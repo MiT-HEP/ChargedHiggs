@@ -1,0 +1,1 @@
+DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 56875352064.0 4156.03632444

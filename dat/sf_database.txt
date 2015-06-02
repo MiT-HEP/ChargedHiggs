@@ -1,0 +1,6 @@
+## LABEL type pt eta sf err
+muon pteta 10 20 0 2 1 0
+muon pteta 20 30 0 2 1 0
+ele pteta 10 100 0 5 1 0
+## LABEL type sf err
+kfac base 1 0

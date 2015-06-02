@@ -1,7 +1,7 @@
 GCC=g++
 CXXFLAGS=`root-config --libs --cflags` -O2 -fPIC -I../  -I./
 ## to use BareObjects
-CXXFLAGS += -L../NeroProducer/Core/bin -lBare 
+CXXFLAGS += -L$(PWD)/../NeroProducer/Core/bin -lBare -Wl,-rpath=$(PWD)/../NeroProducer/Core/bin
 SOFLAGS=-shared
 
 SRCDIR=src
@@ -14,7 +14,7 @@ HPPLINKDEF=$(patsubst $(SRCDIR)/%.cpp, ../interface/%.hpp , $(SRC)  )
 
 
 
-libBare.so: $(OBJ) Dict | $(BINDIR)
+libChargedHiggs.so: $(OBJ) Dict | $(BINDIR)
 	$(GCC) $(CXXFLAGS) $(SOFLAGS) -o $(BINDIR)/$@ $(OBJ) $(BINDIR)/dict.o
 
 $(OBJ) : $(BINDIR)/%.o : $(SRCDIR)/%.cpp interface/%.hpp | $(BINDIR)
@@ -23,9 +23,10 @@ $(OBJ) : $(BINDIR)/%.o : $(SRCDIR)/%.cpp interface/%.hpp | $(BINDIR)
 .PHONY: Dict
 Dict: $(BINDIR)/dict.o
 
-$(BINDIR)/dict.o:
+$(BINDIR)/dict.o: $(SRC) | $(BINDIR)
 	cd $(BINDIR) && rootcint -v4 -f dict.cc -c -I../../ -I../ $(HPPLINKDEF)  ../interface/LinkDef.hpp 
 	cd $(BINDIR) && $(GCC) -c -o dict.o $(CXXFLAGS) -I../../ dict.cc
+
 $(BINDIR):
 	mkdir -p $(BINDIR)
 
@@ -33,5 +34,5 @@ $(BINDIR):
 clean:
 	-rm $(OBJ)
 	-rm $(BINDIR)/dict*
-	-rm $(BINDIR)/libBare.so
+	-rm $(BINDIR)/libChargedHiggs.so
 	-rmdir $(BINDIR)

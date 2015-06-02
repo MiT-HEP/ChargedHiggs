@@ -1,0 +1,16 @@
+##configure Looper
+# eos dir, or eos file, or file+wildcard
+Files=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
+Output=ChHiggs.root
+Analysis=AnalysisBase,Preselection
+
+MCDB=dat/mc_database.txt
+SFDB=dat/sf_database.txt
+
+# Smearer
+#Smear=JER,JES,@SmearBase
+Smear=NONE,JER,JES
+
+#configure Analysis
+config=AnalysisBase|Init()
+#config=Preselection|

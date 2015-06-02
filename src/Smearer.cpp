@@ -22,3 +22,12 @@ int SmearJer::smear(Event *e)
 		j->syst = syst_;
 	return SMEAR_OK;
 }
+
+int SmearLepSF::smear(Event *e)
+{
+	if( e->IsRealData() ) return SMEAR_NA;
+	
+	e -> weight_  . SetSystSF ("LEP",syst_);
+	return SMEAR_OK;
+
+}
