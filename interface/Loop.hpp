@@ -39,6 +39,7 @@ protected:
 	void ClearEvent();
 	void Write(){output_->Write();}	
 	void Close(){output_->Close();}
+	void NewFile();
 
 public:
 	// -- constructor

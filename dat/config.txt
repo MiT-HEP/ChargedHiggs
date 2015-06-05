@@ -1,6 +1,7 @@
 ##configure Looper
 # eos dir, or eos file, or file+wildcard
 Files=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
+addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
 Output=ChHiggs.root
 Analysis=AnalysisBase,Preselection
 

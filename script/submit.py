@@ -2,9 +2,10 @@
 
 import os,sys
 from glob import glob
-from subprocess import call
+from subprocess import call, check_output
+import re
 
-from optparse import OptionParser
+from optparse import OptionParser, OptionGroup
 
 usage = "usage: %prog [options]"
 parser=OptionParser(usage=usage)
@@ -13,12 +14,24 @@ parser.add_option("-d","--dir" ,dest='dir',type='string',help="Directory where t
 parser.add_option("-v","--debug" ,dest='debug',type='int',help="Debug Verbosity. From 0-3. Default=%default",default=0)
 parser.add_option("-n","--njobs" ,dest='njobs',type='int',help="Number of Job to submit",default=50)
 parser.add_option("-q","--queue" ,dest='queue',type='string',help="Queue",default="1nh")
-parser.add_option("-t","--no-tar" ,dest='tar',action='store_false',help="Do not Make Tar",default=True)
 
-parser.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do not Submit",default=False)
-parser.add_option("","--no-compress" ,dest='compress',action='store_false',help="Don't compress",default=True)
-parser.add_option("","--compress"    ,dest='compress',action='store_true',help="Compress stdout/err")
-parser.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="Mount eos file system. Do not use xrootd.",default=False)
+job_opts= OptionGroup(parser,"Job options:","these options modifies the job specific")
+job_opts.add_option("-t","--no-tar" ,dest='tar',action='store_false',help="Do not Make Tar",default=True)
+job_opts.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do not Submit",default=False)
+job_opts.add_option("","--no-compress" ,dest='compress',action='store_false',help="Don't compress",default=True)
+job_opts.add_option("","--compress"    ,dest='compress',action='store_true',help="Compress stdout/err")
+job_opts.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="Mount eos file system.",default=False)
+job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. (For the moment use this option)",default=False)
+job_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
+
+summary= OptionGroup(parser,"Summary","these options are used in case of summary is wanted")
+summary.add_option("-s","--status",dest="status", action='store_true', help = "Display status information for a submission.", default=False)
+summary.add_option("","--resubmit",dest="resubmit", action='store_true', help = "Resubmit failed jobs.", default=False)
+summary.add_option("-j","--joblist",dest="joblist", type='string', help = "Resubmit this job list. '' or 'fail' will submit the failed jobs. 'run' will submit the running jobs", default="")
+
+parser.add_option_group(job_opts)
+parser.add_option_group(summary)
+
 (opts,args)=parser.parse_args()
 
 EOS='/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
@@ -27,6 +40,101 @@ print "inserting in path cwd"
 sys.path.insert(0,os.getcwd())
 print "inserting in path cwd/python"
 sys.path.insert(0,os.getcwd()+'/python')
+
+def PrintLine(list):
+	''' convert list in list of int number, sort and compress consecutive numbers. Then print the result:
+	4,5,8,3 -> 3-5,8
+	'''
+	nums = [ int(s) for s in list ]
+	nums.sort()
+	compress = []
+	last = None
+	blockinit = None
+
+	for n in nums:
+		#first if it is not consecutive
+		if last == None: ## INIT
+			blockinit = n
+
+		elif last != n-1:
+			#close a block and open a new one
+			if last != blockinit:
+				compress.append( str(blockinit) + "-" + str(last) ) 
+			else:
+				compress.append( str(last) ) 
+			blockinit = n
+
+		last = n
+
+	#consider also the last number
+	#close a block and open a new one
+	if last != blockinit:
+		compress.append( str(blockinit) + "-" + str(last) ) 
+	else:
+		compress.append( str(last) ) 
+
+	return ",".join(compress)
+
+def PrintSummary(dir, doPrint=True):
+	''' Print summary informations for dir'''
+	run  = glob(dir + "/*run")
+	fail = glob(dir + "/*fail")
+	done = glob(dir + "/*done")
+
+	## bash color string
+	red="\033[01;31m"
+	green = "\033[01;32m"
+	yellow = "\033[01;33m"
+	white = "\033[00m"
+
+	run = [ re.sub('\.run','' , re.sub('.*/sub','', r) ) for r in run ] 	
+	fail = [ re.sub('\.fail','' , re.sub('.*/sub','', r) ) for r in fail ] 	
+	done = [ re.sub('\.done','' , re.sub('.*/sub','', r) ) for r in done ] 	
+
+	tot = len(run) + len(fail) + len(done)
+
+	color = red
+	if len(run) > len(fail) and len(run) > len(done) : color= yellow
+	if len(done) == tot and tot >0 : color = green
+	
+	if doPrint:
+		print " ----  Directory "+ color+opts.dir+white+" --------"
+		print " Run : " + yellow + "%3d"%len(run) + " / "  + str(tot) + white + " : " + PrintLine(run)  ### + ",".join(run)  + "|" 
+		print " Fail: " + red    + "%3d"%len(fail) + " / " + str(tot) + white + " : " + PrintLine(fail) ### + ",".join(fail) + "|" 
+		print " Done: " + green  + "%3d"%len(done) + " / " + str(tot) + white + " : " + PrintLine(done) ### + ",".join(done) + "|" 
+		print " -------------------------------------"
+
+	return ( done, run, fail)
+
+if opts.status:
+	PrintSummary(opts.dir,doPrint=True)
+	exit(0)
+
+if opts.resubmit:
+	( done, run, fail) = PrintSummary(opts.dir,False)
+
+	if opts.joblist == '' or opts.joblist.lower() == 'fail':
+		joblist = fail
+	elif opts.joblist =='run':
+		joblist = run
+	else:
+		joblist = opts.joblist.split(',')
+	for job in joblist:
+		iJob= int(job)
+		basedir = os.environ['PWD'] + "/" + opts.dir
+		cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
+		print cmdline
+		call (cmdline,shell=True)
+	exit(0)
+
+if opts.hadd:
+	filelist = glob(opts.dir + "/*.root")
+	if opts.dir[-1] == '/':dir = opts.dir[:-1]
+	else: dir  = opt.dir[:]
+	name = re.sub('.*/','',dir)
+	cmd = "hadd -f %s/%s.root "%(opts.dir, name ) + " ".join(filelist)
+	call(cmd,shell=True)
+	exit(0)
 
 # import Parser
 from ParseDat import *
@@ -86,7 +194,6 @@ for iJob in range(0,opts.njobs):
 	sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
 	sh.write('eval `scramv1 runtime -sh`\n') # cmsenv
 
-
 	if opts.tar:
 		sh.write("mkdir -p $WORKDIR/%s_%d\n"%(opts.dir,iJob))
 		sh.write("cd $WORKDIR/%s_%d\n"%(opts.dir,iJob))
@@ -101,6 +208,29 @@ for iJob in range(0,opts.njobs):
 		#mountpoint = "~/eos"
 		mountpoint = "$WORKDIR/%s_%d/eos"%(opts.dir,iJob)
 		sh.write('%s -b fuse mount %s\n'% (EOS,mountpoint))
+
+	if opts.cp:
+		sh.write("mkdir cp\n")
+		for idx,file in enumerate(splittedInput[iJob]):
+			if 'root://eoscms//' in file: file = re.sub('root://eoscms//','', file)
+			# -1 = filename , -2 = dirname
+			filename = file.split('/')[-1] ## remove all directories
+			dir = file.split('/')[-2]
+			sh.write("mkdir ./cp/%s\n"%dir)
+			sh.write('cmsStage %s ./cp/%s/\n'%(file,dir))
+			splittedInput[iJob][idx] = "./cp/" + dir + "/" + filename
+
+
+	if opts.debug>1:
+		# after CD in the WORKDIR and mount
+		sh.write('echo "-------- ENV -------"\n')
+		sh.write("env \n") # print run time environment
+		sh.write('echo "--------------------"\n')
+		sh.write('echo "-------- LS -------"\n')
+		sh.write("ls -lR\n")
+		sh.write('echo "--------------------"\n')
+
+
 
 	if opts.compress:
 		compressString="2>&1 | gzip > %s/log%d.txt.gz"%(opts.dir,iJob)

@@ -61,6 +61,19 @@ double Event::weight(){
 	return weight_ . weight();
 	}
 
+void Event::validate(){
+	//reject all the jets that are identified as : lepton or tau
+    	for ( auto j : jets_ )
+	{
+	j-> resetValidity();
+	for(auto l : leps_)
+		if(l->IsLep() )j-> computeValidity(l);
+	for(auto t: taus_)
+		if(t->IsTau() )j-> computeValidity(t);
+	}
+    return ;
+}
+
 void Weight::AddMC( string label, string dir, double xsec, double nevents)
 {
 	mc_db[label] = new MC();

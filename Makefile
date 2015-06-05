@@ -1,7 +1,7 @@
 GCC=g++
 CXXFLAGS=`root-config --libs --cflags` -O2 -fPIC -I../  -I./
 ## to use BareObjects
-CXXFLAGS += -L$(PWD)/../NeroProducer/Core/bin -lBare -Wl,-rpath=$(PWD)/../NeroProducer/Core/bin
+CXXFLAGS += -L$(PWD)/../NeroProducer/Core/bin -lBare -Wl,-rpath=$(PWD)/../NeroProducer/Core/bin -ggdb
 SOFLAGS=-shared
 
 SRCDIR=src

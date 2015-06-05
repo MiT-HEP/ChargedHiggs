@@ -21,6 +21,7 @@ public:
 	virtual inline float Pt(){return p4.Pt() ;}
 	virtual inline float Eta(){ return p4.Eta(); } 
 	virtual inline float Phi(){ return p4.Phi(); }
+	virtual inline float E(){ return p4.E(); }
 	virtual inline int   IsObject(){return 0;}
 	virtual inline float DeltaR(Object &o){ return p4.DeltaR(o.GetP4()); }
 	virtual inline TLorentzVector & GetP4(){ return p4;}
@@ -55,11 +56,11 @@ public:
 			   }
 	inline int IsBJet(){ if( bdiscr > bcut_ + bsyst*bunc and IsJet() )   return 1; return 0;}
 
-	inline void computeValidity( vector<Object*> &a, float dR = 0.4)
+	inline void computeValidity( Object* o, float dR = 0.4)
 		{
-			for( Object* o :  a )
-				if ( DeltaR (*o) < dR )  isValid = 0;
+			if ( DeltaR (*o) < dR )  isValid = 0;
 		}
+	inline void resetValidity(){isValid=1;}
 };
 
 // ----
@@ -155,7 +156,6 @@ class Weight{
 	
 	string mcName_;
 	double mcXsec_;
-	double mcWeight_;
 	double nEvents_;
 	double lumi_;
 	double sf_;
@@ -167,6 +167,8 @@ protected:
 public:
 	Weight(){ clear(); }
 	~Weight(){}
+
+	double mcWeight_; // this is set in FillEvent
 
 	void clear(){ mcName_= "";
 		mcXsec_ = 1.0; 
@@ -228,6 +230,8 @@ public:
 	virtual void clearSyst(); // call clearSyst in all object it posses
 
 	double weight();
+	// update objects that can be invalid (jets)
+	virtual void validate();
 };
 
 #endif

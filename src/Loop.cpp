@@ -101,6 +101,7 @@ void Looper::Loop()
 		//smear
 		s->smear(event_);
 		//do the analysis
+		event_->validate();
 		for(auto a : analysis_)
 			{
 			#ifdef VERBOSE
@@ -126,51 +127,54 @@ void Looper::ClearEvent(){
 
 }
 
-//#define VERBOSE 3
+void Looper::NewFile()
+{
+	fNumber = tree_->GetTreeNumber();
+	// check name and weight TODO
+	string fname = tree_->GetFile()->GetName();
+	cout<<"[Looper]::[NewFile]::[INFO] Opening new file: '"<<fname<<"'"<<endl;
+		//"root://eoscms//store/../label/abc.root"
+	size_t last = fname.rfind('/');
+	size_t prevLast = fname.rfind('/',last-1);
+	size_t eos = fname.find("/store/");
+	string label=fname.substr(prevLast+1,last - 1 - prevLast ); //pos,len
+	string dir =fname.substr(0,last); // remove the filename
+	if (eos != string::npos) // strip out everything before /store/
+		dir = dir.substr(eos, string::npos);
+	// -- Load current MC --
+	string savedDir=event_ -> weight_ . LoadMC( label );
+	if (savedDir =="")
+		{
+		cout<<"[Looper]::[NewFile]::[WARNING] failed to search MC by LABEL '"<<label<<"' search by dir '"<<dir<<"'"<<endl;
+		// search for dir
+		label = event_ -> weight_ . LoadMCbyDir(dir);
+		savedDir = dir;
+		cout<<"[Looper]::[NewFile]::[WARNING] label found '"<<label<<"'"<<endl;
+		}
+	if ( dir != savedDir or label == "")
+		cout<<"[Looper]::[NewFile]::[WARNING] saved dir '"<<savedDir<<"' and current dir '"<< dir <<"' label '"<<label<<"'"<<endl;
+
+	return;
+}
 
 void Looper::FillEvent(){
 
 	if ( tree_ -> GetTreeNumber() != fNumber)
 		{
-		fNumber = tree_->GetTreeNumber();
-		// check name and weight TODO
-		string fname = tree_->GetFile()->GetName();
-		//"root://eoscms//store/../label/abc.root"
-		cout<<"[Looper]::[FillEvent]::[INFO] Opening new file: "<<fname<<endl;
-		size_t last = fname.rfind('/');
-		size_t prevLast = fname.rfind('/',last-1);
-		size_t eos = fname.find("/store/");
-		string label=fname.substr(prevLast+1,last - 1 - prevLast ); //pos,len
-		string dir =fname.substr(0,last); // remove the filename
-		if (eos != string::npos) // strip out everything before /store/
-			dir = dir.substr(eos, string::npos);
-		// -- Load current MC --
-		string savedDir=event_ -> weight_ . LoadMC( label );
-		if (savedDir =="")
-			{
-			cout<<"[Looper]::[FillEvent]::[WARNING] failed to search MC by LABEL '"<<label<<"' search by dir '"<<dir<<"'"<<endl;
-			// search for dir
-			label = event_ -> weight_ . LoadMCbyDir(dir);
-			savedDir = dir;
-			cout<<"[Looper]::[FillEvent]::[WARNING] label found '"<<label<<"'"<<endl;
-			}
-		if ( dir != savedDir or label == "")
-			cout<<"[Looper]::[FillEvent]::[ERROR] saved dir '"<<savedDir<<"' and current dir '"<< dir <<"' label '"<<label<<"'"<<endl;
+			NewFile();
 		}
+	//usleep(100); // DEBUG XROOTD
 
 	BareEvent *e = dynamic_cast<BareEvent*> ( bare_ [names_["Event"] ] ) ; assert(e!=NULL);
 #ifdef VERBOSE
 	if(VERBOSE>0)cout <<"[Looper]::[FillEvent]::[INFO] Processing "<<e->runNum<<":"<<e->lumiNum<<":"<<e->eventNum<<endl;
 #endif
 	event_ -> isRealData_ = e->isRealData;
-
-	e->clear();
 	//fill Jets
 #ifdef VERBOSE
 	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling Jets: FIXME JES" <<endl;
 #endif
 	BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "Jets" ] ] ); assert (bj !=NULL);
-	//cout <<"[Looper]::[FillEvent]::[DEBUG] "<<bj->p4->GetEntries()<<"|" << bj->bDiscr->size()<<endl;
 	for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
 		{
 		Jet *j =new Jet();
@@ -180,7 +184,6 @@ void Looper::FillEvent(){
 		event_ -> jets_ . push_back(j);
 		}
 	// Fill Leptons
-	bj->clear();
 #ifdef VERBOSE
 	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling Leptons" <<endl;
 #endif
@@ -194,7 +197,6 @@ void Looper::FillEvent(){
 		l-> type = abs((*bl->pdgId)[iL]);
 		event_ -> leps_ . push_back(l);
 		}
-	bl->clear();
 	//Fill Tau
 #ifdef VERBOSE
 	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling Taus" <<endl;
@@ -209,7 +211,6 @@ void Looper::FillEvent(){
 		t-> type = 15;
 		event_ -> taus_ . push_back(t);
 		}
-	bt->clear();
 	// FillMEt
 #ifdef VERBOSE
 	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling MET" <<endl;
@@ -222,7 +223,19 @@ void Looper::FillEvent(){
 	event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
 	event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
 	event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
-	met->clear();
+
+	// FillMonteCarlo
+#ifdef VERBOSE
+	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling MonteCarlo" <<endl;
+#endif
+	BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["MonteCarlo"]]);
+	event_ -> weight_ . mcWeight_ = mc->mcWeight;
+
+#ifdef VERBOSE
+	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Clearing collections" <<endl;
+#endif
+	//for (auto c : bare_)
+	//	c->clear();
 #ifdef VERBOSE
 	if(VERBOSE>0)cout <<"[Looper]::[FillEvent]::[DONE]"<<endl;
 #endif 
