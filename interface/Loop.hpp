@@ -34,12 +34,20 @@ private:
 	Output *output_;
 
 protected:
+	// --- call by FillEvent
+	void FillEventInfo();
+	void FillJets();
+	void FillLeptons();
+	void FillTaus();
+	void FillMet();
+	void FillMC();
+	//
+	void NewFile();
 	// ---- call by LOOP
 	void FillEvent();
 	void ClearEvent();
 	void Write(){output_->Write();}	
 	void Close(){output_->Close();}
-	void NewFile();
 
 public:
 	// -- constructor

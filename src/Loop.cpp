@@ -157,22 +157,21 @@ void Looper::NewFile()
 	return;
 }
 
-void Looper::FillEvent(){
-
-	if ( tree_ -> GetTreeNumber() != fNumber)
-		{
-			NewFile();
-		}
-	//usleep(100); // DEBUG XROOTD
+void Looper::FillEventInfo(){
 
 	BareEvent *e = dynamic_cast<BareEvent*> ( bare_ [names_["Event"] ] ) ; assert(e!=NULL);
 #ifdef VERBOSE
-	if(VERBOSE>0)cout <<"[Looper]::[FillEvent]::[INFO] Processing "<<e->runNum<<":"<<e->lumiNum<<":"<<e->eventNum<<endl;
+	if(VERBOSE>0)cout <<"[Looper]::[FillEventInfo]::[INFO] Processing "<<e->runNum<<":"<<e->lumiNum<<":"<<e->eventNum<<endl;
 #endif
 	event_ -> isRealData_ = e->isRealData;
+
+}
+
+
+void Looper::FillJets(){
 	//fill Jets
 #ifdef VERBOSE
-	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling Jets: FIXME JES" <<endl;
+	if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets: FIXME JES" <<endl;
 #endif
 	BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "Jets" ] ] ); assert (bj !=NULL);
 	for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
@@ -183,9 +182,13 @@ void Looper::FillEvent(){
 		j->bdiscr = bj -> bDiscr -> at(iJet);
 		event_ -> jets_ . push_back(j);
 		}
+	return;
+}
+
+void Looper::FillLeptons(){
 	// Fill Leptons
 #ifdef VERBOSE
-	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling Leptons" <<endl;
+	if(VERBOSE>1)cout <<"[Looper]::[FillLeptons]::[DEBUG] Filling Leptons" <<endl;
 #endif
 	BareLeptons *bl = dynamic_cast<BareLeptons*> ( bare_[ names_["Leptons"] ]); assert(bl != NULL ) ;
 	for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
@@ -197,9 +200,13 @@ void Looper::FillEvent(){
 		l-> type = abs((*bl->pdgId)[iL]);
 		event_ -> leps_ . push_back(l);
 		}
+
+}
+
+void Looper::FillTaus(){
 	//Fill Tau
 #ifdef VERBOSE
-	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling Taus" <<endl;
+	if(VERBOSE>1)cout <<"[Looper]::[FillTaus]::[DEBUG] Filling Taus" <<endl;
 #endif
 	BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
 	for (int iL = 0;iL<bt->p4->GetEntries() ;++iL)
@@ -212,6 +219,21 @@ void Looper::FillEvent(){
 		t-> id = bt-> id -> at(iL);
 		event_ -> taus_ . push_back(t);
 		}
+
+}
+
+
+void Looper::FillMC(){
+	// FillMonteCarlo
+#ifdef VERBOSE
+	if(VERBOSE>1)cout <<"[Looper]::[FillMC]::[DEBUG] Filling MonteCarlo" <<endl;
+#endif
+	BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["MonteCarlo"]]);
+	event_ -> weight_ . mcWeight_ = mc->mcWeight;
+
+}
+
+void Looper::FillMet(){
 	// FillMEt
 #ifdef VERBOSE
 	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling MET" <<endl;
@@ -225,12 +247,22 @@ void Looper::FillEvent(){
 	event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
 	event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
 
-	// FillMonteCarlo
-#ifdef VERBOSE
-	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling MonteCarlo" <<endl;
-#endif
-	BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["MonteCarlo"]]);
-	event_ -> weight_ . mcWeight_ = mc->mcWeight;
+}
+
+void Looper::FillEvent(){
+
+	if ( tree_ -> GetTreeNumber() != fNumber)
+		{
+			NewFile();
+		}
+	//usleep(100); // DEBUG XROOTD
+	FillEventInfo();
+	FillJets();
+	FillLeptons();
+	FillTaus();
+	FillMet();
+	FillMC();
+
 
 #ifdef VERBOSE
 	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Clearing collections" <<endl;

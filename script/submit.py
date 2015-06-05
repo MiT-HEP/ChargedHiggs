@@ -21,7 +21,7 @@ job_opts.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do no
 job_opts.add_option("","--no-compress" ,dest='compress',action='store_false',help="Don't compress",default=True)
 job_opts.add_option("","--compress"    ,dest='compress',action='store_true',help="Compress stdout/err")
 job_opts.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="Mount eos file system.",default=False)
-job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. (For the moment use this option)",default=False)
+job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. ",default=False)
 job_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
 
 summary= OptionGroup(parser,"Summary","these options are used in case of summary is wanted")
