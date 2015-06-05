@@ -85,8 +85,11 @@ public:
 class Tau: virtual public Object,
 	virtual public Lepton
 {
+	float idcut_;
 public:
-	virtual inline int IsTau(){ return 0; }
+	Tau() : Lepton() { idcut_ = 0.5;}
+	float id;
+	virtual int IsTau() ;
 	virtual inline int IsObject(){ return IsTau(); }
 };
 

@@ -209,6 +209,7 @@ void Looper::FillEvent(){
 		t-> iso = (*bt->iso) [iL];
 		t-> charge = bt -> Q -> at(iL);
 		t-> type = 15;
+		t-> id = bt-> id -> at(iL);
 		event_ -> taus_ . push_back(t);
 		}
 	// FillMEt
