@@ -163,9 +163,13 @@ if opts.tar:
 	cmd.extend( glob("python/*py") )
 	cmd.extend( glob("test/*") )
 	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
-	print " ".join(cmd)
+	tarCmdline = " ".join(cmd)
+	print tarCmdline
 	call(cmd)
 
+	tarInfo = open("%s/tar.txt"%opts.dir,"w")
+	print >> tarInfo, tarCmdline
+	tarInfo.close()
 	cmd="git rev-parse HEAD > %s/tag.txt" %opts.dir
 	call(cmd,shell=True)
 	cmd="git describe --tags >> %s/tag.txt" %opts.dir

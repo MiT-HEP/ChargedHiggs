@@ -11,8 +11,24 @@
 #include "NeroProducer/Core/interface/BareLeptons.hpp"
 #include "NeroProducer/Core/interface/BareTaus.hpp"
 
+#include "interface/Handlers.hpp"
 
 //#define VERBOSE 1
+//
+Looper::Looper(){
+	output_=new Output(); 
+	tree_=new TChain("nero/events");
+	event_= new Event(); 
+	fNumber = -1;
+	define_handlers();
+}
+Looper::Looper(string chain){
+	output_=new Output(); 
+	tree_=new TChain(chain.c_str());
+	event_= new Event(); 
+	fNumber = -1;
+	define_handlers();
+}
 
 int Looper::InitSmear(){
 	int R=0;
@@ -89,7 +105,8 @@ void Looper::Loop()
 	cout<<"[Looper]::[Loop]::[INFO] Running on "<<nEntries<<" entries" <<endl;
 
 	sw_. Reset();
-
+	
+	try{	
 	for(unsigned long iEntry = 0 ;iEntry< nEntries ;++iEntry)
 	{
 	if(iEntry %1000 == 0 ) {
@@ -102,6 +119,7 @@ void Looper::Loop()
 	#ifdef VERBOSE
 		if (VERBOSE > 1) cout <<"[Looper]::[Loop] Getting Entry "<<iEntry << " of "<<nEntries<<endl;
 	#endif
+	ClearEvent();
 	// load tree
 	tree_ -> GetEntry(iEntry);
 	//move content into the event
@@ -137,6 +155,14 @@ void Looper::Loop()
 	  s->SetSyst(0); // not necessary, but cleaner in this way
 	  }
 	}
+	}
+	catch( sigint_exception &e)
+		{
+		cout<<" Caught SIGINT/SIGTERM: exiting! "<<endl;
+		Write();
+		Close();
+		throw e; 
+		}
 	// save output
 	Write();
 	Close();
@@ -290,8 +316,8 @@ void Looper::FillEvent(){
 #ifdef VERBOSE
 	if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Clearing collections" <<endl;
 #endif
-	//for (auto c : bare_)
-	//	c->clear();
+	for (auto c : bare_)
+		c->clear();
 #ifdef VERBOSE
 	if(VERBOSE>0)cout <<"[Looper]::[FillEvent]::[DONE]"<<endl;
 #endif 

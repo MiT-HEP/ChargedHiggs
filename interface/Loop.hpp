@@ -55,8 +55,8 @@ protected:
 
 public:
 	// -- constructor
-	Looper(){output_=new Output(); tree_=new TChain("nero/events");event_= new Event(); fNumber = -1;}
-	Looper(string chain){output_=new Output(); tree_=new TChain(chain.c_str());event_= new Event(); fNumber = -1;}
+	Looper();
+	Looper(string chain);
 	~Looper(){ClearEvent();}
 	// ---
 	inline int AddToChain( string name ){ return tree_ -> Add( name.c_str() ) ; }
