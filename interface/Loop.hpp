@@ -16,6 +16,8 @@
 #include "NeroProducer/Core/interface/BareCollection.hpp"
 #include "interface/Output.hpp"
 
+#include "TStopwatch.h"
+
 class Looper{
 
 private:
@@ -32,6 +34,8 @@ private:
 	Event * event_;
 
 	Output *output_;
+
+	TStopwatch sw_;
 
 protected:
 	// --- call by FillEvent

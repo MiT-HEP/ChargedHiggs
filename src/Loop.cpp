@@ -64,6 +64,21 @@ int Looper::InitTree()
 	for (auto c : bare_ )
 		c->setBranchAddresses(tree_);
 
+	tree_ -> SetBranchStatus("*",0);
+	tree_ -> SetBranchStatus("isRealData",1);
+	tree_ -> SetBranchStatus("jetP4",1);
+	tree_ -> SetBranchStatus("jetBdiscr",1);
+	tree_ -> SetBranchStatus("lepP4",1);
+	tree_ -> SetBranchStatus("lepIso",1);
+	tree_ -> SetBranchStatus("lepPdgId",1);
+	tree_ -> SetBranchStatus("tauP4",1);
+	tree_ -> SetBranchStatus("tauId",1);
+	tree_ -> SetBranchStatus("tauQ",1);
+	tree_ -> SetBranchStatus("tauIso",1);
+	tree_ -> SetBranchStatus("mcWeight",1);
+	tree_ -> SetBranchStatus("metP4",1);
+	tree_ -> SetBranchStatus("metPt*",1);
+
 	return 0;
 }
 
@@ -73,9 +88,16 @@ void Looper::Loop()
 
 	cout<<"[Looper]::[Loop]::[INFO] Running on "<<nEntries<<" entries" <<endl;
 
+	sw_. Reset();
+
 	for(unsigned long iEntry = 0 ;iEntry< nEntries ;++iEntry)
 	{
-	if(iEntry %10000 == 0 ) cout<<"[Looper]::[Loop]::[INFO] Getting Entry "<<iEntry<<" / "<<nEntries <<endl;
+	if(iEntry %1000 == 0 ) {
+		sw_.Stop();
+		cout<<"[Looper]::[Loop]::[INFO] Getting Entry "<<iEntry<<" / "<<nEntries << " in (Cpu)"<< sw_ .CpuTime() <<" (Real) "<< sw_.RealTime()<<endl;
+		sw_ .Reset();
+		sw_ .Start();
+		}
 
 	#ifdef VERBOSE
 		if (VERBOSE > 1) cout <<"[Looper]::[Loop] Getting Entry "<<iEntry << " of "<<nEntries<<endl;
@@ -209,7 +231,8 @@ void Looper::FillTaus(){
 	if(VERBOSE>1)cout <<"[Looper]::[FillTaus]::[DEBUG] Filling Taus" <<endl;
 #endif
 	BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
-	for (int iL = 0;iL<bt->p4->GetEntries() ;++iL)
+	//cout <<"[Looper]::[FillTaus]::[DEBUG] P4 "<<bt -> p4 -> GetEntries()  <<" | " <<bt->iso->size() <<" | "<<bt->Q->size()<<" | "<<bt->id->size()<<endl;
+	for (int iL = 0; iL<bt -> p4 -> GetEntries() ;++iL)
 		{
 		Tau *t = new Tau();
 		t->SetP4( *(TLorentzVector*) ((*bt->p4)[iL]) );

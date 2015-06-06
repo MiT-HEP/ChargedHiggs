@@ -27,7 +27,7 @@ job_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Dire
 summary= OptionGroup(parser,"Summary","these options are used in case of summary is wanted")
 summary.add_option("-s","--status",dest="status", action='store_true', help = "Display status information for a submission.", default=False)
 summary.add_option("","--resubmit",dest="resubmit", action='store_true', help = "Resubmit failed jobs.", default=False)
-summary.add_option("-j","--joblist",dest="joblist", type='string', help = "Resubmit this job list. '' or 'fail' will submit the failed jobs. 'run' will submit the running jobs", default="")
+summary.add_option("-j","--joblist",dest="joblist", type='string', help = "Resubmit this job list. '' or 'fail' will submit the failed jobs. 'run' will submit the running jobs. Job list = 3,5,6-10", default="")
 
 parser.add_option_group(job_opts)
 parser.add_option_group(summary)
@@ -119,10 +119,18 @@ if opts.resubmit:
 		joblist = run
 	else:
 		joblist = opts.joblist.split(',')
+
 	for job in joblist:
-		iJob= int(job)
-		basedir = os.environ['PWD'] + "/" + opts.dir
-		cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
+		if '-' in job: 
+		   iBegin= int(job.split('-')[0])
+		   iEnd = int(job.split('-')[1])
+		else: 
+		   iBegin= int(job)
+		   iEnd = int(job)
+	   	for iJob in range(iBegin,iEnd+1):
+			#iJob= int(job)
+			basedir = os.environ['PWD'] + "/" + opts.dir
+			cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
 		print cmdline
 		call (cmdline,shell=True)
 	exit(0)
@@ -264,13 +272,16 @@ for iJob in range(0,opts.njobs):
 
 	## make the sh file executable	
 	call(["chmod","u+x","%s/sub%d.sh"%(opts.dir,iJob)])
-	
+
 	## submit
 	#sh.write('#$-N %s/Job_%d\n'%(opts.dir,iJob))
 	cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
-
 	print cmdline
 	cmdFile.write(cmdline+"\n")
+
+	if len(splittedInput[iJob]) == 0 : 
+		print "No file to run on for job "+ str(iJob)+", will not send it!"
+		continue
 	if not opts.dryrun: 
 		call(cmdline,shell=True)
 
