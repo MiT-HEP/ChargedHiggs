@@ -109,7 +109,7 @@ void Looper::Loop()
 	try{	
 	for(unsigned long iEntry = 0 ;iEntry< nEntries ;++iEntry)
 	{
-	if(iEntry %1000 == 0 ) {
+	if(iEntry %10000 == 0 ) {
 		sw_.Stop();
 		cout<<"[Looper]::[Loop]::[INFO] Getting Entry "<<iEntry<<" / "<<nEntries << " in (Cpu)"<< sw_ .CpuTime() <<" (Real) "<< sw_.RealTime()<<endl;
 		sw_ .Reset();
