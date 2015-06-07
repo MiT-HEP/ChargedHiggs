@@ -36,6 +36,21 @@ void Preselection::Init()
 	GetHisto("CutFlow_TT","")->GetXaxis()->SetBinLabel(2,"N_{jets} #geq 3");
 	GetHisto("CutFlow_TT","")->GetXaxis()->SetBinLabel(3,"N_{Bjets} #geq 1");
 
+	Book("CutFlow_WW","CutFlow WW",100,-.5,100-.5);
+	GetHisto("CutFlow_WW","")->GetXaxis()->SetBinLabel(1,"Total");
+	GetHisto("CutFlow_WW","")->GetXaxis()->SetBinLabel(2,"N_{jets} #geq 3");
+	GetHisto("CutFlow_WW","")->GetXaxis()->SetBinLabel(3,"N_{Bjets} #geq 1");
+
+	Book("CutFlow_WZ","CutFlow WZ",100,-.5,100-.5);
+	GetHisto("CutFlow_WZ","")->GetXaxis()->SetBinLabel(1,"Total");
+	GetHisto("CutFlow_WZ","")->GetXaxis()->SetBinLabel(2,"N_{jets} #geq 3");
+	GetHisto("CutFlow_WZ","")->GetXaxis()->SetBinLabel(3,"N_{Bjets} #geq 1");
+
+	Book("CutFlow_ZZ","CutFlow ZZ",100,-.5,100-.5);
+	GetHisto("CutFlow_ZZ","")->GetXaxis()->SetBinLabel(1,"Total");
+	GetHisto("CutFlow_ZZ","")->GetXaxis()->SetBinLabel(2,"N_{jets} #geq 3");
+	GetHisto("CutFlow_ZZ","")->GetXaxis()->SetBinLabel(3,"N_{Bjets} #geq 1");
+
 	Book("CutFlow_Data","CutFlow Data",100,-.5,100-.5);
 	GetHisto("CutFlow_Data","")->GetXaxis()->SetBinLabel(1,"Total");
 	GetHisto("CutFlow_Data","")->GetXaxis()->SetBinLabel(2,"N_{jets} #geq 3");
@@ -45,6 +60,17 @@ void Preselection::Init()
 	GetHisto("CutFlow_Other","")->GetXaxis()->SetBinLabel(1,"Total");
 	GetHisto("CutFlow_Other","")->GetXaxis()->SetBinLabel(2,"N_{jets} #geq 3");
 	GetHisto("CutFlow_Other","")->GetXaxis()->SetBinLabel(3,"N_{Bjets} #geq 1");
+
+	//signals
+	Book("CutFlow_HBWB_HToTauNu_M-90","CutFlow HBWB_HToTauNu_M-90",100,-.5,100-.5);
+	GetHisto("CutFlow_HBWB_HToTauNu_M-90","")->GetXaxis()->SetBinLabel(1,"Total");
+	GetHisto("CutFlow_HBWB_HToTauNu_M-90","")->GetXaxis()->SetBinLabel(2,"N_{jets} #geq 3");
+	GetHisto("CutFlow_HBWB_HToTauNu_M-90","")->GetXaxis()->SetBinLabel(3,"N_{Bjets} #geq 1");
+
+	Book("CutFlow_TBHp_HToTauNu_M-200","CutFlow TBHp_HToTauNu_M-200",100,-.5,100-.5);
+	GetHisto("CutFlow_TBHp_HToTauNu_M-200","")->GetXaxis()->SetBinLabel(1,"Total");
+	GetHisto("CutFlow_TBHp_HToTauNu_M-200","")->GetXaxis()->SetBinLabel(2,"N_{jets} #geq 3");
+	GetHisto("CutFlow_TBHp_HToTauNu_M-200","")->GetXaxis()->SetBinLabel(3,"N_{Bjets} #geq 1");
 }
 
 int Preselection::analyze(Event*e,string systname)
@@ -56,6 +82,11 @@ int Preselection::analyze(Event*e,string systname)
 	if (e->IsRealData()) label= "CutFlow_Data";
 	else if (e->weight_ . GetMC() . find("DY") != string::npos ) label = "CutFlow_DY"; 
 	else if (e->weight_ . GetMC() . find("TT") != string::npos ) label = "CutFlow_TT"; 
+	else if (e->weight_ . GetMC() . find("WW") != string::npos ) label = "CutFlow_WW"; 
+	else if (e->weight_ . GetMC() . find("WZ") != string::npos ) label = "CutFlow_WZ"; 
+	else if (e->weight_ . GetMC() . find("ZZ") != string::npos ) label = "CutFlow_ZZ"; 
+	else if (e->weight_ . GetMC() . find("HBWB_HToTauNu_M-90") != string::npos ) label = "CutFlow_HBWB_HToTauNu_M-90"; 
+	else if (e->weight_ . GetMC() . find("TBHp_HToTauNu_M-200") != string::npos ) label = "CutFlow_TBHp_HToTauNu_M-200"; 
 	else label = "CutFlow_Other";
 
 	Fill( label ,systname,0,e->weight());

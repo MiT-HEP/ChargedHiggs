@@ -1,7 +1,16 @@
 ##configure Looper
 # eos dir, or eos file, or file+wildcard
+#### BKG ###
 Files=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
 addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
+### WW/WZ/ZZ###
+addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/WW_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
+### SIGNAL ###
+addfiles=/store/user/amarini/Nero/v0.4/Spring14miniaod_PU40bx50/TBHp_HToTauNu_M-200_13TeV_pythia6
+addfiles=/store/user/amarini/Nero/v0.4/Phys14DR-PU20bx25/TTbar_HBWB_HToTauNu_M-90_13TeV_pythia6
+####
+
 Output=ChHiggs.root
 Analysis=AnalysisBase,Preselection
 

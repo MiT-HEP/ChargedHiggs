@@ -144,6 +144,7 @@ def ReadMCDB(file):
 	f = open(file)
 	for line in f:
 		l = line.split('#')[0]
+		l = re.sub('\n','',l)
 		if l == "": continue
 		l=re.sub('^ *','',l)
 		label= l.split(' ')[0]

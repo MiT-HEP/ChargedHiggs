@@ -12,8 +12,10 @@ QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8 /store/user/amarini/Nero/v0.4/RunIISpr
 ST_t-channel_4f_mtop1695_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/ST_t-channel_4f_mtop1695_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1 2252260.5 74.5412881191
 ST_t-channel_4f_mtop1755_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/ST_t-channel_4f_mtop1755_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1 190535504.0 71.0541158121
 ST_tW_top_5f_mtop1755_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/ST_tW_top_5f_mtop1755_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 500000.0 nan
-TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 7149276.0 nan
+TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 7149276.0 556 ## NAN FIX
 TTJets_mtop1695_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/TTJets_mtop1695_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 1436187648.0 597.408158655
 TTJets_mtop1755_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/TTJets_mtop1755_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 811009920.0 516.821830038
 WW_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/WW_TuneCUETP8M1_13TeV-pythia8 28048.2714844 64.5856059293
 WZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8 3880.0 23.7087291882
+TTbar_HBWB_HToTauNu_M-90_13TeV_pythia6 /store/user/amarini/Nero/v0.4/Phys14DR-PU20bx25/TTbar_HBWB_HToTauNu_M-90_13TeV_pythia6 100141.0 12.6016788483
+TBHp_HToTauNu_M-200_13TeV_pythia6 /store/user/amarini/Nero/v0.4/Spring14miniaod_PU40bx50/TBHp_HToTauNu_M-200_13TeV_pythia6 204060.0 0.402162631353
