@@ -1,4 +1,4 @@
-### Charged Higgs Analysis Code
+# Charged Higgs Analysis Code
 
 ## Submission to Batch
 * Submission to the batch system is performed with the script/submit.py:
@@ -53,7 +53,7 @@ python python/Loop.py -v -d dat/config.dat
 
 ## Configuration
 
-# Configuration file
+### Configuration file
 configuration file is a list of keys, followed by a '=' sign.
 The content depends on the key itself.
 * 'include': load the content of filename.dat
@@ -67,7 +67,7 @@ The content depends on the key itself.
 * 'config = AnalysisBase|a=1,b=2,c(3)': configure the analysis setting the public members, or running the public member functions ...
 
 
-# MC Database:
+### MC Database:
 * The MC database should contain the list of MCs with the info for the normalization. Can be dumped with the script:
 ```
 $python python/mcDatabase.py --help
@@ -88,12 +88,12 @@ e.g.:
 python python/mcDatabase.py -r -e /store/user/amarini/Nero/v0.4/
 ```
 
-# SF Database
+### SF Database
 The Scale factor database, contains a list of scale-factors associated to a label. This are constructed in the looper and can be used in the analysis.
 
 ## Development
 
-# Code structure
+### Code structure
 
 ```
 **********    *********    **********
