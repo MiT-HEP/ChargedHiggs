@@ -1,5 +1,17 @@
 # Charged Higgs Analysis Code
 
+### Table of Contents
+- [Installation](#user-content-installation)
+- [Submission](#user-content-submission-to-batch)
+- [Local Run](#user-content-local-run)
+- [Configuration](#user-content-configuration)
+- [Development](#user-content-development)
+
+## Installation
+```
+make
+```
+
 ## Submission to Batch
 * Submission to the batch system is performed with the script/submit.py:
 ```
