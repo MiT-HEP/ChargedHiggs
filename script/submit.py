@@ -94,7 +94,7 @@ def PrintSummary(dir, doPrint=True):
 	tot = len(run) + len(fail) + len(done)
 
 	color = red
-	if len(run) > len(fail) and len(run) > len(done) : color= yellow
+	if len(run) > len(fail)  : color= yellow
 	if len(done) == tot and tot >0 : color = green
 	
 	if doPrint:
@@ -138,7 +138,7 @@ if opts.resubmit:
 if opts.hadd:
 	filelist = glob(opts.dir + "/*.root")
 	if opts.dir[-1] == '/':dir = opts.dir[:-1]
-	else: dir  = opt.dir[:]
+	else: dir  = opts.dir[:]
 	name = re.sub('.*/','',dir)
 	cmd = "hadd -f %s/%s.root "%(opts.dir, name ) + " ".join(filelist)
 	call(cmd,shell=True)

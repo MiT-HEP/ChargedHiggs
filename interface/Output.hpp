@@ -16,6 +16,8 @@ protected:
 	TFile *file_;
 	map<string,TH1D*> histos_;
 	inline TH1D* Get(string name){ return histos_[name];}
+
+	void CreateDir(string dir); // called by Write
 public:
 	Output(){file_=NULL;}
 	~Output(){}

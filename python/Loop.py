@@ -67,7 +67,9 @@ mcdb= ReadMCDB(cfg['MCDB'])
 for label in mcdb:
 	if opts.verbose:
 		print label, " ".join(mcdb[label])
-	loop.AddMC(label, mcdb[label][0], float(mcdb[label][1]),float(mcdb[label][2] ) )
+	### LABEL dir Entries xSec
+	### loop.AddMC( label,dir,xSec,Entries)
+	loop.AddMC(label, mcdb[label][0], float(mcdb[label][2]),float(mcdb[label][1] ) )
 if opts.verbose:print "#############################"
 
 ## add SF

@@ -137,7 +137,7 @@ def PrintUsage():
 	print 'config = AnalysisBase|a=1,b=2,c(3)'
 
 def ReadMCDB(file):
-	'''read and parse the MCDF file:
+	'''read and parse the MCDB file:
 	    \t\t### LABEL dir Entries xSec
 	'''
 	R={}

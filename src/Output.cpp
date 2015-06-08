@@ -43,11 +43,37 @@ void Output::Close()
 	file_= NULL;
 }
 
+void Output::CreateDir(string dir)
+{
+	// It's already recursive
+	file_->mkdir(dir.c_str());
+	
+}
 
 void Output::Write(){ 
 	if(file_) file_->cd() ; 
+	else return;
+
 	for(auto m : histos_) 
-		m.second->Write( m.first.c_str()) ; 
+	{
+		if ( m.first.find("/") != string::npos) // there is a directory
+		{
+			size_t  last = m.first.rfind("/");
+			string dir = m.first.substr(0,last-1);
+			string name = m.first.substr(last+1,string::npos);
+			if (! file_ ->cd (dir.c_str()) )
+			{
+				CreateDir(dir);
+				file_ ->cd (dir.c_str()) ;
+			}
+			m.second->Write( name.c_str()) ; 
+		}
+		else
+		{
+			file_->cd() ; 
+			m.second->Write( m.first.c_str()) ; 
+		}
+	}
 }
 
 void Output::Book(string name, string title,int nBins, double xmin, double xmax)

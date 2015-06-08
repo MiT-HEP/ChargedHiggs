@@ -212,6 +212,7 @@ void Looper::FillEventInfo(){
 	if(VERBOSE>0)cout <<"[Looper]::[FillEventInfo]::[INFO] Processing "<<e->runNum<<":"<<e->lumiNum<<":"<<e->eventNum<<endl;
 #endif
 	event_ -> isRealData_ = e->isRealData;
+	event_ -> runNum_ = e->runNum;
 
 }
 

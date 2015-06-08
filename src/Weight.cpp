@@ -50,6 +50,7 @@ string Weight::LoadMC( string label)
 	mcName_ = label; 
 	mcXsec_= mc_db[label]->xsec; 
 	nEvents_ = mc_db[label] -> nevents; 
+	cout<<"[Weight]::[LoadMC]::[INFO] Loaded MC with weigths:"<<mcName_<<"| xSec "<<mcXsec_ <<" | SumW "<<nEvents_<<" | sf"<<sf_<<" | lumi "<<lumi_<<endl;
 	return mc_db[label]->dir;
 }
 string Weight::LoadMCbyDir( string dir )	 // return "" if failed otherwise label

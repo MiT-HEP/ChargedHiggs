@@ -22,6 +22,9 @@ public:
 	void Book(string name, string title,int nBins, double *xbound);
 	 void Fill(string name, string syst , double value, double weight=1);
 	 TH1D* GetHisto(string name, string systname);
+
+	 vector<string> AllLabel();
+	 string GetLabel(Event *e);
 };
 
 class Preselection:  virtual public AnalysisBase
@@ -32,4 +35,12 @@ public:
 	virtual const string name(){return "Preselection";}
 };
 
+class EventVariables:  virtual public AnalysisBase
+{
+public:
+	virtual void Init();
+	virtual int analyze(Event*,string systname);
+	virtual const string name(){return "EventVariables";}
+
+};
 #endif
