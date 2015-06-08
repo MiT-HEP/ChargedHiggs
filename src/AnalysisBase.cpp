@@ -41,11 +41,12 @@ vector<string> AnalysisBase::AllLabel()
 string AnalysisBase::GetLabel(Event *e){
 
 	// remember if just done
-	static int lastRun = -1;
-	static string label = "";
+	//static int lastRun = -1;
+	//static string label = "";
+	string label = "";
 
-	if (lastRun == e->runNum() ) 
-		return label;
+	//if (lastRun == e->runNum() ) 
+	//	return label;
 	
 	label = "Other";
 
