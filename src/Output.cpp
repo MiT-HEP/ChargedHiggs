@@ -59,7 +59,7 @@ void Output::Write(){
 		if ( m.first.find("/") != string::npos) // there is a directory
 		{
 			size_t  last = m.first.rfind("/");
-			string dir = m.first.substr(0,last-1);
+			string dir = m.first.substr(0,last); // substr get len
 			string name = m.first.substr(last+1,string::npos);
 			if (! file_ ->cd (dir.c_str()) )
 			{
@@ -73,6 +73,13 @@ void Output::Write(){
 			file_->cd() ; 
 			m.second->Write( m.first.c_str()) ; 
 		}
+	#ifdef VERBOSE
+		if (VERBOSE>1) {
+			cout <<"[Output]::[Write]::[DEBUG] Writing Histo "<< m.first<<endl;
+			m.second->Print("all");
+			cout <<"[Output]::[Write]::[DEBUG] -------------- "<< m.first<<endl;
+			}
+	#endif
 	}
 }
 

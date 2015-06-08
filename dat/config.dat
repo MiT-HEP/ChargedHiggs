@@ -12,7 +12,7 @@ addfiles=/store/user/amarini/Nero/v0.4/Phys14DR-PU20bx25/TTbar_HBWB_HToTauNu_M-9
 ####
 
 Output=ChHiggs.root
-Analysis=AnalysisBase,Preselection,EventVariables
+Analysis=Preselection,EventVariables
 
 MCDB=dat/mc_database.txt
 SFDB=dat/sf_database.txt
@@ -22,5 +22,5 @@ SFDB=dat/sf_database.txt
 Smear=NONE,JER,JES
 
 #configure Analysis
-config=AnalysisBase|Init()
+#config=AnalysisBase|Init()
 #config=Preselection|
