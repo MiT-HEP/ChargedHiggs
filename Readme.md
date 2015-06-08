@@ -10,12 +10,15 @@
 ## Installation
 * Install Nero package and compile the Core (_not_ scram)
 ```
+BASE=$PWD [ $CMSSW_BASE/src ]
+cd $BASE
 git clone git@github.com:MiT-HEP/NeroProducer.git
 cd NeroProducer/Core
 make -j 16
 ```
 * Install the package
 ```
+cd $BASE
 git clone git@github.com:MiT-HEP/ChargedHiggs.git ChargedHiggs
 cd ChargedHiggs
 make -j 16
