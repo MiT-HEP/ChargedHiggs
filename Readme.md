@@ -8,8 +8,26 @@
 - [Development](#user-content-development)
 
 ## Installation
+* Install Nero package and compile the Core (_not_ scram)
 ```
-make
+git clone git@github.com:MiT-HEP/NeroProducer.git
+cd NeroProducer/Core
+make -j 16
+```
+* Install the package
+```
+git clone git@github.com:MiT-HEP/ChargedHiggs.git ChargedHiggs
+cd ChargedHiggs
+make -j 16
+```
+* Optional: install combine
+```
+cd $CMSSW_BASE/src
+cmsenv
+git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+cd HiggsAnalysis/CombinedLimit
+git checkout tag...
+scram b -j 16 
 ```
 
 ## Submission to Batch

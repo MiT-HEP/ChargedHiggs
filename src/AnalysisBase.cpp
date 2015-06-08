@@ -29,7 +29,7 @@ vector<string> AnalysisBase::AllLabel()
 	R.push_back("Other");
 	R.push_back("Data");
 	R.push_back("DY");
-	R.push_back("TT");
+	R.push_back("TTJets");
 	R.push_back("WW");
 	R.push_back("WZ");
 	R.push_back("ZZ");
