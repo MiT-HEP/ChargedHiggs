@@ -27,20 +27,5 @@ public:
 	 string GetLabel(Event *e);
 };
 
-class Preselection:  virtual public AnalysisBase
-{
-public:
-	virtual void Init();
-	virtual int analyze(Event*,string systname);
-	virtual const string name(){return "Preselection";}
-};
 
-class EventVariables:  virtual public AnalysisBase
-{
-public:
-	virtual void Init();
-	virtual int analyze(Event*,string systname);
-	virtual const string name(){return "EventVariables";}
-
-};
 #endif
