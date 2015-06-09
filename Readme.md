@@ -124,6 +124,21 @@ python python/mcDatabase.py -r -e /store/user/amarini/Nero/v0.4/
 ### SF Database
 The Scale factor database, contains a list of scale-factors associated to a label. This are constructed in the looper and can be used in the analysis.
 
+### Datacards
+
+* Merge the output files (if necessary):
+```
+python script/submit.py --hadd -d mysub/sub1
+```
+* Dump datacard **shape** based:
+```
+python python/dumpDatacard.py -i ChHiggs.root --hist=CutFlow/CutFlow -f datacard_2.txt -s 
+```
+* or dump **cut and count** datacard:
+```
+python python/dumpDatacard.py -v -f datacard.txt -i ChHiggs.root --hist CutFlow/CutFlow --bin 2 --syst=JER
+```
+
 ## Development
 
 ### Code structure

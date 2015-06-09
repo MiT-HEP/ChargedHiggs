@@ -18,8 +18,8 @@ public:
 	int syst_;
 	const inline string name() {
 		if (syst_ == 0 ) return name_;
-		else if (syst_ >0 ) return name_ + "_UP" ;
-		else  return name_ + "_DOWN" ;
+		else if (syst_ >0 ) return name_ + "Up" ; // this name should be consistent with datacards
+		else  return name_ + "Down" ;
 		}
 	//const inline string operator(){return name();};
 	virtual void inline SetSyst(int s){syst_=s;}
