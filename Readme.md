@@ -5,7 +5,9 @@
 - [Submission](#user-content-submission-to-batch)
 - [Local Run](#user-content-local-run)
 - [Configuration](#user-content-configuration)
+- [Datacards](#user-content-datacards)
 - [Development](#user-content-development)
+
 
 ## Installation
 * Install Nero package and compile the Core (_not_ scram)
@@ -120,6 +122,27 @@ e.g.:
 ```
 python python/mcDatabase.py -r -e /store/user/amarini/Nero/v0.4/
 ```
+
+### PU Reweighting
+* Generate the PU distributions (1D)
+```
+python python/puDistributions.py -r -e /store/user/amarini/Nero/v0.4/  -f aux/pileup.root
+```
+* or Run Dependent( RD )
+```
+python python/puDistributions.py -r -e /store/user/amarini/Nero/v0.4/ --run=0,1000,2000,3000 -f aux/pileupRD.root
+```
+
+* add to these files the pileup distributions in data, with names:
+   * PU-pileup
+   * PU-pileupUp
+   * PU-pileupDown
+* or for the RD model:
+   * RD-pileup_run1_run2
+   * RD-pileupUp_run1_run2
+   * RD-pileupDown_run1_run2
+
+* modify the configuration file for using these files. The pileupRun and pileupLumi keys controls the RD vs 1D model.
 
 ### SF Database
 The Scale factor database, contains a list of scale-factors associated to a label. This are constructed in the looper and can be used in the analysis.

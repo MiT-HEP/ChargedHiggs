@@ -160,6 +160,7 @@ if opts.tar:
 	#cmd.extend( glob("bin/tag.txt" ) )
 	cmd.extend( glob("dat/*dat" ) )
 	cmd.extend( glob("dat/*txt" ) )
+	cmd.extend( glob("aux/*" ) )
 	cmd.extend( glob("python/*py") )
 	cmd.extend( glob("test/*") )
 	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
