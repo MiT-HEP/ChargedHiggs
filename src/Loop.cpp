@@ -13,8 +13,8 @@
 
 #include "interface/Handlers.hpp"
 
-//#define VERBOSE 1
-//
+//#define VERBOSE 2
+
 Looper::Looper(){
 	output_=new Output(); 
 	tree_=new TChain("nero/events");
@@ -35,6 +35,7 @@ int Looper::InitSmear(){
 	R+=AddSmear("NONE");
 	R+=AddSmear("JES");
 	R+=AddSmear("JER");
+	R+=AddSmear("PU");
 	return R;
 }
 
@@ -45,6 +46,7 @@ int Looper::AddSmear(string name){
 	if (name == "NONE" or name == ""){ SmearBase *s = new SmearBase(); systs_ . push_back(s); return 0;}
 	if (name == "JES"){ SmearJes *s = new SmearJes(); systs_ . push_back(s); return 0;}
 	if (name == "JER"){ SmearJer *s = new SmearJer(); systs_ . push_back(s); return 0;}
+	if (name == "PU"){ SmearPu *s = new SmearPu(); systs_ . push_back(s); return 0;}
 
 	cout <<"[Looper]::[AddSmear]::[WARNING] Smear "<<name<<" does NOT exist!!!"<<endl;
 	return 1; // maybe throw exception
@@ -94,6 +96,8 @@ int Looper::InitTree()
 	tree_ -> SetBranchStatus("mcWeight",1);
 	tree_ -> SetBranchStatus("metP4",1);
 	tree_ -> SetBranchStatus("metPt*",1);
+	tree_ -> SetBranchStatus("rho",1);
+	tree_ -> SetBranchStatus("puTrueInt",1);
 
 	return 0;
 }
@@ -189,6 +193,12 @@ void Looper::NewFile()
 	string dir =fname.substr(0,last); // remove the filename
 	if (eos != string::npos) // strip out everything before /store/
 		dir = dir.substr(eos, string::npos);
+
+	if ( event_->IsRealData() ) { 
+		cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<label;
+		event_ -> weight_ . LoadMC("data");
+		return ;
+	}
 	// -- Load current MC --
 	string savedDir=event_ -> weight_ . LoadMC( label );
 	if (savedDir =="")
@@ -213,6 +223,7 @@ void Looper::FillEventInfo(){
 #endif
 	event_ -> isRealData_ = e->isRealData;
 	event_ -> runNum_ = e->runNum;
+	event_ -> rho_ = e->rho;
 
 }
 
@@ -280,6 +291,8 @@ void Looper::FillMC(){
 #endif
 	BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["MonteCarlo"]]);
 	event_ -> weight_ . mcWeight_ = mc->mcWeight;
+
+	event_ -> weight_ . SetPU( mc -> puTrueInt ,  event_ -> runNum_);
 
 }
 

@@ -45,6 +45,14 @@ void Weight::SetPtEtaSF(string label,double pt, double eta)
 
 string Weight::LoadMC( string label) 
 { 
+	if (label == "data" or label == "Data")
+		{
+		mcName_ = label;
+		mcXsec_ = 1.0;
+		nEvents_ = 1.0;
+		return "data";
+		}
+
 	if( mc_db.find(label) == mc_db.end() )
 		return "";
 	mcName_ = label; 

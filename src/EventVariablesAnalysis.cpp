@@ -18,6 +18,9 @@ void EventVariables::Init()
 
 		Book(    ("Vars/Mt_"+l).c_str(),("Mt "+l).c_str(),1000,0,1000);
 		GetHisto(("Vars/Mt_"+l).c_str(),"")->GetXaxis()->SetTitle("m_{T} [GeV]");
+
+		Book(    ("Vars/Rho_"+l).c_str(),("Rho "+l).c_str(),1000,0,100);
+		GetHisto(("Vars/Rho_"+l).c_str(),"")->GetXaxis()->SetTitle("#rho [GeV]");
 	}
 }
 
@@ -27,6 +30,9 @@ int EventVariables::analyze(Event*e,string systname)
 	if(VERBOSE>0)cout<<"[EventVariables]::[analyze]::[DEBUG] analyze event with syst: "<<systname<<endl;
 #endif
 	string label =  GetLabel(e);
+	
+	Fill( "Vars/Rho_"+label, systname, e->Rho() , e->weight() );
+
 	Fill( ("Vars/Ht_"+label).c_str() ,systname, e->Ht() ,e->weight());
 	int j1 = e->LeadJet();
 	if (j1 >=0 ) Fill( ("Vars/PtJ1_"+label).c_str() ,systname, e->GetJet(j1)->Pt() ,e->weight());

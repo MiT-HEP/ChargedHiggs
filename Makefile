@@ -7,6 +7,7 @@ SOFLAGS=-shared
 SRCDIR=src
 BINDIR=bin
 HPPDIR=interface
+AUXDIR=aux
 
 SRC=$(wildcard $(SRCDIR)/*.cpp)
 OBJ=$(patsubst $(SRCDIR)/%.cpp, $(BINDIR)/%.o , $(SRC)  )
@@ -29,6 +30,7 @@ $(BINDIR)/dict.o: $(SRC) | $(BINDIR)
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
+	mkdir -p $(AUXDIR)
 
 .PHONY: clean
 clean:

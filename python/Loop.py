@@ -72,6 +72,56 @@ for label in mcdb:
 	loop.AddMC(label, mcdb[label][0], float(mcdb[label][2]),float(mcdb[label][1] ) )
 if opts.verbose:print "#############################"
 
+## add PU
+if 'pileup' in cfg and cfg['pileup'] != '':
+	if opts.verbose: print "Loading PU file",cfg['pileup']
+	RD=True
+	if 'pileupRun' not in cfg: RD=False
+	if RD and cfg['pileupRun'] == [] : RD=False
+	if RD and cfg['pileupRun'][0] == -1 : RD=False
+	if RD and cfg['pileupLumi'] == [] : RD=False
+	if RD and cfg['pileupLumi'][0] == -1 : RD=False
+
+	if opts.verbose:
+		if RD: print "-> RD Pileup Reweighting"
+		else : print "-> non RD Reweight"
+
+	puFile = r.TFile.Open(cfg['pileup'])
+	if puFile == None: print "ERROR: No PU File",cfg['pileup']
+	labels= [ x for x in mcdb ]
+	labels.extend( ['pileup','pileupUp','pileupDown'] )
+	for label in labels:
+		if RD:
+			for idx in range(0,len(cfg['pileupRun'])-1):
+				runMin = cfg['pileupRun'][idx]
+				runMax = cfg['pileupRun'][idx+1]
+				name = "RD-" + label + "_"+str(runMin)+"_" + str(runMax)
+				lumi = cfg['pileupLumi'][idx]
+				h = puFile.Get(name)
+				if name.startswith("RD-pileup"):
+					loop.AddTarget(h,runMin,runMax,lumi)
+				elif name.startswith("RD-pileupUp"):
+					loop.AddTarget(h,'Up',runMin,runMax,lumi)
+				elif name.startswith("RD-pileupDown"):
+					loop.AddTarget(h,'Down',runMin,runMax,lumi)
+				else:
+					loop.AddPuMC( label, h, runMin,runMax )
+				
+		else:
+			name = "PU-"+ label
+			h = puFile.Get(name)
+			if h == None :
+				print "[Loop.py]::[ERROR]: unable to get PU histo",name, "from file",cfg['pileup']
+			if name == "PU-pileup":
+				loop.AddTarget(h)
+			elif name == "PU-pileupUp":
+				loop.AddTarget(h,'Up')
+			elif name == "PU-pileupDown":
+				loop.AddTarget(h,'Down')
+			else:
+				loop.AddPuMC( label, h )
+		
+
 ## add SF
 if opts.verbose:print "######### SFDB ##############"
 sfdb = ReadSFDB( cfg['SFDB'] )

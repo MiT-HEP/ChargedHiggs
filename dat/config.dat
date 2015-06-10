@@ -16,6 +16,12 @@ Analysis=Preselection,EventVariables
 
 MCDB=dat/mc_database.txt
 SFDB=dat/sf_database.txt
+###
+pileup=aux/pileup.root
+pileupRun=
+pileupLumi=
+Lumi=1
+###
 
 # Smearer
 #Smear=JER,JES,@SmearBase

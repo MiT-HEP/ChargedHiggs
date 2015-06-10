@@ -31,3 +31,12 @@ int SmearLepSF::smear(Event *e)
 	return SMEAR_OK;
 
 }
+
+int SmearPu::smear(Event *e)
+{
+	if( e->IsRealData() ) return SMEAR_NA;
+
+	e -> weight_  . SetSystPU ( syst_ );
+	
+	return SMEAR_OK;
+}
