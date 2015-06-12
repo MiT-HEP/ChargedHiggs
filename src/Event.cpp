@@ -25,6 +25,7 @@ void Event::clearSyst(){
 	// clear SF syst
 	weight_ . clearSF();
 	weight_ . resetSystSF();
+	weight_ . clearSystPU();
 }
 
 

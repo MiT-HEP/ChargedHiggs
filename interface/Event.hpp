@@ -30,6 +30,7 @@ protected:
 	Met met_;
 	int isRealData_;
 	int runNum_;
+	float rho_;
 
 public:
         Weight weight_;
@@ -41,6 +42,7 @@ public:
 	inline Lepton * GetLepton( int iLep ) { return leps_.at(iLep);}
         inline Met GetMet( ) { return met_;}
 
+	inline float Rho() { return rho_; }
 	inline float Ht()   { float ht=0 ; for(auto j : jets_ ) if( j->IsJet()  ) ht+= j->Pt() ; return ht;}
 	inline int   Njets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsJet()  ) n+=1; return n; }
 	inline int   Bjets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsBJet() ) n+=1; return n; }

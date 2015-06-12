@@ -3,6 +3,7 @@
 
 #include "interface/SF.hpp"
 #include "interface/MC.hpp"
+#include "interface/PU.hpp"
 
 class SmearBase;
 class Event;
@@ -20,7 +21,8 @@ protected:
 
 	map<string, MC*> mc_db;
 	map<string, SF*> sf_db;
-
+	
+	PU pu_; // handler for PU
 public:
 	Weight(){ clear(); }
 	~Weight(){}
@@ -31,10 +33,12 @@ public:
 		mcXsec_ = 1.0; 
 		mcWeight_=1.0; 
 		nEvents_=1000. ; 
-		lumi_=1.0; 
-		sf_ = 1.0;}
+		lumi_=1.0;  // for RD MC this number should be the sum of the partial in the PUReweight
+		sf_ = 1.0;
+	}
 	//
-	string GetMC(){ return mcName_; }
+	string GetMC(){ 
+		return mcName_; }
 	// ---
 	void SetLumi(double l) {lumi_= l;}
 	void AddMC( string label, string dir, double xsec, double nevents);
@@ -49,10 +53,23 @@ public:
 	void resetSystSF( ) ;
 	void SetPtEtaSF(string label,double pt , double eta);
 	void ApplySF(string label){ sf_ *= sf_db[label] -> get(); }
-
 	
-	// ---
-	double weight(){ return mcWeight_* mcXsec_ * lumi_ * sf_ / nEvents_; }
+	// --- PU Reweight
+	inline void AddTarget( TH1*h, int runMin=-1, int runMax =-1,double lumi=-1)
+	 { pu_ . AddTarget( h, runMin,runMax,lumi); }
+	inline void AddTarget( TH1*h, string systName, int runMin=-1, int runMax =-1,double lumi=-1)
+	 { pu_ . AddTarget( h, systName,runMin,runMax,lumi); }
+	inline void AddMC( string label, TH1*h, int runMin=-1, int runMax =-1){ pu_. AddMC(  label, h, runMin, runMax ); }
+
+
+	float puInt_;	
+	int runNum_;
+	inline void SetPU(float pu, int run){puInt_ = pu; runNum_=run; }
+	inline void SetSystPU(int syst){pu_.syst=syst;};
+	inline void clearSystPU(){ pu_ .clearSyst();}
+
+	// --- TODO check what happen with data
+	double weight(){ return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; }
 };
 
 #endif
