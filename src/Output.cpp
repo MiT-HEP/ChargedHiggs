@@ -61,11 +61,12 @@ void Output::Write(){
 			size_t  last = m.first.rfind("/");
 			string dir = m.first.substr(0,last); // substr get len
 			string name = m.first.substr(last+1,string::npos);
-			if (! file_ ->cd (dir.c_str()) )
+			//if (! file_ ->cd (dir.c_str()) )
+			if (! file_ -> FindKey(dir.c_str()) )
 			{
 				CreateDir(dir);
-				file_ ->cd (dir.c_str()) ;
 			}
+			file_ ->cd (dir.c_str()) ;
 			m.second->Write( name.c_str()) ; 
 		}
 		else

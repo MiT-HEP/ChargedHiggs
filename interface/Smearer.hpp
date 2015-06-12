@@ -51,4 +51,11 @@ public:
 	
 };
 
+class SmearPu : virtual public SmearBase
+{
+public:
+	SmearPu() : SmearBase(){ name_ = "PU";}
+	virtual int smear(Event*e);	
+};
+
 #endif

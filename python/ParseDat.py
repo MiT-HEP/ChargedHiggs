@@ -31,13 +31,13 @@ def vStringKey(value):
 	return r
 
 def vFloatKey(value):
-	r=[]
-	for v in value.split(','): r.append(FloatKey(v))
+	s = vStringKey(value)
+	r = [ FloatKey(v) for v in s if v!= '' ]
 	return r
 
 def vIntKey(value):
-	r=[]
-	for v in value.split(','): r.append(IntKey(v))
+	s = vStringKey(value)
+	r = [ IntKey(v) for v in s if v!= '' ]
 	return r
 
 def ParseDat(name):
@@ -56,7 +56,7 @@ def ParseDat(name):
 		value = ''
 		if '=' in l : value = '='.join(l.split('=')[1:])
 		######### STRING ###########
-		if key == 'MCDB' or key =='SFDB' or key =='Output':
+		if key == 'MCDB' or key =='SFDB' or key =='Output' or 'pileup' :
 			config[key] = StringKey(value)
 
 		####### V STRING ##########
@@ -68,6 +68,16 @@ def ParseDat(name):
 		if key=='addfiles':
 			if 'Files' not in config: config['Files']=[]
 			config['Files'].extend(vStringKey( value ))
+		####### FLOAT ##########
+		if key == 'Lumi':
+			config[key]=FloatKey(value)
+		####### V FLOAT ##########
+		if key == 'pileupLumi':
+			config[key]=vFloatKey(value)
+
+		####### V INT ##########
+		if key == 'pileupRun':
+			config[key]=vIntKey(value)
 
 		########## DICT ###########
 		if key == 'config': # dict
@@ -112,13 +122,18 @@ def PrintDat(config):
 			for type in config[key]:
 				print key,'=',type,'|'," ".join(config[key][type])
 		######### STRING ###########
-		elif key == 'MCDB' or key =='SFDB' or key == 'Output':
+		elif key == 'MCDB' or key =='SFDB' or key == 'Output' or key == 'pileup':
 			print key ,'=',config[key]
 		######### V STRING ###########
 		elif key =='Files' \
 			or key == 'Analysis' \
 			or key == 'Smear':
 			print key, '=', ','.join(config[key])
+		######### V FLOAT/INT #########
+		elif key == 'pileupLumi' \
+			or key == 'pileupRun':
+			tmp= [ str(n) for n in config[key] ]
+			print key, '=', ','.join(tmp)
 
 		else:
 			print key , '=' , config[key]
@@ -132,6 +147,9 @@ def PrintUsage():
 	print 'Output = file'
 	print 'MCDB = file'
 	print 'SFDB = file'
+	print 'pileup = file'
+	print 'pileupRun  = ""/ -1 / 1,10,100,100'
+	print 'pileupLumi = ""/ -1 /  1.2,2.3,4.5 # partial luminosity '
 	print 'Analysis = AnalysisBase,Analysis2 ..'
 	print 'Smears = @SmearBase,JER,JES'
 	print 'config = AnalysisBase|a=1,b=2,c(3)'
