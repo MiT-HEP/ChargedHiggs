@@ -12,7 +12,7 @@ addfiles=/store/user/amarini/Nero/v0.4/Phys14DR-PU20bx25/TTbar_HBWB_HToTauNu_M-9
 ####
 
 Output=ChHiggs.root
-Analysis=Preselection,EventVariables
+Analysis=Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsMET,ChargedHiggsTopBottom
 
 MCDB=dat/mc_database.txt
 SFDB=dat/sf_database.txt
