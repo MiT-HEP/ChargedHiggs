@@ -32,18 +32,20 @@ protected:
 	int runNum_;
 
 public:
-	Weight weight_;
+        Weight weight_;
 
 	inline int runNum(){return runNum_; }
 
-	 inline Jet * GetJet( int iJet ) { return jets_.at(iJet);}
-	 inline Tau * GetTau( int iTau ) { return taus_.at(iTau);}
-	 inline Lepton * GetLepton( int iLep ) { return leps_.at(iLep);}
+	inline Jet * GetJet( int iJet ) { return jets_.at(iJet);}
+	inline Tau * GetTau( int iTau ) { return taus_.at(iTau);}
+	inline Lepton * GetLepton( int iLep ) { return leps_.at(iLep);}
+        inline Met GetMet( ) { return met_;}
 
 	inline float Ht()   { float ht=0 ; for(auto j : jets_ ) if( j->IsJet()  ) ht+= j->Pt() ; return ht;}
 	inline int   Njets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsJet()  ) n+=1; return n; }
 	inline int   Bjets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsBJet() ) n+=1; return n; }
 	inline int   Ntaus(){ int   n=0  ; for(auto t : taus_ ) if( t->IsTau()  )  n+=1; return n; }
+        inline int   Nleps(){ int   n=0  ; for(auto t : leps_ ) if( t->IsLep()  )  n+=1; return n; }
 	inline int   LeadTau(){ int  n=0 ; for(auto t : taus_ ) { if( t->IsTau() ) return n; ++n;} return -1; }
 	inline int   LeadJet(){ int  n=0 ; for(auto j : jets_ ) { if( j->IsJet() ) return n; ++n;} return -1; }
 	inline float Mvis() {  TLorentzVector e(0,0,0,0); 
