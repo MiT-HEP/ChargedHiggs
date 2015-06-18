@@ -7,25 +7,32 @@
 
 class AnalysisBase
 {
-Output *output_;
-public:
-	AnalysisBase(){};
-	~AnalysisBase(){};
-	// 
-	virtual void inline SetOutput( Output *o ) { output_ = o ;}
-	virtual int analyze(Event*,string systname){return 0;}
-	virtual void Init(){}
-	virtual const string name(){return "AnalysisBase";}
+    Output *output_;
+    public:
+    AnalysisBase(){};
+    ~AnalysisBase(){};
+    // 
+    virtual void inline SetOutput( Output *o ) { output_ = o ;}
+    virtual int analyze(Event*,string systname){return 0;}
+    virtual void Init(){}
+    virtual const string name(){return "AnalysisBase";}
 
-	// call output_->Book, but add something to name
-	void Book(string name, string title,int nBins, double xmin, double xmax);
-	void Book(string name, string title,int nBins, double *xbound);
-	 void Fill(string name, string syst , double value, double weight=1);
-	 TH1D* GetHisto(string name, string systname);
+    // call output_->Book, but add something to name
+    void Book(string name, string title,int nBins, double xmin, double xmax);
+    void Book(string name, string title,int nBins, double *xbound);
+    void Fill(string name, string syst , double value, double weight=1);
+    TH1D* GetHisto(string name, string systname);
 
-	 vector<string> AllLabel();
-	 string GetLabel(Event *e);
+    vector<string> AllLabel();
+    string GetLabel(Event *e);
 };
 
 
 #endif
+// Local Variables:
+// mode:c++
+// indent-tabs-mode:nil
+// tab-width:4
+// c-basic-offset:4
+// End:
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
