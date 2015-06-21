@@ -62,7 +62,7 @@ void Output::Write(){
             string dir = m.first.substr(0,last); // substr get len
             string name = m.first.substr(last+1,string::npos);
             //if (! file_ ->cd (dir.c_str()) )
-            if (! file_ -> FindKey(dir.c_str()) )
+            if ( file_ -> Get(dir.c_str()) == NULL )
             {
                 CreateDir(dir);
             }
