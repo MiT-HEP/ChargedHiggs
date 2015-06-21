@@ -46,6 +46,7 @@ def ParseDat(name):
 	stream = open(name)
 	config = Default()
 	for line in stream:
+		print "DEBUG '0':", config['config']
 		l = line.split('#')[0]
 		l = re.sub(' ' ,'', l )
 		if len(l.split()) == 0 : continue;
@@ -56,7 +57,7 @@ def ParseDat(name):
 		value = ''
 		if '=' in l : value = '='.join(l.split('=')[1:])
 		######### STRING ###########
-		if key == 'MCDB' or key =='SFDB' or key =='Output' or 'pileup' :
+		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' :
 			config[key] = StringKey(value)
 
 		####### V STRING ##########
@@ -83,6 +84,10 @@ def ParseDat(name):
 		if key == 'config': # dict
 			type= value.split('|')[0]
 			config[key][type] = vStringKey(  '|'.join(value.split('|')[1:])  )  
+		if key == 'addConfig': # dict
+			key = 'config'
+			type= value.split('|')[0]
+			config[key][type].extend(vStringKey(  '|'.join(value.split('|')[1:])  )  )
 		
 		######## INCLUDE ###########
 		if key == 'include':
