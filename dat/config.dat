@@ -6,9 +6,15 @@ addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/TTJets_TuneCUETP8M1_13T
 ### WW/WZ/ZZ###
 addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/WW_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
+
 ### SIGNAL ###
-addfiles=/store/user/amarini/Nero/v0.4/Spring14miniaod_PU40bx50/TBHp_HToTauNu_M-200_13TeV_pythia6
-addfiles=/store/user/amarini/Nero/v0.4/Phys14DR-PU20bx25/TTbar_HBWB_HToTauNu_M-90_13TeV_pythia6
+#addfiles=/store/user/amarini/Nero/v0.4/Spring14miniaod_PU40bx50/TBHp_HToTauNu_M-200_13TeV_pythia6
+#addfiles=/store/user/amarini/Nero/v0.4/Phys14DR-PU20bx25/TTbar_HBWB_HToTauNu_M-90_13TeV_pythia6
+#Signal Tau Nu ; Private production
+addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M200
+addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M250
+addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M500
+addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M900
 ####
 
 Output=ChHiggs.root
@@ -27,6 +33,8 @@ Lumi=1
 #Smear=JER,JES,@SmearBase
 Smear=NONE,JER,JES
 
+config=ChargedHiggsTauNu|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
+addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('TTJets'),AddLabel('DY')
 #configure Analysis
 #config=AnalysisBase|Init()
 #config=Preselection|
