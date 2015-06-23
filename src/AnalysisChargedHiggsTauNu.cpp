@@ -50,19 +50,19 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //Veto against isolated lepton
 
     if ( e->Nleps() >0 ) return 0;
-    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,1,e->weight());
+    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,2,e->weight());
 
 
     //At least 3 jets
 
     if ( e->Njets() <3 ) return 0;
-    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,1,e->weight());
+    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,3,e->weight());
 
 
     //At least one b-jet
 
     if ( e->Bjets() <1 ) return 0;
-    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,2,e->weight());
+    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,4,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/EtMiss_"+label,systname, e->GetMet().Pt() ,e->weight());
 
@@ -70,7 +70,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //MET>60GeV
 
     if ( e->GetMet().Pt() <60 ) return 0;
-    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,2,e->weight());
+    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,5,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
 
