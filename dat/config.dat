@@ -23,7 +23,8 @@ Analysis=Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsMET,ChargedHi
 MCDB=dat/mc_database.txt
 SFDB=dat/sf_database.txt
 ###
-pileup=aux/pileup.root
+#pileup=aux/pileup.root
+pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root
 pileupRun=
 pileupLumi=
 Lumi=1
