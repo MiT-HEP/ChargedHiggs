@@ -31,8 +31,8 @@ void Event::clearSyst(){
 
 float Event::Mt() { 
     if ( Ntaus() <=0 ) return -1; 
-    float pt_t  = taus_[ LeadTau() ] -> Pt();
-    float phi_t = taus_[ LeadTau() ] -> Phi();
+    float pt_t  =  LeadTau() -> Pt();
+    float phi_t =  LeadTau() -> Phi();
     float pt_m = met_ . Pt(); 
     float phi_m= met_. Phi(); 
     return TMath::Sqrt( 2* pt_t * pt_m * TMath::Cos(ChargedHiggs::deltaPhi(phi_t,phi_m) ) );
@@ -54,6 +54,89 @@ void Event::validate(){
             if(t->IsTau() )j-> computeValidity(t);
     }
     return ;
+}
+
+// Get Object functions
+Jet * Event::GetJet( int iJet ) 
+{ 
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<jets_.size() ;++i)
+    {
+        if ( jets_[i]->IsJet()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iJet  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return jets_[ valid[iJet].second];
+}
+
+Tau * Event::GetTau( int iTau ) 
+{ // { return taus_.at(iTau);} // old
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<taus_.size() ;++i)
+    {
+        if ( taus_[i]->IsTau()) valid.push_back(pair<float,int>(taus_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iTau  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return taus_[ valid[iTau].second];
+}
+
+Lepton * Event::GetLepton( int iLepton ) 
+{     
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<leps_.size() ;++i)
+    {
+        if ( leps_[i]->IsLep()) valid.push_back(pair<float,int>(leps_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iLepton  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return leps_[ valid[iLepton].second];
+}
+
+Lepton * Event::GetElectron( int iEle ) 
+{     
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<leps_.size() ;++i)
+    {
+        if ( leps_[i]->IsLep() and leps_[i]->IsElectron() ) 
+            valid.push_back(pair<float,int>(leps_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iEle  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return leps_[ valid[iEle].second];
+}
+
+Lepton * Event::GetMuon( int iMu ) 
+{     
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<leps_.size() ;++i)
+    {
+        if ( leps_[i]->IsLep() and leps_[i]->IsMuon() ) 
+            valid.push_back(pair<float,int>(leps_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iMu  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return leps_[ valid[iMu].second];
 }
 
 // Local Variables:
