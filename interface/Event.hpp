@@ -50,6 +50,7 @@ class Event{
     inline int   Nleps(){ int   n=0  ; for(auto t : leps_ ) if( t->IsLep()  )  n+=1; return n; }
     inline int   LeadTau(){ int  n=0 ; for(auto t : taus_ ) { if( t->IsTau() ) return n; ++n;} return -1; }
     inline int   LeadJet(){ int  n=0 ; for(auto j : jets_ ) { if( j->IsJet() ) return n; ++n;} return -1; }
+    inline int   LeadBjet(){ int  n=0 ; for(auto j : jets_ ) { if( j->IsBJet() ) return n; ++n;} return -1; }
     inline float Mvis() {  TLorentzVector e(0,0,0,0); 
         for(auto l : leps_ )  if ( l->IsLep() ) e += l->GetP4(); 
         for(auto j : jets_ )  if ( j->IsJet() ) e += j->GetP4();
