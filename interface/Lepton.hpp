@@ -18,6 +18,8 @@ class Lepton : virtual public Object
             if (iso> isocut_) return 0;
             return 1;
         }
+        virtual inline bool IsElectron(){ return IsLep() and (type == 11); }
+        virtual inline bool IsMuon(){ return IsLep() and (type == 13); }
         virtual inline int   IsObject(){return IsLep();}
 };
 

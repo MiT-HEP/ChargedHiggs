@@ -34,10 +34,10 @@ int EventVariables::analyze(Event*e,string systname)
     Fill( "Vars/Rho_"+label, systname, e->Rho() , e->weight() );
 
     Fill( ("Vars/Ht_"+label).c_str() ,systname, e->Ht() ,e->weight());
-    int j1 = e->LeadJet();
-    if (j1 >=0 ) Fill( ("Vars/PtJ1_"+label).c_str() ,systname, e->GetJet(j1)->Pt() ,e->weight());
-    int t1 = e->LeadTau();
-    if (t1 >=0 ) Fill( ("Vars/PtT1_"+label).c_str() ,systname, e->GetTau(t1)->Pt() ,e->weight());
+    Jet *j1 = e->LeadJet();
+    if (j1 != NULL ) Fill( ("Vars/PtJ1_"+label).c_str() ,systname, j1->Pt() ,e->weight());
+    Tau *t1 = e->LeadTau();
+    if (t1 != NULL ) Fill( ("Vars/PtT1_"+label).c_str() ,systname, t1->Pt() ,e->weight());
     Fill( ("Vars/Mt_"+label).c_str() ,systname, e->Mt() ,e->weight());
     Fill( ("Vars/Mvis_"+label).c_str() ,systname, e->Mvis() ,e->weight());
 
