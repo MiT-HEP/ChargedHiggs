@@ -85,23 +85,7 @@ int Looper::InitTree()
 
     tree_ -> SetBranchStatus("*",0);
     // branches are activate from configuration file
-    //tree_ -> SetBranchStatus("isRealData",1);
-    //tree_ -> SetBranchStatus("jetP4",1);
-    //tree_ -> SetBranchStatus("jetBdiscr",1);
-    //tree_ -> SetBranchStatus("lepP4",1);
-    //tree_ -> SetBranchStatus("lepIso",1);
-    //tree_ -> SetBranchStatus("lepPdgId",1);
-    //tree_ -> SetBranchStatus("tauP4",1);
-    //tree_ -> SetBranchStatus("tauId",1);
-    //tree_ -> SetBranchStatus("tauQ",1);
-    //tree_ -> SetBranchStatus("tauIso",1);
-    //tree_ -> SetBranchStatus("tau*",1);
-    //tree_ -> SetBranchStatus("mcWeight",1);
-    //tree_ -> SetBranchStatus("metP4",1);
-    //tree_ -> SetBranchStatus("metPt*",1);
-    //tree_ -> SetBranchStatus("rho",1);
-    //tree_ -> SetBranchStatus("puTrueInt",1);
-
+    
     return 0;
 }
 
