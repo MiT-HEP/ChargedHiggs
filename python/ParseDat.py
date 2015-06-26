@@ -133,7 +133,8 @@ def PrintDat(config):
 		######### V STRING ###########
 		elif key =='Files' \
 			or key == 'Analysis' \
-			or key == 'Smear':
+			or key == 'Smear' \
+			or key == 'Branches' :
 			print key, '=', ','.join(config[key])
 		######### V FLOAT/INT #########
 		elif key == 'pileupLumi' \
