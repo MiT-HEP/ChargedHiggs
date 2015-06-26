@@ -94,9 +94,9 @@ int Looper::InitTree()
     for (auto c : bare_ )
         c->setBranchAddresses(tree_);
 
-    tree_ -> SetBranchAddress("jetPdgId",       &(jetPdgIds_.at(nameJetPdgIds_["pdgId"])));
-    tree_ -> SetBranchAddress("jetMotherPdgId", &(jetPdgIds_.at(nameJetPdgIds_["motherPdgId"])));
-    tree_ -> SetBranchAddress("jetGrMotherPdgId",&(jetPdgIds_.at(nameJetPdgIds_["grMotherPdgId"])));
+    tree_ -> SetBranchAddress("jetFlavour",         &(jetPdgIds_.at(nameJetPdgIds_["pdgId"])));
+    tree_ -> SetBranchAddress("jetMotherPdgId",     &(jetPdgIds_.at(nameJetPdgIds_["motherPdgId"])));
+    tree_ -> SetBranchAddress("jetGrMotherPdgId",   &(jetPdgIds_.at(nameJetPdgIds_["grMotherPdgId"])));
 
     tree_ -> SetBranchStatus("*",0);
     tree_ -> SetBranchStatus("isRealData",1);
@@ -262,9 +262,9 @@ void Looper::FillJets(){
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
         j->unc = 0.03; //bj -> unc -> at(iJet); FIXME 3% flat
         j->bdiscr = bj -> bDiscr -> at(iJet);
-        j->pdgId = (pdgId ? pdgId -> at(iJet) : 0);
-        j->motherPdgId = (motherPdgId ? motherPdgId -> at(iJet) : 0);
-        j->grMotherPdgId = (grMotherPdgId ? grMotherPdgId -> at(iJet) : 0);
+        j->pdgId = (pdgId ? (pdgId->size() > iJet ? pdgId->at(iJet) : 0) : 0);
+        j->motherPdgId = (motherPdgId ? (motherPdgId->size() > iJet ? motherPdgId->at(iJet) : 0) : 0);
+        j->grMotherPdgId = (grMotherPdgId ? (grMotherPdgId->size() > iJet ? grMotherPdgId->at(iJet) : 0) : 0);
         event_ -> jets_ . push_back(j);
     }
     return;
