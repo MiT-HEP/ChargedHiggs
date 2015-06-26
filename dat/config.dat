@@ -22,7 +22,7 @@ addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M900
 ####
 
 Output=ChHiggs.root
-Analysis=Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsMET,ChargedHiggsTopBottom
+Analysis=Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsZW,ChargedHiggsMET,ChargedHiggsTopBottom
 
 MCDB=dat/mc_database.txt
 SFDB=dat/sf_database.txt
