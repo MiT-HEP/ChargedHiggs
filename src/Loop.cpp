@@ -79,8 +79,24 @@ int Looper::InitTree()
     names_[ "Met" ] = bare_.size();
     bare_.push_back(met);
 
+    vector<int> *jetPdgId = new vector<int>;
+    nameJetPdgIds_[ "pdgId" ] = jetPdgIds_.size();
+    jetPdgIds_.push_back(jetPdgId);
+
+    vector<int> *jetMotherPdgId = new vector<int>;
+    nameJetPdgIds_[ "motherPdgId" ] = jetPdgIds_.size();
+    jetPdgIds_.push_back(jetMotherPdgId);
+
+    vector<int> *jetGrMotherPdgId = new vector<int>;
+    nameJetPdgIds_[ "grMotherPdgId" ] = jetPdgIds_.size();
+    jetPdgIds_.push_back(jetGrMotherPdgId);
+
     for (auto c : bare_ )
         c->setBranchAddresses(tree_);
+
+    tree_ -> SetBranchAddress("jetPdgId",       &(jetPdgIds_.at(nameJetPdgIds_["pdgId"])));
+    tree_ -> SetBranchAddress("jetMotherPdgId", &(jetPdgIds_.at(nameJetPdgIds_["motherPdgId"])));
+    tree_ -> SetBranchAddress("jetGrMotherPdgId",&(jetPdgIds_.at(nameJetPdgIds_["grMotherPdgId"])));
 
     tree_ -> SetBranchStatus("*",0);
     tree_ -> SetBranchStatus("isRealData",1);
@@ -98,6 +114,9 @@ int Looper::InitTree()
     tree_ -> SetBranchStatus("metPt*",1);
     tree_ -> SetBranchStatus("rho",1);
     tree_ -> SetBranchStatus("puTrueInt",1);
+    tree_ -> SetBranchStatus("jetFlavour",1);
+    tree_ -> SetBranchStatus("jetMotherPdgId",1);
+    tree_ -> SetBranchStatus("jetGrMotherPdgId",1);
 
     return 0;
 }
@@ -233,13 +252,19 @@ void Looper::FillJets(){
 #ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets: FIXME JES" <<endl;
 #endif
-    BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "Jets" ] ] ); assert (bj !=NULL);
+    BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_ [ "Jets" ] ] ); assert (bj !=NULL);
+    vector<int> *pdgId = dynamic_cast<vector<int>* > ( jetPdgIds_ [ nameJetPdgIds_ [ "pdgId" ] ] ); assert (pdgId != NULL);
+    vector<int> *motherPdgId = dynamic_cast<vector<int>* > ( jetPdgIds_ [ nameJetPdgIds_ [ "motherPdgId" ] ] ); assert (motherPdgId != NULL);
+    vector<int> *grMotherPdgId = dynamic_cast<vector<int>* > ( jetPdgIds_ [ nameJetPdgIds_ [ "grMotherPdgId" ] ] ); assert (grMotherPdgId != NULL);
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
         j->unc = 0.03; //bj -> unc -> at(iJet); FIXME 3% flat
         j->bdiscr = bj -> bDiscr -> at(iJet);
+        j->pdgId = (pdgId ? pdgId -> at(iJet) : 0);
+        j->motherPdgId = (motherPdgId ? motherPdgId -> at(iJet) : 0);
+        j->grMotherPdgId = (grMotherPdgId ? grMotherPdgId -> at(iJet) : 0);
         event_ -> jets_ . push_back(j);
     }
     return;
