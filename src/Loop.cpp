@@ -287,6 +287,7 @@ void Looper::FillTaus(){
         t-> id = bt-> id -> at(iL);
         event_ -> taus_ . push_back(t);
     }
+    //cout<<"[Looper]::[FillTaus]::[DEBUB] Taus Loaded:"<< event_->taus_.size() <<endl;
 
 }
 

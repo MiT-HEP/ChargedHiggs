@@ -46,7 +46,6 @@ def ParseDat(name):
 	stream = open(name)
 	config = Default()
 	for line in stream:
-		print "DEBUG '0':", config['config']
 		l = line.split('#')[0]
 		l = re.sub(' ' ,'', l )
 		if len(l.split()) == 0 : continue;

@@ -7,7 +7,7 @@ class TauOptimization : virtual public AnalysisBase
 {
     public:
         virtual void Init();
-        virtual int analyzeEvent(Event*,string systname);
+        virtual int analyze(Event*,string systname);
         virtual const string name(){return "TauOptimization";}
 };
 

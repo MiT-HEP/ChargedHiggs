@@ -13,7 +13,7 @@ class Tau: virtual public Object,
     bool run_matching_; // run the algorithm.
 
     public:
-    Tau() : Lepton() { idcut_ = 0.5;match_ = false; run_matching_= false;}
+    Tau() : Lepton() { idcut_ = 0.5;match_ = false; run_matching_= false;isocut_=100;}
     float id;
     virtual int IsTau() ;
     virtual inline int IsObject(){ return IsTau(); }
