@@ -78,11 +78,11 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     Fill("ChargedHiggsTauNu/Vars/NTaus_"+label,systname, e->Ntaus() ,e->weight());
 
-    int t1 = e->LeadTau();
-    if (t1 >=0 ) 
+    Tau* t1 = e->LeadTau();
+    if (t1 !=NULL ) 
         {        
-            Fill("ChargedHiggsTauNu/Vars/Tau1Pt_"+label,systname, e->GetTau(t1)->Pt() ,e->weight());
-            Fill("ChargedHiggsTauNu/Vars/Tau1Eta_"+label,systname, e->GetTau(t1)->Eta() ,e->weight());
+            Fill("ChargedHiggsTauNu/Vars/Tau1Pt_"+label,systname, t1->Pt() ,e->weight());
+            Fill("ChargedHiggsTauNu/Vars/Tau1Eta_"+label,systname,t1->Eta(),e->weight());
         }
 
 
@@ -98,11 +98,11 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,2,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/NJets_"+label,systname, e->Njets() ,e->weight());
-    int j1 = e->LeadJet();
-    if (j1 >=0 ) 
+    Jet* j1 = e->LeadJet();
+    if (j1 !=NULL ) 
         {        
-            Fill("ChargedHiggsTauNu/Vars/Jet1Pt_"+label,systname, e->GetJet(j1)->Pt() ,e->weight());
-            Fill("ChargedHiggsTauNu/Vars/Jet1Eta_"+label,systname, e->GetJet(j1)->Eta() ,e->weight());
+            Fill("ChargedHiggsTauNu/Vars/Jet1Pt_"+label,systname, j1->Pt() ,e->weight());
+            Fill("ChargedHiggsTauNu/Vars/Jet1Eta_"+label,systname,j1->Eta() ,e->weight());
         }
     
     //At least 3 jets
@@ -111,11 +111,11 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,3,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/NBjets_"+label,systname, e->Bjets() ,e->weight());
-    int bj1 = e->LeadBjet();
-    if (bj1 >=0 ) 
+    Jet * bj1 = e->LeadBjet();
+    if (bj1 != NULL) 
         {        
-            Fill("ChargedHiggsTauNu/Vars/Bjet1Pt_"+label,systname, e->GetJet(bj1)->Pt() ,e->weight());
-            Fill("ChargedHiggsTauNu/Vars/Bjet1Eta_"+label,systname, e->GetJet(bj1)->Eta() ,e->weight());
+            Fill("ChargedHiggsTauNu/Vars/Bjet1Pt_"+label,systname, bj1->Pt() ,e->weight());
+            Fill("ChargedHiggsTauNu/Vars/Bjet1Eta_"+label,systname,bj1->Eta(),e->weight());
         }
 
     //At least one b-jet

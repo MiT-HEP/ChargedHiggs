@@ -36,10 +36,17 @@ class Event{
     Weight weight_;
 
     inline int runNum(){return runNum_; }
+    
+    // This functions should check if the objects are valid
+    // Get NULL in case of failure
+    Jet * GetJet( int iJet );
+    Jet * GetBjet( int iJet );
+    Tau * GetTau( int iTau );
+    Lepton * GetLepton( int iLep );
+    Lepton * GetElectron( int iEle );
+    Lepton * GetMuon( int iMu );
 
-    inline Jet * GetJet( int iJet ) { return jets_.at(iJet);}
-    inline Tau * GetTau( int iTau ) { return taus_.at(iTau);}
-    inline Lepton * GetLepton( int iLep ) { return leps_.at(iLep);}
+    //
     inline Met GetMet( ) { return met_;}
 
     inline float Rho() { return rho_; }
@@ -48,9 +55,11 @@ class Event{
     inline int   Bjets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsBJet() ) n+=1; return n; }
     inline int   Ntaus(){ int   n=0  ; for(auto t : taus_ ) if( t->IsTau()  )  n+=1; return n; }
     inline int   Nleps(){ int   n=0  ; for(auto t : leps_ ) if( t->IsLep()  )  n+=1; return n; }
-    inline int   LeadTau(){ int  n=0 ; for(auto t : taus_ ) { if( t->IsTau() ) return n; ++n;} return -1; }
-    inline int   LeadJet(){ int  n=0 ; for(auto j : jets_ ) { if( j->IsJet() ) return n; ++n;} return -1; }
-    inline int   LeadBjet(){ int  n=0 ; for(auto j : jets_ ) { if( j->IsBJet() ) return n; ++n;} return -1; }
+
+    inline Tau*  LeadTau(){ return GetTau(0);} 
+    inline Jet*  LeadJet(){ return GetJet(0);}
+    inline Jet*  LeadBjet(){ return GetBjet(0);}
+
     inline float Mvis() {  TLorentzVector e(0,0,0,0); 
         for(auto l : leps_ )  if ( l->IsLep() ) e += l->GetP4(); 
         for(auto j : jets_ )  if ( j->IsJet() ) e += j->GetP4();
