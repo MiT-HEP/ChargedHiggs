@@ -8,10 +8,12 @@ void Event::ClearEvent(){
     for (auto o :  jets_ ) delete o;
     for (auto o :  leps_ ) delete o;
     for (auto o :  taus_ ) delete o;
+    for (auto o :  genparticles_ ) delete o;
 
     jets_ . clear();
     leps_ . clear();
     taus_ . clear();
+    genparticles_ . clear();
 
     weight_ . clearSF( );
 
@@ -21,6 +23,7 @@ void Event::clearSyst(){
     for ( auto o: jets_) o->clearSyst();
     for ( auto o: taus_) o->clearSyst();
     for ( auto o: leps_) o->clearSyst();
+    for ( auto o: genparticles_) o->clearSyst();
     met_ . clearSyst();
     // clear SF syst
     weight_ . clearSF();
@@ -153,6 +156,20 @@ Lepton * Event::GetMuon( int iMu )
     sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return leps_[ valid[iMu].second];
+}
+
+void Event::MatchTaus(){
+    for(Tau* t : taus_)
+    {
+        if (t->IsMatch() >=0) continue;
+        t->SetRunMatching();
+        // run the real matching
+        for(GenParticle *g : genparticles_)
+        {
+            if (abs(g->GetPdgId()) != 15) continue;
+            if (g->DeltaR( *t ) <0.1) t->SetMatch();
+        }
+    }
 }
 
 // Local Variables:

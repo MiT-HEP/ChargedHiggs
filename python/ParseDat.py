@@ -63,7 +63,8 @@ def ParseDat(name):
 		####### V STRING ##########
 		if      key=='Files' \
 			or key == 'Analysis' \
-			or key == 'Smear' : 
+			or key == 'Smear'  \
+			or key == 'Branches': 
 			config[key] =  vStringKey(  value   )
 	
 		if key=='addfiles':
@@ -214,6 +215,19 @@ def ReadSFDB(file):
 		R['err'] =err
 		L.append(R);
 	return L
+
+def ReadBranches(fileName):
+	''' Read Branches from a files '''
+	R=[]		
+	f =open(fileName,"r")	
+	for line in f:
+		l = line.split('#')[0]
+		l = re.sub('\n','',l)
+		if l == "": continue
+		l=re.sub('^ *','',l).split()[0]
+		b = StringKey(l)
+		R.append(b)
+	return R
 
 def chunkIt(seq, num):
   ''' Take a list seq and return a n lists'''
