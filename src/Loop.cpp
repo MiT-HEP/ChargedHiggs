@@ -68,6 +68,7 @@ int Looper::InitTree()
     bare_.push_back(j);
     // ---
     BareTaus *t = new BareTaus(); 
+    t->SetExtend();
     names_[ "Taus" ] = bare_.size();
     bare_.push_back(t);
     // ---
@@ -83,22 +84,8 @@ int Looper::InitTree()
         c->setBranchAddresses(tree_);
 
     tree_ -> SetBranchStatus("*",0);
-    tree_ -> SetBranchStatus("isRealData",1);
-    tree_ -> SetBranchStatus("jetP4",1);
-    tree_ -> SetBranchStatus("jetBdiscr",1);
-    tree_ -> SetBranchStatus("lepP4",1);
-    tree_ -> SetBranchStatus("lepIso",1);
-    tree_ -> SetBranchStatus("lepPdgId",1);
-    tree_ -> SetBranchStatus("tauP4",1);
-    tree_ -> SetBranchStatus("tauId",1);
-    tree_ -> SetBranchStatus("tauQ",1);
-    tree_ -> SetBranchStatus("tauIso",1);
-    tree_ -> SetBranchStatus("mcWeight",1);
-    tree_ -> SetBranchStatus("metP4",1);
-    tree_ -> SetBranchStatus("metPt*",1);
-    tree_ -> SetBranchStatus("rho",1);
-    tree_ -> SetBranchStatus("puTrueInt",1);
-
+    // branches are activate from configuration file
+    
     return 0;
 }
 
@@ -234,6 +221,13 @@ void Looper::FillJets(){
     if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets: FIXME JES" <<endl;
 #endif
     BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "Jets" ] ] ); assert (bj !=NULL);
+
+    if ( tree_ ->GetBranchStatus("jetP4") == 0 ){ 
+        static int counter = 0;
+        if(counter< 10 ) { counter ++ ; cout<<"[Looper]::[FillJets]::[WARNING] Jets Not Filled "<<endl; }
+        return;
+    }
+
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
         Jet *j =new Jet();
@@ -251,6 +245,13 @@ void Looper::FillLeptons(){
     if(VERBOSE>1)cout <<"[Looper]::[FillLeptons]::[DEBUG] Filling Leptons" <<endl;
 #endif
     BareLeptons *bl = dynamic_cast<BareLeptons*> ( bare_[ names_["Leptons"] ]); assert(bl != NULL ) ;
+
+    if ( tree_ ->GetBranchStatus("lepP4") ==0  ){ 
+        static int counter = 0;
+        if(counter< 10 ) { counter ++ ; cout<<"[Looper]::[FillLeptons]::[WARNING] Leptons Not Filled "<<endl; }
+        return;
+    }
+
     for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
     {
         Lepton *l = new Lepton();
@@ -269,7 +270,13 @@ void Looper::FillTaus(){
     if(VERBOSE>1)cout <<"[Looper]::[FillTaus]::[DEBUG] Filling Taus" <<endl;
 #endif
     BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
-    //cout <<"[Looper]::[FillTaus]::[DEBUG] P4 "<<bt -> p4 -> GetEntries()  <<" | " <<bt->iso->size() <<" | "<<bt->Q->size()<<" | "<<bt->id->size()<<endl;
+
+    if ( tree_ -> GetBranchStatus("tauP4") ==0 ){ 
+        static int counter = 0;
+        if(counter< 10 ) { counter ++ ; cout<<"[Looper]::[FillTaus]::[WARNING] Tau Not Filled "<<endl; }
+        return;
+    }
+
     for (int iL = 0; iL<bt -> p4 -> GetEntries() ;++iL)
     {
         Tau *t = new Tau();
@@ -280,6 +287,7 @@ void Looper::FillTaus(){
         t-> id = bt-> id -> at(iL);
         event_ -> taus_ . push_back(t);
     }
+    //cout<<"[Looper]::[FillTaus]::[DEBUB] Taus Loaded:"<< event_->taus_.size() <<endl;
 
 }
 
@@ -294,6 +302,20 @@ void Looper::FillMC(){
 
     event_ -> weight_ . SetPU( mc -> puTrueInt ,  event_ -> runNum_);
 
+    if ( tree_->GetBranchStatus("genP4") == 0  ){ 
+        static int counter = 0;
+        if(counter< 10 ) { counter ++ ; cout<<"[Looper]::[FillMC]::[WARNING] Gen Particles Not Filled "<<endl; }
+        return;
+    }
+
+    for (int iGP=0;iGP< mc -> p4 ->GetEntries() ; ++iGP)
+    {
+        GenParticle *g =new GenParticle();
+        g->SetP4( *(TLorentzVector*) ((*mc->p4)[iGP]) );
+        g->pdgid_ = mc -> pdgId -> at(iGP);
+        event_ -> genparticles_ . push_back(g);
+    }
+    return ;
 }
 
 void Looper::FillMet(){
@@ -302,6 +324,12 @@ void Looper::FillMet(){
     if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling MET" <<endl;
 #endif
     BareMet * met = dynamic_cast<BareMet*> ( bare_[ names_["Met"]]);
+
+    if ( tree_ -> GetBranchStatus("metP4") == 0 ){ 
+        static int counter = 0;
+        if(counter< 10 ) { counter ++ ; cout<<"[Looper]::[FillMet]::[WARNING] MET Not Filled "<<endl; }
+        return;
+    }
 
     if ( met->p4 ->GetEntries() != 1)
         cout<<"[Looper]::[FillEvent]::[ERROR] MET should have exactly 1 entry instead of "<<met->p4 ->GetEntries() <<endl;

@@ -2,6 +2,7 @@
 
 #pragma link C++ class Object+ ;
 #pragma link C++ class Jet+ ;
+#pragma link C++ class GenParticle+ ;
 #pragma link C++ class Lepton+ ;
 #pragma link C++ class Met+ ;
 #pragma link C++ class Tau+ ;

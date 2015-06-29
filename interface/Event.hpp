@@ -12,6 +12,7 @@ using namespace std;
 #include "interface/Lepton.hpp"
 #include "interface/Tau.hpp"
 #include "interface/Met.hpp"
+#include "interface/GenParticle.hpp"
 
 // ----
 #include "interface/Weight.hpp"
@@ -27,6 +28,7 @@ class Event{
     vector<Lepton*> leps_;
     vector<Jet*>    jets_;
     vector<Tau*>    taus_;
+    vector<GenParticle*>    genparticles_; // gen particles
     Met met_;
     int isRealData_;
     int runNum_;
@@ -70,6 +72,8 @@ class Event{
     virtual void ClearEvent();
     virtual inline int IsRealData(){ return isRealData_ ;} 
     virtual void clearSyst(); // call clearSyst in all object it posses
+
+    virtual void MatchTaus();
 
     double weight();
     // update objects that can be invalid (jets)
