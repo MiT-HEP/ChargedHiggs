@@ -6,8 +6,9 @@ WW_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/WW
 WZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v0.4/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8 3880.0 23.7087291882
 TTbar_HBWB_HToTauNu_M-90_13TeV_pythia6 /store/user/amarini/Nero/v0.4/Phys14DR-PU20bx25/TTbar_HBWB_HToTauNu_M-90_13TeV_pythia6 100141.0 12.6016788483
 TBHp_HToTauNu_M-200_13TeV_pythia6 /store/user/amarini/Nero/v0.4/Spring14miniaod_PU40bx50/TBHp_HToTauNu_M-200_13TeV_pythia6 204060.0 0.402162631353
-SUSYGluGluToTBHPTohbbW /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015 90000.0 1.0
+SUSYGluGluToTBHPTohbbW_old /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015 90000.0 1.0
 HplusToTauNu-M200 /store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M200 77903.0 0.0483074869837
 HplusToTauNu-M250 /store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M250 14100.0 0.00185180623905
 HplusToTauNu-M500 /store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M500 30500.0 2.02914960034e-05
 HplusToTauNu-M900 /store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M900 95243.3203125 6.45402467236e-07
+Hplus_Wh_26_6_2015 /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_26_6_2015/ 90900.0 0.0762941688386
