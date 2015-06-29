@@ -33,6 +33,12 @@ void ChargedHiggsHW::Init()
         Book( ("ChargedHiggsHW/Vars/jetsW_dR_"+ l ) .c_str(), ("dR(j1,j2) "+ l).c_str(),50,0,10);
         Book( ("ChargedHiggsHW/Vars/bjetsH_dR_"+ l ) .c_str(), ("dR(b1,b2) "+ l).c_str(),50,0,10);
 
+        cout <<"[ChargedHiggsHW]::[Init]::[INFO] Booking Histograms of Higgs bjets " <<l<<endl;
+        Book( ("ChargedHiggsHW/Vars/bjetsH_dEta_"+ l ) .c_str(), ("dEta(b1,b2) "+ l).c_str(),50,0,10);
+        Book( ("ChargedHiggsHW/Vars/bjetsH_dPhi_"+ l ) .c_str(), ("dPhi(b1,b2) "+ l).c_str(),50,0,10);
+        Book( ("ChargedHiggsHW/Vars/bjetsH_Pt1_"+ l ) .c_str(), ("pT1 "+ l).c_str(),50,20,150);
+        Book( ("ChargedHiggsHW/Vars/bjetsH_Pt2_"+ l ) .c_str(), ("pT2 "+ l).c_str(),50,20,150);
+
         cout <<"[ChargedHiggsHW]::[Init]::[INFO] Booking Histogram of dPhi lepton and met " <<l<<endl;
         Book( ("ChargedHiggsHW/Vars/leptonMet_dPhi_"+ l ) .c_str(), ("dPhi(l,MET) "+ l).c_str(),50,0,10);
 
@@ -116,7 +122,7 @@ int ChargedHiggsHW::analyze(Event*e,string systname)
 
     //Fill histograms
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 0 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 0 , 1);
 
     if(orderedBJets.size() > 0) Fill("ChargedHiggsHW/Vars/bjet1_pt_"+label,systname, orderedBJets.at(0)->Pt() ,e->weight());
     if(orderedBJets.size() > 1) Fill("ChargedHiggsHW/Vars/bjet2_pt_"+label,systname, orderedBJets.at(1)->Pt() ,e->weight());
@@ -138,31 +144,31 @@ int ChargedHiggsHW::analyze(Event*e,string systname)
 
     if(orderedLJets.size() < 1) return 0;
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 1 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 1 , 1);
 
     if(orderedLJets.size() < 2) return 0;
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 2 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 2 , 1);
 
     if(orderedLeptons.size() < 1) return 0;
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 3 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 3 , 1);
 
     if(met.E() < 20) return 0;
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 4 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 4 , 1);
 
     if(orderedBJets.size() < 1) return 0;
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 5 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 5 , 1);
 
     if(orderedBJets.size() < 2) return 0;
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 6 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 6 , 1);
 
     if(orderedBJets.size() < 3) return 0;
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 7 ,e->weight());  
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 7 , 1);  
 
     //Select two jets with mass closest to the W
     Double_t minDeltaMW = 999;
@@ -196,7 +202,7 @@ int ChargedHiggsHW::analyze(Event*e,string systname)
 
     Fill("ChargedHiggsHW/Vars/jetsW_dR_"+label,systname, deltaR(jetW1->Eta(), jetW2->Eta(), jetW1->Phi(), jetW2->Phi()) ,e->weight());
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 8 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 8 , 1);
 
     vjetW1.SetPtEtaPhiE(jetW1->Pt(), jetW1->Eta(), jetW1->Phi(), jetW1->E());
     vjetW2.SetPtEtaPhiE(jetW2->Pt(), jetW2->Eta(), jetW2->Phi(), jetW2->E());
@@ -252,13 +258,17 @@ int ChargedHiggsHW::analyze(Event*e,string systname)
     if(minDeltaMH > 25) return 0;
 
     Fill("ChargedHiggsHW/Vars/bjetsH_dR_"+label,systname, deltaR(bjetH1->Eta(), bjetH2->Eta(), bjetH1->Phi(), bjetH2->Phi()) ,e->weight());
+    Fill("ChargedHiggsHW/Vars/bjetsH_dEta_"+label,systname, fabs(bjetH1->Eta() - bjetH2->Eta()) ,e->weight());
+    Fill("ChargedHiggsHW/Vars/bjetsH_dPhi_"+label,systname, fabs(bjetH1->Phi() - bjetH2->Phi()) ,e->weight());
+    Fill("ChargedHiggsHW/Vars/bjetsH_Pt1_"+label,systname, bjetH1->Pt() ,e->weight());
+    Fill("ChargedHiggsHW/Vars/bjetsH_Pt2_"+label,systname, bjetH2->Pt() ,e->weight());
 
     vbjetH1.SetPtEtaPhiE(bjetH1->Pt(), bjetH1->Eta(), bjetH1->Phi(), bjetH1->E());
     vbjetH2.SetPtEtaPhiE(bjetH2->Pt(), bjetH2->Eta(), bjetH2->Phi(), bjetH2->E());
     vH = vbjetH1 + vbjetH2;
     Fill("ChargedHiggsHW/Vars/HMass_"+label,systname, vH.M() ,e->weight());
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 9 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 9 , 1);
 
     //Reconstruct W's 4-momenta
     vNeutrino = vmet;
@@ -314,7 +324,7 @@ int ChargedHiggsHW::analyze(Event*e,string systname)
     //Apply sixth cut (top veto)
     if(!passedTopVeto) return 0;
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 10 ,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 10 , 1);
 
     Jet *tempT1, *tempT2;
     Double_t minDeltaMT1 = 999;
@@ -358,7 +368,7 @@ int ChargedHiggsHW::analyze(Event*e,string systname)
     //Apply seventh requirement
     if(minDeltaMT1 > 30 && minDeltaMT2 > 30) return 0;
 
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 11,e->weight());
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 11, 1);
 
     if(minDeltaMT2 < 30) bjetT = tempT2;
     else bjetT = tempT1;
