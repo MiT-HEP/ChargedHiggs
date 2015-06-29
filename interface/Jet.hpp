@@ -35,7 +35,7 @@ class Jet : virtual public Object
     // ---
     virtual inline int   IsObject(){return IsJet();}
     inline int IsJet() {
-        if (!isValid || Pt() < ptcut_ || fabs(Eta()) > etacut_) return 0; 
+        if (Pt() < ptcut_ || fabs(Eta()) > etacut_) return 0; 
         else return 1;
     }
     inline int IsBJet(){

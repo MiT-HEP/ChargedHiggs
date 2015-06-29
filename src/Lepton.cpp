@@ -4,7 +4,7 @@
 Lepton::Lepton() : Object() {
     iso =-1; 
     charge = 0 ;
-    isocut_ = 10;
+    isocut_ = 0.4;
     type=0;
 }
 

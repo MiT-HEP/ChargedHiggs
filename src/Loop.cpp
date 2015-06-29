@@ -280,7 +280,7 @@ void Looper::FillLeptons(){
     {
         Lepton *l = new Lepton();
         l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
-        l-> iso = (*bl->iso) [iL];
+        l-> iso = ((*bl->iso) [iL])/(l->Pt());
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> type = abs((*bl->pdgId)[iL]);
         event_ -> leps_ . push_back(l);
