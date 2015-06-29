@@ -1,0 +1,8 @@
+#
+isRealData
+tau*
+genPdgId
+genP4
+mcWeight
+rho
+puTrueInt

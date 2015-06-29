@@ -46,7 +46,6 @@ def ParseDat(name):
 	stream = open(name)
 	config = Default()
 	for line in stream:
-		print "DEBUG '0':", config['config']
 		l = line.split('#')[0]
 		l = re.sub(' ' ,'', l )
 		if len(l.split()) == 0 : continue;
@@ -63,7 +62,8 @@ def ParseDat(name):
 		####### V STRING ##########
 		if      key=='Files' \
 			or key == 'Analysis' \
-			or key == 'Smear' : 
+			or key == 'Smear'  \
+			or key == 'Branches': 
 			config[key] =  vStringKey(  value   )
 	
 		if key=='addfiles':
@@ -132,7 +132,8 @@ def PrintDat(config):
 		######### V STRING ###########
 		elif key =='Files' \
 			or key == 'Analysis' \
-			or key == 'Smear':
+			or key == 'Smear' \
+			or key == 'Branches' :
 			print key, '=', ','.join(config[key])
 		######### V FLOAT/INT #########
 		elif key == 'pileupLumi' \
@@ -214,6 +215,19 @@ def ReadSFDB(file):
 		R['err'] =err
 		L.append(R);
 	return L
+
+def ReadBranches(fileName):
+	''' Read Branches from a files '''
+	R=[]		
+	f =open(fileName,"r")	
+	for line in f:
+		l = line.split('#')[0]
+		l = re.sub('\n','',l)
+		if l == "": continue
+		l=re.sub('^ *','',l).split()[0]
+		b = StringKey(l)
+		R.append(b)
+	return R
 
 def chunkIt(seq, num):
   ''' Take a list seq and return a n lists'''

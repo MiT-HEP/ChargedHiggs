@@ -1,3 +1,4 @@
+
 import os,sys,re,time
 from glob import glob
 from optparse import OptionParser
@@ -55,6 +56,15 @@ for file in cfg['Files']:
 	loop.AddToChain(f)
 
 loop.InitTree();
+
+## activate branches
+if opts.verbose: print "-> Activate branches"
+branches=[]
+for file in cfg['Branches']:
+	branches.extend( ReadBranches(file) )
+for b in branches:
+	if opts.verbose: print " * ",b
+	loop.ActivateBranch(b)
 
 ## init output
 if opts.verbose: print "-> Opening output file '"+cfg['Output']+"'",
