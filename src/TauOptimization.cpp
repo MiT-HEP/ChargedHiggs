@@ -6,12 +6,19 @@ void TauOptimization::Init(){
     
     for ( string& l : AllLabel()  ) 
     {
+        Book2D("TauOpt/Iso_Rho_" + l , "tau Iso delta Beta corrections",1000,0,200,1000,0,20);
+        Book2D("TauOpt/Iso2_Rho_" + l , "tau Iso2 delta Beta corrections",1000,0,200,1000,0,20);
+
         Book("TauOpt/Iso_Match_"+l,"tau Iso",1000,0.,20.);
         Book("TauOpt/Iso_Lead_"+l,"tau Iso",1000,0.,20.);
+
         Book("TauOpt/IsLeadMatched_"+l,"Leading Matched",10,-4.5,5.5);
 
         Book("TauOpt/Pt_Match_"+l,"tau Pt",1000,0.,1000.);
         Book("TauOpt/Pt_Lead_"+l,"tau Pt",1000,0.,1000.);
+
+        Book("TauOpt/Iso2_Match_"+l,"tau Iso Delta Beta",1500,-10,20.);
+        Book("TauOpt/Iso2_Lead_"+l,"tau Iso Delta Beta",1500,-10,20.);
     }
 }
 
@@ -29,7 +36,11 @@ int TauOptimization::analyze(Event* e, string systname)
 
     Tau * t = e->LeadTau();
 
+    Fill2D("TauOpt/Iso_Rho_" + label,systname, e->Rho() ,t->iso, e->weight() ) ;
+    Fill2D("TauOpt/Iso2_Rho_" + label,systname, e->Rho() ,t->iso2, e->weight() ) ;
+
     Fill("TauOpt/Iso_Lead_"+label,systname, t->iso ,e ->weight() );
+    Fill("TauOpt/Iso2_Lead_"+label,systname, t->iso2 ,e ->weight() );
     Fill("TauOpt/Pt_Lead_"+label,systname, t->Pt() ,e ->weight() );
     Fill("TauOpt/IsLeadMatched_"+label,systname, t->IsMatch() ,e ->weight() );
     // Find first match tau
@@ -49,6 +60,7 @@ int TauOptimization::analyze(Event* e, string systname)
     {
         Tau * tM = e->GetTau( LeadTauMatched ); 
         Fill("TauOpt/Iso_Match_"+label,systname, tM->iso ,e ->weight() );
+        Fill("TauOpt/Iso2_Match_"+label,systname, tM->iso2 ,e ->weight() );
         Fill("TauOpt/Pt_Match_"+label,systname, tM->iso ,e ->weight() );
     }//end LeadTauMatched
 }

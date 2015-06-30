@@ -3,6 +3,7 @@
 
 #include "TFile.h"
 #include "TH1D.h"
+#include "TH2D.h"
 #include "TTree.h"
 
 #include <map>
@@ -15,7 +16,9 @@ class Output{
         // 
         TFile *file_;
         map<string,TH1D*> histos_;
+        map<string,TH2D*> histos2D_;
         inline TH1D* Get(string name){ return histos_[name];}
+        inline TH2D* Get2D(string name){ return histos2D_[name];}
 
         void CreateDir(string dir); // called by Write
     public:
@@ -25,11 +28,17 @@ class Output{
         void Open(string name) ;
         void Write();
         // -- Book Histo
+        bool Exists(string name);
+
         void Book(string name, string title,int nBins, double xmin, double xmax);
         void Book(string name, string title,int nBins, double *xbound);
+
+        void Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2,double ymin,double ymax);
         //
         virtual void Fill(string name, string syst , double value, double weight=1);
+        virtual void Fill2D(string name, string syst , double valueX, double valueY, double weight=1);
         TH1D* Get(string name,string systname);
+        TH2D* Get2D(string name,string systname);
 
 };
 

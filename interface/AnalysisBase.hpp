@@ -19,8 +19,10 @@ class AnalysisBase
 
     // call output_->Book, but add something to name
     void Book(string name, string title,int nBins, double xmin, double xmax);
+    void Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2,double ymin,double ymax);
     void Book(string name, string title,int nBins, double *xbound);
     void Fill(string name, string syst , double value, double weight=1);
+    void Fill2D(string name, string syst , double valueX,double valueY, double weight=1);
     TH1D* GetHisto(string name, string systname);
 
     vector<string> labels;
