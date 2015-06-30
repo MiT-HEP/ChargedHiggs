@@ -6,6 +6,9 @@ void TauOptimization::Init(){
     
     for ( string& l : AllLabel()  ) 
     {
+        Book2D("TauOpt/Iso_Rho_" + l , "tau Iso delta Beta corrections",1000,0,200,1000,0,20);
+        Book2D("TauOpt/Iso2_Rho_" + l , "tau Iso2 delta Beta corrections",1000,0,200,1000,0,20);
+
         Book("TauOpt/Iso_Match_"+l,"tau Iso",1000,0.,20.);
         Book("TauOpt/Iso_Lead_"+l,"tau Iso",1000,0.,20.);
 
@@ -32,6 +35,9 @@ int TauOptimization::analyze(Event* e, string systname)
 
 
     Tau * t = e->LeadTau();
+
+    Fill2D("TauOpt/Iso_Rho_" + label,systname, e->Rho() ,t->iso, e->weight() ) ;
+    Fill2D("TauOpt/Iso2_Rho_" + label,systname, e->Rho() ,t->iso2, e->weight() ) ;
 
     Fill("TauOpt/Iso_Lead_"+label,systname, t->iso ,e ->weight() );
     Fill("TauOpt/Iso2_Lead_"+label,systname, t->iso2 ,e ->weight() );
