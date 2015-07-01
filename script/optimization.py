@@ -153,4 +153,25 @@ for i in range(1, sig.GetNbinsX() +1 ):
 		#h2.SetBinError(i, 1)
 h2.Write()
 
+## SIG/BKG EFF
+h3= sig.Clone("S")
+h3.Reset("all")
+
+h4= sig.Clone("B")
+h4.Reset("all")
+
+for i in range(1, sig.GetNbinsX() +1 ):
+	sig_eff = sig.Integral(1,i) /sig_norm
+	bkg_eff = bkg.Integral(1,i) /bkg_norm
+	if opts.great: 
+		sig_eff = sig.Integral(i,sig.GetNbinsX() ) / sig_norm
+		bkg_eff = bkg.Integral(i,bkg.GetNbinsX() ) / bkg_norm
+
+
+	h3.SetBinContent(i, sig_eff)
+	h4.SetBinContent(i, bkg_eff)
+
+h3.Write()
+h4.Write()
+
 
