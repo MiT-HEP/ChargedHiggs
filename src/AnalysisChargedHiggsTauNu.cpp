@@ -88,7 +88,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     //At least one hadronic tau
 
-    if ( e->Ntaus() <1 ) return 0;
+    if ( e->Ntaus() <1 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,1,e->weight());
 
     Tau* t1 = e->LeadTau();
@@ -101,7 +101,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     //Veto against isolated lepton
 
-    if ( e->Nleps() >0 ) return 0;
+    if ( e->Nleps() >0 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,2,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/NJets_"+label,systname, e->Njets() ,e->weight());
@@ -109,7 +109,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     //At least 3 jets
 
-    if ( e->Njets() <3 ) return 0;
+    if ( e->Njets() <3 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,3,e->weight());
 
     Jet* j1 = e->LeadJet();
@@ -124,7 +124,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     //At least one b-jet
 
-    if ( e->Bjets() <1 ) return 0;
+    if ( e->Bjets() <1 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,4,e->weight());
 
     Jet * bj1 = e->LeadBjet();
@@ -153,12 +153,12 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     //MET>60GeV
 
-    if ( e->GetMet().Pt() <60 ) return 0;
+    if ( e->GetMet().Pt() <60 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,5,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
 
-    return 1;
+    return EVENT_USED;
 }
 // Local Variables:
 // mode:c++
