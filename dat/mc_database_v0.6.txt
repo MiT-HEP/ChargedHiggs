@@ -22,3 +22,6 @@ TTJets_mtop1755_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 /store/user/amarini/Nero
 WW_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v0.6/RunIISpring15DR74/WW_TuneCUETP8M1_13TeV-pythia8 28048.2714844 64.5856059293
 WZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v0.6/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8 15400.0 23.5549671953
 ZZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v0.6/RunIISpring15DR74/ZZ_TuneCUETP8M1_13TeV-pythia8 996168.0 10.2357724104
+Hplus_Wh_26_6_2015 /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_26_6_2015/ 90900.0 0.0762941688386
+Hplus_Wh_18_5_2015 /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015 90900.0 0.0762941688386
+SYGluGluToTBHPTohbbW_M1000_pythia8 /store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M1000_pythia8 90155.40625 0.00118193989906

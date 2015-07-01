@@ -12,3 +12,6 @@ HplusToTauNu-M250 /store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M
 HplusToTauNu-M500 /store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M500 30500.0 2.02914960034e-05
 HplusToTauNu-M900 /store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M900 95243.3203125 6.45402467236e-07
 Hplus_Wh_26_6_2015 /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_26_6_2015/ 90900.0 0.0762941688386
+Hplus_Wh_18_5_2015 /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015 90900.0 0.0762941688386
+TTZJets_Tune4C_13TeV-madgraph-tauola /store/user/amarini/Nero/v0.7/RunIISpring15DR74/TTZJets_Tune4C_13TeV-madgraph-tauola 0.0 2.23754443429
+SYGluGluToTBHPTohbbW_M1000_pythia8 /store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M1000_pythia8 90155.40625 0.00118193989906
