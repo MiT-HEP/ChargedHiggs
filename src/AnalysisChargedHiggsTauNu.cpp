@@ -50,6 +50,13 @@ void ChargedHiggsTauNu::Init()
         Book(    "ChargedHiggsTauNu/Vars/Bjet1Eta_"+l,"Bjet1Eta "+l,100,-5,5);
         GetHisto("ChargedHiggsTauNu/Vars/Bjet1Eta_"+l,"")->GetXaxis()->SetTitle("#eta^{b-tagged jet} [GeV]");
 
+        cout <<"[ChargedHiggsTauNu]::[Init]::[INFO] Boking Histo MaxDEtaBjetJets_" <<l<<endl;
+        Book(    "ChargedHiggsTauNu/Vars/MaxDEtaBjetJets_"+l,"MaxDEtaBjetJets "+l,100,0,10);
+        GetHisto("ChargedHiggsTauNu/Vars/MaxDEtaBjetJets_"+l,"")->GetXaxis()->SetTitle("Max #Delta#eta (b-tagged jet,jets)");
+
+        cout <<"[ChargedHiggsTauNu]::[Init]::[INFO] Boking Histo MaxInvMassBjetJets_" <<l<<endl;
+        Book(    "ChargedHiggsTauNu/Vars/MaxInvMassBjetJets_"+l,"MaxInvMassBjetJets "+l,2000,0,2000);
+        GetHisto("ChargedHiggsTauNu/Vars/MaxInvMassBjetJets_"+l,"")->GetXaxis()->SetTitle("Max invariant mass (b-tagged jet,jets) [GeV]");
 
         cout <<"[ChargedHiggsTauNu]::[Init]::[INFO] Boking Histo EtMiss_" <<l<<endl;
         Book(    "ChargedHiggsTauNu/Vars/EtMiss_"+l,"EtMiss "+l,1000,0,1000);
@@ -78,6 +85,12 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     Fill("ChargedHiggsTauNu/Vars/NTaus_"+label,systname, e->Ntaus() ,e->weight());
 
+
+    //At least one hadronic tau
+
+    if ( e->Ntaus() <1 ) return EVENT_NOT_USED;
+    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,1,e->weight());
+
     Tau* t1 = e->LeadTau();
     if (t1 !=NULL ) 
         {        
@@ -86,31 +99,34 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         }
 
 
-    //At least one hadronic tau
-
-    if ( e->Ntaus() <1 ) return 0;
-    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,1,e->weight());
-
-
     //Veto against isolated lepton
 
-    if ( e->Nleps() >0 ) return 0;
+    if ( e->Nleps() >0 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,2,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/NJets_"+label,systname, e->Njets() ,e->weight());
+    
+
+    //At least 3 jets
+
+    if ( e->Njets() <3 ) return EVENT_NOT_USED;
+    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,3,e->weight());
+
     Jet* j1 = e->LeadJet();
     if (j1 !=NULL ) 
         {        
             Fill("ChargedHiggsTauNu/Vars/Jet1Pt_"+label,systname, j1->Pt() ,e->weight());
             Fill("ChargedHiggsTauNu/Vars/Jet1Eta_"+label,systname,j1->Eta() ,e->weight());
         }
-    
-    //At least 3 jets
-
-    if ( e->Njets() <3 ) return 0;
-    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,3,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/NBjets_"+label,systname, e->Bjets() ,e->weight());
+    
+
+    //At least one b-jet
+
+    if ( e->Bjets() <1 ) return EVENT_NOT_USED;
+    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,4,e->weight());
+
     Jet * bj1 = e->LeadBjet();
     if (bj1 != NULL) 
         {        
@@ -118,22 +134,31 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
             Fill("ChargedHiggsTauNu/Vars/Bjet1Eta_"+label,systname,bj1->Eta(),e->weight());
         }
 
-    //At least one b-jet
+    double DEtaMax=0.;
+    double InvMassMax=0.;
+    for(int i=0;i!=e->Njets();++i)
+        {
+            Jet* jet = e->GetJet(i);
+            if(bj1->DeltaEta(*jet)>DEtaMax) DEtaMax=bj1->DeltaEta(*jet);
+            if(bj1->InvMass(*jet)>InvMassMax) InvMassMax=bj1->InvMass(*jet);
+        }
 
-    if ( e->Bjets() <1 ) return 0;
-    Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,4,e->weight());
+    Fill("ChargedHiggsTauNu/Vars/MaxDEtaBjetJets_"+label,systname, DEtaMax ,e->weight());
+
+    Fill("ChargedHiggsTauNu/Vars/MaxInvMassBjetJets_"+label,systname, InvMassMax ,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/EtMiss_"+label,systname, e->GetMet().Pt() ,e->weight());
 
 
+
     //MET>60GeV
 
-    if ( e->GetMet().Pt() <60 ) return 0;
+    if ( e->GetMet().Pt() <60 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,5,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
 
-    return 1;
+    return EVENT_USED;
 }
 // Local Variables:
 // mode:c++
