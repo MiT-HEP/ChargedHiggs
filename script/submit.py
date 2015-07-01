@@ -80,25 +80,30 @@ def PrintSummary(dir, doPrint=True):
 	run  = glob(dir + "/*run")
 	fail = glob(dir + "/*fail")
 	done = glob(dir + "/*done")
+	pend = glob(dir + "/*pend")
 
 	## bash color string
 	red="\033[01;31m"
 	green = "\033[01;32m"
 	yellow = "\033[01;33m"
+	cyan = "\033[01;36m"
 	white = "\033[00m"
 
 	run = [ re.sub('\.run','' , re.sub('.*/sub','', r) ) for r in run ] 	
 	fail = [ re.sub('\.fail','' , re.sub('.*/sub','', r) ) for r in fail ] 	
 	done = [ re.sub('\.done','' , re.sub('.*/sub','', r) ) for r in done ] 	
+	pend = [ re.sub('\.pend','' , re.sub('.*/sub','', r) ) for r in pend ] 	
 
-	tot = len(run) + len(fail) + len(done)
+	tot = len(run) + len(fail) + len(done) + len(pend)
 
 	color = red
-	if len(run) > len(fail)  : color= yellow
+	if len(run) > len(fail) and len(run) >len(pend)  : color= yellow
+	if len(pend) > len(run) and len(pend) >len(fail): color= cyan
 	if len(done) == tot and tot >0 : color = green
 	
 	if doPrint:
 		print " ----  Directory "+ color+opts.dir+white+" --------"
+		print " Run : " + cyan   + "%3d"%len(pend) + " / " + str(tot) + white + " : " + PrintLine(pend)  ###
 		print " Run : " + yellow + "%3d"%len(run) + " / "  + str(tot) + white + " : " + PrintLine(run)  ### + ",".join(run)  + "|" 
 		print " Fail: " + red    + "%3d"%len(fail) + " / " + str(tot) + white + " : " + PrintLine(fail) ### + ",".join(fail) + "|" 
 		print " Done: " + green  + "%3d"%len(done) + " / " + str(tot) + white + " : " + PrintLine(done) ### + ",".join(done) + "|" 
@@ -130,9 +135,11 @@ if opts.resubmit:
 	   	for iJob in range(iBegin,iEnd+1):
 			#iJob= int(job)
 			basedir = os.environ['PWD'] + "/" + opts.dir
+			touch = "touch " + basedir + "/sub%d.pend"%iJob
+			call(touch,shell=True)
 			cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
-		print cmdline
-		call (cmdline,shell=True)
+			print cmdline
+			call (cmdline,shell=True)
 	exit(0)
 
 if opts.hadd:
@@ -213,8 +220,13 @@ for iJob in range(0,opts.njobs):
 		sh.write("tar -xzf %s/package.tar.gz\n"%(basedir ))
 		sh.write("mkdir -p %s\n"%opts.dir)
 		sh.write("cp %s/*dat %s/\n"%(basedir,opts.dir))
+
+	touch = "touch " + basedir + "/sub%d.pend"%iJob
+	call(touch,shell=True)
+
 	sh.write('touch %s/sub%d.run\n'%(basedir,iJob))
 	sh.write('rm %s/sub%d.done\n'%(basedir,iJob))
+	sh.write('rm %s/sub%d.pend\n'%(basedir,iJob))
 	sh.write('rm %s/sub%d.fail\n'%(basedir,iJob))
 
 	if opts.mount:

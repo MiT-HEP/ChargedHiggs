@@ -1,6 +1,9 @@
 #ifndef ANALYSIS_BASE_H
 #define ANALYSIS_BASE_H
 
+#define EVENT_USED 1
+#define EVENT_NOT_USED 0
+
 
 #include "interface/Event.hpp"
 #include "interface/Output.hpp"
@@ -13,7 +16,7 @@ class AnalysisBase
     ~AnalysisBase(){};
     // 
     virtual void inline SetOutput( Output *o ) { output_ = o ;}
-    virtual int analyze(Event*,string systname){return 0;}
+    virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}
     virtual void Init(){}
     virtual const string name(){return "AnalysisBase";}
 
