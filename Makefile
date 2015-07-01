@@ -13,7 +13,17 @@ SRC=$(wildcard $(SRCDIR)/*.cpp)
 OBJ=$(patsubst $(SRCDIR)/%.cpp, $(BINDIR)/%.o , $(SRC)  )
 HPPLINKDEF=$(patsubst $(SRCDIR)/%.cpp, ../interface/%.hpp , $(SRC)  )
 
+.PHONY: all
+all:
+	$(info, "--- Full compilation --- ")	
+	$(info, "-> if you want just to recompile something use 'make fast' ")	
+	$(info, "------------------------ ")	
+	$(MAKE) clean
+	$(MAKE) libChargedHiggs.so
 
+.PHONY: fast
+fast:
+	$(MAKE) libChargedHiggs.so
 
 libChargedHiggs.so: $(OBJ) Dict | $(BINDIR)
 	$(GCC) $(CXXFLAGS) $(SOFLAGS) -o $(BINDIR)/$@ $(OBJ) $(BINDIR)/dict.o
