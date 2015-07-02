@@ -15,8 +15,8 @@ void ChargedHiggsHW::Init()
         GetHisto(("ChargedHiggsHW/CutFlow/CutFlow_"+l).c_str(),"")->GetXaxis()->SetBinLabel(7,"2 bjets");
         GetHisto(("ChargedHiggsHW/CutFlow/CutFlow_"+l).c_str(),"")->GetXaxis()->SetBinLabel(8,"3 bjets");
         GetHisto(("ChargedHiggsHW/CutFlow/CutFlow_"+l).c_str(),"")->GetXaxis()->SetBinLabel(9,"W mass");
-        GetHisto(("ChargedHiggsHW/CutFlow/CutFlow_"+l).c_str(),"")->GetXaxis()->SetBinLabel(10,"H mass");
-        GetHisto(("ChargedHiggsHW/CutFlow/CutFlow_"+l).c_str(),"")->GetXaxis()->SetBinLabel(11,"Top veto");
+        GetHisto(("ChargedHiggsHW/CutFlow/CutFlow_"+l).c_str(),"")->GetXaxis()->SetBinLabel(10,"Top veto");
+        GetHisto(("ChargedHiggsHW/CutFlow/CutFlow_"+l).c_str(),"")->GetXaxis()->SetBinLabel(11,"H mass");
         GetHisto(("ChargedHiggsHW/CutFlow/CutFlow_"+l).c_str(),"")->GetXaxis()->SetBinLabel(12,"Top mass");
 
         cout <<"[ChargedHiggsHW]::[Init]::[INFO] Booking Histograms of jets pT " <<l<<endl;
@@ -258,6 +258,62 @@ int ChargedHiggsHW::analyze(Event*e,string systname)
 
     //Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 3 ,e->weight());
 
+    vector<Jet*> allJets;
+    for(Int_t x = 0; x < orderedLJets.size(); x++){
+        Jet *tempjet = orderedLJets.at(x);
+        if(tempjet == jetW1 || tempjet == jetW2) continue;
+        allJets.push_back(tempjet);
+    }
+    for(Int_t x = 0; x < orderedBJets.size(); x++){
+        Jet *tempjet = orderedBJets.at(x);
+        allJets.push_back(tempjet);
+    }
+
+    //Top veto
+    Int_t topCandidates = 0;
+    TLorentzVector vT1temp, vT21temp, vT22temp;
+    bool passedTopVeto = true;
+    for(Int_t ijet = 0; ijet < allJets.size(); ijet++){
+
+        for(Int_t jjet = ijet+1; jjet < allJets.size(); jjet++){
+            Jet *tempjet1 = allJets.at(ijet), *tempjet2 = allJets.at(jjet);
+            TLorentzVector vtemp1, vtemp2, vHtemp;
+            vtemp1.SetPtEtaPhiE(tempjet1->Pt(), tempjet1->Eta(), tempjet1->Phi(), tempjet1->E());
+            vtemp2.SetPtEtaPhiE(tempjet2->Pt(), tempjet2->Eta(), tempjet2->Phi(), tempjet2->E());
+
+            if(deltaR(vtemp1.Eta(), vtemp2.Eta(), vtemp1.Phi(), vtemp2.Phi()) < DR) continue;
+
+            if(deltaR(vtemp1.Eta(), jetW1->Eta(), vtemp1.Phi(), jetW1->Phi()) < DR) continue;
+            if(deltaR(vtemp1.Eta(), jetW2->Eta(), vtemp1.Phi(), jetW2->Phi()) < DR) continue;
+            if(deltaR(vtemp1.Eta(), leptonW->Eta(), vtemp1.Phi(), leptonW->Phi()) < DR) continue;
+            if(deltaR(vtemp2.Eta(), jetW1->Eta(), vtemp2.Phi(), jetW1->Phi()) < DR) continue;
+            if(deltaR(vtemp2.Eta(), jetW2->Eta(), vtemp2.Phi(), jetW2->Phi()) < DR) continue;
+            if(deltaR(vtemp2.Eta(), leptonW->Eta(), vtemp2.Phi(), leptonW->Phi()) < DR) continue;
+
+            vT1temp = vtemp1 + vW1;
+            vT21temp = vtemp2 + vW2Sol1;
+            vT22temp = vtemp2 + vW2Sol2;
+
+            Double_t tempDeltaM1 = fabs(vT1temp.M() - 173.34);
+            Double_t tempDeltaM21 = fabs(vT21temp.M() - 173.34);
+            Double_t tempDeltaM22 = fabs(vT21temp.M() - 173.34);
+
+            if(topCandidates == 0 && (tempDeltaM1 < 20 || tempDeltaM21 < 20 || tempDeltaM22 < 20)) topCandidates = 1;
+            if(topCandidates < 2 && tempDeltaM1 < 20 && (tempDeltaM21 < 20 || tempDeltaM22 < 20)) topCandidates = 2;
+
+            if((tempDeltaM1 < 20 && tempDeltaM21 < 20) || (tempDeltaM1 < 20 && tempDeltaM22 < 20)) passedTopVeto = false;
+
+        }
+    }
+
+    //Fill histograms
+    Fill("ChargedHiggsHW/CutVars/TopVeto_"+label,systname, topCandidates, e->weight());
+
+    //Apply sixth cut (top veto)
+    if(!passedTopVeto) return 0;
+
+    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 9 , e->weight());
+
     //Select two bjets with mass closest to the H
     Double_t minDeltaMH = 999;
     for(Int_t ijet = 0; ijet < orderedBJets.size(); ijet++){
@@ -308,63 +364,6 @@ int ChargedHiggsHW::analyze(Event*e,string systname)
     Fill("ChargedHiggsHW/Vars/bjetsH_Pt2_"+label,systname, bjetH2->Pt() ,e->weight());
   
     Fill("ChargedHiggsHW/Vars/HMass_"+label,systname, vH.M() ,e->weight());
-
-    Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 9 , e->weight());
-
-    vector<Jet*> allJets;
-    for(Int_t x = 0; x < orderedLJets.size(); x++){
-        Jet *tempjet = orderedLJets.at(x);
-        if(tempjet == jetW1 || tempjet == jetW2) continue;
-        allJets.push_back(tempjet);
-    }
-    for(Int_t x = 0; x < orderedBJets.size(); x++){
-        Jet *tempjet = orderedBJets.at(x);
-        if(tempjet == bjetH1 || tempjet == bjetH2) continue;
-        allJets.push_back(tempjet);
-    }
-
-    //Top veto
-    Int_t topCandidates =0;
-    TLorentzVector vT1temp, vT21temp, vT22temp;
-    bool passedTopVeto = true;
-    for(Int_t ijet = 0; ijet < allJets.size(); ijet++){
-
-        for(Int_t jjet = ijet+1; jjet < allJets.size(); jjet++){
-            Jet *tempjet1 = allJets.at(ijet), *tempjet2 = allJets.at(jjet);
-            TLorentzVector vtemp1, vtemp2, vHtemp;
-            vtemp1.SetPtEtaPhiE(tempjet1->Pt(), tempjet1->Eta(), tempjet1->Phi(), tempjet1->E());
-            vtemp2.SetPtEtaPhiE(tempjet2->Pt(), tempjet2->Eta(), tempjet2->Phi(), tempjet2->E());
-
-            if(deltaR(vtemp1.Eta(), vtemp2.Eta(), vtemp1.Phi(), vtemp2.Phi()) < DR) continue;
-
-            if(deltaR(vtemp1.Eta(), jetW1->Eta(), vtemp1.Phi(), jetW1->Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), jetW2->Eta(), vtemp1.Phi(), jetW2->Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), leptonW->Eta(), vtemp1.Phi(), leptonW->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), jetW1->Eta(), vtemp2.Phi(), jetW1->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), jetW2->Eta(), vtemp2.Phi(), jetW2->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), leptonW->Eta(), vtemp2.Phi(), leptonW->Phi()) < DR) continue;
-
-            vT1temp = vtemp1 + vW1;
-            vT21temp = vtemp2 + vW2Sol1;
-            vT22temp = vtemp2 + vW2Sol2;
-
-            Double_t tempDeltaM1 = fabs(vT1temp.M() - 173.34);
-            Double_t tempDeltaM21 = fabs(vT21temp.M() - 173.34);
-            Double_t tempDeltaM22 = fabs(vT21temp.M() - 173.34);
-
-            if(topCandidates == 0 && (tempDeltaM1 < 20 || tempDeltaM21 < 20 || tempDeltaM22 < 20)) topCandidates = 1;
-            if(topCandidates < 2 && tempDeltaM1 < 20 && (tempDeltaM21 < 20 || tempDeltaM22 < 20)) topCandidates = 2;
-
-            if((tempDeltaM1 < 20 && tempDeltaM21 < 20) || (tempDeltaM1 < 20 && tempDeltaM22 < 20)) passedTopVeto = false;
-
-        }
-    }
-
-    //Fill histograms
-    Fill("ChargedHiggsHW/CutVars/TopVeto_"+label,systname, topCandidates, e->weight());
-
-    //Apply sixth cut (top veto)
-    if(!passedTopVeto) return 0;
 
     Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 10 , e->weight());
 
