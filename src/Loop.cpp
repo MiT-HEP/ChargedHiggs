@@ -69,6 +69,7 @@ int Looper::InitTree()
     // ---
     BareTaus *t = new BareTaus(); 
     t->SetExtend();
+    t->SetMatch(); // matching informations
     names_[ "Taus" ] = bare_.size();
     bare_.push_back(t);
     // ---
@@ -287,7 +288,8 @@ void Looper::FillTaus(){
         t-> id = bt-> id -> at(iL);
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
         t-> id_ele = bt -> againstEleLoose-> at(iL); 
-        t-> id_mu = bt -> againstMuLoose-> at(iL); 
+        t-> id_mu = bt -> againstMuLoose -> at(iL); 
+        t-> match = bt -> match -> at(iL);
         event_ -> taus_ . push_back(t);
     }
     //cout<<"[Looper]::[FillTaus]::[DEBUB] Taus Loaded:"<< event_->taus_.size() <<endl;

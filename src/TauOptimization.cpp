@@ -30,10 +30,6 @@ int TauOptimization::analyze(Event* e, string systname)
 
     string label = GetLabel(e);
 
-    // Require matching with GEN objects
-    e->MatchTaus();
-
-
     Tau * t = e->LeadTau();
 
     Fill2D("TauOpt/Iso_Rho_" + label,systname, e->Rho() ,t->iso, e->weight() ) ;

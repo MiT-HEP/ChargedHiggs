@@ -72,9 +72,6 @@ class Event{
     virtual void ClearEvent();
     virtual inline int IsRealData(){ return isRealData_ ;} 
     virtual void clearSyst(); // call clearSyst in all object it posses
-
-    virtual void MatchTaus();
-
     double weight();
     // update objects that can be invalid (jets)
     virtual void validate();
