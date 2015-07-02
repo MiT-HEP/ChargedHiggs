@@ -1,6 +1,9 @@
 #ifndef ANALYSIS_BASE_H
 #define ANALYSIS_BASE_H
 
+#define EVENT_USED 1
+#define EVENT_NOT_USED 0
+
 
 #include "interface/Event.hpp"
 #include "interface/Output.hpp"
@@ -13,14 +16,16 @@ class AnalysisBase
     ~AnalysisBase(){};
     // 
     virtual void inline SetOutput( Output *o ) { output_ = o ;}
-    virtual int analyze(Event*,string systname){return 0;}
+    virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}
     virtual void Init(){}
     virtual const string name(){return "AnalysisBase";}
 
     // call output_->Book, but add something to name
     void Book(string name, string title,int nBins, double xmin, double xmax);
+    void Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2,double ymin,double ymax);
     void Book(string name, string title,int nBins, double *xbound);
     void Fill(string name, string syst , double value, double weight=1);
+    void Fill2D(string name, string syst , double valueX,double valueY, double weight=1);
     TH1D* GetHisto(string name, string systname);
 
     vector<string> labels;

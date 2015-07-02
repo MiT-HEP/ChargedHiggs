@@ -456,7 +456,8 @@ int ChargedHiggsHW::analyze(Event*e,string systname)
 
     //Fill("ChargedHiggsHW/CutFlow/CutFlow_"+label,systname, 7 ,e->weight());
 
-    return 0;
+    return EVENT_USED;
+
 }
 
 // Local Variables:

@@ -30,7 +30,7 @@ int ChargedHiggsZW::analyze(Event*e,string systname)
     //The event selection should be implemented here for details see src/AnalysisChargedHiggsTauNu.cpp
 
 
-    return 0;
+    return EVENT_NOT_USED;
 }
 // Local Variables:
 // mode:c++
