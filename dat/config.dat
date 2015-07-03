@@ -5,20 +5,36 @@
 ##### Files=....,....,...
 #
 #### BKG ###
-Files=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
-addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
+Files=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
 ### WW/WZ/ZZ###
-addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/WW_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/v0.4/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WW_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
 ### SIGNAL ###
-#addfiles=/store/user/amarini/Nero/v0.4/Spring14miniaod_PU40bx50/TBHp_HToTauNu_M-200_13TeV_pythia6
-#addfiles=/store/user/amarini/Nero/v0.4/Phys14DR-PU20bx25/TTbar_HBWB_HToTauNu_M-90_13TeV_pythia6
-addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015
+#addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015
 #Signal Tau Nu ; Private production
-addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M200
-addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M250
-addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M500
-addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M900
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M200
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M250
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M500
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M900
+### QCD
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+
 ####
 
 Output=ChHiggs.root
@@ -38,10 +54,11 @@ Lumi=1
 
 # Smearer
 #Smear=JER,JES,@SmearBase
-Smear=NONE,JER,JES
+#Smear=NONE,JER,JES
+Smear=NONE
 
 config=ChargedHiggsTauNu|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
-addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('TTJets'),AddLabel('DY')
+addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('TTJets'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
 #configure Analysis
 #config=AnalysisBase|Init()
 #config=Preselection|
