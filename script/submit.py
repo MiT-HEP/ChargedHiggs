@@ -103,7 +103,7 @@ def PrintSummary(dir, doPrint=True):
 	
 	if doPrint:
 		print " ----  Directory "+ color+opts.dir+white+" --------"
-		print " Run : " + cyan   + "%3d"%len(pend) + " / " + str(tot) + white + " : " + PrintLine(pend)  ###
+		print " Pend: " + cyan   + "%3d"%len(pend) + " / " + str(tot) + white + " : " + PrintLine(pend)  ###
 		print " Run : " + yellow + "%3d"%len(run) + " / "  + str(tot) + white + " : " + PrintLine(run)  ### + ",".join(run)  + "|" 
 		print " Fail: " + red    + "%3d"%len(fail) + " / " + str(tot) + white + " : " + PrintLine(fail) ### + ",".join(fail) + "|" 
 		print " Done: " + green  + "%3d"%len(done) + " / " + str(tot) + white + " : " + PrintLine(done) ### + ",".join(done) + "|" 
@@ -223,8 +223,14 @@ for iJob in range(0,opts.njobs):
 
 	touch = "touch " + basedir + "/sub%d.pend"%iJob
 	call(touch,shell=True)
+	cmd = "rm " + basedir + "/sub%d.run 2>&1 >/dev/null"%iJob
+	call(cmd,shell=True)
+	cmd = "rm " + basedir + "/sub%d.done 2>&1 >/dev/null"%iJob
+	call(cmd,shell=True)
+	cmd = "rm " + basedir + "/sub%d.fail 2>&1 >/dev/null"%iJob
+	call(cmd,shell=True)
 
-	sh.write('touch %s/sub%d.run\n'%(basedir,iJob))
+	sh.write('time > %s/sub%d.run\n'%(basedir,iJob))
 	sh.write('rm %s/sub%d.done\n'%(basedir,iJob))
 	sh.write('rm %s/sub%d.pend\n'%(basedir,iJob))
 	sh.write('rm %s/sub%d.fail\n'%(basedir,iJob))
