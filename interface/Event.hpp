@@ -47,6 +47,7 @@ class Event{
     Lepton * GetLepton( int iLep );
     Lepton * GetElectron( int iEle );
     Lepton * GetMuon( int iMu );
+    GenParticle * GetGenParticle( int iGenPar );
 
     //
     inline Met GetMet( ) { return met_;}
@@ -57,6 +58,7 @@ class Event{
     inline int   Bjets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsBJet() ) n++; return n; }
     inline int   Ntaus(){ int   n=0  ; for(auto t : taus_ ) if( t->IsTau()  )  n++; return n; }
     inline int   Nleps(){ int   n=0  ; for(auto t : leps_ ) if( t->IsLep()  )  n++; return n; }
+    inline int   NGenPar(){ return genparticles_.size(); }
 
     inline Tau*  LeadTau(){ return GetTau(0);} 
     inline Jet*  LeadJet(){ return GetJet(0);}

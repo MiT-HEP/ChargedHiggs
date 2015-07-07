@@ -6,6 +6,9 @@ Lepton::Lepton() : Object() {
     charge = 0 ;
     isocut_ = 0.4;
     type=0;
+    tightId=0;
+    ptcut_=20;
+    etacut_=4.7;
 }
 
 // Local Variables:

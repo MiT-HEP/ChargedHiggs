@@ -25,3 +25,4 @@ ZZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v0.6/RunIISpring15DR74/ZZ
 Hplus_Wh_26_6_2015 /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_26_6_2015/ 90900.0 0.0762941688386
 Hplus_Wh_18_5_2015 /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015 90900.0 0.0762941688386
 SYGluGluToTBHPTohbbW_M1000_pythia8 /store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M1000_pythia8 90155.40625 0.00118193989906
+SYGluGluToTBHPTohbbW_M500_pythia8 /store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M500_pythia8 89544.0 0.0142623119674

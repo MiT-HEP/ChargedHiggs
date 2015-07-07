@@ -158,6 +158,11 @@ Lepton * Event::GetMuon( int iMu )
     return leps_[ valid[iMu].second];
 }
 
+GenParticle * Event::GetGenParticle( int iGenPar ) 
+{
+    return (iGenPar >= 0 && iGenPar < genparticles_.size() ? genparticles_.at(iGenPar) : NULL);
+}
+
 void Event::MatchTaus(){
     for(Tau* t : taus_)
     {

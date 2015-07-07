@@ -16,6 +16,10 @@ metP4
 metPt*
 rho
 puTrueInt
+genP4*
+genPdgId
 jetFlavour
 jetMotherPdgId
 jetGrMotherPdgId
+jetPuId
+lepTightId

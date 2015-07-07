@@ -282,6 +282,7 @@ void Looper::FillLeptons(){
         l-> iso = ((*bl->iso) [iL])/(l->Pt());
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> type = abs((*bl->pdgId)[iL]);
+        l-> tightId = (*bl->tightId)[iL];
         event_ -> leps_ . push_back(l);
     }
 

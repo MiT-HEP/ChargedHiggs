@@ -12,6 +12,7 @@ class Jet : virtual public Object
     float etacut_ ; // ** eta cut on the accepted jets
     float betacut_ ; // ** eta cut on the accepted bjets
     float bcut_; /// ** bcut on the bJets discr
+    float puidcut_;
     public:
     Jet() ; 
 
@@ -23,6 +24,8 @@ class Jet : virtual public Object
     float bdiscr; // 
     float bunc; // TOFILL
     int bsyst ;
+
+    float puId;
 
     //Gen-level info
     int pdgId;
