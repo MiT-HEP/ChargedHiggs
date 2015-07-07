@@ -163,19 +163,6 @@ GenParticle * Event::GetGenParticle( int iGenPar )
     return (iGenPar >= 0 && iGenPar < genparticles_.size() ? genparticles_.at(iGenPar) : NULL);
 }
 
-void Event::MatchTaus(){
-    for(Tau* t : taus_)
-    {
-        if (t->IsMatch() >=0) continue;
-        t->SetRunMatching();
-        // run the real matching
-        for(GenParticle *g : genparticles_)
-        {
-            if (abs(g->GetPdgId()) != 15) continue;
-            if (g->DeltaR( *t ) <0.1) t->SetMatch();
-        }
-    }
-}
 
 // Local Variables:
 // mode:c++

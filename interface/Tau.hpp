@@ -9,28 +9,25 @@ class Tau: virtual public Object,
 {
     float idcut_;
 
-    bool match_ ; // is matched with a gen tau
-    bool run_matching_; // run the algorithm.
 
     public:
-    Tau() : Lepton() { idcut_ = 0.5;match_ = false; run_matching_= false;isocut_=100; iso2 = -999; id_ele= -1; id_mu=-1;}
+    Tau() : Lepton() { idcut_ = 0.5; match = -999; ; isocut_=100; iso2 = -999; id_ele= -1; id_mu=-1;}
     float id;
     float iso2;
     int id_ele;
     int id_mu;
+    int match ; // is matched with a gen tau
+
     virtual int IsTau() ;
     virtual inline int IsObject(){ return IsTau(); }
 
-    virtual int IsMatch( ) { if (not run_matching_ ) return -1; if (match_) return 1; else return 0;}
+    virtual bool IsMatch( ) { if (match >= 0) return true; else return false;}
 
     virtual void clearSyst(){
         Lepton::clearSyst(); 
         Object::clearSyst();
-        run_matching_= false;
-        match_=false; }
+        }
 
-    inline virtual void SetMatch(bool m=true){match_=m;}
-    inline virtual void SetRunMatching(bool m=true){run_matching_=m;}
 };
 
 #endif

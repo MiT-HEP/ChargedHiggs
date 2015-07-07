@@ -5,26 +5,43 @@
 ##### Files=....,....,...
 #
 #### BKG ###
-#Files=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
-#Files=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
-#addfiles=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/TTJets_mtop1695_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-#addfiles=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/TTJets_mtop1755_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-#addfiles=/store/user/amarini/Nero/v0.7/RunIISpring15DR74/TTZJets_Tune4C_13TeV-madgraph-tauola
+
+Files=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
+addfiles=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/TTJets_mtop1695_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/TTJets_mtop1755_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=/store/user/amarini/Nero/v0.7/RunIISpring15DR74/TTZJets_Tune4C_13TeV-madgraph-tauola
 ### WW/WZ/ZZ###
-#addfiles=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/WW_TuneCUETP8M1_13TeV-pythia8
-#addfiles=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
-#addfiles=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/ZZ_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WW_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/v0.6/RunIISpring15DR74/ZZ_TuneCUETP8M1_13TeV-pythia8
 ### SIGNAL ###
-#addfiles=/store/user/amarini/Nero/v0.4/Spring14miniaod_PU40bx50/TBHp_HToTauNu_M-200_13TeV_pythia6
-#addfiles=/store/user/amarini/Nero/v0.4/Phys14DR-PU20bx25/TTbar_HBWB_HToTauNu_M-90_13TeV_pythia6
-Files=/store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_26_6_2015
+addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_26_6_2015
 addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M1000_pythia8
 addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M500_pythia8
 #Signal Tau Nu ; Private production
-#addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M200
-#addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M250
-#addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M500
-#addfiles=/store/user/amarini/Nero/v0.5/RunIISpring15DR74/HplusToTauNu-M900
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M200
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M250
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M500
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M900
+### QCD
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+
 ####
 
 Output=ChHiggs.root
@@ -51,6 +68,7 @@ Smear=NONE
 config=ChargedHiggsHW|AddLabel("Hplus_Wh"),AddLabel("SYGluGluToTBHPTohbbW_M500"),AddLabel("SYGluGluToTBHPTohbbW_M1000"),AddLabel('TTJets_TuneCUETP8M1')
 #addConfig=ChargedHiggsHW|AddLabel('WW'),AddLabel('WZ'),AddLabel('TTJets_mtop1695'),AddLabel('TTJets_mtop1755'),AddLabel('DY'),AddLabel('ZZ')
 #config=ChargedHiggsHWAlternative|AddLabel("Hplus_Wh"),AddLabel("SYGluGluToTBHPTohbbW_M500"),AddLabel("SYGluGluToTBHPTohbbW_M1000"),AddLabel('TTJets_TuneCUETP8M1')
+
 #configure Analysis
 #config=AnalysisBase|Init()
 #config=Preselection|
