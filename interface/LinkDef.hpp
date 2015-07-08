@@ -13,6 +13,11 @@
 #pragma link C++ class Event+ ;
 #pragma link C++ class Looper+;
 #pragma link C++ class SmearBase+;
+
+#ifdef HAVE_COMBINE
+    #pragma link C++ class Fitter+;
+#endif
+
 //#pragma link C++ class sigint_exception+;
 
 #endif
