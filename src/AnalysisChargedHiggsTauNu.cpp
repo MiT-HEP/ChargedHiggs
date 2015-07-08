@@ -1,4 +1,5 @@
 #include "interface/AnalysisChargedHiggsTauNu.hpp"
+#include "interface/GeneralFunctions.hpp"
 
 void ChargedHiggsTauNu::Init()
 {
@@ -62,6 +63,13 @@ void ChargedHiggsTauNu::Init()
         Book(    "ChargedHiggsTauNu/Vars/EtMiss_"+l,"EtMiss "+l,1000,0,1000);
         GetHisto("ChargedHiggsTauNu/Vars/EtMiss_"+l,"")->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
 
+        cout <<"[ChargedHiggsTauNu]::[Init]::[INFO] Boking Histo RCollMin_" <<l<<endl;
+        Book(    "ChargedHiggsTauNu/Vars/RCollMin_"+l,"RCollMin "+l,100,0,TMath::Pi());
+        GetHisto("ChargedHiggsTauNu/Vars/RCollMin_"+l,"")->GetXaxis()->SetTitle("R_{coll}^{min}");
+
+        cout <<"[ChargedHiggsTauNu]::[Init]::[INFO] Boking Histo RbbMin_" <<l<<endl;
+        Book(    "ChargedHiggsTauNu/Vars/RbbMin_"+l,"RbbMin "+l,100,0,TMath::Pi());
+        GetHisto("ChargedHiggsTauNu/Vars/RbbMin_"+l,"")->GetXaxis()->SetTitle("R_{bb}^{min}");
 
         cout <<"[ChargedHiggsTauNu]::[Init]::[INFO] Boking Histo Mt_" <<l<<endl;
         Book(    "ChargedHiggsTauNu/Vars/Mt_"+l,"Mt "+l,1000,0,1000);
@@ -155,6 +163,18 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     if ( e->GetMet().Pt() <60 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,5,e->weight());
+
+    double DPhiEtMissJet1=ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi());
+    double DPhiEtMissJet2=ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi());
+    double DPhiEtMissJet3=ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi());
+    double DPhiEtMissTau=ChargedHiggs::deltaPhi(e->GetMet().Phi(),t1->Phi());
+
+    double RbbMin=min(min(sqrt(pow(DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
+    double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
+
+    Fill("ChargedHiggsTauNu/Vars/RbbMin_"+label,systname,RbbMin,e->weight());
+
+    Fill("ChargedHiggsTauNu/Vars/RCollMin_"+label,systname,RCollMin,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
 
