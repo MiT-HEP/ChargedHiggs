@@ -38,7 +38,7 @@ float Event::Mt() {
     float phi_t =  LeadTau() -> Phi();
     float pt_m = met_ . Pt(); 
     float phi_m= met_. Phi(); 
-    return TMath::Sqrt( 2* pt_t * pt_m * TMath::Cos(ChargedHiggs::deltaPhi(phi_t,phi_m) ) );
+    return TMath::Sqrt( 2* pt_t * pt_m * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi_t,phi_m)) ) );
 } 
 
 double Event::weight(){
