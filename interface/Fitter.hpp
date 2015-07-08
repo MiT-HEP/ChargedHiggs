@@ -26,9 +26,9 @@ using namespace std;
 #include "RooDataHist.h"
 #include "RooRealVar.h"
 #include "RooAddPdf.h"
-#include "HiggsAnalysis/CombinedLimit/interface/RooSpline1D.h"
 // do not use namespace for dictionaries
 //using namespace RooFit;
+class RooSpline1D;
 
 
 
@@ -60,6 +60,9 @@ class Fitter{
     vector<float> startFraction_;
 
     map<string, float> fitParameters_;
+    map<string, RooSpline1D*> splines_;
+
+    // -- RooAbsReal* getMeanWithSyst(string name, RooAbsReal*mean);
 
     public:
 
@@ -76,6 +79,7 @@ class Fitter{
     void fitSignal();
     void write();
     void finalModel();
+
 };
 
 // Local Variables:

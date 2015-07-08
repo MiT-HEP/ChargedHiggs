@@ -1,6 +1,8 @@
+#include "interface/Fitter.hpp"
+
 #ifdef HAVE_COMBINE
 
-#include "interface/Fitter.hpp"
+#include "HiggsAnalysis/CombinedLimit/interface/RooSpline1D.h"
 
 using namespace RooFit;
 
@@ -71,6 +73,7 @@ void Fitter::init(){
                         &(xSec_x[0]),
                         &(xSec_y[0])
                         );
+        splines_[ xsecName ] = xsSpline;
         w_ -> import ( *xsSpline  );
     }
 
@@ -101,9 +104,9 @@ void Fitter::fitSignal(){
 
     for( int i=0;i< nGaussians ;++i)
     {
-        RooRealVar *m = new RooRealVar( Form("gaus_mean_%d",i),Form("gaus_mean_%d",i), startMean_[i] );
-        RooRealVar *s = new RooRealVar( Form("gaus_sigma_%d",i), Form("gaus_sigma_%d",i), startSigma_[i] );
-        RooGaussian *gaus = new RooGaussian(Form("gaus_g%d",i),Form("gaus_g%d",i),*x_, *m, *s);
+        RooRealVar *m = new RooRealVar( Form("fitmodel_gaus_mean_%d",i),Form("fitmodel_gaus_mean_%d",i), startMean_[i] );
+        RooRealVar *s = new RooRealVar( Form("fitmodel_gaus_sigma_%d",i), Form("fitmodel_gaus_sigma_%d",i), startSigma_[i] );
+        RooGaussian *gaus = new RooGaussian(Form("fitmodel_gaus_g%d",i),Form("fitmodel_gaus_g%d",i),*x_, *m, *s);
 
         v_means.push_back(m);
         v_sigmas.push_back(s);
@@ -112,7 +115,7 @@ void Fitter::fitSignal(){
 
         if (i != nGaussians-1) // sum to 1
         {
-        RooRealVar *f = new RooRealVar( Form("gaus_frac_%d",i) ,Form("gaus_frac_%d",i) , startFraction_[i], 0.01,1.0 );
+        RooRealVar *f = new RooRealVar( Form("fitmodel_gaus_frac_%d",i) ,Form("fitmodel_gaus_frac_%d",i) , startFraction_[i], 0.01,1.0 );
         v_fracs.push_back(f);
         coeffs -> add(   *f  ) ;
         }
@@ -177,6 +180,7 @@ void Fitter::fitSignal(){
                         &(x[0]),
                         &(mean[0])
                         );
+            splines_[ splname ] = meanSpline;
             w_ -> import ( *meanSpline  );
             splname= Form("spline_cat%d_sigma",cat);
             RooSpline1D *sigmaSpline = new RooSpline1D(
@@ -187,6 +191,7 @@ void Fitter::fitSignal(){
                         &(x[0]),
                         &(sigma[0])
                         );
+            splines_[ splname ] = sigmaSpline;
             w_ -> import ( *sigmaSpline  );
             if (i =nGaussians -1 ){
                 splname= Form("spline_cat%d_frac",cat);
@@ -198,6 +203,7 @@ void Fitter::fitSignal(){
                         &(x[0]),
                         &(frac[0])
                         );
+                splines_[ splname ] = fracSpline;
                 w_ -> import ( *fracSpline  );
             } // not last gaus
         } // nGaussians
@@ -205,10 +211,48 @@ void Fitter::fitSignal(){
     return;
 }
 
-void finalModel(){
+// -- RooAbsReal* getMeanWithSyst(string name,RooAbsReal * mean){
+// --     // Foreseen to add systematics
+// --     RooArgList *depends = new RooArgList();
+// --     string formula = "@0 ";
+// --     depends -> add(*mean);
+// -- 
+// --     RooFormulaVar *formVar= new RooFormulaVar(name.c_str(), name.c_str(), formula.c_str(), depends);
+// --     return formVar;
+// -- }
+
+void Fitter::finalModel(){
     // -- Save final model 
     // final model uses splines to get the values of the multigaussians
     // it will also include nuisances variables if necessary
+    //
+    for( int cat=0;cat<int() ;++cat)
+    {
+        RooArgList *coeffs = new RooArgList();
+        RooArgList *gaussians = new RooArgList();
+
+        for( int i=0;i< nGaussians ;++i)
+        {
+
+            RooAbsReal *m =  splines_[  Form("spline_cat%d_mean",cat) ] ;
+            RooAbsReal *s =  splines_[  Form("spline_cat%d_sigma",cat) ] ;
+            RooGaussian *gaus = new RooGaussian(Form("gaus_g%d",i),Form("gaus_g%d",i),*x_, *m, *s);
+
+
+            gaussians -> add( *gaus );
+
+            if (i != nGaussians-1) // sum to 1
+            {
+            RooAbsReal *f = splines_ [  Form("spline_cat%d_frac",cat) ];
+            coeffs -> add(   *f  ) ;
+            }
+        }
+
+        string name = Form("pdf_sigmodel_cat%d",cat);
+        // ------------------------------------------------------------------------------\/recursive
+        RooAddPdf *sigModel = new RooAddPdf(name.c_str(),name.c_str(),*gaussians,*coeffs,true);
+        w_ -> import( *sigModel );
+    }
 
 }
 
