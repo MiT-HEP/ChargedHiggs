@@ -230,7 +230,7 @@ for iJob in range(0,opts.njobs):
 	cmd = "rm " + basedir + "/sub%d.fail 2>&1 >/dev/null"%iJob
 	call(cmd,shell=True)
 
-	sh.write('time > %s/sub%d.run\n'%(basedir,iJob))
+	sh.write('date > %s/sub%d.run\n'%(basedir,iJob))
 	sh.write('rm %s/sub%d.done\n'%(basedir,iJob))
 	sh.write('rm %s/sub%d.pend\n'%(basedir,iJob))
 	sh.write('rm %s/sub%d.fail\n'%(basedir,iJob))

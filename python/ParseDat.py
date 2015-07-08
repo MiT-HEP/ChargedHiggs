@@ -156,6 +156,7 @@ def PrintUsage():
 	print 'pileup = file'
 	print 'pileupRun  = ""/ -1 / 1,10,100,100'
 	print 'pileupLumi = ""/ -1 /  1.2,2.3,4.5 # partial luminosity '
+	print 'branches = brancfile'
 	print 'Analysis = AnalysisBase,Analysis2 ..'
 	print 'Smears = @SmearBase,JER,JES'
 	print 'config = AnalysisBase|a=1,b=2,c(3)'
