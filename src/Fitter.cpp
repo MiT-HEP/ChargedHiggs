@@ -11,7 +11,8 @@ Fitter::Fitter(){
     nGaussians= 3;
     inputMasks.push_back("ChargedHiggsTauNu/Vars/Mt_HplusToTauNu-M%.0f");
     datasetMask_ = "hist_Mt_M%.0f";
-    xsecMask_ = "xsec_Mt_cat%d";
+    //xsecMask_ = "xsec_Mt_cat%d";
+    xsecMask_ = "pdf_sigmodel_cat%d__norm";
     massMask_ = "%.0f";
     writeDatasets_ = true;
     plot_ = true;
@@ -42,6 +43,7 @@ void Fitter::init(){
         {
             string mass = Form(massMask_.c_str() ,m);
             TH1D *h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(), m) ) ;
+            h->Rebin(5); //FIXME REMOVEME
 
             if (h == NULL) cout <<"[Fitter]::[init]::[ERROR] no such histogram: mask='"<<inputMasks[cat]<<"' mass="<<m<<endl;
 
@@ -138,7 +140,7 @@ void Fitter::fitSignal(){
              if (plot_ ) {
                  TCanvas *c = new TCanvas();
                  RooPlot *p = x_ -> frame();
-                 hist_[ name ] -> plotOn(p);
+                 hist_[ name ] -> plotOn(p,DataError(RooAbsData::SumW2));
                  fitModel -> plotOn(p);
                  p -> Draw();
                  c -> SaveAs( Form("%s/fit_mh_%s_cat%d.pdf",plotDir_.c_str(),mass.c_str(),cat) );
@@ -226,7 +228,7 @@ void Fitter::finalModel(){
     // final model uses splines to get the values of the multigaussians
     // it will also include nuisances variables if necessary
     //
-    for( int cat=0;cat<int() ;++cat)
+    for( int cat=0;cat<int(inputMasks.size()) ;++cat)
     {
         RooArgList *coeffs = new RooArgList();
         RooArgList *gaussians = new RooArgList();
@@ -252,7 +254,22 @@ void Fitter::finalModel(){
         // ------------------------------------------------------------------------------\/recursive
         RooAddPdf *sigModel = new RooAddPdf(name.c_str(),name.c_str(),*gaussians,*coeffs,true);
         w_ -> import( *sigModel );
-    }
+        // -- Plot
+        if (plot_ ) {
+            TCanvas *c = new TCanvas();
+            RooPlot *p = x_ -> frame();
+            for(float mh=200;mh<1000;mh+= 50)
+            {
+                mh_ -> setVal(mh);
+                sigModel->plotOn(p);
+            }
+            p -> Draw();
+            c -> SaveAs( Form("%s/interpolation_cat%d.pdf",plotDir_.c_str(),cat) );
+            c -> SaveAs( Form("%s/interpolation_cat%d.png",plotDir_.c_str(),cat) );
+            delete p;
+            delete c;
+           } // end plot
+    } //end cat
 
 }
 
