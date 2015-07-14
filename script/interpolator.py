@@ -19,6 +19,7 @@ extra.add_option("","--inject",type='float',help = "Multiply Signal by factor. [
 parser.add_option_group(extra)
 
 opts, args = parser.parse_args()
+opts.plotDir = "plot/interpolation"
 
 sys.argv=[]
 import ROOT
@@ -231,8 +232,8 @@ if opts.plot:
 	lumi = opts.lumi/1000. ## lumi in fb
 	l.DrawLatex(0.89,.91,"%.1f fb^{-1} (13 TeV)"%lumi)
 
-	c.SaveAs("interpolation.pdf")
-	c.SaveAs("interpolation.png")
+	c.SaveAs(opts.plotDir + "/interpolation.pdf")
+	c.SaveAs(opts.plotDir + "/interpolation.png")
 	fOutput.cd()
 	c.Write()
 
