@@ -32,6 +32,11 @@ TH1D* AnalysisBase::GetHisto(string name,string systname)
     return output_ -> Get(name,systname);	
 }
 
+TH2D* AnalysisBase::GetHisto2D(string name,string systname)
+{
+    return output_ -> Get2D(name,systname);	
+}
+
 // vector<string> AnalysisBase::AllLabel()
 // {
 //     vector<string> R;

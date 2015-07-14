@@ -11,6 +11,7 @@ addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/TTJets_TuneCUETP8M1_13T
 ### WW/WZ/ZZ###
 addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WW_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/ZZ_TuneCUETP8M1_13TeV-pythia8
 ### SIGNAL ###
 #addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015
 #Signal Tau Nu ; Private production
@@ -58,7 +59,7 @@ Lumi=1
 Smear=NONE
 
 config=ChargedHiggsTauNu|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
-addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('TTJets'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
+addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
 #configure Analysis
 #config=AnalysisBase|Init()
 #config=Preselection|
