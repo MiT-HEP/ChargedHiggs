@@ -76,6 +76,23 @@ Jet * Event::GetJet( int iJet )
     return jets_[ valid[iJet].second];
 }
 
+// Get Object functions
+Jet * Event::GetCentralJet( int iJet ) 
+{ 
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<jets_.size() ;++i)
+    {
+        if ( jets_[i]->IsCentralJet()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iJet  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return jets_[ valid[iJet].second];
+}
+
 Jet * Event::GetBjet( int iJet ) 
 { 
     vector<pair<float,int> > valid; // pt, idx

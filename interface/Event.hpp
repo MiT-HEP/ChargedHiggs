@@ -42,6 +42,7 @@ class Event{
     // This functions should check if the objects are valid
     // Get NULL in case of failure
     Jet * GetJet( int iJet );
+    Jet * GetCentralJet( int iJet );
     Jet * GetBjet( int iJet );
     Tau * GetTau( int iTau );
     Lepton * GetLepton( int iLep );
@@ -54,6 +55,7 @@ class Event{
     inline float Rho() { return rho_; }
     inline float Ht()   { float ht=0 ; for(auto j : jets_ ) if( j->IsJet()  ) ht+= j->Pt() ; return ht;}
     inline int   Njets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsJet()  ) n+=1; return n; }
+    inline int   NcentralJets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsCentralJet()  ) n+=1; return n; }
     inline int   Bjets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsBJet() ) n+=1; return n; }
     inline int   Ntaus(){ int   n=0  ; for(auto t : taus_ ) if( t->IsTau()  )  n+=1; return n; }
     inline int   Nleps(){ int   n=0  ; for(auto t : leps_ ) if( t->IsLep()  )  n+=1; return n; }
