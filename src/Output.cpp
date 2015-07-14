@@ -131,6 +131,7 @@ void Output::Book(string name, string title,int nBins, double xmin, double xmax)
     histos_ [name] = new TH1D(name.c_str(),
             title.c_str(), 
             nBins,xmin,xmax); 
+    histos_ [name] -> Sumw2();
 }
 
 void Output::Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2, double ymin,double ymax)
@@ -143,6 +144,7 @@ void Output::Book2D(string name, string title,int nBins, double xmin, double xma
             nBins,xmin,xmax,
             nBins2,ymin,ymax
             ); 
+    histos2D_ [name] -> Sumw2();
 }
 
 void Output::Book(string name, string title,int nBins, double *xbound)
@@ -154,6 +156,7 @@ void Output::Book(string name, string title,int nBins, double *xbound)
             name.c_str(),
             title.c_str(), 
             nBins,xbound); 
+    histos_ [name ] -> Sumw2();
 }
 
 TH1D* Output::Get(string name,string systname)
