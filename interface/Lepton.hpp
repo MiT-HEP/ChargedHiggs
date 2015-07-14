@@ -7,6 +7,7 @@ class Lepton : virtual public Object
 {
     protected:
         float isocut_;
+        float ptcut_;
     public:
         Lepton() ;
 
@@ -15,7 +16,9 @@ class Lepton : virtual public Object
         int type;// abspdgid 11 o 13 
 
         virtual inline int IsLep(){ 
-            if (iso> isocut_) return 0;
+            if ( iso > isocut_) return 0;
+            if ( Pt() < ptcut_ ) return 0;
+
             return 1;
         }
         virtual inline bool IsElectron(){ return IsLep() and (type == 11); }

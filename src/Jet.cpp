@@ -11,6 +11,7 @@ Jet::Jet() : Object(){
     bcut_=0.5; // define bjets
     ptcut_=30.;
     etacut_=4.7;
+    etacutcentral_=2.4;
 }
 
 // Local Variables:

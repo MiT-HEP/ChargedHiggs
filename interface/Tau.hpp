@@ -11,7 +11,7 @@ class Tau: virtual public Object,
 
 
     public:
-    Tau() : Lepton() { idcut_ = 0.5; match = -999; ; isocut_=100; iso2 = -999; id_ele= -1; id_mu=-1;}
+    Tau() ;
     float id;
     float iso2;
     int id_ele;
