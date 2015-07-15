@@ -8,7 +8,7 @@ Lepton::Lepton() : Object() {
     type=0;
     tightId=0;
     ptcut_=20;
-    etacut_=4.7;
+    etacut_=2.5;
 }
 
 // Local Variables:

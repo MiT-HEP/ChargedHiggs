@@ -14,7 +14,7 @@ Jet::Jet() : Object(){
     // -- this cut should remain constant
     bcut_=0.814; // define bjets
     ptcut_=20.;
-    etacut_=4,7;
+    etacut_=2.5;
     betacut_=2.5;
     puidcut_=0;
 
