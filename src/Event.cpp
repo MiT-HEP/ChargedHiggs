@@ -38,7 +38,7 @@ float Event::Mt() {
     float phi_t =  LeadTau() -> Phi();
     float pt_m = met_ . Pt(); 
     float phi_m= met_. Phi(); 
-    return TMath::Sqrt( 2* pt_t * pt_m * TMath::Cos(ChargedHiggs::deltaPhi(phi_t,phi_m) ) );
+    return TMath::Sqrt( 2* pt_t * pt_m * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi_t,phi_m)) ) );
 } 
 
 double Event::weight(){
@@ -66,6 +66,23 @@ Jet * Event::GetJet( int iJet )
     for(int i = 0 ; i<jets_.size() ;++i)
     {
         if ( jets_[i]->IsJet()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iJet  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return jets_[ valid[iJet].second];
+}
+
+// Get Object functions
+Jet * Event::GetCentralJet( int iJet ) 
+{ 
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<jets_.size() ;++i)
+    {
+        if ( jets_[i]->IsCentralJet()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
     }
 
     if (valid.size() == 0 ) return NULL;

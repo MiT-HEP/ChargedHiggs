@@ -9,6 +9,7 @@ class Lepton : virtual public Object
         float isocut_;
         float ptcut_;
         float etacut_;
+
     public:
         Lepton() ;
 

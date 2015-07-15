@@ -27,6 +27,7 @@ class AnalysisBase
     void Fill(string name, string syst , double value, double weight=1);
     void Fill2D(string name, string syst , double valueX,double valueY, double weight=1);
     TH1D* GetHisto(string name, string systname);
+    TH2D* GetHisto2D(string name, string systname);
 
     vector<string> labels;
     inline vector<string>& AllLabel(){return labels;}

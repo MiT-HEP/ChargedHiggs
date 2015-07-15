@@ -13,7 +13,9 @@ class Jet : virtual public Object
     float betacut_ ; // ** eta cut on the accepted bjets
     float bcut_; /// ** bcut on the bJets discr
     float puidcut_;
+    float etacutcentral_;
     public:
+
     Jet() ; 
 
     int isValid; // rejected by DR
@@ -37,14 +39,21 @@ class Jet : virtual public Object
     virtual inline void  clearSyst(){syst = 0;bsyst=0; isValid=1;}; // reset smearing
     // ---
     virtual inline int   IsObject(){return IsJet();}
+
     inline int IsJet() {
         if (Pt() < ptcut_ || fabs(Eta()) > etacut_) return 0; 
         else return 1;
     }
+
     inline int IsBJet(){
         if( bdiscr < bcut_ || !IsJet() || fabs(Eta()) > betacut_) return 0;
         else return 1;
-       }
+    }
+
+    inline int IsCentralJet() {
+        if (not IsJet() || fabs(Eta()) >= etacutcentral_) return 0;
+        else return 1;
+    }
 
     inline void computeValidity( Object* o, float dR = 0.4)
     {
