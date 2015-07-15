@@ -40,6 +40,7 @@ class Jet : virtual public Object
     inline int IsCentralJet() {
         if ( not IsJet() ) return 0;
         if ( fabs(Eta()) >= etacutcentral_ ) return 0;
+        return 1;
     }
 
     inline int IsBJet(){ if( bdiscr > bcut_ + bsyst*bunc and IsJet() )   return 1; return 0;}
