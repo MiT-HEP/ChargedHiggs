@@ -67,8 +67,8 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	sh.write('cd %s\n'%(os.getcwd() ) )
 	sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
 
-	print " WORK-AROUND COMBINE: FIXME!!! "
-	sh.write('cd ~amarini/work/ProductionJanuary2014/CMSSW_6_1_1_CategoryFull/src\n')
+	#print " WORK-AROUND COMBINE: FIXME!!! "
+	#sh.write('cd ~amarini/work/ProductionJanuary2014/CMSSW_6_1_1_CategoryFull/src\n')
 	sh.write('eval `scramv1 runtime -sh`\n') # cmsenv
 
 	## Touch control files
