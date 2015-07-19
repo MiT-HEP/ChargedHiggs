@@ -289,9 +289,10 @@ def Combine(h1,h2,postfix="",dir="/tmp/%(USER)s"):
 	h1.Clone("sig").Write()
 	h2.Clone("bkg").Write()
 	data= h1.Clone("data") ## no data, but needed to convert datacard into ws, I put an asimov instead
-	data.Add(bkg)
+	data.Add(h2)
 	data.Write()
 	f.Close()
+	print "writing datacard in ",wdir+"datacard%s.txt"%postfix 
 	dat = open(wdir+"datacard%s.txt"%postfix ,"w")
 
 	dat.write("-------------------------------------\n")
@@ -343,8 +344,8 @@ def CleanForCombine(px_s,px_b):
 	RemoveSpikes(px_s,False,3)
 	RemoveSpikes(px_b,False,3)
 
-	px_s.Smooth(20)
-	px_b.Smooth(20)
+	#px_s.Smooth(20)
+	#px_b.Smooth(20)
 	return 
 
 
