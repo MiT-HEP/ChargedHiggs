@@ -1,5 +1,6 @@
 
 import os,sys,re,time
+import json
 from glob import glob
 from optparse import OptionParser
 parser = OptionParser()
@@ -24,6 +25,21 @@ if opts.verbose: print "-> Base Path is " + basepath
 #os.environ['LD_LIBRARY_PATH'] =  basepath + "../NeroProducer/Core/bin/" + ":" + os.environ['LD_LIBRARY_PATH']
 #sys.path.insert(0,basepath + "../NeroProducer/Core/bin/")
 #sys.path.insert(0,os.getcwd())
+
+############# easier to parse json files in python
+def getJson(fname):
+    try:
+        jstring = open(fname).read()
+    except IOError:
+        jstring = fname
+    return json.loads( jstring )
+
+def applyJson(obj,fname):
+    goodlumis = getJson( fname )
+    
+    for run in goodlumis.keys():
+        for lumis in goodlumis[run]:
+            obj.addGoodLumi(int(run), int(lumis[0]), int(lumis[1]) )
 
 ################ IMPORT ROOT  ################
 if opts.verbose: print "-> Importing root",
@@ -155,6 +171,8 @@ for smear in cfg['Smear']:
 		if opts.verbose: print "-> Adding smear from name '"+smear+"'"
 		loop.AddSmear(smear)
 
+
+
 ## add analysis
 for analysis in cfg['Analysis']:
 	if opts.verbose: print '-> Adding analysis',analysis
@@ -165,12 +183,18 @@ for analysis in cfg['Analysis']:
 		## CHECK ATTRIBUTE
 		check = key.split('=')[0].split('(')[0]
 		#if not hasattr( analyzer, check):
-		try: 
-			getattr(analyzer, check)
-		except AttributeError:
-			print "WARNING Analyzer",analysis,"do not have attribute",check
-		##
-		exec('analyzer.'+key)
+		if check.startswith('@'):
+			## global function
+			check = check[1:]
+			check = re.sub("$OBJ","analyzer",check)
+			exec( check ) 
+		else:
+			try: 
+				getattr(analyzer, check)
+			except AttributeError:
+				print "WARNING Analyzer",analysis,"do not have attribute",check
+			##
+			exec('analyzer.'+key)
 	loop.AddAnalysis(analyzer)
 
 if opts.verbose: print "-> Init Analysis"
