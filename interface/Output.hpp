@@ -10,6 +10,7 @@
 using namespace std;
 
 // do we want it implemented as singleton ?
+class TmvaTrainer;
 
 class Output{
     protected:
@@ -39,6 +40,8 @@ class Output{
         virtual void Fill2D(string name, string syst , double valueX, double valueY, double weight=1);
         TH1D* Get(string name,string systname);
         TH2D* Get2D(string name,string systname);
+
+        inline TFile * GetFile(){ return file_;} // TMVA wants the file pointer
 
 };
 

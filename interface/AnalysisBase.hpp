@@ -18,6 +18,7 @@ class AnalysisBase
     virtual void inline SetOutput( Output *o ) { output_ = o ;}
     virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}
     virtual void Init(){}
+    virtual void End(){} // before closing files and writing
     virtual const string name(){return "AnalysisBase";}
 
     // call output_->Book, but add something to name
@@ -34,6 +35,8 @@ class AnalysisBase
     string GetLabel(Event *e);
     inline void AddLabel(string s) {labels.push_back(s);}
     inline void AddLabels(vector<string> &v) { for(string &s : v ) labels.push_back(s);}
+
+    inline TFile* GetOutputFile(){ return output_->GetFile() ;} // TMVA wants the file pointer
 };
 
 

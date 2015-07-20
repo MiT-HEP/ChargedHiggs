@@ -155,7 +155,11 @@ void Looper::Loop()
         Close();
         throw e; 
     }
+    //call end procedures for the analyis
+    for(auto a : analysis_)
+        a->End();
     // save output
+
     Write();
     Close();
     return;	
