@@ -1,47 +1,10 @@
 #include "interface/TmvaTrainer.hpp"
 
-#define VERBOSE 2
+#define VERBOSE 0
+
 #include <iostream>
 using namespace std;
-// ----------------------------- DATA STORE -----------------------
-template<class T>
-void DataStore::Set(string name, T value)
-{
-   if( valuesD_.find( name ) != valuesD_.end() ) 
-            valuesD_[name] = double( value) ;
-   if( valuesF_.find( name ) != valuesF_.end() ) 
-            valuesF_[name] = float( value) ;
-   if( valuesI_.find( name ) != valuesI_.end() ) 
-            valuesI_[name] = int( value) ;
-   return ;
 
-}
-
-bool DataStore::Exists(string name)
-{
-   if( valuesD_.find( name ) != valuesD_.end() ) return true;
-   if( valuesF_.find( name ) != valuesF_.end() ) return true;
-   if( valuesI_.find( name ) != valuesI_.end() ) return true;
-   return false;
-}
-void DataStore::Add(string name, char type)
-{
-    if (Exists(name)) return;
-    switch (type)
-    {
-        case 'F': valuesF_[name] = 0.0;break;
-        case 'D': valuesD_[name] = 0.0;break;
-        case 'I': valuesI_[name] = 0;break;
-    }
-    return;
-}
-void* DataStore::GetPointer(string name){
-   if( valuesD_.find( name ) != valuesD_.end() ) return &valuesD_[ name ];
-   if( valuesF_.find( name ) != valuesF_.end() ) return &valuesF_[ name ];
-   if( valuesI_.find( name ) != valuesI_.end() ) return &valuesI_[ name ];
-   return NULL;
-}
-// -------------------------------------------------------------------------------
 
 TmvaTrainer::TmvaTrainer() : AnalysisBase(){
     factory_=NULL;
@@ -56,7 +19,7 @@ void TmvaTrainer::AddVariable(string name, char type ,double xmin,double xmax)
 {
     cout<<"[TmvaTrainer]::[AddVariable]::[INFO] : "<<name<<" '"<<type<<"' "<<xmin<<" -- "<<xmax<<endl;
     factory_ -> AddVariable(name.c_str(),type,xmin,xmax); 
-    tree_->Branch(name.c_str(), varsValues_.GetPointer(name), (name+"/" + type).c_str());
+    Branch("tmva_tree",name,type);
 
 }
 
@@ -70,38 +33,37 @@ int TmvaTrainer::analyze(Event*e, string systname)
 
     if (label=="Data" ) return 0;
 
-    if(VERBOSE>1) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[2] Event is none of Syst and data"<<endl;
-
     if (e->Ntaus() <=0 ) return 0;
     if (e->Nleps() >0 ) return 0;
 
-    if(VERBOSE>1) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[2] Event has a tau and no lep"<<endl;
 
     Jet* j1 = e->LeadJet(); 
     Jet * bj1 = e->LeadBjet();
     Tau* t1 = e->LeadTau();
 
-    varsValues_.Set("NJets",e->Njets());
-    varsValues_.Set("NBJets",e->Bjets());
-    varsValues_.Set("etat1",t1->Eta());
-    varsValues_.Set("phit1",t1->Phi());
+    SetTreeVar("NJets",e->Njets());
+    SetTreeVar("NBJets",e->Bjets());
+    SetTreeVar("etat1",t1->Eta());
+    SetTreeVar("phit1",t1->Phi());
+    SetTreeVar("weight",e->weight());
 
-    if (j1 != NULL ) varsValues_.Set("pTj1",j1->Pt());
-              else  varsValues_.Set("pTj1",0);
-    if (bj1 != NULL ) varsValues_.Set("pTb1",bj1->Pt());
-              else  varsValues_.Set("pTb1",0);
+    if (j1 != NULL ) SetTreeVar("pTj1",j1->Pt());
+              else  SetTreeVar("pTj1",0);
+    if (bj1 != NULL ) SetTreeVar("pTb1",bj1->Pt());
+              else  SetTreeVar("pTb1",0);
 
 
-
-    if(VERBOSE>1) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[2] Putting in the right place:"<<e->eventNum()<<endl;
-    if (label.find("Hplus") )  // SIG
+    if (label.find("Hplus") !=string::npos)  // SIG
         {
-            varsValues_.Set("sig",1);
+            SetTreeVar("sig",1);
         }
     else{ // BKG
-            varsValues_.Set("sig",0);
+            SetTreeVar("sig",0);
         }
-    tree_->Fill();
+
+    if(VERBOSE>1) PrintTreeVar(); 
+    FillTree("tmva_tree");
+    return 0;
 }
 
 void TmvaTrainer::Init(){
@@ -109,8 +71,7 @@ void TmvaTrainer::Init(){
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[Init]::[DEBUG]::[1] InstanceTMVA "<<endl; 
 
     // -- Create a tree for TMVA
-    GetOutputFile()->cd();
-    tree_=new TTree("tmva_tree","tmva_tree");
+    InitTree("tmva_tree");
 
     // book factory
     TMVA::Tools::Instance();
@@ -129,8 +90,10 @@ void TmvaTrainer::Init(){
     AddVariable("phit1",'F',-10,10);
 
     // tell tmva about sig and bkg
-    varsValues_.Add("sig",'I');
-    tree_->Branch("sig",varsValues_.GetPointer("sig"),"sig/I");
+
+    SetTreeVar("sig",'I');
+    // tell tmva about weight
+    SetTreeVar("weight",'D');
 
 }
 

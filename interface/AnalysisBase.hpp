@@ -37,6 +37,13 @@ class AnalysisBase
     inline void AddLabels(vector<string> &v) { for(string &s : v ) labels.push_back(s);}
 
     inline TFile* GetOutputFile(){ return output_->GetFile() ;} // TMVA wants the file pointer
+    // Tree Operations ---- 
+    inline void InitTree(string name){ output_->InitTree(name);}
+    inline void Branch(string tree,string name,char type){ output_->Branch(tree,name,type);}
+    template<class T>
+    inline void SetTreeVar(string name, T value) { output_->SetTreeVar(name,value);}
+    inline void PrintTreeVar(){output_->PrintTreeVar() ;}
+    inline void FillTree(string tree){output_->FillTree(tree);}
 };
 
 

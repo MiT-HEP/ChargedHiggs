@@ -8,21 +8,6 @@
 #include "interface/AnalysisBase.hpp"
 
 
-class DataStore{
-        map<string,double> valuesD_;
-        map<string,float> valuesF_;
-        map<string,int >  valuesI_;
-
-    public:
-
-        void Add(string name, char type);
-        bool Exists(string name);
-        void* GetPointer(string name);
-        
-        template<class T>
-        void Set(string name, T value);
-
-};
 
 class TmvaTrainer : virtual public AnalysisBase
 {
