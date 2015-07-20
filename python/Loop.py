@@ -71,6 +71,7 @@ for file in cfg['Files']:
 	if opts.verbose: print "Adding file: '"+f+"'"
 	loop.AddToChain(f)
 
+if opts.verbose: print "-> InitTree"
 loop.InitTree();
 
 ## activate branches
