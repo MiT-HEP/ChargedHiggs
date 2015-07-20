@@ -10,7 +10,6 @@ class JsonAnalysis : virtual public AnalysisBase
     /*Select Data pass a JSON File
     */
 
-    void ReadJson();
     bool CheckLumi(long run, int lumi);
     std::map<long, std::vector<std::pair<int,int> > > goodLumis_;
 
