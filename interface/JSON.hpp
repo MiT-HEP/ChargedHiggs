@@ -7,18 +7,17 @@ using namespace std;
 
 class JsonAnalysis : virtual public AnalysisBase
 {
-	/*Select Data pass a JSON File
-	 */
+    /*Select Data pass a JSON File
+    */
 
-	void ReadJson();
-	bool CheckLumi(long run, int lumi);
-	std::map<long, std::vector<std::pair<int,int> > > goodLumis_;
+    void ReadJson();
+    bool CheckLumi(long run, int lumi);
+    std::map<long, std::vector<std::pair<int,int> > > goodLumis_;
 
 
-public:
+    public:
 
     virtual int analyze(Event*,string systname);
-    virtual void Init(){}
     virtual const string name(){return "JsonAnalysis";}
 
     void addGoodLumi(long run, int lumi1, int lumi2);

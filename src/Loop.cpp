@@ -211,6 +211,8 @@ void Looper::FillEventInfo(){
 #endif
     event_ -> isRealData_ = e->isRealData;
     event_ -> runNum_ = e->runNum;
+    event_ -> lumiNum_ = e->lumiNum;
+    event_ -> eventNum_ = e->eventNum;
     event_ -> rho_ = e->rho;
 
 }
