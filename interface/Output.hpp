@@ -67,12 +67,16 @@ class Output{
         DataStore varValues_;
         map<string,TTree*> trees_;
     public:
+
         inline void InitTree(string name){ file_->cd(); trees_[name]= new TTree(name.c_str(),name.c_str());}
         inline void Branch(string tree,string name, char type){ varValues_.Add(name,type); trees_[tree]->Branch(name.c_str(), varValues_.GetPointer(name), (name+"/"+type).c_str() ) ;}
         template<class T>
         inline void SetTreeVar(string name, T value) { varValues_.Set(name,value);}
         inline void FillTree(string tree){ trees_[tree]->Fill();}
         inline void PrintTreeVar(){ varValues_.Print() ;}
+
+        inline TTree* GetTree(string tree){ return trees_[tree] ;}
+        inline void PrintTree(string tree){ trees_[tree]->Print();}
 
 };
 

@@ -14,7 +14,6 @@ class TmvaTrainer : virtual public AnalysisBase
     private:
         TMVA::Factory *factory_;
         TFile *fout_;
-        TTree *tree_;
         vector<Double_t> variables_;
 
         DataStore varsValues_;

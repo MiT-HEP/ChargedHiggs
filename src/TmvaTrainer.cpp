@@ -25,7 +25,7 @@ void TmvaTrainer::AddVariable(string name, char type ,double xmin,double xmax)
 
 int TmvaTrainer::analyze(Event*e, string systname)
 {
-    if(VERBOSE>1) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[2] Getting Event:"<<e->eventNum()<<endl;
+    if(VERBOSE>2) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[2] Getting Event:"<<e->eventNum()<<endl;
 
     if( systname !="" and systname !="NONE" ) return 0;
 
@@ -42,9 +42,12 @@ int TmvaTrainer::analyze(Event*e, string systname)
     Tau* t1 = e->LeadTau();
 
     SetTreeVar("NJets",e->Njets());
-    SetTreeVar("NBJets",e->Bjets());
+    SetTreeVar("NCJets",e->NcentralJets());
+    SetTreeVar("BJets",e->Bjets());
     SetTreeVar("etat1",t1->Eta());
     SetTreeVar("phit1",t1->Phi());
+    SetTreeVar("phimet",e->GetMet().Phi());
+    SetTreeVar("ht",e->Ht());
     SetTreeVar("weight",e->weight());
 
     if (j1 != NULL ) SetTreeVar("pTj1",j1->Pt());
@@ -77,32 +80,39 @@ void TmvaTrainer::Init(){
     TMVA::Tools::Instance();
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[Init]::[DEBUG]::[1] Construct Factory "<<endl; 
     factory_ = new TMVA::Factory("TMVAClassification", GetOutputFile(),
-            "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
+            //"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
+            "!V:!Silent:Color:DrawProgressBar:Transformations=I;P;G,D:AnalysisType=Classification");
 
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[Init]::[DEBUG]::[1] AddVariables "<<endl; 
    
    
     AddVariable("NJets",'I',0,10);    
+    AddVariable("NCJets",'I',0,10);    
     AddVariable("BJets",'I',0,10);    
     AddVariable("pTj1",'F',0,6500);
     AddVariable("pTb1",'F',0,6500);
     AddVariable("etat1",'F',-10,10);
+    AddVariable("phimet",'F',-10,10);
     AddVariable("phit1",'F',-10,10);
+    AddVariable("ht",'F',0,10000);
+
 
     // tell tmva about sig and bkg
 
-    SetTreeVar("sig",'I');
+    Branch("tmva_tree","sig",'I');
     // tell tmva about weight
-    SetTreeVar("weight",'D');
+    Branch("tmva_tree","weight",'D');
+    factory_->SetWeightExpression("weight");
 
 }
 
 void TmvaTrainer::End(){
 
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] AddSignal and Bkg "<<endl; 
+    if(VERBOSE>0) PrintTree("tmva_tree");
 
-    factory_->AddSignalTree(tree_);
-    factory_->AddBackgroundTree(tree_);
+    factory_->AddSignalTree( GetTree("tmva_tree"));
+    factory_->AddBackgroundTree( GetTree("tmva_tree"));
      
     TCut sigCut ("sig > 0.5");
     TCut bgCut  ("sig <= 0.5");
@@ -112,7 +122,7 @@ void TmvaTrainer::End(){
     
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] Book Methods "<<endl; 
     factory_ ->BookMethod(TMVA::Types::kBDT, "BDT",
-            "!H:!V:NTrees=850:nEventsMin=150:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning"
+            "!H:!V:NTrees=850:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning"
             );
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] Train"<<endl;
     factory_ -> TrainAllMethods();

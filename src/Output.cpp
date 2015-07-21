@@ -214,9 +214,9 @@ void* DataStore::GetPointer(string name){
 
 void DataStore::Print(){
     cout <<" ---- DATASTORE ----"<<endl;
-    for(auto p :valuesD_ ) cout<<p.first<<": "<<p.second<<endl;
-    for(auto p :valuesF_ ) cout<<p.first<<": "<<p.second<<endl;
-    for(auto p :valuesI_ ) cout<<p.first<<": "<<p.second<<endl;
+    for(auto p :valuesD_ ) cout<<p.first<<"| 'D': "<<p.second<<endl;
+    for(auto p :valuesF_ ) cout<<p.first<<"| 'F': "<<p.second<<endl;
+    for(auto p :valuesI_ ) cout<<p.first<<"| 'I': "<<p.second<<endl;
     cout <<" -------------------"<<endl;
 }
 // -------------------------------------------------------------------------------

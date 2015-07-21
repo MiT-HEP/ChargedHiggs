@@ -44,6 +44,8 @@ class AnalysisBase
     inline void SetTreeVar(string name, T value) { output_->SetTreeVar(name,value);}
     inline void PrintTreeVar(){output_->PrintTreeVar() ;}
     inline void FillTree(string tree){output_->FillTree(tree);}
+    inline void PrintTree(string tree){output_->PrintTree(tree);}
+    inline TTree* GetTree(string tree){ return output_->GetTree(tree);}
 };
 
 
