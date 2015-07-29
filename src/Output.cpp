@@ -122,6 +122,11 @@ void Output::Write(){
             m.second->Write( m.first.c_str()) ; 
         }
     }
+    for(auto m : trees_) 
+    {
+            file_->cd();
+            m.second->Write( m.first.c_str()) ; 
+    }
 }
 
 void Output::Book(string name, string title,int nBins, double xmin, double xmax)
@@ -178,6 +183,43 @@ bool Output::Exists(string name){
     if ( histos_.find(name) != histos_.end() ) return true;
     return false;
 }
+
+
+// ----------------------------- DATA STORE -----------------------
+
+bool DataStore::Exists(string name)
+{
+   if( valuesD_.find( name ) != valuesD_.end() ) return true;
+   if( valuesF_.find( name ) != valuesF_.end() ) return true;
+   if( valuesI_.find( name ) != valuesI_.end() ) return true;
+   return false;
+}
+void DataStore::Add(string name, char type)
+{
+    if (Exists(name)) return;
+    switch (type)
+    {
+        case 'F': valuesF_[name] = 0.0;break;
+        case 'D': valuesD_[name] = 0.0;break;
+        case 'I': valuesI_[name] = 0;break;
+    }
+    return;
+}
+void* DataStore::GetPointer(string name){
+   if( valuesD_.find( name ) != valuesD_.end() ) return &valuesD_[ name ];
+   if( valuesF_.find( name ) != valuesF_.end() ) return &valuesF_[ name ];
+   if( valuesI_.find( name ) != valuesI_.end() ) return &valuesI_[ name ];
+   return NULL;
+}
+
+void DataStore::Print(){
+    cout <<" ---- DATASTORE ----"<<endl;
+    for(auto p :valuesD_ ) cout<<p.first<<"| 'D': "<<p.second<<endl;
+    for(auto p :valuesF_ ) cout<<p.first<<"| 'F': "<<p.second<<endl;
+    for(auto p :valuesI_ ) cout<<p.first<<"| 'I': "<<p.second<<endl;
+    cout <<" -------------------"<<endl;
+}
+// -------------------------------------------------------------------------------
 
 // Local Variables:
 // mode:c++

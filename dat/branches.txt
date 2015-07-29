@@ -16,3 +16,6 @@ metP4
 metPt*
 rho
 puTrueInt
+runNum
+lumiNum
+eventNum

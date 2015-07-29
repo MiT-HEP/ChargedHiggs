@@ -32,12 +32,16 @@ class Event{
     Met met_;
     int isRealData_;
     int runNum_;
+    int lumiNum_;
+    int eventNum_;
     float rho_;
 
     public:
     Weight weight_;
 
     inline int runNum(){return runNum_; }
+    inline int lumiNum(){return lumiNum_; }
+    inline int eventNum(){return eventNum_; }
     
     // This functions should check if the objects are valid
     // Get NULL in case of failure

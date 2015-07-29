@@ -155,7 +155,11 @@ void Looper::Loop()
         Close();
         throw e; 
     }
+    //call end procedures for the analyis
+    for(auto a : analysis_)
+        a->End();
     // save output
+
     Write();
     Close();
     return;	
@@ -211,6 +215,8 @@ void Looper::FillEventInfo(){
 #endif
     event_ -> isRealData_ = e->isRealData;
     event_ -> runNum_ = e->runNum;
+    event_ -> lumiNum_ = e->lumiNum;
+    event_ -> eventNum_ = e->eventNum;
     event_ -> rho_ = e->rho;
 
 }

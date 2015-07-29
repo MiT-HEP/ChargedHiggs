@@ -18,6 +18,7 @@ class AnalysisBase
     virtual void inline SetOutput( Output *o ) { output_ = o ;}
     virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}
     virtual void Init(){}
+    virtual void End(){} // before closing files and writing
     virtual const string name(){return "AnalysisBase";}
 
     // call output_->Book, but add something to name
@@ -34,6 +35,17 @@ class AnalysisBase
     string GetLabel(Event *e);
     inline void AddLabel(string s) {labels.push_back(s);}
     inline void AddLabels(vector<string> &v) { for(string &s : v ) labels.push_back(s);}
+
+    inline TFile* GetOutputFile(){ return output_->GetFile() ;} // TMVA wants the file pointer
+    // Tree Operations ---- 
+    inline void InitTree(string name){ output_->InitTree(name);}
+    inline void Branch(string tree,string name,char type){ output_->Branch(tree,name,type);}
+    template<class T>
+    inline void SetTreeVar(string name, T value) { output_->SetTreeVar(name,value);}
+    inline void PrintTreeVar(){output_->PrintTreeVar() ;}
+    inline void FillTree(string tree){output_->FillTree(tree);}
+    inline void PrintTree(string tree){output_->PrintTree(tree);}
+    inline TTree* GetTree(string tree){ return output_->GetTree(tree);}
 };
 
 

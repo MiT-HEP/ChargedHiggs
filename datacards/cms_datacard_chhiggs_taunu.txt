@@ -14,6 +14,7 @@ shapes Hplus 	cat0  ChHiggs_interpolated.root  Mt_HplusToTauNu-M$MASS_interpolat
 shapes QCD  	cat0  ChHiggs_interpolated.root  Mt_QCD
 shapes TTJets  	cat0  ChHiggs_interpolated.root  Mt_TTJets
 shapes ZZ  	cat0  ChHiggs_interpolated.root  Mt_ZZ
+shapes WJets  	cat0  ChHiggs_interpolated.root  Mt_WJets
 shapes WW  	cat0  ChHiggs_interpolated.root  Mt_WW
 shapes WZ  	cat0  ChHiggs_interpolated.root  Mt_WZ
 shapes DY  	cat0  ChHiggs_interpolated.root  Mt_DY
@@ -21,10 +22,10 @@ shapes DY  	cat0  ChHiggs_interpolated.root  Mt_DY
 bin cat0
 observation -1
 -------------------------------------
-bin 	cat0	cat0	cat0	cat0 	cat0	cat0	cat0
-process Hplus	QCD	TTJets	WW	WZ	DY	ZZ
-process 0	1	2	3	4	5	6
-rate	-1	-1	-1	-1	-1	-1	-1
+bin 	cat0	cat0	cat0	cat0 	cat0	cat0	cat0	cat0	
+process Hplus	QCD	TTJets	WW	WZ	DY	ZZ  	WJets
+process 0	1	2	3	4	5	6   	7	
+rate	-1	-1	-1	-1	-1	-1	-1  	-1	
 -------------------------------------
 
 
