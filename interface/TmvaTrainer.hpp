@@ -25,7 +25,8 @@ class TmvaTrainer : virtual public AnalysisBase
         virtual void End();
         virtual const string name(){return "TmvaTrainer";}
         virtual void AddVariable( string, char, double=0.,double=0.);
-
+        
+        bool train;
 };
 
 #endif

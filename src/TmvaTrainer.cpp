@@ -8,6 +8,7 @@ using namespace std;
 
 TmvaTrainer::TmvaTrainer() : AnalysisBase(){
     factory_=NULL;
+    train = true;
 }
 
 TmvaTrainer::~TmvaTrainer() {
@@ -18,7 +19,7 @@ TmvaTrainer::~TmvaTrainer() {
 void TmvaTrainer::AddVariable(string name, char type ,double xmin,double xmax)
 {
     cout<<"[TmvaTrainer]::[AddVariable]::[INFO] : "<<name<<" '"<<type<<"' "<<xmin<<" -- "<<xmax<<endl;
-    factory_ -> AddVariable(name.c_str(),type,xmin,xmax); 
+    if (train) factory_ -> AddVariable(name.c_str(),type,xmin,xmax); 
     Branch("tmva_tree",name,type);
 
 }
@@ -77,9 +78,9 @@ void TmvaTrainer::Init(){
     InitTree("tmva_tree");
 
     // book factory
-    TMVA::Tools::Instance();
+    if(train) TMVA::Tools::Instance();
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[Init]::[DEBUG]::[1] Construct Factory "<<endl; 
-    factory_ = new TMVA::Factory("TMVAClassification", GetOutputFile(),
+    if(train)factory_ = new TMVA::Factory("TMVAClassification", GetOutputFile(),
             //"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
             "!V:!Silent:Color:DrawProgressBar:Transformations=I;P;G,D:AnalysisType=Classification");
 
@@ -102,11 +103,14 @@ void TmvaTrainer::Init(){
     Branch("tmva_tree","sig",'I');
     // tell tmva about weight
     Branch("tmva_tree","weight",'D');
-    factory_->SetWeightExpression("weight");
+    if(train)factory_->SetWeightExpression("weight");
 
 }
 
 void TmvaTrainer::End(){
+
+    // if I just want to save the tree
+    if (not train) return;
 
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] AddSignal and Bkg "<<endl; 
     if(VERBOSE>0) PrintTree("tmva_tree");
