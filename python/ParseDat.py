@@ -186,9 +186,12 @@ def ReadSFDB(file):
 	L=[]
 	f = open(file)
 	for line in f:
+	   try:
 		l = line.split('#')[0]
+		l = l.replace('\n','') ## delete end of line
 		if l == "": continue
-		l=re.sub('^ *','',l)
+		l=re.sub('^ *','',l) ## remove space at the beginning
+		l=re.sub('\ +',' ',l) ## squeeze
 		label= l.split(' ')[0]
 		type= l.split(' ')[1]
 		R={}
@@ -215,6 +218,11 @@ def ReadSFDB(file):
 		R['sf'] =sf
 		R['err'] =err
 		L.append(R);
+
+	   except:
+		   print "Unable to parse line:"
+		   print "'" + line.replace('\n','') + "'"
+		   raise ## re-raise exception
 	return L
 
 def ReadBranches(fileName):
