@@ -177,7 +177,8 @@ for smear in cfg['Smear']:
 ## add analysis
 for analysis in cfg['Analysis']:
 	if opts.verbose: print '-> Adding analysis',analysis
-	analyzer = r.__getattr__(analysis)()
+	classname=analysis.split(':')[0]
+	analyzer = r.__getattr__(classname)()
 	if analysis in cfg['config']:
 	   for key in cfg['config'][analysis]:
 		if opts.verbose:print '  - config keys', key

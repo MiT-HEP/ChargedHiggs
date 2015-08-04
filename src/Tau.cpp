@@ -4,7 +4,7 @@
 using namespace std;
 
 Tau::Tau() : Lepton(){
-    ptcut_ = 41;
+    ptcut_ = 20;
     isocut_= 1.5; 
     idcut_ = 0.5; 
 

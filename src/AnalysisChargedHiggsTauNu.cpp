@@ -163,7 +163,10 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
             Fill("ChargedHiggsTauNu/Vars/Tau1Pt_"+label,systname, t1->Pt() ,e->weight());
             Fill("ChargedHiggsTauNu/Vars/Tau1Eta_"+label,systname,t1->Eta(),e->weight());
         }
-
+   
+    // trigger: Tau50, Eta 2.1
+    if ( t1->Pt() < 51 ) return EVENT_NOT_USED; // tau cut
+    if ( fabs(t1->Eta() ) >2.1 ) return EVENT_NOT_USED;// eta cut
 
     //Veto against isolated lepton
 
@@ -220,7 +223,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     //MET>60GeV
 
-    if ( e->GetMet().Pt() <60 ) return EVENT_NOT_USED;
+    //MET>130GeV .. trigger
+    if ( e->GetMet().Pt() <130 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,5,e->weight());
     
 

@@ -39,6 +39,7 @@ addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/QCD_Pt_3200toInf_TuneCU
 ####
 
 Output=ChHiggs.root
+## Preselection:1,Preselection:2
 Analysis=JsonAnalysis,Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsZW,ChargedHiggsMET,ChargedHiggsTopBottom
 
 MCDB=dat/mc_database.txt
