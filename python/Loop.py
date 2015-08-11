@@ -188,6 +188,7 @@ for analysis in cfg['Analysis']:
 		if check.startswith('@'):
 			## global function
 			check = check[1:]
+			check = re.sub('!',',',check)
 			check = re.sub("$OBJ","analyzer",check)
 			exec( check ) 
 		else:

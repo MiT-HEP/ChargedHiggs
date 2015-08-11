@@ -26,7 +26,7 @@ void TmvaTrainer::AddVariable(string name, char type ,double xmin,double xmax)
 
 int TmvaTrainer::analyze(Event*e, string systname)
 {
-    if(VERBOSE>2) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[2] Getting Event:"<<e->eventNum()<<endl;
+    if(VERBOSE>2) cout<<"[TmvaTrainer]::[analyze]::[DEBUG]::[2] Getting Event:"<<e->eventNum()<<endl;
 
     if( systname !="" and systname !="NONE" ) return 0;
 

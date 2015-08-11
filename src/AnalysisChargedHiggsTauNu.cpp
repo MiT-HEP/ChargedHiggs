@@ -133,6 +133,12 @@ void ChargedHiggsTauNu::Init()
         Book(    "ChargedHiggsTauNu/Vars/Mt_"+l,"Mt "+l,1000,0,1000);
         GetHisto("ChargedHiggsTauNu/Vars/Mt_"+l,"")->GetXaxis()->SetTitle("m_{T} [GeV]");
 
+        // Study NLO Positive and negative shapes for interpolation and subtraction
+        if (l == "WJets" or l == "DY")
+        {
+            Book(    "ChargedHiggsTauNu/Vars/Mt_wPlus_"+l,"Mt "+l,1000,0,1000);
+            Book(    "ChargedHiggsTauNu/Vars/Mt_wMinus_"+l,"Mt "+l,1000,0,1000);
+        }
 
     }
 
@@ -276,6 +282,14 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,6,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
+
+    if ( (label=="WJets" or label=="DY") and (systname =="" or systname == "NONE"))
+    {
+        if (e->weight()> 0 )
+            Fill("ChargedHiggsTauNu/Vars/Mt_wPlus_"+label , systname,e->Mt(), e->weight() );
+        else 
+            Fill("ChargedHiggsTauNu/Vars/Mt_wMinus_"+label , systname,e->Mt(), e->weight() );
+    }
 
     return EVENT_USED;
 }

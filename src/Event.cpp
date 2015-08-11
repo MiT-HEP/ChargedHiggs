@@ -175,6 +175,22 @@ Lepton * Event::GetMuon( int iMu )
     return leps_[ valid[iMu].second];
 }
 
+Tau * Event::GetTauInvIso( int iTau ) 
+{ // { return taus_.at(iTau);} // old
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<taus_.size() ;++i)
+    {
+        if ( taus_[i]->IsTauInvIso()) valid.push_back(pair<float,int>(taus_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iTau  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return taus_[ valid[iTau].second];
+}
+
 
 // Local Variables:
 // mode:c++

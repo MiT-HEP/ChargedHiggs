@@ -20,6 +20,13 @@ int Tau::IsTau(){
     if ( Pt() < ptcut_ ) return 0;
     return 1;
 }
+
+int Tau::IsTauInvIso(){
+    if (id<idcut_ ) return 0;
+    if (iso2 < isocut_ ) return 0;
+    if ( Pt() < ptcut_ ) return 0;
+    return 1;
+}
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

@@ -137,6 +137,10 @@ if opts.resubmit:
 			basedir = os.environ['PWD'] + "/" + opts.dir
 			touch = "touch " + basedir + "/sub%d.pend"%iJob
 			call(touch,shell=True)
+			cmd = "rm " + basedir + "/sub%d.fail"%iJob
+			call(cmd,shell=True)
+			cmd = "rm " + basedir + "/sub%d.run"%iJob
+			call(cmd,shell=True)
 			cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
 			print cmdline
 			call (cmdline,shell=True)
@@ -169,7 +173,14 @@ if opts.tar:
 	cmd.extend( glob("dat/*txt" ) )
 	cmd.extend( glob("aux/*" ) )
 	cmd.extend( glob("python/*py") )
-	cmd.extend( glob("test/*") )
+	#cmd.extend( glob("test/*") )
+	cmd.extend( glob("test/*py") )
+	cmd.extend( glob("test/*C") )
+	cmd.extend( glob("test/*.hpp") )
+	cmd.extend( glob("test/*.cpp") )
+	cmd.extend( glob("test/*.o") )
+	cmd.extend( glob("test/*.so") )
+	cmd.extend( glob("test/*.exe") )
 	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
 	tarCmdline = " ".join(cmd)
 	print tarCmdline

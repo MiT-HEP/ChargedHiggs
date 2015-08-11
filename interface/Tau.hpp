@@ -19,6 +19,7 @@ class Tau: virtual public Object,
     int match ; // is matched with a gen tau
 
     virtual int IsTau() ;
+    virtual int IsTauInvIso();
     virtual inline int IsObject(){ return IsTau(); }
 
     virtual bool IsMatch( ) { if (match >= 0) return true; else return false;}
