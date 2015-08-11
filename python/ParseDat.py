@@ -1,6 +1,21 @@
 import os,sys,re
 from subprocess import call,check_output
 
+
+def FindBasePath(verbose=False):
+     if verbose: print "-> Looking for basepath"
+     basepath = ""
+     mypath = os.path.abspath(os.getcwd())
+     while mypath != "" and mypath != "/":
+             if "ChargedHiggs" in os.path.basename(mypath):
+                     basepath = os.path.abspath(mypath)
+             mypath = os.path.dirname(mypath)
+
+     if verbose: print "-> Base Path is " + basepath
+     sys.path.insert(0,basepath)
+     sys.path.insert(0,"./")
+     return basepath
+
 def Default():
 	config = {}
 	config['config'] = {}
@@ -43,7 +58,13 @@ def vIntKey(value):
 def ParseDat(name):
 	''' Parse configuratino File '''
 	print "<-> Parsing input file", name
-	stream = open(name)
+
+	try:
+		stream = open(name)
+	except IOError:
+		base= FindBasePath() ## make sure to be able to open file correctly
+		stream = open( base +"/" + name) 
+
 	config = Default()
 	for line in stream:
 		l = line.split('#')[0]
