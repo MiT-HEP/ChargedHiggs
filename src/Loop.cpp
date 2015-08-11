@@ -84,6 +84,10 @@ int Looper::InitTree()
     names_[ "Met" ] = bare_.size();
     bare_.push_back(met);
 
+    BareTrigger *tr = new BareTrigger(); 
+    names_[ "Trigger" ] = bare_.size();
+    bare_.push_back(tr);
+
     for (auto c : bare_ )
         c->setBranchAddresses(tree_);
 
@@ -219,6 +223,9 @@ void Looper::NewFile()
         string token;
         while(std::getline(ss, token, ',')) {
                 //std::cout << token << '\n';
+#ifdef VERBOSE
+		if(VERBOSE>0)cout<<"[Looper]::[NewFile]::[DEBUG] TriggerNames"<< event_->triggerNames_ .size() <<" = "<<token<<endl;
+#endif
                 event_ -> triggerNames_ .push_back(token);
                 }
         event_ -> IsTriggered(""); // reset trigger caching
@@ -380,7 +387,7 @@ void Looper::FillTrigger(){
     }
     event_ -> triggerFired_ . clear();
     for(size_t i=0;i< tr ->triggerFired ->size() ;++i)
-        event_ -> triggerFired_ . push_back ( bool( (*tr->triggerFired)[i]) );
+        event_ -> triggerFired_ . push_back ( bool( (*tr->triggerFired)[i]  ) );
 }
 
 void Looper::FillEvent(){

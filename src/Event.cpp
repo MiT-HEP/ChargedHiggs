@@ -202,7 +202,7 @@ bool Event::IsTriggered( string name )
     }
     
     lastPos = -1;
-    for (size_t i=0;i<= triggerNames_.size() ;++i)
+    for (size_t i=0; i <  triggerNames_.size() ;++i)
     {
         if (name == triggerNames_[i] ) { lastPos=i; break;} 
     }
