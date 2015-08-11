@@ -2,7 +2,7 @@ from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 from subprocess import call,check_output
 from glob import glob
 
-import sys,os
+import sys,os,re
 
 config = config()
 
@@ -27,7 +27,7 @@ config.Data.publishDataName =''
 
 config.Site.storageSite = 'T2_CH_CERN'
 #config.Site.blacklist = [ 'T2_US_Florida','T2_US_Vanderbilt']
-config.Site.whitelist = [ 'T2_CH_CERN']
+#config.Site.whitelist = [ 'T2_CH_CERN']
 
 
 
@@ -97,8 +97,12 @@ if __name__ == '__main__':
 				dir + '/package.tar.gz',
 				]
 		list = glob(dir + '/*dat')
+		## load ParseDat
+		setInputFiles(list)
+		###
 		config.JobType.inputFiles.extend(list)
 		config.Data.totalUnits = len(list)  ## SET the N. Of jobs
+		from ParseDat import ParseDat, FindEOS
 		cfg = ParseDat( list[0] ) ## get the first one
 		output= cfg['Output']
 		outdir = '/'.join(output.split('/')[0:-1])
@@ -106,7 +110,6 @@ if __name__ == '__main__':
 		outfile= re.sub( '_[0-9]*\.root','.root', outfile)
 		#config.JobType.outputFiles=["QCDPurity.root"] ## TODO automatic --> read from one  input.dat
 		config.JobType.outputFiles=[outfile] #
-		setInputFiles(list)
 		shFile=dir + "/grid.sh"
 		sh = open (shFile,"w")
 		sh.write("#!/bin/bash\n")

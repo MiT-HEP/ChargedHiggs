@@ -196,6 +196,8 @@ bool Event::IsTriggered( string name )
     static string lastName = "";
     static int lastPos = -1;
 
+    //cout <<"name = "<<name<<" last="<<lastName<<" lastPos="<<lastPos<<endl;
+
     if (name == lastName and lastPos >=0 )
     {
         return triggerFired_[ lastPos ] ;
