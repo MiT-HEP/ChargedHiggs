@@ -99,7 +99,13 @@ if __name__ == '__main__':
 		list = glob(dir + '/*dat')
 		config.JobType.inputFiles.extend(list)
 		config.Data.totalUnits = len(list)  ## SET the N. Of jobs
-		config.JobType.outputFiles=["QCDPurity.root"] ## TODO automatic --> read from one  input.dat
+		cfg = ParseDat( list[0] ) ## get the first one
+		output= cfg['Output']
+		outdir = '/'.join(output.split('/')[0:-1])
+		outfile = output.split('/')[-1]
+		outfile= re.sub( '_[0-9]*\.root','.root', outfile)
+		#config.JobType.outputFiles=["QCDPurity.root"] ## TODO automatic --> read from one  input.dat
+		config.JobType.outputFiles=[outfile] #
 		setInputFiles(list)
 		shFile=dir + "/grid.sh"
 		sh = open (shFile,"w")
@@ -111,11 +117,13 @@ if __name__ == '__main__':
 		sh.write('env' ) ## DEBUG
 		sh.write("echo '------------- ---- ------------'\n")
 		sh.write("tar -xzf package.tar.gz\n")
-		sh.write("mkdir test/mysub/QCDPurity/\n")  ### TODO automatic 
+		#sh.write("mkdir test/mysub/QCDPurity/\n")  ### TODO automatic 
+		sh.write("mkdir -p %s\n"%outdir)  ###
 		## is dat in the same directory ?
 		sh.write("python python/Loop.py -v -d input${NUM}.dat \n")
 		sh.write("EXITCODE=$?\n")
-		sh.write("mv t/mysub/QCDPurity/QCDPurity_${NUM}.root QCDPurity.root\n") ### TODO automatic, crab will append the _num.root +1
+		#sh.write("mv t/mysub/QCDPurity/QCDPurity_${NUM}.root QCDPurity.root\n") ### TODO automatic, crab will append the _num.root +1
+		sh.write("mv " + outdir + "/" + re.sub('.root','',outfile) + "_${NUM}.root " +outfile+"\n") ### 
 		## FJR
 		sh.write('FJR="FrameworkJobReport.xml"\n')
 		sh.write('[ "${EXITCODE}" == "0" ] && echo \'<FrameworkJobReport Status="Success">\' > ${FJR}\n')
