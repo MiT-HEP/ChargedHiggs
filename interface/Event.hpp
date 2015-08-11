@@ -30,11 +30,14 @@ class Event{
     vector<Tau*>    taus_;
     vector<GenParticle*>    genparticles_; // gen particles
     Met met_;
+    vector<bool>    triggerFired_;
     int isRealData_;
     int runNum_;
     int lumiNum_;
     int eventNum_;
     float rho_;
+
+    vector<string> triggerNames_;
 
     public:
     Weight weight_;
@@ -82,6 +85,7 @@ class Event{
     double weight();
     // update objects that can be invalid (jets)
     virtual void validate();
+    bool IsTriggered(string name);
 };
 
 #endif

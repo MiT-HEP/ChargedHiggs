@@ -5,14 +5,14 @@ void ChargedHiggsQCDPurity::Init()
     for ( string& l : AllLabel()  ) 
     for (size_t iBin = 0 ; iBin + 1 < PtBins.size() ; ++iBin )
     {
-        Book( dir + HistName(PtBins[iBin], true )+"_"+ l  , ("EtMiss "+ l).c_str(),100,0.,200);
-        Book( dir + HistName(PtBins[iBin], false)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),100,0.,200.);
+        Book( dir + HistName(PtBins[iBin], true )+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+        Book( dir + HistName(PtBins[iBin], false)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
     }
     // --- for event not in the PtBins 
     for ( string& l : AllLabel()  ) 
     {
-        Book( dir + HistName(-1, true )+"_"+ l  , ("EtMiss "+ l).c_str(),100,0.,200);
-        Book( dir + HistName(-1, false)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),100,0.,200.);
+        Book( dir + HistName(-1, true )+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+        Book( dir + HistName(-1, false)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
     }
 
 }
@@ -30,8 +30,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // TODO:
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
     // * put a limit on the TauInv sideband ? 10/20 GeV ? 
+    //
+    if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_v") )  return EVENT_NOT_USED;
 
-    if (t != NULL)
+    if (t != NULL and t->Pt()>=51 and fabs(t->Eta())<2.1)
         {
         float pt = t->Pt();
         if (pt  > 8000 or pt <0 ) 
@@ -39,7 +41,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         string hist = HistName(pt,true);
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
         }
-    if (tInv != NULL)
+    if (tInv != NULL and tInv->Pt()>=51 and fabs(tInv->Eta())<2.1)
         {
         float pt = tInv->Pt();
         if (pt  > 8000 or pt <0 ) 

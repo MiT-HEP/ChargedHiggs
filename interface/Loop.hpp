@@ -45,6 +45,7 @@ class Looper{
         void FillTaus();
         void FillMet();
         void FillMC();
+        void FillTrigger();
         //
         void NewFile();
         // ---- call by LOOP

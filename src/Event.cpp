@@ -191,6 +191,25 @@ Tau * Event::GetTauInvIso( int iTau )
     return taus_[ valid[iTau].second];
 }
 
+bool Event::IsTriggered( string name )
+{
+    static string lastName = "";
+    static int lastPos = -1;
+
+    if (name == lastName and lastPos >=0 )
+    {
+        return triggerFired_[ lastPos ] ;
+    }
+    
+    lastPos = -1;
+    for (size_t i=0;i<= triggerNames_.size() ;++i)
+    {
+        if (name == triggerNames_[i] ) { lastPos=i; break;} 
+    }
+    lastName = name;
+    if (lastPos >=0 ) return triggerFired_[ lastPos ] ; 
+    return false;
+}
 
 // Local Variables:
 // mode:c++
