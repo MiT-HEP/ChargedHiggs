@@ -31,10 +31,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
     // * put a limit on the TauInv sideband ? 10/20 GeV ? 
     //
-    if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30") )  {
+    if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1") )  {
         return EVENT_NOT_USED;
     }
-    cout <<" EVENT TRIGGERED"<<endl;
+    //cout <<" EVENT TRIGGERED"<<endl;
 
     if (t != NULL and t->Pt()>=51 and fabs(t->Eta())<2.1)
         {

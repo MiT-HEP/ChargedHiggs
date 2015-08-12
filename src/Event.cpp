@@ -210,6 +210,8 @@ bool Event::IsTriggered( string name )
     }
     lastName = name;
     if (lastPos >=0 ) return triggerFired_[ lastPos ] ; 
+    
+    cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
     return false;
 }
 

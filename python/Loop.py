@@ -49,9 +49,21 @@ r.gROOT.SetBatch()
 if opts.verbose: print "DONE"
 ################ LOAD LIBRARY ###############
 if opts.verbose: print "-> Load Bare library"
-r.gSystem.Load( "../NeroProducer/Core/bin/libBare.so")
+status=r.gSystem.Load( "../NeroProducer/Core/bin/libBare.so")
+rpath=True
+if status < 0:
+	if opts.verbose: print "-> trying bin/bare"
+	status = r.gSystem.Load("bin/bare/libBare.so")
+	sys.path.insert(0,"bin/bare")
+	rpath=False
+	if status<0: print " Failed to load libBare.so"
+if status >= 0 and opts.verbose: print "DONE"
+
 if opts.verbose: print "-> Load ChargedHiggs library"
-r.gSystem.Load( "./bin/libChargedHiggs.so")
+if rpath:
+	r.gSystem.Load( "./bin/libChargedHiggs.so")
+else:
+	r.gSystem.Load("./bin/libChargedHiggs.0.so")
 if opts.verbose: print "DONE",
 ################ CREATING LOOPER ##########
 from ROOT import Looper

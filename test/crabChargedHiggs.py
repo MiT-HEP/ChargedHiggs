@@ -117,7 +117,7 @@ if __name__ == '__main__':
 		sh.write(" ls -l \n") ## DEBUG
 		sh.write('echo "ARGS=$@" \n') ## DEBUG
 		sh.write('NUM=$[$1-1] \n') ## offset by one
-		sh.write('env' ) ## DEBUG
+		sh.write('env\n' ) ## DEBUG
 		sh.write("echo '------------- ---- ------------'\n")
 		sh.write("tar -xzf package.tar.gz\n")
 		#sh.write("mkdir test/mysub/QCDPurity/\n")  ### TODO automatic 

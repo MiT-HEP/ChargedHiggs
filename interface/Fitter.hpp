@@ -77,7 +77,7 @@ class Fitter{
     // add Bern - Gaus To the fit Model
     void addBernFitModel(RooArgList *pdfs,RooArgList *coeffs,bool isLast);
     void addGausFitModel(RooArgList *pdfs,RooArgList *coeffs,bool isLast);
-    
+
     // -- save Coeff of the fit in fitParameters_
     void saveCoefficientsGaus( int cat,string mass,bool isLast);
     void saveCoefficientsBern( int cat,string mass,bool isLast);
@@ -113,6 +113,8 @@ class Fitter{
 
 };
 
+#endif
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil
@@ -120,5 +122,3 @@ class Fitter{
 // c-basic-offset:4
 // End:
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
-
-#endif
