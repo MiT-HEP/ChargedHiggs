@@ -62,7 +62,7 @@ if status >= 0 and opts.verbose: print "DONE"
 if opts.verbose: print "-> Load ChargedHiggs library"
 if rpath:
 	r.gSystem.Load( "./bin/libChargedHiggs.so")
-else:
+else: ## it's likely that this will work
 	r.gSystem.Load("./bin/libChargedHiggs.0.so")
 if opts.verbose: print "DONE",
 ################ CREATING LOOPER ##########

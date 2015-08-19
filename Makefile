@@ -1,7 +1,8 @@
 GCC=g++
 CXXFLAGS=`root-config --libs --cflags` -O2 -fPIC -I../  -I./
 ## to use BareObjects
-CXXFLAGS += -L$(PWD)/../NeroProducer/Core/bin -lBare -Wl,-rpath=$(PWD)/../NeroProducer/Core/bin -ggdb -lTMVA
+RPATH= -Wl,-rpath=$(PWD)/../NeroProducer/Core/bin
+CXXFLAGS += -L$(PWD)/../NeroProducer/Core/bin -lBare  -ggdb -lTMVA
 SOFLAGS=-shared
 
 SRCDIR=src
@@ -20,10 +21,12 @@ all:
 	$(info, "------------------------ ")	
 	$(MAKE) clean
 	$(MAKE) libChargedHiggs.so
+	$(MAKE) libChargedHiggs.0.so
 
 .PHONY: fast
 fast:
 	$(MAKE) libChargedHiggs.so
+	$(MAKE) libChargedHiggs.0.so
 
 # check if CMSSW is defined
 ifndef CMSSW_BASE
@@ -43,21 +46,25 @@ $(info No Combine Package found)
 else
 $(info Using combine: $(COMBINELIB))
 CXXFLAGS += -L$(ROOFITSYS)/lib -lRooFit -lRooFitCore -I$(ROOFITSYS)/include
-CXXFLAGS += -D HAVE_COMBINE -L$(COMBINELIBDIR) -l$(COMBINELIB) -Wl,-rpath=$(COMBINELIBDIR)
+CXXFLAGS += -D HAVE_COMBINE -L$(COMBINELIBDIR) -l$(COMBINELIB) 
+RPATH += -Wl,-rpath=$(COMBINELIBDIR)
 endif
 
 libChargedHiggs.so: $(OBJ) Dict | $(BINDIR)
+	$(GCC) $(CXXFLAGS) $(RPATH) $(SOFLAGS) -o $(BINDIR)/$@ $(OBJ) $(BINDIR)/dict.o
+
+libChargedHiggs.0.so: $(OBJ) Dict | $(BINDIR)
 	$(GCC) $(CXXFLAGS) $(SOFLAGS) -o $(BINDIR)/$@ $(OBJ) $(BINDIR)/dict.o
 
 $(OBJ) : $(BINDIR)/%.o : $(SRCDIR)/%.cpp interface/%.hpp | $(BINDIR)
-	$(GCC) $(CXXFLAGS) -c -o $(BINDIR)/$*.o $<
+	$(GCC) $(CXXFLAGS) $(RPATH) -c -o $(BINDIR)/$*.o $<
 
 .PHONY: Dict
 Dict: $(BINDIR)/dict.o
 
 $(BINDIR)/dict.o: $(SRC) | $(BINDIR)
 	cd $(BINDIR) && rootcint -v4 -f dict.cc -c -I../../ -I../  $(HPPLINKDEF)  ../interface/LinkDef.hpp 
-	cd $(BINDIR) && $(GCC) -c -o dict.o $(CXXFLAGS) -I../../ dict.cc
+	cd $(BINDIR) && $(GCC) -c -o dict.o $(CXXFLAGS) $(RPATH) -I../../ dict.cc
 
 $(BINDIR):
 	mkdir -p $(BINDIR)

@@ -122,7 +122,9 @@ if __name__ == '__main__':
 		sh.write("tar -xzf package.tar.gz\n")
 		#sh.write("mkdir test/mysub/QCDPurity/\n")  ### TODO automatic 
 		sh.write("mkdir -p %s\n"%outdir)  ###
-		## is dat in the same directory ?
+		sh.write("LD_LIBRARY_PATH=$PWD/bin/bare:$LD_LIBRARY_PATH\n")
+		sh.write("LD_LIBRARY_PATH=$PWD/bin:$LD_LIBRARY_PATH\n")
+		sh.write("LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH\n")
 		sh.write("python python/Loop.py -v -d input${NUM}.dat \n")
 		sh.write("EXITCODE=$?\n")
 		#sh.write("mv t/mysub/QCDPurity/QCDPurity_${NUM}.root QCDPurity.root\n") ### TODO automatic, crab will append the _num.root +1
@@ -161,4 +163,5 @@ if __name__ == '__main__':
     ## todo: set output.root to be transfered, set split, 
     ###################################################
 
-    submitDir("mysub/QCDPurity")
+    #submitDir("mysub/QCDPurity")
+    submitDir("mysub/QCDPurity3p0")

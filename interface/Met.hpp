@@ -8,6 +8,7 @@ class Met: virtual public Object
         float ptUp; // TOFILL
         float ptDown; // TOFILL
         int syst ;
+        float gen ;
 
         virtual inline int IsMet(){ return 1; }
         virtual inline int IsObject(){ return IsMet(); }

@@ -173,11 +173,18 @@ if opts.tar:
 		call(cmdBare,shell=True)
 		cmdBare = "cp " +os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/bin/dict_rdict.pcm ./bin/bare/"
 		call(cmdBare,shell=True)
-		cmdBare = "cp bin/libChargedHiggs.so bin/libChargedHiggs.0.so"
+		## run time libraries needs also the .h files :(
+		cmdBare = "mkdir -p ./bin/interface"
 		call(cmdBare,shell=True)
-		cmdBare = "/afs/cern.ch/user/a/amarini/public/patchelf --set-rpath '' bin/libChargedHiggs.0.so"
-		call(cmdBare,shell=True)
+		cmdBare = "cp " + os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/interface/*hpp ./bin/interface/"
+		call(cmdBare,shell=True);
+		### this file is produced by make
+		#cmdBare = "cp bin/libChargedHiggs.so bin/libChargedHiggs.0.so"
+		#call(cmdBare,shell=True)
+		#cmdBare = "/afs/cern.ch/user/a/amarini/public/patchelf --set-rpath '' bin/libChargedHiggs.0.so"
+		#call(cmdBare,shell=True)
 	cmd.extend( glob("bin/bare/*" ) )
+	cmd.extend( glob("bin/interface/*" ) )
 	cmd.extend( glob("bin/*so" ) )
 	cmd.extend( glob("bin/dict*" ) )
 	#cmd.extend( glob("bin/tag.txt" ) )

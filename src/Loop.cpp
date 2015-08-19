@@ -81,6 +81,7 @@ int Looper::InitTree()
     bare_.push_back(l);
 
     BareMet *met = new BareMet(); 
+    met->SetExtend(); // pfmet3p0
     names_[ "Met" ] = bare_.size();
     bare_.push_back(met);
 
@@ -371,9 +372,15 @@ void Looper::FillMet(){
     if ( met->p4 ->GetEntries() != 1)
         cout<<"[Looper]::[FillMet]::[ERROR] MET should have exactly 1 entry instead of "<<met->p4 ->GetEntries() <<endl;
 
-    event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
+    //event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
+    event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
     event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
     event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
+
+    if ( event_->IsRealData() )
+	event_ -> met_ . gen = 0;	
+    else
+    	event_ -> met_ . gen =( (TLorentzVector*)(*met->genP4)[0] )->Pt();
 
 }
 

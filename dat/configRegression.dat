@@ -1,0 +1,12 @@
+##################### DEFAULT #############
+include=dat/config.dat
+###########################################
+# --small set for test
+#Files=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M200
+#addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
+
+Output=RegressionOutput.root
+Analysis=RegressionTrainer
+config=RegressionTrainer|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
+## just save the tree for training
+addConfig=RegressionTrainer|train=0
