@@ -19,11 +19,14 @@ using namespace std;
 
 class Looper;
 class AnalysisBase;
+class ChargedHiggsEWKEmbedding;
 
 class Event{
     friend class Looper;
     friend class SmearBase;
     friend class AnalysisBase;
+    friend class ChargedHiggsEWKEmbedding;  // embedding will replace the taus
+
     protected:
     vector<Lepton*> leps_;
     vector<Jet*>    jets_;
