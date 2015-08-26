@@ -1,6 +1,21 @@
 import os,sys,re
 from subprocess import call,check_output
 
+
+def FindBasePath(verbose=False):
+     if verbose: print "-> Looking for basepath"
+     basepath = ""
+     mypath = os.path.abspath(os.getcwd())
+     while mypath != "" and mypath != "/":
+             if "ChargedHiggs" in os.path.basename(mypath):
+                     basepath = os.path.abspath(mypath)
+             mypath = os.path.dirname(mypath)
+
+     if verbose: print "-> Base Path is " + basepath
+     sys.path.insert(0,basepath)
+     sys.path.insert(0,"./")
+     return basepath
+
 def Default():
 	config = {}
 	config['config'] = {}
@@ -43,7 +58,13 @@ def vIntKey(value):
 def ParseDat(name):
 	''' Parse configuratino File '''
 	print "<-> Parsing input file", name
-	stream = open(name)
+
+	try:
+		stream = open(name)
+	except IOError:
+		base= FindBasePath() ## make sure to be able to open file correctly
+		stream = open( base +"/" + name) 
+
 	config = Default()
 	for line in stream:
 		l = line.split('#')[0]
@@ -186,9 +207,12 @@ def ReadSFDB(file):
 	L=[]
 	f = open(file)
 	for line in f:
+	   try:
 		l = line.split('#')[0]
+		l = l.replace('\n','') ## delete end of line
 		if l == "": continue
-		l=re.sub('^ *','',l)
+		l=re.sub('^ *','',l) ## remove space at the beginning
+		l=re.sub('\ +',' ',l) ## squeeze
 		label= l.split(' ')[0]
 		type= l.split(' ')[1]
 		R={}
@@ -215,6 +239,11 @@ def ReadSFDB(file):
 		R['sf'] =sf
 		R['err'] =err
 		L.append(R);
+
+	   except:
+		   print "Unable to parse line:"
+		   print "'" + line.replace('\n','') + "'"
+		   raise ## re-raise exception
 	return L
 
 def ReadBranches(fileName):

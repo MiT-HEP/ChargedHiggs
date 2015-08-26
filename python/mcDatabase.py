@@ -52,7 +52,7 @@ r.gROOT.SetBatch()
 n=0
 myTmp= r.TFile.Open("/tmp/" + os.environ["USER"] + "/mytmp.root","RECREATE")
 myTmp.cd()
-sum=r.TH1F("SumWeights","Sum of mcWeights",1,0,2)
+sum=r.TH1D("SumWeights","Sum of mcWeights",1,0,2)
 
 for idx,fName in enumerate(fileList):
 	print "processing file:",idx,"/",len(fileList)," : ", fName
@@ -66,7 +66,7 @@ for idx,fName in enumerate(fileList):
 		h_xSec.Add( h )
 
 	t = fROOT.Get("nero/all")
-	mysum=r.TH1F("mysum","Sum of mcWeights",1,0,2)
+	mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)
 	t.Draw("1>>mysum","mcWeight") ##>>+ doesn't work
 	sum.Add(mysum)
 	n += t.GetEntries()

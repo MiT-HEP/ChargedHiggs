@@ -19,3 +19,6 @@ puTrueInt
 runNum
 lumiNum
 eventNum
+triggerFired
+pfMet_e3p0
+metP4_GEN

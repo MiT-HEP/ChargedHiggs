@@ -133,6 +133,12 @@ void ChargedHiggsTauNu::Init()
         Book(    "ChargedHiggsTauNu/Vars/Mt_"+l,"Mt "+l,1000,0,1000);
         GetHisto("ChargedHiggsTauNu/Vars/Mt_"+l,"")->GetXaxis()->SetTitle("m_{T} [GeV]");
 
+        // Study NLO Positive and negative shapes for interpolation and subtraction
+        if (l == "WJets" or l == "DY")
+        {
+            Book(    "ChargedHiggsTauNu/Vars/Mt_wPlus_"+l,"Mt "+l,1000,0,1000);
+            Book(    "ChargedHiggsTauNu/Vars/Mt_wMinus_"+l,"Mt "+l,1000,0,1000);
+        }
 
     }
 
@@ -163,7 +169,10 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
             Fill("ChargedHiggsTauNu/Vars/Tau1Pt_"+label,systname, t1->Pt() ,e->weight());
             Fill("ChargedHiggsTauNu/Vars/Tau1Eta_"+label,systname,t1->Eta(),e->weight());
         }
-
+   
+    // trigger: Tau50, Eta 2.1
+    if ( t1->Pt() < 51 ) return EVENT_NOT_USED; // tau cut
+    if ( fabs(t1->Eta() ) >2.1 ) return EVENT_NOT_USED;// eta cut
 
     //Veto against isolated lepton
 
@@ -220,7 +229,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     //MET>60GeV
 
-    if ( e->GetMet().Pt() <60 ) return EVENT_NOT_USED;
+    //MET>130GeV .. trigger
+    if ( e->GetMet().Pt() <130 ) return EVENT_NOT_USED;
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,5,e->weight());
     
 
@@ -272,6 +282,14 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,6,e->weight());
 
     Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
+
+    if ( (label=="WJets" or label=="DY") and (systname =="" or systname == "NONE"))
+    {
+        if (e->weight()> 0 )
+            Fill("ChargedHiggsTauNu/Vars/Mt_wPlus_"+label , systname,e->Mt(), e->weight() );
+        else 
+            Fill("ChargedHiggsTauNu/Vars/Mt_wMinus_"+label , systname,e->Mt(), e->weight() );
+    }
 
     return EVENT_USED;
 }

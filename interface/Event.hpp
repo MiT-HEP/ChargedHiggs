@@ -19,22 +19,28 @@ using namespace std;
 
 class Looper;
 class AnalysisBase;
+class ChargedHiggsEWKEmbedding;
 
 class Event{
     friend class Looper;
     friend class SmearBase;
     friend class AnalysisBase;
+    friend class ChargedHiggsEWKEmbedding;  // embedding will replace the taus
+
     protected:
     vector<Lepton*> leps_;
     vector<Jet*>    jets_;
     vector<Tau*>    taus_;
     vector<GenParticle*>    genparticles_; // gen particles
     Met met_;
+    vector<bool>    triggerFired_;
     int isRealData_;
     int runNum_;
     int lumiNum_;
     int eventNum_;
     float rho_;
+
+    vector<string> triggerNames_;
 
     public:
     Weight weight_;
@@ -49,6 +55,7 @@ class Event{
     Jet * GetCentralJet( int iJet );
     Jet * GetBjet( int iJet );
     Tau * GetTau( int iTau );
+    Tau * GetTauInvIso( int iTau );
     Lepton * GetLepton( int iLep );
     Lepton * GetElectron( int iEle );
     Lepton * GetMuon( int iMu );
@@ -81,6 +88,7 @@ class Event{
     double weight();
     // update objects that can be invalid (jets)
     virtual void validate();
+    bool IsTriggered(string name);
 };
 
 #endif

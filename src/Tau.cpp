@@ -4,7 +4,7 @@
 using namespace std;
 
 Tau::Tau() : Lepton(){
-    ptcut_ = 41;
+    ptcut_ = 20;
     isocut_= 1.5; 
     idcut_ = 0.5; 
 
@@ -17,6 +17,13 @@ Tau::Tau() : Lepton(){
 int Tau::IsTau(){
     if (id<idcut_ ) return 0;
     if (iso2 >= isocut_ ) return 0;
+    if ( Pt() < ptcut_ ) return 0;
+    return 1;
+}
+
+int Tau::IsTauInvIso(){
+    if (id<idcut_ ) return 0;
+    if (iso2 < isocut_ ) return 0;
     if ( Pt() < ptcut_ ) return 0;
     return 1;
 }

@@ -1,0 +1,37 @@
+##configure Looper
+##### This file store the configuratino to run all the analysis
+##### if you want to make a config file that overwrite some changes just create a new one with the line
+##### include=dat/config.txt
+##### Files=....,....,...
+#
+#### BKG ###
+Files=/store/user/amarini/Nero/v1.0.3/PromptReco-v1/SingleMuon
+####
+
+Output=ChHiggsEWKEmbedding.root
+## Preselection:1,Preselection:2
+Analysis=JsonAnalysis,Preselection,ChargedHiggsEWKEmbedding
+
+MCDB=dat/mc_database.txt
+SFDB=dat/sf_database.txt
+Branches=dat/branches.txt
+###
+#pileup=aux/pileup.root
+#pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root
+pileup=
+pileupRun=
+pileupLumi=
+Lumi=1
+###
+# additional JSON FILE for Data selection
+
+# Smearer
+#Smear=JER,JES,@SmearBase
+#Smear=NONE,JER,JES
+Smear=NONE
+
+config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-251252_13TeV_PromptReco_Collisions15_JSON.txt')
+#configure Analysis
+#config=AnalysisBase|Init()
+#config=Preselection|
+config=ChargedHiggsEWKEmbedding|doTree=0,doMerge=1,embeddingTrees.push_back("root://eoscms///store/user/amarini/Nero/v1.0.3/Embedding/SingleMuonToTau/NeroNtuples.root");

@@ -70,11 +70,11 @@ void Fitter::init(){
             // -- Construct RooDataHist
             string name =  Form("cat_%d_mass_%s",cat,mass.c_str());
             hist_ [ name ] = new RooDataHist(
-                            Form(datasetMask_.c_str(),m),
-                            Form(datasetMask_.c_str(),m),
-                            *x_,
-                            Import( *h ) 
-                            );
+                    Form(datasetMask_.c_str(),m),
+                    Form(datasetMask_.c_str(),m),
+                    *x_,
+                    Import( *h ) 
+                    );
 
             if (writeDatasets_)w_ -> import( *hist_[ name ] ); // write datasets in the workspace
 
@@ -90,19 +90,19 @@ void Fitter::init(){
         //
         string xsecName =  Form(xsecMask_.c_str() , cat) ;
         RooSpline1D *xsSpline = new RooSpline1D(
-                        xsecName.c_str(),
-                        xsecName.c_str(),
-                        *mh_,
-                        xSec_x.size(),
-                        &(xSec_x[0]),
-                        &(xSec_y[0])
-                        );
+                xsecName.c_str(),
+                xsecName.c_str(),
+                *mh_,
+                xSec_x.size(),
+                &(xSec_x[0]),
+                &(xSec_y[0])
+                );
         splines_[ xsecName ] = xsSpline;
         w_ -> import ( *xsSpline  );
     }
 
     fInput -> Close();
-   
+
 
     // -- Init parameters
     //
@@ -122,28 +122,28 @@ void Fitter::initBern(){
 
 void Fitter::initGaus(){
     for(int i=0;i<nGaussians ;++i)
-        {
+    {
         if(i==0 ){
             startMean_  . push_back( 100 );
             startSigma_ . push_back( 100. );
             startFraction_ . push_back(.3);
-            }
+        }
         if( i== 1) {
             startMean_  . push_back( 0. );
             startSigma_ . push_back( 500. );
             startFraction_ . push_back(.30);
-            }
+        }
         else if (i== 2){
             startMean_  . push_back( 100);
             startSigma_ . push_back( 300);
             startFraction_ . push_back(.30);
-            }
+        }
         else{
             startMean_  . push_back( 500);
             startSigma_ . push_back( 100+100*i);
             startFraction_ . push_back(.05);
-            }
         }
+    }
     return;
 }
 
@@ -151,31 +151,31 @@ void Fitter::addBernFitModel(RooArgList *pdfs,RooArgList*coeffs, bool isLast)
 {
     if (nBernstein <=0 ) return;
 
-        RooArgList * args = new RooArgList();
-        for(int b=0;b<nBernstein; b++)
-            {
-            string name = Form("fitmodel_bern_param_%d",b);
-            RooRealVar *tmp = new RooRealVar(name.c_str(), name.c_str(), startBern_[b],0.01,100.);
-            vars_ [ name ] = tmp;
-            args -> add( *tmp );
-            }
-        string name = Form("fitmodel_bern_%d",nBernstein);
-        RooAbsPdf *bern; 
-        if (nBernstein ==1 ) bern= new RooBernsteinFast<1>(name.c_str(),name.c_str(),*x_, *args);
-        if (nBernstein ==2 ) bern= new RooBernsteinFast<2>(name.c_str(),name.c_str(),*x_, *args);
-        if (nBernstein ==3 ) bern= new RooBernsteinFast<3>(name.c_str(),name.c_str(),*x_, *args);
-        if (nBernstein ==4 ) bern= new RooBernsteinFast<4>(name.c_str(),name.c_str(),*x_, *args);
-        if (nBernstein ==5 ) bern= new RooBernsteinFast<5>(name.c_str(),name.c_str(),*x_, *args);
-        if (nBernstein ==6 ) bern= new RooBernsteinFast<6>(name.c_str(),name.c_str(),*x_, *args);
-        if (nBernstein ==7 ) bern= new RooBernsteinFast<7>(name.c_str(),name.c_str(),*x_, *args);
+    RooArgList * args = new RooArgList();
+    for(int b=0;b<nBernstein; b++)
+    {
+        string name = Form("fitmodel_bern_param_%d",b);
+        RooRealVar *tmp = new RooRealVar(name.c_str(), name.c_str(), startBern_[b],0.01,100.);
+        vars_ [ name ] = tmp;
+        args -> add( *tmp );
+    }
+    string name = Form("fitmodel_bern_%d",nBernstein);
+    RooAbsPdf *bern; 
+    if (nBernstein ==1 ) bern= new RooBernsteinFast<1>(name.c_str(),name.c_str(),*x_, *args);
+    if (nBernstein ==2 ) bern= new RooBernsteinFast<2>(name.c_str(),name.c_str(),*x_, *args);
+    if (nBernstein ==3 ) bern= new RooBernsteinFast<3>(name.c_str(),name.c_str(),*x_, *args);
+    if (nBernstein ==4 ) bern= new RooBernsteinFast<4>(name.c_str(),name.c_str(),*x_, *args);
+    if (nBernstein ==5 ) bern= new RooBernsteinFast<5>(name.c_str(),name.c_str(),*x_, *args);
+    if (nBernstein ==6 ) bern= new RooBernsteinFast<6>(name.c_str(),name.c_str(),*x_, *args);
+    if (nBernstein ==7 ) bern= new RooBernsteinFast<7>(name.c_str(),name.c_str(),*x_, *args);
 
-        pdfs->add( *bern );
+    pdfs->add( *bern );
 
-        if ( not isLast ){ // if I have other pdfs add fraction
-            RooRealVar *f = new RooRealVar( Form("fitmodel_bern_frac") ,Form("fitmodel_bern_frac") , 0.3, 0.01,1.0 );
-            vars_[ f->GetName() ] = f;
-            coeffs -> add ( *f );
-        }
+    if ( not isLast ){ // if I have other pdfs add fraction
+        RooRealVar *f = new RooRealVar( Form("fitmodel_bern_frac") ,Form("fitmodel_bern_frac") , 0.3, 0.01,1.0 );
+        vars_[ f->GetName() ] = f;
+        coeffs -> add ( *f );
+    }
 } 
 
 void Fitter::addGausFitModel(RooArgList *pdfs, RooArgList *coeffs, bool isLast)
@@ -193,133 +193,133 @@ void Fitter::addGausFitModel(RooArgList *pdfs, RooArgList *coeffs, bool isLast)
 
         if ( (i != nGaussians-1 )  or not isLast)
         {
-        RooRealVar *f = new RooRealVar( Form("fitmodel_gaus_frac_%d",i) ,Form("fitmodel_gaus_frac_%d",i) , startFraction_[i], 0.01,1.0 );
-        vars_ [ f->GetName() ] = f;
-        coeffs -> add(   *f  ) ;
+            RooRealVar *f = new RooRealVar( Form("fitmodel_gaus_frac_%d",i) ,Form("fitmodel_gaus_frac_%d",i) , startFraction_[i], 0.01,1.0 );
+            vars_ [ f->GetName() ] = f;
+            coeffs -> add(   *f  ) ;
         }
     }
 
 }
 
 void Fitter::saveCoefficientsBern(int cat,string mass,bool isLast){
-            for(int b=0;b<nBernstein ;++b)
-            {
-                fitParameters_[ Form("fit_cat%d_mass_%s_bern_par_%d",cat,mass.c_str(),b) ] = vars_[ Form("fitmodel_bern_param_%d",b) ]  -> getVal();
-            }
-            if( nBernstein >0 && not isLast ) fitParameters_[ Form("fit_cat%d_mass_%s_bern_frac",cat,mass.c_str()) ] = vars_["fitmodel_bern_frac" ]  -> getVal();
+    for(int b=0;b<nBernstein ;++b)
+    {
+        fitParameters_[ Form("fit_cat%d_mass_%s_bern_par_%d",cat,mass.c_str(),b) ] = vars_[ Form("fitmodel_bern_param_%d",b) ]  -> getVal();
+    }
+    if( nBernstein >0 && not isLast ) fitParameters_[ Form("fit_cat%d_mass_%s_bern_frac",cat,mass.c_str()) ] = vars_["fitmodel_bern_frac" ]  -> getVal();
 
 }
 
 
 void Fitter::saveCoefficientsGaus(int cat,string mass,bool isLast)
 {
-            for(int i=0;i< nGaussians ;++i) 
-            {
-                fitParameters_[ Form("fit_cat%d_mass_%s_mean_%d",cat,mass.c_str(), i )] = vars_[ Form("fitmodel_gaus_mean_%d",i) ] -> getVal();
-                fitParameters_[ Form("fit_cat%d_mass_%s_sigma_%d",cat,mass.c_str(), i )] = vars_[Form("fitmodel_gaus_sigma_%d",i)] -> getVal();
-                if ( (i !=nGaussians -1) or not isLast ) fitParameters_[ Form("fit_cat%d_mass_%s_frac_%d",cat,mass.c_str(), i )] = vars_[ Form("fitmodel_gaus_frac_%d",i) ] -> getVal();
-            }
+    for(int i=0;i< nGaussians ;++i) 
+    {
+        fitParameters_[ Form("fit_cat%d_mass_%s_mean_%d",cat,mass.c_str(), i )] = vars_[ Form("fitmodel_gaus_mean_%d",i) ] -> getVal();
+        fitParameters_[ Form("fit_cat%d_mass_%s_sigma_%d",cat,mass.c_str(), i )] = vars_[Form("fitmodel_gaus_sigma_%d",i)] -> getVal();
+        if ( (i !=nGaussians -1) or not isLast ) fitParameters_[ Form("fit_cat%d_mass_%s_frac_%d",cat,mass.c_str(), i )] = vars_[ Form("fitmodel_gaus_frac_%d",i) ] -> getVal();
+    }
     return;
 }
 
 void Fitter::interpolateBern(int cat,  bool isLast){
 
-        for(int b=0;b<nBernstein ;++b)
+    for(int b=0;b<nBernstein ;++b)
+    {
+        vector<float> x;
+        vector<float> frac;
+        vector<float> pars;
+        for( auto & m: mIn )
         {
-            vector<float> x;
-            vector<float> frac;
-            vector<float> pars;
-            for( auto & m: mIn )
-            {
-                string mass=Form(massMask_.c_str(),m);
-                x.push_back(m);
-                pars.push_back( fitParameters_[Form("fit_cat%d_mass_%s_bern_par_%d",cat,mass.c_str(),b)] ) ;
-                if ( isLast ) frac.push_back( fitParameters_[Form("fit_cat%d_mass_%s_bern_frac",cat,mass.c_str())] ) ;
-            }
-            string splname= Form("spline_cat%d_par%d_bern",cat,b);
+            string mass=Form(massMask_.c_str(),m);
+            x.push_back(m);
+            pars.push_back( fitParameters_[Form("fit_cat%d_mass_%s_bern_par_%d",cat,mass.c_str(),b)] ) ;
+            if ( isLast ) frac.push_back( fitParameters_[Form("fit_cat%d_mass_%s_bern_frac",cat,mass.c_str())] ) ;
+        }
+        string splname= Form("spline_cat%d_par%d_bern",cat,b);
+        RooSpline1D *spline = new RooSpline1D(
+                splname.c_str(),
+                splname.c_str(),
+                *mh_,
+                x.size(),
+                &(x[0]),
+                &(pars[0])
+                ); 
+        splines_[ splname ] = spline;
+        //w_ -> import ( *spline  );
+
+        if( isLast ){
+            string splname= Form("spline_cat%d_bern_frac",cat);
             RooSpline1D *spline = new RooSpline1D(
-                        splname.c_str(),
-                        splname.c_str(),
-                        *mh_,
-                        x.size(),
-                        &(x[0]),
-                        &(pars[0])
-                        ); 
+                    splname.c_str(),
+                    splname.c_str(),
+                    *mh_,
+                    x.size(),
+                    &(x[0]),
+                    &(frac[0])
+                    ); 
             splines_[ splname ] = spline;
             //w_ -> import ( *spline  );
+        }
 
-            if( isLast ){
-                    string splname= Form("spline_cat%d_bern_frac",cat);
-                    RooSpline1D *spline = new RooSpline1D(
-                                splname.c_str(),
-                                splname.c_str(),
-                                *mh_,
-                                x.size(),
-                                &(x[0]),
-                                &(frac[0])
-                                ); 
-                    splines_[ splname ] = spline;
-                    //w_ -> import ( *spline  );
-            }
-        
-        } // end loop over bernstein
+    } // end loop over bernstein
     return;
 }
 
 void Fitter::interpolateGaus(int cat, bool isLast)
 {
-        for(int i=0;i< nGaussians ;++i) 
+    for(int i=0;i< nGaussians ;++i) 
+    {
+        vector<float> x;
+        vector<float> mean;
+        vector<float> sigma;
+        vector<float> frac;
+        for( auto & m: mIn )
         {
-            vector<float> x;
-            vector<float> mean;
-            vector<float> sigma;
-            vector<float> frac;
-            for( auto & m: mIn )
-            {
-                string mass=Form(massMask_.c_str(),m);
-                x.push_back(m);
-                mean.push_back( fitParameters_[Form("fit_cat%d_mass_%s_mean_%d",cat,mass.c_str(),i)] ) ;
-                sigma.push_back( fitParameters_[Form("fit_cat%d_mass_%s_sigma_%d",cat,mass.c_str(),i)] ) ;
-                if (i != nGaussians -1 ) frac.push_back( fitParameters_[Form("fit_cat%d_mass_%s_frac_%d",cat,mass.c_str(),i)] ) ;
-            }
+            string mass=Form(massMask_.c_str(),m);
+            x.push_back(m);
+            mean.push_back( fitParameters_[Form("fit_cat%d_mass_%s_mean_%d",cat,mass.c_str(),i)] ) ;
+            sigma.push_back( fitParameters_[Form("fit_cat%d_mass_%s_sigma_%d",cat,mass.c_str(),i)] ) ;
+            if (i != nGaussians -1 ) frac.push_back( fitParameters_[Form("fit_cat%d_mass_%s_frac_%d",cat,mass.c_str(),i)] ) ;
+        }
 
-            // -- Save splines 
-            string splname= Form("spline_cat%d_g%d_mean",cat,i);
-            RooSpline1D *meanSpline = new RooSpline1D(
-                        splname.c_str(),
-                        splname.c_str(),
-                        *mh_,
-                        x.size(),
-                        &(x[0]),
-                        &(mean[0])
-                        );
-            splines_[ splname ] = meanSpline;
-            //w_ -> import ( *meanSpline  );
-            splname= Form("spline_cat%d_g%d_sigma",cat,i);
-            RooSpline1D *sigmaSpline = new RooSpline1D(
-                        splname.c_str(),
-                        splname.c_str(),
-                        *mh_,
-                        x.size(),
-                        &(x[0]),
-                        &(sigma[0])
-                        );
-            splines_[ splname ] = sigmaSpline;
-            //w_ -> import ( *sigmaSpline  );
-            if ( (i !=nGaussians -1)  or not isLast){
-                splname= Form("spline_cat%d_g%d_frac",cat,i);
-                RooSpline1D *fracSpline = new RooSpline1D(
-                        splname.c_str(),
-                        splname.c_str(),
-                        *mh_,
-                        x.size(),
-                        &(x[0]),
-                        &(frac[0])
-                        );
-                splines_[ splname ] = fracSpline;
-                //w_ -> import ( *fracSpline  );
-            } // not last gaus
-        } // nGaussians
+        // -- Save splines 
+        string splname= Form("spline_cat%d_g%d_mean",cat,i);
+        RooSpline1D *meanSpline = new RooSpline1D(
+                splname.c_str(),
+                splname.c_str(),
+                *mh_,
+                x.size(),
+                &(x[0]),
+                &(mean[0])
+                );
+        splines_[ splname ] = meanSpline;
+        //w_ -> import ( *meanSpline  );
+        splname= Form("spline_cat%d_g%d_sigma",cat,i);
+        RooSpline1D *sigmaSpline = new RooSpline1D(
+                splname.c_str(),
+                splname.c_str(),
+                *mh_,
+                x.size(),
+                &(x[0]),
+                &(sigma[0])
+                );
+        splines_[ splname ] = sigmaSpline;
+        //w_ -> import ( *sigmaSpline  );
+        if ( (i !=nGaussians -1)  or not isLast){
+            splname= Form("spline_cat%d_g%d_frac",cat,i);
+            RooSpline1D *fracSpline = new RooSpline1D(
+                    splname.c_str(),
+                    splname.c_str(),
+                    *mh_,
+                    x.size(),
+                    &(x[0]),
+                    &(frac[0])
+                    );
+            splines_[ splname ] = fracSpline;
+            //w_ -> import ( *fracSpline  );
+        } // not last gaus
+    } // nGaussians
     return;
 }
 
@@ -347,49 +347,49 @@ void Fitter::fitSignal(){
     {
         for( auto & m: mIn )
         {
-             // ------------------------- FIT ----------------
-             string mass = Form( massMask_.c_str(), m );
-             string name =  Form("cat_%d_mass_%s",cat,mass.c_str());  
+            // ------------------------- FIT ----------------
+            string mass = Form( massMask_.c_str(), m );
+            string name =  Form("cat_%d_mass_%s",cat,mass.c_str());  
 
-             // switch on and off verbosity of roofit/minuit
-             int errlevel = -1;
-             int printlevel = -1;
-             int warnlevel = 0;
-             if (verbose)
-             {
+            // switch on and off verbosity of roofit/minuit
+            int errlevel = -1;
+            int printlevel = -1;
+            int warnlevel = 0;
+            if (verbose)
+            {
                 errlevel = 1;
                 printlevel = 1;
                 warnlevel = 1;
-             }
-             // -- fit
+            }
+            // -- fit
 
-             fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
-             fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
+            fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
+            fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
 
-             // -- Plot
-             if (plot ) {
-                 TCanvas *c = new TCanvas();
-                 RooPlot *p = x_ -> frame();
-                 hist_[ name ] -> plotOn(p,DataError(RooAbsData::SumW2));
-                 fitModel -> plotOn(p);
+            // -- Plot
+            if (plot ) {
+                TCanvas *c = new TCanvas();
+                RooPlot *p = x_ -> frame();
+                hist_[ name ] -> plotOn(p,DataError(RooAbsData::SumW2));
+                fitModel -> plotOn(p);
 
-                 for(int i=0;i < nGaussians ;++i)
-                 {
-                       fitModel -> plotOn(p, Components(Form("fitmodel_gaus_g%d",i)),LineStyle(kDashed) );
-                 }
+                for(int i=0;i < nGaussians ;++i)
+                {
+                    fitModel -> plotOn(p, Components(Form("fitmodel_gaus_g%d",i)),LineStyle(kDashed) );
+                }
 
-                 if( nBernstein >0 )
-                 {
-                fitModel -> plotOn(p, Components(Form("fitmodel_bern_%d",nBernstein)),LineStyle(kDotted) );
-                 }
+                if( nBernstein >0 )
+                {
+                    fitModel -> plotOn(p, Components(Form("fitmodel_bern_%d",nBernstein)),LineStyle(kDotted) );
+                }
 
-                 c->SetLogy();
-                 p -> Draw();
-                 c -> SaveAs( Form("%s/fit_mh_%s_cat%d.pdf",plotDir.c_str(),mass.c_str(),cat) );
-                 c -> SaveAs( Form("%s/fit_mh_%s_cat%d.png",plotDir.c_str(),mass.c_str(),cat) );
-                 delete p;
-                 delete c;
-                } // end plots
+                c->SetLogy();
+                p -> Draw();
+                c -> SaveAs( Form("%s/fit_mh_%s_cat%d.pdf",plotDir.c_str(),mass.c_str(),cat) );
+                c -> SaveAs( Form("%s/fit_mh_%s_cat%d.png",plotDir.c_str(),mass.c_str(),cat) );
+                delete p;
+                delete c;
+            } // end plots
             // -- Save coefficients vs mh
             saveCoefficientsBern(cat,mass, nGaussians<=0);
             saveCoefficientsGaus(cat,mass,true);
@@ -428,11 +428,11 @@ void Fitter::finalModel(){
         {  
             RooArgList *pars=new RooArgList();
             for(int b=0;b<nBernstein; b++)
-                {
+            {
                 RooAbsReal *p = splines_ [ Form("spline_cat%d_par%d_bern",cat,b) ] ;
                 if (p == NULL ) cout<<"[Fitter]::[finalModel]::[ERROR] bern parameter"<<b<<"for cat"<<cat<<"is NULL "<<endl;
                 pars -> add( *p );
-                }
+            }
             RooAbsPdf* pdf; 
 
             if (nBernstein==1) pdf=new RooBernsteinFast<1>(Form("bern_%d",nBernstein), Form("bern_%d",nBernstein), *x_, *pars);
@@ -452,7 +452,7 @@ void Fitter::finalModel(){
 
             RooAbsReal *m =  splines_[  Form("spline_cat%d_g%d_mean",cat,i) ] ;
             RooAbsReal *s =  splines_[  Form("spline_cat%d_g%d_sigma",cat,i) ] ;
-            
+
             if( m== NULL ) cout<<"[Fitter]::[finalModel]::[ERROR] mean spline is NULL"<< Form("spline_cat%d_g%d_mean",cat,i)<<endl;
             if( s== NULL ) cout<<"[Fitter]::[finalModel]::[ERROR] sigma spline is NULL"<< Form("spline_cat%d_g%d_sigma",cat,i)<<endl;
             if (m== NULL or s==NULL) for(auto& p: splines_) cout<<"[Fitter]::[finalModel]::[DEBUG] splines_["<<p.first<<"] = "<<p.second<<endl;
@@ -464,8 +464,8 @@ void Fitter::finalModel(){
 
             if (i != nGaussians-1) // sum to 1
             {
-            RooAbsReal *f = splines_ [  Form("spline_cat%d_g%d_frac",cat,i) ];
-            coeffs -> add(   *f  ) ;
+                RooAbsReal *f = splines_ [  Form("spline_cat%d_g%d_frac",cat,i) ];
+                coeffs -> add(   *f  ) ;
             }
         }
 
@@ -487,7 +487,7 @@ void Fitter::finalModel(){
             c -> SaveAs( Form("%s/interpolation_cat%d.png",plotDir.c_str(),cat) );
             delete p;
             delete c;
-           } // end plot
+        } // end plot
     } //end cat
 
 }

@@ -1,5 +1,5 @@
-#ifndef TMVA_TRAINER_H
-#define TMVA_TRAINER_H
+#ifndef REGR_TRAINER_H
+#define REGR_TRAINER_H
 
 #include "TMVA/Factory.h"
 #include "TMVA/Tools.h"
@@ -9,7 +9,7 @@
 
 
 
-class TmvaTrainer : virtual public AnalysisBase
+class RegressionTrainer : virtual public AnalysisBase
 {
     private:
         TMVA::Factory *factory_;
@@ -18,12 +18,12 @@ class TmvaTrainer : virtual public AnalysisBase
 
         DataStore varsValues_;
     public:
-        TmvaTrainer();
-        ~TmvaTrainer();
+        RegressionTrainer();
+        ~RegressionTrainer();
         virtual int analyze(Event*,string systname);
         virtual void Init();
         virtual void End();
-        virtual const string name(){return "TmvaTrainer";}
+        virtual const string name(){return "RegressionTrainer";}
         virtual void AddVariable( string, char, double=0.,double=0.);
         
         bool train;

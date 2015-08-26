@@ -10,8 +10,11 @@
 #include "NeroProducer/Core/interface/BareFatJets.hpp"
 #include "NeroProducer/Core/interface/BareLeptons.hpp"
 #include "NeroProducer/Core/interface/BareTaus.hpp"
+#include "NeroProducer/Core/interface/BareTrigger.hpp"
 
 #include "interface/Handlers.hpp"
+
+#include <sstream>
 
 //#define VERBOSE 2
 
@@ -78,8 +81,13 @@ int Looper::InitTree()
     bare_.push_back(l);
 
     BareMet *met = new BareMet(); 
+    met->SetExtend(); // pfmet3p0
     names_[ "Met" ] = bare_.size();
     bare_.push_back(met);
+
+    BareTrigger *tr = new BareTrigger(); 
+    names_[ "Trigger" ] = bare_.size();
+    bare_.push_back(tr);
 
     for (auto c : bare_ )
         c->setBranchAddresses(tree_);
@@ -189,21 +197,40 @@ void Looper::NewFile()
     if ( event_->IsRealData() ) { 
         cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<label;
         event_ -> weight_ . LoadMC("data");
-        return ;
     }
     // -- Load current MC --
-    string savedDir=event_ -> weight_ . LoadMC( label );
-    if (savedDir =="")
-    {
-        cout<<"[Looper]::[NewFile]::[WARNING] failed to search MC by LABEL '"<<label<<"' search by dir '"<<dir<<"'"<<endl;
-        // search for dir
-        label = event_ -> weight_ . LoadMCbyDir(dir);
-        savedDir = dir;
-        cout<<"[Looper]::[NewFile]::[WARNING] label found '"<<label<<"'"<<endl;
-    }
-    if ( dir != savedDir or label == "")
-        cout<<"[Looper]::[NewFile]::[WARNING] saved dir '"<<savedDir<<"' and current dir '"<< dir <<"' label '"<<label<<"'"<<endl;
+    else {
+        string savedDir=event_ -> weight_ . LoadMC( label );
+        if (savedDir =="")
+        {
+            cout<<"[Looper]::[NewFile]::[WARNING] failed to search MC by LABEL '"<<label<<"' search by dir '"<<dir<<"'"<<endl;
+            // search for dir
+            label = event_ -> weight_ . LoadMCbyDir(dir);
+            savedDir = dir;
+            cout<<"[Looper]::[NewFile]::[WARNING] label found '"<<label<<"'"<<endl;
+        }
+        if ( dir != savedDir or label == "")
+            cout<<"[Looper]::[NewFile]::[WARNING] saved dir '"<<savedDir<<"' and current dir '"<< dir <<"' label '"<<label<<"'"<<endl;
+    } // end MC
 
+    // LOAD TRIGGER NAMES
+    TNamed * tn=  (TNamed*)tree_->GetFile()->Get("nero/triggerNames");
+    if (tn == NULL ) 
+        cout<<"[Looper]::[NewFile]::[ERROR] no trigger informations in file:"<<fname<<endl; 
+    // split by comma and save in the  triggerNames_
+    {
+        event_ -> triggerNames_ . clear();
+        stringstream ss(tn->GetTitle());
+        string token;
+        while(std::getline(ss, token, ',')) {
+                //std::cout << token << '\n';
+#ifdef VERBOSE
+		if(VERBOSE>0)cout<<"[Looper]::[NewFile]::[DEBUG] TriggerNames"<< event_->triggerNames_ .size() <<" = "<<token<<endl;
+#endif
+                event_ -> triggerNames_ .push_back(token);
+                }
+        event_ -> IsTriggered(""); // reset trigger caching
+    }
     return;
 }
 
@@ -332,7 +359,7 @@ void Looper::FillMC(){
 void Looper::FillMet(){
     // FillMEt
 #ifdef VERBOSE
-    if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Filling MET" <<endl;
+    if(VERBOSE>1)cout <<"[Looper]::[FillMet]::[DEBUG] Filling MET" <<endl;
 #endif
     BareMet * met = dynamic_cast<BareMet*> ( bare_[ names_["Met"]]);
 
@@ -343,12 +370,31 @@ void Looper::FillMet(){
     }
 
     if ( met->p4 ->GetEntries() != 1)
-        cout<<"[Looper]::[FillEvent]::[ERROR] MET should have exactly 1 entry instead of "<<met->p4 ->GetEntries() <<endl;
+        cout<<"[Looper]::[FillMet]::[ERROR] MET should have exactly 1 entry instead of "<<met->p4 ->GetEntries() <<endl;
 
-    event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
+    //event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
+    event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
     event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
     event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
 
+    if ( event_->IsRealData() )
+	event_ -> met_ . gen = 0;	
+    else
+    	event_ -> met_ . gen =( (TLorentzVector*)(*met->genP4)[0] )->Pt();
+
+}
+
+void Looper::FillTrigger(){
+    BareTrigger *tr = dynamic_cast<BareTrigger*> ( bare_[names_["Trigger"]]);
+    if (tree_->GetBranchStatus( "triggerFired") == 0 )
+    {
+        static int counter = 0 ;
+        if (counter<10){counter++; cout<<"[Loope]::[FillTrigger]::[WARNING] No trigger"<<endl;}
+        return;
+    }
+    event_ -> triggerFired_ . clear();
+    for(size_t i=0;i< tr ->triggerFired ->size() ;++i)
+        event_ -> triggerFired_ . push_back ( bool( (*tr->triggerFired)[i]  ) );
 }
 
 void Looper::FillEvent(){
@@ -364,6 +410,7 @@ void Looper::FillEvent(){
     FillTaus();
     FillMet();
     FillMC();
+    FillTrigger();
 
 
 #ifdef VERBOSE
@@ -381,4 +428,4 @@ void Looper::FillEvent(){
 // tab-width:4
 // c-basic-offset:4
 // End:
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+

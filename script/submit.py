@@ -137,6 +137,10 @@ if opts.resubmit:
 			basedir = os.environ['PWD'] + "/" + opts.dir
 			touch = "touch " + basedir + "/sub%d.pend"%iJob
 			call(touch,shell=True)
+			cmd = "rm " + basedir + "/sub%d.fail"%iJob
+			call(cmd,shell=True)
+			cmd = "rm " + basedir + "/sub%d.run"%iJob
+			call(cmd,shell=True)
 			cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
 			print cmdline
 			call (cmdline,shell=True)
@@ -162,6 +166,25 @@ cmdFile.write("##Commands used to submit on batch. Automatic written by python/s
 
 if opts.tar:
 	cmd=["tar","-czf","%s/package.tar.gz"%opts.dir]
+	if True: ## copy also the bare library in the tar. for grid submission
+		cmdBare = "mkdir -p ./bin/bare"
+		call(cmdBare,shell=True)
+		cmdBare = "cp " +os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/bin/libBare.so ./bin/bare/"
+		call(cmdBare,shell=True)
+		cmdBare = "cp " +os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/bin/dict_rdict.pcm ./bin/bare/"
+		call(cmdBare,shell=True)
+		## run time libraries needs also the .h files :(
+		cmdBare = "mkdir -p ./bin/interface"
+		call(cmdBare,shell=True)
+		cmdBare = "cp " + os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/interface/*hpp ./bin/interface/"
+		call(cmdBare,shell=True);
+		### this file is produced by make
+		#cmdBare = "cp bin/libChargedHiggs.so bin/libChargedHiggs.0.so"
+		#call(cmdBare,shell=True)
+		#cmdBare = "/afs/cern.ch/user/a/amarini/public/patchelf --set-rpath '' bin/libChargedHiggs.0.so"
+		#call(cmdBare,shell=True)
+	cmd.extend( glob("bin/bare/*" ) )
+	cmd.extend( glob("bin/interface/*" ) )
 	cmd.extend( glob("bin/*so" ) )
 	cmd.extend( glob("bin/dict*" ) )
 	#cmd.extend( glob("bin/tag.txt" ) )
@@ -169,7 +192,14 @@ if opts.tar:
 	cmd.extend( glob("dat/*txt" ) )
 	cmd.extend( glob("aux/*" ) )
 	cmd.extend( glob("python/*py") )
-	cmd.extend( glob("test/*") )
+	#cmd.extend( glob("test/*") )
+	cmd.extend( glob("test/*py") )
+	cmd.extend( glob("test/*C") )
+	cmd.extend( glob("test/*.hpp") )
+	cmd.extend( glob("test/*.cpp") )
+	cmd.extend( glob("test/*.o") )
+	cmd.extend( glob("test/*.so") )
+	cmd.extend( glob("test/*.exe") )
 	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
 	tarCmdline = " ".join(cmd)
 	print tarCmdline

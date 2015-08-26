@@ -175,6 +175,45 @@ Lepton * Event::GetMuon( int iMu )
     return leps_[ valid[iMu].second];
 }
 
+Tau * Event::GetTauInvIso( int iTau ) 
+{ // { return taus_.at(iTau);} // old
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<taus_.size() ;++i)
+    {
+        if ( taus_[i]->IsTauInvIso()) valid.push_back(pair<float,int>(taus_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iTau  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return taus_[ valid[iTau].second];
+}
+
+bool Event::IsTriggered( string name )
+{
+    static string lastName = "";
+    static int lastPos = -1;
+
+    //cout <<"name = "<<name<<" last="<<lastName<<" lastPos="<<lastPos<<endl;
+
+    if (name == lastName and lastPos >=0 )
+    {
+        return triggerFired_[ lastPos ] ;
+    }
+    
+    lastPos = -1;
+    for (size_t i=0; i <  triggerNames_.size() ;++i)
+    {
+        if (name == triggerNames_[i] ) { lastPos=i; break;} 
+    }
+    lastName = name;
+    if (lastPos >=0 ) return triggerFired_[ lastPos ] ; 
+    
+    cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
+    return false;
+}
 
 // Local Variables:
 // mode:c++
