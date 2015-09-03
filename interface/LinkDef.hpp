@@ -16,6 +16,7 @@
 
 #pragma link C++ class Fitter+;
 #pragma link C++ class PurityFit+;
+#pragma link C++ class NegativeWeightInterpolator+;
 
 //#pragma link C++ class sigint_exception+;
 

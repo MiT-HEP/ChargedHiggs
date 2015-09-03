@@ -1,18 +1,29 @@
 #include "interface/AnalysisChargedHiggsQCDPurity.hpp"
+#include "interface/GeneralFunctions.hpp"
 
 void ChargedHiggsQCDPurity::Init()
 {
     for ( string& l : AllLabel()  ) 
-    for (size_t iBin = 0 ; iBin + 1 < PtBins.size() ; ++iBin )
+    for (size_t iBin = -1 ; iBin + 1 < PtBins.size() ; ++iBin )
     {
-        Book( dir + HistName(PtBins[iBin], true )+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
-        Book( dir + HistName(PtBins[iBin], false)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+        float pt = -1;
+        if (iBin>=0 ) pt= PtBins[iBin];
+        //                       direct, fullSel
+        Book( dir + HistName(pt, true , false)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+        Book( dir + HistName(pt, false, false)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
     }
     // --- for event not in the PtBins 
+    // -- full selection
     for ( string& l : AllLabel()  ) 
+    for (size_t iBin = -1 ; iBin + 1 < PtBins.size() ; ++iBin )
     {
-        Book( dir + HistName(-1, true )+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
-        Book( dir + HistName(-1, false)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+        float pt = -1;
+        if (iBin>=0 ) pt= PtBins[iBin];
+        Book( dir + HistName(pt, true , true)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+        Book( dir + HistName(pt, false, true)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+        //
+        Book( dir + HistName(pt, true , true,"Mt")+"_"+ l  , ("Mt "+ l).c_str(),250,0.,500);
+        Book( dir + HistName(pt, false, true,"Mt")+"_"+ l  , ("MtIsoInv "+ l).c_str(),250,0.,500.);
     }
 
 }
@@ -30,28 +41,77 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // TODO:
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
     // * put a limit on the TauInv sideband ? 10/20 GeV ? 
-    //
-    if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") )  {
+   
+   // TODO -> use TAU + MET TRIGGER 
+    if ( e->IsRealData() and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") )  {
         return EVENT_NOT_USED;
     }
     //cout <<" EVENT TRIGGERED"<<endl;
+    //
+    // ---
+    if ( t==NULL or tInv==NULL ) return EVENT_NOT_USED;
+    if ( e->Nleps() >0 ) return EVENT_NOT_USED;
+    if ( e->Njets() <3 ) return EVENT_NOT_USED;
+    
 
     if (t != NULL and t->Pt()>=51 and fabs(t->Eta())<2.1)
         {
         float pt = t->Pt();
         if (pt  > 8000 or pt <0 ) 
             cout <<"[ChargedHiggsQCDPurity]::[analyze]::[INFO] strange event:  tau Pt="<<pt<<endl;
-        string hist = HistName(pt,true);
+        string hist = HistName(pt,true, false);
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
         }
+
     if (tInv != NULL and tInv->Pt()>=51 and fabs(tInv->Eta())<2.1)
         {
         float pt = tInv->Pt();
         if (pt  > 8000 or pt <0 ) 
             cout <<"[ChargedHiggsQCDPurity]::[analyze]::[INFO] strange event:  tau (inv iso) Pt="<<pt<<endl;
-        string hist = HistName(pt,false);
+        string hist = HistName(pt,false,false);
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
         }
+
+    if ( e->GetMet().Pt() <130 ) return EVENT_NOT_USED;
+    if ( e->Bjets() <1 ) return EVENT_NOT_USED;
+
+    double DPhiEtMissJet1=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
+    double DPhiEtMissJet2=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
+    double DPhiEtMissJet3=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
+
+    if (t!=NULL) 
+    {
+        double DPhiEtMissTau=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),t->Phi()));
+
+        double RbbMin=min(min(sqrt(pow(DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
+        double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
+        double RsrMax=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
+        if ( RCollMin*TMath::RadToDeg() >=40 and RbbMin*TMath::RadToDeg() >=40 ){
+                 float pt = t->Pt();
+                 string hist = HistName(pt,true,true);  
+                 Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
+
+                 hist = HistName(pt,true,true,"Mt");  
+                 Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight());
+        }
+    }
+
+    if (tInv != NULL ) {
+        double DPhiEtMissTau=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),tInv->Phi()));
+        double RbbMin=min(min(sqrt(pow(DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
+        double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
+        double RsrMax=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
+        if ( RCollMin*TMath::RadToDeg() >=40 and RbbMin*TMath::RadToDeg() >=40 ){
+                 float pt = tInv->Pt();
+                 string hist = HistName(pt,false,true);  
+                 Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
+
+                 hist = HistName(pt,false,true,"Mt");  
+                 Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight());
+        }
+    
+    }
+
 
     return EVENT_NOT_USED;
 }
@@ -63,19 +123,44 @@ int ChargedHiggsQCDPurity::FindBin(float pt)
     return -1;
 }
 
-string ChargedHiggsQCDPurity::HistName(float pt, bool Direct)
+string ChargedHiggsQCDPurity::HistName(float pt, bool Direct, bool FullSelection, string var)
 {
    int iBin=FindBin(pt);
    string name;
 
-   if (iBin<0 ) name = "EtMiss_BinNotFound"; 
-   else name= Form("EtMiss_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1]);
+   if (iBin<0 ) name = var +"_BinNotFound"; 
+   else name= Form("%s_pt%.0f_%.0f",var.c_str(),PtBins[iBin],PtBins[iBin+1]);
 
    if (not Direct) name += "_IsoInv";
+
+   if ( FullSelection) name += "_FullSelection" ;
 
    return name;
 }
 
+// ---- All plots have a wPlus/wMinus 
+void ChargedHiggsQCDPurity::Book(string name, string title,int nBins, double xmin, double xmax){
+    AnalysisBase::Book(name,title,nBins,xmin,xmax);
+    if (name.find("_Data") != string::npos) return;
+    string wPlus = name + "_wPlus";
+    string wMinus = name + "_wMinus";
+
+    AnalysisBase::Book(wPlus,title,nBins,xmin,xmax);
+    AnalysisBase::Book(wMinus,title,nBins,xmin,xmax);
+
+}
+
+void ChargedHiggsQCDPurity::Fill(string name, string syst , double value, double weight)
+{
+    AnalysisBase::Fill(name,syst,value,weight);
+    if (name.find("_Data") != string::npos) return;
+    string wPlus = name + "_wPlus";
+    string wMinus = name + "_wMinus";
+    if (weight>0 ) AnalysisBase::Fill(wPlus,syst,value,weight);
+    if (weight<0 ) AnalysisBase::Fill(wMinus,syst,value,weight);
+    return ;
+
+}
 
 // Local Variables:
 // mode:c++

@@ -15,7 +15,10 @@ class ChargedHiggsQCDPurity:  virtual public AnalysisBase
 
         const string dir="ChargedHiggsQCDPurity/Vars/";
         int FindBin(float pt);
-        string HistName(float pt, bool Direct=true);
+        string HistName(float pt, bool Direct=true, bool FullSelection=false,string var = "EtMiss");
+
+    void Book(string name, string title,int nBins, double xmin, double xmax);
+    void Fill(string name, string syst , double value, double weight=1);
 };
 
 #endif

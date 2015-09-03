@@ -29,7 +29,9 @@ void PurityFit::fit(){
         TCanvas *cEWK= new TCanvas(Form("EWK_control_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ));
         TCanvas *cQCD= new TCanvas(Form("QCD_control_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ));
 
+        if (verbose_ >0 ) cout <<"[PurityFit]::[fit]::[INFO] Getting histogram: '"<< Form(targetname.c_str(),PtBins[iBin],PtBins[iBin+1])<<"'" <<endl;
         TH1D *h   = (TH1D*) fIn_ -> Get( Form(targetname.c_str(), PtBins[iBin],PtBins[iBin+1])  ) -> Clone();  // EWK
+        if (verbose_ >0 ) cout <<"[PurityFit]::[fit]::[INFO] Getting histogram: '"<< Form(signame.c_str(),PtBins[iBin],PtBins[iBin+1])<<"'" <<endl;
         TH1D *sig = (TH1D*) fIn_ -> Get( Form(signame.c_str(), PtBins[iBin],PtBins[iBin+1]) ) -> Clone();// QCD
        
         if ( h != NULL and sig != NULL and h->Integral() >0 and sig->Integral() >0)  // control plots QCD
@@ -38,7 +40,9 @@ void PurityFit::fit(){
 
             sig->DrawNormalized("P");
 
+            if (verbose_ >0 ) cout <<"[PurityFit]::[fit]::[INFO] Getting histogram: '"<<Form(bkgname.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD")<<"'" <<endl;
             TH1D * qcd = (TH1D*)  fIn_ ->Get( Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],"QCD") );
+            if (verbose_ >0 ) cout <<"[PurityFit]::[fit]::[INFO] Getting histogram: '"<<Form(bkgnameInv.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD")<<"'" <<endl;
             TH1D * qcdInv = (TH1D*)  fIn_ ->Get( Form( bkgnameInv.c_str() , PtBins[iBin],PtBins[iBin+1],"QCD") ) ;
             sig->SetMarkerStyle(20);
             qcd->SetLineColor(kRed+2);
@@ -108,8 +112,24 @@ void PurityFit::fit(){
         fOut->Close(); // close for the fit_specific
 
         delete cEWK;
-     
-        float f = fit_specific( h,sig,bkg, Form("fit_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ), outname);
+    
+        map<string,float> pars; 
+
+        float hI= h->Integral();
+        float sI= sig->Integral();
+
+        float f = fit_specific( h,sig,bkg, Form("fit_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ), outname, &pars);
+
+        // propagate the fraction to the yields
+        float R = f * hI / sI;
+        float Rhi = pars["fracErrorHigh"] * hI / sI;
+        float Rlo = pars["fracErrorLow"] * hI / sI;
+
+        cout <<"pt "<<PtBins[iBin]<<" "<<PtBins[iBin+1]
+            << " frac "<<f <<" +"<<pars["fracErrorHigh"]<< " -"<< pars["fracErrorLow"]
+            << " R "<< R <<" +"<<Rhi<<" -"<<Rlo
+            <<endl;
+
     } // bin loop
 
 }
@@ -119,24 +139,30 @@ void PurityFit::fit(){
 using namespace RooFit;
 // -------------------------------------------------------------------
 
-float PurityFit::fit_specific( TH1* h, TH1* sig, TH1* bkg, 
+float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_, 
         string name, // unique name of the result
         string outname , // output file name, where to save results
         map<string,float> *pars	 // to gather additional params
         )
 {
+
     // 1) perform preliminary checks
-    if ( h== NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no target histogram"<<endl; return -1;}
-    if ( sig== NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no sig histogram"<<endl; return -1;}
-    if ( bkg== NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no bkg histogram"<<endl; return -1;}
+    if ( h_ == NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no target histogram"<<endl; return -1;}
+    if ( sig_ == NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no sig histogram"<<endl; return -1;}
+    if ( bkg_ == NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no bkg histogram"<<endl; return -1;}
 
-    if (sig->Integral() == 0 ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] sig integrall is NULL"<<endl; return -2;}
-    if (bkg->Integral() == 0 ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] bkg integrall is NULL"<<endl; return -2;}
+    if (sig_ -> Integral() == 0 ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] sig integrall is NULL"<<endl; return -2;}
+    if (bkg_ -> Integral() == 0 ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] bkg integrall is NULL"<<endl; return -2;}
 
-    if (verbose_ >0) cout <<"[PurityFit]::[fit_specific]::[INFO] fitting "<<h->GetName() << " " << sig->GetName()<<" "<<bkg->GetName()<<endl;
+    if (verbose_ >0) cout <<"[PurityFit]::[fit_specific]::[INFO] fitting "<<h_->GetName() << " " << sig_->GetName()<<" "<<bkg_->GetName()<<endl;
+    // 1.5) Clone
+    TH1 * sig = (TH1*)sig_ -> Clone(Form("%s_fitspecific_clone",sig_->GetName()));
+    TH1 * bkg = (TH1*)bkg_ -> Clone(Form("%s_fitspecific_clone",bkg_->GetName()));
+    TH1 * h = (TH1*)h_ -> Clone(Form("%s_fitspecific_clone",h_->GetName()));
     // 2) scale templates: template normalization is meaningless
     sig->Sumw2();	
     bkg->Sumw2();
+
 
     sig -> Scale( 1./sig->Integral() );
     bkg -> Scale( 1./bkg->Integral() );
@@ -185,13 +211,18 @@ float PurityFit::fit_specific( TH1* h, TH1* sig, TH1* bkg,
     RooPlot *frame=x.frame();
     RooMsgService::instance().setSilentMode(true);
     r = PdfModel.fitTo(HistToFit,
-            SumW2Error(kTRUE),
+            //SumW2Error(kTRUE),
             Save(), 
             PrintEvalErrors(-1),
             PrintLevel(-1),
             Minos(kTRUE),
             Warnings(0)
             );
+    // 8.5) save additional results
+    if (pars != NULL ) {
+        (*pars)["fracErrorHigh"] = f.getAsymErrorHi(); 
+        (*pars)["fracErrorLow" ] = f.getAsymErrorLo(); 
+    }
     // 9) plot
     HistToFit.plotOn(frame,DataError(RooAbsData::SumW2));
     PdfModel.plotOn(frame, LineColor(kBlack));
@@ -242,6 +273,11 @@ float PurityFit::fit_specific( TH1* h, TH1* sig, TH1* bkg,
         r->Write(Form("%s_roofit",name.c_str() ) );
         fOut->Close();
     }
+
+    // delete the clone
+    sig -> Delete();
+    bkg -> Delete();
+    h   -> Delete();
 
     return f.getVal();
 }
