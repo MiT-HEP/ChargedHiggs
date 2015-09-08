@@ -1,4 +1,6 @@
 #include "interface/PurityFit.hpp"
+#include "interface/NegativeWeightInterpolator.hpp"
+#include <fstream>
 
 
 void PurityFit::init(){
@@ -23,6 +25,10 @@ void PurityFit::fit(){
     // reset output file
     TFile *fOut= TFile::Open(outname.c_str(),"RECREATE");
     fOut->Close();
+
+    ofstream  fw;
+    fw.open("R.txt");
+    fw <<"# QCD R-factor computed by PurityFit"<<endl;
 
     for (size_t iBin=0;iBin+1<PtBins.size() ;++iBin)
     {
@@ -76,10 +82,24 @@ void PurityFit::fit(){
         l->SetFillStyle(0);
         l->SetBorderSize(0);
 
+        ///-----
+        NegativeWeightInterpolator n;
+        n.print();
+        // ----
+
         TH1D *bkg= NULL;
         for (string& s : bkglabels)
         {
             TH1D *bkg_tmp = (TH1D*)  fIn_ ->Get( Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str()) );
+            TH1D *bkg_binned = NULL;
+            if ( s== "WJets" or s=="DY" )
+            {
+                bkg_binned = bkg_tmp;
+                TH1D*pos = static_cast<TH1D*>(fIn_ ->Get( Form( (bkgname+ "_wPlus").c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str()) ));
+                TH1D*neg = static_cast<TH1D*>(fIn_ ->Get( Form( (bkgname+ "_wMinus").c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str()) ));
+                bkg_tmp = static_cast<TH1D*>(n.add(pos,neg));
+            }
+
             if ( bkg_tmp == NULL )  cout <<"[PurityFit]::[fit]::[ERROR] histo "<<  Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str()) << " is NULL"<<endl;
 
             bool first = false;
@@ -90,9 +110,9 @@ void PurityFit::fit(){
             else bkg->Add(bkg_tmp);
       
             // control plots EWK
-            if (s == "DY") bkg_tmp->SetLineColor(kCyan);
+            if (s == "DY") { bkg_tmp->SetLineColor(kCyan); bkg_binned->SetLineColor(kCyan); } 
             else if (s == "TTJets") bkg_tmp->SetLineColor(kMagenta+2);
-            else if (s == "WJets" ) bkg_tmp->SetLineColor(kGreen+2);
+            else if (s == "WJets" ) { bkg_tmp->SetLineColor(kGreen+2); bkg_binned -> SetLineColor(kGreen+2);}
             else if (s == "WW"  )  bkg_tmp->SetLineColor(kRed);
             else if (s == "WZ"  )  bkg_tmp->SetLineColor(kRed+2);
             else if (s == "ZZ"  )  bkg_tmp->SetLineColor(kRed-4);
@@ -101,6 +121,8 @@ void PurityFit::fit(){
 
             if (first) bkg_tmp->Draw("HIST");
             else bkg_tmp->Draw("HIST SAME");
+
+            if (bkg_binned) bkg_binned -> Draw("HIST SAME");
 
         } // labels loop
         
@@ -125,10 +147,13 @@ void PurityFit::fit(){
         float Rhi = pars["fracErrorHigh"] * hI / sI;
         float Rlo = pars["fracErrorLow"] * hI / sI;
 
+        //  INFO
         cout <<"pt "<<PtBins[iBin]<<" "<<PtBins[iBin+1]
             << " frac "<<f <<" +"<<pars["fracErrorHigh"]<< " -"<< pars["fracErrorLow"]
             << " R "<< R <<" +"<<Rhi<<" -"<<Rlo
             <<endl;
+        //  for SF DB
+        fw <<"tauinviso pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
 
     } // bin loop
 

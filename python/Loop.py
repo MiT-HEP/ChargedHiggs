@@ -207,7 +207,11 @@ for analysis in cfg['Analysis']:
 			try: 
 				getattr(analyzer, check)
 			except AttributeError:
-				print "WARNING Analyzer",analysis,"do not have attribute",check
+				try: 
+					check= check.split('.')[0]
+					getattr(analyzer, check)
+				except AttributeError:
+					print "WARNING Analyzer",analysis,"do not have attribute",check,"key=",key
 			##
 			exec('analyzer.'+key)
 	loop.AddAnalysis(analyzer)

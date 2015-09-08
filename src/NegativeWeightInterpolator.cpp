@@ -92,8 +92,8 @@ void NegativeWeightInterpolator::guess(const TH1*h)
      vars["s1"] -> setVal( mean / TMath::Sqrt( TMath::Pi()/2.0 )  );
      vars["s1"] -> setRange( vars["s1"]->getVal()/3.0 , vars["s1"]->getVal()*3.0 ) ;
      // -- expo
-     vars["l3"] -> setVal( 1./mean ) ;
-     vars["l3"] -> setRange( 1./mean/3.0, 1./mean*3.0 ) ;
+     vars["l3"] -> setVal( -1./mean ) ;
+     vars["l3"] -> setRange( -10000., -(1./mean)/3.0 ) ;
 }
 
 void NegativeWeightInterpolator::reset(){

@@ -1,4 +1,5 @@
 #include "interface/Weight.hpp"
+//#define VERBOSE 1
 
 void Weight::AddMC( string label, string dir, double xsec, double nevents)
 {
@@ -13,12 +14,20 @@ void Weight::AddSF( string label, double sf, double err){
     sf_db[label]->sf = sf;
     sf_db[label]->err = err;
     sf_db[label]->syst = 0;
+    sf_db[label]->label = label;
 }
 
 void Weight::AddPtEtaSF( string label,double pt1, double pt2 , double eta1, double eta2, double sf, double err){
+    #ifdef VERBOSE
+        if(VERBOSE>0) cout <<"[Weight]::[AddPtEtaSF]::[DEBUG1] adding sf label '"<<label<<"'"<<endl;
+    #endif
     if ( sf_db.find(label) == sf_db.end() )
     {
         sf_db[label] = new SF_PtEta();
+        sf_db[label]->label= label;
+        #ifdef VERBOSE
+            if(VERBOSE>0) cout <<"[Weight]::[AddPtEtaSF]::[DEBUG1] Constructing PtEta"<<endl;
+        #endif
     }
     SF_PtEta *p =  dynamic_cast<SF_PtEta*> ( sf_db[label] );
     if (p == NULL)
@@ -35,9 +44,17 @@ void Weight::resetSystSF(){
 
 void Weight::SetPtEtaSF(string label,double pt, double eta)
 {
+    #ifdef VERBOSE
+        if(VERBOSE>0) cout <<"[Weight]::[SetPtEtaSF]::[DEBUG1] label='"<<label<<"'"<<endl;
+    #endif
     SF_PtEta *p =  dynamic_cast<SF_PtEta*> ( sf_db[label] );
     if (p == NULL)
-        cout <<"[Weight]::[SetPtEtaSF]::[ERROR] SF "<<label<<" is not Pt Eta dependent"<<endl;
+        cout <<"[Weight]::[SetPtEtaSF]::[ERROR] SF '"<<label<<"' is not Pt Eta dependent"<<endl;
+
+    #ifdef VERBOSE
+        if(VERBOSE>0)cout <<"[Weight]::[SetPtEtaSF]::[DEBUG1] p->label='"<<p->label<<"'"<<endl;
+    #endif 
+
     p->set(pt,eta);
     return;
 }

@@ -89,6 +89,14 @@ class Event{
     // update objects that can be invalid (jets)
     virtual void validate();
     bool IsTriggered(string name);
+
+    // SF utils
+    void SetPtEtaSF(string label, float pt, float eta){ 
+        cout <<"[Event]::[SetPtEtaSF]::[DEBUG] '"<<label<<"'"<<endl;
+        weight_ . SetPtEtaSF(label,pt,eta);
+        }
+    void ApplySF(string label){ weight_ . ApplySF(label) ; } 
+    bool ExistSF(string label){ return weight_ . ExistSF(label); }
 };
 
 #endif

@@ -57,6 +57,9 @@ int Looper::AddSmear(string name){
 
 int Looper::InitTree()
 {
+#ifdef VERBOSE
+    if(VERBOSE>0)cout <<"[Looper]::[InitTree] InitTree "<<endl;
+#endif
     // --- declare branches, and structures
     BareEvent *e = new BareEvent(); 
     names_[ "Event" ] = bare_.size();
