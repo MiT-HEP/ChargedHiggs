@@ -49,7 +49,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     //cout <<" EVENT TRIGGERED"<<endl;
     //
     // ---
-    if ( t==NULL or tInv==NULL ) return EVENT_NOT_USED;
+    if ( t==NULL and tInv==NULL ) return EVENT_NOT_USED;
     if ( e->Nleps() >0 ) return EVENT_NOT_USED;
     if ( e->Njets() <3 ) return EVENT_NOT_USED;
 
@@ -65,6 +65,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     if (tInv != NULL and tInv->Pt()>=51 and fabs(tInv->Eta())<2.1)
     {
+        cout<<" TauInv Guard A"<<endl; //DEBUG
         float pt = tInv->Pt();
         if (pt  > 8000 or pt <0 ) 
             cout <<"[ChargedHiggsQCDPurity]::[analyze]::[INFO] strange event:  tau (inv iso) Pt="<<pt<<endl;
@@ -78,6 +79,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     double DPhiEtMissJet1=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
     double DPhiEtMissJet2=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
     double DPhiEtMissJet3=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
+    cout<<" Met Bjets guord Guard"<<endl; //DEBUG
 
     if (t!=NULL) 
     {
@@ -97,6 +99,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     }
 
     if (tInv != NULL ) {
+        cout<<" TauInv Guard B"<<endl; //DEBUG
         // if the SF don't exist go on, but don't fill inconsistent events
         if( not e->ExistSF("tauinviso") ){
             static int count = 0 ;
@@ -104,7 +107,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             return EVENT_NOT_USED;
         }
 
-        cout <<"[DEBUG] Setting SF Pt Eta for tauinviso to "<<tInv->Pt()<<" "<<tInv->Eta()<<endl;
+        //cout <<"[DEBUG] Setting SF Pt Eta for tauinviso to "<<tInv->Pt()<<" "<<tInv->Eta()<<endl;
         e->SetPtEtaSF("tauinviso",tInv->Pt(),tInv->Eta());
         e->ApplySF("tauinviso");
 
@@ -124,6 +127,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
             hist = HistName(pt,false,true,"Mt");  
             Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight());
+            cout <<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG] Filling histo: '"<<dir+hist+"_"+label<<"' with Mt="<<e->Mt()<<" and weight="<<e->weight()<<endl;
         }
 
     }

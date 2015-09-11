@@ -22,10 +22,10 @@ void SF_PtEta::set( double pt, double eta)
     int change = 0;
     for(auto s : store)
     {
-        if ( s.first.pt1  < pt ) continue;
-        if ( s.first.pt2  >= pt ) continue;
-        if ( s.first.eta1  < eta ) continue;
-        if ( s.first.eta2  >= eta ) continue;
+        if ( pt < s.first.pt1 ) continue;
+        if ( s.first.pt2  <= pt ) continue;
+        if ( eta < s.first.eta1 ) continue;
+        if ( s.first.eta2  <= eta ) continue;
         sf = s.second.first;	
         err = s.second.second;
         change = 1;

@@ -92,7 +92,7 @@ class Event{
 
     // SF utils
     void SetPtEtaSF(string label, float pt, float eta){ 
-        cout <<"[Event]::[SetPtEtaSF]::[DEBUG] '"<<label<<"'"<<endl;
+        //cout <<"[Event]::[SetPtEtaSF]::[DEBUG] '"<<label<<"'"<<endl;
         weight_ . SetPtEtaSF(label,pt,eta);
         }
     void ApplySF(string label){ weight_ . ApplySF(label) ; } 
