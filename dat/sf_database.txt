@@ -41,3 +41,10 @@ ele pteta 55 8000 0.5 1.0 1.034 0.014
 ele pteta 55 8000 1.0 1.5 1.063 0.019
 ele pteta 55 8000 1.5 2.0 1.017 0.024
 ele pteta 55 8000 2.0 2.5 1.040 0.028
+#
+# QCD R-factor computed by PurityFit, first line is to avoid complainings lowPt
+tauinviso pteta 0 50 -2.1 2.1 0 1
+tauinviso pteta 50 70 -2.1 2.1 0.607903 -0.00496872
+tauinviso pteta 70 100 -2.1 2.1 0.327231 -0.00201134
+tauinviso pteta 100 150 -2.1 2.1 0.0430085 0.0492938
+tauinviso pteta 150 8000 -2.1 2.1 0.0860815 0.0618674

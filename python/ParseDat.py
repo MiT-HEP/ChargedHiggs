@@ -213,6 +213,7 @@ def ReadSFDB(file):
 		if l == "": continue
 		l=re.sub('^ *','',l) ## remove space at the beginning
 		l=re.sub('\ +',' ',l) ## squeeze
+		if l == "": continue
 		label= l.split(' ')[0]
 		type= l.split(' ')[1]
 		R={}
@@ -222,10 +223,10 @@ def ReadSFDB(file):
 		if type == 'pteta':
 			pt1  = float ( l.split(' ')[2] )
 			pt2  = float ( l.split(' ')[3] )
-			eta1 = float ( l.split(' ')[3] )
-			eta2 = float ( l.split(' ')[4] )
-			sf   = float ( l.split(' ')[5] )
-			err  = float ( l.split(' ')[6] )
+			eta1 = float ( l.split(' ')[4] )
+			eta2 = float ( l.split(' ')[5] )
+			sf   = float ( l.split(' ')[6] )
+			err  = float ( l.split(' ')[7] )
 			R['pt1']=pt1
 			R['pt2']=pt2
 			R['eta1']=eta1

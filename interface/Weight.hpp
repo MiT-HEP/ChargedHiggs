@@ -53,6 +53,7 @@ class Weight{
     void resetSystSF( ) ;
     void SetPtEtaSF(string label,double pt , double eta);
     void ApplySF(string label){ sf_ *= sf_db[label] -> get(); }
+    inline bool ExistSF(string label){ if (sf_db.find(label) != sf_db.end() ) return true; else return false; }
 
     // --- PU Reweight
     inline void AddTarget( TH1*h, int runMin=-1, int runMax =-1,double lumi=-1)

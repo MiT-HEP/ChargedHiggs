@@ -57,43 +57,71 @@ int Looper::AddSmear(string name){
 
 int Looper::InitTree()
 {
+#ifdef VERBOSE
+    if(VERBOSE>0)cout <<"[Looper]::[InitTree] InitTree "<<endl;
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Event "<<endl;
+#endif
     // --- declare branches, and structures
     BareEvent *e = new BareEvent(); 
     names_[ "Event" ] = bare_.size();
     bare_.push_back(e);
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init MonteCarlo "<<endl;
+#endif
     // ---
     BareMonteCarlo *mc = new BareMonteCarlo(); 
     names_[ "MonteCarlo" ] = bare_.size();
     bare_.push_back(mc);
     // ---
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Jets "<<endl;
+#endif
     BareJets *j = new BareJets(); 
     names_[ "Jets" ] = bare_.size();
     bare_.push_back(j);
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Taus "<<endl;
+#endif
     // ---
     BareTaus *t = new BareTaus(); 
     t->SetExtend();
     t->SetMatch(); // matching informations
     names_[ "Taus" ] = bare_.size();
     bare_.push_back(t);
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Leptons "<<endl;
+#endif
     // ---
     BareLeptons *l = new BareLeptons(); 
     names_[ "Leptons" ] = bare_.size();
     bare_.push_back(l);
 
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Met "<<endl;
+#endif
     BareMet *met = new BareMet(); 
     met->SetExtend(); // pfmet3p0
     names_[ "Met" ] = bare_.size();
     bare_.push_back(met);
 
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Trigger "<<endl;
+#endif
     BareTrigger *tr = new BareTrigger(); 
     names_[ "Trigger" ] = bare_.size();
     bare_.push_back(tr);
 
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] SetAddresses "<<endl;
+#endif
     for (auto c : bare_ )
         c->setBranchAddresses(tree_);
 
     tree_ -> SetBranchStatus("*",0);
     // branches are activate from configuration file
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Return "<<endl;
+#endif
     
     return 0;
 }

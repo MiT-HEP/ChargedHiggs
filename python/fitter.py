@@ -44,9 +44,9 @@ if opts.purity:
 	fitter.inname = "QCDPurity.root"
 	fitter.outname = "QCDFit.root"
 	if opts.verbose: fitter.verbose_ = 1
-	fitter.PtBins.push_back(0)
-	fitter.PtBins.push_back(51)
-	fitter.PtBins.push_back(80)
+	#fitter.PtBins.push_back(0)
+	fitter.PtBins.push_back(50)
+	fitter.PtBins.push_back(70)
 	fitter.PtBins.push_back(100)
 	fitter.PtBins.push_back(150)
 	fitter.PtBins.push_back(8000)

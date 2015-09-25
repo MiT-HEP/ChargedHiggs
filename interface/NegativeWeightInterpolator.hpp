@@ -1,6 +1,5 @@
-#ifndef PURITY_FIT_H
-#define PURITY_FIT_H
-
+#ifndef NEG_WEIGHT_INTERPOLATOR_H
+#define NEG_WEIGHT_INTERPOLATOR_H
 // --- STD ---
 #include <string>
 #include <vector>
@@ -15,6 +14,7 @@ using namespace std;
 #include "TROOT.h" 
 #include "TLatex.h"
 #include "TLegend.h"
+
 // --- ROOFIT ---
 #include "RooGlobalFunc.h"
 #include "RooPlot.h"
@@ -30,32 +30,36 @@ using namespace std;
 #include "RooAddPdf.h"
 #include "RooHistPdf.h"
 #include "RooFitResult.h"
+#include "RooExponential.h"
+#include "RooGenericPdf.h"
 
-class PurityFit{
-    protected:
-        float fit_specific( const TH1* h, const TH1* sig, const TH1* bkg, 
-            string name, // unique name of the result
-            string outname="" , // output file name, where to save results
-            map<string,float> *pars	=NULL // to gather additional params
-            );
 
-        TFile *fIn_;
+class NegativeWeightInterpolator
+{
+public:
+	NegativeWeightInterpolator() { constructModel() ; w_ = new RooWorkspace("w","workspace");}
+	TH1 * add( const TH1* pos, const TH1* neg); // assume that the second one is negative
+	TH1 * fit( const TH1*) ;
 
-    public:
-        PurityFit(){outname="";inname="";verbose_=0;};
-        ~PurityFit(){};
+	void constructModel();
+	void reset();
+    void guess(const TH1*); // guess initial parameters
 
-        vector<float> PtBins;
-        string outname;
-        string inname;
+    void inline SetVerbosity(int n) {verbose_= n;}
+    void print();
+private:
+	map<string, RooRealVar*> vars;
+	map<string, RooAbsPdf*> pdfs;
 
-        int verbose_;
-
-        virtual void init();
-        virtual void fit();
+	RooAbsPdf *model;
+	RooFitResult *result=NULL;
+    int verbose_ = 0;
+    RooWorkspace *w_;
 };
 
+
 #endif
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil
