@@ -7,15 +7,13 @@
 class Tau: virtual public Object,
     virtual public Lepton
 {
-    float idcut_;
-
 
     public:
     Tau() ;
-    float id;
+    bool id;
     float iso2;
-    int id_ele;
-    int id_mu;
+    bool id_ele =0;
+    bool id_mu =0 ;
     int match ; // is matched with a gen tau
 
     virtual int IsTau() ;

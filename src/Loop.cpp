@@ -292,10 +292,13 @@ void Looper::FillJets(){
 
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
+	bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
-        j->unc = 0.03; //bj -> unc -> at(iJet); FIXME 3% flat
+        j->unc = bj -> unc -> at(iJet); //
         j->bdiscr = bj -> bDiscr -> at(iJet);
+	// TODO add PuId, and syst
+	if (not id) continue;
         event_ -> jets_ . push_back(j);
     }
     return;
@@ -316,11 +319,14 @@ void Looper::FillLeptons(){
 
     for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
     {
+	bool id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepLoose;
         Lepton *l = new Lepton();
         l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
         l-> iso = (*bl->iso) [iL];
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> type = abs((*bl->pdgId)[iL]);
+	if (not id) continue;
+
         event_ -> leps_ . push_back(l);
     }
 
@@ -346,10 +352,10 @@ void Looper::FillTaus(){
         t-> iso = (*bt->iso) [iL];
         t-> charge = bt -> Q -> at(iL);
         t-> type = 15;
-        t-> id = bt-> id -> at(iL);
+        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
-        t-> id_ele = bt -> againstEleLoose-> at(iL); 
-        t-> id_mu = bt -> againstMuLoose -> at(iL); 
+        t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleLoose ; 
+        t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
         event_ -> taus_ . push_back(t);
     }
@@ -401,7 +407,8 @@ void Looper::FillMet(){
         cout<<"[Looper]::[FillMet]::[ERROR] MET should have exactly 1 entry instead of "<<met->p4 ->GetEntries() <<endl;
 
     //event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
-    event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
+    //event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
+    event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
     event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
 
