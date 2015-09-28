@@ -5,39 +5,37 @@
 ##### Files=....,....,...
 #
 #### BKG ###
-Files=/store/user/amarini/Nero/v1.0.3/25ns/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-### WW/WZ/ZZ###
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/WW_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/WZ_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/ZZ_TuneCUETP8M1_13TeV-pythia8
+##Files=/store/user/amarini/Nero/v1.1/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+##### WW/WZ/ZZ###
+##addfiles=/store/user/amarini/Nero/v1.1/WW_TuneCUETP8M1_13TeV-pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/WZ_TuneCUETP8M1_13TeV-pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/ZZ_TuneCUETP8M1_13TeV-pythia8
 ### SIGNAL ###
-#addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015
 #Signal Tau Nu ; Private production
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/HplusToTauNu-M200
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/HplusToTauNu-M250
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/HplusToTauNu-M500
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/HplusToTauNu-M900
+Files=/store/user/amarini/Nero/v1.1/HplusToTauNu-M200
+addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M250
+addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M500
+addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M900
 ### QCD
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
+##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
 ############# DATA 50ns###########
-#addfiles=/store/user/amarini/Nero/v1.0.3/PromptReco-v1/Tau
-addfiles=/store/user/amarini/Nero/v1.0.4/Tau
+addfiles=/store/user/amarini/Nero/v1.1/Tau
 
 ####
 
@@ -67,7 +65,7 @@ config=ChargedHiggsQCDPurity|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauN
 addConfig=ChargedHiggsQCDPurity|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(50),PtBins.push_back(70),PtBins.push_back(100),PtBins.push_back(150),PtBins.push_back(8000)
 #config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-251252_13TeV_PromptReco_Collisions15_JSON.txt')
-config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-254879_13TeV_PromptReco_Collisions15_JSON.txt')
+#config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-254879_13TeV_PromptReco_Collisions15_JSON.txt')
 #configure Analysis
 #config=AnalysisBase|Init()
 #config=Preselection|

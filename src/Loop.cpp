@@ -117,6 +117,13 @@ int Looper::InitTree()
     for (auto c : bare_ )
         c->setBranchAddresses(tree_);
 
+	/// FIXME, id for taus v1.1
+    static int guard=0;
+    if(++guard<10)cout<<" TAUS FIX FOR v1.1"<<endl;
+    BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
+    tree_ ->SetBranchAddress("tauId", &bt -> selBits);
+    ///
+
     tree_ -> SetBranchStatus("*",0);
     // branches are activate from configuration file
 #ifdef VERBOSE
@@ -280,7 +287,7 @@ void Looper::FillEventInfo(){
 void Looper::FillJets(){
     //fill Jets
 #ifdef VERBOSE
-    if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets: FIXME JES" <<endl;
+    if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets. FIXME JES" <<endl;
 #endif
     BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "Jets" ] ] ); assert (bj !=NULL);
 
@@ -295,7 +302,7 @@ void Looper::FillJets(){
 	bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
-        j->unc = bj -> unc -> at(iJet); //
+        j->unc = 0.03;//bj -> unc -> at(iJet); //
         j->bdiscr = bj -> bDiscr -> at(iJet);
 	// TODO add PuId, and syst
 	if (not id) continue;
@@ -347,6 +354,14 @@ void Looper::FillTaus(){
 
     for (int iL = 0; iL<bt -> p4 -> GetEntries() ;++iL)
     {
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[FillTaus]::[DEBUG] Filling Taus n."<<iL <<" of "<<bt -> p4 -> GetEntries() <<endl;
+    if(VERBOSE>1)cout<<"\t iso= " << bt->iso->size()<<endl;
+    if(VERBOSE>1)cout<<"\t charge= " << bt->Q->size()<<endl;
+    if(VERBOSE>1)cout<<"\t iso2= " << bt->isoDeltaBetaCorr->size()<<endl;
+    if(VERBOSE>1)cout<<"\t selBits= " << bt->selBits->size()<<endl;
+    if(VERBOSE>1)cout<<"\t match= " << bt->match->size()<<endl;
+#endif
         Tau *t = new Tau();
         t->SetP4( *(TLorentzVector*) ((*bt->p4)[iL]) );
         t-> iso = (*bt->iso) [iL];

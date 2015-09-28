@@ -1,0 +1,5 @@
+HplusToTauNu-M200 /store/user/amarini/Nero/v1.1/HplusToTauNu-M200 81503.0 0.0483498918624
+HplusToTauNu-M200_amcatnlo /store/user/amarini/Nero/v1.1/HplusToTauNu-M200_amcatnlo 2241.17930067 0.00646843395947
+HplusToTauNu-M250 /store/user/amarini/Nero/v1.1/HplusToTauNu-M250 24600.0 0.00184906226682
+HplusToTauNu-M500 /store/user/amarini/Nero/v1.1/HplusToTauNu-M500 38500.0 2.03807320957e-05
+HplusToTauNu-M900 /store/user/amarini/Nero/v1.1/HplusToTauNu-M900 105248.082053 6.49124332808e-07
