@@ -17,6 +17,7 @@ class Met: virtual public Object
             else if (syst >0 ) return ptUp * syst ;
             else return ptDown * syst;
         }
+        virtual inline float PtGen(){ return gen;} 
 };
 #endif
 // Local Variables:

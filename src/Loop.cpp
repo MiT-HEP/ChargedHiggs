@@ -16,7 +16,7 @@
 
 #include <sstream>
 
-//#define VERBOSE 2
+#define VERBOSE 2
 
 Looper::Looper(){
     output_=new Output(); 
@@ -302,7 +302,7 @@ void Looper::FillJets(){
 	bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
-        j->unc = 0.03;//bj -> unc -> at(iJet); //
+        j->unc = bj -> unc -> at(iJet); //
         j->bdiscr = bj -> bDiscr -> at(iJet);
 	// TODO add PuId, and syst
 	if (not id) continue;
@@ -423,6 +423,10 @@ void Looper::FillMet(){
 
     //event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     //event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
+#ifdef VERBOSE
+    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size();
+    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size();
+#endif
     event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
     event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
