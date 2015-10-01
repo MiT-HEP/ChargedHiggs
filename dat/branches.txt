@@ -31,3 +31,12 @@ mcWeight
 triggerFired
 ## GEN
 metP4_GEN
+#
+genP4*
+genPdgId
+## JET
+jetFlavour
+jetMatchedParton*
+jetMotherPdgId
+jetGrMotherPdgId
+jetPuId

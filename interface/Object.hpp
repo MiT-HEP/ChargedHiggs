@@ -19,6 +19,7 @@ class Object
         virtual inline float Eta(){ return p4.Eta(); } 
         virtual inline float Phi(){ return p4.Phi(); }
         virtual inline float E(){ return p4.E(); }
+        virtual inline float M(){ return p4.M(); }
         virtual inline int   IsObject(){return 0;}
         virtual inline float DeltaR(Object &o){ return p4.DeltaR(o.GetP4()); }
         virtual inline float DeltaEta(Object &o){return fabs(p4.Eta()-(o.GetP4()).Eta()); }

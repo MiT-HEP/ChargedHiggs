@@ -59,17 +59,20 @@ class Event{
     Lepton * GetLepton( int iLep );
     Lepton * GetElectron( int iEle );
     Lepton * GetMuon( int iMu );
+    GenParticle * GetGenParticle( int iGenPar );
 
     //
     inline Met GetMet( ) { return met_;}
 
     inline float Rho() { return rho_; }
     inline float Ht()   { float ht=0 ; for(auto j : jets_ ) if( j->IsJet()  ) ht+= j->Pt() ; return ht;}
-    inline int   Njets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsJet()  ) n+=1; return n; }
-    inline int   NcentralJets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsCentralJet()  ) n+=1; return n; }
-    inline int   Bjets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsBJet() ) n+=1; return n; }
-    inline int   Ntaus(){ int   n=0  ; for(auto t : taus_ ) if( t->IsTau()  )  n+=1; return n; }
-    inline int   Nleps(){ int   n=0  ; for(auto t : leps_ ) if( t->IsLep()  )  n+=1; return n; }
+
+    inline int Njets(){int n=0; for(auto j : jets_) if(j->IsJet()) n++; return n;}
+    inline int NcentralJets(){int n=0; for(auto j : jets_) if(j->IsCentralJet()) n++; return n;}
+    inline int Bjets(){int n=0; for(auto j : jets_) if(j->IsBJet()) n++; return n;}
+    inline int Ntaus(){int n=0; for(auto t : taus_) if(t->IsTau()) n++; return n;}
+    inline int Nleps(){int n=0; for(auto t : leps_) if(t->IsLep()) n++; return n;}
+    inline int NGenPar(){return genparticles_.size();}
 
     inline Tau*  LeadTau(){ return GetTau(0);} 
     inline Jet*  LeadJet(){ return GetJet(0);}

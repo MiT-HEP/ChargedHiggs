@@ -124,6 +124,9 @@ int Looper::InitTree()
     tree_ ->SetBranchAddress("tauId", &bt -> selBits);
     ///
 
+    for (auto c : bare_ )
+        c->setBranchAddresses(tree_);
+
     tree_ -> SetBranchStatus("*",0);
     // branches are activate from configuration file
 #ifdef VERBOSE
@@ -289,7 +292,11 @@ void Looper::FillJets(){
 #ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets. FIXME JES" <<endl;
 #endif
+
     BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "Jets" ] ] ); assert (bj !=NULL);
+    vector<int> *pdgId = dynamic_cast<vector<int>* > ( jetPdgIds_ [ nameJetPdgIds_ [ "pdgId" ] ] ); assert (pdgId != NULL);
+    vector<int> *motherPdgId = dynamic_cast<vector<int>* > ( jetPdgIds_ [ nameJetPdgIds_ [ "motherPdgId" ] ] ); assert (motherPdgId != NULL);
+    vector<int> *grMotherPdgId = dynamic_cast<vector<int>* > ( jetPdgIds_ [ nameJetPdgIds_ [ "grMotherPdgId" ] ] ); assert (grMotherPdgId != NULL);
 
     if ( tree_ ->GetBranchStatus("jetP4") == 0 ){ 
         static int counter = 0;
@@ -300,12 +307,20 @@ void Looper::FillJets(){
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
 	bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
+	if (not id) continue;
+
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
         j->unc = bj -> unc -> at(iJet); //
         j->bdiscr = bj -> bDiscr -> at(iJet);
+
 	// TODO add PuId, and syst
-	if (not id) continue;
+        j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
+        j->motherPdgId = bj->motherPdgId -> at(iJet);
+        j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
+	j->puId = bj -> puId -> at(iJet);
+	
+	// add it
         event_ -> jets_ . push_back(j);
     }
     return;
@@ -327,12 +342,15 @@ void Looper::FillLeptons(){
     for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
     {
 	bool id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepLoose;
+	if (not id) continue;
+
         Lepton *l = new Lepton();
         l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
-        l-> iso = (*bl->iso) [iL];
+        l-> iso = ((*bl->iso) [iL])/(l->Pt());
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> type = abs((*bl->pdgId)[iL]);
-	if (not id) continue;
+
+        l-> tightId = ( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight); 
 
         event_ -> leps_ . push_back(l);
     }
@@ -372,6 +390,7 @@ void Looper::FillTaus(){
         t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleLoose ; 
         t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
+
         event_ -> taus_ . push_back(t);
     }
     //cout<<"[Looper]::[FillTaus]::[DEBUB] Taus Loaded:"<< event_->taus_.size() <<endl;

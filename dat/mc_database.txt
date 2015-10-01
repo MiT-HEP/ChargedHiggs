@@ -32,3 +32,8 @@ ZZTo2Q2Nu_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/amarini/Nero/v0.8/RunII
 ZZTo4L_13TeV-amcatnloFXFX-pythia8 /store/user/amarini/Nero/v0.8/RunIISpring15DR74/ZZTo4L_13TeV-amcatnloFXFX-pythia8 32557.0820312 1.25266916869
 ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/amarini/Nero/v0.8/RunIISpring15DR74/ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8 2194591.5 6.67093968984
 ZZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v0.8/RunIISpring15DR74/ZZ_TuneCUETP8M1_13TeV-pythia8 996168.0 10.2357724104
+Hplus_Wh_26_6_2015 /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_26_6_2015/ 90900.0 0.0762941688386
+Hplus_Wh_18_5_2015 /store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015 90900.0 0.0762941688386
+TTZJets_Tune4C_13TeV-madgraph-tauola /store/user/amarini/Nero/v0.7/RunIISpring15DR74/TTZJets_Tune4C_13TeV-madgraph-tauola 0.0 2.23754443429
+SYGluGluToTBHPTohbbW_M1000_pythia8 /store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M1000_pythia8 90155.40625 0.00118193989906
+SYGluGluToTBHPTohbbW_M500_pythia8 /store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M500_pythia8 89544.0 0.0142623119674

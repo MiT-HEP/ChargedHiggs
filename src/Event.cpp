@@ -176,7 +176,7 @@ Lepton * Event::GetMuon( int iMu )
 }
 
 Tau * Event::GetTauInvIso( int iTau ) 
-{ // { return taus_.at(iTau);} // old
+{ 
     vector<pair<float,int> > valid; // pt, idx
     for(int i = 0 ; i<taus_.size() ;++i)
     {
@@ -214,6 +214,13 @@ bool Event::IsTriggered( string name )
     cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
     return false;
 }
+
+GenParticle * Event::GetGenParticle( int iGenPar ) 
+{  
+    //FIXME: what is the purpose of this function ? 
+    return (iGenPar >= 0 && iGenPar < genparticles_.size() ? genparticles_.at(iGenPar) : NULL);
+}
+
 
 // Local Variables:
 // mode:c++
