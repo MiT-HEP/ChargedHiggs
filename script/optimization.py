@@ -134,7 +134,7 @@ def CreateSosB(sig,bkg):
 		sig_int *= opts.lumi
 		bkg_int *= opts.lumi
 	
-		if bkg_int !=0:
+		if bkg_int >0:
 			h2.SetBinContent(i, sig_int/math.sqrt(bkg_int))
 		else:
 			h2.SetBinContent(i, 0)
