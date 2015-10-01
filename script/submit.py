@@ -137,9 +137,9 @@ if opts.resubmit:
 			basedir = os.environ['PWD'] + "/" + opts.dir
 			touch = "touch " + basedir + "/sub%d.pend"%iJob
 			call(touch,shell=True)
-			cmd = "rm " + basedir + "/sub%d.fail"%iJob
+			cmd = "rm " + basedir + "/sub%d.fail"%iJob + " 2>&1 >/dev/null"
 			call(cmd,shell=True)
-			cmd = "rm " + basedir + "/sub%d.run"%iJob
+			cmd = "rm " + basedir + "/sub%d.run"%iJob + " 2>&1 >/dev/null"
 			call(cmd,shell=True)
 			cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
 			print cmdline
@@ -253,17 +253,17 @@ for iJob in range(0,opts.njobs):
 
 	touch = "touch " + basedir + "/sub%d.pend"%iJob
 	call(touch,shell=True)
-	cmd = "rm " + basedir + "/sub%d.run 2>&1 >/dev/null"%iJob
+	cmd = "rm " + basedir + "/sub%d.run 2>&1 >/dev/null"%iJob + " 2>&1 >/dev/null"
 	call(cmd,shell=True)
-	cmd = "rm " + basedir + "/sub%d.done 2>&1 >/dev/null"%iJob
+	cmd = "rm " + basedir + "/sub%d.done 2>&1 >/dev/null"%iJob + " 2>&1 >/dev/null"
 	call(cmd,shell=True)
-	cmd = "rm " + basedir + "/sub%d.fail 2>&1 >/dev/null"%iJob
+	cmd = "rm " + basedir + "/sub%d.fail 2>&1 >/dev/null"%iJob + " 2>&1 >/dev/null"
 	call(cmd,shell=True)
 
 	sh.write('date > %s/sub%d.run\n'%(basedir,iJob))
-	sh.write('rm %s/sub%d.done\n'%(basedir,iJob))
-	sh.write('rm %s/sub%d.pend\n'%(basedir,iJob))
-	sh.write('rm %s/sub%d.fail\n'%(basedir,iJob))
+	sh.write('rm %s/sub%d.done 2>&1 >/dev/null\n'%(basedir,iJob))
+	sh.write('rm %s/sub%d.pend 2>&1 >/dev/null\n'%(basedir,iJob))
+	sh.write('rm %s/sub%d.fail 2>&1 >/dev/null\n'%(basedir,iJob))
 
 	if opts.mount:
 		#mountpoint = "~/eos"
@@ -303,7 +303,7 @@ for iJob in range(0,opts.njobs):
 		sh.write('EXITCODE=${PIPESTATUS[0]}\n')
 	else:
 		sh.write('EXITCODE=$?\n')
-	sh.write('rm %s/sub%d.run\n'%(basedir,iJob))
+	sh.write('rm %s/sub%d.run 2>&1 >/dev/null\n'%(basedir,iJob))
 	sh.write('[ $EXITCODE == 0 ] && touch %s/sub%d.done\n'%(basedir,iJob))
 	sh.write('[ $EXITCODE != 0 ] && echo $EXITCODE > %s/sub%d.fail\n'%(basedir,iJob))
 
