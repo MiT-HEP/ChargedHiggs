@@ -54,6 +54,7 @@ class Event{
     Jet * GetJet( int iJet );
     Jet * GetCentralJet( int iJet );
     Jet * GetBjet( int iJet );
+    Jet * GetLjet( int iJet );
     Tau * GetTau( int iTau );
     Tau * GetTauInvIso( int iTau );
     Lepton * GetLepton( int iLep );

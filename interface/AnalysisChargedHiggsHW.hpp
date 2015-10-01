@@ -12,6 +12,9 @@ class ChargedHiggsHW:  virtual public AnalysisBase
         Double_t deltaR(Double_t, Double_t, Double_t, Double_t);
         Double_t neutrinoPz(TLorentzVector, TLorentzVector, Int_t);
         virtual const string name(){return "ChargedHiggsHW";}
+
+        static constexpr float Mw = 80.385;
+        static constexpr float Mh = 125.;
 };
 
 #endif
