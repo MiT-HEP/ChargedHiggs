@@ -43,7 +43,7 @@ Output=QCDPurity.root
 ## Preselection:1,Preselection:2
 Analysis=JsonAnalysis,Preselection,ChargedHiggsQCDPurity
 
-MCDB=dat/mc_database_v1.0.3.txt
+MCDB=dat/mc_database_v1.1.txt
 SFDB=dat/sf_database.txt
 Branches=dat/branches.txt
 ###
