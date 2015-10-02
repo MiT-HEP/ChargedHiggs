@@ -3,11 +3,13 @@
 
 #include "interface/Lepton.hpp"
 #include "interface/GenParticle.hpp"
+#include "interface/Trigger.hpp"
 
 class Tau: virtual public Object,
-    virtual public Lepton
+    virtual public Lepton,
+    virtual public Trigger
 {
-
+    
     public:
     Tau() ;
     bool id;
