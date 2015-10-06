@@ -19,8 +19,7 @@ void TagAndProbe::Init(){
         Branch(treename,"passIdMu",'I');  // pass id muon
         Branch(treename,"passTrigger",'I');  // pass trigger -- need trigger matching !
 
-        Branch(treename,"iTag",'I');
-        Branch(treename,"iProbe",'I');
+        Branch(treename,"isTagTrigger",'I');  // pass trigger -- need trigger matching !
         Branch(treename,"isMC",'I');
         //PrintTree(treename);
 	}
@@ -60,19 +59,16 @@ int TagAndProbe::analyze(Event*e,string systname){
         SetTreeVar("passIdEle", tProbe -> id_ele );
         SetTreeVar("passIdMu", tProbe -> id_mu );
         SetTreeVar("passTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tProbe )  );
+        SetTreeVar("isTagTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tTag )  );
 
         int _itag_ = -1, _iprobe_ = -1 ;
 
-        for( int i = 0;i < e->taus_.size() ; ++i) if (tTag == e->taus_[i] ) _itag_ = i;
-        for( int i = 0 ; i< e->taus_.size() ;++i) if (tProbe == e->taus_[i] ) _iprobe_= i;
-
-        SetTreeVar("iTag", _itag_);
-        SetTreeVar("iProbe",_iprobe_);
 
         //PrintTreeVar(treename);
         if(e->IsRealData() ) SetTreeVar("isMC",0);
-        else if (label.find("Higgs") != string::npos ) SetTreeVar("isMC",1);
-        else SetTreeVar("isMC",2);
+        else if (label.find("HplusToTauNu") != string::npos ) SetTreeVar("isMC",1);
+        else if (label.find("DY") != string::npos) SetTreeVar("isMC",2);
+        else SetTreeVar("isMC",3);
 
 	    FillTree(treename);
     }

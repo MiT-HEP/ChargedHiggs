@@ -8,6 +8,8 @@ usage = '''  Draw trigger plots from TagAndProbe Trees.
 
 parser = OptionParser(usage=usage)
 parser.add_option("-p","--plot" ,dest='plot',type='string',help="PlotDir [Default=%default]",default="plot")
+parser.add_option("-b","--batch" ,dest='batch',action='store_true',help="Batch [Default=%default]",default="batch")
+parser.add_option("-f","--file" ,dest='file',type='string',help="InputFile [Default=%default]",default="TagAndProbe.root")
 
 opts,args = parser.parse_args()
 
@@ -16,9 +18,11 @@ import ROOT
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 
+if opts.batch:
+	ROOT.gROOT.SetBatch(1)
 
-fROOT = ROOT.TFile.Open("TagAndProbe.root")
-if fROOT == None: print "TagAndProbe.root: no such file"
+fROOT = ROOT.TFile.Open(opts.file)
+if fROOT == None: print opts.file+": no such file"
 tree = fROOT.Get("tagprobe")
 if tree == None: print "tagprobe: no such tree"
 
@@ -34,11 +38,11 @@ xaxis={"ptProbe" : "p_{T}^{#tau,probe} [GeV]",
 
 
 what = {}
-what [ "trigger" ] = {'var' : ["ptProbe","etaProbe"] , 'base':"", 'sel':"passTrigger" 	, "yaxis" : "trigger eff" }
-what [ "ID" ]      = {'var' : ["ptProbe"]            , 'base':"", 'sel':"passId" 	, "yaxis" : "id eff" }
-what [ "IDELE" ]   = {'var' : ["ptProbe"]            , 'base':"", 'sel':"passIdEle" 	, "yaxis" : "id(e) eff" }
-what [ "IDMU" ]    = {'var' : ["ptProbe"]            , 'base':"", 'sel':"passIdMu" 	, "yaxis" : "id(#mu) eff" }
-what [ "ISO" ]     = {'var' : ["ptProbe","m"]        , 'base':"", 'sel':"passIso"	, "yaxis" : "iso eff" }
+what [ "trigger" ] = {'var' : ["ptProbe","etaProbe"] , 'base':"isTagTrigger", 'sel':"passTrigger" 	, "yaxis" : "trigger eff" }
+what [ "ID" ]      = {'var' : ["ptProbe","m"]        , 'base':"isTagTrigger && passTrigger", 'sel':"passId" 	, "yaxis" : "id eff" }
+what [ "ISO" ]     = {'var' : ["ptProbe","m"]        , 'base':"isTagTrigger && passTrigger && passId", 'sel':"passIso"	, "yaxis" : "iso eff" }
+what [ "IDELE" ]   = {'var' : ["ptProbe"]            , 'base':"isTagTrigger && passTrigger && passId", 'sel':"passIdEle" 	, "yaxis" : "id(e) eff" }
+what [ "IDMU" ]    = {'var' : ["ptProbe"]            , 'base':"isTagTrigger && passTrigger && passId", 'sel':"passIdMu" 	, "yaxis" : "id(#mu) eff" }
 
 
 for name in what:
@@ -57,6 +61,7 @@ for name in what:
 
 	v = var + ">>sel" + ranges[var]	
 	s = "isMC==0"
+	if what[name]['base'] != "": s += " && " +  what[name]['base'] ## add also base
 	if what[name]['sel'] != "": s += " && " +  what[name]['sel']
 	print "Drawing sel:",v,"|",s
 	tree.Draw( v, s ,"goff")
@@ -72,7 +77,9 @@ for name in what:
 	sel.GetXaxis().SetTitleOffset(1.3)
 	sel.GetYaxis().SetTitleOffset(1.3)
 	c.Update()
-	raw_input("ok?")
+
+	if not opts.batch:
+		raw_input("ok?")
 
 	for ext	 in [ 'pdf','png']:
 		c.SaveAs( opts.plot + "/" + "tp_"+ name + "_" + var +"."+ ext ) 

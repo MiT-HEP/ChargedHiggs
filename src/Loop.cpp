@@ -369,7 +369,8 @@ void Looper::FillTaus(){
         t-> iso = (*bt->iso) [iL];
         t-> charge = bt -> Q -> at(iL);
         t-> type = 15;
-        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
+        //t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
+        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
         t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleLoose ; 
         t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 

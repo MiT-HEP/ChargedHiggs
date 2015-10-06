@@ -14,10 +14,10 @@
 ##addfiles=/store/user/amarini/Nero/v1.1/ZZ_TuneCUETP8M1_13TeV-pythia8
 ### SIGNAL ###
 #Signal Tau Nu ; Private production
-Files=/store/user/amarini/Nero/v1.1/HplusToTauNu-M200
-addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M250
-addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M500
-addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M900
+#Files=/store/user/amarini/Nero/v1.1/HplusToTauNu-M200
+#addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M250
+#addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M500
+#addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M900
 ### QCD
 ##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
 ##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
@@ -35,7 +35,8 @@ addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M900
 ##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
 ##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
 ############# DATA 50ns###########
-addfiles=/store/user/amarini/Nero/v1.1/Tau
+#addfiles=/store/user/amarini/Nero/v1.1/Tau
+Files=/store/user/amarini/Nero/v1.1/Tau
 
 ####
 
