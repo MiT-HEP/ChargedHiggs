@@ -164,7 +164,7 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
     GenParticle *genW1 = 0, *genW2 = 0, *genH = 0, *genCH = 0;
     Met met;
 
-    //TLorentzVector vLeptonW, vMet, vNeutrino, vW1, vW2Sol1, vW2Sol2, vjetW1, vjetW2, vH, vbjetT, vHW1, vHW2, vbjetH1, vbjetH2, vT;
+    TLorentzVector vLeptonW, vMet, vNeutrino, vW1, vW2Sol1, vW2Sol2, vjetW1, vjetW2, vH, vbjetT, vHW1, vHW2, vbjetH1, vbjetH2, vT;
 
     //Set up MET
     met = e->GetMet();
@@ -223,36 +223,36 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
     }
 
     //Fill histograms of basic variables
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 0, 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/NLJets_" + label, systname, e->Njets() - e->Bjets(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/NJets_" + label, systname, e->Njets(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/NBJets_" + label, systname, e->Bjets(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/NLeptons_" + label, systname, e->Nleps(), 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 0, e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/NLJets_" + label, systname, e->Njets() - e->Bjets(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/NJets_" + label, systname, e->Njets(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/NBJets_" + label, systname, e->Bjets(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/NLeptons_" + label, systname, e->Nleps(), e->weight());
 
     //Apply first set of requirements (without the distance requirement)
     if(orderedLJets.size() < 1) return EVENT_NOT_USED;
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 1, 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 1, e->weight());
     if(orderedLJets.size() < 2) return EVENT_NOT_USED;
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 2, 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 2, e->weight());
     if(orderedLeptons.size() != 1) return EVENT_NOT_USED;
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 3, 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 3, e->weight());
     if(met.E() < 20) return EVENT_NOT_USED;
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 4, 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 4, e->weight());
     if(orderedBJets.size() < 1) return EVENT_NOT_USED;
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 5, 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 5, e->weight());
     if(orderedBJets.size() < 2) return EVENT_NOT_USED;
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 6, 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 6, e->weight());
     if(orderedBJets.size() < 3) return EVENT_NOT_USED;
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 7, 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 7, e->weight());
 
     //Fill histograms of basic kinematics
-    Fill("ChargedHiggsHW/VetoFirst/Vars/BJet1_Pt_" + label, systname, orderedBJets.at(0)->Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/BJet2_Pt_" + label, systname, orderedBJets.at(1)->Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/BJet3_Pt_" + label, systname, orderedBJets.at(2)->Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/LJet1_Pt_" + label, systname, orderedLJets.at(0)->Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/LJet2_Pt_" + label, systname, orderedLJets.at(1)->Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/Lepton_Pt_" + label, systname, orderedLeptons.at(0)->Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/Met_" + label, systname, met.E(), 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/BJet1_Pt_" + label, systname, orderedBJets.at(0)->Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/BJet2_Pt_" + label, systname, orderedBJets.at(1)->Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/BJet3_Pt_" + label, systname, orderedBJets.at(2)->Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/LJet1_Pt_" + label, systname, orderedLJets.at(0)->Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/LJet2_Pt_" + label, systname, orderedLJets.at(1)->Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/Lepton_Pt_" + label, systname, orderedLeptons.at(0)->Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/Met_" + label, systname, met.E(), e->weight());
 
     //Select two jets with reconstructed mass closest to the W
     Double_t minDeltaMW = 999;
@@ -261,13 +261,12 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
         for(Int_t jjet = ijet + 1; jjet < orderedLJets.size(); jjet++){
 
             Jet *tempjet1 = orderedLJets.at(ijet), *tempjet2 = orderedLJets.at(jjet);
-            TLorentzVector vtemp1, vtemp2, vWtemp;
-            vtemp1.SetPtEtaPhiE(tempjet1->Pt(), tempjet1->Eta(), tempjet1->Phi(), tempjet1->E());
-            vtemp2.SetPtEtaPhiE(tempjet2->Pt(), tempjet2->Eta(), tempjet2->Phi(), tempjet2->E());
+            TLorentzVector vWtemp;
 
-            vWtemp = vtemp1 + vtemp2;
+            vWtemp = tempjet1 -> GetP4() + tempjet2 -> GetP4();
 
-            if(deltaR(vtemp1.Eta(), vtemp2.Eta(), vtemp1.Phi(), vtemp2.Phi()) < DR) continue;
+            //if(deltaR(vtemp1.Eta(), vtemp2.Eta(), vtemp1.Phi(), vtemp2.Phi()) < DR) continue;
+            if(tempjet1 -> DeltaR (tempjet2) < DR) continue;
 
             Double_t tempDeltaM = fabs(vWtemp.M() - Mw);
 
@@ -289,21 +288,21 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
     vW1 = vjetW1 + vjetW2;
 
     //Fill W mass histogram
-    Fill("ChargedHiggsHW/VetoFirst/Vars/HadronicW_Mass_" + label, systname, vW1.M(), 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/HadronicW_Mass_" + label, systname, vW1.M(), e->weight());
 
     //Apply second cut
     if(minDeltaMW > 30) return EVENT_NOT_USED;
 
     //Fill more W histograms
-    Fill("ChargedHiggsHW/VetoFirst/Vars/HadronicW_Pt_" + label, systname, vW1.Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/WJets_dR_" + label, systname, deltaR(jetW1->Eta(), jetW2->Eta(), jetW1->Phi(), jetW2->Phi()), 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/HadronicW_Pt_" + label, systname, vW1.Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/WJets_dR_" + label, systname, jetW1 -> DeltaR ( jetW2) , e->weight());
 
     if(genW1 && genW2){
-        if(deltaR(genW1->Eta(), vW1.Eta(), genW1->Phi(), vW1.Phi()) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenHadronicW_Pt_" + label, systname, genW1->Pt(), e->weight());
-        else if(deltaR(genW2->Eta(), vW1.Eta(), genW2->Phi(), vW1.Phi()) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenHadronicW_Pt_" + label, systname, genW2->Pt(), e->weight());
+        if( vW1 . DeltaR ( genW1 -> GetP4() ) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenHadronicW_Pt_" + label, systname, genW1->Pt(), e->weight());
+        else if(vW1 . DeltaR ( genW2->GetP4() )  < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenHadronicW_Pt_" + label, systname, genW2->Pt(), e->weight());
     }
 
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 8 , 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 8 , e->weight());
 
     //Find longitudinal neutrino momentum
     Double_t pNuZSol1, pNuZSol2;
@@ -315,18 +314,18 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
     //Reconstruct Ws and fill histograms
     vNeutrino.SetPxPyPzE(vMet.Px(), vMet.Py(), pNuZSol1, Sqrt(vMet.E()*vMet.E() + pNuZSol1*pNuZSol1));
     vW2Sol1 = vLeptonW + vNeutrino;
-    Fill("ChargedHiggsHW/VetoFirst/Vars/LeptonicW_Pt_" + label, systname, vW2Sol1.Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/LeptonicW_Mass_" + label, systname, vW2Sol1.M(), 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/LeptonicW_Pt_" + label, systname, vW2Sol1.Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/LeptonicW_Mass_" + label, systname, vW2Sol1.M(), e->weight());
     vNeutrino.SetPxPyPzE(vMet.Px(), vMet.Py(), pNuZSol2, Sqrt(vMet.E()*vMet.E() + pNuZSol2*pNuZSol2));
     vW2Sol2 = vLeptonW + vNeutrino;
-    Fill("ChargedHiggsHW/VetoFirst/Vars/LeptonicW_Pt_" + label, systname, vW2Sol2.Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/LeptonicW_Mass_" + label, systname, vW2Sol2.M(), 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/LeptonicW_Pt_" + label, systname, vW2Sol2.Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/LeptonicW_Mass_" + label, systname, vW2Sol2.M(), e->weight());
 
     if(genW1 && genW2){
-        if(deltaR(genW1->Eta(), vW2Sol1.Eta(), genW1->Phi(), vW2Sol1.Phi()) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenLeptonicW_Pt_" + label, systname, genW1->Pt(), 1);
-        else if(deltaR(genW1->Eta(), vW2Sol2.Eta(), genW1->Phi(), vW2Sol2.Phi()) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenLeptonicW_Pt_" + label, systname, genW1->Pt(), 1);
-        else if(deltaR(genW2->Eta(), vW2Sol1.Eta(), genW2->Phi(), vW2Sol1.Phi()) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenLeptonicW_Pt_" + label, systname, genW2->Pt(), 1);
-        else if(deltaR(genW2->Eta(), vW2Sol2.Eta(), genW2->Phi(), vW2Sol2.Phi()) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenLeptonicW_Pt_" + label, systname, genW2->Pt(), 1);
+        if( vW2Sol1 . DeltaR ( genW1 ->GetP4() ) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenLeptonicW_Pt_" + label, systname, genW1->Pt(), e->weight());
+        else if( vW2Sol2.DeltaR( genW1 ->GetP4() )  < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenLeptonicW_Pt_" + label, systname, genW1->Pt(), e->weight());
+        else if( vW2Sol1.DeltaR (genW2->GetP4()) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenLeptonicW_Pt_" + label, systname, genW2->Pt(), e->weight());
+        else if( vW2Sol2 . DeltaR (genW2->GetP4()) < matchDR) Fill("ChargedHiggsHW/VetoFirst/Vars/GenLeptonicW_Pt_" + label, systname, genW2->Pt(), e->weight());
     }
 
     //Maybe here we can apply a mass cut for the leptonic Ws
@@ -353,26 +352,27 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
 
             if(ijet == jjet) continue;
 
+            //FIXME: remove the tlorentz vectors
             Jet *tempjet1 = allJets.at(ijet), *tempjet2 = allJets.at(jjet);
             TLorentzVector vtemp1, vtemp2, vHtemp;
             vtemp1.SetPtEtaPhiE(tempjet1->Pt(), tempjet1->Eta(), tempjet1->Phi(), tempjet1->E());
             vtemp2.SetPtEtaPhiE(tempjet2->Pt(), tempjet2->Eta(), tempjet2->Phi(), tempjet2->E());
 
-            if(deltaR(vtemp1.Eta(), vtemp2.Eta(), vtemp1.Phi(), vtemp2.Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), jetW1->Eta(), vtemp1.Phi(), jetW1->Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), jetW2->Eta(), vtemp1.Phi(), jetW2->Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), leptonW->Eta(), vtemp1.Phi(), leptonW->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), jetW1->Eta(), vtemp2.Phi(), jetW1->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), jetW2->Eta(), vtemp2.Phi(), jetW2->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), leptonW->Eta(), vtemp2.Phi(), leptonW->Phi()) < DR) continue;
+            if(vtemp1 . DeltaR(vtemp2) < DR) continue;
+            if(vtemp1 . DeltaR(jetW1->GetP4()) < DR) continue;
+            if(vtemp1 . DeltaR(jetW2->GetP4()) < DR) continue;
+            if(vtemp1 . DeltaR(leptonW->GetP4()) < DR) continue;
+            if(vtemp2 . DeltaR(jetW1->GetP4()) < DR) continue;
+            if(vtemp2 . DeltaR(jetW2->GetP4()) < DR) continue;
+            if(vtemp2 . DeltaR(leptonW->GetP4()) < DR) continue;
 
             vT1temp = vtemp1 + vW1;
             vT21temp = vtemp2 + vW2Sol1;
             vT22temp = vtemp2 + vW2Sol2;
 
-            Double_t tempDeltaM1 = fabs(vT1temp.M() - 173.34);
-            Double_t tempDeltaM21 = fabs(vT21temp.M() - 173.34);
-            Double_t tempDeltaM22 = fabs(vT22temp.M() - 173.34);
+            Double_t tempDeltaM1 = fabs(vT1temp.M() - Mtop);
+            Double_t tempDeltaM21 = fabs(vT21temp.M() - Mtop);
+            Double_t tempDeltaM22 = fabs(vT22temp.M() - Mtop);
 
             if(topCandidates < 2 && (tempDeltaM1 < 20 || tempDeltaM21 < 20 || tempDeltaM22 < 20)) topCandidates = 1;
 
@@ -386,19 +386,20 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
     }
 
     //Fill Top Veto histogram
-    Fill("ChargedHiggsHW/VetoFirst/Vars/TopVeto_" + label, systname, topCandidates, 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/TopVeto_" + label, systname, topCandidates, e->weight());
 
     //Apply sixth cut (top veto)
     if(!passedTopVeto) return EVENT_NOT_USED;
 
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 9, 1);
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 9, e->weight());
 
     //Select two bjets with mass closest to the Higgs
     Double_t minDeltaMH = 999;
     for(Int_t ijet = 0; ijet < orderedBJets.size(); ijet++){
 
         for(Int_t jjet = ijet+1; jjet < orderedBJets.size(); jjet++){
-
+            
+            // FIXME: remove tlorentzvectors. seems the same of a loop before
             Jet *tempjet1 = orderedBJets.at(ijet), *tempjet2 = orderedBJets.at(jjet);
             TLorentzVector vtemp1, vtemp2, vHtemp;
             vtemp1.SetPtEtaPhiE(tempjet1->Pt(), tempjet1->Eta(), tempjet1->Phi(), tempjet1->E());
@@ -406,15 +407,15 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
 
             vHtemp = vtemp1 + vtemp2;
 
-            if(deltaR(vtemp1.Eta(), vtemp2.Eta(), vtemp1.Phi(), vtemp2.Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), jetW1->Eta(), vtemp1.Phi(), jetW1->Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), jetW2->Eta(), vtemp1.Phi(), jetW2->Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), leptonW->Eta(), vtemp1.Phi(), leptonW->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), jetW1->Eta(), vtemp2.Phi(), jetW1->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), jetW2->Eta(), vtemp2.Phi(), jetW2->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), leptonW->Eta(), vtemp2.Phi(), leptonW->Phi()) < DR) continue;
+            if(vtemp1 . DeltaR(vtemp2) < DR) continue;
+            if(vtemp1 . DeltaR(jetW1->GetP4()) < DR) continue;
+            if(vtemp1 . DeltaR(jetW2->GetP4()) < DR) continue;
+            if(vtemp1 . DeltaR(leptonW->GetP4()) < DR) continue;
+            if(vtemp2 . DeltaR(jetW1->GetP4()) < DR) continue;
+            if(vtemp2 . DeltaR(jetW2->GetP4()) < DR) continue;
+            if(vtemp2 . DeltaR(leptonW->GetP4()) < DR) continue;
 
-            Double_t tempDeltaM = fabs(vHtemp.M() - 125);
+            Double_t tempDeltaM = fabs(vHtemp.M() - Mh);
 
             if(tempDeltaM < minDeltaMH){
                 minDeltaMH = tempDeltaM;
@@ -434,16 +435,16 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
     vH = vbjetH1 + vbjetH2;
 
     //Fill Higgs mass histogram
-    Fill("ChargedHiggsHW/VetoFirst/Vars/H_Mass_" + label, systname, vH.M(), 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/H_Mass_" + label, systname, vH.M(), e->weight());
 
     //Apply fifth cut
     if(minDeltaMH > 15) return EVENT_NOT_USED;
 
     //Fill other Higgs histograms
-    if(genH) Fill("ChargedHiggsHW/VetoFirst/Vars/GenH_Pt_" + label, systname, genH->Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/H_Pt_" + label, systname, vH.Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/HBJets_dR_" + label, systname, deltaR(bjetH1->Eta(), bjetH2->Eta(), bjetH1->Phi(), bjetH2->Phi()), 1);
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 10, 1);
+    if(genH) Fill("ChargedHiggsHW/VetoFirst/Vars/GenH_Pt_" + label, systname, genH->Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/H_Pt_" + label, systname, vH.Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/HBJets_dR_" + label, systname, bjetH1 -> DeltaR(bjetH2) , e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 10, e->weight()); // FIXME, put all of the cut in a enum
 
     Jet *tempT1 = 0, *tempT21 = 0, *tempT22 = 0;
     Double_t minDeltaMT1 = 999;
@@ -457,7 +458,7 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
 
         TLorentzVector vTopTemp = vW1 + vtemp;
 
-        Double_t tempDeltaM = fabs(vTopTemp.M() - 173.34);
+        Double_t tempDeltaM = fabs(vTopTemp.M() - Mtop);
 
         if(tempDeltaM < minDeltaMT1){
             minDeltaMT1 = tempDeltaM;
@@ -476,7 +477,7 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
 
         TLorentzVector vTopTemp = vW2Sol1 + vtemp;
 
-        Double_t tempDeltaM = fabs(vTopTemp.M() - 173.34);
+        Double_t tempDeltaM = fabs(vTopTemp.M() - Mtop);
 
         if(tempDeltaM < minDeltaMT21){
             minDeltaMT21 = tempDeltaM;
@@ -495,7 +496,7 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
 
         TLorentzVector vTopTemp = vW2Sol2 + vtemp;
 
-        Double_t tempDeltaM = fabs(vTopTemp.M() - 173.34);
+        Double_t tempDeltaM = fabs(vTopTemp.M() - Mtop);
 
         if(tempDeltaM < minDeltaMT22){
             minDeltaMT22 = tempDeltaM;
@@ -522,49 +523,50 @@ int ChargedHiggsHW::VetoFirst(Event *e,string systname){
     else vT = vW1 + vbjetT;
 
     //Fill top mass histogram
-    Fill("ChargedHiggsHW/VetoFirst/Vars/T_Mass_" + label, systname, vT.M(), 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/T_Mass_" + label, systname, vT.M(), e->weight());
 
     //Apply seventh requirement
     if(minDeltaMT1 > 30 && minDeltaMT21 > 30 && minDeltaMT22 > 30) return EVENT_NOT_USED;
 
     //Fill other top histograms
-    Fill("ChargedHiggsHW/VetoFirst/Vars/T_Pt_" + label, systname, vT.Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 11, 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/T_Pt_" + label, systname, vT.Pt() , e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 11, e->weight());
 
     //Set up Charged Higgs 4-momentum vector
     if(bjetT == tempT1){vHW1 = vW2Sol1 + vH; vHW2 = vW2Sol2 + vH;}
     else vHW1 = vHW2 = vW1 + vH;
 
     //Fill Charged Higgs histograms
-    Fill("ChargedHiggsHW/VetoFirst/Vars/ChargedH_Mass_" + label, systname, vHW1.M(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/ChargedH_Mass_" + label, systname, vHW2.M(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/ChargedH_Pt_" + label, systname, vHW1.Pt(), 1);
-    Fill("ChargedHiggsHW/VetoFirst/Vars/ChargedH_Pt_" + label, systname, vHW2.Pt(), 1);
+    Fill("ChargedHiggsHW/VetoFirst/Vars/ChargedH_Mass_" + label, systname, vHW1.M(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/ChargedH_Mass_" + label, systname, vHW2.M(), e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/ChargedH_Pt_" + label, systname, vHW1.Pt(),  e->weight());
+    Fill("ChargedHiggsHW/VetoFirst/Vars/ChargedH_Pt_" + label, systname, vHW2.Pt(),  e->weight());
 
     if(genCH){
         TLorentzVector tempv;
         tempv.SetPtEtaPhiE(genCH->Pt(), genCH->Eta(), genCH->Phi(), genCH->E());
-        Fill("ChargedHiggsHW/VetoFirst/Vars/GenChargedH_Mass_" + label, systname, tempv.M(), 1);
-        Fill("ChargedHiggsHW/VetoFirst/Vars/GenChargedH_Pt_" + label, systname, genCH->Pt(), 1);
+        Fill("ChargedHiggsHW/VetoFirst/Vars/GenChargedH_Mass_" + label, systname, tempv.M(), e->weight());
+        Fill("ChargedHiggsHW/VetoFirst/Vars/GenChargedH_Pt_" + label, systname, genCH->Pt(), e->weight());
     }
 
     //Here we can apply a cut on the mass of the charged Higgs
-    if(vHW1.M() > 250) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 12, 1);
-    if(vHW1.M() > 300) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 13, 1);
-    if(vHW1.M() > 350) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 14, 1);
-    if(vHW1.M() > 400) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 15, 1);
-    if(vHW1.M() > 450) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 16, 1);
-    if(vHW1.M() > 500) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 17, 1);
-    if(vHW1.M() > 550) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 18, 1);
-    if(vHW1.M() > 600) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 19, 1);
-    if(vHW1.M() > 650) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 20, 1);
-    if(vHW1.M() > 700) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 21, 1);
-    if(vHW1.M() > 750) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 22, 1);
-    if(vHW1.M() > 800) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 23, 1);
-    if(vHW1.M() > 850) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 24, 1);
-    if(vHW1.M() > 900) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 25, 1);
-    if(vHW1.M() > 950) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 26, 1);
-    if(vHW1.M() > 1000) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 27, 1);
+    //FIXME ... do you need a TH2D histogram?
+    if(vHW1.M() > 250) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 12, e->weight());
+    if(vHW1.M() > 300) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 13, e->weight());
+    if(vHW1.M() > 350) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 14, e->weight());
+    if(vHW1.M() > 400) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 15, e->weight());
+    if(vHW1.M() > 450) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 16, e->weight());
+    if(vHW1.M() > 500) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 17, e->weight());
+    if(vHW1.M() > 550) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 18, e->weight());
+    if(vHW1.M() > 600) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 19, e->weight());
+    if(vHW1.M() > 650) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 20, e->weight());
+    if(vHW1.M() > 700) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 21, e->weight());
+    if(vHW1.M() > 750) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 22, e->weight());
+    if(vHW1.M() > 800) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 23, e->weight());
+    if(vHW1.M() > 850) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 24, e->weight());
+    if(vHW1.M() > 900) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 25, e->weight());
+    if(vHW1.M() > 950) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 26, e->weight());
+    if(vHW1.M() > 1000) Fill("ChargedHiggsHW/VetoFirst/CutFlow/CutFlow_" + label, systname, 27, e->weight());
 
     return EVENT_USED;
 
@@ -602,19 +604,19 @@ int ChargedHiggsHW::VetoSecond(Event *e, string systname){
 
         if(abs(genpar->GetPdgId()) == 37){
             if(!genCH) genCH = genpar;
-            else if(deltaR(genpar->Eta(), genCH->Eta(), genpar->Phi(), genCH->Phi()) < DR) genCH = genpar;
+            else if( genpar -> DeltaR(genCH) < DR) genCH = genpar;
         }
 
         else if(abs(genpar->GetPdgId()) == 25){
             if(!genH) genH = genpar;
-            else if(deltaR(genpar->Eta(), genH->Eta(), genpar->Phi(), genH->Phi()) < DR) genH = genpar;
+            else if( genpar->DeltaR(genH) < DR) genH = genpar;
         }
 
         else if(abs(genpar->GetPdgId()) == 24){
             if(!genW1) genW1 = genpar;
-            else if(deltaR(genpar->Eta(), genW1->Eta(), genpar->Phi(), genW1->Phi()) < DR) genW1 = genpar;
+            else if( genpar -> DeltaR(genW1) < DR) genW1 = genpar;
             else if(genW1 && !genW2) genW2 = genpar;
-            else if(genW1 && deltaR(genpar->Eta(), genW2->Eta(), genpar->Phi(), genW2->Phi()) < DR) genW2 = genpar;
+            else if(genW1 && genpar-> DeltaR(genW2) < DR) genW2 = genpar;
         }
 
     }
@@ -714,7 +716,7 @@ int ChargedHiggsHW::VetoSecond(Event *e, string systname){
     vW1 = jetW1->GetP4() + jetW2->GetP4();
 
     //Fill W mass histogram
-    Fill("ChargedHiggsHW/VetoSecond/Vars/HadronicW_Mass_" + label, systname, vW1.M(), 1);
+    Fill("ChargedHiggsHW/VetoSecond/Vars/HadronicW_Mass_" + label, systname, vW1.M(), e->weight());
 
     //Apply second cut
     if(minDeltaMW > 30) return EVENT_NOT_USED;
@@ -831,27 +833,28 @@ int ChargedHiggsHW::VetoSecond(Event *e, string systname){
         for(Int_t jjet = 0; jjet < allJets.size(); jjet++){
 
             if(ijet == jjet) continue;
+            //FIXME, an ether identical jet loop. Template and functions are adviced
 
             Jet *tempjet1 = allJets.at(ijet), *tempjet2 = allJets.at(jjet);
             TLorentzVector vtemp1, vtemp2, vHtemp;
             vtemp1.SetPtEtaPhiE(tempjet1->Pt(), tempjet1->Eta(), tempjet1->Phi(), tempjet1->E());
             vtemp2.SetPtEtaPhiE(tempjet2->Pt(), tempjet2->Eta(), tempjet2->Phi(), tempjet2->E());
 
-            if(deltaR(vtemp1.Eta(), vtemp2.Eta(), vtemp1.Phi(), vtemp2.Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), jetW1->Eta(), vtemp1.Phi(), jetW1->Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), jetW2->Eta(), vtemp1.Phi(), jetW2->Phi()) < DR) continue;
-            if(deltaR(vtemp1.Eta(), leptonW->Eta(), vtemp1.Phi(), leptonW->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), jetW1->Eta(), vtemp2.Phi(), jetW1->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), jetW2->Eta(), vtemp2.Phi(), jetW2->Phi()) < DR) continue;
-            if(deltaR(vtemp2.Eta(), leptonW->Eta(), vtemp2.Phi(), leptonW->Phi()) < DR) continue;
+            if(vtemp1 . DeltaR(vtemp2) < DR) continue;
+            if(vtemp1 . DeltaR(jetW1->GetP4()) < DR) continue;
+            if(vtemp1 . DeltaR(jetW2->GetP4()) < DR) continue;
+            if(vtemp1 . DeltaR(leptonW->GetP4()) < DR) continue;
+            if(vtemp2 . DeltaR(jetW1->GetP4()) < DR) continue;
+            if(vtemp2 . DeltaR(jetW2->GetP4()) < DR) continue;
+            if(vtemp2 . DeltaR(leptonW->GetP4()) < DR) continue;
 
-            vT1temp = vtemp1 + vW1;
-            vT21temp = vtemp2 + vW2Sol1;
-            vT22temp = vtemp2 + vW2Sol2;
+            vT1temp  = tempjet1 -> GetP4() + vW1;
+            vT21temp = tempjet2 -> GetP4() + vW2Sol1;
+            vT22temp = tempjet2 -> GetP4() + vW2Sol2;
 
-            Double_t tempDeltaM1 = fabs(vT1temp.M() - 173.34);
-            Double_t tempDeltaM21 = fabs(vT21temp.M() - 173.34);
-            Double_t tempDeltaM22 = fabs(vT22temp.M() - 173.34);
+            Double_t tempDeltaM1 = fabs(vT1temp.M() - Mtop );
+            Double_t tempDeltaM21 = fabs(vT21temp.M() - Mtop);
+            Double_t tempDeltaM22 = fabs(vT22temp.M() - Mtop);
 
             if(topCandidates < 2 && (tempDeltaM1 < 20 || tempDeltaM21 < 20 || tempDeltaM22 < 20)) topCandidates = 1;
 
@@ -865,12 +868,12 @@ int ChargedHiggsHW::VetoSecond(Event *e, string systname){
     }
 
     //Fill Top Veto histogram
-    Fill("ChargedHiggsHW/VetoSecond/Vars/TopVeto_" + label, systname, topCandidates, 1);
+    Fill("ChargedHiggsHW/VetoSecond/Vars/TopVeto_" + label, systname, topCandidates, e -> weight() );
 
     //Apply sixth cut (top veto)
     if(!passedTopVeto) return EVENT_NOT_USED;
 
-    Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 10, 1);
+    Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 10, e-> weight());
 
     Jet *tempT1 = 0, *tempT21 = 0, *tempT22 = 0;
     Double_t minDeltaMT1 = 999;
@@ -884,7 +887,7 @@ int ChargedHiggsHW::VetoSecond(Event *e, string systname){
 
         TLorentzVector vTopTemp = vW1 + vtemp;
 
-        Double_t tempDeltaM = fabs(vTopTemp.M() - 173.34);
+        Double_t tempDeltaM = fabs(vTopTemp.M() - Mtop);
 
         if(tempDeltaM < minDeltaMT1){
             minDeltaMT1 = tempDeltaM;
@@ -903,7 +906,7 @@ int ChargedHiggsHW::VetoSecond(Event *e, string systname){
 
         TLorentzVector vTopTemp = vW2Sol1 + vtemp;
 
-        Double_t tempDeltaM = fabs(vTopTemp.M() - 173.34);
+        Double_t tempDeltaM = fabs(vTopTemp.M() - Mtop);
 
         if(tempDeltaM < minDeltaMT21){
             minDeltaMT21 = tempDeltaM;
@@ -922,7 +925,7 @@ int ChargedHiggsHW::VetoSecond(Event *e, string systname){
 
         TLorentzVector vTopTemp = vW2Sol2 + vtemp;
 
-        Double_t tempDeltaM = fabs(vTopTemp.M() - 173.34);
+        Double_t tempDeltaM = fabs(vTopTemp.M() - Mtop);
 
         if(tempDeltaM < minDeltaMT22){
             minDeltaMT22 = tempDeltaM;
@@ -949,49 +952,49 @@ int ChargedHiggsHW::VetoSecond(Event *e, string systname){
     else vT = vW1 + vbjetT;
 
     //Fill top mass histogram
-    Fill("ChargedHiggsHW/VetoSecond/Vars/T_Mass_" + label, systname, vT.M(), 1);
+    Fill("ChargedHiggsHW/VetoSecond/Vars/T_Mass_" + label, systname, vT.M(), e->weight());
 
     //Apply seventh requirement
     if(minDeltaMT1 > 30 && minDeltaMT21 > 30 && minDeltaMT22 > 30) return EVENT_NOT_USED;
 
     //Fill other top histograms
-    Fill("ChargedHiggsHW/VetoSecond/Vars/T_Pt_" + label, systname, vT.Pt(), 1);
-    Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 11, 1);
+    Fill("ChargedHiggsHW/VetoSecond/Vars/T_Pt_" + label, systname, vT.Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 11, e->weight());
 
     //Set up Charged Higgs 4-momentum vector
     if(bjetT == tempT1){vHW1 = vW2Sol1 + vH; vHW2 = vW2Sol2 + vH;}
     else vHW1 = vHW2 = vW1 + vH;
 
     //Fill Charged Higgs histograms
-    Fill("ChargedHiggsHW/VetoSecond/Vars/ChargedH_Mass_" + label, systname, vHW1.M(), 1);
-    Fill("ChargedHiggsHW/VetoSecond/Vars/ChargedH_Mass_" + label, systname, vHW2.M(), 1);
-    Fill("ChargedHiggsHW/VetoSecond/Vars/ChargedH_Pt_" + label, systname, vHW1.Pt(), 1);
-    Fill("ChargedHiggsHW/VetoSecond/Vars/ChargedH_Pt_" + label, systname, vHW2.Pt(), 1);
+    Fill("ChargedHiggsHW/VetoSecond/Vars/ChargedH_Mass_" + label, systname, vHW1.M(), e->weight());
+    Fill("ChargedHiggsHW/VetoSecond/Vars/ChargedH_Mass_" + label, systname, vHW2.M(), e->weight());
+    Fill("ChargedHiggsHW/VetoSecond/Vars/ChargedH_Pt_" + label, systname, vHW1.Pt(), e->weight());
+    Fill("ChargedHiggsHW/VetoSecond/Vars/ChargedH_Pt_" + label, systname, vHW2.Pt(), e->weight());
 
     if(genCH){
         TLorentzVector tempv;
         tempv.SetPtEtaPhiE(genCH->Pt(), genCH->Eta(), genCH->Phi(), genCH->E());
-        Fill("ChargedHiggsHW/VetoSecond/Vars/GenChargedH_Mass_" + label, systname, tempv.M(), 1);
-        Fill("ChargedHiggsHW/VetoSecond/Vars/GenChargedH_Pt_" + label, systname, genCH->Pt(), 1);
+        Fill("ChargedHiggsHW/VetoSecond/Vars/GenChargedH_Mass_" + label, systname, tempv.M(), e->weight());
+        Fill("ChargedHiggsHW/VetoSecond/Vars/GenChargedH_Pt_" + label, systname, genCH->Pt(), e->weight());
     }
 
     //Here we can apply a cut on the mass of the charged Higgs
-    if(vHW1.M() > 250) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 12, 1);
-    if(vHW1.M() > 300) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 13, 1);
-    if(vHW1.M() > 350) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 14, 1);
-    if(vHW1.M() > 400) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 15, 1);
-    if(vHW1.M() > 450) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 16, 1);
-    if(vHW1.M() > 500) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 17, 1);
-    if(vHW1.M() > 550) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 18, 1);
-    if(vHW1.M() > 600) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 19, 1);
-    if(vHW1.M() > 650) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 20, 1);
-    if(vHW1.M() > 700) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 21, 1);
-    if(vHW1.M() > 750) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 22, 1);
-    if(vHW1.M() > 800) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 23, 1);
-    if(vHW1.M() > 850) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 24, 1);
-    if(vHW1.M() > 900) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 25, 1);
-    if(vHW1.M() > 950) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 26, 1);
-    if(vHW1.M() > 1000) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 27, 1);
+    if(vHW1.M() > 250) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 12, e->weight());
+    if(vHW1.M() > 300) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 13, e->weight());
+    if(vHW1.M() > 350) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 14, e->weight());
+    if(vHW1.M() > 400) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 15, e->weight());
+    if(vHW1.M() > 450) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 16, e->weight());
+    if(vHW1.M() > 500) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 17, e->weight());
+    if(vHW1.M() > 550) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 18, e->weight());
+    if(vHW1.M() > 600) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 19, e->weight());
+    if(vHW1.M() > 650) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 20, e->weight());
+    if(vHW1.M() > 700) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 21, e->weight());
+    if(vHW1.M() > 750) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 22, e->weight());
+    if(vHW1.M() > 800) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 23, e->weight());
+    if(vHW1.M() > 850) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 24, e->weight());
+    if(vHW1.M() > 900) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 25, e->weight());
+    if(vHW1.M() > 950) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 26, e->weight());
+    if(vHW1.M() > 1000) Fill("ChargedHiggsHW/VetoSecond/CutFlow/CutFlow_" + label, systname, 27, e->weight());
 
     return EVENT_USED;
 

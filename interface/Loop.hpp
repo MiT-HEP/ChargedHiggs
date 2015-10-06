@@ -26,8 +26,6 @@ class Looper{
 
         vector<BareCollection*> bare_;
         map<string,int> names_;
-        vector<vector<int>* > jetPdgIds_;
-        map<string,int> nameJetPdgIds_;
 
         vector<AnalysisBase*> analysis_;
 

@@ -26,6 +26,7 @@ class Event{
     friend class SmearBase;
     friend class AnalysisBase;
     friend class ChargedHiggsEWKEmbedding;  // embedding will replace the taus
+    friend class TagAndProbe; // need access to the bare objects
 
     protected:
     vector<Lepton*> leps_;
@@ -92,7 +93,7 @@ class Event{
     double weight();
     // update objects that can be invalid (jets)
     virtual void validate();
-    bool IsTriggered(string name);
+    bool IsTriggered(string name, Trigger *trigger = NULL);
 
     // SF utils
     void SetPtEtaSF(string label, float pt, float eta){ 

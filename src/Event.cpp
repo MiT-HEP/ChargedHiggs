@@ -3,12 +3,14 @@
 #include "TMath.h"
 #include <iostream>
 
+//#define VERBOSE 2
+
 void Event::ClearEvent(){
 
-    for (auto o :  jets_ ) delete o;
-    for (auto o :  leps_ ) delete o;
-    for (auto o :  taus_ ) delete o;
-    for (auto o :  genparticles_ ) delete o;
+    for (auto o :  jets_ ) ChargedHiggs::Delete(o);
+    for (auto o :  leps_ ) ChargedHiggs::Delete(o);
+    for (auto o :  taus_ ) ChargedHiggs::Delete(o);
+    for (auto o :  genparticles_ ) ChargedHiggs::Delete(o);
 
     jets_ . clear();
     leps_ . clear();
@@ -207,8 +209,13 @@ Tau * Event::GetTauInvIso( int iTau )
     return taus_[ valid[iTau].second];
 }
 
-bool Event::IsTriggered( string name )
+bool Event::IsTriggered( string name ,Trigger *trigger)
 {
+    // TODO: make event inheriths from trigger, and remove this switch
+    #ifdef VERBOSE
+    if (VERBOSE >1) cout <<"[Event]::[IsTriggered]::[DEBUG] name="<<name<<" trigger="<<trigger<<endl;
+    #endif
+    
     static string lastName = "";
     static int lastPos = -1;
 
@@ -216,7 +223,10 @@ bool Event::IsTriggered( string name )
 
     if (name == lastName and lastPos >=0 )
     {
-        return triggerFired_[ lastPos ] ;
+        if (trigger == NULL)
+            return triggerFired_[ lastPos ] ;
+        else 
+            return trigger -> IsTriggered( lastPos ) ;
     }
     
     lastPos = -1;
@@ -225,7 +235,15 @@ bool Event::IsTriggered( string name )
         if (name == triggerNames_[i] ) { lastPos=i; break;} 
     }
     lastName = name;
-    if (lastPos >=0 ) return triggerFired_[ lastPos ] ; 
+    if (lastPos >=0 ) {
+        #ifdef VERBOSE
+        if (VERBOSE >1) cout <<"[Event]::[IsTriggered]::[DEBUG] grace exit"<<endl;
+        #endif
+        if (trigger == NULL)
+            return triggerFired_[ lastPos ] ; 
+        else 
+            return trigger -> IsTriggered( lastPos) ;
+    }
     
     cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
     return false;

@@ -29,6 +29,7 @@ eventNum
 mcWeight
 ## TRIGGER
 triggerFired
+triggerTaus
 ## GEN
 metP4_GEN
 #

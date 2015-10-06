@@ -31,9 +31,9 @@ class Object
         float InvMass(Object &o);
 
         // pointer versions
-        virtual inline float DeltaR(Object *o){ return DeltaR(*o) ;}
-        virtual inline float DeltaEta(Object *o){return DeltaEta(*o); }
-        virtual inline float DeltaPhi(Object *o){return DeltaPhi(*o); }
+        virtual inline float DeltaR(Object *o){ return this->DeltaR(*o) ;}
+        virtual inline float DeltaEta(Object *o){return this->DeltaEta(*o); }
+        virtual inline float DeltaPhi(Object *o){return this->DeltaPhi(*o); }
 
         // ---
         // copy constructor

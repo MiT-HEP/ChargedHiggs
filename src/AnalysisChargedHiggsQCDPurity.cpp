@@ -1,6 +1,8 @@
 #include "interface/AnalysisChargedHiggsQCDPurity.hpp"
 #include "interface/GeneralFunctions.hpp"
 
+//#define VERBOSE 1
+
 void ChargedHiggsQCDPurity::Init()
 {
     for ( string& l : AllLabel()  ) 
@@ -30,6 +32,9 @@ void ChargedHiggsQCDPurity::Init()
 
 int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 {
+    #ifdef VERBOSE
+    if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] start analyze event"<<endl;
+    #endif
     string label = GetLabel(e);
     // do not distinguish between data and mc, 
     // so we can run closures
@@ -37,6 +42,11 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     Tau *t = e->GetTau(0);
     // Fill Inverted Iso
     Tau *tInv = e->GetTauInvIso(0);
+
+    #ifdef VERBOSE
+    if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is Tau? "<< (t==NULL) <<endl;
+    if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is TauInv? "<< (tInv == NULL)<<endl;
+    #endif
 
     // TODO:
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
@@ -47,12 +57,18 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         return EVENT_NOT_USED;
     }
     //cout <<" EVENT TRIGGERED"<<endl;
+    #ifdef VERBOSE
+    if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is real data? "<<e->IsRealData() <<" and pass trigger" <<endl;
+    #endif
     //
     // ---
     if ( t==NULL and tInv==NULL ) return EVENT_NOT_USED;
     if ( e->Nleps() >0 ) return EVENT_NOT_USED;
     if ( e->Njets() <3 ) return EVENT_NOT_USED;
 
+    #ifdef VERBOSE
+    if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] pass basic selection (Njets, nLepts)"<<endl;
+    #endif
 
     if (t != NULL and t->Pt()>=51 and fabs(t->Eta())<2.1)
     {
@@ -76,10 +92,13 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     if ( e->GetMet().Pt() <130 ) return EVENT_NOT_USED;
     if ( e->Bjets() <1 ) return EVENT_NOT_USED;
 
+    #ifdef VERBOSE
+    if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] pass Met, and Bjets"<<endl;
+    #endif
+
     double DPhiEtMissJet1=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
     double DPhiEtMissJet2=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
     double DPhiEtMissJet3=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
-    cout<<" Met Bjets guord Guard"<<endl; //DEBUG
 
     if (t!=NULL) 
     {
@@ -89,6 +108,9 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
         double RsrMax=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
         if ( RCollMin*TMath::RadToDeg() >=40 and RbbMin*TMath::RadToDeg() >=40 ){
+            #ifdef VERBOSE
+            if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is tau, pass angular cuts"<<endl;
+            #endif
             float pt = t->Pt();
             string hist = HistName(pt,true,true);  
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
@@ -100,6 +122,9 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     if (tInv != NULL ) {
         cout<<" TauInv Guard B"<<endl; //DEBUG
+        #ifdef VERBOSE
+        if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is tauInv"<<endl;
+        #endif
         // if the SF don't exist go on, but don't fill inconsistent events
         if( not e->ExistSF("tauinviso") ){
             static int count = 0 ;
@@ -120,9 +145,12 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         double RbbMin=min(min(sqrt(pow(DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
         double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
         double RsrMax=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
-        if ( RCollMin*TMath::RadToDeg() >=40 and RbbMin*TMath::RadToDeg() >=40 ){
-            float pt = tInv->Pt();
-            string hist = HistName(pt,false,true);  
+        if ( RCollMin*TMath::RadToDeg() >=40 and RbbMin*TMath::RadToDeg() >=40 ){    
+            #ifdef VERBOSE
+            if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is TauInv, pass angular cuts. fill with SF."<<endl;
+            #endif
+            float pt = tInv->Pt();                                                   
+            string hist = HistName(pt,false,true);                                   
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
 
             hist = HistName(pt,false,true,"Mt");  
@@ -145,6 +173,14 @@ int ChargedHiggsQCDPurity::FindBin(float pt)
 
 string ChargedHiggsQCDPurity::HistName(float pt, bool Direct, bool FullSelection, string var)
 {
+    #ifdef VERBOSE
+    if (VERBOSE>0){cout<<"[ChargedHiggsQCDPurity]::[HistName]::[DEBUG] called HistName with:"<<endl;
+                   cout<<"\t * pt="<<pt <<endl;
+                   cout<<"\t * Direct= "<<Direct<<endl;
+                   cout<<"\t * FullSection= "<<FullSelection<<endl;
+                   cout<<"\t * var = "<<var<<endl;
+    }
+    #endif
     int iBin=FindBin(pt);
     string name;
 
@@ -154,6 +190,10 @@ string ChargedHiggsQCDPurity::HistName(float pt, bool Direct, bool FullSelection
     if (not Direct) name += "_IsoInv";
 
     if ( FullSelection) name += "_FullSelection" ;
+
+    #ifdef VERBOSE
+    if(VERBOSE>0) cout<<"[ChargedHiggsQCDPurity]::[HistName]::[DEBUG] returning name="<<name<<endl;
+    #endif
 
     return name;
 }
