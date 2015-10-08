@@ -184,7 +184,21 @@ for smear in cfg['Smear']:
 		if opts.verbose: print "-> Adding smear from name '"+smear+"'"
 		loop.AddSmear(smear)
 
-
+for corr in cfg['Corrector']:
+	if opts.verbose: print "-> constructing corrector",corr
+	if corr=='NONE' : continue
+	c = r.__getattr__(corr)() 
+	if corr in cfg['config']:
+		for key in cfg['config'][corr]:
+			if opts.verbose:print '  - config keys', key
+			check = key.split('=')[0].split('(')[0].split('.')[0]
+			try:
+				getattr(c, check)
+			except AttributeError:
+				print "Corrector",corr,"seems not to have attribute",check
+			exec( "c."+key ) 
+	c.Init()
+	loop.AddCorrector(c)
 
 ## add analysis
 for analysis in cfg['Analysis']:

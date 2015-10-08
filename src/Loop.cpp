@@ -11,6 +11,7 @@
 #include "NeroProducer/Core/interface/BareLeptons.hpp"
 #include "NeroProducer/Core/interface/BareTaus.hpp"
 #include "NeroProducer/Core/interface/BareTrigger.hpp"
+#include "NeroProducer/Core/interface/BareVertex.hpp"
 
 #include "interface/Handlers.hpp"
 
@@ -42,6 +43,10 @@ int Looper::InitSmear(){
     return R;
 }
 
+int Looper::InitCorrector(){
+	for(auto& c : correctors_ ) { c-> Init() ; }
+}
+
 int Looper::AddSmear(string name){
 #ifdef VERBOSE
     if(VERBOSE>0)cout <<"[Looper]::[AddSmear] Adding Smear '"<<name<<"'."<<endl;
@@ -65,6 +70,12 @@ int Looper::InitTree()
     BareEvent *e = new BareEvent(); 
     names_[ "Event" ] = bare_.size();
     bare_.push_back(e);
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Vertex "<<endl;
+#endif
+    BareVertex *v = new BareVertex(); 
+    names_[ "Vertex" ] = bare_.size();
+    bare_.push_back(v);
 #ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init MonteCarlo "<<endl;
 #endif
@@ -175,8 +186,12 @@ void Looper::Loop()
                     s->SetSyst(i);
                     //smear
                     s->smear(event_);
+		    //do the corrections on top
+		    for(auto& c : correctors_)
+			    c->correct(event_);
+
                     //do the analysis
-                    event_->validate();
+                    event_->validate(); // validate the objects
                     for(auto a : analysis_)
                     {
 #ifdef VERBOSE
@@ -280,6 +295,9 @@ void Looper::FillEventInfo(){
     event_ -> lumiNum_ = e->lumiNum;
     event_ -> eventNum_ = e->eventNum;
     event_ -> rho_ = e->rho;
+
+    BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["Vertex"] ] ) ; assert(e!=NULL);
+    event_ -> npv_ = v->npv;
 
 }
 
@@ -430,13 +448,14 @@ void Looper::FillMet(){
     if ( met->p4 ->GetEntries() != 1)
         cout<<"[Looper]::[FillMet]::[ERROR] MET should have exactly 1 entry instead of "<<met->p4 ->GetEntries() <<endl;
 
-    //event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     //event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
 #ifdef VERBOSE
     if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size()<<endl;
     if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
 #endif
+    //event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
+    //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
     event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
     event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
 
