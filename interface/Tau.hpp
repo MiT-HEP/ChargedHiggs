@@ -3,19 +3,19 @@
 
 #include "interface/Lepton.hpp"
 #include "interface/GenParticle.hpp"
+#include "interface/Trigger.hpp"
 
 class Tau: virtual public Object,
-    virtual public Lepton
+    virtual public Lepton,
+    virtual public Trigger
 {
-    float idcut_;
-
-
+    
     public:
     Tau() ;
-    float id;
+    bool id;
     float iso2;
-    int id_ele;
-    int id_mu;
+    bool id_ele =0;
+    bool id_mu =0 ;
     int match ; // is matched with a gen tau
 
     virtual int IsTau() ;

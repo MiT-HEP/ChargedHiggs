@@ -117,6 +117,13 @@ int Looper::InitTree()
     for (auto c : bare_ )
         c->setBranchAddresses(tree_);
 
+	/// FIXME, id for taus v1.1
+    static int guard=0;
+    if(++guard<10)cout<<" TAUS FIX FOR v1.1"<<endl;
+    BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
+    tree_ ->SetBranchAddress("tauId", &bt -> selBits);
+    ///
+
     tree_ -> SetBranchStatus("*",0);
     // branches are activate from configuration file
 #ifdef VERBOSE
@@ -280,7 +287,7 @@ void Looper::FillEventInfo(){
 void Looper::FillJets(){
     //fill Jets
 #ifdef VERBOSE
-    if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets: FIXME JES" <<endl;
+    if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets. FIXME JES" <<endl;
 #endif
     BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "Jets" ] ] ); assert (bj !=NULL);
 
@@ -292,10 +299,14 @@ void Looper::FillJets(){
 
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
+	bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
+	if (not id) continue;
+	// when create an Object, put it into the jets_ stuff, otherwise won't be deleted
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
-        j->unc = 0.03; //bj -> unc -> at(iJet); FIXME 3% flat
+        j->unc = bj -> unc -> at(iJet); //
         j->bdiscr = bj -> bDiscr -> at(iJet);
+	// TODO add PuId, and syst
         event_ -> jets_ . push_back(j);
     }
     return;
@@ -316,11 +327,14 @@ void Looper::FillLeptons(){
 
     for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
     {
+	bool id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepLoose;
+	if (not id) continue;
         Lepton *l = new Lepton();
         l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
         l-> iso = (*bl->iso) [iL];
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> type = abs((*bl->pdgId)[iL]);
+
         event_ -> leps_ . push_back(l);
     }
 
@@ -332,6 +346,7 @@ void Looper::FillTaus(){
     if(VERBOSE>1)cout <<"[Looper]::[FillTaus]::[DEBUG] Filling Taus" <<endl;
 #endif
     BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
+    BareTrigger *tr = dynamic_cast<BareTrigger*> ( bare_[names_["Trigger"]]);
 
     if ( tree_ -> GetBranchStatus("tauP4") ==0 ){ 
         static int counter = 0;
@@ -341,16 +356,31 @@ void Looper::FillTaus(){
 
     for (int iL = 0; iL<bt -> p4 -> GetEntries() ;++iL)
     {
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[FillTaus]::[DEBUG] Filling Taus n."<<iL <<" of "<<bt -> p4 -> GetEntries() <<endl;
+    if(VERBOSE>1)cout<<"\t iso= " << bt->iso->size()<<endl;
+    if(VERBOSE>1)cout<<"\t charge= " << bt->Q->size()<<endl;
+    if(VERBOSE>1)cout<<"\t iso2= " << bt->isoDeltaBetaCorr->size()<<endl;
+    if(VERBOSE>1)cout<<"\t selBits= " << bt->selBits->size()<<endl;
+    if(VERBOSE>1)cout<<"\t match= " << bt->match->size()<<endl;
+#endif
         Tau *t = new Tau();
         t->SetP4( *(TLorentzVector*) ((*bt->p4)[iL]) );
         t-> iso = (*bt->iso) [iL];
         t-> charge = bt -> Q -> at(iL);
         t-> type = 15;
-        t-> id = bt-> id -> at(iL);
+        //t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
+        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
-        t-> id_ele = bt -> againstEleLoose-> at(iL); 
-        t-> id_mu = bt -> againstMuLoose -> at(iL); 
+        t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleLoose ; 
+        t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
+
+#ifdef VERBOSE
+	if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Filling Taus Trigger"<<endl;
+#endif
+	t->trigger =  0;
+	if (tree_ -> GetBranchStatus("triggerTaus") !=0  && tr -> triggerTaus ->size() >iL) t->trigger = tr->triggerTaus->at(iL);
         event_ -> taus_ . push_back(t);
     }
     //cout<<"[Looper]::[FillTaus]::[DEBUB] Taus Loaded:"<< event_->taus_.size() <<endl;
@@ -401,15 +431,26 @@ void Looper::FillMet(){
         cout<<"[Looper]::[FillMet]::[ERROR] MET should have exactly 1 entry instead of "<<met->p4 ->GetEntries() <<endl;
 
     //event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
-    event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
+    //event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
+#ifdef VERBOSE
+    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size()<<endl;
+    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
+#endif
+    event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
     event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
 
+#ifdef VERBOSE
+    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] GEN Info "<<endl;
+#endif
     if ( event_->IsRealData() )
-	event_ -> met_ . gen = 0;	
+	event_ -> met_ . gen = 0;
     else
     	event_ -> met_ . gen =( (TLorentzVector*)(*met->genP4)[0] )->Pt();
 
+#ifdef VERBOSE
+    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Grace Exit "<<endl;
+#endif
 }
 
 void Looper::FillTrigger(){

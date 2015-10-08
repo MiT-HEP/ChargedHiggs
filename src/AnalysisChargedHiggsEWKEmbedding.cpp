@@ -152,10 +152,10 @@ int ChargedHiggsEWKEmbedding::analyze(Event*e,string systname)
             t-> iso = (*bt->iso) [iL];
             t-> charge = bt -> Q -> at(iL);
             t-> type = 15;
-            t-> id = bt-> id -> at(iL);
+            t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
             t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
-            t-> id_ele = bt -> againstEleLoose-> at(iL); 
-            t-> id_mu = bt -> againstMuLoose -> at(iL); 
+            t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleLoose ; 
+            t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
             t-> match = bt -> match -> at(iL);
             e -> taus_ . push_back(t);
         }

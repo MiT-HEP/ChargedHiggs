@@ -5,6 +5,8 @@
 
 class Lepton : virtual public Object
 {
+    friend class TagAndProbe;
+
     protected:
         float isocut_;
         float ptcut_;

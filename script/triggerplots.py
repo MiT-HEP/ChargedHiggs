@@ -19,44 +19,63 @@ chain = ROOT.TChain("nero/events")
 h = ROOT.TH1D("h","h",400,0,200)
 h_base = ROOT.TH1D("h_base","h_base",400,0,200)
 
+BaseHeader = ""
+
+###    TauDecayModeFindingNewDMs = 1UL <<0,
+###    TauDecayModeFinding = 1UL <<1,
+###    AgainstEleLoose = 1UL <<8,
+###    AgainstEleMedium = 1UL<<9,
+###    AgainstMuLoose = 1UL<<10,
+###    AgainstMuTight = 1UL<<11
+
+tauId="(tauId[0] & 1) && (tauId[0] & (1<<8)) && (tauId[0] & (1<<10))"
 
 ### selection for the tau Pt
-#BaseTrigger=""
-#ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1"
-#sel = "tauIsoDeltaBetaCorr[]<1.5 && tauId[]>0.5 && abs(tauP4[].Eta()) < 2.1 && metP4[0].Pt()>90"
-#var = "tauP4[].Pt()"
-#files = FindEOS("/store/user/amarini/Nero/v1.0.2/17Jul2015-v1/MET")
+if False:
+	BaseTrigger=""
+	#ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"
+	ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"
+	sel = "tauIsoDeltaBetaCorr[0]<1.5 &&"+ tauId+ " && abs(tauP4[0].Eta()) < 2.1 && metP4[0].Pt()>90"
+	var = "tauP4[0].Pt()"
+	BaseHeader = "MET Dataset"
+	files = FindEOS("/store/user/amarini/Nero/v1.1//MET")
+
 
 ### selection for the met cut
-###BaseTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1"
-#BaseTrigger=""
-#ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"
-#ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"
-#var = "metP4[0].Pt()"
-#sel = "tauIsoDeltaBetaCorr[]<1.5 && tauId[]>0.5 && abs(tauP4[].Eta()) < 2.1 && tauP4[].Pt() > 51"
-#files = FindEOS("/store/user/amarini/Nero/v1.0.2/17Jul2015-v1/Tau")
+if True:
+	BaseTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_v"
+	#BaseTrigger=""
+	ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"
+	#ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"
+	var = "metPuppi.Pt()"
+	sel = "tauIsoDeltaBetaCorr[]<1.5 && "+ tauId +" && abs(tauP4[].Eta()) < 2.1 && tauP4[].Pt() > 51"
+	h_base.GetXaxis().SetTitle("E_{T}^{miss} (Puppi)")
+	files = FindEOS("/store/user/amarini/Nero/v1.1/Tau/")
 
 ## eta
-## h = ROOT.TH1D("h","h",200,0,4)
-## h_base = ROOT.TH1D("h_base","h_base",200,0,4)
-## #BaseTrigger="HLT_LooseIsoPFTau50_Trk30_v" ## NO ETA # NO MET
-## BaseTrigger="" ## NO ETA # NO MET
-## ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"
-## var = "tauP4[].Eta()"
-## sel = "tauIsoDeltaBetaCorr[]<1.5 && tauId[]>0.5 && tauP4[].Pt() > 51 && metP4[0].Pt()>90"
-## files = FindEOS("/store/user/amarini/Nero/v1.0.2/17Jul2015-v1/MET")
+if False:
+	h = ROOT.TH1D("h","h",200,0,4)
+	h_base = ROOT.TH1D("h_base","h_base",200,0,4)
+	#BaseTrigger="HLT_LooseIsoPFTau50_Trk30_v" ## NO ETA # NO MET
+	BaseTrigger="" ## NO ETA # NO MET
+	BaseHeader = "MET Dataset"
+	ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"
+	var = "tauP4[].Eta()"
+	h_base.GetXaxis().SetTitle("#eta_{#tau} ")
+	sel = "tauIsoDeltaBetaCorr[]<1.5 && " + tauId+" && tauP4[].Pt() > 51 && metP4[0].Pt()>90"
+	files = FindEOS("/store/user/amarini/Nero/v1.1//MET")
 
 
 ##HLT_PFMET120_NoiseCleaned_BtagCSV0p72,
 ## check it vs BTagDiscriminator
-h = ROOT.TH1D("h","h",200,0,1)
-h_base = ROOT.TH1D("h_base","h_base",200,0,1)
-#BaseTrigger="HLT_LooseIsoPFTau50_Trk30_v" ## NO ETA # NO MET
-BaseTrigger="" ## NO ETA # NO MET
-ProbeTrigger="HLT_PFMET120_NoiseCleaned_BtagCSV0p72"
-var = "jetBdiscr"
-sel = "tauIsoDeltaBetaCorr[]<1.5 && tauId[]>0.5 && tauP4[].Pt() > 40 && metP4[0].Pt()>130"
-files = FindEOS("/store/user/amarini/Nero/v1.0.2/17Jul2015-v1/MET")
+##h = ROOT.TH1D("h","h",200,0,1)
+##h_base = ROOT.TH1D("h_base","h_base",200,0,1)
+###BaseTrigger="HLT_LooseIsoPFTau50_Trk30_v" ## NO ETA # NO MET
+##BaseTrigger="" ## NO ETA # NO MET
+##ProbeTrigger="HLT_PFMET120_NoiseCleaned_BtagCSV0p72"
+##var = "jetBdiscr"
+##sel = "tauIsoDeltaBetaCorr[]<1.5 && tauId[]>0.5 && tauP4[].Pt() > 40 && metP4[0].Pt()>130"
+##files = FindEOS("/store/user/amarini/Nero/v1.0.2/17Jul2015-v1/MET")
 
 ######################
 
@@ -94,6 +113,10 @@ p2.Draw()
 p1.cd()
 h_base.Draw()
 h.Draw("SAME")
+leg = ROOT.TLegend(0.7,.7,.9,.9,BaseHeader)
+leg.AddEntry(h_base,BaseTrigger)
+leg.AddEntry(h,ProbeTrigger)
+leg.Draw()
 
 p2.cd()
 r=h.Clone("r")

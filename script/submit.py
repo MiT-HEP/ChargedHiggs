@@ -41,6 +41,13 @@ sys.path.insert(0,os.getcwd())
 print "inserting in path cwd/python"
 sys.path.insert(0,os.getcwd()+'/python')
 
+## bash color string
+red="\033[01;31m"
+green = "\033[01;32m"
+yellow = "\033[01;33m"
+cyan = "\033[01;36m"
+white = "\033[00m"
+
 def PrintLine(list):
 	''' convert list in list of int number, sort and compress consecutive numbers. Then print the result:
 	4,5,8,3 -> 3-5,8
@@ -81,13 +88,6 @@ def PrintSummary(dir, doPrint=True):
 	fail = glob(dir + "/*fail")
 	done = glob(dir + "/*done")
 	pend = glob(dir + "/*pend")
-
-	## bash color string
-	red="\033[01;31m"
-	green = "\033[01;32m"
-	yellow = "\033[01;33m"
-	cyan = "\033[01;36m"
-	white = "\033[00m"
 
 	run = [ re.sub('\.run','' , re.sub('.*/sub','', r) ) for r in run ] 	
 	fail = [ re.sub('\.fail','' , re.sub('.*/sub','', r) ) for r in fail ] 	
@@ -333,7 +333,7 @@ for iJob in range(0,opts.njobs):
 	cmdFile.write(cmdline+"\n")
 
 	if len(splittedInput[iJob]) == 0 : 
-		print "No file to run on for job "+ str(iJob)+", will not send it!"
+		print "No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white
 		continue
 	if not opts.dryrun: 
 		call(cmdline,shell=True)
