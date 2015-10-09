@@ -184,7 +184,7 @@ for smear in cfg['Smear']:
 		if opts.verbose: print "-> Adding smear from name '"+smear+"'"
 		loop.AddSmear(smear)
 
-for corr in cfg['Corrector']:
+for corr in cfg['Correct']:
 	if opts.verbose: print "-> constructing corrector",corr
 	if corr=='NONE' : continue
 	c = r.__getattr__(corr)() 
