@@ -84,6 +84,7 @@ def ParseDat(name):
 		if      key=='Files' \
 			or key == 'Analysis' \
 			or key == 'Smear'  \
+			or key == 'Correct'  \
 			or key == 'Branches': 
 			config[key] =  vStringKey(  value   )
 	
@@ -154,6 +155,7 @@ def PrintDat(config):
 		elif key =='Files' \
 			or key == 'Analysis' \
 			or key == 'Smear' \
+			or key == 'Correct' \
 			or key == 'Branches' :
 			print key, '=', ','.join(config[key])
 		######### V FLOAT/INT #########
@@ -180,6 +182,7 @@ def PrintUsage():
 	print 'branches = brancfile'
 	print 'Analysis = AnalysisBase,Analysis2 ..'
 	print 'Smears = @SmearBase,JER,JES'
+	print 'Correct = @CorrectorBase'
 	print 'config = AnalysisBase|a=1,b=2,c(3)'
 
 def ReadMCDB(file):
