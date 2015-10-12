@@ -1,0 +1,12 @@
+include=dat/config.dat
+
+Files=/store/user/amarini/Nero/v1.1/HplusToTauNu-M200
+addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M250
+addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M500
+addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M900
+addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M200_amcatnlo
+
+MCDB=dat/mc_database_v1.1.txt
+
+#### this is fake, just for testing
+config=ChargedHiggsHW|AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M900")

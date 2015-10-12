@@ -135,6 +135,9 @@ int Looper::InitTree()
     tree_ ->SetBranchAddress("tauId", &bt -> selBits);
     ///
 
+    for (auto c : bare_ )
+        c->setBranchAddresses(tree_);
+
     tree_ -> SetBranchStatus("*",0);
     // branches are activate from configuration file
 #ifdef VERBOSE
@@ -307,6 +310,7 @@ void Looper::FillJets(){
 #ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets. FIXME JES" <<endl;
 #endif
+
     BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "Jets" ] ] ); assert (bj !=NULL);
 
     if ( tree_ ->GetBranchStatus("jetP4") == 0 ){ 
@@ -317,14 +321,36 @@ void Looper::FillJets(){
 
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
+
+	#ifdef VERBOSE
+	    if (VERBOSE >1 )
+		{
+		cout <<"[Looper]::[FillJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
+		cout <<"\t\t * selBits size: "<< bj->selBits ->size()<<endl;
+		cout <<"\t\t * unc size:" << bj -> unc ->size() <<endl;
+		cout <<"\t\t * bdiscr size :"<< bj -> bDiscr ->size() <<endl;
+
+		cout <<"\t\t * pdgId :" <<bj -> matchedPartonPdgId -> size()<<endl;
+		cout <<"\t\t * mother :"<<bj->motherPdgId ->size()<<endl;
+		cout <<"\t\t * gr mother:"<<  bj-> grMotherPdgId -> size()<<endl;
+		cout <<"\t\t * puId :"<<  bj -> puId -> size() <<endl;
+		}
+	#endif
 	bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
 	if (not id) continue;
-	// when create an Object, put it into the jets_ stuff, otherwise won't be deleted
+
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
         j->unc = bj -> unc -> at(iJet); //
         j->bdiscr = bj -> bDiscr -> at(iJet);
+
 	// TODO add PuId, and syst
+        j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
+        j->motherPdgId = bj->motherPdgId -> at(iJet);
+        j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
+	j->puId = bj -> puId -> at(iJet);
+	
+	// add it
         event_ -> jets_ . push_back(j);
     }
     return;
@@ -349,9 +375,10 @@ void Looper::FillLeptons(){
 	if (not id) continue;
         Lepton *l = new Lepton();
         l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
-        l-> iso = (*bl->iso) [iL];
+        l-> iso = ((*bl->iso) [iL])/(l->Pt());
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> type = abs((*bl->pdgId)[iL]);
+        l-> tightId = ( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight); 
 
         event_ -> leps_ . push_back(l);
     }
