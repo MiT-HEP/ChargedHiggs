@@ -1,6 +1,17 @@
 import os,sys,re
 from optparse import OptionParser
 
+from array import array
+
+#ptBinList=  list( set(range(0,60) + range(60,100)[::2] + range(100,500)[::10] + range(500,1000)[::50]))
+#ptBinList=  range(0,60) + range(60,100)[::2] + range(100,500)[::10] + range(500,1000)[::50] + [1000]
+ptBinList=  range(0,60) + range(60,100)[::2] + range(100,250)[::10] + [250]
+ptBin = array('f', ptBinList)
+for idx,b in enumerate(ptBinList):
+	if idx >0 and b <= ptBinList[idx-1]: 
+		print "ERROR, not increasing order"
+	print "Bin",idx,"=",b
+
 usage = '''  Draw trigger plots from TagAndProbe Trees.
 	     This uses trigger matching and Z->tau tau events.
 	     No fit on the Z lineshape so far
@@ -52,7 +63,14 @@ for name in what:
 	c.SetLeftMargin(0.15)
 	c.SetTopMargin(0.05)
 	c.SetBottomMargin(0.15)
-
+	
+	h1= None
+	h2= None
+	if var == "ptProbe":
+		h1=ROOT.TH1D("base","base", len(ptBinList)-1,ptBin)
+		h2=ROOT.TH1D("sel","sel", len(ptBinList)-1,ptBin)
+		ranges[var] =""
+		
 	v = var + ">>base" + ranges[var]	
 	s = "isMC==0"
 	if what[name]['base'] != "": s += " && " +  what[name]['base']

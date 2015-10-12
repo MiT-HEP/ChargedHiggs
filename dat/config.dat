@@ -63,9 +63,11 @@ Smear=NONE
 
 ################################# ANALYSIS CONFIGURATION ############################
 
-##### JSON ####
-config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-251252_13TeV_PromptReco_Collisions15_JSON.txt')
 
+#Correct=NONE
+Correct=MetPhiCorrector
+config=MitPhiCorrector|fileName="aux/MetPhi.root"
+####
 ##### TauNu ####
 config=ChargedHiggsTauNu|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
 addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
@@ -73,6 +75,8 @@ addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabe
 config=ChargedHiggsHW|AddLabel("Hplus_Wh"),AddLabel("SYGluGluToTBHPTohbbW_M500"),AddLabel("SYGluGluToTBHPTohbbW_M1000"),AddLabel('TTJets_TuneCUETP8M1')
 #addConfig=ChargedHiggsHW|AddLabel('WW'),AddLabel('WZ'),AddLabel('TTJets_mtop1695'),AddLabel('TTJets_mtop1755'),AddLabel('DY'),AddLabel('ZZ')
 #config=ChargedHiggsHWAlternative|AddLabel("Hplus_Wh"),AddLabel("SYGluGluToTBHPTohbbW_M500"),AddLabel("SYGluGluToTBHPTohbbW_M1000"),AddLabel('TTJets_TuneCUETP8M1')
+##### JSON ####
+config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-251252_13TeV_PromptReco_Collisions15_JSON.txt')
 
 
 ##### OTHER ####
@@ -80,3 +84,4 @@ config=ChargedHiggsHW|AddLabel("Hplus_Wh"),AddLabel("SYGluGluToTBHPTohbbW_M500")
 #configure Analysis
 #config=AnalysisBase|Init()
 #config=Preselection|
+#config=MetPhiCorrector|fileName=""

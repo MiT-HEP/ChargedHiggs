@@ -36,13 +36,15 @@
 ##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
 ############# DATA 50ns###########
 #addfiles=/store/user/amarini/Nero/v1.1/Tau
-Files=/store/user/amarini/Nero/v1.1/Tau
+#Files=/store/user/amarini/Nero/v1.1/Tau
+Files=/store/user/amarini/Nero/v1.1/TauNoId
 
 ####
 
-Output=QCDPurity.root
+Output=QCDPurity_NoId_MetNoHF.root
 ## Preselection:1,Preselection:2
-Analysis=JsonAnalysis,Preselection,ChargedHiggsQCDPurity
+#Analysis=JsonAnalysis,Preselection,ChargedHiggsQCDPurity
+Analysis=ChargedHiggsQCDPurity
 
 MCDB=dat/mc_database_v1.1.txt
 SFDB=dat/sf_database.txt

@@ -177,11 +177,16 @@ python python/dumpDatacard.py -v -f datacard.txt -i ChHiggs.root --hist CutFlow/
                         -> ...
 
 
-                      ****************
-           -> vector< * AnalysisBase * >
-                      ****************
+                      *************  
+           -> vector< * SmearBase * >      : set the actual systematic smear. Object or corrector should be awared.
+                      *************  
 
                       *************  
-           -> vector< * SmearBase * >
+           -> vector< * CorrectorBase * >  : change the content of the event, correcting objects like met, energy ...
                       *************  
+
+                      ****************
+           -> vector< * AnalysisBase * >   : perform analysis. Usually do not have rw access to the objects. To check.
+                      ****************
+
 ```

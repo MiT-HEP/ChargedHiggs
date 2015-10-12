@@ -73,8 +73,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     if (t != NULL and t->Pt()>=51 and fabs(t->Eta())<2.1)
     {
         float pt = t->Pt();
+
         if (pt  > 8000 or pt <0 ) 
             cout <<"[ChargedHiggsQCDPurity]::[analyze]::[INFO] strange event:  tau Pt="<<pt<<endl;
+
         string hist = HistName(pt,true, false);
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
     }
@@ -89,6 +91,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
     }
 
+    // -------------------------- FULL SELECTION -----------------------------------------------
     if ( e->GetMet().Pt() <130 ) return EVENT_NOT_USED;
     if ( e->Bjets() <1 ) return EVENT_NOT_USED;
 

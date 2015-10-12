@@ -25,6 +25,7 @@ class Event{
     friend class Looper;
     friend class SmearBase;
     friend class AnalysisBase;
+    friend class CorrectorBase;
     friend class ChargedHiggsEWKEmbedding;  // embedding will replace the taus
     friend class TagAndProbe; // need access to the bare objects
 
@@ -40,6 +41,7 @@ class Event{
     int lumiNum_;
     int eventNum_;
     float rho_;
+    int npv_;
 
     vector<string> triggerNames_;
 
@@ -67,6 +69,7 @@ class Event{
     inline Met GetMet( ) { return met_;}
 
     inline float Rho() { return rho_; }
+    inline int Npv() { return npv_ ;} 
     inline float Ht()   { float ht=0 ; for(auto j : jets_ ) if( j->IsJet()  ) ht+= j->Pt() ; return ht;}
 
     inline int Njets(){int n=0; for(auto j : jets_) if(j->IsJet()) n++; return n;}

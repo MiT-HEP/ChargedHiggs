@@ -10,6 +10,7 @@
 // Charged Higgs
 #include "interface/AnalysisBase.hpp"
 #include "interface/Smearer.hpp"
+#include "interface/Corrector.hpp"
 #include "interface/Event.hpp"
 
 // Bare Structures
@@ -30,6 +31,8 @@ class Looper{
         vector<AnalysisBase*> analysis_;
 
         vector<SmearBase*> systs_;
+
+        vector<CorrectorBase*> correctors_;
 
         Event * event_;
 
@@ -64,9 +67,13 @@ class Looper{
         inline int AddAnalysis( AnalysisBase* a ) {analysis_ . push_back(a); return 0;}
         inline int AddSmear(SmearBase *s) { systs_ .push_back(s) ; return 0; }
         int AddSmear(string name);
+        inline int AddCorrector(CorrectorBase *c) { correctors_.push_back(c) ; return 0;}
+        //-------------
+
         int InitTree () ;
         inline void ActivateBranch(string bname){ tree_ -> SetBranchStatus(bname.c_str(),1); return; }
         int InitSmear() ;
+        int InitCorrector() ;
         int InitAnalysis() { for(auto a : analysis_ ) { a->SetOutput(output_); a->Init() ;}  return 0;}
         int InitOutput(string name){output_ -> Open(name); return 0;}
         //
