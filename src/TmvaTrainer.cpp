@@ -1,4 +1,5 @@
 #include "interface/TmvaTrainer.hpp"
+#include "interface/GeneralFunctions.hpp"
 
 #define VERBOSE 0
 
@@ -65,6 +66,22 @@ int TmvaTrainer::analyze(Event*e, string systname)
             SetTreeVar("sig",0);
         }
 
+    // angular variables
+    double DPhiEtMissJet1=0 ; if (e->GetJet(0) != NULL ) DPhiEtMissJet1 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
+    double DPhiEtMissJet2=0 ; if (e->GetJet(1) != NULL ) DPhiEtMissJet2 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
+    double DPhiEtMissJet3=0 ; if (e->GetJet(2) != NULL ) DPhiEtMissJet3 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
+    double DPhiEtMissTau=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),t1->Phi()));
+
+    double RbbMin=min(min(sqrt(pow(DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
+    double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
+    double RsrMax=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
+
+    SetTreeVar("rbb",RbbMin);
+    SetTreeVar("rcoll",RCollMin);
+    SetTreeVar("rsr",RsrMax);
+    SetTreeVar("DPhiEtMissJet1",DPhiEtMissJet1);
+    SetTreeVar("DPhiEtMissTau",DPhiEtMissTau);
+
     if(VERBOSE>1) PrintTreeVar(); 
     FillTree("tmva_tree");
     return 0;
@@ -96,6 +113,12 @@ void TmvaTrainer::Init(){
     AddVariable("phimet",'F',-10,10);
     AddVariable("phit1",'F',-10,10);
     AddVariable("ht",'F',0,10000);
+    // -- Angular Variables
+    AddVariable("rbb",'F',0,3.1415*2);
+    AddVariable("rcoll",'F',0,3.1415*2);
+    AddVariable("rsr",'F',0,3.1415*2);
+    AddVariable("DPhiEtMissJet1",'F',0,3.1415);
+    AddVariable("DPhiEtMissTau",'F',0,3.1415);
 
 
     // tell tmva about sig and bkg

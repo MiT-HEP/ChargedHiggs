@@ -33,14 +33,26 @@ void Event::clearSyst(){
     weight_ . clearSystPU();
 }
 
-
-float Event::Mt() { 
-    if ( Ntaus() <=0 ) return -1; 
-    float pt_t  =  LeadTau() -> Pt();
-    float phi_t =  LeadTau() -> Phi();
+float Event::Mt(MtType type) {  // 0 tau, 1 muon, 2 electron, 3 lepton
     float pt_m = met_ . Pt(); 
     float phi_m= met_. Phi(); 
-    return TMath::Sqrt( 2* pt_t * pt_m * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi_t,phi_m)) ) );
+    switch(type){
+    case MtTau:
+        {
+        if ( Ntaus() <=0 ) return -1; 
+        float pt_t  =  LeadTau() -> Pt();
+        float phi_t =  LeadTau() -> Phi();
+        return ChargedHiggs::mt(pt_t,pt_m,phi_t,phi_m); 
+        }
+    case MtMuon:
+        {
+        if (GetMuon(0) == NULL ) return -1;
+        float pt_mu = GetMuon(0)-> Pt();
+        float phi_mu = GetMuon(0)-> Phi();
+        return ChargedHiggs::mt(pt_mu,pt_m,phi_mu,phi_m); 
+        }
+    } 
+    return -3;
 } 
 
 double Event::weight(){

@@ -85,7 +85,8 @@ class Event{
         for(auto t : taus_ )  if ( t->IsTau() ) e += t->GetP4();
         return e.M();
     }
-    float Mt() ;
+    enum MtType { MtTau =0 , MtMuon };
+    float Mt(MtType type=MtTau ) ; // 0 tau, 1 muon ,...
     virtual void ClearEvent();
     virtual inline int IsRealData(){ return isRealData_ ;} 
     virtual void clearSyst(); // call clearSyst in all object it posses

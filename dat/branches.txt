@@ -31,5 +31,6 @@ mcWeight
 ## TRIGGER
 triggerFired
 triggerTaus
+triggerLeps
 ## GEN
 metP4_GEN

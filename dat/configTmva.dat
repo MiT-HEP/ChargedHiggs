@@ -1,5 +1,5 @@
 ##################### DEFAULT #############
-include=dat/config.dat
+include=dat/configSignal.dat
 ###########################################
 # --small set for test
 #Files=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M200

@@ -336,6 +336,7 @@ void Looper::FillLeptons(){
     if(VERBOSE>1)cout <<"[Looper]::[FillLeptons]::[DEBUG] Filling Leptons" <<endl;
 #endif
     BareLeptons *bl = dynamic_cast<BareLeptons*> ( bare_[ names_["Leptons"] ]); assert(bl != NULL ) ;
+    BareTrigger *tr = dynamic_cast<BareTrigger*> ( bare_[names_["Trigger"]]);
 
     if ( tree_ ->GetBranchStatus("lepP4") ==0  ){ 
         static int counter = 0;
@@ -352,6 +353,11 @@ void Looper::FillLeptons(){
         l-> iso = (*bl->iso) [iL];
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> type = abs((*bl->pdgId)[iL]);
+	#ifdef VERBOSE
+		if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Filling Lep Trigger"<<endl;
+	#endif
+	l->trigger =  0;
+	if (tree_ -> GetBranchStatus("triggerLeps") !=0  && tr -> triggerLeps ->size() >iL) l->trigger = tr->triggerLeps->at(iL);
 
         event_ -> leps_ . push_back(l);
     }
