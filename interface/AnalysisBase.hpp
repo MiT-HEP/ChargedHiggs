@@ -13,7 +13,7 @@ class AnalysisBase
     Output *output_;
     public:
     AnalysisBase(){ labels.push_back("Data"); labels.push_back("Other");};
-    ~AnalysisBase(){};
+    virtual ~AnalysisBase(){};
     // 
     virtual void inline SetOutput( Output *o ) { output_ = o ;}
     virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}

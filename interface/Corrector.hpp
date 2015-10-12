@@ -5,7 +5,7 @@
 
 class CorrectorBase{
 	public:
-		virtual int correct(Event *e) {};
+		virtual int correct(Event *e) {return 0;};
 		virtual const string name(){ return "CorrectorBase";}
 		virtual void Init() {}
 	

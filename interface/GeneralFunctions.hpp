@@ -11,6 +11,8 @@ namespace ChargedHiggs{
     // --- call delete and set to null
     template<typename T> 
     void Delete(T& x) { delete x; x=NULL; }
+
+
 };
 
 #endif
