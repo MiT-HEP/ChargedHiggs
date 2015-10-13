@@ -46,6 +46,11 @@ else:
 t.SetBranchStatus("*",0)
 t.SetBranchStatus("npv",1)
 t.SetBranchStatus("met*",1)
+#t.SetBranchStatus("mcWeight",1)
+t.SetBranchStatus("lepP4*",1)
+t.SetBranchStatus("lepIso*",1)
+t.SetBranchStatus("lepPdgId*",1)
+t.SetBranchStatus("lepSelBits*",1)
 
 extra=""
 if opts.mc: extra = "_mc"
@@ -59,6 +64,27 @@ metPyProf = ROOT.TProfile("tpr%s_metpy"%extra,"metpy",100,0,100)
 print "->Looping"
 for i in range(0,t.GetEntries()):
 	t.GetEntry(i)
+	## 2 muon selection
+
+	l1 = -1 
+	l2 = -1
+	#LepLoose  = 1UL<<3
+	if t.lepP4.GetEntries() <2 : continue
+	for i in range(0,t.lepP4.GetEntries() ) :
+		if t.lepSelBits[i] & (1<<3): 
+			l1 = i
+			break
+	for i in range(i+1,t.lepP4.GetEntries() ) :
+		if t.lepSelBits[i] & (1<<3): 
+			l2 = i
+			break
+	if t.lepP4[l2]< 20 : continue
+	##OS-SF, muon
+	t.lepPdgId[0]* t.lepPdgId[1] == -13*13
+
+	ll = t.lepP4[0] + t.lepP4[1]
+	if ll.M() <91-20 or ll.M()> 91+20: continue
+
 	metPx.Fill( t.npv , t.metPuppi.Px() ) 
 	metPy.Fill( t.npv , t.metPuppi.Py() ) 
 
@@ -116,7 +142,7 @@ def set_palette():
 if True:
 	set_palette()
 
-cx=ROOT.TCanvas("cx","cx")
+cx=ROOT.TCanvas("cx_%s"%extra,"cx")
 metPx.Draw("COLZ")
 metPxProf.SetLineWidth(2)
 metPxProf.SetLineColor(ROOT.kBlack)
@@ -124,7 +150,7 @@ metPxProf.SetMarkerStyle(20)
 metPxProf.Draw("PSAME")
 f1.Draw("LSAME")
 
-cy=ROOT.TCanvas("cy","cy")
+cy=ROOT.TCanvas("cy_%s"%extra,"cy")
 metPy.Draw("COLZ")
 metPyProf.SetLineWidth(2)
 metPyProf.SetLineColor(ROOT.kBlack)
@@ -133,3 +159,7 @@ metPyProf.Draw("P SAME")
 f2.Draw("LSAME")
 
 raw_input("ok?")
+cx.Write()
+cy.Write()
+
+fOut.Close()
