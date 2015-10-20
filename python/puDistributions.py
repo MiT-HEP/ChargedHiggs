@@ -1,4 +1,4 @@
-#!env python
+#!/bin/env python
 
 import re
 import os,sys
@@ -43,7 +43,7 @@ cmd = EOS+ " find -f " + opts.eos
 
 outputList = check_output(cmd,shell=True)
 fileList0 = outputList.split() ## change lines into list
-fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in fileList0 ]
+fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in fileList0 if '/failed/' not in f ]
 
 import ROOT as r
 r.gROOT.SetBatch()

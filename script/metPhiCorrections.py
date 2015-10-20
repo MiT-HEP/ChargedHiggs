@@ -38,10 +38,11 @@ t=ROOT.TChain("nero/events")
 if opts.eos != "":
 	list =  FindEOS(opts.eos)
 	for l in list:
+		print "Adding: ",l
 		t.Add(l)
 else:
 	print "-> TEST <-"
-	t.Add("root://eoscms///store/user/amarini/Nero/v1.1/TauNoId/NeroNtuples_0.root")
+	t.Add("root://eoscms///store/user/amarini/Nero/v1.1.1/SingleMuon/NeroNtuples/151013_092356/0000/NeroNtuples_6.root")
 
 t.SetBranchStatus("*",0)
 t.SetBranchStatus("npv",1)
@@ -78,12 +79,18 @@ for i in range(0,t.GetEntries()):
 		if t.lepSelBits[i] & (1<<3): 
 			l2 = i
 			break
-	if t.lepP4[l2]< 20 : continue
+	#print "DEBUG l1=",l1,"l2=",l2
+	if l1< 0 or l2 <0 : continue
+	if t.lepP4[l2].Pt()< 20 : continue
 	##OS-SF, muon
 	t.lepPdgId[0]* t.lepPdgId[1] == -13*13
+	#print "DEBUG OS SF"
 
 	ll = t.lepP4[0] + t.lepP4[1]
+	#print "DEBUG M=",ll.M()
 	if ll.M() <91-20 or ll.M()> 91+20: continue
+
+	#print "DEBUG: Event pass selection"
 
 	metPx.Fill( t.npv , t.metPuppi.Px() ) 
 	metPy.Fill( t.npv , t.metPuppi.Py() ) 

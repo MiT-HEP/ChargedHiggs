@@ -37,8 +37,7 @@ class Weight{
         sf_ = 1.0;
     }
     //
-    string GetMC(){ 
-        return mcName_; }
+    string GetMC(){ return mcName_; }
     // ---
     void SetLumi(double l) {lumi_= l;}
     void AddMC( string label, string dir, double xsec, double nevents);

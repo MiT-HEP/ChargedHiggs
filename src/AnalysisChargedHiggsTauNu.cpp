@@ -165,7 +165,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 #endif
     string label = GetLabel(e);
     cut.reset();
-    cut.SetMask(MaxCut) ;
+    cut.SetMask(MaxCut-1) ;
     cut.SetCutBit( Total ) ;
 
     if(e->weight() == 0. ) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
@@ -212,11 +212,16 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     // VARS, N-1 ,
     // 1 hadronic tau only. with Pt> 51 and eta <2.1
     // before angular variables
-    // cut.SetMask(Met+1) ;
     // ...
    
-    if (not cut.passAll() ) return EVENT_NOT_USED; 
-    cut.SetMask(MaxCut) ;
+    cut.SetMask(Met) ;
+
+    //if (not cut.passAll() ) return EVENT_NOT_USED;  // I need at least three jets to compute the angular variables
+    if (not cut.pass(ThreeJets) ) return EVENT_NOT_USED;  // I need at least three jets to compute the angular variables
+
+    cut.SetMask(MaxCut-1) ;
+
+
     // -------------------- ANGULAR VARIABLES -----------
     double DEtaMax=0.;
     double InvMassMax=0.;

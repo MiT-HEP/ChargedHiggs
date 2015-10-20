@@ -53,8 +53,8 @@ if opts.purity:
 else:
 	call( "mkdir -p plot/sigfit", shell=True)
 	fitter.plotDir = "plot/sigfit/"
-	fitter.nGaussians = 1
-	fitter.nBernstein = 3
+	fitter.nGaussians = 2
+	fitter.nBernstein = 4
 	fitter.xmin = 150
 	fitter.mIn.push_back(200)
 	fitter.mIn.push_back(250)

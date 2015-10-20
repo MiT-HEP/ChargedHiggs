@@ -129,10 +129,10 @@ int Looper::InitTree()
         c->setBranchAddresses(tree_);
 
 	/// FIXME, id for taus v1.1
-    static int guard=0;
-    if(++guard<10)cout<<" TAUS FIX FOR v1.1"<<endl;
-    BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
-    tree_ ->SetBranchAddress("tauId", &bt -> selBits);
+    // static int guard=0;
+    // if(++guard<10)cout<<" TAUS FIX FOR v1.1"<<endl;
+    // BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
+    // tree_ ->SetBranchAddress("tauId", &bt -> selBits);
     ///
 
     tree_ -> SetBranchStatus("*",0);
@@ -237,20 +237,47 @@ void Looper::NewFile()
     cout<<"[Looper]::[NewFile]::[INFO] Opening new file: '"<<fname<<"'"<<endl;
     //"root://eoscms//store/../label/abc.root"
     size_t last = fname.rfind('/');
-    size_t prevLast = fname.rfind('/',last-1);
+    //size_t prevLast = fname.rfind('/',last-1);
     size_t eos = fname.find("/store/");
-    string label=fname.substr(prevLast+1,last - 1 - prevLast ); //pos,len
+    //string label=fname.substr(prevLast+1,last - 1 - prevLast ); //pos,len
+    
+    string label="";
     string dir =fname.substr(0,last); // remove the filename
     if (eos != string::npos) // strip out everything before /store/
         dir = dir.substr(eos, string::npos);
 
+    // split by dirs
+    vector<string> dirs;
+
+    {
+    	istringstream ss (fname);
+    	string token;
+    	while (std::getline(ss, token, '/')){
+    	    if (token.find(".root") != string::npos) continue;
+    	    if (token.find("eos") != string::npos) continue;
+    	    if (token.find("cms") != string::npos) continue;
+    	    dirs.push_back(token); 
+    	} 
+    }// scope loop
+
     if ( event_->IsRealData() ) { 
-        cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<label;
+        cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<endl;;
         event_ -> weight_ . LoadMC("data");
     }
     // -- Load current MC --
     else {
-        string savedDir=event_ -> weight_ . LoadMC( label );
+	// try as labels all the directories in the given order
+	//
+        string savedDir= "" ;
+	int iDir= dirs.size()-1;
+	while ( savedDir == "" and iDir>=0 )
+		{
+		label = dirs[iDir];
+		savedDir=event_ -> weight_ . LoadMC( label );
+		--iDir;
+		}
+
+	// last change
         if (savedDir =="")
         {
             cout<<"[Looper]::[NewFile]::[WARNING] failed to search MC by LABEL '"<<label<<"' search by dir '"<<dir<<"'"<<endl;
@@ -259,8 +286,10 @@ void Looper::NewFile()
             savedDir = dir;
             cout<<"[Looper]::[NewFile]::[WARNING] label found '"<<label<<"'"<<endl;
         }
+
         if ( dir != savedDir or label == "")
             cout<<"[Looper]::[NewFile]::[WARNING] saved dir '"<<savedDir<<"' and current dir '"<< dir <<"' label '"<<label<<"'"<<endl;
+
     } // end MC
 
     // LOAD TRIGGER NAMES

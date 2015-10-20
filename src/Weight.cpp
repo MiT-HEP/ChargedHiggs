@@ -1,5 +1,5 @@
 #include "interface/Weight.hpp"
-//#define VERBOSE 1
+#define VERBOSE 1
 
 void Weight::AddMC( string label, string dir, double xsec, double nevents)
 {

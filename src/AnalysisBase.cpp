@@ -1,7 +1,7 @@
 #include "interface/AnalysisBase.hpp"
 #include <iostream>
 
-//#define VERBOSE 1
+//#define VERBOSE 2
 
 void AnalysisBase::Book(string name, string title, int nBins,double xmin,double xmax)
 {
@@ -74,6 +74,10 @@ string AnalysisBase::GetLabel(Event *e){
             }
         }
     } // end else (MC)
+
+    #ifdef VERBOSE
+    if(VERBOSE>1) cout <<"[AnalysisBase]::[GetLabel]::[DEBUG]  mc is '"<<e->weight_ . GetMC() <<"' label is '"<<label<<"'"<<endl;
+    #endif
     return label;
 }
 

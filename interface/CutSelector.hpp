@@ -2,6 +2,7 @@
 #define CUTSELECTOR_H
 
 #include <cstdint>
+#include <bitset>
 
 class CutSelector{
     private:
@@ -23,7 +24,10 @@ class CutSelector{
         bool passAllExcept(const size_t i) const { uint32_t mymask= mask_; mymask &= ~( 1<<i) ; return  !( ~cut_ & mymask); }
         bool pass(const size_t i) const  { return (cut_ & mask_ & (1<<i) );} // apply mask anyway, for consistency
         bool passAllUpTo(const size_t i) const  { uint32_t mymask = (1<<(i+1)) -1; return !( ~cut_ & mymask); } // apply mask anyway, for consistency
+        friend ostream& operator<<(ostream& os, const CutSelector &cs){ os << "Cut="<< std::bitset<32>(cs.cut_) <<" Mask="<< std::bitset<32>(cs.mask_) ; return os; }
+
 };
+
 
 #endif
 // Local Variables:
