@@ -253,14 +253,15 @@ void Looper::NewFile()
     	istringstream ss (fname);
     	string token;
     	while (std::getline(ss, token, '/')){
-    	    if (token.find(".root") != string::npos) continue;
+    	    if (token.find("root") != string::npos) continue;
     	    if (token.find("eos") != string::npos) continue;
     	    if (token.find("cms") != string::npos) continue;
+    	    if (token == "" ) continue;
     	    dirs.push_back(token); 
     	} 
     }// scope loop
 
-    if ( event_->IsRealData() ) { 
+    if ( event_->IsRealData() ) {  
         cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<endl;;
         event_ -> weight_ . LoadMC("data");
     }
@@ -522,12 +523,13 @@ void Looper::FillTrigger(){
 
 void Looper::FillEvent(){
 
+    FillEventInfo(); // new file uses isRealData, but not the weights
+
     if ( tree_ -> GetTreeNumber() != fNumber)
     {
         NewFile();
     }
     //usleep(100); // DEBUG XROOTD
-    FillEventInfo();
     FillJets();
     FillLeptons();
     FillTaus();

@@ -51,6 +51,14 @@ float Event::Mt(MtType type) {  // 0 tau, 1 muon, 2 electron, 3 lepton
         float phi_mu = GetMuon(0)-> Phi();
         return ChargedHiggs::mt(pt_mu,pt_m,phi_mu,phi_m); 
         }
+    case MtTauInv:
+        {
+            Tau *tInv = GetTauInvIso(0); 
+            if (tInv == NULL) return -1;
+            float pt_t  =  tInv -> Pt();
+            float phi_t =  tInv -> Phi();
+            return ChargedHiggs::mt(pt_t,pt_m,phi_t,phi_m); 
+        }
     } 
     return -3;
 } 
