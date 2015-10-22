@@ -21,8 +21,8 @@ TTree *t =(TTree*) _file0->Get("tmva_tree")
 factory_->AddSignalTree( t );
 factory_->AddBackgroundTree( t );
 
-TCut sigCut ("sig > 0.5");
-TCut bgCut  ("sig <= 0.5");
+TCut sigCut ("sig > 0.5 && mc == 202"); // 201 = 180GeV, 202=200GeV; 206=400;
+TCut bgCut  ("sig <= 0.5 && mc < 0 ");
 
 factory_-> PrepareTrainingAndTestTree(sigCut,   bgCut, "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V");
 

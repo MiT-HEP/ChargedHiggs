@@ -1,5 +1,5 @@
 ##################### DEFAULT #############
-include=dat/configSignal.dat
+include=dat/config.dat
 ###########################################
 # --small set for test
 #Files=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M200
@@ -8,5 +8,6 @@ include=dat/configSignal.dat
 Output=TmvaOutput.root
 Analysis=TmvaTrainer
 config=TmvaTrainer|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
+addConfig=TmvaTrainer|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo')
 ## just save the tree for training
 addConfig=TmvaTrainer|train=0

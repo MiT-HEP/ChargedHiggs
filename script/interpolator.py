@@ -124,7 +124,8 @@ if opts.inject!=1:
 
 ### Copy the following histograms
 for suffix in ["Data","QCD","TTJets","WW","WZ","ZZ","DY"]:
-	dataName =  '_'.join(opts.name.split("_")[:-1]) + "_"+ suffix
+	#dataName =  '_'.join(opts.name.split("_")[:-1]) + "_"+ suffix  ## last underscore
+	dataName =  opts.name.split("_")[0] + "_"+ suffix ## first underscore
 	targetName = dataName.split("/")[-1]
 	data = fInput.Get( dataName )
 	

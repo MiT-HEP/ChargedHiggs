@@ -66,6 +66,38 @@ int TmvaTrainer::analyze(Event*e, string systname)
             SetTreeVar("sig",0);
         }
 
+    int mc=0;
+    if (label.find("amcatnlo") != string::npos) 
+    {
+        mc= 200;
+        if (label.find("M-180") !=string::npos) mc += 1;
+        if (label.find("M-200") !=string::npos) mc += 2;
+        if (label.find("M-220") !=string::npos) mc += 3;
+        if (label.find("M-250") !=string::npos) mc += 4;
+        if (label.find("M-300") !=string::npos) mc += 5;
+        if (label.find("M-400") !=string::npos) mc += 6;
+    }
+    else if (label.find("Hplus") !=string::npos) 
+    {
+        mc=100 ;
+        if (label.find("M-200") !=string::npos) mc += 1;
+        if (label.find("M-250") !=string::npos) mc += 2;
+        if (label.find("M-500") !=string::npos) mc += 3;
+        if (label.find("M-900") !=string::npos) mc += 4;
+    }
+    else  // bkg
+    {
+        mc = -100;
+        if(label.find("QCD") != string::npos) mc -=1 ;
+        if(label.find("DY") != string::npos) mc -=2 ;
+        if(label.find("TTJets") != string::npos) mc -=3 ;
+        if(label.find("WJets") != string::npos) mc -=4 ;
+        if(label.find("WW") != string::npos) mc -=5 ;
+        if(label.find("WZ") != string::npos) mc -=6 ;
+        if(label.find("ZZ") != string::npos) mc -=7 ;
+    }
+    SetTreeVar("mc",mc);
+
     // angular variables
     double DPhiEtMissJet1=0 ; if (e->GetJet(0) != NULL ) DPhiEtMissJet1 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
     double DPhiEtMissJet2=0 ; if (e->GetJet(1) != NULL ) DPhiEtMissJet2 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
@@ -124,6 +156,7 @@ void TmvaTrainer::Init(){
     // tell tmva about sig and bkg
 
     Branch("tmva_tree","sig",'I');
+    Branch("tmva_tree","mc",'I'); // to distinguish between the different mc
     // tell tmva about weight
     Branch("tmva_tree","weight",'D');
     if(train)factory_->SetWeightExpression("weight");

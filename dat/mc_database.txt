@@ -27,3 +27,4 @@ QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8 /store/user/amarini/Nero/v1.1.1/QCD
 QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8 /store/user/amarini/Nero/v1.1.1/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8 194456.0 0.00720566478107
 QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8 /store/user/amarini/Nero/v1.1.1/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8 3708470.1139 139898554.418
 QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8 /store/user/amarini/Nero/v1.1.1/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8 1937216.08387 32.6901624089
+ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.1.1/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 38217.5771927 0.0687200993824
