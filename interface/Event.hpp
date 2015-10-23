@@ -87,6 +87,13 @@ class Event{
     }
     enum MtType { MtTau =0 , MtMuon, MtTauInv };
     float Mt(MtType type=MtTau ) ; // 0 tau, 1 muon ,...
+
+    // --------- Angular variables
+    float RbbMin(int iMax=3) ;
+    float RCollMin(int iMax=3) ;
+    float RsrMax(int iMax=3)  ;
+
+    //-----------------------------
     virtual void ClearEvent();
     virtual inline int IsRealData(){ return isRealData_ ;} 
     virtual void clearSyst(); // call clearSyst in all object it posses

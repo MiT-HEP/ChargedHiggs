@@ -33,7 +33,7 @@ void Event::clearSyst(){
     weight_ . clearSystPU();
 }
 
-float Event::Mt(MtType type) {  // 0 tau, 1 muon, 2 electron, 3 lepton
+float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton
     float pt_m = met_ . Pt(); 
     float phi_m= met_. Phi(); 
     switch(type){
@@ -62,6 +62,57 @@ float Event::Mt(MtType type) {  // 0 tau, 1 muon, 2 electron, 3 lepton
     } 
     return -3;
 } 
+
+float Event::RbbMin(int iMax) {
+    // notice the Pi-...
+    if (GetTau(0) == NULL) return -1;
+    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( GetTau(0) ) );
+
+    float rbbmin = -1;
+    for(int i=0 ; i< iMax; ++i)
+    {
+        if( GetJet(i) == NULL ) break;
+        float dphietmissjet= fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
+        float myrbb = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+
+        if (rbbmin<0 or myrbb<rbbmin) rbbmin = myrbb;
+    }
+
+    return rbbmin;
+}
+float Event::RCollMin(int iMax) {
+    // notice the Pi-...
+    if (GetTau(0) == NULL) return -1;
+    float dphietmisstau = fabs(GetMet().DeltaPhi( GetTau(0) ) );
+    float rcollmin = -1;
+    for(int i=0 ; i< iMax; ++i)
+    {
+        if( GetJet(i) == NULL ) break;
+        float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
+        float myrcoll = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+
+        if (rcollmin<0 or myrcoll<rcollmin) rcollmin = myrcoll;
+    }
+
+    return rcollmin;
+}
+
+float Event::RsrMax(int iMax) {
+    if (GetTau(0) == NULL) return -1;
+    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( GetTau(0) ) );
+    float rsrmax = -1;
+    for(int i=0 ; i< iMax; ++i)
+    {
+        if( GetJet(i) == NULL ) break;
+        float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
+        float myrsr = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+
+        // CHECKME, is this correct ? min ? 
+        if (rsrmax<0 or myrsr<rsrmax) rsrmax = myrsr;
+    }
+
+    return rsrmax;
+}
 
 double Event::weight(){
     if (isRealData_ ) return 1;

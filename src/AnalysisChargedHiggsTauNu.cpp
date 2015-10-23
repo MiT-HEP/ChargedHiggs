@@ -215,10 +215,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     // ...
    
     cut.SetMask(Met) ;
-
     //if (not cut.passAll() ) return EVENT_NOT_USED;  // I need at least three jets to compute the angular variables
-    if (not cut.pass(ThreeJets) ) return EVENT_NOT_USED;  // I need at least three jets to compute the angular variables
-
+    //if (not cut.pass(ThreeJets) ) return EVENT_NOT_USED;  // not anymore!
     cut.SetMask(MaxCut-1) ;
 
 
@@ -237,18 +235,23 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         }
 
 
-    double DPhiEtMissJet1=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
-    double DPhiEtMissJet2=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
-    double DPhiEtMissJet3=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
+    // FIXME, TODO use the event information
+    double DPhiEtMissJet1=-1; if( e->GetJet(0) != NULL) DPhiEtMissJet1=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
+    double DPhiEtMissJet2=-1; if( e->GetJet(1) != NULL) DPhiEtMissJet2=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
+    double DPhiEtMissJet3=-1; if( e->GetJet(2) != NULL) DPhiEtMissJet3=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
     double DPhiEtMissTau=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),t1->Phi()));
 
     // up To angular variables
 
 
-    double RbbMin=min(min(sqrt(pow(DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
-    double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
-    double RsrMax=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
-    double DPhiTauJet1=fabs(ChargedHiggs::deltaPhi(t1->Phi(),(e->GetJet(0))->Phi()));
+    double RbbMin= e->RbbMin();
+    double RCollMin= e-> RCollMin();
+    double RsrMax= e->RsrMax();
+
+
+    double DPhiTauJet1=-1;
+    if( e-> GetJet(0) != NULL ) DPhiTauJet1= fabs(ChargedHiggs::deltaPhi(t1->Phi(),(e->GetJet(0))->Phi()));
+
 
     // --- studies for angular variables
     if ( cut.passAllUpTo(Met) ){

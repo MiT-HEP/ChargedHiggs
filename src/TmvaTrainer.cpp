@@ -99,18 +99,15 @@ int TmvaTrainer::analyze(Event*e, string systname)
     SetTreeVar("mc",mc);
 
     // angular variables
-    double DPhiEtMissJet1=0 ; if (e->GetJet(0) != NULL ) DPhiEtMissJet1 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
-    double DPhiEtMissJet2=0 ; if (e->GetJet(1) != NULL ) DPhiEtMissJet2 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
-    double DPhiEtMissJet3=0 ; if (e->GetJet(2) != NULL ) DPhiEtMissJet3 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
+    double DPhiEtMissJet1=-1 ; if (e->GetJet(0) != NULL ) DPhiEtMissJet1 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
+    //double DPhiEtMissJet2=-1 ; if (e->GetJet(1) != NULL ) DPhiEtMissJet2 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
+    //double DPhiEtMissJet3=-1 ; if (e->GetJet(2) != NULL ) DPhiEtMissJet3 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
     double DPhiEtMissTau=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),t1->Phi()));
 
-    double RbbMin=min(min(sqrt(pow(DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
-    double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
-    double RsrMax=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
+    SetTreeVar("rbb",e->RbbMin());
+    SetTreeVar("rcoll",e->RCollMin());
+    SetTreeVar("rsr",e->RsrMax());
 
-    SetTreeVar("rbb",RbbMin);
-    SetTreeVar("rcoll",RCollMin);
-    SetTreeVar("rsr",RsrMax);
     SetTreeVar("DPhiEtMissJet1",DPhiEtMissJet1);
     SetTreeVar("DPhiEtMissTau",DPhiEtMissTau);
 
@@ -167,7 +164,7 @@ void TmvaTrainer::End(){
 
     // if I just want to save the tree
     if (not train) return;
-
+    //TODO, outdated, update with the offline one
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] AddSignal and Bkg "<<endl; 
     if(VERBOSE>0) PrintTree("tmva_tree");
 
