@@ -4,6 +4,7 @@
 using namespace std;
 
 Tau::Tau() : Lepton(){
+    etacut_= 2.1;
     ptcut_ = 20;
     isocut_= 1.5; 
 
@@ -17,6 +18,7 @@ int Tau::IsTau(){
     if ( not id_mu) return 0;
     if (iso2 >= isocut_ ) return 0;
     if ( Pt() < ptcut_ ) return 0;
+    if ( fabs(Eta() ) > etacut_) return 0;
     return 1;
 }
 

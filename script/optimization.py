@@ -32,6 +32,9 @@ import ROOT
 fInput = ROOT.TFile.Open(opts.file)
 fOutput = ROOT.TFile.Open(opts.out,"RECREATE")
 
+if fInput == None:
+	print "'"+opts.file+"': No such file or directory"
+
 def RemoveSpikes(h, eonly = True,n = 1):
 	for i in range(1+n, h.GetNbinsX() + 1 -n ): 
 		c = h.GetBinContent(i)

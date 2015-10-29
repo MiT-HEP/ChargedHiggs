@@ -43,6 +43,10 @@ int TmvaTrainer::analyze(Event*e, string systname)
     Jet * bj1 = e->LeadBjet();
     Tau* t1 = e->LeadTau();
 
+    //Trigger
+    if (t1->Pt() < 51 ) return 0;
+    if (e->GetMet().Pt() <130 ) return 0;
+
     SetTreeVar("NJets",e->Njets());
     SetTreeVar("NCJets",e->NcentralJets());
     SetTreeVar("BJets",e->Bjets());
@@ -80,10 +84,10 @@ int TmvaTrainer::analyze(Event*e, string systname)
     else if (label.find("Hplus") !=string::npos) 
     {
         mc=100 ;
-        if (label.find("M-200") !=string::npos) mc += 1;
-        if (label.find("M-250") !=string::npos) mc += 2;
-        if (label.find("M-500") !=string::npos) mc += 3;
-        if (label.find("M-900") !=string::npos) mc += 4;
+        if (label.find("M200") !=string::npos) mc += 1;
+        if (label.find("M250") !=string::npos) mc += 2;
+        if (label.find("M500") !=string::npos) mc += 3;
+        if (label.find("M900") !=string::npos) mc += 4;
     }
     else  // bkg
     {
@@ -110,6 +114,8 @@ int TmvaTrainer::analyze(Event*e, string systname)
 
     SetTreeVar("DPhiEtMissJet1",DPhiEtMissJet1);
     SetTreeVar("DPhiEtMissTau",DPhiEtMissTau);
+
+    SetTreeVar("pTt1oMet", t1->Pt() / e->GetMet().Pt() );
 
     if(VERBOSE>1) PrintTreeVar(); 
     FillTree("tmva_tree");
@@ -149,6 +155,7 @@ void TmvaTrainer::Init(){
     AddVariable("DPhiEtMissJet1",'F',0,3.1415);
     AddVariable("DPhiEtMissTau",'F',0,3.1415);
 
+    AddVariable("pTt1oMet",'F',0,10);
 
     // tell tmva about sig and bkg
 

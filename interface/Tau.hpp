@@ -9,7 +9,8 @@ class Tau: virtual public Object,
     virtual public Lepton,
     virtual public Trigger
 {
-    
+    float etacut_; 
+
     public:
     Tau() ;
     bool id;

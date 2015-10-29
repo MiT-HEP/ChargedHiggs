@@ -1,6 +1,7 @@
 #include "interface/AnalysisChargedHiggsTmva.hpp"
 
 void TmvaAnalysis::AddVariable( string name, char type){ 
+    cout<<"[TmvaAnalysis]::[AddVariable]::[INFO] Adding variable: '"<<name<<"'"<<endl;
     varValues_.Add(name,type); 
     if ( type == 'I') for(auto& r : readers_ ) r -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
     else if ( type == 'F') for(auto&r : readers_) r -> AddVariable(name.c_str(),  (float*)varValues_.GetPointer(name));
@@ -14,11 +15,18 @@ void TmvaAnalysis::AddVariable( string name, char type){
 void TmvaAnalysis::Init(){
     cout<<"[TmvaAnalysis]::[Init]::[INFO] Book histos"<<endl;
     for ( string& l : AllLabel()  ) {
+        Book( "ChargedHiggsTmva/Vars/Mt_"+l, "Mt_"+l, 2000,0,2000.);
         for( int bdtIdx=0; bdtIdx < int(weights.size()) ; ++bdtIdx)
         {
-            Book(Form("ChargedHiggsTmva/Vars/Bdt%d_",bdtIdx)+l, "BDT_"+l, 1000,-10.,10.);
-            Book2D(Form("ChargedHiggsTmva/Vars/Bdt%dVsMt_",bdtIdx)+l, "BDT_"+l, 1000,-10.,10.,2000,0,2000);
+            Book(Form("ChargedHiggsTmva/Vars/Bdt%d_",bdtIdx)+l, "BDT_"+l, 200,-1.,1.);
+            Book2D(Form("ChargedHiggsTmva/Vars/MtVsBdt%d_",bdtIdx)+l, "BDT_"+l, 2000,0,2000,200,-1.,1.);
         }
+
+        // BDT Correlations
+        Book2D("ChargedHiggsTmva/Vars/Bdt0Bdt1"+l, "BDT0_BDT1"+l, 200,-1.,1.,200,-1.,1.);
+        Book2D("ChargedHiggsTmva/Vars/Bdt0Bdt2"+l, "BDT0_BDT2"+l, 200,-1.,1.,200,-1.,1.);
+        Book2D("ChargedHiggsTmva/Vars/Bdt1Bdt3"+l, "BDT1_BDT3"+l, 200,-1.,1.,200,-1.,1.);
+        Book2D("ChargedHiggsTmva/Vars/Bdt2Bdt3"+l, "BDT2_BDT3"+l, 200,-1.,1.,200,-1.,1.);
     }
 
     TMVA::Tools::Instance();
@@ -41,6 +49,7 @@ void TmvaAnalysis::Init(){
     AddVariable("rbb",'F');
     AddVariable("rcoll",'F');
     AddVariable("rsr",'F');
+    AddVariable("pTt1oMet",'F');
     //AddVariable("DPhiEtMissJet1",'F' );
     //AddVariable("DPhiEtMissTau",'F');
 
@@ -72,6 +81,10 @@ int TmvaAnalysis::analyze(Event*e,string systname){
     Jet * bj1 = e->LeadBjet();
     Tau* t1 = e->LeadTau();
 
+    // ALIGN with TRIGGER
+    if ( e->GetMet().Pt() < 130 ) return 0;
+    if ( t1->Pt() <51 or fabs(t1->Eta() )  >=2.1 ) return 0;
+
     SetVariable("NJets",e->Njets());
     SetVariable("NCJets",e->NcentralJets());
     SetVariable("BJets",e->Bjets());
@@ -89,6 +102,7 @@ int TmvaAnalysis::analyze(Event*e,string systname){
     SetVariable("rbb",e->RbbMin());
     SetVariable("rcoll",e->RCollMin());
     SetVariable("rsr",e->RsrMax());
+    SetVariable("pTt1oMet", t1->Pt() / e->GetMet().Pt() ) ;
     //SetVariable("DPhiEtMissJet1",DPhiEtMissJet1);
     //SetVariable("DPhiEtMissTau",DPhiEtMissTau);
 
@@ -98,10 +112,25 @@ int TmvaAnalysis::analyze(Event*e,string systname){
         bdt.push_back(readers_[i]->EvaluateMVA("BDT") );
 
         Fill( Form("ChargedHiggsTmva/Vars/Bdt%d_",i)+label,systname,bdt[i] ,e->weight() ) ;
-        Fill2D(Form("ChargedHiggsTmva/Vars/Bdt%dVsMt_",i)+label,systname,bdt[i], e->Mt(),e->weight() ) ;
+        Fill2D(Form("ChargedHiggsTmva/Vars/MtVsBdt%d_",i)+label,systname,e->Mt(),bdt[i],e->weight() ) ;
     }
 
-    return 0; // for the moment FIXME
+    // FILL2D
+    {
+        if(bdt.size() > 1) Fill2D("ChargedHiggsTmva/Vars/Bdt0Bdt1"+label,systname,bdt[0],bdt[1],e->weight());
+        if(bdt.size() > 2) Fill2D("ChargedHiggsTmva/Vars/Bdt0Bdt2"+label,systname,bdt[0],bdt[2],e->weight());
+        if(bdt.size() > 3) Fill2D("ChargedHiggsTmva/Vars/Bdt1Bdt3"+label,systname,bdt[1],bdt[3],e->weight());
+        if(bdt.size() > 3) Fill2D("ChargedHiggsTmva/Vars/Bdt2Bdt3"+label,systname,bdt[2],bdt[3],e->weight());
+    
+    }
+
+    if( bdt.size() >2){
+        if (bdt[0]> -0.25 and bdt[1] > -.4) { // check -- BDT 0 = QCD 200 GeV, BDT 1 = TTJets 200 GeV
+            Fill("ChargedHiggsTmva/Vars/Mt_"+label,systname,e->Mt(), e->weight() ) ;
+        }
+    }
+
+    return 0; // 
 
 } // end analyze
 
