@@ -1,0 +1,32 @@
+# shapes process channel file histogram [ histogram_with_systematics ] 
+# PROCESS is replaced with the process name (or "data_obs" for the observed data)
+# $CHANNEL is replaced with the channel name
+# $SYSTEMATIC is replaced with the name of the systematic + (Up, Down)
+# $MASS is replaced with the higgs mass value which is passed as option in the command line used to run the limit tool 
+-------------------------------------
+imax *
+jmax *
+kmax *
+-------------------------------------
+shapes data_obs cat0  ChHiggsTmva_interpolated.root  Mt_Data
+shapes Hplus 	cat0  ChHiggsTmva_interpolated.root  Mt_HplusToTauNu_M-$MASS_13TeV_amcatnlo_interpolated
+#shapes *  	cat0  ChHiggsTmva_interpolated.root  Mt_$PROCESS
+shapes QCD  	cat0  ChHiggsTmva_interpolated.root  Mt_QCD
+shapes TTJets  	cat0  ChHiggsTmva_interpolated.root  Mt_TTJets
+shapes ZZ  	cat0  ChHiggsTmva_interpolated.root  Mt_ZZ
+shapes WJets  	cat0  ChHiggsTmva_interpolated.root  Mt_WJets
+shapes WW  	cat0  ChHiggsTmva_interpolated.root  Mt_WW
+shapes WZ  	cat0  ChHiggsTmva_interpolated.root  Mt_WZ
+shapes DY  	cat0  ChHiggsTmva_interpolated.root  Mt_DY
+-------------------------------------
+bin cat0
+observation -1
+-------------------------------------
+bin 	cat0	cat0	cat0	cat0
+process Hplus	QCD	TTJets	DY  
+process 0	1	2	4   
+rate	-1	-1	-1	-1  
+-------------------------------------
+
+
+
