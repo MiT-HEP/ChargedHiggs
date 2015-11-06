@@ -326,7 +326,7 @@ void Looper::FillEventInfo(){
     event_ -> eventNum_ = e->eventNum;
     event_ -> rho_ = e->rho;
 
-    BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["Vertex"] ] ) ; assert(e!=NULL);
+    BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["Vertex"] ] ) ; assert(v!=NULL);
     event_ -> npv_ = v->npv;
 
 }
@@ -384,10 +384,11 @@ void Looper::FillLeptons(){
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> type = abs((*bl->pdgId)[iL]);
 	#ifdef VERBOSE
-		if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Filling Lep Trigger"<<endl;
+		if(VERBOSE>1) cout<<"[Looper]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;
 	#endif
 	l->trigger =  0;
 	if (tree_ -> GetBranchStatus("triggerLeps") !=0  && tr -> triggerLeps ->size() >iL) l->trigger = tr->triggerLeps->at(iL);
+
 
         event_ -> leps_ . push_back(l);
     }
@@ -430,11 +431,44 @@ void Looper::FillTaus(){
         t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
 
-#ifdef VERBOSE
-	if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Filling Taus Trigger"<<endl;
-#endif
+	//---------------------------------------------
+	#ifdef VERBOSE
+		if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Filling Taus Trigger"<<endl;
+	#endif
 	t->trigger =  0;
 	if (tree_ -> GetBranchStatus("triggerTaus") !=0  && tr -> triggerTaus ->size() >iL) t->trigger = tr->triggerTaus->at(iL);
+
+	//---------------------------------------------
+	#ifdef VERBOSE
+		if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Tau Regression"<<endl;
+	#endif
+        BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["Vertex"] ] ) ; assert(v!=NULL);
+        BareJets *bj = dynamic_cast<BareJets*> ( bare_ [names_["Jets"] ] ) ; assert(bj!=NULL);
+	// --- duplicate regression variables
+	t -> regVars_ . nvtx    = v -> npv;
+	t -> regVars_ . tauPt   =  t->Pt() ; //  just copied, no corrections
+	t -> regVars_ . tauEta  =  t->Eta() ;
+        t -> regVars_ . tauIso  = (*bt->iso) [iL];
+        t -> regVars_ . tauQ    = bt -> Q -> at(iL);
+        t -> regVars_ . tauIso2 = bt -> isoDeltaBetaCorr -> at(iL);
+        t -> regVars_ . tauM    = bt -> M -> at(iL);
+	t -> regVars_ . tauChargedIsoPtSum  = bt -> chargedIsoPtSum -> at(iL);
+	
+	t -> regVars_ . jetPt =-10;
+	t -> regVars_ . jetEta =-10;
+	for(int ij=0;ij< bj->p4->GetEntries() ;ij++)
+	{
+		TLorentzVector* j = (TLorentzVector*)bj->p4->At(ij);
+		if ( t -> GetP4() . DeltaR(*j) > 0.1) continue;
+		t -> regVars_ . jetPt = j->Pt();
+		t -> regVars_ . jetEta = j->Eta();
+		break;
+	}
+
+
+	t -> regVars_ . tauNeutralIsoPtSum  = bt -> neutralIsoPtSum -> at(iL);
+
+	//---------------------------------------------
         event_ -> taus_ . push_back(t);
     }
     //cout<<"[Looper]::[FillTaus]::[DEBUB] Taus Loaded:"<< event_->taus_.size() <<endl;
@@ -495,7 +529,10 @@ void Looper::FillMet(){
     event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
     event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
 
+
 #ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[FillMet]::[DEBUG] Met XXX is ="<< event_->met_.Pt() << "=="<< event_->met_.PtUncorr()<<endl;
+    if(VERBOSE>1)cout <<"[Looper]::[FillMet]::[DEBUG] Met is ="<< event_->GetMet().Pt() << "=="<< event_->GetMet().PtUncorr()<<endl;
     if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] GEN Info "<<endl;
 #endif
     if ( event_->IsRealData() )

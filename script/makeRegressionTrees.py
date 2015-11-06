@@ -36,7 +36,7 @@ tree = ROOT.TTree("tree","tree")
 vars={}
 for name in ['tauPt','tauEta','tauPhi','tauGenPt','tauGenPhi','tauIso','nvtx','jetPt','jetEta','jetPhi',
 		'tauM','tauQ','tauIsoCh','tauIsoNh','tauIso2','tauNeutralIsoPtSum','tauChargedIsoPtSum',
-		'tauPartonPt','weight'
+		'tauPartonPt','weight', 'tauPartonEta', 'tauPartonPhi',
 		]:
 	vars[name]=array('f',[0.])
 	tree.Branch(name,vars[name],name+"/F");
@@ -82,6 +82,7 @@ for iEntry in range(0,t.GetEntries() ):
 			if t.genjetP4[i].DeltaR( t.genP4[iGenTau])< 0.1:
 				iGenJet=i
 				break
+		## FIXME WRT RECO TAU
 		iJet=-1	
 		for i in range(0, t.jetP4.GetEntries() ):
 			if t.jetP4[i].DeltaR( t.genP4[iGenTau])< 0.1:
@@ -93,7 +94,8 @@ for iEntry in range(0,t.GetEntries() ):
 				iTau=i
 				break
 
-		if iTau < 0 or iJet < 0 or iGenJet <0:
+		#if iTau < 0 or iJet < 0 or iGenJet <0:
+		if iTau < 0 or iGenJet <0:
 			continue
 
 		vars['weight'][0]=1.0
@@ -110,9 +112,16 @@ for iEntry in range(0,t.GetEntries() ):
 		vars['tauNeutralIsoPtSum'][0] = t.tauNeutralIsoPtSum[iTau]
 		vars['tauGenPt'][0] = t.genjetP4[iGenJet].Pt()
 		vars['tauPartonPt'][0] = t.genP4[iGenTau].Pt()
-		vars['jetPt'][0]  = t.jetP4[iJet].Pt()
-		vars['jetEta'][0] = t.jetP4[iJet].Eta()
-		vars['jetPhi'][0] = t.jetP4[iJet].Phi()
+		vars['tauPartonEta'][0] = t.genP4[iGenTau].Eta()
+		vars['tauPartonPhi'][0] = t.genP4[iGenTau].Phi()
+		if iJet >=0:
+			vars['jetPt'][0]  = t.jetP4[iJet].Pt()
+			vars['jetEta'][0] = t.jetP4[iJet].Eta()
+			vars['jetPhi'][0] = t.jetP4[iJet].Phi()
+		else:
+			vars['jetPt'][0]  = -10.
+			vars['jetEta'][0] = -10.
+			vars['jetPhi'][0] = -10.
 		tree.Fill()
 	## loop over entries
 

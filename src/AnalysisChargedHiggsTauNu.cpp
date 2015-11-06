@@ -205,7 +205,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if( cut.passAllUpTo(OneBjet) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneBjet,e->weight());
 
     //MET>130GeV .. trigger
-    if ( e->GetMet().Pt() >= 130 ) cut.SetCutBit(Met);
+    //Uncorr Pt does not include met phi corrections, and Tau Nu regression
+    if ( e->GetMet().PtUncorr() >= 130 ) cut.SetCutBit(Met);
     if( cut.passAllUpTo(Met) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Met,e->weight());
 
 
@@ -214,12 +215,16 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     // before angular variables
     // ...
    
-    cut.SetMask(Met) ;
     //if (not cut.passAll() ) return EVENT_NOT_USED;  // I need at least three jets to compute the angular variables
     //if (not cut.pass(ThreeJets) ) return EVENT_NOT_USED;  // not anymore!
-    cut.SetMask(MaxCut-1) ;
 
 
+    //cut.SetMask(Met) ; //FOR REGRESSION
+    cut.SetMask(MaxCut-1) ; 
+   
+    //cout <<"cut = "<<cut<<endl;
+    //CutSelector s; s.SetCutBit(Met);
+    //cout <<"met = "<<s<<endl;
     // -------------------- ANGULAR VARIABLES -----------
     double DEtaMax=0.;
     double InvMassMax=0.;
@@ -276,12 +281,17 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //if ( RsrMax*TMath::RadToDeg()>140) return EVENT_NOT_USED;
     //Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,6,e->weight());
 
-    if ( RCollMin*TMath::RadToDeg() >40 ) cut.SetCutBit( AngColl) ;
+    // ANG VALUES FOR Regression
+    //if ( RCollMin*TMath::RadToDeg() >40 ) cut.SetCutBit( AngColl) ;
+    if ( RCollMin*TMath::RadToDeg() >= 0 ) cut.SetCutBit( AngColl) ;
 
     if (cut.passAllUpTo(AngColl) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,AngColl,e->weight());
 
-    if ( RbbMin*TMath::RadToDeg() >40 ) cut.SetCutBit(AngRbb) ;
+    //if ( RbbMin*TMath::RadToDeg() >40 ) cut.SetCutBit(AngRbb) ;
+    if ( RbbMin > 0.8 ) cut.SetCutBit(AngRbb) ;
     if(cut.passAllUpTo(AngRbb) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,AngRbb,e->weight());
+
+
 
     //if ( DPhiTauJet1 > 2.089) return EVENT_NOT_USED;
     //Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,6,e->weight());

@@ -5,11 +5,22 @@
 #include "interface/GeneralFunctions.hpp"
 #include <iostream>
 
+class CorrectorBase;
+
 class Object
 {
+    friend class CorrectorBase;
     protected:
         // this class provide the really basic information used at analysis level
         TLorentzVector p4;
+
+        TLorentzVector p4NoCorr;
+        bool isCorrect=false;
+
+        // --- Correctors should use this functions
+        void Scale ( float value) { p4 *= value; isCorrect=true;}
+        void Add (TLorentzVector&v, float c=1) { p4 += (c*v) ; isCorrect=true;}
+
     public:
         //---
         Object(){};
@@ -17,6 +28,7 @@ class Object
         //---
         virtual inline void  clearSyst(){}; // reset smearing
         virtual inline float Pt(){return p4.Pt() ;}
+        inline float PtUncorr(){ return p4NoCorr.Pt() ;} // not overwrite
         virtual inline float Eta(){ return p4.Eta(); } 
         virtual inline float Phi(){ return p4.Phi(); }
         virtual inline float E(){ return p4.E(); }
@@ -26,7 +38,7 @@ class Object
         virtual inline float DeltaEta(Object &o){return fabs(p4.Eta()-(o.GetP4()).Eta()); }
         virtual inline float DeltaPhi(Object &o){return fabs( ChargedHiggs::deltaPhi( Phi(), o.Phi()) ); }
         virtual inline TLorentzVector & GetP4(){ return p4;}
-        virtual inline void SetP4(TLorentzVector &x){p4 = x;}
+        virtual void SetP4(TLorentzVector &x);
 
         float InvMass(Object &o);
 
@@ -37,10 +49,10 @@ class Object
 
         // ---
         // copy constructor
-        Object( const Object &x ) { p4 = x.p4 ; } 
+        Object( const Object &x ) { p4 = x.p4 ; p4NoCorr = x.p4NoCorr; isCorrect=x.isCorrect;} 
         //assignment
-        Object& operator=(const Object &x) { p4 = x.p4 ; return *this;} 
-        Object& operator+=(const Object &x) { p4 += x.p4 ; return *this;} 
+        Object& operator=(const Object &x) { p4 = x.p4 ; p4NoCorr=x.p4NoCorr ; isCorrect=x.isCorrect; return *this;} 
+        Object& operator+=(const Object &x) { p4 += x.p4 ; p4NoCorr+=x.p4NoCorr;isCorrect = isCorrect || x.isCorrect; return *this;} 
 
         // binary 
         const Object operator+(const Object &x) const { Object y(*this); y+=x; return y;} ;

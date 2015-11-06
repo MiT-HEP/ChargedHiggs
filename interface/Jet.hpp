@@ -27,8 +27,8 @@ class Jet : virtual public Object
     int bsyst ;
 
     // ---
-    inline float Pt(){ if (syst ==0) return p4.Pt(); return p4.Pt() *(1.0  + unc*syst );}
-    virtual inline void  clearSyst(){syst = 0;bsyst=0; isValid=1;}; // reset smearing
+    inline float Pt() override { if (syst ==0) return p4.Pt(); return p4.Pt() *(1.0  + unc*syst );}
+    inline void  clearSyst()override {Object::clearSyst() ;syst = 0;bsyst=0; isValid=1;}; // reset smearing
     // ---
     virtual inline int   IsObject(){return IsJet();}
     inline int IsJet() { if (not isValid) return 0 ; 

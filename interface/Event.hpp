@@ -64,7 +64,7 @@ class Event{
     Lepton * GetMuon( int iMu );
 
     //
-    inline Met GetMet( ) { return met_;}
+    inline Met GetMet( ) { return met_;} // should be const, but noCorrPt is not set correctly without &
 
     inline float Rho() { return rho_; }
     inline int Npv() { return npv_ ;} 

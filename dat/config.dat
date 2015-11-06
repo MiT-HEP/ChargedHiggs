@@ -3,7 +3,12 @@
 ##### if you want to make a config file that overwrite some changes just create a new one with the line
 ##### include=dat/config.txt
 ##### Files=....,....,...
-#
+
+
+################
+### DATASETS ###
+################
+
 #### BKG ###
 Files=/store/user/amarini/Nero/v1.1.1/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=/store/user/amarini/Nero/v1.1.1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
@@ -44,6 +49,11 @@ addfiles=/store/user/amarini/Nero/v1.1.1/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_py
 #addfiles=/store/user/amarini/Nero/v1.1.1/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
 ####
 
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+
 Output=ChHiggs.root
 ## Preselection:1,Preselection:2
 Analysis=JsonAnalysis,Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsZW,ChargedHiggsMET,ChargedHiggsTopBottom
@@ -71,26 +81,38 @@ Smear=NONE
 #Correct=NONE
 Correct=MetPhiCorrector
 
-#____________________               _____________________________
+#________________________________________________________________
 #____________________ CONFIGURATION _____________________________
 #
 config=MitPhiCorrector|fileName="aux/MetPhi.root"
 ##########  ANALYSIS  ################
 
-# TauNu
+#############
+### TauNu ###
+#############
+
 config=ChargedHiggsTauNu|AddLabel('DY')
 addConfig=ChargedHiggsTauNu|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo')
 addConfig=ChargedHiggsTauNu|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
 addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('QCD'),AddLabel('WJets')
-# JSON
+
+############
+### JSON ###
+############
+
 config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-251252_13TeV_PromptReco_Collisions15_JSON.txt')
 
+############
 ### TMVA ###
+############
+
 #config=TmvaAnalysis|weights.push_back(" aux/bdt_mH200_QCD.xml"),weights.push_back("aux/bdt_mH200_TTJets.xml"),weights.push_back(" aux/bdt_mH400_QCD.xml"),weights.push_back("aux/bdt_mH400_TTJets.xml")
 config=TmvaAnalysis|weights.push_back(" aux/bdt_mH200_QCD.xml"),weights.push_back("aux/bdt_mH200_TTJets.xml"),weights.push_back(" aux/bdt_mH400_QCD.xml"),weights.push_back("aux/bdt_mH400_TTJets.xml")
 addConfig=TmvaAnalysis|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo')
 addConfig=TmvaAnalysis|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
 addConfig=TmvaAnalysis|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('QCD'),AddLabel('WJets'),AddLabel("DY")
+
+
 #configure Analysis
 #config=AnalysisBase|Init()
 #config=Preselection|
