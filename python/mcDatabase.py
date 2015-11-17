@@ -32,7 +32,7 @@ if opts.rec:
 		dir = re.sub('/eos/cms','',dir)
 		if dir[-1] == '/' : dir = dir[:-1] # remove trailing slash
 		label = re.sub('.*/','',dir)
-		if nd==0 and nf >0 :
+		if nd==0 and nf >0 and not re.match("Run2015",dir): ## remove data
 			print "Found one directory:",dir
 			cmd = "python %s -e %s -x %f -l %s -f %s"%(sys.argv[0],dir,opts.xsec,label,opts.file)
 			print "going to execute",cmd
