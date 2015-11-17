@@ -38,7 +38,8 @@ void train( string fileName="reg_tree.root")
 	factory_->AddVariable("jetPt",'F');
 	factory_->AddVariable("jetEta",'F');
 
-	factory_->AddTarget("tauPartonPt/tauPt",'F');
+	//factory_->AddTarget("tauPartonPt/tauPt",'F');
+	factory_->AddTarget("tauPartonPt/tauPt","Fraction","1",0.05,2.50);
 	
 	factory_->SetWeightExpression("weight");
 	

@@ -3,6 +3,7 @@
 
 #include "interface/AnalysisBase.hpp"
 #include "interface/Output.hpp" // DataStore
+#include "interface/CatSelector.hpp"
 
 #include "TMVA/Reader.h"
 #include "TMVA/Tools.h"
@@ -24,6 +25,9 @@ class TmvaAnalysis : virtual public AnalysisBase
         void AddVariable( string name, char type);
 
         vector<string> weights;
+
+        // multi category analysis
+        CatSelector categories;
 
     private:
         // this allows to handle different data type (namely float int) in a unique structure. -- Like Trees

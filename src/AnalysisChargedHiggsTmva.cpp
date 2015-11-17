@@ -60,6 +60,23 @@ void TmvaAnalysis::Init(){
         readers_[i]->BookMVA("BDT",weights[i].c_str());
     }
     cout <<"[TmvaAnalysis]::[Init]::[INFO] Done"<<endl;
+    
+    // ------------------------ CATEGORIES ----------------- ; 
+    // configurable ? TODO
+    categories.AddVariable("bdt0");
+    categories.AddVariable("bdt1");
+
+    // -0.25 and bdt[1] > -.4
+    categories.SetBoundary("bdt0",0, -.25);
+    categories.SetBoundary("bdt1",0, -.4);
+    categories.SetBoundary("bdt0",1, -0.8);
+    categories.SetBoundary("bdt0",1, -0.9);
+
+    for(int icat=0;icat< categories.GetNcat() ;++icat)
+    for ( string& l : AllLabel()  ) {
+        Book( string("ChargedHiggsTmva/Vars/Mt_") + Form("cat%d_",icat) +l, "Mt_"+l, 2000,0,2000.);
+        Book2D( string("ChargedHiggsTmva/Vars/Bdt0Bdt1") + Form("cat%d_",icat) + l, "BDT0_BDT1"+l, 200,-1.,1.,200,-1.,1.);
+    }
 
 } // end init
 
@@ -130,6 +147,16 @@ int TmvaAnalysis::analyze(Event*e,string systname){
         }
     }
 
+    // ----------- MULTI CATEGORY ANALYSIS ------
+    categories.SetVariable("bdt0",bdt[0]);
+    categories.SetVariable("bdt1",bdt[1]);
+    int mycat=categories.computeCat();
+    if(mycat >=0 )
+    {
+        Fill(string("ChargedHiggsTmva/Vars/Mt_") + Form("cat%d_",mycat) + label , systname,e->Mt(), e->weight() ) ; 
+        Fill2D( string("ChargedHiggsTmva/Vars/Bdt0Bdt1") + Form("cat%d_",mycat)+label,systname,bdt[0],bdt[1],e->weight());
+    }
+    // -----------------------------------------
     return 0; // 
 
 } // end analyze
