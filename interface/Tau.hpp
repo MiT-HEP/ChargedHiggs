@@ -9,7 +9,9 @@ class Tau: virtual public Object,
     virtual public Lepton,
     virtual public Trigger
 {
-    
+    float etacut_; 
+
+
     public:
     Tau() ;
     bool id;
@@ -29,6 +31,20 @@ class Tau: virtual public Object,
         Object::clearSyst();
         }
 
+    // --- REGRESSION 
+    struct regression{
+        float nvtx; 
+        float tauPt;
+        float tauEta;
+        float tauM;
+        float tauQ;
+        float tauIso;
+        float tauIso2;
+        float tauChargedIsoPtSum;
+        float tauNeutralIsoPtSum;
+        float jetPt;
+        float jetEta;
+    } regVars_;
 };
 
 #endif

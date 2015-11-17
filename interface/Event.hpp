@@ -64,7 +64,7 @@ class Event{
     Lepton * GetMuon( int iMu );
 
     //
-    inline Met GetMet( ) { return met_;}
+    inline Met GetMet( ) { return met_;} // should be const, but noCorrPt is not set correctly without &
 
     inline float Rho() { return rho_; }
     inline int Npv() { return npv_ ;} 
@@ -85,7 +85,15 @@ class Event{
         for(auto t : taus_ )  if ( t->IsTau() ) e += t->GetP4();
         return e.M();
     }
-    float Mt() ;
+    enum MtType { MtTau =0 , MtMuon, MtTauInv };
+    float Mt(MtType type=MtTau ) ; // 0 tau, 1 muon ,...
+
+    // --------- Angular variables
+    float RbbMin(int iMax=3) ;
+    float RCollMin(int iMax=3) ;
+    float RsrMax(int iMax=3)  ;
+
+    //-----------------------------
     virtual void ClearEvent();
     virtual inline int IsRealData(){ return isRealData_ ;} 
     virtual void clearSyst(); // call clearSyst in all object it posses

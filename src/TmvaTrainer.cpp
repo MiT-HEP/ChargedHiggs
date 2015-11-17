@@ -1,4 +1,5 @@
 #include "interface/TmvaTrainer.hpp"
+#include "interface/GeneralFunctions.hpp"
 
 #define VERBOSE 0
 
@@ -42,6 +43,10 @@ int TmvaTrainer::analyze(Event*e, string systname)
     Jet * bj1 = e->LeadBjet();
     Tau* t1 = e->LeadTau();
 
+    //Trigger
+    if (t1->Pt() < 51 ) return 0;
+    if (e->GetMet().Pt() <130 ) return 0;
+
     SetTreeVar("NJets",e->Njets());
     SetTreeVar("NCJets",e->NcentralJets());
     SetTreeVar("BJets",e->Bjets());
@@ -64,6 +69,53 @@ int TmvaTrainer::analyze(Event*e, string systname)
     else{ // BKG
             SetTreeVar("sig",0);
         }
+
+    int mc=0;
+    if (label.find("amcatnlo") != string::npos) 
+    {
+        mc= 200;
+        if (label.find("M-180") !=string::npos) mc += 1;
+        if (label.find("M-200") !=string::npos) mc += 2;
+        if (label.find("M-220") !=string::npos) mc += 3;
+        if (label.find("M-250") !=string::npos) mc += 4;
+        if (label.find("M-300") !=string::npos) mc += 5;
+        if (label.find("M-400") !=string::npos) mc += 6;
+    }
+    else if (label.find("Hplus") !=string::npos) 
+    {
+        mc=100 ;
+        if (label.find("M200") !=string::npos) mc += 1;
+        if (label.find("M250") !=string::npos) mc += 2;
+        if (label.find("M500") !=string::npos) mc += 3;
+        if (label.find("M900") !=string::npos) mc += 4;
+    }
+    else  // bkg
+    {
+        mc = -100;
+        if(label.find("QCD") != string::npos) mc -=1 ;
+        if(label.find("DY") != string::npos) mc -=2 ;
+        if(label.find("TTJets") != string::npos) mc -=3 ;
+        if(label.find("WJets") != string::npos) mc -=4 ;
+        if(label.find("WW") != string::npos) mc -=5 ;
+        if(label.find("WZ") != string::npos) mc -=6 ;
+        if(label.find("ZZ") != string::npos) mc -=7 ;
+    }
+    SetTreeVar("mc",mc);
+
+    // angular variables
+    double DPhiEtMissJet1=-1 ; if (e->GetJet(0) != NULL ) DPhiEtMissJet1 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
+    //double DPhiEtMissJet2=-1 ; if (e->GetJet(1) != NULL ) DPhiEtMissJet2 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
+    //double DPhiEtMissJet3=-1 ; if (e->GetJet(2) != NULL ) DPhiEtMissJet3 = fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
+    double DPhiEtMissTau=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),t1->Phi()));
+
+    SetTreeVar("rbb",e->RbbMin());
+    SetTreeVar("rcoll",e->RCollMin());
+    SetTreeVar("rsr",e->RsrMax());
+
+    SetTreeVar("DPhiEtMissJet1",DPhiEtMissJet1);
+    SetTreeVar("DPhiEtMissTau",DPhiEtMissTau);
+
+    SetTreeVar("pTt1oMet", t1->Pt() / e->GetMet().Pt() );
 
     if(VERBOSE>1) PrintTreeVar(); 
     FillTree("tmva_tree");
@@ -96,11 +148,19 @@ void TmvaTrainer::Init(){
     AddVariable("phimet",'F',-10,10);
     AddVariable("phit1",'F',-10,10);
     AddVariable("ht",'F',0,10000);
+    // -- Angular Variables
+    AddVariable("rbb",'F',0,3.1415*2);
+    AddVariable("rcoll",'F',0,3.1415*2);
+    AddVariable("rsr",'F',0,3.1415*2);
+    AddVariable("DPhiEtMissJet1",'F',0,3.1415);
+    AddVariable("DPhiEtMissTau",'F',0,3.1415);
 
+    AddVariable("pTt1oMet",'F',0,10);
 
     // tell tmva about sig and bkg
 
     Branch("tmva_tree","sig",'I');
+    Branch("tmva_tree","mc",'I'); // to distinguish between the different mc
     // tell tmva about weight
     Branch("tmva_tree","weight",'D');
     if(train)factory_->SetWeightExpression("weight");
@@ -111,7 +171,7 @@ void TmvaTrainer::End(){
 
     // if I just want to save the tree
     if (not train) return;
-
+    //TODO, outdated, update with the offline one
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] AddSignal and Bkg "<<endl; 
     if(VERBOSE>0) PrintTree("tmva_tree");
 

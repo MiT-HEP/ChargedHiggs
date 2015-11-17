@@ -8,6 +8,7 @@ void TagAndProbe::Init(){
 		cout<<"[TagAndProbe]::[Init]::[INFO] doTree: "<<treename<<endl;
 		InitTree(treename);
 		Branch(treename, "m", 'F'); // invariant mass
+		Branch(treename, "mt", 'F'); // mt muon-t
 		Branch(treename, "ptProbe", 'F'); // pt probe
 		Branch(treename, "etaProbe", 'F'); // eta probe
 		//Branch(treename, "ptTag", 'F'); // pt probe
@@ -30,26 +31,37 @@ void TagAndProbe::Init(){
 int TagAndProbe::analyze(Event*e,string systname){
 
     bool isTrigger=false; 
-    if (e->IsRealData() ) isTrigger =   e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v");
+    //if (e->IsRealData() ) isTrigger =   e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v");
+    if (e->IsRealData() ) isTrigger =   e->IsTriggered("HLT_IsoMu20"); // or 27
 
     if (not isTrigger) return EVENT_NOT_USED; // common base
 
     string label = GetLabel(e);
 
     Tau *tProbe = NULL;
+    Jet *jProbe = NULL;
 
-    for(int iTag =0; iTag <=1 ; ++iTag)
-    {
-        Tau *tTag = e->GetTau(iTag);
+        Lepton *mTag = e->GetMuon(0);
 
-        if (tTag == NULL ) continue; // no tag taus
+        if (mTag == NULL ) return EVENT_NOT_USED; // no tag taus
+        SetTreeVar("isTagTrigger", e->IsTriggered( "HLT_IsoMu20", mTag )  );
 
         for( auto& t : e->taus_) 
-            if (tTag != t  and tTag -> DeltaR ( *t ) > .05  ) { tProbe = t; break;} // take the first probe // pt ordered
+            if (tProbe != NULL) { tProbe = t; break;} // take the first probe // pt ordered, can't use GetTau
 
-        if (tProbe == NULL ) break;
+        // nothnig to probe FIXME, logic needs to change
+        if (tProbe == NULL ) return EVENT_NOT_USED;
 
-        SetTreeVar("m", tTag->InvMass( *tProbe ) );
+        for( auto& j : e->jets_) 
+            if (j -> DeltaR( *tProbe ) <0.05) jProbe = j; 
+
+        if (jProbe == NULL ){ 
+            cout <<"WARNING: not bare jet associated to the tau"<<endl;
+            return EVENT_NOT_USED;
+            }
+
+        SetTreeVar("m", mTag->InvMass( *tProbe ) );
+        SetTreeVar("mt", e->Mt(Event::MtMuon) );
         SetTreeVar("ptProbe", tProbe->Pt() ) ;
         SetTreeVar("etaProbe",tProbe->Eta() ) ;
 
@@ -59,7 +71,6 @@ int TagAndProbe::analyze(Event*e,string systname){
         SetTreeVar("passIdEle", tProbe -> id_ele );
         SetTreeVar("passIdMu", tProbe -> id_mu );
         SetTreeVar("passTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tProbe )  );
-        SetTreeVar("isTagTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tTag )  );
 
         int _itag_ = -1, _iprobe_ = -1 ;
 
@@ -71,7 +82,6 @@ int TagAndProbe::analyze(Event*e,string systname){
         else SetTreeVar("isMC",3);
 
 	    FillTree(treename);
-    }
 
     return EVENT_NOT_USED;
 }

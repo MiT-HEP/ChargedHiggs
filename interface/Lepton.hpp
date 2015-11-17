@@ -2,8 +2,10 @@
 #define LEPTON_H
 
 #include "interface/Object.hpp"
+#include "interface/Trigger.hpp"
 
-class Lepton : virtual public Object
+class Lepton : virtual public Object,
+    virtual public Trigger
 {
     friend class TagAndProbe;
 

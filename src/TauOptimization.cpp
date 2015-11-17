@@ -2,7 +2,7 @@
 
 void TauOptimization::Init(){
     cout<<"[TauOptimization]::[Init]::[INFO] Booking Histo "<<endl;
-
+    
     
     for ( string& l : AllLabel()  ) 
     {
@@ -20,6 +20,17 @@ void TauOptimization::Init(){
         Book("TauOpt/Iso2_Match_"+l,"tau Iso Delta Beta",1500,-10,20.);
         Book("TauOpt/Iso2_Lead_"+l,"tau Iso Delta Beta",1500,-10,20.);
     }
+
+    string treename = "TauOptTree";
+    InitTree(treename);
+    Branch(treename, "tau1Pt" ,'F');
+    Branch(treename, "tau2Pt" ,'F');
+    Branch(treename, "tau1Eta" ,'F');
+    Branch(treename, "tau2Eta" ,'F');
+    Branch(treename, "tau1Iso" ,'F');
+    Branch(treename, "tau2Iso" ,'F');
+    Branch(treename, "ttM" ,'F');
+
 }
 
 int TauOptimization::analyze(Event* e, string systname)
@@ -59,6 +70,14 @@ int TauOptimization::analyze(Event* e, string systname)
         Fill("TauOpt/Iso2_Match_"+label,systname, tM->iso2 ,e ->weight() );
         Fill("TauOpt/Pt_Match_"+label,systname, tM->iso ,e ->weight() );
     }//end LeadTauMatched
+
+    // 
+    if ( e->IsRealData() and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") )
+    {
+        //SetTreeVar("mc",mc); // XXX
+        //FillTree("tmva_tree");
+    
+    }
 }
 
 // Local Variables:

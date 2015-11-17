@@ -1,5 +1,5 @@
 #include "interface/Weight.hpp"
-//#define VERBOSE 1
+#define VERBOSE 1
 
 void Weight::AddMC( string label, string dir, double xsec, double nevents)
 {
@@ -62,7 +62,7 @@ void Weight::SetPtEtaSF(string label,double pt, double eta)
 
 string Weight::LoadMC( string label) 
 { 
-    if (label == "data" or label == "Data")
+    if (label == "data" or label == "Data" or label == "Tau" or label == "MET" or label == "SingleElectron" or label == "SingleMuon")
     {
         mcName_ = label;
         mcXsec_ = 1.0;

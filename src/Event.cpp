@@ -33,15 +33,86 @@ void Event::clearSyst(){
     weight_ . clearSystPU();
 }
 
-
-float Event::Mt() { 
-    if ( Ntaus() <=0 ) return -1; 
-    float pt_t  =  LeadTau() -> Pt();
-    float phi_t =  LeadTau() -> Phi();
+float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton
     float pt_m = met_ . Pt(); 
     float phi_m= met_. Phi(); 
-    return TMath::Sqrt( 2* pt_t * pt_m * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi_t,phi_m)) ) );
+    switch(type){
+    case MtTau:
+        {
+        if ( Ntaus() <=0 ) return -1; 
+        float pt_t  =  LeadTau() -> Pt();
+        float phi_t =  LeadTau() -> Phi();
+        return ChargedHiggs::mt(pt_t,pt_m,phi_t,phi_m); 
+        }
+    case MtMuon:
+        {
+        if (GetMuon(0) == NULL ) return -1;
+        float pt_mu = GetMuon(0)-> Pt();
+        float phi_mu = GetMuon(0)-> Phi();
+        return ChargedHiggs::mt(pt_mu,pt_m,phi_mu,phi_m); 
+        }
+    case MtTauInv:
+        {
+            Tau *tInv = GetTauInvIso(0); 
+            if (tInv == NULL) return -1;
+            float pt_t  =  tInv -> Pt();
+            float phi_t =  tInv -> Phi();
+            return ChargedHiggs::mt(pt_t,pt_m,phi_t,phi_m); 
+        }
+    } 
+    return -3;
 } 
+
+float Event::RbbMin(int iMax) {
+    // notice the Pi-...
+    if (GetTau(0) == NULL) return -1;
+    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( GetTau(0) ) );
+
+    float rbbmin = -1;
+    for(int i=0 ; i< iMax; ++i)
+    {
+        if( GetJet(i) == NULL ) break;
+        float dphietmissjet= fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
+        float myrbb = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+
+        if (rbbmin<0 or myrbb<rbbmin) rbbmin = myrbb;
+    }
+
+    return rbbmin;
+}
+float Event::RCollMin(int iMax) {
+    // notice the Pi-...
+    if (GetTau(0) == NULL) return -1;
+    float dphietmisstau = fabs(GetMet().DeltaPhi( GetTau(0) ) );
+    float rcollmin = -1;
+    for(int i=0 ; i< iMax; ++i)
+    {
+        if( GetJet(i) == NULL ) break;
+        float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
+        float myrcoll = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+
+        if (rcollmin<0 or myrcoll<rcollmin) rcollmin = myrcoll;
+    }
+
+    return rcollmin;
+}
+
+float Event::RsrMax(int iMax) {
+    if (GetTau(0) == NULL) return -1;
+    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( GetTau(0) ) );
+    float rsrmax = -1;
+    for(int i=0 ; i< iMax; ++i)
+    {
+        if( GetJet(i) == NULL ) break;
+        float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
+        float myrsr = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+
+        // CHECKME, is this correct ? min ? 
+        if (rsrmax<0 or myrsr<rsrmax) rsrmax = myrsr;
+    }
+
+    return rsrmax;
+}
 
 double Event::weight(){
     if (isRealData_ ) return 1;

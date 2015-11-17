@@ -63,9 +63,10 @@ void Fitter::init(){
         {
             string mass = Form(massMask_.c_str() ,m);
             TH1D *h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(), m) ) ;
-            h->Rebin(5); //FIXME REMOVEME
 
             if (h == NULL) cout <<"[Fitter]::[init]::[ERROR] no such histogram: mask='"<<inputMasks[cat]<<"' mass="<<m<<endl;
+
+            h->Rebin(5); //FIXME REMOVEME
 
             // -- Construct RooDataHist
             string name =  Form("cat_%d_mass_%s",cat,mass.c_str());
@@ -368,7 +369,7 @@ void Fitter::fitSignal(){
 
             // -- Plot
             if (plot ) {
-                TCanvas *c = new TCanvas();
+                TCanvas *c = new TCanvas(Form("c_%s_cat%d",mass.c_str(),cat),"c");
                 RooPlot *p = x_ -> frame();
                 hist_[ name ] -> plotOn(p,DataError(RooAbsData::SumW2));
                 fitModel -> plotOn(p);
@@ -383,10 +384,14 @@ void Fitter::fitSignal(){
                     fitModel -> plotOn(p, Components(Form("fitmodel_bern_%d",nBernstein)),LineStyle(kDotted) );
                 }
 
-                c->SetLogy();
+                //c->SetLogy();
                 p -> Draw();
+                c -> Update() ;
+
                 c -> SaveAs( Form("%s/fit_mh_%s_cat%d.pdf",plotDir.c_str(),mass.c_str(),cat) );
                 c -> SaveAs( Form("%s/fit_mh_%s_cat%d.png",plotDir.c_str(),mass.c_str(),cat) );
+
+                //
                 delete p;
                 delete c;
             } // end plots

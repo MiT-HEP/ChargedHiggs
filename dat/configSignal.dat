@@ -1,0 +1,13 @@
+include=dat/config.dat
+
+Files=/store/user/amarini/Nero/v1.1.1/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.1.1/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.1.1/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.1.1/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.1.1/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.1.1/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
+
+addfiles=/store/user/amarini/Nero/v1.1.1/HplusToTauNu-M200
+addfiles=/store/user/amarini/Nero/v1.1.1/HplusToTauNu-M250
+addfiles=/store/user/amarini/Nero/v1.1.1/HplusToTauNu-M500
+addfiles=/store/user/amarini/Nero/v1.1.1/HplusToTauNu-M900

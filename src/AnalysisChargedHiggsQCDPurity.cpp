@@ -157,8 +157,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
 
             hist = HistName(pt,false,true,"Mt");  
-            Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight());
-            cout <<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG] Filling histo: '"<<dir+hist+"_"+label<<"' with Mt="<<e->Mt()<<" and weight="<<e->weight()<<endl;
+            Fill(dir+hist+"_"+label,systname, e->Mt(Event::MtTauInv) ,e->weight());
+            cout <<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG] Filling histo: '"<<dir+hist+"_"+label<<"' with Mt="<< e->Mt(Event::MtTauInv) <<" and weight="<<e->weight()<<endl;
         }
 
     }

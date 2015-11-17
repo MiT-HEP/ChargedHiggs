@@ -153,10 +153,12 @@ def GetLimitFromTree(inputFile,xsec=False):
 			mh= median[i][0]
 			xSec= -1
 			for label in mcdb:
-				if "M%.0f"%mh in label:
+				#if "M%.0f"%mh in label:
+				if 'amcatnlo' not in label : continue
+				if "M-%.0f"%mh in label: #amcatnlo
 					xSec = mcdb[label][2]
 			if xSec <0 :  continue
-			print "Found xSec for mh=",mh,"xSec=",xSec
+			print "Found xSec for mh=",mh,"xSec=",xSec, "and label", label
 			xsections_mcdb.append(  (mh,xSec) )
 		# run over the mass point and eventually interpolate between the xsec
 		for i in range(0,len(median)):

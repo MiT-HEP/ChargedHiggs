@@ -133,6 +133,15 @@ def FindEOS(name,mount=""):
 	cmd = EOS + ' find -f ' + name
 	print "Runnig command:",cmd
 	list = check_output(cmd ,shell=True).split()
+
+	# print removed
+	tot = len(list)
+	removed = [ f for f in list if '/failed/' in f ] 
+	for f in removed:
+		print "ParseDat.py - FindEOS: Ignoring failed file: '"+ f + "'"
+	# remove failed directories from crab submission
+	list = [ f  for f in list if '/failed/' not in f ]
+
 	if mount != "":
 		fileList = [ re.sub("/eos/cms", mount + "/cms",f) for f in list ]
 	else:

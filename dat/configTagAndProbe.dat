@@ -62,6 +62,8 @@ Lumi=1
 #Smear=JER,JES,@SmearBase
 #Smear=NONE,JER,JES
 Smear=NONE
+Correct=MetPhiCorrector
+config=MitPhiCorrector|fileName="aux/MetPhi.root"
 
 config=TagAndProbe|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
 #config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-251252_13TeV_PromptReco_Collisions15_JSON.txt')
