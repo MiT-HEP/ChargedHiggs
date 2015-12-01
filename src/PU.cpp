@@ -58,6 +58,7 @@ bool PU::IsInRange(int run, int runMin, int runMax)
 
 double PU::GetPUWeight(string label, float x, int run)
 {
+try{
 #ifdef VERBOSE
     if(VERBOSE>1) cout<<"[PU]::[GetPUWeight]::[DEBUG] "<<endl;
 #endif
@@ -68,6 +69,11 @@ double PU::GetPUWeight(string label, float x, int run)
 #endif
         return 1;
     }
+
+    string targetName = "target";
+    if (syst>0) targetName = "target_Up";
+    if (syst<0) targetName = "target_Down";
+
     // This function is very slow. Let's cache a bit.
     static int lastSyst=-100; //CACHE
     static vector<PUunit*>  *lastTarget=NULL; //CACHE
@@ -86,9 +92,6 @@ double PU::GetPUWeight(string label, float x, int run)
     }
     if ( not currentTarget)
     {
-        string targetName = "target";
-        if (syst>0) targetName = "target_Up";
-        if (syst<0) targetName = "target_Down";
 
         auto container_target =  container.find(targetName); // SAVE SEARCH
         if(container_target == container.end() ) 
@@ -129,20 +132,24 @@ double PU::GetPUWeight(string label, float x, int run)
         lastMC=currentMC;
         lastMClabel = label;
     }//end currentMC
+
     /// ----------------- CHECK DONE --------
     TH1 *target=NULL;
     TH1 *mc=NULL;
     double l = -1;
-    //	for(PUunit* p : container[targetName])
+
+    int targetNum=0;
     for(PUunit* p : *currentTarget)
     {
         if (IsInRange(run, p->runMin,p->runMax) )
         {
             target=p->hist;
             l = p->lumi; // only relevant for data
+            break;
         }
+        targetNum += 1;
     }
-    //for(PUunit* p : container[label])
+
     for(PUunit* p : *currentMC)
     {
         if (IsInRange(run, p->runMin,p->runMax) )
@@ -155,16 +162,58 @@ double PU::GetPUWeight(string label, float x, int run)
     // scale them
     //target ->Scale(target->Integral() );
     //mc ->Scale(mc->Integral() );
+   
+    // get normalization factors to preserve xSec
+    string normName=Form("%s,%s",label.c_str(),targetName.c_str());
 
+    vector<double>* currentNorm ;
+    if ( norm.find(normName) == norm.end())
+    {
+        norm[ normName ] = new vector<double>();
+        currentNorm = norm[ normName ];
+    }
+
+
+    if ( currentNorm->size() < targetNum +1 ) currentNorm->resize(targetNum+1,-1);
+
+    if (currentNorm->at(targetNum) <0){
+        target -> Scale(1./target->Integral() );     
+        mc -> Scale( 1./mc ->Integral() );
+        double sum= 0.;
+        
+        for(int i=0; i <= target->GetNbinsX() + 1 ; ++i)
+        {
+            double num= target -> GetBinContent( i);  
+            double den= mc -> GetBinContent( mc->FindBin( target->GetBinCenter(i) ) );  
+            double rw = 0.; 
+            if (den>0) rw = num / den;
+            sum += den*rw;
+        }
+        currentNorm->at(targetNum) = sum;
+        cout <<"[PU]::[GetPUWeight]::[INFO]  |B| Target='"<<targetName << "' label='" << label << "' targetNum="<<targetNum<<" reweight Sum ="<<sum<<endl;
+    }
+
+    double sum = currentNorm->at(targetNum);
     double num= target->GetBinContent( target->FindBin(x) );
     double den= mc->GetBinContent( mc->FindBin(x) );	
 
-    double w=num/den ;
+    double w = 0.;
+    if (den>0) w=num/den ;
+    w /= sum;
+
     if (l>=0 ) w *= l / ltot;
 #ifdef VERBOSE
     if(VERBOSE>1) cout<<"[PU]::[GetPUWeight]::[DEBUG] Returning weight w="<<w<<endl;
 #endif
     return w;
+}
+catch (std::exception &e)
+    {
+        cout <<"[PU]::[GetPUWeight]::[Exception]"<<endl;
+        cout <<e.what() <<endl;
+        throw e;
+    }
+// -----
 }
 
 void PU::clear(){

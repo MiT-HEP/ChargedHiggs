@@ -35,7 +35,7 @@ QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8 /store/user/amarini/Nero/v1.2/QCD_Pt_50
 QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8 /store/user/amarini/Nero/v1.2/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/QCD-600-800-25ns/151115_184330/0000 1964128.0 183.57641464
 QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8 /store/user/amarini/Nero/v1.2/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/QCD-800-1000-25ns/151115_184341/0000 1497584.07737 32.6503869588
 QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8 /store/user/amarini/Nero/v1.2/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/QCD-80-120-25ns/151115_184227/0000 3450659.81816 2703292.14722
-TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/ /store/user/amarini/Nero/v1.2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/TT-25ns/151115_184034/0000 8823771.0 831 #NNLO
+TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/user/amarini/Nero/v1.2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/TT-25ns/151115_184034/0000 8823771.0 831 #NNLO
 TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/amarini/Nero/v1.2/TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8/TTZToQQ-25ns/151115_184113/0000 396605.04191 0.496605610259
 VBFHToGG_M-125_13TeV_powheg_pythia8 /store/user/amarini/Nero/v1.2/VBFHToGG_M-125_13TeV_powheg_pythia8 7097174.60418 3.70722627057
 WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 /store/user/amarini/Nero/v1.2/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-25ns/151115_184045/0000 3.73654308847e+12 42376.9146369

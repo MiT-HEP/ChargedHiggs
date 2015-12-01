@@ -33,6 +33,8 @@ class PU
 {
     double ltot ; // total luminosity seen
     map< string , vector< PUunit* >* > container;
+    // mc, target, run
+    map< string , vector<double>* > norm;
 
     void AddToContainer( string label, TH1*, int runMin, int runMax,double lumi=-1);
     bool IsInRange(int run, int runMin,int runMax);
