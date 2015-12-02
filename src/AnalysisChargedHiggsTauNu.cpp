@@ -360,7 +360,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     // ------------------------ FULL SELECTION ---------------
     if (cut.passAll() ) 
     {
-        Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
+        if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
 
         if ( (label=="WJets" or label=="DY") and (systname =="" or systname == "NONE"))
         {

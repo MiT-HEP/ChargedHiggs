@@ -30,7 +30,9 @@ addfiles=/store/user/amarini/Nero/v1.2/ChargedHiggs_HplusTB_HplusToTauNu_M-200_1
 addfiles=/store/user/amarini/Nero/v1.2/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
 addfiles=/store/user/amarini/Nero/v1.2/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
 addfiles=/store/user/amarini/Nero/v1.2/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.2/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8
 addfiles=/store/user/amarini/Nero/v1.2/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.2/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
 ### QCD
 addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
 addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
@@ -92,7 +94,7 @@ config=MitPhiCorrector|fileName="aux/MetPhi.root"
 #############
 
 config=ChargedHiggsTauNu|AddLabel('DY')
-addConfig=ChargedHiggsTauNu|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo')
+addConfig=ChargedHiggsTauNu|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-350_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo')
 addConfig=ChargedHiggsTauNu|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
 addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('QCD'),AddLabel('WJets')
 
@@ -108,7 +110,7 @@ config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-260627_13TeV_PromptReco_Col
 
 #config=TmvaAnalysis|weights.push_back(" aux/bdt_mH200_QCD.xml"),weights.push_back("aux/bdt_mH200_TTJets.xml"),weights.push_back(" aux/bdt_mH400_QCD.xml"),weights.push_back("aux/bdt_mH400_TTJets.xml")
 config=TmvaAnalysis|weights.push_back("aux/bdt_mH200_QCD.xml"),weights.push_back("aux/bdt_mH200_TTJets.xml"),weights.push_back(" aux/bdt_mH400_QCD.xml"),weights.push_back("aux/bdt_mH400_TTJets.xml")
-addConfig=TmvaAnalysis|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo')
+addConfig=TmvaAnalysis|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-350_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo')
 addConfig=TmvaAnalysis|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
 addConfig=TmvaAnalysis|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('QCD'),AddLabel('WJets'),AddLabel("DY")
 

@@ -46,6 +46,8 @@ class AnalysisBase
     inline void FillTree(string tree){output_->FillTree(tree);}
     inline void PrintTree(string tree){output_->PrintTree(tree);}
     inline TTree* GetTree(string tree){ return output_->GetTree(tree);}
+    bool unblind{false}; // use this flag to protect histograms or region that should be blind
+    bool Unblind(Event *e) {if (e->IsRealData() ) return unblind; return true;} // if is not data, no need to return something else
 };
 
 

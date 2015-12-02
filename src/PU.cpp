@@ -185,8 +185,7 @@ try{
         {
             double num= target -> GetBinContent( i);  
             double den= mc -> GetBinContent( mc->FindBin( target->GetBinCenter(i) ) );  
-            double rw = 0.; 
-            if (den>0) rw = num / den;
+            double rw = Ratio(num,den); 
             sum += den*rw;
         }
         currentNorm->at(targetNum) = sum;
@@ -197,8 +196,7 @@ try{
     double num= target->GetBinContent( target->FindBin(x) );
     double den= mc->GetBinContent( mc->FindBin(x) );	
 
-    double w = 0.;
-    if (den>0) w=num/den ;
+    double w = Ratio(num,den);
     w /= sum;
 
     if (l>=0 ) w *= l / ltot;
