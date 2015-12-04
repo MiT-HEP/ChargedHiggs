@@ -143,7 +143,7 @@ int TmvaAnalysis::analyze(Event*e,string systname){
 
     if( bdt.size() >2){
         if (bdt[0]> -0.25 and bdt[1] > -.4) { // check -- BDT 0 = QCD 200 GeV, BDT 1 = TTJets 200 GeV
-            Fill("ChargedHiggsTmva/Vars/Mt_"+label,systname,e->Mt(), e->weight() ) ;
+            if( Unblind(e) )Fill("ChargedHiggsTmva/Vars/Mt_"+label,systname,e->Mt(), e->weight() ) ;
         }
     }
 
@@ -153,7 +153,7 @@ int TmvaAnalysis::analyze(Event*e,string systname){
     int mycat=categories.computeCat();
     if(mycat >=0 )
     {
-        Fill(string("ChargedHiggsTmva/Vars/Mt_") + Form("cat%d_",mycat) + label , systname,e->Mt(), e->weight() ) ; 
+        if(Unblind(e))Fill(string("ChargedHiggsTmva/Vars/Mt_") + Form("cat%d_",mycat) + label , systname,e->Mt(), e->weight() ) ; 
         Fill2D( string("ChargedHiggsTmva/Vars/Bdt0Bdt1") + Form("cat%d_",mycat)+label,systname,bdt[0],bdt[1],e->weight());
     }
     // -----------------------------------------

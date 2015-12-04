@@ -4,6 +4,10 @@ import os,sys
 from glob import glob
 from subprocess import call, check_output
 import re
+import threading
+import time
+
+threads=[]
 
 def drange(start, stop, step):
         ''' Return a floating range list. Start and stop are included in the list if possible.'''
@@ -26,6 +30,7 @@ parser.add_option("-q","--queue" ,dest='queue',type='string',help="Queue [Defaul
 parser.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do not Submit [Default=%default]",default=False)
 parser.add_option("-e","--expected" ,dest='exp',action='store_true',help="Run Expected [Default=%default]",default=True)
 parser.add_option("-u","--unblind" ,dest='exp',action='store_false',help="Unblind Results")
+parser.add_option("","--ncore",type='int',help="num. of core. [%default]",default=4)
 
 (opts,args)=parser.parse_args()
 
@@ -51,6 +56,17 @@ call("mkdir -p %s"%opts.dir,shell=True)
 #for iJob in range(0,opts.njobs):
 cmdFile = open("%s/cmdFile.sh"%opts.dir,"w")
 iJob = -1
+
+def parallel(text2ws, bsub=""):
+	print "-> Parallel command :'"+text2ws+"'"
+	st = call(text2ws,shell=True);
+	if st !=0 :
+		print "ERROR in executing txt2ws"
+		return 0
+	if bsub !="":
+		print "-> submitting",bsub
+		call(bsub,shell=True)
+	return 0 
 
 for mass in drange(opts.begin,opts.end,opts.step):
 	iJob += 1
@@ -91,8 +107,11 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	## Construct Datacard
 	datacard= re.sub( ".txt","_M%.0f.root"%mass,opts.input.split("/")[-1])
 	cmd = "text2workspace.py -m " + str(mass) + " -o " + opts.dir + "/" + datacard +  " " + opts.input
-	print "-> Running command :'"+cmd+"'"
-	call(cmd,shell=True)
+	if opts.ncore <2:
+		print "-> Running command :'"+cmd+"'"
+		call(cmd,shell=True)
+	else:
+		text2ws = cmd[:]
 	
 	## copy datacard in workdir
 	sh.write('cp -v '+ basedir + "/"+  datacard + " ./ \n" )
@@ -112,8 +131,26 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	sh.write('rm %s/sub%d.run\n'%(basedir,iJob))
 
 	cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
-	print cmdline
 	cmdFile.write(cmdline+"\n")
 
+	bsub=""
 	if not opts.dryrun: 
-		call(cmdline,shell=True)
+		if opts.ncore<2:
+			print cmdline
+			call(cmdline,shell=True)
+		else:
+			bsub=cmdline[:]
+
+	if opts.ncore>=2:
+		while threading.activeCount() >= opts.ncore:
+			print "sleep ....",
+			time.sleep(3)
+			print "wake up"
+		t= threading.Thread(target=parallel,args=(text2ws,bsub,) )
+		t.start()
+		threads.append(t)
+
+for t in threads:
+	t.join()
+
+print "Done"

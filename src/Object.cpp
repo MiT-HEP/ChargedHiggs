@@ -4,7 +4,7 @@
 
 using namespace std;
 
-float Object::InvMass(Object &o){ 
+double Object::InvMass(Object &o){ 
   TLorentzVector hp4(p4);
   return (hp4.operator+=(o.GetP4())).M(); 
 }

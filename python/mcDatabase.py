@@ -12,6 +12,7 @@ parser.add_option("-x","--xsec",dest="xsec",type="float",help="Use external cros
 parser.add_option("-l","--label",dest="label",type="string",help="MC label",default="DYamcatnlo");
 parser.add_option("-f","--file",dest="file",type="string",help="mc_database file name",default="dat/mc_database.txt");
 parser.add_option("-r","--recursive", dest='rec', action= 'store_true', help="do same for each subdir", default =False);
+parser.add_option("-p","--pileup",dest="pu",type="string",help="TODO FIXME")
 
 (opts,args)=parser.parse_args()
 

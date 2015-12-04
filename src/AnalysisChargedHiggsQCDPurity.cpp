@@ -13,10 +13,17 @@ void ChargedHiggsQCDPurity::Init()
             //                       direct, fullSel
             Book( dir + HistName(pt, true , false)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, false, false)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+            // ---- 
+            Book( dir + HistName(pt, true , false, "Upar")+"_"+ l  , ("EtMissParallel "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, false, "Upar")+"_"+ l  , ("EtMissParallelIsoInv "+ l).c_str(),250,0.,500.);
+
+            Book( dir + HistName(pt, true , false, "Uperp")+"_"+ l  , ("EtMissPerp "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, false, "Uperp")+"_"+ l  , ("EtMissPerpIsoInv "+ l).c_str(),250,0.,500.);
         }
     // --- for event not in the PtBins 
     // -- full selection
     for ( string& l : AllLabel()  ) 
+    {
         for (size_t iBin = -1 ; iBin + 1 < PtBins.size() ; ++iBin )
         {
             float pt = -1;
@@ -24,9 +31,20 @@ void ChargedHiggsQCDPurity::Init()
             Book( dir + HistName(pt, true , true)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, false, true)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
             //
-            Book( dir + HistName(pt, true , true,"Mt")+"_"+ l  , ("Mt "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, true,"Mt")+"_"+ l  , ("MtIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt, true , true, "Upar")+"_"+ l  , ("EtMissParallel "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, true, true, "Uperp")+"_"+ l  , ("EtMissPerp "+ l).c_str(),250,0.,500.);
+
+            // Book( dir + HistName(pt, true , true,"Mt")+"_"+ l  , ("Mt "+ l).c_str(),250,0.,500);
+            // Book( dir + HistName(pt, false, true,"Mt")+"_"+ l  , ("MtIsoInv "+ l).c_str(),250,0.,500.);
+
+            Book( dir + HistName(pt, false , true, "Upar")+"_"+ l  , ("EtMissParallelIsoInv "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, true, "Uperp")+"_"+ l  , ("EtMissPerpIsoInv "+ l).c_str(),250,0.,500.);
+
         }
+        // I don't need to split it by pt
+            Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),250,0.,500);
+            Book( dir + "Mt"+"_"+ l  , ("MtIsoInv "+ l).c_str(),250,0.,500.);
+    }
 
 }
 
@@ -50,7 +68,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     // TODO:
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
-    // * put a limit on the TauInv sideband ? 10/20 GeV ? 
+    // * put a limit on the TauInv sideband ? 3.0 -20 GeV
 
     // TODO -> use TAU + MET TRIGGER 
     if ( e->IsRealData() and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") )  {
@@ -79,19 +97,27 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
         string hist = HistName(pt,true, false);
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+        hist = HistName(pt,true, false,"Uperp");
+        Fill( dir+hist +"_"+label,systname, Upar(e,t), e->weight() );
+        hist = HistName(pt,true, false,"Upar");
+        Fill( dir+hist +"_"+label,systname, Uperp(e,t), e->weight() );
     }
 
     if (tInv != NULL and tInv->Pt()>=51 and fabs(tInv->Eta())<2.1)
     {
-        cout<<" TauInv Guard A"<<endl; //DEBUG
         float pt = tInv->Pt();
         if (pt  > 8000 or pt <0 ) 
             cout <<"[ChargedHiggsQCDPurity]::[analyze]::[INFO] strange event:  tau (inv iso) Pt="<<pt<<endl;
         string hist = HistName(pt,false,false);
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+        hist = HistName(pt,false, false,"Uperp");
+        Fill( dir+hist +"_"+label,systname, Upar(e,tInv), e->weight() );
+        hist = HistName(pt,false, false,"Upar");
+        Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight() );
     }
 
     // -------------------------- FULL SELECTION -----------------------------------------------
+    // this part is need for the QCD Prediction after the purity fit
     if ( e->GetMet().Pt() <130 ) return EVENT_NOT_USED;
     if ( e->Bjets() <1 ) return EVENT_NOT_USED;
 
@@ -118,13 +144,17 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             string hist = HistName(pt,true,true);  
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
 
-            hist = HistName(pt,true,true,"Mt");  
-            Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight());
+            //hist = HistName(pt,true,true,"Mt");  
+            hist= "Mt"; //UNBLIND
+            if ( Unblind(e) ) Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight());
+            hist = HistName(pt,true, true,"Uperp");
+            Fill( dir+hist +"_"+label,systname, Upar(e,t), e->weight() );
+            hist = HistName(pt,true, true,"Upar");
+            Fill( dir+hist +"_"+label,systname, Uperp(e,t), e->weight() );
         }
     }
 
     if (tInv != NULL ) {
-        cout<<" TauInv Guard B"<<endl; //DEBUG
         #ifdef VERBOSE
         if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is tauInv"<<endl;
         #endif
@@ -156,9 +186,14 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             string hist = HistName(pt,false,true);                                   
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
 
-            hist = HistName(pt,false,true,"Mt");  
+            //hist = HistName(pt,false,true,"Mt");  
+            hist = "MtIsoInv";
             Fill(dir+hist+"_"+label,systname, e->Mt(Event::MtTauInv) ,e->weight());
             cout <<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG] Filling histo: '"<<dir+hist+"_"+label<<"' with Mt="<< e->Mt(Event::MtTauInv) <<" and weight="<<e->weight()<<endl;
+            hist = HistName(pt,false, true,"Uperp");
+            Fill( dir+hist +"_"+label,systname, Upar(e,tInv), e->weight() );
+            hist = HistName(pt,false, true,"Upar");
+            Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight() );
         }
 
     }

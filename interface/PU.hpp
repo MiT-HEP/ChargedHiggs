@@ -33,9 +33,20 @@ class PU
 {
     double ltot ; // total luminosity seen
     map< string , vector< PUunit* >* > container;
+    // mc, target, run
+    map< string , vector<double>* > norm;
 
     void AddToContainer( string label, TH1*, int runMin, int runMax,double lumi=-1);
     bool IsInRange(int run, int runMin,int runMax);
+
+    // --- limit max 
+    inline double Ratio(double num, double den){ 
+            if (std::isnan(num) or std::isinf(den)) return 0  ;
+            if (std::isnan(den) or std::isinf(num)) return 10;
+            if (den <=0 ) return 0 ; 
+            if (num>10*den) return 10; 
+            return num/den;
+            };
 
     public:
     PU();
