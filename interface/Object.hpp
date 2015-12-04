@@ -40,7 +40,7 @@ class Object
         virtual inline TLorentzVector & GetP4(){ return p4;}
         virtual void SetP4(TLorentzVector &x);
 
-        float InvMass(Object &o);
+        double InvMass(Object &o);
 
         // pointer versions
         virtual inline float DeltaR(Object *o){ return this->DeltaR(*o) ;}

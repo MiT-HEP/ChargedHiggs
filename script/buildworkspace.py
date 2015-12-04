@@ -11,6 +11,7 @@ parser.add_option("-n","--ncat",type='int',help="Number of cat. [Default=%defaul
 extra = OptionGroup(parser,"Extra options:","")
 #extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. [Default=%default]", default=1)
 extra.add_option("","--datacard",type='string',help="Output datacard extra. [Default=%default]", default="")
+extra.add_option("","--basedir",type='string',help="Base Dir. [Default=%default]", default="ChargedHiggsTauNu/Vars/")
 
 parser.add_option_group(extra)
 
@@ -32,6 +33,7 @@ w = ROOT.RooWorkspace("w","w")
 ############ DATACARD ###########
 datName = "cms_datacard_ws"
 if opts.qcd != "": datName+="_qcddata"
+if opts.datacard != "": datName += "_" + opts.datacard
 datName += ".txt"
 
 datacard=open(datName,"w")
@@ -50,7 +52,8 @@ argset_obs = ROOT.RooArgSet(mt)
 
 fIn = ROOT.TFile.Open(opts.input,"READ")
 
-basedir = "ChargedHiggsTauNu/Vars/"
+#basedir = "ChargedHiggsTauNu/Vars/"
+basedir = opts.basedir
 lastget=""
 
 for cat in range(0,opts.ncat):
@@ -83,17 +86,17 @@ def ImportPdfFromTH1(tfile, name, target): ## w is global as arglist_obs and arg
 		print "FIXME implement a negligible shape with constrain"
 		return
 	else:
-		print "Normalization for '%s' is %f"%(name,h_mc.Integral())
+		print "Normalization for '%s' is %f"%(name,h.Integral())
 	
 	## ---ZERO ---
 	for i in range(0,h.GetNbinsX()):
 		if h.GetBinContent(i+1)<0: h.SetBinContent(i+1,0)
-	roo_mc = ROOT.RooDataHist("hist_"+target,target,arglist_obs,h_mc)
+	roo_mc = ROOT.RooDataHist("hist_"+target,target,arglist_obs,h)
 	pdf_mc = ROOT.RooHistPdf(target, target,argset_obs, roo_mc)
 	## NORM
 	getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
-	w.factory(target + "_norm[%f]"% h_mc.Integral())
-	g.extend([h_mc,roo_mc,pdf_mc])
+	w.factory(target + "_norm[%f]"% h.Integral())
+	g.extend([h,roo_mc,pdf_mc])
 
 	return
 

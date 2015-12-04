@@ -81,6 +81,8 @@ string AnalysisBase::GetLabel(Event *e){
     return label;
 }
 
+#include "interface/Logger.hpp"
+void AnalysisBase::Log(const string& function, const string& level, const string& message){ Logger::getInstance().Log(this,function,level,message ); }
 
 // Local Variables:
 // mode:c++

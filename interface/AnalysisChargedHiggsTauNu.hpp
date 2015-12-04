@@ -20,9 +20,9 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
         // for the n-1 plots
         CutSelector cut;
 
-        virtual void Init();
-        virtual int analyze(Event*,string systname);
-        virtual const string name(){return "ChargedHiggsTauNu";}
+        void Init() override;
+        int analyze(Event*,string systname) override;
+        const string name() override {return "ChargedHiggsTauNu";}
 };
 
 #endif

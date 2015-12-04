@@ -48,6 +48,7 @@ class AnalysisBase
     inline TTree* GetTree(string tree){ return output_->GetTree(tree);}
     bool unblind{false}; // use this flag to protect histograms or region that should be blind
     bool Unblind(Event *e) {if (e->IsRealData() ) return unblind; return true;} // if is not data, no need to return something else
+	void Log(const string& function, const string& level, const string& message);
 };
 
 
