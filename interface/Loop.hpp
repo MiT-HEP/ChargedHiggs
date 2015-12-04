@@ -18,6 +18,9 @@
 #include "interface/Output.hpp"
 
 #include "TStopwatch.h"
+#include "interface/Logger.hpp"
+
+#include <sstream>
 
 class Looper{
 
@@ -40,11 +43,14 @@ class Looper{
 
         TStopwatch sw_;
 
+        void Log(const string& func, const string& state, const string& mex){ Logger::getInstance().Log(name(),func,state, mex); };
+
     protected:
         // --- call by FillEvent
         void FillEventInfo();
         void FillJets();
         void FillLeptons();
+        void FillPhotons();
         void FillTaus();
         void FillMet();
         void FillMC();
@@ -63,6 +69,8 @@ class Looper{
         Looper(string chain);
         ~Looper(){ClearEvent();}
         // ---
+        const string name(){return "Looper";}
+        // ---
         inline int AddToChain( string name ){ return tree_ -> Add( name.c_str() ) ; }
         inline int AddAnalysis( AnalysisBase* a ) {analysis_ . push_back(a); return 0;}
         inline int AddSmear(SmearBase *s) { systs_ .push_back(s) ; return 0; }
@@ -74,7 +82,7 @@ class Looper{
         inline void ActivateBranch(string bname){ tree_ -> SetBranchStatus(bname.c_str(),1); return; }
         int InitSmear() ;
         int InitCorrector() ;
-        int InitAnalysis() { for(auto a : analysis_ ) { a->SetOutput(output_); a->Init() ;}  return 0;}
+        int InitAnalysis() { for(auto a : analysis_ ) { a->SetOutput(output_); a->doInit() ;}  return 0;}
         int InitOutput(string name){output_ -> Open(name); return 0;}
         //
         void Loop();

@@ -15,6 +15,7 @@ void Event::ClearEvent(){
     jets_ . clear();
     leps_ . clear();
     taus_ . clear();
+    phos_ . clear();
     genparticles_ . clear();
 
     weight_ . clearSF( );
@@ -63,10 +64,10 @@ float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton
     return -3;
 } 
 
-float Event::RbbMin(int iMax) {
+float Event::RbbMin(int iMax,Tau *t) {
     // notice the Pi-...
-    if (GetTau(0) == NULL) return -1;
-    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( GetTau(0) ) );
+    if (t == NULL) return -1;
+    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( t ) );
 
     float rbbmin = -1;
     for(int i=0 ; i< iMax; ++i)
@@ -80,10 +81,10 @@ float Event::RbbMin(int iMax) {
 
     return rbbmin;
 }
-float Event::RCollMin(int iMax) {
+float Event::RCollMin(int iMax,Tau *t) {
     // notice the Pi-...
-    if (GetTau(0) == NULL) return -1;
-    float dphietmisstau = fabs(GetMet().DeltaPhi( GetTau(0) ) );
+    if (t == NULL) return -1;
+    float dphietmisstau = fabs(GetMet().DeltaPhi( t ) );
     float rcollmin = -1;
     for(int i=0 ; i< iMax; ++i)
     {
@@ -97,9 +98,9 @@ float Event::RCollMin(int iMax) {
     return rcollmin;
 }
 
-float Event::RsrMax(int iMax) {
-    if (GetTau(0) == NULL) return -1;
-    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( GetTau(0) ) );
+float Event::RsrMax(int iMax, Tau *t) {
+    if (t == NULL) return -1;
+    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( t ) );
     float rsrmax = -1;
     for(int i=0 ; i< iMax; ++i)
     {
@@ -302,6 +303,23 @@ bool Event::IsTriggered( string name ,Trigger *trigger)
     
     cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
     return false;
+}
+
+Photon * Event::GetPhoton( int iPho ) 
+{     
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<phos_.size() ;++i)
+    {
+        if ( phos_[i]->IsPho()) 
+            valid.push_back(pair<float,int>(phos_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iPho  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return phos_[ valid[iPho].second];
 }
 
 // Local Variables:

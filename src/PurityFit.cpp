@@ -208,12 +208,12 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
     float xmax = h->GetBinLowEdge(nbins+1);
 
     TF1 expo("expo","[0]*TMath::Exp(-[1]*x)",xmin,xmax);
-    expo.SetParameter(0,bkg->Integral());
-    expo.SetParameter(1,bkg->GetBinCenter(nbins/5));
-    expo.SetParLimits(0,bkg->Integral()*.1, bkg->Integral()*10);
-    expo.SetParLimits(1,bkg->GetBinLowEdge(1), bkg->GetBinLowEdge(nbins+1));
-    bkg->Fit( &expo ,"QNW") ;
-    bkg->Fit( &expo ,"QNWM") ;
+    expo.SetParameter(0,0.05);
+    expo.SetParameter(1,0.01);
+    expo.SetParLimits(0,TMath::Min(bkg->Integral()*.1,0.001), bkg->Integral()*10);
+    expo.SetParLimits(1,1e-9, 1.);
+    bkg->Fit( &expo ,"QN") ;
+    bkg->Fit( &expo ,"QNM") ;
 
     cout<<"----------- BKG PARAMETERS ARE -------"<<endl;
     cout<<" 0 : "<< expo.GetParameter(0) <<endl;
@@ -224,7 +224,8 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
     expo.DrawClone("L SAME");
 
     for(int i=1;i<=bkg->GetNbinsX() ;++i)
-        bkg->SetBinContent(i,expo.Eval( bkg->GetBinCenter(i) ) ) ;
+        //bkg->SetBinContent(i,expo.Eval( bkg->GetBinCenter(i) ) ) ;
+        bkg->SetBinContent(i,expo.Integral( bkg->GetBinLowEdge(i),bkg->GetBinLowEdge(i+1) ) ) ;
 
     if (sig->Integral() >0)
         sig -> Scale( 1./sig->Integral() );
@@ -289,7 +290,7 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
             Warnings(0)
             );
     r = PdfModel.fitTo(HistToFit,
-            //SumW2Error(kTRUE),
+            SumW2Error(kTRUE),
             Save(), 
             PrintEvalErrors(-1),
             PrintLevel(-1),
@@ -342,6 +343,7 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
             ptmin = atof( pts.c_str() ) ;
 
             pts="";
+            ++n;
             while (	name[n] != '_' and name[n] != '\0' ) { pts+=name[n]; ++n;}
             ptmax = atof( pts.c_str() ) ;
             txt->DrawLatex(.3,.82,Form("%.1f<P_{T}<%.1f",ptmin,ptmax));	

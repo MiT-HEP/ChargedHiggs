@@ -12,7 +12,7 @@ Tau::Tau() : Lepton(){
     iso2 = -999;  // Iso with Delta beta correction
 }
 
-int Tau::IsTau(){
+int Tau::IsTau() const {
     if ( not id ) return 0;
     if ( not id_ele) return 0;
     if ( not id_mu) return 0;
@@ -22,7 +22,7 @@ int Tau::IsTau(){
     return 1;
 }
 
-int Tau::IsTauInvIso(){
+int Tau::IsTauInvIso() const {
     if ( not id ) return 0;
     if ( not id_ele) return 0;
     if ( not id_mu) return 0;

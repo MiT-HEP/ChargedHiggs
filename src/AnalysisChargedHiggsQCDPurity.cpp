@@ -43,7 +43,7 @@ void ChargedHiggsQCDPurity::Init()
         }
         // I don't need to split it by pt
             Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),250,0.,500);
-            Book( dir + "Mt"+"_"+ l  , ("MtIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),250,0.,500.);
     }
 
 }

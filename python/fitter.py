@@ -45,11 +45,31 @@ if opts.purity:
 	fitter.outname = "QCDFit.root"
 	if opts.verbose: fitter.verbose_ = 1
 	#fitter.PtBins.push_back(0)
+	#print "COARSE BINNINGS"
+	#fitter.PtBins.push_back(50)
+	#fitter.PtBins.push_back(70)
+	#fitter.PtBins.push_back(100)
+	#fitter.PtBins.push_back(150)
+	#fitter.PtBins.push_back(8000)
+	print "FINE BINNINGS"
 	fitter.PtBins.push_back(50)
+	fitter.PtBins.push_back(55)
+	fitter.PtBins.push_back(60)
+	fitter.PtBins.push_back(65)
 	fitter.PtBins.push_back(70)
+	fitter.PtBins.push_back(80)
+	fitter.PtBins.push_back(90)
 	fitter.PtBins.push_back(100)
+	fitter.PtBins.push_back(125)
 	fitter.PtBins.push_back(150)
+	fitter.PtBins.push_back(175)
+	fitter.PtBins.push_back(200)
+	fitter.PtBins.push_back(250)
+	fitter.PtBins.push_back(500)
+	fitter.PtBins.push_back(750)
+	fitter.PtBins.push_back(1000)
 	fitter.PtBins.push_back(8000)
+
 else:
 	call( "mkdir -p plot/sigfit", shell=True)
 	fitter.plotDir = "plot/sigfit/"

@@ -6,6 +6,10 @@ void GGAnalysis::Init(){
 	    Log(__FUNCTION__,"INFO","Booking Histo Mass");
     }
 
+    InitTree("ggTree");
+    Branch("ggTree","mgg",'F');
+    Branch("ggTree","weight",'F');
+
 }
 
 int GGAnalysis::analyze(Event *e, string systname)
@@ -16,6 +20,17 @@ int GGAnalysis::analyze(Event *e, string systname)
     cut.SetCutBit( Total ) ;
 
     if (e->weight() == 0.) Log(__FUNCTION__,"WARNING","Event Weight is NULL");
+
+    Photon *g1 = e->GetPhoton(0);
+    Photon *g2 = e->GetPhoton(1);
+
+    if (g1 == NULL or g2 == NULL ) return 0;
+
+    SetTreeVar("mgg", g1->InvMass( *g2) );
+    SetTreeVar("weight", e->weight() ) ;
+    FillTree("ggTree");
+
+    return 0;
 }
 
 // Local Variables:

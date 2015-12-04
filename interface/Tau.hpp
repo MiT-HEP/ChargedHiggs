@@ -20,9 +20,9 @@ class Tau: virtual public Object,
     bool id_mu =0 ;
     int match ; // is matched with a gen tau
 
-    virtual int IsTau() ;
-    virtual int IsTauInvIso();
-    virtual inline int IsObject(){ return IsTau(); }
+    virtual int IsTau() const ;
+    virtual int IsTauInvIso() const ;
+    inline int IsObject() const override{ return IsTau(); }
 
     virtual bool IsMatch( ) { if (match >= 0) return true; else return false;}
 

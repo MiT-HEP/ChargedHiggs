@@ -12,6 +12,7 @@ using namespace std;
 #include "interface/Lepton.hpp"
 #include "interface/Tau.hpp"
 #include "interface/Met.hpp"
+#include "interface/Photon.hpp"
 #include "interface/GenParticle.hpp"
 
 // ----
@@ -33,6 +34,7 @@ class Event{
     vector<Lepton*> leps_;
     vector<Jet*>    jets_;
     vector<Tau*>    taus_;
+    vector<Photon*> phos_;
     vector<GenParticle*>    genparticles_; // gen particles
     Met met_;
     vector<bool>    triggerFired_;
@@ -62,6 +64,7 @@ class Event{
     Lepton * GetLepton( int iLep );
     Lepton * GetElectron( int iEle );
     Lepton * GetMuon( int iMu );
+    Photon * GetPhoton( int iPho );
 
     //
     inline Met GetMet( ) { return met_;} // should be const, but noCorrPt is not set correctly without &
@@ -89,9 +92,13 @@ class Event{
     float Mt(MtType type=MtTau ) ; // 0 tau, 1 muon ,...
 
     // --------- Angular variables
-    float RbbMin(int iMax=3) ;
-    float RCollMin(int iMax=3) ;
-    float RsrMax(int iMax=3)  ;
+    inline float RbbMin(int iMax=3) { return RbbMin(iMax,GetTau(0) ) ; }
+    inline float RCollMin(int iMax=3) { return RCollMin(iMax, GetTau(0)); }
+    inline float RsrMax(int iMax=3) { return RsrMax(iMax, GetTau(0)); } 
+
+    float RbbMin(int iMax,Tau *t) ;
+    float RCollMin(int iMax,Tau *t) ;
+    float RsrMax(int iMax,Tau *t) ;
 
     //-----------------------------
     virtual void ClearEvent();

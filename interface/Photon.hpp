@@ -1,10 +1,10 @@
-#ifndef LEPTON_H
-#define LEPTON_H
+#ifndef PHOTON_H
+#define PHOTON_H
 
 #include "interface/Object.hpp"
 #include "interface/Trigger.hpp"
 
-class Lepton : virtual public Object,
+class Photon : virtual public Object,
     virtual public Trigger
 {
     friend class TagAndProbe;
@@ -13,24 +13,19 @@ class Lepton : virtual public Object,
         float isocut_;
         float ptcut_;
     public:
-        void SetIsoCut(float x){isocut_=x;}
-        void SetPtCut( float x){ptcut_=x;}
-
-        Lepton() ;
+        Photon() ; // in the cpp
 
         float iso; // isolation 
-        int charge; // charge +1 -1
-        int type;// abspdgid 11 o 13 
+        int id; // 
 
-        virtual inline int IsLep() const { 
+        virtual inline int IsPho() const { 
             if ( iso > isocut_) return 0;
             if ( Pt() < ptcut_ ) return 0;
 
             return 1;
         }
-        virtual inline bool IsElectron() const { return IsLep() and (type == 11); }
-        virtual inline bool IsMuon() const { return IsLep() and (type == 13); }
-        virtual inline int   IsObject(){return IsLep();}
+
+        inline int  IsObject() const override {return IsPho();}
 };
 
 #endif

@@ -10,10 +10,16 @@
 
 class AnalysisBase
 {
-    Output *output_;
+    private:
+    Output *output_; // set automatically
+
     public:
     AnalysisBase(){ labels.push_back("Data"); labels.push_back("Other");};
     virtual ~AnalysisBase(){};
+    //--
+    void doInit() {Init();}
+    void doEnd() { End();} 
+    int doAnalyze(Event*e,string systname){return analyze(e,systname);}
     // 
     virtual void inline SetOutput( Output *o ) { output_ = o ;}
     virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}

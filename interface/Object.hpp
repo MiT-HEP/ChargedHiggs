@@ -27,25 +27,25 @@ class Object
         ~Object(){};
         //---
         virtual inline void  clearSyst(){}; // reset smearing
-        virtual inline float Pt(){return p4.Pt() ;}
-        inline float PtUncorr(){ return p4NoCorr.Pt() ;} // not overwrite
-        virtual inline float Eta(){ return p4.Eta(); } 
-        virtual inline float Phi(){ return p4.Phi(); }
-        virtual inline float E(){ return p4.E(); }
-        virtual inline float M(){ return p4.M(); }
-        virtual inline int   IsObject(){return 0;}
-        virtual inline float DeltaR(Object &o){ return p4.DeltaR(o.GetP4()); }
-        virtual inline float DeltaEta(Object &o){return fabs(p4.Eta()-(o.GetP4()).Eta()); }
-        virtual inline float DeltaPhi(Object &o){return fabs( ChargedHiggs::deltaPhi( Phi(), o.Phi()) ); }
+        virtual inline float Pt() const {return p4.Pt() ;}
+        inline float PtUncorr() const { return p4NoCorr.Pt() ;} // not overwrite
+        virtual inline float Eta() const { return p4.Eta(); } 
+        virtual inline float Phi() const { return p4.Phi(); }
+        virtual inline float E() const { return p4.E(); }
+        virtual inline float M() const { return p4.M(); }
+        virtual inline int   IsObject() const {return 0;}
+        virtual inline float DeltaR(Object &o) const { return p4.DeltaR(o.GetP4()); }
+        virtual inline float DeltaEta(Object &o) const {return fabs(p4.Eta()-(o.GetP4()).Eta()); }
+        virtual inline float DeltaPhi(Object &o) const {return fabs( ChargedHiggs::deltaPhi( Phi(), o.Phi()) ); }
         virtual inline TLorentzVector & GetP4(){ return p4;}
         virtual void SetP4(TLorentzVector &x);
 
-        double InvMass(Object &o);
+        double InvMass(Object &o) const  ;
 
         // pointer versions
-        virtual inline float DeltaR(Object *o){ return this->DeltaR(*o) ;}
-        virtual inline float DeltaEta(Object *o){return this->DeltaEta(*o); }
-        virtual inline float DeltaPhi(Object *o){return this->DeltaPhi(*o); }
+        virtual inline float DeltaR(Object *o) const { return this->DeltaR(*o) ;}
+        virtual inline float DeltaEta(Object *o) const {return this->DeltaEta(*o); }
+        virtual inline float DeltaPhi(Object *o) const {return this->DeltaPhi(*o); }
 
         // ---
         // copy constructor

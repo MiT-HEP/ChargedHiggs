@@ -27,23 +27,23 @@ class Jet : virtual public Object
     int bsyst ;
 
     // ---
-    inline float Pt() override { if (syst ==0) return p4.Pt(); return p4.Pt() *(1.0  + unc*syst );}
+    inline float Pt() const override { if (syst ==0) return p4.Pt(); return p4.Pt() *(1.0  + unc*syst );}
     inline void  clearSyst()override {Object::clearSyst() ;syst = 0;bsyst=0; isValid=1;}; // reset smearing
     // ---
-    virtual inline int   IsObject(){return IsJet();}
-    inline int IsJet() { if (not isValid) return 0 ; 
+    inline int IsObject() const override {return IsJet();}
+    inline int IsJet() const { if (not isValid) return 0 ; 
         if( Pt() < ptcut_ ) return 0; 
         if( fabs(Eta()) >= etacut_) return 0;
         return 1;
     }
 
-    inline int IsCentralJet() {
+    inline int IsCentralJet() const {
         if ( not IsJet() ) return 0;
         if ( fabs(Eta()) >= etacutcentral_ ) return 0;
         return 1;
     }
 
-    inline int IsBJet(){ if( bdiscr > bcut_ + bsyst*bunc and IsJet() )   return 1; return 0;}
+    inline int IsBJet() const { if( bdiscr > bcut_ + bsyst*bunc and IsJet() )   return 1; return 0;}
 
     inline void computeValidity( Object* o, float dR = 0.4)
     {

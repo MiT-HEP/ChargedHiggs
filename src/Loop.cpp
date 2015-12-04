@@ -9,11 +9,13 @@
 #include "NeroProducer/Core/interface/BareMet.hpp"
 #include "NeroProducer/Core/interface/BareFatJets.hpp"
 #include "NeroProducer/Core/interface/BareLeptons.hpp"
+#include "NeroProducer/Core/interface/BarePhotons.hpp"
 #include "NeroProducer/Core/interface/BareTaus.hpp"
 #include "NeroProducer/Core/interface/BareTrigger.hpp"
 #include "NeroProducer/Core/interface/BareVertex.hpp"
 
 #include "interface/Handlers.hpp"
+#include "interface/Logger.hpp"
 
 #include <sstream>
 
@@ -108,6 +110,14 @@ int Looper::InitTree()
     bare_.push_back(l);
 
 #ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Photons "<<endl;
+#endif
+    // ---
+    BarePhotons *p = new BarePhotons(); 
+    names_[ "Photons" ] = bare_.size();
+    bare_.push_back(p);
+
+#ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Met "<<endl;
 #endif
     BareMet *met = new BareMet(); 
@@ -148,7 +158,8 @@ void Looper::Loop()
 {
     unsigned long nEntries = tree_->GetEntries();
 
-    cout<<"[Looper]::[Loop]::[INFO] Running on "<<nEntries<<" entries" <<endl;
+    //ostringstream os; os<<"Running on "<<nEntries<<" entries" ;
+    Log(__FUNCTION__,"INFO", Form("Running on %d entries",nEntries) );
 
     sw_. Reset();
 
@@ -157,7 +168,7 @@ void Looper::Loop()
         {
             if(iEntry %10000 == 0 ) {
                 sw_.Stop();
-                cout<<"[Looper]::[Loop]::[INFO] Getting Entry "<<iEntry<<" / "<<nEntries << " in (Cpu)"<< sw_ .CpuTime() <<" (Real) "<< sw_.RealTime()<<endl;
+		Log(__FUNCTION__,"INFO",Form("Getting Entry %lu / %lu in (Cpu) %.4f (Real) %.4f",iEntry,nEntries, sw_.CpuTime(),sw_.RealTime()) );
                 sw_ .Reset();
                 sw_ .Start();
             }
@@ -191,15 +202,15 @@ void Looper::Loop()
 			    c->correct(event_);
 
                     //do the analysis
-                    event_->validate(); // validate the objects
                     for(auto a : analysis_)
                     {
 #ifdef VERBOSE
-                        if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing Analysis "<<a->name()<<endl;;
+                        if (VERBOSE > 1) Log(__FUNCTION__,"DEBUG", string("Doing Analysis") + a->name());
 #endif
+                    	event_->validate(); // validate the objects
                         // each analysis step will apply the SF accordingly to the object it is using
                         event_ -> weight_ . clearSF() ;
-                        if ( a->analyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
+                        if ( a->doAnalyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
                     }
                 }
                 s->SetSyst(0); // not necessary, but cleaner in this way
@@ -215,7 +226,7 @@ void Looper::Loop()
     }
     //call end procedures for the analyis
     for(auto a : analysis_)
-        a->End();
+        a->doEnd();
     // save output
 
     Write();
@@ -358,6 +369,35 @@ void Looper::FillJets(){
         event_ -> jets_ . push_back(j);
     }
     return;
+}
+
+void Looper::FillPhotons(){
+	BarePhotons*b = dynamic_cast<BarePhotons*>(bare_[names_["Photons"] ] ) ; 
+	if (b == NULL)
+	{
+		static int count=0;
+		if (count <10 )  Log(__FUNCTION__,"WARNING", "No photons available");
+		count ++;
+		return ;
+	}
+    	if ( tree_ ->GetBranchStatus("photonP4") ==0  ){ 
+		static int count2 = 0;
+		count2++;
+		if (count2 <10 )  Log(__FUNCTION__,"WARNING", "Photons not filled");
+		return;
+	}
+
+    	for (int i = 0;i<b->p4->GetEntries() ;++i)
+    	{
+    	    //bool id = (b->selBits->at(i)) & BarePhotons::Selection::PhoMedium;
+	    //if (not id) continue;
+	    Photon *p = new Photon();
+	    p->SetP4( *(TLorentzVector*) ((*b->p4)[i]) );
+	    p->iso = b->chIso->at(i);
+	    p->id = (b->selBits->at(i));
+	    event_ -> phos_ . push_back(p);
+    	}
+
 }
 
 void Looper::FillLeptons(){
@@ -569,6 +609,7 @@ void Looper::FillEvent(){
     //usleep(100); // DEBUG XROOTD
     FillJets();
     FillLeptons();
+    FillPhotons();
     FillTaus();
     FillMet();
     FillMC();
