@@ -13,6 +13,8 @@ class Photon : virtual public Object,
         float isocut_;
         float ptcut_;
     public:
+        inline void SetPtCut(float x) {ptcut_ = x;}
+        inline void SetIsoCut(float x) {isocut_ = x;}
         Photon() ; // in the cpp
 
         float iso; // isolation 

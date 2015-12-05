@@ -13,6 +13,8 @@ class Tau: virtual public Object,
 
 
     public:
+    void SetEtaCut(float x){etacut_=x;}
+
     Tau() ;
     bool id;
     float iso2;

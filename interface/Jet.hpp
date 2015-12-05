@@ -15,6 +15,11 @@ class Jet : virtual public Object
 
     public:
 
+    void SetPtCut(float x){ptcut_= x;}
+    void SetEtaCut(float x){etacut_ = x;}
+    void SetEtaCutCentral( float x) {etacutcentral_=x;}
+    void SetBCut(float x) {bcut_=x;}
+
     Jet() ; 
 
     int isValid; // rejected by DR

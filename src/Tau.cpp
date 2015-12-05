@@ -4,9 +4,9 @@
 using namespace std;
 
 Tau::Tau() : Lepton(){
-    etacut_= 2.1;
-    ptcut_ = 20;
-    isocut_= 1.5;  // inv iso may be different
+    etacut_= 0;
+    ptcut_ = 0;
+    isocut_= 0;  // inv iso may be different
 
     match = -999; ;  // matching with generator
     iso2 = -999;  // Iso with Delta beta correction

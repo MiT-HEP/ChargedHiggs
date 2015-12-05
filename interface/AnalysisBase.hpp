@@ -13,6 +13,16 @@ class AnalysisBase
     private:
     Output *output_; // set automatically
 
+    protected:
+    // --- this are the default values. override these functions
+    virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(10); l->SetPtCut(15);}
+    virtual inline void SetPhotonCuts(Photon *p){p->SetIsoCut(-1); p->SetPtCut(30);}
+    virtual inline void SetTauCuts(Tau *t){ t->SetIsoCut(1.5); t->SetEtaCut(2.1); t->SetPtCut(20);}
+    virtual inline void SetJetCuts(Jet *j){j->SetBCut(0.5);j->SetEtaCut(4.7); j->SetEtaCutCentral(2.4);j->SetPtCut(30);};
+    virtual void SetGenCuts(GenParticle *g){};
+    
+    void SetCuts(Event *e);
+
     public:
     AnalysisBase(){ labels.push_back("Data"); labels.push_back("Other");};
     virtual ~AnalysisBase(){};
