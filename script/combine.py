@@ -31,8 +31,13 @@ parser.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do not 
 parser.add_option("-e","--expected" ,dest='exp',action='store_true',help="Run Expected [Default=%default]",default=True)
 parser.add_option("-u","--unblind" ,dest='exp',action='store_false',help="Unblind Results")
 parser.add_option("","--ncore",type='int',help="num. of core. [%default]",default=4)
+parser.add_option("","--rmax",type='float',help="rmax. [%default]",default=1000000)
+parser.add_option("","--onews",action='store_true',help="Only one ws. names do not depend on the higgs mass. [%default]",default=False)
+parser.add_option("","--nosyst",action='store_true',help="No Syst.. [%default]",default=False)
 
 (opts,args)=parser.parse_args()
+
+onews=0 ## for onews
 
 EOS='/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
 
@@ -59,7 +64,11 @@ iJob = -1
 
 def parallel(text2ws, bsub=""):
 	print "-> Parallel command :'"+text2ws+"'"
-	st = call(text2ws,shell=True);
+	if text2ws != "/bin/true":
+		st = call(text2ws,shell=True);
+	else: 
+		st =0
+
 	if st !=0 :
 		print "ERROR in executing txt2ws"
 		return 0
@@ -107,9 +116,16 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	## Construct Datacard
 	datacard= re.sub( ".txt","_M%.0f.root"%mass,opts.input.split("/")[-1])
 	cmd = "text2workspace.py -m " + str(mass) + " -o " + opts.dir + "/" + datacard +  " " + opts.input
+	if opts.onews:
+		datacard= re.sub( ".txt",".root",opts.input.split("/")[-1])
+		cmd = "text2workspace.py -o "+ opts.dir+"/"+datacard +" " + opts.input
+		if onews >0 : cmd="/bin/true"
+		onews+=1
+
 	if opts.ncore <2:
-		print "-> Running command :'"+cmd+"'"
-		call(cmd,shell=True)
+		if cmd != "/bin/true":
+			print "-> Running command :'"+cmd+"'"
+			call(cmd,shell=True)
 	else:
 		text2ws = cmd[:]
 	
@@ -117,10 +133,12 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	sh.write('cp -v '+ basedir + "/"+  datacard + " ./ \n" )
 	##Write combine line
 	#combine -M Asymptotic -m 200 -S 0 --run=expected --expectSignal=1 --expectSignalMass=200  cms_datacard_chhiggs_taunu.txt
-	combine = "combine -M Asymptotic -m "+ str(mass) + " -S 0 "
+	combine = "combine -M Asymptotic -m "+ str(mass)
+	if opts.nosyst: combine += " -S 0 "
 	combine += "  --cminDefaultMinimizerType=Minuit2 "
+	combine += " -H ProfileLikelihood " ## hint
 	if opts.exp : combine += " --run=expected --expectSignal=1 --expectSignalMass="+str(mass) + " "
-	combine += " --rMax=1000000 "
+	combine += " --rMax=%f "%opts.rmax
 	combine += datacard
 	sh.write( combine + "\n" )
 	sh.write('EXITCODE=$?\n')
@@ -142,13 +160,18 @@ for mass in drange(opts.begin,opts.end,opts.step):
 			bsub=cmdline[:]
 
 	if opts.ncore>=2:
-		while threading.activeCount() >= opts.ncore:
-			print "sleep ....",
-			time.sleep(3)
-			print "wake up"
+		if not opts.onews:
+			while threading.activeCount() >= opts.ncore:
+				print "sleep ....",
+				time.sleep(1)
+				print "wake up"
 		t= threading.Thread(target=parallel,args=(text2ws,bsub,) )
 		t.start()
 		threads.append(t)
+
+		if opts.onews and text2ws !="/bin/true":
+			print "-> for onews I'll wait the text2ws to end"
+			t.join()
 
 for t in threads:
 	t.join()

@@ -219,7 +219,7 @@ void Looper::Loop()
     }
     catch( sigint_exception &e)
     {
-        cout<<" Caught SIGINT/SIGTERM: exiting! "<<endl;
+	Log(__FUNCTION__,"SIGNAL"," Caught SIGINT/SIGTERM: exiting! ");
         Write();
         Close();
         throw e; 
@@ -245,7 +245,7 @@ void Looper::NewFile()
     fNumber = tree_->GetTreeNumber();
     // check name and weight TODO
     string fname = tree_->GetFile()->GetName();
-    cout<<"[Looper]::[NewFile]::[INFO] Opening new file: '"<<fname<<"'"<<endl;
+    Log(__FUNCTION__,"INFO","Openining new file: '"+ fname +"'");
     //"root://eoscms//store/../label/abc.root"
     size_t last = fname.rfind('/');
     //size_t prevLast = fname.rfind('/',last-1);

@@ -13,6 +13,7 @@ parser.add_option("-l","--label",dest="label",default="",type="string",help="Lab
 parser.add_option("-o","--outname",dest="outname",help="Name of output pdf/png/C")
 parser.add_option("-v","--verbose",dest="verbose",default=False,action="store_true")
 parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
+parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true",help="Draw observation")
 parser.add_option("-x","--xSec",dest="xsec",help="Print limit vs xSec instead of mu",default=False,action="store_true")
 (opts,args)=parser.parse_args()
 
@@ -85,7 +86,10 @@ def GetLimitFromTree(inputFile,xsec=False):
 	twoSigma=ROOT.TGraphAsymmErrors()
 	twoSigma.SetName("twoSigma")
 	
-	
+	dataObs=ROOT.TGraphAsymmErrors()
+	dataObs.SetName("data_obs")
+
+	data    = []
 	median 	= []
 	Up 	= []
 	Up2 	= []
@@ -101,7 +105,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 		type= 0
 	
 		## TODO OBS
-	
+			
 		if q==0.5 : 
 			#exp.SetPoint(g.GetN(), mh,l ) 
 			median.append(  (mh,l) ) 
@@ -118,6 +122,8 @@ def GetLimitFromTree(inputFile,xsec=False):
 		if abs(q-0.9750000) <1e-5 :  ## 95% 2sUp
 			type=2
 			Up2.append( (mh,l) )
+		if q <-.5: # -1
+			data.append( (mh,l) ) 
 	
 	if len(Up2) != len(Down2) :print "[ERROR] Count 2s"
 	if len(Up) != len(Down) :print "[ERROR] Count 1s"
@@ -184,6 +190,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 		if mh != Up2[i][0] : print "[ERROR]: MH mismatch"
 		if mh != Down[i][0] : print "[ERROR]: MH mismatch"
 		if mh != Down2[i][0] : print "[ERROR]: MH mismatch"
+		if opts.unblind and mh != data[i][0]: print "[ERROR]: MH mismatch"
 		
 		if xsec:
 			print "mh=",mh,"xSec=",xSec, "median = ",median[i][1]
@@ -193,6 +200,8 @@ def GetLimitFromTree(inputFile,xsec=False):
 			Up2[i]      = (mh, Up2[i][1] * xSec )
 			Down[i]     = (mh, Down[i][1] * xSec )
 			Down2[i]    = (mh, Down2[i][1] * xSec )
+			if opts.unblind:
+				data[i] = (mh, data[i][1] * xSec) 
 	
 		exp.SetPoint( count, median[i][0] ,median[i][1])
 
@@ -201,15 +210,18 @@ def GetLimitFromTree(inputFile,xsec=False):
 		twoSigma.SetPoint(count, mh , median[i][1] ) 
 		twoSigma.SetPointError(count, 0, 0 , median[i][1] - Down2[i][1], Up2[i][1]-median[i][1] ) 
 
-	return obs,exp,oneSigma,twoSigma
+		if opts.unblind:dataObs.SetPoint(count,mh,data[i][1])
 
+	return obs,exp,oneSigma,twoSigma, dataObs
+
+list_data = []
 list_obs = []
 list_exp = []
 list_oneSigma=[]
 list_twoSigma=[]
 
 for idx,f in enumerate(opts.file.split(',')):
-	obs,exp,oneSigma,twoSigma= GetLimitFromTree(f,opts.xsec)
+	obs,exp,oneSigma,twoSigma,dataObs= GetLimitFromTree(f,opts.xsec)
 
 	if idx == 0 :
 		obs.SetMarkerStyle(21)
@@ -227,6 +239,12 @@ for idx,f in enumerate(opts.file.split(',')):
 		
 		oneSigma.SetFillColor(ROOT.kGreen)
 		twoSigma.SetFillColor(ROOT.kYellow)
+
+		dataObs.SetMarkerStyle(21)
+		dataObs.SetMarkerSize(0.8)
+		dataObs.SetMarkerColor(ROOT.kBlack)
+		dataObs.SetLineColor(ROOT.kBlack)
+
 	else:
 		obs.SetMarkerStyle(21)
 		obs.SetMarkerSize(0.5)
@@ -260,6 +278,10 @@ for idx,f in enumerate(opts.file.split(',')):
 		oneSigma.SetFillStyle(0)
 		twoSigma.SetFillStyle(0)
 
+		dataObs.SetMarkerStyle(21+idx)
+		dataObs.SetMarkerSize(0.8)
+
+	list_data.append(dataObs)
 	list_obs.append(obs)
 	list_exp.append(exp)
 	list_oneSigma.append(oneSigma)
@@ -315,6 +337,7 @@ for idx in range(0,len(list_exp) ):
 		list_oneSigma[idx].Draw("PE3 SAME")
 	#mg.Add(list_exp[idx])
 	list_exp[idx].Draw("L SAME")
+	if opts.unblind: list_data[idx].Draw("P SAME")
 
 #mg.Draw("3")
 #mg.Draw("LPX")

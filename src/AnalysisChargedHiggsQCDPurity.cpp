@@ -34,9 +34,6 @@ void ChargedHiggsQCDPurity::Init()
             Book( dir + HistName(pt, true , true, "Upar")+"_"+ l  , ("EtMissParallel "+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, true, true, "Uperp")+"_"+ l  , ("EtMissPerp "+ l).c_str(),250,0.,500.);
 
-            // Book( dir + HistName(pt, true , true,"Mt")+"_"+ l  , ("Mt "+ l).c_str(),250,0.,500);
-            // Book( dir + HistName(pt, false, true,"Mt")+"_"+ l  , ("MtIsoInv "+ l).c_str(),250,0.,500.);
-
             Book( dir + HistName(pt, false , true, "Upar")+"_"+ l  , ("EtMissParallelIsoInv "+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, false, true, "Uperp")+"_"+ l  , ("EtMissPerpIsoInv "+ l).c_str(),250,0.,500.);
 
