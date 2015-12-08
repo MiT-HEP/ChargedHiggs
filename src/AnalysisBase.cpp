@@ -5,6 +5,7 @@
 
 void AnalysisBase::Book(string name, string title, int nBins,double xmin,double xmax)
 {
+    Log(__FUNCTION__,"INFO","Booking histo "+name);
     output_ -> Book(name,title,nBins,xmin,xmax);
 }
 

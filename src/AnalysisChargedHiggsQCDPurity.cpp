@@ -1,5 +1,9 @@
 #include "interface/AnalysisChargedHiggsQCDPurity.hpp"
 #include "interface/GeneralFunctions.hpp"
+#include "interface/CutSelector.hpp"
+#include "interface/AnalysisChargedHiggsTauNu.hpp"
+#include <string>
+
 
 //#define VERBOSE 1
 
@@ -63,48 +67,46 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is TauInv? "<< (tInv == NULL)<<endl;
     #endif
 
+    // --- take the selection from the tau nu analysis
+    CutSelector direct; 
+        direct.SetMask(ChargedHiggsTauNu::MaxCut-1);
+        direct.SetCut(ChargedHiggsTauNu::Selection(e,true));
+    CutSelector inverse;
+        inverse.SetMask(ChargedHiggsTauNu::MaxCut-1);
+        inverse.SetCut(ChargedHiggsTauNu::Selection(e,false));
+
     // TODO:
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
     // * put a limit on the TauInv sideband ? 3.0 -20 GeV
 
-    // TODO -> use TAU + MET TRIGGER 
-    if ( e->IsRealData() and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") )  {
-        return EVENT_NOT_USED;
-    }
-    //cout <<" EVENT TRIGGERED"<<endl;
-    #ifdef VERBOSE
-    if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is real data? "<<e->IsRealData() <<" and pass trigger" <<endl;
-    #endif
-    //
-    // ---
-    if ( t==NULL and tInv==NULL ) return EVENT_NOT_USED;
-    if ( e->Nleps() >0 ) return EVENT_NOT_USED;
-    if ( e->Njets() <3 ) return EVENT_NOT_USED;
+    if ( not direct.passAllUpTo(ChargedHiggsTauNu::ThreeJets)
+         and not inverse.passAllUpTo(ChargedHiggsTauNu::ThreeJets)
+       ) return EVENT_NOT_USED;
 
-    #ifdef VERBOSE
-    if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] pass basic selection (Njets, nLepts)"<<endl;
-    #endif
 
-    if (t != NULL and t->Pt()>=51 and fabs(t->Eta())<2.1)
+    //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection
+    bool passPrescale=false;
+    if (not e->IsRealData()) passPrescale=true;
+    if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
+
+    if (t != NULL and passPrescale) // direct
     {
         float pt = t->Pt();
 
-        if (pt  > 8000 or pt <0 ) 
-            cout <<"[ChargedHiggsQCDPurity]::[analyze]::[INFO] strange event:  tau Pt="<<pt<<endl;
+        if (pt  > 8000 or pt <0 )  Log(__FUNCTION__,"INFO",Form("strange event : tau Pt=%.0f",pt));
 
         string hist = HistName(pt,true, false);
-        Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+        Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
         hist = HistName(pt,true, false,"Uperp");
         Fill( dir+hist +"_"+label,systname, Upar(e,t), e->weight() );
         hist = HistName(pt,true, false,"Upar");
         Fill( dir+hist +"_"+label,systname, Uperp(e,t), e->weight() );
     }
 
-    if (tInv != NULL and tInv->Pt()>=51 and fabs(tInv->Eta())<2.1)
+    if (tInv != NULL and passPrescale) // inv iso
     {
         float pt = tInv->Pt();
-        if (pt  > 8000 or pt <0 ) 
-            cout <<"[ChargedHiggsQCDPurity]::[analyze]::[INFO] strange event:  tau (inv iso) Pt="<<pt<<endl;
+        if (pt  > 8000 or pt <0 )  Log(__FUNCTION__,"INFO",Form("strange event : tau Pt=%.0f",pt));
         string hist = HistName(pt,false,false);
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
         hist = HistName(pt,false, false,"Uperp");
@@ -114,71 +116,40 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     }
 
     // -------------------------- FULL SELECTION -----------------------------------------------
-    // this part is need for the QCD Prediction after the purity fit
-    if ( e->GetMet().Pt() <130 ) return EVENT_NOT_USED;
-    if ( e->Bjets() <1 ) return EVENT_NOT_USED;
 
-    #ifdef VERBOSE
-    if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] pass Met, and Bjets"<<endl;
-    #endif
-
-    double DPhiEtMissJet1=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(0))->Phi()));
-    double DPhiEtMissJet2=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(1))->Phi()));
-    double DPhiEtMissJet3=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),(e->GetJet(2))->Phi()));
-
-    if (t!=NULL) 
+    if (t!=NULL and direct.passAll() ) 
     {
-        double DPhiEtMissTau=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),t->Phi()));
-
-        double RbbMin=min(min(sqrt(pow(DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
-        double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
-        double RsrMax=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
-        if ( RCollMin*TMath::RadToDeg() >=40 and RbbMin*TMath::RadToDeg() >=40 ){
             #ifdef VERBOSE
-            if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is tau, pass angular cuts"<<endl;
+            if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG", "is tau pass full selection");
             #endif
             float pt = t->Pt();
             string hist = HistName(pt,true,true);  
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
 
-            //hist = HistName(pt,true,true,"Mt");  
             hist= "Mt"; //UNBLIND
             if ( Unblind(e) ) Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight());
             hist = HistName(pt,true, true,"Uperp");
             Fill( dir+hist +"_"+label,systname, Upar(e,t), e->weight() );
             hist = HistName(pt,true, true,"Upar");
             Fill( dir+hist +"_"+label,systname, Uperp(e,t), e->weight() );
-        }
     }
 
-    if (tInv != NULL ) {
+    if (tInv != NULL and inverse.passAll()) {
         #ifdef VERBOSE
-        if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is tauInv"<<endl;
+        if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG","is tauInv full selection");
         #endif
         // if the SF don't exist go on, but don't fill inconsistent events
         if( not e->ExistSF("tauinviso") ){
             static int count = 0 ;
-            if (count++ <100) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[INFO] tauinviso SF does not exists"<<endl;
+            if (count++ < 20 )Log(__FUNCTION__,"WARNING","tau inviso SF does not exist" );
             return EVENT_NOT_USED;
         }
 
-        //cout <<"[DEBUG] Setting SF Pt Eta for tauinviso to "<<tInv->Pt()<<" "<<tInv->Eta()<<endl;
         e->SetPtEtaSF("tauinviso",tInv->Pt(),tInv->Eta());
         e->ApplySF("tauinviso");
 
-        if (e->weight() == 0 )
-        {
-            cout <<"[ChargedHiggsQCDPurity]::[analyze]::[WARNING] event weight after SF is 0."<<endl; 
-        }
-        //e->weight();
-        double DPhiEtMissTau=fabs(ChargedHiggs::deltaPhi(e->GetMet().Phi(),tInv->Phi()));
-        double RbbMin=min(min(sqrt(pow(DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
-        double RCollMin=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(DPhiEtMissTau,2)));
-        double RsrMax=min(min(sqrt(pow(TMath::Pi()-DPhiEtMissJet1,2)+pow(TMath::Pi()-DPhiEtMissTau,2)),sqrt(pow(TMath::Pi()-DPhiEtMissJet2,2)+pow(TMath::Pi()-DPhiEtMissTau,2))),sqrt(pow(TMath::Pi()-DPhiEtMissJet3,2)+pow(TMath::Pi()-DPhiEtMissTau,2)));
-        if ( RCollMin*TMath::RadToDeg() >=40 and RbbMin*TMath::RadToDeg() >=40 ){    
-            #ifdef VERBOSE
-            if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is TauInv, pass angular cuts. fill with SF."<<endl;
-            #endif
+        if (e->weight() == 0 )Log(__FUNCTION__,"WARNING","event weight after SF is 0 ");
+
             float pt = tInv->Pt();                                                   
             string hist = HistName(pt,false,true);                                   
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
@@ -186,13 +157,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             //hist = HistName(pt,false,true,"Mt");  
             hist = "MtIsoInv";
             Fill(dir+hist+"_"+label,systname, e->Mt(Event::MtTauInv) ,e->weight());
-            cout <<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG] Filling histo: '"<<dir+hist+"_"+label<<"' with Mt="<< e->Mt(Event::MtTauInv) <<" and weight="<<e->weight()<<endl;
             hist = HistName(pt,false, true,"Uperp");
             Fill( dir+hist +"_"+label,systname, Upar(e,tInv), e->weight() );
             hist = HistName(pt,false, true,"Upar");
             Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight() );
-        }
-
     }
 
 

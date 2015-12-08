@@ -12,6 +12,7 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
             NoLep ,
             ThreeJets ,
             OneBjet ,
+            Trigger ,
             Met ,
             AngColl ,
             AngRbb ,
@@ -22,6 +23,9 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
 
         void Init() override;
         int analyze(Event*,string systname) override;
+        // *return the cut flow
+        //  direct tau or inv tau
+        static unsigned Selection(Event*, bool direct=true) ;
         const string name() override {return "ChargedHiggsTauNu";}
 };
 

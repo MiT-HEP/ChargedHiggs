@@ -1,13 +1,15 @@
 #ifndef MET_H
 #define MET_H
 
+#include "interface/Object.hpp"
+
 class CorrectorBase;
 
 class Met: virtual public Object
 {
 
     public:
-        Met(){syst = 0 ;}
+        Met() : Object() {syst = 0 ;}
         float ptUp; // TOFILL -> TODO COPY OPERATOR FOR SYST
         float ptDown; // TOFILL
         int syst ;

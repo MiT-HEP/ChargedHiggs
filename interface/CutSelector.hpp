@@ -15,6 +15,9 @@ class CutSelector{
         CutSelector(uint32_t cut, size_t maxn) { SetCut(cut); SetMask(maxn);}
         ~CutSelector(){}
         // ---
+        uint32_t raw() const { return cut_;}
+        uint32_t mask() const { return mask_;}
+        // ---
         void SetMask(size_t maxn) {mask_ = (1<<(maxn+1)) -1 ;}//{ mask_=0; for(size_t i=0; i<maxn ;++i) mask_ |= (1<<i) ;  }
         void SetCut(uint32_t cut) {cut_= cut;}
         void SetCutBit(size_t i) { cut_ |= (1<<i) ;}

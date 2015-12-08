@@ -100,6 +100,9 @@ class Event{
     float RCollMin(int iMax,Tau *t) ;
     float RsrMax(int iMax,Tau *t) ;
 
+    inline float DPhiEtMissJet(int iJet=0){ Jet*j= GetJet(iJet) ; if( j == NULL) return -1; return fabs(GetMet().DeltaPhi(j) );}
+    inline float DPhiTauJet(Tau*t,int iJet=0){Jet*j=GetJet(iJet) ; if (j==NULL) return -1 ; return fabs(j->DeltaPhi(*t));}
+
     //-----------------------------
     virtual void ClearEvent();
     virtual inline int IsRealData(){ return isRealData_ ;} 

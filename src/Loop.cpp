@@ -391,6 +391,9 @@ void Looper::FillPhotons(){
     	{
     	    //bool id = (b->selBits->at(i)) & BarePhotons::Selection::PhoMedium;
 	    //if (not id) continue;
+	    bool eleVeto= b->selBits->at(i) & (1UL<<7); // v1.2.1
+	    if (not eleVeto) continue;
+
 	    Photon *p = new Photon();
 	    p->SetP4( *(TLorentzVector*) ((*b->p4)[i]) );
 	    p->iso = b->chIso->at(i);
