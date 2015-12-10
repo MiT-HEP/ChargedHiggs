@@ -13,12 +13,15 @@ class Jet : virtual public Object
     float etacutcentral_;
     float bcut_; /// ** bcut on the bJets discr
 
+    float  qgl_ ; // To Set
+
     public:
 
     void SetPtCut(float x){ptcut_= x;}
     void SetEtaCut(float x){etacut_ = x;}
     void SetEtaCutCentral( float x) {etacutcentral_=x;}
     void SetBCut(float x) {bcut_=x;}
+    inline void SetQGL(float qgl){ qgl_ = qgl;}
 
     Jet() ; 
 
@@ -34,6 +37,7 @@ class Jet : virtual public Object
     // ---
     inline float Pt() const override { if (syst ==0) return p4.Pt(); return p4.Pt() *(1.0  + unc*syst );}
     inline void  clearSyst()override {Object::clearSyst() ;syst = 0;bsyst=0; isValid=1;}; // reset smearing
+    inline float QGL() const { return qgl_; } 
     // ---
     inline int IsObject() const override {return IsJet();}
     inline int IsJet() const { if (not isValid) return 0 ; 

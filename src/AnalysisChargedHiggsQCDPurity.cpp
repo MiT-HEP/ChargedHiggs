@@ -23,6 +23,9 @@ void ChargedHiggsQCDPurity::Init()
 
             Book( dir + HistName(pt, true , false, "Uperp")+"_"+ l  , ("EtMissPerp "+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, false, false, "Uperp")+"_"+ l  , ("EtMissPerpIsoInv "+ l).c_str(),250,0.,500.);
+            //  Used in case of spline reweighting iterations
+            Book( dir + HistName(pt, true,  false, "TauPt")+"_"+ l  , ("PtTau "+ l).c_str(),1000,0.,1000.);
+            Book( dir + HistName(pt, false, false, "TauPt")+"_"+ l  , ("PtTauIsoInv "+ l).c_str(),1000,0.,1000.);
         }
     // --- for event not in the PtBins 
     // -- full selection
@@ -101,6 +104,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         Fill( dir+hist +"_"+label,systname, Upar(e,t), e->weight() );
         hist = HistName(pt,true, false,"Upar");
         Fill( dir+hist +"_"+label,systname, Uperp(e,t), e->weight() );
+        hist = HistName(pt, true, false, "TauPt") ;
+        Fill( dir+hist +"_"+label,systname, t->Pt(), e->weight() );
     }
 
     if (tInv != NULL and passPrescale) // inv iso
@@ -113,6 +118,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         Fill( dir+hist +"_"+label,systname, Upar(e,tInv), e->weight() );
         hist = HistName(pt,false, false,"Upar");
         Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight() );
+        hist = HistName(pt, false, false, "TauPt") ;
+        Fill( dir+hist +"_"+label,systname, tInv->Pt(), e->weight() );
     }
 
     // -------------------------- FULL SELECTION -----------------------------------------------
@@ -126,8 +133,9 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             string hist = HistName(pt,true,true);  
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
 
-            hist= "Mt"; //UNBLIND
+            hist= "Mt"; //UNBLIND --------
             if ( Unblind(e) ) Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight());
+
             hist = HistName(pt,true, true,"Uperp");
             Fill( dir+hist +"_"+label,systname, Upar(e,t), e->weight() );
             hist = HistName(pt,true, true,"Upar");

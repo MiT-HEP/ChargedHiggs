@@ -21,66 +21,77 @@ void ChargedHiggsTauNu::Init()
         GetHisto("ChargedHiggsTauNu/CutFlow/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(AngRbb,"R_{bb}^{Min}>40");
         //GetHisto("ChargedHiggsTauNu/CutFlow/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(7,"#Delta #phi (Tau,Jet1)<2.09");
 
-        Book(    "ChargedHiggsTauNu/Vars/NTaus_"+l,"NTaus "+l +";Number of selected hadronic tau" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/NOne/NTaus_"+l,"NTaus "+l +";Number of selected hadronic tau" ,1000,0,1000);
 
-        Book(    "ChargedHiggsTauNu/Vars/Tau1Pt_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/NOne/Tau1Pt_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
 
-        Book(    "ChargedHiggsTauNu/Vars/Tau1Eta_"+l,"Tau1Eta "+l +";#eta^{#tau}(leading #tau) [GeV]",100,-5,5);
+        Book(    "ChargedHiggsTauNu/NOne/Tau1Eta_"+l,"Tau1Eta "+l +";#eta^{#tau}(leading #tau) [GeV]",100,-5,5);
 
-        Book(    "ChargedHiggsTauNu/Vars/NJets_"+l,"NJets "+l + "; Number of selected jets",1000,0,1000);
+        Book(    "ChargedHiggsTauNu/NOne/NJets_"+l,"NJets "+l + "; Number of selected jets",1000,0,1000);
 
-        Book(    "ChargedHiggsTauNu/Vars/Jet1Pt_"+l,"Jet1Pt "+l+";p_{T}^{jet}(leading jet) [GeV]",1000,0,1000);
+        Book(    "ChargedHiggsTauNu/NOne/Jet1Pt_"+l,"Jet1Pt "+l+";p_{T}^{jet}(leading jet) [GeV]",1000,0,1000);
 
-        Book(    "ChargedHiggsTauNu/Vars/Jet1Eta_"+l,"Jet1Eta "+l+";#eta^{jet}(leading jet) [GeV]",100,-5,5);
+        Book(    "ChargedHiggsTauNu/NOne/Jet1Eta_"+l,"Jet1Eta "+l+";#eta^{jet}(leading jet) [GeV]",100,-5,5);
 
-        Book(    "ChargedHiggsTauNu/Vars/Jet2Pt_"+l,"Jet2Pt "+l+";p_{T}^{jet}(sub-leading jet) [GeV]",1000,0,1000);
+        Book(    "ChargedHiggsTauNu/NOne/Jet2Pt_"+l,"Jet2Pt "+l+";p_{T}^{jet}(sub-leading jet) [GeV]",1000,0,1000);
 
-        Book(    "ChargedHiggsTauNu/Vars/Jet2Eta_"+l,"Jet2Eta "+l+";#eta^{jet}(sub-leading jet) [GeV]",100,-5,5);
+        Book(    "ChargedHiggsTauNu/NOne/Jet2Eta_"+l,"Jet2Eta "+l+";#eta^{jet}(sub-leading jet) [GeV]",100,-5,5);
 
-        Book(    "ChargedHiggsTauNu/Vars/Jet3Pt_"+l,"Jet3Pt "+l+";p_{T}^{jet}(subsub-leading jet) [GeV]",1000,0,1000);
+        Book(    "ChargedHiggsTauNu/NOne/Jet3Pt_"+l,"Jet3Pt "+l+";p_{T}^{jet}(subsub-leading jet) [GeV]",1000,0,1000);
 
-        Book(    "ChargedHiggsTauNu/Vars/Jet3Eta_"+l,"Jet3Eta "+l + ";#eta^{jet}(subsub-leading jet) [GeV]",100,-5,5);
+        Book(    "ChargedHiggsTauNu/NOne/Jet3Eta_"+l,"Jet3Eta "+l + ";#eta^{jet}(subsub-leading jet) [GeV]",100,-5,5);
 
-        Book(    "ChargedHiggsTauNu/Vars/NBjets_"+l,"NBjets "+l + ";Number of selected b jets",1000,0,1000);
+        Book(    "ChargedHiggsTauNu/NOne/NBjets_"+l,"NBjets "+l + ";Number of selected b jets",1000,0,1000);
 
-        Book(    "ChargedHiggsTauNu/Vars/Bjet1Pt_"+l,"Bjet1Pt "+l+"p_{T}^{b-tagged jet} [GeV]",1000,0,1000);
+        Book(    "ChargedHiggsTauNu/NOne/Bjet1Pt_"+l,"Bjet1Pt "+l+"p_{T}^{b-tagged jet} [GeV]",1000,0,1000);
 
-        Book(    "ChargedHiggsTauNu/Vars/Bjet1Eta_"+l,"Bjet1Eta "+l+";#eta^{b-tagged jet} [GeV]",100,-5,5);
+        Book(    "ChargedHiggsTauNu/NOne/Bjet1Eta_"+l,"Bjet1Eta "+l+";#eta^{b-tagged jet} [GeV]",100,-5,5);
 
-        Book(    "ChargedHiggsTauNu/Vars/MaxDEtaBjetJets_"+l,"MaxDEtaBjetJets "+l+";Max #Delta#eta (b-tagged jet,jets)",100,0,10);
+        Book(    "ChargedHiggsTauNu/NOne/MaxDEtaBjetJets_"+l,"MaxDEtaBjetJets "+l+";Max #Delta#eta (b-tagged jet,jets)",100,0,10);
 
-        Book(    "ChargedHiggsTauNu/Vars/MaxInvMassBjetJets_"+l,"MaxInvMassBjetJets "+l+";Max invariant mass (b-tagged jet,jets) [GeV]",2000,0,2000);
+        Book(    "ChargedHiggsTauNu/NOne/MaxInvMassBjetJets_"+l,"MaxInvMassBjetJets "+l+";Max invariant mass (b-tagged jet,jets) [GeV]",2000,0,2000);
 
-        Book(    "ChargedHiggsTauNu/Vars/EtMiss_"+l,"EtMiss "+l+";E_{T}^{miss} [GeV]",1000,0,1000);
+        Book(    "ChargedHiggsTauNu/NOne/EtMiss_"+l,"EtMiss "+l+";E_{T}^{miss} [GeV]",1000,0,1000);
 
-        Book2D(    "ChargedHiggsTauNu/Vars/EtMissVsMt_"+l,"EtMissVsMt "+l+";m_{T} [GeV];E_{T}^{miss} [GeV]",1000,0,1000,1000,0,1000);
+        Book2D(  "ChargedHiggsTauNu/NOne/EtMissVsMt_"+l,"EtMissVsMt "+l+";m_{T} [GeV];E_{T}^{miss} [GeV]",1000,0,1000,1000,0,1000);
 
-        Book2D(    "ChargedHiggsTauNu/Vars/DPhiJet1MetVsDPhiTauMet_"+l,"DPhiJetMetVsDPhiTauMet "+l + ";#Delta #phi(#tau,MET);#Delta #phi(Jet1,MET)",50,0,TMath::Pi(),50,0,TMath::Pi());
+        Book2D(  "ChargedHiggsTauNu/NOne/DPhiJet1MetVsDPhiTauMet_"+l,"DPhiJetMetVsDPhiTauMet "+l + ";#Delta #phi(#tau,MET);#Delta #phi(Jet1,MET)",50,0,TMath::Pi(),50,0,TMath::Pi());
 
-        Book2D(    "ChargedHiggsTauNu/Vars/DPhiJet2MetVsDPhiTauMet_"+l,"DPhiJetMetVsDPhiTauMet "+l+";Delta #phi(#tau,MET);#Delta #phi(Jet2,MET)",50,0,TMath::Pi(),50,0,TMath::Pi());
+        Book2D(  "ChargedHiggsTauNu/NOne/DPhiJet2MetVsDPhiTauMet_"+l,"DPhiJetMetVsDPhiTauMet "+l+";Delta #phi(#tau,MET);#Delta #phi(Jet2,MET)",50,0,TMath::Pi(),50,0,TMath::Pi());
 
-        Book2D(    "ChargedHiggsTauNu/Vars/DPhiJet3MetVsDPhiTauMet_"+l,"DPhiJetMetVsDPhiTauMet "+l+";#Delta #phi(#tau,MET);#Delta #phi(Jet3,MET)",50,0,TMath::Pi(),50,0,TMath::Pi());
+        Book2D(  "ChargedHiggsTauNu/NOne/DPhiJet3MetVsDPhiTauMet_"+l,"DPhiJetMetVsDPhiTauMet "+l+";#Delta #phi(#tau,MET);#Delta #phi(Jet3,MET)",50,0,TMath::Pi(),50,0,TMath::Pi());
 
-        Book(    "ChargedHiggsTauNu/Vars/RCollMin_"+l,"RCollMin "+l+";R_{coll}^{min}",100,0,2*TMath::Pi());
+        Book(    "ChargedHiggsTauNu/NOne/RCollMin_"+l,"RCollMin "+l+";R_{coll}^{min}",100,0,2*TMath::Pi());
 
-        Book(    "ChargedHiggsTauNu/Vars/RbbMin_"+l,"RbbMin "+l+";R_{bb}^{min}",100,0,2*TMath::Pi());
+        Book(    "ChargedHiggsTauNu/NOne/RbbMin_"+l,"RbbMin "+l+";R_{bb}^{min}",100,0,2*TMath::Pi());
 
-        Book(    "ChargedHiggsTauNu/Vars/RsrMax_"+l,"RsrMax "+l+";R_{sr}^{max}",100,0,2*TMath::Pi());
+        Book(    "ChargedHiggsTauNu/NOne/RsrMax_"+l,"RsrMax "+l+";R_{sr}^{max}",100,0,2*TMath::Pi());
 
-        Book(    "ChargedHiggsTauNu/Vars/DPhiTauJet1_"+l,"DPhiTauJet1 "+l+";#Delta #phi (#tau, leading jet)",50,0,TMath::Pi());
+        Book(    "ChargedHiggsTauNu/NOne/DPhiTauJet1_"+l,"DPhiTauJet1 "+l+";#Delta #phi (#tau, leading jet)",50,0,TMath::Pi());
 
-        Book2D(    "ChargedHiggsTauNu/Vars/RCollMinVsMt_"+l,"RCollMinVsMt "+l + ";m_{T} [GeV];R_{Coll}^{min}",1000,0,1000,100,0,2*TMath::Pi());
+        Book2D(  "ChargedHiggsTauNu/NOne/RCollMinVsMt_"+l,"RCollMinVsMt "+l + ";m_{T} [GeV];R_{Coll}^{min}",1000,0,1000,100,0,2*TMath::Pi());
 
-        Book2D(    "ChargedHiggsTauNu/Vars/RbbMinVsMt_"+l,"RbbMinVsMt "+l+";m_{T} [GeV];R_{bb}^{min}",1000,0,1000,100,0,2*TMath::Pi());
+        Book2D(  "ChargedHiggsTauNu/NOne/RbbMinVsMt_"+l,"RbbMinVsMt "+l+";m_{T} [GeV];R_{bb}^{min}",1000,0,1000,100,0,2*TMath::Pi());
 
-        Book2D(    "ChargedHiggsTauNu/Vars/RsrMaxVsMt_"+l,"RsrMaxVsMt "+l+";m_{T} [GeV];R_{sr}^{Max}",1000,0,1000,100,0,2*TMath::Pi());
+        Book2D(  "ChargedHiggsTauNu/NOne/RsrMaxVsMt_"+l,"RsrMaxVsMt "+l+";m_{T} [GeV];R_{sr}^{Max}",1000,0,1000,100,0,2*TMath::Pi());
 
-        Book2D(    "ChargedHiggsTauNu/Vars/DPhiTauJet1VsMt_"+l,"DPhiTauJet1VsMt "+l + ";m_{T} [GeV];#Delta #phi (#tau, leading jet)",1000,0,1000,50,0,TMath::Pi());
+        Book2D(  "ChargedHiggsTauNu/NOne/DPhiTauJet1VsMt_"+l,"DPhiTauJet1VsMt "+l + ";m_{T} [GeV];#Delta #phi (#tau, leading jet)",1000,0,1000,50,0,TMath::Pi());
 
+        /*********************************************
+         *              FULL SELECTION               *
+         *********************************************/
+
+        // for the TTJets background
+        Book(    "ChargedHiggsTauNu/Vars/JetInvMass_" + l ,"Jet Invariant mass;m_{jj} [GeV]",1000,0,1000) ;
+        Book(    "ChargedHiggsTauNu/Vars/Jet13InvMass_" + l ,"Jet Invariant mass;m_{jj} [GeV]",1000,0,1000) ;
+        Book(    "ChargedHiggsTauNu/Vars/Jet23InvMass_" + l ,"Jet Invariant mass;m_{jj} [GeV]",1000,0,1000) ;
+
+        Book(    "ChargedHiggsTauNu/Vars/Jet1QGL_" + l ,"QGL of the leading jet;QGL",300,-1.5,1.5) ;
+        Book(    "ChargedHiggsTauNu/Vars/Jet2QGL_" + l ,"QGL of the subleading jet;QGL",300,-1.5,1.5) ;
         /**********************************************
          *                   MT                       *
          **********************************************/
-        Book(    "ChargedHiggsTauNu/Vars/Mt_"+l,"Mt "+l + ";m_{T} [GeV]",1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Vars/Mt_"+l,"Mt "+l + ";m_{T} [GeV]",1000,0,1000); // the Vars directory contains the full selection
 
         // Study NLO Positive and negative shapes for interpolation and subtraction
         if (l == "WJets" or l == "DY")
@@ -155,7 +166,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Total,e->weight());
 
-    Fill("ChargedHiggsTauNu/Vars/NTaus_"+label,systname, e->Ntaus() ,e->weight());
+    Fill("ChargedHiggsTauNu/NOne/NTaus_"+label,systname, e->Ntaus() ,e->weight());
 
     Tau *t= e->GetTau(0);
     cut.SetCut( Selection(e,true) );
@@ -206,16 +217,16 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     // --- studies for angular variables
     if ( cut.passAllUpTo(Met) ){
-        Fill("ChargedHiggsTauNu/Vars/MaxDEtaBjetJets_"+label,systname, DEtaMax ,e->weight());
-        Fill("ChargedHiggsTauNu/Vars/MaxInvMassBjetJets_"+label,systname, InvMassMax ,e->weight());
-        Fill2D("ChargedHiggsTauNu/Vars/DPhiJet1MetVsDPhiTauMet_"+label,systname,DPhiEtMissTau,DPhiEtMissJet1,e->weight());
-        Fill2D("ChargedHiggsTauNu/Vars/DPhiJet2MetVsDPhiTauMet_"+label,systname,DPhiEtMissTau,DPhiEtMissJet2,e->weight());
-        Fill2D("ChargedHiggsTauNu/Vars/DPhiJet3MetVsDPhiTauMet_"+label,systname,DPhiEtMissTau,DPhiEtMissJet3,e->weight());
+        Fill("ChargedHiggsTauNu/NOne/MaxDEtaBjetJets_"+label,systname, DEtaMax ,e->weight());
+        Fill("ChargedHiggsTauNu/NOne/MaxInvMassBjetJets_"+label,systname, InvMassMax ,e->weight());
+        Fill2D("ChargedHiggsTauNu/NOne/DPhiJet1MetVsDPhiTauMet_"+label,systname,DPhiEtMissTau,DPhiEtMissJet1,e->weight());
+        Fill2D("ChargedHiggsTauNu/NOne/DPhiJet2MetVsDPhiTauMet_"+label,systname,DPhiEtMissTau,DPhiEtMissJet2,e->weight());
+        Fill2D("ChargedHiggsTauNu/NOne/DPhiJet3MetVsDPhiTauMet_"+label,systname,DPhiEtMissTau,DPhiEtMissJet3,e->weight());
         // ---
-        Fill("ChargedHiggsTauNu/Vars/RsrMax_"+label,systname,RsrMax,e->weight());
-        Fill2D("ChargedHiggsTauNu/Vars/RsrMaxVsMt_"+label,systname,e->Mt(),RsrMax,e->weight());
-        Fill("ChargedHiggsTauNu/Vars/DPhiTauJet1_"+label,systname,DPhiTauJet1,e->weight());
-        Fill2D("ChargedHiggsTauNu/Vars/DPhiTauJet1VsMt_"+label,systname,e->Mt(),DPhiTauJet1,e->weight());
+        Fill("ChargedHiggsTauNu/NOne/RsrMax_"+label,systname,RsrMax,e->weight());
+        Fill2D("ChargedHiggsTauNu/NOne/RsrMaxVsMt_"+label,systname,e->Mt(),RsrMax,e->weight());
+        Fill("ChargedHiggsTauNu/NOne/DPhiTauJet1_"+label,systname,DPhiTauJet1,e->weight());
+        Fill2D("ChargedHiggsTauNu/NOne/DPhiTauJet1VsMt_"+label,systname,e->Mt(),DPhiTauJet1,e->weight());
     }
 
 
@@ -230,60 +241,60 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     // ------------------- N-1 SELECTIONS
     if( cut.passAllExcept(Met) )
     {   
-        Fill2D("ChargedHiggsTauNu/Vars/EtMissVsMt_"+label,systname,e->Mt(),e->GetMet().Pt(),e->weight());
-        Fill("ChargedHiggsTauNu/Vars/EtMiss_"+label,systname, e->GetMet().Pt() ,e->weight());
+        Fill2D("ChargedHiggsTauNu/NOne/EtMissVsMt_"+label,systname,e->Mt(),e->GetMet().Pt(),e->weight());
+        Fill("ChargedHiggsTauNu/NOne/EtMiss_"+label,systname, e->GetMet().Pt() ,e->weight());
     }
 
     if (cut.passAllExcept( AngRbb) ){
-        Fill("ChargedHiggsTauNu/Vars/RbbMin_"+label,systname,RbbMin,e->weight());
-        Fill2D("ChargedHiggsTauNu/Vars/RbbMinVsMt_"+label,systname,e->Mt(),RbbMin,e->weight());
+        Fill("ChargedHiggsTauNu/NOne/RbbMin_"+label,systname,RbbMin,e->weight());
+        Fill2D("ChargedHiggsTauNu/NOne/RbbMinVsMt_"+label,systname,e->Mt(),RbbMin,e->weight());
     }
 
     if (cut.passAllExcept(AngColl) ) {
-        Fill("ChargedHiggsTauNu/Vars/RCollMin_"+label,systname,RCollMin,e->weight());
-        Fill2D("ChargedHiggsTauNu/Vars/RCollMinVsMt_"+label,systname,e->Mt(),RCollMin,e->weight());
+        Fill("ChargedHiggsTauNu/NOne/RCollMin_"+label,systname,RCollMin,e->weight());
+        Fill2D("ChargedHiggsTauNu/NOne/RCollMinVsMt_"+label,systname,e->Mt(),RCollMin,e->weight());
     }
 
     if (cut.passAllExcept(ThreeJets) ) 
     {
-        Fill("ChargedHiggsTauNu/Vars/NJets_"+label,systname, e->Njets() ,e->weight());
+        Fill("ChargedHiggsTauNu/NOne/NJets_"+label,systname, e->Njets() ,e->weight());
         Jet* j1 = e->LeadJet();
         if (j1 !=NULL ) 
             {        
-                Fill("ChargedHiggsTauNu/Vars/Jet1Pt_"+label,systname, j1->Pt() ,e->weight());
-                Fill("ChargedHiggsTauNu/Vars/Jet1Eta_"+label,systname,j1->Eta() ,e->weight());
+                Fill("ChargedHiggsTauNu/NOne/Jet1Pt_"+label,systname, j1->Pt() ,e->weight());
+                Fill("ChargedHiggsTauNu/NOne/Jet1Eta_"+label,systname,j1->Eta() ,e->weight());
             }
 
         Jet* j2 = e->GetJet(1);
         if (j2 !=NULL ) 
             {        
-                Fill("ChargedHiggsTauNu/Vars/Jet2Pt_"+label,systname, j2->Pt() ,e->weight());
-                Fill("ChargedHiggsTauNu/Vars/Jet2Eta_"+label,systname,j2->Eta() ,e->weight());
+                Fill("ChargedHiggsTauNu/NOne/Jet2Pt_"+label,systname, j2->Pt() ,e->weight());
+                Fill("ChargedHiggsTauNu/NOne/Jet2Eta_"+label,systname,j2->Eta() ,e->weight());
             }
 
         Jet* j3 = e->GetJet(3);
         if (j3 !=NULL ) 
             {        
-                Fill("ChargedHiggsTauNu/Vars/Jet3Pt_"+label,systname, j3->Pt() ,e->weight());
-                Fill("ChargedHiggsTauNu/Vars/Jet3Eta_"+label,systname,j3->Eta() ,e->weight());
+                Fill("ChargedHiggsTauNu/NOne/Jet3Pt_"+label,systname, j3->Pt() ,e->weight());
+                Fill("ChargedHiggsTauNu/NOne/Jet3Eta_"+label,systname,j3->Eta() ,e->weight());
             }
     } // Three jets , n-1
 
     if( cut.passAllExcept( OneTau) )
     { 
-        Fill("ChargedHiggsTauNu/Vars/Tau1Pt_"+label,systname, t->Pt() ,e->weight());
-        Fill("ChargedHiggsTauNu/Vars/Tau1Eta_"+label,systname,t->Eta(),e->weight());
+        Fill("ChargedHiggsTauNu/NOne/Tau1Pt_"+label,systname, t->Pt() ,e->weight());
+        Fill("ChargedHiggsTauNu/NOne/Tau1Eta_"+label,systname,t->Eta(),e->weight());
     }
    
 
     if (cut.passAllExcept(OneBjet) )
     {
-        Fill("ChargedHiggsTauNu/Vars/NBjets_"+label,systname, e->Bjets() ,e->weight());
+        Fill("ChargedHiggsTauNu/NOne/NBjets_"+label,systname, e->Bjets() ,e->weight());
         //At least one b-jet
         if (bj1 != NULL) 
             {        
-                Fill("ChargedHiggsTauNu/Vars/Bjet1Pt_"+label,systname, bj1->Pt() ,e->weight());
-                Fill("ChargedHiggsTauNu/Vars/Bjet1Eta_"+label,systname,bj1->Eta(),e->weight());
+                Fill("ChargedHiggsTauNu/NOne/Bjet1Pt_"+label,systname, bj1->Pt() ,e->weight());
+                Fill("ChargedHiggsTauNu/NOne/Bjet1Eta_"+label,systname,bj1->Eta(),e->weight());
             }
     }
 
@@ -291,6 +302,12 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if (cut.passAll() ) 
     {
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
+
+        Fill("ChargedHiggsTauNu/Vars/Jet1QGL_"+label,systname,e->GetJet(0)->QGL() , e->weight() );
+        Fill("ChargedHiggsTauNu/Vars/Jet2QGL_"+label,systname,e->GetJet(1)->QGL() , e->weight() );
+        Fill("ChargedHiggsTauNu/Vars/JetInvMass_"+label,systname,e->GetJet(0)->InvMass(e->GetJet(1)) , e->weight() );
+        Fill("ChargedHiggsTauNu/Vars/Jet13InvMass_"+label,systname,e->GetJet(0)->InvMass(e->GetJet(2)) , e->weight() );
+        Fill("ChargedHiggsTauNu/Vars/Jet22InvMass_"+label,systname,e->GetJet(1)->InvMass(e->GetJet(2)) , e->weight() );
 
         if ( (label=="WJets" or label=="DY") and (systname =="" or systname == "NONE"))
         {

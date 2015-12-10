@@ -365,6 +365,9 @@ void Looper::FillJets(){
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
         j->unc = bj -> unc -> at(iJet); //
         j->bdiscr = bj -> bDiscr -> at(iJet);
+
+	if (tree_->GetBranchStatus("jetQGL") ) j->SetQGL( bj -> qgl -> at(iJet) );
+	else j->SetQGL(  -10 ); // Add a warning ? 
 	// TODO add PuId, and syst
         event_ -> jets_ . push_back(j);
     }

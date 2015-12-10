@@ -1,60 +1,13 @@
-##configure Looper
-##### This file store the configuratino to run all the analysis
-##### if you want to make a config file that overwrite some changes just create a new one with the line
-##### include=dat/config.txt
-##### Files=....,....,...
 #
-#### BKG ###
-##Files=/store/user/amarini/Nero/v1.1/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-##### WW/WZ/ZZ###
-##addfiles=/store/user/amarini/Nero/v1.1/WW_TuneCUETP8M1_13TeV-pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/WZ_TuneCUETP8M1_13TeV-pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/ZZ_TuneCUETP8M1_13TeV-pythia8
-### SIGNAL ###
-#Signal Tau Nu ; Private production
-#Files=/store/user/amarini/Nero/v1.1/HplusToTauNu-M200
-#addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M250
-#addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M500
-#addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M900
-### QCD
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
-##addfiles=/store/user/amarini/Nero/v1.1/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
-############# DATA 50ns###########
-#Files=/store/user/amarini/Nero/v1.1/Tau
-Files=/store/user/amarini/Nero/v1.1/TauNoId
+include=dat/config.dat
+Files=/store/user/amarini/Nero/v1.2/SingleMuon
 
 ####
 
-#Output=TagAndProbe.root
-Output=TagAndProbeNoId.root
+Output=TagAndProbe.root
 ## Preselection:1,Preselection:2
-Analysis=JsonAnalysis,Preselection,TagAndProbe
+Analysis=JsonAnalysis,TagAndProbe
 
-MCDB=dat/mc_database_v1.1.txt
-SFDB=dat/sf_database.txt
-Branches=dat/branches.txt
-###
-#pileup=aux/pileup.root
-#pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root
-pileup=
-pileupRun=
-pileupLumi=
-Lumi=1
 ###
 # additional JSON FILE for Data selection
 

@@ -42,7 +42,7 @@ datacard.write("-------------------------------------\n")
 
 
 ########################## IMPORT DATA #############
-w.factory("mgg[500,2000]"); # RooRealVar
+w.factory("mgg[500,1200]"); # RooRealVar
 mgg=w.var("mgg")
 arglist_obs = ROOT.RooArgList(mgg)
 argset_obs = ROOT.RooArgSet(mgg)
@@ -77,7 +77,7 @@ mX=w.var("MH")
 #w.factory("sX[0.,100]"); # RooRealVar
 #sX=w.var("sX")
 
-sX = ROOT.RooFormulaVar("sX","sX","0.04*MH",ROOT.RooArgList(mX))
+sX = ROOT.RooFormulaVar("sX","sX","0.05*MH",ROOT.RooArgList(mX))
 
 for n in range(0,opts.ncat):
 	

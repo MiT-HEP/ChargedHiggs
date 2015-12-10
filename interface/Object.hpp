@@ -43,6 +43,7 @@ class Object
         double InvMass(Object &o) const  ;
 
         // pointer versions
+        virtual inline double InvMass(Object *o) const { return this->InvMass(*o);} 
         virtual inline float DeltaR(Object *o) const { return this->DeltaR(*o) ;}
         virtual inline float DeltaEta(Object *o) const {return this->DeltaEta(*o); }
         virtual inline float DeltaPhi(Object *o) const {return this->DeltaPhi(*o); }

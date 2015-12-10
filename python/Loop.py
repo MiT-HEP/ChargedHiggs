@@ -183,6 +183,9 @@ for key in sfdb:
 	if key['type'] == 'base':
 		if opts.verbose: print label,key['type'], key['sf'],key['err'] 
 		loop.AddSF(label, key['sf'], key['err'])
+	if key['type'] == 'spline':
+		if opts.verbose: print label,key['type'], key['pt'], key['sf'],key['err'] 
+		loop.AddSplineSF(label,key['pt'],key['sf'],key['err'])
 if opts.verbose:print "#############################"
 
 for smear in cfg['Smear']:

@@ -46,8 +46,7 @@ int TagAndProbe::analyze(Event*e,string systname){
         if (mTag == NULL ) return EVENT_NOT_USED; // no tag taus
         SetTreeVar("isTagTrigger", e->IsTriggered( "HLT_IsoMu20", mTag )  );
 
-        for( auto& t : e->taus_) 
-            if (tProbe != NULL) { tProbe = t; break;} // take the first probe // pt ordered, can't use GetTau
+        tProbe = e->GetTau(0);
 
         // nothnig to probe FIXME, logic needs to change
         if (tProbe == NULL ) return EVENT_NOT_USED;

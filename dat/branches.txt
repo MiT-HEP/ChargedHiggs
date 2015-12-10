@@ -3,6 +3,7 @@ jetP4
 jetUnc
 jetBdiscr
 jetSelBits
+jetQGL
 ### Leptons
 lepP4
 lepIso

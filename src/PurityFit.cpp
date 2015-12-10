@@ -207,25 +207,60 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
     float xmin = h->GetBinLowEdge(1);
     float xmax = h->GetBinLowEdge(nbins+1);
 
-    TF1 expo("expo","[0]*TMath::Exp(-[1]*x)",xmin,xmax);
-    expo.SetParameter(0,0.05);
-    expo.SetParameter(1,0.01);
-    expo.SetParLimits(0,TMath::Min(bkg->Integral()*.1,0.001), bkg->Integral()*10);
-    expo.SetParLimits(1,1e-9, 1.);
-    bkg->Fit( &expo ,"QN") ;
-    bkg->Fit( &expo ,"QNM") ;
+    double prevChi2=-1;
 
-    cout<<"----------- BKG PARAMETERS ARE -------"<<endl;
-    cout<<" 0 : "<< expo.GetParameter(0) <<endl;
-    cout<<" 1 : "<< expo.GetParameter(1) <<endl;
-    cout<<"--------------------------------------"<<endl;
-    TCanvas *cbkg=new TCanvas((string(name)+"_bkgfit").c_str(),"Canvas");
-    bkg->Clone("bkgForDraw")->Draw("P E"); // FIXME, memory leak
-    expo.DrawClone("L SAME");
+    vector<TCanvas*> cbkgs;
+    vector<TF1> expos;
+
+    int poln=0;
+    for( poln=0;poln<5; ++poln)
+    {
+        string formula = "TMath::Exp(-[0]*x) * ( ";
+        for(int i=0;i<=poln;++i)
+                {
+                    if (i>0 ) formula += " + ";
+                    formula += Form("[%d]",i+1);
+                    if (i>0) formula += Form("*TMath::Power(x,%d)",i);
+                }
+        formula += ")";
+        cout <<"Considering Formula"<<formula<<endl;
+        TF1 expo(Form("expo%d",poln),formula.c_str(),xmin,xmax);
+        expo.SetParameter(0,0.01);
+        expo.SetParameter(1,0.05);
+
+        expo.SetParLimits(0,TMath::Min(bkg->Integral()*.1,0.001), bkg->Integral()*10);
+        expo.SetParLimits(1,1e-9, 1.);
+        bkg->Fit( &expo ,"QN") ;
+        bkg->Fit( &expo ,"QNM") ;
+        expos.push_back(expo);
+
+        double chi2=expo.GetChisquare();
+        double prob = 0 ; 
+        if (poln > 0)
+        {
+            int n = 0;
+            for(int i=1;i<=bkg->GetNbinsX();++i) if ( bkg->GetBinContent(i)> 0 ) ++n;
+            int dof = n - (poln+2) + 1;
+            double f = (prevChi2 - chi2) / ( chi2 /dof) ;
+            prob= 1.- TMath::FDistI (f , 1, dof  ) ;
+        }
+        prevChi2 = chi2;
+
+        cout<<"----------- BKG PARAMETERS ARE -------"<<endl;
+        cout << "Prob = "<<prob<<endl;
+        cout<<" 0 : "<< expo.GetParameter(0) <<endl;
+        for(int i=0; i<=poln;++i)
+            cout<<" "<< i+1 <<" : "<< expo.GetParameter(i+1) <<endl;
+        cout<<"--------------------------------------"<<endl;
+        TCanvas *cbkg=new TCanvas( (string(name)+"_bkgfit"+ Form("pol%d",poln)).c_str(),"Canvas"); cbkgs.push_back(cbkg);
+        bkg->Clone("bkgForDraw")->Draw("P E"); // FIXME, memory leak
+        expo.DrawClone("L SAME");
+
+        if (prob >0.05 and poln> 0) break; // ---------------------- EXIT BEFORE UPDATING
+    }
 
     for(int i=1;i<=bkg->GetNbinsX() ;++i)
-        //bkg->SetBinContent(i,expo.Eval( bkg->GetBinCenter(i) ) ) ;
-        bkg->SetBinContent(i,expo.Integral( bkg->GetBinLowEdge(i),bkg->GetBinLowEdge(i+1) ) ) ;
+            bkg->SetBinContent(i,expos[poln].Integral( bkg->GetBinLowEdge(i),bkg->GetBinLowEdge(i+1) ) ) ;
 
     if (sig->Integral() >0)
         sig -> Scale( 1./sig->Integral() );
@@ -355,12 +390,14 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
         TFile *fOut=TFile::Open(outname.c_str(),"UPDATE");
         fOut->cd();
         c->Write();
-        cbkg->Write();
+        for( auto c : cbkgs ) c->Write();
         r->Write(Form("%s_roofit",name.c_str() ) );
         fOut->Close();
     }
 
     // delete the clone
+    for( auto c : cbkgs ) c->Delete();
+    cbkgs.clear();
     sig -> Delete();
     bkg -> Delete();
     h   -> Delete();

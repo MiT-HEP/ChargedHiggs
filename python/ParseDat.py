@@ -243,6 +243,11 @@ def ReadSFDB(file):
 			R['pt2']=pt2
 			R['eta1']=eta1
 			R['eta2']=eta2
+		elif type == 'spline':
+			pt = float( l.split(' ')[2])
+			sf   = float ( l.split(' ')[3] )
+			err  = float ( l.split(' ')[4] )
+			R['pt']=pt
 
 		elif type == 'base':
 			sf  = float ( l.split(' ') [2] )
