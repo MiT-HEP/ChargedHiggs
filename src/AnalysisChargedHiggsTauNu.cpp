@@ -307,7 +307,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         Fill("ChargedHiggsTauNu/Vars/Jet2QGL_"+label,systname,e->GetJet(1)->QGL() , e->weight() );
         Fill("ChargedHiggsTauNu/Vars/JetInvMass_"+label,systname,e->GetJet(0)->InvMass(e->GetJet(1)) , e->weight() );
         Fill("ChargedHiggsTauNu/Vars/Jet13InvMass_"+label,systname,e->GetJet(0)->InvMass(e->GetJet(2)) , e->weight() );
-        Fill("ChargedHiggsTauNu/Vars/Jet22InvMass_"+label,systname,e->GetJet(1)->InvMass(e->GetJet(2)) , e->weight() );
+        Fill("ChargedHiggsTauNu/Vars/Jet23InvMass_"+label,systname,e->GetJet(1)->InvMass(e->GetJet(2)) , e->weight() );
 
         if ( (label=="WJets" or label=="DY") and (systname =="" or systname == "NONE"))
         {
