@@ -12,11 +12,18 @@ class Lepton : virtual public Object,
     protected:
         float isocut_;
         float ptcut_;
-        float isorelcut_;
+        float etacut_;
+        float isorelcut_ {-1};
     public:
         inline void SetIsoCut(float x){isocut_=x;}
         inline void SetPtCut( float x){ptcut_=x;}
         inline void SetIsoRelCut( float x){isorelcut_=x;}
+        inline void SetEtaCut( float x){etacut_=x;}
+
+        inline float GetIsoCut()const {return isocut_;}
+        inline float GetPtCut() const { return ptcut_;}
+        inline float GetEtaCut() const { return etacut_;}
+        inline float GetIsoRelCut() const { return isorelcut_;}
 
         Lepton() ;
 
@@ -25,6 +32,7 @@ class Lepton : virtual public Object,
         int type;// abspdgid 11 o 13 
 
         virtual inline int IsLep() const { 
+            if ( etacut_ >=0 and abs(Eta()) > etacut_) return 0;
             if ( isocut_ >=0 and iso > isocut_) return 0;
             if ( isorelcut_ >=0 and iso/Pt() > isorelcut_) return 0;
             if ( Pt() < ptcut_ ) return 0;

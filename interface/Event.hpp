@@ -41,18 +41,21 @@ class Event{
     int isRealData_;
     int runNum_;
     int lumiNum_;
-    int eventNum_;
+    unsigned eventNum_;
     float rho_;
     int npv_;
 
     vector<string> triggerNames_;
+
+    string fName_;
 
     public:
     Weight weight_;
 
     inline int runNum(){return runNum_; }
     inline int lumiNum(){return lumiNum_; }
-    inline int eventNum(){return eventNum_; }
+    inline unsigned eventNum(){return eventNum_; }
+    inline string GetName()const{ return fName_;}
     
     // This functions should check if the objects are valid
     // Get NULL in case of failure
@@ -101,7 +104,7 @@ class Event{
     float RsrMax(int iMax,Tau *t) ;
 
     inline float DPhiEtMissJet(int iJet=0){ Jet*j= GetJet(iJet) ; if( j == NULL) return -1; return fabs(GetMet().DeltaPhi(j) );}
-    inline float DPhiTauJet(Tau*t,int iJet=0){Jet*j=GetJet(iJet) ; if (j==NULL) return -1 ; return fabs(j->DeltaPhi(*t));}
+    inline float DPhiTauJet(Tau*t,int iJet=0){Jet*j=GetJet(iJet) ; if (j==NULL) return -1 ;if(t==NULL) return -1; return fabs(j->DeltaPhi(*t));}
 
     //-----------------------------
     virtual void ClearEvent();

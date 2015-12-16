@@ -317,6 +317,8 @@ for iJob in range(0,opts.njobs):
 			sh.write("[ $EXITCODE == 0 ] && mv -v %s/%s %s/\n"%(opts.dir,outname,basedir))
 		if opts.compress:
 			sh.write("mv %s/log%d.txt.gz %s/log%d.txt.gz\n"%(opts.dir,iJob,basedir,iJob) )
+	sh.write('echo "Finished At:"\n')
+	sh.write("date\n")
 	
 	dat=open("%s/input%d.dat"%(opts.dir,iJob),"w")
 	dat.write("include=%s\n"%opts.input)

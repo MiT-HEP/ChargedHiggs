@@ -63,13 +63,12 @@ Analysis=JsonAnalysis,Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggs
 MCDB=dat/mc_database.txt
 SFDB=dat/sf_database.txt
 Branches=dat/branches.txt
-###
-#pileup=aux/pileup.root
+pileup=aux/pileup.root
 #pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root
 #pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup_JSON_1p2_PRE_10-09-2015.root 
 #pileup=file,fileup,filedn TODO
 #pileup=aux/pileup_JSON_1p2_PRE_10-09-2015.root 
-pileup=
+##pileup=
 pileupRun=
 pileupLumi=
 Lumi=1

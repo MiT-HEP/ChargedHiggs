@@ -239,6 +239,7 @@ Lepton * Event::GetMuon( int iMu )
     {
         if ( leps_[i]->IsLep() and leps_[i]->IsMuon() ) 
             valid.push_back(pair<float,int>(leps_[i]->Pt(),i)); 
+
     }
 
     if (valid.size() == 0 ) return NULL;

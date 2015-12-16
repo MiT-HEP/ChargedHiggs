@@ -5,6 +5,11 @@
 #define JSON_EVENT_FAIL 1
 #define JSON_EVENT_PASS 0
 
+void JsonAnalysis::Init(){
+    Log(__FUNCTION__,"INFO","Init JSON Analysis");
+    if (goodLumis_.empty()) Log(__FUNCTION__,"WARNING","No Good luminosity selection");
+    else Log(__FUNCTION__,"INFO",Form("Good Lumi selection based on %u runs ", goodLumis_.size()) ) ;
+}
 
 
 void JsonAnalysis::addGoodLumi(long run, int lumi1, int lumi2)

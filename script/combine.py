@@ -34,6 +34,7 @@ parser.add_option("","--ncore",type='int',help="num. of core. [%default]",defaul
 parser.add_option("","--rmax",type='float',help="rmax. [%default]",default=1000000)
 parser.add_option("","--onews",action='store_true',help="Only one ws. names do not depend on the higgs mass. [%default]",default=False)
 parser.add_option("","--nosyst",action='store_true',help="No Syst.. [%default]",default=False)
+parser.add_option("-M","--method" ,dest='method',type='string',help="Method [%default]",default="Asymptotic")
 
 (opts,args)=parser.parse_args()
 
@@ -133,7 +134,7 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	sh.write('cp -v '+ basedir + "/"+  datacard + " ./ \n" )
 	##Write combine line
 	#combine -M Asymptotic -m 200 -S 0 --run=expected --expectSignal=1 --expectSignalMass=200  cms_datacard_chhiggs_taunu.txt
-	combine = "combine -M Asymptotic -m "+ str(mass)
+	combine = "combine -M "+ opts.method +" -m "+ str(mass)
 	if opts.nosyst: combine += " -S 0 "
 	combine += "  --cminDefaultMinimizerType=Minuit2 "
 	combine += " -H ProfileLikelihood " ## hint

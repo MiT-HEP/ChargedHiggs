@@ -245,6 +245,8 @@ void Looper::NewFile()
     fNumber = tree_->GetTreeNumber();
     // check name and weight TODO
     string fname = tree_->GetFile()->GetName();
+    event_ -> fName_ = fname;
+
     Log(__FUNCTION__,"INFO","Openining new file: '"+ fname +"'");
     //"root://eoscms//store/../label/abc.root"
     size_t last = fname.rfind('/');
@@ -340,6 +342,7 @@ void Looper::FillEventInfo(){
     BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["Vertex"] ] ) ; assert(v!=NULL);
     event_ -> npv_ = v->npv;
 
+
 }
 
 
@@ -423,7 +426,7 @@ void Looper::FillLeptons(){
     for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
     {
 	bool id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepLoose;
-	if (not id) continue;
+	//if (not id) continue;
         Lepton *l = new Lepton();
         l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
         l-> iso = (*bl->iso) [iL];
@@ -434,7 +437,6 @@ void Looper::FillLeptons(){
 	#endif
 	l->trigger =  0;
 	if (tree_ -> GetBranchStatus("triggerLeps") !=0  && tr -> triggerLeps ->size() >iL) l->trigger = tr->triggerLeps->at(iL);
-
 
         event_ -> leps_ . push_back(l);
     }

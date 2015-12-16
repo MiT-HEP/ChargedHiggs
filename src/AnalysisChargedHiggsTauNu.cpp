@@ -205,7 +205,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     double DPhiEtMissJet1=e->DPhiEtMissJet(0); 
     double DPhiEtMissJet2=e->DPhiEtMissJet(1); 
     double DPhiEtMissJet3=e->DPhiEtMissJet(2); 
-    double DPhiEtMissTau= fabs(e->GetMet().DeltaPhi(t));
+    double DPhiEtMissTau= ( t== NULL) ? -1 : fabs(e->GetMet().DeltaPhi(t));
 
     // up To angular variables
     double RbbMin= e->RbbMin();
