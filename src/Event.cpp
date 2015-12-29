@@ -292,6 +292,7 @@ bool Event::IsTriggered( string name ,Trigger *trigger)
         if (name == triggerNames_[i] ) { lastPos=i; break;} 
     }
     lastName = name;
+    //cout <<"[Event]::[IsTriggered]::[DEBUG] Found trigger menu with name '"<<name<<"' at pos "<<lastPos<<endl;
     if (lastPos >=0 ) {
         #ifdef VERBOSE
         if (VERBOSE >1) cout <<"[Event]::[IsTriggered]::[DEBUG] grace exit"<<endl;

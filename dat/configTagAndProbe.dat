@@ -1,6 +1,7 @@
 #
 include=dat/config.dat
 Files=/store/user/amarini/Nero/v1.2/SingleMuon
+addfiles=/store/user/amarini/Nero/v1.2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 
 ####
 
@@ -18,9 +19,4 @@ Smear=NONE
 Correct=MetPhiCorrector
 config=MitPhiCorrector|fileName="aux/MetPhi.root"
 
-config=TagAndProbe|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
-#config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-251252_13TeV_PromptReco_Collisions15_JSON.txt')
-#config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-254879_13TeV_PromptReco_Collisions15_JSON.txt')
-#configure Analysis
-#config=AnalysisBase|Init()
-#config=Preselection|
+config=TagAndProbe|AddLabel("DY"),AddLabel("HplusToTauNu")

@@ -77,14 +77,15 @@ datacard.write("\n")
 
 ######################## WRITE SIG ##########################
 
-w.factory("MH[500,1000]"); # RooRealVar
+w.factory("MH[150,250]"); # RooRealVar
 mX=w.var("MH")
 #w.factory("sX[0.,100]"); # RooRealVar
 #sX=w.var("sX")
 
 
 for n in range(0,opts.ncat):
-	sX = ROOT.RooFormulaVar("sX_cat%d"%n,"sX","0.01*MH",ROOT.RooArgList(mX))
+	#sX = ROOT.RooFormulaVar("sX_cat%d"%n,"sX","0.01*MH",ROOT.RooArgList(mX))
+	sX = ROOT.RooFormulaVar("sX_cat%d"%n,"sX","4",ROOT.RooArgList(mX))
 	
 	pdf_sig = ROOT.RooGaussian("pdf_cat%d_SIG"%n,"gauspdf", mmm, mX,sX)
 
@@ -140,8 +141,9 @@ for cat in range(0,opts.ncat):
 	## guess bernstain order
 	useOrder=4
 	
-	#for order in range(1,8): ## 8 is not defined in combine
-	if False: ## 8 is not defined in combine
+	#for order in range(1,8): ## 8 is not defined in combine"
+	MultiPdf=False
+	if MultiPdf: ## 8 is not defined in combine
 		print "* Testing Bernstain order",order
 		if useOrder> 0 and order != useOrder : continue
 	
@@ -224,9 +226,16 @@ for cat in range(0,opts.ncat):
 	pdf_bkg = ROOT.RooMultiPdf("pdf_cat%d_bkg"%cat,"multipdf",pdf_cat,storedPdfs)
 	pdf_bkg_norm = ROOT.RooRealVar("pdf_cat%d_bkg_norm"%cat,"",data[cat].sumEntries(),data[cat].sumEntries()*.5,data[cat].sumEntries()*2.0)
 	pdf_bkg_norm.setConstant(False)
-	print "-> importing",pdf_bkg.GetName()
-	getattr(w,'import')(pdf_bkg,ROOT.RooCmdArg())
-	getattr(w,'import')(pdf_bkg_norm,ROOT.RooCmdArg())
+
+	if MultiPdf:
+		print "-> importing",pdf_bkg.GetName()
+		getattr(w,'import')(pdf_bkg,ROOT.RooCmdArg())
+		getattr(w,'import')(pdf_bkg_norm,ROOT.RooCmdArg())
+	else:
+		print "-> importing",pdf_bkg.GetName()
+		exp_norm = ROOT.RooRealVar("exp_cat%d_norm"%cat,"",data[cat].sumEntries(),data[cat].sumEntries()*.5,data[cat].sumEntries()*2.0)
+		getattr(w,'import')(exp,ROOT.RooCmdArg())
+		getattr(w,'import')(exp_norm,ROOT.RooCmdArg())
 
 
 ######################## WRITE DATACARD ##########################
@@ -279,9 +288,10 @@ for cat in range(0,opts.ncat):
 datacard.write("\n")
 
 
-datacard.write("\n")
-for cat in range(0,opts.ncat):
-	datacard.write("pdfindex_cat%d discrete\n"%cat)
+if MultiPdf:
+	datacard.write("\n")
+	for cat in range(0,opts.ncat):
+		datacard.write("pdfindex_cat%d discrete\n"%cat)
 
 #fOut=ROOT.TFile.Open(opts.output,"RECREATE")
 w.writeToFile(opts.output)

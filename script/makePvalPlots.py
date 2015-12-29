@@ -54,7 +54,7 @@ ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 
 dummy = ROOT.TH1D("dummy","dummy",1000, 0, 1000)
-dummy.GetXaxis().SetRangeUser(100,1000)
+dummy.GetXaxis().SetRangeUser(150,250)
 dummy.GetYaxis().SetRangeUser(1.e-10,1)
 
 dummy.GetXaxis().SetTitle("m_{H^{+}}")
@@ -81,7 +81,7 @@ for i,sig in enumerate(sigmas):
   lines[i].Draw('SAME')
   labels[i].Draw('SAME')
 
-#c.SetLogy(True)
+c.SetLogy(True)
 c.Update()
 
 raw_input("ok?")

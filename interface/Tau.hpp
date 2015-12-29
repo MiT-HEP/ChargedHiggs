@@ -10,10 +10,14 @@ class Tau: virtual public Object,
     virtual public Trigger
 {
     float etacut_; 
+    bool doEleRej_;
+    bool doMuRej_;
 
 
     public:
     void SetEtaCut(float x){etacut_=x;}
+    void SetMuRej(bool x ) { doMuRej_ = x;}
+    void SetEleRej(bool x ) { doEleRej_ = x;}
 
     Tau() ;
     bool id;

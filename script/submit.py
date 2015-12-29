@@ -247,6 +247,7 @@ for iJob in range(0,opts.njobs):
 	if opts.tar:
 		sh.write("mkdir -p $WORKDIR/%s_%d\n"%(opts.dir,iJob))
 		sh.write("cd $WORKDIR/%s_%d\n"%(opts.dir,iJob))
+		#sh.write('LD_LIBRARY_PATH=${PWD}:${PWD}/bin:$LD_LIBRARY_PATH\n') ## TODO: test
 		sh.write("tar -xzf %s/package.tar.gz\n"%(basedir ))
 		sh.write("mkdir -p %s\n"%opts.dir)
 		sh.write("cp %s/*dat %s/\n"%(basedir,opts.dir))

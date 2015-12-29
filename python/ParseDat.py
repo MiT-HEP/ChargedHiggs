@@ -214,9 +214,9 @@ def ReadMCDB(file):
 
 def ReadSFDB(file):
 	'''read and parse the SFDB file:
-	    \t\t### LABEL dir Entries xSec
+	    \t\t### LABEL type -- -- --- --- 
 	'''
-	L=[]
+	L=[]## this is a list of sf bins
 	f = open(file)
 	for line in f:
 	   try:
@@ -231,6 +231,19 @@ def ReadSFDB(file):
 		R={}
 		R['label']= label
 		R['type'] = type
+
+		if label == 'include':
+			tmp = ReadSFDB(type)
+			#remove from L all the key with the same label as in tmp
+			labels = set([])
+			new = []
+			for key in tmp:
+				labels.add( key['label'])
+			for key in L:
+				if key['label'] not in labels:
+					new.append( key ) 
+			# merge L and tmp
+			L = new[:]
 
 		if type == 'pteta':
 			pt1  = float ( l.split(' ')[2] )

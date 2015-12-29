@@ -14,9 +14,9 @@ Tau::Tau() : Lepton(){
 
 int Tau::IsTau() const {
     if ( not id ) return 0;
-    if ( not id_ele) return 0;
-    if ( not id_mu) return 0;
-    if (iso2 >= isocut_ ) return 0;
+    if ( doEleRej_   and not id_ele) return 0;
+    if ( doMuRej_    and not id_mu) return 0;
+    if ( isocut_ >=0 and iso2 >= isocut_ ) return 0;
     if ( Pt() < ptcut_ ) return 0;
     if ( fabs(Eta() ) > etacut_) return 0;
     return 1;
@@ -24,8 +24,8 @@ int Tau::IsTau() const {
 
 int Tau::IsTauInvIso() const {
     if ( not id ) return 0;
-    if ( not id_ele) return 0;
-    if ( not id_mu) return 0;
+    if ( doEleRej_ and not id_ele) return 0;
+    if ( doMuRej_ and not id_mu) return 0;
     if (iso2 < 3.0 ) return 0;
     if (iso2 > 20.0 ) return 0;
     if ( Pt() < ptcut_ ) return 0;

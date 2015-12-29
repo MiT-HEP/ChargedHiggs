@@ -212,6 +212,9 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
     vector<TCanvas*> cbkgs;
     vector<TF1> expos;
 
+    double cached_pars[50]; //cache
+    for(int i=0;i< sizeof(cached_pars)/sizeof(double); ++i) cached_pars[i]=0;
+
     int poln=0;
     for( poln=0;poln<5; ++poln)
     {
@@ -230,9 +233,15 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
 
         expo.SetParLimits(0,TMath::Min(bkg->Integral()*.1,0.001), bkg->Integral()*10);
         expo.SetParLimits(1,1e-9, 1.);
+
+        if (poln>0)for(int k=0;k < poln+1;++k) expo.SetParameter(k, cached_pars[k]);
+
         bkg->Fit( &expo ,"QN") ;
         bkg->Fit( &expo ,"QNM") ;
         expos.push_back(expo);
+
+        //cache parameters
+        for(int k=0;k < poln+1;++k) cached_pars[k]=expo.GetParameter(k);
 
         double chi2=expo.GetChisquare();
         double prob = 0 ; 
@@ -248,6 +257,7 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
 
         cout<<"----------- BKG PARAMETERS ARE -------"<<endl;
         cout << "Prob = "<<prob<<endl;
+        cout << "chi2 = "<<chi2<<endl;
         cout<<" 0 : "<< expo.GetParameter(0) <<endl;
         for(int i=0; i<=poln;++i)
             cout<<" "<< i+1 <<" : "<< expo.GetParameter(i+1) <<endl;
@@ -258,6 +268,8 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
 
         if (prob >0.05 and poln> 0) break; // ---------------------- EXIT BEFORE UPDATING
     }
+    
+    poln -= 1;  // the last has a negligible improvement
 
     for(int i=1;i<=bkg->GetNbinsX() ;++i)
             bkg->SetBinContent(i,expos[poln].Integral( bkg->GetBinLowEdge(i),bkg->GetBinLowEdge(i+1) ) ) ;
