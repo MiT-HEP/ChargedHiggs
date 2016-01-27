@@ -9,11 +9,13 @@
 #include "NeroProducer/Core/interface/BareMet.hpp"
 #include "NeroProducer/Core/interface/BareFatJets.hpp"
 #include "NeroProducer/Core/interface/BareLeptons.hpp"
+#include "NeroProducer/Core/interface/BarePhotons.hpp"
 #include "NeroProducer/Core/interface/BareTaus.hpp"
 #include "NeroProducer/Core/interface/BareTrigger.hpp"
 #include "NeroProducer/Core/interface/BareVertex.hpp"
 
 #include "interface/Handlers.hpp"
+#include "interface/Logger.hpp"
 
 #include <sstream>
 
@@ -108,6 +110,14 @@ int Looper::InitTree()
     bare_.push_back(l);
 
 #ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Photons "<<endl;
+#endif
+    // ---
+    BarePhotons *p = new BarePhotons(); 
+    names_[ "Photons" ] = bare_.size();
+    bare_.push_back(p);
+
+#ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[InitTree] Init Met "<<endl;
 #endif
     BareMet *met = new BareMet(); 
@@ -148,7 +158,8 @@ void Looper::Loop()
 {
     unsigned long nEntries = tree_->GetEntries();
 
-    cout<<"[Looper]::[Loop]::[INFO] Running on "<<nEntries<<" entries" <<endl;
+    //ostringstream os; os<<"Running on "<<nEntries<<" entries" ;
+    Log(__FUNCTION__,"INFO", Form("Running on %d entries",nEntries) );
 
     sw_. Reset();
 
@@ -157,7 +168,7 @@ void Looper::Loop()
         {
             if(iEntry %10000 == 0 ) {
                 sw_.Stop();
-                cout<<"[Looper]::[Loop]::[INFO] Getting Entry "<<iEntry<<" / "<<nEntries << " in (Cpu)"<< sw_ .CpuTime() <<" (Real) "<< sw_.RealTime()<<endl;
+		Log(__FUNCTION__,"INFO",Form("Getting Entry %lu / %lu in (Cpu) %.4f (Real) %.4f",iEntry,nEntries, sw_.CpuTime(),sw_.RealTime()) );
                 sw_ .Reset();
                 sw_ .Start();
             }
@@ -191,15 +202,15 @@ void Looper::Loop()
 			    c->correct(event_);
 
                     //do the analysis
-                    event_->validate(); // validate the objects
                     for(auto a : analysis_)
                     {
 #ifdef VERBOSE
-                        if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing Analysis "<<a->name()<<endl;;
+                        if (VERBOSE > 1) Log(__FUNCTION__,"DEBUG", string("Doing Analysis") + a->name());
 #endif
+                    	event_->validate(); // validate the objects
                         // each analysis step will apply the SF accordingly to the object it is using
                         event_ -> weight_ . clearSF() ;
-                        if ( a->analyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
+                        if ( a->doAnalyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
                     }
                 }
                 s->SetSyst(0); // not necessary, but cleaner in this way
@@ -208,14 +219,14 @@ void Looper::Loop()
     }
     catch( sigint_exception &e)
     {
-        cout<<" Caught SIGINT/SIGTERM: exiting! "<<endl;
+	Log(__FUNCTION__,"SIGNAL"," Caught SIGINT/SIGTERM: exiting! ");
         Write();
         Close();
         throw e; 
     }
     //call end procedures for the analyis
     for(auto a : analysis_)
-        a->End();
+        a->doEnd();
     // save output
 
     Write();
@@ -234,7 +245,9 @@ void Looper::NewFile()
     fNumber = tree_->GetTreeNumber();
     // check name and weight TODO
     string fname = tree_->GetFile()->GetName();
-    cout<<"[Looper]::[NewFile]::[INFO] Opening new file: '"<<fname<<"'"<<endl;
+    event_ -> fName_ = fname;
+
+    Log(__FUNCTION__,"INFO","Openining new file: '"+ fname +"'");
     //"root://eoscms//store/../label/abc.root"
     size_t last = fname.rfind('/');
     //size_t prevLast = fname.rfind('/',last-1);
@@ -329,6 +342,7 @@ void Looper::FillEventInfo(){
     BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["Vertex"] ] ) ; assert(v!=NULL);
     event_ -> npv_ = v->npv;
 
+
 }
 
 
@@ -345,6 +359,15 @@ void Looper::FillJets(){
         return;
     }
 
+#ifdef VERBOSE
+    if(VERBOSE>1)
+	    cout <<"[Looper]::[FillJets]::[DEBUG] Jets length:"<<endl;
+	    cout <<"\t * selBits: "	<< tree_->GetBranchStatus("jetSelBits") << " : "<< bj->selBits->size()<<endl;
+	    cout <<"\t * unc: "		<< tree_->GetBranchStatus("jetUnc") << " : "<< bj->unc->size()<<endl;
+	    cout <<"\t * bdiscr: "	<< tree_->GetBranchStatus("jetBdiscr") << " : "<< bj->bDiscr->size()<<endl;
+	    cout <<"\t * qgl: "		<< tree_->GetBranchStatus("jetQG") << " : "<< bj->qgl->size()<<endl;
+#endif
+
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
 	bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
@@ -354,10 +377,45 @@ void Looper::FillJets(){
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
         j->unc = bj -> unc -> at(iJet); //
         j->bdiscr = bj -> bDiscr -> at(iJet);
+
+	if (tree_->GetBranchStatus("jetQGL") ) j->SetQGL( bj -> qgl -> at(iJet) );
+	else j->SetQGL(  -10 ); // Add a warning ? 
 	// TODO add PuId, and syst
         event_ -> jets_ . push_back(j);
     }
     return;
+}
+
+void Looper::FillPhotons(){
+	BarePhotons*b = dynamic_cast<BarePhotons*>(bare_[names_["Photons"] ] ) ; 
+	if (b == NULL)
+	{
+		static int count=0;
+		if (count <10 )  Log(__FUNCTION__,"WARNING", "No photons available");
+		count ++;
+		return ;
+	}
+    	if ( tree_ ->GetBranchStatus("photonP4") ==0  ){ 
+		static int count2 = 0;
+		count2++;
+		if (count2 <10 )  Log(__FUNCTION__,"WARNING", "Photons not filled");
+		return;
+	}
+
+    	for (int i = 0;i<b->p4->GetEntries() ;++i)
+    	{
+    	    //bool id = (b->selBits->at(i)) & BarePhotons::Selection::PhoMedium;
+	    //if (not id) continue;
+	    bool eleVeto= b->selBits->at(i) & (1UL<<7); // v1.2.1
+	    if (not eleVeto) continue;
+
+	    Photon *p = new Photon();
+	    p->SetP4( *(TLorentzVector*) ((*b->p4)[i]) );
+	    p->iso = b->chIso->at(i);
+	    p->id = (b->selBits->at(i));
+	    event_ -> phos_ . push_back(p);
+    	}
+
 }
 
 void Looper::FillLeptons(){
@@ -377,7 +435,7 @@ void Looper::FillLeptons(){
     for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
     {
 	bool id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepLoose;
-	if (not id) continue;
+	//if (not id) continue;
         Lepton *l = new Lepton();
         l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
         l-> iso = (*bl->iso) [iL];
@@ -388,7 +446,6 @@ void Looper::FillLeptons(){
 	#endif
 	l->trigger =  0;
 	if (tree_ -> GetBranchStatus("triggerLeps") !=0  && tr -> triggerLeps ->size() >iL) l->trigger = tr->triggerLeps->at(iL);
-
 
         event_ -> leps_ . push_back(l);
     }
@@ -436,7 +493,9 @@ void Looper::FillTaus(){
 		if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Filling Taus Trigger"<<endl;
 	#endif
 	t->trigger =  0;
+	t->triggerNone =  0;
 	if (tree_ -> GetBranchStatus("triggerTaus") !=0  && tr -> triggerTaus ->size() >iL) t->trigger = tr->triggerTaus->at(iL);
+	if (tree_ -> GetBranchStatus("triggerNoneTaus") !=0  && tr -> triggerNoneTaus ->size() >iL) t->triggerNone = tr->triggerNoneTaus->at(iL);
 
 	//---------------------------------------------
 	#ifdef VERBOSE
@@ -569,6 +628,7 @@ void Looper::FillEvent(){
     //usleep(100); // DEBUG XROOTD
     FillJets();
     FillLeptons();
+    FillPhotons();
     FillTaus();
     FillMet();
     FillMC();

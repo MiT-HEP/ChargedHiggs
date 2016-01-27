@@ -15,6 +15,7 @@ void Event::ClearEvent(){
     jets_ . clear();
     leps_ . clear();
     taus_ . clear();
+    phos_ . clear();
     genparticles_ . clear();
 
     weight_ . clearSF( );
@@ -63,10 +64,10 @@ float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton
     return -3;
 } 
 
-float Event::RbbMin(int iMax) {
+float Event::RbbMin(int iMax,Tau *t) {
     // notice the Pi-...
-    if (GetTau(0) == NULL) return -1;
-    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( GetTau(0) ) );
+    if (t == NULL) return -1;
+    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( t ) );
 
     float rbbmin = -1;
     for(int i=0 ; i< iMax; ++i)
@@ -80,10 +81,10 @@ float Event::RbbMin(int iMax) {
 
     return rbbmin;
 }
-float Event::RCollMin(int iMax) {
+float Event::RCollMin(int iMax,Tau *t) {
     // notice the Pi-...
-    if (GetTau(0) == NULL) return -1;
-    float dphietmisstau = fabs(GetMet().DeltaPhi( GetTau(0) ) );
+    if (t == NULL) return -1;
+    float dphietmisstau = fabs(GetMet().DeltaPhi( t ) );
     float rcollmin = -1;
     for(int i=0 ; i< iMax; ++i)
     {
@@ -97,9 +98,9 @@ float Event::RCollMin(int iMax) {
     return rcollmin;
 }
 
-float Event::RsrMax(int iMax) {
-    if (GetTau(0) == NULL) return -1;
-    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( GetTau(0) ) );
+float Event::RsrMax(int iMax, Tau *t) {
+    if (t == NULL) return -1;
+    float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( t ) );
     float rsrmax = -1;
     for(int i=0 ; i< iMax; ++i)
     {
@@ -238,6 +239,7 @@ Lepton * Event::GetMuon( int iMu )
     {
         if ( leps_[i]->IsLep() and leps_[i]->IsMuon() ) 
             valid.push_back(pair<float,int>(leps_[i]->Pt(),i)); 
+
     }
 
     if (valid.size() == 0 ) return NULL;
@@ -264,7 +266,7 @@ Tau * Event::GetTauInvIso( int iTau )
     return taus_[ valid[iTau].second];
 }
 
-bool Event::IsTriggered( string name ,Trigger *trigger)
+bool Event::IsTriggered( string name ,Trigger *trigger, bool isNone)
 {
     // TODO: make event inheriths from trigger, and remove this switch
     #ifdef VERBOSE
@@ -281,7 +283,10 @@ bool Event::IsTriggered( string name ,Trigger *trigger)
         if (trigger == NULL)
             return triggerFired_[ lastPos ] ;
         else 
-            return trigger -> IsTriggered( lastPos ) ;
+        {
+            if (isNone)  return trigger -> IsTriggeredNone ( lastPos ) ;
+            else return trigger -> IsTriggered( lastPos ) ;
+        }
     }
     
     lastPos = -1;
@@ -290,6 +295,7 @@ bool Event::IsTriggered( string name ,Trigger *trigger)
         if (name == triggerNames_[i] ) { lastPos=i; break;} 
     }
     lastName = name;
+    //cout <<"[Event]::[IsTriggered]::[DEBUG] Found trigger menu with name '"<<name<<"' at pos "<<lastPos<<endl;
     if (lastPos >=0 ) {
         #ifdef VERBOSE
         if (VERBOSE >1) cout <<"[Event]::[IsTriggered]::[DEBUG] grace exit"<<endl;
@@ -297,11 +303,32 @@ bool Event::IsTriggered( string name ,Trigger *trigger)
         if (trigger == NULL)
             return triggerFired_[ lastPos ] ; 
         else 
-            return trigger -> IsTriggered( lastPos) ;
+        {
+            if (isNone) return trigger->IsTriggeredNone (lastPos ) ;
+            else return trigger -> IsTriggered( lastPos) ;
+        }
     }
-    
-    cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
+   
+    // Log only if it's not empty  -- can be used to reset stuff
+    if (name != "") cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
     return false;
+}
+
+Photon * Event::GetPhoton( int iPho ) 
+{     
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<phos_.size() ;++i)
+    {
+        if ( phos_[i]->IsPho()) 
+            valid.push_back(pair<float,int>(phos_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iPho  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return phos_[ valid[iPho].second];
 }
 
 // Local Variables:

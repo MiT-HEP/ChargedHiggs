@@ -35,6 +35,7 @@ def getJson(fname):
     return json.loads( jstring )
 
 def applyJson(obj,fname):
+    if opts.verbose: print "-> Apply JSON '" + fname + "' to objet '"+ obj.name() + "'" 
     goodlumis = getJson( fname )
     
     for run in goodlumis.keys():
@@ -183,6 +184,9 @@ for key in sfdb:
 	if key['type'] == 'base':
 		if opts.verbose: print label,key['type'], key['sf'],key['err'] 
 		loop.AddSF(label, key['sf'], key['err'])
+	if key['type'] == 'spline':
+		if opts.verbose: print label,key['type'], key['pt'], key['sf'],key['err'] 
+		loop.AddSplineSF(label,key['pt'],key['sf'],key['err'])
 if opts.verbose:print "#############################"
 
 for smear in cfg['Smear']:
@@ -224,10 +228,10 @@ for analysis in cfg['Analysis']:
 		#if not hasattr( analyzer, check):
 		if check.startswith('@'):
 			## global function
-			check = check[1:]
-			check = re.sub('!',',',check)
-			check = re.sub("$OBJ","analyzer",check)
-			exec( check ) 
+			exe = key[1:]
+			exe = re.sub('!',',',exe)
+			exe = re.sub("\$OBJ","analyzer",exe)
+			exec( exe ) 
 		else:
 			try: 
 				getattr(analyzer, check)

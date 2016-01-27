@@ -13,6 +13,9 @@ public:
         int analyze(Event*,string systname) override;
         const string name()override{return "TagAndProbe";}
 
+        // loose tau selection
+        void SetTauCuts(Tau*t) override;
+
         bool doTree = true;
         string treename ="tagprobe";
 

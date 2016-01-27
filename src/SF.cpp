@@ -66,6 +66,45 @@ void SF_PtEta::print(){
     }
     cout <<" ----------------------"<<endl;
 }
+// ------------- SPLINE -------------
+//
+#include "TFile.h"
+void SF_PtSpline::set( double pt){
+    sf = spline_ -> Eval(pt);
+    err = errSpline_ -> Eval(pt);
+    return;
+}
+
+void SF_PtSpline::init(){
+    if (spline_==NULL){spline_=new TSpline3();spline_->SetName( (label+"spline").c_str());}
+    if (errSpline_==NULL){errSpline_=new TSpline3(); errSpline_->SetName( (label+"errSpline").c_str());}
+
+}
+
+void SF_PtSpline::init(string filename, string obj,string obj2)
+{
+    clear();
+    TFile *f = TFile::Open(filename.c_str());
+    spline_= (TSpline3*)f->Get(obj.c_str()) -> Clone( (obj + "clone").c_str() );
+    errSpline_= (TSpline3*)f->Get(obj2.c_str()) -> Clone( (obj2 + "clone").c_str() );
+    f->Close();
+}
+
+void SF_PtSpline::add(double pt, double sf, double err)
+{
+    init();
+    spline_->SetPoint( spline_ ->GetNp(), pt , sf );
+    errSpline_->SetPoint(errSpline_->GetNp(), pt, err);
+
+}
+
+void SF_PtSpline::print(){
+    cout <<" ------ SF Pt Spline --------"<<endl;
+    cout <<"label="<<label<<endl;
+    if(spline_)spline_->Print("V");
+    if(errSpline_)errSpline_->Print("V");
+    cout <<"---------------"<<endl;
+}
 
 // Local Variables:
 // mode:c++

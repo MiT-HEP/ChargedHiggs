@@ -39,12 +39,17 @@ TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/user/amarini/Nero/v1.2/TTJe
 TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/amarini/Nero/v1.2/TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8/TTZToQQ-25ns/151115_184113/0000 396605.04191 0.496605610259
 VBFHToGG_M-125_13TeV_powheg_pythia8 /store/user/amarini/Nero/v1.2/VBFHToGG_M-125_13TeV_powheg_pythia8 7097174.60418 3.70722627057
 WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 /store/user/amarini/Nero/v1.2/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-25ns/151115_184045/0000 3.73654308847e+12 42376.9146369
-WW_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v1.2/WW_TuneCUETP8M1_13TeV-pythia8/WW-25ns/151115_184102/0000 993655.641385 64.9141738205
-WZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v1.2/WZ_TuneCUETP8M1_13TeV-pythia8/WZ-25ns/151115_183958/0000 978512.0 23.4113123492
+##WW_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v1.2/WW_TuneCUETP8M1_13TeV-pythia8/WW-25ns/151115_184102/0000 993655.641385 64.9141738205
+WW_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v1.2/WW_TuneCUETP8M1_13TeV-pythia8/WW-25ns/151115_184102/0000 993655.641385 118.7 
+##WZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v1.2/WZ_TuneCUETP8M1_13TeV-pythia8/WZ-25ns/151115_183958/0000 978512.0 23.4113123492
+WZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v1.2/WZ_TuneCUETP8M1_13TeV-pythia8/WZ-25ns/151115_183958/0000 978512.0 48.66
 WminusH_HToGG_WToAll_M125_13TeV_powheg_pythia8 /store/user/amarini/Nero/v1.2/WminusH_HToGG_WToAll_M125_13TeV_powheg_pythia8 312310.750058 0.536223438449
 WplusH_HToGG_WToAll_M125_13TeV_powheg_pythia8 /store/user/amarini/Nero/v1.2/WplusH_HToGG_WToAll_M125_13TeV_powheg_pythia8 499691.916958 0.861150467697
 ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8 /store/user/amarini/Nero/v1.2/ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8 429642.635464 0.757807392355
-ZZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v1.2/ZZ_TuneCUETP8M1_13TeV-pythia8/ZZ-25ns/151115_184010/0000 996944.0 10.1273319302
+#ZZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v1.2/ZZ_TuneCUETP8M1_13TeV-pythia8/ZZ-25ns/151115_184010/0000 996944.0 10.1273319302
+## Guillelmo
+ZZ_TuneCUETP8M1_13TeV-pythia8 /store/user/amarini/Nero/v1.2/ZZ_TuneCUETP8M1_13TeV-pythia8/ZZ-25ns/151115_184010/0000 996944.0 19.3
 ttHToGG_M125_13TeV_powheg_pythia8 /store/user/amarini/Nero/v1.2/ttHToGG_M125_13TeV_powheg_pythia8 799600.0 0.540099093789
 ttHToNonbb_M125_13TeV_powheg_pythia8 /store/user/amarini/Nero/v1.2/ttHToNonbb_M125_13TeV_powheg_pythia8/ttHToNonbb-25ns/151115_184137/0000 1893625.0 0.540099024773
 ttHTobb_M125_13TeV_powheg_pythia8 /store/user/amarini/Nero/v1.2/ttHTobb_M125_13TeV_powheg_pythia8/ttHTobb-25ns/151115_184125/0000 3933404.0 0.540099024773
+TT_TuneCUETP8M1_13TeV-powheg-pythia8 /store/user/amarini/Nero/v1.2.1/TT_TuneCUETP8M1_13TeV-powheg-pythia8 38046829.0 831 ## 729.987347147

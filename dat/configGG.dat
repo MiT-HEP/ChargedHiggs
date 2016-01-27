@@ -1,0 +1,22 @@
+#Files=/store/user/amarini/Nero/v1.2/DoubleEG_0T
+Files=/store/user/amarini/Nero/v1.2.1/DoubleEG
+
+MCDB=dat/mc_database.txt
+SFDB=dat/sf_database.txt
+Branches=dat/branches_pho.txt
+
+Output=GG.root
+#Analysis=JsonAnalysis,GGAnalysis
+Analysis=GGAnalysis
+pileup=aux/pileup.root
+
+Smear=NONE
+Correct=NONE
+
+############
+### JSON ###
+############
+
+#config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt')
+
+

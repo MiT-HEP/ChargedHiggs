@@ -12,7 +12,8 @@
 #### BKG ###
 Files=/store/user/amarini/Nero/v1.2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=/store/user/amarini/Nero/v1.2/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/v1.2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/amarini/Nero/v1.2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/store/user/amarini/Nero/v1.2.1/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 ### WW/WZ/ZZ###
 addfiles=/store/user/amarini/Nero/v1.2/WW_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/v1.2/WZ_TuneCUETP8M1_13TeV-pythia8
@@ -52,6 +53,7 @@ SFDB=dat/sf_database.txt
 Branches=dat/branches.txt
 ###
 pileup=aux/pileup.root
+#pileup=
 #pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root
 #pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup_JSON_1p2_PRE_10-09-2015.root 
 #pileup=file,fileup,filedn TODO
@@ -82,7 +84,7 @@ config=MitPhiCorrector|fileName="aux/MetPhi.root"
 #############
 
 config=DYAnalysis|AddLabel('DY')
-addConfig=DYAnalysis|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('QCD'),AddLabel('WJets')
+addConfig=DYAnalysis|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('QCD'),AddLabel('WJets')
 
 ############
 ### JSON ###

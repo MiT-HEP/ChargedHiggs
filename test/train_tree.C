@@ -64,6 +64,7 @@ void train( string fileName="test/mysub/Tmva/TmvaOutput.root",string bkg="QCD", 
 	if(bkg =="QCD") mcBkg = -101;
 	else if(bkg=="TTJets") mcBkg =-103;
 	else if(bkg=="DY") mcBkg =-102;
+	else if(bkg=="QCDData") mcBkg = -200;
 	else cout<<"ERROR: No bkg "<< bkg<<endl;
 	
 	TCut sigCut ( Form("sig > 0.5 && mc == %d",mcSig)); // 201 = 180GeV, 202=200GeV; 206=400;

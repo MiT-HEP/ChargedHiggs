@@ -12,6 +12,7 @@ using namespace std;
 #include "interface/Lepton.hpp"
 #include "interface/Tau.hpp"
 #include "interface/Met.hpp"
+#include "interface/Photon.hpp"
 #include "interface/GenParticle.hpp"
 
 // ----
@@ -33,24 +34,28 @@ class Event{
     vector<Lepton*> leps_;
     vector<Jet*>    jets_;
     vector<Tau*>    taus_;
+    vector<Photon*> phos_;
     vector<GenParticle*>    genparticles_; // gen particles
     Met met_;
     vector<bool>    triggerFired_;
     int isRealData_;
     int runNum_;
     int lumiNum_;
-    int eventNum_;
+    unsigned eventNum_;
     float rho_;
     int npv_;
 
     vector<string> triggerNames_;
+
+    string fName_;
 
     public:
     Weight weight_;
 
     inline int runNum(){return runNum_; }
     inline int lumiNum(){return lumiNum_; }
-    inline int eventNum(){return eventNum_; }
+    inline unsigned eventNum(){return eventNum_; }
+    inline string GetName()const{ return fName_;}
     
     // This functions should check if the objects are valid
     // Get NULL in case of failure
@@ -62,6 +67,7 @@ class Event{
     Lepton * GetLepton( int iLep );
     Lepton * GetElectron( int iEle );
     Lepton * GetMuon( int iMu );
+    Photon * GetPhoton( int iPho );
 
     //
     inline Met GetMet( ) { return met_;} // should be const, but noCorrPt is not set correctly without &
@@ -89,9 +95,16 @@ class Event{
     float Mt(MtType type=MtTau ) ; // 0 tau, 1 muon ,...
 
     // --------- Angular variables
-    float RbbMin(int iMax=3) ;
-    float RCollMin(int iMax=3) ;
-    float RsrMax(int iMax=3)  ;
+    inline float RbbMin(int iMax=3) { return RbbMin(iMax,GetTau(0) ) ; }
+    inline float RCollMin(int iMax=3) { return RCollMin(iMax, GetTau(0)); }
+    inline float RsrMax(int iMax=3) { return RsrMax(iMax, GetTau(0)); } 
+
+    float RbbMin(int iMax,Tau *t) ;
+    float RCollMin(int iMax,Tau *t) ;
+    float RsrMax(int iMax,Tau *t) ;
+
+    inline float DPhiEtMissJet(int iJet=0){ Jet*j= GetJet(iJet) ; if( j == NULL) return -1; return fabs(GetMet().DeltaPhi(j) );}
+    inline float DPhiTauJet(Tau*t,int iJet=0){Jet*j=GetJet(iJet) ; if (j==NULL) return -1 ;if(t==NULL) return -1; return fabs(j->DeltaPhi(*t));}
 
     //-----------------------------
     virtual void ClearEvent();
@@ -100,7 +113,7 @@ class Event{
     double weight();
     // update objects that can be invalid (jets)
     virtual void validate();
-    bool IsTriggered(string name, Trigger *trigger = NULL);
+    bool IsTriggered(string name, Trigger *trigger = NULL, bool isNone=false); // the None do not check if it is the L3 or LF -- only for taus and matching
 
     // SF utils
     void SetPtEtaSF(string label, float pt, float eta){ 

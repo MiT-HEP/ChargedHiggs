@@ -46,6 +46,7 @@ class Weight{
 
     void AddSF( string label, double sf, double err);
     void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err);
+    void AddSplineSF(string label, double pt, double sf, double err);
 
     void clearSF( ){ sf_ =1.0;}
     void SetSystSF(string label, int s ) { sf_db[label] -> syst = s;}
@@ -68,8 +69,14 @@ class Weight{
     inline void SetSystPU(int syst){pu_.syst=syst;};
     inline void clearSystPU(){ pu_ .clearSyst();}
 
-    // --- TODO check what happen with data
-    double weight(){ return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; }
+    // ---  check what happen with data, TODO CHECK LUMI
+    double weight(){ 
+        //Log(__FUNCTION__,"DEBUG",Form("Weight: Mc=%lf mcXsec=%lf sf=%lf pu=%lf nevents=%lf",mcWeight_, mcXsec_ ,sf_,pu_.GetPUWeight(mcName_,puInt_,runNum_), nEvents_));
+        return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        }
+
+    // 
+	void Log(const string& function, const string& level, const string& message);
 };
 
 #endif

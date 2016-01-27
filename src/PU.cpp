@@ -1,5 +1,8 @@
 #include "interface/PU.hpp"
 #include "TStopwatch.h"
+#include "interface/Logger.hpp"
+
+#define LogMe(type,message) Logger::getInstance().Log(typeid(*this).name(),__FUNCTION__,type,message)
 //#define VERBOSE 2
 
 PUunit::PUunit(){ runMin = -1 ; runMax=-1; hist = NULL; lumi = -1;}
@@ -60,12 +63,12 @@ double PU::GetPUWeight(string label, float x, int run)
 {
 try{
 #ifdef VERBOSE
-    if(VERBOSE>1) cout<<"[PU]::[GetPUWeight]::[DEBUG] "<<endl;
+    LogMe("DEBUG","Start");
 #endif
     if ( label == "data" or label == "Data" ) 
     {
 #ifdef VERBOSE
-        if(VERBOSE>1) cout<<"[PU]::[GetPUWeight]::[DEBUG] Returning data weight 1"<<endl;
+    LogMe("DEBUG","Data : Returning PUWeight = 1 ");
 #endif
         return 1;
     }
@@ -73,6 +76,10 @@ try{
     string targetName = "target";
     if (syst>0) targetName = "target_Up";
     if (syst<0) targetName = "target_Down";
+
+#ifdef VERBOSE
+    LogMe("DEBUG","Target is ='"+targetName+"'");
+#endif
 
     // This function is very slow. Let's cache a bit.
     static int lastSyst=-100; //CACHE
@@ -82,16 +89,27 @@ try{
 
     vector<PUunit*> *currentTarget=NULL;
     vector<PUunit*> *currentMC=NULL;
-    // CACHE
+
+    // CHECK IF CHACHED IS OK
     if (lastSyst == syst) {
         currentTarget=lastTarget;
+        #ifdef VERBOSE
+            LogMe("DEBUG",Form("Using lastTarget address=%lx", lastTarget)  );
+        #endif
     }
     if (lastMClabel == label ) 
     {
         currentMC=lastMC;
+        #ifdef VERBOSE
+            LogMe("DEBUG",Form("Using lastMC address=%lx", lastMC)  );
+        #endif
     }
-    if ( not currentTarget)
+
+    if ( currentTarget == NULL)
     {
+        #ifdef VERBOSE
+            LogMe("DEBUG",Form("Reloading current Target")  );
+        #endif
 
         auto container_target =  container.find(targetName); // SAVE SEARCH
         if(container_target == container.end() ) 
@@ -110,8 +128,11 @@ try{
         lastSyst=syst;
     } // end not currentTarget
 
-    if (not currentMC)
+    if ( currentMC == NULL)
     {
+        #ifdef VERBOSE
+            LogMe("DEBUG",Form("Reloading current MC")  );
+        #endif
         auto container_mc =  container.find(label); //SAVE SEARCH
         if( container_mc == container.end() )
         {
@@ -133,8 +154,11 @@ try{
         lastMClabel = label;
     }//end currentMC
 
+    #ifdef VERBOSE
+        LogMe("DEBUG",Form("Caching check done. Getting histos")  );
+    #endif
     /// ----------------- CHECK DONE --------
-    TH1 *target=NULL;
+    TH1 *target=NULL; // get histos
     TH1 *mc=NULL;
     double l = -1;
 
@@ -150,6 +174,7 @@ try{
         targetNum += 1;
     }
 
+
     for(PUunit* p : *currentMC)
     {
         if (IsInRange(run, p->runMin,p->runMax) )
@@ -158,6 +183,11 @@ try{
 
     if (target ==NULL) cout<<"[PU]::[GetPUWeight]::[ERROR] Null target PU Syst="<<syst <<endl;
     if (mc ==NULL) cout<<"[PU]::[GetPUWeight]::[ERROR] Null mc PU " <<label<<endl;
+
+    #ifdef VERBOSE
+        LogMe("DEBUG",Form("TargetNum=%d/%u",targetNum,currentTarget->size())  );
+        LogMe("DEBUG","Getting normalization factors" );
+    #endif
 
     // scale them
     //target ->Scale(target->Integral() );
@@ -170,9 +200,12 @@ try{
     if ( norm.find(normName) == norm.end())
     {
         norm[ normName ] = new vector<double>();
-        currentNorm = norm[ normName ];
     }
+    currentNorm = norm[ normName ];
 
+    #ifdef VERBOSE
+        LogMe("DEBUG","NormName='" + normName +"'" );
+    #endif
 
     if ( currentNorm->size() < targetNum +1 ) currentNorm->resize(targetNum+1,-1);
 
@@ -201,7 +234,7 @@ try{
 
     if (l>=0 ) w *= l / ltot;
 #ifdef VERBOSE
-    if(VERBOSE>1) cout<<"[PU]::[GetPUWeight]::[DEBUG] Returning weight w="<<w<<endl;
+    if(VERBOSE>1) cout<<"[PU]::[GetPUWeight]::[DEBUG] Returning weight w="<<w<<" | "<<num<<"/"<<den<<"*"<<sum<<endl;
 #endif
     return w;
 }

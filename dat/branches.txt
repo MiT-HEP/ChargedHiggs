@@ -3,6 +3,7 @@ jetP4
 jetUnc
 jetBdiscr
 jetSelBits
+jetQGL
 ### Leptons
 lepP4
 lepIso
@@ -32,5 +33,6 @@ mcWeight
 triggerFired
 triggerTaus
 triggerLeps
+triggerNoneTaus
 ## GEN
 metP4_GEN

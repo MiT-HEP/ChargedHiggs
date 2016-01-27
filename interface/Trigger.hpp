@@ -6,8 +6,11 @@
 class Trigger{
 
 public:
-	int trigger;
+	int trigger{0};
+    int triggerNone{0};
+    // ---
 	bool IsTriggered(int triggerPos){ return (trigger & (1UL << triggerPos)); }
+	bool IsTriggeredNone(int triggerPos){ return (triggerNone & (1UL << triggerPos)); }
 };
 
 #endif

@@ -115,7 +115,7 @@ for mc in mcList:
    datacard.write("\tw:pdf_$CHANNEL_"+mc)
    datacard.write("\n")
 
-for sigMH in [ 200,250,300,400]:
+for sigMH in [ 200,250,300,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
 	if opts.ncat==1:

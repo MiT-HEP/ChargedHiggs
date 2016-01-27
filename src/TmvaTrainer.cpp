@@ -25,6 +25,52 @@ void TmvaTrainer::AddVariable(string name, char type ,double xmin,double xmax)
 
 }
 
+int TmvaTrainer::analyzeInvIso(Event*e,string systname)
+{
+    Jet* j1 = e->LeadJet(); 
+    Jet * bj1 = e->LeadBjet();
+    Tau *t1 = e->GetTauInvIso(0);
+
+    if (e->Nleps() >0 ) return 0;
+    if (t1 == NULL ) return 0;
+
+    //Trigger
+    if (t1->Pt() < 51 ) return 0;
+    if (e->GetMet().Pt() <130 ) return 0;
+
+    SetTreeVar("sig",0);
+    SetTreeVar("mc",-200); // data driven bkg
+
+    SetTreeVar("NJets",e->Njets());
+    SetTreeVar("NCJets",e->NcentralJets());
+    SetTreeVar("BJets",e->Bjets());
+    SetTreeVar("etat1",t1->Eta());
+    SetTreeVar("phit1",t1->Phi());
+    SetTreeVar("phimet",e->GetMet().Phi());
+    SetTreeVar("ht",e->Ht());
+    SetTreeVar("weight",e->weight());
+
+    if (j1 != NULL ) SetTreeVar("pTj1",j1->Pt());
+              else  SetTreeVar("pTj1",0);
+    if (bj1 != NULL ) SetTreeVar("pTb1",bj1->Pt());
+              else  SetTreeVar("pTb1",0);
+    double DPhiEtMissJet1=-1 ; if (j1 != NULL ) DPhiEtMissJet1 = fabs(e->GetMet().DeltaPhi(j1));
+    double DPhiEtMissTau=fabs(e->GetMet().DeltaPhi(t1));
+
+     // compute with the inv tau
+    SetTreeVar("rbb",e->RbbMin(3, t1));
+    SetTreeVar("rcoll",e->RCollMin(3,t1));
+    SetTreeVar("rsr",e->RsrMax(3,t1));
+
+    SetTreeVar("DPhiEtMissJet1",DPhiEtMissJet1);
+    SetTreeVar("DPhiEtMissTau",DPhiEtMissTau);
+
+    SetTreeVar("pTt1oMet", t1->Pt() / e->GetMet().Pt() );
+
+    FillTree("tmva_tree");
+    return 0;
+}
+
 int TmvaTrainer::analyze(Event*e, string systname)
 {
     if(VERBOSE>2) cout<<"[TmvaTrainer]::[analyze]::[DEBUG]::[2] Getting Event:"<<e->eventNum()<<endl;
@@ -33,7 +79,7 @@ int TmvaTrainer::analyze(Event*e, string systname)
 
     string label = GetLabel(e);
 
-    if (label=="Data" ) return 0;
+    if (label=="Data" ) return analyzeInvIso(e,systname); // TAU INV ISO FOR DATA -> QCD
 
     if (e->Ntaus() <=0 ) return 0;
     if (e->Nleps() >0 ) return 0;

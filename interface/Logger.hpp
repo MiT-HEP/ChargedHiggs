@@ -19,6 +19,11 @@ public:
 			<<"]::["<<function <<"]::["<<level<<"]: "
 			<<message<<endl;
 	}
+	void Log(const string& name,const string& function, const string & level, const string& message){
+		cout <<"["<<name
+			<<"]::["<<function <<"]::["<<level<<"]: "
+			<<message<<endl;
+	}
 };
 
 #endif
