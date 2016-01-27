@@ -113,7 +113,7 @@ class Event{
     double weight();
     // update objects that can be invalid (jets)
     virtual void validate();
-    bool IsTriggered(string name, Trigger *trigger = NULL);
+    bool IsTriggered(string name, Trigger *trigger = NULL, bool isNone=false); // the None do not check if it is the L3 or LF -- only for taus and matching
 
     // SF utils
     void SetPtEtaSF(string label, float pt, float eta){ 

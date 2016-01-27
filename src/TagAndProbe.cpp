@@ -29,6 +29,7 @@ void TagAndProbe::Init(){
         Branch(treename,"passIdMu",'I');  // pass id muon
         Branch(treename,"passEventTrigger",'I');  // pass trigger -- need trigger matching !
         Branch(treename,"passTrigger",'I');  // pass trigger -- need trigger matching !
+        Branch(treename,"passTriggerNone",'I');  // pass trigger -- studying tr matching
         Branch(treename,"passTriggerMet",'I');  // pass trigger -- need trigger matching !
         Branch(treename,"passMCTruth",'I');  // pass Truth MC
 
@@ -81,6 +82,7 @@ int TagAndProbe::analyze(Event*e,string systname){
     SetTreeVar("passIdMu", tProbe -> id_mu );
     SetTreeVar("passEventTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", NULL)  );
     SetTreeVar("passTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tProbe )  );
+    SetTreeVar("passTriggerNone", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tProbe , true)  );
     SetTreeVar("passTriggerMet", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80", tProbe )  );
     SetTreeVar("passMCTruth", tProbe -> IsMatch() );
 

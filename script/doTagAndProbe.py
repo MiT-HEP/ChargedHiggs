@@ -81,6 +81,9 @@ for iEntry in range(0,tree.GetEntries()):
 	name = HistName("HLTEvent", tree.isMC, tree.ptProbe, tree.passEventTrigger) ###
 	hists[name].Fill(tree.m)
 
+	name = HistName("HLTNone", tree.isMC, tree.ptProbe, tree.passTriggerNone) ###
+	hists[name].Fill(tree.m)
+
 	if not tree.passTrigger: continue
 	name = HistName("Iso", tree.isMC, tree.ptProbe, tree.passIso) ###
 	hists[name].Fill(tree.m)

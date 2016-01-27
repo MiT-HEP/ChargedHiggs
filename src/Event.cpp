@@ -266,7 +266,7 @@ Tau * Event::GetTauInvIso( int iTau )
     return taus_[ valid[iTau].second];
 }
 
-bool Event::IsTriggered( string name ,Trigger *trigger)
+bool Event::IsTriggered( string name ,Trigger *trigger, bool isNone)
 {
     // TODO: make event inheriths from trigger, and remove this switch
     #ifdef VERBOSE
@@ -283,7 +283,10 @@ bool Event::IsTriggered( string name ,Trigger *trigger)
         if (trigger == NULL)
             return triggerFired_[ lastPos ] ;
         else 
-            return trigger -> IsTriggered( lastPos ) ;
+        {
+            if (isNone)  return trigger -> IsTriggeredNone ( lastPos ) ;
+            else return trigger -> IsTriggered( lastPos ) ;
+        }
     }
     
     lastPos = -1;
@@ -300,10 +303,14 @@ bool Event::IsTriggered( string name ,Trigger *trigger)
         if (trigger == NULL)
             return triggerFired_[ lastPos ] ; 
         else 
-            return trigger -> IsTriggered( lastPos) ;
+        {
+            if (isNone) return trigger->IsTriggeredNone (lastPos ) ;
+            else return trigger -> IsTriggered( lastPos) ;
+        }
     }
-    
-    cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
+   
+    // Log only if it's not empty  -- can be used to reset stuff
+    if (name != "") cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
     return false;
 }
 

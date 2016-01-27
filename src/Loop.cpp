@@ -359,6 +359,15 @@ void Looper::FillJets(){
         return;
     }
 
+#ifdef VERBOSE
+    if(VERBOSE>1)
+	    cout <<"[Looper]::[FillJets]::[DEBUG] Jets length:"<<endl;
+	    cout <<"\t * selBits: "	<< tree_->GetBranchStatus("jetSelBits") << " : "<< bj->selBits->size()<<endl;
+	    cout <<"\t * unc: "		<< tree_->GetBranchStatus("jetUnc") << " : "<< bj->unc->size()<<endl;
+	    cout <<"\t * bdiscr: "	<< tree_->GetBranchStatus("jetBdiscr") << " : "<< bj->bDiscr->size()<<endl;
+	    cout <<"\t * qgl: "		<< tree_->GetBranchStatus("jetQG") << " : "<< bj->qgl->size()<<endl;
+#endif
+
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
 	bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
@@ -484,7 +493,9 @@ void Looper::FillTaus(){
 		if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Filling Taus Trigger"<<endl;
 	#endif
 	t->trigger =  0;
+	t->triggerNone =  0;
 	if (tree_ -> GetBranchStatus("triggerTaus") !=0  && tr -> triggerTaus ->size() >iL) t->trigger = tr->triggerTaus->at(iL);
+	if (tree_ -> GetBranchStatus("triggerNoneTaus") !=0  && tr -> triggerNoneTaus ->size() >iL) t->triggerNone = tr->triggerNoneTaus->at(iL);
 
 	//---------------------------------------------
 	#ifdef VERBOSE

@@ -20,6 +20,10 @@ void DYAnalysis::Init(){
 	    Book ("DYAnalysis/Vars/Ptmm_"+ l ,"Ptmm;p_{T}^{#mu#mu} [GeV];Events", 1000,0,1000);
 	    Book ("DYAnalysis/Vars/Ptem_"+ l ,"Ptem;p_{T}^{e#mu} [GeV];Events"  , 1000,0,1000);
 	    Book ("DYAnalysis/Vars/PtemNoMCut_"+ l ,"Ptem;p_{T}^{e#mu} [GeV];Events"  , 1000,0,1000);
+        // counting unweighted events
+	    Book ("DYAnalysis/Vars/PtmmUW_"+ l ,"Ptmm;p_{T}^{#mu#mu} [GeV];Events", 1000,0,1000);
+        // trilepton
+	    Book ("DYAnalysis/Vars/Ptlll_"+ l ,"Ptlll;p_{T}^{ll} [GeV];Events"  , 100,0,1000);
         // eta
 	    Book ("DYAnalysis/Vars/EtaMu1_"+ l ,"EtaMu1;#eta^{#mu1} ;Events", 1000,-5,5);
         //
@@ -84,6 +88,7 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
             Fill("DYAnalysis/Vars/EtaMu1_"+ label,systname, mu0->Eta(),e->weight()) ;
        	    Fill("DYAnalysis/Vars/Npvmm_"+ label,systname, e->Npv(),e->weight()) ;
             Fill("DYAnalysis/Vars/NJmm_"+ label,systname, e->NcentralJets(),e->weight()) ;
+            Fill("DYAnalysis/Vars/PtmmUW_"+ label,systname, Z.Pt(),1.0) ;
         }
 
         if ( Z.Pt() > 500) // NoSingleMuon Trigger -> ISO
@@ -154,15 +159,18 @@ int DYAnalysis::analyzeEM(Event *e, string systname)
     if (mu0==NULL or e0 == NULL) return 0;
 
     // e -- mu pair is not leading
-    if ( mu1 != NULL  and mu1->Pt() > e0->Pt()  ) return 0;
-    if ( e1 != NULL  and e1->Pt() > mu0->Pt()  ) return 0;
+    bool isEMuLeading= true;
+    if ( mu1 != NULL  and mu1->Pt() > e0->Pt() ) isEMuLeading=false;
+    if ( e1 != NULL  and e1->Pt() > mu0->Pt()  ) isEMuLeading=false;
+
+    if ( not isEMuLeading ) return 0;
 
     /////////////             E MU 
     bool doNotDoubleCount = true;
 
     if ( e->IsRealData() and e->GetName().find("SingleElectron") != string::npos) doNotDoubleCount=false;
 
-    if ( mu0->Pt() >25 and e0->Pt() >25 and doNotDoubleCount )
+    if ( mu0->Pt() >25 and e0->Pt() >25 and doNotDoubleCount and isEMuLeading  )
     {
         
         if ( e->IsRealData() and e->GetName().find("SingleMuon") == string::npos) cout <<"WTF ?"<<endl;
@@ -187,6 +195,52 @@ int DYAnalysis::analyzeEM(Event *e, string systname)
         }
 
     }
+
+}
+
+int DYAnalysis::analyzeLLL(Event *e, string systname)
+{
+    //Log(__FUNCTION__,"DEBUG","Begin Function");
+    string label = GetLabel(e);
+    cut.reset();
+    cut.SetMask(MaxCut-1) ;
+    cut.SetCutBit( Total ) ;
+
+    if (e->IsTriggered("HLT_IsoMu20") ) cut.SetCutBit(Trigger);
+
+    Lepton*mu0 = e->GetMuon(0);
+    Lepton*e0 = e->GetElectron(0);
+    Lepton*mu1 = e->GetMuon(1);
+    Lepton*e1 = e->GetElectron(1);
+
+    if (mu0==NULL or e0 == NULL) return 0;
+
+    bool doNotDoubleCount = true;
+    if ( e->IsRealData() and e->GetName().find("SingleElectron") != string::npos) doNotDoubleCount=false;
+
+    //Log(__FUNCTION__,"DEBUG","First Block emm");
+    if (mu1 != NULL and mu1->Pt() > 25 and e0->Pt()> 25  and doNotDoubleCount){ //mme
+        if (mu1->Charge() *mu0->Charge() == -1)cut.SetCutBit(Leptons);
+        Object Z(*mu0);
+        Z+= *mu1;
+        if (Z.M()> 60 && Z.M()<120) cut.SetCutBit(Mass);
+       	if (cut.passAll() ){
+            Fill("DYAnalysis/Vars/Ptlll_"+ label,systname, Z.Pt(),e->weight()) ;
+        }
+    }
+    //Log(__FUNCTION__,"DEBUG","Second Block eem");
+    if (e1 != NULL and mu0->Pt() > 25 and e1->Pt()> 25  and doNotDoubleCount){ //emm
+        if (e1->Charge() *e0->Charge() == -1)cut.SetCutBit(Leptons);
+        Object Z(*e0);
+        Z += *e1;
+        if (Z.M()> 60 && Z.M()<120) cut.SetCutBit(Mass);
+       	if (cut.passAll() ){
+            Fill("DYAnalysis/Vars/Ptlll_"+ label,systname, Z.Pt(),e->weight()) ;
+        }
+    }
+    //Log(__FUNCTION__,"DEBUG","End Function");
+    return 0;
+
 }
 
 int DYAnalysis::analyze(Event *e, string systname)
@@ -196,6 +250,7 @@ int DYAnalysis::analyze(Event *e, string systname)
     analyzeMM(e,systname);
     analyzeEM(e,systname);
     analyzeEE(e,systname);
+    analyzeLLL(e,systname);
     return 0;
 
 }

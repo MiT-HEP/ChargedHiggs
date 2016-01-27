@@ -9,6 +9,7 @@ parser.add_option("","--base",dest="base",type='string',help="Base Directory to 
 parser.add_option("","--mc",dest="mc",type='string',help="MC to Draw. [%default]",default="DY,TT,WW,WZ,ZZ,WJets");
 parser.add_option("-v","--var",dest="var",type='string',help="Var to Draw. [%default]",default="Ptem");
 parser.add_option("-f","--file",dest="file",type='string',help="file. [%default]",default="test/mysub/DY/DY.root");
+parser.add_option("","--rebin",dest="rebin",type='int',help="rebin. [%default]",default=1);
 
 opts, args = parser.parse_args()
 
@@ -85,6 +86,7 @@ for ext in ["Data"] + opts.mc.split(','):
 	dict[ext] = fIn.Get( full )  
 	if dict[ext] == None:
 		print "Unable to fetch ",full
+	if opts.rebin >0: dict[ext].Rebin(opts.rebin)
 	if ext != "Data" : dict[ext].Scale(opts.lumi)
 
 ##Correct for range and bin

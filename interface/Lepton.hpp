@@ -24,6 +24,7 @@ class Lepton : virtual public Object,
         inline float GetPtCut() const { return ptcut_;}
         inline float GetEtaCut() const { return etacut_;}
         inline float GetIsoRelCut() const { return isorelcut_;}
+        inline int Charge() const { return charge; }
 
         Lepton() ;
 
