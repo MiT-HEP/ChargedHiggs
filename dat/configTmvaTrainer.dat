@@ -4,7 +4,7 @@ include=dat/config.dat
 # --small set for test
 #Files=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M200
 #addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/v1.2/Tau
+addfiles=/store/user/amarini/Nero/v1.3/Tau
 
 Output=TmvaOutput.root
 Analysis=TmvaTrainer
