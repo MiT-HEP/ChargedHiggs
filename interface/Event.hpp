@@ -48,9 +48,15 @@ class Event{
     vector<string> triggerNames_;
 
     string fName_;
+    Weight *weight_;
 
     public:
-    Weight weight_;
+
+    //--- Constructor
+    Event();
+    ~Event();
+
+    Weight *GetWeight(){ return weight_;} 
 
     inline int runNum(){return runNum_; }
     inline int lumiNum(){return lumiNum_; }
@@ -122,10 +128,10 @@ class Event{
     // SF utils
     void SetPtEtaSF(string label, float pt, float eta){ 
         //cout <<"[Event]::[SetPtEtaSF]::[DEBUG] '"<<label<<"'"<<endl;
-        weight_ . SetPtEtaSF(label,pt,eta);
+        weight_ -> SetPtEtaSF(label,pt,eta);
         }
-    void ApplySF(string label){ weight_ . ApplySF(label) ; } 
-    bool ExistSF(string label){ return weight_ . ExistSF(label); }
+    void ApplySF(string label){ weight_ -> ApplySF(label) ; } 
+    bool ExistSF(string label){ return weight_ -> ExistSF(label); }
 };
 
 #endif

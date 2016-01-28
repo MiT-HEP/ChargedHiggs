@@ -27,7 +27,7 @@ int SmearLepSF::smear(Event *e)
 {
     if( e->IsRealData() ) return SMEAR_NA;
 
-    e -> weight_  . SetSystSF ("LEP",syst_);
+    e -> GetWeight()-> SetSystSF ("LEP",syst_);
     return SMEAR_OK;
 
 }
@@ -36,7 +36,7 @@ int SmearPu::smear(Event *e)
 {
     if( e->IsRealData() ) return SMEAR_NA;
 
-    e -> weight_  . SetSystPU ( syst_ );
+    e -> GetWeight() -> SetSystPU ( syst_ );
 
     return SMEAR_OK;
 }

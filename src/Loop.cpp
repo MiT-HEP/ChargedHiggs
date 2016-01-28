@@ -204,7 +204,7 @@ void Looper::Loop()
 #endif
                     	event_->validate(); // validate the objects
                         // each analysis step will apply the SF accordingly to the object it is using
-                        event_ -> weight_ . clearSF() ;
+                        event_ -> GetWeight() -> clearSF() ;
                         if ( a->doAnalyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
                     }
                 }
@@ -273,7 +273,7 @@ void Looper::NewFile()
 
     if ( event_->IsRealData() ) {  
         cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<endl;;
-        event_ -> weight_ . LoadMC("data");
+        event_ -> GetWeight() -> LoadMC("data");
     }
     // -- Load current MC --
     else {
@@ -284,7 +284,7 @@ void Looper::NewFile()
 	while ( savedDir == "" and iDir>=0 )
 		{
 		label = dirs[iDir];
-		savedDir=event_ -> weight_ . LoadMC( label );
+		savedDir=event_ -> GetWeight() -> LoadMC( label );
 		--iDir;
 		}
 
@@ -293,7 +293,7 @@ void Looper::NewFile()
         {
             cout<<"[Looper]::[NewFile]::[WARNING] failed to search MC by LABEL '"<<label<<"' search by dir '"<<dir<<"'"<<endl;
             // search for dir
-            label = event_ -> weight_ . LoadMCbyDir(dir);
+            label = event_ -> GetWeight() -> LoadMCbyDir(dir);
             savedDir = dir;
             cout<<"[Looper]::[NewFile]::[WARNING] label found '"<<label<<"'"<<endl;
         }
@@ -323,7 +323,7 @@ void Looper::NewFile()
     }
 
     // Dumper
-    dump_ -> NewFile( event_-> weight_ . GetMC() ) ;
+    dump_ -> NewFile( event_-> GetWeight() -> GetMC() ) ;
     dump_ -> InitTree(bare_);
     return;
 }
@@ -566,9 +566,9 @@ void Looper::FillMC(){
     if(VERBOSE>1)cout <<"[Looper]::[FillMC]::[DEBUG] Filling MonteCarlo" <<endl;
 #endif
     BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["MonteCarlo"]]);
-    event_ -> weight_ . mcWeight_ = mc->mcWeight;
+    event_ -> GetWeight() -> SetMcWeight(  mc->mcWeight );
 
-    event_ -> weight_ . SetPU( mc -> puTrueInt ,  event_ -> runNum_);
+    event_ -> GetWeight() -> SetPU( mc -> puTrueInt ,  event_ -> runNum_);
 
     if ( tree_->GetBranchStatus("genP4") == 0  ){ 
         static int counter = 0;

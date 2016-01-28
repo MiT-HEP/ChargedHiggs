@@ -54,7 +54,7 @@ string AnalysisBase::GetLabel(Event *e){
     else{
         for (string& s:  AllLabel() )
         {
-            if (e->weight_ . GetMC() . find(s) != string::npos ) {
+            if (e-> GetWeight() -> GetMC() . find(s) != string::npos ) {
                 label = s; 
                 break;
             }
@@ -62,7 +62,7 @@ string AnalysisBase::GetLabel(Event *e){
     } // end else (MC)
 
     #ifdef VERBOSE
-    if(VERBOSE>1) cout <<"[AnalysisBase]::[GetLabel]::[DEBUG]  mc is '"<<e->weight_ . GetMC() <<"' label is '"<<label<<"'"<<endl;
+    if(VERBOSE>1) cout <<"[AnalysisBase]::[GetLabel]::[DEBUG]  mc is '"<<e-> GetWeight() -> GetMC() <<"' label is '"<<label<<"'"<<endl;
     #endif
     return label;
 }

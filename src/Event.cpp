@@ -4,6 +4,16 @@
 #include <iostream>
 
 //#define VERBOSE 2
+//
+Event::Event()
+{
+    weight_ = new Weight();
+}
+
+Event::~Event(){
+    ClearEvent();
+    delete weight_;
+}
 
 void Event::ClearEvent(){
 
@@ -18,7 +28,7 @@ void Event::ClearEvent(){
     phos_ . clear();
     genparticles_ . clear();
 
-    weight_ . clearSF( );
+    weight_ -> clearSF( );
 
 }
 
@@ -29,9 +39,9 @@ void Event::clearSyst(){
     for ( auto o: genparticles_) o->clearSyst();
     met_ . clearSyst();
     // clear SF syst
-    weight_ . clearSF();
-    weight_ . resetSystSF();
-    weight_ . clearSystPU();
+    weight_ -> clearSF();
+    weight_ -> resetSystSF();
+    weight_ -> clearSystPU();
 }
 
 float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton
@@ -117,7 +127,7 @@ float Event::RsrMax(int iMax, Tau *t) {
 
 double Event::weight(){
     if (isRealData_ ) return 1;
-    return weight_ . weight();
+    return weight_ -> weight();
 }
 
 void Event::validate(){

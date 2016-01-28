@@ -94,16 +94,16 @@ class Looper{
         //
         void Loop();
 
-        inline void AddMC( string label, string dir, double xsec, double nevents){event_ -> weight_. AddMC(label,dir,xsec,nevents); }
-        inline void AddSF( string label, double sf, double err){ event_->weight_.AddSF(label,sf,err);}
+        inline void AddMC( string label, string dir, double xsec, double nevents){event_ -> GetWeight() -> AddMC(label,dir,xsec,nevents); }
+        inline void AddSF( string label, double sf, double err){ event_->GetWeight() -> AddSF(label,sf,err);}
         inline void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err)
-        {event_ -> weight_ .AddPtEtaSF(label,pt1,pt2,eta1,eta2,sf,err); }
-        inline void AddSplineSF(string label, double pt, double sf, double err){ event_->weight_.AddSplineSF(label,pt,sf,err);}
+        {event_ -> GetWeight()  -> AddPtEtaSF(label,pt1,pt2,eta1,eta2,sf,err); }
+        inline void AddSplineSF(string label, double pt, double sf, double err){ event_->GetWeight() -> AddSplineSF(label,pt,sf,err);}
 
         // -- PU Reweight
-        inline void AddTarget( TH1*h, int runMin=-1, int runMax =-1,double lumi=-1){ event_ -> weight_ .AddTarget(h,runMin,runMax,lumi);}
-        inline void AddTarget( TH1*h, string systName, int runMin=-1, int runMax =-1,double lumi=-1){ event_ ->weight_ . AddTarget(h,systName, runMin,runMax);}
-        inline void AddPuMC( string label, TH1*h, int runMin=-1, int runMax =-1){ event_ ->weight_. AddMC(  label, h, runMin, runMax ); }
+        inline void AddTarget( TH1*h, int runMin=-1, int runMax =-1,double lumi=-1){ event_ -> GetWeight() -> AddTarget(h,runMin,runMax,lumi);}
+        inline void AddTarget( TH1*h, string systName, int runMin=-1, int runMax =-1,double lumi=-1){ event_ ->GetWeight() -> AddTarget(h,systName, runMin,runMax);}
+        inline void AddPuMC( string label, TH1*h, int runMin=-1, int runMax =-1){ event_ ->GetWeight() -> AddMC(  label, h, runMin, runMax ); }
 
 
 };
