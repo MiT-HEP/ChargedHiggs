@@ -27,8 +27,7 @@ class Event{
     friend class SmearBase;
     friend class AnalysisBase;
     friend class CorrectorBase;
-    friend class ChargedHiggsEWKEmbedding;  // embedding will replace the taus
-    friend class TagAndProbe; // need access to the bare objects
+    friend class ChargedHiggsEWKEmbedding;  // embedding will replace the taus --- should be made a corrector
 
     protected:
     vector<Lepton*> leps_;
