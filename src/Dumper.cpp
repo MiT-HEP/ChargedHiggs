@@ -34,7 +34,7 @@ void Dumper::Fill(){
 
 void Dumper::Close(){
     // if open close, and set pointer to 0
-    if (out_) {out_->Write(); out_->Close();}
+    if (out_) {out_->Write(); out_->Close(); Log(__FUNCTION__,"INFO","Dumper is closing files");}
     ChargedHiggs::Delete(out_);
     ChargedHiggs::Delete(tree_);
 }
@@ -70,7 +70,7 @@ void Dumper::OpenNewFile()
     out_->cd("nero");
     tree_=new TTree("events","events");
     //tree_->SetMaxTreeSize( 10ULL<<30 ); //10Gb
-    tree_->SetMaxTreeSize( 1LL<<30 ); //10Gb
+    TTree::SetMaxTreeSize( 1LL<<30 ); //1Gb
 }
 
 // Local Variables:

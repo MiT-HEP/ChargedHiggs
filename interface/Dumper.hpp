@@ -33,7 +33,6 @@ class Dumper: public Named {
 
         string cacheMC_{""};
 
-        void Close();
         void OpenNewFile();
 
     public:
@@ -59,6 +58,8 @@ class Dumper: public Named {
         virtual void InitTree(const vector<BareCollection*> &bare);
 
         void Fill();
+
+        void Close();
 
 };
 

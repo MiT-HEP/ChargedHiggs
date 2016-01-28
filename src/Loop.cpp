@@ -217,6 +217,7 @@ void Looper::Loop()
 	Log(__FUNCTION__,"SIGNAL"," Caught SIGINT/SIGTERM: exiting! ");
         Write();
         Close();
+	dump_->Close();
         throw e; 
     }
     //call end procedures for the analyis
@@ -224,6 +225,7 @@ void Looper::Loop()
         a->doEnd();
     // save output
 
+    dump_->Close();
     Write();
     Close();
     return;	
