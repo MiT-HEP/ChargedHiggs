@@ -42,8 +42,8 @@ class PU : public Named
     bool IsInRange(int run, int runMin,int runMax);
 
     // --- limit max 
-    inline double Ratio(double num, double den){ 
-            if (std::isnan(num) or std::isinf(den)) return 0  ;
+    inline static double Ratio(double num, double den)  { 
+            if (std::isnan(num) or std::isinf(den)) return 0 ;
             if (std::isnan(den) or std::isinf(num)) return 10;
             if (den <=0 ) return 0 ; 
             if (num>10*den) return 10; 
