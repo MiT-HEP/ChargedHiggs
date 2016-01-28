@@ -2,8 +2,10 @@
 #define LEPTON_H
 
 #include "interface/Object.hpp"
+#include "interface/Trigger.hpp"
 
-class Lepton : virtual public Object
+class Lepton : virtual public Object,
+    virtual public Trigger
 {
     friend class TagAndProbe;
 
@@ -11,8 +13,22 @@ class Lepton : virtual public Object
         float isocut_;
         float ptcut_;
         float etacut_;
-
+        float isorelcut_ {-1};
+        bool   tightcut_ {0};  // ask for tight cut
     public:
+        inline void SetIsoCut(float x){isocut_=x;}
+        inline void SetPtCut( float x){ptcut_=x;}
+        inline void SetIsoRelCut( float x){isorelcut_=x;}
+        inline void SetEtaCut( float x){etacut_=x;}
+        inline void SetTightCut( bool x=true){tightcut_=x;}
+
+        inline float GetIsoCut()const {return isocut_;}
+        inline float GetPtCut() const { return ptcut_;}
+        inline float GetEtaCut() const { return etacut_;}
+        inline float GetIsoRelCut() const { return isorelcut_;}
+        inline bool  GetTightCut() const { return tightcut_;}
+        inline int Charge() const { return charge; }
+
         Lepton() ;
 
         float iso; // isolation 
@@ -20,12 +36,16 @@ class Lepton : virtual public Object
         int type;// abspdgid 11 o 13 
         int tightId;
 
-        virtual inline int IsLep(){ 
-            if (iso> isocut_ || Pt() < ptcut_ || tightId==0 || fabs(Eta()) > etacut_) return 0;
-            else return 1;
+        virtual inline int IsLep() const { 
+            if ( etacut_ >=0 and abs(Eta()) > etacut_) return 0;
+            if ( isocut_ >=0 and iso > isocut_) return 0;
+            if ( isorelcut_ >=0 and iso/Pt() > isorelcut_) return 0;
+            if ( Pt() < ptcut_ ) return 0;
+            if ( tightcut_ and not tightId) return 0;
+            return 1;
         }
-        virtual inline bool IsElectron(){ return IsLep() and (type == 11); }
-        virtual inline bool IsMuon(){ return IsLep() and (type == 13); }
+        virtual inline bool IsElectron() const { return IsLep() and (type == 11); }
+        virtual inline bool IsMuon() const { return IsLep() and (type == 13); }
         virtual inline int   IsObject(){return IsLep();}
 };
 

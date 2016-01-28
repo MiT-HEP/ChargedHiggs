@@ -1,0 +1,32 @@
+# shapes process channel file histogram [ histogram_with_systematics ] 
+# PROCESS is replaced with the process name (or "data_obs" for the observed data)
+# $CHANNEL is replaced with the channel name
+# $SYSTEMATIC is replaced with the name of the systematic + (Up, Down)
+# $MASS is replaced with the higgs mass value which is passed as option in the command line used to run the limit tool 
+-------------------------------------
+imax *
+jmax *
+kmax *
+-------------------------------------
+shapes data_obs *  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_Data
+shapes Hplus 	*  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_HplusToTauNu_M-$MASS_13TeV_amcatnlo
+#shapes *  	*  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_$PROCESS
+shapes QCD  	*  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_QCD
+shapes TTJets  	*  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_TTJets
+shapes ZZ  	*  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_ZZ
+shapes WJets  	*  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_WJets
+shapes WW  	*  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_WW
+shapes WZ  	*  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_WZ
+shapes DY  	*  ChHiggsTmva.root  ChargedHiggsTmva/Vars/Mt_$CHANNEL_DY
+-------------------------------------
+bin cat0 cat1
+observation -1 -1
+-------------------------------------
+bin 	cat0	cat0	cat0	cat0	cat1	cat1	cat1	cat1
+process Hplus	QCD	TTJets	DY  	Hplus	QCD	TTJets	DY  
+process 0	1	2	4   	0	1	2	4   
+rate	-1	-1	-1	-1  	-1	-1	-1	-1  
+-------------------------------------
+
+
+

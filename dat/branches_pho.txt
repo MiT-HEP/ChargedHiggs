@@ -1,0 +1,12 @@
+photonP4
+photonSelBits
+photonChIso
+### EVENT
+isRealData
+rho
+npv
+puTrueInt
+runNum
+lumiNum
+eventNum
+mcWeight

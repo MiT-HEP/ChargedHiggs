@@ -12,6 +12,7 @@ parser.add_option("-x","--xsec",dest="xsec",type="float",help="Use external cros
 parser.add_option("-l","--label",dest="label",type="string",help="MC label",default="DYamcatnlo");
 parser.add_option("-f","--file",dest="file",type="string",help="mc_database file name",default="dat/mc_database.txt");
 parser.add_option("-r","--recursive", dest='rec', action= 'store_true', help="do same for each subdir", default =False);
+parser.add_option("-p","--pileup",dest="pu",type="string",help="TODO FIXME")
 
 (opts,args)=parser.parse_args()
 
@@ -32,7 +33,7 @@ if opts.rec:
 		dir = re.sub('/eos/cms','',dir)
 		if dir[-1] == '/' : dir = dir[:-1] # remove trailing slash
 		label = re.sub('.*/','',dir)
-		if nd==0 and nf >0 :
+		if nd==0 and nf >0 and not re.match("Run2015",dir): ## remove data
 			print "Found one directory:",dir
 			cmd = "python %s -e %s -x %f -l %s -f %s"%(sys.argv[0],dir,opts.xsec,label,opts.file)
 			print "going to execute",cmd
@@ -43,7 +44,7 @@ cmd = EOS+ " find -f " + opts.eos
 
 outputList = check_output(cmd,shell=True)
 fileList0 = outputList.split() ## change lines into list
-fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in fileList0 ]
+fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in fileList0 if '/failed/' not in f ]
 
 import ROOT as r
 r.gROOT.SetBatch()

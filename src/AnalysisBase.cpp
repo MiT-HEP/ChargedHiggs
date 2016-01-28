@@ -1,10 +1,11 @@
 #include "interface/AnalysisBase.hpp"
 #include <iostream>
 
-//#define VERBOSE 1
+//#define VERBOSE 2
 
 void AnalysisBase::Book(string name, string title, int nBins,double xmin,double xmax)
 {
+    Log(__FUNCTION__,"INFO","Booking histo "+name);
     output_ -> Book(name,title,nBins,xmin,xmax);
 }
 
@@ -74,9 +75,25 @@ string AnalysisBase::GetLabel(Event *e){
             }
         }
     } // end else (MC)
+
+    #ifdef VERBOSE
+    if(VERBOSE>1) cout <<"[AnalysisBase]::[GetLabel]::[DEBUG]  mc is '"<<e->weight_ . GetMC() <<"' label is '"<<label<<"'"<<endl;
+    #endif
     return label;
 }
 
+#include "interface/Logger.hpp"
+void AnalysisBase::Log(const string& function, const string& level, const string& message){ Logger::getInstance().Log(this,function,level,message ); }
+
+void AnalysisBase::SetCuts(Event *e)
+{
+    for (auto& l : e->leps_) SetLeptonCuts(l);
+    for (auto& p : e->phos_) SetPhotonCuts(p);
+    for (auto& t : e->taus_) SetTauCuts(t);
+    for (auto& j : e->jets_) SetJetCuts(j);
+    for (auto& g : e->genparticles_) SetGenCuts(g);
+    return;
+}
 
 // Local Variables:
 // mode:c++

@@ -2,6 +2,7 @@
 #define CHARGEDHIGGS_QCDPURITY_H
 
 #include "interface/AnalysisBase.hpp"
+#include "interface/GeneralFunctions.hpp"
 
 class ChargedHiggsQCDPurity:  virtual public AnalysisBase
 {
@@ -19,6 +20,8 @@ class ChargedHiggsQCDPurity:  virtual public AnalysisBase
 
     void Book(string name, string title,int nBins, double xmin, double xmax);
     void Fill(string name, string syst , double value, double weight=1);
+    float Upar(Event*e,Tau *t ){ return e->GetMet().Pt() * TMath::Cos( e->GetMet().DeltaPhi( *t ) ) ; };
+    float Uperp(Event*e, Tau*t){ return e->GetMet().Pt() * TMath::Sin( e->GetMet().DeltaPhi( *t) );}; // this is positive, deltaPhi>0
 };
 
 #endif

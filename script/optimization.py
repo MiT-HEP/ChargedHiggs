@@ -19,9 +19,11 @@ parser.add_option("-b","--bkg"	,dest="bkg"	,type='string',help="Bkg Histo. [Defa
 parser.add_option("-l","--lumi"	,dest="lumi"	,type='float' ,help="InputFile. [Default=%default]",default=5000)
 parser.add_option("-g","--great",dest="great",action='store_true',help="Sig Cut is greater than, instead of less than",default=False)
 
-parser.add_option("","--double",dest="double",action='store_true',help="Do Double Boundary optimisation",default=False)
+parser.add_option("","--double",dest="double",action='store_true',help="Do Double Boundary optimisation. (single variable, two cat)",default=False)
 
-parser.add_option("","--2D",dest="twoD",action='store_true',help="Do a two2D optimization simultaneously vs Mt.",default=False)
+parser.add_option("","--2D",dest="twoD",action='store_true',help="Do a two2D optimization simultaneously vs Mt. (eg RbbMinVsMt)",default=False)
+
+parser.add_option("","--twoBound2D",dest="doubleTwoD",action='store_true',help="Do Double Boundary optimisation. (with two cat, eg Bdt0 vs Bdt1)",default=False)
 
 #Iso_Lead_HplusToTauNu-M
 
@@ -31,6 +33,9 @@ import ROOT
 
 fInput = ROOT.TFile.Open(opts.file)
 fOutput = ROOT.TFile.Open(opts.out,"RECREATE")
+
+if fInput == None:
+	print "'"+opts.file+"': No such file or directory"
 
 def RemoveSpikes(h, eonly = True,n = 1):
 	for i in range(1+n, h.GetNbinsX() + 1 -n ): 
@@ -89,6 +94,17 @@ def ComputeEff(h, norm,i, great=False):
 	if opts.great: eff = h.Integral(i,h.GetNbinsX() ) / norm
 	return eff
 
+def ComputeEff2D(h, norm, x, y, great=False):
+	''' Compute the effeciency of a bin-cut '''
+	if norm == 0 : return 0
+	#Integral (Int_t binx1, Int_t binx2, Int_t biny1, Int_t biny2, Option_t *option="") const 
+
+	if opts.great:
+		eff =  h.Integral(x, h.GetNbinsX(), y,h.GetNbinsY())/ norm
+	else:
+		eff =h.Integral(1,x,1,y) /norm
+	return eff
+
 def CreateRoC(sig,bkg):
 	'''Create a RoC plot from the Sig and Bkg'''
 	g = ROOT.TGraphAsymmErrors()
@@ -140,9 +156,35 @@ def CreateSosB(sig,bkg):
 			h2.SetBinContent(i, 0)
 	return h2
 
+def CreateSosB2D(sig,bkg):
+	''' Create a 2D S/sqrt(B) plots'''
+	h2= sig.Clone("SosB")
+	h2.Reset("ICESM")
+	
+	tot=float(sig.GetNbinsX() *sig.GetNbinsY())
+	for x in range(1,sig.GetNbinsX() + 1):
+	   for y in range(1,sig.GetNbinsY() + 1):
+		idx= (x-1)*sig.GetNbinsX()  + (y-1)
+		if idx%100==0:
+			print "\r** Doing Entry",idx,"of",tot,": ",idx/tot*100,"%",
+			sys.stdout.flush()
+		sig_int = ComputeEff2D(sig,1,x,y, opts.great)
+		bkg_int = ComputeEff2D(bkg,1,x,y, opts.great)
+
+		sig_int *= opts.lumi
+		bkg_int *= opts.lumi
+	
+		if bkg_int >0:
+			h2.SetBinContent(x,y, sig_int/math.sqrt(bkg_int))
+		else:
+			h2.SetBinContent(x,y, 0)
+	print
+	return h2
+
+
 ## SIG/BKG EFF
 def CreateEffPlot(h,name):
-	h3= sig.Clone(name)
+	h3= h.Clone(name)
 	h3.Reset("ICESM")
 
 	norm = h.Integral()
@@ -152,6 +194,23 @@ def CreateEffPlot(h,name):
 		h3.SetBinContent(i, eff)
 	
 	return h3
+
+def CreateEffPlot2D(h,name=""):
+	h2 = h.Clone(name)
+	h2.Reset("ICESM")
+	norm = h.Integral()
+	tot=h.GetNbinsX()*h.GetNbinsY()
+	for x in range(1,h.GetNbinsX() + 1):
+	   for y in range(1,h.GetNbinsY() + 1):
+	       idx=(x-1)*h.GetNbinsX()+(y-1)
+	       if idx%100 ==0 : 
+		       print "\r** Doing entry",idx,"of",tot,": ",float(idx)/tot*100,"%",
+		       sys.stdout.flush
+	       eff =  ComputeEff2D(h,norm,x,y,opts.great)
+	       h2.SetBinContent(x,y,eff);
+	print ## newline
+	return h2
+
 
 def CombineSig(s1,b1,s2,b2,type=2):
 	''' Combine significances using 
@@ -211,6 +270,17 @@ def FindMaximum(h):
 			iMax = i
 	return (iMax,max)
 
+def FindMaximum2D(h):
+	max = 0
+	iMax = (-1,-1)
+	for x in range(1,h.GetNbinsX()+1):
+	  for y in range(1,h.GetNbinsY()+1):
+		c = h.GetBinContent(x,y)
+		if max <= c :
+			max = c
+			iMax = (x,y)
+	return (iMax,max)
+
 def TwoBoundariesOpt(sig,bkg):
 	''' Assume opts.great '''
 	if not opts.great: 
@@ -242,6 +312,123 @@ def TwoBoundariesOpt(sig,bkg):
 	print "maxBound = ",maxBound," -> ",sig.GetBinCenter(maxBound)
 	print "---------------"
 	return h2
+
+def TwoBoundariesOpt2D(sig,bkg):
+	''' Two boundaries (cat0,cat1) optimization in S/SqrtB like for Bdt0,Bdt1 pair '''
+	if not opts.great: 
+		print "Two Boundaries optimization not implemented for less"
+	print "->Starting 2D optimization for ",sig.GetName(),"and",bkg.GetName()
+
+	startX=1	
+	endX=sig.GetNbinsX()
+	startY=1	
+	endY=sig.GetNbinsX()
+
+	boundA=(startX+1,startY+1)
+	boundB=(startX,startY)
+
+	##   -------
+	##   |   A |
+	##   | B   |
+	##   -------
+
+	Z=-1
+	boundaries = (boundA,boundB)
+
+	### startX +1 -> remove the 1 boundary case
+	### endX +1 -> include the endX in the loop 
+	#bAlist = [ (x,y) for x in range(startX+1,endX+1) for y in range(startY+1,endY+1) ]
+	
+	hTemplate = ROOT.TH2D("hTemplate","hTempl", endX-startX+1, startX-0.5 ,endX+0.5, endY-startY+1, startY-0.5,endY-.5)
+
+	#optimize boundA
+	#optimize boundB
+	# reinterate 3 times
+
+	for nIter in range(0,3):
+		print "->Doing iteration",nIter
+		boundB=boundaries[1]
+		startX=boundB[0]
+		startY=boundB[1]
+		#update the value of valid A boundaries
+		bAlist = [ (x,y) for x in range(startX+1,endX+1) for y in range(startY+1,endY+1) ]
+		sigAB = ComputeEff2D(sig,1, boundB[0],boundB[1],True)
+		bkgAB = ComputeEff2D(bkg,1, boundB[0],boundB[1],True)
+		for idx,boundA in enumerate(bAlist):
+			## end -> <boundA, excluding boundA
+			boundB=boundaries[1]
+			if True:
+				print "\r **Doing element",idx,"of",len(bAlist),". ",float(idx)/len(bAlist)*100,"%",
+				sys.stdout.flush()
+			sigA = ComputeEff2D(sig,1, boundA[0],boundA[1],True)
+			sigB=sigAB-sigA
+			bkgA = ComputeEff2D(bkg,1, boundA[0],boundA[1],True)
+			bkgB=bkgAB-bkgA
+
+			Ztmp = CombineSig(sigA,bkgA,sigB,bkgB)
+			isSpike=False
+			n=2
+			if not isSpike:
+			   for perm in [(0,n),(0,-n),(n,0),(-n,0)]:
+				sigA = ComputeEff2D(sig,1, boundA[0]+perm[0],boundA[1]+perm[1],True)
+				bkgA = ComputeEff2D(bkg,1, boundA[0]+perm[0],boundA[1]+perm[1],True)
+				sigB=sigAB-sigA
+				bkgB=sigAB-sigA
+				Ztmp2=CombineSig(sigA,bkgA,sigB,bkgB)
+				if Ztmp >0 and abs(Ztmp2-Ztmp)/Ztmp>0.05 : isSpike=True
+				if isSpike:break
+
+			if Ztmp > Z and not isSpike: 
+				boundaries = (boundA,boundB)
+				Z=Ztmp
+
+		boundA=boundaries[0]
+		hCurrent=hTemplate.Clone("hComb_A_%d_%d"%(boundA[0],boundA[1]))
+		#update the Blist on the A boundary
+		bBlist= [ (x,y) for x in range( startX,boundA[0] ) for y in range(startY,boundA[1] )]
+		sigA = ComputeEff2D(sig,1, boundA[0],boundA[1],True)
+		bkgA = ComputeEff2D(bkg,1, boundA[0],boundA[1],True)
+		for boundB in bBlist:	
+			boundA=boundaries[0]
+			sigAB = ComputeEff2D(sig,1, boundB[0],boundB[1],True)
+			sigB=sigAB-sigA
+			bkgAB = ComputeEff2D(bkg,1, boundB[0],boundB[1],True)
+			bkgB=bkgAB-bkgA
+
+			Ztmp = CombineSig(sigA,bkgA,sigB,bkgB)
+			mybin= hCurrent.FindBin(boundB[0],boundB[1])
+			hCurrent.SetBinContent(mybin,Ztmp)
+
+			isSpike=False
+			n=2
+			if not isSpike:
+			   for perm in [(0,n),(0,-n),(n,0),(-n,0)]:
+				sigAB = ComputeEff2D(sig,1, boundB[0]+perm[0],boundB[1]+perm[1],True)
+				bkgAB = ComputeEff2D(bkg,1, boundB[0]+perm[0],boundB[1]+perm[1],True)
+				sigB=sigAB-sigA
+				bkgB=sigAB-sigA
+				Ztmp2=CombineSig(sigA,bkgA,sigB,bkgB)
+				if Ztmp >0 and abs(Ztmp2-Ztmp)/Ztmp>0.05 : isSpike=True
+				if isSpike:break
+
+			if Ztmp > Z and not isSpike : 
+				boundaries = (boundA,boundB)
+				Z=Ztmp
+			## save hCurrent
+		hCurrent.Write()
+
+	outstr="--- Cat opt 2D --- \n"
+	outstr += "maximum found at bin (" + str(boundA[0]) + " , " + str(boundA[1]) + ") + (" + str(boundB[0]) + " , " + str(boundB[1]) + ")\n"
+	outstr += "maximum found at cut values = (" + str(sig.GetXaxis().GetBinLowEdge(boundA[0])) + " , " + str(sig.GetXaxis().GetBinLowEdge(boundA[1]) ) + ") + (";
+	outstr += str(sig.GetYaxis().GetBinLowEdge(boundB[0])) + " , "+ str(sig.GetYaxis().GetBinLowEdge(boundB[1]) ) + ")\n"
+	outstr += "Z= " + str(Z)  +"\n"
+	outstr += "-----------------"
+
+	print
+	print
+	print outstr
+	n=ROOT.TNamed("outstr",outstr);
+	n.Write()
 
 def DiscrPower(h1,h2):
 	''' Return the discrimination power'''
@@ -463,7 +650,7 @@ if __name__ == "__main__":
 	sig.Write("sig_IN")
 	bkg.Write("bkg_IN")
 
-	if not opts.twoD:
+	if not opts.twoD and not opts.doubleTwoD: 
 		CreateEffPlot(sig,"S").Write()
 		CreateEffPlot(bkg,"B").Write()
 		SosB=CreateSosB(sig,bkg)
@@ -480,6 +667,25 @@ if __name__ == "__main__":
 			fOutput.mkdir("opt")
 			fOutput.cd("opt")
 			TwoBoundariesOpt(sig,bkg).Write()
+
+	if opts.doubleTwoD:
+		## TODO
+		print "TODO"
+		print "-> 2D, Two boundaries"
+		print "*** Eff Sig"
+		CreateEffPlot2D(sig,"S").Write()
+		print "*** Eff Bkg"
+		CreateEffPlot2D(bkg,"B").Write()
+		print "*** Eff SoSB"
+		CreateSosB2D(sig,bkg).Write()
+		# this will also write what it needs
+		fOutput.mkdir("opt2D")
+		fOutput.cd("opt2D")
+		print "*** 2D Opt"
+		TwoBoundariesOpt2D(sig,bkg)
+		fOutput.cd("")
+
+
 	if opts.twoD:
 		print "-> 2D Discr Power"
 		TwoD(sig,bkg,'D').Write()

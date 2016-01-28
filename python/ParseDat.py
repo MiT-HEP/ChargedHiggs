@@ -133,6 +133,15 @@ def FindEOS(name,mount=""):
 	cmd = EOS + ' find -f ' + name
 	print "Runnig command:",cmd
 	list = check_output(cmd ,shell=True).split()
+
+	# print removed
+	tot = len(list)
+	removed = [ f for f in list if '/failed/' in f ] 
+	for f in removed:
+		print "ParseDat.py - FindEOS: Ignoring failed file: '"+ f + "'"
+	# remove failed directories from crab submission
+	list = [ f  for f in list if '/failed/' not in f ]
+
 	if mount != "":
 		fileList = [ re.sub("/eos/cms", mount + "/cms",f) for f in list ]
 	else:
@@ -205,9 +214,9 @@ def ReadMCDB(file):
 
 def ReadSFDB(file):
 	'''read and parse the SFDB file:
-	    \t\t### LABEL dir Entries xSec
+	    \t\t### LABEL type -- -- --- --- 
 	'''
-	L=[]
+	L=[]## this is a list of sf bins
 	f = open(file)
 	for line in f:
 	   try:
@@ -223,6 +232,19 @@ def ReadSFDB(file):
 		R['label']= label
 		R['type'] = type
 
+		if label == 'include':
+			tmp = ReadSFDB(type)
+			#remove from L all the key with the same label as in tmp
+			labels = set([])
+			new = []
+			for key in tmp:
+				labels.add( key['label'])
+			for key in L:
+				if key['label'] not in labels:
+					new.append( key ) 
+			# merge L and tmp
+			L = new[:]
+
 		if type == 'pteta':
 			pt1  = float ( l.split(' ')[2] )
 			pt2  = float ( l.split(' ')[3] )
@@ -234,6 +256,11 @@ def ReadSFDB(file):
 			R['pt2']=pt2
 			R['eta1']=eta1
 			R['eta2']=eta2
+		elif type == 'spline':
+			pt = float( l.split(' ')[2])
+			sf   = float ( l.split(' ')[3] )
+			err  = float ( l.split(' ')[4] )
+			R['pt']=pt
 
 		elif type == 'base':
 			sf  = float ( l.split(' ') [2] )

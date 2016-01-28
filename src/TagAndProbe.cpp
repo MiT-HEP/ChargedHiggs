@@ -2,12 +2,22 @@
 
 //#define VERBOSE 1
 //
+void TagAndProbe::SetTauCuts(Tau *t){ 
+    t->SetIsoCut(-1);  // default 1.5 -- inv iso >3  <20
+    t->SetEtaCut(2.1); 
+    t->SetPtCut(20);
+    t->SetEleRej(false); // default true
+    t->SetMuRej(false); // default true
+    return ;
+}
 
 void TagAndProbe::Init(){
 	if ( doTree){
 		cout<<"[TagAndProbe]::[Init]::[INFO] doTree: "<<treename<<endl;
 		InitTree(treename);
 		Branch(treename, "m", 'F'); // invariant mass
+		//Branch(treename, "mt", 'F'); // mt muon-t
+		Branch(treename, "met", 'F'); // met
 		Branch(treename, "ptProbe", 'F'); // pt probe
 		Branch(treename, "etaProbe", 'F'); // eta probe
 		//Branch(treename, "ptTag", 'F'); // pt probe
@@ -17,7 +27,11 @@ void TagAndProbe::Init(){
         Branch(treename,"passId",'I');  // pass id
         Branch(treename,"passIdEle",'I');  // pass id ele
         Branch(treename,"passIdMu",'I');  // pass id muon
+        Branch(treename,"passEventTrigger",'I');  // pass trigger -- need trigger matching !
         Branch(treename,"passTrigger",'I');  // pass trigger -- need trigger matching !
+        Branch(treename,"passTriggerNone",'I');  // pass trigger -- studying tr matching
+        Branch(treename,"passTriggerMet",'I');  // pass trigger -- need trigger matching !
+        Branch(treename,"passMCTruth",'I');  // pass Truth MC
 
         Branch(treename,"isTagTrigger",'I');  // pass trigger -- need trigger matching !
         Branch(treename,"isMC",'I');
@@ -30,47 +44,58 @@ void TagAndProbe::Init(){
 int TagAndProbe::analyze(Event*e,string systname){
 
     bool isTrigger=false; 
-    if (e->IsRealData() ) isTrigger =   e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v");
+    //if (e->IsRealData() ) isTrigger =   e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v");
+    if (e->IsRealData() ) isTrigger =   e->IsTriggered("HLT_IsoMu20"); // or 27
 
-    if (not isTrigger) return EVENT_NOT_USED; // common base
+    if (not isTrigger and e->IsRealData()) return EVENT_NOT_USED; // common base ; //mc will pass 
 
     string label = GetLabel(e);
 
+
+    Lepton *mTag = e->GetMuon(0);
+
+    if (mTag == NULL ) return EVENT_NOT_USED; // no tag taus
+    SetTreeVar("isTagTrigger", e->IsTriggered( "HLT_IsoMu20", mTag )  );
+
+    // LEPTON VETO:
+    if (e->GetMuon(1) != NULL) return EVENT_NOT_USED;
+    if (e->GetElectron(0) != NULL ) return EVENT_NOT_USED;
+
     Tau *tProbe = NULL;
 
-    for(int iTag =0; iTag <=1 ; ++iTag)
+    for (int iT=0;iT<100 ;++iT)  // Fill one for each Tau Candidate
     {
-        Tau *tTag = e->GetTau(iTag);
+    tProbe = e->GetTau(iT);
 
-        if (tTag == NULL ) continue; // no tag taus
+    if (tProbe == NULL ) return EVENT_NOT_USED;
 
-        for( auto& t : e->taus_) 
-            if (tTag != t  and tTag -> DeltaR ( *t ) > .05  ) { tProbe = t; break;} // take the first probe // pt ordered
+    SetTreeVar("m", mTag->InvMass( *tProbe ) );
+    //SetTreeVar("mt", e->Mt(Event::MtMuon) );
+    SetTreeVar("met", e->GetMet().Pt() );
+    SetTreeVar("ptProbe", tProbe->Pt() ) ;
+    SetTreeVar("etaProbe",tProbe->Eta() ) ;
 
-        if (tProbe == NULL ) break;
-
-        SetTreeVar("m", tTag->InvMass( *tProbe ) );
-        SetTreeVar("ptProbe", tProbe->Pt() ) ;
-        SetTreeVar("etaProbe",tProbe->Eta() ) ;
-
-        //SetTreeVar("passIso", tProbe -> iso2 < tProbe->isocut_ );
-        SetTreeVar("passIso", tProbe -> iso2 < 1.5 );
-        SetTreeVar("passId", tProbe -> id );
-        SetTreeVar("passIdEle", tProbe -> id_ele );
-        SetTreeVar("passIdMu", tProbe -> id_mu );
-        SetTreeVar("passTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tProbe )  );
-        SetTreeVar("isTagTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tTag )  );
-
-        int _itag_ = -1, _iprobe_ = -1 ;
+    //SetTreeVar("passIso", tProbe -> iso2 < tProbe->isocut_ );
+    SetTreeVar("passIso", tProbe -> iso2 < 1.5 );
+    SetTreeVar("passId", tProbe -> id ); // 100% ?!?
+    SetTreeVar("passIdEle", tProbe -> id_ele );
+    SetTreeVar("passIdMu", tProbe -> id_mu );
+    SetTreeVar("passEventTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", NULL)  );
+    SetTreeVar("passTrigger", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tProbe )  );
+    SetTreeVar("passTriggerNone", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_v", tProbe , true)  );
+    SetTreeVar("passTriggerMet", e->IsTriggered( "HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80", tProbe )  );
+    SetTreeVar("passMCTruth", tProbe -> IsMatch() );
 
 
-        //PrintTreeVar(treename);
-        if(e->IsRealData() ) SetTreeVar("isMC",0);
-        else if (label.find("HplusToTauNu") != string::npos ) SetTreeVar("isMC",1);
-        else if (label.find("DY") != string::npos) SetTreeVar("isMC",2);
-        else SetTreeVar("isMC",3);
+    // ------------- SAVE EVENT INFO -------------
+    if(e->IsRealData() ) SetTreeVar("isMC",0);
+    else if (label.find("HplusToTauNu") != string::npos ) SetTreeVar("isMC",1);
+    else if (label.find("DY") != string::npos) SetTreeVar("isMC",2);
+    else SetTreeVar("isMC",3);
+    //------------------------------------------
 
-	    FillTree(treename);
+    //PrintTreeVar(treename);
+	FillTree(treename);
     }
 
     return EVENT_NOT_USED;

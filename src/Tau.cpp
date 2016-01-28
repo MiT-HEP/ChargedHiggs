@@ -4,27 +4,30 @@
 using namespace std;
 
 Tau::Tau() : Lepton(){
-    ptcut_ = 20;
-    isocut_= 1.5; 
+    etacut_= 0;
+    ptcut_ = 0;
+    isocut_= 0;  // inv iso may be different
 
     match = -999; ;  // matching with generator
     iso2 = -999;  // Iso with Delta beta correction
 }
 
-int Tau::IsTau(){
+int Tau::IsTau() const {
     if ( not id ) return 0;
-    if ( not id_ele) return 0;
-    if ( not id_mu) return 0;
-    if (iso2 >= isocut_ ) return 0;
+    if ( doEleRej_   and not id_ele) return 0;
+    if ( doMuRej_    and not id_mu) return 0;
+    if ( isocut_ >=0 and iso2 >= isocut_ ) return 0;
     if ( Pt() < ptcut_ ) return 0;
+    if ( fabs(Eta() ) > etacut_) return 0;
     return 1;
 }
 
-int Tau::IsTauInvIso(){
+int Tau::IsTauInvIso() const {
     if ( not id ) return 0;
-    if ( not id_ele) return 0;
-    if ( not id_mu) return 0;
-    if (iso2 < isocut_ ) return 0;
+    if ( doEleRej_ and not id_ele) return 0;
+    if ( doMuRej_ and not id_mu) return 0;
+    if (iso2 < 3.0 ) return 0;
+    if (iso2 > 20.0 ) return 0;
     if ( Pt() < ptcut_ ) return 0;
     return 1;
 }

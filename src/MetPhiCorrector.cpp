@@ -55,7 +55,18 @@ int MetPhiCorrector::correct(Event *e)
         px -= metPhiPxMC -> Eval( e->Npv() ) ;
         py -= metPhiPyMC -> Eval( e->Npv() ) ;
     }
-    GetMet(e).GetP4().SetXYZT( px,py,0,0);
+    TLorentzVector newmet(px,py,0,0);
+    //GetMet(e).GetP4().SetXYZT( px,py,0,0);
+    //
+#ifdef DEBUG
+    if(DEBUG>0)cout <<"[MetPhiCorrector]::[correct] Met was "<<e->GetMet().Pt() <<" UNCOR="<<e->GetMet().PtUncorr()<<endl;
+#endif
+   
+    SetP4(GetMet(e), newmet);
+
+#ifdef DEBUG
+    if(DEBUG>0)cout <<"[MetPhiCorrector]::[correct] Met is "<<e->GetMet().Pt() <<" UNCOR="<<e->GetMet().PtUncorr()<<endl;
+#endif
     return 0;
 }
 

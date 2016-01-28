@@ -4,7 +4,8 @@
 Lepton::Lepton() : Object() {
     iso =-1; 
     charge = 0 ;
-    isocut_ = 0.4;
+    isocut_ = 0; // this value will ignored
+    ptcut_ = 0;
     type=0;
     tightId=0;
     ptcut_=20;

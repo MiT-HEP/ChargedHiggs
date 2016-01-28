@@ -1,0 +1,10 @@
+include=dat/config.dat
+Correct=MetPhiCorrector,TauRegression
+#Correct=MetPhiCorrector
+
+config=MitPhiCorrector|fileName="aux/MetPhi.root"
+config=TauRegression|fileName="aux/bdt_regression_taugun.xml"
+
+Analysis=ChargedHiggsTauNu
+
+

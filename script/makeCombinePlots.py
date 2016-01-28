@@ -13,7 +13,10 @@ parser.add_option("-l","--label",dest="label",default="",type="string",help="Lab
 parser.add_option("-o","--outname",dest="outname",help="Name of output pdf/png/C")
 parser.add_option("-v","--verbose",dest="verbose",default=False,action="store_true")
 parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
+parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true",help="Draw observation")
 parser.add_option("-x","--xSec",dest="xsec",help="Print limit vs xSec instead of mu",default=False,action="store_true")
+parser.add_option(""  ,"--yaxis",help="Y axis range Y1,Y2 [%default]",default="")
+parser.add_option(""  ,"--xaxis",help="X axis range X1,X2 [%default]",default="")
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -70,7 +73,17 @@ def GetLimitFromTree(inputFile,xsec=False):
 
 	## Make Limit plot
 	fInput= ROOT.TFile.Open(inputFile)
+
+	if fInput == None:
+		print "**** ERROR ****"
+		print " file ",f,"does not exist"
+		print "***************"
+
 	limitTree = fInput.Get("limit")
+	if limitTree == None:
+		print "**** ERROR ****"
+		print " limit tree not present in file",f
+		print "***************"
 	
 	#Expected
 	obs=ROOT.TGraphAsymmErrors()
@@ -85,7 +98,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 	twoSigma=ROOT.TGraphAsymmErrors()
 	twoSigma.SetName("twoSigma")
 	
-	
+	data    = []
 	median 	= []
 	Up 	= []
 	Up2 	= []
@@ -101,7 +114,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 		type= 0
 	
 		## TODO OBS
-	
+			
 		if q==0.5 : 
 			#exp.SetPoint(g.GetN(), mh,l ) 
 			median.append(  (mh,l) ) 
@@ -118,6 +131,8 @@ def GetLimitFromTree(inputFile,xsec=False):
 		if abs(q-0.9750000) <1e-5 :  ## 95% 2sUp
 			type=2
 			Up2.append( (mh,l) )
+		if q <-.5: # -1
+			data.append( (mh,l) ) 
 	
 	if len(Up2) != len(Down2) :print "[ERROR] Count 2s"
 	if len(Up) != len(Down) :print "[ERROR] Count 1s"
@@ -153,10 +168,12 @@ def GetLimitFromTree(inputFile,xsec=False):
 			mh= median[i][0]
 			xSec= -1
 			for label in mcdb:
-				if "M%.0f"%mh in label:
+				#if "M%.0f"%mh in label:
+				if 'amcatnlo' not in label : continue
+				if "M-%.0f"%mh in label: #amcatnlo
 					xSec = mcdb[label][2]
 			if xSec <0 :  continue
-			print "Found xSec for mh=",mh,"xSec=",xSec
+			print "Found xSec for mh=",mh,"xSec=",xSec, "and label", label
 			xsections_mcdb.append(  (mh,xSec) )
 		# run over the mass point and eventually interpolate between the xsec
 		for i in range(0,len(median)):
@@ -182,6 +199,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 		if mh != Up2[i][0] : print "[ERROR]: MH mismatch"
 		if mh != Down[i][0] : print "[ERROR]: MH mismatch"
 		if mh != Down2[i][0] : print "[ERROR]: MH mismatch"
+		if opts.unblind and mh != data[i][0]: print "[ERROR]: MH mismatch"
 		
 		if xsec:
 			print "mh=",mh,"xSec=",xSec, "median = ",median[i][1]
@@ -191,6 +209,8 @@ def GetLimitFromTree(inputFile,xsec=False):
 			Up2[i]      = (mh, Up2[i][1] * xSec )
 			Down[i]     = (mh, Down[i][1] * xSec )
 			Down2[i]    = (mh, Down2[i][1] * xSec )
+			if opts.unblind:
+				data[i] = (mh, data[i][1] * xSec) 
 	
 		exp.SetPoint( count, median[i][0] ,median[i][1])
 
@@ -199,22 +219,26 @@ def GetLimitFromTree(inputFile,xsec=False):
 		twoSigma.SetPoint(count, mh , median[i][1] ) 
 		twoSigma.SetPointError(count, 0, 0 , median[i][1] - Down2[i][1], Up2[i][1]-median[i][1] ) 
 
+		if opts.unblind:obs.SetPoint(count,mh,data[i][1])
+
 	return obs,exp,oneSigma,twoSigma
 
-list_obs = []
+list_data = []
 list_exp = []
 list_oneSigma=[]
 list_twoSigma=[]
 
 for idx,f in enumerate(opts.file.split(',')):
-	obs,exp,oneSigma,twoSigma= GetLimitFromTree(f,opts.xsec)
+	obs,exp,oneSigma,twoSigma = GetLimitFromTree(f,opts.xsec)
 
 	if idx == 0 :
 		obs.SetMarkerStyle(21)
-		obs.SetMarkerSize(0.5)
+		obs.SetMarkerSize(0.8)
 		obs.SetLineColor(1)
 		obs.SetLineWidth(2)
 		obs.SetFillStyle(0)
+		obs.SetMarkerColor(ROOT.kBlack)
+		obs.SetLineColor(ROOT.kBlack)
 		
 		exp.SetLineColor(1)
 		exp.SetLineStyle(2)
@@ -225,9 +249,18 @@ for idx,f in enumerate(opts.file.split(',')):
 		
 		oneSigma.SetFillColor(ROOT.kGreen)
 		twoSigma.SetFillColor(ROOT.kYellow)
+
+		### PRINT MORE ##
+		if opts.unblind:
+			print "**** RESULTS **** "
+			for point in range(0,obs.GetN()):
+				print "MH=",obs.GetX()[point],"y=",obs.GetY()[point]
+				print "exp=",exp.GetY()[point]
+			print "***************** "
+
 	else:
-		obs.SetMarkerStyle(21)
-		obs.SetMarkerSize(0.5)
+		obs.SetMarkerStyle(21+idx)
+		obs.SetMarkerSize(0.8)
 		obs.SetLineColor(1)
 		obs.SetLineWidth(2)
 		obs.SetFillStyle(0)
@@ -258,7 +291,8 @@ for idx,f in enumerate(opts.file.split(',')):
 		oneSigma.SetFillStyle(0)
 		twoSigma.SetFillStyle(0)
 
-	list_obs.append(obs)
+
+	list_data.append(obs)
 	list_exp.append(exp)
 	list_oneSigma.append(oneSigma)
 	list_twoSigma.append(twoSigma)
@@ -294,6 +328,11 @@ if opts.xsec:
 	dummy.GetXaxis().SetRangeUser(200,900)
 	dummy.GetYaxis().SetRangeUser(1e-2,1e2)
 
+if opts.yaxis != "":
+	dummy.GetYaxis().SetRangeUser( float(opts.yaxis.split(',')[0]), float(opts.yaxis.split(',')[1]) )
+if opts.xaxis != "":
+	dummy.GetXaxis().SetRangeUser( float(opts.xaxis.split(',')[0]), float(opts.xaxis.split(',')[1]) )
+
 dummy.Draw("AXIS")
 
 line = ROOT.TGraph()
@@ -313,6 +352,7 @@ for idx in range(0,len(list_exp) ):
 		list_oneSigma[idx].Draw("PE3 SAME")
 	#mg.Add(list_exp[idx])
 	list_exp[idx].Draw("L SAME")
+	if opts.unblind: list_data[idx].Draw("P SAME")
 
 #mg.Draw("3")
 #mg.Draw("LPX")

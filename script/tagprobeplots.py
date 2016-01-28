@@ -18,8 +18,8 @@ usage = '''  Draw trigger plots from TagAndProbe Trees.
 	'''
 
 parser = OptionParser(usage=usage)
-parser.add_option("-p","--plot" ,dest='plot',type='string',help="PlotDir [Default=%default]",default="plot")
-parser.add_option("-b","--batch" ,dest='batch',action='store_true',help="Batch [Default=%default]",default="batch")
+parser.add_option("-p","--plot" ,dest='plot',type='string',help="PlotDir [Default=%default]",default="plot/tp")
+parser.add_option("-b","--batch" ,dest='batch',action='store_true',help="Batch [Default=%default]",default=False)
 parser.add_option("-f","--file" ,dest='file',type='string',help="InputFile [Default=%default]",default="TagAndProbe.root")
 
 opts,args = parser.parse_args()

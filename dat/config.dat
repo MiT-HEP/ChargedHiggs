@@ -3,12 +3,18 @@
 ##### if you want to make a config file that overwrite some changes just create a new one with the line
 ##### include=dat/config.txt
 ##### Files=....,....,...
-#
+
+
+################
+### DATASETS ###
+################
+
 #### BKG ###
-Files=/store/user/amarini/Nero/v1.0.3/25ns/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+Files=/store/user/amarini/Nero/v1.3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=/store/user/amarini/Nero/v1.3/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=/store/user/amarini/Nero/v1.3/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 ### WW/WZ/ZZ###
+<<<<<<< HEAD
 addfiles=/store/user/amarini/Nero/v1.0.3/25ns/WW_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/v1.0.3/25ns/WZ_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/v1.0.3/25ns/ZZ_TuneCUETP8M1_13TeV-pythia8
@@ -21,35 +27,63 @@ addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M200
 addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M250
 addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M500
 addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M900
+=======
+addfiles=/store/user/amarini/Nero/v1.3/WW_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/v1.3/WZ_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/v1.3/ZZ_TuneCUETP8M1_13TeV-pythia8
+### SIGNAL ###
+#Signal Tau Nu ; Private production
+addfiles=/store/user/amarini/Nero/v1.3/HplusToTauNu-M200
+addfiles=/store/user/amarini/Nero/v1.3/HplusToTauNu-M250
+addfiles=/store/user/amarini/Nero/v1.3/HplusToTauNu-M500
+addfiles=/store/user/amarini/Nero/v1.3/HplusToTauNu-M900
+## signal amc@nlo
+addfiles=/store/user/amarini/Nero/v1.3/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
+>>>>>>> master
 ### QCD
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/v1.3/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
 ####
 
-Output=ChHiggs.root
-## Preselection:1,Preselection:2
-Analysis=JsonAnalysis,Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsZW,ChargedHiggsMET,ChargedHiggsTopBottom
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
 
-MCDB=dat/mc_database_v1.1.txt
+include=dat/json.dat
+include=dat/taunu.dat
+include=dat/tmva.dat
+
+Output=ChHiggs.root
+
+MCDB=dat/mc_database.txt
 SFDB=dat/sf_database.txt
 Branches=dat/branches.txt
-###
-#pileup=aux/pileup.root
+pileup=aux/pileup.root
 #pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root
-pileup=
+#pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup_JSON_1p2_PRE_10-09-2015.root 
+#pileup=file,fileup,filedn TODO
+#pileup=aux/pileup_JSON_1p2_PRE_10-09-2015.root 
+##pileup=
 pileupRun=
 pileupLumi=
 Lumi=1
@@ -66,22 +100,18 @@ Smear=NONE
 
 #Correct=NONE
 Correct=MetPhiCorrector
+
+
+#________________________________________________________________
+#____________________ CONFIGURATION _____________________________
+#
 config=MitPhiCorrector|fileName="aux/MetPhi.root"
-####
-##### TauNu ####
-config=ChargedHiggsTauNu|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
-addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
-##### HW ####
-config=ChargedHiggsHW|AddLabel("Hplus_Wh"),AddLabel("SYGluGluToTBHPTohbbW_M500"),AddLabel("SYGluGluToTBHPTohbbW_M1000"),AddLabel('TTJets_TuneCUETP8M1')
-#addConfig=ChargedHiggsHW|AddLabel('WW'),AddLabel('WZ'),AddLabel('TTJets_mtop1695'),AddLabel('TTJets_mtop1755'),AddLabel('DY'),AddLabel('ZZ')
-#config=ChargedHiggsHWAlternative|AddLabel("Hplus_Wh"),AddLabel("SYGluGluToTBHPTohbbW_M500"),AddLabel("SYGluGluToTBHPTohbbW_M1000"),AddLabel('TTJets_TuneCUETP8M1')
-##### JSON ####
-config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-251252_13TeV_PromptReco_Collisions15_JSON.txt')
-
-
-##### OTHER ####
+##########  ANALYSIS  ################
+## Preselection:1,Preselection:2
+Analysis=JsonAnalysis,Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsZW,ChargedHiggsMET,ChargedHiggsTopBottom
 
 #configure Analysis
 #config=AnalysisBase|Init()
 #config=Preselection|
 #config=MetPhiCorrector|fileName=""
+

@@ -1,13 +1,32 @@
 #ifndef CHARGEDHIGGSTAUNU_H
 #define CHARGEDHIGGSTAUNU_H
+
 #include "interface/AnalysisBase.hpp"
+#include "interface/CutSelector.hpp"
 
 class ChargedHiggsTauNu:  virtual public AnalysisBase
 {
     public:
-        virtual void Init();
-        virtual int analyze(Event*,string systname);
-        virtual const string name(){return "ChargedHiggsTauNu";}
+        enum CutFlow{ Total=0, 
+            OneTau ,
+            NoLep ,
+            ThreeJets ,
+            OneBjet ,
+            Trigger ,
+            Met ,
+            AngColl ,
+            AngRbb ,
+            MaxCut
+            };
+        // for the n-1 plots
+        CutSelector cut;
+
+        void Init() override;
+        int analyze(Event*,string systname) override;
+        // *return the cut flow
+        //  direct tau or inv tau
+        static unsigned Selection(Event*, bool direct=true) ;
+        const string name() override {return "ChargedHiggsTauNu";}
 };
 
 #endif
