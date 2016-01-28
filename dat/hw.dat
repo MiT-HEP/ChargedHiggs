@@ -1,0 +1,8 @@
+#############
+###  HW   ###
+#############
+config=ChargedHiggsHW|AddLabel("Hplus_Wh"),AddLabel("SYGluGluToTBHPTohbbW_M500"),AddLabel("SYGluGluToTBHPTohbbW_M1000"),AddLabel('TTJets_TuneCUETP8M1')
+#addConfig=ChargedHiggsHW|AddLabel('WW'),AddLabel('WZ'),AddLabel('TTJets_mtop1695'),AddLabel('TTJets_mtop1755'),AddLabel('DY'),AddLabel('ZZ')
+#config=ChargedHiggsHWAlternative|AddLabel("Hplus_Wh"),AddLabel("SYGluGluToTBHPTohbbW_M500"),AddLabel("SYGluGluToTBHPTohbbW_M1000"),AddLabel('TTJets_TuneCUETP8M1')
+
+

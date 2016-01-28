@@ -38,21 +38,6 @@ TH2D* AnalysisBase::GetHisto2D(string name,string systname)
     return output_ -> Get2D(name,systname);	
 }
 
-// vector<string> AnalysisBase::AllLabel()
-// {
-//     vector<string> R;
-//     R.push_back("Other");
-//     R.push_back("Data");
-//     R.push_back("DY");
-//     R.push_back("TTJets");
-//     R.push_back("WW");
-//     R.push_back("WZ");
-//     R.push_back("ZZ");
-//     R.push_back("HBWB_HToTauNu_M-90");
-//     R.push_back("TBHp_HToTauNu_M-200");
-//     return R;
-// }
-
 string AnalysisBase::GetLabel(Event *e){
 
     // remember if just done
@@ -82,8 +67,8 @@ string AnalysisBase::GetLabel(Event *e){
     return label;
 }
 
-#include "interface/Logger.hpp"
-void AnalysisBase::Log(const string& function, const string& level, const string& message){ Logger::getInstance().Log(this,function,level,message ); }
+//#include "interface/Logger.hpp"
+//void AnalysisBase::Log(const string& function, const string& level, const string& message){ Logger::getInstance().Log(this,function,level,message ); }
 
 void AnalysisBase::SetCuts(Event *e)
 {

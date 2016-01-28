@@ -1,10 +1,13 @@
 #ifndef MC_H
 #define MC_H
 
-class MC{
+#include "interface/Named.hpp"
+
+class MC : public Named {
     // This class will contain the basic MC informations
     // XSEC, SumOf Event weights, directory ...
     public:
+        const string name() const { return "MC";}
         string dir;
         double xsec;
         double nevents;

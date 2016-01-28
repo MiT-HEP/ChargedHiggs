@@ -12,6 +12,7 @@
 #include "interface/Smearer.hpp"
 #include "interface/Corrector.hpp"
 #include "interface/Event.hpp"
+#include "interface/Dumper.hpp"
 
 // Bare Structures
 #include "NeroProducer/Core/interface/BareCollection.hpp"
@@ -42,6 +43,8 @@ class Looper{
         Output *output_;
 
         TStopwatch sw_;
+
+        Dumper *dump_;
 
         void Log(const string& func, const string& state, const string& mex){ Logger::getInstance().Log(name(),func,state, mex); };
 
@@ -77,6 +80,10 @@ class Looper{
         int AddSmear(string name);
         inline int AddCorrector(CorrectorBase *c) { correctors_.push_back(c) ; return 0;}
         //-------------
+        // DUMPER
+        void SetDumpDir(string dir){dump_->SetOutDir(dir);}
+        void ActivateDump(bool x=true){dump_->ActivateDump(x);}
+        //------------
 
         int InitTree () ;
         inline void ActivateBranch(string bname){ tree_ -> SetBranchStatus(bname.c_str(),1); return; }

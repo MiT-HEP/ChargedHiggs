@@ -7,8 +7,9 @@
 
 #include "interface/Event.hpp"
 #include "interface/Output.hpp"
+#include "interface/Named.hpp"
 
-class AnalysisBase
+class AnalysisBase : public Named
 {
     private:
     Output *output_; // set automatically
@@ -35,7 +36,7 @@ class AnalysisBase
     virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}
     virtual void Init(){}
     virtual void End(){} // before closing files and writing
-    virtual const string name(){return "AnalysisBase";}
+    virtual const string name() const {return "AnalysisBase";}
 
     // call output_->Book, but add something to name
     void Book(string name, string title,int nBins, double xmin, double xmax);
@@ -64,7 +65,7 @@ class AnalysisBase
     inline TTree* GetTree(string tree){ return output_->GetTree(tree);}
     bool unblind{false}; // use this flag to protect histograms or region that should be blind
     bool Unblind(Event *e) {if (e->IsRealData() ) return unblind; return true;} // if is not data, no need to return something else
-	void Log(const string& function, const string& level, const string& message);
+	//void Log(const string& function, const string& level, const string& message);
 };
 
 

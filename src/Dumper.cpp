@@ -1,0 +1,82 @@
+#include "interface/Dumper.hpp"
+#include "interface/Logger.hpp"
+
+#include "NeroProducer/Core/interface/BareCollection.hpp"
+void Dumper::SetOutDir(string dir)
+{ 
+    Log(__FUNCTION__,"INFO","Output Dir Set to " + dir );
+    outdirname_ = dir;
+}
+void Dumper::SetBaseName(string name){
+    Log(__FUNCTION__,"INFO","Base Name Set to " + name );
+    basename_=name;
+}
+void Dumper::ActivateDump(bool x) 
+{
+    if (x ) Log(__FUNCTION__,"INFO","Dumper has been activated " );
+    else    Log(__FUNCTION__,"INFO","Dumper has been de-activated " );
+    dump_=x;
+}
+
+void Dumper::InitTree(const vector<BareCollection*> &bare)
+{
+    if (not dump_) return;
+    for(auto &b : bare)
+    {
+        b->defineBranches(tree_);	
+    }
+}
+
+void Dumper::Fill(){
+    if (not dump_) return;
+    tree_->Fill();
+}
+
+void Dumper::Close(){
+    // if open close, and set pointer to 0
+    if (out_) {out_->Write(); out_->Close();}
+    ChargedHiggs::Delete(out_);
+    ChargedHiggs::Delete(tree_);
+}
+
+void Dumper::OpenNewFile()
+{
+    if (not dump_) return;
+    Close();
+    // Open the new file
+    string dname=outdirname_ +"/"+ cacheMC_  ;
+
+    if ( dname[0] == '/' or dname.find("root://") == string::npos) system( ("mkdir -p " + dname).c_str() );
+
+
+    string fname=outdirname_ +"/"+ cacheMC_ + "/" + Form(basename_.c_str() ,0) ;
+    for(int i=0;i<10000;++i)
+    {
+        fname=outdirname_ +"/"+ cacheMC_ + "/" + Form(basename_.c_str() ,i) ;
+        //* check if file exists, and if not break
+        TFile *tmp = TFile::Open(fname.c_str());
+        if (tmp == NULL){
+            break; 
+            }
+        else{
+            tmp->Close();
+        }
+    }
+
+    Log(__FUNCTION__,"INFO","Opening Dump File:" + fname);
+    
+    out_=TFile::Open(fname.c_str(), "RECREATE");
+    out_->mkdir("nero");
+    out_->cd("nero");
+    tree_=new TTree("events","events");
+    //tree_->SetMaxTreeSize( 10ULL<<30 ); //10Gb
+    tree_->SetMaxTreeSize( 1LL<<30 ); //10Gb
+}
+
+// Local Variables:
+// mode:c++
+// indent-tabs-mode:nil
+// tab-width:4
+// c-basic-offset:4
+// End:
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 

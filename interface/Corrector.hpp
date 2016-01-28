@@ -2,8 +2,9 @@
 #define CORRECTOR_H
 
 #include "interface/Event.hpp"
+#include "interface/Named.hpp"
 
-class CorrectorBase{
+class CorrectorBase : public Named {
 	public:
 		virtual int correct(Event *e) {return 0;};
 		virtual const string name(){ return "CorrectorBase";}

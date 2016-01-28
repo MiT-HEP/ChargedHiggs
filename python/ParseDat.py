@@ -23,11 +23,15 @@ def Default():
 
 
 def BoolKey(value):
-	value = value.lowercase()
+	value = value.lower()
 	if 'no' in value: return False
 	if 'yes' in value: return True 
 	if 'false' in value : return False
 	if 'true' in value : return True
+	if value =='n' : return False
+	if value =='y': return True
+	return False
+
 
 def StringKey(value):
 	value = re.sub('\n','',value)
@@ -76,8 +80,11 @@ def ParseDat(name):
 		key = l.split('=')[0]
 		value = ''
 		if '=' in l : value = '='.join(l.split('=')[1:])
+		######### BOOL  ###########
+		if key == "Dump":
+			config[key]=BoolKey(value)
 		######### STRING ###########
-		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' :
+		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' or key =='DumpDir' :
 			config[key] = StringKey(value)
 
 		####### V STRING ##########

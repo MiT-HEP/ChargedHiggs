@@ -11,7 +11,7 @@ public:
 
         void Init() override;
         int analyze(Event*,string systname) override;
-        const string name()override{return "TagAndProbe";}
+        const string name() const override{return "TagAndProbe";}
 
         // loose tau selection
         void SetTauCuts(Tau*t) override;

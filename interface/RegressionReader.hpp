@@ -5,8 +5,9 @@
 #include "TMVA/Tools.h"
 #include "interface/Output.hpp"
 #include "interface/Corrector.hpp"
+#include "interface/Named.hpp"
 		
-class RegressionReaderBase{
+class RegressionReaderBase: virtual public Named{
 	//Base class to read a regression
 	protected:
 		DataStore varsValues_;
@@ -19,7 +20,7 @@ class RegressionReaderBase{
 		~RegressionReaderBase(){}
 		virtual void Init(){config=true; } //Add Variables
 		virtual float Eval()=0;
-		virtual const string name(){ return "RegressionReaderBase";}
+		virtual const string name() const { return "RegressionReaderBase";}
 
 		void AddVariable(string, char type);
 
@@ -32,7 +33,7 @@ class TauRegression : public RegressionReaderBase, public CorrectorBase
 {
 	public:
 		int correct(Event *e) override final;
-		const string name() override final { return "TauRegression" ;} 
+		const string name() const override final { return "TauRegression" ;} 
 		void Init() override final;
         float Eval() override final;
 

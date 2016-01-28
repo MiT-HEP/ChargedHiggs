@@ -13,21 +13,6 @@
 Files=/store/user/amarini/Nero/v1.3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=/store/user/amarini/Nero/v1.3/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=/store/user/amarini/Nero/v1.3/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-### WW/WZ/ZZ###
-<<<<<<< HEAD
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/WW_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/WZ_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/v1.0.3/25ns/ZZ_TuneCUETP8M1_13TeV-pythia8
-### Signal HW ###
-addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_26_6_2015
-addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M1000_pythia8
-addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/SYGluGluToTBHPTohbbW_M500_pythia8
-### Signal Tau Nu ; Private production
-addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M200
-addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M250
-addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M500
-addfiles=/store/user/amarini/Nero/v1.1/HplusToTauNu-M900
-=======
 addfiles=/store/user/amarini/Nero/v1.3/WW_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/v1.3/WZ_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/v1.3/ZZ_TuneCUETP8M1_13TeV-pythia8

@@ -7,9 +7,9 @@
 class ChargedHiggsQCDPurity:  virtual public AnalysisBase
 {
     public:
-        virtual void Init();
-        virtual int analyze(Event*,string systname);
-        virtual const string name(){return "ChargedHiggsQCDPurity";}
+        void Init() override;
+        int analyze(Event*,string systname) override;
+        const string name() const override{return "ChargedHiggsQCDPurity";}
 
         // Configuration
         vector<float> PtBins;

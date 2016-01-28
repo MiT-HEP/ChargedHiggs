@@ -11,6 +11,8 @@ using namespace std;
 #include "TH1D.h"
 #include "TH1F.h"
 
+#include "interface/Named.hpp"
+
 class PUunit
 {
     // base class to be able to perform PU Reweighting
@@ -29,7 +31,7 @@ class PUunit
 // target/data -> PU
 //
 //
-class PU
+class PU : public Named
 {
     double ltot ; // total luminosity seen
     map< string , vector< PUunit* >* > container;
@@ -51,6 +53,8 @@ class PU
     public:
     PU();
     int syst;
+
+    const string name() const { return "PU";}
 
     void clear();
     void clearSyst(){ syst=0;}

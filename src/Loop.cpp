@@ -25,6 +25,7 @@ Looper::Looper(){
     output_=new Output(); 
     tree_=new TChain("nero/events");
     event_= new Event(); 
+    dump_ = new Dumper();
     fNumber = -1;
     define_handlers();
 }
@@ -33,6 +34,7 @@ Looper::Looper(string chain){
     tree_=new TChain(chain.c_str());
     event_= new Event(); 
     fNumber = -1;
+    dump_ = new Dumper();
     define_handlers();
 }
 
@@ -135,16 +137,6 @@ int Looper::InitTree()
 #ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[InitTree] SetAddresses "<<endl;
 #endif
-    for (auto c : bare_ )
-        c->setBranchAddresses(tree_);
-
-	/// FIXME, id for taus v1.1
-    // static int guard=0;
-    // if(++guard<10)cout<<" TAUS FIX FOR v1.1"<<endl;
-    // BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
-    // tree_ ->SetBranchAddress("tauId", &bt -> selBits);
-    ///
-
     for (auto c : bare_ )
         c->setBranchAddresses(tree_);
 
@@ -327,6 +319,10 @@ void Looper::NewFile()
                 }
         event_ -> IsTriggered(""); // reset trigger caching
     }
+
+    // Dumper
+    dump_ -> NewFile( event_-> weight_ . GetMC() ) ;
+    dump_ -> InitTree(bare_);
     return;
 }
 
@@ -652,7 +648,7 @@ void Looper::FillEvent(){
     {
         NewFile();
     }
-    //usleep(100); // DEBUG XROOTD
+
     FillJets();
     FillLeptons();
     FillPhotons();
@@ -661,7 +657,8 @@ void Looper::FillEvent(){
     FillMC();
     FillTrigger();
 
-
+    // fead the dumper before clearing the collections
+    dump_->Fill();
 #ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Clearing collections" <<endl;
 #endif
