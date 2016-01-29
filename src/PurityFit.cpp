@@ -1,5 +1,4 @@
 #include "interface/PurityFit.hpp"
-#include "interface/NegativeWeightInterpolator.hpp"
 #include "TMath.h"
 #include "TF1.h"
 #include <fstream>
@@ -83,11 +82,6 @@ void PurityFit::fit(){
         TLegend *l =new TLegend(0.6,.6,.9,.9);
         l->SetFillStyle(0);
         l->SetBorderSize(0);
-
-        ///-----
-        //NegativeWeightInterpolator n;
-        //n.print();
-        // ----
 
         TH1D *bkg= NULL;
         for (string& s : bkglabels)
