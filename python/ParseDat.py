@@ -32,8 +32,11 @@ def BoolKey(value):
 	if value =='y': return True
 	return False
 
+## TODO, make a class for the parser
+subdict={}
 
 def StringKey(value):
+	if '%' in value: value = value%subdict
 	value = re.sub('\n','',value)
 	return value
 
@@ -83,6 +86,10 @@ def ParseDat(name):
 		######### BOOL  ###########
 		if key == "Dump":
 			config[key]=BoolKey(value)
+		######### SUB ######
+		if key == 'sub':
+			## make sure that is well formatted
+			subdict[value.split('|')[0] ]= StringKey( value.split('|')[1] )
 		######### STRING ###########
 		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' or key =='DumpDir' :
 			config[key] = StringKey(value)
