@@ -18,7 +18,7 @@ TTJets-madgraph /store/user/amarini/Nero/v1.3.1/TTJets_TuneCUETP8M1_13TeV-madgra
 TTZToQQ /store/user/amarini/Nero/v1.3.1/TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8/TTZToQQ/160130_121112/0000 395146.827253 0.451459637587
 TTJets-amcatnlo /store/user/amarini/Nero/v1.3.1/TT_TuneCUETP8M1_13TeV-amcatnlo-pythia8/TTJets-amcatnlo/160130_120750/0000 12932262979.2 831
 WJets /store/user/amarini/Nero/v1.3.1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets/160130_121027/0000 3.73197735021e+12 41735.4814854
-WW-pythia8 /store/user/amarini/Nero/v1.3.1/WW_TuneCUETP8M1_13TeV-pythia8/WW/160130_121050/0000 988437.589993 118.7
+WW /store/user/amarini/Nero/v1.3.1/WW_TuneCUETP8M1_13TeV-pythia8/WW/160130_121050/0000 988437.589993 118.7
 WZ-pythia8 /store/user/amarini/Nero/v1.3.1/WZ_TuneCUETP8M1_13TeV-pythia8/WZ-pythia8/160130_120648/0000 1000000.0 48.66
 ttHToNonbb /store/user/amarini/Nero/v1.3.1/ttHToNonbb_M125_13TeV_powheg_pythia8/ttHToNonbb/160130_121151/0000 3945824.0 0.540099048615
 ttHTobb /store/user/amarini/Nero/v1.3.1/ttHTobb_M125_13TeV_powheg_pythia8/ttHTobb/160130_121129/0000 3772012.0 0.540099064509
