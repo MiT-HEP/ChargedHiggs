@@ -10,9 +10,10 @@ class Jet : virtual public Object
     //
     float ptcut_; // ** pt cut on the accepted jets
     float etacut_ ; // ** eta cut on the accepted jets
-    float etacutcentral_;
+    float betacut_ ; // ** eta cut on the accepted bjets
     float bcut_; /// ** bcut on the bJets discr
-
+    float puidcut_;
+    float etacutcentral_;
     float  qgl_ ; // To Set
 
     public:
@@ -34,6 +35,13 @@ class Jet : virtual public Object
     float bunc; // TOFILL
     int bsyst ;
 
+    float puId;
+
+    //Gen-level info
+    int pdgId;
+    int motherPdgId;
+    int grMotherPdgId;
+
     // ---
     inline float Pt() const override { if (syst ==0) return p4.Pt(); return p4.Pt() *(1.0  + unc*syst );}
     inline void  clearSyst()override {Object::clearSyst() ;syst = 0;bsyst=0; isValid=1;}; // reset smearing
@@ -52,7 +60,7 @@ class Jet : virtual public Object
         return 1;
     }
 
-    inline int IsBJet() const { if( bdiscr > bcut_ + bsyst*bunc and IsJet() )   return 1; return 0;}
+    inline int IsBJet() const { if( bdiscr > bcut_ + bsyst*bunc and IsJet() and fabs(Eta()) <= betacut_ )   return 1; return 0;}
 
     inline void computeValidity( Object* o, float dR = 0.4)
     {

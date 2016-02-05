@@ -25,6 +25,7 @@ Looper::Looper(){
     output_=new Output(); 
     tree_=new TChain("nero/events");
     event_= new Event(); 
+    dump_ = new Dumper();
     fNumber = -1;
     define_handlers();
 }
@@ -33,6 +34,7 @@ Looper::Looper(string chain){
     tree_=new TChain(chain.c_str());
     event_= new Event(); 
     fNumber = -1;
+    dump_ = new Dumper();
     define_handlers();
 }
 
@@ -138,13 +140,6 @@ int Looper::InitTree()
     for (auto c : bare_ )
         c->setBranchAddresses(tree_);
 
-	/// FIXME, id for taus v1.1
-    // static int guard=0;
-    // if(++guard<10)cout<<" TAUS FIX FOR v1.1"<<endl;
-    // BareTaus *bt = dynamic_cast<BareTaus*> ( bare_[ names_["Taus"] ]); assert (bt != NULL ) ;
-    // tree_ ->SetBranchAddress("tauId", &bt -> selBits);
-    ///
-
     tree_ -> SetBranchStatus("*",0);
     // branches are activate from configuration file
 #ifdef VERBOSE
@@ -209,7 +204,7 @@ void Looper::Loop()
 #endif
                     	event_->validate(); // validate the objects
                         // each analysis step will apply the SF accordingly to the object it is using
-                        event_ -> weight_ . clearSF() ;
+                        event_ -> GetWeight() -> clearSF() ;
                         if ( a->doAnalyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
                     }
                 }
@@ -222,6 +217,7 @@ void Looper::Loop()
 	Log(__FUNCTION__,"SIGNAL"," Caught SIGINT/SIGTERM: exiting! ");
         Write();
         Close();
+	dump_->Close();
         throw e; 
     }
     //call end procedures for the analyis
@@ -229,6 +225,7 @@ void Looper::Loop()
         a->doEnd();
     // save output
 
+    dump_->Close();
     Write();
     Close();
     return;	
@@ -276,7 +273,7 @@ void Looper::NewFile()
 
     if ( event_->IsRealData() ) {  
         cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<endl;;
-        event_ -> weight_ . LoadMC("data");
+        event_ -> GetWeight() -> LoadMC("data");
     }
     // -- Load current MC --
     else {
@@ -287,7 +284,7 @@ void Looper::NewFile()
 	while ( savedDir == "" and iDir>=0 )
 		{
 		label = dirs[iDir];
-		savedDir=event_ -> weight_ . LoadMC( label );
+		savedDir=event_ -> GetWeight() -> LoadMC( label );
 		--iDir;
 		}
 
@@ -296,7 +293,7 @@ void Looper::NewFile()
         {
             cout<<"[Looper]::[NewFile]::[WARNING] failed to search MC by LABEL '"<<label<<"' search by dir '"<<dir<<"'"<<endl;
             // search for dir
-            label = event_ -> weight_ . LoadMCbyDir(dir);
+            label = event_ -> GetWeight() -> LoadMCbyDir(dir);
             savedDir = dir;
             cout<<"[Looper]::[NewFile]::[WARNING] label found '"<<label<<"'"<<endl;
         }
@@ -324,6 +321,10 @@ void Looper::NewFile()
                 }
         event_ -> IsTriggered(""); // reset trigger caching
     }
+
+    // Dumper
+    dump_ -> NewFile( event_-> GetWeight() -> GetMC() ) ;
+    dump_ -> InitTree(bare_);
     return;
 }
 
@@ -351,6 +352,7 @@ void Looper::FillJets(){
 #ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[FillJets]::[DEBUG] Filling Jets. FIXME JES" <<endl;
 #endif
+
     BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "Jets" ] ] ); assert (bj !=NULL);
 
     if ( tree_ ->GetBranchStatus("jetP4") == 0 ){ 
@@ -370,9 +372,24 @@ void Looper::FillJets(){
 
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
+
+	#ifdef VERBOSE
+	    if (VERBOSE >1 )
+		{
+		cout <<"[Looper]::[FillJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
+		cout <<"\t\t * selBits size: "<< bj->selBits ->size()<<endl;
+		cout <<"\t\t * unc size:" << bj -> unc ->size() <<endl;
+		cout <<"\t\t * bdiscr size :"<< bj -> bDiscr ->size() <<endl;
+
+		cout <<"\t\t * pdgId :" <<bj -> matchedPartonPdgId -> size()<<endl;
+		cout <<"\t\t * mother :"<<bj->motherPdgId ->size()<<endl;
+		cout <<"\t\t * gr mother:"<<  bj-> grMotherPdgId -> size()<<endl;
+		cout <<"\t\t * puId :"<<  bj -> puId -> size() <<endl;
+		}
+	#endif
 	bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
 	if (not id) continue;
-	// when create an Object, put it into the jets_ stuff, otherwise won't be deleted
+
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
         j->unc = bj -> unc -> at(iJet); //
@@ -380,7 +397,13 @@ void Looper::FillJets(){
 
 	if (tree_->GetBranchStatus("jetQGL") ) j->SetQGL( bj -> qgl -> at(iJet) );
 	else j->SetQGL(  -10 ); // Add a warning ? 
-	// TODO add PuId, and syst
+
+        j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
+        j->motherPdgId = bj->motherPdgId -> at(iJet);
+        j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
+	j->puId = bj -> puId -> at(iJet);
+	
+	// add it
         event_ -> jets_ . push_back(j);
     }
     return;
@@ -438,9 +461,11 @@ void Looper::FillLeptons(){
 	//if (not id) continue;
         Lepton *l = new Lepton();
         l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
-        l-> iso = (*bl->iso) [iL];
+        l-> iso = ((*bl->iso) [iL])/(l->Pt());
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> type = abs((*bl->pdgId)[iL]);
+        l-> tightId = ( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight); 
+
 	#ifdef VERBOSE
 		if(VERBOSE>1) cout<<"[Looper]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;
 	#endif
@@ -541,9 +566,9 @@ void Looper::FillMC(){
     if(VERBOSE>1)cout <<"[Looper]::[FillMC]::[DEBUG] Filling MonteCarlo" <<endl;
 #endif
     BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["MonteCarlo"]]);
-    event_ -> weight_ . mcWeight_ = mc->mcWeight;
+    event_ -> GetWeight() -> SetMcWeight(  mc->mcWeight );
 
-    event_ -> weight_ . SetPU( mc -> puTrueInt ,  event_ -> runNum_);
+    event_ -> GetWeight() -> SetPU( mc -> puTrueInt ,  event_ -> runNum_);
 
     if ( tree_->GetBranchStatus("genP4") == 0  ){ 
         static int counter = 0;
@@ -625,7 +650,7 @@ void Looper::FillEvent(){
     {
         NewFile();
     }
-    //usleep(100); // DEBUG XROOTD
+
     FillJets();
     FillLeptons();
     FillPhotons();
@@ -634,7 +659,8 @@ void Looper::FillEvent(){
     FillMC();
     FillTrigger();
 
-
+    // fead the dumper before clearing the collections
+    dump_->Fill();
 #ifdef VERBOSE
     if(VERBOSE>1)cout <<"[Looper]::[FillEvent]::[DEBUG] Clearing collections" <<endl;
 #endif

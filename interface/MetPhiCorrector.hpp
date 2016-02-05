@@ -10,7 +10,7 @@ class MetPhiCorrector : virtual public CorrectorBase
     public:
         MetPhiCorrector () : CorrectorBase() {}
         void Init() override final;
-        const string name() override final { return "MetPhiCorrector";}
+        const string name() const override final { return "MetPhiCorrector";}
         int correct (Event *e) override final;
 
         string fileName = "aux/MetPhi.root";

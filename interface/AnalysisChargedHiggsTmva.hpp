@@ -16,7 +16,7 @@ class TmvaAnalysis : virtual public AnalysisBase
         int analyze(Event*,string systname) override;
         void Init() override;
         void End() override;
-        const string name() override {return "TmvaAnalysis";}
+        const string name() const override {return "TmvaAnalysis";}
 
         // Variables
         template<class T>

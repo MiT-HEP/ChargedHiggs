@@ -4,6 +4,16 @@
 #include <iostream>
 
 //#define VERBOSE 2
+//
+Event::Event()
+{
+    weight_ = new Weight();
+}
+
+Event::~Event(){
+    ClearEvent();
+    delete weight_;
+}
 
 void Event::ClearEvent(){
 
@@ -18,7 +28,7 @@ void Event::ClearEvent(){
     phos_ . clear();
     genparticles_ . clear();
 
-    weight_ . clearSF( );
+    weight_ -> clearSF( );
 
 }
 
@@ -29,9 +39,9 @@ void Event::clearSyst(){
     for ( auto o: genparticles_) o->clearSyst();
     met_ . clearSyst();
     // clear SF syst
-    weight_ . clearSF();
-    weight_ . resetSystSF();
-    weight_ . clearSystPU();
+    weight_ -> clearSF();
+    weight_ -> resetSystSF();
+    weight_ -> clearSystPU();
 }
 
 float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton
@@ -117,7 +127,7 @@ float Event::RsrMax(int iMax, Tau *t) {
 
 double Event::weight(){
     if (isRealData_ ) return 1;
-    return weight_ . weight();
+    return weight_ -> weight();
 }
 
 void Event::validate(){
@@ -173,6 +183,22 @@ Jet * Event::GetBjet( int iJet )
     for(int i = 0 ; i<jets_.size() ;++i)
     {
         if ( jets_[i]->IsBJet()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iJet  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return jets_[ valid[iJet].second];
+}
+
+Jet * Event::GetLjet( int iJet ) 
+{ 
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<jets_.size() ;++i)
+    {
+        if ( not jets_[i]->IsBJet()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
     }
 
     if (valid.size() == 0 ) return NULL;
@@ -251,7 +277,7 @@ Lepton * Event::GetMuon( int iMu )
 }
 
 Tau * Event::GetTauInvIso( int iTau ) 
-{ // { return taus_.at(iTau);} // old
+{ 
     vector<pair<float,int> > valid; // pt, idx
     for(int i = 0 ; i<taus_.size() ;++i)
     {
@@ -312,6 +338,12 @@ bool Event::IsTriggered( string name ,Trigger *trigger, bool isNone)
     // Log only if it's not empty  -- can be used to reset stuff
     if (name != "") cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
     return false;
+}
+
+GenParticle * Event::GetGenParticle( int iGenPar ) 
+{  
+    //FIXME: what is the purpose of this function ? 
+    return (iGenPar >= 0 && iGenPar < genparticles_.size() ? genparticles_.at(iGenPar) : NULL);
 }
 
 Photon * Event::GetPhoton( int iPho ) 

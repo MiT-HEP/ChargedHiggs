@@ -16,7 +16,7 @@ class DYAnalysis: virtual public AnalysisBase
         int analyzeEE(Event*,string systname);
         int analyzeEM(Event*,string systname);
         int analyzeLLL(Event*,string systname);
-        const string name() override {return "DYAnalysis";}
+        const string name() const override {return "DYAnalysis";}
         void SetLeptonCuts(Lepton *l) override ; 
 
     private:

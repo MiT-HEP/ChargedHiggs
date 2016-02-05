@@ -12,7 +12,7 @@ class GGAnalysis: virtual public AnalysisBase
 
         void Init() override;
         int analyze(Event*,string systname) override;
-        const string name() override {return "GGAnalysis";}
+        const string name() const override {return "GGAnalysis";}
 
     private:
         CutSelector cut;

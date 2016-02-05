@@ -7,8 +7,6 @@
 class Photon : virtual public Object,
     virtual public Trigger
 {
-    friend class TagAndProbe;
-
     protected:
         float isocut_;
         float ptcut_;

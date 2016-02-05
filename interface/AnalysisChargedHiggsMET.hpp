@@ -7,7 +7,7 @@ class ChargedHiggsMET:  virtual public AnalysisBase
     public:
         void Init() override;
         int analyze(Event*,string systname) override;
-        const string name() override {return "ChargedHiggsMET";}
+        const string name() const override {return "ChargedHiggsMET";}
 };
 
 #endif

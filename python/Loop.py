@@ -247,8 +247,14 @@ for analysis in cfg['Analysis']:
 
 if opts.verbose: print "-> Init Analysis"
 loop.InitAnalysis()
-###
 
+### Init Dumper
+if opts.verbose: print "-> Init Dumper"
+if 'DumpDir' in cfg: loop.SetDumpDir(cfg['DumpDir'])
+if 'Dump' in cfg: loop.ActivateDump(cfg['Dump'])
+
+
+### Loop
 if opts.verbose: print "-> Loop"
 
 loop.Loop()

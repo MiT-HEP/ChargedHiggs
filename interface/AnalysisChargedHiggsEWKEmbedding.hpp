@@ -18,7 +18,7 @@ class ChargedHiggsEWKEmbedding:  virtual public AnalysisBase
         virtual ~ChargedHiggsEWKEmbedding(){}
         void Init() override;
         int analyze(Event*,string systname) override;
-        const string name() override {return "ChargedHiggsEWKEmbedding";}
+        const string name() const override {return "ChargedHiggsEWKEmbedding";}
         /* Configuration to run the dump of the events*/
         bool doTree = true;
         string treename ="embedding";

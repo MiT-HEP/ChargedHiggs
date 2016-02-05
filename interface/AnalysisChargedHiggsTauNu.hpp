@@ -26,7 +26,7 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
         // *return the cut flow
         //  direct tau or inv tau
         static unsigned Selection(Event*, bool direct=true) ;
-        const string name() override {return "ChargedHiggsTauNu";}
+        const string name() const override {return "ChargedHiggsTauNu";}
 };
 
 #endif

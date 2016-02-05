@@ -17,7 +17,7 @@ class JsonAnalysis : virtual public AnalysisBase
     public:
 
     int analyze(Event*,string systname) override;
-    const string name() override {return "JsonAnalysis";}
+    const string name() const override {return "JsonAnalysis";}
     void Init() override ;
 
 

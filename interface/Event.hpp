@@ -27,8 +27,7 @@ class Event{
     friend class SmearBase;
     friend class AnalysisBase;
     friend class CorrectorBase;
-    friend class ChargedHiggsEWKEmbedding;  // embedding will replace the taus
-    friend class TagAndProbe; // need access to the bare objects
+    friend class ChargedHiggsEWKEmbedding;  // embedding will replace the taus --- should be made a corrector
 
     protected:
     vector<Lepton*> leps_;
@@ -48,9 +47,15 @@ class Event{
     vector<string> triggerNames_;
 
     string fName_;
+    Weight *weight_;
 
     public:
-    Weight weight_;
+
+    //--- Constructor
+    Event();
+    ~Event();
+
+    Weight *GetWeight(){ return weight_;} 
 
     inline int runNum(){return runNum_; }
     inline int lumiNum(){return lumiNum_; }
@@ -62,11 +67,13 @@ class Event{
     Jet * GetJet( int iJet );
     Jet * GetCentralJet( int iJet );
     Jet * GetBjet( int iJet );
+    Jet * GetLjet( int iJet );
     Tau * GetTau( int iTau );
     Tau * GetTauInvIso( int iTau );
     Lepton * GetLepton( int iLep );
     Lepton * GetElectron( int iEle );
     Lepton * GetMuon( int iMu );
+    GenParticle * GetGenParticle( int iGenPar );
     Photon * GetPhoton( int iPho );
 
     //
@@ -75,11 +82,13 @@ class Event{
     inline float Rho() { return rho_; }
     inline int Npv() { return npv_ ;} 
     inline float Ht()   { float ht=0 ; for(auto j : jets_ ) if( j->IsJet()  ) ht+= j->Pt() ; return ht;}
-    inline int   Njets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsJet()  ) n+=1; return n; }
-    inline int   NcentralJets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsCentralJet()  ) n+=1; return n; }
-    inline int   Bjets(){ int   n=0  ; for(auto j : jets_ ) if( j->IsBJet() ) n+=1; return n; }
-    inline int   Ntaus(){ int   n=0  ; for(auto t : taus_ ) if( t->IsTau()  )  n+=1; return n; }
-    inline int   Nleps(){ int   n=0  ; for(auto t : leps_ ) if( t->IsLep()  )  n+=1; return n; }
+
+    inline int Njets(){int n=0; for(auto j : jets_) if(j->IsJet()) n++; return n;}
+    inline int NcentralJets(){int n=0; for(auto j : jets_) if(j->IsCentralJet()) n++; return n;}
+    inline int Bjets(){int n=0; for(auto j : jets_) if(j->IsBJet()) n++; return n;}
+    inline int Ntaus(){int n=0; for(auto t : taus_) if(t->IsTau()) n++; return n;}
+    inline int Nleps(){int n=0; for(auto t : leps_) if(t->IsLep()) n++; return n;}
+    inline int NGenPar(){return genparticles_.size();}
 
     inline Tau*  LeadTau(){ return GetTau(0);} 
     inline Jet*  LeadJet(){ return GetJet(0);}
@@ -118,10 +127,10 @@ class Event{
     // SF utils
     void SetPtEtaSF(string label, float pt, float eta){ 
         //cout <<"[Event]::[SetPtEtaSF]::[DEBUG] '"<<label<<"'"<<endl;
-        weight_ . SetPtEtaSF(label,pt,eta);
+        weight_ -> SetPtEtaSF(label,pt,eta);
         }
-    void ApplySF(string label){ weight_ . ApplySF(label) ; } 
-    bool ExistSF(string label){ return weight_ . ExistSF(label); }
+    void ApplySF(string label){ weight_ -> ApplySF(label) ; } 
+    bool ExistSF(string label){ return weight_ -> ExistSF(label); }
 };
 
 #endif

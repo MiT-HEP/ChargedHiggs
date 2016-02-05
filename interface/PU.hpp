@@ -11,6 +11,8 @@ using namespace std;
 #include "TH1D.h"
 #include "TH1F.h"
 
+#include "interface/Named.hpp"
+
 class PUunit
 {
     // base class to be able to perform PU Reweighting
@@ -29,7 +31,7 @@ class PUunit
 // target/data -> PU
 //
 //
-class PU
+class PU : public Named
 {
     double ltot ; // total luminosity seen
     map< string , vector< PUunit* >* > container;
@@ -40,8 +42,8 @@ class PU
     bool IsInRange(int run, int runMin,int runMax);
 
     // --- limit max 
-    inline double Ratio(double num, double den){ 
-            if (std::isnan(num) or std::isinf(den)) return 0  ;
+    inline static double Ratio(double num, double den)  { 
+            if (std::isnan(num) or std::isinf(den)) return 0 ;
             if (std::isnan(den) or std::isinf(num)) return 10;
             if (den <=0 ) return 0 ; 
             if (num>10*den) return 10; 
@@ -51,6 +53,8 @@ class PU
     public:
     PU();
     int syst;
+
+    const string name() const { return "PU";}
 
     void clear();
     void clearSyst(){ syst=0;}

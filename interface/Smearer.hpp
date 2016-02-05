@@ -2,12 +2,13 @@
 #define SMEAR_H
 
 #include "interface/Event.hpp"
+#include "interface/Named.hpp"
 
 #define SMEAR_OK 0
 #define SMEAR_NA 1
 #define SMEAR_UNKOWN_FAIL 2
 
-class SmearBase{
+class SmearBase : public Named {
     public:
 
         SmearBase(){};
@@ -16,7 +17,7 @@ class SmearBase{
         // ---
         string name_ = "NONE";
         int syst_;
-        const inline string name() {
+        const inline string name() const {
             if (syst_ == 0 ) return name_;
             else if (syst_ >0 ) return name_ + "Up" ; // this name should be consistent with datacards
             else  return name_ + "Down" ;

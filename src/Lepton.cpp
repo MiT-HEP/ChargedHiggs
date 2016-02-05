@@ -7,6 +7,9 @@ Lepton::Lepton() : Object() {
     isocut_ = 0; // this value will ignored
     ptcut_ = 0;
     type=0;
+    tightId=0;
+    ptcut_=20;
+    etacut_=2.5;
 }
 
 // Local Variables:

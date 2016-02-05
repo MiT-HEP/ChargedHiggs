@@ -5,9 +5,11 @@
 #include <map>
 #include <iostream>
 
+#include "interface/Named.hpp"
+
 using namespace std;
 
-class  SF{
+class  SF : public Named{
     // Base class for implement SF 
     // this will be used by the Weight class to 
     // change the event weight 
@@ -20,6 +22,7 @@ class  SF{
         int syst;
         //
         virtual double get(){ return sf + err*syst ; }
+        const string name() const {return "SF";}
 };
 
 class SF_PtEta : virtual public SF
@@ -39,6 +42,7 @@ class SF_PtEta : virtual public SF
         // will copy the right SF and err in the mother members sf,err
         virtual void set(double pt,double eta);
         void print();
+        const string name() const {return "SF_PtEta";}
 };
 
 const bool operator<( const SF_PtEta::range&r1 , const SF_PtEta::range &r2);
@@ -63,6 +67,7 @@ class SF_PtSpline : virtual public SF
         void init();
         void set (double pt);
         void print();
+        const string name() const {return "SF_PtSpline";}
 
 };
 

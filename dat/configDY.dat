@@ -4,41 +4,42 @@
 ##### include=dat/config.txt
 ##### Files=....,....,...
 
+sub=tag|v1.3.1
 
 ################
 ### DATASETS ###
 ################
 
 #### BKG ###
-Files=/store/user/amarini/Nero/v1.2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/v1.2/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-#addfiles=/store/user/amarini/Nero/v1.2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=/store/user/amarini/Nero/v1.2.1/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+Files=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=/store/user/amarini/Nero/v1.2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 ### WW/WZ/ZZ###
-addfiles=/store/user/amarini/Nero/v1.2/WW_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/v1.2/WZ_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/v1.2/ZZ_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/WW_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/WZ_TuneCUETP8M1_13TeV-pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/ZZ_TuneCUETP8M1_13TeV-pythia8
 ### SIGNAL ###
 ### QCD
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/v1.2/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
 ####
 #### DATA
-addfiles=/store/user/amarini/Nero/v1.2/SingleMuon
-addfiles=/store/user/amarini/Nero/v1.2/SingleElectron
+addfiles=/store/user/amarini/Nero/%(tag)s/SingleMuon
+addfiles=/store/user/amarini/Nero/%(tag)s/SingleElectron
 
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
@@ -53,12 +54,6 @@ SFDB=dat/sf_database.txt
 Branches=dat/branches.txt
 ###
 pileup=aux/pileup.root
-#pileup=
-#pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root
-#pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup_JSON_1p2_PRE_10-09-2015.root 
-#pileup=file,fileup,filedn TODO
-#pileup=aux/pileup_JSON_1p2_PRE_10-09-2015.root 
-#pileup=
 pileupRun=
 pileupLumi=
 #Lumi=2110 ## doing nothing
@@ -70,8 +65,8 @@ Lumi=1
 #Smear=JER,JES,@SmearBase
 #Smear=NONE,JER,JES
 Smear=NONE
-#Correct=NONE
-Correct=MetPhiCorrector
+Correct=NONE
+#Correct=MetPhiCorrector
 
 #________________________________________________________________
 #____________________ CONFIGURATION _____________________________
@@ -90,7 +85,7 @@ addConfig=DYAnalysis|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT')
 ### JSON ###
 ############
 
-config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt')
+include=dat/json.dat
 
 
 #configure Analysis

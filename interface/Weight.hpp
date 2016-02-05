@@ -17,6 +17,7 @@ class Weight{
     double nEvents_;
     double lumi_;
     double sf_;
+    double mcWeight_; // this is set in FillEvent
     protected:
 
     map<string, MC*> mc_db;
@@ -27,7 +28,7 @@ class Weight{
     Weight(){ clear(); }
     ~Weight(){}
 
-    double mcWeight_; // this is set in FillEvent
+    void SetMcWeight(double w){mcWeight_= w;}
 
     void clear(){ mcName_= "";
         mcXsec_ = 1.0; 

@@ -23,13 +23,20 @@ def Default():
 
 
 def BoolKey(value):
-	value = value.lowercase()
+	value = value.lower()
 	if 'no' in value: return False
 	if 'yes' in value: return True 
 	if 'false' in value : return False
 	if 'true' in value : return True
+	if value =='n' : return False
+	if value =='y': return True
+	return False
+
+## TODO, make a class for the parser
+subdict={}
 
 def StringKey(value):
+	if '%' in value: value = value%subdict
 	value = re.sub('\n','',value)
 	return value
 
@@ -76,8 +83,15 @@ def ParseDat(name):
 		key = l.split('=')[0]
 		value = ''
 		if '=' in l : value = '='.join(l.split('=')[1:])
+		######### BOOL  ###########
+		if key == "Dump":
+			config[key]=BoolKey(value)
+		######### SUB ######
+		if key == 'sub':
+			## make sure that is well formatted
+			subdict[value.split('|')[0] ]= StringKey( value.split('|')[1] )
 		######### STRING ###########
-		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' :
+		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' or key =='DumpDir' :
 			config[key] = StringKey(value)
 
 		####### V STRING ##########

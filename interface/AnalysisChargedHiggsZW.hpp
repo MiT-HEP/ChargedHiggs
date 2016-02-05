@@ -5,9 +5,9 @@
 class ChargedHiggsZW:  virtual public AnalysisBase
 {
     public:
-        virtual void Init();
-        virtual int analyze(Event*,string systname);
-        virtual const string name(){return "ChargedHiggsZW";}
+        void Init() override;
+        int analyze(Event*,string systname) override;
+        const string name() const override {return "ChargedHiggsZW";}
 };
 
 #endif
