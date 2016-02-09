@@ -21,6 +21,7 @@ job_opts.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do no
 job_opts.add_option("","--no-compress" ,dest='compress',action='store_false',help="Don't compress",default=True)
 job_opts.add_option("","--compress"    ,dest='compress',action='store_true',help="Compress stdout/err")
 job_opts.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="Mount eos file system.",default=False)
+job_opts.add_option("","--hadoop" ,dest='hadoop',action='store_true',help="Use Hadhoop and MIT-T3",default=False)
 job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. ",default=False)
 job_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
 
@@ -221,7 +222,9 @@ if True:
 	for f in config['Files']:
 		list=[]
 		if '/store/' in f:
-			if opts.mount:
+			if opts.hadoop:
+				list = FindHadoop( f ) 
+			elif opts.mount:
 				list =  FindEOS(f, "%%MOUNTPOINT%%/eos")
 			else:
 				list =  FindEOS(f)
@@ -233,7 +236,77 @@ if True:
 	config['Files']=fileList
 	splittedInput=chunkIt(config['Files'],opts.njobs )
 
-for iJob in range(0,opts.njobs):
+if opts.hadoop:
+   if len(fileList) ==0:
+	print "filelist has 0 len: Nothing to be done"
+	exit(0)
+   redirect = ">&2"
+   run= open("%s/run.sh"%opts.dir,"w")
+   run.write("#!/bin/bash\n")
+   run.write("JOBID=$1\n")
+   run.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
+   # if x509 proxy is copied to the workspace
+   # export X509_USER_PROXY=x509up_u$(id -u)
+   run.write("scram p CMSSW %s\n"%os.environ['CMSSW_VERSION'])
+   run.write("cd %s/src\n"%os.environ['CMSSW_VERSION'])
+   run.write("eval `scram runtime -sh`\n")
+   run.write("tar xzf ../../package.tar.gz\n")
+   run.write("mkdir -p ../NeroProducer/Core/bin\n")
+   run.write("cp -v bin/bare/* ../NeroProducer/Core/bin\n") 
+   run.write("mkdir -p ../NeroProducer/Core/interface\n")
+   run.write("cp -v bin/interface/* ../NeroProducer/Core/interface\n") 
+   run.write('LD_LIBRARY_PATH=./:./bin/:$LD_LIBRARY_PATH\n')
+   run.write("echo --- ENV ---- %s\n"%redirect)
+   run.write("env | sed 's/^/ENV ---/' %s \n"%redirect)
+   run.write("echo --- LS ---- %s\n"%redirect)
+   run.write("ls -l | sed 's/^/LS ---/' %s\n"%redirect)
+   #cmsRun cfg.py jobId=$JOBID
+   run.write("python python/Loop.py -v -d ../../input${JOBID}.dat %s\n"%redirect)
+   run.write('EXITCODE=$?\n')
+   run.write("echo Finished At: %s\n"%redirect)
+   run.write("date %s\n"%redirect)
+   run.write("echo EXITCODE is $EXITCODE %s\n"%redirect)
+   run.write("exit $EXITCODE\n")
+   
+   inputLs =[]
+   subdir="."
+   for iJob in range(0,opts.njobs):
+        if len(splittedInput[iJob]) == 0 : 
+             print "No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white
+             continue
+	outname = re.sub('.root','_%d.root'%iJob,config['Output'])
+	dat=open("%s/input%d.dat"%(opts.dir,iJob),"w")
+	inputLs.append("%s/input%d.dat"%(subdir,iJob))
+	dat.write("include=%s\n"%opts.input)
+	dat.write('Files=%s\n'%( ','.join(splittedInput[iJob]) ) )
+	dat.write('Output=%s/%s\n'%(subdir,outname) )
+   # create condor.jdl
+   outname = re.sub('.root','_$(Process).root',config['Output'])
+   condor=open("%s/condor.jdl"%opts.dir,"w")
+   condor.write("executable = %s/run.sh\n"%subdir)
+   condor.write("should_transfer_files = YES\n")
+   condor.write("when_to_transfer_output = ON_EXIT\n")
+   condor.write("transfer_input_files = %(dir)s/package.tar.gz,%(input)s\n"%{"dir":subdir,"input": ",".join(inputLs)})
+   condor.write("universe = vanilla\n")
+   condor.write("log = test.$(Process).log\n")
+   condor.write("output = %s\n"%outname)
+   condor.write("error = test.$(Process).err\n")
+   condor.write("requirements = Arch == \"X86_64\" && OpSysAndVer == \"SL6\" && HasFileTransfer\n")
+   condor.write("arguments = $(Process)\n")
+   condor.write("queue %d\n"%(len(inputLs)))
+   cmdFile.write("cd %s\n"%opts.dir)
+   cmdFile.write("condor_submit condor.jdl\n")
+   cmd ="cd %s && condor_submit condor.jdl"%opts.dir
+   if not opts.dryrun: 
+	status = call(cmd,shell=True)
+	if status !=0:
+		print "unable to submit,",cmd
+   else:
+	print cmd
+		
+##################### WRITE BATCH ###########################
+if not opts.hadoop:
+   for iJob in range(0,opts.njobs):
 	sh=open("%s/sub%d.sh"%(opts.dir,iJob),"w")
 	basedir=opts.dir
 	if basedir[0] != '/': basedir=os.environ['PWD'] + "/" + opts.dir

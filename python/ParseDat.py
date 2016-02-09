@@ -136,6 +136,16 @@ def ParseDat(name):
 					config[key] = R[key]
 	return config
 
+def FindHadoop(name,mount="/mnt/hadoop/cms"):
+	if os.path.isfile(name): return [name] ## file exists
+	cmd = "find %s/%s -type f "%(mount,name)
+	list=check_output(cmd, shell=True).split()
+	removed = [f for f in list if '/failed/' in f ]
+	for f in removed:
+		print "ParseDat.py - FindHadoop: Ignoring failed file: '"+ f + "'"
+	list = [ f for f in list if '/failed/' not in f ]
+	return list
+
 def FindEOS(name,mount=""):
 	''' EOS PATH should be followed. The mount option will assume that eos is mounted in ~/eos '''
 	EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
@@ -143,6 +153,7 @@ def FindEOS(name,mount=""):
 	if '/store/' not in name: return [name]
 	if '/eos/cms/store/' in name: return [name] # likely already parsed
 	if 'root://eoscms//' in name: return [name] # already parsed
+	if os.path.isfile(name): return [name] ## file exists
 
 	cmd = EOS + ' find -f ' + name
 	print "Runnig command:",cmd
