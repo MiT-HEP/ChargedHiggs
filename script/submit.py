@@ -26,8 +26,8 @@ job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file
 job_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
 
 summary= OptionGroup(parser,"Summary","these options are used in case of summary is wanted")
-summary.add_option("-s","--status",dest="status", action='store_true', help = "Display status information for a submission.", default=False)
-summary.add_option("","--resubmit",dest="resubmit", action='store_true', help = "Resubmit failed jobs.", default=False)
+summary.add_option("-s","--status",dest="status", action='store_true', help = "Display status information for a submission. (Can be use with hadoop option)", default=False)
+summary.add_option("","--resubmit",dest="resubmit", action='store_true', help = "Resubmit failed jobs. (no hadoop)", default=False)
 summary.add_option("-j","--joblist",dest="joblist", type='string', help = "Resubmit this job list. '' or 'fail' will submit the failed jobs. 'run' will submit the running jobs. Job list = 3,5,6-10", default="")
 
 parser.add_option_group(job_opts)
@@ -83,6 +83,22 @@ def PrintLine(list):
 
 	return ",".join(compress)
 
+def Print_ (done, run, fail, pend):
+	'''Internal'''
+	tot = len(run) + len(fail) + len(done) + len(pend)
+
+	color = red
+	if len(run) > len(fail) and len(run) >len(pend)  : color= yellow
+	if len(pend) > len(run) and len(pend) >len(fail): color= cyan
+	if len(done) == tot and tot >0 : color = green
+	
+	print " ----  Directory "+ color+opts.dir+white+" --------"
+	print " Pend: " + cyan   + "%3d"%len(pend) + " / " + str(tot) + white + " : " + PrintLine(pend)  ###
+	print " Run : " + yellow + "%3d"%len(run) + " / "  + str(tot) + white + " : " + PrintLine(run)  ### + ",".join(run)  + "|" 
+	print " Fail: " + red    + "%3d"%len(fail) + " / " + str(tot) + white + " : " + PrintLine(fail) ### + ",".join(fail) + "|" 
+	print " Done: " + green  + "%3d"%len(done) + " / " + str(tot) + white + " : " + PrintLine(done) ### + ",".join(done) + "|" 
+	print " -------------------------------------"
+
 def PrintSummary(dir, doPrint=True):
 	''' Print summary informations for dir'''
 	run  = glob(dir + "/*run")
@@ -95,25 +111,51 @@ def PrintSummary(dir, doPrint=True):
 	done = [ re.sub('\.done','' , re.sub('.*/sub','', r) ) for r in done ] 	
 	pend = [ re.sub('\.pend','' , re.sub('.*/sub','', r) ) for r in pend ] 	
 
-	tot = len(run) + len(fail) + len(done) + len(pend)
-
-	color = red
-	if len(run) > len(fail) and len(run) >len(pend)  : color= yellow
-	if len(pend) > len(run) and len(pend) >len(fail): color= cyan
-	if len(done) == tot and tot >0 : color = green
-	
 	if doPrint:
-		print " ----  Directory "+ color+opts.dir+white+" --------"
-		print " Pend: " + cyan   + "%3d"%len(pend) + " / " + str(tot) + white + " : " + PrintLine(pend)  ###
-		print " Run : " + yellow + "%3d"%len(run) + " / "  + str(tot) + white + " : " + PrintLine(run)  ### + ",".join(run)  + "|" 
-		print " Fail: " + red    + "%3d"%len(fail) + " / " + str(tot) + white + " : " + PrintLine(fail) ### + ",".join(fail) + "|" 
-		print " Done: " + green  + "%3d"%len(done) + " / " + str(tot) + white + " : " + PrintLine(done) ### + ",".join(done) + "|" 
-		print " -------------------------------------"
+		Print_(done,run,fail,pend)
 
 	return ( done, run, fail)
 
+def PrintHadhoop(dir, doPrint = True):
+	log = glob ( dir + "/test.*.log" )
+	done=[]
+	run =[]
+	fail=[]
+	pend=[]
+	for l in log:
+		iJob = re.sub('.*/test\.','', re.sub("\.log","" , l ) )
+		status = call( "cat %s | grep 'Job executing on host' >& /dev/null"%(l) , shell=True)
+		if status != 0 :
+			pend.append(iJob)
+			continue
+		status = call( "cat %s | grep 'Job terminated.' >& /dev/null"%(l) , shell=True)
+		if status != 0:
+			run.append(iJob)
+			continue
+		status = call( "cat %s | grep 'return value 0' >& /dev/null"%(l) , shell=True)
+		if status != 0:
+			fail.append(iJob)
+			continue
+		outlist = glob(dir +"/*_%s.root"%iJob)
+		if len(outlist) != 1:
+			print "unable to find outfile in:",outlist
+			fail.append(iJob)
+			continue
+		outname=outlist[0]
+		if os.stat(outname).st_size == 0:
+			fail.append(iJob)
+			continue
+		done.append(iJob)
+	
+	if doPrint:
+		Print_(done,run,fail,pend)
+	return ( done, run, fail)
+
 if opts.status:
-	PrintSummary(opts.dir,doPrint=True)
+	if opts.hadoop:
+		PrintHadhoop(opts.dir,doPrint=True)
+	else:
+		PrintSummary(opts.dir,doPrint=True)
 	exit(0)
 
 if opts.resubmit:
