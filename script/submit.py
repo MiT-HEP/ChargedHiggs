@@ -37,6 +37,10 @@ parser.add_option_group(summary)
 
 EOS='/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
 
+if 'CMSSW_BASE' not in os.environ:
+	print "-> Use a CMSSW environment: cmsenv"
+	exit(0)
+
 print "inserting in path cwd"
 sys.path.insert(0,os.getcwd())
 print "inserting in path cwd/python"
@@ -309,6 +313,7 @@ if opts.hadoop:
    run.write("date %s\n"%redirect)
    run.write("echo EXITCODE is $EXITCODE %s\n"%redirect)
    run.write("exit $EXITCODE\n")
+   run.close()
    
    inputLs =[]
    subdir="."
@@ -322,6 +327,7 @@ if opts.hadoop:
 	dat.write("include=%s\n"%opts.input)
 	dat.write('Files=%s\n'%( ','.join(splittedInput[iJob]) ) )
 	dat.write('Output=%s/%s\n'%(subdir,outname) )
+	dat.close()
    # create condor.jdl
    outname = re.sub('.root','_$(Process).root',config['Output'])
    condor=open("%s/condor.jdl"%opts.dir,"w")
@@ -336,6 +342,7 @@ if opts.hadoop:
    condor.write("requirements = Arch == \"X86_64\" && OpSysAndVer == \"SL6\" && HasFileTransfer\n")
    condor.write("arguments = $(Process)\n")
    condor.write("queue %d\n"%(len(inputLs)))
+   condor.close()
    cmdFile.write("cd %s\n"%opts.dir)
    cmdFile.write("condor_submit condor.jdl\n")
    cmd ="cd %s && condor_submit condor.jdl"%opts.dir
