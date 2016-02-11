@@ -183,7 +183,14 @@ bool Output::Exists(string name){
     if ( histos_.find(name) != histos_.end() ) return true;
     return false;
 }
-
+// ---------------------------- TREE -----------------
+void Output::Branch(string tree,string name, char type){ 
+    varValues_.Add(name,type); 
+    if (type != 'T')
+       trees_[tree]->Branch(name.c_str(), varValues_.GetPointer(name), (name+"/"+type).c_str() ) ;
+    else //if (type == 'T')
+        trees_[tree]->Branch(name.c_str(),"TLorentzVector", varValues_.GetPointer(name)) ;
+}
 
 // ----------------------------- DATA STORE -----------------------
 
@@ -192,6 +199,7 @@ bool DataStore::Exists(string name)
    if( valuesD_.find( name ) != valuesD_.end() ) return true;
    if( valuesF_.find( name ) != valuesF_.end() ) return true;
    if( valuesI_.find( name ) != valuesI_.end() ) return true;
+   if( valuesP4_.find( name ) != valuesP4_.end() ) return true;
    return false;
 }
 void DataStore::Add(string name, char type)
@@ -202,6 +210,7 @@ void DataStore::Add(string name, char type)
         case 'F': valuesF_[name] = 0.0;break;
         case 'D': valuesD_[name] = 0.0;break;
         case 'I': valuesI_[name] = 0;break;
+        case 'T': valuesP4_[name] = TLorentzVector();break;
     }
     return;
 }
@@ -209,6 +218,7 @@ void* DataStore::GetPointer(string name){
    if( valuesD_.find( name ) != valuesD_.end() ) return &valuesD_[ name ];
    if( valuesF_.find( name ) != valuesF_.end() ) return &valuesF_[ name ];
    if( valuesI_.find( name ) != valuesI_.end() ) return &valuesI_[ name ];
+   if( valuesP4_.find( name ) != valuesP4_.end() ) return &valuesP4_[ name ];
    return NULL;
 }
 
@@ -217,8 +227,19 @@ void DataStore::Print(){
     for(auto p :valuesD_ ) cout<<p.first<<"| 'D': "<<p.second<<endl;
     for(auto p :valuesF_ ) cout<<p.first<<"| 'F': "<<p.second<<endl;
     for(auto p :valuesI_ ) cout<<p.first<<"| 'I': "<<p.second<<endl;
+    for(auto p :valuesP4_ ) cout<<p.first<<"| 'I': x="<<p.second.Px()<< " y="<< p.second.Py()<< " z=" << p.second.Pz() << " t="<<p.second.E() <<endl;
     cout <<" -------------------"<<endl;
 }
+
+// ------------------ SET Template spec ---------------
+template<>
+void DataStore::Set<TLorentzVector>(string name, const TLorentzVector & value)
+{
+   if( valuesP4_.find( name ) != valuesP4_.end() ) 
+            valuesP4_[name] = TLorentzVector( value) ;
+   return ;
+}
+
 // -------------------------------------------------------------------------------
 
 // Local Variables:
