@@ -1,8 +1,8 @@
 #
 include=dat/config.dat
 
-Files=/store/user/amarini/Nero/v1.3/SingleMuon
-addfiles=/store/user/amarini/Nero/v1.3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+Files=/store/user/amarini/Nero/%(tag)s/SingleMuon
+addfiles=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 
 ####
 
