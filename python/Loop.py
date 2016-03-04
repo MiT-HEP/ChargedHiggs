@@ -187,6 +187,8 @@ for key in sfdb:
 	if key['type'] == 'spline':
 		if opts.verbose: print label,key['type'], key['pt'], key['sf'],key['err'] 
 		loop.AddSplineSF(label,key['pt'],key['sf'],key['err'])
+	if key['type'] == 'csv':
+		loop.AddCSVSF(label, key['filename'])
 if opts.verbose:print "#############################"
 
 for smear in cfg['Smear']:

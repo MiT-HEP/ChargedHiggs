@@ -19,8 +19,8 @@ class Photon : virtual public Object,
         int id; // 
 
         virtual inline int IsPho() const { 
-            if ( iso > isocut_) return 0;
-            if ( Pt() < ptcut_ ) return 0;
+            if ( isocut_ > 0 and iso > isocut_) return 0;
+            if ( ptcut_ > 0 and Pt() < ptcut_ ) return 0;
 
             return 1;
         }

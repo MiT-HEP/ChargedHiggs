@@ -268,4 +268,57 @@ for cat in range(0,opts.ncat):
 #fOut=ROOT.TFile.Open(opts.output,"RECREATE")
 w.writeToFile(opts.output)
 
+print " --- ASYMM TEST ---"
+roo_data=ROOT.RooDataSet("data_obs_cat0","data obs", t_data, argset_obs,"mgg>500")
+roo_data_high=ROOT.RooDataSet("data_obs_high","data obs", t_data, argset_obs,"mgg>800")
+roo_data_low=ROOT.RooDataSet("data_obs_low","data obs", t_data, argset_obs,"mgg>500 && mgg<700")
+
+a1= ROOT.RooRealVar("a1","pla",-5,-10,-1)
+b1= ROOT.RooRealVar("b1","plb",1,-10,10)
+#a1= ROOT.RooRealVar("a1","pla",30,0.0001,1000)
+myfunc1= ROOT.RooGenericPdf("plaw_log1","plaw2","TMath::Power(mgg,a1 + b1* TMath::Log(mgg))",ROOT.RooArgList(mgg,a1,b1))
+#myfunc1= ROOT.RooGenericPdf("plaw_log1","plaw2","TMath::Exp(-mgg/a1)",ROOT.RooArgList(mgg,a1))
+fitres1=myfunc1.fitTo(roo_data_high, ROOT.RooFit.Range(800,1200),ROOT.RooFit.PrintEvalErrors(-1),ROOT.RooFit.PrintLevel(-1), ROOT.RooFit.Warnings(0))
+
+a2= ROOT.RooRealVar("a2","pla",-5,-10,-1)
+b2= ROOT.RooRealVar("b2","plb",1,-10,10)
+#a2= ROOT.RooRealVar("a2","pla",30,0.00001,1000)
+myfunc2= ROOT.RooGenericPdf("plaw_log2","plaw2","TMath::Power(mgg,a2 + b2* TMath::Log(mgg))",ROOT.RooArgList(mgg,a2,b2))
+#myfunc2= ROOT.RooGenericPdf("plaw_log2","plaw2","TMath::Exp(-mgg/a2)",ROOT.RooArgList(mgg,a2))
+fitres2=myfunc2.fitTo(roo_data_low,ROOT.RooFit.Range(500,700),ROOT.RooFit.PrintEvalErrors(-1),ROOT.RooFit.PrintLevel(-1), ROOT.RooFit.Warnings(0))
+
+plot = mgg.frame();
+c=  ROOT.TCanvas("asymm","asymm")
+c.Divide(2,2)
+c.cd(1)
+
+roo_data.plotOn(plot)
+myfunc.plotOn(plot)
+roo_data_high.plotOn(plot,ROOT.RooFit.MarkerColor(ROOT.kRed))
+roo_data_low.plotOn(plot,ROOT.RooFit.MarkerColor(ROOT.kGreen))
+#myfunc1.plotOn(plot,ROOT.RooFit.Normalization(1.0,ROOT.RooAbsReal.RelativeExpected),ROOT.RooFit.LineColor(ROOT.kRed) ) 
+### HIGH
+#myfunc1.plotOn(plot,ROOT.RooFit.Normalization( ndatahigh * npdf1tot/npdf1high /ndatatot ),ROOT.RooFit.LineColor(ROOT.kRed) ,ROOT.RooFit.Range(500,1200)) 
+myfunc1.plotOn(plot, ROOT.RooFit.LineColor(ROOT.kRed) , ROOT.RooFit.Range(500,1200) ) 
+### LOW                                                                                                
+myfunc2.plotOn(plot, ROOT.RooFit.LineColor(ROOT.kGreen) , ROOT.RooFit.Range(500,1200) )
+
+plot.Draw()
+
+c.cd(2)
+plot2= mgg.frame(ROOT.RooFit.Range(800,1200))
+roo_data_high.plotOn(plot2)
+myfunc1.plotOn(plot2)
+plot2.Draw()
+
+c.cd(3)
+plot3= mgg.frame(ROOT.RooFit.Range(500,700))
+roo_data_low.plotOn(plot3)
+myfunc2.plotOn(plot3)
+plot3.Draw()
+
+c.SaveAs("plotGG/asymm.pdf")
+
 print " --- DONE --- "
+
+

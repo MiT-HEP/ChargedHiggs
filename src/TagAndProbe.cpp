@@ -15,13 +15,22 @@ void TagAndProbe::Init(){
 	if ( doTree){
 		cout<<"[TagAndProbe]::[Init]::[INFO] doTree: "<<treename<<endl;
 		InitTree(treename);
-		Branch(treename, "m", 'F'); // invariant mass
-		//Branch(treename, "mt", 'F'); // mt muon-t
+        Branch(treename, "runNum",'I');
+        Branch(treename, "lumiSec",'I');
+        Branch(treename, "evtNum", 'I');
+        Branch(treename, "npv",'I');
+        Branch(treename, "pass",'I');
+        Branch(treename, "npu",'F');
+        Branch(treename, "scale1fb",'F');
+		Branch(treename, "mass", 'F'); // invariant mass
+		Branch(treename, "qtag", 'I'); // invariant mass
+		Branch(treename, "qprobe", 'I'); // invariant mass
+        Branch(treename, "tag", 'T');
+        Branch(treename, "probe", 'T');
+        Branch(treename, "truth_tag",'I');
+        Branch(treename, "truth_probe", 'I');
+        //
 		Branch(treename, "met", 'F'); // met
-		Branch(treename, "ptProbe", 'F'); // pt probe
-		Branch(treename, "etaProbe", 'F'); // eta probe
-		//Branch(treename, "ptTag", 'F'); // pt probe
-		//Branch(treename, "etaTag", 'F'); // eta probe
         
         Branch(treename,"passIso",'I');  // pass isolation
         Branch(treename,"passId",'I');  // pass id
@@ -50,7 +59,12 @@ int TagAndProbe::analyze(Event*e,string systname){
     if (not isTrigger and e->IsRealData()) return EVENT_NOT_USED; // common base ; //mc will pass 
 
     string label = GetLabel(e);
-
+    SetTreeVar("runNum",e->runNum());
+    SetTreeVar("lumiSec",e->lumiNum());
+    SetTreeVar("evtNum",e->eventNum());
+    SetTreeVar("scale1fb",e->weight() );
+    SetTreeVar("npv",e->Npv() );
+    SetTreeVar("npu",e-> GetWeight() -> GetPU() );
 
     Lepton *mTag = e->GetMuon(0);
 
@@ -69,13 +83,15 @@ int TagAndProbe::analyze(Event*e,string systname){
 
     if (tProbe == NULL ) return EVENT_NOT_USED;
 
-    SetTreeVar("m", mTag->InvMass( *tProbe ) );
+    SetTreeVar("mass", mTag->InvMass( *tProbe ) );
     //SetTreeVar("mt", e->Mt(Event::MtMuon) );
     SetTreeVar("met", e->GetMet().Pt() );
-    SetTreeVar("ptProbe", tProbe->Pt() ) ;
-    SetTreeVar("etaProbe",tProbe->Eta() ) ;
+    SetTreeVar("probe", tProbe->GetP4() ) ;
+    SetTreeVar("tag",mTag->GetP4() ) ;
+    SetTreeVar("pass",  tProbe -> iso2 < 1.5 && tProbe -> id  && tProbe -> id_ele && tProbe -> id_mu);
+    SetTreeVar("qprobe", tProbe->Charge() ) ;
+    SetTreeVar("qtag",mTag->Charge() ) ;
 
-    //SetTreeVar("passIso", tProbe -> iso2 < tProbe->isocut_ );
     SetTreeVar("passIso", tProbe -> iso2 < 1.5 );
     SetTreeVar("passId", tProbe -> id ); // 100% ?!?
     SetTreeVar("passIdEle", tProbe -> id_ele );

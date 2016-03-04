@@ -18,8 +18,10 @@ class GGAnalysis: virtual public AnalysisBase
         CutSelector cut;
 
         enum CutFlow{ Total=0, 
-            Leptons,
-            Trigger,
+            Photon1,
+            Photon2,
+            //Leptons,
+            //Trigger,
             Mass,
             MaxCut // do not remove
         };

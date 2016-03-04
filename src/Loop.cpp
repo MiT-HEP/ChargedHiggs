@@ -607,8 +607,8 @@ void Looper::FillMet(){
     if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size()<<endl;
     if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
 #endif
-    //event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
-    event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
+    event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
+    //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
     event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
     event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);

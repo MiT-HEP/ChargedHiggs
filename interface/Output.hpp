@@ -5,24 +5,30 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TTree.h"
+#include "TLorentzVector.h"
 
 #include <map>
 using namespace std;
 
 // class design to store tree variables
 class DataStore{
+        map<string,TLorentzVector*> valuesP4_;
         map<string,double> valuesD_;
         map<string,float> valuesF_;
         map<string,int >  valuesI_;
 
     public:
+        DataStore(){};
+        ~DataStore();
 
         void Add(string name, char type);
         bool Exists(string name);
         void* GetPointer(string name);
-        
+       
+        //int float and double can be cast between them 
         template<class T>
-        void Set(string name, T value);
+        void Set(string name, const T & value);
+
         void Print();
 };
 
@@ -69,9 +75,11 @@ class Output{
     public:
 
         inline void InitTree(string name){ file_->cd(); trees_[name]= new TTree(name.c_str(),name.c_str());}
-        inline void Branch(string tree,string name, char type){ varValues_.Add(name,type); trees_[tree]->Branch(name.c_str(), varValues_.GetPointer(name), (name+"/"+type).c_str() ) ;}
+        void Branch(string tree,string name, char type);
+
         template<class T>
-        inline void SetTreeVar(string name, T value) { varValues_.Set(name,value);}
+        void SetTreeVar(string name, const T & value) { varValues_.Set(name,value);}
+
         inline void FillTree(string tree){ trees_[tree]->Fill();}
         inline void PrintTreeVar(){ varValues_.Print() ;}
 
@@ -80,10 +88,17 @@ class Output{
 
 };
 
+// --- Template specification declaration
+template<>
+void DataStore::Set<TLorentzVector>(string name, const TLorentzVector & value);
+
+// --- pointer version of TLorentzVector
+template<>
+void DataStore::Set<TLorentzVector*>(string name, TLorentzVector* const & value);
 
 // --- Templates here
 template<class T>
-void DataStore::Set(string name, T value)
+void DataStore::Set(string name, const T & value)
 {
    if( valuesD_.find( name ) != valuesD_.end() ) 
             valuesD_[name] = double( value) ;
@@ -92,8 +107,9 @@ void DataStore::Set(string name, T value)
    if( valuesI_.find( name ) != valuesI_.end() ) 
             valuesI_[name] = int( value) ;
    return ;
-
 }
+
+
 
 #endif 
 // Local Variables:

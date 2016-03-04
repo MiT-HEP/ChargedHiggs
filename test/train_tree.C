@@ -71,9 +71,13 @@ void train( string fileName="test/mysub/Tmva/TmvaOutput.root",string bkg="QCD", 
 	TCut bgCut  ( Form("sig <= 0.5 && mc == %d ",mcBkg)); // QCD= -101, DY = -102  TTJets = -103
 	
 	factory_-> PrepareTrainingAndTestTree(sigCut,   bgCut, "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V");
-	
+
+	// -- ADABOOST	
+	// -- factory_ ->BookMethod(TMVA::Types::kBDT, "BDT",
+	// -- 		            "!H:!V:NTrees=850:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:Pray"
+	// -- 			             );
 	factory_ ->BookMethod(TMVA::Types::kBDT, "BDT",
-			            "!H:!V:NTrees=850:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:Pray"
+			            "!H:!V:NTrees=850:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2:Pray"
 				             );
 	
 	factory_ -> TrainAllMethods();

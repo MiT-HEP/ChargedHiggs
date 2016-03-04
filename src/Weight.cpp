@@ -52,6 +52,19 @@ void Weight::AddSplineSF(string label, double pt, double sf, double err)
     p->add(pt,sf,err);
 }
 
+void Weight::AddCSVSF(string label, string filename)
+{
+    if (sf_db.find(label) != sf_db.end() )
+    {
+        Log(__FUNCTION__,"ERROR","SF "+ label +" already exists in the database. Not supported for CSV. Ignoring.");
+        return;
+    }
+    SF_CSV *p = new SF_CSV();
+    p -> init(filename);
+    p -> label = label;
+    sf_db[label] = p;
+}
+
 
 void Weight::resetSystSF(){
     for (auto o : sf_db)
@@ -65,21 +78,32 @@ void Weight::SetPtEtaSF(string label,double pt, double eta)
     #endif
     SF_PtEta *p =  dynamic_cast<SF_PtEta*> ( sf_db[label] );
     SF_PtSpline *p2 =  dynamic_cast<SF_PtSpline*> ( sf_db[label] );
+    SF_CSV *p3 =  dynamic_cast<SF_CSV*> ( sf_db[label] );
 
-    if (p == NULL and p2 == NULL)
-        Log(__FUNCTION__,"ERROR", " SF '" + label + "' is not Pt Eta dependent or pt spline" );
-
-
-    #ifdef VERBOSE
-        if(VERBOSE>0)cout <<"[Weight]::[SetPtEtaSF]::[DEBUG1] p->label='"<<p->label<<"'"<<endl;
-    #endif 
+    if (p == NULL and p2 == NULL and p3==NULL)
+        Log(__FUNCTION__,"ERROR", " SF '" + label + "' is not Pt Eta dependent or pt spline, or csv" );
 
     if (p) p->set(pt,eta);
     if (p2) p2->set(pt);
+    if (p3) p3->set(pt,eta);
     return;
 }
 
+// ------------- CVS  ---
+void Weight::SetWPSF(string label, int wp)
+{
+    SF_CSV *p =  dynamic_cast<SF_CSV*> ( sf_db[label] );
+    if (p==NULL) Log(__FUNCTION__,"ERROR", " SF '" + label + "' is not CSV" );
+    p->setWP(wp);
+}
+void Weight::SetJetFlavorSF(string label, int flavor)
+{
+    SF_CSV *p =  dynamic_cast<SF_CSV*> ( sf_db[label] );
+    if (p==NULL) Log(__FUNCTION__,"ERROR", " SF '" + label + "' is not CSV" );
+    p->setJetFlavor(flavor);
+}
 
+// -----------------------
 string Weight::LoadMC( string label) 
 { 
     if (label == "data" or label == "Data" or label == "Tau" or label == "MET" or label == "SingleElectron" or label == "SingleMuon")

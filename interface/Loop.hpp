@@ -99,6 +99,7 @@ class Looper{
         inline void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err)
         {event_ -> GetWeight()  -> AddPtEtaSF(label,pt1,pt2,eta1,eta2,sf,err); }
         inline void AddSplineSF(string label, double pt, double sf, double err){ event_->GetWeight() -> AddSplineSF(label,pt,sf,err);}
+        inline void AddCSVSF(string label, string filename){event_->GetWeight() ->AddCSVSF(label,filename);}
 
         // -- PU Reweight
         inline void AddTarget( TH1*h, int runMin=-1, int runMax =-1,double lumi=-1){ event_ -> GetWeight() -> AddTarget(h,runMin,runMax,lumi);}

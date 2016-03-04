@@ -24,6 +24,7 @@ job_opts.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="M
 job_opts.add_option("","--hadoop" ,dest='hadoop',action='store_true',help="Use Hadhoop and MIT-T3",default=False)
 job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. ",default=False)
 job_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
+job_opts.add_option("","--clear" ,dest='clear',action='store_true',help="Clear Directory (used with hadd).",default=False)
 
 summary= OptionGroup(parser,"Summary","these options are used in case of summary is wanted")
 summary.add_option("-s","--status",dest="status", action='store_true', help = "Display status information for a submission. (Can be use with hadoop option)", default=False)
@@ -200,6 +201,15 @@ if opts.hadd:
 	name = re.sub('.*/','',dir)
 	cmd = "hadd -f %s/%s.root "%(opts.dir, name ) + " ".join(filelist)
 	call(cmd,shell=True)
+	if opts.clear:
+		filelist = glob(opts.dir + "/*")
+		rmlist = [ f for f in filelist if  re.sub('^.*/','',f) != name + ".root"]
+		keeplist = [ f for f in filelist if re.sub('^.*/','',f) == name + ".root"]
+		rmcmd = "rm " + " ".join(rmlist)
+		#for i in rmlist:
+		#	print i, "'"+re.sub('^.*/','',f) + "'", "'" + name + ".root'"
+		print " I will keep = '",keeplist
+		call(rmcmd,shell=True)
 	exit(0)
 
 # import Parser

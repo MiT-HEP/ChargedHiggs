@@ -1,4 +1,5 @@
 #include "interface/SF.hpp"
+#include "interface/Handlers.hpp"
 #define VERBOSE 2
 
 void SF_PtEta::add(double pt1, double pt2,double eta1, double eta2, double sf, double err)
@@ -105,6 +106,111 @@ void SF_PtSpline::print(){
     if(errSpline_)errSpline_->Print("V");
     cout <<"---------------"<<endl;
 }
+
+// -----------------------CSV-------------------------- 
+//
+void SF_CSV::init(string filename)
+{
+    //---
+    Log(__FUNCTION__,"INFO",string("Loading '") +filename+"' in SF CSV " + label );
+    string meas="incl";
+    calib=new BTagCalibration("CSVv2",filename);
+    readerL=new BTagCalibrationReader( BTagEntry::OP_LOOSE,  // operating point 
+                    "central"           // systematics type
+                     );
+    readerL->load( *calib, BTagEntry::FLAV_B,meas); readerL->load( *calib, BTagEntry::FLAV_C,meas); readerL->load( *calib, BTagEntry::FLAV_UDSG,meas);
+
+    readerL_up=new BTagCalibrationReader( BTagEntry::OP_LOOSE,"up" );
+    readerL_down=new BTagCalibrationReader( BTagEntry::OP_LOOSE, "down" );
+
+    readerL_up->load( *calib, BTagEntry::FLAV_B,meas); readerL_up->load( *calib, BTagEntry::FLAV_C,meas); readerL_up->load( *calib, BTagEntry::FLAV_UDSG,meas);
+    readerL_down->load( *calib, BTagEntry::FLAV_B,meas); readerL_down->load( *calib, BTagEntry::FLAV_C,meas); readerL_down->load( *calib, BTagEntry::FLAV_UDSG,meas);
+
+    readerM=new BTagCalibrationReader( BTagEntry::OP_MEDIUM, "central" );
+    readerM_up=new BTagCalibrationReader(  BTagEntry::OP_MEDIUM,  "up" );
+    readerM_down=new BTagCalibrationReader(  BTagEntry::OP_MEDIUM,  "down" );
+
+    readerM->load( *calib, BTagEntry::FLAV_B,meas); readerM->load( *calib, BTagEntry::FLAV_C,meas); readerM->load( *calib, BTagEntry::FLAV_UDSG,meas);
+    readerM_up->load( *calib, BTagEntry::FLAV_B,meas); readerM_up->load( *calib, BTagEntry::FLAV_C,meas); readerM_up->load( *calib, BTagEntry::FLAV_UDSG,meas);
+    readerM_down->load( *calib, BTagEntry::FLAV_B,meas); readerM_down->load( *calib, BTagEntry::FLAV_C,meas); readerM_down->load( *calib, BTagEntry::FLAV_UDSG,meas);
+
+    readerT=new BTagCalibrationReader( BTagEntry::OP_TIGHT, "central" );
+    readerT_up=new BTagCalibrationReader( BTagEntry::OP_TIGHT,  "up" );
+    readerT_down=new BTagCalibrationReader( BTagEntry::OP_TIGHT,  "down" );
+
+    readerT->load( *calib, BTagEntry::FLAV_B,meas); readerT->load( *calib, BTagEntry::FLAV_C,meas); readerT->load( *calib, BTagEntry::FLAV_UDSG,meas);
+    readerT_up->load( *calib, BTagEntry::FLAV_B,meas); readerT_up->load( *calib, BTagEntry::FLAV_C,meas); readerT_up->load( *calib, BTagEntry::FLAV_UDSG,meas);
+    readerT_down->load( *calib, BTagEntry::FLAV_B,meas); readerT_down->load( *calib, BTagEntry::FLAV_C,meas); readerT_down->load( *calib, BTagEntry::FLAV_UDSG,meas);
+
+    return;
+}
+
+void SF_CSV::set( float pt, float eta)
+{
+   set(pt,eta,cached_wp,cached_flavor); 
+}
+
+void SF_CSV::setWP(int wp){
+   set(cached_pt,cached_eta,wp,cached_flavor); 
+}
+
+void SF_CSV::setJetFlavor(int flavor){
+   set(cached_pt,cached_eta,cached_wp,flavor); 
+}
+
+
+void SF_CSV::set( float pt, float eta, int wp, int flavor)
+{
+    // -- cache --
+    cached_pt=pt;
+    cached_eta=eta;
+    cached_wp=wp;
+    cached_flavor=flavor;
+
+    // change flavor to be easy to parse later
+    flavor = abs(flavor);
+    if (flavor == 21 ) flavor = 0;
+    if (flavor <4) flavor = 0;
+    
+    bool isLJet = (flavor == 0 );
+    bool isBJet = (flavor == 5 );
+    bool isCJet = (flavor == 4 );
+    float scaleSyst = 1.0;
+
+    auto BTEFlav = BTagEntry::FLAV_B;
+    if (isCJet) BTEFlav = BTagEntry::FLAV_C;
+    if (isLJet) BTEFlav = BTagEntry::FLAV_UDSG;
+    
+    if ( (isBJet or isCJet) and pt> MaxBJetPt ) { pt=MaxBJetPt; scaleSyst=2.0;}
+    if (isLJet and pt> MaxLJetPt ) { pt=MaxLJetPt; scaleSyst=2.0;}
+    if ( (isBJet or isCJet) and pt< MinBJetPt ) { pt=MinBJetPt; scaleSyst=2.0;}
+    if (isLJet and pt< MinLJetPt ) { pt=MinLJetPt; scaleSyst=2.0;}
+    
+    BTagCalibrationReader *nominal{0};
+    BTagCalibrationReader *up{0};
+    BTagCalibrationReader *down{0};
+
+    if (wp ==0)
+    {
+        nominal = readerL; up = readerL_up ; down=readerL_down;
+    }
+    else if (wp ==1)
+    {
+        nominal = readerM; up = readerM_up ; down=readerM_down;
+    }
+    else if (wp ==2)
+    {
+        nominal = readerT; up = readerT_up ; down=readerT_down;
+    }
+    else { Log(__FUNCTION__,"ERROR","Unsupported WP"); throw abort ;}
+
+    sf=nominal->eval(BTEFlav, eta, pt);
+    errUp=(up->eval(BTEFlav, eta, pt) -sf ) * scaleSyst;
+    errDown=(sf - down->eval(BTEFlav, eta, pt) ) * scaleSyst;
+
+    return;
+}
+
 
 // Local Variables:
 // mode:c++

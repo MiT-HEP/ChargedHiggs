@@ -125,10 +125,9 @@ class Event{
     bool IsTriggered(string name, Trigger *trigger = NULL, bool isNone=false); // the None do not check if it is the L3 or LF -- only for taus and matching
 
     // SF utils
-    void SetPtEtaSF(string label, float pt, float eta){ 
-        //cout <<"[Event]::[SetPtEtaSF]::[DEBUG] '"<<label<<"'"<<endl;
-        weight_ -> SetPtEtaSF(label,pt,eta);
-        }
+    inline void SetPtEtaSF(string label, float pt, float eta){  weight_ -> SetPtEtaSF(label,pt,eta);}
+    inline void SetWPSF(string label, int wp){  weight_ -> SetWPSF(label,wp);}
+    inline void SetJetFlavorSF(string label, int flavor){  weight_ -> SetJetFlavorSF(label,flavor);}
     void ApplySF(string label){ weight_ -> ApplySF(label) ; } 
     bool ExistSF(string label){ return weight_ -> ExistSF(label); }
 };

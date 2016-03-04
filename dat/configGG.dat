@@ -1,13 +1,17 @@
-#Files=/store/user/amarini/Nero/v1.3/DoubleEG_0T
-Files=/store/user/amarini/Nero/v1.3/DoubleEG
+
+sub=tag|v1.3.1
+
+#Files=/store/user/amarini/Nero/%(tag)s/DoubleEG_0T
+Files=/store/user/amarini/Nero/%(tag)s/DoubleEG
+include=dat/json.dat
 
 MCDB=dat/mc_database.txt
 SFDB=dat/sf_database.txt
 Branches=dat/branches_pho.txt
 
 Output=GG.root
-#Analysis=JsonAnalysis,GGAnalysis
-Analysis=GGAnalysis
+Analysis=JsonAnalysis,GGAnalysis
+#Analysis=GGAnalysis
 pileup=aux/pileup.root
 
 Smear=NONE
