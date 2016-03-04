@@ -14,7 +14,8 @@ sub=tag|v1.3.1
 #### BKG ###
 Files=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/TT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/WW_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/WZ_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/ZZ_TuneCUETP8M1_13TeV-pythia8

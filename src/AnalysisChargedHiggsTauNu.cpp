@@ -1,5 +1,6 @@
 #include "interface/AnalysisChargedHiggsTauNu.hpp"
 #include "interface/GeneralFunctions.hpp"
+#include "interface/Logger.hpp" // for static functions
 
 void ChargedHiggsTauNu::Init()
 {
@@ -133,6 +134,15 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
     // --- At least 1 b-jet
     if ( e->Bjets() >=1 ) cut.SetCutBit(OneBjet) ;
 
+    // apply bjets sf -- TEST FIXME
+    if ( e->Bjets() >=1 ) {
+        //if( not e->ExistSF("btag") ){ Log(__FUNCTION__, "WARNING" , "no btag SF" ); } 
+        if( not e->ExistSF("btag") ){ Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , "no btag SF" ); } 
+        e->SetPtEtaSF("btag",e->GetBjet(0)->Pt(), e->GetBjet(0)->Eta() );
+        e->SetWPSF("btag",1); // medium, for sf
+        e->SetJetFlavorSF("btag",0);
+    }
+
     //Uncorr Pt does not include met phi corrections, and Tau Nu regression
     if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
 
@@ -154,7 +164,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
 int ChargedHiggsTauNu::analyze(Event*e,string systname)
 {
 #ifdef VERBOSE
-    if(VERBOSE>0)Log(__FUNCITON__,"DEBUG","analyze event with syst "+systname);
+    if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","analyze event with syst "+systname);
 #endif
     string label = GetLabel(e);
     cut.reset();

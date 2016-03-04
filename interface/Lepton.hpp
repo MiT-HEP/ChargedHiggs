@@ -46,7 +46,8 @@ class Lepton : virtual public Object,
         }
         virtual inline bool IsElectron() const { return IsLep() and (type == 11); }
         virtual inline bool IsMuon() const { return IsLep() and (type == 13); }
-        virtual inline int   IsObject(){return IsLep();}
+        inline int   IsObject() const override {return IsLep();} // TODO, const, check that nothing broke
+        virtual inline float Isolation() const { return iso; } 
 };
 
 #endif

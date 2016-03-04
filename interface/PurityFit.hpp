@@ -30,6 +30,7 @@ using namespace std;
 #include "RooAddPdf.h"
 #include "RooHistPdf.h"
 #include "RooFitResult.h"
+#include "RooExtendPdf.h"
 
 class PurityFit{
     protected:

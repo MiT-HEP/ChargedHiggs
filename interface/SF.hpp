@@ -25,6 +25,15 @@ class  SF : public Named{
         const string name() const {return "SF";}
 };
 
+class SF_Asymm : public SF
+{
+    public:
+        double errUp,errDown;
+        SF_Asymm() :SF() { errUp=0.0; errDown=0.0;}
+        virtual double get() { if (syst==0 ) return sf; else if (syst>0) return sf + errUp *syst ; else if (syst<0) return sf + errDown * syst ; else return 0.; }
+        const string name() const { return "SF_Asymm";}
+};
+
 class SF_PtEta : virtual public SF
 {
     // this class implements a SF that it is pt and eta dependent (2D dependent) on something
@@ -68,6 +77,46 @@ class SF_PtSpline : virtual public SF
         void set (double pt);
         void print();
         const string name() const {return "SF_PtSpline";}
+
+};
+
+#include "interface/BTagCalibrationStandalone.hpp"
+
+class SF_CSV : public SF_Asymm
+{
+    //SF(){ syst=0; sf=1.0; err=0; label = "";}
+    //~SF(){}
+    //string label;
+    //double sf;
+    //double errUp;
+    //double errDown;
+    //int syst;
+    //
+    BTagCalibration *calib {0};
+    BTagCalibrationReader *readerL{0}, *readerL_up={0}, *readerL_down={0};
+    BTagCalibrationReader *readerM{0}, *readerM_up={0}, *readerM_down={0};
+    BTagCalibrationReader *readerT{0}, *readerT_up={0}, *readerT_down={0};
+    constexpr static float MaxBJetPt = 670.;
+    constexpr static float MaxLJetPt = 1000.;
+    constexpr static float MinBJetPt = 30.;
+    constexpr static float MinLJetPt = 20.;
+
+    float cached_pt{30.};
+    float cached_eta{0};
+    int cached_wp{0};
+    int cached_flavor{0};
+
+    public:
+        SF_CSV() {};
+        ~SF_CSV(){ delete readerL;delete readerL_up;delete readerL_down;delete readerM;delete readerM_up;delete readerM_down;delete readerT;delete readerT_up;delete readerT_down;delete calib;}
+        void init (string filename);
+        // flavor is pdgid, wp 0==Loose, 1==Medium, 2 = Tight
+        void set (float pt, float eta, int wp,int flavor );
+        void set (float pt, float eta); // use cached for the others
+        void setWP(int wp);
+        void setJetFlavor(int flavor);
+        void print(){};
+        const string name() const {return "SF_CSV";}
 
 };
 

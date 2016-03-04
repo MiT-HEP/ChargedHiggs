@@ -9,6 +9,10 @@
 #pragma link C++ class MC+ ;
 #pragma link C++ class SF+ ;
 #pragma link C++ class SF_PtEta+ ;
+#pragma link C++ class SF_Asymm+ ;
+#pragma link C++ class SF_PtSpline+ ;
+#pragma link C++ class SF_CSV+ ;
+
 #pragma link C++ class Weight+ ;
 #pragma link C++ class Event+ ;
 #pragma link C++ class Looper+;
@@ -20,6 +24,8 @@
 #pragma link C++ class NegativeWeightInterpolator+;
 
 //#pragma link C++ class sigint_exception+;
+#pragma link C++ class RooCMSShape+;
+#pragma link C++ class RooVoigtianShape+;
 
 #endif
 // Local Variables:

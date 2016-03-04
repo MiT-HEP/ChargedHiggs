@@ -12,12 +12,14 @@ using namespace std;
 
 // class design to store tree variables
 class DataStore{
-        map<string,TLorentzVector> valuesP4_;
+        map<string,TLorentzVector*> valuesP4_;
         map<string,double> valuesD_;
         map<string,float> valuesF_;
         map<string,int >  valuesI_;
 
     public:
+        DataStore(){};
+        ~DataStore();
 
         void Add(string name, char type);
         bool Exists(string name);
@@ -89,6 +91,11 @@ class Output{
 // --- Template specification declaration
 template<>
 void DataStore::Set<TLorentzVector>(string name, const TLorentzVector & value);
+
+// --- pointer version of TLorentzVector
+template<>
+void DataStore::Set<TLorentzVector*>(string name, TLorentzVector* const & value);
+
 // --- Templates here
 template<class T>
 void DataStore::Set(string name, const T & value)

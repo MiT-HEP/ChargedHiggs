@@ -10,14 +10,16 @@ void PurityFit::init(){
 }
 
 void PurityFit::fit(){
-    string signame   ="ChargedHiggsQCDPurity/Vars/Uperp_pt%.0f_%.0f_IsoInv_Data";
-    string bkgname   ="ChargedHiggsQCDPurity/Vars/Uperp_pt%.0f_%.0f_%s";
-    string bkgnameInv="ChargedHiggsQCDPurity/Vars/Uperp_pt%.0f_%.0f_IsoInv_%s";
-    string targetname="ChargedHiggsQCDPurity/Vars/Uperp_pt%.0f_%.0f_Data";
+    // Uperp, EtMiss
+    string what="EtMiss";
+    string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_Data";
+    string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_%s";
+    string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_%s";
+    string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_Data";
 
     vector<string> bkglabels;
         bkglabels.push_back("WJets");
-        //bkglabels.push_back("TTJets");
+        bkglabels.push_back("TT");
         bkglabels.push_back("WW");
         bkglabels.push_back("WZ");
         bkglabels.push_back("ZZ");
@@ -107,7 +109,7 @@ void PurityFit::fit(){
       
             // control plots EWK
             if (s == "DY") { bkg_tmp->SetLineColor(kCyan);}// bkg_binned->SetLineColor(kCyan); } 
-            else if (s == "TTJets") bkg_tmp->SetLineColor(kMagenta+2);
+            else if (s == "TT") bkg_tmp->SetLineColor(kMagenta+2);
             else if (s == "WJets" ) { bkg_tmp->SetLineColor(kGreen+2);}// bkg_binned -> SetLineColor(kGreen+2);}
             else if (s == "WW"  )  bkg_tmp->SetLineColor(kRed);
             else if (s == "WZ"  )  bkg_tmp->SetLineColor(kRed+2);
@@ -180,6 +182,7 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
     TH1 * sig = (TH1*)sig_ -> Clone(Form("%s_fitspecific_clone",sig_->GetName()));
     TH1 * bkg = (TH1*)bkg_ -> Clone(Form("%s_fitspecific_clone",bkg_->GetName()));
     TH1 * h = (TH1*)h_ -> Clone(Form("%s_fitspecific_clone",h_->GetName()));
+
     // 1.6) check no negative entries otherwise 0
     for(int i=1;i<=sig->GetNbinsX();++i)
         if(sig->GetBinContent(i) <0) sig->SetBinContent(i,0);
@@ -195,6 +198,11 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
     for(int i=1;i<=bkg->GetNbinsX();++i)
         bkg->SetBinContent(i,1.0);
     }
+
+    // 2.1) save integrals
+    float bkgIntegral = bkg->Integral();
+    float sigIntegral = sig->Integral();
+    float hIntegral = h ->Integral();
 
     // 2.5) fit background with exponential
     int   nbins = h->GetNbinsX();
@@ -315,8 +323,11 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
     // 6) create roo hist pdf
     RooHistPdf PdfSig("pdfsig","pdfsig",x,HistSig,0);
     RooHistPdf PdfBkg("pdfbkg","pdfbkg",x,HistBkg,10); //last number is interpolation
+    RooRealVar norm("norm","norm", bkgIntegral) ;
+    norm.setConstant();
+    RooExtendPdf PdfExtBkg("pdfextbkg","pdfextbkg",PdfBkg,norm);
     // 7) create model
-    RooAddPdf PdfModel("model","model",RooArgList(PdfSig,PdfBkg),f);
+    RooAddPdf PdfModel("model","model",RooArgList(PdfSig,PdfExtBkg),f);
     // 8) fit
     RooFitResult *r;
     RooPlot *frame=x.frame();

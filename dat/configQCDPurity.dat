@@ -7,7 +7,8 @@ include=dat/config.dat
 Files=/store/user/amarini/Nero/%(tag)s/Tau
 addfiles=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/store/user/amarini/Nero/%(tag)s/TT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 ### WW/WZ/ZZ###
 addfiles=/store/user/amarini/Nero/%(tag)s/WW_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/WZ_TuneCUETP8M1_13TeV-pythia8
@@ -57,7 +58,7 @@ Analysis=ChargedHiggsQCDPurity
 #Smear=NONE,JER,JES
 Smear=NONE
 
-config=ChargedHiggsQCDPurity|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TTJets'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
+config=ChargedHiggsQCDPurity|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
 addConfig=ChargedHiggsQCDPurity|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo')
 #addConfig=ChargedHiggsQCDPurity|PtBins.push_back(50),PtBins.push_back(70),PtBins.push_back(100),PtBins.push_back(150),PtBins.push_back(8000)
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(50),PtBins.push_back(55),PtBins.push_back(60),PtBins.push_back(65)

@@ -48,11 +48,14 @@ class Weight{
     void AddSF( string label, double sf, double err);
     void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err);
     void AddSplineSF(string label, double pt, double sf, double err);
+    void AddCSVSF(string label, string filename);
 
     void clearSF( ){ sf_ =1.0;}
     void SetSystSF(string label, int s ) { sf_db[label] -> syst = s;}
     void resetSystSF( ) ;
     void SetPtEtaSF(string label,double pt , double eta);
+    void SetWPSF(string label, int wp);
+    void SetJetFlavorSF(string label, int flavor);
     void ApplySF(string label){ sf_ *= sf_db[label] -> get(); }
     inline bool ExistSF(string label){ if (sf_db.find(label) != sf_db.end() ) return true; else return false; }
 
@@ -69,6 +72,7 @@ class Weight{
     inline void SetPU(float pu, int run){puInt_ = pu; runNum_=run; }
     inline void SetSystPU(int syst){pu_.syst=syst;};
     inline void clearSystPU(){ pu_ .clearSyst();}
+    inline int GetPU() const { return puInt_ ; } 
 
     // ---  check what happen with data, TODO CHECK LUMI
     double weight(){ 

@@ -7,6 +7,7 @@
 class ChargedHiggsTauNu:  virtual public AnalysisBase
 {
     public:
+        ChargedHiggsTauNu() : AnalysisBase() {}
         enum CutFlow{ Total=0, 
             OneTau ,
             NoLep ,

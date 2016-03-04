@@ -1,4 +1,5 @@
 #include "interface/Output.hpp"
+#include "interface/Logger.hpp"
 #include <iostream>
 //#define VERBOSE 2
 using namespace std;
@@ -193,6 +194,14 @@ void Output::Branch(string tree,string name, char type){
 }
 
 // ----------------------------- DATA STORE -----------------------
+DataStore::~DataStore(){
+    for(auto& p : valuesP4_ ) delete p.second;
+    valuesP4_.clear();
+    valuesD_.clear();
+    valuesI_.clear();
+    valuesF_.clear();
+}
+
 
 bool DataStore::Exists(string name)
 {
@@ -207,10 +216,11 @@ void DataStore::Add(string name, char type)
     if (Exists(name)) return;
     switch (type)
     {
-        case 'F': valuesF_[name] = 0.0;break;
-        case 'D': valuesD_[name] = 0.0;break;
-        case 'I': valuesI_[name] = 0;break;
-        case 'T': valuesP4_[name] = TLorentzVector();break;
+        case 'F': valuesF_[name] = 0.0; break;
+        case 'D': valuesD_[name] = 0.0; break;
+        case 'I': valuesI_[name] = 0;   break;
+        case 'T': valuesP4_[name] = new TLorentzVector(0,0,0,0); break;
+        default: Logger::getInstance().Log("DataStore","Add","ERROR", string("type '") + type + "' not defined" ); break;
     }
     return;
 }
@@ -227,7 +237,7 @@ void DataStore::Print(){
     for(auto p :valuesD_ ) cout<<p.first<<"| 'D': "<<p.second<<endl;
     for(auto p :valuesF_ ) cout<<p.first<<"| 'F': "<<p.second<<endl;
     for(auto p :valuesI_ ) cout<<p.first<<"| 'I': "<<p.second<<endl;
-    for(auto p :valuesP4_ ) cout<<p.first<<"| 'I': x="<<p.second.Px()<< " y="<< p.second.Py()<< " z=" << p.second.Pz() << " t="<<p.second.E() <<endl;
+    for(auto p :valuesP4_ ) cout<<p.first<<"| 'T': x="<<p.second->Px()<< " y="<< p.second->Py()<< " z=" << p.second->Pz() << " t="<<p.second->E() <<endl;
     cout <<" -------------------"<<endl;
 }
 
@@ -236,9 +246,13 @@ template<>
 void DataStore::Set<TLorentzVector>(string name, const TLorentzVector & value)
 {
    if( valuesP4_.find( name ) != valuesP4_.end() ) 
-            valuesP4_[name] = TLorentzVector( value) ;
+            (* valuesP4_[name]) = TLorentzVector( value ) ;
    return ;
 }
+
+template<>
+void DataStore::Set<TLorentzVector*>(string name, TLorentzVector* const & value) { Set(name,*value); } // if in the .h, will be compiled in all the .o
+
 
 // -------------------------------------------------------------------------------
 

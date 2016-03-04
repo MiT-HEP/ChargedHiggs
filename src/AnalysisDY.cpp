@@ -16,6 +16,8 @@ void DYAnalysis::Init(){
 	    Book ("DYAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 100,50,200);
 	    Book ("DYAnalysis/Vars/Mem_"+ l ,"Mem;m^{e#mu} [GeV];Events"  , 100,50,200);
 	    // 
+	    Book ("DYAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
+
 	    Book ("DYAnalysis/Vars/Ptee_"+ l ,"Ptee;p_{T}^{ee} [GeV];Events"    , 1000,0,1000);
 	    Book ("DYAnalysis/Vars/Ptmm_"+ l ,"Ptmm;p_{T}^{#mu#mu} [GeV];Events", 1000,0,1000);
 	    Book ("DYAnalysis/Vars/Ptem_"+ l ,"Ptem;p_{T}^{e#mu} [GeV];Events"  , 1000,0,1000);
@@ -58,6 +60,13 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
     Jet *j1 = e->GetJet(1);
 
     if (mu0 == NULL or mu1 == NULL) return 0;
+
+    if (mu0->Pt() > 25 and fabs(mu0->Eta())< 2.4) 
+    {
+        if (e->IsTriggered("HLT_IsoMu20") ) {
+            Fill("DYAnalysis/Vars/MuonIso_"+ label,systname, mu0->Isolation(),e->weight()) ;
+        }
+    }
 
     if ( mu1->Pt() >20)
     { // ------------------- 20 -------------------
