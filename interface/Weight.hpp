@@ -47,6 +47,7 @@ class Weight{
 
     void AddSF( string label, double sf, double err);
     void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err);
+    void AddTh2fSF(string label, string filename);
     void AddSplineSF(string label, double pt, double sf, double err);
     void AddCSVSF(string label, string filename);
 

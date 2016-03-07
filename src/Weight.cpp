@@ -65,6 +65,19 @@ void Weight::AddCSVSF(string label, string filename)
     sf_db[label] = p;
 }
 
+void Weight::AddTh2fSF(string label, string filename)
+{
+    if (sf_db.find(label) != sf_db.end() )
+    {
+        Log(__FUNCTION__,"ERROR","SF "+ label +" already exists in the database. Not supported for Th2f.");
+        return;
+    }
+    SF_TH2F *p = new SF_TH2F();
+    p -> init(filename);
+    p -> label = label;
+    sf_db[label] = p;
+}
+
 
 void Weight::resetSystSF(){
     for (auto o : sf_db)

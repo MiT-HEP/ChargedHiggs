@@ -181,6 +181,9 @@ for key in sfdb:
 	if key['type'] == 'pteta':
 		if opts.verbose: print label,key['type'],  key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['sf'],key['err'] 
 		loop.AddPtEtaSF(label, key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['sf'],key['err'])
+	if key['type'] == 'th2f':
+		if opts.verbose: print label,key['type'],  key['filename']
+		loop.AddTh2fSF(label, key['filename'])
 	if key['type'] == 'base':
 		if opts.verbose: print label,key['type'], key['sf'],key['err'] 
 		loop.AddSF(label, key['sf'], key['err'])
