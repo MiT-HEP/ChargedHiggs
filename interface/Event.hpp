@@ -73,7 +73,12 @@ class Event{
     Lepton * GetLepton( int iLep );
     Lepton * GetElectron( int iEle );
     Lepton * GetMuon( int iMu );
-    GenParticle * GetGenParticle( int iGenPar );
+    GenParticle * GetGenParticle( int iGenPar ); // ?!?
+    GenParticle * GetGenStable( int iGenPar ,int pdgid);
+    //
+    inline GenParticle * GetGenElectron( int iGenPar ){return GetGenStable(iGenPar,11);}
+    inline GenParticle * GetGenMuon( int iGenPar ){return GetGenStable(iGenPar,13);}
+
     Photon * GetPhoton( int iPho );
 
     //

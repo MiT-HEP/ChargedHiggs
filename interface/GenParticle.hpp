@@ -2,13 +2,20 @@
 #define GEN_PARTICLE_H
 
 #include "interface/Object.hpp"
+#include "NeroProducer/Core/interface/BareMonteCarlo.hpp"
+
 class GenParticle : virtual public Object
 {
     protected:
-    public:
         int pdgid_;
-        int GetPdgId(){ return pdgid_;}
+        unsigned flags_; // from Nero
+    public:
+
+        int GetPdgId() const { return pdgid_;}
         void SetPdgId(int pdg){pdgid_= pdg;}
+        unsigned GetFlag() const { return flags_;}
+        void SetFlags(unsigned x) { flags_=x;}
+        bool IsPromptFinalState() const { return flags_ & BareMonteCarlo::PromptFinalState ;}
 };
 
 #endif

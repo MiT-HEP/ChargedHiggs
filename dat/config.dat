@@ -27,13 +27,13 @@ addfiles=/store/user/amarini/Nero/%(tag)s/ZZ_TuneCUETP8M1_13TeV-pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/HplusToTauNu-M900
 ## signal amc@nlo
 #addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
 ### QCD
 addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8

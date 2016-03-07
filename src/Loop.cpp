@@ -578,9 +578,13 @@ void Looper::FillMC(){
 
     for (int iGP=0;iGP< mc -> p4 ->GetEntries() ; ++iGP)
     {
+	int apdg = abs(mc -> pdgId -> at(iGP) );
+	if (apdg != 11 and apdg !=13 and not (mc -> flags ->at(iGP) & BareMonteCarlo::PromptFinalState) ) continue; // keep status 1 electrons and muons
+
         GenParticle *g =new GenParticle();
         g->SetP4( *(TLorentzVector*) ((*mc->p4)[iGP]) );
-        g->pdgid_ = mc -> pdgId -> at(iGP);
+	g->SetPdgId( mc -> pdgId -> at(iGP));
+	g->SetFlags( mc ->flags ->at(iGP) );
         event_ -> genparticles_ . push_back(g);
     }
     return ;
