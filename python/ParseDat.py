@@ -287,6 +287,11 @@ def ReadSFDB(file):
 			err  = float ( l.split(' ')[4] )
 			R['pt']=pt
 
+		elif type == 'th2f':
+			R['filename'] = l.split(' ' )[2]
+			sf=0.0 ## ignored
+			err=0.0 ## ignored
+
 		elif type == 'base':
 			sf  = float ( l.split(' ') [2] )
 			err = float ( l.split(' ') [3] )

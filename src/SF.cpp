@@ -1,5 +1,7 @@
 #include "interface/SF.hpp"
 #include "interface/Handlers.hpp"
+#include "TFile.h"
+#include "TH2F.h"
 #define VERBOSE 2
 
 void SF_PtEta::add(double pt1, double pt2,double eta1, double eta2, double sf, double err)
@@ -67,6 +69,35 @@ void SF_PtEta::print(){
     }
     cout <<" ----------------------"<<endl;
 }
+// --- TH1F 
+
+void SF_TH2F::init(string filename,string histname)
+{
+    TFile *f = TFile::Open(filename.c_str() ) ;
+    if (f == NULL){
+        Log(__FUNCTION__,"ERROR","file '" + filename + "' does not exist");
+        throw abort ;
+    }
+    TH2F *h=(TH2F*)f->Get(histname.c_str());
+    if (h==NULL){
+        Log(__FUNCTION__,"ERROR","h '"+histname+"' does not exist");
+        throw abort ;
+    }
+
+    for( int aetabin =1; aetabin <= h->GetNbinsX() ; ++aetabin)
+    for( int ptbin =1; ptbin <= h->GetNbinsY() ; ++ptbin)
+    {
+        float ptmin = h->GetYaxis()->GetBinLowEdge(ptbin); 
+        float ptmax = h->GetYaxis()->GetBinLowEdge(ptbin+1); 
+        float aetamin = h->GetXaxis()->GetBinLowEdge(aetabin); 
+        float aetamax = h->GetXaxis()->GetBinLowEdge(aetabin+1); 
+        float sf = h->GetBinContent(aetabin,ptbin);
+        float err = h->GetBinError(aetabin,ptbin);
+        if (ptbin == h->GetNbinsY() ) ptmax = 8000.; // highest is open, current recommendation
+        add(ptmin,ptmax,aetamin,aetamax,sf,err);
+    }
+}
+
 // ------------- SPLINE -------------
 //
 #include "TFile.h"

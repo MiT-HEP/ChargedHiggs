@@ -148,7 +148,7 @@ if opts.plot!="":
 		c2=ROOT.TCanvas("c2","c")
 		data = ROOT.RooDataHist("h","h",ROOT.RooArgList(x),hists[name])
 		#bkg = ROOT.RooCMSShape("cms-shape","cms-shape",x,Balpha,Bbeta,Bgamma,Bpeak)
-		bkg = ROOT.RooBerneinFast(2)("bern","bern",x,ROOT.RooArgList(Bbern0,Bbern1,Bbern2))
+		bkg = ROOT.RooBernsteinFast(2)("bern","bern",x,ROOT.RooArgList(Bbern0,Bbern1,Bbern2))
 		# RooVoigtianShape::RooVoigtianShape(const char* name, const char* title, RooAbsReal& _m, RooAbsReal& _m0, RooAbsReal& _sigma, RooAbsReal& _alpha, RooAbsReal& _n, RooAbsReal& _width, bool doFast) =>
 		sig = ROOT.RooVoigtianShape("voigtian","voigtian", x,Zmass, Ssigma, Salpha,Sn,Zwidth,True)
 		f.setVal(.9)

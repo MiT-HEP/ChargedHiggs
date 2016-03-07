@@ -56,6 +56,16 @@ class SF_PtEta : virtual public SF
 
 const bool operator<( const SF_PtEta::range&r1 , const SF_PtEta::range &r2);
 
+
+class SF_TH2F : virtual public SF_PtEta
+{
+    public:
+        SF_TH2F() : SF_PtEta(),SF(){}
+        SF_TH2F(string filename) : SF_PtEta(),SF(){ init(filename); }
+        void init(string filename,string histname="EGamma_SF2D");
+        const string name() const {return "SF_TH2F";}
+};
+
 #include "TSpline.h"
 
 class SF_PtSpline : virtual public SF
