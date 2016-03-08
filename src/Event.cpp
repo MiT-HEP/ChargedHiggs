@@ -346,14 +346,17 @@ GenParticle * Event::GetGenParticle( int iGenPar )
     return (iGenPar >= 0 && iGenPar < genparticles_.size() ? genparticles_.at(iGenPar) : NULL);
 }
 
-GenParticle * Event::GetGenStable( int iGenPar ,int pdgid) 
+GenParticle * Event::GetGenStable( int iGenPar ,int pdgid,float aeta) 
 {  
     // status 1, electrons
     vector<pair<float,int> > valid; // pt, idx
     for(int i = 0 ; i<genparticles_.size() ;++i)
     {
-        if ( genparticles_[i]->IsPromptFinalState() and abs(genparticles_[i]->GetPdgId()) == pdgid) 
-            valid.push_back(pair<float,int>(genparticles_[i]->Pt(),i)); 
+        GenParticle *gp = genparticles_[i];
+        if (not gp->IsPromptFinalState()  ) continue;
+        if ( abs(gp->GetPdgId()) != pdgid)  continue;
+        if ( fabs(gp->Eta() ) > aeta) continue;
+        valid.push_back(pair<float,int>(gp->Pt(),i)); 
     }
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iGenPar  ) return NULL;

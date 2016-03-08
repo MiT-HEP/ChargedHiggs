@@ -74,10 +74,10 @@ class Event{
     Lepton * GetElectron( int iEle );
     Lepton * GetMuon( int iMu );
     GenParticle * GetGenParticle( int iGenPar ); // ?!?
-    GenParticle * GetGenStable( int iGenPar ,int pdgid);
+    GenParticle * GetGenStable( int iGenPar ,int pdgid, float aeta=2.5);
     //
-    inline GenParticle * GetGenElectron( int iGenPar ){return GetGenStable(iGenPar,11);}
-    inline GenParticle * GetGenMuon( int iGenPar ){return GetGenStable(iGenPar,13);}
+    inline GenParticle * GetGenElectron( int iGenPar, float aeta = 2.5 ){return GetGenStable(iGenPar,11,aeta);}
+    inline GenParticle * GetGenMuon( int iGenPar, float aeta=2.5 ){return GetGenStable(iGenPar,13,aeta);}
 
     Photon * GetPhoton( int iPho );
 

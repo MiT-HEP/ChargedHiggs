@@ -22,3 +22,5 @@ WW /store/user/amarini/Nero/v1.3.1/WW_TuneCUETP8M1_13TeV-pythia8/WW/160130_12105
 WZ-pythia8 /store/user/amarini/Nero/v1.3.1/WZ_TuneCUETP8M1_13TeV-pythia8/WZ-pythia8/160130_120648/0000 1000000.0 48.66
 ttHToNonbb /store/user/amarini/Nero/v1.3.1/ttHToNonbb_M125_13TeV_powheg_pythia8/ttHToNonbb/160130_121151/0000 3945824.0 0.540099048615
 ttHTobb /store/user/amarini/Nero/v1.3.1/ttHTobb_M125_13TeV_powheg_pythia8/ttHTobb/160130_121129/0000 3772012.0 0.540099064509
+ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 3824.21193987 0.00677053507259
+ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 234.780327005 0.000398541650012

@@ -10,6 +10,7 @@
 ################
 #
 sub=tag|v1.3.1
+sub=amarini|/store/user/amarini/Nero
 
 #### BKG ###
 Files=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
@@ -26,6 +27,8 @@ addfiles=/store/user/amarini/Nero/%(tag)s/ZZ_TuneCUETP8M1_13TeV-pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/HplusToTauNu-M500
 #addfiles=/store/user/amarini/Nero/%(tag)s/HplusToTauNu-M900
 ## signal amc@nlo
+addfiles=%(amarini)s/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8

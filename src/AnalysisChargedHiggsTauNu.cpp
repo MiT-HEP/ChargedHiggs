@@ -180,6 +180,14 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     Tau *t= e->GetTau(0);
     cut.SetCut( Selection(e,true) );
+
+    if ( cut.pass(NoLep) and not e->IsRealData() ){
+        // SF for Veto
+        GenParticle * gp  = e->GetGenElectron(0,2.4);
+        if (not e->ExistSF("eleveto")) Log(__FUNCTION__,"WARNING","No eleveto SF"); //FIXME Remove this line, may be slow
+        if (gp != NULL and gp->Pt() > 15) {e->SetPtEtaSF("eleveto",gp->Pt(),fabs(gp->Eta())); e->ApplySF("eleveto");}  // this should be SC-eta, some how propagated
+        //TODO Muon
+    }
     
 
     if( cut.passAllUpTo( OneTau)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneTau,e->weight());
