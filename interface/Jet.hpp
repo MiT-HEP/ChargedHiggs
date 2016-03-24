@@ -2,6 +2,9 @@
 #define JET_H
 
 #include "interface/Object.hpp"
+#include <algorithm>
+#include <string>
+#include <map>
 
 // ---
 class Jet : virtual public Object
@@ -16,6 +19,9 @@ class Jet : virtual public Object
     float etacutcentral_;
     float  qgl_ ; // To Set
 
+    // qgl vars
+    std::map<std::string,float> qglVars_;
+
     public:
 
     void SetPtCut(float x){ptcut_= x;}
@@ -23,6 +29,11 @@ class Jet : virtual public Object
     void SetEtaCutCentral( float x) {etacutcentral_=x;}
     void SetBCut(float x) {bcut_=x;}
     inline void SetQGL(float qgl){ qgl_ = qgl;}
+    inline void SetQGLVar(std::string name,float value){
+            std::transform(name.begin(),name.end(),name.begin(),::tolower ) ;
+            qglVars_[name] = value;
+            };
+
 
     Jet() ; 
 
@@ -42,10 +53,16 @@ class Jet : virtual public Object
     int motherPdgId;
     int grMotherPdgId;
 
+    inline int Flavor() const { return pdgId;}
+
     // ---
     inline float Pt() const override { if (syst ==0) return p4.Pt(); return p4.Pt() *(1.0  + unc*syst );}
     inline void  clearSyst()override {Object::clearSyst() ;syst = 0;bsyst=0; isValid=1;}; // reset smearing
     inline float QGL() const { return qgl_; } 
+    inline float QGLVar(std::string name) const {
+            std::transform(name.begin(),name.end(),name.begin(),::tolower ) ;
+            return qglVars_.find(name)->second; // this will throw an exception if not found
+            };
     // ---
     inline int IsObject() const override {return IsJet();}
     inline int IsJet() const { if (not isValid) return 0 ; 

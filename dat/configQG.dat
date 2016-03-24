@@ -1,0 +1,69 @@
+##configure Looper
+##### This file store the configuratino to run all the analysis
+##### if you want to make a config file that overwrite some changes just create a new one with the line
+##### include=dat/config.txt
+##### Files=....,....,...
+
+sub=tag|QG
+
+################
+### DATASETS ###
+################
+
+#### BKG ###
+Files=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+### WW/WZ/ZZ###
+### SIGNAL ###
+### QCD
+####
+#### DATA
+addfiles=/store/user/amarini/Nero/%(tag)s/SingleMuon
+
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+Output=QG.root
+## Preselection:1,Preselection:2
+Analysis=JsonAnalysis,QGAnalysis
+
+MCDB=dat/mc_database_QG.txt
+SFDB=dat/sf_database.txt
+Branches=dat/branchesQG.txt
+###
+pileup=aux/pileup.root
+pileupRun=
+pileupLumi=
+#Lumi=2110 ## doing nothing
+Lumi=1
+###
+# additional JSON FILE for Data selection
+
+# Smearer
+#Smear=JER,JES,@SmearBase
+#Smear=NONE,JER,JES
+Smear=NONE
+Correct=NONE
+#Correct=MetPhiCorrector
+
+#________________________________________________________________
+#____________________ CONFIGURATION _____________________________
+#
+##########  ANALYSIS  ################
+
+#############
+###  QG   ###
+#############
+
+config=QGAnalysis|AddLabel('DY')
+
+############
+### JSON ###
+############
+
+include=dat/json.dat
+
+
+

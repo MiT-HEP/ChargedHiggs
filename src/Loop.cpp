@@ -398,6 +398,10 @@ void Looper::FillJets(){
 	if (tree_->GetBranchStatus("jetQGL") ) j->SetQGL( bj -> qgl -> at(iJet) );
 	else j->SetQGL(  -10 ); // Add a warning ? 
 
+	if (tree_->GetBranchStatus("jetQglMult") ) j->SetQGLVar( "mult", bj -> qglMult -> at(iJet) );
+	if (tree_->GetBranchStatus("jetQglPtD") ) j->SetQGLVar( "ptD", bj -> qglPtD -> at(iJet) );
+	if (tree_->GetBranchStatus("jetQglAxis2") ) j->SetQGLVar( "axis2", bj -> qglAxis2 -> at(iJet) );
+
         j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
         j->motherPdgId = bj->motherPdgId -> at(iJet);
         j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
@@ -576,10 +580,23 @@ void Looper::FillMC(){
         return;
     }
 
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[FillMC]::[DEBUG] Reading GP:" 
+	    	<< mc->p4->GetEntries()<<":"
+	    	<< mc->pdgId->size()<<":"
+	    	<< mc->flags->size()<<":"
+		<<endl;
+#endif
+
     for (int iGP=0;iGP< mc -> p4 ->GetEntries() ; ++iGP)
     {
 	int apdg = abs(mc -> pdgId -> at(iGP) );
-	if (apdg != 11 and apdg !=13 and not (mc -> flags ->at(iGP) & BareMonteCarlo::PromptFinalState) ) continue; // keep status 1 electrons and muons
+	bool keep=false;
+	if (  (apdg == 11 or apdg ==13) and (mc -> flags ->at(iGP) & BareMonteCarlo::PromptFinalState) ) keep=true; // keep status 1 electrons and muons
+	// keep Q/G/Tau
+	if ( (apdg == 15 or apdg==21 or apdg <6 ) and (mc->flags->at(iGP) & ( BareMonteCarlo::HardProcess | BareMonteCarlo::HardProcessBeforeFSR | BareMonteCarlo::HardProcessDecayed) )) keep=true;
+
+	if (not keep) continue;
 
         GenParticle *g =new GenParticle();
         g->SetP4( *(TLorentzVector*) ((*mc->p4)[iGP]) );
@@ -587,6 +604,9 @@ void Looper::FillMC(){
 	g->SetFlags( mc ->flags ->at(iGP) );
         event_ -> genparticles_ . push_back(g);
     }
+#ifdef VERBOSE
+    if(VERBOSE>1)cout <<"[Looper]::[FillMC]::[DEBUG] Reading END" <<endl;
+#endif
     return ;
 }
 

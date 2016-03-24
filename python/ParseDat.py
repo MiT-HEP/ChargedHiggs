@@ -289,7 +289,7 @@ def ReadSFDB(file):
 
 		elif type == 'th2f':
 			R['filename'] = l.split(' ' )[2]
-			if len(l.split(' ') >= 4 ):
+			if len(l.split(' ')) >= 4:
 				R['veto'] = l.split(' ' )[3].lower()
 			else: R['veto'] = ''
 			sf=0.0 ## ignored

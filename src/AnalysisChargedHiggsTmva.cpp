@@ -70,7 +70,7 @@ void TmvaAnalysis::Init(){
     categories.SetBoundary("bdt0",0, -.25);
     categories.SetBoundary("bdt1",0, -.4);
     categories.SetBoundary("bdt0",1, -0.8);
-    categories.SetBoundary("bdt0",1, -0.9);
+    categories.SetBoundary("bdt1",1, -0.9);
 
     for(int icat=0;icat< categories.GetNcat() ;++icat)
     for ( string& l : AllLabel()  ) {
