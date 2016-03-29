@@ -21,7 +21,7 @@ int Binning::findBin(const std::vector<float> &v, float x)
 {
     int R=-1; // Can be binary search
     for( int i=0; i<v.size() -1 ; ++i){
-        if (v[i]>=x and v[i+1]<x) { R=i; break;}
+        if (v[i]<=x and x<v[i+1]) { R=i; break;}
     }
     return R;
 }

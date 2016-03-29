@@ -38,6 +38,8 @@ class Plot:
 		self.lumi_=-1
 		self.extra_="Preliminary"
 		self.current_=0; ## iterator
+		self.legpos=(0.65,.60,.93,.85)
+		self.legheader=""
 
 	def __contains__(self, key): 
 		return key in self.dict_
@@ -66,6 +68,9 @@ class Plot:
 		return len(self.dict_)
 	#def delitem(self,x):
 
+	def SetLumi(self,lumi):
+		self.lumi_ = lumi
+
 	## plot stuff
 	def PrepareCanvas(self,name="c"):
 	        self.canv_=ROOT.TCanvas(name,name,800,800)
@@ -75,8 +80,8 @@ class Plot:
 	        self.canv_.SetBottomMargin(0.15)
 
 	def PrepareTwoPads(self):
-		self.pup=ROOT.TPad(opts.var+ "_pad1" ,"pad1", 0,0.25, 1 ,1)
-		self.pdn=ROOT.TPad(opts.var+ "_pad2" ,"pad2", 0,0, 1 ,.25)
+		self.pup=ROOT.TPad("_pad1" ,"pad1", 0,0.25, 1 ,1)
+		self.pdn=ROOT.TPad("_pad2" ,"pad2", 0,0, 1 ,.25)
 		
 		self.pup.SetTopMargin(0.05)
 		self.pup.SetBottomMargin(0.15)
@@ -104,41 +109,100 @@ class Plot:
 		self.canv_.cd()
 	        ltx=ROOT.TLatex()
 	        ltx.SetNDC()
-	        ltx.SetTextFont(42)
-	        ltx.SetTextSize(0.03)
+	        ltx.SetTextFont(43)
+	        ltx.SetTextSize(28)
 	        ltx.SetTextAlign(31)
 		if self.lumi_<0 : ltx.DrawLatex(.94,.96,"13 TeV")
 		elif self.lumi_ > 1000: ltx.DrawLatex(.94,.96,"%.1f fb^{-1} (13 TeV)" % (self.lumi_/1000.))  
 		else : ltx.DrawLatex(.94,.96,"%.1f pb^{-1} (13 TeV)" % (self.lumi_)) 
 	        ltx.SetTextAlign(13)
-	        ltx.SetTextSize(0.05)
+	        ltx.SetTextSize(32)
 	        ltx.SetTextAlign(33)
 	        ltx.DrawLatex(.87,.92,"#bf{CMS}#scale[0.75]{#it{ %s}}"%self.extra_) #
+		garbage.append(ltx)
 
 	def Legend(self):
 		self.canv_.cd()
-		l = ROOT.TLegend(0.65,.60,.93,.85)
-		l.AddEntry(self.dict_["Data"],"data","PE")
+		l = ROOT.TLegend(self.legpos[0],self.legpos[1],self.legpos[2],self.legpos[3])
+		l.SetHeader(self.legheader)
+		l.AddEntry(self.dict_["Data"],"Data","PE")
 		if 'DY' in self.dict_: l.AddEntry(self.dict_["DY"],"DY","F")
 		if 'TT' in self.dict_: l.AddEntry(self.dict_["TT"],"TT","F")
 		if 'WJets' in self.dict_: l.AddEntry(self.dict_["WJets"],"WJets","F")
 		if 'WW' in self.dict_: l.AddEntry(self.dict_["WW"],"EWK","F")
 		if 'QCD' in self.dict_: l.AddEntry(self.dict_["QCD"],"QCD","F")
+
+		# dictionaries are not sorted
+		toadd = {}
+		for name in self.dict_:
+			if 'Data' in name: continue
+			if '_Q_' in name: toadd['Q']=name
+			if '_G_' in name: toadd['G']=name
+			if '_U_' in name: toadd['U']=name
+		if 'Q' in toadd: l.AddEntry(self.dict_[toadd['Q']],"quark","F")
+		if 'G' in toadd: l.AddEntry(self.dict_[toadd['G']],"gluon","F")
+		if 'U' in toadd: l.AddEntry(self.dict_[toadd['U']],"pile-up","F")
+
 		l.Draw()
 		l.SetBorderSize(0)
+		l.SetFillStyle(0)
 		garbage.append(l)
 
-	def Range(self):
+	def Range(self,target="Data"):
 		## to do.. something good
 		for name in self.dict_:
-			if 'Mult' in name:
-				self.dict_[name].GetXaxis().SetRangeUser(0,50)
+			if 'mult' in name:
+				self.dict_[target].GetXaxis().SetRangeUser(0,50)
+				self.dict_[target].GetXaxis().SetTitle("Multiplicity")
+			elif 'ptD' in name or 'ptd' in name or 'PtD' in name:
+				self.dict_[target].GetXaxis().SetRangeUser(0,1.0)
+				self.dict_[target].GetXaxis().SetTitle("p_{T}#it{D}")
+				self.legpos=(0.15,.60,.45,.85)
+			elif 'QGL' in name:
+				self.dict_[target].GetXaxis().SetRangeUser(0,1.0)
+				self.legpos=(0.35,.60,.65,.85)
+				self.dict_[target].GetXaxis().SetTitle("QGL (76X)")
+			elif 'axis2' in name:
+				self.dict_[target].GetXaxis().SetRangeUser(0,10)
+				self.dict_[target].GetXaxis().SetTitle("-log(#sigma_{2})")
+
+			# figure out header
+			if 'mult' in name or 'ptD' in name or 'QGL' in name or 'axis2' in name:
+				parts=name.split('_')
+				header=""
+				if len(parts) >= 4 and 'pt' in parts[2]:
+					ptmin=re.sub('pt','',parts[2])
+					ptmax=parts[3]
+					header += "#splitline{" + ptmin+"<p_{T}[GeV]<" + ptmax + "}{"
+				if len(parts) >= 6 and 'eta' in parts[4]:
+					etamin=re.sub('eta','',parts[4])
+					etamax=parts[5]
+					header += " "+etamin+"<#||{#eta}<" + etamax
+					header += "}"
+				self.legheader = header
+			## Rebin
+			if 'QGL_pt30_50_eta0.0_2.0' in name: self.dict_[name].Rebin(2)
+			elif 'QGL_pt30_50_eta2.0_2.5' in name: self.dict_[name].Rebin(5)
+			elif 'QGL_pt30_50_eta2.5_3.0' in name: self.dict_[name].Rebin(5)
+			elif 'QGL_pt30_50' in name: self.dict_[name].Rebin(5)
+			elif 'QGL' in name: self.dict_[name].Rebin(2)
+			elif 'pt250_500' in name: self.dict_[name].Rebin(5)
+			elif 'pt120_250' in name: self.dict_[name].Rebin(5)
+			elif 'pt80_120_eta0.0_2.0' in name: self.dict_[name].Rebin(2)
+			elif 'pt80_120_eta2.5_3.0' in name: self.dict_[name].Rebin(5)
+			elif 'pt80_120_eta2.0_2.5' in name: self.dict_[name].Rebin(2)
+			elif 'pt50_80_eta2.5_3.0' in name: self.dict_[name].Rebin(2)
+			elif 'pt50_80_eta2.0_2.5' in name: self.dict_[name].Rebin(2)
+			elif 'pt50_80_eta0.0_2.0' in name: self.dict_[name].Rebin(2)
+			elif 'pt30_50_eta2.5_3.0' in name: self.dict_[name].Rebin(2)
+			elif 'pt30_50_eta2.0_3.5' in name: self.dict_[name].Rebin(2)
 
 
 ## can I fetch these automatically?
 ptBins=[30.,50.,80.,120.,250.,500.,8000.]
 etaBins=[0.,2.,2.5,3.,4.7]
-jetTypes=["Q","G","U"]
+#jetTypes=["Q","G","U"]
+jetTypes=["U","G","Q"]
 jetVars=["QGL","mult","ptD","axis2"]
 
 #loop over bins
@@ -157,6 +221,7 @@ for var in jetVars:
 	plot=Plot()
         for t in jetTypes:
 	  for what in ["Data"]+ opts.mc.split(","):
+	     if what == "Data" and t!="U": continue # data is only U, no MC matching
 	     name= "_".join([var,t, "pt%.0f"%(ptBins[ptbin]) , "%.0f"%(ptBins[ptbin+1]), "eta%.1f"%(etaBins[etabin]),"%.1f"%(etaBins[etabin+1]), what ])
 	     h=fIn.Get(opts.base + "/" + name)
 	     if h==None: print "-> fetch of histos",name,"in base",opts.base,"FAILED!"
@@ -164,12 +229,9 @@ for var in jetVars:
 	     if what == "Data" and t=="U" : plot["Data"] = h ## short link, in Data there is no Q/G Truth information
 
 
-	#Correct for range and bin
-	plot.Range()
 
 	## Prepare canvas###
 	c = plot.PrepareCanvas()
-	plot.CMS()
 
 	s = ROOT.THStack("S","MC")
 	plot["all"] = None
@@ -191,6 +253,13 @@ for var in jetVars:
 	plot["axis"] = plot["Data"].Clone("axis")
 	plot["axis"].Draw("AXIS")
 
+	#Correct for range and bin
+	plot.Range("axis")
+	#plot.Range("Data")
+
+	plot.SetLumi(2300)
+	plot.CMS()
+
 	ndata=plot["Data"].Integral()
 	nmc = plot["all"].Integral()
 	## DEBUG
@@ -208,10 +277,11 @@ for var in jetVars:
 	      plot[name].Scale(ndata/nmc)
 	      s.Add(plot[name])
 	
-	c.Update()
+	plot.Update()
 
 	s.Draw("HIST SAME")
-	plot["Data"].Draw("PE SAME")
+	plot["Data"].SetBinErrorOption(ROOT.TH1.kPoisson)
+	plot["Data"].Draw("PE X0 SAME")
 
 
 	maxY = max( plot["Data"].GetMaximum(), plot["all"].GetMaximum() )
@@ -243,7 +313,7 @@ for var in jetVars:
 	plot.Update()
 
 	for ext in opts.exts.split(','):
-		plot.SaveAs( opts.plot+ "/canv_" + outname +"." + ext)
+		plot.SaveAs( opts.plot+ "/" + outname +"." + ext)
 
 exit(0)
 

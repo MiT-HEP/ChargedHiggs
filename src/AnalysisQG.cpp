@@ -24,11 +24,17 @@ void QGAnalysis::Init(){
 
                 if ( l == "Data" and t != "U") continue; // Data have no MC info
 
+                float xmin=-1, xmax=1.0;
+                int nbins=200;
+
+                if ( v == "axis2") { xmin=0; xmax=10;}
+                if ( v == "mult") { xmin=0; xmax=100;nbins=100;}
+
                 Book ("QGAnalysis/Vars/"+v +"_"+ t+"_"+ l ,v+"_" + t, 200,-1,1.0);
                 for(int ptb=0;ptb < ptBins.size()-1; ++ptb)         
                 for(int aetab=0;aetab < aetaBins.size()-1; ++aetab)
                 {
-                    Book ("QGAnalysis/Vars/"+v+"_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,v +"_" + t, 200,-1,1.0);
+                    Book ("QGAnalysis/Vars/"+v+"_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,v +"_" + t, nbins,xmin,xmax);
                 } // pt-eta
             } // vars
         } // types
@@ -98,7 +104,7 @@ int QGAnalysis::analyzeMM(Event *e, string systname)
             Fill("QGAnalysis/Vars/QGL_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGL(),e->weight()) ;
             Fill("QGAnalysis/Vars/mult_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("mult"),e->weight()) ;
             Fill("QGAnalysis/Vars/ptD_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("ptD"),e->weight()) ;
-            Fill("QGAnalysis/Vars/axis2_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("axis2"),e->weight()) ;
+            Fill("QGAnalysis/Vars/axis2_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis2")),e->weight()) ;
         }
 
     }
