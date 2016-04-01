@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 
+class TLorentzVector;
+
 namespace ChargedHiggs{
     // ---
     float deltaPhi(const float phi1,const float phi2);
@@ -16,6 +18,8 @@ namespace ChargedHiggs{
     void Delete(T& x) { delete x; x=NULL; }
 
     float mt(const float pt1, const float pt2, const float phi1, const float phi2);
+
+    double CosThetaCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS=13) ;
 };
 
 namespace Binning{

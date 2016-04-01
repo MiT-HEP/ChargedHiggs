@@ -11,15 +11,21 @@ class QGAnalysis: virtual public AnalysisBase
         virtual ~QGAnalysis (){}
 
         void Init() override;
+        void InitMM();
+        void InitJJ();
         int analyze(Event*,string systname) override;
         int analyzeMM(Event*,string systname);
+        int analyzeJJ(Event*,string systname);
         const string name() const override {return "QGAnalysis";}
         void SetLeptonCuts(Lepton *l) override ; 
+
+        bool doMM{true};
+        bool doJJ{true};
 
     private:
         CutSelector cut;
 
-        enum CutFlow{ Total=0, 
+        enum ZmmCutFlow{ Total=0, 
             Leptons,
             Trigger,
             Mass,
@@ -27,6 +33,13 @@ class QGAnalysis: virtual public AnalysisBase
             DeltaPhi,
             MaxCut // do not remove
         };
+
+        enum DiJetCutFlow { DiJetTotal = 0,
+            DiJetTwoJets,
+            DiJetDeltaPhi,
+            DiJetMaxCut
+        };
+
         const vector<string> jetTypes{"Q","G","U"};
         const vector<string> jetVars{"QGL","mult","ptD","axis2"};
 

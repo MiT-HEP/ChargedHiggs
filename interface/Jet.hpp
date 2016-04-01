@@ -77,6 +77,7 @@ class Jet : virtual public Object
         return 1;
     }
 
+    inline float Btag() const { return bdiscr ; } // don't use this function, to check if it is a bjet
     inline int IsBJet() const { if( bdiscr > bcut_ + bsyst*bunc and IsJet() and fabs(Eta()) <= betacut_ )   return 1; return 0;}
 
     inline void computeValidity( Object* o, float dR = 0.4)

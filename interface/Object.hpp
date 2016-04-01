@@ -33,6 +33,7 @@ class Object
         virtual inline float Phi() const { return p4.Phi(); }
         virtual inline float E() const { return p4.E(); }
         virtual inline float M() const { return p4.M(); }
+        virtual inline float Rapidity() const { return p4.Rapidity(); }
         virtual inline int   IsObject() const {return 0;}
         virtual inline float DeltaR(Object &o) const { return p4.DeltaR(o.GetP4()); }
         virtual inline float DeltaEta(Object &o) const {return fabs(p4.Eta()-(o.GetP4()).Eta()); }

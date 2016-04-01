@@ -180,8 +180,9 @@ class Plot:
 					header += " "+etamin+"<#||{#eta}<" + etamax
 					header += "}"
 				self.legheader = header
-			## Rebin
+			## Rebin TODO, mv in a rebin macro. to make sure is called only once
 			if 'QGL_pt30_50_eta0.0_2.0' in name: self.dict_[name].Rebin(2)
+			elif 'QGL' in name and 'eta3.0_4.7' in name: self.dict_[name].Rebin(5)
 			elif 'QGL_pt30_50_eta2.0_2.5' in name: self.dict_[name].Rebin(5)
 			elif 'QGL_pt30_50_eta2.5_3.0' in name: self.dict_[name].Rebin(5)
 			elif 'QGL_pt30_50' in name: self.dict_[name].Rebin(5)
@@ -195,7 +196,8 @@ class Plot:
 			elif 'pt50_80_eta2.0_2.5' in name: self.dict_[name].Rebin(2)
 			elif 'pt50_80_eta0.0_2.0' in name: self.dict_[name].Rebin(2)
 			elif 'pt30_50_eta2.5_3.0' in name: self.dict_[name].Rebin(2)
-			elif 'pt30_50_eta2.0_3.5' in name: self.dict_[name].Rebin(2)
+			elif 'pt30_50_eta2.0_2.5' in name: self.dict_[name].Rebin(2)
+			elif 'eta3.0_4.7' in name: self.dict_[name].Rebin(5)
 
 
 ## can I fetch these automatically?
@@ -215,8 +217,8 @@ if fIn== None:
 	print "ERROR: File ",opts.file,'does not exist'
 
 for var in jetVars:
- for ptbin in range(0, len(ptBins)-2):
-  for etabin in range(0, len(etaBins)-2):
+ for ptbin in range(0, len(ptBins)-1):
+  for etabin in range(0, len(etaBins)-1):
 	# fetch histograms
 	plot=Plot()
         for t in jetTypes:
