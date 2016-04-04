@@ -84,7 +84,7 @@ Correct=NONE
 ###  QG   ###
 #############
 
-config=QGAnalysis|AddLabel('DY'),doMM=1,doJJ=1
+config=QGAnalysis|AddLabel('DY'),AddLabel('QCD'),doMM=1,doJJ=1
 
 ############
 ### JSON ###

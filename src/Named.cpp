@@ -6,6 +6,11 @@ void Named::Log(const string & function, const string &level, const string &mess
     Logger::getInstance().Log(this,function,level,message );
 }
 
+void Named::LogN(const string & function, const string &level, const string &message,int N)
+{	
+    Logger::getInstance().LogN(this->name(),function,level,message,N );
+}
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

@@ -14,6 +14,8 @@
 #include "interface/Event.hpp"
 #include "interface/Dumper.hpp"
 
+#include "interface/Loader.hpp"
+
 // Bare Structures
 #include "NeroProducer/Core/interface/BareCollection.hpp"
 #include "interface/Output.hpp"
@@ -46,18 +48,11 @@ class Looper{
 
         Dumper *dump_;
 
+        Loader* loader_; // translate the information in the ntuples in the information in the fwk
+
         void Log(const string& func, const string& state, const string& mex){ Logger::getInstance().Log(name(),func,state, mex); };
 
     protected:
-        // --- call by FillEvent
-        void FillEventInfo();
-        void FillJets();
-        void FillLeptons();
-        void FillPhotons();
-        void FillTaus();
-        void FillMet();
-        void FillMC();
-        void FillTrigger();
         //
         void NewFile();
         // ---- call by LOOP
@@ -69,11 +64,14 @@ class Looper{
     public:
         // -- constructor
         Looper();
-        Looper(string chain);
         ~Looper(){ClearEvent();}
         // ---
         const string name(){return "Looper";}
         // ---
+        inline void InitLoader(string name){ 
+                    loader_ = LoaderFactory::get().create(name); 
+                    tree_=new TChain(loader_->chain().c_str());
+        }
         inline int AddToChain( string name ){ return tree_ -> Add( name.c_str() ) ; }
         inline int AddAnalysis( AnalysisBase* a ) {analysis_ . push_back(a); return 0;}
         inline int AddSmear(SmearBase *s) { systs_ .push_back(s) ; return 0; }

@@ -21,9 +21,13 @@ using namespace std;
 class Looper;
 class AnalysisBase;
 class ChargedHiggsEWKEmbedding;
+class Loader;
+class LoadNero;
 
 class Event{
     friend class Looper;
+    friend class Loader;
+    friend class LoadNero;
     friend class SmearBase;
     friend class AnalysisBase;
     friend class CorrectorBase;
