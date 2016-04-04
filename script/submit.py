@@ -21,12 +21,14 @@ job_opts.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do no
 job_opts.add_option("","--no-compress" ,dest='compress',action='store_false',help="Don't compress",default=True)
 job_opts.add_option("","--compress"    ,dest='compress',action='store_true',help="Compress stdout/err")
 job_opts.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="Mount eos file system.",default=False)
+job_opts.add_option("","--hadoop" ,dest='hadoop',action='store_true',help="Use Hadhoop and MIT-T3",default=False)
 job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. ",default=False)
 job_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
+job_opts.add_option("","--clear" ,dest='clear',action='store_true',help="Clear Directory (used with hadd).",default=False)
 
 summary= OptionGroup(parser,"Summary","these options are used in case of summary is wanted")
-summary.add_option("-s","--status",dest="status", action='store_true', help = "Display status information for a submission.", default=False)
-summary.add_option("","--resubmit",dest="resubmit", action='store_true', help = "Resubmit failed jobs.", default=False)
+summary.add_option("-s","--status",dest="status", action='store_true', help = "Display status information for a submission. (Can be use with hadoop option)", default=False)
+summary.add_option("","--resubmit",dest="resubmit", action='store_true', help = "Resubmit failed jobs. (no hadoop)", default=False)
 summary.add_option("-j","--joblist",dest="joblist", type='string', help = "Resubmit this job list. '' or 'fail' will submit the failed jobs. 'run' will submit the running jobs. Job list = 3,5,6-10", default="")
 
 parser.add_option_group(job_opts)
@@ -36,10 +38,21 @@ parser.add_option_group(summary)
 
 EOS='/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
 
+if 'CMSSW_BASE' not in os.environ:
+	print "-> Use a CMSSW environment: cmsenv"
+	exit(0)
+
 print "inserting in path cwd"
 sys.path.insert(0,os.getcwd())
 print "inserting in path cwd/python"
 sys.path.insert(0,os.getcwd()+'/python')
+
+## bash color string
+red="\033[01;31m"
+green = "\033[01;32m"
+yellow = "\033[01;33m"
+cyan = "\033[01;36m"
+white = "\033[00m"
 
 def PrintLine(list):
 	''' convert list in list of int number, sort and compress consecutive numbers. Then print the result:
@@ -75,25 +88,8 @@ def PrintLine(list):
 
 	return ",".join(compress)
 
-def PrintSummary(dir, doPrint=True):
-	''' Print summary informations for dir'''
-	run  = glob(dir + "/*run")
-	fail = glob(dir + "/*fail")
-	done = glob(dir + "/*done")
-	pend = glob(dir + "/*pend")
-
-	## bash color string
-	red="\033[01;31m"
-	green = "\033[01;32m"
-	yellow = "\033[01;33m"
-	cyan = "\033[01;36m"
-	white = "\033[00m"
-
-	run = [ re.sub('\.run','' , re.sub('.*/sub','', r) ) for r in run ] 	
-	fail = [ re.sub('\.fail','' , re.sub('.*/sub','', r) ) for r in fail ] 	
-	done = [ re.sub('\.done','' , re.sub('.*/sub','', r) ) for r in done ] 	
-	pend = [ re.sub('\.pend','' , re.sub('.*/sub','', r) ) for r in pend ] 	
-
+def Print_ (done, run, fail, pend):
+	'''Internal'''
 	tot = len(run) + len(fail) + len(done) + len(pend)
 
 	color = red
@@ -101,18 +97,70 @@ def PrintSummary(dir, doPrint=True):
 	if len(pend) > len(run) and len(pend) >len(fail): color= cyan
 	if len(done) == tot and tot >0 : color = green
 	
+	print " ----  Directory "+ color+opts.dir+white+" --------"
+	print " Pend: " + cyan   + "%3d"%len(pend) + " / " + str(tot) + white + " : " + PrintLine(pend)  ###
+	print " Run : " + yellow + "%3d"%len(run) + " / "  + str(tot) + white + " : " + PrintLine(run)  ### + ",".join(run)  + "|" 
+	print " Fail: " + red    + "%3d"%len(fail) + " / " + str(tot) + white + " : " + PrintLine(fail) ### + ",".join(fail) + "|" 
+	print " Done: " + green  + "%3d"%len(done) + " / " + str(tot) + white + " : " + PrintLine(done) ### + ",".join(done) + "|" 
+	print " -------------------------------------"
+
+def PrintSummary(dir, doPrint=True):
+	''' Print summary informations for dir'''
+	run  = glob(dir + "/*run")
+	fail = glob(dir + "/*fail")
+	done = glob(dir + "/*done")
+	pend = glob(dir + "/*pend")
+
+	run = [ re.sub('\.run','' , re.sub('.*/sub','', r) ) for r in run ] 	
+	fail = [ re.sub('\.fail','' , re.sub('.*/sub','', r) ) for r in fail ] 	
+	done = [ re.sub('\.done','' , re.sub('.*/sub','', r) ) for r in done ] 	
+	pend = [ re.sub('\.pend','' , re.sub('.*/sub','', r) ) for r in pend ] 	
+
 	if doPrint:
-		print " ----  Directory "+ color+opts.dir+white+" --------"
-		print " Pend: " + cyan   + "%3d"%len(pend) + " / " + str(tot) + white + " : " + PrintLine(pend)  ###
-		print " Run : " + yellow + "%3d"%len(run) + " / "  + str(tot) + white + " : " + PrintLine(run)  ### + ",".join(run)  + "|" 
-		print " Fail: " + red    + "%3d"%len(fail) + " / " + str(tot) + white + " : " + PrintLine(fail) ### + ",".join(fail) + "|" 
-		print " Done: " + green  + "%3d"%len(done) + " / " + str(tot) + white + " : " + PrintLine(done) ### + ",".join(done) + "|" 
-		print " -------------------------------------"
+		Print_(done,run,fail,pend)
 
 	return ( done, run, fail)
 
+def PrintHadhoop(dir, doPrint = True):
+	log = glob ( dir + "/test.*.log" )
+	done=[]
+	run =[]
+	fail=[]
+	pend=[]
+	for l in log:
+		iJob = re.sub('.*/test\.','', re.sub("\.log","" , l ) )
+		status = call( "cat %s | grep 'Job executing on host' >& /dev/null"%(l) , shell=True)
+		if status != 0 :
+			pend.append(iJob)
+			continue
+		status = call( "cat %s | grep 'Job terminated.' >& /dev/null"%(l) , shell=True)
+		if status != 0:
+			run.append(iJob)
+			continue
+		status = call( "cat %s | grep 'return value 0' >& /dev/null"%(l) , shell=True)
+		if status != 0:
+			fail.append(iJob)
+			continue
+		outlist = glob(dir +"/*_%s.root"%iJob)
+		if len(outlist) != 1:
+			print "unable to find outfile in:",outlist
+			fail.append(iJob)
+			continue
+		outname=outlist[0]
+		if os.stat(outname).st_size == 0:
+			fail.append(iJob)
+			continue
+		done.append(iJob)
+	
+	if doPrint:
+		Print_(done,run,fail,pend)
+	return ( done, run, fail)
+
 if opts.status:
-	PrintSummary(opts.dir,doPrint=True)
+	if opts.hadoop:
+		PrintHadhoop(opts.dir,doPrint=True)
+	else:
+		PrintSummary(opts.dir,doPrint=True)
 	exit(0)
 
 if opts.resubmit:
@@ -137,9 +185,9 @@ if opts.resubmit:
 			basedir = os.environ['PWD'] + "/" + opts.dir
 			touch = "touch " + basedir + "/sub%d.pend"%iJob
 			call(touch,shell=True)
-			cmd = "rm " + basedir + "/sub%d.fail"%iJob
+			cmd = "rm " + basedir + "/sub%d.fail"%iJob + " 2>&1 >/dev/null"
 			call(cmd,shell=True)
-			cmd = "rm " + basedir + "/sub%d.run"%iJob
+			cmd = "rm " + basedir + "/sub%d.run"%iJob + " 2>&1 >/dev/null"
 			call(cmd,shell=True)
 			cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
 			print cmdline
@@ -153,6 +201,15 @@ if opts.hadd:
 	name = re.sub('.*/','',dir)
 	cmd = "hadd -f %s/%s.root "%(opts.dir, name ) + " ".join(filelist)
 	call(cmd,shell=True)
+	if opts.clear:
+		filelist = glob(opts.dir + "/*")
+		rmlist = [ f for f in filelist if  re.sub('^.*/','',f) != name + ".root"]
+		keeplist = [ f for f in filelist if re.sub('^.*/','',f) == name + ".root"]
+		rmcmd = "rm " + " ".join(rmlist)
+		#for i in rmlist:
+		#	print i, "'"+re.sub('^.*/','',f) + "'", "'" + name + ".root'"
+		print " I will keep = '",keeplist
+		call(rmcmd,shell=True)
 	exit(0)
 
 # import Parser
@@ -221,7 +278,9 @@ if True:
 	for f in config['Files']:
 		list=[]
 		if '/store/' in f:
-			if opts.mount:
+			if opts.hadoop:
+				list = FindHadoop( f ) 
+			elif opts.mount:
 				list =  FindEOS(f, "%%MOUNTPOINT%%/eos")
 			else:
 				list =  FindEOS(f)
@@ -233,7 +292,80 @@ if True:
 	config['Files']=fileList
 	splittedInput=chunkIt(config['Files'],opts.njobs )
 
-for iJob in range(0,opts.njobs):
+if opts.hadoop:
+   if len(fileList) ==0:
+	print "filelist has 0 len: Nothing to be done"
+	exit(0)
+   redirect = ">&2"
+   run= open("%s/run.sh"%opts.dir,"w")
+   run.write("#!/bin/bash\n")
+   run.write("JOBID=$1\n")
+   run.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
+   # if x509 proxy is copied to the workspace
+   # export X509_USER_PROXY=x509up_u$(id -u)
+   run.write("scram p CMSSW %s\n"%os.environ['CMSSW_VERSION'])
+   run.write("cd %s/src\n"%os.environ['CMSSW_VERSION'])
+   run.write("eval `scram runtime -sh`\n")
+   run.write("tar xzf ../../package.tar.gz\n")
+   run.write("mkdir -p ../NeroProducer/Core/bin\n")
+   run.write("cp -v bin/bare/* ../NeroProducer/Core/bin\n") 
+   run.write("mkdir -p ../NeroProducer/Core/interface\n")
+   run.write("cp -v bin/interface/* ../NeroProducer/Core/interface\n") 
+   run.write('LD_LIBRARY_PATH=./:./bin/:$LD_LIBRARY_PATH\n')
+   run.write("echo --- ENV ---- %s\n"%redirect)
+   run.write("env | sed 's/^/ENV ---/' %s \n"%redirect)
+   run.write("echo --- LS ---- %s\n"%redirect)
+   run.write("ls -l | sed 's/^/LS ---/' %s\n"%redirect)
+   #cmsRun cfg.py jobId=$JOBID
+   run.write("python python/Loop.py -v -d ../../input${JOBID}.dat %s\n"%redirect)
+   run.write('EXITCODE=$?\n')
+   run.write("echo Finished At: %s\n"%redirect)
+   run.write("date %s\n"%redirect)
+   run.write("echo EXITCODE is $EXITCODE %s\n"%redirect)
+   run.write("exit $EXITCODE\n")
+   run.close()
+   
+   inputLs =[]
+   subdir="."
+   for iJob in range(0,opts.njobs):
+        if len(splittedInput[iJob]) == 0 : 
+             print "No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white
+             continue
+	outname = re.sub('.root','_%d.root'%iJob,config['Output'])
+	dat=open("%s/input%d.dat"%(opts.dir,iJob),"w")
+	inputLs.append("%s/input%d.dat"%(subdir,iJob))
+	dat.write("include=%s\n"%opts.input)
+	dat.write('Files=%s\n'%( ','.join(splittedInput[iJob]) ) )
+	dat.write('Output=%s/%s\n'%(subdir,outname) )
+	dat.close()
+   # create condor.jdl
+   outname = re.sub('.root','_$(Process).root',config['Output'])
+   condor=open("%s/condor.jdl"%opts.dir,"w")
+   condor.write("executable = %s/run.sh\n"%subdir)
+   condor.write("should_transfer_files = YES\n")
+   condor.write("when_to_transfer_output = ON_EXIT\n")
+   condor.write("transfer_input_files = %(dir)s/package.tar.gz,%(input)s\n"%{"dir":subdir,"input": ",".join(inputLs)})
+   condor.write("universe = vanilla\n")
+   condor.write("log = test.$(Process).log\n")
+   condor.write("output = %s\n"%outname)
+   condor.write("error = test.$(Process).err\n")
+   condor.write("requirements = Arch == \"X86_64\" && OpSysAndVer == \"SL6\" && HasFileTransfer\n")
+   condor.write("arguments = $(Process)\n")
+   condor.write("queue %d\n"%(len(inputLs)))
+   condor.close()
+   cmdFile.write("cd %s\n"%opts.dir)
+   cmdFile.write("condor_submit condor.jdl\n")
+   cmd ="cd %s && condor_submit condor.jdl"%opts.dir
+   if not opts.dryrun: 
+	status = call(cmd,shell=True)
+	if status !=0:
+		print "unable to submit,",cmd
+   else:
+	print cmd
+		
+##################### WRITE BATCH ###########################
+if not opts.hadoop:
+   for iJob in range(0,opts.njobs):
 	sh=open("%s/sub%d.sh"%(opts.dir,iJob),"w")
 	basedir=opts.dir
 	if basedir[0] != '/': basedir=os.environ['PWD'] + "/" + opts.dir
@@ -247,23 +379,24 @@ for iJob in range(0,opts.njobs):
 	if opts.tar:
 		sh.write("mkdir -p $WORKDIR/%s_%d\n"%(opts.dir,iJob))
 		sh.write("cd $WORKDIR/%s_%d\n"%(opts.dir,iJob))
+		#sh.write('LD_LIBRARY_PATH=${PWD}:${PWD}/bin:$LD_LIBRARY_PATH\n') ## TODO: test
 		sh.write("tar -xzf %s/package.tar.gz\n"%(basedir ))
 		sh.write("mkdir -p %s\n"%opts.dir)
 		sh.write("cp %s/*dat %s/\n"%(basedir,opts.dir))
 
 	touch = "touch " + basedir + "/sub%d.pend"%iJob
 	call(touch,shell=True)
-	cmd = "rm " + basedir + "/sub%d.run 2>&1 >/dev/null"%iJob
+	cmd = "rm " + basedir + "/sub%d.run 2>&1 >/dev/null"%iJob + " 2>&1 >/dev/null"
 	call(cmd,shell=True)
-	cmd = "rm " + basedir + "/sub%d.done 2>&1 >/dev/null"%iJob
+	cmd = "rm " + basedir + "/sub%d.done 2>&1 >/dev/null"%iJob + " 2>&1 >/dev/null"
 	call(cmd,shell=True)
-	cmd = "rm " + basedir + "/sub%d.fail 2>&1 >/dev/null"%iJob
+	cmd = "rm " + basedir + "/sub%d.fail 2>&1 >/dev/null"%iJob + " 2>&1 >/dev/null"
 	call(cmd,shell=True)
 
 	sh.write('date > %s/sub%d.run\n'%(basedir,iJob))
-	sh.write('rm %s/sub%d.done\n'%(basedir,iJob))
-	sh.write('rm %s/sub%d.pend\n'%(basedir,iJob))
-	sh.write('rm %s/sub%d.fail\n'%(basedir,iJob))
+	sh.write('rm %s/sub%d.done 2>&1 >/dev/null\n'%(basedir,iJob))
+	sh.write('rm %s/sub%d.pend 2>&1 >/dev/null\n'%(basedir,iJob))
+	sh.write('rm %s/sub%d.fail 2>&1 >/dev/null\n'%(basedir,iJob))
 
 	if opts.mount:
 		#mountpoint = "~/eos"
@@ -303,7 +436,7 @@ for iJob in range(0,opts.njobs):
 		sh.write('EXITCODE=${PIPESTATUS[0]}\n')
 	else:
 		sh.write('EXITCODE=$?\n')
-	sh.write('rm %s/sub%d.run\n'%(basedir,iJob))
+	sh.write('rm %s/sub%d.run 2>&1 >/dev/null\n'%(basedir,iJob))
 	sh.write('[ $EXITCODE == 0 ] && touch %s/sub%d.done\n'%(basedir,iJob))
 	sh.write('[ $EXITCODE != 0 ] && echo $EXITCODE > %s/sub%d.fail\n'%(basedir,iJob))
 
@@ -317,6 +450,8 @@ for iJob in range(0,opts.njobs):
 			sh.write("[ $EXITCODE == 0 ] && mv -v %s/%s %s/\n"%(opts.dir,outname,basedir))
 		if opts.compress:
 			sh.write("mv %s/log%d.txt.gz %s/log%d.txt.gz\n"%(opts.dir,iJob,basedir,iJob) )
+	sh.write('echo "Finished At:"\n')
+	sh.write("date\n")
 	
 	dat=open("%s/input%d.dat"%(opts.dir,iJob),"w")
 	dat.write("include=%s\n"%opts.input)
@@ -333,7 +468,7 @@ for iJob in range(0,opts.njobs):
 	cmdFile.write(cmdline+"\n")
 
 	if len(splittedInput[iJob]) == 0 : 
-		print "No file to run on for job "+ str(iJob)+", will not send it!"
+		print "No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white
 		continue
 	if not opts.dryrun: 
 		call(cmdline,shell=True)

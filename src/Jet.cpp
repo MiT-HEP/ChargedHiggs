@@ -7,11 +7,18 @@ Jet::Jet() : Object(){
     bsyst = 0; 
     bunc=0; 
     isValid=1;
+    pdgId=0;
+    motherPdgId=0;
+    grMotherPdgId=0;
+    puId=0;
     // -- this cut should remain constant
-    bcut_=0.5; // define bjets
-    ptcut_=30.;
+    bcut_=0.814; // define bjets
+    ptcut_=20.;
     etacut_=4.7;
+    betacut_=2.5;
+    puidcut_=0;
     etacutcentral_=2.4;
+
 }
 
 // Local Variables:

@@ -17,6 +17,7 @@ class Weight{
     double nEvents_;
     double lumi_;
     double sf_;
+    double mcWeight_; // this is set in FillEvent
     protected:
 
     map<string, MC*> mc_db;
@@ -27,7 +28,7 @@ class Weight{
     Weight(){ clear(); }
     ~Weight(){}
 
-    double mcWeight_; // this is set in FillEvent
+    void SetMcWeight(double w){mcWeight_= w;}
 
     void clear(){ mcName_= "";
         mcXsec_ = 1.0; 
@@ -37,22 +38,28 @@ class Weight{
         sf_ = 1.0;
     }
     //
-    string GetMC(){ 
-        return mcName_; }
+    string GetMC(){ return mcName_; }
     // ---
     void SetLumi(double l) {lumi_= l;}
     void AddMC( string label, string dir, double xsec, double nevents);
     string LoadMC( string label) ;	 // return "" if failed otherwise dir
     string LoadMCbyDir( string dir ) ;	 // return "" if failed otherwise label
 
+    SF* GetSF(string label){ if (sf_db.find(label) == sf_db.end() ) return NULL; return sf_db[label]; } // avoid to create label if not there
     void AddSF( string label, double sf, double err);
     void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err);
+    void AddTh2fSF(string label, string filename);
+    void AddSplineSF(string label, double pt, double sf, double err);
+    void AddCSVSF(string label, string filename);
 
     void clearSF( ){ sf_ =1.0;}
     void SetSystSF(string label, int s ) { sf_db[label] -> syst = s;}
     void resetSystSF( ) ;
     void SetPtEtaSF(string label,double pt , double eta);
+    void SetWPSF(string label, int wp);
+    void SetJetFlavorSF(string label, int flavor);
     void ApplySF(string label){ sf_ *= sf_db[label] -> get(); }
+    inline bool ExistSF(string label){ if (sf_db.find(label) != sf_db.end() ) return true; else return false; }
 
     // --- PU Reweight
     inline void AddTarget( TH1*h, int runMin=-1, int runMax =-1,double lumi=-1)
@@ -67,9 +74,16 @@ class Weight{
     inline void SetPU(float pu, int run){puInt_ = pu; runNum_=run; }
     inline void SetSystPU(int syst){pu_.syst=syst;};
     inline void clearSystPU(){ pu_ .clearSyst();}
+    inline int GetPU() const { return puInt_ ; } 
 
-    // --- TODO check what happen with data
-    double weight(){ return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; }
+    // ---  check what happen with data, TODO CHECK LUMI
+    double weight(){ 
+        //Log(__FUNCTION__,"DEBUG",Form("Weight: Mc=%lf mcXsec=%lf sf=%lf pu=%lf nevents=%lf",mcWeight_, mcXsec_ ,sf_,pu_.GetPUWeight(mcName_,puInt_,runNum_), nEvents_));
+        return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        }
+
+    // 
+	void Log(const string& function, const string& level, const string& message);
 };
 
 #endif

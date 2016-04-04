@@ -1,0 +1,5 @@
+############
+### JSON ###
+############
+
+config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt')

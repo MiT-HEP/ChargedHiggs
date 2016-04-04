@@ -5,6 +5,7 @@ muon pteta 20 30 0 2 1 0
 ## LABEL type sf err
 kfac base 1 0
 #
+## include file
 ############# 
 # https://indico.cern.ch/event/369239/contribution/1/attachments/1134778/1623291/EGM_July31.pdf  slide 11
 # 1.5 -> -1.566,1.4442, this is eta, not sceta (not in the ntuple for now)
@@ -41,3 +42,14 @@ ele pteta 55 8000 0.5 1.0 1.034 0.014
 ele pteta 55 8000 1.0 1.5 1.063 0.019
 ele pteta 55 8000 1.5 2.0 1.017 0.024
 ele pteta 55 8000 2.0 2.5 1.040 0.028
+#
+# QCD R-factor computed by PurityFit, first line is to avoid complainings lowPt
+tauinviso pteta 0 50 -2.1 2.1 0 1
+# QCD R-factor computed by PurityFit
+tauinviso pteta 50 70 -2.1 2.1 0.157675 0.0001
+tauinviso pteta 70 100 -2.1 2.1 0.161061 0.0001
+tauinviso pteta 100 150 -2.1 2.1 0.116291 0.0001
+tauinviso pteta 150 8000 -2.1 2.1 0.0906803 -0.000149771
+##
+btag csv aux/CSVv2.csv
+eleveto th2f aux/CutBasedID_VetoWP_76X_18Feb.txt_SF2D.root veto

@@ -1,0 +1,96 @@
+##configure Looper
+##### This file store the configuratino to run all the analysis
+##### if you want to make a config file that overwrite some changes just create a new one with the line
+##### include=dat/config.txt
+##### Files=....,....,...
+
+sub=tag|QG
+
+################
+### DATASETS ###
+################
+
+#### BKG ###
+Files=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+### WW/WZ/ZZ###
+### SIGNAL ###
+### QCD
+####
+#### DATA
+addfiles=/store/user/amarini/Nero/%(tag)s/SingleMuon
+
+##################### DiJet ################
+
+addfiles=/store/user/amarini/Nero/$(tag)s/ZeroBias
+addfiles=/store/user/amarini/Nero/$(tag)s/ZeroBias1
+addfiles=/store/user/amarini/Nero/$(tag)s/ZeroBias2
+addfiles=/store/user/amarini/Nero/$(tag)s/ZeroBias3
+addfiles=/store/user/amarini/Nero/$(tag)s/ZeroBias4
+
+
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_10to15_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_5to10_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
+addfiles=/store/user/amarini/Nero/$(tag)s/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
+
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+Output=QG.root
+## Preselection:1,Preselection:2
+Analysis=JsonAnalysis,QGAnalysis
+
+MCDB=dat/mc_database_QG.txt
+SFDB=dat/sf_database.txt
+Branches=dat/branchesQG.txt
+###
+pileup=aux/pileup.root
+pileupRun=
+pileupLumi=
+#Lumi=2110 ## doing nothing
+Lumi=1
+###
+# additional JSON FILE for Data selection
+
+# Smearer
+#Smear=JER,JES,@SmearBase
+#Smear=NONE,JER,JES
+Smear=NONE
+Correct=NONE
+#Correct=MetPhiCorrector
+
+#________________________________________________________________
+#____________________ CONFIGURATION _____________________________
+#
+##########  ANALYSIS  ################
+
+#############
+###  QG   ###
+#############
+
+config=QGAnalysis|AddLabel('DY'),doMM=1,doJJ=1
+
+############
+### JSON ###
+############
+
+include=dat/json.dat
+
+
+

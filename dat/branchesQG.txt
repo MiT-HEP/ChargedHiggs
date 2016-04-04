@@ -1,0 +1,32 @@
+### Jet
+jetP4
+jetUnc
+jetBdiscr
+jetSelBits
+jetQGL
+## QGL Variables
+jetQgl*
+### Leptons
+lepP4
+lepIso
+lepPdgId
+lepSelBits
+### EVENT
+isRealData
+rho
+npv
+puTrueInt
+runNum
+lumiNum
+eventNum
+mcWeight
+## TRIGGER
+triggerFired
+triggerTaus
+triggerLeps
+## JET
+jetFlavour
+jetMatchedParton*
+jetMotherPdgId
+jetGrMotherPdgId
+jetPuId

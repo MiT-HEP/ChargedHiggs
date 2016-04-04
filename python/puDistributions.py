@@ -1,4 +1,4 @@
-#!env python
+#!/bin/env python
 
 import re
 import os,sys
@@ -31,8 +31,19 @@ if opts.rec:
 		nf = float(re.sub('nfiles=','',nfiles) )
 		dir = re.sub('/eos/cms','',dir)
 		if dir[-1] == '/' : dir = dir[:-1] # remove trailing slash
-		label = re.sub('.*/','',dir)
-		if nd==0 and nf >0 :
+
+		## find label: directory not containing only numbers, hyphens, underscore, or empty
+		dirs=dir.split('/')
+		idx=len(dirs) -1 
+		while idx >=0 :
+			label = dirs[idx]
+			if re.match( '^[0-9_\-]*$',label): 
+				idx -= 1
+			else:
+				break
+		if idx <0: label = re.sub('.*/','',dir)
+
+		if nd==0 and nf >0 and not re.match("Run2015",dir) : # exclude Run directories
 			print "Found one directory:",dir
 			cmd = "python %s -e %s -l %s -f %s --run '%s'"%(sys.argv[0],dir,label,opts.file,opts.run)
 			print "going to execute",cmd
@@ -43,7 +54,7 @@ cmd = EOS+ " find -f " + opts.eos
 
 outputList = check_output(cmd,shell=True)
 fileList0 = outputList.split() ## change lines into list
-fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in fileList0 ]
+fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in fileList0 if '/failed/' not in f ]
 
 import ROOT as r
 r.gROOT.SetBatch()

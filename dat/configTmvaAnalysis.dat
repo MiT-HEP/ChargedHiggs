@@ -5,8 +5,6 @@ include=dat/config.dat
 #Files=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/HplusToTauNu-M200
 #addfiles=/store/user/amarini/Nero/v0.8/RunIISpring15DR74/WZ_TuneCUETP8M1_13TeV-pythia8
 
-Output=TmvaOutput.root
-Analysis=TmvaTrainer
-config=TmvaTrainer|AddLabel("HplusToTauNu-M200"),AddLabel("HplusToTauNu-M250"),AddLabel("HplusToTauNu-M500"),AddLabel("HplusToTauNu-M900")
-## just save the tree for training
-addConfig=TmvaTrainer|train=0
+Output=ChHiggTmva.root
+Analysis=TmvaAnalysis
+

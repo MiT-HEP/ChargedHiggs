@@ -105,10 +105,10 @@ for mass in opts.available.split(","):
 
 	hIn[ dict["mass"] ] = fInput.Get(objName)
 	if hIn[ dict["mass"] ] == None:
-		print "Unable to get object", fileName, "from file",opts.input
+		print "Unable to get object", qbjName, "from file",opts.input
 		exit(1)
 	if hIn[ dict["mass"] ].Integral() == 0 :
-		print "Object", fileName, " is likely to be empty"
+		print "Object", objName, " is likely to be empty"
 
 	hIn[ dict["mass"] ].Rebin(opts.rebin)
 	if opts.inject !=1 : print "[WARING] :: INJECTING x"+str(opts.inject)+" signal"
@@ -124,7 +124,8 @@ if opts.inject!=1:
 
 ### Copy the following histograms
 for suffix in ["Data","QCD","TTJets","WW","WZ","ZZ","DY"]:
-	dataName =  '_'.join(opts.name.split("_")[:-1]) + "_"+ suffix
+	#dataName =  '_'.join(opts.name.split("_")[:-1]) + "_"+ suffix  ## last underscore
+	dataName =  opts.name.split("_")[0] + "_"+ suffix ## first underscore
 	targetName = dataName.split("/")[-1]
 	data = fInput.Get( dataName )
 	

@@ -1,0 +1,12 @@
+##################### DEFAULT #############
+include=dat/config.dat
+###########################################
+# --small set for test
+addfiles=/store/user/amarini/Nero/%(tag)s/Tau
+
+Output=TmvaOutput.root
+Analysis=TmvaTrainer
+config=TmvaTrainer|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo')
+addConfig=TmvaTrainer|AddLabel("DY"),AddLabel("QCD"),AddLabel("TTJets"),AddLabel("WJets"),AddLabel("WW"),AddLabel("WZ"),AddLabel("ZZ")
+## just save the tree for training
+addConfig=TmvaTrainer|train=0

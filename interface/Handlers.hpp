@@ -23,6 +23,16 @@ class sigint_exception: public exception
         }
 } ;
 
+// don't catch this exception, may be something  we don't want
+class abort : public exception
+{
+    public:
+        virtual const char*what() const throw()
+            {
+            return "Aborting..." ;
+            }
+};
+
 #endif
 // Local Variables:
 // mode:c++

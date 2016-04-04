@@ -1,23 +1,48 @@
-#
-jetP4*
-isRealData
+### Jet
 jetP4
+jetUnc
 jetBdiscr
+jetSelBits
+jetQGL
+### Leptons
 lepP4
 lepIso
 lepPdgId
+lepSelBits
+### TAU
 tauP4
-tauId
+#tauId
 tauQ
 tauIso
+tauSelBits
 tau*
-mcWeight
+### MET
 metP4
 metPt*
+metPuppi
+### EVENT
+isRealData
 rho
+npv
 puTrueInt
 runNum
 lumiNum
 eventNum
+mcWeight
+## TRIGGER
 triggerFired
-pfMet_e3p0
+triggerTaus
+triggerLeps
+triggerNoneTaus
+## GEN
+metP4_GEN
+#
+genP4*
+genPdgId
+genFlags
+## JET
+jetFlavour
+jetMatchedParton*
+jetMotherPdgId
+jetGrMotherPdgId
+jetPuId

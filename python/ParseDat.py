@@ -23,13 +23,20 @@ def Default():
 
 
 def BoolKey(value):
-	value = value.lowercase()
+	value = value.lower()
 	if 'no' in value: return False
 	if 'yes' in value: return True 
 	if 'false' in value : return False
 	if 'true' in value : return True
+	if value =='n' : return False
+	if value =='y': return True
+	return False
+
+## TODO, make a class for the parser
+subdict={}
 
 def StringKey(value):
+	if '%' in value: value = value%subdict
 	value = re.sub('\n','',value)
 	return value
 
@@ -76,14 +83,22 @@ def ParseDat(name):
 		key = l.split('=')[0]
 		value = ''
 		if '=' in l : value = '='.join(l.split('=')[1:])
+		######### BOOL  ###########
+		if key == "Dump":
+			config[key]=BoolKey(value)
+		######### SUB ######
+		if key == 'sub':
+			## make sure that is well formatted
+			subdict[value.split('|')[0] ]= StringKey( value.split('|')[1] )
 		######### STRING ###########
-		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' :
+		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' or key =='DumpDir' :
 			config[key] = StringKey(value)
 
 		####### V STRING ##########
 		if      key=='Files' \
 			or key == 'Analysis' \
 			or key == 'Smear'  \
+			or key == 'Correct'  \
 			or key == 'Branches': 
 			config[key] =  vStringKey(  value   )
 	
@@ -121,6 +136,16 @@ def ParseDat(name):
 					config[key] = R[key]
 	return config
 
+def FindHadoop(name,mount="/mnt/hadoop/cms"):
+	if os.path.isfile(name): return [name] ## file exists
+	cmd = "find %s/%s -type f "%(mount,name)
+	list=check_output(cmd, shell=True).split()
+	removed = [f for f in list if '/failed/' in f ]
+	for f in removed:
+		print "ParseDat.py - FindHadoop: Ignoring failed file: '"+ f + "'"
+	list = [ f for f in list if '/failed/' not in f ]
+	return list
+
 def FindEOS(name,mount=""):
 	''' EOS PATH should be followed. The mount option will assume that eos is mounted in ~/eos '''
 	EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
@@ -128,10 +153,20 @@ def FindEOS(name,mount=""):
 	if '/store/' not in name: return [name]
 	if '/eos/cms/store/' in name: return [name] # likely already parsed
 	if 'root://eoscms//' in name: return [name] # already parsed
+	if os.path.isfile(name): return [name] ## file exists
 
 	cmd = EOS + ' find -f ' + name
 	print "Runnig command:",cmd
 	list = check_output(cmd ,shell=True).split()
+
+	# print removed
+	tot = len(list)
+	removed = [ f for f in list if '/failed/' in f ] 
+	for f in removed:
+		print "ParseDat.py - FindEOS: Ignoring failed file: '"+ f + "'"
+	# remove failed directories from crab submission
+	list = [ f  for f in list if '/failed/' not in f ]
+
 	if mount != "":
 		fileList = [ re.sub("/eos/cms", mount + "/cms",f) for f in list ]
 	else:
@@ -154,6 +189,7 @@ def PrintDat(config):
 		elif key =='Files' \
 			or key == 'Analysis' \
 			or key == 'Smear' \
+			or key == 'Correct' \
 			or key == 'Branches' :
 			print key, '=', ','.join(config[key])
 		######### V FLOAT/INT #########
@@ -180,6 +216,7 @@ def PrintUsage():
 	print 'branches = brancfile'
 	print 'Analysis = AnalysisBase,Analysis2 ..'
 	print 'Smears = @SmearBase,JER,JES'
+	print 'Correct = @CorrectorBase'
 	print 'config = AnalysisBase|a=1,b=2,c(3)'
 
 def ReadMCDB(file):
@@ -202,9 +239,9 @@ def ReadMCDB(file):
 
 def ReadSFDB(file):
 	'''read and parse the SFDB file:
-	    \t\t### LABEL dir Entries xSec
+	    \t\t### LABEL type -- -- --- --- 
 	'''
-	L=[]
+	L=[]## this is a list of sf bins
 	f = open(file)
 	for line in f:
 	   try:
@@ -213,27 +250,58 @@ def ReadSFDB(file):
 		if l == "": continue
 		l=re.sub('^ *','',l) ## remove space at the beginning
 		l=re.sub('\ +',' ',l) ## squeeze
+		if l == "": continue
 		label= l.split(' ')[0]
 		type= l.split(' ')[1]
 		R={}
 		R['label']= label
 		R['type'] = type
 
+		if label == 'include':
+			tmp = ReadSFDB(type)
+			#remove from L all the key with the same label as in tmp
+			labels = set([])
+			new = []
+			for key in tmp:
+				labels.add( key['label'])
+			for key in L:
+				if key['label'] not in labels:
+					new.append( key ) 
+			# merge L and tmp
+			L = new[:]
+
 		if type == 'pteta':
 			pt1  = float ( l.split(' ')[2] )
 			pt2  = float ( l.split(' ')[3] )
-			eta1 = float ( l.split(' ')[3] )
-			eta2 = float ( l.split(' ')[4] )
-			sf   = float ( l.split(' ')[5] )
-			err  = float ( l.split(' ')[6] )
+			eta1 = float ( l.split(' ')[4] )
+			eta2 = float ( l.split(' ')[5] )
+			sf   = float ( l.split(' ')[6] )
+			err  = float ( l.split(' ')[7] )
 			R['pt1']=pt1
 			R['pt2']=pt2
 			R['eta1']=eta1
 			R['eta2']=eta2
+		elif type == 'spline':
+			pt = float( l.split(' ')[2])
+			sf   = float ( l.split(' ')[3] )
+			err  = float ( l.split(' ')[4] )
+			R['pt']=pt
+
+		elif type == 'th2f':
+			R['filename'] = l.split(' ' )[2]
+			if len(l.split(' ')) >= 4:
+				R['veto'] = l.split(' ' )[3].lower()
+			else: R['veto'] = ''
+			sf=0.0 ## ignored
+			err=0.0 ## ignored
 
 		elif type == 'base':
 			sf  = float ( l.split(' ') [2] )
 			err = float ( l.split(' ') [3] )
+		elif type == 'csv':
+			R['filename'] = l.split(' ' )[2]
+			sf=0.0 ## ignored
+			err=0.0 ## ignored
 		else:
 			print "type",type,"not supported in the sf database"
 		R['sf'] =sf

@@ -28,6 +28,10 @@ fast:
 	$(MAKE) libChargedHiggs.so
 	$(MAKE) libChargedHiggs.0.so
 
+.PHONY: core
+core:
+	cd ../NeroProducer/Core && $(MAKE) 
+
 # check if CMSSW is defined
 ifndef CMSSW_BASE
 $(info No CMSSSW !!!!)

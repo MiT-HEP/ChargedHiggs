@@ -30,10 +30,11 @@ using namespace std;
 #include "RooAddPdf.h"
 #include "RooHistPdf.h"
 #include "RooFitResult.h"
+#include "RooExtendPdf.h"
 
 class PurityFit{
     protected:
-        float fit_specific( TH1* h, TH1* sig, TH1* bkg, 
+        float fit_specific( const TH1* h, const TH1* sig, const TH1* bkg, 
             string name, // unique name of the result
             string outname="" , // output file name, where to save results
             map<string,float> *pars	=NULL // to gather additional params

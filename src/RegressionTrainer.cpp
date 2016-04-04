@@ -45,9 +45,6 @@ int RegressionTrainer::analyze(Event*e, string systname)
     SetTreeVar("MetGEN",e->GetMet() .gen ) ;
 
 
-    AddVariable("etaj1",'F',0,6500);
-    AddVariable("phij1",'F',-5,5);
-
     SetTreeVar("NJets",e->Njets());
     SetTreeVar("NCJets",e->NcentralJets());
     SetTreeVar("etat1",t1->Eta());
@@ -98,9 +95,7 @@ void RegressionTrainer::Init(){
     if(VERBOSE>0) cout<<"[RegressionTrainer]::[Init]::[DEBUG]::[1] AddVariables "<<endl; 
    
   
-    Branch("regression_tree","MetGEN",'F');
-    factory_->AddTarget( "MetGEN" ); 
-
+    AddVariable("MetGEN",'I',0,6500);    
 
     AddVariable("NJets",'I',0,10);    
     AddVariable("NCJets",'I',0,10);    
@@ -119,6 +114,8 @@ void RegressionTrainer::Init(){
     Branch("regression_tree","sig",'I');
     // tell tmva about weight
     Branch("regression_tree","weight",'D');
+
+    if(train) factory_->AddTarget( "MetGEN" ); 
     if(train)factory_->SetWeightExpression("weight");
 
 }

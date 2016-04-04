@@ -35,6 +35,7 @@ def getJson(fname):
     return json.loads( jstring )
 
 def applyJson(obj,fname):
+    if opts.verbose: print "-> Apply JSON '" + fname + "' to objet '"+ obj.name() + "'" 
     goodlumis = getJson( fname )
     
     for run in goodlumis.keys():
@@ -130,6 +131,8 @@ if 'pileup' in cfg and cfg['pileup'] != '':
 	labels= [ x for x in mcdb ]
 	labels.extend( ['pileup','pileupUp','pileupDown'] )
 	for label in labels:
+		if label[-1] == '/':
+			label = label[:-1]
 		if RD:
 			for idx in range(0,len(cfg['pileupRun'])-1):
 				runMin = cfg['pileupRun'][idx]
@@ -148,14 +151,23 @@ if 'pileup' in cfg and cfg['pileup'] != '':
 				
 		else:
 			name = "PU-"+ label
+			name2=""
 			h = puFile.Get(name)
+			if h == None and 'pileup' in label:
+				name2= re.sub("pileupUp","target_Up",name)
+				name2= re.sub("pileupDown","target_Down",name2)
+				name2= re.sub("pileup","target",name2)
+				h= puFile.Get( name2)
+
 			if h == None :
-				print "[Loop.py]::[ERROR]: unable to get PU histo",name, "from file",cfg['pileup']
-			if name == "PU-pileup":
+				print "[Loop.py]::[ERROR]: unable to get PU histo '" + name +"' from file",cfg['pileup']
+				if name2 != "" : print "[Loop.py]::[ERROR]: nor '"+name2+"'"
+
+			if name == "PU-pileup" or name=="PU-target":
 				loop.AddTarget(h)
-			elif name == "PU-pileupUp":
+			elif name == "PU-pileupUp" or name == "PU-target_Up":
 				loop.AddTarget(h,'Up')
-			elif name == "PU-pileupDown":
+			elif name == "PU-pileupDown" or name == "PU-target_Down":
 				loop.AddTarget(h,'Down')
 			else:
 				loop.AddPuMC( label, h )
@@ -169,9 +181,20 @@ for key in sfdb:
 	if key['type'] == 'pteta':
 		if opts.verbose: print label,key['type'],  key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['sf'],key['err'] 
 		loop.AddPtEtaSF(label, key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['sf'],key['err'])
+	if key['type'] == 'th2f':
+		if opts.verbose: print label,key['type'],  key['filename'], key['veto']
+		loop.AddTh2fSF(label, key['filename'])
 	if key['type'] == 'base':
 		if opts.verbose: print label,key['type'], key['sf'],key['err'] 
 		loop.AddSF(label, key['sf'], key['err'])
+	if key['type'] == 'spline':
+		if opts.verbose: print label,key['type'], key['pt'], key['sf'],key['err'] 
+		loop.AddSplineSF(label,key['pt'],key['sf'],key['err'])
+	if key['type'] == 'csv':
+		loop.AddCSVSF(label, key['filename'])
+	if 'veto' in key:
+		if opts.verbose: print "  * setting veto for",label
+		sf = loop.GetSF(label).SetVeto()
 if opts.verbose:print "#############################"
 
 for smear in cfg['Smear']:
@@ -184,7 +207,21 @@ for smear in cfg['Smear']:
 		if opts.verbose: print "-> Adding smear from name '"+smear+"'"
 		loop.AddSmear(smear)
 
-
+for corr in cfg['Correct']:
+	if opts.verbose: print "-> constructing corrector",corr
+	if corr=='NONE' : continue
+	c = r.__getattr__(corr)() 
+	if corr in cfg['config']:
+		for key in cfg['config'][corr]:
+			if opts.verbose:print '  - config keys', key
+			check = key.split('=')[0].split('(')[0].split('.')[0]
+			try:
+				getattr(c, check)
+			except AttributeError:
+				print "Corrector",corr,"seems not to have attribute",check
+			exec( "c."+key ) 
+	c.Init()
+	loop.AddCorrector(c)
 
 ## add analysis
 for analysis in cfg['Analysis']:
@@ -199,23 +236,33 @@ for analysis in cfg['Analysis']:
 		#if not hasattr( analyzer, check):
 		if check.startswith('@'):
 			## global function
-			check = check[1:]
-			check = re.sub('!',',',check)
-			check = re.sub("$OBJ","analyzer",check)
-			exec( check ) 
+			exe = key[1:]
+			exe = re.sub('!',',',exe)
+			exe = re.sub("\$OBJ","analyzer",exe)
+			exec( exe ) 
 		else:
 			try: 
 				getattr(analyzer, check)
 			except AttributeError:
-				print "WARNING Analyzer",analysis,"do not have attribute",check
+				try: 
+					check= check.split('.')[0]
+					getattr(analyzer, check)
+				except AttributeError:
+					print "WARNING Analyzer",analysis,"do not have attribute",check,"key=",key
 			##
 			exec('analyzer.'+key)
 	loop.AddAnalysis(analyzer)
 
 if opts.verbose: print "-> Init Analysis"
 loop.InitAnalysis()
-###
 
+### Init Dumper
+if opts.verbose: print "-> Init Dumper"
+if 'DumpDir' in cfg: loop.SetDumpDir(cfg['DumpDir'])
+if 'Dump' in cfg: loop.ActivateDump(cfg['Dump'])
+
+
+### Loop
 if opts.verbose: print "-> Loop"
 
 loop.Loop()

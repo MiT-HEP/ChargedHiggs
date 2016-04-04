@@ -21,6 +21,7 @@ class TmvaTrainer : virtual public AnalysisBase
         TmvaTrainer();
         ~TmvaTrainer();
         virtual int analyze(Event*,string systname);
+        int analyzeInvIso(Event*e,string systname);
         virtual void Init();
         virtual void End();
         virtual const string name(){return "TmvaTrainer";}

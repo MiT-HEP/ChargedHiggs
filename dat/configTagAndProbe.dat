@@ -1,0 +1,23 @@
+#
+include=dat/config.dat
+
+Files=/store/user/amarini/Nero/%(tag)s/SingleMuon
+addfiles=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+
+####
+
+Output=TagAndProbe.root
+## Preselection:1,Preselection:2
+Analysis=JsonAnalysis,TagAndProbe
+
+###
+# additional JSON FILE for Data selection
+
+# Smearer
+#Smear=JER,JES,@SmearBase
+#Smear=NONE,JER,JES
+Smear=NONE
+Correct=MetPhiCorrector
+config=MitPhiCorrector|fileName="aux/MetPhi.root"
+
+config=TagAndProbe|AddLabel("DY"),AddLabel("HplusToTauNu")
