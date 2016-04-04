@@ -13,16 +13,20 @@ class  SF : public Named{
     // Base class for implement SF 
     // this will be used by the Weight class to 
     // change the event weight 
+    protected:
+        int veto_{0}; // flip to veto ; make sure is set even if constructor is not called
     public:
-        SF(){ syst=0; sf=1.0; err=0; label = "";}
+        SF(){ syst=0; sf=1.0; err=0; label = ""; veto_=0;}
         ~SF(){}
         string label;
         double sf;
         double err;
         int syst;
         //
-        virtual double get(){ return sf + err*syst ; }
+        virtual double get(){ if (veto_) return 1.0 - (sf + err*syst); else return sf + err*syst ; }
         const string name() const {return "SF";}
+        virtual void SetVeto(int x=1){veto_=x;}
+        // TODO print
 };
 
 class SF_Asymm : public SF

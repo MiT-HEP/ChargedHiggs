@@ -182,7 +182,7 @@ for key in sfdb:
 		if opts.verbose: print label,key['type'],  key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['sf'],key['err'] 
 		loop.AddPtEtaSF(label, key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['sf'],key['err'])
 	if key['type'] == 'th2f':
-		if opts.verbose: print label,key['type'],  key['filename']
+		if opts.verbose: print label,key['type'],  key['filename'], key['veto']
 		loop.AddTh2fSF(label, key['filename'])
 	if key['type'] == 'base':
 		if opts.verbose: print label,key['type'], key['sf'],key['err'] 
@@ -192,6 +192,9 @@ for key in sfdb:
 		loop.AddSplineSF(label,key['pt'],key['sf'],key['err'])
 	if key['type'] == 'csv':
 		loop.AddCSVSF(label, key['filename'])
+	if 'veto' in key:
+		if opts.verbose: print "  * setting veto for",label
+		sf = loop.GetSF(label).SetVeto()
 if opts.verbose:print "#############################"
 
 for smear in cfg['Smear']:

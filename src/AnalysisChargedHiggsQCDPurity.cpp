@@ -9,6 +9,7 @@
 
 void ChargedHiggsQCDPurity::Init()
 {
+    // -- simplified selection
     for ( string& l : AllLabel()  ) 
         for (size_t iBin = -1 ; iBin + 1 < PtBins.size() ; ++iBin )
         {
@@ -26,6 +27,15 @@ void ChargedHiggsQCDPurity::Init()
             //  Used in case of spline reweighting iterations
             Book( dir + HistName(pt, true,  false, "TauPt")+"_"+ l  , ("PtTau "+ l).c_str(),1000,0.,1000.);
             Book( dir + HistName(pt, false, false, "TauPt")+"_"+ l  , ("PtTauIsoInv "+ l).c_str(),1000,0.,1000.);
+            // QG ? Tau 
+            Book( dir + HistName(pt, true , false)+"_Q_" + l  , ("EtMiss Q"+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, false)+"_Q_" + l  , ("EtMissIsoInv Q"+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt, true , false)+"_G_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, false)+"_G_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt, true , false)+"_T_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, false)+"_T_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt, true , false)+"_U_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, false)+"_U_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
         }
     // --- for event not in the PtBins 
     // -- full selection
@@ -43,6 +53,15 @@ void ChargedHiggsQCDPurity::Init()
 
             Book( dir + HistName(pt, false , true, "Upar")+"_"+ l  , ("EtMissParallelIsoInv "+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, false, true, "Uperp")+"_"+ l  , ("EtMissPerpIsoInv "+ l).c_str(),250,0.,500.);
+            // QG ? 
+            Book( dir + HistName(pt, true , true )+"_Q_" + l  , ("EtMiss Q"+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, true )+"_Q_" + l  , ("EtMissIsoInv Q"+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt, true , true )+"_G_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, true )+"_G_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt, true , true )+"_T_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, true )+"_T_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt, true , true )+"_U_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt, false, true )+"_U_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
 
         }
         // I don't need to split it by pt
@@ -82,6 +101,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
     // * put a limit on the TauInv sideband ? 3.0 -20 GeV
 
+    // check minimal selection: Three bjets
     if ( not direct.passAllUpTo(ChargedHiggsTauNu::ThreeJets)
          and not inverse.passAllUpTo(ChargedHiggsTauNu::ThreeJets)
        ) return EVENT_NOT_USED;
@@ -95,6 +115,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     if (t != NULL and passPrescale) // direct
     {
         float pt = t->Pt();
+        int flavor= t->Rematch(e);
 
         if (pt  > 8000 or pt <0 )  Log(__FUNCTION__,"INFO",Form("strange event : tau Pt=%.0f",pt));
 
@@ -106,11 +127,20 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         Fill( dir+hist +"_"+label,systname, Uperp(e,t), e->weight() );
         hist = HistName(pt, true, false, "TauPt") ;
         Fill( dir+hist +"_"+label,systname, t->Pt(), e->weight() );
+
+        hist = HistName(pt, true, false) ;
+        if (flavor == 15) hist += "_T";
+        else if (flavor == 21 ) hist+="_G";
+        else if (flavor <5 and flavor != 0 ) hist+="_Q";
+        else hist += "_U";
+        Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+
     }
 
     if (tInv != NULL and passPrescale) // inv iso
     {
         float pt = tInv->Pt();
+        int flavor= tInv->Rematch(e);
         if (pt  > 8000 or pt <0 )  Log(__FUNCTION__,"INFO",Form("strange event : tau Pt=%.0f",pt));
         string hist = HistName(pt,false,false);
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
@@ -120,6 +150,13 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight() );
         hist = HistName(pt, false, false, "TauPt") ;
         Fill( dir+hist +"_"+label,systname, tInv->Pt(), e->weight() );
+
+        hist = HistName(pt, false, false) ;
+        if (flavor == 15) hist += "_T";
+        else if (flavor == 21 ) hist+="_G";
+        else if (flavor <5 and flavor != 0 ) hist+="_Q";
+        else hist += "_U";
+        Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
     }
 
     // -------------------------- FULL SELECTION -----------------------------------------------
@@ -130,6 +167,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG", "is tau pass full selection");
             #endif
             float pt = t->Pt();
+            int flavor= t->Rematch(e);
             string hist = HistName(pt,true,true);  
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
 
@@ -140,6 +178,13 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill( dir+hist +"_"+label,systname, Upar(e,t), e->weight() );
             hist = HistName(pt,true, true,"Upar");
             Fill( dir+hist +"_"+label,systname, Uperp(e,t), e->weight() );
+
+            hist = HistName(pt, true,true) ;
+            if (flavor == 15) hist += "_T";
+            else if (flavor == 21 ) hist+="_G";
+            else if (flavor <5 and flavor != 0 ) hist+="_Q";
+            else hist += "_U";
+            Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
     }
 
     if (tInv != NULL and inverse.passAll()) {
@@ -159,6 +204,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         if (e->weight() == 0 )Log(__FUNCTION__,"WARNING","event weight after SF is 0 ");
 
             float pt = tInv->Pt();                                                   
+            int flavor= tInv->Rematch(e);
             string hist = HistName(pt,false,true);                                   
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
 
@@ -169,6 +215,13 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill( dir+hist +"_"+label,systname, Upar(e,tInv), e->weight() );
             hist = HistName(pt,false, true,"Upar");
             Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight() );
+
+            hist = HistName(pt, false, true) ;
+            if (flavor == 15) hist += "_T";
+            else if (flavor == 21 ) hist+="_G";
+            else if (flavor <5 and flavor != 0 ) hist+="_Q";
+            else hist += "_U";
+            Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
     }
 
 

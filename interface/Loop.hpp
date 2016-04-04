@@ -106,6 +106,8 @@ class Looper{
         inline void AddTarget( TH1*h, int runMin=-1, int runMax =-1,double lumi=-1){ event_ -> GetWeight() -> AddTarget(h,runMin,runMax,lumi);}
         inline void AddTarget( TH1*h, string systName, int runMin=-1, int runMax =-1,double lumi=-1){ event_ ->GetWeight() -> AddTarget(h,systName, runMin,runMax);}
         inline void AddPuMC( string label, TH1*h, int runMin=-1, int runMax =-1){ event_ ->GetWeight() -> AddMC(  label, h, runMin, runMax ); }
+        // use to set veto, ecc... in general don't use it directly
+        inline SF* GetSF(string label){ return event_->GetWeight() -> GetSF(label) ;}
 
 
 };

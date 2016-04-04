@@ -45,6 +45,7 @@ class Weight{
     string LoadMC( string label) ;	 // return "" if failed otherwise dir
     string LoadMCbyDir( string dir ) ;	 // return "" if failed otherwise label
 
+    SF* GetSF(string label){ if (sf_db.find(label) == sf_db.end() ) return NULL; return sf_db[label]; } // avoid to create label if not there
     void AddSF( string label, double sf, double err);
     void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err);
     void AddTh2fSF(string label, string filename);

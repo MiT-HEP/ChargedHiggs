@@ -113,7 +113,7 @@ for iEntry in range(0,tree.GetEntries()):
 	name = HistName("HLTNone", tree.isMC, tree.probe.Pt(), tree.passTriggerNone) ###
 	hists[name].Fill(tree.mass)
 
-	if not tree.passTrigger: continue
+	#if not tree.passTrigger: continue
 	name = HistName("Iso", tree.isMC, tree.probe.Pt(), tree.passIso) ###
 	hists[name].Fill(tree.mass)
 
@@ -150,7 +150,8 @@ if opts.plot!="":
 		#bkg = ROOT.RooCMSShape("cms-shape","cms-shape",x,Balpha,Bbeta,Bgamma,Bpeak)
 		bkg = ROOT.RooBernsteinFast(2)("bern","bern",x,ROOT.RooArgList(Bbern0,Bbern1,Bbern2))
 		# RooVoigtianShape::RooVoigtianShape(const char* name, const char* title, RooAbsReal& _m, RooAbsReal& _m0, RooAbsReal& _sigma, RooAbsReal& _alpha, RooAbsReal& _n, RooAbsReal& _width, bool doFast) =>
-		sig = ROOT.RooVoigtianShape("voigtian","voigtian", x,Zmass, Ssigma, Salpha,Sn,Zwidth,True)
+		#sig = ROOT.RooVoigtianShape("voigtian","voigtian", x,Zmass, Ssigma, Salpha,Sn,Zwidth,True)
+		sig = ROOT.RooGaussian("gaussian","gaussian", x,Zmass, Ssigma)
 		f.setVal(.9)
 		model = ROOT.RooAddPdf("model","model",ROOT.RooArgList(sig,bkg), ROOT.RooArgList(f))
 		model.fitTo(data,ROOT.RooFit.Save(),ROOT.RooFit.PrintEvalErrors(-1),ROOT.RooFit.PrintLevel(-1),ROOT.RooFit.Warnings(0))

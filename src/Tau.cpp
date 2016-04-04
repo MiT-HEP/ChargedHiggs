@@ -31,6 +31,43 @@ int Tau::IsTauInvIso() const {
     if ( Pt() < ptcut_ ) return 0;
     return 1;
 }
+
+#include "interface/Event.hpp"
+
+int Tau::Rematch(Event *e,float dR){
+    if (rematch_ >=0 ) return rematch_; // cache
+
+    GenParticle * gp =NULL;
+    int ig=0;
+    bool isTau=false;
+    bool isQuark=false;
+    bool isGluon=false;
+    float hardestPt=-1.;
+    bool isHardestQ = false;
+
+    for (gp = e->GetGenParticle(ig) ; gp != NULL ; gp=e->GetGenParticle(++ig))
+    {
+        if  (gp->DeltaR(this) >dR) continue;
+        if  ( abs(gp->GetPdgId()) == 15 ) isTau = true; // I don't care the status
+        if ( abs(gp->GetPdgId() ) <= 4 )
+            {
+            isGluon=true;
+            if (hardestPt < gp->Pt() ) { hardestPt=gp->Pt(); isHardestQ=false;}
+            }
+        if ( abs(gp->GetPdgId() ) <= 4 )
+            {
+            isQuark=true;
+            if (hardestPt < gp->Pt() ) { hardestPt=gp->Pt(); isHardestQ=true;}
+            }
+    }
+    if (isTau) rematch_=15;
+    //the additional check isQuark, prevent the default value on isHardest
+    if (rematch_ <0 and isQuark and isHardestQ) rematch_=1;
+    if (rematch_ <0 and isGluon and not isHardestQ) rematch_=1;
+    // no match
+    if (rematch_ <0 ) rematch_=0;
+    return rematch_;
+}
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

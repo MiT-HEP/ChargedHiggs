@@ -346,6 +346,26 @@ GenParticle * Event::GetGenParticle( int iGenPar )
     return (iGenPar >= 0 && iGenPar < genparticles_.size() ? genparticles_.at(iGenPar) : NULL);
 }
 
+GenParticle * Event::GetGenStable( int iGenPar ,int pdgid,float aeta) 
+{  
+    // status 1, electrons
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<genparticles_.size() ;++i)
+    {
+        GenParticle *gp = genparticles_[i];
+        if (not gp->IsPromptFinalState()  ) continue;
+        if ( abs(gp->GetPdgId()) != pdgid)  continue;
+        if ( fabs(gp->Eta() ) > aeta) continue;
+        valid.push_back(pair<float,int>(gp->Pt(),i)); 
+    }
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iGenPar  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return genparticles_[ valid[iGenPar].second];
+}
+
 Photon * Event::GetPhoton( int iPho ) 
 {     
     vector<pair<float,int> > valid; // pt, idx

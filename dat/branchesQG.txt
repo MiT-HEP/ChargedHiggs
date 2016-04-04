@@ -4,22 +4,13 @@ jetUnc
 jetBdiscr
 jetSelBits
 jetQGL
+## QGL Variables
+jetQgl*
 ### Leptons
 lepP4
 lepIso
 lepPdgId
 lepSelBits
-### TAU
-tauP4
-#tauId
-tauQ
-tauIso
-tauSelBits
-tau*
-### MET
-metP4
-metPt*
-metPuppi
 ### EVENT
 isRealData
 rho
@@ -33,13 +24,6 @@ mcWeight
 triggerFired
 triggerTaus
 triggerLeps
-triggerNoneTaus
-## GEN
-metP4_GEN
-#
-genP4*
-genPdgId
-genFlags
 ## JET
 jetFlavour
 jetMatchedParton*

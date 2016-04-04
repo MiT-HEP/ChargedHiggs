@@ -5,6 +5,8 @@
 #include "interface/GenParticle.hpp"
 #include "interface/Trigger.hpp"
 
+class Event;
+
 class Tau: virtual public Object,
     virtual public Lepton,
     virtual public Trigger
@@ -12,6 +14,7 @@ class Tau: virtual public Object,
     float etacut_; 
     bool doEleRej_;
     bool doMuRej_;
+    int rematch_ {-1};
 
 
     public:
@@ -30,6 +33,12 @@ class Tau: virtual public Object,
     virtual int IsTauInvIso() const ;
     inline int IsObject() const override{ return IsTau(); }
 
+    // Return 15 = tau, 21 = Gluon, 1-4 = UDSC (maybe only 1) 
+    // 0 no match
+    int Rematch(Event *e,float dR=0.4);
+
+    // this one uses the one written in the ntuples.
+    // decommission ? 
     virtual bool IsMatch( ) { if (match >= 0) return true; else return false;}
 
     virtual void clearSyst(){

@@ -9,19 +9,16 @@
 class Logger
 {
 private:
-	Logger(){};
-	Logger(Logger const &) = delete;
-	void operator=(Logger const&)=delete;
+	Logger(){}; // Singleton
+	Logger(Logger const &) = delete; // Singleton
+	void operator=(Logger const&)=delete; // Singleton
+
+    map<string,int> counter_;
 public:
-	~Logger(){};
-	static Logger & getInstance(){  static Logger l ; return l;}
+	~Logger(){}; // Singleton
+	static Logger & getInstance(){  static Logger l ; return l;} // Singleton
 
-	//void Log(AnalysisBase*a,const string& function, const string & level, const string& message){
-	//    cout <<"["<<a->name()
-	//        <<"]::["<<function <<"]::["<<level<<"]: "
-	//        <<message<<endl;
-	//}
-
+    // ---
     void Log(Named*a ,const string & function, const string &level, const string & message)
     {
         return Log(a->name(), function,level,message);
@@ -32,6 +29,8 @@ public:
 			<<"]::["<<function <<"]::["<<level<<"]: "
 			<<message<<endl;
 	}
+
+    void LogN( const string & name, const string& function, const string & level, const string & message,int N);
 };
 
 #endif

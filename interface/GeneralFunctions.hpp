@@ -5,6 +5,11 @@
     #define NULL 0
 #endif
 
+#include <vector>
+#include <string>
+
+class TLorentzVector;
+
 namespace ChargedHiggs{
     // ---
     float deltaPhi(const float phi1,const float phi2);
@@ -14,7 +19,15 @@ namespace ChargedHiggs{
 
     float mt(const float pt1, const float pt2, const float phi1, const float phi2);
 
+    double CosThetaCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS=13) ;
+};
 
+namespace Binning{
+    // can I template this ? 
+    // bins, find the bin, return i if in [i,i+1)
+    int findBin(const std::vector<float> &v, float x);
+    // return the formmatted string "bin0_bin1"
+    std::string findBinStr(const std::vector<float> &v, float x,const char* precision="%.0f_%.0f");
 };
 
 #endif
