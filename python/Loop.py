@@ -68,8 +68,13 @@ else: ## it's likely that this will work
 if opts.verbose: print "DONE",
 ################ CREATING LOOPER ##########
 from ROOT import Looper
+from ROOT import LoaderFactory
 
 loop = Looper()
+
+if opts.verbose: print "-> InitLoader Nero"
+loop.InitLoader("LoadNero");
+
 ################ LOAD CONFIGURATION ########
 from ParseDat import *
 cfg = ParseDat(opts.dat)
@@ -83,6 +88,7 @@ for file in cfg['Files']:
     for f in FindEOS(file):
 	if opts.verbose: print "Adding file: '"+f+"'"
 	loop.AddToChain(f)
+
 
 if opts.verbose: print "-> InitTree"
 loop.InitTree();

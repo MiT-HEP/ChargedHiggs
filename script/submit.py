@@ -119,7 +119,7 @@ def PrintSummary(dir, doPrint=True):
 	if doPrint:
 		Print_(done,run,fail,pend)
 
-	return ( done, run, fail)
+	return ( done, run, fail, pend)
 
 def PrintHadhoop(dir, doPrint = True):
 	log = glob ( dir + "/test.*.log" )
@@ -164,12 +164,14 @@ if opts.status:
 	exit(0)
 
 if opts.resubmit:
-	( done, run, fail) = PrintSummary(opts.dir,False)
+	( done, run, fail, pend) = PrintSummary(opts.dir,False)
 
 	if opts.joblist == '' or opts.joblist.lower() == 'fail':
 		joblist = fail
-	elif opts.joblist =='run':
+	elif opts.joblist.lower() =='run':
 		joblist = run
+	elif opts.joblist.lower() == 'pend' :
+		joblist = pend
 	else:
 		joblist = opts.joblist.split(',')
 
