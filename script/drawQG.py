@@ -317,6 +317,7 @@ for var in jetVars:
 	for ext in opts.exts.split(','):
 		plot.SaveAs( opts.plot+ "/" + outname +"." + ext)
 
+print "-- DONE --"
 exit(0)
 
 
