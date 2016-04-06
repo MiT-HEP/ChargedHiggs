@@ -7,6 +7,15 @@ void QGAnalysis::SetLeptonCuts(Lepton *l){
     l->SetIsoRelCut(0.15);
     l->SetEtaCut(2.4);
 }
+
+void QGAnalysis::SetJetCuts(Jet *j){
+    j->SetBCut(0.800);
+    j->SetEtaCut(4.7); 
+    j->SetEtaCutCentral(2.4);
+    j->SetPtCut(30);
+    j->SetPuIdCut(0.5);
+}
+
 void QGAnalysis::Init(){
     if (doMM) InitMM();
     if (doJJ) InitJJ();

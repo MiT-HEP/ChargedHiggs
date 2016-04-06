@@ -15,15 +15,17 @@ class Jet : virtual public Object
     float etacut_ ; // ** eta cut on the accepted jets
     float betacut_ ; // ** eta cut on the accepted bjets
     float bcut_; /// ** bcut on the bJets discr
-    float puidcut_;
     float etacutcentral_;
     float  qgl_ ; // To Set
+    float puidcut_{-100};
+    float puId;
 
     // qgl vars
     std::map<std::string,float> qglVars_;
 
     public:
 
+    void SetPuIdCut(float x) {puidcut_=x;}
     void SetPtCut(float x){ptcut_= x;}
     void SetEtaCut(float x){etacut_ = x;}
     void SetEtaCutCentral( float x) {etacutcentral_=x;}
@@ -33,6 +35,7 @@ class Jet : virtual public Object
             std::transform(name.begin(),name.end(),name.begin(),::tolower ) ;
             qglVars_[name] = value;
             };
+    void SetPuId(float x) {puId=x;}
 
 
     Jet() ; 
@@ -46,7 +49,6 @@ class Jet : virtual public Object
     float bunc; // TOFILL
     int bsyst ;
 
-    float puId;
 
     //Gen-level info
     int pdgId;
@@ -68,6 +70,7 @@ class Jet : virtual public Object
     inline int IsJet() const { if (not isValid) return 0 ; 
         if( Pt() < ptcut_ ) return 0; 
         if( fabs(Eta()) >= etacut_) return 0;
+        if( puidcut_ > -100 and puId < puidcut_ ) return 0;
         return 1;
     }
 

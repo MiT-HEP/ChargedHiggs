@@ -51,13 +51,13 @@ class Object
 
         // ---
         // copy constructor
-        Object( const Object &x ) { p4 = x.p4 ; } 
+        Object( const Object &x ) { p4 = x.p4 ; p4NoCorr=x.p4NoCorr;} 
         //assignment
-        Object& operator=(const Object &x) { p4 = x.p4 ; return *this;} 
-        Object& operator+=(const Object &x) { p4 += x.p4 ; return *this;} 
+        Object& operator=(const Object &x) { p4 = x.p4 ; p4NoCorr=x.p4NoCorr; return *this;} 
+        Object& operator+=(const Object &x) { p4 += x.p4 ; p4NoCorr+= x.p4NoCorr; return *this;} 
 
         // binary 
-        const Object operator+(const Object &x) const { Object y(*this); y+=x; return y;} ;
+        const Object operator+(const Object &x) const { Object y(*this); y+=x;return y;} ;
 };
 
 #endif

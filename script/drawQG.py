@@ -219,6 +219,7 @@ if fIn== None:
 for var in jetVars:
  for ptbin in range(0, len(ptBins)-1):
   for etabin in range(0, len(etaBins)-1):
+    try:
 	# fetch histograms
 	plot=Plot()
         for t in jetTypes:
@@ -239,6 +240,7 @@ for var in jetVars:
 	plot["all"] = None
 
         for t in jetTypes:
+	  #if t=='U' and 'DiJet' in opts.base: continue ### FIXME, ugly removal
 	  for mc in opts.mc.split(","):
 	      name= "_".join([var,t, "pt%.0f"%(ptBins[ptbin]) , "%.0f"%(ptBins[ptbin+1]), "eta%.1f"%(etaBins[etabin]),"%.1f"%(etaBins[etabin+1]), what ])
 	      plot[name].SetLineColor(ROOT.kBlack)
@@ -274,6 +276,7 @@ for var in jetVars:
 
 	## two loops, because I cannot scale the THStack, I'll scale the histogram before adding them to the THStack
         for t in jetTypes:
+	  #if t=='U' and 'DiJet' in opts.base: continue ### FIXME, ugly removal
 	  for mc in opts.mc.split(","):
 	      name= "_".join([var,t, "pt%.0f"%(ptBins[ptbin]) , "%.0f"%(ptBins[ptbin+1]), "eta%.1f"%(etaBins[etabin]),"%.1f"%(etaBins[etabin+1]), what ])
 	      plot[name].Scale(ndata/nmc)
@@ -316,6 +319,9 @@ for var in jetVars:
 
 	for ext in opts.exts.split(','):
 		plot.SaveAs( opts.plot+ "/" + outname +"." + ext)
+    except:
+	    print "Caught Exception. Try to continue"
+	    pass
 
 print "-- DONE --"
 exit(0)
