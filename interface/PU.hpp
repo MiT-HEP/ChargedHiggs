@@ -50,6 +50,8 @@ class PU : public Named
             return num/den;
             };
 
+    string target="target";
+
     public:
     PU();
     int syst;
@@ -58,6 +60,8 @@ class PU : public Named
 
     void clear();
     void clearSyst(){ syst=0;}
+    void clearTarget(){ target="target";}
+    void SetTarget(string name){ target = name; }
     void AddTarget( TH1*, int runMin=-1, int runMax =-1,double lumi=-1);
     void AddTarget( TH1*, string systName="Up",int runMin=-1, int runMax =-1,double lumi=-1);
     void AddMC( string label, TH1*, int runMin=-1, int runMax =-1);

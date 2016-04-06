@@ -124,6 +124,7 @@ void Looper::Loop()
 						event_->validate(); // validate the objects
 						// each analysis step will apply the SF accordingly to the object it is using
 						event_ -> GetWeight() -> clearSF() ;
+						event_ -> GetWeight() -> clearPU() ; // for target
 						if ( a->doAnalyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
 					}
 				}

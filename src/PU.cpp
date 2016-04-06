@@ -73,9 +73,9 @@ try{
         return 1;
     }
 
-    string targetName = "target";
-    if (syst>0) targetName = "target_Up";
-    if (syst<0) targetName = "target_Down";
+    string targetName = target;
+    if (syst>0) targetName = target+"_Up";
+    if (syst<0) targetName = target+"_Down";
 
 #ifdef VERBOSE
     LogMe("DEBUG","Target is ='"+targetName+"'");
@@ -83,6 +83,7 @@ try{
 
     // This function is very slow. Let's cache a bit.
     static int lastSyst=-100; //CACHE
+    static string lastTargetName=target; //CACHE
     static vector<PUunit*>  *lastTarget=NULL; //CACHE
     static vector<PUunit*>  *lastMC=NULL; //CACHE
     static string lastMClabel=""; //CACHE
@@ -91,7 +92,7 @@ try{
     vector<PUunit*> *currentMC=NULL;
 
     // CHECK IF CHACHED IS OK
-    if (lastSyst == syst) {
+    if (lastSyst == syst and lastTargetName == target) {
         currentTarget=lastTarget;
         #ifdef VERBOSE
             LogMe("DEBUG",Form("Using lastTarget address=%lx", lastTarget)  );
