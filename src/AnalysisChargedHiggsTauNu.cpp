@@ -146,7 +146,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
     //Uncorr Pt does not include met phi corrections, and Tau Nu regression
     if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
 
-    if ( e->GetMet().PtUncorr() >= 130 ) cut.SetCutBit(Met);
+    if ( e->GetMet().Pt() >= 130 ) cut.SetCutBit(Met); // or PtUncorr
 
     double RbbMin= e->RbbMin(3,t);
     double RCollMin= e-> RCollMin(3,t);

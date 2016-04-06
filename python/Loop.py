@@ -72,8 +72,6 @@ from ROOT import LoaderFactory
 
 loop = Looper()
 
-if opts.verbose: print "-> InitLoader Nero"
-loop.InitLoader("LoadNero");
 
 ################ LOAD CONFIGURATION ########
 from ParseDat import *
@@ -82,6 +80,9 @@ cfg = ParseDat(opts.dat)
 if opts.verbose:
 	PrintDat(cfg)
 
+################ Loader ####
+if opts.verbose: print "-> Init Loader:",cfg['Loader']
+loop.InitLoader(cfg['Loader']);
 ### configurable
 
 for file in cfg['Files']:

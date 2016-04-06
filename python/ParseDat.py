@@ -19,6 +19,7 @@ def FindBasePath(verbose=False):
 def Default():
 	config = {}
 	config['config'] = {}
+	config['Loader'] = "LoadNero"
 	return config;
 
 
@@ -91,7 +92,7 @@ def ParseDat(name):
 			## make sure that is well formatted
 			subdict[value.split('|')[0] ]= StringKey( value.split('|')[1] )
 		######### STRING ###########
-		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' or key =='DumpDir' :
+		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' or key =='DumpDir' or key == 'Loader':
 			config[key] = StringKey(value)
 
 		####### V STRING ##########
@@ -205,6 +206,7 @@ def PrintDat(config):
 def PrintUsage():
 	print '###Configuration file###'
 	print 'include = filename.dat'
+	print 'Loader = LoadNero'
 	print 'Files = file1,file2,file3'
 	print 'addfiles = file4'
 	print 'Output = file'

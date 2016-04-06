@@ -1,6 +1,7 @@
 ##configure Looper
 ##### This file store the configuratino to run all the analysis
 ##### if you want to make a config file that overwrite some changes just create a new one with the line
+##### Loader=LoadNero
 ##### include=dat/config.txt
 ##### Files=....,....,...
 
