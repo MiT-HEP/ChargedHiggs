@@ -68,6 +68,46 @@ class AnalysisBase : public Named
 	//void Log(const string& function, const string& level, const string& message);
 };
 
+// ------------------------- FACTORY -----------------
+class AnalysisCreator;
+class AnalysisFactory{
+    public:
+        static AnalysisFactory& get() { static AnalysisFactory instance; return instance;}
+        void inline registerit(const std::string&classname,AnalysisCreator*creator){
+                std::cout<<"[AnalysisFactory]::[INFO]"<<" Registering "<<classname<<std::endl;
+                table_[classname]=creator;
+                }
+        AnalysisBase*create(const std::string&name);
+    private:
+        AnalysisFactory(){}
+        AnalysisFactory(AnalysisFactory const&)= delete;
+        void operator=(AnalysisFactory const&)= delete;
+        std::map<std::string,AnalysisCreator*>table_;
+};
+
+class AnalysisCreator{
+    public:
+        virtual AnalysisBase * create() = 0;
+        AnalysisCreator(const std::string& classname){ 
+            std::cout<<" called creator const for "<<classname<<std::endl;
+            AnalysisFactory::get() . registerit(classname,this);
+        }
+};
+
+template<typename T>
+class AnalysisCreatorImpl : public AnalysisCreator
+{
+    public:
+        AnalysisCreatorImpl(const std::string&classname) : AnalysisCreator(classname){}
+        AnalysisBase*create() override final { return new T() ; }
+};
+
+//Register macros
+#define REGISTERANALYSIS(classname)\
+    namespace { \
+        AnalysisCreatorImpl<classname> _creator_ (#classname); \
+    };
+// ------------------------------------------------- END FACTORY ----------------------------
 
 #endif
 // Local Variables:

@@ -67,7 +67,7 @@ class LoaderFactory // Singleton
     public:
         static LoaderFactory& get(){ static LoaderFactory instance; return instance; } // singleton
         void inline registerit(const std::string& classname, LoaderCreator* creator){
-            std::cout<<"[LoaderFactory]"<<"::[INFO]"<<"Registering "<<classname<<std::endl;
+            std::cout<<"[LoaderFactory]"<<"::[INFO]"<<" Registering "<<classname<<std::endl;
             table_[classname] = creator;
         }
         Loader* create(const std::string &name ) ;

@@ -80,6 +80,15 @@ void AnalysisBase::SetCuts(Event *e)
     return;
 }
 
+// ---------------------------- FACTORY -----------------------
+AnalysisBase* AnalysisFactory::create(const std::string & name)
+{
+    const auto& i = table_.find(name); 
+    if ( i == table_.end() ) { std::cout<<"[AnalysisFactory]::[ERROR]::Unable to create: "<<name<<std::endl; return (AnalysisBase*)NULL ; }
+    return i -> second -> create();
+}
+// ---------------------- END FACTORY ----------------------------
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

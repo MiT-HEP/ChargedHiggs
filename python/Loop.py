@@ -234,6 +234,7 @@ for corr in cfg['Correct']:
 for analysis in cfg['Analysis']:
 	if opts.verbose: print '-> Adding analysis',analysis
 	classname=analysis.split(':')[0]
+	#analyzer = r.AnalysisFactory.get().create(classname)
 	analyzer = r.__getattr__(classname)()
 	if analysis in cfg['config']:
 	   for key in cfg['config'][analysis]:
