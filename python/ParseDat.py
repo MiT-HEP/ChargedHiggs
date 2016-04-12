@@ -239,7 +239,7 @@ def ReadMCDB(file):
 		R[label] = (dir,entries,xsec)
 	return R
 
-def ReadSFDB(file):
+def ReadSFDB(file,verbose=False):
 	'''read and parse the SFDB file:
 	    \t\t### LABEL type -- -- --- --- 
 	'''
@@ -259,20 +259,29 @@ def ReadSFDB(file):
 		R['label']= label
 		R['type'] = type
 
-		if label == 'include':
+		if label.lower() == 'include':
+			if verbose: print "-> Reading SF from file",type ### DEBUG
 			tmp = ReadSFDB(type)
 			#remove from L all the key with the same label as in tmp
 			labels = set([])
 			new = []
+
 			for key in tmp:
+				## DEBUG
+				if verbose: print " * found key:",key ### DEBUG
 				labels.add( key['label'])
+				new.append(key)
+
 			for key in L:
 				if key['label'] not in labels:
 					new.append( key ) 
+					if verbose: print " * copying key :",key ### DEBUG
+				else:
+					if verbose: print " * overwriting key :",key ### DEBUG
 			# merge L and tmp
 			L = new[:]
 
-		if type == 'pteta':
+		elif type == 'pteta':
 			pt1  = float ( l.split(' ')[2] )
 			pt2  = float ( l.split(' ')[3] )
 			eta1 = float ( l.split(' ')[4] )
@@ -305,7 +314,7 @@ def ReadSFDB(file):
 			sf=0.0 ## ignored
 			err=0.0 ## ignored
 		else:
-			print "type",type,"not supported in the sf database"
+			print "sf",label,"of type",type,"not supported in the sf database"
 		R['sf'] =sf
 		R['err'] =err
 		L.append(R);

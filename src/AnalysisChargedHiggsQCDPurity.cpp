@@ -106,6 +106,11 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
          and not inverse.passAllUpTo(ChargedHiggsTauNu::ThreeJets)
        ) return EVENT_NOT_USED;
 
+    //if ( not direct.passAllUpTo(ChargedHiggsTauNu::OneBjet)
+    //     and not inverse.passAllUpTo(ChargedHiggsTauNu::OneBjet)
+    //   ) return EVENT_NOT_USED; 
+    //LogN(__FUNCTION__,"WARNING","ONE B REQUIRED FOR QCD LOOSE",10);
+
 
     //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection
     bool passPrescale=false;
@@ -191,15 +196,17 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         #ifdef VERBOSE
         if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG","is tauInv full selection");
         #endif
+
+        //const string sf="tauinviso";
+        const string sfname="tauinvisospline";
         // if the SF don't exist go on, but don't fill inconsistent events
-        if( not e->ExistSF("tauinviso") ){
-            static int count = 0 ;
-            if (count++ < 20 )Log(__FUNCTION__,"WARNING","tau inviso SF does not exist" );
+        if( not e->ExistSF(sfname) ){
+            LogN(__FUNCTION__,"WARNING","Tau inviso SF does not exist",10);
             return EVENT_NOT_USED;
         }
 
-        e->SetPtEtaSF("tauinviso",tInv->Pt(),tInv->Eta());
-        e->ApplySF("tauinviso");
+        e->SetPtEtaSF(sfname,tInv->Pt(),tInv->Eta());
+        e->ApplySF(sfname);
 
         if (e->weight() == 0 )Log(__FUNCTION__,"WARNING","event weight after SF is 0 ");
 
