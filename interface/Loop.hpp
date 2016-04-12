@@ -74,7 +74,6 @@ class Looper{
         }
         inline int AddToChain( string name ){ return tree_ -> Add( name.c_str() ) ; }
         inline int AddAnalysis( AnalysisBase* a ) {analysis_ . push_back(a); return 0;}
-        inline int AddAnalysis( const string name ) {analysis_ . push_back( AnalysisFactory::get() . create(name)); return 0;}
         inline int AddSmear(SmearBase *s) { systs_ .push_back(s) ; return 0; }
         int AddSmear(string name);
         inline int AddCorrector(CorrectorBase *c) { correctors_.push_back(c) ; return 0;}
