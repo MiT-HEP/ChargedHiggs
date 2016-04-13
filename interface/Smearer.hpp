@@ -52,6 +52,15 @@ class SmearJer:virtual public SmearBase
 
 };
 
+class SmearSF : virtual public SmearBase
+{
+    string sfname_{""};
+    public:
+        SmearSF() :SmearBase(){ name_= "SF";}
+        SmearSF(string name,string sf) :SmearBase(){ name_= name; sfname_=sf;}
+        virtual int smear(Event *e);
+};
+
 class SmearPu : virtual public SmearBase
 {
     public:

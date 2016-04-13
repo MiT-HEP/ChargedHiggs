@@ -208,7 +208,13 @@ for smear in cfg['Smear']:
 	if smear[0]=='@': 
 		smear=smear[1:]
 		if opts.verbose: print '-> constructing smear',smear
-		smearer = r.__getattr__(smear)()
+		if '(' in smear:## this if can be removed
+			smear = re.sub('!',',',smear) ## put a comma
+			#cmdSmear="smearer="+smear
+			#exec(cmdSmear)
+			smearer=eval("r."+smear)
+		else:
+			smearer = r.__getattr__(smear)()
 		loop.AddSmear(smearer)
 	else:
 		if opts.verbose: print "-> Adding smear from name '"+smear+"'"

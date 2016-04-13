@@ -40,6 +40,17 @@ int SmearPu::smear(Event *e)
 
     return SMEAR_OK;
 }
+
+int SmearSF::smear(Event *e)
+{
+    if( e->IsRealData() ) return SMEAR_NA;
+
+    e -> GetWeight()-> SetSystSF (sfname_,syst_);
+    return SMEAR_OK;
+
+}
+
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

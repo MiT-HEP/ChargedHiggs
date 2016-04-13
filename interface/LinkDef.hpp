@@ -17,6 +17,7 @@
 #pragma link C++ class Event+ ;
 #pragma link C++ class Looper+;
 #pragma link C++ class SmearBase+;
+#pragma link C++ class SmearSF+;
 #pragma link C++ class CutSelector+;
 
 #pragma link C++ class Fitter+;
