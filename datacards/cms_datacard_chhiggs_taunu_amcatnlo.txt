@@ -10,7 +10,8 @@ kmax *
 -------------------------------------
 shapes data_obs cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_Data
 shapes Hplus 	cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_HplusToTauNu_M-$MASS_13TeV_amcatnlo
-shapes QCD  	cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_QCD
+#shapes QCD  	cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_QCD
+shapes QCD  	cat0  QCDPurity.root  QCDPurity/Vars/MtInvIso_Data
 shapes TT  	cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_TT
 shapes ZZ  	cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_ZZ
 shapes WJets  	cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_WJets
@@ -18,14 +19,17 @@ shapes WW  	cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_WW
 shapes WZ  	cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_WZ
 shapes DY  	cat0  ChHiggs.root  ChargedHiggsTauNu/Vars/Mt_DY
 -------------------------------------
-bin cat0
-observation -1
+bin 		cat0
+observation 	-1
 -------------------------------------
-bin 	cat0	cat0	cat0	cat0
-process Hplus	QCD	TT	DY  
-process 0	1	2	4   
-rate	-1	-1	-1	-1  
+bin 		cat0	cat0	cat0	cat0
+process 	Hplus	QCD	TT	DY  
+process 	0	1	2	4   
+rate		-1	-1	-1	-1  
 -------------------------------------
-
+lumi	lnN	1.027	1.027	1.027	1.027
+BTAG	shape	1	1	1	1
+JES	shape	1	1	1	1
+RFAC	shape	0	1	0	0
 
 

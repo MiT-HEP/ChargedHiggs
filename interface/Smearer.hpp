@@ -16,7 +16,7 @@ class SmearBase : public Named {
 
         // ---
         string name_ = "NONE";
-        int syst_;
+        int syst_{0};
         const inline string name() const {
             if (syst_ == 0 ) return name_;
             else if (syst_ >0 ) return name_ + "Up" ; // this name should be consistent with datacards

@@ -4,8 +4,8 @@ Correct=MetPhiCorrector
 
 config=MitPhiCorrector|fileName="aux/MetPhi.root"
 #config=TauRegression|fileName="aux/bdt_regression_taugun.xml"
-Smear=NONE
-Smear=JES,@SmearSF("BTAG"!"btag")
+#Smear=NONE
+Smear=NONE,JES,@SmearSF("BTAG"!"btag")
 ## QCD Purity
 #@SmearSF("RFAC","tauinvisospline")
 

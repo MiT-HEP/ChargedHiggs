@@ -30,6 +30,7 @@ class Loader : public Named {
         virtual int FillEvent() = 0 ;
         virtual void FillEventInfo() = 0 ; // pre new file check: fill isReal data
         virtual void NewFile() = 0 ;
+        virtual void Clear() {};
         
 };
 
@@ -42,10 +43,12 @@ class LoadNero : public Loader{
     public:
         const string name() const override { return "LoadNero" ;} 
         const string chain() const override{ return "nero/events";} // name of the tree in the file
+        vector<BareCollection*> & GetBare(){  return bare_;}
 
         int InitTree() override; 
         int FillEvent() override;
         void FillEventInfo() override;
+        void Clear() override { for (auto c : bare_) c->clear() ;}
 
         void FillJets();
         void FillLeptons();

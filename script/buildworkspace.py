@@ -24,7 +24,8 @@ ROOT.gROOT.SetBatch()
 
 g=[] ## garbage un-collector
 
-mcList=['DY','TTJets','WW','WZ','ZZ','WJets']
+#mcList=['DY','TT','WW','WZ','ZZ','WJets']
+mcList=['DY','TT','WW','WZ','WJets']
 if opts.qcd == "" : mcList.append("QCD")
 
 ################### OPEN OUTPUT ############
@@ -101,21 +102,43 @@ def ImportPdfFromTH1(tfile, name, target): ## w is global as arglist_obs and arg
 	return
 
 ### BKG ###
-for mc in mcList:
+systs=["BTAG","JES"]
+
+systBkg=[""]
+for shift in ["Up","Down"]: 
+	for s in systs: 
+		systBkg.append(s + shift)
+
+for syst in systBkg:
+ for mc in mcList:
    for cat in range(0,opts.ncat):
 	if opts.ncat==1:
 		lastget=basedir+"Mt_"+ mc
 	else:
 		lastget=basedir+"Mt_cat%d_"%cat+ mc
+	if syst !="":lastget+="_"+syst
 	h_mc=fIn.Get(lastget)
 
-	ImportPdfFromTH1(fIn,lastget,"pdf_cat%d_"%cat + mc )
+	if syst == "": systName=""
+	else: systName="_"+syst
 
-   datacard.write("shapes %s *\t"%mc + opts.output)
-   datacard.write("\tw:pdf_$CHANNEL_"+mc)
-   datacard.write("\n")
+	target="pdf_cat%d_"%cat + mc + systName
+	print "*** Considering MC=",mc,"cat=",cat,"syst=",syst,"target=",target
+	ImportPdfFromTH1(fIn,lastget,target )
 
-for sigMH in [ 200,250,300,350,400,500]:
+   if syst=="":
+   	datacard.write("shapes %s *\t"%mc + opts.output)
+   	datacard.write("\tw:pdf_$CHANNEL_"+mc)
+   	datacard.write("\n")
+
+systs=["BTAG","JES"]
+systSig=[""]
+for shift in ["Up","Down"]: 
+	for s in systs: 
+		systSig.append(s + shift)
+
+for syst in systSig:
+ for sigMH in [ 200,250,300,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
 	if opts.ncat==1:
@@ -123,23 +146,30 @@ for sigMH in [ 200,250,300,350,400,500]:
 	else:
 		lastget=basedir+"Mt_cat%d_"%cat+ sigStr
 
-	ImportPdfFromTH1(fIn, lastget, "pdf_cat%d_Hplus_MH"%cat + str(sigMH))
+	if syst !="":lastget+="_"+syst
+
+	if syst == "": systName=""
+	else: systName="_"+syst
+
+	target="pdf_cat%d_Hplus_MH"%cat + str(sigMH)  +systName
+	print "*** Considering MH=",sigMH,"cat=",cat,"syst=",syst,"target=",target
+	ImportPdfFromTH1(fIn, lastget, target)
 
 datacard.write("shapes Hplus *\t"+opts.output)
 datacard.write("\tw:"+"pdf_$CHANNEL_Hplus_MH$MASS" )
 datacard.write("\n")
 
 if opts.qcd != "":
-   print "FIXME ISOInv"
+   #print "FIXME ISOInv"
    fInQCD=ROOT.TFile.Open(opts.qcd,"READ")
 
    if fInQCD == None: print "<*> NO QCD File '%s'"%opts.qcd
 
    for cat in range(0,opts.ncat):
 	if opts.ncat == 1:
-		lastget="ChargedHiggsQCDPurity/Vars/Mt_Data"
+		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
 	else:
-		lastget="ChargedHiggsQCDPurity/Vars/Mt_cat%d_Data"%cat
+		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_cat%d_Data"%cat
 	ImportPdfFromTH1(fInQCD, lastget,"pdf_inviso_cat%d_QCD"%cat )
 
    datacard.write("shapes QCD *\t"+opts.output)
@@ -194,7 +224,38 @@ for cat in range(0,opts.ncat):
 	if proc=="QCD" and opts.qcd!="":
 	   datacard.write("\t-")
 	else:
-	   datacard.write("\t1.13")
+	   datacard.write("\t1.027")
+datacard.write("\n")
+
+########## RFAC ###############
+if opts.qcd != "":
+   datacard.write("RFAC shape")
+   #RFACUp RFACDown
+   syst="RFAC"
+   for ext in ["Up","Down"]:
+    for cat in range(0,opts.ncat):
+	if opts.ncat == 1:
+		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data" + "_" + syst + ext
+	else:
+		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_cat%d_Data"%cat + "_" + syst + ext
+	ImportPdfFromTH1(fInQCD, lastget,"pdf_inviso_cat%d_QCD"%cat + syst + ext )
+   for proc in mcAll:
+	if proc=="QCD":
+	   datacard.write("\t1")
+	else:
+	   datacard.write("\t-")
+   datacard.write("\n")
+########## BTAG ###############
+datacard.write("BTAG shape")
+syst="BTAG"
+for proc in mcAll:
+        datacard.write("\t1")
+datacard.write("\n")
+########## JES ###############
+datacard.write("JES shape")
+syst="JES"
+for proc in mcAll:
+        datacard.write("\t1")
 datacard.write("\n")
 
 #fOut=ROOT.TFile.Open(opts.output,"RECREATE")

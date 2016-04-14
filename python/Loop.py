@@ -270,6 +270,9 @@ for analysis in cfg['Analysis']:
 if opts.verbose: print "-> Init Analysis"
 loop.InitAnalysis()
 
+if opts.verbose:
+	loop.PrintInfo()
+
 ### Init Dumper
 if opts.verbose: print "-> Init Dumper"
 if 'DumpDir' in cfg: loop.SetDumpDir(cfg['DumpDir'])

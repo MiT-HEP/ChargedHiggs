@@ -31,8 +31,8 @@ class Looper{
         TChain *tree_; 
         int fNumber;
 
-        vector<BareCollection*> bare_;
-        map<string,int> names_;
+        //vector<BareCollection*> bare_; // should be in the Loader?
+        //map<string,int> names_;
 
         vector<AnalysisBase*> analysis_;
 
@@ -87,7 +87,8 @@ class Looper{
         inline void ActivateBranch(string bname){ tree_ -> SetBranchStatus(bname.c_str(),1); return; }
         int InitSmear() ;
         int InitCorrector() ;
-        int InitAnalysis() { for(auto a : analysis_ ) { a->SetOutput(output_); a->doInit() ;}  return 0;}
+        int InitAnalysis() ;//{ for(auto a : analysis_ ) { a->SetOutput(output_); a->doInit() ;}  return 0;}
+        int PrintInfo();
         int InitOutput(string name){output_ -> Open(name); return 0;}
         //
         void Loop();
