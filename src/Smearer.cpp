@@ -8,7 +8,7 @@ int SmearJes::smear(Event *e)
     for (auto j : GetJets(e))
         j->syst = syst_;
     //e->met_ .syst = syst_;
-    GetMet(e) . syst = syst_;
+    //GetMet(e) . syst = syst_; //FIXME
 
     return SMEAR_OK;
 }
