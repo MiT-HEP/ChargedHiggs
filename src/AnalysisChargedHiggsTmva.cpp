@@ -1,4 +1,6 @@
 #include "interface/AnalysisChargedHiggsTmva.hpp"
+// Add the cut flow of tau nu for debug purposes
+#include "interface/AnalysisChargedHiggsTauNu.hpp"
 
 void TmvaAnalysis::AddVariable( string name, char type){ 
     cout<<"[TmvaAnalysis]::[AddVariable]::[INFO] Adding variable: '"<<name<<"'"<<endl;
@@ -15,6 +17,7 @@ void TmvaAnalysis::AddVariable( string name, char type){
 void TmvaAnalysis::Init(){
     cout<<"[TmvaAnalysis]::[Init]::[INFO] Book histos"<<endl;
     for ( string& l : AllLabel()  ) {
+        Book("ChargedHiggsTmva/TauNu/CutFlow_"+ l  , ("CutFlow "+ l).c_str(),100,-.5,100-.5); //DEBUG FROM TAUNU
         Book( "ChargedHiggsTmva/Vars/Mt_"+l, "Mt_"+l, 2000,0,2000.);
         for( int bdtIdx=0; bdtIdx < int(weights.size()) ; ++bdtIdx)
         {
@@ -88,21 +91,51 @@ int TmvaAnalysis::analyze(Event*e,string systname){
 
     string label = GetLabel(e);
 
-    if (e->Ntaus() <=0 ) return 0;
-    if (e->Nleps() >0 ) return 0;
-   
     // MET 
    //if ( e->IsRealData() and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") )  {
    
     Jet* j1 = e->LeadJet(); 
     Jet * bj1 = e->LeadBjet();
     Tau* t1 = e->LeadTau();
+    
+    // DEBUG FROM CUT BASED
+    CutSelector direct;  int index=0;
+        direct.SetMask(ChargedHiggsTauNu::MaxCut-1);
+        direct.SetCut(ChargedHiggsTauNu::Selection(e,true));
+    Fill("ChargedHiggsTmva/TauNu/CutFlow_"+label,systname,index,e->weight());
+
+    size_t mask=ChargedHiggsTauNu::OneTau;  index++;
+    if( direct.passMask(mask)   ) Fill("ChargedHiggsTmva/TauNu/CutFlow_"+label,systname,index,e->weight());
+    mask |=ChargedHiggsTauNu::NoLep; index++;
+    if( direct.passMask(mask)   ) Fill("ChargedHiggsTmva/TauNu/CutFlow_"+label,systname,index,e->weight());
+    mask |=ChargedHiggsTauNu::Met; index++;
+    if( direct.passMask(mask)   ) Fill("ChargedHiggsTmva/TauNu/CutFlow_"+label,systname,index,e->weight());
+    mask |=ChargedHiggsTauNu::Trigger; index++;
+    if( direct.passMask(mask)   ) Fill("ChargedHiggsTmva/TauNu/CutFlow_"+label,systname,index,e->weight());
+
+    mask |=ChargedHiggsTauNu::ThreeJets; index++;
+    if( direct.passMask(mask) ) Fill("ChargedHiggsTmva/TauNu/CutFlow_"+label,systname,index,e->weight());
+    mask |=ChargedHiggsTauNu::OneBjet; index++;
+    if( direct.passMask(mask)   ) Fill("ChargedHiggsTmva/TauNu/CutFlow_"+label,systname,index,e->weight());
+
+    index++;
+    // -- END DEBUG
 
     // ALIGN with TRIGGER
+    if ( e->Ntaus() <=0 ) return 0;
+    if ( e->Nleps() >0 ) return 0;
     if ( e->GetMet().Pt() < 130 ) return 0;
-    if ( t1->Pt() <51 or fabs(t1->Eta() )  >=2.1 ) return 0;
-    if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) return 0;
+    if ( t1->Pt() < 51 or fabs(t1->Eta() )  >=2.1 ) return 0;
+    //if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) return 0;
+    if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  return 0;
 
+    //  DEBUG
+    Fill("ChargedHiggsTmva/TauNu/CutFlow_"+label,systname,index,e->weight());
+
+
+    if (e->weight() == 0. ) Log(__FUNCTION__,"INFO", "Event Weight is NULL");
+    // -------------- END SELECTION -----------------
+    //
     SetVariable("NJets",e->Njets());
     SetVariable("NCJets",e->NcentralJets());
     SetVariable("BJets",e->Bjets());
@@ -123,6 +156,14 @@ int TmvaAnalysis::analyze(Event*e,string systname){
     SetVariable("pTt1oMet", t1->Pt() / e->GetMet().Pt() ) ;
     //SetVariable("DPhiEtMissJet1",DPhiEtMissJet1);
     //SetVariable("DPhiEtMissTau",DPhiEtMissTau);
+
+    // Set BTag SF
+    if ( e->Bjets() >=1 ) {
+        if( not e->ExistSF("btag") ){ Log(__FUNCTION__, "WARNING" , "no btag SF" ); } 
+        e->SetPtEtaSF("btag",e->GetBjet(0)->Pt(), e->GetBjet(0)->Eta() );
+        e->SetWPSF("btag",1); // medium, for sf
+        e->SetJetFlavorSF("btag",0);
+    }
 
     vector<float> bdt;
     for(unsigned i =0 ;i< readers_.size() ; ++i)
