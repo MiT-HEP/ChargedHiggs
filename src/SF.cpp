@@ -119,8 +119,14 @@ void SF_PtSpline::init(){ // init splines from TGraph
     if (spline_==NULL and g_ ==NULL) Log(__FUNCTION__,"ERROR","Unable to init spline");
     if (errSpline_==NULL and ge_ ==NULL) Log(__FUNCTION__,"ERROR","Unable to init Error Spline");
     // are G and GE sorted ?
-    if (spline_==NULL){spline_=new TSpline3( (label+"Spline").c_str(),g_);spline_->SetName( (label+"spline").c_str());}
-    if (errSpline_==NULL){errSpline_=new TSpline3( (label+"errSpline").c_str(),ge_); errSpline_->SetName( (label+"errSpline").c_str());}
+    if (spline_==NULL){
+            spline_=new TSpline3( (label+"Spline").c_str(),g_);
+            spline_->SetName( (label+"spline").c_str());
+    }
+    if (errSpline_==NULL){
+        errSpline_=new TSpline3( (label+"errSpline").c_str(),ge_); 
+        errSpline_->SetName( (label+"errSpline").c_str());
+    }
 
 }
 

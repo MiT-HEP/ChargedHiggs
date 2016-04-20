@@ -13,7 +13,7 @@ void QGAnalysis::SetJetCuts(Jet *j){
     j->SetEtaCut(4.7); 
     j->SetEtaCutCentral(2.4);
     j->SetPtCut(30);
-    j->SetPuIdCut(0.5);
+    //j->SetPuIdCut(0.5);
 }
 
 void QGAnalysis::Init(){

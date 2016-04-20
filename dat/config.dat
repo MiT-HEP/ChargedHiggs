@@ -47,6 +47,8 @@ addfiles=%(amarini)s/QG/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
 addfiles=%(amarini)s/QG/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
 addfiles=%(amarini)s/QG/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
 addfiles=%(amarini)s/QG/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+
+addfiles=/store/user/amarini/Nero/%(tag)s/Tau
 ####
 
 #__________________________________________________________________
@@ -60,7 +62,7 @@ include=dat/tmva.dat
 Output=ChHiggs.root
 
 MCDB=dat/mc_database.txt
-SFDB=dat/sf_database.txt
+SFDB=aux/sf_database.txt
 Branches=dat/branches.txt
 pileup=aux/pileup.root
 #pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root

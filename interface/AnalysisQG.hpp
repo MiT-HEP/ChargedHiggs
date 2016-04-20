@@ -44,7 +44,7 @@ class QGAnalysis: virtual public AnalysisBase
         const vector<string> jetTypes{"Q","G","U"};
         const vector<string> jetVars{"QGL","mult","ptD","axis2"};
 
-        vector<float> ptBins{30,50,80,120,250,500,8000};
+        vector<float> ptBins{30,40,50,80,100,120,250,500,8000};
         vector<float> aetaBins{0,2,2.5,3.,4.7};
 
 };

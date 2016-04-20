@@ -92,8 +92,8 @@ int TmvaAnalysis::analyze(Event*e,string systname){
     if (e->Nleps() >0 ) return 0;
    
     // MET 
-    //if ( e->IsRealData() and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") )  {
-
+   //if ( e->IsRealData() and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") )  {
+   
     Jet* j1 = e->LeadJet(); 
     Jet * bj1 = e->LeadBjet();
     Tau* t1 = e->LeadTau();
@@ -101,6 +101,7 @@ int TmvaAnalysis::analyze(Event*e,string systname){
     // ALIGN with TRIGGER
     if ( e->GetMet().Pt() < 130 ) return 0;
     if ( t1->Pt() <51 or fabs(t1->Eta() )  >=2.1 ) return 0;
+    if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) return 0;
 
     SetVariable("NJets",e->Njets());
     SetVariable("NCJets",e->NcentralJets());
@@ -142,7 +143,7 @@ int TmvaAnalysis::analyze(Event*e,string systname){
     }
 
     if( bdt.size() >2){
-        if (bdt[0]> -0.25 and bdt[1] > -.4) { // check -- BDT 0 = QCD 200 GeV, BDT 1 = TTJets 200 GeV
+        if (bdt[0]> 0. and bdt[1] > 0.) { // check -- BDT 0 = QCD 200 GeV, BDT 1 = TTJets 200 GeV
             if( Unblind(e) )Fill("ChargedHiggsTmva/Vars/Mt_"+label,systname,e->Mt(), e->weight() ) ;
         }
     }

@@ -5,7 +5,9 @@
 
 void AnalysisBase::Book(string name, string title, int nBins,double xmin,double xmax)
 {
-    Log(__FUNCTION__,"INFO","Booking histo "+name);
+#ifdef VERBOSE
+    if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","Booking histo "+name);
+#endif
     output_ -> Book(name,title,nBins,xmin,xmax);
 }
 

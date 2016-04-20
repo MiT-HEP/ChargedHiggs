@@ -166,6 +166,8 @@ class Plot:
 				self.dict_[target].GetXaxis().SetRangeUser(0,10)
 				self.dict_[target].GetXaxis().SetTitle("-log(#sigma_{2})")
 
+			self.dict_[target].GetXaxis().SetTitle("Events")
+
 			# figure out header
 			if 'mult' in name or 'ptD' in name or 'QGL' in name or 'axis2' in name:
 				parts=name.split('_')
@@ -201,7 +203,7 @@ class Plot:
 
 
 ## can I fetch these automatically?
-ptBins=[30.,50.,80.,120.,250.,500.,8000.]
+ptBins=[30.,40,50.,80.,100,120.,250.,500.,8000.]
 etaBins=[0.,2.,2.5,3.,4.7]
 #jetTypes=["Q","G","U"]
 jetTypes=["U","G","Q"]
