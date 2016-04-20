@@ -2,7 +2,7 @@
 #include "interface/Handlers.hpp"
 #include "TFile.h"
 #include "TH2F.h"
-#define VERBOSE 2
+//#define VERBOSE 2
 
 void SF_PtEta::add(double pt1, double pt2,double eta1, double eta2, double sf, double err)
 {
@@ -102,31 +102,66 @@ void SF_TH2F::init(string filename,string histname)
 //
 #include "TFile.h"
 void SF_PtSpline::set( double pt){
+#ifdef VERBOSE
+    if(VERBOSE>1)Log(__FUNCTION__,"DEBUG", Form("is spline_ null ? %ld and err? %ld",spline_,errSpline_) );
+    if(VERBOSE>1) print();
+#endif
+    if (spline_ == NULL) init();
     sf = spline_ -> Eval(pt);
     err = errSpline_ -> Eval(pt);
     return;
 }
 
-void SF_PtSpline::init(){
-    if (spline_==NULL){spline_=new TSpline3();spline_->SetName( (label+"spline").c_str());}
-    if (errSpline_==NULL){errSpline_=new TSpline3(); errSpline_->SetName( (label+"errSpline").c_str());}
+void SF_PtSpline::init(){ // init splines from TGraph
+#ifdef VERBOSE
+    if(VERBOSE>1)Log(__FUNCTION__,"DEBUG", Form("is spline_ null ? %ld and err? %ld",spline_,errSpline_) );
+#endif
+    if (spline_==NULL and g_ ==NULL) Log(__FUNCTION__,"ERROR","Unable to init spline");
+    if (errSpline_==NULL and ge_ ==NULL) Log(__FUNCTION__,"ERROR","Unable to init Error Spline");
+    // are G and GE sorted ?
+    if (spline_==NULL){
+            spline_=new TSpline3( (label+"Spline").c_str(),g_);
+            spline_->SetName( (label+"spline").c_str());
+    }
+    if (errSpline_==NULL){
+        errSpline_=new TSpline3( (label+"errSpline").c_str(),ge_); 
+        errSpline_->SetName( (label+"errSpline").c_str());
+    }
 
 }
 
 void SF_PtSpline::init(string filename, string obj,string obj2)
 {
+#ifdef VERBOSE
+    if(VERBOSE>1)Log(__FUNCTION__,"DEBUG"," --- ");
+#endif
     clear();
-    TFile *f = TFile::Open(filename.c_str());
-    spline_= (TSpline3*)f->Get(obj.c_str()) -> Clone( (obj + "clone").c_str() );
-    errSpline_= (TSpline3*)f->Get(obj2.c_str()) -> Clone( (obj2 + "clone").c_str() );
+    TFile *f = TFile::Open(filename.c_str()); // TODO: make it able to read TGraph too
+    if (f->Get(obj.c_str())->InheritsFrom("TSpline3") ) spline_= (TSpline3*)f->Get(obj.c_str()) -> Clone( (obj + "clone").c_str() );
+    else if ( f->Get(obj.c_str())->InheritsFrom("TGraph") ) 
+            { 
+                g_=(TGraph*)f->Get(obj.c_str())->Clone();
+            }
+    else Log(__FUNCTION__,"ERROR","Type not supported for obj "+ obj + " in " + filename);
+
+    if (f->Get(obj2.c_str())->InheritsFrom("TSpline3") ) errSpline_= (TSpline3*)f->Get(obj2.c_str()) -> Clone( (obj2 + "clone").c_str() );
+    else if (f->Get(obj2.c_str())->InheritsFrom("TGraph") )
+            {
+                ge_=(TGraph*)f->Get(obj.c_str())->Clone();
+            }
+    else Log(__FUNCTION__,"ERROR","Type not supported for obj "+ obj2 + " in " + filename);
     f->Close();
 }
 
 void SF_PtSpline::add(double pt, double sf, double err)
 {
-    init();
-    spline_->SetPoint( spline_ ->GetNp(), pt , sf );
-    errSpline_->SetPoint(errSpline_->GetNp(), pt, err);
+#ifdef VERBOSE
+    if(VERBOSE>1)Log(__FUNCTION__,"DEBUG"," --- ");
+#endif
+    if (g_==NULL) {g_ = new TGraph();}
+    if (ge_==NULL) {ge_ = new TGraph();}
+    g_->SetPoint( g_ ->GetN(), pt , sf );
+    ge_->SetPoint( ge_->GetN(), pt, err);
 
 }
 

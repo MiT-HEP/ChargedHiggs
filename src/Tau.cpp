@@ -48,8 +48,9 @@ int Tau::Rematch(Event *e,float dR){
     for (gp = e->GetGenParticle(ig) ; gp != NULL ; gp=e->GetGenParticle(++ig))
     {
         if  (gp->DeltaR(this) >dR) continue;
+        if  (gp->IsPromptFinalState() ) continue; // useless
         if  ( abs(gp->GetPdgId()) == 15 ) isTau = true; // I don't care the status
-        if ( abs(gp->GetPdgId() ) <= 4 )
+        if ( abs(gp->GetPdgId() ) == 21 )
             {
             isGluon=true;
             if (hardestPt < gp->Pt() ) { hardestPt=gp->Pt(); isHardestQ=false;}
@@ -63,7 +64,7 @@ int Tau::Rematch(Event *e,float dR){
     if (isTau) rematch_=15;
     //the additional check isQuark, prevent the default value on isHardest
     if (rematch_ <0 and isQuark and isHardestQ) rematch_=1;
-    if (rematch_ <0 and isGluon and not isHardestQ) rematch_=1;
+    if (rematch_ <0 and isGluon and not isHardestQ) rematch_=21;
     // no match
     if (rematch_ <0 ) rematch_=0;
     return rematch_;

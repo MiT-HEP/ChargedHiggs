@@ -144,9 +144,10 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
     }
 
     //Uncorr Pt does not include met phi corrections, and Tau Nu regression
-    if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
+    //if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
+    if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
 
-    if ( e->GetMet().PtUncorr() >= 130 ) cut.SetCutBit(Met);
+    if ( e->GetMet().Pt() >= 130 ) cut.SetCutBit(Met); // or PtUncorr
 
     double RbbMin= e->RbbMin(3,t);
     double RCollMin= e-> RCollMin(3,t);
@@ -195,6 +196,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if( cut.passAllUpTo(ThreeJets) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,ThreeJets,e->weight());
     if( cut.passAllUpTo(OneBjet)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneBjet,e->weight());
     if( cut.passAllUpTo(Met)       ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Met,e->weight());
+    if( cut.passAllUpTo(Trigger)       ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Trigger,e->weight());
 
 
     // VARS, N-1 ,

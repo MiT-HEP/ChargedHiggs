@@ -16,7 +16,7 @@ class SmearBase : public Named {
 
         // ---
         string name_ = "NONE";
-        int syst_;
+        int syst_{0};
         const inline string name() const {
             if (syst_ == 0 ) return name_;
             else if (syst_ >0 ) return name_ + "Up" ; // this name should be consistent with datacards
@@ -50,6 +50,15 @@ class SmearJer:virtual public SmearBase
         SmearJer() : SmearBase(){ name_ = "JER";}
         virtual int smear(Event*e);	
 
+};
+
+class SmearSF : virtual public SmearBase
+{
+    string sfname_{""};
+    public:
+        SmearSF() :SmearBase(){ name_= "SF";}
+        SmearSF(string name,string sf) :SmearBase(){ name_= name; sfname_=sf;}
+        virtual int smear(Event *e);
 };
 
 class SmearPu : virtual public SmearBase

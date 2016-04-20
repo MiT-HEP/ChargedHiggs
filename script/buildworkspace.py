@@ -7,6 +7,7 @@ parser.add_option("","--qcd",type='string',help="Input ROOT file. Set Null to us
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [Default=%default]", default="ChHiggsWs.root")
 parser.add_option("-L","--lumi",type='float',help="Luminosity pb. [Default=%default]", default=5000)
 parser.add_option("-n","--ncat",type='int',help="Number of cat. [Default=%default]", default=1)
+parser.add_option("","--nosyst",action='store_true',help="Do not look for syst. [Default=%default]", default=False)
 
 extra = OptionGroup(parser,"Extra options:","")
 #extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. [Default=%default]", default=1)
@@ -24,7 +25,8 @@ ROOT.gROOT.SetBatch()
 
 g=[] ## garbage un-collector
 
-mcList=['DY','TTJets','WW','WZ','ZZ','WJets']
+#mcList=['DY','TT','WW','WZ','ZZ','WJets']
+mcList=['DY','TT','WW','WZ','WJets']
 if opts.qcd == "" : mcList.append("QCD")
 
 ################### OPEN OUTPUT ############
@@ -86,7 +88,7 @@ def ImportPdfFromTH1(tfile, name, target): ## w is global as arglist_obs and arg
 		print "FIXME implement a negligible shape with constrain"
 		return
 	else:
-		print "Normalization for '%s' is %f"%(name,h.Integral())
+		print "Normalization for '%s' is %e"%(name,h.Integral())
 	
 	## ---ZERO ---
 	for i in range(0,h.GetNbinsX()):
@@ -95,27 +97,52 @@ def ImportPdfFromTH1(tfile, name, target): ## w is global as arglist_obs and arg
 	pdf_mc = ROOT.RooHistPdf(target, target,argset_obs, roo_mc)
 	## NORM
 	getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
-	w.factory(target + "_norm[%f]"% h.Integral())
+	w.factory(target + "_norm[%e]"% h.Integral())
 	g.extend([h,roo_mc,pdf_mc])
 
 	return
 
 ### BKG ###
-for mc in mcList:
+systs=["BTAG","JES"]
+if opts.nosyst: systs=[]
+
+systBkg=[""]
+for shift in ["Up","Down"]: 
+	for s in systs: 
+		systBkg.append(s + shift)
+
+for syst in systBkg:
+ for mc in mcList:
    for cat in range(0,opts.ncat):
 	if opts.ncat==1:
 		lastget=basedir+"Mt_"+ mc
 	else:
 		lastget=basedir+"Mt_cat%d_"%cat+ mc
+	if syst !="":lastget+="_"+syst
 	h_mc=fIn.Get(lastget)
 
-	ImportPdfFromTH1(fIn,lastget,"pdf_cat%d_"%cat + mc )
+	if syst == "": systName=""
+	else: systName="_"+syst
 
-   datacard.write("shapes %s *\t"%mc + opts.output)
-   datacard.write("\tw:pdf_$CHANNEL_"+mc)
-   datacard.write("\n")
+	target="pdf_cat%d_"%cat + mc + systName
+	print "*** Considering MC=",mc,"cat=",cat,"syst=",syst,"target=",target
+	ImportPdfFromTH1(fIn,lastget,target )
 
-for sigMH in [ 200,250,300,350,400,500]:
+   #if syst=="":
+   #	datacard.write("shapes %s *\t"%mc + opts.output)
+   #	datacard.write("\tw:pdf_$CHANNEL_"+mc)
+   #	datacard.write("\tw:pdf_$CHANNEL_"+mc+"_$SYSTEMATIC")
+   #	datacard.write("\n")
+
+systs=["BTAG","JES"]
+if opts.nosyst: systs=[]
+systSig=[""]
+for shift in ["Up","Down"]: 
+	for s in systs: 
+		systSig.append(s + shift)
+
+for syst in systSig:
+ for sigMH in [ 200,250,300,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
 	if opts.ncat==1:
@@ -123,28 +150,56 @@ for sigMH in [ 200,250,300,350,400,500]:
 	else:
 		lastget=basedir+"Mt_cat%d_"%cat+ sigStr
 
-	ImportPdfFromTH1(fIn, lastget, "pdf_cat%d_Hplus_MH"%cat + str(sigMH))
+	if syst !="":lastget+="_"+syst
+
+	if syst == "": systName=""
+	else: systName="_"+syst
+
+	target="pdf_cat%d_Hplus_MH"%cat + str(sigMH)  +systName
+	print "*** Considering MH=",sigMH,"cat=",cat,"syst=",syst,"target=",target
+	ImportPdfFromTH1(fIn, lastget, target)
 
 datacard.write("shapes Hplus *\t"+opts.output)
 datacard.write("\tw:"+"pdf_$CHANNEL_Hplus_MH$MASS" )
+datacard.write("\tw:"+"pdf_$CHANNEL_Hplus_MH$MASS_$SYSTEMATIC" )
 datacard.write("\n")
 
 if opts.qcd != "":
-   print "FIXME ISOInv"
+   #print "FIXME ISOInv"
    fInQCD=ROOT.TFile.Open(opts.qcd,"READ")
 
    if fInQCD == None: print "<*> NO QCD File '%s'"%opts.qcd
 
-   for cat in range(0,opts.ncat):
+   systs=["BTAG","RFAC","JES"]
+   if opts.nosyst: systs=[]
+   systQCD=[""]
+   for shift in ["Up","Down"]: 
+   	for s in systs: 
+   		systQCD.append(s + shift)
+
+   for syst in systQCD:
+    for cat in range(0,opts.ncat):
 	if opts.ncat == 1:
-		lastget="ChargedHiggsQCDPurity/Vars/Mt_Data"
+		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
 	else:
-		lastget="ChargedHiggsQCDPurity/Vars/Mt_cat%d_Data"%cat
-	ImportPdfFromTH1(fInQCD, lastget,"pdf_inviso_cat%d_QCD"%cat )
+		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_cat%d_Data"%cat
+
+	if syst !="":lastget+="_"+syst
+
+	if syst == "": systName=""
+	else: systName="_"+syst
+
+	target="pdf_inviso_cat%d_QCD"%cat + systName
+	print "*** Considering QCD","syst=",syst,"target=",target
+	ImportPdfFromTH1(fInQCD, lastget,target )
 
    datacard.write("shapes QCD *\t"+opts.output)
    datacard.write("\tw:"+"pdf_inviso_$CHANNEL_QCD" )
+   datacard.write("\tw:"+"pdf_inviso_$CHANNEL_QCD_$SYSTEMATIC" )
    datacard.write("\n")
+
+### GENERAL LINE
+datacard.write("shapes\t*\t*\t"+opts.output+"\tw:pdf_$CHANNEL_$PROCESS\tw:pdf_$CHANNEL_$PROCESS_$SYSTEMATIC\n")
 
 #### OBSERVATION
 datacard.write("-------------------------------------\n")
@@ -180,7 +235,7 @@ datacard.write("rate\t")
 for cat in range(0,opts.ncat):
    for proc in mcAll:
 	if proc=="QCD" and opts.qcd!="":
-		datacard.write("\t2.37") ## lumi factor 5000/2110, should be 1.00 FIXME
+		datacard.write("\t%.2f"%(opts.lumi/2318.)) ## lumi factor 5000/2110, should be 1.00 FIXME
 	else:
 		datacard.write("\t%.0f"%opts.lumi)
 datacard.write("\n")
@@ -194,7 +249,43 @@ for cat in range(0,opts.ncat):
 	if proc=="QCD" and opts.qcd!="":
 	   datacard.write("\t-")
 	else:
-	   datacard.write("\t1.13")
+	   datacard.write("\t1.027")
+datacard.write("\n")
+
+if opts.nosyst: 
+	w.writeToFile(opts.output)
+	print " --- DONE --- "
+	exit(0)
+
+########## RFAC ###############
+if opts.qcd != "":
+   datacard.write("RFAC shape")
+   #RFACUp RFACDown
+   for proc in mcAll:
+	if proc=="QCD":
+	   datacard.write("\t1")
+	else:
+	   datacard.write("\t-")
+   datacard.write("\n")
+########## BTAG ###############
+datacard.write("BTAG shape")
+syst="BTAG"
+for proc in mcAll:
+	if proc=="QCD":
+		if opts.qcd !="" and syst in systQCD:
+        		datacard.write("\t1")
+		else: datacard.write("\t-")
+        datacard.write("\t1")
+datacard.write("\n")
+########## JES ###############
+datacard.write("JES shape")
+syst="JES"
+for proc in mcAll:
+	if proc=="QCD":
+		if opts.qcd !="" and syst in systQCD:
+        		datacard.write("\t1")
+		else: datacard.write("\t-")
+        datacard.write("\t1")
 datacard.write("\n")
 
 #fOut=ROOT.TFile.Open(opts.output,"RECREATE")

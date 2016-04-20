@@ -128,7 +128,7 @@ class Event{
     virtual void ClearEvent();
     virtual inline int IsRealData(){ return isRealData_ ;} 
     virtual void clearSyst(); // call clearSyst in all object it posses
-    double weight();
+    double weight(bool safe=true); // safe will return 1 for data, ALWAYS
     // update objects that can be invalid (jets)
     virtual void validate();
     bool IsTriggered(string name, Trigger *trigger = NULL, bool isNone=false); // the None do not check if it is the L3 or LF -- only for taus and matching

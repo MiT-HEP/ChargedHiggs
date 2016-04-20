@@ -15,6 +15,7 @@ parser.add_option("-v","--verbose",dest="verbose",default=False,action="store_tr
 parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
 parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true",help="Draw observation")
 parser.add_option("-x","--xSec",dest="xsec",help="Print limit vs xSec instead of mu",default=False,action="store_true")
+parser.add_option("","--xSecName",dest="xsecname",help="extra string to be match in the mc_database",default="ChargedHiggs")
 parser.add_option(""  ,"--yaxis",help="Y axis range Y1,Y2 [%default]",default="")
 parser.add_option(""  ,"--xaxis",help="X axis range X1,X2 [%default]",default="")
 (opts,args)=parser.parse_args()
@@ -167,13 +168,16 @@ def GetLimitFromTree(inputFile,xsec=False):
 		for i in range(0,len(median)):
 			mh= median[i][0]
 			xSec= -1
+			labelFound=""
 			for label in mcdb:
 				#if "M%.0f"%mh in label:
 				if 'amcatnlo' not in label : continue
+				if opts.xsecname not in label: continue
 				if "M-%.0f"%mh in label: #amcatnlo
+					labelFound=label[:]
 					xSec = mcdb[label][2]
 			if xSec <0 :  continue
-			print "Found xSec for mh=",mh,"xSec=",xSec, "and label", label
+			print "Found xSec for mh=",mh,"xSec=",xSec, "and label", labelFound
 			xsections_mcdb.append(  (mh,xSec) )
 		# run over the mass point and eventually interpolate between the xsec
 		for i in range(0,len(median)):
@@ -189,7 +193,13 @@ def GetLimitFromTree(inputFile,xsec=False):
 	
 	
 			xsections_interpolated[mh] = interpolate(xsections_mcdb[bin][0],float(xsections_mcdb[bin][1]),xsections_mcdb[bin+1][0],float(xsections_mcdb[bin+1][1]),mh )
-
+	## sort median, Up Up2 Down Down2 data with mh
+	median.sort()
+	Up.sort()
+	Up2.sort()
+	Down.sort()
+	Down2.sort()
+	data.sort()
 	## merge the list into TGraphs.
 	for i in range(0,len(median)):
 		count= exp.GetN()

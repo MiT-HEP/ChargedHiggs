@@ -28,6 +28,9 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
         //  direct tau or inv tau
         static unsigned Selection(Event*, bool direct=true) ;
         const string name() const override {return "ChargedHiggsTauNu";}
+        // define blind region: Data; Mt> 50
+        bool Unblind(Event *e) { if (e->IsRealData() and e->Mt() > 50) return unblind; return true;} // if is not data, no need to return something else
+
 };
 
 #endif

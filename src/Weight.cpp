@@ -1,5 +1,5 @@
 #include "interface/Weight.hpp"
-#define VERBOSE 1
+//#define VERBOSE 1
 
 #include "interface/Logger.hpp"
 void Weight::Log(const string& function, const string& level, const string& message){ Logger::getInstance().Log("Weight",function,level,message ); }

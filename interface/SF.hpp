@@ -71,19 +71,21 @@ class SF_TH2F : virtual public SF_PtEta
 };
 
 #include "TSpline.h"
+#include "TGraph.h"
 
 class SF_PtSpline : virtual public SF
 {
     private:
-
+        TGraph *g_{0};
+        TGraph *ge_{0};
         TSpline3 *spline_{0};
         TSpline3 *errSpline_{0};
 
     public :
-        SF_PtSpline() : SF() {}
+        SF_PtSpline() : SF() {spline_=NULL;errSpline_=NULL;}
         ~SF_PtSpline(){clear();}
         
-        inline void clear(){delete spline_; delete errSpline_;}
+        inline void clear(){delete spline_; delete errSpline_; delete g_; delete ge_;}
 
         void add (double pt, double sf ,double err);
         void init (string filename, string obj,string obj2);

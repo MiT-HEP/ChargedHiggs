@@ -57,7 +57,7 @@ Output=QG.root
 Analysis=JsonAnalysis,QGAnalysis
 
 MCDB=dat/mc_database_QG.txt
-SFDB=dat/sf_database.txt
+SFDB=aux/sf_database.txt
 Branches=dat/branchesQG.txt
 ###
 pileup=aux/pileup.root

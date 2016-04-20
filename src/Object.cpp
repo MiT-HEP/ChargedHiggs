@@ -12,7 +12,6 @@ double Object::InvMass(Object &o) const {
 void Object::SetP4(TLorentzVector &x){  
     p4NoCorr = x;
     p4 =x ;
-    //p4NoCorr.SetXYZT(x.X(),x.Y(),x.Z(),x.T() ); 
     //p4.SetXYZT(x.X(),x.Y(),x.Z(),x.T() ) ; 
     isCorrect=false; 
 }

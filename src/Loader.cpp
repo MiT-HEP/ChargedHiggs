@@ -107,7 +107,7 @@ void LoadNero::FillJets(){
     // EXTRA DEBUG INFO
 #ifdef VERBOSE
     if(VERBOSE>1)
-        cout <<"[Looper]::[FillJets]::[DEBUG] Jets length:"<<endl;
+        cout <<"[LoadNero]::[FillJets]::[DEBUG] Jets length:"<<endl;
     cout <<"\t * selBits: "	<< tree_->GetBranchStatus("jetSelBits") << " : "<< bj->selBits->size()<<endl;
     cout <<"\t * unc: "		<< tree_->GetBranchStatus("jetUnc") << " : "<< bj->unc->size()<<endl;
     cout <<"\t * bdiscr: "	<< tree_->GetBranchStatus("jetBdiscr") << " : "<< bj->bDiscr->size()<<endl;
@@ -120,7 +120,7 @@ void LoadNero::FillJets(){
 #ifdef VERBOSE
         if (VERBOSE >1 )
         {
-            cout <<"[Looper]::[FillJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
+            cout <<"[LoadNero]::[FillJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
             cout <<"\t\t * selBits size: "<< bj->selBits ->size()<<endl;
             cout <<"\t\t * unc size:" << bj -> unc ->size() <<endl;
             cout <<"\t\t * bdiscr size :"<< bj -> bDiscr ->size() <<endl;
@@ -150,7 +150,7 @@ void LoadNero::FillJets(){
         j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
         j->motherPdgId = bj->motherPdgId -> at(iJet);
         j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
-        j->puId = bj -> puId -> at(iJet);
+        j->SetPuId(bj -> puId -> at(iJet));
 
         // add it
         event_ -> jets_ . push_back(j);
@@ -185,7 +185,7 @@ void LoadNero::FillLeptons(){
         l-> tightId = ( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight); 
 
 #ifdef VERBOSE
-        if(VERBOSE>1) cout<<"[Looper]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;
+        if(VERBOSE>1) cout<<"[LoadNero]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;
 #endif
         l->trigger =  0;
         if (tree_ -> GetBranchStatus("triggerLeps") !=0  && tr -> triggerLeps ->size() >iL) l->trigger = tr->triggerLeps->at(iL);
@@ -237,7 +237,7 @@ void LoadNero::FillTaus(){
     for (int iL = 0; iL<bt -> p4 -> GetEntries() ;++iL)
     {
 #ifdef VERBOSE
-        if(VERBOSE>1)cout <<"[Looper]::[FillTaus]::[DEBUG] Filling Taus n."<<iL <<" of "<<bt -> p4 -> GetEntries() <<endl;
+        if(VERBOSE>1)cout <<"[LoadNero]::[FillTaus]::[DEBUG] Filling Taus n."<<iL <<" of "<<bt -> p4 -> GetEntries() <<endl;
         if(VERBOSE>1)cout<<"\t iso= " << bt->iso->size()<<endl;
         if(VERBOSE>1)cout<<"\t charge= " << bt->Q->size()<<endl;
         if(VERBOSE>1)cout<<"\t iso2= " << bt->isoDeltaBetaCorr->size()<<endl;
@@ -258,7 +258,7 @@ void LoadNero::FillTaus(){
 
         //---------------------------------------------
 #ifdef VERBOSE
-        if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Filling Taus Trigger"<<endl;
+        if(VERBOSE>1) cout<<"[LoadNero]::[FillTaus]::[DEBUG] Filling Taus Trigger"<<endl;
 #endif
         t->trigger =  0;
         t->triggerNone =  0;
@@ -267,7 +267,7 @@ void LoadNero::FillTaus(){
 
         //---------------------------------------------
 #ifdef VERBOSE
-        if(VERBOSE>1) cout<<"[Looper]::[FillTaus]::[DEBUG] Tau Regression"<<endl;
+        if(VERBOSE>1) cout<<"[LoadNero]::[FillTaus]::[DEBUG] Tau Regression"<<endl;
 #endif
         BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["BareVertex"] ] ) ; assert(v!=NULL);
         BareJets *bj = dynamic_cast<BareJets*> ( bare_ [names_["BareJets"] ] ) ; assert(bj!=NULL);
@@ -298,14 +298,15 @@ void LoadNero::FillTaus(){
         //---------------------------------------------
         event_ -> taus_ . push_back(t);
     }
-    //cout<<"[Looper]::[FillTaus]::[DEBUB] Taus Loaded:"<< event_->taus_.size() <<endl;
+    //cout<<"[LoadNero]::[FillTaus]::[DEBUB] Taus Loaded:"<< event_->taus_.size() <<endl;
 
 
 } // end fill taus
+
 void LoadNero::FillMet(){
     // FillMEt
 #ifdef VERBOSE
-    if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","Filling MET");
+    if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","Filling MET");
 #endif
     BareMet * met = dynamic_cast<BareMet*> ( bare_[ names_["BareMet"]]);
 
@@ -319,8 +320,8 @@ void LoadNero::FillMet(){
 
     //event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
 #ifdef VERBOSE
-    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size()<<endl;
-    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
+    if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size()<<endl;
+    if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
 #endif
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
@@ -330,9 +331,9 @@ void LoadNero::FillMet(){
 
 
 #ifdef VERBOSE
-    if(VERBOSE>1)cout <<"[Looper]::[FillMet]::[DEBUG] Met XXX is ="<< event_->met_.Pt() << "=="<< event_->met_.PtUncorr()<<endl;
-    if(VERBOSE>1)cout <<"[Looper]::[FillMet]::[DEBUG] Met is ="<< event_->GetMet().Pt() << "=="<< event_->GetMet().PtUncorr()<<endl;
-    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] GEN Info "<<endl;
+    if(VERBOSE>1)cout <<"[LoadNero]::[FillMet]::[DEBUG] Met XXX is ="<< event_->met_.Pt() << "=="<< event_->met_.PtUncorr()<<endl;
+    if(VERBOSE>1)cout <<"[LoadNero]::[FillMet]::[DEBUG] Met is ="<< event_->GetMet().Pt() << "=="<< event_->GetMet().PtUncorr()<<endl;
+    if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] GEN Info "<<endl;
 #endif
 
     // FILL GEN MET
@@ -340,7 +341,7 @@ void LoadNero::FillMet(){
     else event_ -> met_ . gen =( (TLorentzVector*)(*met->genP4)[0] )->Pt();
 
 #ifdef VERBOSE
-    if (VERBOSE>1) cout<<"[Looper]::[FillMet]::[DEBUG] Grace Exit "<<endl;
+    if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Grace Exit "<<endl;
 #endif
 
 } // end fill Met
@@ -362,7 +363,7 @@ void LoadNero::FillMC(){
     }
 
 #ifdef VERBOSE
-    if(VERBOSE>1)cout <<"[Looper]::[FillMC]::[DEBUG] Reading GP:" 
+    if(VERBOSE>1)cout <<"[LoadNero]::[FillMC]::[DEBUG] Reading GP:" 
         << mc->p4->GetEntries()<<":"
             << mc->pdgId->size()<<":"
             << mc->flags->size()<<":"
@@ -386,7 +387,7 @@ void LoadNero::FillMC(){
         event_ -> genparticles_ . push_back(g);
     }
 #ifdef VERBOSE
-    if(VERBOSE>1)cout <<"[Looper]::[FillMC]::[DEBUG] Reading END" <<endl;
+    if(VERBOSE>1)cout <<"[LoadNero]::[FillMC]::[DEBUG] Reading END" <<endl;
 #endif
     return ;
 
@@ -423,7 +424,7 @@ void LoadNero::NewFile(){
         while(std::getline(ss, token, ',')) {
             //std::cout << token << '\n';
 #ifdef VERBOSE
-            if(VERBOSE>0)cout<<"[Looper]::[NewFile]::[DEBUG] TriggerNames"<< event_->triggerNames_ .size() <<" = "<<token<<endl;
+            if(VERBOSE>0)cout<<"[LoadNero]::[NewFile]::[DEBUG] TriggerNames"<< event_->triggerNames_ .size() <<" = "<<token<<endl;
 #endif
             event_ -> triggerNames_ .push_back(token);
         }

@@ -90,6 +90,7 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	## Open File and write Preamble
 	sh.write('#!/bin/bash\n')
 	sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/" \n'%(os.environ['USER']))
+	sh.write('rm -v $WORKDIR/higgs*root\n')  ## make sure there is no residual in the WORKDIR
 	sh.write('cd %s\n'%(os.getcwd() ) )
 	sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
 
@@ -137,7 +138,7 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	combine = "combine -M "+ opts.method +" -m "+ str(mass)
 	if opts.nosyst: combine += " -S 0 "
 	combine += "  --cminDefaultMinimizerType=Minuit2 "
-	combine += " -H ProfileLikelihood " ## hint
+	#combine += " -H ProfileLikelihood " ## hint, it's not working
 	if opts.exp : combine += " --run=expected --expectSignal=1 --expectSignalMass="+str(mass) + " "
 	combine += " --rMax=%f "%opts.rmax
 	combine += datacard
@@ -146,7 +147,7 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	sh.write('[ $EXITCODE == 0 ] && touch %s/sub%d.done\n'%(basedir,iJob))
 	sh.write('[ $EXITCODE != 0 ] && echo $EXITCODE > %s/sub%d.fail\n'%(basedir,iJob))
 	
-	sh.write('cp higgs*root %s/\n'%basedir)
+	sh.write('cp -v higgs*root %s/\n'%basedir)
 	sh.write('rm %s/sub%d.run\n'%(basedir,iJob))
 
 	cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)

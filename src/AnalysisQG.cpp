@@ -7,6 +7,15 @@ void QGAnalysis::SetLeptonCuts(Lepton *l){
     l->SetIsoRelCut(0.15);
     l->SetEtaCut(2.4);
 }
+
+void QGAnalysis::SetJetCuts(Jet *j){
+    j->SetBCut(0.800);
+    j->SetEtaCut(4.7); 
+    j->SetEtaCutCentral(2.4);
+    j->SetPtCut(30);
+    //j->SetPuIdCut(0.5);
+}
+
 void QGAnalysis::Init(){
     if (doMM) InitMM();
     if (doJJ) InitJJ();
@@ -184,8 +193,9 @@ int QGAnalysis::analyzeJJ(Event *e, string systname)
         Fill("QGAnalysis/DiJet/Npv_"+ label,systname, e->Npv(),e->weight()) ;
         string etaStrJ0=Binning::findBinStr( aetaBins, fabs(j0->Eta()), "eta%.1f_%.1f");
         string etaStrJ1=Binning::findBinStr( aetaBins, fabs(j1->Eta()), "eta%.1f_%.1f");
-        string ptStrJ0=Binning::findBinStr( ptBins, j0->Pt(), "pt%.0f_%.0f");
-        string ptStrJ1=Binning::findBinStr( ptBins, j1->Pt(), "pt%.0f_%.0f");
+        LogN(__FUNCTION__,"WARNING","Not T&P diJet",10);
+        string ptStrJ0=Binning::findBinStr( ptBins, j0->Pt(), "pt%.0f_%.0f"); 
+        string ptStrJ1=Binning::findBinStr( ptBins, j1->Pt(), "pt%.0f_%.0f"); 
         int flavorJ0 = abs(j0->Flavor());
 
         string typeJ0="U";
@@ -209,6 +219,7 @@ int QGAnalysis::analyzeJJ(Event *e, string systname)
         Fill("QGAnalysis/DiJet/ptD_" +typeJ1 +"_"+ label, systname, j1->QGLVar("ptD"),e->weight()) ;
         Fill("QGAnalysis/DiJet/axis2_" +typeJ1 +"_"+ label, systname, j1->QGLVar("axis2"),e->weight()) ;
         // binned
+        
         // pt1 <-> pt0: TP
         if (etaStrJ0 != "NotFound" and ptStrJ1 != "NotFound")
         {

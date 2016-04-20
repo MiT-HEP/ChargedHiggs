@@ -125,8 +125,8 @@ float Event::RsrMax(int iMax, Tau *t) {
     return rsrmax;
 }
 
-double Event::weight(){
-    if (isRealData_ ) return 1;
+double Event::weight(bool safe){
+    if (isRealData_ and safe) return 1;
     return weight_ -> weight();
 }
 

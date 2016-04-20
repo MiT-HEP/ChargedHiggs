@@ -19,7 +19,7 @@ class AnalysisBase : public Named
     virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(10); l->SetPtCut(15);l->SetIsoRelCut(-1);l->SetEtaCut(2.4); l->SetTightCut(false);}
     virtual inline void SetPhotonCuts(Photon *p){p->SetIsoCut(-1); p->SetPtCut(30);}
     virtual inline void SetTauCuts(Tau *t){ t->SetIsoCut(1.5); t->SetEtaCut(2.1); t->SetPtCut(20); t->SetMuRej(true); t->SetEleRej(true);}
-    virtual inline void SetJetCuts(Jet *j){j->SetBCut(0.800);j->SetEtaCut(4.7); j->SetEtaCutCentral(2.4);j->SetPtCut(30);};
+    virtual inline void SetJetCuts(Jet *j){j->SetBCut(0.800);j->SetEtaCut(4.7); j->SetEtaCutCentral(2.4);j->SetPtCut(30);j->SetPuIdCut(-100);}
     virtual void SetGenCuts(GenParticle *g){};
     
     void SetCuts(Event *e);
@@ -64,10 +64,9 @@ class AnalysisBase : public Named
     inline void PrintTree(string tree){output_->PrintTree(tree);}
     inline TTree* GetTree(string tree){ return output_->GetTree(tree);}
     bool unblind{false}; // use this flag to protect histograms or region that should be blind
-    bool Unblind(Event *e) {if (e->IsRealData() ) return unblind; return true;} // if is not data, no need to return something else
+    virtual bool Unblind(Event *e) {if (e->IsRealData() ) return unblind; return true;} // if is not data, no need to return something else
 	//void Log(const string& function, const string& level, const string& message);
 };
-
 
 #endif
 // Local Variables:

@@ -5,7 +5,7 @@
 include=dat/config.dat
 ##### Files=....,....,...
 Files=/store/user/amarini/Nero/%(tag)s/Tau
-addfiles=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=/store/user/amarini/Nero/QG/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 #addfiles=/store/user/amarini/Nero/%(tag)s/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/TT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
@@ -15,11 +15,13 @@ addfiles=/store/user/amarini/Nero/%(tag)s/WZ_TuneCUETP8M1_13TeV-pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/ZZ_TuneCUETP8M1_13TeV-pythia8
 ### SIGNAL ###
 #addfiles=/store/user/jsalfeld/ChargedHiggs/NeroTuples/Hplus_Wh_18_5_2015
+addfiles=%(amarini)s/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/d23057e/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
 #Signal Tau Nu ; Private production
-addfiles=/store/user/amarini/Nero/%(tag)s/HplusToTauNu-M200
-addfiles=/store/user/amarini/Nero/%(tag)s/HplusToTauNu-M250
-addfiles=/store/user/amarini/Nero/%(tag)s/HplusToTauNu-M500
-addfiles=/store/user/amarini/Nero/%(tag)s/HplusToTauNu-M900
 ## signal amc@nlo
 addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
@@ -29,21 +31,21 @@ addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-30
 addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
 addfiles=/store/user/amarini/Nero/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
 ### QCD
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
+addfiles=%(amarini)s/QG/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
 #
 
 ####
@@ -56,7 +58,8 @@ Analysis=ChargedHiggsQCDPurity
 # Smearer
 #Smear=JER,JES,@SmearBase
 #Smear=NONE,JER,JES
-Smear=NONE
+#Smear=NONE
+Smear=NONE,JES,@SmearSF("BTAG"!"btag"),@SmearSF("RFAC"!"tauinvisospline")
 
 config=ChargedHiggsQCDPurity|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
 addConfig=ChargedHiggsQCDPurity|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo')

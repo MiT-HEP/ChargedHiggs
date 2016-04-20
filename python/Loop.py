@@ -72,8 +72,6 @@ from ROOT import LoaderFactory
 
 loop = Looper()
 
-if opts.verbose: print "-> InitLoader Nero"
-loop.InitLoader("LoadNero");
 
 ################ LOAD CONFIGURATION ########
 from ParseDat import *
@@ -82,6 +80,9 @@ cfg = ParseDat(opts.dat)
 if opts.verbose:
 	PrintDat(cfg)
 
+################ Loader ####
+if opts.verbose: print "-> Init Loader:",cfg['Loader']
+loop.InitLoader(cfg['Loader']);
 ### configurable
 
 for file in cfg['Files']:
@@ -207,7 +208,13 @@ for smear in cfg['Smear']:
 	if smear[0]=='@': 
 		smear=smear[1:]
 		if opts.verbose: print '-> constructing smear',smear
-		smearer = r.__getattr__(smear)()
+		if '(' in smear:## this if can be removed
+			smear = re.sub('!',',',smear) ## put a comma
+			#cmdSmear="smearer="+smear
+			#exec(cmdSmear)
+			smearer=eval("r."+smear)
+		else:
+			smearer = r.__getattr__(smear)()
 		loop.AddSmear(smearer)
 	else:
 		if opts.verbose: print "-> Adding smear from name '"+smear+"'"
@@ -233,6 +240,7 @@ for corr in cfg['Correct']:
 for analysis in cfg['Analysis']:
 	if opts.verbose: print '-> Adding analysis',analysis
 	classname=analysis.split(':')[0]
+	#analyzer = r.AnalysisFactory.get().create(classname)
 	analyzer = r.__getattr__(classname)()
 	if analysis in cfg['config']:
 	   for key in cfg['config'][analysis]:
@@ -261,6 +269,9 @@ for analysis in cfg['Analysis']:
 
 if opts.verbose: print "-> Init Analysis"
 loop.InitAnalysis()
+
+if opts.verbose:
+	loop.PrintInfo()
 
 ### Init Dumper
 if opts.verbose: print "-> Init Dumper"

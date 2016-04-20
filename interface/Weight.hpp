@@ -53,6 +53,8 @@ class Weight{
     void AddCSVSF(string label, string filename);
 
     void clearSF( ){ sf_ =1.0;}
+    void clearPU( ){ pu_ . clearTarget() ;};
+    void SetPUTarget(string name) { pu_ . SetTarget( name ) ; } 
     void SetSystSF(string label, int s ) { sf_db[label] -> syst = s;}
     void resetSystSF( ) ;
     void SetPtEtaSF(string label,double pt , double eta);

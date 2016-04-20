@@ -55,6 +55,28 @@ int Looper::AddSmear(string name){
 	return 1; // maybe throw exception
 }
 
+
+int Looper::InitAnalysis() { 
+	for(auto a : analysis_ ) { a->SetOutput(output_); a->doInit() ;}  
+	return 0;
+}
+
+int Looper::PrintInfo(){
+	string analysis_string="Analysis";
+	string systs_string="Systs";
+	string corr_string="Correctors";
+	for(auto a : analysis_ ) analysis_string += string(":") +a->name();
+	for(auto s : systs_ ) systs_string += string(":") +s->name();
+	for(auto c : correctors_) corr_string += string(":")+c->name();
+
+	Log(__FUNCTION__,"INFO","-------------------------------------");
+	Log(__FUNCTION__,"INFO",analysis_string);
+	Log(__FUNCTION__,"INFO",systs_string);
+	Log(__FUNCTION__,"INFO",corr_string);
+	Log(__FUNCTION__,"INFO","-------------------------------------");
+
+}
+
 int Looper::InitTree()
 {
 #ifdef VERBOSE
@@ -124,6 +146,7 @@ void Looper::Loop()
 						event_->validate(); // validate the objects
 						// each analysis step will apply the SF accordingly to the object it is using
 						event_ -> GetWeight() -> clearSF() ;
+						event_ -> GetWeight() -> clearPU() ; // for target
 						if ( a->doAnalyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
 					}
 				}
@@ -226,7 +249,9 @@ void Looper::NewFile()
 
 	// Dumper
 	dump_ -> NewFile( event_-> GetWeight() -> GetMC() ) ;
-	dump_ -> InitTree(bare_);
+
+	if (dynamic_cast<LoadNero*>(loader_) != NULL)
+		dump_ -> InitTree(dynamic_cast<LoadNero*>(loader_)->GetBare());
 	return;
 }
 
@@ -247,8 +272,7 @@ void Looper::FillEvent(){
 #ifdef VERBOSE
 	if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","Clearing collections");
 #endif
-	for (auto c : bare_)
-		c->clear();
+	loader_->Clear();
 #ifdef VERBOSE
 	if(VERBOSE>0) Log(__FUNCTION__,"DONE","");
 #endif 

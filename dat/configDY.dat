@@ -50,7 +50,7 @@ Output=DY.root
 Analysis=JsonAnalysis,DYAnalysis
 
 MCDB=dat/mc_database.txt
-SFDB=dat/sf_database.txt
+SFDB=aux/sf_database.txt
 Branches=dat/branches.txt
 ###
 pileup=aux/pileup.root
