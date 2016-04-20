@@ -7,6 +7,7 @@ parser.add_option("","--qcd",type='string',help="Input ROOT file. Set Null to us
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [Default=%default]", default="ChHiggsWs.root")
 parser.add_option("-L","--lumi",type='float',help="Luminosity pb. [Default=%default]", default=5000)
 parser.add_option("-n","--ncat",type='int',help="Number of cat. [Default=%default]", default=1)
+parser.add_option("","--nosyst",action='store_true',help="Do not look for syst. [Default=%default]", default=False)
 
 extra = OptionGroup(parser,"Extra options:","")
 #extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. [Default=%default]", default=1)
@@ -103,6 +104,7 @@ def ImportPdfFromTH1(tfile, name, target): ## w is global as arglist_obs and arg
 
 ### BKG ###
 systs=["BTAG","JES"]
+if opts.nosyst: systs=[]
 
 systBkg=[""]
 for shift in ["Up","Down"]: 
@@ -133,6 +135,7 @@ for syst in systBkg:
    #	datacard.write("\n")
 
 systs=["BTAG","JES"]
+if opts.nosyst: systs=[]
 systSig=[""]
 for shift in ["Up","Down"]: 
 	for s in systs: 
@@ -168,6 +171,7 @@ if opts.qcd != "":
    if fInQCD == None: print "<*> NO QCD File '%s'"%opts.qcd
 
    systs=["BTAG","RFAC","JES"]
+   if opts.nosyst: systs=[]
    systQCD=[""]
    for shift in ["Up","Down"]: 
    	for s in systs: 
@@ -247,6 +251,11 @@ for cat in range(0,opts.ncat):
 	else:
 	   datacard.write("\t1.027")
 datacard.write("\n")
+
+if opts.nosyst: 
+	w.writeToFile(opts.output)
+	print " --- DONE --- "
+	exit(0)
 
 ########## RFAC ###############
 if opts.qcd != "":
