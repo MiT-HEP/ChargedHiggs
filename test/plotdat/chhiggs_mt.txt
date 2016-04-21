@@ -1,0 +1,57 @@
+[include]
+file= plotdat/chhiggs_none_template.txt
+sub= XXX:Mt,NOne:Vars
+
+[base]
+yrange=1e-3,1e4
+xrange=0,500
+xtitle=m_{T}~[GeV]
+output= plot/Mt
+drawList= mc,chhiggs200,chhiggs500,data,box
+
+[legend]
+legendList = data,qcdinviso,tt,ewk,chhiggs200,chhiggs500   
+
+[box]
+type=box
+style=fill
+styleopt=1001
+width=2
+color=RGB,0,0,0,.40
+points=50,1e-3;500,1e-3;500,60;50,60;50,1e-3
+xerror=false
+yerror=false
+
+[mc]
+obj  = ewk,tt,qcdinviso
+
+[data]
+rebin=10
+
+[ewk]
+rebin=10
+
+[qcd]
+rebin=10
+
+[qcdinviso]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data
+style = line
+fillcolor = RGB,0.1,.4,1.
+fillstyle=1000
+color=ROOT.kBlack
+label=QCD~(Data)
+scale=1
+width=2
+
+[tt]
+rebin=10
+
+[chhiggs500]
+rebin=10
+
+[chhiggs200]
+rebin=10

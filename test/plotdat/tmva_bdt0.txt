@@ -1,0 +1,44 @@
+[include]
+file= plotdat/chhiggs_none_template.txt
+sub= XXX:Bdt0,NOne:Vars,ChHiggs.root:TmvaAnalysis.root,ChargedHiggsTauNu:ChargedHiggsTmva
+
+[legend]
+header=QCD~Data~vs~m_{H^{+}}=200~GeV
+position = .60,.7,.90,.92
+legendList = qcd,tt,ewk,chhiggs200,chhiggs500   ## if name1 == band and name3 == line, join them, will use the first for the label
+
+[base]
+yrange=1e-1,1e6
+xrange=-1.2,1
+xtitle=bdt0
+## removed data
+drawList= mc,chhiggs200,chhiggs500,data,box
+
+[data]
+rebin=10
+blind=0,10
+
+[ewk]
+rebin=10
+
+[qcd]
+rebin=10
+
+[tt]
+rebin=10
+
+[chhiggs500]
+rebin=10
+
+[chhiggs200]
+rebin=10
+
+[box]
+type=box
+style=fill
+styleopt=1001
+width=2
+color=RGB,0,0,0,.40
+points=0,1e-1;10,1e-1;10,1e3;0,1e3;0,1e-1
+xerror=false
+yerror=false

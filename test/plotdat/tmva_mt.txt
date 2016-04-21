@@ -1,0 +1,18 @@
+[include]
+file= plotdat/tmva_bdt0.txt
+sub= Bdt0:Mt,bdt0:Mt
+
+[base]
+xrange=0,500
+yrange=1e-1,1e4
+xtitle=m_{T}~[GeV]
+output=plot/TmvaMt
+
+[legend]
+header=~
+
+[data]
+blind=~
+
+[box]
+points=50,1e-1;500,1e-1;500,1e2;50,1e2;50,1e-1
