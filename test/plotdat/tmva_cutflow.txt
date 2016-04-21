@@ -1,0 +1,99 @@
+[base]
+type = 1D
+yrange = 1,1e16
+xrange = -.5,9.5
+canv = 800,800
+ratio = True
+yLog = True
+xLog = False
+output= plot/TmvaCutFlow
+format= pdf,root
+drawList= mc,chhiggs200,chhiggs500,data
+#binlabels = 8:Total,OneTau,NoLep,Met,Trigger,ThreeJets,OneB,Baseline
+
+[text]
+#text = Preliminary
+text = Internal
+position = tl 
+lumi = 2.3~fb^{-1}~(13~TeV)
+
+[legend]
+draw =  True
+legendList = data,qcd,tt,ewk,chhiggs200,chhiggs500   ## if name1 == band and name3 == line, join them, will use the first for the label
+position = .60,.7,.90,.95
+
+[data]
+type = TH1D
+file = TmvaAnalysis.root
+obj  = ChargedHiggsTmva/TauNu/CutFlow_Data
+style = marker
+styleopt = 20
+color = ROOT.kBlack
+label = Data
+yerror=True
+
+[mc]
+type = stack
+file = TmvaAnalysis.root 
+#obj  = qcd,tt,ewk
+obj  = ewk,tt,qcd
+
+[qcd]
+type = th1d
+file = TmvaAnalysis.root
+obj = ChargedHiggsTmva/TauNu/CutFlow_QCD
+style = line
+fillcolor = RGB,0.2,.9,1.
+fillstyle=1000
+color=ROOT.kBlack
+label=QCD
+scale=2318
+width=2
+
+[tt]
+type = th1d
+file = TmvaAnalysis.root
+obj = ChargedHiggsTmva/TauNu/CutFlow_TT
+style = line
+fillcolor=ROOT.kMagenta+2
+fillstyle=1000
+color=ROOT.kBlack
+label=TTJets
+scale=2318
+width=2
+
+[ewk]
+type = add
+file = TmvaAnalysis.root
+obj  = ChargedHiggsTmva/TauNu/CutFlow_DY,ChargedHiggsTmva/TauNu/CutFlow_WJets,ChargedHiggsTmva/TauNu/CutFlow_WW,ChargedHiggsTmva/TauNu/CutFlow_WZ,ChargedHiggsTmva/TauNu/CutFlow_ZZ
+style = line
+fillstyle=1000
+#fillcolor=ROOT.kGreen+2
+fillcolor = RGB,.1,.8,0.2
+color=ROOT.kBlack
+label=EWK
+scale=2318
+width=2
+
+[chhiggs200]
+type = th1d
+file = TmvaAnalysis.root
+obj = ChargedHiggsTmva/TauNu/CutFlow_HplusToTauNu_M-200_13TeV_amcatnlo
+style = line
+styleopt = 7
+color=ROOT.kBlue
+label= H^{+}~(m=200GeV)~x100
+scale=231800
+width=2
+
+[chhiggs500]
+type = th1d
+file = TmvaAnalysis.root
+obj = ChargedHiggsTmva/TauNu/CutFlow_HplusToTauNu_M-500_13TeV_amcatnlo
+style = line
+styleopt = 3
+color=ROOT.kRed
+label= H^{+}~(m=500GeV)~x10^{4}
+scale=2318e4
+width=2
+

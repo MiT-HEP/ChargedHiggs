@@ -1,0 +1,46 @@
+[include]
+file= plotdat/chhiggs_none_template.txt
+sub= XXX:EtMiss
+
+[base]
+yrange=1e-1,1e6
+xrange=0,500
+output= plot/EtMissQCDInvIso
+xtitle=E_{T}^{miss}~[GeV]
+
+[legend]
+legendList = data,qcdinviso,tt,ewk,chhiggs200,chhiggs500   
+
+[mc]
+obj  = ewk,tt,qcdinviso
+
+[data]
+rebin=10
+
+[ewk]
+rebin=10
+
+[qcd]
+rebin=10
+
+[qcdinviso]
+rebin=10 #### FIXME
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/EtMissIsoInv_Data
+style = line
+fillcolor = RGB,0.1,.4,1.
+fillstyle=1000
+color=ROOT.kBlack
+label=QCD~(Data)
+scale=1
+width=2
+
+[tt]
+rebin=10
+
+[chhiggs500]
+rebin=10
+
+[chhiggs200]
+rebin=10

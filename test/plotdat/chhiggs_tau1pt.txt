@@ -1,0 +1,26 @@
+[include]
+file= plotdat/chhiggs_none_template.txt
+sub= XXX:Tau1Pt
+
+[base]
+yrange=1e-1,1e6
+xrange=0,400
+xtitle=p_{T}^{@tau}~[GeV]
+
+[data]
+rebin=10
+
+[ewk]
+rebin=10
+
+[qcd]
+rebin=10
+
+[tt]
+rebin=10
+
+[chhiggs500]
+rebin=10
+
+[chhiggs200]
+rebin=10

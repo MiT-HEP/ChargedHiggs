@@ -1,0 +1,6 @@
+[include]
+file= plotdat/tmva_bdt0.txt
+sub= Bdt0:Bdt1,bdt0:bdt1
+
+[legend]
+header=TTJets~vs~m_{H^{+}}=200~GeV

@@ -1,0 +1,27 @@
+[include]
+file= plotdat/chhiggs_none_template.txt
+sub= XXX:Mt,NOne:Vars
+
+[base]
+yrange=1e-3,1e4
+xrange=0,500
+xtitle=m_{T}~[GeV]
+output= plot/MtMC
+
+[data]
+rebin=10
+
+[ewk]
+rebin=10
+
+[qcd]
+rebin=10
+
+[tt]
+rebin=10
+
+[chhiggs500]
+rebin=10
+
+[chhiggs200]
+rebin=10
