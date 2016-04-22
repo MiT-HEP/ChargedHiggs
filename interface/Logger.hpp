@@ -19,7 +19,7 @@ public:
 	static Logger & getInstance(){  static Logger l ; return l;} // Singleton
 
     // ---
-    void Log(Named*a ,const string & function, const string &level, const string & message)
+    void Log(const Named*a ,const string & function, const string &level, const string & message)
     {
         return Log(a->name(), function,level,message);
     }

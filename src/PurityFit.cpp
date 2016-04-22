@@ -135,19 +135,23 @@ void PurityFit::fit(){
     
         map<string,float> pars; 
 
+        bkg->Scale(lumi);
+
         float hI= h->Integral();
         float sI= sig->Integral();
+        float bI= bkg->Integral();
 
         float f = fit_specific( h, sig, bkg, Form("fit_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ), outname, &pars);
 
         // propagate the fraction to the yields
-        float R = f * hI / sI;
+        float R = f * (hI-bI) / sI;
         float Rhi = pars["fracErrorHigh"] * hI / sI;
         float Rlo = pars["fracErrorLow"] * hI / sI;
 
         //  INFO
         cout <<"pt "<<PtBins[iBin]<<" "<<PtBins[iBin+1]
             << " frac "<<f <<" +"<<pars["fracErrorHigh"]<< " -"<< pars["fracErrorLow"]
+            << " hI = "<< hI <<" sI="<<sI << " R' ="<<hI/sI 
             << " R "<< R <<" +"<<Rhi<<" -"<<Rlo
             <<endl;
         //  for SF DB

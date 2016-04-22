@@ -23,10 +23,14 @@ class  SF : public Named{
         double err;
         int syst;
         //
-        virtual double get(){ if (veto_) return 1.0 - (sf + err*syst); else return sf + err*syst ; }
+        virtual double get(){ 
+            if (veto_) return 1.0 - (sf + err*syst); else return sf + err*syst ; 
+        }
+
+
         const string name() const {return "SF";}
         virtual void SetVeto(int x=1){veto_=x;}
-        // TODO print
+        virtual void print() const ;
 };
 
 class SF_Asymm : public SF

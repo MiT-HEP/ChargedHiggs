@@ -15,6 +15,7 @@ class ChargedHiggsQCDPurity:  virtual public AnalysisBase
         vector<float> PtBins;
 
         const string dir="ChargedHiggsQCDPurity/Vars/";
+        const string none="ChargedHiggsQCDPurity/NOne/";
         int FindBin(float pt);
         string HistName(float pt, bool Direct=true, bool FullSelection=false,string var = "EtMiss");
 

@@ -3,6 +3,15 @@
 #include "TFile.h"
 #include "TH2F.h"
 //#define VERBOSE 2
+//
+void SF::print() const
+{
+    Log(__FUNCTION__,"INFO","------ SF: "+ label + "-------");
+    Log(__FUNCTION__,"INFO",Form("sf=%f",sf));
+    Log(__FUNCTION__,"INFO",Form("err=%f",err));
+    Log(__FUNCTION__,"INFO",Form("syst=%d",syst));
+    Log(__FUNCTION__,"INFO","------------------------------");
+}
 
 void SF_PtEta::add(double pt1, double pt2,double eta1, double eta2, double sf, double err)
 {

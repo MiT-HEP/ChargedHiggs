@@ -60,7 +60,9 @@ class Weight{
     void SetPtEtaSF(string label,double pt , double eta);
     void SetWPSF(string label, int wp);
     void SetJetFlavorSF(string label, int flavor);
-    void ApplySF(string label){ sf_ *= sf_db[label] -> get(); }
+    void ApplySF(string label){ 
+        sf_ *= sf_db[label] -> get(); 
+    }
     inline bool ExistSF(string label){ if (sf_db.find(label) != sf_db.end() ) return true; else return false; }
 
     // --- PU Reweight

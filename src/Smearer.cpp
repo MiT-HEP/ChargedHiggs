@@ -43,8 +43,9 @@ int SmearPu::smear(Event *e)
 
 int SmearSF::smear(Event *e)
 {
-    if( e->IsRealData() ) return SMEAR_NA;
+    //if( e->IsRealData() ) return SMEAR_NA;
 
+    //Log(__FUNCTION__,"DEBUG", "Setting Systematics SF for "+ sfname_ + Form(" to %d",syst_));
     e -> GetWeight()-> SetSystSF (sfname_,syst_);
     return SMEAR_OK;
 

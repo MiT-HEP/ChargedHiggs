@@ -67,6 +67,8 @@ void ChargedHiggsQCDPurity::Init()
         // I don't need to split it by pt
             Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),1000,0.,1000); // same binning in TauNu
             Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),1000,0.,1000.);
+            Book( none + "EtMissIsoInv"+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),1000,0.,1000.);
+            Book( none + "EtMiss"+"_"+ l  , ("EtMiss "+ l).c_str(),1000,0.,1000.); // copy of the Tau Nu ? 
     }
 
 }
@@ -164,7 +166,14 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
     }
 
+
     // -------------------------- FULL SELECTION -----------------------------------------------
+    
+    // N minus one direct
+    if (t!=NULL and direct.passAllExcept(ChargedHiggsTauNu::Met) ) 
+        {
+            Fill( none + "EtMiss" +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+        }
 
     if (t!=NULL and direct.passAll() ) 
     {
@@ -192,11 +201,9 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
     }
 
-    if (tInv != NULL and inverse.passAll()) {
-        #ifdef VERBOSE
-        if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG","is tauInv full selection");
-        #endif
-
+    // ---------------------- INF TAU SF 
+    //
+    if (tInv != NULL ){ // USE weight(false) to apply TF on data!
         //const string sf="tauinviso";
         const string sfname="tauinvisospline";
         // if the SF don't exist go on, but don't fill inconsistent events
@@ -204,11 +211,25 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             LogN(__FUNCTION__,"WARNING","Tau inviso SF does not exist",10);
             return EVENT_NOT_USED;
         }
-
         e->SetPtEtaSF(sfname,tInv->Pt(),tInv->Eta());
         e->ApplySF(sfname); // only in weight(false) sf are applied in data
 
-        if (e->weight(false) == 0 )Log(__FUNCTION__,"WARNING","event weight after SF is 0 ");
+        //Log(__FUNCTION__,"DEBUG",string("syst name is ") + systname + Form("weight is %f",e->weight(false)) );
+
+        if (inverse.passAllExcept(ChargedHiggsTauNu::Met))
+        {
+            //if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") ) Log(__FUNCTION__,"ERROR","Event Is NOT Triggered!!! Why am I here?");
+            Fill( none + "EtMissIsoInv" +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
+        }
+
+        if (inverse.passAll()) { // FULL SELECTION
+            #ifdef VERBOSE
+            if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG","is tauInv full selection");
+            #endif
+
+
+
+            if (e->weight(false) == 0 )Log(__FUNCTION__,"WARNING","event weight after SF is 0 ");
 
             float pt = tInv->Pt();                                                   
             int flavor= tInv->Rematch(e);
@@ -229,7 +250,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             else if (flavor <5 and flavor != 0 ) hist+="_Q";
             else hist += "_U";
             Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
-    }
+        } // inverse.passAll
+    } // tInv
 
 
     return EVENT_NOT_USED;

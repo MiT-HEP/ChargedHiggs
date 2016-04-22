@@ -1,12 +1,12 @@
 #include "interface/Named.hpp"
 #include "interface/Logger.hpp"
 
-void Named::Log(const string & function, const string &level, const string &message)
+void Named::Log(const string & function, const string &level, const string &message) const
 {	
     Logger::getInstance().Log(this,function,level,message );
 }
 
-void Named::LogN(const string & function, const string &level, const string &message,int N)
+void Named::LogN(const string & function, const string &level, const string &message,int N) const
 {	
     Logger::getInstance().LogN(this->name(),function,level,message,N );
 }

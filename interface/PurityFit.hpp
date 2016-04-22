@@ -51,6 +51,7 @@ class PurityFit{
         string inname;
 
         int verbose_;
+        double lumi{2318};
 
         virtual void init();
         virtual void fit();

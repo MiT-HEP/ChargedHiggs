@@ -35,6 +35,8 @@ if opts.verbose: print "DONE",
 if opts.purity:
 	from ROOT import PurityFit
 	fitter = PurityFit()
+	fitter.lumi=2318.
+	print "-> Setting lumi to",fitter.lumi
 else:
 	from ROOT import Fitter
 	fitter = Fitter()
