@@ -10,7 +10,7 @@ output= plot/Mt
 drawList= mc,chhiggs200,chhiggs500,data,box
 
 [legend]
-legendList = data,qcdinviso,tt,ewk,chhiggs200,chhiggs500   
+legendList = data,qcdinvisocorr,tt,ewk,chhiggs200,chhiggs500   
 
 [box]
 type=box
@@ -23,7 +23,7 @@ xerror=false
 yerror=false
 
 [mc]
-obj  = ewk,tt,qcdinviso
+obj  = ewk,tt,qcdinvisocorr
 
 [data]
 rebin=10
@@ -45,6 +45,20 @@ fillstyle=1000
 color=ROOT.kBlack
 label=QCD~(Data)
 scale=1
+width=2
+
+[qcdinvisocorr]
+rebin=10
+type = add
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data,ChargedHiggsQCDPurity/Vars/MtIsoInv_TT,ChargedHiggsQCDPurity/Vars/MtIsoInv_DY,ChargedHiggsQCDPurity/Vars/MtIsoInv_WJets,ChargedHiggsQCDPurity/Vars/MtIsoInv_WW,ChargedHiggsQCDPurity/Vars/MtIsoInv_WZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ZZ
+#### FIXME
+scale = 1.,-2318.,-2318.,-2318.,-2318.,-2318.,-2318.
+style = line
+fillcolor = RGB,0.5,.6,1.
+fillstyle=1000
+color=ROOT.kBlack
+label=QCD~(Data)
 width=2
 
 [tt]

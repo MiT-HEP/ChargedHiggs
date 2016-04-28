@@ -1,4 +1,5 @@
 import sys, os
+import re
 from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
@@ -6,6 +7,7 @@ parser.add_option("-i","--input",type='string',help="Input ROOT file. [Default=%
 parser.add_option("","--qcd",type='string',help="Input ROOT file. Set Null to use QCD from above [Default=%default]", default="QCDPurity.root")
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [Default=%default]", default="ChHiggsWs.root")
 parser.add_option("-L","--lumi",type='float',help="Luminosity pb. [Default=%default]", default=5000)
+parser.add_option("","--qcdlumi",type='float',help="QCD Luminosity pb. [Default=%default]", default=2318)
 parser.add_option("-n","--ncat",type='int',help="Number of cat. [Default=%default]", default=1)
 parser.add_option("","--nosyst",action='store_true',help="Do not look for syst. [Default=%default]", default=False)
 
@@ -74,7 +76,7 @@ datacard.write("shapes data_obs *\t" + opts.output)
 datacard.write("\tw:data_obs_$CHANNEL")
 datacard.write("\n")
 
-def ImportPdfFromTH1(tfile, name, target): ## w is global as arglist_obs and argset_obs
+def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs and argset_obs
 	if tfile == None:
 		print "<*> File not exists"
 	h = tfile.Get(name)
@@ -82,6 +84,13 @@ def ImportPdfFromTH1(tfile, name, target): ## w is global as arglist_obs and arg
 	if h == None:
 		print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetTitle())
 		raise Exception("No Such Histogram")
+	for name2,c in add:
+		h_tmp=tfile.Get(name2)
+		if h_tmp==None:
+			print "<*> Unable to find '%s' in '%s': Ignoring it!"%(name2,tfile.GetTitle())
+			continue
+		h_tmp.Scale(c)
+		h.Add(h_tmp)
 
 	if h.Integral() <= 0.: 
 		print " Integral for hist '%s' is null"%name
@@ -189,9 +198,12 @@ if opts.qcd != "":
 	if syst == "": systName=""
 	else: systName="_"+syst
 
+	addlist=[]
+	for bkg in ['WJets','TT','WW','WZ','ZZ','DY']:
+		addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) ## the scaling to 5 is done later in the datacard, minus because needs to be subtracted
 	target="pdf_inviso_cat%d_QCD"%cat + systName
 	print "*** Considering QCD","syst=",syst,"target=",target
-	ImportPdfFromTH1(fInQCD, lastget,target )
+	ImportPdfFromTH1(fInQCD, lastget,target ,addlist)
 
    datacard.write("shapes QCD *\t"+opts.output)
    datacard.write("\tw:"+"pdf_inviso_$CHANNEL_QCD" )
@@ -235,7 +247,7 @@ datacard.write("rate\t")
 for cat in range(0,opts.ncat):
    for proc in mcAll:
 	if proc=="QCD" and opts.qcd!="":
-		datacard.write("\t%.2f"%(opts.lumi/2318.)) ## lumi factor 5000/2110, should be 1.00 FIXME
+		datacard.write("\t%.2f"%(opts.lumi/opts.qcdlumi)) ## lumi factor 5000/2110, should be 1.00 FIXME
 	else:
 		datacard.write("\t%.0f"%opts.lumi)
 datacard.write("\n")

@@ -1,0 +1,41 @@
+[include]
+file= plotdat/chhiggs_metqcd.txt
+
+[base]
+output= plot/EtMissBand
+drawList= mc,chhiggs200,chhiggs500,qcdinvisoband,data
+
+[legend]
+legendList = data,qcdinvisocorr,qcdinvisoband,tt,ewk,chhiggs200,chhiggs500   
+
+
+[qcdbandup]
+type=add
+file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root
+obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data_RFACUp,ChargedHiggsTauNu/NOne/EtMiss_TT,ChargedHiggsTauNu/NOne/EtMiss_DY,ChargedHiggsTauNu/NOne/EtMiss_WJets,ChargedHiggsTauNu/NOne/EtMiss_WW,ChargedHiggsTauNu/NOne/EtMiss_WZ,ChargedHiggsTauNu/NOne/EtMiss_ZZ
+rebin=10
+scale = 1,2318,2318,2318,2318,2318,2318
+
+[qcdbanddown]
+type=add
+file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root
+obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data_RFACDown,ChargedHiggsTauNu/NOne/EtMiss_TT,ChargedHiggsTauNu/NOne/EtMiss_DY,ChargedHiggsTauNu/NOne/EtMiss_WJets,ChargedHiggsTauNu/NOne/EtMiss_WW,ChargedHiggsTauNu/NOne/EtMiss_WZ,ChargedHiggsTauNu/NOne/EtMiss_ZZ
+rebin=10
+scale = 1,2318,2318,2318,2318,2318,2318
+
+[qcdbandcentral]
+type=add
+file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root
+obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data,ChargedHiggsTauNu/NOne/EtMiss_TT,ChargedHiggsTauNu/NOne/EtMiss_DY,ChargedHiggsTauNu/NOne/EtMiss_WJets,ChargedHiggsTauNu/NOne/EtMiss_WW,ChargedHiggsTauNu/NOne/EtMiss_WZ,ChargedHiggsTauNu/NOne/EtMiss_ZZ
+rebin=10
+scale = 1,2318,2318,2318,2318,2318,2318
+
+[qcdinvisoband]
+type=envelope
+obj=qcdbandup,qcdbanddown,qcdbandcentral
+style=band
+styleopt=1000
+color = RGB,1.0,0,0,0.6
+xerror=true
+label=QCD~Uncert.
+

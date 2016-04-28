@@ -1,0 +1,41 @@
+[include]
+file= plotdat/chhiggs_mt.txt
+
+[base]
+output= plot/MtBand
+drawList= mc,chhiggs200,chhiggs500,qcdinvisoband,data,box
+
+[legend]
+legendList = data,qcdinviso,qcdinvisoband,tt,ewk,chhiggs200,chhiggs500   
+
+
+[qcdbandup]
+type=add
+file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root
+obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data_RFACUp,ChargedHiggsTauNu/Vars/Mt_TT,ChargedHiggsTauNu/Vars/Mt_DY,ChargedHiggsTauNu/Vars/Mt_WJets,ChargedHiggsTauNu/Vars/Mt_WW,ChargedHiggsTauNu/Vars/Mt_WZ,ChargedHiggsTauNu/Vars/Mt_ZZ
+rebin=10
+scale = 1,2318,2318,2318,2318,2318,2318
+
+[qcdbanddown]
+type=add
+file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root
+obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data_RFACDown,ChargedHiggsTauNu/Vars/Mt_TT,ChargedHiggsTauNu/Vars/Mt_DY,ChargedHiggsTauNu/Vars/Mt_WJets,ChargedHiggsTauNu/Vars/Mt_WW,ChargedHiggsTauNu/Vars/Mt_WZ,ChargedHiggsTauNu/Vars/Mt_ZZ
+rebin=10
+scale = 1,2318,2318,2318,2318,2318,2318
+
+[qcdbandcentral]
+type=add
+file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root
+obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data,ChargedHiggsTauNu/Vars/Mt_TT,ChargedHiggsTauNu/Vars/Mt_DY,ChargedHiggsTauNu/Vars/Mt_WJets,ChargedHiggsTauNu/Vars/Mt_WW,ChargedHiggsTauNu/Vars/Mt_WZ,ChargedHiggsTauNu/Vars/Mt_ZZ
+rebin=10
+scale = 1,2318,2318,2318,2318,2318,2318
+
+[qcdinvisoband]
+type=envelope
+obj=qcdbandup,qcdbanddown,qcdbandcentral
+style=band
+styleopt=1000
+color = RGB,1.0,0,0,0.6
+xerror=true
+label=QCD~Uncert.
+
