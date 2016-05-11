@@ -89,6 +89,9 @@ void ChargedHiggsTauNu::Init()
 
         Book(    "ChargedHiggsTauNu/Vars/Jet1QGL_" + l ,"QGL of the leading jet;QGL",300,-1.5,1.5) ;
         Book(    "ChargedHiggsTauNu/Vars/Jet2QGL_" + l ,"QGL of the subleading jet;QGL",300,-1.5,1.5) ;
+
+        Book(    "ChargedHiggsTauNu/Vars/MtDecoQ_" + l ,"Mt deco;MtQ",1000,0,1000) ;
+        Book(    "ChargedHiggsTauNu/Vars/MtDecoCosPhi_" + l ,"Mt deco;MtCosPhi",1000,-1,1) ;
         /**********************************************
          *                   MT                       *
          **********************************************/
@@ -145,9 +148,14 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
 
     //Uncorr Pt does not include met phi corrections, and Tau Nu regression
     //if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
-    if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
+    //if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
+    if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
+    //if ( e->IsTriggered("HLT_PFMET120_NoiseCleaned_BtagCSV0p72"))  cut.SetCutBit(Trigger);
 
-    if ( e->GetMet().Pt() >= 130 ) cut.SetCutBit(Met); // or PtUncorr
+    if (e->IsRealData() and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") )
+        Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , Form("GREPMEAAA Found Data Event (%d,%d,%u) trigger by Tau+120 and not by Tau+80",e->runNum(),e->lumiNum(), e->eventNum()) ); 
+    
+    if ( e->GetMet().Pt() >= 80 ) cut.SetCutBit(Met); // or PtUncorr
 
     double RbbMin= e->RbbMin(3,t);
     double RCollMin= e-> RCollMin(3,t);
@@ -322,6 +330,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if (cut.passAll() ) 
     {
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
+        if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoQ_"+label,systname, e->MtDecoQ() ,e->weight());
+        if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoCosPhi_"+label,systname, e->MtDecoCosPhi() ,e->weight());
 
         Fill("ChargedHiggsTauNu/Vars/Jet1QGL_"+label,systname,e->GetJet(0)->QGL() , e->weight() );
         Fill("ChargedHiggsTauNu/Vars/Jet2QGL_"+label,systname,e->GetJet(1)->QGL() , e->weight() );
