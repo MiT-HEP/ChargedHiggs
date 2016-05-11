@@ -74,6 +74,28 @@ float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton
     return -3;
 } 
 
+float Event::MtDecoQ(MtType type, float mt0){
+    switch(type){
+        case MtTau:
+            return MtDecoQ(GetTau(0), mt0);
+        case MtMuon:
+            return MtDecoQ(GetMuon(0), mt0);
+        case MtTauInv:
+            return MtDecoQ(GetTauInvIso(0), mt0);
+    } // end switch
+}
+
+float Event::MtDecoCosPhi(MtType type){
+    switch(type){
+        case MtTau:
+            return MtDecoCosPhi(GetTau(0));
+        case MtMuon:
+            return MtDecoCosPhi(GetMuon(0));
+        case MtTauInv:
+            return MtDecoCosPhi(GetTauInvIso(0));
+    } // end switch
+}
+
 float Event::RbbMin(int iMax,Tau *t) {
     // notice the Pi-...
     if (t == NULL) return -1;

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <bitset>
 
 class TLorentzVector;
 
@@ -20,6 +21,17 @@ namespace ChargedHiggs{
     float mt(const float pt1, const float pt2, const float phi1, const float phi2);
 
     double CosThetaCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS=13) ;
+
+    constexpr float Mw = 80.385;
+    constexpr float Mh = 125.;
+    constexpr float Mtop = 173.34;
+
+   template<typename T>
+   std::string printBinary(const T& x){ std::bitset<sizeof(T)*8> b(x); return b.to_string() ; }
+
+   template<typename T>
+   std::string printBinary(const T& x,unsigned max){ std::bitset<sizeof(T)*8> b(x); std::string s= b.to_string(); return s.substr(b.size()-max) ;  }
+
 };
 
 namespace Binning{

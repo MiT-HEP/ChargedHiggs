@@ -17,6 +17,7 @@ using namespace std;
 
 // ----
 #include "interface/Weight.hpp"
+#include "interface/GeneralFunctions.hpp"
 
 class Looper;
 class AnalysisBase;
@@ -65,6 +66,14 @@ class Event{
     inline int lumiNum(){return lumiNum_; }
     inline unsigned eventNum(){return eventNum_; }
     inline string GetName()const{ return fName_;}
+
+    // Bare version  -- don't use these functions, unless for debug or sync
+    inline Jet * GetBareJet(unsigned iJet) const { if (jets_.size() <= iJet) return (Jet*) NULL; return jets_[iJet]; }
+    inline Tau * GetBareTau(unsigned iTau) const { if (taus_.size() <= iTau) return (Tau*) NULL; return taus_[iTau]; }
+    inline Lepton * GetBareLepton(unsigned iLepton) const { if (leps_.size() <= iLepton) return (Lepton*) NULL; return leps_[iLepton]; }
+    inline Photon * GetBarePhoton(unsigned iPhoton) const { if (phos_.size() <= iPhoton) return (Photon*) NULL; return phos_[iPhoton]; }
+
+    // ---
     
     // This functions should check if the objects are valid
     // Get NULL in case of failure
@@ -86,7 +95,7 @@ class Event{
     Photon * GetPhoton( int iPho );
 
     //
-    inline Met GetMet( ) { return met_;} // should be const, but noCorrPt is not set correctly without &
+    inline Met GetMet( ) const { return met_;} // should be const,  -- FIXED? but noCorrPt is not set correctly without &
 
     inline float Rho() { return rho_; }
     inline int Npv() { return npv_ ;} 
@@ -111,6 +120,14 @@ class Event{
     }
     enum MtType { MtTau =0 , MtMuon, MtTauInv };
     float Mt(MtType type=MtTau ) ; // 0 tau, 1 muon ,...
+
+    // Q and 
+    inline float MtDecoQ(Object *t,float mt0 = ChargedHiggs::Mw) const {if (t==NULL) return -999; return 1- std::pow(mt0,2)/(2*t->Pt()*GetMet().Pt());} 
+    inline float MtDecoCosPhi(Object *t) const { if (t==NULL) return -10; return std::cos(GetMet().DeltaPhi(*t)) ;} 
+    float MtDecoQ(MtType type=MtTau, float mt0=ChargedHiggs::Mw);
+    float MtDecoCosPhi(MtType type=MtTau);
+
+
 
     // --------- Angular variables
     inline float RbbMin(int iMax=3) { return RbbMin(iMax,GetTau(0) ) ; }

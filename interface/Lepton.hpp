@@ -44,10 +44,15 @@ class Lepton : virtual public Object,
             if ( tightcut_ and not tightId) return 0;
             return 1;
         }
+
         virtual inline bool IsElectron() const { return IsLep() and (type == 11); }
         virtual inline bool IsMuon() const { return IsLep() and (type == 13); }
         inline int   IsObject() const override {return IsLep();} // TODO, const, check that nothing broke
         virtual inline float Isolation() const { return iso; } 
+
+        // these functions are used in order to avoid the lep checks
+        virtual inline bool IsElectronDirty() const { return type == 11; }
+        virtual inline bool IsMuonDirty() const { return type == 13; }
 };
 
 #endif

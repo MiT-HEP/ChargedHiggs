@@ -201,6 +201,8 @@ if opts.hadd:
 	if opts.dir[-1] == '/':dir = opts.dir[:-1]
 	else: dir  = opts.dir[:]
 	name = re.sub('.*/','',dir)
+	cmd = "[ -f %s%s.root ] && rm -v %s/%s.root"%(opts.dir,name,opts.dir,name) ## remove the file in oredr not to double count
+	call(cmd,shell=True)
 	cmd = "hadd -f %s/%s.root "%(opts.dir, name ) + " ".join(filelist)
 	call(cmd,shell=True)
 	if opts.clear:

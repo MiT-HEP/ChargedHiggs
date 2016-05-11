@@ -44,6 +44,13 @@ class Jet : virtual public Object
 
     float unc; // TOFILL
     int syst ;
+// Local Variables:
+// mode:c++
+// indent-tabs-mode:nil
+// tab-width:4
+// c-basic-offset:4
+// End:
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
 
     float bdiscr; // 
     float bunc; // TOFILL
@@ -59,6 +66,9 @@ class Jet : virtual public Object
 
     // ---
     inline float Pt() const override { if (syst ==0) return p4.Pt(); return p4.Pt() *(1.0  + unc*syst );}
+    inline float E() const override { if (syst == 0) return p4.E(); return p4.E() * (1.0 + unc*syst) ; }
+    inline float GetUnc() const { return unc; }
+
     inline void  clearSyst()override {Object::clearSyst() ;syst = 0;bsyst=0; isValid=1;}; // reset smearing
     inline float QGL() const { return qgl_; } 
     inline float QGLVar(std::string name) const {
