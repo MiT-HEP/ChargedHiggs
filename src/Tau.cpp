@@ -19,6 +19,7 @@ int Tau::IsTau() const {
     if ( isocut_ >=0 and iso2 >= isocut_ ) return 0;
     if ( Pt() < ptcut_ ) return 0;
     if ( fabs(Eta() ) > etacut_) return 0;
+    if ( not id_iso ) return 0; // this include additional cuts on top of the iso cut
     return 1;
 }
 

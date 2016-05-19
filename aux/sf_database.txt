@@ -45,6 +45,8 @@ ele pteta 55 8000 2.0 2.5 1.040 0.028
 # tau invisolation: transfer factors
 include aux/R.txt
 include aux/Rspline2.txt
+#include aux/RMet80.txt
+#include aux/ROldId.txt
 ## BTag from POG
 btag csv aux/CSVv2.csv
 ## electron veto from egamma POG

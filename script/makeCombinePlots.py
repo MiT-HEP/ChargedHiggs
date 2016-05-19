@@ -18,6 +18,7 @@ parser.add_option("-x","--xSec",dest="xsec",help="Print limit vs xSec instead of
 parser.add_option("","--xSecName",dest="xsecname",help="extra string to be match in the mc_database",default="ChargedHiggs")
 parser.add_option(""  ,"--yaxis",help="Y axis range Y1,Y2 [%default]",default="")
 parser.add_option(""  ,"--xaxis",help="X axis range X1,X2 [%default]",default="")
+parser.add_option("","--exclude",dest="exclude",help="Exclude mh points MH1,MH2,.. [%default]",default="")
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -155,7 +156,10 @@ def GetLimitFromTree(inputFile,xsec=False):
 		sys.path.insert(0,os.getcwd())
 		
 		from ParseDat import ReadMCDB
-		
+	
+		if 'FixQCD' in inputFile:
+			print "->Reading from OLD"
+			mcdb=ReadMCDB(basepath+"/dat/mc_database.old") 
 		mcdb=ReadMCDB(basepath+"/dat/mc_database.txt") 
 		#R[label] = (dir,sumw,xsec)
 
@@ -180,6 +184,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 			print "Found xSec for mh=",mh,"xSec=",xSec, "and label", labelFound
 			xsections_mcdb.append(  (mh,xSec) )
 		# run over the mass point and eventually interpolate between the xsec
+		xsections_mcdb.sort()
 		for i in range(0,len(median)):
 			mh= median[i][0]
 			bin=-1
@@ -190,6 +195,10 @@ def GetLimitFromTree(inputFile,xsec=False):
 					bin = j  # last bin is closed on both sides
 			if bin <0 : 
 				print "[ERROR]: unable to find cross section bin for mh=", mh
+				print "-----------------------"
+				for xsec in xsections_mcdb :
+					print "mh=",xsec[0],"xsec=",xsec[1]
+				print "-----------------------"
 	
 	
 			xsections_interpolated[mh] = interpolate(xsections_mcdb[bin][0],float(xsections_mcdb[bin][1]),xsections_mcdb[bin+1][0],float(xsections_mcdb[bin+1][1]),mh )
@@ -210,6 +219,14 @@ def GetLimitFromTree(inputFile,xsec=False):
 		if mh != Down[i][0] : print "[ERROR]: MH mismatch"
 		if mh != Down2[i][0] : print "[ERROR]: MH mismatch"
 		if opts.unblind and mh != data[i][0]: print "[ERROR]: MH mismatch"
+
+		isToExclude=False
+		for mtest in opts.exclude.split(','):
+			if float(mtest) == mh:
+				isToExclude = True
+		if isToExclude: 
+			print "Excluding MH=",mh,"from the plot"
+			continue
 		
 		if xsec:
 			print "mh=",mh,"xSec=",xSec, "median = ",median[i][1]
