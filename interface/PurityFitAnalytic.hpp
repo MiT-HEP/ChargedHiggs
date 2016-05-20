@@ -34,6 +34,7 @@ using namespace std;
 #include "RooExponential.h"
 #include "RooGaussian.h"
 #include "RooGenericPdf.h"
+#include "RooFFTConvPdf.h"
 
 #include "interface/BaseFitter.hpp"
 

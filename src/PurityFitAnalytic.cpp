@@ -334,10 +334,10 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
 
     // ----------------------- FIT INV ISO TO EXTRACT QCD MODEL ---------------------------
     if (initvalues.find("sigmaR_QCD") == initvalues.end())initvalues["sigmaR_QCD"] = 20;
-    if (initvalues.find("cE_QCD") == initvalues.end())initvalues["cE_QCD"] = 0.001;
-    if (initvalues.find("sigmaG_QCD") == initvalues.end())initvalues["sigmaG_QCD"] = 20;
-    if (initvalues.find("muG_QCD") == initvalues.end())initvalues["muG_QCD"] = 5;
-    if (initvalues.find("f1QCD") == initvalues.end())initvalues["f1QCD"] = .3;
+    if (initvalues.find("cE_QCD") == initvalues.end())initvalues["cE_QCD"] = -0.001;
+    if (initvalues.find("sigmaG_QCD") == initvalues.end())initvalues["sigmaG_QCD"] = 5;
+    if (initvalues.find("muG_QCD") == initvalues.end())initvalues["muG_QCD"] = 0;
+    if (initvalues.find("f1QCD") == initvalues.end())initvalues["f1QCD"] = .95;
     if (initvalues.find("f2QCD") == initvalues.end())initvalues["f2QCD"] = .3;
     if (initvalues.find("fInvIso") == initvalues.end())initvalues["fInvIso"] = .9;
     if (initvalues.find("f") == initvalues.end())initvalues["f"] = .9;
@@ -345,17 +345,18 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     // x) create QCD model
     RooRealVar sR("sigmaR_QCD","sigmaR",initvalues["sigmaR_QCD"]);
     RooGenericPdf rayleighQCD ("rayleigh_QCD","@0/(@1*@1)*TMath::Exp(-@0*@0/(2*@1*@1))",RooArgList(x,sR) );
-    RooRealVar cE("cE_QCD","cE",initvalues["cE_QCD"]);
+    RooRealVar cE("cE_QCD","cE",initvalues["cE_QCD"],-1.,0.);
     RooExponential expoQCD("expo_QCD","expoQCD",x,cE);
-    RooRealVar sG("sigmaG_QCD","sigmaG",initvalues["sigmaG_QCD"]);
-    RooRealVar mG("muG_QCD","muG",initvalues["muG_QCD"]);
-    RooGaussian gausQCD("gauss_QCD","gauss_QCD",x,mG,sG);
+    RooRealVar sG("sigmaG_QCD","sigmaG",initvalues["sigmaG_QCD"],0.00001,30);
+    RooRealVar mG("muG_QCD","muG",initvalues["muG_QCD"],-5,5);
+    RooGaussian gaussQCD("gauss_QCD","gauss_QCD",x,mG,sG);
 
-    RooRealVar f1QCD("f1QCD","f1QCD",initvalues["f1QCD"]);
+    RooRealVar f1QCD("f1QCD","f1QCD",initvalues["f1QCD"],.9,1.0);
     RooRealVar f2QCD("f2QCD","f2QCD",initvalues["f2QCD"]);
-    //RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD,gausQCD) , RooArgList(f1QCD,f2QCD) );
+    //RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD,gaussQCD) , RooArgList(f1QCD,f2QCD) );
     //RooGenericPdf modelQCD ("rayleigh_QCD","@0/(@1*@1)*TMath::Exp(-@0*@0/(2*@1*@1))",RooArgList(x,sR) );
-    RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD) , RooArgList(f1QCD) );
+    //RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD) , RooArgList(f1QCD) );
+    RooFFTConvPdf modelQCD("rxg","rayleigh (X) gauss",x,rayleighQCD,gaussQCD);
 
     RooRealVar fInvIso("fInvIso","fInvIso",initvalues["fInvIso"]);
     RooAddPdf modelInvIso("modelInvIso","modelInvIso",RooArgList(modelQCD,modelEwk) , RooArgList(fInvIso) );
