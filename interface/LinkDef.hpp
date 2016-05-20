@@ -20,9 +20,10 @@
 #pragma link C++ class SmearSF+;
 #pragma link C++ class CutSelector+;
 
+#pragma link C++ class BaseFitter+;
 #pragma link C++ class Fitter+;
 #pragma link C++ class PurityFit+;
-#pragma link C++ class NegativeWeightInterpolator+;
+#pragma link C++ class PurityFitAnalytic+;
 
 //#pragma link C++ class sigint_exception+;
 #pragma link C++ class RooCMSShape+;

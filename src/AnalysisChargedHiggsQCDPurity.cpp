@@ -27,6 +27,7 @@ void ChargedHiggsQCDPurity::Init()
             //  Used in case of spline reweighting iterations
             Book( dir + HistName(pt, true,  false, "TauPt")+"_"+ l  , ("PtTau "+ l).c_str(),1000,0.,1000.);
             Book( dir + HistName(pt, false, false, "TauPt")+"_"+ l  , ("PtTauIsoInv "+ l).c_str(),1000,0.,1000.);
+
             // QG ? Tau 
             Book( dir + HistName(pt, true , false)+"_Q_" + l  , ("EtMiss Q"+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, false, false)+"_Q_" + l  , ("EtMissIsoInv Q"+ l).c_str(),250,0.,500.);
@@ -37,7 +38,19 @@ void ChargedHiggsQCDPurity::Init()
             Book( dir + HistName(pt, true , false)+"_U_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, false, false)+"_U_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
         }
-    // --- for event not in the PtBins 
+    // --- for event NOT BINNED! CONTROL PLOTS
+    for (string &l : AllLabel() )
+    {
+            //  Used for control plots
+            string hist= "TauPt_IsoInv_Control";
+            Book( dir + hist+"_"+ l  , ("PtTauIsoInv "+ l).c_str(),1000,0.,1000.); // this guys has the R factor applied in the loos selection
+            hist= "TauPt_Control";
+            Book( dir + hist+"_"+ l  , ("PtTau "+ l).c_str(),1000,0.,1000.); // this guys has the R factor applied in the loos selection
+            hist= "EtMiss_IsoInv_Control";
+            Book( dir + hist+"_"+ l  , ("EtMissTauIsoInv "+ l).c_str(),250,0,500);
+            hist= "EtMiss_Control";
+            Book( dir + hist+"_"+ l  , ("EtMiss "+ l).c_str(),250,0,500);
+    }
     // -- full selection
     for ( string& l : AllLabel()  ) 
     {
@@ -142,6 +155,13 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         else hist += "_U";
         Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
 
+        { // CONTROL PLOTS -- LOOSE SELECTION
+            string hist= "TauPt_Control";
+            Fill( dir+hist +"_"+label,systname, t->Pt(), e->weight() );
+            hist= "EtMiss_Control";
+            Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+        }
+
     }
 
     if (tInv != NULL and passPrescale) // inv iso
@@ -215,6 +235,12 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         e->ApplySF(sfname); // only in weight(false) sf are applied in data
 
         //Log(__FUNCTION__,"DEBUG",string("syst name is ") + systname + Form("weight is %f",e->weight(false)) );
+        if (tInv != NULL and passPrescale){ // CONTROL PLOTS -- LOOSE SELECTION
+            string hist= "TauPt_IsoInv_Control";
+            Fill( dir+hist +"_"+label,systname, tInv->Pt(), e->weight(false) );
+            hist= "EtMiss_IsoInv_Control";
+            Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
+        }
 
         if (inverse.passAllExcept(ChargedHiggsTauNu::Met))
         {

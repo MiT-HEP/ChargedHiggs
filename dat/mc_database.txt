@@ -20,7 +20,7 @@ QCD-50-80 /store/user/amarini/Nero/v1.4/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
 QCD-600-800 /store/user/amarini/Nero/v1.4/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/QCD-600-800/160513_175708/0000 3534700.0 183.354119673
 QCD-800-1000 /store/user/amarini/Nero/v1.4/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/QCD-800-1000/160513_175732/0000 2784248.23049 33.2672244814
 QCD-80-120 /store/user/amarini/Nero/v1.4/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/QCD-80-120/160513_175519/0000 6131452.68331 2700760.35761
-TT-powheg-ext3 /store/user/amarini/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160513_180234/0000 94495075.0 729.988557281
+TT-powheg-ext3 /store/user/amarini/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160513_180234/0000 94495075.0 831
 W3Jets-madgraph /store/user/amarini/Nero/v1.4/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/W3Jets-madgraph/160513_180322/0000 7205063.0 939.461425781
 #WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160513_180301/0000 3.73197735021e+12 40472.4644846
 ## NNLO
