@@ -74,7 +74,10 @@ for idx,fName in enumerate(fileList):
 		h_xSec = fROOT.Get("nero/xSec").Clone("myxSec")
 	else:
 		h = fROOT.Get("nero/xSec")
-		print "\txSec in file is ",h.GetBinContent(1)/h.GetBinContent(2),"+/-",math.sqrt(1./h.GetBinContent(2))
+		if h.GetBinContent(2) == 0 : 
+			print "Error is 0, xsec is",h.GetBinContent(1),"try to continue"
+		else:
+			print "\txSec in file is ",h.GetBinContent(1)/h.GetBinContent(2),"+/-",math.sqrt(1./h.GetBinContent(2))
 		h_xSec.Add( h )
 
 	t = fROOT.Get("nero/all")

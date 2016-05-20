@@ -1,5 +1,5 @@
-#ifndef PURITY_FIT_H
-#define PURITY_FIT_H
+#ifndef PURITY_FIT_ANALYTIC_H
+#define PURITY_FIT_ANALYTIC_H
 
 // --- STD ---
 #include <string>
@@ -31,8 +31,13 @@ using namespace std;
 #include "RooHistPdf.h"
 #include "RooFitResult.h"
 #include "RooExtendPdf.h"
+#include "RooExponential.h"
+#include "RooGaussian.h"
+#include "RooGenericPdf.h"
 
-class PurityFit{
+#include "interface/BaseFitter.hpp"
+
+class PurityFitAnalytic : public BaseFitter{
     protected:
         float fit_specific( const TH1* h, const TH1* sig, const TH1* bkg, 
             TH1* bkgInv,
@@ -43,20 +48,26 @@ class PurityFit{
 
         TFile *fIn_;
 
+
     public:
-        PurityFit(){outname="";inname="";verbose_=0;};
-        ~PurityFit(){};
+        PurityFitAnalytic(){outname="";inname="";txtoutname="";verbose_=0;};
+        ~PurityFitAnalytic(){};
 
         vector<float> PtBins;
+        vector<string> bkglabels;
+
         string outname;
         string inname;
+
         string txtoutname;
+        map<string,float> initvalues;
 
         int verbose_;
         double lumi{2318};
 
         virtual void init();
         virtual void fit();
+        const string name() const override { return "PurityFitAnalytic";}
 };
 
 #endif

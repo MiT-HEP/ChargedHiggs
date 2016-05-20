@@ -1,15 +1,15 @@
-#include "interface/PurityFit.hpp"
+#include "interface/PurityFitAnalytic.hpp"
 #include "TMath.h"
 #include "TF1.h"
 #include <fstream>
 
 
-void PurityFit::init(){
+void PurityFitAnalytic::init(){
     fIn_ = TFile::Open(inname.c_str() );
-    if (fIn_== NULL) cout<<"[PurityFit]::[init]::[ERROR] no input file:"<<inname<<endl;
+    if (fIn_ == NULL) Log(__FUNCTION__,"ERROR",string("No input file:") + inname );
 }
 
-void PurityFit::fit(){
+void PurityFitAnalytic::fit(){
     // Uperp, EtMiss
     string what="EtMiss";
     string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_Data";
@@ -17,13 +17,16 @@ void PurityFit::fit(){
     string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_%s";
     string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_Data";
 
-    vector<string> bkglabels;
+    if (bkglabels.empty() )
+    {
+        Log(__FUNCTION__,"INFO","Using default bkg labels");
         bkglabels.push_back("WJets");
         bkglabels.push_back("TT");
         bkglabels.push_back("WW");
         bkglabels.push_back("WZ");
         bkglabels.push_back("ZZ");
         bkglabels.push_back("DY");
+    }
 
     // reset output file
     TFile *fOut= TFile::Open(outname.c_str(),"RECREATE");
@@ -31,17 +34,20 @@ void PurityFit::fit(){
 
     ofstream  fw;
     fw.open(txtoutname.c_str());
-    fw <<"# QCD R-factor computed by PurityFit"<<endl;
+    fw <<"# QCD R-factor computed by PurityFitAnalytic"<<endl;
 
     for (size_t iBin=0;iBin+1<PtBins.size() ;++iBin)
     {
         TCanvas *cEWK= new TCanvas(Form("EWK_control_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ));
         TCanvas *cQCD= new TCanvas(Form("QCD_control_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ));
+       
+        string histname = Form(targetname.c_str(),PtBins[iBin],PtBins[iBin+1]); 
+        if (verbose_ > 0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname);
+        TH1D *h   = (TH1D*) fIn_ -> Get( histname.c_str()  ) -> Clone();  
 
-        if (verbose_ >0 ) cout <<"[PurityFit]::[fit]::[INFO] Getting histogram: '"<< Form(targetname.c_str(),PtBins[iBin],PtBins[iBin+1])<<"'" <<endl;
-        TH1D *h   = (TH1D*) fIn_ -> Get( Form(targetname.c_str(), PtBins[iBin],PtBins[iBin+1])  ) -> Clone();  // EWK
-        if (verbose_ >0 ) cout <<"[PurityFit]::[fit]::[INFO] Getting histogram: '"<< Form(signame.c_str(),PtBins[iBin],PtBins[iBin+1])<<"'" <<endl;
-        TH1D *sig = (TH1D*) fIn_ -> Get( Form(signame.c_str(), PtBins[iBin],PtBins[iBin+1]) ) -> Clone();// QCD
+        histname=Form(signame.c_str(),PtBins[iBin],PtBins[iBin+1]);
+        if (verbose_ >0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname); 
+        TH1D *sig = (TH1D*) fIn_ -> Get( histname.c_str() ) -> Clone();// QCD
        
         if ( h != NULL and sig != NULL and h->Integral() >0 and sig->Integral() >0)  // control plots QCD
         {
@@ -49,10 +55,14 @@ void PurityFit::fit(){
 
             sig->DrawNormalized("P");
 
-            if (verbose_ >0 ) cout <<"[PurityFit]::[fit]::[INFO] Getting histogram: '"<<Form(bkgname.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD")<<"'" <<endl;
-            TH1D * qcd = (TH1D*)  fIn_ ->Get( Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],"QCD") );
-            if (verbose_ >0 ) cout <<"[PurityFit]::[fit]::[INFO] Getting histogram: '"<<Form(bkgnameInv.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD")<<"'" <<endl;
-            TH1D * qcdInv = (TH1D*)  fIn_ ->Get( Form( bkgnameInv.c_str() , PtBins[iBin],PtBins[iBin+1],"QCD") ) ;
+            histname=Form(bkgname.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD");
+            if (verbose_>0) Log(__FUNCTION__,"INFO","Getting histogram "+histname);
+            TH1D * qcd = (TH1D*)  fIn_ ->Get( histname.c_str() );
+            
+            histname=Form(bkgnameInv.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD");
+            if (verbose_>0) Log(__FUNCTION__,"INFO","Getting histogram "+histname);
+            TH1D * qcdInv = (TH1D*)  fIn_ ->Get(histname.c_str()) ;
+
             sig->SetMarkerStyle(20);
             qcd->SetLineColor(kRed+2);
             qcdInv->SetMarkerColor(kRed);
@@ -61,6 +71,7 @@ void PurityFit::fit(){
             
             if (qcd->Integral() >0 ) qcd->DrawNormalized("HIST SAME");
             if (qcdInv->Integral() > 0 ) qcdInv->DrawNormalized("P SAME");
+
             TLegend *l = new TLegend(0.6,.6,.9,.9);
             l->SetFillStyle(0);
             l->SetBorderSize(0);
@@ -87,13 +98,16 @@ void PurityFit::fit(){
 
         TH1D *bkg= NULL;
         TH1D *bkgInv= NULL;
+
         for (string& s : bkglabels)
         {
-            TH1D *bkg_tmp = (TH1D*)  fIn_ ->Get( Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str()) );
-            if ( bkg_tmp == NULL )  cout <<"[PurityFit]::[fit]::[ERROR] histo "<<  Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str()) << " is NULL"<<endl;
+            histname= Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str());
+            TH1D *bkg_tmp = (TH1D*)  fIn_ ->Get( histname.c_str() );
+            if (bkg_tmp == NULL) Log(__FUNCTION__,"ERROR", string("histo: ") + histname + " is NULL");
 
-            TH1D *bkgInv_tmp = (TH1D*)  fIn_ ->Get( Form( bkgnameInv.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str()) );
-            if ( bkgInv_tmp == NULL )  cout <<"[PurityFit]::[fit]::[ERROR] histo "<<  Form( bkgnameInv.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str()) << " is NULL"<<endl;
+            histname=Form( bkgnameInv.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str());
+            TH1D *bkgInv_tmp = (TH1D*)  fIn_ ->Get( histname.c_str());
+            if (bkgInv_tmp == NULL) Log(__FUNCTION__,"ERROR",string("histo: ") + histname + " is NULL");
 
             bool first = false;
             if (bkg==NULL) {
@@ -121,9 +135,6 @@ void PurityFit::fit(){
             if (first) bkg_tmp->Draw("HIST");
             else bkg_tmp->Draw("HIST SAME");
 
-            // DEBUG
-            cout<<"[INFO]"<<" BKG "<<s<<" "<<bkg_tmp->Integral()<<" bkg="<<bkg->Integral()<<endl;
-
         } // labels loop
         
         l->Draw();
@@ -148,22 +159,24 @@ void PurityFit::fit(){
         float f = fit_specific( h, sig, bkg, bkgInv, Form("fit_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ), outname, &pars);
 
         // propagate the fraction to the yields
-        float R = f * (hI-bI) / (sI -biI);
-        float Rhi = pars["fracErrorHigh"] * hI / sI;
-        float Rlo = pars["fracErrorLow"] * hI / sI;
+        float R = f * hI / (sI * pars["fInvIso"]);
+        float Rhi = pars["fracErrorHigh"] * hI / (sI * pars["fInvIso"]);
+        float Rlo = pars["fracErrorLow"] * hI / (sI * pars["fInvIso"]);
 
         //  INFO
         cout <<"[INFO] pt "<<PtBins[iBin]<<" "<<PtBins[iBin+1]
             << " frac "<<f <<" +"<<pars["fracErrorHigh"]<< " -"<< pars["fracErrorLow"]
             << " hI = "<< hI 
             << " sI="<< sI 
-            << " bI="<< bI
-            << " biI="<< biI
+            << " bI="<< bI <<" [~(1-f)*hI] "
+            << " biI="<< biI<<" [~(1-fI)*sI]"
+            << " fInvIso="<<pars["fInvIso"]
             << " R' ="<< (hI-bI)/sI 
             << " R "<< R <<" +"<<Rhi<<" -"<<Rlo
             <<endl;
         //  for SF DB
         fw <<"tauinviso pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
+        fw <<"tauinvisospline spline "<<(PtBins[iBin] + PtBins[iBin+1])/2.0<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
 
     } // bin loop
 
@@ -174,7 +187,7 @@ void PurityFit::fit(){
 using namespace RooFit;
 // -------------------------------------------------------------------
 
-float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_, 
+float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_, 
         TH1* bkgInv_,
         string name, // unique name of the result
         string outname , // output file name, where to save results
@@ -183,15 +196,16 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
 {
 
     // 1) perform preliminary checks
-    if ( h_ == NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no target histogram"<<endl; return -1;}
-    if ( sig_ == NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no sig histogram"<<endl; return -1;}
-    if ( bkg_ == NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no bkg histogram"<<endl; return -1;}
-    if ( bkgInv_ == NULL ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] no bkgInv histogram"<<endl; return -1;}
+    if ( h_ == NULL ) { Log(__FUNCTION__,"ERROR", "no target histogram"); return -1;}
+    if ( sig_ == NULL ) { Log(__FUNCTION__,"ERROR","no sig histogram"); return -1;}
+    if ( bkg_ == NULL ) { Log(__FUNCTION__,"ERROR","no bkg histogram"); return -1;}
+    if ( bkgInv_ == NULL ) { Log(__FUNCTION__,"ERROR" ,"no bkgInv histogram"); return -1;}
 
-    if (sig_ -> Integral() == 0 ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] sig integrall is NULL"<<endl; return -2;}
-    if (bkg_ -> Integral() == 0 ) { cout<<"[PurityFit]::[fit_specific]::[ERROR] bkg integrall is NULL"<<endl; return -2;}
+    if (sig_ -> Integral() == 0 ) { Log(__FUNCTION__,"ERROR" ,"sig integral is NULL"); return -2;}
+    if (bkg_ -> Integral() == 0 ) { Log(__FUNCTION__,"ERROR","bkg integral is NULL"); return -2;}
 
-    if (verbose_ >0) cout <<"[PurityFit]::[fit_specific]::[INFO] fitting "<<h_->GetName() << " " << sig_->GetName()<<" "<<bkg_->GetName()<<endl;
+    if (verbose_ > 0) Log(__FUNCTION__,"INFO",string("fitting: ") + h_->GetName() + " " +   sig_->GetName() + " " + bkg_->GetName() ) ;
+
     // 1.5) Clone
     TH1 * sig = (TH1*)sig_ -> Clone(Form("%s_fitspecific_clone",sig_->GetName()));
     TH1 * bkg = (TH1*)bkg_ -> Clone(Form("%s_fitspecific_clone",bkg_->GetName()));
@@ -295,35 +309,109 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
     for(int i=1;i<=bkg->GetNbinsX() ;++i)
             bkg->SetBinContent(i,expos[poln].Integral( bkg->GetBinLowEdge(i),bkg->GetBinLowEdge(i+1) ) ) ;
 
-    // remove bkgInv from Sig
-    sig->Add(bkgInv,-1);
+    // remove bkgInv from Sig ?
+    //sig->Add(bkgInv,-1);
 
     if (sig->Integral() >0)
         sig -> Scale( 1./sig->Integral() );
     if (bkg->Integral() >0)
         bkg -> Scale( 1./bkg->Integral() );
 
+    RooRealVar x("x","EtMiss",xmin,xmax);
 
+    // ---------------------------------- EWK MODEL -----------------
+    // create bkg model for ewk
+    // expos[poln]
+    string model= Form("TMath::Exp(-%e*x ) * (",expos[poln].GetParameter(0));
+    for(int i=0;i<=poln;++i)
+    {
+                    if (i>0 ) model += " + ";
+                    model += Form("%e",expos[poln].GetParameter(i+1));
+                    if (i>0) model += Form("*TMath::Power(x,%d)",i);
+    }
+    model += ")";
+    RooGenericPdf modelEwk("modelEwk",model.c_str(),x);
+
+    // ----------------------- FIT INV ISO TO EXTRACT QCD MODEL ---------------------------
+    if (initvalues.find("sigmaR_QCD") == initvalues.end())initvalues["sigmaR_QCD"] = 20;
+    if (initvalues.find("cE_QCD") == initvalues.end())initvalues["cE_QCD"] = 0.001;
+    if (initvalues.find("sigmaG_QCD") == initvalues.end())initvalues["sigmaG_QCD"] = 20;
+    if (initvalues.find("muG_QCD") == initvalues.end())initvalues["muG_QCD"] = 5;
+    if (initvalues.find("f1QCD") == initvalues.end())initvalues["f1QCD"] = .3;
+    if (initvalues.find("f2QCD") == initvalues.end())initvalues["f2QCD"] = .3;
+    if (initvalues.find("fInvIso") == initvalues.end())initvalues["fInvIso"] = .9;
+    if (initvalues.find("f") == initvalues.end())initvalues["f"] = .9;
+    //if (initvalues.find("XXX") == initvalues.end())initvalues["XXX"] = 40;
+    // x) create QCD model
+    RooRealVar sR("sigmaR_QCD","sigmaR",initvalues["sigmaR_QCD"]);
+    RooGenericPdf rayleighQCD ("rayleigh_QCD","@0/(@1*@1)*TMath::Exp(-@0*@0/(2*@1*@1))",RooArgList(x,sR) );
+    RooRealVar cE("cE_QCD","cE",initvalues["cE_QCD"]);
+    RooExponential expoQCD("expo_QCD","expoQCD",x,cE);
+    RooRealVar sG("sigmaG_QCD","sigmaG",initvalues["sigmaG_QCD"]);
+    RooRealVar mG("muG_QCD","muG",initvalues["muG_QCD"]);
+    RooGaussian gausQCD("gauss_QCD","gauss_QCD",x,mG,sG);
+
+    RooRealVar f1QCD("f1QCD","f1QCD",initvalues["f1QCD"]);
+    RooRealVar f2QCD("f2QCD","f2QCD",initvalues["f2QCD"]);
+    //RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD,gausQCD) , RooArgList(f1QCD,f2QCD) );
+    //RooGenericPdf modelQCD ("rayleigh_QCD","@0/(@1*@1)*TMath::Exp(-@0*@0/(2*@1*@1))",RooArgList(x,sR) );
+    RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD) , RooArgList(f1QCD) );
+
+    RooRealVar fInvIso("fInvIso","fInvIso",initvalues["fInvIso"]);
+    RooAddPdf modelInvIso("modelInvIso","modelInvIso",RooArgList(modelQCD,modelEwk) , RooArgList(fInvIso) );
+    
+
+    RooMsgService::instance().setSilentMode(true);
+    RooDataHist HistSig("sig","hist sig",x,sig); // BKGINVISO SUB
+    //MODELQCD
+    modelInvIso.fitTo(HistSig,
+            SumW2Error(kTRUE),
+            Save(), 
+            PrintEvalErrors(-1),
+            PrintLevel(-1),
+            //Minos(kTRUE),
+            Warnings(0)
+            );
+
+    RooPlot * frameInvIso = x.frame();
+    HistSig.plotOn(frameInvIso);
+    modelInvIso.plotOn(frameInvIso);
+    modelInvIso.plotOn(frameInvIso,Components(modelQCD),LineStyle(kDashed));
+    modelInvIso.plotOn(frameInvIso,Components(modelEwk),LineStyle(kDashed),LineColor(kRed));
+    // freeze model QCD
+    sR.setConstant();
+    cE.setConstant();
+    sG.setConstant();
+    mG.setConstant();
+    f1QCD.setConstant();
+    f2QCD.setConstant();
+
+    // follow the values
+    initvalues["sigmaR_QCD"] = sR.getVal();
+    initvalues["cE_QCD"] = cE.getVal();
+    initvalues["sigmaG_QCD"] = sG.getVal();
+    initvalues["muG_QCD"] = mG.getVal();
+    initvalues["f1QCD"] = f1QCD.getVal();
+    initvalues["f2QCD"] = f2QCD.getVal();
+    initvalues["fInvIso"] = fInvIso.getVal();
+
+    // save fInvIso in pars
+    if (pars!=NULL)(*pars)["fInvIso"] = fInvIso.getVal();
+
+
+    // ----------------------- FIT DIRECT ISO WITH FIXED QCD MODEL ---------------------------
     // 3) estimate paramaters
     //
     // 4) create roofit variables
-    RooRealVar f("f","fraction",0.95,0.3,1.0);
+    RooRealVar f("f","fraction",initvalues["f"],0.3,1.0);
     f.setRange(0.3,1.0);
     f.setConstant(false);
 
-    RooRealVar x("x","EtMiss",xmin,xmax);
     // 5) create roo data hist
-    RooDataHist HistSig("sig","hist sig",x,sig);
-    RooDataHist HistBkg("bkg","hist bkg",x,bkg);
     RooDataHist HistToFit("target","hist target",x,h);
     // 6) create roo hist pdf
-    RooHistPdf PdfSig("pdfsig","pdfsig",x,HistSig,0);
-    RooHistPdf PdfBkg("pdfbkg","pdfbkg",x,HistBkg,10); //last number is interpolation
-    RooRealVar norm("norm","norm", bkgIntegral) ;
-    norm.setConstant();
-    RooExtendPdf PdfExtBkg("pdfextbkg","pdfextbkg",PdfBkg,norm);
     // 7) create model
-    RooAddPdf PdfModel("model","model",RooArgList(PdfSig,PdfExtBkg),f);
+    RooAddPdf PdfModel("model","model",RooArgList(modelQCD,modelEwk),f);
     // 8) fit
     RooFitResult *r;
     RooPlot *frame=x.frame();
@@ -358,8 +446,8 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
     // 9) plot
     HistToFit.plotOn(frame,DataError(RooAbsData::SumW2));
     PdfModel.plotOn(frame, LineColor(kBlack));
-    PdfModel.plotOn(frame, Components(PdfBkg),LineColor(kRed)); 
-    PdfModel.plotOn(frame, Components(PdfSig),LineColor(kBlue),LineStyle(kDashed));
+    PdfModel.plotOn(frame, Components(modelQCD),LineColor(kRed)); 
+    PdfModel.plotOn(frame, Components(modelEwk),LineColor(kBlue),LineStyle(kDashed));
 
     TCanvas *c=new TCanvas((string(name)+"_canvas").c_str(),"Canvas");
     c->cd();
@@ -398,11 +486,17 @@ float PurityFit::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_,
         }
     } // end get pt from name
 
+    TCanvas *cInvIso=new TCanvas((string(name)+"_inviso_canvas").c_str(),"Canvas");
+    cInvIso->cd();
+    cInvIso->Draw();
+    frameInvIso->Draw();
+
     if ( outname != "")
     {
         TFile *fOut=TFile::Open(outname.c_str(),"UPDATE");
         fOut->cd();
         c->Write();
+        cInvIso->Write();
         for( auto c : cbkgs ) c->Write();
         r->Write(Form("%s_roofit",name.c_str() ) );
         fOut->Close();

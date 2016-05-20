@@ -63,40 +63,42 @@ metPy = ROOT.TH2D("th2%s_metpy"%extra,"metpy",100,0,100,2000,-1000,1000)
 metPyProf = ROOT.TProfile("tpr%s_metpy"%extra,"metpy",100,0,100)
 
 print "->Looping"
+DEBUG=False
 for i in range(0,t.GetEntries()):
 	t.GetEntry(i)
 	## 2 muon selection
 
 	l1 = -1 
 	l2 = -1
-	#LepLoose  = 1UL<<3
+	#LepLoose  = 1UL<<4
+	if DEBUG: print "DEBUG Entry",i
 	if t.lepP4.GetEntries() <2 : continue
 	for i in range(0,t.lepP4.GetEntries() ) :
-		if t.lepSelBits[i] & (1<<3): 
+		if t.lepSelBits[i] & (1<<4): 
 			l1 = i
 			break
 	for i in range(i+1,t.lepP4.GetEntries() ) :
-		if t.lepSelBits[i] & (1<<3): 
+		if t.lepSelBits[i] & (1<<4): 
 			l2 = i
 			break
-	#print "DEBUG l1=",l1,"l2=",l2
+	if DEBUG: print "DEBUG l1=",l1,"l2=",l2
 	if l1< 0 or l2 <0 : continue
 	if t.lepP4[l2].Pt()< 20 : continue
 	##OS-SF, muon
-	t.lepPdgId[0]* t.lepPdgId[1] == -13*13
-	#print "DEBUG OS SF"
+	if t.lepPdgId[l1]* t.lepPdgId[l2] != -13*13: continue
+	if DEBUG: print "DEBUG OS SF"
 
-	ll = t.lepP4[0] + t.lepP4[1]
-	#print "DEBUG M=",ll.M()
+	ll = t.lepP4[l1] + t.lepP4[l2]
+	if DEBUG: print "DEBUG M=",ll.M()
 	if ll.M() <91-20 or ll.M()> 91+20: continue
 
-	#print "DEBUG: Event pass selection"
+	if DEBUG:print "DEBUG: Event pass selection"
 
-	metPx.Fill( t.npv , t.metPuppi.Px() ) 
-	metPy.Fill( t.npv , t.metPuppi.Py() ) 
+	metPx.Fill( t.npv , t.metP4[0].Px() ) 
+	metPy.Fill( t.npv , t.metP4[0].Py() ) 
 
-	metPxProf.Fill( t.npv , t.metPuppi.Px() ) 
-	metPyProf.Fill( t.npv , t.metPuppi.Py() ) 
+	metPxProf.Fill( t.npv , t.metP4[0].Px() ) 
+	metPyProf.Fill( t.npv , t.metP4[0].Py() ) 
 
 print "->Fit"
 

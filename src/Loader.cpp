@@ -249,12 +249,18 @@ void LoadNero::FillTaus(){
         t-> iso = (*bt->iso) [iL];
         t-> charge = bt -> Q -> at(iL);
         t-> type = 15;
+        //#warning "Old ID for TAUS"
         //t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
         t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
+        //t-> iso2 = bt -> isoMva -> at(iL);
         t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleLoose ; 
         t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
+        t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
+        //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumIsolationMVArun2v1DBnewDMwLT); 
+
+
 
         //---------------------------------------------
 #ifdef VERBOSE

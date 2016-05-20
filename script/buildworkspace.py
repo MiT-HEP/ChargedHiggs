@@ -40,6 +40,7 @@ if opts.qcd != "": datName+="_qcddata"
 if opts.datacard != "": datName += "_" + opts.datacard
 datName += ".txt"
 
+print "-> Opening datacard",datName
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
 datacard.write("imax *\n")

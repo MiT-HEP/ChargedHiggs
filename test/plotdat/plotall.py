@@ -18,10 +18,10 @@ dat={
 	"plotdat/chhiggs_tau1pt.txt":"plot/Tau1Pt.pdf",
 	"plotdat/chhiggs_mt.txt":"plot/Mt.pdf",
 	"plotdat/chhiggs_mtmc.txt":"plot/MtMC.pdf",
-	"plotdat/tmva_bdt0.txt":"plot/Bdt0.pdf",
-	"plotdat/tmva_bdt1.txt":"plot/Bdt1.pdf",
-	"plotdat/tmva_cutflow.txt":"plot/TmvaCutFlow.pdf",
-	"plotdat/tmva_mt.txt":"plot/TmvaMt.pdf",
+	#"plotdat/tmva_bdt0.txt":"plot/Bdt0.pdf",
+	#"plotdat/tmva_bdt1.txt":"plot/Bdt1.pdf",
+	#"plotdat/tmva_cutflow.txt":"plot/TmvaCutFlow.pdf",
+	#"plotdat/tmva_mt.txt":"plot/TmvaMt.pdf",
 	}
 
 print "I will consider the following files",dat.keys()
