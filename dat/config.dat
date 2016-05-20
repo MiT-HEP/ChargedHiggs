@@ -12,12 +12,13 @@
 #
 sub=tag|v1.4
 sub=amarini|/store/user/amarini/Nero
+sub=klute|/store/user/klute/Nero
 
 #### BKG ###
 Files=%(amarini)s/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=%(amarini)s/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 #addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
-addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+addfiles=%(klute)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 
 ##powehg diboson
 addfiles=%(amarini)s/%(tag)s/WWTo2L2Nu_13TeV-powheg
