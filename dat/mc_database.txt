@@ -1,8 +1,13 @@
-ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8/160513_180048/0000 3824.21193987 0.152334
-ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8/160513_180108/0000 53.8136832915 0.0650948 
-ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8/160513_180129/0000 19.9723819789 0.04422586755
-ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8/160513_180000/0000 8.82172987683 0.0302237
-ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8/160513_175940/0000 2.36038155917 0.0150724
+## = BR x xsec = 0.19384*0.152334
+ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8/160513_180048/0000 3824.21193987 0.02952842256
+## BR x xsec =  0.03635 * 0.0650948
+ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8/160513_180108/0000 53.8136832915 0.002366
+## 0.0304316159251* 0.04422586755
+ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8/160513_180129/0000 19.9723819789 0.0013458646
+## 0.2767E-01 * 0.0302237
+ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8/160513_180000/0000 8.82172987683 0.000836289779
+## 0.2538E-01 * 0.0150724
+ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8/160513_175940/0000 2.36038155917 0.000382537512
 DY3Jets-madgraph /store/user/amarini/Nero/v1.4/DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/DY3Jets-madgraph/160513_180212/0000 5701878.0 103.338850911
 #DY-amcatnlo /store/user/amarini/Nero/v1.4/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/DY-amcatnlo/160513_180152/0000 4.27792831692e+11 3970.62040569
 ### NNLO
