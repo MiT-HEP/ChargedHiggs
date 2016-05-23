@@ -19,6 +19,7 @@ Smear=NONE,JES,@SmearSF("BTAG"!"btag"),@SmearSF("RFAC"!"tauinvisospline")
 
 config=ChargedHiggsQCDPurity|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
 addConfig=ChargedHiggsQCDPurity|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo')
+addConfig=ChargedHiggsQCDPurity|AddLabel('ST')
 #addConfig=ChargedHiggsQCDPurity|PtBins.push_back(50),PtBins.push_back(70),PtBins.push_back(100),PtBins.push_back(150),PtBins.push_back(8000)
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(50),PtBins.push_back(55),PtBins.push_back(60),PtBins.push_back(65)
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(70),PtBins.push_back(80),PtBins.push_back(90),PtBins.push_back(100)

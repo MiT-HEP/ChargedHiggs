@@ -58,8 +58,11 @@ void ChargedHiggsQCDPurity::Init()
         {
             float pt = -1;
             if (iBin>=0 ) pt= PtBins[iBin];
+            //                       direct full
             Book( dir + HistName(pt, true , true)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, false, true)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+            // ---  NoR
+            Book( dir + HistName(pt, false, true)+"_NoR_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
             //
             Book( dir + HistName(pt, true , true, "Upar")+"_"+ l  , ("EtMissParallel "+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt, true, true, "Uperp")+"_"+ l  , ("EtMissPerp "+ l).c_str(),250,0.,500.);
@@ -224,6 +227,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // ---------------------- INF TAU SF 
     //
     if (tInv != NULL ){ // USE weight(false) to apply TF on data!
+        float pt = tInv->Pt();                                                   
         //const string sf="tauinviso";
         const string sfname="tauinvisospline";
         // if the SF don't exist go on, but don't fill inconsistent events
@@ -246,6 +250,22 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         {
             //if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") ) Log(__FUNCTION__,"ERROR","Event Is NOT Triggered!!! Why am I here?");
             Fill( none + "EtMissIsoInv" +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
+
+        }
+
+        // remove trigger & met
+        unsigned mymask =  0 ;
+        for(unsigned i=0;i<ChargedHiggsTauNu::MaxCut;++i){
+            if (i==ChargedHiggsTauNu::Trigger) continue;
+            if (i==ChargedHiggsTauNu::Met) continue;
+            mymask |= (1<<i); // set all 1
+        }
+
+        if (passPrescale and inverse.passMask(mymask) )
+        {
+            // On data avoid R fact -- n minus one
+            string hist=HistName(pt, false, true)+"_NoR";
+            Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight(true));
         }
 
         if (inverse.passAll()) { // FULL SELECTION
@@ -257,10 +277,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
             if (e->weight(false) == 0 )Log(__FUNCTION__,"WARNING","event weight after SF is 0 ");
 
-            float pt = tInv->Pt();                                                   
             int flavor= tInv->Rematch(e);
             string hist = HistName(pt,false,true);                                   
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight(false));
+
 
             //hist = HistName(pt,false,true,"Mt");  
             hist = "MtIsoInv";

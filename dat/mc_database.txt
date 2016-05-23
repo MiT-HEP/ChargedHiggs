@@ -7,26 +7,24 @@ DY3Jets-madgraph /store/user/amarini/Nero/v1.4/DY3JetsToLL_M-50_TuneCUETP8M1_13T
 #DY-amcatnlo /store/user/amarini/Nero/v1.4/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/DY-amcatnlo/160513_180152/0000 4.27792831692e+11 3970.62040569
 ### NNLO
 DY-amcatnlo /store/user/amarini/Nero/v1.4/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/DY-amcatnlo/160513_180152/0000 4.27792831692e+11 6025.2
-QCD-1000-1400 /store/user/amarini/Nero/v1.4/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/QCD-1000-1400/160513_175752/0000 2212507.0 9.28701681343
-QCD-120-170 /store/user/amarini/Nero/v1.4/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/QCD-120-170/160513_175541/0000 6848308.65823 469202.608586
 QCD-15-30 /store/user/amarini/Nero/v1.4/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/QCD-15-30/160513_175413/0000 36314150.0 1753278066.79
-QCD-170-300 /store/user/amarini/Nero/v1.4/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/QCD-170-300/160513_175601/0000 5634367.0 117241.634689
-QCD-1800-2400 /store/user/amarini/Nero/v1.4/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/QCD-1800-2400/160513_175836/0000 393760.0 0.113953207984
-QCD-300-470 /store/user/amarini/Nero/v1.4/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/QCD-300-470/160513_175624/0000 4291040.0 7802.32328868
 QCD-30-50 /store/user/amarini/Nero/v1.4/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/QCD-30-50/160513_175434/0000 9434585.73864 139126648.089
-QCD-3200-Inf /store/user/amarini/Nero/v1.4/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/QCD-3200-Inf/160513_175917/0000 391108.0 0.000200342332318
-QCD-470-600 /store/user/amarini/Nero/v1.4/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/QCD-470-600/160513_175646/0000 1733914.40519 646.066116294
 QCD-50-80 /store/user/amarini/Nero/v1.4/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/QCD-50-80/160513_175455/0000 9775360.0 19084720.8228
+QCD-80-120 /store/user/amarini/Nero/v1.4/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/QCD-80-120/160513_175519/0000 6131452.68331 2700760.35761
+QCD-120-170 /store/user/amarini/Nero/v1.4/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/QCD-120-170/160513_175541/0000 6848308.65823 469202.608586
+QCD-170-300 /store/user/amarini/Nero/v1.4/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/QCD-170-300/160513_175601/0000 5634367.0 117241.634689
+QCD-300-470 /store/user/amarini/Nero/v1.4/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/QCD-300-470/160513_175624/0000 4291040.0 7802.32328868
+QCD-470-600 /store/user/amarini/Nero/v1.4/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/QCD-470-600/160513_175646/0000 1733914.40519 646.066116294
 QCD-600-800 /store/user/amarini/Nero/v1.4/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/QCD-600-800/160513_175708/0000 3534700.0 183.354119673
 QCD-800-1000 /store/user/amarini/Nero/v1.4/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/QCD-800-1000/160513_175732/0000 2784248.23049 33.2672244814
-QCD-80-120 /store/user/amarini/Nero/v1.4/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/QCD-80-120/160513_175519/0000 6131452.68331 2700760.35761
+QCD-1000-1400 /store/user/amarini/Nero/v1.4/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/QCD-1000-1400/160513_175752/0000 2212507.0 9.28701681343
+QCD-1800-2400 /store/user/amarini/Nero/v1.4/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/QCD-1800-2400/160513_175836/0000 393760.0 0.113953207984
+QCD-3200-Inf /store/user/amarini/Nero/v1.4/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/QCD-3200-Inf/160513_175917/0000 391108.0 0.000200342332318
 #TT-powheg-ext3 /store/user/amarini/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160513_180234/0000 94495075.0 831
-TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160513_180234/0000 94495075.0 831
 W3Jets-madgraph /store/user/amarini/Nero/v1.4/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/W3Jets-madgraph/160513_180322/0000 7205063.0 939.461425781
-#WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160513_180301/0000 3.73197735021e+12 40472.4644846
 ## NNLO
-WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160513_180301/0000 3.73197735021e+12 61526.7
-WWTo2L2Nu-powheg /store/user/amarini/Nero/v1.4/WWTo2L2Nu_13TeV-powheg/WWTo2L2Nu-powheg/160513_180345/0000 1979988.0 10.4813995361
+#WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160513_180301/0000 3.73197735021e+12 61526.7
+WWTo2L2Nu-powheg /store/user/amarini/Nero/v1.4/WWTo2L2Nu_13TeV-powheg/WWTo2L2Nu-powheg/160513_180345/0000 1979988.0 12.46
 WZJJ_EWK /store/user/amarini/Nero/v1.4/WZJJ_EWK_13TeV-madgraph-pythia8/WZJJ_EWK/160513_180727/0000 492200.0 0.0346049666405
 WZJJ_EWK_QCD /store/user/amarini/Nero/v1.4/WZJJ_EWK_QCD_13TeV-madgraph-pythia8/WZJJ_EWK_QCD/160513_180702/0000 499800.0 0.488976279895
 WZJJ_QCD /store/user/amarini/Nero/v1.4/WZJJ_QCD_13TeV-madgraph-pythia8/WZJJ_QCD/160513_180747/0000 500000.0 0.458641727765
@@ -37,4 +35,15 @@ WZTo2L2Q /store/user/amarini/Nero/v1.4/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythi
 WZTo3LNu /store/user/amarini/Nero/v1.4/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8/WZTo3LNu/160513_180535/0000 2000000.0 4.10165901184
 ZZTo2L2Q /store/user/amarini/Nero/v1.4/ZZTo2L2Nu_13TeV_powheg_pythia8/ZZTo2L2Q/160513_180621/0000 8597925.0 0.564395311144
 ZZTo4L /store/user/amarini/Nero/v1.4/ZZTo4L_13TeV-amcatnloFXFX-pythia8/ZZTo4L/160513_180556/0000 20550058.4207 1.08418625367
-WWToLNuQQ /store/user/amarini/Nero/v1.4/WWToLNuQQ_13TeV-powheg/WWToLNuQQ/160513_180409/0000 1924400.0 43.531100803
+WWToLNuQQ /store/user/amarini/Nero/v1.4/WWToLNuQQ_13TeV-powheg/WWToLNuQQ/160513_180409/0000 1924400.0 52
+#TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160513_180234/0000 94495075.0 831
+#TT-powheg-ext3 /store/user/amarini/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160520_195211/0000 75862400.0 831
+# this is the sum of the previous two
+TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160520_195211/0000 170357475.0 831
+#WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160513_180301/0000 3.73197735021e+12 40472.4644846
+WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160520_195401/0000 2.98163086304e+13 61526.7
+ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8 /store/user/jaeyserm/Nero/v1.4/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8/160521_081438/0000 29044072.1216 10.32
+ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8-resub /store/user/jaeyserm/Nero/v1.4/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8-resub/160522_004517/0000 38932192.0 80.95
+ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1 /store/user/jaeyserm/Nero/v1.4/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/160521_081519/0000 64957724.0 136.02
+ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8 /store/user/jaeyserm/Nero/v1.4/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8/160521_081545/0000 999400.0 30.09
+ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8 /store/user/jaeyserm/Nero/v1.4/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8/160521_081607/0000 1000000.0 30.11

@@ -12,8 +12,10 @@ class BaseFitter: virtual public Named
     public:
         virtual void init()=0;
         virtual void fit()=0;
+        virtual void end(){};
         const string name() const override { return "BaseFitter";}
         double lumi{2318};
+        int verbose_;
 
 };
 

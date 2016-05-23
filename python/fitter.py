@@ -44,10 +44,11 @@ fitter = r.__getattr__(opts.classname)()
 if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
 	fitter.outname= opts.outfile
 	fitter.inname =opts.file
-	fitter.lumi=2308.
+	#fitter.lumi=2308.
+	fitter.lumi=209.
 	if opts.verbose: fitter.verbose_ = 1
 
-	print "-> Setting lumi to",fitter.lumi
+	print "-> Setting lumi to PRESCALED LUMI:",fitter.lumi
 	fitter.txtoutname=opts.outtxt
 
 	################ CONFIGURING FITTER ##########

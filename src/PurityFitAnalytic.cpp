@@ -16,6 +16,8 @@ void PurityFitAnalytic::fit(){
     string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_%s";
     string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_%s";
     string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_Data";
+    string fullselInv   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_FullSelection_NoR_Data";
+    string tauname="ChargedHiggsQCDPurity/Vars/TauPt_pt%.0f_%.0f_Data"; // use to compute the mean
 
     if (bkglabels.empty() )
     {
@@ -34,7 +36,8 @@ void PurityFitAnalytic::fit(){
 
     ofstream  fw;
     fw.open(txtoutname.c_str());
-    fw <<"# QCD R-factor computed by PurityFitAnalytic"<<endl;
+    fw <<"# QCD R-factor computed by "<<name()<<endl;
+    fw <<"# with fFull as last "<<name()<<endl;
 
     for (size_t iBin=0;iBin+1<PtBins.size() ;++iBin)
     {
@@ -44,6 +47,15 @@ void PurityFitAnalytic::fit(){
         string histname = Form(targetname.c_str(),PtBins[iBin],PtBins[iBin+1]); 
         if (verbose_ > 0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname);
         TH1D *h   = (TH1D*) fIn_ -> Get( histname.c_str()  ) -> Clone();  
+
+        histname=Form(fullselInv.c_str(),PtBins[iBin],PtBins[iBin+1]);
+        if (verbose_ > 0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname);
+        TH1D *hFullInv   = (TH1D*) fIn_ -> Get( histname.c_str()  ) -> Clone();  
+        if (hFullInv == NULL) Log(__FUNCTION__,"ERROR","No Such file or dir");
+
+        histname=Form(tauname.c_str(),PtBins[iBin],PtBins[iBin+1]);
+        if (verbose_ > 0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname);
+        TH1D *hTau   = (TH1D*) fIn_ -> Get( histname.c_str()  ) -> Clone();  
 
         histname=Form(signame.c_str(),PtBins[iBin],PtBins[iBin+1]);
         if (verbose_ >0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname); 
@@ -156,7 +168,7 @@ void PurityFitAnalytic::fit(){
         float bI= bkg->Integral();
         float biI= bkgInv->Integral();
 
-        float f = fit_specific( h, sig, bkg, bkgInv, Form("fit_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ), outname, &pars);
+        float f = fit_specific( h, sig, bkg, bkgInv, hFullInv, Form("fit_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ), outname, &pars);
 
         // propagate the fraction to the yields
         float R = f * hI / (sI * pars["fInvIso"]);
@@ -171,12 +183,13 @@ void PurityFitAnalytic::fit(){
             << " bI="<< bI <<" [~(1-f)*hI] "
             << " biI="<< biI<<" [~(1-fI)*sI]"
             << " fInvIso="<<pars["fInvIso"]
+            << " fFull= "<<pars["fFull"]
             << " R' ="<< (hI-bI)/sI 
             << " R "<< R <<" +"<<Rhi<<" -"<<Rlo
             <<endl;
         //  for SF DB
         fw <<"tauinviso pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
-        fw <<"tauinvisospline spline "<<(PtBins[iBin] + PtBins[iBin+1])/2.0<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
+        fw <<"tauinvisospline spline "<<hTau->GetMean()<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<< " " << pars["fFull"] <<endl;
 
     } // bin loop
 
@@ -189,6 +202,7 @@ using namespace RooFit;
 
 float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1* bkg_, 
         TH1* bkgInv_,
+        TH1* hFullInv,
         string name, // unique name of the result
         string outname , // output file name, where to save results
         map<string,float> *pars	 // to gather additional params
@@ -237,7 +251,8 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     float hIntegral = h ->Integral();
     float bkgInvIntegral = bkgInv->Integral();
 
-    // 2.5) fit background with exponential
+    // 2.5) fit background with exponential series.
+    // TODO User RooFit
     int   nbins = h->GetNbinsX();
     float xmin = h->GetBinLowEdge(1);
     float xmax = h->GetBinLowEdge(nbins+1);
@@ -348,15 +363,15 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     RooRealVar cE("cE_QCD","cE",initvalues["cE_QCD"],-1.,0.);
     RooExponential expoQCD("expo_QCD","expoQCD",x,cE);
     RooRealVar sG("sigmaG_QCD","sigmaG",initvalues["sigmaG_QCD"],0.00001,30);
-    RooRealVar mG("muG_QCD","muG",initvalues["muG_QCD"],-5,5);
+    RooRealVar mG("muG_QCD","muG",initvalues["muG_QCD"],0,30);
     RooGaussian gaussQCD("gauss_QCD","gauss_QCD",x,mG,sG);
 
     RooRealVar f1QCD("f1QCD","f1QCD",initvalues["f1QCD"],.9,1.0);
     RooRealVar f2QCD("f2QCD","f2QCD",initvalues["f2QCD"]);
     //RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD,gaussQCD) , RooArgList(f1QCD,f2QCD) );
-    //RooGenericPdf modelQCD ("rayleigh_QCD","@0/(@1*@1)*TMath::Exp(-@0*@0/(2*@1*@1))",RooArgList(x,sR) );
+    RooGenericPdf modelQCD ("rayleigh_QCD","@0/(@1*@1)*TMath::Exp(-@0*@0/(2*@1*@1))",RooArgList(x,sR) );
     //RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD) , RooArgList(f1QCD) );
-    RooFFTConvPdf modelQCD("rxg","rayleigh (X) gauss",x,rayleighQCD,gaussQCD);
+    //RooFFTConvPdf modelQCD("rxg","rayleigh (X) gauss",x,rayleighQCD,gaussQCD);
 
     RooRealVar fInvIso("fInvIso","fInvIso",initvalues["fInvIso"]);
     RooAddPdf modelInvIso("modelInvIso","modelInvIso",RooArgList(modelQCD,modelEwk) , RooArgList(fInvIso) );
@@ -439,6 +454,22 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     cout <<" -------------- FINAL ----------------"<<endl;
     r-> floatParsFinal() . Print("V");
     cout <<" -------------------------------------"<<endl;
+    // -------------Fit Full selection inv iso
+    RooRealVar fFull("fFull","fraction",.999,0.3,1.0);
+    f.setRange(0.3,1.0);
+    f.setConstant(false);
+
+    RooDataHist HistFullSel("FullSel","hist target",x,hFullInv);
+    RooAddPdf PdfModelFullInv("modelFullInv","model",RooArgList(modelQCD,modelEwk),fFull);
+
+    PdfModelFullInv.fitTo(HistFullSel);
+
+    RooPlot*frameFull = x.frame();
+    HistFullSel.plotOn(frameFull);
+    PdfModelFullInv.plotOn(frameFull);
+    PdfModelFullInv.plotOn(frame, Components(modelQCD),LineColor(kRed)); 
+    PdfModelFullInv.plotOn(frame, Components(modelEwk),LineColor(kBlue),LineStyle(kDashed));
+
     // 8.5) save additional results
     if (pars != NULL ) {
         (*pars)["fracErrorHigh"] = f.getAsymErrorHi(); 
@@ -492,12 +523,18 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     cInvIso->Draw();
     frameInvIso->Draw();
 
+    TCanvas *cFull=new TCanvas((string(name)+"_invisofullsel_canvas").c_str(),"Canvas");
+    cFull->cd();
+    cFull->Draw();
+    frameFull->Draw();
+
     if ( outname != "")
     {
         TFile *fOut=TFile::Open(outname.c_str(),"UPDATE");
         fOut->cd();
         c->Write();
         cInvIso->Write();
+        cFull->Write();
         for( auto c : cbkgs ) c->Write();
         r->Write(Form("%s_roofit",name.c_str() ) );
         fOut->Close();
@@ -510,6 +547,10 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     bkg -> Delete();
     h   -> Delete();
 
+    Log(__FUNCTION__,"INFO",Form("fFull=%.5f",fFull.getVal()) ) ;
+
+    (*pars)["fFull"] = fFull.getVal();
+    //FIXME ERRORS
     return f.getVal();
 }
 
