@@ -42,7 +42,8 @@ class PurityFitAnalytic : public BaseFitter{
     protected:
         float fit_specific( const TH1* h, const TH1* sig, const TH1* bkg, 
             TH1* bkgInv,
-            string name, // unique name of the result
+            TH1* hFullInv=NULL,
+            string name="", // unique name of the result
             string outname="" , // output file name, where to save results
             map<string,float> *pars	=NULL // to gather additional params
             );
@@ -64,7 +65,6 @@ class PurityFitAnalytic : public BaseFitter{
         map<string,float> initvalues;
 
         int verbose_;
-        double lumi{2318};
 
         virtual void init();
         virtual void fit();

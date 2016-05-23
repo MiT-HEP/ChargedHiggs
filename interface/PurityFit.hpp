@@ -32,11 +32,14 @@ using namespace std;
 #include "RooFitResult.h"
 #include "RooExtendPdf.h"
 
-class PurityFit{
+#include "interface/BaseFitter.hpp"
+
+class PurityFit : public BaseFitter{
     protected:
         float fit_specific( const TH1* h, const TH1* sig, const TH1* bkg, 
             TH1* bkgInv,
-            string name, // unique name of the result
+            TH1* hFullInv=NULL,
+            string name ="", // unique name of the result
             string outname="" , // output file name, where to save results
             map<string,float> *pars	=NULL // to gather additional params
             );
@@ -48,15 +51,16 @@ class PurityFit{
         ~PurityFit(){};
 
         vector<float> PtBins;
+        vector<string> bkglabels;
+
         string outname;
         string inname;
         string txtoutname;
-
-        int verbose_;
-        double lumi{2318};
+        map<string,float> initvalues;
 
         virtual void init();
         virtual void fit();
+        const string name() const override { return "PurityFit";}
 };
 
 #endif
