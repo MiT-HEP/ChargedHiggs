@@ -160,7 +160,19 @@ if opts.status:
 	if opts.hadoop:
 		PrintHadhoop(opts.dir,doPrint=True)
 	else:
-		PrintSummary(opts.dir,doPrint=True)
+		( done, run, fail, pend) = PrintSummary(opts.dir,doPrint=True)
+		cpu=[]
+		termcpu=re.compile("TERM_CPULIMIT")
+		for iJob in fail + run:
+		    try:
+		    	log = open(opts.dir + "/log"+iJob+".txt")
+		    except IOError: 
+			continue
+		    if re.search("TERM_CPULIMIT",log.read() ) != None : cpu.append(iJob)
+		    log.close()
+		if len(cpu) >0 :
+		    print " CPU LIMIT",PrintLine(cpu)
+		    print " -------------------------------------"
 	exit(0)
 
 if opts.resubmit:

@@ -1,0 +1,134 @@
+[base]
+type = 1D
+yrange=1e-1,1e6
+xrange=0,400
+xtitle=p_{T}^{@tau}~[GeV]
+canv = 800,800
+yLog = True
+xLog = False
+output= plot/TauPt_Control
+format= pdf,root
+drawList= mc,chhiggs200,chhiggs500,data
+
+[text] 
+text = Internal
+position = tl
+lumi = 209~pb^{-1}~(13~TeV)
+
+[legend] 
+draw =  True
+header = ~
+legendList = data,qcdinviso,tt,ewk,chhiggs200,chhiggs500   
+position = .60,.7,.90,.95
+
+
+[data]
+rebin=10
+type = TH1D
+file = QCDPurity.root
+obj  = ChargedHiggsQCDPurity/Vars/TauPt_Control_Data
+style = marker
+styleopt = 20
+color = ROOT.kBlack
+label = Data~@it{@scale[0.6]{(Prescaled)}}
+yerror=True
+
+[mc]
+type = stack
+file = QCDPurity.root
+#obj  = qcd,tt,ewk
+obj  = ewk,tt,qcdinviso
+
+[qcdinviso]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_Data
+style = line
+fillcolor = ROOT.kOrange
+fillstyle=1000
+color=ROOT.kBlack
+label=QCD~@it{@scale[0.6]{(Data)}}
+scale=1
+width=2
+
+
+[qcdinvisocorr]
+rebin=10
+type = add
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_Data,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_TT,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_DY,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_WJets,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_WW,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_WZ,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_ZZ,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_ST
+scale = 1.,-209.,-209.,-209.,-209.,-209.,-209.,-209
+style = line
+fillcolor = ROOT.kOrange
+fillstyle=1000
+color=ROOT.kBlack
+label=QCD~@it{@scale[0.6]{(Data)}}
+width=2
+
+[tt]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/TauPt_Control_TT
+style = line
+fillcolor=ROOT.kMagenta+2
+fillstyle=1000
+color=ROOT.kBlack
+label=TTJets
+scale=209
+width=2
+
+[st]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/TauPt_Control_ST
+style = line
+fillcolor=ROOT.kRed-4
+fillstyle=1000
+color=ROOT.kBlack
+label=ST
+scale=209
+width=2
+
+[ewk]
+rebin=10
+type = add
+file = QCDPurity.root
+obj  = ChargedHiggsQCDPurity/Vars/TauPt_Control_DY,ChargedHiggsQCDPurity/Vars/TauPt_Control_WJets,ChargedHiggsQCDPurity/Vars/TauPt_Control_WW,ChargedHiggsQCDPurity/Vars/TauPt_Control_WZ,ChargedHiggsQCDPurity/Vars/TauPt_Control_ZZ
+style = line
+fillstyle=1000
+#fillcolor=ROOT.kGreen+2
+fillcolor = RGB,.1,.8,0.2
+color=ROOT.kBlack
+label=EWK
+scale=2318
+width=2
+
+[chhiggs200]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/TauPt_Control_HplusToTauNu_M-200_13TeV_amcatnlo
+style = line
+styleopt = 7
+color=ROOT.kBlue
+label= H^{+}~(m=200GeV)~x100
+scale=20900
+width=2
+
+[chhiggs500]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/TauPt_Control_HplusToTauNu_M-500_13TeV_amcatnlo
+style = line
+styleopt = 3
+color=ROOT.kRed
+label= H^{+}~(m=500GeV)~x10^{4}
+scale=209e4
+width=2
+
+
+

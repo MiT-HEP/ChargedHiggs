@@ -2,25 +2,30 @@
 #define MET_H
 
 #include "interface/Object.hpp"
+#include "interface/Smearable.hpp"
 
 class CorrectorBase;
 
-class Met: virtual public Object
+class Met : 
+        virtual public Object, 
+        virtual public SmearableComplex
 {
 
+    protected:
+
     public:
-        Met() : Object() {syst = 0 ;}
-        float ptUp; // TOFILL -> TODO COPY OPERATOR FOR SYST
-        float ptDown; // TOFILL
-        int syst ;
+        Met() : Object(), SmearableComplex() {syst = 0 ;}
         float gen ;
 
         virtual inline int IsMet() const { return 1; }
         inline int IsObject()const override { return IsMet(); }
-        inline void  clearSyst() override { Object::clearSyst(); syst = 0;}; // reset smearing
+        inline void  clearSyst() override { Object::clearSyst(); syst = 0; type=Smearer::NONE;}; // reset smearing
         inline float Pt() const override { if ( syst == 0 ) return p4.Pt();
-            else if (syst >0 ) return ptUp * syst ;
-            else return ptDown * syst;
+            else 
+            {
+            if (syst >0 ) return ptUpSyst[type]  ;
+            else return ptDownSyst[type] ;
+            }
         }
         virtual inline float PtGen(){ return gen;} 
 };

@@ -2,12 +2,13 @@
 #define JET_H
 
 #include "interface/Object.hpp"
+#include "interface/Smearable.hpp"
 #include <algorithm>
 #include <string>
 #include <map>
 
 // ---
-class Jet : virtual public Object
+class Jet : virtual public Object, virtual public SmearableComplex
 {
     // This class take care of the jet definition in the analysis
     //
@@ -37,25 +38,11 @@ class Jet : virtual public Object
             };
     void SetPuId(float x) {puId=x;}
 
-
     Jet() ; 
 
     int isValid; // rejected by DR
 
-    float unc; // TOFILL
-    int syst ;
-// Local Variables:
-// mode:c++
-// indent-tabs-mode:nil
-// tab-width:4
-// c-basic-offset:4
-// End:
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
-
     float bdiscr; // 
-    float bunc; // TOFILL
-    int bsyst ;
-
 
     //Gen-level info
     int pdgId;
@@ -65,11 +52,20 @@ class Jet : virtual public Object
     inline int Flavor() const { return pdgId;}
 
     // ---
-    inline float Pt() const override { if (syst ==0) return p4.Pt(); return p4.Pt() *(1.0  + unc*syst );}
-    inline float E() const override { if (syst == 0) return p4.E(); return p4.E() * (1.0 + unc*syst) ; }
-    inline float GetUnc() const { return unc; }
+    inline float Pt() const override { 
+            if (syst ==0) return p4.Pt(); 
+            //return p4.Pt() *(1.0  + uncSyst[type]*syst );
+            if (syst>0 ) return ptUpSyst[type];
+            else return ptDownSyst[type];
+    }
+    inline float E() const override { 
+        if (syst == 0) return p4.E(); 
+        else return Pt()/p4.Pt() *p4.E();
+    }
+    inline float GetUnc() const { return Pt()/p4.Pt(); }
 
-    inline void  clearSyst()override {Object::clearSyst() ;syst = 0;bsyst=0; isValid=1;}; // reset smearing
+    inline void  clearSyst() override {Object::clearSyst() ;syst = 0; isValid=1;type=Smearer::NONE;} // reset smearing
+
     inline float QGL() const { return qgl_; } 
     inline float QGLVar(std::string name) const {
             std::transform(name.begin(),name.end(),name.begin(),::tolower ) ;
@@ -91,7 +87,7 @@ class Jet : virtual public Object
     }
 
     inline float Btag() const { return bdiscr ; } // don't use this function, to check if it is a bjet
-    inline int IsBJet() const { if( bdiscr > bcut_ + bsyst*bunc and IsJet() and fabs(Eta()) <= betacut_ )   return 1; return 0;}
+    inline int IsBJet() const { if( bdiscr > bcut_  and IsJet() and fabs(Eta()) <= betacut_ )   return 1; return 0;}
 
     inline void computeValidity( Object* o, float dR = 0.4)
     {

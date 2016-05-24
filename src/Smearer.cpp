@@ -4,11 +4,17 @@ int SmearJes::smear(Event *e)
     // only on data apply Jes
     if( not e->IsRealData() ) return SMEAR_NA;
 
-    //for (auto j : e->jets_)
     for (auto j : GetJets(e))
+    {
         j->syst = syst_;
-    //e->met_ .syst = syst_;
-    //GetMet(e) . syst = syst_; //FIXME
+        j->SetSmearType(Smearer::JES);
+        if (not j->IsFilled() ) Log(__FUNCTION__,"WARNING","JES Smearings values not filled in JET");
+    }
+
+    GetMet(e) . syst = syst_;
+    GetMet(e) . SetSmearType(Smearer::JES);
+    
+    if ( not GetMet(e) . IsFilled() ) Log(__FUNCTION__,"WARNING","JES Smearing not filled in MET");
 
     return SMEAR_OK;
 }
@@ -19,7 +25,17 @@ int SmearJer::smear(Event *e)
     if( e->IsRealData() ) return SMEAR_NA;
     //for (auto j : e->jets_)
     for (auto j : GetJets(e))
+    {
         j->syst = syst_;
+        j->SetSmearType(Smearer::JER);
+        if (not j->IsFilled() ) Log(__FUNCTION__,"WARNING","JER Smearings values not filled in JET");
+    }
+
+    GetMet(e) . syst = syst_;
+    GetMet(e) . SetSmearType(Smearer::JER);
+    if ( not GetMet(e) . IsFilled() ) Log(__FUNCTION__,"WARNING","JES Smearing not filled in MET");
+
+
     return SMEAR_OK;
 }
 
