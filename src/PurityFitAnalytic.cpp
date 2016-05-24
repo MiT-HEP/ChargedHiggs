@@ -28,6 +28,7 @@ void PurityFitAnalytic::fit(){
         bkglabels.push_back("WZ");
         bkglabels.push_back("ZZ");
         bkglabels.push_back("DY");
+        bkglabels.push_back("ST");
     }
 
     // reset output file
@@ -262,67 +263,99 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     vector<TCanvas*> cbkgs;
     vector<TF1> expos;
 
-    double cached_pars[50]; //cache
-    for(int i=0;i< sizeof(cached_pars)/sizeof(double); ++i) cached_pars[i]=0;
+    // --- double cached_pars[50]; //cache
+    // --- for(int i=0;i< sizeof(cached_pars)/sizeof(double); ++i) cached_pars[i]=0;
 
-    int poln=0;
-    for( poln=0;poln<5; ++poln)
-    {
-        string formula = "TMath::Exp(-[0]*x) * ( ";
-        for(int i=0;i<=poln;++i)
-                {
-                    if (i>0 ) formula += " + ";
-                    formula += Form("[%d]",i+1);
-                    if (i>0) formula += Form("*TMath::Power(x,%d)",i);
-                }
-        formula += ")";
-        cout <<"Considering Formula"<<formula<<endl;
-        TF1 expo(Form("expo%d",poln),formula.c_str(),xmin,xmax);
-        expo.SetParameter(0,0.01);
-        expo.SetParameter(1,0.05);
+    // --- int poln=0;
+    // --- for( poln=0;poln<5; ++poln)
+    // --- {
+    // ---     string formula = "TMath::Exp(-[0]*x) * ( ";
+    // ---     for(int i=0;i<=poln;++i)
+    // ---             {
+    // ---                 if (i>0 ) formula += " + ";
+    // ---                 formula += Form("[%d]",i+1);
+    // ---                 if (i>0) formula += Form("*TMath::Power(x,%d)",i);
+    // ---             }
+    // ---     formula += ")";
+    // ---     cout <<"Considering Formula"<<formula<<endl;
+    // ---     TF1 expo(Form("expo%d",poln),formula.c_str(),xmin,xmax);
+    // ---     expo.SetParameter(0,0.01);
+    // ---     expo.SetParameter(1,0.05);
 
-        expo.SetParLimits(0,TMath::Min(bkg->Integral()*.1,0.001), bkg->Integral()*10);
-        expo.SetParLimits(1,1e-9, 1.);
+    // ---     expo.SetParLimits(0,TMath::Min(bkg->Integral()*.1,0.001), bkg->Integral()*10);
+    // ---     expo.SetParLimits(1,1e-9, 1.);
 
-        if (poln>0)for(int k=0;k < poln+1;++k) expo.SetParameter(k, cached_pars[k]);
+    // ---     if (poln>0)for(int k=0;k < poln+1;++k) expo.SetParameter(k, cached_pars[k]);
 
-        bkg->Fit( &expo ,"QN") ;
-        bkg->Fit( &expo ,"QNM") ;
-        expos.push_back(expo);
+    // ---     bkg->Fit( &expo ,"QN") ;
+    // ---     bkg->Fit( &expo ,"QNM") ;
+    // ---     expos.push_back(expo);
 
-        //cache parameters
-        for(int k=0;k < poln+1;++k) cached_pars[k]=expo.GetParameter(k);
+    // ---     //cache parameters
+    // ---     for(int k=0;k < poln+1;++k) cached_pars[k]=expo.GetParameter(k);
 
-        double chi2=expo.GetChisquare();
-        double prob = 0 ; 
-        if (poln > 0)
-        {
-            int n = 0;
-            for(int i=1;i<=bkg->GetNbinsX();++i) if ( bkg->GetBinContent(i)> 0 ) ++n;
-            int dof = n - (poln+2) + 1;
-            double f = (prevChi2 - chi2) / ( chi2 /dof) ;
-            prob= 1.- TMath::FDistI (f , 1, dof  ) ;
-        }
-        prevChi2 = chi2;
+    // ---     double chi2=expo.GetChisquare();
+    // ---     double prob = 0 ; 
+    // ---     if (poln > 0)
+    // ---     {
+    // ---         int n = 0;
+    // ---         for(int i=1;i<=bkg->GetNbinsX();++i) if ( bkg->GetBinContent(i)> 0 ) ++n;
+    // ---         int dof = n - (poln+2) + 1;
+    // ---         double f = (prevChi2 - chi2) / ( chi2 /dof) ;
+    // ---         prob= 1.- TMath::FDistI (f , 1, dof  ) ;
+    // ---     }
+    // ---     prevChi2 = chi2;
 
-        cout<<"----------- BKG PARAMETERS ARE -------"<<endl;
-        cout << "Prob = "<<prob<<endl;
-        cout << "chi2 = "<<chi2<<endl;
-        cout<<" 0 : "<< expo.GetParameter(0) <<endl;
-        for(int i=0; i<=poln;++i)
-            cout<<" "<< i+1 <<" : "<< expo.GetParameter(i+1) <<endl;
-        cout<<"--------------------------------------"<<endl;
-        TCanvas *cbkg=new TCanvas( (string(name)+"_bkgfit"+ Form("pol%d",poln)).c_str(),"Canvas"); cbkgs.push_back(cbkg);
-        bkg->Clone("bkgForDraw")->Draw("P E"); // FIXME, memory leak
-        expo.DrawClone("L SAME");
+    // ---     cout<<"----------- BKG PARAMETERS ARE -------"<<endl;
+    // ---     cout << "Prob = "<<prob<<endl;
+    // ---     cout << "chi2 = "<<chi2<<endl;
+    // ---     cout<<" 0 : "<< expo.GetParameter(0) <<endl;
+    // ---     for(int i=0; i<=poln;++i)
+    // ---         cout<<" "<< i+1 <<" : "<< expo.GetParameter(i+1) <<endl;
+    // ---     cout<<"--------------------------------------"<<endl;
+    // ---     TCanvas *cbkg=new TCanvas( (string(name)+"_bkgfit"+ Form("pol%d",poln)).c_str(),"Canvas"); cbkgs.push_back(cbkg);
+    // ---     bkg->Clone("bkgForDraw")->Draw("P E"); // FIXME, memory leak
+    // ---     expo.DrawClone("L SAME");
 
-        if (prob >0.05 and poln> 0) break; // ---------------------- EXIT BEFORE UPDATING
-    }
+    // ---     if (prob >0.05 and poln> 0) break; // ---------------------- EXIT BEFORE UPDATING
+    // --- }
     
-    poln -= 1;  // the last has a negligible improvement
+    // -- poln -= 1;  // the last has a negligible improvement
 
-    for(int i=1;i<=bkg->GetNbinsX() ;++i)
-            bkg->SetBinContent(i,expos[poln].Integral( bkg->GetBinLowEdge(i),bkg->GetBinLowEdge(i+1) ) ) ;
+    // -- for(int i=1;i<=bkg->GetNbinsX() ;++i)
+    // --         bkg->SetBinContent(i,expos[poln].Integral( bkg->GetBinLowEdge(i),bkg->GetBinLowEdge(i+1) ) ) ;
+
+    RooRealVar x("x","EtMiss",xmin,xmax);
+    // ---------------------------------- EWK MODEL -----------------
+    if (initvalues.find("sigmaR_EWK") == initvalues.end())initvalues["sigmaR_EWK"] = 100.;
+    if (initvalues.find("exp_EWK") == initvalues.end())initvalues["exp_EWK"] = 0.003;
+    RooRealVar sR_EWK("sigmaR_EWK","sigmaR_EWK",initvalues["sigmaR_EWK"],50.,200.);
+    RooRealVar exp_EWK("exp_EWK","exp_EWK",initvalues["exp_EWK"],0.,1);
+    RooGenericPdf modelEwk("rayleigh_mod_EWK","@0/@1 * TMath::Exp(-@0*@0/(2*@1*@1)-@0*@2)",RooArgList(x,sR_EWK,exp_EWK) );
+    RooDataHist HistEwk("ewk","hist ewk",x,bkg);
+    modelEwk.fitTo(HistEwk,
+            SumW2Error(kTRUE),
+            Save(), 
+            PrintEvalErrors(-1),
+            PrintLevel(-1),
+            //Minos(kTRUE),
+            Warnings(0)
+            );
+    // follow values
+    initvalues["sigmaR_EWK"]= sR_EWK.getVal();
+    initvalues["exp_EWK"] = exp_EWK.getVal();
+    // freeze
+    sR_EWK.setConstant();
+    exp_EWK.setConstant();
+
+    RooPlot * frameEwk = x.frame();
+    HistEwk.plotOn(frameEwk,SumW2Error(kTRUE));
+    modelEwk.plotOn(frameEwk);
+
+    TCanvas *cbkg=new TCanvas( (string(name) + "_bkgfit").c_str(),"Canvas");
+    frameEwk->Draw();
+    cbkgs.push_back(cbkg);
+    //plot
 
     // remove bkgInv from Sig ?
     //sig->Add(bkgInv,-1);
@@ -332,20 +365,19 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     if (bkg->Integral() >0)
         bkg -> Scale( 1./bkg->Integral() );
 
-    RooRealVar x("x","EtMiss",xmin,xmax);
 
     // ---------------------------------- EWK MODEL -----------------
     // create bkg model for ewk
     // expos[poln]
-    string model= Form("TMath::Exp(-%e*x ) * (",expos[poln].GetParameter(0));
-    for(int i=0;i<=poln;++i)
-    {
-                    if (i>0 ) model += " + ";
-                    model += Form("%e",expos[poln].GetParameter(i+1));
-                    if (i>0) model += Form("*TMath::Power(x,%d)",i);
-    }
-    model += ")";
-    RooGenericPdf modelEwk("modelEwk",model.c_str(),x);
+    // --- string model= Form("TMath::Exp(-%e*x ) * (",expos[poln].GetParameter(0));
+    // --- for(int i=0;i<=poln;++i)
+    // --- {
+    // ---                 if (i>0 ) model += " + ";
+    // ---                 model += Form("%e",expos[poln].GetParameter(i+1));
+    // ---                 if (i>0) model += Form("*TMath::Power(x,%d)",i);
+    // --- }
+    // --- model += ")";
+    // --- RooGenericPdf modelEwk("modelEwk",model.c_str(),x);
 
     // ----------------------- FIT INV ISO TO EXTRACT QCD MODEL ---------------------------
     if (initvalues.find("sigmaR_QCD") == initvalues.end())initvalues["sigmaR_QCD"] = 20;
@@ -373,7 +405,7 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     //RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD) , RooArgList(f1QCD) );
     //RooFFTConvPdf modelQCD("rxg","rayleigh (X) gauss",x,rayleighQCD,gaussQCD);
 
-    RooRealVar fInvIso("fInvIso","fInvIso",initvalues["fInvIso"]);
+    RooRealVar fInvIso("fInvIso","fInvIso",initvalues["fInvIso"],0.,1.);
     RooAddPdf modelInvIso("modelInvIso","modelInvIso",RooArgList(modelQCD,modelEwk) , RooArgList(fInvIso) );
     
 

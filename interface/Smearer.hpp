@@ -8,6 +8,8 @@
 #define SMEAR_NA 1
 #define SMEAR_UNKOWN_FAIL 2
 
+// -------------------- DEFINE SMEARERs --------------
+
 class SmearBase : public Named {
     public:
 

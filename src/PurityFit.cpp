@@ -28,6 +28,7 @@ void PurityFit::fit(){
         bkglabels.push_back("WZ");
         bkglabels.push_back("ZZ");
         bkglabels.push_back("DY");
+        bkglabels.push_back("ST");
     }
 
     // reset output file

@@ -137,7 +137,19 @@ void LoadNero::FillJets(){
 
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
-        j->unc = bj -> unc -> at(iJet); //
+        // JES
+        //Log(__FUNCTION__,"DEBUG","Going to Fill Jes");
+        j->SetValueUp  (Smearer::JES , (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
+        j->SetValueDown(Smearer::JES , (1. - bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
+        j->SetFilled(Smearer::JES);
+        // JER
+        //Log(__FUNCTION__,"DEBUG","Going to Fill Jer");
+        j->SetValueUp  (Smearer::JER , bj->ptResUncUp->at(iJet)   );
+        j->SetValueDown(Smearer::JER , bj->ptResUncDown->at(iJet) );
+        j->SetFilled(Smearer::JER);
+
+        //Log(__FUNCTION__,"DEBUG","-> Done");
+        // ---
         j->bdiscr = bj -> bDiscr -> at(iJet);
 
         if (tree_->GetBranchStatus("jetQGL") ) j->SetQGL( bj -> qgl -> at(iJet) );
@@ -332,8 +344,27 @@ void LoadNero::FillMet(){
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
-    event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
-    event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
+    //event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
+    //event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
+    
+    // ---  JES ---
+   // Log(__FUNCTION__,"DEBUG","Going to Fill Jes MET");
+    event_ -> met_ . SetValueUp  (Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt() );
+    event_ -> met_ . SetValueDown(Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesDown]) -> Pt() );
+    event_-> met_ . SetFilled(Smearer::JES);
+
+    //Log(__FUNCTION__,"DEBUG","Going to Fill Jer MET");
+    // ---  JER ---
+    if (event_->IsRealData())
+    {
+        event_-> met_ . SetFilled(Smearer::JER,false);
+    }
+    else{
+        event_ -> met_ . SetValueUp  ( Smearer::JER ,( (TLorentzVector*)(*met->metSyst)[BareMet::JerUp]) -> Pt()   );
+        event_ -> met_ . SetValueDown( Smearer::JER ,( (TLorentzVector*)(*met->metSyst)[BareMet::JerDown]) -> Pt() );
+        event_-> met_ . SetFilled(Smearer::JER);
+    }
+    //Log(__FUNCTION__,"DEBUG","Done");
 
 
 #ifdef VERBOSE
