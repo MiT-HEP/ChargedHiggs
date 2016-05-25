@@ -190,7 +190,7 @@ void PurityFitAnalytic::fit(){
             <<endl;
         //  for SF DB
         fw <<"tauinviso pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
-        fw <<"tauinvisospline spline "<<hTau->GetMean()<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<< " " << pars["fFull"] <<endl;
+        fw <<"tauinvisospline spline "<<hTau->GetMean()<< " "<<R<<" "<< (Rhi + Rlo)/2.0<< " " << pars["fFull"] <<endl;
 
     } // bin loop
 
@@ -328,10 +328,24 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     RooRealVar x("x","EtMiss",xmin,xmax);
     // ---------------------------------- EWK MODEL -----------------
     if (initvalues.find("sigmaR_EWK") == initvalues.end())initvalues["sigmaR_EWK"] = 100.;
-    if (initvalues.find("exp_EWK") == initvalues.end())initvalues["exp_EWK"] = 0.003;
+    if (initvalues.find("exp_EWK") == initvalues.end())initvalues["exp_EWK"] = 0.003; // ~ 300
+    if (initvalues.find("aEWK") == initvalues.end())initvalues["aEWK"] = 0.6;
+    if (initvalues.find("bEWK") == initvalues.end())initvalues["bEWK"] = 0.3;
+    if (initvalues.find("mEWK") == initvalues.end())initvalues["mEWK"] = 50.;
+    if (initvalues.find("sEWK") == initvalues.end())initvalues["sEWK"] = 50.;
+
+
     RooRealVar sR_EWK("sigmaR_EWK","sigmaR_EWK",initvalues["sigmaR_EWK"],50.,200.);
-    RooRealVar exp_EWK("exp_EWK","exp_EWK",initvalues["exp_EWK"],0.,1);
-    RooGenericPdf modelEwk("rayleigh_mod_EWK","@0/@1 * TMath::Exp(-@0*@0/(2*@1*@1)-@0*@2)",RooArgList(x,sR_EWK,exp_EWK) );
+    RooRealVar exp_EWK("exp_EWK","exp_EWK",initvalues["exp_EWK"],1./1000.,1./50.);
+    RooGenericPdf rayleighEWK("rayleigh_EWK","@0/@1 * TMath::Exp(-@0*@0/(2*@1*@1))",RooArgList(x,sR_EWK) );
+    RooGenericPdf expEWK("exp_mod_EWK","@0*TMath::Exp(-@0*@1)",RooArgList(x,exp_EWK) ) ;
+    RooRealVar mEWK("mEWK","mEWK",initvalues["mEWK"],0,100);
+    RooRealVar sEWK("sEWK","sEWK",initvalues["sEWK"],0,100);
+    RooGaussian  gausEWK("gausEWK","gausEWK",x,mEWK,sEWK);
+    RooRealVar aEWK("aEwk","aEWK",initvalues["aEWK"],0.,1.);
+    RooRealVar bEWK("bEwk","bEWK",initvalues["bEWK"],0.,1.);
+    RooAddPdf modelEwk("modelEwk","modelEwk",RooArgList(rayleighEWK,expEWK,gausEWK),RooArgList(aEWK,bEWK)); 
+
     RooDataHist HistEwk("ewk","hist ewk",x,bkg);
     modelEwk.fitTo(HistEwk,
             SumW2Error(kTRUE),
@@ -344,9 +358,17 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     // follow values
     initvalues["sigmaR_EWK"]= sR_EWK.getVal();
     initvalues["exp_EWK"] = exp_EWK.getVal();
+    initvalues["aEWK"] = aEWK.getVal();
+    initvalues["bEWK"] = bEWK.getVal();
+    initvalues["mEWK"] = mEWK.getVal();
+    initvalues["sEWK"] = sEWK.getVal();
     // freeze
     sR_EWK.setConstant();
     exp_EWK.setConstant();
+    aEWK.setConstant();
+    bEWK.setConstant();
+    mEWK.setConstant();
+    sEWK.setConstant();
 
     RooPlot * frameEwk = x.frame();
     HistEwk.plotOn(frameEwk,SumW2Error(kTRUE));
@@ -385,7 +407,7 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     if (initvalues.find("sigmaG_QCD") == initvalues.end())initvalues["sigmaG_QCD"] = 5;
     if (initvalues.find("muG_QCD") == initvalues.end())initvalues["muG_QCD"] = 0;
     if (initvalues.find("f1QCD") == initvalues.end())initvalues["f1QCD"] = .95;
-    if (initvalues.find("f2QCD") == initvalues.end())initvalues["f2QCD"] = .3;
+    if (initvalues.find("f2QCD") == initvalues.end())initvalues["f2QCD"] = (1.-initvalues["f1QCD"])/2.;
     if (initvalues.find("fInvIso") == initvalues.end())initvalues["fInvIso"] = .9;
     if (initvalues.find("f") == initvalues.end())initvalues["f"] = .9;
     //if (initvalues.find("XXX") == initvalues.end())initvalues["XXX"] = 40;
@@ -398,10 +420,10 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     RooRealVar mG("muG_QCD","muG",initvalues["muG_QCD"],0,30);
     RooGaussian gaussQCD("gauss_QCD","gauss_QCD",x,mG,sG);
 
-    RooRealVar f1QCD("f1QCD","f1QCD",initvalues["f1QCD"],.9,1.0);
+    RooRealVar f1QCD("f1QCD","f1QCD",initvalues["f1QCD"],.1,1.0);
     RooRealVar f2QCD("f2QCD","f2QCD",initvalues["f2QCD"]);
     //RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD,gaussQCD) , RooArgList(f1QCD,f2QCD) );
-    RooGenericPdf modelQCD ("rayleigh_QCD","@0/(@1*@1)*TMath::Exp(-@0*@0/(2*@1*@1))",RooArgList(x,sR) );
+    RooGenericPdf modelQCD("rayleigh_QCD","@0/(@1*@1)*TMath::Exp(-@0*@0/(2*@1*@1))",RooArgList(x,sR) );
     //RooAddPdf modelQCD("modelQCD","modelQCD",RooArgList(rayleighQCD,expoQCD) , RooArgList(f1QCD) );
     //RooFFTConvPdf modelQCD("rxg","rayleigh (X) gauss",x,rayleighQCD,gaussQCD);
 
@@ -486,6 +508,14 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     cout <<" -------------- FINAL ----------------"<<endl;
     r-> floatParsFinal() . Print("V");
     cout <<" -------------------------------------"<<endl;
+
+    // 9) plot
+    //HistToFit.plotOn(frame,DataError(RooAbsData::SumW2));
+    HistToFit.plotOn(frame,DataError(RooAbsData::SumW2));
+    PdfModel.plotOn(frame, LineColor(kBlack));
+    PdfModel.plotOn(frame, Components(modelQCD),LineColor(kBlue)); 
+    PdfModel.plotOn(frame, Components(modelEwk),LineColor(kRed),LineStyle(kDashed));
+
     // -------------Fit Full selection inv iso
     RooRealVar fFull("fFull","fraction",.999,0.3,1.0);
     f.setRange(0.3,1.0);
@@ -499,19 +529,14 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
     RooPlot*frameFull = x.frame();
     HistFullSel.plotOn(frameFull);
     PdfModelFullInv.plotOn(frameFull);
-    PdfModelFullInv.plotOn(frame, Components(modelQCD),LineColor(kRed)); 
-    PdfModelFullInv.plotOn(frame, Components(modelEwk),LineColor(kBlue),LineStyle(kDashed));
+    PdfModelFullInv.plotOn(frameFull, Components(modelQCD),LineColor(kBlue)); 
+    PdfModelFullInv.plotOn(frameFull, Components(modelEwk),LineColor(kRed),LineStyle(kDashed));
 
     // 8.5) save additional results
     if (pars != NULL ) {
         (*pars)["fracErrorHigh"] = f.getAsymErrorHi(); 
         (*pars)["fracErrorLow" ] = f.getAsymErrorLo(); 
     }
-    // 9) plot
-    HistToFit.plotOn(frame,DataError(RooAbsData::SumW2));
-    PdfModel.plotOn(frame, LineColor(kBlack));
-    PdfModel.plotOn(frame, Components(modelQCD),LineColor(kRed)); 
-    PdfModel.plotOn(frame, Components(modelEwk),LineColor(kBlue),LineStyle(kDashed));
 
     TCanvas *c=new TCanvas((string(name)+"_canvas").c_str(),"Canvas");
     c->cd();

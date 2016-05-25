@@ -186,7 +186,7 @@ void PurityFit::fit(){
             <<endl;
         //  for SF DB
         fw <<"tauinviso pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
-        fw <<"tauinvisospline spline "<<hTau->GetMean()<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
+        fw <<"tauinvisospline spline "<<hTau->GetMean()<< " "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
 
     } // bin loop
 

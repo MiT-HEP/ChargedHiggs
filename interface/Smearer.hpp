@@ -35,7 +35,7 @@ class SmearBase : public Named {
 class SmearLepSF : virtual public SmearBase
 {
     public:
-        SmearLepSF() :SmearBase(){ name_= "LEPSF";}
+        SmearLepSF() :SmearBase(){ Log(__FUNCTION__,"WARNING","Obsolete. Use SmearSF");name_= "LEPSF";}
         virtual int smear(Event *e);
 };
 
@@ -69,6 +69,17 @@ class SmearPu : virtual public SmearBase
         SmearPu() : SmearBase(){ name_ = "PU";}
         virtual int smear(Event*e);	
 };
+
+// --- class SmearScale() : virtual public SmearBase
+// --- {
+// ---     bool doRen{true};
+// ---     bool doFac{true};
+// --- 
+// ---     pubilc: 
+// ---         SmearScales() : SmearBase(){ name_="Scale";}
+// ---         SmearScales(string name, bool ren, bool fac) : SmearBase(){ name_=name;doRen=ren,doFac=fac;}
+// ---         virtual int smear(Event*e);	
+// --- };
 
 #endif
 // Local Variables:
