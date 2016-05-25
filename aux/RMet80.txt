@@ -16,7 +16,7 @@ tauinviso pteta 500 750 -2.1 2.1 0.0609882 0.00933183
 tauinviso pteta 750 1000 -2.1 2.1 97624.8 11050.6
 tauinviso pteta 1000 8000 -2.1 2.1 -nan -nan
 # with fFull as last PurityFitAnalytic
-tauinvisospline spline 0 0.182136 0.05 0.941681
+#tauinvisospline spline 0 0.182136 0.05 0.941681
 tauinvisospline spline 53.0115 0.182136 -2.35216e-05 0.86031
 tauinvisospline spline 57.4893 0.188658 -1.79206e-05 0.892319
 tauinvisospline spline 62.4786 0.187806 -1.87512e-05 0.90673
@@ -31,4 +31,4 @@ tauinvisospline spline 186.217 0.0945129 -3.55226e-05 0.868899
 tauinvisospline spline 220.789 0.0846919 -2.57364e-05 0.842437
 tauinvisospline spline 308.6 0.0799048 -3.24573e-05 0.842439
 tauinvisospline spline 594.142 0.0609882 0.00933183 0.536065
-tauinvisospline spline 812.099 97624.8 11050.6 0.695253
+tauinvisospline spline 812.099 0.06098 0.00 0.695253
