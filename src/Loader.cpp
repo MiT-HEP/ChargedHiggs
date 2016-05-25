@@ -144,9 +144,15 @@ void LoadNero::FillJets(){
         j->SetFilled(Smearer::JES);
         // JER
         //Log(__FUNCTION__,"DEBUG","Going to Fill Jer");
-        j->SetValueUp  (Smearer::JER , bj->ptResUncUp->at(iJet)   );
-        j->SetValueDown(Smearer::JER , bj->ptResUncDown->at(iJet) );
-        j->SetFilled(Smearer::JER);
+        if (event_->IsRealData())
+        {
+            j->SetFilled(Smearer::JER,false);
+        }
+        else{
+            j->SetValueUp  (Smearer::JER , bj->ptResUncUp->at(iJet)   );
+            j->SetValueDown(Smearer::JER , bj->ptResUncDown->at(iJet) );
+            j->SetFilled(Smearer::JER);
+        }
 
         //Log(__FUNCTION__,"DEBUG","-> Done");
         // ---
