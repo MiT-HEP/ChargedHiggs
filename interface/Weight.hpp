@@ -4,11 +4,12 @@
 #include "interface/SF.hpp"
 #include "interface/MC.hpp"
 #include "interface/PU.hpp"
+#include "interface/Smearable.hpp"
 
 class SmearBase;
 class Event;
 
-class Weight{
+class Weight : virtual public SmearableBase {
     friend class Event;
     friend class SmearBase;
 
@@ -18,17 +19,28 @@ class Weight{
     double lumi_;
     double sf_;
     double mcWeight_; // this is set in FillEvent
+
+    double scalesWeights_[MC_MAX_SCALES];
+    double scalesNeventReweight_[MC_MAX_SCALES];
+    bool scales_{false};
+
+    // syst here will have the values of MC::SCALES
+
     protected:
+
 
     map<string, MC*> mc_db;
     map<string, SF*> sf_db;
+
 
     PU pu_; // handler for PU
     public:
     Weight(){ clear(); }
     ~Weight(){}
 
-    void SetMcWeight(double w){mcWeight_= w;}
+    inline void SetMcWeight(double w){mcWeight_= w; scales_=false;}
+    inline void SetScaleWeight(double w, MC::SCALES pos){scalesWeights_[pos]=w; scales_=true;}
+    inline void SetSyst( MC::SCALES val) { syst = val;}
 
     void clear(){ mcName_= "";
         mcXsec_ = 1.0; 
@@ -36,12 +48,14 @@ class Weight{
         nEvents_=1000. ; 
         lumi_=1.0;  // for RD MC this number should be the sum of the partial in the PUReweight
         sf_ = 1.0;
+        syst = MC::none;
     }
     //
     string GetMC(){ return mcName_; }
     // ---
     void SetLumi(double l) {lumi_= l;}
     void AddMC( string label, string dir, double xsec, double nevents);
+    inline void AddMCScale( string label , MC::SCALES x, double rw) { mc_db[label]->scalesNeventsReweight[x] = rw; }
     string LoadMC( string label) ;	 // return "" if failed otherwise dir
     string LoadMCbyDir( string dir ) ;	 // return "" if failed otherwise label
 
@@ -83,8 +97,14 @@ class Weight{
     // ---  check what happen with data, TODO CHECK LUMI
     double weight(){ 
         //Log(__FUNCTION__,"DEBUG",Form("Weight: Mc=%lf mcXsec=%lf sf=%lf pu=%lf nevents=%lf",mcWeight_, mcXsec_ ,sf_,pu_.GetPUWeight(mcName_,puInt_,runNum_), nEvents_));
+        if (syst == MC::none)
         return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        else 
+        {
+        if (not scales_) Log(__FUNCTION__,"ERROR","Scales reweighting uncorrect!!!");
+        return scalesWeights_[syst] * scalesNeventReweight_[syst] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
         }
+    }
 
     // 
 	void Log(const string& function, const string& level, const string& message);

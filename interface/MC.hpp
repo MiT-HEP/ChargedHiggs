@@ -1,16 +1,23 @@
 #ifndef MC_H
 #define MC_H
 
+#define MC_MAX_SCALES 6
+
 #include "interface/Named.hpp"
 
 class MC : public Named {
     // This class will contain the basic MC informations
     // XSEC, SumOf Event weights, directory ...
     public:
+        enum SCALES{none=-1,r1f2=0,r1f5,r2f1,r2f2,r5f1,r5f5};
+
         const string name() const { return "MC";}
         string dir;
         double xsec;
         double nevents;
+
+        // if set, set the SumW base / SumW^R
+        double scalesNeventsReweight[MC_MAX_SCALES];
 };
 
 #endif

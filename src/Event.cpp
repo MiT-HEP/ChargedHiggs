@@ -42,6 +42,7 @@ void Event::clearSyst(){
     weight_ -> clearSF();
     weight_ -> resetSystSF();
     weight_ -> clearSystPU();
+    weight_ -> SetSyst( MC::none ) ;
 }
 
 float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton
