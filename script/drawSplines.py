@@ -3,10 +3,10 @@ import re
 from optparse import OptionParser,OptionGroup
 
 parser=OptionParser()
-parser.add_option("","--sfdb" ,dest='sfdb',type='string',help="SF DB [%default]",default="aux/RMet80.txt")
+parser.add_option("","--sfdb" ,dest='sfdb',type='string',help="SF DB comma separated [%default]",default="aux/RMet80.txt")
 parser.add_option("-l","--label" ,dest='label',type='string',help="label [%default]",default="tauinvisospline")
 parser.add_option("-o","--out" ,dest='out',type='string',help="outlabel [%default]",default="")
-parser.add_option("","--legend" ,dest='legend',type='string',help="legend labels [%default]",default="Fit")
+parser.add_option("","--legend" ,dest='legend',type='string',help="legend labels, comma separated [%default]",default="Fit")
 
 opts,args=parser.parse_args()
 

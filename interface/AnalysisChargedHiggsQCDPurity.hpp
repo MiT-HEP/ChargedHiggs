@@ -19,10 +19,10 @@ class ChargedHiggsQCDPurity:  virtual public AnalysisBase
         int FindBin(float pt);
         string HistName(float pt, bool Direct=true, bool FullSelection=false,string var = "EtMiss");
 
-    void Book(string name, string title,int nBins, double xmin, double xmax);
-    void Fill(string name, string syst , double value, double weight=1);
     float Upar(Event*e,Tau *t ){ return e->GetMet().Pt() * TMath::Cos( e->GetMet().DeltaPhi( *t ) ) ; };
     float Uperp(Event*e, Tau*t){ return e->GetMet().Pt() * TMath::Sin( e->GetMet().DeltaPhi( *t) );}; // this is positive, deltaPhi>0
+    
+    bool Unblind(Event *e) { if (e->IsRealData() and e->Mt() > 50) return unblind; return true;} // if is not data, no need to return something else
 };
 
 #endif

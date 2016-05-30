@@ -98,18 +98,32 @@ float Event::MtDecoCosPhi(MtType type){
 }
 
 float Event::RbbMin(int iMax,Tau *t) {
+
     // notice the Pi-...
     if (t == NULL) return -1;
+    bool direct= t->IsTau(); // otherwise I suppose inviso
     float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( t ) );
 
     float rbbmin = -1;
-    for(int i=0 ; i< iMax; ++i)
+    if (direct)
     {
-        if( GetJet(i) == NULL ) break;
-        float dphietmissjet= fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
-        float myrbb = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+        for(int i=0 ; i< iMax; ++i)
+        {
+            if( GetJet(i) == NULL ) break;
+            float dphietmissjet= fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
+            float myrbb = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
 
-        if (rbbmin<0 or myrbb<rbbmin) rbbmin = myrbb;
+            if (rbbmin<0 or myrbb<rbbmin) rbbmin = myrbb;
+        }
+    }else{
+        for(int i=0 ; i< iMax; ++i)
+        {
+            if( GetJetInvIso(i) == NULL ) break;
+            float dphietmissjet= fabs( GetMet().DeltaPhi( GetJetInvIso(i) ) ) ;
+            float myrbb = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+
+            if (rbbmin<0 or myrbb<rbbmin) rbbmin = myrbb;
+        }
     }
 
     return rbbmin;
@@ -117,15 +131,28 @@ float Event::RbbMin(int iMax,Tau *t) {
 float Event::RCollMin(int iMax,Tau *t) {
     // notice the Pi-...
     if (t == NULL) return -1;
+    bool direct= t->IsTau(); // otherwise I suppose inviso
     float dphietmisstau = fabs(GetMet().DeltaPhi( t ) );
     float rcollmin = -1;
-    for(int i=0 ; i< iMax; ++i)
+    if (direct)
     {
-        if( GetJet(i) == NULL ) break;
-        float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
-        float myrcoll = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+        for(int i=0 ; i< iMax; ++i)
+        {
+            if( GetJet(i) == NULL ) break;
+            float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
+            float myrcoll = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
 
-        if (rcollmin<0 or myrcoll<rcollmin) rcollmin = myrcoll;
+            if (rcollmin<0 or myrcoll<rcollmin) rcollmin = myrcoll;
+        }
+    }else{
+        for(int i=0 ; i< iMax; ++i)
+        {
+            if( GetJetInvIso(i) == NULL ) break;
+            float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJetInvIso(i) ) ) ;
+            float myrcoll = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+
+            if (rcollmin<0 or myrcoll<rcollmin) rcollmin = myrcoll;
+        }
     }
 
     return rcollmin;
@@ -133,16 +160,29 @@ float Event::RCollMin(int iMax,Tau *t) {
 
 float Event::RsrMax(int iMax, Tau *t) {
     if (t == NULL) return -1;
+    bool direct= t->IsTau(); // otherwise I suppose inviso
     float dphietmisstau = TMath::Pi() - fabs(GetMet().DeltaPhi( t ) );
     float rsrmax = -1;
-    for(int i=0 ; i< iMax; ++i)
-    {
-        if( GetJet(i) == NULL ) break;
-        float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
-        float myrsr = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+    if (direct){
+        for(int i=0 ; i< iMax; ++i)
+        {
+            if( GetJet(i) == NULL ) break;
+            float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJet(i) ) ) ;
+            float myrsr = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
 
-        // CHECKME, is this correct ? min ? 
-        if (rsrmax<0 or myrsr<rsrmax) rsrmax = myrsr;
+            // CHECKME, is this correct ? min ? 
+            if (rsrmax<0 or myrsr<rsrmax) rsrmax = myrsr;
+        }
+    }else{
+        for(int i=0 ; i< iMax; ++i)
+        {
+            if( GetJetInvIso(i) == NULL ) break;
+            float dphietmissjet= TMath::Pi() - fabs( GetMet().DeltaPhi( GetJetInvIso(i) ) ) ;
+            float myrsr = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+
+            // CHECKME, is this correct ? min ? 
+            if (rsrmax<0 or myrsr<rsrmax) rsrmax = myrsr;
+        }
     }
 
     return rsrmax;
@@ -161,7 +201,7 @@ void Event::validate(){
         for(auto l : leps_)
             if(l->IsLep() )j-> computeValidity(l);
         for(auto t: taus_)
-            if(t->IsTau() )j-> computeValidity(t);
+            if(t->IsTauInvIso() )j-> computeValidity(t,0.4,true);
     }
     return ;
 }
@@ -183,6 +223,22 @@ Jet * Event::GetJet( int iJet )
     return jets_[ valid[iJet].second];
 }
 
+Jet * Event::GetJetInvIso( int iJet ) 
+{ 
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<jets_.size() ;++i)
+    {
+        if ( jets_[i]->IsJetInvIso()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iJet  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return jets_[ valid[iJet].second];
+}
+
 // Get Object functions
 Jet * Event::GetCentralJet( int iJet ) 
 { 
@@ -190,6 +246,22 @@ Jet * Event::GetCentralJet( int iJet )
     for(int i = 0 ; i<jets_.size() ;++i)
     {
         if ( jets_[i]->IsCentralJet()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iJet  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return jets_[ valid[iJet].second];
+}
+
+Jet * Event::GetBjetInvIso( int iJet ) 
+{ 
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<jets_.size() ;++i)
+    {
+        if ( jets_[i]->IsBJetInvIso()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
     }
 
     if (valid.size() == 0 ) return NULL;

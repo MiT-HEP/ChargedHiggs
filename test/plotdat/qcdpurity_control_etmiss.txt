@@ -1,0 +1,6 @@
+[include]
+file= plotdat/qcdpurity_control_taupt.txt
+sub= TauPt:EtMiss
+
+[base]
+xtitle=E_{T}^{miss}~[GeV]

@@ -24,6 +24,13 @@ class Jet : virtual public Object, virtual public SmearableComplex
     // qgl vars
     std::map<std::string,float> qglVars_;
 
+    inline int IsJetExceptValidity() const { 
+        if( Pt() < ptcut_ ) return 0; 
+        if( fabs(Eta()) >= etacut_) return 0;
+        if( puidcut_ > -100 and puId < puidcut_ ) return 0;
+        return 1;
+    }
+
     public:
 
     void SetPuIdCut(float x) {puidcut_=x;}
@@ -41,6 +48,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
     Jet() ; 
 
     int isValid; // rejected by DR
+    int isValidInvIso;
 
     float bdiscr; // 
 
@@ -73,11 +81,15 @@ class Jet : virtual public Object, virtual public SmearableComplex
             };
     // ---
     inline int IsObject() const override {return IsJet();}
-    inline int IsJet() const { if (not isValid) return 0 ; 
-        if( Pt() < ptcut_ ) return 0; 
-        if( fabs(Eta()) >= etacut_) return 0;
-        if( puidcut_ > -100 and puId < puidcut_ ) return 0;
-        return 1;
+
+    inline int IsJet() const { 
+        if (not isValid) return 0; 
+        return IsJetExceptValidity();
+    }
+
+    inline int IsJetInvIso() const { 
+        if (not isValidInvIso) return 0; 
+        return IsJetExceptValidity();
     }
 
     inline int IsCentralJet() const {
@@ -89,11 +101,14 @@ class Jet : virtual public Object, virtual public SmearableComplex
     inline float Btag() const { return bdiscr ; } // don't use this function, to check if it is a bjet
     inline int IsBJet() const { if( bdiscr > bcut_  and IsJet() and fabs(Eta()) <= betacut_ )   return 1; return 0;}
 
-    inline void computeValidity( Object* o, float dR = 0.4)
+    inline int IsBJetInvIso() const { if( bdiscr > bcut_  and IsJetInvIso() and fabs(Eta()) <= betacut_ )   return 1; return 0;}
+
+    inline void computeValidity( Object* o, float dR = 0.4,bool inverse=false)
     {
-        if ( DeltaR (*o) < dR )  isValid = 0;
+        if (inverse){if ( DeltaR (*o) < dR )  isValidInvIso = 0;}
+        else { if ( DeltaR (*o) < dR )  isValid = 0;}
     }
-    inline void resetValidity(){isValid=1;}
+    inline void resetValidity(){isValid=1;isValidInvIso=1;}
 };
 
 #endif

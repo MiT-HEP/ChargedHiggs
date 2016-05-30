@@ -595,6 +595,13 @@ float PurityFitAnalytic::fit_specific( const TH1* h_, const TH1* sig_, const TH1
         for( auto c : cbkgs ) c->Write();
         r->Write(Form("%s_roofit",name.c_str() ) );
         fOut->Close();
+
+        // Save the fit  plot
+        c->SaveAs( (string("plot/PurityFitAnalytic/") + c->GetName() + ".pdf").c_str());
+        cInvIso->SaveAs( (string("plot/PurityFitAnalytic/") + cInvIso->GetName() + ".pdf").c_str());
+        cFull->SaveAs( (string("plot/PurityFitAnalytic/") + cFull->GetName() + ".pdf").c_str());
+        for( auto c : cbkgs ) c->SaveAs( (string("plot/PurityFitAnalytic/") + c->GetName() + ".pdf").c_str());
+
     }
 
     // delete the clone

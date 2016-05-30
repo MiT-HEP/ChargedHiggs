@@ -119,15 +119,18 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
     // * put a limit on the TauInv sideband ? 3.0 -20 GeV
 
+    bool passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
+    bool passInverseLoose=inverse.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
     // check minimal selection: Three bjets
-    if ( not direct.passAllUpTo(ChargedHiggsTauNu::ThreeJets)
-         and not inverse.passAllUpTo(ChargedHiggsTauNu::ThreeJets)
+    if ( not passDirectLoose
+         and not  passInverseLoose
        ) return EVENT_NOT_USED;
 
     //if ( not direct.passAllUpTo(ChargedHiggsTauNu::OneBjet)
     //     and not inverse.passAllUpTo(ChargedHiggsTauNu::OneBjet)
     //   ) return EVENT_NOT_USED; 
     //LogN(__FUNCTION__,"WARNING","ONE B REQUIRED FOR QCD LOOSE",10);
+    //
 
 
     //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection
@@ -135,7 +138,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     if (not e->IsRealData()) passPrescale=true;
     if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
 
-    if (t != NULL and passPrescale) // direct
+    if (t != NULL and passDirectLoose and passPrescale) // direct
     {
         float pt = t->Pt();
         int flavor= t->Rematch(e);
@@ -167,7 +170,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     }
 
-    if (tInv != NULL and passPrescale) // inv iso
+    if (tInv != NULL and passInverseLoose and passPrescale) // inv iso
     {
         float pt = tInv->Pt();
         int flavor= tInv->Rematch(e);
@@ -226,7 +229,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     // ---------------------- INF TAU SF 
     //
-    if (tInv != NULL ){ // USE weight(false) to apply TF on data!
+    if (tInv != NULL and passInverseLoose ){ // USE weight(false) to apply TF on data!
         float pt = tInv->Pt();                                                   
         //const string sf="tauinviso";
         const string sfname="tauinvisospline";
@@ -239,7 +242,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         e->ApplySF(sfname); // only in weight(false) sf are applied in data
 
         //Log(__FUNCTION__,"DEBUG",string("syst name is ") + systname + Form("weight is %f",e->weight(false)) );
-        if (tInv != NULL and passPrescale){ // CONTROL PLOTS -- LOOSE SELECTION
+        if (tInv != NULL and passInverseLoose and passPrescale){ // CONTROL PLOTS -- LOOSE SELECTION
             string hist= "TauPt_IsoInv_Control";
             Fill( dir+hist +"_"+label,systname, tInv->Pt(), e->weight(false) );
             hist= "EtMiss_IsoInv_Control";
@@ -249,6 +252,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         if (inverse.passAllExcept(ChargedHiggsTauNu::Met))
         {
             //if (not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") ) Log(__FUNCTION__,"ERROR","Event Is NOT Triggered!!! Why am I here?");
+            //Log(__FUNCTION__,"DEBUG",Form("N-1 MET Selection InvIso w=%.4f",e->weight(false)));
             Fill( none + "EtMissIsoInv" +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
 
         }
@@ -261,7 +265,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             mymask |= (1<<i); // set all 1
         }
 
-        if (passPrescale and inverse.passMask(mymask) )
+        if (passPrescale and passInverseLoose and inverse.passMask(mymask) )
         {
             // On data avoid R fact -- n minus one
             string hist=HistName(pt, false, true)+"_NoR";
@@ -272,7 +276,6 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             #ifdef VERBOSE
             if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG","is tauInv full selection");
             #endif
-
 
 
             if (e->weight(false) == 0 )Log(__FUNCTION__,"WARNING","event weight after SF is 0 ");
@@ -335,30 +338,6 @@ string ChargedHiggsQCDPurity::HistName(float pt, bool Direct, bool FullSelection
     #endif
 
     return name;
-}
-
-// ---- All plots have a wPlus/wMinus 
-void ChargedHiggsQCDPurity::Book(string name, string title,int nBins, double xmin, double xmax){
-    AnalysisBase::Book(name,title,nBins,xmin,xmax);
-    if (name.find("_Data") != string::npos) return;
-    string wPlus = name + "_wPlus";
-    string wMinus = name + "_wMinus";
-
-    AnalysisBase::Book(wPlus,title,nBins,xmin,xmax);
-    AnalysisBase::Book(wMinus,title,nBins,xmin,xmax);
-
-}
-
-void ChargedHiggsQCDPurity::Fill(string name, string syst , double value, double weight)
-{
-    AnalysisBase::Fill(name,syst,value,weight);
-    if (name.find("_Data") != string::npos) return;
-    string wPlus = name + "_wPlus";
-    string wMinus = name + "_wMinus";
-    if (weight>0 ) AnalysisBase::Fill(wPlus,syst,value,weight);
-    if (weight<0 ) AnalysisBase::Fill(wMinus,syst,value,weight);
-    return ;
-
 }
 
 // Local Variables:

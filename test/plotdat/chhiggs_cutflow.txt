@@ -19,7 +19,7 @@ lumi = 2.3~fb^{-1}~(13~TeV)
 
 [legend]
 draw =  True
-legendList = data,qcd,tt,ewk,chhiggs200,chhiggs500   ## if name1 == band and name3 == line, join them, will use the first for the label
+legendList = data,qcd,tt,st,ewk,chhiggs200,chhiggs500   ## if name1 == band and name3 == line, join them, will use the first for the label
 position = .60,.7,.90,.95
 
 [data]
@@ -35,8 +35,7 @@ yerror=True
 [mc]
 type = stack
 file = ChHiggs.root 
-#obj  = qcd,tt,ewk
-obj  = ewk,tt,qcd
+obj  = ewk,st,tt,qcd
 
 [qcd]
 type = th1d
@@ -47,7 +46,7 @@ fillcolor = RGB,0.2,.9,1.
 fillstyle=1000
 color=ROOT.kBlack
 label=QCD
-scale=2318
+scale=2308
 width=2
 
 [tt]
@@ -59,7 +58,19 @@ fillcolor=ROOT.kMagenta+2
 fillstyle=1000
 color=ROOT.kBlack
 label=TTJets
-scale=2318
+scale=2308
+width=2
+
+[st]
+type = th1d
+file = ChHiggs.root
+obj = ChargedHiggsTauNu/CutFlow/CutFlow_ST
+style = line
+fillcolor=ROOT.kRed-4
+fillstyle=1000
+color=ROOT.kBlack
+label=TTJets
+scale=2308
 width=2
 
 [ewk]
@@ -72,7 +83,7 @@ fillstyle=1000
 fillcolor = RGB,.1,.8,0.2
 color=ROOT.kBlack
 label=EWK
-scale=2318
+scale=2308
 width=2
 
 [chhiggs200]
@@ -83,7 +94,7 @@ style = line
 styleopt = 7
 color=ROOT.kBlue
 label= H^{+}~(m=200GeV)~x100
-scale=231800
+scale=230800
 width=2
 
 [chhiggs500]
@@ -94,6 +105,6 @@ style = line
 styleopt = 3
 color=ROOT.kRed
 label= H^{+}~(m=500GeV)~x10^{4}
-scale=2318e4
+scale=2308e4
 width=2
 

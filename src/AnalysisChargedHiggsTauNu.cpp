@@ -132,16 +132,21 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
     if ( e->Nleps() == 0 ) cut.SetCutBit(NoLep);
 
     // ---- At least 3 jets
-    if ( e->Njets() >=3 ) cut.SetCutBit(ThreeJets);
+    if ( direct and e->Njets() >=3 ) cut.SetCutBit(ThreeJets);
+    if ( not direct and e->NjetsInvIso() >=3 ) cut.SetCutBit(ThreeJets);
 
     // --- At least 1 b-jet
-    if ( e->Bjets() >=1 ) cut.SetCutBit(OneBjet) ;
+    if ( direct and e->Bjets() >=1 ) cut.SetCutBit(OneBjet) ;
+    if ( not direct and e->BjetsInvIso() >=1 ) cut.SetCutBit(OneBjet) ;
 
     // apply bjets sf -- TEST FIXME
-    if ( e->Bjets() >=1 ) {
+    if ( cut.pass(OneBjet)) {
         //if( not e->ExistSF("btag") ){ Log(__FUNCTION__, "WARNING" , "no btag SF" ); } 
         if( not e->ExistSF("btag") ){ Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , "no btag SF" ); } 
-        e->SetPtEtaSF("btag",e->GetBjet(0)->Pt(), e->GetBjet(0)->Eta() );
+        if (direct)
+            e->SetPtEtaSF("btag",e->GetBjet(0)->Pt(), e->GetBjet(0)->Eta() );
+        else
+            e->SetPtEtaSF("btag",e->GetBjetInvIso(0)->Pt(), e->GetBjetInvIso(0)->Eta() );
         e->SetWPSF("btag",1); // medium, for sf
         e->SetJetFlavorSF("btag",0);
     }
@@ -330,6 +335,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     // ------------------------ FULL SELECTION ---------------
     if (cut.passAll() ) 
     {
+        e->ApplySF("tauid"); // only in MC
+
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoQ_"+label,systname, e->MtDecoQ() ,e->weight());
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoCosPhi_"+label,systname, e->MtDecoCosPhi() ,e->weight());

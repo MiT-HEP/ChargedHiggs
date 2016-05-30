@@ -52,3 +52,5 @@ include aux/RMet80.txt
 btag csv aux/CSVv2.csv
 ## electron veto from egamma POG
 eleveto th2f aux/CutBasedID_VetoWP_76X_18Feb.txt_SF2D.root veto
+## POG Tau
+tauid base 1.0 0.06

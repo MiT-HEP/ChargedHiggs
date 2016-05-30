@@ -1,0 +1,119 @@
+[base]
+type = 1D
+yrange = 1e-1,1e4
+xrange = 0,500
+canv = 800,800
+ratio = True
+yLog = True
+xLog = False
+output= plot/MtQCDOnly
+format= pdf,root
+drawList= mc,chhiggs200,chhiggs500,data
+
+[text]
+#text = Preliminary
+text = Internal
+position = tl 
+lumi = 2.3~fb^{-1}~(13~TeV)
+
+[legend]
+draw =  True
+header = ~
+legendList = data,qcdinvisocorr,tt,st,ewk,chhiggs200,chhiggs500   
+position = .60,.7,.90,.95
+
+[data]
+type = TH1D
+file = QCDPurity.root
+obj  = ChargedHiggsQCDPurity/Vars/Mt_Data
+style = marker
+styleopt = 20
+rebin=10
+color = ROOT.kBlack
+label = Data
+yerror=True
+
+[mc]
+type = stack
+file = QCDPurity.root 
+obj  = ewk,tt,st,qcdinvisocorr
+
+[tt]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/Mt_TT
+style = line
+fillcolor=ROOT.kMagenta+2
+fillstyle=1000
+color=ROOT.kBlack
+label=TTJets
+scale=2308
+width=2
+
+[st]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/Mt_ST
+style = line
+fillcolor=ROOT.kRed-4
+fillstyle=1000
+color=ROOT.kBlack
+label=TTJets
+scale=2308
+width=2
+
+[ewk]
+rebin=10
+type = add
+file = QCDPurity.root
+obj  = ChargedHiggsQCDPurity/Vars/Mt_DY,ChargedHiggsQCDPurity/Vars/Mt_WJets,ChargedHiggsQCDPurity/Vars/Mt_WW,ChargedHiggsQCDPurity/Vars/Mt_WZ,ChargedHiggsQCDPurity/Vars/Mt_ZZ
+style = line
+fillstyle=1000
+#fillcolor=ROOT.kGreen+2
+fillcolor = RGB,.1,.8,0.2
+color=ROOT.kBlack
+label=EWK
+scale=2308
+width=2
+
+[chhiggs200]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/Mt_HplusToTauNu_M-200_13TeV_amcatnlo
+style = line
+styleopt = 7
+color=ROOT.kBlue
+label= H^{+}~(m=200GeV)~x100
+scale=230800
+width=2
+
+[chhiggs500]
+rebin=10
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/Mt_HplusToTauNu_M-500_13TeV_amcatnlo
+style = line
+styleopt = 3
+color=ROOT.kRed
+label= H^{+}~(m=500GeV)~x10^{4}
+scale=2308e4
+width=2
+
+
+[qcdinvisocorr]
+rebin=10
+type = add
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data,ChargedHiggsQCDPurity/Vars/MtIsoInv_TT,ChargedHiggsQCDPurity/Vars/MtIsoInv_DY,ChargedHiggsQCDPurity/Vars/MtIsoInv_WJets,ChargedHiggsQCDPurity/Vars/MtIsoInv_WW,ChargedHiggsQCDPurity/Vars/MtIsoInv_WZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ZZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ST
+#### FIXME
+scale = 1.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308
+style = line
+fillcolor = RGB,0.5,.6,1.
+fillstyle=1000
+color=ROOT.kBlack
+label=QCD~(Data)
+width=2
+
