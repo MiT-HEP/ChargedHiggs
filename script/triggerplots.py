@@ -21,21 +21,14 @@ h_base = ROOT.TH1D("h_base","h_base",400,0,200)
 
 BaseHeader = ""
 
-###    TauDecayModeFindingNewDMs = 1UL <<0,
-###    TauDecayModeFinding = 1UL <<1,
-###    AgainstEleLoose = 1UL <<8,
-###    AgainstEleMedium = 1UL<<9,
-###    AgainstMuLoose = 1UL<<10,
-###    AgainstMuTight = 1UL<<11
-
-tauId="(tauId[0] & 1) && (tauId[0] & (1<<8)) && (tauId[0] & (1<<10))"
+tauSelBits="(tauSelBits[0] & 1) && (tauSelBits[0] & (1<<2)) && (tauSelBits[0] & (1<<21))"
 
 ### selection for the tau Pt
 if False:
 	BaseTrigger=""
 	#ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"
 	ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"
-	sel = "tauIsoDeltaBetaCorr[0]<1.5 &&"+ tauId+ " && abs(tauP4[0].Eta()) < 2.1 && metP4[0].Pt()>90"
+	sel = "tauIsoDeltaBetaCorr[0]<1.5 &&"+ tauSelBits+ " && abs(tauP4[0].Eta()) < 2.1 && metP4[0].Pt()>90"
 	var = "tauP4[0].Pt()"
 	BaseHeader = "MET Dataset"
 	files = FindEOS("/store/user/amarini/Nero/v1.1//MET")
@@ -47,10 +40,11 @@ if True:
 	#BaseTrigger=""
 	ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"
 	#ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"
-	var = "metPuppi.Pt()"
-	sel = "tauIsoDeltaBetaCorr[]<1.5 && "+ tauId +" && abs(tauP4[].Eta()) < 2.1 && tauP4[].Pt() > 51"
-	h_base.GetXaxis().SetTitle("E_{T}^{miss} (Puppi)")
-	files = FindEOS("/store/user/amarini/Nero/v1.1/Tau/")
+	var = "metP4[0].Pt()"
+	#sel = "tauIsoDeltaBetaCorr[]<1.5 && "+ tauSelBits +" && abs(tauP4[].Eta()) < 2.1 && tauP4[].Pt() > 51"
+	sel =  tauSelBits +" && abs(tauP4[].Eta()) < 2.1 && tauP4[].Pt() > 51"
+	h_base.GetXaxis().SetTitle("E_{T}^{miss}")
+	files = FindEOS("/store/user/amarini/Nero/v1.4/Tau/")
 
 ## eta
 if False:
