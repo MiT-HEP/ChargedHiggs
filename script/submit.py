@@ -15,7 +15,7 @@ parser.add_option("-v","--debug" ,dest='debug',type='int',help="Debug Verbosity.
 parser.add_option("-n","--njobs" ,dest='njobs',type='int',help="Number of Job to submit",default=50)
 parser.add_option("-q","--queue" ,dest='queue',type='string',help="Queue",default="1nh")
 
-job_opts= OptionGroup(parser,"Job options:","these options modifies the job specific")
+job_opts= OptionGroup(parser,"Job options:","these options modify the job specific")
 job_opts.add_option("-t","--no-tar" ,dest='tar',action='store_false',help="Do not Make Tar",default=True)
 job_opts.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do not Submit",default=False)
 job_opts.add_option("","--no-compress" ,dest='compress',action='store_false',help="Don't compress",default=True)
@@ -23,8 +23,11 @@ job_opts.add_option("","--compress"    ,dest='compress',action='store_true',help
 job_opts.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="Mount eos file system.",default=False)
 job_opts.add_option("","--hadoop" ,dest='hadoop',action='store_true',help="Use Hadhoop and MIT-T3",default=False)
 job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. ",default=False)
-job_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
-job_opts.add_option("","--clear" ,dest='clear',action='store_true',help="Clear Directory (used with hadd).",default=False)
+
+hadd_opts=OptionGroup(parser,"Hadd options","these options modify the behaviour of hadd")
+hadd_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
+hadd_opts.add_option("","--clear" ,dest='clear',action='store_true',help="Clear Directory (used with hadd).",default=False)
+hadd_opts.add_option("","--nocheck" ,dest='nocheck',action='store_true',help="Skip checking of log files in hadd. 'zcat log*.txt.gz| grei -i error' ",default=False)
 
 summary= OptionGroup(parser,"Summary","these options are used in case of summary is wanted")
 summary.add_option("-s","--status",dest="status", action='store_true', help = "Display status information for a submission. (Can be use with hadoop option)", default=False)
@@ -32,6 +35,7 @@ summary.add_option("","--resubmit",dest="resubmit", action='store_true', help = 
 summary.add_option("-j","--joblist",dest="joblist", type='string', help = "Resubmit this job list. '' or 'fail' will submit the failed jobs. 'run' will submit the running jobs. Job list = 3,5,6-10", default="")
 
 parser.add_option_group(job_opts)
+parser.add_option_group(hadd_opts)
 parser.add_option_group(summary)
 
 (opts,args)=parser.parse_args()
@@ -212,12 +216,22 @@ if opts.hadd:
 	filelist = glob(opts.dir + "/*.root")
 	if opts.dir[-1] == '/':dir = opts.dir[:-1]
 	else: dir  = opts.dir[:]
+
+	if not opts.nocheck:
+		cmd = "zcat %s/log*.txt.gz | grep -i error"%dir
+		st=call(cmd,shell=True)
+		if st == 0 and opts.clear:
+			print "-> Errors have been found. Refusing to clear"
+			opts.clear = False
+		cmd = "zcat %s/log*.txt.gz | grep -i warning"%dir
+		call(cmd,shell=True)
+
 	name = re.sub('.*/','',dir)
 	cmd = "[ -f %s%s.root ] && rm -v %s/%s.root"%(opts.dir,name,opts.dir,name) ## remove the file in oredr not to double count
 	call(cmd,shell=True)
 	cmd = "hadd -f %s/%s.root "%(opts.dir, name ) + " ".join(filelist)
 	call(cmd,shell=True)
-	if opts.clear:
+	if opts.clear: 
 		filelist = glob(opts.dir + "/*")
 		rmlist = [ f for f in filelist if  re.sub('^.*/','',f) != name + ".root"]
 		keeplist = [ f for f in filelist if re.sub('^.*/','',f) == name + ".root"]

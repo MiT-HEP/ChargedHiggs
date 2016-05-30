@@ -396,7 +396,21 @@ void LoadNero::FillMC(){
         Log(__FUNCTION__,"DEBUG","Filling Monte Carlo Information");
 #endif
     BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["BareMonteCarlo"]]);
+
     event_ -> GetWeight() -> SetMcWeight(  mc->mcWeight );
+
+    if (tree_->GetBranchStatus("r1f2") )  // after setmcw, because it will reset the status of the scales
+    {
+        event_ -> GetWeight() -> SetScaleWeight( mc->r1f2 , MC::r1f2 ) ;
+        event_ -> GetWeight() -> SetScaleWeight( mc->r1f5 , MC::r1f5 ) ;
+        event_ -> GetWeight() -> SetScaleWeight( mc->r2f1 , MC::r2f1 ) ;
+        event_ -> GetWeight() -> SetScaleWeight( mc->r2f2 , MC::r2f2 ) ;
+        event_ -> GetWeight() -> SetScaleWeight( mc->r5f1 , MC::r5f1 ) ;
+        event_ -> GetWeight() -> SetScaleWeight( mc->r5f5 , MC::r5f5 ) ;
+    }
+    else{
+        LogN(__FUNCTION__,"WARNING","Running w/o scale uncertainties. Correct if no-syst.",10);
+    }
 
     event_ -> GetWeight() -> SetPU( mc -> puTrueInt ,  event_ -> runNum_);
 

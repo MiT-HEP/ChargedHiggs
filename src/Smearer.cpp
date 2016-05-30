@@ -67,6 +67,30 @@ int SmearSF::smear(Event *e)
 
 }
 
+// -----------------------------------
+int SmearScales::smear(Event*e)
+{
+    if ( e->IsRealData() ) return SMEAR_NA;
+
+    // syst in Weight here will have the values of MC::SCALES
+    if (syst_ == 1 )
+    {
+        if (doRen and doFac) e->GetWeight() -> SetSyst( MC::r2f2);
+        else if (doRen) e->GetWeight() -> SetSyst ( MC::r2f1) ;
+        else if (doFac) e->GetWeight() -> SetSyst (MC::r1f2);
+        else e->GetWeight() -> SetSyst( MC::none);
+    }
+    if (syst_ == -1)
+    {
+        if (doRen and doFac) e->GetWeight() -> SetSyst( MC::r5f5);
+        else if (doRen) e->GetWeight() -> SetSyst ( MC::r5f1) ;
+        else if (doFac) e->GetWeight() -> SetSyst (MC::r1f5);
+        else e->GetWeight() -> SetSyst( MC::none);
+    }
+    if (syst_ == 0 ) e->GetWeight() ->SetSyst( MC::none);
+    return SMEAR_OK;
+}
+
 
 // Local Variables:
 // mode:c++

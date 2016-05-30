@@ -70,16 +70,20 @@ class SmearPu : virtual public SmearBase
         virtual int smear(Event*e);	
 };
 
-// --- class SmearScale() : virtual public SmearBase
-// --- {
-// ---     bool doRen{true};
-// ---     bool doFac{true};
-// --- 
-// ---     pubilc: 
-// ---         SmearScales() : SmearBase(){ name_="Scale";}
-// ---         SmearScales(string name, bool ren, bool fac) : SmearBase(){ name_=name;doRen=ren,doFac=fac;}
-// ---         virtual int smear(Event*e);	
-// --- };
+class SmearScales : virtual public SmearBase
+{
+    /*
+     *Never tested, nor implemented the load of the Nevents Reweighted in the MC. 
+     *These info  not available at the moment
+     */
+    bool doRen{true};
+    bool doFac{true};
+
+    public: 
+        SmearScales() : SmearBase(){ name_="Scale";}
+        SmearScales(string name, bool ren, bool fac) : SmearBase(){ name_=name;doRen=ren,doFac=fac;}
+        virtual int smear(Event*e);	
+};
 
 #endif
 // Local Variables:

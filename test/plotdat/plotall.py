@@ -22,6 +22,10 @@ dat={
 	#"plotdat/tmva_bdt1.txt":"plot/Bdt1.pdf",
 	#"plotdat/tmva_cutflow.txt":"plot/TmvaCutFlow.pdf",
 	#"plotdat/tmva_mt.txt":"plot/TmvaMt.pdf",
+	"plotdat/chhiggs_metqcd.txt":"plot/EtMissQCDInvIso.pdf",
+	"plotdat/qcdpurity_control_etmiss.txt":"plot/EtMiss_Control.pdf",
+	"plotdat/qcdpurity_control_taupt.txt":"plot/EtMiss_Control_v2.pdf",
+	"plotdat/qcdpurity_mt.txt":"plot/plot/MtQCDOnly.pdf",
 	}
 
 print "I will consider the following files",dat.keys()

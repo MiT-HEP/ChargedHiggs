@@ -3,14 +3,14 @@ file= plotdat/chhiggs_none_template.txt
 sub= XXX:Mt,NOne:Vars
 
 [base]
-yrange=1e-3,1e4
+yrange=1e-1,1e4
 xrange=0,500
 xtitle=m_{T}~[GeV]
 output= plot/Mt
 drawList= mc,chhiggs200,chhiggs500,data,box
 
 [legend]
-legendList = data,qcdinvisocorr,tt,ewk,chhiggs200,chhiggs500   
+legendList = data,qcdinvisocorr,tt,st,ewk,chhiggs200,chhiggs500   
 
 [box]
 type=box
@@ -23,7 +23,7 @@ xerror=false
 yerror=false
 
 [mc]
-obj  = ewk,tt,qcdinvisocorr
+obj  = ewk,tt,st,qcdinvisocorr
 
 [data]
 rebin=10
@@ -51,9 +51,9 @@ width=2
 rebin=10
 type = add
 file = QCDPurity.root
-obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data,ChargedHiggsQCDPurity/Vars/MtIsoInv_TT,ChargedHiggsQCDPurity/Vars/MtIsoInv_DY,ChargedHiggsQCDPurity/Vars/MtIsoInv_WJets,ChargedHiggsQCDPurity/Vars/MtIsoInv_WW,ChargedHiggsQCDPurity/Vars/MtIsoInv_WZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ZZ
+obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data,ChargedHiggsQCDPurity/Vars/MtIsoInv_TT,ChargedHiggsQCDPurity/Vars/MtIsoInv_DY,ChargedHiggsQCDPurity/Vars/MtIsoInv_WJets,ChargedHiggsQCDPurity/Vars/MtIsoInv_WW,ChargedHiggsQCDPurity/Vars/MtIsoInv_WZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ZZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ST
 #### FIXME
-scale = 1.,-2318.,-2318.,-2318.,-2318.,-2318.,-2318.
+scale = 1.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308
 style = line
 fillcolor = RGB,0.5,.6,1.
 fillstyle=1000
@@ -62,6 +62,9 @@ label=QCD~(Data)
 width=2
 
 [tt]
+rebin=10
+
+[st]
 rebin=10
 
 [chhiggs500]

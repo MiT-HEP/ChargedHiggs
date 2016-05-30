@@ -18,7 +18,7 @@ lumi = 209~pb^{-1}~(13~TeV)
 [legend] 
 draw =  True
 header = ~
-legendList = data,qcdinviso,tt,ewk,chhiggs200,chhiggs500   
+legendList = data,qcdinvisocorr,tt,st,ewk,chhiggs200,chhiggs500   
 position = .60,.7,.90,.95
 
 
@@ -37,7 +37,7 @@ yerror=True
 type = stack
 file = QCDPurity.root
 #obj  = qcd,tt,ewk
-obj  = ewk,tt,qcdinviso
+obj  = ewk,tt,st,qcdinvisocorr
 
 [qcdinviso]
 rebin=10
@@ -103,7 +103,7 @@ fillstyle=1000
 fillcolor = RGB,.1,.8,0.2
 color=ROOT.kBlack
 label=EWK
-scale=2318
+scale=209
 width=2
 
 [chhiggs200]

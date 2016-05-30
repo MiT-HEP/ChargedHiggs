@@ -72,13 +72,19 @@ for idx,fName in enumerate(fileList):
 	if idx == 0:
 		myTmp.cd()
 		h_xSec = fROOT.Get("nero/xSec").Clone("myxSec")
+		hScales = fROOT.Get("nero/scaleReweightSums").Clone("myScales")
+		hPdfs = fROOT.Get("nero/pdfReweightSums").Clone("myPdfs")
 	else:
 		h = fROOT.Get("nero/xSec")
+		hScalesTmp = fROOT.Get("nero/scaleReweightSums")
+		hPdfsTmp = fROOT.Get("nero/pdfReweightSums")
 		if h.GetBinContent(2) == 0 : 
 			print "Error is 0, xsec is",h.GetBinContent(1),"try to continue"
 		else:
 			print "\txSec in file is ",h.GetBinContent(1)/h.GetBinContent(2),"+/-",math.sqrt(1./h.GetBinContent(2))
 		h_xSec.Add( h )
+		hScales.Add( hScalesTmp )
+		hPdfs.Add( hPdfsTmp )
 
 	t = fROOT.Get("nero/all")
 	mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)
@@ -97,6 +103,16 @@ print "---------------------------------------------"
 f = open (opts.file,"a")
 print>>f, opts.label,opts.eos, sum.GetBinContent(1),
 if opts.xsec >0 : print>>f, opts.xsec,
-else: print>>f,  h_xSec.GetBinContent(1)/h_xSec.GetBinContent(2)
+else: print>>f,  h_xSec.GetBinContent(1)/h_xSec.GetBinContent(2),
+
+if hScales.GetBinContent(1) > 0:
+	print>>f, "SCALES",
+	for i in range(0,6):
+		print>>f, sum.GetBinContent(1)/hScales.GetBinContent(i+1),
+if hPdfs.GetBinContent(1) > 0:
+	print>>f, "PDFS",
+	for i in range(0,100):
+		print>>f, sum.GetBinContent(1)/hPdfs.GetBinContent(i+1), 
+print >>f,"" ##new line
 print "---------------------------------------------"
 

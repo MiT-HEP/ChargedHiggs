@@ -78,8 +78,10 @@ class Event{
     // This functions should check if the objects are valid
     // Get NULL in case of failure
     Jet * GetJet( int iJet );
+    Jet * GetJetInvIso( int iJet );
     Jet * GetCentralJet( int iJet );
     Jet * GetBjet( int iJet );
+    Jet * GetBjetInvIso( int iJet );
     Jet * GetLjet( int iJet );
     Tau * GetTau( int iTau );
     Tau * GetTauInvIso( int iTau );
@@ -102,8 +104,10 @@ class Event{
     inline float Ht()   { float ht=0 ; for(auto j : jets_ ) if( j->IsJet()  ) ht+= j->Pt() ; return ht;}
 
     inline int Njets(){int n=0; for(auto j : jets_) if(j->IsJet()) n++; return n;}
+    inline int NjetsInvIso(){int n=0; for(auto j : jets_) if(j->IsJetInvIso()) n++; return n;}
     inline int NcentralJets(){int n=0; for(auto j : jets_) if(j->IsCentralJet()) n++; return n;}
     inline int Bjets(){int n=0; for(auto j : jets_) if(j->IsBJet()) n++; return n;}
+    inline int BjetsInvIso(){int n=0; for(auto j : jets_) if(j->IsBJetInvIso()) n++; return n;}
     inline int Ntaus(){int n=0; for(auto t : taus_) if(t->IsTau()) n++; return n;}
     inline int Nleps(){int n=0; for(auto t : leps_) if(t->IsLep()) n++; return n;}
     inline int NGenPar(){return genparticles_.size();}
