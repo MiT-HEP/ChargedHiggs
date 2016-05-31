@@ -3,18 +3,18 @@ import re
 from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
-parser.add_option("-i","--input",type='string',help="Input ROOT file. [Default=%default]", default="ChHiggs.root")
-parser.add_option("","--qcd",type='string',help="Input ROOT file. Set Null to use QCD from above [Default=%default]", default="QCDPurity.root")
-parser.add_option("-o","--output",type='string',help="Output ROOT file. [Default=%default]", default="ChHiggsWs.root")
-parser.add_option("-L","--lumi",type='float',help="Luminosity pb. [Default=%default]", default=5000)
-parser.add_option("","--qcdlumi",type='float',help="QCD Luminosity pb. [Default=%default]", default=2318)
-parser.add_option("-n","--ncat",type='int',help="Number of cat. [Default=%default]", default=1)
-parser.add_option("","--nosyst",action='store_true',help="Do not look for syst. [Default=%default]", default=False)
+parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="ChHiggs.root")
+parser.add_option("","--qcd",type='string',help="Input ROOT file. Set Null to use QCD from above [%default]", default="QCDPurity.root")
+parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="ChHiggsWs.root")
+parser.add_option("-L","--lumi",type='float',help="Luminosity pb. [%default]", default=5000)
+parser.add_option("","--qcdlumi",type='float',help="QCD Luminosity pb. [%default]", default=2318)
+parser.add_option("-n","--ncat",type='int',help="Number of cat. [%default]", default=1)
+parser.add_option("","--nosyst",action='store_true',help="Do not look for syst. [%default]", default=False)
 
 extra = OptionGroup(parser,"Extra options:","")
-#extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. [Default=%default]", default=1)
-extra.add_option("","--datacard",type='string',help="Output datacard extra. [Default=%default]", default="")
-extra.add_option("","--basedir",type='string',help="Base Dir. [Default=%default]", default="ChargedHiggsTauNu/Vars/")
+extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. [%default]", default=-1)
+extra.add_option("","--datacard",type='string',help="Output datacard extra. [%default]", default="")
+extra.add_option("","--basedir",type='string',help="Base Dir. [%default]", default="ChargedHiggsTauNu/Vars/")
 
 parser.add_option_group(extra)
 
@@ -28,7 +28,7 @@ ROOT.gROOT.SetBatch()
 g=[] ## garbage un-collector
 
 #mcList=['DY','TT','WW','WZ','ZZ','WJets']
-mcList=['DY','TT','WW','WZ','WJets']
+mcList=['DY','TT','ST','WW','WZ','ZZ','WJets']
 if opts.qcd == "" : mcList.append("QCD")
 
 ################### OPEN OUTPUT ############
@@ -69,6 +69,9 @@ for cat in range(0,opts.ncat):
 	h_data = fIn.Get( lastget)
 	if h_data == None: print "<*> No Data Found for cat%d last get '%s'"%(cat,lastget)
 
+	if opts.rebin >0 :
+		h_data.Rebin(opts.rebin)
+
 	roo_data= ROOT.RooDataHist("data_obs_cat%d"%cat,"M_{T}",arglist_obs,h_data)
 	getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
 	g.extend([h_data,roo_data])
@@ -77,7 +80,7 @@ datacard.write("shapes data_obs *\t" + opts.output)
 datacard.write("\tw:data_obs_$CHANNEL")
 datacard.write("\n")
 
-def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs and argset_obs
+def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs and argset_obs and rebin
 	if tfile == None:
 		print "<*> File not exists"
 	h = tfile.Get(name)
@@ -85,6 +88,10 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 	if h == None:
 		print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetTitle())
 		raise Exception("No Such Histogram")
+
+	if opts.rebin >0 :
+		h.Rebin(opts.rebin)
+
 	for name2,c in add:
 		h_tmp=tfile.Get(name2)
 		if h_tmp==None:
