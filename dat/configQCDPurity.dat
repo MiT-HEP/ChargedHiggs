@@ -9,7 +9,7 @@ include=dat/config.dat
 Output=QCDPurity.root
 ## Preselection:1,Preselection:2
 #Analysis=JsonAnalysis,Preselection,ChargedHiggsQCDPurity
-Analysis=ChargedHiggsQCDPurity
+Analysis=JsonAnalysis,ChargedHiggsQCDPurity
 
 # Smearer
 #Smear=JER,JES,@SmearBase

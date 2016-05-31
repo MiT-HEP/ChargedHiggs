@@ -206,6 +206,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             #ifdef VERBOSE
             if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG", "is tau pass full selection");
             #endif
+            //if(e->IsRealData() and (systname=="NONE" or systname=="") ) Log(__FUNCTION__,"SYNC",Form("%d,%d,%ld",e->runNum(),e->lumiNum(),e->eventNum()) );
             float pt = t->Pt();
             int flavor= t->Rematch(e);
             string hist = HistName(pt,true,true);  

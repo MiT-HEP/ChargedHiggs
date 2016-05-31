@@ -182,18 +182,17 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","analyze event with syst "+systname);
 #endif
     string label = GetLabel(e);
-    cut.reset();
-    cut.SetMask(MaxCut-1) ;
-    cut.SetCutBit( Total ) ;
 
     if(e->weight() == 0. ) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
 
 
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Total,e->weight());
-
     Fill("ChargedHiggsTauNu/NOne/NTaus_"+label,systname, e->Ntaus() ,e->weight());
 
     Tau *t= e->GetTau(0);
+
+    cut.reset();
+    cut.SetMask(MaxCut-1) ;
     cut.SetCut( Selection(e,true) );
 
     if ( cut.pass(NoLep) and not e->IsRealData() ){
@@ -336,6 +335,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if (cut.passAll() ) 
     {
         e->ApplySF("tauid"); // only in MC
+
+        //if(e->IsRealData() and (systname=="NONE" or systname=="")) Log(__FUNCTION__,"SYNC",Form("%d,%d,%ld",e->runNum(),e->lumiNum(),e->eventNum()) );
 
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoQ_"+label,systname, e->MtDecoQ() ,e->weight());
