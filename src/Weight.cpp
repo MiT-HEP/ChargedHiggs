@@ -126,6 +126,8 @@ string Weight::LoadMC( string label)
         nEvents_ = 1.0;
         for (int i=0; i<MC_MAX_SCALES;++i) scalesWeights_[i] =1.0;
         for (int i=0; i<MC_MAX_SCALES;++i) scalesNeventReweight_[i] =1.0;
+        for (int i=0; i<MC_MAX_PDFS;++i) pdfsWeights_[i] =1.0;
+        for (int i=0; i<MC_MAX_PDFS;++i) pdfsNeventReweight_[i] =1.0;
         return "data";
     }
 
@@ -138,6 +140,7 @@ string Weight::LoadMC( string label)
     // Load Scale info
     auto iter = mc_db.find(label);
     for (int i=0; i<MC_MAX_SCALES;++i) scalesNeventReweight_[i] = iter->second->scalesNeventsReweight[i];
+    for (int i=0; i<MC_MAX_PDFS;++i) pdfsNeventReweight_[i] = iter->second->pdfsNeventsReweight[i];
 
     cout<<"[Weight]::[LoadMC]::[INFO] Loaded MC with weigths:"<<mcName_<<"| xSec "<<mcXsec_ <<" | SumW "<<nEvents_<<" | sf"<<sf_<<" | lumi "<<lumi_<<endl;
     return mc_db[label]->dir;

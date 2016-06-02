@@ -218,12 +218,12 @@ if opts.hadd:
 	else: dir  = opts.dir[:]
 
 	if not opts.nocheck:
-		cmd = "zcat %s/log*.txt.gz | grep -i error"%dir
+		cmd = "zcat %s/log*.txt.gz | grep -i error | sort | uniq -c "%dir
 		st=call(cmd,shell=True)
 		if st == 0 and opts.clear:
 			print "-> Errors have been found. Refusing to clear"
 			opts.clear = False
-		cmd = "zcat %s/log*.txt.gz | grep -i warning"%dir
+		cmd = "zcat %s/log*.txt.gz | grep -i warning | sort | uniq -c "%dir
 		call(cmd,shell=True)
 
 	name = re.sub('.*/','',dir)

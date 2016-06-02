@@ -85,6 +85,21 @@ class SmearScales : virtual public SmearBase
         virtual int smear(Event*e);	
 };
 
+class SmearPdfs : virtual public SmearBase
+{
+    /*
+     *Never tested, nor implemented the load of the Nevents Reweighted in the MC. 
+     *These info  not available at the moment
+     */
+    int num_; // from 0- each round I'll do 2: pos=num*2+(syst_>0)?1:0
+    int GetPos() const { return num_*2 + ((syst_>0)?1:0);}
+    public: 
+        SmearPdfs() : SmearBase(){ name_="Pdf";num_=0;}
+        SmearPdfs(int num) : SmearBase(){num_=num; name_="Pdf";}
+        const inline string name() const { return  name_ + Form("%d",GetPos());}
+        virtual int smear(Event*e);	
+};
+
 #endif
 // Local Variables:
 // mode:c++

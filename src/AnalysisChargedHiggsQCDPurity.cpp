@@ -121,16 +121,18 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     bool passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
     bool passInverseLoose=inverse.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
+
+    /*
+    bool passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::OneBjet);
+    bool passInverseLoose=inverse.passAllUpTo(ChargedHiggsTauNu::OneBjet);
+    #warning QCD BJets
+    LogN(__FUNCTION__,"WARNING","ONE B REQUIRED FOR QCD LOOSE",10);
+    */
+
     // check minimal selection: Three bjets
     if ( not passDirectLoose
          and not  passInverseLoose
        ) return EVENT_NOT_USED;
-
-    //if ( not direct.passAllUpTo(ChargedHiggsTauNu::OneBjet)
-    //     and not inverse.passAllUpTo(ChargedHiggsTauNu::OneBjet)
-    //   ) return EVENT_NOT_USED; 
-    //LogN(__FUNCTION__,"WARNING","ONE B REQUIRED FOR QCD LOOSE",10);
-    //
 
 
     //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection

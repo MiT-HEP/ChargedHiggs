@@ -23,8 +23,12 @@ class Weight : virtual public SmearableBase {
     double scalesWeights_[MC_MAX_SCALES];
     double scalesNeventReweight_[MC_MAX_SCALES];
     bool scales_{false};
+    bool pdfs_{false};
+    double pdfsWeights_[MC_MAX_PDFS];
+    double pdfsNeventReweight_[MC_MAX_PDFS];
 
     // syst here will have the values of MC::SCALES
+    int systPdf {-1}; // 0 ... MAX_MC_MAX_PDFS
 
     protected:
 
@@ -38,9 +42,11 @@ class Weight : virtual public SmearableBase {
     Weight(){ clear(); }
     ~Weight(){}
 
-    inline void SetMcWeight(double w){mcWeight_= w; scales_=false;}
+    inline void SetMcWeight(double w){mcWeight_= w; scales_=false; pdfs_=false;}
     inline void SetScaleWeight(double w, MC::SCALES pos){scalesWeights_[pos]=w; scales_=true;}
+    inline void SetPdfWeight(double w, unsigned pos){pdfsWeights_[pos]=w; pdfs_=true;}
     inline void SetSyst( MC::SCALES val) { syst = val;}
+    inline void SetSystPdf( int val=-1) { systPdf = val;}
 
     void clear(){ mcName_= "";
         mcXsec_ = 1.0; 
@@ -49,6 +55,7 @@ class Weight : virtual public SmearableBase {
         lumi_=1.0;  // for RD MC this number should be the sum of the partial in the PUReweight
         sf_ = 1.0;
         syst = MC::none;
+        systPdf = -1;
     }
     //
     string GetMC(){ return mcName_; }
@@ -56,6 +63,7 @@ class Weight : virtual public SmearableBase {
     void SetLumi(double l) {lumi_= l;}
     void AddMC( string label, string dir, double xsec, double nevents);
     inline void AddMCScale( string label , MC::SCALES x, double rw) { mc_db[label]->scalesNeventsReweight[x] = rw; }
+    inline void AddMCPdf( string label , unsigned x, double rw) { mc_db[label]->pdfsNeventsReweight[x] = rw; }
     string LoadMC( string label) ;	 // return "" if failed otherwise dir
     string LoadMCbyDir( string dir ) ;	 // return "" if failed otherwise label
 
@@ -97,12 +105,16 @@ class Weight : virtual public SmearableBase {
     // ---  check what happen with data, TODO CHECK LUMI
     double weight(){ 
         //Log(__FUNCTION__,"DEBUG",Form("Weight: Mc=%lf mcXsec=%lf sf=%lf pu=%lf nevents=%lf",mcWeight_, mcXsec_ ,sf_,pu_.GetPUWeight(mcName_,puInt_,runNum_), nEvents_));
-        if (syst == MC::none)
+        if (syst == MC::none and systPdf <0)
         return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
-        else 
+        else if (systPdf<0) 
         {
         if (not scales_) Log(__FUNCTION__,"ERROR","Scales reweighting uncorrect!!!");
         return scalesWeights_[syst] * scalesNeventReweight_[syst] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        }
+        else { // pdfs
+        if (not pdfs_) Log(__FUNCTION__,"ERROR","Pdfs reweighting uncorrect!!!");
+        return pdfsWeights_[syst] * pdfsNeventReweight_[syst] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
         }
     }
 

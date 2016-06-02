@@ -87,6 +87,8 @@ void LoadNero::FillEventInfo(){
     event_ -> eventNum_ = e->eventNum;
     event_ -> rho_ = e->rho;
 
+    event_ -> met_ . setFullRecommendation ( e->selBits & BareEvent::FullRecommendation );
+
     BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["BareVertex"] ] ) ; assert(v!=NULL);
     event_ -> npv_ = v->npv;
 }
@@ -196,10 +198,14 @@ void LoadNero::FillLeptons(){
         bool id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepLoose;
         //if (not id) continue;
         Lepton *l = new Lepton();
-        l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
+        l-> type = abs((*bl->pdgId)[iL]);
+        //l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
+        TLorentzVector lp4= *(TLorentzVector*) ((*bl->p4)[iL]);
+#warning Using Electrons MiniAOD P4 as is w/o corrections
+        if (l->type == 11) lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
+        l-> SetP4( lp4 );
         l-> iso = ((*bl->iso) [iL])/(l->Pt());
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
-        l-> type = abs((*bl->pdgId)[iL]);
         l-> tightId = ( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight); 
 
 #ifdef VERBOSE
@@ -267,16 +273,16 @@ void LoadNero::FillTaus(){
         t-> iso = (*bt->iso) [iL];
         t-> charge = bt -> Q -> at(iL);
         t-> type = 15;
-        //#warning "Old ID for TAUS"
-        //t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
-        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
+        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
+        //#warning "NEW ID for TAUS"
+        //t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
         //t-> iso2 = bt -> isoMva -> at(iL);
         t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleLoose ; 
         t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
         t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
-        //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumIsolationMVArun2v1DBnewDMwLT); 
+        //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumIsolationMVArun2v1DBoldDMwLT); 
 
 
 
@@ -352,9 +358,9 @@ void LoadNero::FillMet(){
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
     //event_ -> met_ . ptUp = met-> ptJESUP -> at(0);
     //event_ -> met_ . ptDown = met-> ptJESDOWN -> at(0);
-    
+
     // ---  JES ---
-   // Log(__FUNCTION__,"DEBUG","Going to Fill Jes MET");
+    // Log(__FUNCTION__,"DEBUG","Going to Fill Jes MET");
     event_ -> met_ . SetValueUp  (Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt() );
     event_ -> met_ . SetValueDown(Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesDown]) -> Pt() );
     event_-> met_ . SetFilled(Smearer::JES);
@@ -410,6 +416,13 @@ void LoadNero::FillMC(){
     }
     else{
         LogN(__FUNCTION__,"WARNING","Running w/o scale uncertainties. Correct if no-syst.",10);
+    }
+    if (tree_->GetBranchStatus("pdfRwgt") and mc->pdfRwgt->size() >= MC_MAX_PDFS)
+    {
+        for (unsigned i=0 ; i< MC_MAX_PDFS;++i) event_->GetWeight()->SetPdfWeight( mc->pdfRwgt->at(i), i);
+    }
+    else{
+        LogN(__FUNCTION__,"WARNING","Running w/o pdf uncertainties. Correct if no-syst.",10);
     }
 
     event_ -> GetWeight() -> SetPU( mc -> puTrueInt ,  event_ -> runNum_);

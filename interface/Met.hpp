@@ -12,10 +12,15 @@ class Met :
 {
 
     protected:
+        // filters:
+        bool FullRecommendation{false};
 
     public:
         Met() : Object(), SmearableComplex() {syst = 0 ;}
         float gen ;
+
+        inline bool passFullRecommendation()const { return FullRecommendation;}
+        inline void setFullRecommendation(bool value){ FullRecommendation=value;}
 
         virtual inline int IsMet() const { return 1; }
         inline int IsObject()const override { return IsMet(); }

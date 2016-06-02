@@ -236,7 +236,23 @@ def ReadMCDB(file):
 		dir= l.split(' ')[1]
 		entries = l.split(' ')[2]
 		xsec = l.split(' ')[3]
-		R[label] = (dir,entries,xsec)
+		scales=[]
+		pdfs=[]
+		current=4
+		while len(l.split(' ') )>current:
+		   what=l.split(' ')[current]
+		   current+=1
+		   if 'PDFS' in what :
+		   	for i in range(0,100):## MC_MAX_PDFS
+				pdfs.append(float(l.split(' ')[current]))
+				current+=1
+		   elif 'SCALES' in what:
+		   	for i in range(0,6): ## MC_MAX_SCALESS
+				scales.append(float(l.split(' ')[current]))
+				current+=1
+		  
+
+		R[label] = (dir,entries,xsec,scales,pdfs)
 	return R
 
 def ReadSFDB(file,verbose=False):

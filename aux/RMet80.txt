@@ -1,32 +1,24 @@
-# QCD R-factor computed by PurityFitAnalytic
-# with fFull as last PurityFitAnalytic
-tauinviso pteta 50 55 -2.1 2.1 0.375492 -5.43713e-05
-tauinviso pteta 55 60 -2.1 2.1 0.404266 -4.26772e-05
-tauinviso pteta 60 65 -2.1 2.1 0.411221 -4.4553e-05
-tauinviso pteta 65 70 -2.1 2.1 0.421236 -5.30003e-05
-tauinviso pteta 70 80 -2.1 2.1 0.41175 -2.98817e-05
-tauinviso pteta 80 90 -2.1 2.1 0.395556 -3.65694e-05
-tauinviso pteta 90 100 -2.1 2.1 0.355951 -4.5862e-05
-tauinviso pteta 100 125 -2.1 2.1 0.299032 -2.35862e-05
-tauinviso pteta 125 150 -2.1 2.1 0.221174 -3.21543e-05
-tauinviso pteta 150 175 -2.1 2.1 0.174968 -3.90263e-05
-tauinviso pteta 175 200 -2.1 2.1 0.145192 -5.60223e-05
-tauinviso pteta 200 250 -2.1 2.1 0.123265 -3.8245e-05
-tauinviso pteta 250 500 -2.1 2.1 0.106188 -4.26075e-05
-tauinviso pteta 500 750 -2.1 2.1 0.0675952 0.0102826
-tauinviso pteta 750 1000 -2.1 2.1 1.76608e+08 1.99632e+07
-tauinvisospline spline 53.0559 0.375492 -5.43713e-05 0.778793
-tauinvisospline spline 57.4901 0.404266 -4.26772e-05 0.839548
-tauinvisospline spline 62.4785 0.411221 -4.4553e-05 0.857847
-tauinvisospline spline 67.4384 0.421236 -5.30003e-05 0.803836
-tauinvisospline spline 74.7337 0.41175 -2.98817e-05 0.849829
-tauinvisospline spline 84.7071 0.395556 -3.65694e-05 0.863794
-tauinvisospline spline 94.7274 0.355951 -4.5862e-05 0.846017
-tauinvisospline spline 110.954 0.299032 -2.35862e-05 0.848813
-tauinvisospline spline 136.076 0.221174 -3.21543e-05 0.845262
-tauinvisospline spline 161.285 0.174968 -3.90263e-05 0.871382
-tauinvisospline spline 186.221 0.145192 -5.60223e-05 0.855463
-tauinvisospline spline 220.78 0.123265 -3.8245e-05 0.833691
-tauinvisospline spline 308.6 0.106188 -4.26075e-05 0.80893
-tauinvisospline spline 594.142 0.0675952 0.0102826 0.560913
-tauinvisospline spline 1000 0.0675952 0.0102826 0.560913
+# QCD R-factor computed by PurityFit
+# this file includes the results from RMet80_nofit 
+# and the uncertainties derived from OneB_nofit
+#tauinvisospline spline 0 60.0299 0
+tauinvisospline spline 53.0035 0.186054 0.023098
+tauinvisospline spline 57.4568 0.20713 0.006637
+tauinvisospline spline 62.4296 0.215069 -0.001375
+tauinvisospline spline 67.3942 0.221054 0.01983
+tauinvisospline spline 74.6998 0.233344 0.02116
+tauinvisospline spline 84.6437 0.246921 0.007494
+tauinvisospline spline 94.5923 0.227595 0.027195
+tauinvisospline spline 110.874 0.214892 0.029146
+tauinvisospline spline 135.868 0.205346 0.010616
+tauinvisospline spline 161.163 0.173665 0.025986
+tauinvisospline spline 185.799 0.16892 0.0383
+tauinvisospline spline 221.27 0.154642 0.039481
+tauinvisospline spline 306.401 0.174399 0.028873
+##added to preserve linear behaviour, otherwise spline crazy
+tauinvisospline spline 429.57 0.1313 0.019
+tauinvisospline spline 552.75 0.0884851 0.01
+# idem
+tauinvisospline spline 717.84 0.081 0.03
+tauinvisospline spline 882.943 0.08 0.05
+tauinvisospline spline 8000 0.08 0.05

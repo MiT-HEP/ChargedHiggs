@@ -94,6 +94,8 @@ class Looper{
         void Loop();
 
         inline void AddMC( string label, string dir, double xsec, double nevents){event_ -> GetWeight() -> AddMC(label,dir,xsec,nevents); }
+        inline void AddMCScale(string label, int x, double rw){ event_->GetWeight()->AddMCScale(label, MC::SCALES(x), rw);}
+        inline void AddMCPdf(string label, int x, double rw){ event_->GetWeight()->AddMCPdf(label, x, rw);}
         inline void AddSF( string label, double sf, double err){ event_->GetWeight() -> AddSF(label,sf,err);}
         inline void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err)
         {event_ -> GetWeight()  -> AddPtEtaSF(label,pt1,pt2,eta1,eta2,sf,err); }

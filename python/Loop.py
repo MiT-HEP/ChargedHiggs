@@ -113,10 +113,18 @@ if opts.verbose:print "######### MCDB ##############"
 mcdb= ReadMCDB(cfg['MCDB'])
 for label in mcdb:
 	if opts.verbose:
-		print label, " ".join(mcdb[label])
+		print label, " ".join(mcdb[label][0:3])
 	### LABEL dir Entries xSec
 	### loop.AddMC( label,dir,xSec,Entries)
 	loop.AddMC(label, mcdb[label][0], float(mcdb[label][2]),float(mcdb[label][1] ) )
+	scales=mcdb[label][3]
+	pdfs=mcdb[label][4]
+	if len(scales) > 0 :
+		if opts.verbose: print "   * MC has scales"
+		for idx,rw in enumerate(scales): loop.AddMCScale(label,idx,rw);
+	if len(pdfs) > 0 :
+		if opts.verbose: print "   * MC has pdfs"
+		for idx,rw in enumerate(pdfs): loop.AddMCPdf(label,idx,rw);
 if opts.verbose:print "#############################"
 
 ## add PU
@@ -216,6 +224,14 @@ for smear in cfg['Smear']:
 		else:
 			smearer = r.__getattr__(smear)()
 		loop.AddSmear(smearer)
+	elif smear[0] == "*":
+		pos = smear.find(']')
+		vec = re.sub('!',',',smear[2:pos])
+		smear=re.sub('!',',',smear[pos+1:])
+		for i in range(int(vec.split(',')[0]),int(vec.split(',')[1])):
+			if opts.verbose: print "-> Constructing smear",smear%i
+			smearer=eval("r."+smear%i);
+			loop.AddSmear(smearer)
 	else:
 		if opts.verbose: print "-> Adding smear from name '"+smear+"'"
 		loop.AddSmear(smear)
