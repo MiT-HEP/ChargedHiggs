@@ -30,6 +30,7 @@ class Weight : virtual public SmearableBase {
     // syst here will have the values of MC::SCALES
     int systPdf {-1}; // 0 ... MAX_MC_MAX_PDFS
 
+
     protected:
 
 
@@ -41,6 +42,8 @@ class Weight : virtual public SmearableBase {
     public:
     Weight(){ clear(); }
     ~Weight(){}
+
+    void PrintInfo();
 
     inline void SetMcWeight(double w){mcWeight_= w; scales_=false; pdfs_=false;}
     inline void SetScaleWeight(double w, MC::SCALES pos){scalesWeights_[pos]=w; scales_=true;}
@@ -103,23 +106,28 @@ class Weight : virtual public SmearableBase {
     inline int GetPU() const { return puInt_ ; } 
 
     // ---  check what happen with data, TODO CHECK LUMI
-    double weight(){ 
+    inline double doWeight() { 
         //Log(__FUNCTION__,"DEBUG",Form("Weight: Mc=%lf mcXsec=%lf sf=%lf pu=%lf nevents=%lf",mcWeight_, mcXsec_ ,sf_,pu_.GetPUWeight(mcName_,puInt_,runNum_), nEvents_));
         if (syst == MC::none and systPdf <0)
         return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
         else if (systPdf<0) 
         {
-        if (not scales_) Log(__FUNCTION__,"ERROR","Scales reweighting uncorrect!!!");
+        if (not scales_) {Log(__FUNCTION__,"ERROR","Scales reweighting uncorrect!!!");PrintInfo();}
         return scalesWeights_[syst] * scalesNeventReweight_[syst] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
         }
         else { // pdfs
-        if (not pdfs_) Log(__FUNCTION__,"ERROR","Pdfs reweighting uncorrect!!!");
+        if (not pdfs_) {Log(__FUNCTION__,"ERROR","Pdfs reweighting uncorrect!!!"); PrintInfo();}
         return pdfsWeights_[syst] * pdfsNeventReweight_[syst] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
         }
     }
+    double weight(){
+        double R=doWeight();
+        if (R==0)PrintInfo();
+        return R;
+        }
 
     // 
-	void Log(const string& function, const string& level, const string& message);
+	void Log(const string& function, const string& level, const string& message) const;
 };
 
 #endif

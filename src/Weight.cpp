@@ -2,7 +2,36 @@
 //#define VERBOSE 1
 
 #include "interface/Logger.hpp"
-void Weight::Log(const string& function, const string& level, const string& message){ Logger::getInstance().Log("Weight",function,level,message ); }
+void Weight::Log(const string& function, const string& level, const string& message) const { Logger::getInstance().Log("Weight",function,level,message ); }
+
+void Weight::PrintInfo() {
+    Log(__FUNCTION__,"INFO","-------------------------------------");
+
+    Log(__FUNCTION__,"INFO","mcName:" + mcName_);
+    Log(__FUNCTION__,"INFO",Form("mcXsec:%lf",mcXsec_));
+    Log(__FUNCTION__,"INFO",Form("SumW:%lf",nEvents_));
+    Log(__FUNCTION__,"INFO",Form("SF:%lf",sf_));
+    Log(__FUNCTION__,"INFO",Form("mcWeight:%lf",mcWeight_));
+    Log(__FUNCTION__,"INFO",Form("lumi:%lf",lumi_));
+    Log(__FUNCTION__,"INFO",Form("puInt:%lf",puInt_));
+    Log(__FUNCTION__,"INFO",Form("scales=%d pdfs=%d",int(scales_),int(pdfs_)));
+    Log(__FUNCTION__,"INFO",Form("syst=%d",int(syst) ) );
+    Log(__FUNCTION__,"INFO",Form("systPdf=%d",int(syst) ) );
+    Log(__FUNCTION__,"INFO",Form("pu=%lf", pu_.GetPUWeight(mcName_,puInt_,runNum_) ) );
+    Log(__FUNCTION__,"INFO",Form("weight=%lf", doWeight() ) );
+    if (syst != MC::none){
+        Log(__FUNCTION__,"INFO"," --- SCALES ---");
+        for(int i=0;i< MC_MAX_SCALES ;++i)  
+            Log(__FUNCTION__,"INFO",Form("   scale %d: w=%lf NeventRwgt=%lf",i,scalesWeights_[i],scalesNeventReweight_[i]));
+    }
+    if (systPdf >=0 ){
+        Log(__FUNCTION__,"INFO"," --- PDFS ---");
+        for(int i=0;i< MC_MAX_PDFS ;++i)  
+            Log(__FUNCTION__,"INFO",Form("   pdf %d: w=%lf NeventRwgt=%lf",i,pdfsWeights_[i],pdfsNeventReweight_[i]));
+    }
+    Log(__FUNCTION__,"INFO","-------------------------------------");
+}
+
 
 void Weight::AddMC( string label, string dir, double xsec, double nevents)
 {

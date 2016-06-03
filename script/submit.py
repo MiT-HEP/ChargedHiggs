@@ -207,6 +207,8 @@ if opts.resubmit:
 			call(cmd,shell=True)
 			cmd = "rm " + basedir + "/sub%d.run"%iJob + " 2>&1 >/dev/null"
 			call(cmd,shell=True)
+			cmd = "rm " + basedir + "/log%d.txt"%iJob + " 2>&1 >/dev/null"
+			call(cmd,shell=True)
 			cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
 			print cmdline
 			call (cmdline,shell=True)

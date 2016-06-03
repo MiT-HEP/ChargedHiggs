@@ -7,6 +7,8 @@ parser.add_option("","--sfdb" ,dest='sfdb',type='string',help="SF DB comma separ
 parser.add_option("-l","--label" ,dest='label',type='string',help="label [%default]",default="tauinvisospline")
 parser.add_option("-o","--out" ,dest='out',type='string',help="outlabel [%default]",default="")
 parser.add_option("","--legend" ,dest='legend',type='string',help="legend labels, comma separated [%default]",default="Fit")
+parser.add_option("","--nopoints" ,dest='drawpoints',action='store_false',help="don't draw points",default=True)
+parser.add_option("","--noline" ,dest='drawline',action='store_false',help="don't draw line",default=True)
 
 opts,args=parser.parse_args()
 
@@ -53,20 +55,28 @@ for idx,g in enumerate(graphs):
 	s.SetLineWidth(2)
 	
 	g.SetMarkerStyle(markers[idx])
-	g.SetMarkerColor(r.kBlack)
-	g.SetLineColor(r.kBlack)
+	#g.SetMarkerColor(r.kBlack)
+	g.SetMarkerColor(colors[idx])
+	g.SetLineColor(colors[idx])
 	
 	if idx==0:
-		g.Draw("AP")
+		if opts.drawpoints: 
+			g.Draw("APL")
+		else:
+			g.Draw("A")
 		g.GetXaxis().SetTitle("p_{T}^{#tau^{h}} [GeV]")
 		g.GetYaxis().SetTitle("R")
 	else:
-		g.Draw("P SAME")
-	s.Draw("L SAME")
+		if opts.drawpoints: 
+			g.Draw("PL SAME")
+	if opts.drawline: 
+		s.Draw("L SAME")
 	splines.append(s)
 	if opts.legend != "":
-		leg.AddEntry(g,opts.legend.split(',')[idx],"P")
-		leg.AddEntry(s,opts.legend.split(',')[idx] + " spline","L")
+		if opts.drawpoints: 
+			leg.AddEntry(g,opts.legend.split(',')[idx],"P")
+		if opts.drawline: 
+			leg.AddEntry(s,opts.legend.split(',')[idx] + " spline","L")
 
 if opts.legend != "":
 	leg.Draw("SAME")

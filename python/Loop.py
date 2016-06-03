@@ -225,9 +225,14 @@ for smear in cfg['Smear']:
 			smearer = r.__getattr__(smear)()
 		loop.AddSmear(smearer)
 	elif smear[0] == "*":
+		if opts.verbose: print "-> Constructing multiples smears: full String '" + smear + "'"
 		pos = smear.find(']')
 		vec = re.sub('!',',',smear[2:pos])
 		smear=re.sub('!',',',smear[pos+1:])
+		smear=re.sub('\$','%d',smear)
+		if opts.verbose:
+			print "   * Range:", vec
+			print "   * Residual name=",smear
 		for i in range(int(vec.split(',')[0]),int(vec.split(',')[1])):
 			if opts.verbose: print "-> Constructing smear",smear%i
 			smearer=eval("r."+smear%i);
