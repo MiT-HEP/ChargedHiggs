@@ -38,7 +38,8 @@ if False:
 if True:
 	BaseTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_v"
 	#BaseTrigger=""
-	ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"
+	#ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"
+	ProbeTrigger="HLT_PFMET120_NoiseCleaned_BtagCSV0p72"
 	#ProbeTrigger="HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"
 	var = "metP4[0].Pt()"
 	#sel = "tauIsoDeltaBetaCorr[]<1.5 && "+ tauSelBits +" && abs(tauP4[].Eta()) < 2.1 && tauP4[].Pt() > 51"

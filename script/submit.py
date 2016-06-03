@@ -207,6 +207,8 @@ if opts.resubmit:
 			call(cmd,shell=True)
 			cmd = "rm " + basedir + "/sub%d.run"%iJob + " 2>&1 >/dev/null"
 			call(cmd,shell=True)
+			cmd = "rm " + basedir + "/log%d.txt"%iJob + " 2>&1 >/dev/null"
+			call(cmd,shell=True)
 			cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
 			print cmdline
 			call (cmdline,shell=True)
@@ -218,12 +220,12 @@ if opts.hadd:
 	else: dir  = opts.dir[:]
 
 	if not opts.nocheck:
-		cmd = "zcat %s/log*.txt.gz | grep -i error"%dir
+		cmd = "zcat %s/log*.txt.gz | grep -i error | sort | uniq -c "%dir
 		st=call(cmd,shell=True)
 		if st == 0 and opts.clear:
 			print "-> Errors have been found. Refusing to clear"
 			opts.clear = False
-		cmd = "zcat %s/log*.txt.gz | grep -i warning"%dir
+		cmd = "zcat %s/log*.txt.gz | grep -i warning | sort | uniq -c "%dir
 		call(cmd,shell=True)
 
 	name = re.sub('.*/','',dir)

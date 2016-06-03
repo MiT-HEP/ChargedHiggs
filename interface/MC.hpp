@@ -2,6 +2,7 @@
 #define MC_H
 
 #define MC_MAX_SCALES 6
+#define MC_MAX_PDFS 100
 
 #include "interface/Named.hpp"
 
@@ -18,6 +19,7 @@ class MC : public Named {
 
         // if set, set the SumW base / SumW^R
         double scalesNeventsReweight[MC_MAX_SCALES];
+        double pdfsNeventsReweight[MC_MAX_PDFS];
 };
 
 #endif

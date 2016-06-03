@@ -15,7 +15,7 @@ legendList = data,qcdinvisocorr,tt,ewk,chhiggs200,chhiggs500
 
 [mc]
 #obj  = ewk,tt,qcdinviso
-obj  = ewk,tt,qcdinvisocorr
+obj  = ewk,tt,st,qcdinvisocorr
 
 [data]
 rebin=10
@@ -54,6 +54,9 @@ label=QCD~(Data)
 width=2
 
 [tt]
+rebin=10
+
+[st]
 rebin=10
 
 [chhiggs500]

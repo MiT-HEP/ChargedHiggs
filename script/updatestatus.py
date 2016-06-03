@@ -52,7 +52,13 @@ while True:
 	index.write('<td><h3> Running  </h3> </td>\n')
 	index.write('<td><h3> Failed   </h3> </td>\n')
 	index.write('</tr>\n') ## end line
+
+	# consider *, so will be updated in the loops
+	args2=[]
 	for dir in args:
+		args2.extend(glob(dir))
+
+	for dir in args2:
 		print "considering",dir
 		done,run,fail,pend = GetSummary( dir ) 
 		value=len(done)

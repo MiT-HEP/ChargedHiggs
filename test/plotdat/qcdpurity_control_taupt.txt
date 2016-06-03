@@ -132,3 +132,9 @@ width=2
 
 
 
+[ratio]
+draw = True
+base = mc  ## denominator, for now TH1
+fraction = 0.25
+yrange = 0.8,1.2
+ytitle = Data/MC

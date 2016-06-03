@@ -91,6 +91,19 @@ int SmearScales::smear(Event*e)
     return SMEAR_OK;
 }
 
+int SmearPdfs::smear(Event*e)
+{
+    if ( e->IsRealData() ) return SMEAR_NA;
+
+    // syst in Weight here will have the values of MC::SCALES
+    if (syst_ != 0 )
+    {
+        e->GetWeight() -> SetSystPdf( GetPos());
+    }
+    else e->GetWeight() -> SetSystPdf(-1);
+    return SMEAR_OK;
+}
+
 
 // Local Variables:
 // mode:c++

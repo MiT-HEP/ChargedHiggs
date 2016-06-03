@@ -9,6 +9,7 @@ lepP4
 lepIso
 lepPdgId
 lepSelBits
+lepPfPt
 ### TAU
 tauP4
 #tauId
@@ -35,6 +36,8 @@ r2f1
 r5f1
 r1f5
 r5f5
+pdfRwgt
+filterSelBits
 ## TRIGGER
 triggerFired
 triggerTaus

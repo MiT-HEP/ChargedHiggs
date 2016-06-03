@@ -6,36 +6,44 @@ output= plot/EtMissBand
 drawList= mc,chhiggs200,chhiggs500,qcdinvisoband,data
 
 [legend]
-legendList = data,qcdinvisocorr,qcdinvisoband,tt,ewk,chhiggs200,chhiggs500   
-
+legendList = data,qcdinvisocorr,qcdinvisoband,tt,st,ewk,chhiggs200,chhiggs500   
+position = .6,.5,.90,.92
 
 [qcdbandup]
 type=add
-file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root
-obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data_RFACUp,ChargedHiggsTauNu/NOne/EtMiss_TT,ChargedHiggsTauNu/NOne/EtMiss_DY,ChargedHiggsTauNu/NOne/EtMiss_WJets,ChargedHiggsTauNu/NOne/EtMiss_WW,ChargedHiggsTauNu/NOne/EtMiss_WZ,ChargedHiggsTauNu/NOne/EtMiss_ZZ,ChargedHiggsTauNu/NOne/EtMiss_ST
+file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root
+obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data_RFACUp,ChargedHiggsTauNu/NOne/EtMiss_TT,ChargedHiggsTauNu/NOne/EtMiss_DY,ChargedHiggsTauNu/NOne/EtMiss_WJets,ChargedHiggsTauNu/NOne/EtMiss_WW,ChargedHiggsTauNu/NOne/EtMiss_WZ,ChargedHiggsTauNu/NOne/EtMiss_ZZ,ChargedHiggsTauNu/NOne/EtMiss_ST,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_TT,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_DY,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WJets,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WW,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WZ,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_ZZ,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_ST
 rebin=10
-scale = 1,-2308,-2308,-2308,-2308,-2308,-2308,-2308
+scale = 1,+2308,+2308,+2308,+2308,+2308,+2308,+2308,-2308,-2308,-2308,-2308,-2308,-2308,-2308
+style = line
+styleopt = 3
+color=ROOT.kMagenta
 
 [qcdbanddown]
 type=add
-file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root
-obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data_RFACDown,ChargedHiggsTauNu/NOne/EtMiss_TT,ChargedHiggsTauNu/NOne/EtMiss_DY,ChargedHiggsTauNu/NOne/EtMiss_WJets,ChargedHiggsTauNu/NOne/EtMiss_WW,ChargedHiggsTauNu/NOne/EtMiss_WZ,ChargedHiggsTauNu/NOne/EtMiss_ZZ,ChargedHiggsTauNu/NOne/EtMiss_ST
+file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root
+obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data_RFACDown,ChargedHiggsTauNu/NOne/EtMiss_TT,ChargedHiggsTauNu/NOne/EtMiss_DY,ChargedHiggsTauNu/NOne/EtMiss_WJets,ChargedHiggsTauNu/NOne/EtMiss_WW,ChargedHiggsTauNu/NOne/EtMiss_WZ,ChargedHiggsTauNu/NOne/EtMiss_ZZ,ChargedHiggsTauNu/NOne/EtMiss_ST,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_TT,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_DY,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WJets,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WW,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WZ,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_ZZ,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_ST
 rebin=10
-scale = 1,-2308,-2308,-2308,-2308,-2308,-2308,-2308
+scale = 1,+2308,+2308,+2308,+2308,+2308,+2308,+2308,-2308,-2308,-2308,-2308,-2308,-2308,-2308
+style = line
+styleopt = 3
+color=ROOT.kMagenta
+
 
 [qcdbandcentral]
 type=add
-file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root
-obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data,ChargedHiggsTauNu/NOne/EtMiss_TT,ChargedHiggsTauNu/NOne/EtMiss_DY,ChargedHiggsTauNu/NOne/EtMiss_WJets,ChargedHiggsTauNu/NOne/EtMiss_WW,ChargedHiggsTauNu/NOne/EtMiss_WZ,ChargedHiggsTauNu/NOne/EtMiss_ZZ,ChargedHiggsTauNu/NOne/EtMiss_ST
+file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root
+obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data,ChargedHiggsTauNu/NOne/EtMiss_TT,ChargedHiggsTauNu/NOne/EtMiss_DY,ChargedHiggsTauNu/NOne/EtMiss_WJets,ChargedHiggsTauNu/NOne/EtMiss_WW,ChargedHiggsTauNu/NOne/EtMiss_WZ,ChargedHiggsTauNu/NOne/EtMiss_ZZ,ChargedHiggsTauNu/NOne/EtMiss_ST,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_TT,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_DY,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WJets,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WW,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WZ,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_ZZ,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_ST
 rebin=10
-scale = 1,-2308,-2308,-2308,-2308,-2308,-2308,-2308
+scale = 1,+2308,+2308,+2308,+2308,+2308,+2308,+2308,-2308,-2308,-2308,-2308,-2308,-2308,-2308
 
 [qcdinvisoband]
 type=envelope
 obj=qcdbandup,qcdbanddown,qcdbandcentral
 style=band
-styleopt=1000
-color = RGB,1.0,0,0,0.6
+styleopt=3004
+#color = RGB,1.0,0,0,0.6
+color=ROOT.kBlack
 xerror=true
 label=QCD~Uncert.
 
