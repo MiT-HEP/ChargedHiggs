@@ -18,7 +18,7 @@ void Weight::PrintInfo() {
     Log(__FUNCTION__,"INFO",Form("syst=%d",int(syst) ) );
     Log(__FUNCTION__,"INFO",Form("systPdf=%d",int(syst) ) );
     Log(__FUNCTION__,"INFO",Form("pu=%lf", pu_.GetPUWeight(mcName_,puInt_,runNum_) ) );
-    Log(__FUNCTION__,"INFO",Form("weight=%lf", doWeight() ) );
+    Log(__FUNCTION__,"INFO",Form("weight=%le", doWeight() ) );
     if (syst != MC::none){
         Log(__FUNCTION__,"INFO"," --- SCALES ---");
         for(int i=0;i< MC_MAX_SCALES ;++i)  
