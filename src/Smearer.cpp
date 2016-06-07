@@ -2,7 +2,7 @@
 int SmearJes::smear(Event *e)
 {
     // only on data apply Jes
-    if( not e->IsRealData() ) return SMEAR_NA;
+    //if( not e->IsRealData() ) return SMEAR_NA;
 
     for (auto j : GetJets(e))
     {
@@ -11,6 +11,7 @@ int SmearJes::smear(Event *e)
         if (not j->IsFilled() ) Log(__FUNCTION__,"WARNING","JES Smearings values not filled in JET");
     }
 
+    // this is not const like in e->GetMet()
     GetMet(e) . syst = syst_;
     GetMet(e) . SetSmearType(Smearer::JES);
     
@@ -21,7 +22,7 @@ int SmearJes::smear(Event *e)
 
 int SmearJer::smear(Event *e)
 {
-    // only on data apply Jes
+    // only on mc
     if( e->IsRealData() ) return SMEAR_NA;
     //for (auto j : e->jets_)
     for (auto j : GetJets(e))
@@ -33,7 +34,7 @@ int SmearJer::smear(Event *e)
 
     GetMet(e) . syst = syst_;
     GetMet(e) . SetSmearType(Smearer::JER);
-    if ( not GetMet(e) . IsFilled() ) Log(__FUNCTION__,"WARNING","JES Smearing not filled in MET");
+    if ( not GetMet(e) . IsFilled() ) Log(__FUNCTION__,"WARNING","JER Smearing not filled in MET");
 
 
     return SMEAR_OK;
@@ -75,6 +76,7 @@ int SmearScales::smear(Event*e)
     // syst in Weight here will have the values of MC::SCALES
     if (syst_ == 1 )
     {
+        e->GetWeight() -> SetSystPdf(-1);
         if (doRen and doFac) e->GetWeight() -> SetSyst( MC::r2f2);
         else if (doRen) e->GetWeight() -> SetSyst ( MC::r2f1) ;
         else if (doFac) e->GetWeight() -> SetSyst (MC::r1f2);
@@ -82,6 +84,7 @@ int SmearScales::smear(Event*e)
     }
     if (syst_ == -1)
     {
+        e->GetWeight() -> SetSystPdf(-1);
         if (doRen and doFac) e->GetWeight() -> SetSyst( MC::r5f5);
         else if (doRen) e->GetWeight() -> SetSyst ( MC::r5f1) ;
         else if (doFac) e->GetWeight() -> SetSyst (MC::r1f5);
@@ -99,6 +102,7 @@ int SmearPdfs::smear(Event*e)
     if (syst_ != 0 )
     {
         e->GetWeight() -> SetSystPdf( GetPos());
+        e->GetWeight() ->SetSyst( MC::none);
     }
     else e->GetWeight() -> SetSystPdf(-1);
     return SMEAR_OK;

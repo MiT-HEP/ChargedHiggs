@@ -23,6 +23,7 @@ job_opts.add_option("","--compress"    ,dest='compress',action='store_true',help
 job_opts.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="Mount eos file system.",default=False)
 job_opts.add_option("","--hadoop" ,dest='hadoop',action='store_true',help="Use Hadhoop and MIT-T3",default=False)
 job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. ",default=False)
+job_opts.add_option("","--nosyst" ,dest='nosyst',action='store_true',help="Do not Run Systematics",default=False)
 
 hadd_opts=OptionGroup(parser,"Hadd options","these options modify the behaviour of hadd")
 hadd_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
@@ -222,6 +223,9 @@ if opts.hadd:
 	if not opts.nocheck:
 		cmd = "zcat %s/log*.txt.gz | grep -i error | sort | uniq -c "%dir
 		st=call(cmd,shell=True)
+
+		cmd = "zcat %s/log*.txt.gz | grep -i error > /dev/null "%dir
+		st=call(cmd,shell=True)
 		if st == 0 and opts.clear:
 			print "-> Errors have been found. Refusing to clear"
 			opts.clear = False
@@ -369,6 +373,8 @@ if opts.hadoop:
 	dat.write("include=%s\n"%opts.input)
 	dat.write('Files=%s\n'%( ','.join(splittedInput[iJob]) ) )
 	dat.write('Output=%s/%s\n'%(subdir,outname) )
+	if opts.nosyst:
+		dat.write("SMEAR=NONE\n")
 	dat.close()
    # create condor.jdl
    outname = re.sub('.root','_$(Process).root',config['Output'])

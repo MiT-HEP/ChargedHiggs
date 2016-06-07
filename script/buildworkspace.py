@@ -81,12 +81,13 @@ datacard.write("\tw:data_obs_$CHANNEL")
 datacard.write("\n")
 
 def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs and argset_obs and rebin
+	''' Import the pdf a th1 in tfile, with name and renaming it as target. You can add a set of (name,scale) to the base hist'''
 	if tfile == None:
 		print "<*> File not exists"
 	h = tfile.Get(name)
 
 	if h == None:
-		print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetTitle())
+		print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetName())
 		raise Exception("No Such Histogram")
 
 	if opts.rebin >0 :
@@ -120,7 +121,9 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 	return
 
 ### BKG ###
-systs=["BTAG","JES"]
+######### import mc based background contributions
+#systs=["BTAG","JES","TAU"]
+systs=["BTAG","TAU"]
 if opts.nosyst: systs=[]
 
 systBkg=[""]
@@ -130,6 +133,7 @@ for shift in ["Up","Down"]:
 
 for syst in systBkg:
  for mc in mcList:
+   #if 'JER' in syst and (mc== 'DY' or mc=='TT' or mc=='ST' or mc=='WW') : continue ###
    for cat in range(0,opts.ncat):
 	if opts.ncat==1:
 		lastget=basedir+"Mt_"+ mc
@@ -151,15 +155,20 @@ for syst in systBkg:
    #	datacard.write("\tw:pdf_$CHANNEL_"+mc+"_$SYSTEMATIC")
    #	datacard.write("\n")
 
-systs=["BTAG","JES"]
+################# Import SIGNAL CONTRIBUTIONS ##############
+systs=["BTAG","TAU"]
 if opts.nosyst: systs=[]
 systSig=[""]
 for shift in ["Up","Down"]: 
 	for s in systs: 
 		systSig.append(s + shift)
 
+print "#########################"
+print "     FIX MH POINTS       "
+print "#########################"
 for syst in systSig:
- for sigMH in [ 200,250,300,350,400,500]:
+ #for sigMH in [ 200,250,300,350,400,500]:
+ for sigMH in [ 200,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
 	if opts.ncat==1:
@@ -181,13 +190,15 @@ datacard.write("\tw:"+"pdf_$CHANNEL_Hplus_MH$MASS" )
 datacard.write("\tw:"+"pdf_$CHANNEL_Hplus_MH$MASS_$SYSTEMATIC" )
 datacard.write("\n")
 
+########################### IMPORT QCD from inverse isolation ############
 if opts.qcd != "":
    #print "FIXME ISOInv"
    fInQCD=ROOT.TFile.Open(opts.qcd,"READ")
 
    if fInQCD == None: print "<*> NO QCD File '%s'"%opts.qcd
 
-   systs=["BTAG","RFAC","JES"]
+   #systs=["BTAG","RFAC","JES"]
+   systs=["BTAG","RFAC"]
    if opts.nosyst: systs=[]
    systQCD=[""]
    for shift in ["Up","Down"]: 
@@ -295,20 +306,47 @@ for proc in mcAll:
 		if opts.qcd !="" and syst in systQCD:
         		datacard.write("\t1")
 		else: datacard.write("\t-")
-        datacard.write("\t1")
+	else:
+        	datacard.write("\t1")
 datacard.write("\n")
-########## JES ###############
-datacard.write("JES shape")
-syst="JES"
+############ JES ###############
+##datacard.write("JES shape")
+##syst="JES"
+##for proc in mcAll:
+##	if proc=="QCD":
+##		if opts.qcd !="" and syst in systQCD:
+##        		datacard.write("\t1")
+##		else: datacard.write("\t-")
+##	else:
+##        	datacard.write("\t1")
+##datacard.write("\n")
+########## JER ###############
+#datacard.write("JER shape")
+#syst="JER"
+#for proc in mcAll:
+#	if proc=="QCD":
+#		if opts.qcd !="" and syst in systQCD:
+#        		datacard.write("\t1")
+#		else: datacard.write("\t-")
+#	else:
+#        	datacard.write("\t1")
+#datacard.write("\n")
+########## TAU ###############
+datacard.write("TAU shape")
+syst="TAU"
 for proc in mcAll:
 	if proc=="QCD":
 		if opts.qcd !="" and syst in systQCD:
         		datacard.write("\t1")
 		else: datacard.write("\t-")
-        datacard.write("\t1")
+	else:
+        	datacard.write("\t1")
 datacard.write("\n")
 
 #fOut=ROOT.TFile.Open(opts.output,"RECREATE")
 w.writeToFile(opts.output)
 
+print "--------------------" 
+print "datacard=",datName
+print "ws=",opts.output
 print " --- DONE --- "

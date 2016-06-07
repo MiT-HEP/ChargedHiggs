@@ -125,7 +125,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
 
     //----------------- ONE TAU -------------
     if (  // pt 20, Iso 1.5
-         t->Pt()>= 51 and 
+         t->Pt()>= 50 and 
          fabs(t->Eta() ) <2.1
             ) cut.SetCutBit(OneTau) ;
 
@@ -213,7 +213,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
 
     // VARS, N-1 ,
-    // 1 hadronic tau only. with Pt> 51 and eta <2.1
+    // 1 hadronic tau only. with Pt> 50 and eta <2.1
     // before angular variables
     // ...
    
