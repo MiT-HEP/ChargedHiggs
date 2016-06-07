@@ -4,42 +4,45 @@
 ##### include=dat/config.txt
 ##### Files=....,....,...
 
-sub=tag|v1.3.1
+sub=tag|v1.4
+sub=amarini|/store/user/amarini/Nero
+sub=klute|/store/user/klute/Nero
 
 ################
 ### DATASETS ###
 ################
 
 #### BKG ###
-Files=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=/store/user/amarini/Nero/v1.2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
-### WW/WZ/ZZ###
-addfiles=/store/user/amarini/Nero/%(tag)s/WW_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/WZ_TuneCUETP8M1_13TeV-pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/ZZ_TuneCUETP8M1_13TeV-pythia8
-### SIGNAL ###
-### QCD
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
-addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
-####
-#### DATA
-addfiles=/store/user/amarini/Nero/%(tag)s/SingleMuon
-addfiles=/store/user/amarini/Nero/%(tag)s/SingleElectron
+Files=%(klute)s/%(tag)s/SingleMuon
+#/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#addfiles=/store/user/amarini/Nero/v1.2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+##addfiles=/store/user/amarini/Nero/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+#### WW/WZ/ZZ###
+#addfiles=/store/user/amarini/Nero/%(tag)s/WW_TuneCUETP8M1_13TeV-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/WZ_TuneCUETP8M1_13TeV-pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/ZZ_TuneCUETP8M1_13TeV-pythia8
+#### SIGNAL ###
+#### QCD
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
+#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+#####
+##### DATA
+#addfiles=/store/user/amarini/Nero/%(tag)s/SingleMuon
+#addfiles=/store/user/amarini/Nero/%(tag)s/SingleElectron
 
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________

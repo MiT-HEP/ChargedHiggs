@@ -1,10 +1,10 @@
 #include "interface/AnalysisDY.hpp"
 
-
+#warning DY ANALYSIS NON ISO
 void DYAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
     l->SetPtCut(25); 
-    l->SetIsoRelCut(0.15);
+    l->SetIsoRelCut(-1);
     l->SetEtaCut(2.4);
 }
 
@@ -41,6 +41,9 @@ void DYAnalysis::Init(){
 	    Book ("DYAnalysis/Vars/MHighPtmm_"+ l ,"MHighPtmm", 1000,0,1000);
 	    Book ("DYAnalysis/Vars/MJHighPtee_"+ l ,"MJHighPtee", 1000,0,1000);
 	    Book ("DYAnalysis/Vars/MJHighPtmm_"+ l ,"MJHighPtmm", 1000,0,1000);
+        //
+	    Book ("DYAnalysis/Vars/MCloseMt_"+ l ,"MCloseMt", 1000,0,1000);
+	    Book ("DYAnalysis/Vars/MCloseJZ_"+ l ,"MCloseJZ", 1000,0,1000);
         //
 	    Book ("DYAnalysis/Vars/Pt20mm_"+ l ,"Ptmm20", 1000,0,1000);
     }
@@ -104,6 +107,11 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
         {
             Fill( "DYAnalysis/Vars/MHighPtmm_" + label,systname,Z.M() ,e->weight() ) ;
             if( j1 != NULL ) Fill( "DYAnalysis/Vars/MJHighPtmm_" + label,systname, j1->InvMass(j0) ,e->weight() ) ;
+        }
+
+        if(mu0->DeltaR(mu1) <.8) {
+	        Fill ("DYAnalysis/Vars/MCloseMt_"+ label , systname, ChargedHiggs::mt(Z.GetP4(), e->GetMet().GetP4()) , e->weight());
+	        if (j0!=NULL)Fill ("DYAnalysis/Vars/MCloseJZ_"+ label,systname,j0->InvMass(&Z)  , e->weight());
         }
     }
     return 0;

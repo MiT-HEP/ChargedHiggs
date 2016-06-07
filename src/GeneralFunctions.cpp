@@ -1,5 +1,6 @@
 #include "interface/GeneralFunctions.hpp"
 #include "TMath.h"
+#include <cmath>
 
 float ChargedHiggs::deltaPhi(const float phi1,const float phi2)
 {

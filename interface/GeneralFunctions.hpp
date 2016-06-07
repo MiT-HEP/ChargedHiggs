@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <bitset>
+#include <cmath>
 
 class TLorentzVector;
 
@@ -19,6 +20,23 @@ namespace ChargedHiggs{
     void Delete(T& x) { delete x; x=NULL; }
 
     float mt(const float pt1, const float pt2, const float phi1, const float phi2);
+
+    // use this for massive objects
+    template <typename T>
+    inline float mt( const T& obj1, const T& obj2)
+    {
+    float m1 = obj1.M();
+    float pt1= obj1.Pt();
+    float m2 = obj2.M();
+    float pt2= obj2.Pt();
+    float dphi = deltaPhi(obj1.Phi() , obj2.Phi() );
+
+    float pt12 = std::pow(pt1,2) + std::pow(pt2,2) - 2*pt1*pt2 * std::cos( std::acos(-1)  - dphi);
+
+    float et1 = std::sqrt( std::pow(m1,2) + std::pow(pt1,2) );
+    float et2 = std::sqrt( std::pow(m2,2) + std::pow(pt2,2) );
+    return std::sqrt( std::pow(et1 + et2,2) - pt12);
+    }
 
     double CosThetaCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS=13) ;
 

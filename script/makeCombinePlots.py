@@ -221,9 +221,10 @@ def GetLimitFromTree(inputFile,xsec=False):
 		if opts.unblind and mh != data[i][0]: print "[ERROR]: MH mismatch"
 
 		isToExclude=False
-		for mtest in opts.exclude.split(','):
-			if float(mtest) == mh:
-				isToExclude = True
+		if opts.exclude != "":
+			for mtest in opts.exclude.split(','):
+				if float(mtest) == mh:
+					isToExclude = True
 		if isToExclude: 
 			print "Excluding MH=",mh,"from the plot"
 			continue
@@ -409,7 +410,7 @@ l.SetTextAlign(13)
 l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
 l.SetTextSize(0.03)
 l.SetTextAlign(31)
-l.DrawLatex(0.89,.91,"5 fb^{-1} (13 TeV)")
+l.DrawLatex(0.89,.91,"2.3 fb^{-1} (13 TeV)")
 
 #draw legend
 leg = ROOT.TLegend(0.65,.55,.88,.88)
