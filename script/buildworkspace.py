@@ -122,8 +122,8 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 
 ### BKG ###
 ######### import mc based background contributions
-#systs=["BTAG","JES","TAU"]
-systs=["BTAG","TAU"]
+systs=["BTAG","JES","TAU","TRIG","TRIGMET"]
+#systs=["BTAG","TAU"]
 if opts.nosyst: systs=[]
 
 systBkg=[""]
@@ -156,19 +156,19 @@ for syst in systBkg:
    #	datacard.write("\n")
 
 ################# Import SIGNAL CONTRIBUTIONS ##############
-systs=["BTAG","TAU"]
+systs=["BTAG","TAU","JES","TRIG","TRIGMET"]
 if opts.nosyst: systs=[]
 systSig=[""]
 for shift in ["Up","Down"]: 
 	for s in systs: 
 		systSig.append(s + shift)
 
-print "#########################"
-print "     FIX MH POINTS       "
-print "#########################"
+## print "#########################"
+## print "     FIX MH POINTS       "
+## print "#########################"
 for syst in systSig:
- #for sigMH in [ 200,250,300,350,400,500]:
- for sigMH in [ 200,350,400,500]:
+ for sigMH in [ 200,220,250,300,350,400,500]:
+ #for sigMH in [ 200,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
 	if opts.ncat==1:
@@ -197,8 +197,8 @@ if opts.qcd != "":
 
    if fInQCD == None: print "<*> NO QCD File '%s'"%opts.qcd
 
-   #systs=["BTAG","RFAC","JES"]
-   systs=["BTAG","RFAC"]
+   systs=["BTAG","RFAC"] ## no JES here
+   #systs=["BTAG","RFAC"]
    if opts.nosyst: systs=[]
    systQCD=[""]
    for shift in ["Up","Down"]: 
@@ -288,27 +288,27 @@ if opts.nosyst:
 	print " --- DONE --- "
 	exit(0)
 
-########## RFAC ###############
-if opts.qcd != "":
-   datacard.write("RFAC shape")
-   #RFACUp RFACDown
-   for proc in mcAll:
-	if proc=="QCD":
-	   datacard.write("\t1")
-	else:
-	   datacard.write("\t-")
-   datacard.write("\n")
-########## BTAG ###############
-datacard.write("BTAG shape")
-syst="BTAG"
-for proc in mcAll:
-	if proc=="QCD":
-		if opts.qcd !="" and syst in systQCD:
-        		datacard.write("\t1")
-		else: datacard.write("\t-")
-	else:
-        	datacard.write("\t1")
-datacard.write("\n")
+########### RFAC ###############
+##if opts.qcd != "":
+##   datacard.write("RFAC shape")
+##   #RFACUp RFACDown
+##   for proc in mcAll:
+##	if proc=="QCD":
+##	   datacard.write("\t1")
+##	else:
+##	   datacard.write("\t-")
+##   datacard.write("\n")
+############ BTAG ###############
+##datacard.write("BTAG shape")
+##syst="BTAG"
+##for proc in mcAll:
+##	if proc=="QCD":
+##		if opts.qcd !="" and syst in systQCD:
+##        		datacard.write("\t1")
+##		else: datacard.write("\t-")
+##	else:
+##        	datacard.write("\t1")
+##datacard.write("\n")
 ############ JES ###############
 ##datacard.write("JES shape")
 ##syst="JES"
@@ -332,16 +332,45 @@ datacard.write("\n")
 #        	datacard.write("\t1")
 #datacard.write("\n")
 ########## TAU ###############
-datacard.write("TAU shape")
-syst="TAU"
-for proc in mcAll:
-	if proc=="QCD":
-		if opts.qcd !="" and syst in systQCD:
-        		datacard.write("\t1")
-		else: datacard.write("\t-")
-	else:
-        	datacard.write("\t1")
-datacard.write("\n")
+##datacard.write("TAU shape")
+##syst="TAU"
+##for proc in mcAll:
+##	if proc=="QCD":
+##		if opts.qcd !="" and syst in systQCD:
+##        		datacard.write("\t1")
+##		else: datacard.write("\t-")
+##	else:
+##        	datacard.write("\t1")
+##datacard.write("\n")
+
+def writeSyst(syst="JES"):
+	datacard.write(syst+" shape")
+	for proc in mcAll:
+		if proc=="QCD":
+			if opts.qcd !="" and syst + "Up"  in systQCD:
+	        		datacard.write("\t1")
+			else: datacard.write("\t-")
+		elif proc in mcList :
+			if syst + "Up" in systBkg:
+	        		datacard.write("\t1")
+			else:
+	        		datacard.write("\t-")
+		elif proc == "Hplus" :
+			if syst + "Up" in systSig:
+	        		datacard.write("\t1")
+			else:
+	        		datacard.write("\t-")
+		else:
+			print "DONT KNOW WHAT TO DO WITH proc=",proc,"syst=",syst
+	datacard.write("\n")
+
+writeSyst('JES')
+writeSyst('JER')
+writeSyst('TAU')
+writeSyst('BTAG')
+writeSyst('RFAC')
+writeSyst('TRIG')
+writeSyst('TRIGMET')
 
 #fOut=ROOT.TFile.Open(opts.output,"RECREATE")
 w.writeToFile(opts.output)

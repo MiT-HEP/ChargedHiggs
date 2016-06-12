@@ -50,3 +50,9 @@ btag csv aux/CSVv2.csv
 eleveto th2f aux/CutBasedID_VetoWP_76X_18Feb.txt_SF2D.root veto
 ## POG Tau
 tauid base 1.0 0.06
+## trigger
+tauLeg3p json-sami aux/tauLegTriggerEfficiency2015_3prong.json
+tauLeg13p json-sami aux/tauLegTriggerEfficiency2015_13prong.json
+tauLeg1p json-sami aux/tauLegTriggerEfficiency2015_1prong.json
+metLegBtagLoose json-sami aux/metLegTriggerEfficiency2015_btagLoose.json
+metLegBtagMedium json-sami aux/metLegTriggerEfficiency2015_btagMedium.json

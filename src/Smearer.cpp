@@ -12,6 +12,7 @@ int SmearJes::smear(Event *e)
     }
 
     // this is not const like in e->GetMet()
+    //#warning NO MET IN JES
     GetMet(e) . syst = syst_;
     GetMet(e) . SetSmearType(Smearer::JES);
     
@@ -32,9 +33,10 @@ int SmearJer::smear(Event *e)
         if (not j->IsFilled() ) Log(__FUNCTION__,"WARNING","JER Smearings values not filled in JET");
     }
 
-    GetMet(e) . syst = syst_;
-    GetMet(e) . SetSmearType(Smearer::JER);
-    if ( not GetMet(e) . IsFilled() ) Log(__FUNCTION__,"WARNING","JER Smearing not filled in MET");
+#warning NO MET IN JER
+    //GetMet(e) . syst = syst_;
+    //GetMet(e) . SetSmearType(Smearer::JER);
+    //if ( not GetMet(e) . IsFilled() ) Log(__FUNCTION__,"WARNING","JER Smearing not filled in MET");
 
 
     return SMEAR_OK;

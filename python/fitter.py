@@ -9,6 +9,7 @@ parser.add_option("-c","--class",dest="classname",type="string",help="Class [%de
 parser.add_option("-f","--file",dest="file",type="string",help="InputFile [%default]",default="QCDPurity.root")
 parser.add_option("-o","--outfile",dest="outfile",type="string",help="OutputFile [%default]",default="QCDFit.root")
 parser.add_option("-t","--outtxt",dest="outtxt",type="string",help="OutputTxt [%default]",default="R.txt")
+parser.add_option("-l","--qcdlumi",dest="qcdlumi",type="float",help="Prescaled luminosity to use [%default]",default=209.)
 
 (opts,args) = parser.parse_args()
 
@@ -45,7 +46,7 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
 	fitter.outname= opts.outfile
 	fitter.inname =opts.file
 	#fitter.lumi=2308.
-	fitter.lumi=209.
+	fitter.lumi=opts.qcdlumi
 	if opts.verbose: fitter.verbose_ = 1
 
 	print "-> Setting lumi to PRESCALED LUMI:",fitter.lumi

@@ -1,4 +1,5 @@
 import os,sys,re
+import math
 from subprocess import call,check_output
 
 
@@ -255,6 +256,7 @@ def ReadMCDB(file):
 		R[label] = (dir,entries,xsec,scales,pdfs)
 	return R
 
+import json
 def ReadSFDB(file,verbose=False):
 	'''read and parse the SFDB file:
 	    \t\t### LABEL type -- -- --- --- 
@@ -325,10 +327,57 @@ def ReadSFDB(file,verbose=False):
 		elif type == 'base':
 			sf  = float ( l.split(' ') [2] )
 			err = float ( l.split(' ') [3] )
+
 		elif type == 'csv':
 			R['filename'] = l.split(' ' )[2]
 			sf=0.0 ## ignored
 			err=0.0 ## ignored
+
+		elif type == 'json-sami':
+			R['filename'] = l.split(' ')[2]
+			R['type'] = 'pteta'
+			try: 
+			   jstring = open(R['filename']).read()
+			except IOError as e:
+			   print "-> Error in reading SF",R['filename']
+			   raise e
+		        j=json.loads( jstring )
+			"dataParameters"
+			"mcParameters"
+			run="runs_256629_260627"
+			runMC="2015D"
+			for idx,params in enumerate(j["dataParameters"][run]["bins"]):
+				R["pt1"] =params["pt"] 
+				if len(j["dataParameters"][run]["bins"]) > idx+1:
+					next=j["dataParameters"][run]["bins"][idx+1]
+					R["pt2"] = next["pt"]
+				else:
+					R["pt2"] = 8000.
+				R["eta1"] =  -10
+				R["eta2"] = 10
+				effD = params["efficiency"]
+				## TODO: implement Asymm
+				errD = params["uncertaintyPlus"]
+				mc=j["mcParameters"][runMC]["bins"]
+				effMc= mc[idx]["efficiency"]
+				errMc = mc[idx]["uncertaintyPlus"] 
+
+				if effMc == 0. : continue # bin not well populated
+
+				try:
+					R["sf"] = effD/effMc
+					R["err"] = math.sqrt((errD/effD)**2 + (errMc/effMc)**2)* R["sf"]
+				except ZeroDivisionError:
+					R["sf"] =1.0
+					R["err"] =0.0
+
+				print "  * Loading SF: ",R["pt1"],R["pt2"]," -- ",R["sf"],"+/-",R["err"]
+				R1={} ## copy 
+				for key in R: R1[key] = R[key]
+				L.append(R1)
+			R=None
+			continue ## lines loop
+			 
 		else:
 			print "sf",label,"of type",type,"not supported in the sf database"
 		R['sf'] =sf

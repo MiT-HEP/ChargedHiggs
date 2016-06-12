@@ -189,6 +189,10 @@ if opts.resubmit:
 		joblist = run
 	elif opts.joblist.lower() == 'pend' :
 		joblist = pend
+	elif opts.joblist.lower() == 'done' :
+		joblist = done
+	elif opts.joblist.lower() == 'all' :
+		joblist = pend + run + fail + done
 	else:
 		joblist = opts.joblist.split(',')
 

@@ -23,6 +23,7 @@ dat={
 	#"plotdat/tmva_cutflow.txt":"plot/TmvaCutFlow.pdf",
 	#"plotdat/tmva_mt.txt":"plot/TmvaMt.pdf",
 	"plotdat/chhiggs_metqcd.txt":"plot/EtMissQCDInvIso.pdf",
+	"plotdat/chhiggs_metband.txt":"plot/EtMissBand.pdf",
 	"plotdat/qcdpurity_control_etmiss.txt":"plot/EtMiss_Control.pdf",
 	"plotdat/qcdpurity_control_taupt.txt":"plot/EtMiss_Control_v2.pdf",
 	"plotdat/qcdpurity_mt.txt":"plot/plot/MtQCDOnly.pdf",

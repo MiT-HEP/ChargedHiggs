@@ -140,10 +140,15 @@ void LoadNero::FillJets(){
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
         // JES
-        //Log(__FUNCTION__,"DEBUG","Going to Fill Jes");
+        //Log(__FUNCTION__,"DEBUG",Form("Going to Fill Jes for jet: %d",iJet));
+
         j->SetValueUp  (Smearer::JES , (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
         j->SetValueDown(Smearer::JES , (1. - bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
         j->SetFilled(Smearer::JES);
+
+        //Log(__FUNCTION__,"DEBUG",Form(" JesUp=%f", (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
+        //Log(__FUNCTION__,"DEBUG",Form(" JesDown=%f", (1. - bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
+
         // JER
         //Log(__FUNCTION__,"DEBUG","Going to Fill Jer");
         if (event_->IsRealData())
@@ -361,9 +366,28 @@ void LoadNero::FillMet(){
 
     // ---  JES ---
     // Log(__FUNCTION__,"DEBUG","Going to Fill Jes MET");
-    event_ -> met_ . SetValueUp  (Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt() );
-    event_ -> met_ . SetValueDown(Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesDown]) -> Pt() );
+    #warning Computing Met JES from jets
+    LogN(__FUNCTION__,"INFO","Met JES computed from jets",5);
+    BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "BareJets" ] ] ); assert (bj !=NULL);
+    TLorentzVector jesUp, jesDown;
+    jesUp  = *(TLorentzVector*)(*met -> p4) [0];
+    jesDown= *(TLorentzVector*)(*met -> p4) [0];
+    for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)  
+    {
+        TLorentzVector delta;
+        delta.SetPtEtaPhiE(  bj -> unc -> at(iJet) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt(), ((TLorentzVector*)(*bj->p4)[iJet])->Eta(), ((TLorentzVector*)(*bj->p4)[iJet])->Phi(), ((TLorentzVector*)(*bj->p4)[iJet])->E() * bj -> unc -> at(iJet));
+        jesUp += delta;
+        jesDown -= delta;
+    }
+    event_ -> met_ . SetValueUp  (Smearer::JES , jesUp.Pt() ); 
+    event_ -> met_ . SetValueDown(Smearer::JES , jesDown.Pt() );
+
+    // JES from MiniAOD
+    //event_ -> met_ . SetValueUp  (Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt() );
+    //event_ -> met_ . SetValueDown(Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesDown]) -> Pt() );
     event_-> met_ . SetFilled(Smearer::JES);
+
+    //Log(__FUNCTION__,"DEBUG",Form("Met=%f MetJesUp=%f",((TLorentzVector*)(*met -> p4) [0])->Pt() , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt()));
 
     //Log(__FUNCTION__,"DEBUG","Going to Fill Jer MET");
     // ---  JER ---

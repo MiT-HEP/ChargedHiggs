@@ -186,6 +186,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if(e->weight() == 0. ) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
 
 
+
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Total,e->weight());
     Fill("ChargedHiggsTauNu/NOne/NTaus_"+label,systname, e->Ntaus() ,e->weight());
 
@@ -195,6 +196,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     cut.SetMask(MaxCut-1) ;
     cut.SetCut( Selection(e,true) );
 
+    //Log(__FUNCTION__,"DEBUG","Analyze event with syst "+ systname + Form(" Njets=%d NB=%d PassAll=%d cuts=%s", e->Njets(),e->Bjets() ,cut.passAll(), ChargedHiggs::printBinary(cut.raw()).c_str() ));
+
     if ( cut.pass(NoLep) and not e->IsRealData() ){
         // SF for Veto
         GenParticle * gp  = e->GetGenElectron(0,2.4);
@@ -202,7 +205,15 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         if (gp != NULL and gp->Pt() > 15) {e->SetPtEtaSF("eleveto",gp->Pt(),fabs(gp->Eta())); e->ApplySF("eleveto");}  // this should be SC-eta, some how propagated
         //TODO Muon
     }
-    
+ 
+    //#warning no sf  trigger
+    if (cut.pass(Trigger) and not e->IsRealData()) {
+        if( not e->ExistSF("tauLeg13p") ) Log(__FUNCTION__,"WARING" ,"No Tau Trigger SF");  
+        if( t!=NULL){ e->SetPtEtaSF("tauLeg13p",t->Pt(),t->Eta()); e->ApplySF("tauLeg13p");}
+        if( not e->ExistSF("metLegBtagMedium") ) Log(__FUNCTION__,"WARING" ,"No Tau metLegBtagMedium SF");  
+        e->SetPtEtaSF("metLegBtagMedium",e->GetMet().Pt(),0);
+        e->ApplySF("metLegBtagMedium");
+    }  
 
     if( cut.passAllUpTo( OneTau)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneTau,e->weight());
     if( cut.passAllUpTo(NoLep)     ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());
@@ -337,6 +348,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         e->ApplySF("tauid"); // only in MC
 
         //if(e->IsRealData() and (systname=="NONE" or systname=="")) Log(__FUNCTION__,"SYNC",Form("%d,%d,%ld",e->runNum(),e->lumiNum(),e->eventNum()) );
+        //
 
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoQ_"+label,systname, e->MtDecoQ() ,e->weight());
