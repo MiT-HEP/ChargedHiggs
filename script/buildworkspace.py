@@ -273,15 +273,36 @@ datacard.write("\n")
 ############ SYST########
 datacard.write("-------------------------------------\n")
 
+def WriteNormSyst(name="lumi",value="1.027", regexp=".*"):
+	########## LUMI ###
+	datacard.write(name+"\tlnN")
+	invert=False
+	if regexp != "" and regexp[0] == '!':
+		invert=True
+		regexp=regexp[1:]
+
+	for cat in range(0,opts.ncat):
+	   for proc in mcAll:
+		match=re.search(regexp,proc)
+		if (match and not invert) or (not match and invert):
+		   datacard.write("\t"+value)
+		else:
+		   datacard.write("\t-")
+	datacard.write("\n")
+
+if opts.qcd=="":
+	writeNormSyst("lumi","1.027","")
+else:
+	writeNormSyst("lumi","1.027","!QCD")
 ########## LUMI ###
-datacard.write("lumi\tlnN")
-for cat in range(0,opts.ncat):
-   for proc in mcAll:
-	if proc=="QCD" and opts.qcd!="":
-	   datacard.write("\t-")
-	else:
-	   datacard.write("\t1.027")
-datacard.write("\n")
+### datacard.write("lumi\tlnN")
+### for cat in range(0,opts.ncat):
+###    for proc in mcAll:
+### 	if proc=="QCD" and opts.qcd!="":
+### 	   datacard.write("\t-")
+### 	else:
+### 	   datacard.write("\t1.027")
+### datacard.write("\n")
 
 if opts.nosyst: 
 	w.writeToFile(opts.output)
@@ -364,6 +385,7 @@ def writeSyst(syst="JES"):
 			print "DONT KNOW WHAT TO DO WITH proc=",proc,"syst=",syst
 	datacard.write("\n")
 
+### write shape syst
 writeSyst('JES')
 writeSyst('JER')
 writeSyst('TAU')
@@ -371,6 +393,29 @@ writeSyst('BTAG')
 writeSyst('RFAC')
 writeSyst('TRIG')
 writeSyst('TRIGMET')
+## write norm syst
+writeNormSyst("TTSCALE","0.965/1.024","TT")
+writeNormSyst("TTPDF","1.042","TT")
+writeNormSyst("TTMASS","1.027","TT")
+
+writeNormSyst("STSCALE","0.977/1.028","ST")
+writeNormSyst("STPDF","1.026","ST")
+writeNormSyst("STMASS","1.022","ST")
+
+writeNormSyst("DYSCALE","0.9963/1.0065","DY")
+writeNormSyst("DYPDF","1.037","DY")
+
+writeNormSyst("WJetsSCALE","0.996/1.008","WJets")
+writeNormSyst("WJetsPDF","1.0375","WJets")
+
+writeNormSyst("WWSCALE","1.025","WW")
+writeNormSyst("WWPDF","1.022","WW")
+
+writeNormSyst("WZSCALE","1.032","WZ")
+writeNormSyst("WZPDF","1.044","WZ")
+
+writeNormSyst("ZZSCALE","1.031","ZZ")
+writeNormSyst("ZZPDF","1.037","ZZ")
 
 #fOut=ROOT.TFile.Open(opts.output,"RECREATE")
 w.writeToFile(opts.output)
