@@ -152,12 +152,15 @@ def FindEOS(name,mount=""):
 	''' EOS PATH should be followed. The mount option will assume that eos is mounted in ~/eos '''
 	EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
 	# should match wildcard, that for some reason new root does not
-	if '/store/' not in name: return [name]
+	if '/store/' not in name and '/eos/user' not in name: return [name]
 	if '/eos/cms/store/' in name: return [name] # likely already parsed
 	if 'root://eoscms//' in name: return [name] # already parsed
 	if os.path.isfile(name): return [name] ## file exists
-
-	cmd = EOS + ' find -f ' + name
+	
+	userInstance=""
+	if '/eos/user' in name:
+		userInstance="root://eosuser"
+	cmd = EOS + userInstance+ ' find -f ' + name
 	print "Runnig command:",cmd
 	list = check_output(cmd ,shell=True).split()
 
@@ -170,9 +173,15 @@ def FindEOS(name,mount=""):
 	list = [ f  for f in list if '/failed/' not in f ]
 
 	if mount != "":
+		if userInstance != "": 
+			print "UNSUPPORTED: mount + instance"
+			raise ValueError
 		fileList = [ re.sub("/eos/cms", mount + "/cms",f) for f in list ]
 	else:
-		fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in list ]
+		if userInstance =="":
+			fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in list ]
+		else:
+			fileList = [ re.sub("/eos/user","root://eosuser///eos/user",f) for f in list ]
 
 	return fileList
 

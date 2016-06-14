@@ -273,7 +273,7 @@ datacard.write("\n")
 ############ SYST########
 datacard.write("-------------------------------------\n")
 
-def WriteNormSyst(name="lumi",value="1.027", regexp=".*"):
+def writeNormSyst(name="lumi",value="1.027", regexp=".*"):
 	########## LUMI ###
 	datacard.write(name+"\tlnN")
 	invert=False

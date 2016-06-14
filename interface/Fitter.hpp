@@ -30,9 +30,11 @@ using namespace std;
 //using namespace RooFit;
 class RooSpline1D;
 
+#include "interface/BaseFitter.hpp"
 
 
-class Fitter{
+
+class Fitter : virtual public BaseFitter{
     /* Original Author: Andrea C. Marini 
      * Date: 8th June 2015
      * This class provide an interface to create 
@@ -43,7 +45,7 @@ class Fitter{
     //
     RooWorkspace *w_;
     RooRealVar *mh_; // truth
-    RooRealVar *x_; // observable
+    RooRealVar *x_; // observable (mt)
 
     map< string, RooDataHist*> hist_;
 
@@ -107,9 +109,11 @@ class Fitter{
     // --- objects that can be called
     Fitter();
     void init();	
+    void fit() {}; //TODO
     void fitSignal();
     void write();
     void finalModel();
+    const string name() const override { return "Fitter";}
 
 };
 
