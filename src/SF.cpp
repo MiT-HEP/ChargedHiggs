@@ -2,6 +2,7 @@
 #include "interface/Handlers.hpp"
 #include "TFile.h"
 #include "TH2F.h"
+#include "TMVA/TSpline1.h"
 //#define VERBOSE 2
 //
 void SF::print() const
@@ -129,11 +130,11 @@ void SF_PtSpline::init(){ // init splines from TGraph
     if (errSpline_==NULL and ge_ ==NULL) Log(__FUNCTION__,"ERROR","Unable to init Error Spline");
     // are G and GE sorted ?
     if (spline_==NULL){
-            spline_=new TSpline3( (label+"Spline").c_str(),g_);
+            spline_=new TMVA::TSpline1( (label+"Spline").c_str(),g_);
             spline_->SetName( (label+"spline").c_str());
     }
     if (errSpline_==NULL){
-        errSpline_=new TSpline3( (label+"errSpline").c_str(),ge_); 
+        errSpline_=new TMVA::TSpline1( (label+"errSpline").c_str(),ge_); 
         errSpline_->SetName( (label+"errSpline").c_str());
     }
 
@@ -146,14 +147,14 @@ void SF_PtSpline::init(string filename, string obj,string obj2)
 #endif
     clear();
     TFile *f = TFile::Open(filename.c_str()); // TODO: make it able to read TGraph too
-    if (f->Get(obj.c_str())->InheritsFrom("TSpline3") ) spline_= (TSpline3*)f->Get(obj.c_str()) -> Clone( (obj + "clone").c_str() );
+    if (f->Get(obj.c_str())->InheritsFrom("TSpline") ) spline_= (TSpline*)f->Get(obj.c_str()) -> Clone( (obj + "clone").c_str() );
     else if ( f->Get(obj.c_str())->InheritsFrom("TGraph") ) 
             { 
                 g_=(TGraph*)f->Get(obj.c_str())->Clone();
             }
     else Log(__FUNCTION__,"ERROR","Type not supported for obj "+ obj + " in " + filename);
 
-    if (f->Get(obj2.c_str())->InheritsFrom("TSpline3") ) errSpline_= (TSpline3*)f->Get(obj2.c_str()) -> Clone( (obj2 + "clone").c_str() );
+    if (f->Get(obj2.c_str())->InheritsFrom("TSpline") ) errSpline_= (TSpline*)f->Get(obj2.c_str()) -> Clone( (obj2 + "clone").c_str() );
     else if (f->Get(obj2.c_str())->InheritsFrom("TGraph") )
             {
                 ge_=(TGraph*)f->Get(obj.c_str())->Clone();

@@ -48,7 +48,7 @@ colors=[r.kRed,r.kBlue,r.kGreen+2,r.kGray]
 markers=[20,21,22,29,30]
 splines=[]
 for idx,g in enumerate(graphs):
-	s=r.TSpline3("spline_"+g.GetName(),g)
+	s=r.TMVA.TSpline1("spline_"+g.GetName(),g)
 	## sup, sdown
 	
 	s.SetLineColor( colors[idx])
