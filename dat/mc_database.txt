@@ -58,3 +58,8 @@ ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8-resub /st
 ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1 /store/user/jaeyserm/Nero/v1.4/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/160521_081519/0000 64957724.0 136.02
 ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8 /store/user/jaeyserm/Nero/v1.4/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8/160521_081545/0000 999400.0 30.09
 ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8 /store/user/jaeyserm/Nero/v1.4/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8/160521_081607/0000 1000000.0 30.11
+W0JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W0JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 24328832.0 34273.632815
+W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 45442170.0 18455.979619
+W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 30190119.0 6035.904629 
+W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 19141299.0 1821.46719
+W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 9533327.0 939.684984

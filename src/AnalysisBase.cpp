@@ -60,7 +60,15 @@ string AnalysisBase::GetLabel(Event *e){
                 label = s; 
                 break;
             }
+            if ( s=="WJets" and ( // WNJets
+                 e->GetWeight() ->GetMC() .find("W0Jet") !=string::npos or
+                 e->GetWeight() ->GetMC() .find("W1Jet") !=string::npos or
+                 e->GetWeight() ->GetMC() .find("W2Jet") !=string::npos or
+                 e->GetWeight() ->GetMC() .find("W3Jet") !=string::npos or
+                 e->GetWeight() ->GetMC() .find("W4Jet") !=string::npos )
+               ) { label=s; break;}
         }
+            
     } // end else (MC)
 
     #ifdef VERBOSE

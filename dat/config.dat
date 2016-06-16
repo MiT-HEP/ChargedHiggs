@@ -17,7 +17,7 @@ sub=jan|/store/user/jaeyserm/Nero
 
 #### BKG ###
 Files=%(klute)s/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=%(amarini)s/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#addfiles=%(amarini)s/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 #addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 addfiles=%(klute)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
@@ -75,6 +75,14 @@ addfiles=%(amarini)s/%(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
 addfiles=%(amarini)s/%(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
 addfiles=%(amarini)s/%(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
 addfiles=%(amarini)s/%(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+
+
+## WNJets
+addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W0JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 
 addfiles=/store/user/amarini/Nero/%(tag)s/Tau
 ####

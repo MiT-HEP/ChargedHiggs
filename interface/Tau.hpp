@@ -63,6 +63,7 @@ class Tau: virtual public Object,
     } regVars_;
 };
 
+
 #endif
 // Local Variables:
 // mode:c++

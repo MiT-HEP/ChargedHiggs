@@ -1,6 +1,7 @@
 #include "interface/AnalysisChargedHiggsTauNu.hpp"
 #include "interface/GeneralFunctions.hpp"
 #include "interface/Logger.hpp" // for static functions
+#include <memory>
 
 void ChargedHiggsTauNu::Init()
 {
@@ -108,17 +109,34 @@ void ChargedHiggsTauNu::Init()
 
 }
 
-unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
+unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon){
     CutSelector cut;
     cut.SetMask(MaxCut-1);
     cut.SetCutBit(Total);
 
-    Tau *t =NULL;
-    if (direct) t = e->GetTau(0);
-    else  t = e->GetTauInvIso(0);
+    std::unique_ptr<Tau> garbage; //if created will be deleted
 
-    Tau *sub = NULL;
-    if (direct) sub = e->GetTau(1);
+    Tau *t =NULL;
+    if (direct and not muon) t = e->GetTau(0); 
+    else if(not muon) t = e->GetTauInvIso(0);
+    else {
+        //Construct a fake tau
+        Lepton*m=e->GetMuon(0);
+        t=new Tau();
+        t->SetP4( m->GetP4() );
+        t-> iso =0;
+        t-> type =15;
+        t-> iso2=0;
+        t-> id=1;
+        t-> id_ele=1;
+        t-> id_mu=1
+        t-> id_iso=1;
+        garbage.reset(t); // make sure it will be deleted
+    }
+
+    Object *sub = NULL;
+    if (direct and not muon) sub = e->GetTau(1);
+    if (muon) sub=e->GetMuon(1);
 
     if (t== NULL) return cut.raw();
     if (sub != NULL) return cut.raw(); //multiple taus
@@ -129,7 +147,8 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
          fabs(t->Eta() ) <2.1
             ) cut.SetCutBit(OneTau) ;
 
-    if ( e->Nleps() == 0 ) cut.SetCutBit(NoLep);
+    if ( e->Nleps() == 0 and not muon) cut.SetCutBit(NoLep);
+    if ( muon  and e->Nleps() ==1) cut.SetCutBit(NoLep);;
 
     // ---- At least 3 jets
     if ( direct and e->Njets() >=3 ) cut.SetCutBit(ThreeJets);
@@ -154,7 +173,8 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
     //Uncorr Pt does not include met phi corrections, and Tau Nu regression
     //if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
     //if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
-    if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
+    if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
+    else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
     //if ( e->IsTriggered("HLT_PFMET120_NoiseCleaned_BtagCSV0p72"))  cut.SetCutBit(Trigger);
 
     // if (e->IsRealData() and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") )

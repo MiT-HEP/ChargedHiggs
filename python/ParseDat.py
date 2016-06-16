@@ -155,15 +155,16 @@ def FindEOS(name,mount=""):
 	if '/store/' not in name and '/eos/user' not in name: return [name]
 	if '/eos/cms/store/' in name: return [name] # likely already parsed
 	if 'root://eoscms//' in name: return [name] # already parsed
+	if 'root://eosuser//' in name: return [name] # already parsed
 	if os.path.isfile(name): return [name] ## file exists
 	
 	userInstance=""
 	if '/eos/user' in name:
-		userInstance="root://eosuser"
+		userInstance=" root://eosuser"
 	cmd = EOS + userInstance+ ' find -f ' + name
 	print "Runnig command:",cmd
 	list = check_output(cmd ,shell=True).split()
-
+	
 	# print removed
 	tot = len(list)
 	removed = [ f for f in list if '/failed/' in f ] 

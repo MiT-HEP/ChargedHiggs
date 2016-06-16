@@ -43,22 +43,11 @@ class Fitter : virtual public BaseFitter{
 
     // private members end with _
     //
-    RooWorkspace *w_;
-    RooRealVar *mh_; // truth
-    RooRealVar *x_; // observable (mt)
+    RooWorkspace *w_{0};
+    RooRealVar *mh_{0}; // truth
+    RooRealVar *x_{0}; // observable (mt)
 
     map< string, RooDataHist*> hist_;
-
-    string datasetMask_ ;
-    string xsecMask_;
-    string massMask_;
-
-    bool writeDatasets_ ; // write the RooDatasets into the ws
-
-    vector<float> startMean_;
-    vector<float> startSigma_;
-    vector<float> startFraction_;
-    vector<float> startBern_;
 
     // save fit parameters vs mass category 
     map<string, float> fitParameters_;
@@ -67,41 +56,29 @@ class Fitter : virtual public BaseFitter{
     // save RooRealVars used for fit
     map<string, RooRealVar*> vars_;
 
-    // -- RooAbsReal* getMeanWithSyst(string name, RooAbsReal*mean);
+    public:
+    string datasetMask_ ;
+    string xsecMask_;
+    string eaMask_;
+    string massMask_;
+    string normMask_;
+    string modelMask_;
+    string systLabel_{""}; //_JesUp, _JesDown .., mainly internal, but should be uniq
+    vector<string> systIn; 
+
     void info();
 
-    // ------------ INIT -------
-    void initGaus();
-    void initBern();
+    bool writeDatasets_ ; // write the RooDatasets into the ws
 
-
-    // ------------SIGNAL MODEL AND FIT -----------
-    // add Bern - Gaus To the fit Model
-    void addBernFitModel(RooArgList *pdfs,RooArgList *coeffs,bool isLast);
-    void addGausFitModel(RooArgList *pdfs,RooArgList *coeffs,bool isLast);
-
-    // -- save Coeff of the fit in fitParameters_
-    void saveCoefficientsGaus( int cat,string mass,bool isLast);
-    void saveCoefficientsBern( int cat,string mass,bool isLast);
-
-    void interpolateBern(int cat,bool isLast);
-    void interpolateGaus(int cat,bool isLast);
-
-    // --- FINAL MODEL ---
-
-    public:
 
     // --- objects that can be set	
     vector<float> mIn; // input masses
     vector<string> inputMasks; // input FileName Mask. Must contain a replacement for float. One for each cat
-    string outputFileName; // 
-    string inputFileName;
+    string outname; // 
+    string inname;
     string plotDir;
     bool plot; // make plot fit
     bool verbose;
-
-    int nGaussians;
-    int nBernstein;
 
     float xmin;
     float xmax;
@@ -109,11 +86,12 @@ class Fitter : virtual public BaseFitter{
     // --- objects that can be called
     Fitter();
     void init();	
-    void fit() {}; //TODO
-    void fitSignal();
+    void fit() ;
     void write();
-    void finalModel();
+    void end();
     const string name() const override { return "Fitter";}
+
+    map<string,float> initPars_;
 
 };
 

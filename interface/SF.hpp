@@ -82,8 +82,8 @@ class SF_PtSpline : virtual public SF
     private:
         TGraph *g_{0};
         TGraph *ge_{0};
-        TSpline3 *spline_{0};
-        TSpline3 *errSpline_{0};
+        TSpline *spline_{0};
+        TSpline *errSpline_{0};
 
     public :
         SF_PtSpline() : SF() {spline_=NULL;errSpline_=NULL;}
