@@ -287,6 +287,36 @@ void SF_CSV::set( float pt, float eta, int wp, int flavor)
     return;
 }
 
+// ------------ TF1 -----------------
+
+void SF_TF1::set(double pt)
+{
+    sf = f_sf_->Eval(pt);
+    if(f_err_) err = f_err_->Eval(pt);
+    else err=0;
+}
+
+void SF_TF1::print(){
+    SF::print();
+    if (f_sf_)Log(__FUNCTION__,"INFO",f_sf_->GetTitle());
+    else Log(__FUNCTION__,"INFO","TF1 not set");
+    Log(__FUNCTION__,"INFO","------------------------------");
+}
+
+// -----
+void SF_TF2::set(double x,double y)
+{
+    sf = f_sf_->Eval(x,y);
+    if(f_err_) err = f_err_->Eval(x,y);
+    else err=0;
+}
+
+void SF_TF2::print(){
+    SF::print();
+    if (f_sf_)Log(__FUNCTION__,"INFO",f_sf_->GetTitle());
+    else Log(__FUNCTION__,"INFO","TF2 not set");
+    Log(__FUNCTION__,"INFO","------------------------------");
+}
 
 // Local Variables:
 // mode:c++

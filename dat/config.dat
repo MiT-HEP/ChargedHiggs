@@ -20,7 +20,9 @@ Files=%(klute)s/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 #addfiles=%(amarini)s/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 #addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 addfiles=%(klute)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
-addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+#addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+# rerun with more mc info
+addfiles=%(amarini)s/1.4.prong/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 
 ## Single Top
 addfiles=%(jan)s/%(tag)s/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8

@@ -77,6 +77,9 @@ class Weight : virtual public SmearableBase {
     void AddSplineSF(string label, double pt, double sf, double err);
     void AddCSVSF(string label, string filename);
 
+    void AddTF1SF(string label, string formula);
+    void AddTF2SF(string label, string formula);
+
     void clearSF( ){ sf_ =1.0;}
     void clearPU( ){ pu_ . clearTarget() ;};
     void SetPUTarget(string name) { pu_ . SetTarget( name ) ; } 
@@ -85,9 +88,7 @@ class Weight : virtual public SmearableBase {
     void SetPtEtaSF(string label,double pt , double eta);
     void SetWPSF(string label, int wp);
     void SetJetFlavorSF(string label, int flavor);
-    void ApplySF(string label){ 
-        sf_ *= sf_db[label] -> get(); 
-    }
+    void ApplySF(string label);
     inline bool ExistSF(string label){ if (sf_db.find(label) != sf_db.end() ) return true; else return false; }
 
     // --- PU Reweight
@@ -129,6 +130,8 @@ class Weight : virtual public SmearableBase {
     // 
 	void Log(const string& function, const string& level, const string& message) const;
 };
+
+
 
 #endif
 // Local Variables:

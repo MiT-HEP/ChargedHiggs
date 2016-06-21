@@ -102,6 +102,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // Fill Inverted Iso
     Tau *tInv = e->GetTauInvIso(0);
 
+    e->ApplyTopReweight();
+    e->ApplyWReweight();
     #ifdef VERBOSE
     if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is Tau? "<< (t==NULL) <<endl;
     if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is TauInv? "<< (tInv == NULL)<<endl;
@@ -208,6 +210,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     if (t!=NULL and direct.passAll() ) 
     {
+            //if ( not e->IsRealData()) e->ApplySF("btag");
             #ifdef VERBOSE
             if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG", "is tau pass full selection");
             #endif
@@ -279,6 +282,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         }
 
         if (inverse.passAll()) { // FULL SELECTION
+            //if ( not e->IsRealData()) e->ApplySF("btag");
             #ifdef VERBOSE
             if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG","is tauInv full selection");
             #endif

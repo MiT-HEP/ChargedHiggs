@@ -64,7 +64,8 @@ void Fitter::init(){
     if(w_==NULL) w_ = new RooWorkspace("w","workspace") ;
 
     if(mh_==NULL) mh_ = new RooRealVar("MH","MH",200,500);
-    if(x_==NULL) x_ = new RooRealVar("Mt","Mt",xmin,xmax);
+    if(x_==NULL) x_ = new RooRealVar("mt","mt",xmin,xmax);
+    mh_->setConstant();
 
 
     // * take TH1F and make RooDataHist
@@ -176,7 +177,7 @@ void Fitter::init(){
 
         RooArgList normList(*eaSpline,*xsSpline);
         string normFormula="@0*@1 * (1.";
-        int count=1;
+        int count=2;
 
         for(auto& syst: systIn) // compute norm difference for syst
         {
@@ -192,7 +193,8 @@ void Fitter::init(){
             splines_[ eaName ] = eaSpline;
             w_ -> import ( *eaSpline ,RecycleConflictNodes() );
             normList.add( *eaSpline);
-            normFormula += Form( "+@%d*@%d",++count ) ;
+            normFormula += Form( "+@%d*@%d",count ,count+1) ;
+            count +=2;
 
             RooRealVar *vSyst = new RooRealVar(syst.c_str(),syst.c_str(),0); // var for syst shift
             normList.add(*vSyst);

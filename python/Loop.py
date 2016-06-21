@@ -207,6 +207,10 @@ for key in sfdb:
 		loop.AddSplineSF(label,key['pt'],key['sf'],key['err'])
 	if key['type'] == 'csv':
 		loop.AddCSVSF(label, key['filename'])
+	if key['type'] == 'tf1':
+		loop.AddTF1SF(label, key['formula'])
+	if key['type'] == 'tf2':
+		loop.AddTF2SF(label, key['formula'])
 	if 'veto' in key:
 		if opts.verbose: print "  * setting veto for",label
 		sf = loop.GetSF(label).SetVeto()

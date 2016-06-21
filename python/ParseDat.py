@@ -262,7 +262,8 @@ def ReadMCDB(file):
 				scales.append(float(l.split(' ')[current]))
 				current+=1
 		  
-
+		if label in R :
+			print "WARNING: Duplicate label",label
 		R[label] = (dir,entries,xsec,scales,pdfs)
 	return R
 
@@ -340,6 +341,11 @@ def ReadSFDB(file,verbose=False):
 
 		elif type == 'csv':
 			R['filename'] = l.split(' ' )[2]
+			sf=0.0 ## ignored
+			err=0.0 ## ignored
+
+		elif type == 'tf1' or type=='tf2':
+			R['formula'] = l.split(' ' )[2]
 			sf=0.0 ## ignored
 			err=0.0 ## ignored
 

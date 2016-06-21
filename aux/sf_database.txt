@@ -56,3 +56,9 @@ tauLeg13p json-sami aux/tauLegTriggerEfficiency2015_13prong.json
 tauLeg1p json-sami aux/tauLegTriggerEfficiency2015_1prong.json
 metLegBtagLoose json-sami aux/metLegTriggerEfficiency2015_btagLoose.json
 metLegBtagMedium json-sami aux/metLegTriggerEfficiency2015_btagMedium.json
+#######################
+### top reweighting ###
+#######################
+topreweight tf2 TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137*y))
+wreweight tf1 1./(1.1003+4.23574e-06*x+1.35084e-06*x*x)
+###

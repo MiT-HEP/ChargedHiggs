@@ -32,7 +32,6 @@ QCD-1000-1400 /store/user/amarini/Nero/v1.4/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV
 QCD-1800-2400 /store/user/amarini/Nero/v1.4/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/QCD-1800-2400/160513_175836/0000 393760.0 0.113953207984
 QCD-3200-Inf /store/user/amarini/Nero/v1.4/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/QCD-3200-Inf/160513_175917/0000 391108.0 0.000200342332318
 #TT-powheg-ext3 /store/user/amarini/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160513_180234/0000 94495075.0 831
-W3Jets-madgraph /store/user/amarini/Nero/v1.4/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/W3Jets-madgraph/160513_180322/0000 7205063.0 939.461425781
 ## NNLO
 #WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160513_180301/0000 3.73197735021e+12 61526.7
 WWTo2L2Nu-powheg /store/user/amarini/Nero/v1.4/WWTo2L2Nu_13TeV-powheg/WWTo2L2Nu-powheg/160513_180345/0000 1979988.0 12.46
@@ -50,7 +49,10 @@ WWToLNuQQ /store/user/amarini/Nero/v1.4/WWToLNuQQ_13TeV-powheg/WWToLNuQQ/160513_
 #TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160513_180234/0000 94495075.0 831
 #TT-powheg-ext3 /store/user/amarini/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160520_195211/0000 75862400.0 831
 # this is the sum of the previous two
-TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160520_195211/0000 170357475.0 831
+# sum of klute + v1.4
+#TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160520_195211/0000 170357475.0 831
+## sum of klute + v1.4.prong
+TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160520_195211/0000 180390675.0 831
 #WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160513_180301/0000 3.73197735021e+12 40472.4644846
 WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160520_195401/0000 2.98163086304e+13 61526.7
 ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8 /store/user/jaeyserm/Nero/v1.4/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8/160521_081438/0000 29044072.1216 10.32

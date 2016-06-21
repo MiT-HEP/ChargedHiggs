@@ -120,18 +120,20 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon){
     if (direct and not muon) t = e->GetTau(0); 
     else if(not muon) t = e->GetTauInvIso(0);
     else {
-        //Construct a fake tau
         Lepton*m=e->GetMuon(0);
-        t=new Tau();
-        t->SetP4( m->GetP4() );
-        t-> iso =0;
-        t-> type =15;
-        t-> iso2=0;
-        t-> id=1;
-        t-> id_ele=1;
-        t-> id_mu=1
-        t-> id_iso=1;
-        garbage.reset(t); // make sure it will be deleted
+        //Construct a fake tau
+        if (m!=NULL){
+            t=new Tau();
+            t->SetP4( m->GetP4() );
+            t-> iso =0;
+            t-> type =15;
+            t-> iso2=0;
+            t-> id=1;
+            t-> id_ele=1;
+            t-> id_mu=1;
+            t-> id_iso=1;
+            garbage.reset(t); // make sure it will be deleted
+        }
     }
 
     Object *sub = NULL;
@@ -143,7 +145,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon){
 
     //----------------- ONE TAU -------------
     if (  // pt 20, Iso 1.5
-         t->Pt()>= 50 and 
+         t->Pt()>= 60 and 
          fabs(t->Eta() ) <2.1
             ) cut.SetCutBit(OneTau) ;
 
@@ -180,8 +182,8 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon){
     // if (e->IsRealData() and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") )
     //     Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , Form("GREPMEAAA Found Data Event (%d,%d,%u) trigger by Tau+120 and not by Tau+80",e->runNum(),e->lumiNum(), e->eventNum()) ); 
    
-    //#warning "MET 100" 
-    if ( e->GetMet().Pt() >= 80 ) cut.SetCutBit(Met); // or PtUncorr
+    #warning "MET 100" 
+    if ( e->GetMet().Pt() >= 100 ) cut.SetCutBit(Met); // or PtUncorr
 
     double RbbMin= e->RbbMin(3,t);
     double RCollMin= e-> RCollMin(3,t);
@@ -204,8 +206,9 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     string label = GetLabel(e);
 
     if(e->weight() == 0. ) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
-
-
+    
+    e->ApplyTopReweight();
+    e->ApplyWReweight();
 
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Total,e->weight());
     Fill("ChargedHiggsTauNu/NOne/NTaus_"+label,systname, e->Ntaus() ,e->weight());
@@ -234,6 +237,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         e->SetPtEtaSF("metLegBtagMedium",e->GetMet().Pt(),0);
         e->ApplySF("metLegBtagMedium");
     }  
+
+    //if (cut.pass(OneBjet) and not e->IsRealData()) e->ApplySF("btag");
 
     if( cut.passAllUpTo( OneTau)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneTau,e->weight());
     if( cut.passAllUpTo(NoLep)     ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());

@@ -160,6 +160,10 @@ class Event{
     inline void SetJetFlavorSF(string label, int flavor){  weight_ -> SetJetFlavorSF(label,flavor);}
     void ApplySF(string label){ weight_ -> ApplySF(label) ; } 
     bool ExistSF(string label){ return weight_ -> ExistSF(label); }
+
+    // 
+    void ApplyTopReweight();
+    void ApplyWReweight();
 };
 
 #endif

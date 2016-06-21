@@ -103,6 +103,9 @@ class Looper{
         inline void AddCSVSF(string label, string filename){event_->GetWeight() ->AddCSVSF(label,filename);}
         inline void AddTh2fSF(string label, string filename){event_->GetWeight() ->AddTh2fSF(label,filename);}
 
+        inline void AddTF2SF(string label, string formula){event_->GetWeight() ->AddTF2SF(label,formula);}
+        inline void AddTF1SF(string label, string formula){event_->GetWeight() ->AddTF1SF(label,formula);}
+
         // -- PU Reweight
         inline void AddTarget( TH1*h, int runMin=-1, int runMax =-1,double lumi=-1){ event_ -> GetWeight() -> AddTarget(h,runMin,runMax,lumi);}
         inline void AddTarget( TH1*h, string systName, int runMin=-1, int runMax =-1,double lumi=-1){ event_ ->GetWeight() -> AddTarget(h,systName, runMin,runMax);}

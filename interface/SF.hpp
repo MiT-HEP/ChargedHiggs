@@ -24,7 +24,8 @@ class  SF : public Named{
         int syst;
         //
         virtual double get(){ 
-            if (veto_) return 1.0 - (sf + err*syst); else return sf + err*syst ; 
+            //                1.0 - DELTA
+            if (veto_) return 1.0 + 1.0 - (sf + err*syst); else return sf + err*syst ; 
         }
 
 
@@ -76,6 +77,52 @@ class SF_TH2F : virtual public SF_PtEta
 
 #include "TSpline.h"
 #include "TGraph.h"
+#include "TF1.h"
+#include "TF2.h"
+
+class SF_TF1 : virtual public SF
+{
+    private:
+        TF1 *f_sf_{0};
+        TF1 *f_err_{0};
+
+    public :
+        SF_TF1() : SF() {} 
+        void init(string formula,string errFormula="") 
+            {
+            f_sf_ =new TF1( ("SF_TF1"+ label).c_str(),formula.c_str(),0,1000);
+            if(errFormula!="") f_err_=new TF1(("SF_TF1_ERR_"+ label).c_str(), errFormula.c_str(),0,1000);
+            }
+        ~SF_TF1(){clear();}
+        
+        inline void clear(){delete f_sf_; delete f_err_; }
+
+        void set (double pt);
+        void print();
+        const string name() const {return "SF_TF1";}
+};
+
+class SF_TF2 : virtual public SF
+{
+    private:
+        TF2 *f_sf_{0};
+        TF2 *f_err_{0};
+
+    public :
+        SF_TF2() : SF() {} 
+        void init(string formula,string errFormula="") 
+            {
+            f_sf_ =new TF2( ("SF_TF2"+ label).c_str(),formula.c_str(),0,1000,0,1000);
+            if(errFormula!="") f_err_=new TF2(("SF_TF2_ERR_"+ label).c_str(), errFormula.c_str(),0,1000,0,1000);
+            }
+        ~SF_TF2(){clear();}
+        
+        inline void clear(){delete f_sf_; delete f_err_; }
+
+        void set (double x,double y);
+        void print();
+        const string name() const {return "SF_TF2";}
+};
 
 class SF_PtSpline : virtual public SF
 {
