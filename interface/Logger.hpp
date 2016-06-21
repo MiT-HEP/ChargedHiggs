@@ -19,12 +19,12 @@ public:
 	static Logger & getInstance(){  static Logger l ; return l;} // Singleton
 
     // ---
-    void Log(const Named*a ,const string & function, const string &level, const string & message)
+    inline void Log(const Named*a ,const string & function, const string &level, const string & message)
     {
         return Log(a->name(), function,level,message);
     }
 
-	void Log(const string& name,const string& function, const string & level, const string& message){
+	inline void Log(const string& name,const string& function, const string & level, const string& message){
 		cout <<"["<<name
 			<<"]::["<<function <<"]::["<<level<<"]: "
 			<<message<<endl;

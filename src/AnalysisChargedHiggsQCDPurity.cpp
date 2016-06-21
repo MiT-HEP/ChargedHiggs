@@ -102,6 +102,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // Fill Inverted Iso
     Tau *tInv = e->GetTauInvIso(0);
 
+    e->ApplyTopReweight();
+    e->ApplyWReweight();
     #ifdef VERBOSE
     if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is Tau? "<< (t==NULL) <<endl;
     if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is TauInv? "<< (tInv == NULL)<<endl;
@@ -122,13 +124,13 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     bool passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
     bool passInverseLoose=inverse.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
 
-    /*
-    bool passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::OneBjet);
-    bool passInverseLoose=inverse.passAllUpTo(ChargedHiggsTauNu::OneBjet);
+   /* 
+    passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::OneBjet);
+    passInverseLoose=inverse.passAllUpTo(ChargedHiggsTauNu::OneBjet);
     #warning QCD BJets
     LogN(__FUNCTION__,"WARNING","ONE B REQUIRED FOR QCD LOOSE",10);
     */
-
+    
     // check minimal selection: Three bjets
     if ( not passDirectLoose
          and not  passInverseLoose
@@ -139,6 +141,9 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     bool passPrescale=false;
     if (not e->IsRealData()) passPrescale=true;
     if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
+    //#warning MET80 TRigger in QCD
+    //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") ) passPrescale=true;
+    //LogN(__FUNCTION__,"WARNING","MET 80 in QCD Loose",10);
 
     if (t != NULL and passDirectLoose and passPrescale) // direct
     {
@@ -205,6 +210,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     if (t!=NULL and direct.passAll() ) 
     {
+            //if ( not e->IsRealData()) e->ApplySF("btag");
             #ifdef VERBOSE
             if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG", "is tau pass full selection");
             #endif
@@ -276,6 +282,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         }
 
         if (inverse.passAll()) { // FULL SELECTION
+            //if ( not e->IsRealData()) e->ApplySF("btag");
             #ifdef VERBOSE
             if (VERBOSE >0 ) Log(__FUNCTION__,"DEBUG","is tauInv full selection");
             #endif

@@ -478,6 +478,68 @@ Photon * Event::GetPhoton( int iPho )
     return phos_[ valid[iPho].second];
 }
 
+#include "interface/Logger.hpp"
+void Event::ApplyTopReweight(){
+    if( GetWeight() -> GetMC() . find("TT") == string::npos)
+    { // not ttbar sample
+        return;
+    }
+
+    if (not ExistSF("topreweight") )
+    {
+        Logger::getInstance().LogN("Event",__FUNCTION__,"WARNING","TOP SF DOES NOT EXIST",5);
+        return;
+    }
+
+    double pt1=-1,pt2=-1;
+    // look for gen particles
+    for(auto const &g : genparticles_)
+    {
+        if (g->GetPdgId() == 6 ) pt1 = g->Pt();
+        if (g->GetPdgId() == -6) pt2 = g->Pt();
+
+        if(pt1 >0 and pt2>0) break;
+    }
+
+    if (pt1<0 or pt2<0) 
+    {
+        Logger::getInstance().LogN("Event",__FUNCTION__,"WARNING",Form("I didn't find two tops for reweighting"),5);
+        return;
+    }
+
+    SetPtEtaSF("topreweight",pt1,pt2);
+
+    ApplySF("topreweight");
+}
+
+void Event::ApplyWReweight(){
+
+ #warning noWR
+     return ; 
+    //Logger::getInstance().LogN("Event",__FUNCTION__,"LOG","ApplyWReweight Macro called" + GetWeight() -> GetMC() ,5);
+
+    if( GetWeight() -> GetMC() . find("TT") == string::npos and
+            GetWeight() -> GetMC() . find("W0JetsToLNu") == string::npos and
+            GetWeight() -> GetMC() . find("W1JetsToLNu") == string::npos and 
+            GetWeight() -> GetMC() . find("W2JetsToLNu") == string::npos and 
+            GetWeight() -> GetMC() . find("W3JetsToLNu") == string::npos and 
+            GetWeight() -> GetMC() . find("W4JetsToLNu") == string::npos
+      )
+    { // not ttbar sample
+        return;
+    }
+
+    if (not ExistSF("wreweight") )
+    {
+        Logger::getInstance().LogN("Event",__FUNCTION__,"WARNING","TOP SF DOES NOT EXIST",5);
+        return;
+    }
+    
+    Logger::getInstance().LogN("Event",__FUNCTION__,"INFO","Top And W Reweighting",5);
+    SetPtEtaSF("wreweight",GetMet().Pt(),0.);
+    ApplySF("wreweight");
+
+}
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

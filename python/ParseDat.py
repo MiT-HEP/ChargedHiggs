@@ -1,4 +1,5 @@
 import os,sys,re
+import math
 from subprocess import call,check_output
 
 
@@ -151,15 +152,19 @@ def FindEOS(name,mount=""):
 	''' EOS PATH should be followed. The mount option will assume that eos is mounted in ~/eos '''
 	EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
 	# should match wildcard, that for some reason new root does not
-	if '/store/' not in name: return [name]
+	if '/store/' not in name and '/eos/user' not in name: return [name]
 	if '/eos/cms/store/' in name: return [name] # likely already parsed
 	if 'root://eoscms//' in name: return [name] # already parsed
+	if 'root://eosuser//' in name: return [name] # already parsed
 	if os.path.isfile(name): return [name] ## file exists
-
-	cmd = EOS + ' find -f ' + name
+	
+	userInstance=""
+	if '/eos/user' in name:
+		userInstance=" root://eosuser"
+	cmd = EOS + userInstance+ ' find -f ' + name
 	print "Runnig command:",cmd
 	list = check_output(cmd ,shell=True).split()
-
+	
 	# print removed
 	tot = len(list)
 	removed = [ f for f in list if '/failed/' in f ] 
@@ -169,9 +174,15 @@ def FindEOS(name,mount=""):
 	list = [ f  for f in list if '/failed/' not in f ]
 
 	if mount != "":
+		if userInstance != "": 
+			print "UNSUPPORTED: mount + instance"
+			raise ValueError
 		fileList = [ re.sub("/eos/cms", mount + "/cms",f) for f in list ]
 	else:
-		fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in list ]
+		if userInstance =="":
+			fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in list ]
+		else:
+			fileList = [ re.sub("/eos/user","root://eosuser///eos/user",f) for f in list ]
 
 	return fileList
 
@@ -251,10 +262,12 @@ def ReadMCDB(file):
 				scales.append(float(l.split(' ')[current]))
 				current+=1
 		  
-
+		if label in R :
+			print "WARNING: Duplicate label",label
 		R[label] = (dir,entries,xsec,scales,pdfs)
 	return R
 
+import json
 def ReadSFDB(file,verbose=False):
 	'''read and parse the SFDB file:
 	    \t\t### LABEL type -- -- --- --- 
@@ -325,10 +338,62 @@ def ReadSFDB(file,verbose=False):
 		elif type == 'base':
 			sf  = float ( l.split(' ') [2] )
 			err = float ( l.split(' ') [3] )
+
 		elif type == 'csv':
 			R['filename'] = l.split(' ' )[2]
 			sf=0.0 ## ignored
 			err=0.0 ## ignored
+
+		elif type == 'tf1' or type=='tf2':
+			R['formula'] = l.split(' ' )[2]
+			sf=0.0 ## ignored
+			err=0.0 ## ignored
+
+		elif type == 'json-sami':
+			R['filename'] = l.split(' ')[2]
+			R['type'] = 'pteta'
+			try: 
+			   jstring = open(R['filename']).read()
+			except IOError as e:
+			   print "-> Error in reading SF",R['filename']
+			   raise e
+		        j=json.loads( jstring )
+			"dataParameters"
+			"mcParameters"
+			run="runs_256629_260627"
+			runMC="2015D"
+			for idx,params in enumerate(j["dataParameters"][run]["bins"]):
+				R["pt1"] =params["pt"] 
+				if len(j["dataParameters"][run]["bins"]) > idx+1:
+					next=j["dataParameters"][run]["bins"][idx+1]
+					R["pt2"] = next["pt"]
+				else:
+					R["pt2"] = 8000.
+				R["eta1"] =  -10
+				R["eta2"] = 10
+				effD = params["efficiency"]
+				## TODO: implement Asymm
+				errD = params["uncertaintyPlus"]
+				mc=j["mcParameters"][runMC]["bins"]
+				effMc= mc[idx]["efficiency"]
+				errMc = mc[idx]["uncertaintyPlus"] 
+
+				if effMc == 0. : continue # bin not well populated
+
+				try:
+					R["sf"] = effD/effMc
+					R["err"] = math.sqrt((errD/effD)**2 + (errMc/effMc)**2)* R["sf"]
+				except ZeroDivisionError:
+					R["sf"] =1.0
+					R["err"] =0.0
+
+				print "  * Loading SF: ",R["pt1"],R["pt2"]," -- ",R["sf"],"+/-",R["err"]
+				R1={} ## copy 
+				for key in R: R1[key] = R[key]
+				L.append(R1)
+			R=None
+			continue ## lines loop
+			 
 		else:
 			print "sf",label,"of type",type,"not supported in the sf database"
 		R['sf'] =sf

@@ -17,6 +17,7 @@ parser.add_option("-p","--pileup",dest="pu",type="string",help="TODO FIXME")
 (opts,args)=parser.parse_args()
 
 EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
+if '/eos/user' in opts.eos: EOS += " root://eosuser"
 
 if opts.rec:
 	cmd = EOS +" find -d "+opts.eos
@@ -55,7 +56,10 @@ cmd = EOS+ " find -f " + opts.eos
 
 outputList = check_output(cmd,shell=True)
 fileList0 = outputList.split() ## change lines into list
-fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in fileList0 if '/failed/' not in f ]
+if '/eos/user' in opts.eos:
+	fileList = [ re.sub("/eos/user","root://eosuser///eos/user",f) for f in fileList0 if '/failed/' not in f ]
+else:
+	fileList = [ re.sub("/eos/cms","root://eoscms//",f) for f in fileList0 if '/failed/' not in f ]
 
 import ROOT as r
 r.gROOT.SetBatch()

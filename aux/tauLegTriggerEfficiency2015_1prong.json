@@ -1,0 +1,104 @@
+{
+  "_timestamp":   "Generated on Fri Jun  3 11:30:38 2016 by HiggsAnalysis/NtupleAnalysis/src/TriggerEfficiency/work/PythonWriter.py",
+  "_rootVersion": "6.04/14",
+  "dataParameters": {
+      "runs_256629_260627": {
+          "era": "2015D",
+          "firstRun"  :256629,
+          "lastRun"   :260627,
+          "luminosity": 2164.976,
+          "bins" : [
+             {
+               "pt"              :20.0,
+               "efficiency"      :0.0383858267717,
+               "uncertaintyPlus" :0.00701870803835,
+               "uncertaintyMinus":0.00603628610577
+             },
+             {
+               "pt"              :30.0,
+               "efficiency"      :0.0929668552951,
+               "uncertaintyPlus" :0.00900629583581,
+               "uncertaintyMinus":0.00831628541876
+             },
+             {
+               "pt"              :40.0,
+               "efficiency"      :0.278321678322,
+               "uncertaintyPlus" :0.0177719018987,
+               "uncertaintyMinus":0.0171265041201
+             },
+             {
+               "pt"              :50.0,
+               "efficiency"      :0.633333333333,
+               "uncertaintyPlus" :0.027573452608,
+               "uncertaintyMinus":0.0284260646535
+             },
+             {
+               "pt"              :60.0,
+               "efficiency"      :0.827433628319,
+               "uncertaintyPlus" :0.025737881013,
+               "uncertaintyMinus":0.0288818508983
+             },
+             {
+               "pt"              :80.0,
+               "efficiency"      :0.910256410256,
+               "uncertaintyPlus" :0.0325010049195,
+               "uncertaintyMinus":0.0449901343323
+             },
+             {
+               "pt"              :100.0,
+               "efficiency"      :0.882352941176,
+               "uncertaintyPlus" :0.0456587756637,
+               "uncertaintyMinus":0.0636560481649
+             }
+          ]
+      }
+  },
+  "mcParameters": {
+      "2015D": {
+          "bins" : [
+             {
+               "pt"              :20.0,
+               "efficiency"      :0.0434705305758,
+               "uncertaintyPlus" :0.0125983897557,
+               "uncertaintyMinus":0.0125983897557
+             },
+             {
+               "pt"              :30.0,
+               "efficiency"      :0.03693114895,
+               "uncertaintyPlus" :0.00782855797077,
+               "uncertaintyMinus":0.00782855797077
+             },
+             {
+               "pt"              :40.0,
+               "efficiency"      :0.203602766514,
+               "uncertaintyPlus" :0.0212497676856,
+               "uncertaintyMinus":0.0212497676856
+             },
+             {
+               "pt"              :50.0,
+               "efficiency"      :0.703204750364,
+               "uncertaintyPlus" :0.0409718500387,
+               "uncertaintyMinus":0.0409718500387
+             },
+             {
+               "pt"              :60.0,
+               "efficiency"      :0.878918799707,
+               "uncertaintyPlus" :0.0367686894186,
+               "uncertaintyMinus":0.0367686894186
+             },
+             {
+               "pt"              :80.0,
+               "efficiency"      :0.808495607105,
+               "uncertaintyPlus" :0.106085984447,
+               "uncertaintyMinus":0.106085984447
+             },
+             {
+               "pt"              :100.0,
+               "efficiency"      :0.809875106231,
+               "uncertaintyPlus" :0.109437735741,
+               "uncertaintyMinus":0.109437735741
+             }
+          ]
+      }
+  }
+}

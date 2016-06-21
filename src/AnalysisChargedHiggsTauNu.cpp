@@ -1,6 +1,7 @@
 #include "interface/AnalysisChargedHiggsTauNu.hpp"
 #include "interface/GeneralFunctions.hpp"
 #include "interface/Logger.hpp" // for static functions
+#include <memory>
 
 void ChargedHiggsTauNu::Init()
 {
@@ -108,28 +109,48 @@ void ChargedHiggsTauNu::Init()
 
 }
 
-unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
+unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon){
     CutSelector cut;
     cut.SetMask(MaxCut-1);
     cut.SetCutBit(Total);
 
-    Tau *t =NULL;
-    if (direct) t = e->GetTau(0);
-    else  t = e->GetTauInvIso(0);
+    std::unique_ptr<Tau> garbage; //if created will be deleted
 
-    Tau *sub = NULL;
-    if (direct) sub = e->GetTau(1);
+    Tau *t =NULL;
+    if (direct and not muon) t = e->GetTau(0); 
+    else if(not muon) t = e->GetTauInvIso(0);
+    else {
+        Lepton*m=e->GetMuon(0);
+        //Construct a fake tau
+        if (m!=NULL){
+            t=new Tau();
+            t->SetP4( m->GetP4() );
+            t-> iso =0;
+            t-> type =15;
+            t-> iso2=0;
+            t-> id=1;
+            t-> id_ele=1;
+            t-> id_mu=1;
+            t-> id_iso=1;
+            garbage.reset(t); // make sure it will be deleted
+        }
+    }
+
+    Object *sub = NULL;
+    if (direct and not muon) sub = e->GetTau(1);
+    if (muon) sub=e->GetMuon(1);
 
     if (t== NULL) return cut.raw();
     if (sub != NULL) return cut.raw(); //multiple taus
 
     //----------------- ONE TAU -------------
     if (  // pt 20, Iso 1.5
-         t->Pt()>= 50 and 
+         t->Pt()>= 60 and 
          fabs(t->Eta() ) <2.1
             ) cut.SetCutBit(OneTau) ;
 
-    if ( e->Nleps() == 0 ) cut.SetCutBit(NoLep);
+    if ( e->Nleps() == 0 and not muon) cut.SetCutBit(NoLep);
+    if ( muon  and e->Nleps() ==1) cut.SetCutBit(NoLep);;
 
     // ---- At least 3 jets
     if ( direct and e->Njets() >=3 ) cut.SetCutBit(ThreeJets);
@@ -154,14 +175,15 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct){
     //Uncorr Pt does not include met phi corrections, and Tau Nu regression
     //if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
     //if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
-    if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
+    if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
+    else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
     //if ( e->IsTriggered("HLT_PFMET120_NoiseCleaned_BtagCSV0p72"))  cut.SetCutBit(Trigger);
 
     // if (e->IsRealData() and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") )
     //     Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , Form("GREPMEAAA Found Data Event (%d,%d,%u) trigger by Tau+120 and not by Tau+80",e->runNum(),e->lumiNum(), e->eventNum()) ); 
    
-    //#warning "MET 130" 
-    if ( e->GetMet().Pt() >= 80 ) cut.SetCutBit(Met); // or PtUncorr
+    #warning "MET 100" 
+    if ( e->GetMet().Pt() >= 100 ) cut.SetCutBit(Met); // or PtUncorr
 
     double RbbMin= e->RbbMin(3,t);
     double RCollMin= e-> RCollMin(3,t);
@@ -184,7 +206,9 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     string label = GetLabel(e);
 
     if(e->weight() == 0. ) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
-
+    
+    e->ApplyTopReweight();
+    e->ApplyWReweight();
 
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Total,e->weight());
     Fill("ChargedHiggsTauNu/NOne/NTaus_"+label,systname, e->Ntaus() ,e->weight());
@@ -195,6 +219,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     cut.SetMask(MaxCut-1) ;
     cut.SetCut( Selection(e,true) );
 
+    //Log(__FUNCTION__,"DEBUG","Analyze event with syst "+ systname + Form(" Njets=%d NB=%d PassAll=%d cuts=%s", e->Njets(),e->Bjets() ,cut.passAll(), ChargedHiggs::printBinary(cut.raw()).c_str() ));
+
     if ( cut.pass(NoLep) and not e->IsRealData() ){
         // SF for Veto
         GenParticle * gp  = e->GetGenElectron(0,2.4);
@@ -202,7 +228,17 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         if (gp != NULL and gp->Pt() > 15) {e->SetPtEtaSF("eleveto",gp->Pt(),fabs(gp->Eta())); e->ApplySF("eleveto");}  // this should be SC-eta, some how propagated
         //TODO Muon
     }
-    
+ 
+    //#warning no sf  trigger
+    if (cut.pass(Trigger) and not e->IsRealData()) {
+        if( not e->ExistSF("tauLeg13p") ) Log(__FUNCTION__,"WARING" ,"No Tau Trigger SF");  
+        if( t!=NULL){ e->SetPtEtaSF("tauLeg13p",t->Pt(),t->Eta()); e->ApplySF("tauLeg13p");}
+        if( not e->ExistSF("metLegBtagMedium") ) Log(__FUNCTION__,"WARING" ,"No Tau metLegBtagMedium SF");  
+        e->SetPtEtaSF("metLegBtagMedium",e->GetMet().Pt(),0);
+        e->ApplySF("metLegBtagMedium");
+    }  
+
+    //if (cut.pass(OneBjet) and not e->IsRealData()) e->ApplySF("btag");
 
     if( cut.passAllUpTo( OneTau)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneTau,e->weight());
     if( cut.passAllUpTo(NoLep)     ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());
@@ -337,6 +373,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         e->ApplySF("tauid"); // only in MC
 
         //if(e->IsRealData() and (systname=="NONE" or systname=="")) Log(__FUNCTION__,"SYNC",Form("%d,%d,%ld",e->runNum(),e->lumiNum(),e->eventNum()) );
+        //
 
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoQ_"+label,systname, e->MtDecoQ() ,e->weight());

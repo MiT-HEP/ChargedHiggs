@@ -189,6 +189,10 @@ if opts.resubmit:
 		joblist = run
 	elif opts.joblist.lower() == 'pend' :
 		joblist = pend
+	elif opts.joblist.lower() == 'done' :
+		joblist = done
+	elif opts.joblist.lower() == 'all' :
+		joblist = pend + run + fail + done
 	else:
 		joblist = opts.joblist.split(',')
 
@@ -313,7 +317,7 @@ if True:
 	fileList=[]
 	for f in config['Files']:
 		list=[]
-		if '/store/' in f:
+		if '/store/' or '/eos/user' in f:
 			if opts.hadoop:
 				list = FindHadoop( f ) 
 			elif opts.mount:

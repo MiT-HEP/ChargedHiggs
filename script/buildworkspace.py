@@ -122,8 +122,8 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 
 ### BKG ###
 ######### import mc based background contributions
-#systs=["BTAG","JES","TAU"]
-systs=["BTAG","TAU"]
+systs=["BTAG","JES","TAU","TRIG","TRIGMET"]
+#systs=["BTAG","TAU"]
 if opts.nosyst: systs=[]
 
 systBkg=[""]
@@ -156,19 +156,19 @@ for syst in systBkg:
    #	datacard.write("\n")
 
 ################# Import SIGNAL CONTRIBUTIONS ##############
-systs=["BTAG","TAU"]
+systs=["BTAG","TAU","JES","TRIG","TRIGMET"]
 if opts.nosyst: systs=[]
 systSig=[""]
 for shift in ["Up","Down"]: 
 	for s in systs: 
 		systSig.append(s + shift)
 
-print "#########################"
-print "     FIX MH POINTS       "
-print "#########################"
+## print "#########################"
+## print "     FIX MH POINTS       "
+## print "#########################"
 for syst in systSig:
- #for sigMH in [ 200,250,300,350,400,500]:
- for sigMH in [ 200,350,400,500]:
+ for sigMH in [ 200,220,250,300,350,400,500]:
+ #for sigMH in [ 200,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
 	if opts.ncat==1:
@@ -197,8 +197,8 @@ if opts.qcd != "":
 
    if fInQCD == None: print "<*> NO QCD File '%s'"%opts.qcd
 
-   #systs=["BTAG","RFAC","JES"]
-   systs=["BTAG","RFAC"]
+   systs=["BTAG","RFAC"] ## no JES here
+   #systs=["BTAG","RFAC"]
    if opts.nosyst: systs=[]
    systQCD=[""]
    for shift in ["Up","Down"]: 
@@ -273,42 +273,63 @@ datacard.write("\n")
 ############ SYST########
 datacard.write("-------------------------------------\n")
 
+def writeNormSyst(name="lumi",value="1.027", regexp=".*"):
+	########## LUMI ###
+	datacard.write(name+"\tlnN")
+	invert=False
+	if regexp != "" and regexp[0] == '!':
+		invert=True
+		regexp=regexp[1:]
+
+	for cat in range(0,opts.ncat):
+	   for proc in mcAll:
+		match=re.search(regexp,proc)
+		if (match and not invert) or (not match and invert):
+		   datacard.write("\t"+value)
+		else:
+		   datacard.write("\t-")
+	datacard.write("\n")
+
+if opts.qcd=="":
+	writeNormSyst("lumi","1.027","")
+else:
+	writeNormSyst("lumi","1.027","!QCD")
 ########## LUMI ###
-datacard.write("lumi\tlnN")
-for cat in range(0,opts.ncat):
-   for proc in mcAll:
-	if proc=="QCD" and opts.qcd!="":
-	   datacard.write("\t-")
-	else:
-	   datacard.write("\t1.027")
-datacard.write("\n")
+### datacard.write("lumi\tlnN")
+### for cat in range(0,opts.ncat):
+###    for proc in mcAll:
+### 	if proc=="QCD" and opts.qcd!="":
+### 	   datacard.write("\t-")
+### 	else:
+### 	   datacard.write("\t1.027")
+### datacard.write("\n")
 
 if opts.nosyst: 
 	w.writeToFile(opts.output)
 	print " --- DONE --- "
 	exit(0)
 
-########## RFAC ###############
-if opts.qcd != "":
-   datacard.write("RFAC shape")
-   #RFACUp RFACDown
-   for proc in mcAll:
-	if proc=="QCD":
-	   datacard.write("\t1")
-	else:
-	   datacard.write("\t-")
-   datacard.write("\n")
-########## BTAG ###############
-datacard.write("BTAG shape")
-syst="BTAG"
-for proc in mcAll:
-	if proc=="QCD":
-		if opts.qcd !="" and syst in systQCD:
-        		datacard.write("\t1")
-		else: datacard.write("\t-")
-	else:
-        	datacard.write("\t1")
-datacard.write("\n")
+########### RFAC ###############
+##if opts.qcd != "":
+##   datacard.write("RFAC shape")
+##   #RFACUp RFACDown
+##   for proc in mcAll:
+##	if proc=="QCD":
+##	   datacard.write("\t1")
+##	else:
+##	   datacard.write("\t-")
+##   datacard.write("\n")
+############ BTAG ###############
+##datacard.write("BTAG shape")
+##syst="BTAG"
+##for proc in mcAll:
+##	if proc=="QCD":
+##		if opts.qcd !="" and syst in systQCD:
+##        		datacard.write("\t1")
+##		else: datacard.write("\t-")
+##	else:
+##        	datacard.write("\t1")
+##datacard.write("\n")
 ############ JES ###############
 ##datacard.write("JES shape")
 ##syst="JES"
@@ -332,16 +353,69 @@ datacard.write("\n")
 #        	datacard.write("\t1")
 #datacard.write("\n")
 ########## TAU ###############
-datacard.write("TAU shape")
-syst="TAU"
-for proc in mcAll:
-	if proc=="QCD":
-		if opts.qcd !="" and syst in systQCD:
-        		datacard.write("\t1")
-		else: datacard.write("\t-")
-	else:
-        	datacard.write("\t1")
-datacard.write("\n")
+##datacard.write("TAU shape")
+##syst="TAU"
+##for proc in mcAll:
+##	if proc=="QCD":
+##		if opts.qcd !="" and syst in systQCD:
+##        		datacard.write("\t1")
+##		else: datacard.write("\t-")
+##	else:
+##        	datacard.write("\t1")
+##datacard.write("\n")
+
+def writeSyst(syst="JES"):
+	datacard.write(syst+" shape")
+	for proc in mcAll:
+		if proc=="QCD":
+			if opts.qcd !="" and syst + "Up"  in systQCD:
+	        		datacard.write("\t1")
+			else: datacard.write("\t-")
+		elif proc in mcList :
+			if syst + "Up" in systBkg:
+	        		datacard.write("\t1")
+			else:
+	        		datacard.write("\t-")
+		elif proc == "Hplus" :
+			if syst + "Up" in systSig:
+	        		datacard.write("\t1")
+			else:
+	        		datacard.write("\t-")
+		else:
+			print "DONT KNOW WHAT TO DO WITH proc=",proc,"syst=",syst
+	datacard.write("\n")
+
+### write shape syst
+writeSyst('JES')
+writeSyst('JER')
+writeSyst('TAU')
+writeSyst('BTAG')
+writeSyst('RFAC')
+writeSyst('TRIG')
+writeSyst('TRIGMET')
+## write norm syst
+writeNormSyst("TTSCALE","0.965/1.024","TT")
+writeNormSyst("TTPDF","1.042","TT")
+writeNormSyst("TTMASS","1.027","TT")
+
+writeNormSyst("STSCALE","0.977/1.028","ST")
+writeNormSyst("STPDF","1.026","ST")
+writeNormSyst("STMASS","1.022","ST")
+
+writeNormSyst("DYSCALE","0.9963/1.0065","DY")
+writeNormSyst("DYPDF","1.037","DY")
+
+writeNormSyst("WJetsSCALE","0.996/1.008","WJets")
+writeNormSyst("WJetsPDF","1.0375","WJets")
+
+writeNormSyst("WWSCALE","1.025","WW")
+writeNormSyst("WWPDF","1.022","WW")
+
+writeNormSyst("WZSCALE","1.032","WZ")
+writeNormSyst("WZPDF","1.044","WZ")
+
+writeNormSyst("ZZSCALE","1.031","ZZ")
+writeNormSyst("ZZPDF","1.037","ZZ")
 
 #fOut=ROOT.TFile.Open(opts.output,"RECREATE")
 w.writeToFile(opts.output)

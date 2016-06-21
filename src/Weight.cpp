@@ -107,6 +107,31 @@ void Weight::AddTh2fSF(string label, string filename)
     sf_db[label] = p;
 }
 
+void Weight::AddTF1SF(string label, string formula)
+{
+    if (sf_db.find(label) != sf_db.end() )
+    {
+        Log(__FUNCTION__,"ERROR","SF "+ label +" already exists in the database. Not supported for TF1.");
+        return;
+    }
+    SF_TF1 *p = new SF_TF1();
+    p -> label = label; // before formula
+    p -> init(formula);
+    sf_db[label] = p;
+}
+void Weight::AddTF2SF(string label, string formula)
+{
+    if (sf_db.find(label) != sf_db.end() )
+    {
+        Log(__FUNCTION__,"ERROR","SF "+ label +" already exists in the database. Not supported for TF2.");
+        return;
+    }
+    SF_TF2 *p = new SF_TF2();
+    p -> label = label; // before formula
+    p -> init(formula);
+    sf_db[label] = p;
+}
+
 
 void Weight::resetSystSF(){
     for (auto o : sf_db)
@@ -121,13 +146,17 @@ void Weight::SetPtEtaSF(string label,double pt, double eta)
     SF_PtEta *p =  dynamic_cast<SF_PtEta*> ( sf_db[label] );
     SF_PtSpline *p2 =  dynamic_cast<SF_PtSpline*> ( sf_db[label] );
     SF_CSV *p3 =  dynamic_cast<SF_CSV*> ( sf_db[label] );
+    SF_TF1 *p4 =  dynamic_cast<SF_TF1*> ( sf_db[label] );
+    SF_TF2 *p5 =  dynamic_cast<SF_TF2*> ( sf_db[label] );
 
-    if (p == NULL and p2 == NULL and p3==NULL)
+    if (p == NULL and p2 == NULL and p3==NULL and p4== NULL and p5==NULL)
         Log(__FUNCTION__,"ERROR", " SF '" + label + "' is not Pt Eta dependent or pt spline, or csv" );
 
     if (p) p->set(pt,eta);
     if (p2) p2->set(pt);
     if (p3) p3->set(pt,eta);
+    if (p4) p4->set(pt);
+    if (p5) p5->set(pt,eta);
     return;
 }
 
@@ -189,6 +218,16 @@ string Weight::LoadMCbyDir( string dir )	 // return "" if failed otherwise label
     LoadMC(label);
     return label;
 }
+
+void Weight::ApplySF(string label){
+        if (sf_db[label] -> get() < 1e-5) 
+        {
+            Log(__FUNCTION__,"WARNING",Form("SF for %s is very little: %f",label.c_str(),sf_db[label] -> get() ));
+            return;
+        }
+        sf_ *= sf_db[label] -> get(); 
+    }
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

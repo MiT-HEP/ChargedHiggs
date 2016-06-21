@@ -70,7 +70,7 @@ style = line
 fillcolor=ROOT.kRed-4
 fillstyle=1000
 color=ROOT.kBlack
-label=TTJets
+label=Single~Top
 scale=2308
 width=2
 

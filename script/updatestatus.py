@@ -31,6 +31,7 @@ while True:
 	index.write("<!DOCTYPE html>\n")
 	index.write("<html>\n")
 	index.write("<h1> Status </h1>\n")
+	index.write('<meta http-equiv="refresh" content="5" />\n')
 	
 	index.write('''<style type="text/css">
 	progress[value] {
