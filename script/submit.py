@@ -420,6 +420,8 @@ if not opts.hadoop:
 
 	if opts.tar:
 		sh.write("mkdir -p $WORKDIR/%s_%d\n"%(opts.dir,iJob))
+		sh.write("cd $WORKDIR\n")
+		sh.write("ln -s %s_%d/interface ./"%(opts.dir,iJob))
 		sh.write("cd $WORKDIR/%s_%d\n"%(opts.dir,iJob))
 		#sh.write('LD_LIBRARY_PATH=${PWD}:${PWD}/bin:$LD_LIBRARY_PATH\n') ## TODO: test
 		sh.write("tar -xzf %s/package.tar.gz\n"%(basedir ))
