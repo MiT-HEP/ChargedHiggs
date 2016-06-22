@@ -3,6 +3,7 @@
 
 #include "interface/Object.hpp"
 #include "interface/Trigger.hpp"
+#include "interface/Smearable.hpp"
 
 class Lepton : virtual public Object,
     virtual public Trigger

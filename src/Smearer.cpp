@@ -110,6 +110,28 @@ int SmearPdfs::smear(Event*e)
     return SMEAR_OK;
 }
 
+int SmearTauScale::smear(Event *e)
+{
+    // only on data apply Jes
+    //if( not e->IsRealData() ) return SMEAR_NA;
+    TLorentzVector metSystShift;
+
+    for (auto t : GetTaus(e))
+    {
+        t->syst = syst_;
+    }
+
+
+    // this is not const like in e->GetMet()
+    //#warning NO MET IN JES
+    GetMet(e) . syst = syst_;
+    GetMet(e) . SetSmearType(Smearer::TAUESCALE);
+    
+    if ( not GetMet(e) . IsFilled() ) Log(__FUNCTION__,"WARNING","JES Smearing not filled in MET");
+
+    return SMEAR_OK;
+}
+
 
 // Local Variables:
 // mode:c++

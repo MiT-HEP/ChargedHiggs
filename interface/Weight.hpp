@@ -77,8 +77,8 @@ class Weight : virtual public SmearableBase {
     void AddSplineSF(string label, double pt, double sf, double err);
     void AddCSVSF(string label, string filename);
 
-    void AddTF1SF(string label, string formula);
-    void AddTF2SF(string label, string formula);
+    void AddTF1SF(string label, string formula,string errFormula);
+    void AddTF2SF(string label, string formula,string errFormula);
 
     void clearSF( ){ sf_ =1.0;}
     void clearPU( ){ pu_ . clearTarget() ;};

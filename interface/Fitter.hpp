@@ -1,6 +1,8 @@
 #ifndef FITTER_H
 #define FITTER_H
 
+#ifdef HAVE_COMBINE
+
 // --- STD ---
 #include <string>
 #include <vector>
@@ -94,6 +96,8 @@ class Fitter : virtual public BaseFitter{
     map<string,float> initPars_;
 
 };
+
+#endif
 
 #endif
 

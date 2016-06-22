@@ -371,6 +371,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if (cut.passAll() ) 
     {
         e->ApplySF("tauid"); // only in MC
+        e->ApplySF("tauid2"); // only in MC
 
         //if(e->IsRealData() and (systname=="NONE" or systname=="")) Log(__FUNCTION__,"SYNC",Form("%d,%d,%ld",e->runNum(),e->lumiNum(),e->eventNum()) );
         //

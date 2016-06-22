@@ -387,6 +387,22 @@ void LoadNero::FillMet(){
     //event_ -> met_ . SetValueDown(Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesDown]) -> Pt() );
     event_-> met_ . SetFilled(Smearer::JES);
 
+    // ---- TAU SCALE
+    BareTaus *bt = dynamic_cast<BareTaus*> ( bare_ [ names_[ "BareTaus" ] ] ); assert (bt !=NULL);
+    TLorentzVector tauUp, tauDown;
+    tauUp  = *(TLorentzVector*)(*met -> p4) [0];
+    tauDown= *(TLorentzVector*)(*met -> p4) [0];
+    for (int iTau=0;iTau< bt -> p4 ->GetEntries() ; ++iTau)  
+    {
+        TLorentzVector delta;
+        delta.SetPtEtaPhiE(  1.03 * ((TLorentzVector*)(*bt->p4)[iTau])->Pt(), ((TLorentzVector*)(*bt->p4)[iTau])->Eta(), ((TLorentzVector*)(*bt->p4)[iTau])->Phi(), ((TLorentzVector*)(*bt->p4)[iTau])->E() * 1.03);
+        tauUp += delta;
+        tauDown -= delta;
+    }
+    event_ -> met_ . SetValueUp  (Smearer::TAUESCALE , tauUp.Pt() ); 
+    event_ -> met_ . SetValueDown(Smearer::TAUESCALE , tauDown.Pt() );
+    event_-> met_ . SetFilled(Smearer::TAUESCALE);
+
     //Log(__FUNCTION__,"DEBUG",Form("Met=%f MetJesUp=%f",((TLorentzVector*)(*met -> p4) [0])->Pt() , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt()));
 
     //Log(__FUNCTION__,"DEBUG","Going to Fill Jer MET");

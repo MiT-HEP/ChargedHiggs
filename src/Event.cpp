@@ -514,9 +514,17 @@ void Event::ApplyTopReweight(){
 
 void Event::ApplyWReweight(){
 
- #warning noWR
-     return ; 
+// #warning noWR
+//     return ; 
     //Logger::getInstance().LogN("Event",__FUNCTION__,"LOG","ApplyWReweight Macro called" + GetWeight() -> GetMC() ,5);
+    /*if (
+            GetWeight() -> GetMC() . find("W0JetsToLNu") != string::npos or
+            GetWeight() -> GetMC() . find("W1JetsToLNu") != string::npos or 
+            GetWeight() -> GetMC() . find("W2JetsToLNu") != string::npos or 
+            GetWeight() -> GetMC() . find("W3JetsToLNu") != string::npos or 
+            GetWeight() -> GetMC() . find("W4JetsToLNu") != string::npos
+       ){ ApplySF("wreweight2");}
+    */
 
     if( GetWeight() -> GetMC() . find("TT") == string::npos and
             GetWeight() -> GetMC() . find("W0JetsToLNu") == string::npos and
@@ -536,7 +544,8 @@ void Event::ApplyWReweight(){
     }
     
     Logger::getInstance().LogN("Event",__FUNCTION__,"INFO","Top And W Reweighting",5);
-    SetPtEtaSF("wreweight",GetMet().Pt(),0.);
+    //SetPtEtaSF("wreweight",GetMet().Pt(),0.);
+    SetPtEtaSF("wreweight",Ht(),0.);
     ApplySF("wreweight");
 
 }

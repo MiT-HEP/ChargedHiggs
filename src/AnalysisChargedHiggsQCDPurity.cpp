@@ -85,6 +85,12 @@ void ChargedHiggsQCDPurity::Init()
             Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),1000,0.,1000.);
             Book( none + "EtMissIsoInv"+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),1000,0.,1000.);
             Book( none + "EtMiss"+"_"+ l  , ("EtMiss "+ l).c_str(),1000,0.,1000.); // copy of the Tau Nu ? 
+
+        Book(    none+"RbbMin_"+l,"RbbMin "+l+";R_{bb}^{min}",100,0,2*TMath::Pi());
+        Book(    none+"RCollMin_"+l,"RCollMin "+l+";R_{coll}^{min}",100,0,2*TMath::Pi());
+
+        Book(    none+"RbbMinIsoInv_"+l,"RbbMin IsoInv "+l+";R_{bb}^{min}",100,0,2*TMath::Pi());
+        Book(    none+"RCollMinIsoInv_"+l,"RCollMin IsoInv "+l+";R_{coll}^{min}",100,0,2*TMath::Pi());
     }
 
 }
@@ -208,6 +214,16 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill( none + "EtMiss" +"_"+label,systname, e->GetMet().Pt(), e->weight() );
         }
 
+    if (t!=NULL and direct.passAllExcept(ChargedHiggsTauNu::AngRbb) ) 
+        {
+            Fill( none + "RbbMin" +"_"+label,systname, e->RbbMin(), e->weight() );
+        }
+
+    if (t!=NULL and direct.passAllExcept(ChargedHiggsTauNu::AngColl) ) 
+        {
+            Fill( none + "RCollMin" +"_"+label,systname, e->RCollMin(), e->weight() );
+        }
+
     if (t!=NULL and direct.passAll() ) 
     {
             //if ( not e->IsRealData()) e->ApplySF("btag");
@@ -265,6 +281,16 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill( none + "EtMissIsoInv" +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
 
         }
+
+        if (inverse.passAllExcept(ChargedHiggsTauNu::AngRbb) ) 
+            {
+                Fill( none + "RbbMin" +"_"+label,systname, e->RbbMin(3,tInv), e->weight() );
+            }
+
+        if (inverse.passAllExcept(ChargedHiggsTauNu::AngColl) ) 
+            {
+                Fill( none + "RCollMin" +"_"+label,systname, e->RCollMin(3,tInv), e->weight() );
+            }
 
         // remove trigger & met
         unsigned mymask =  0 ;
