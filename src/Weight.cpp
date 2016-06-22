@@ -107,7 +107,7 @@ void Weight::AddTh2fSF(string label, string filename)
     sf_db[label] = p;
 }
 
-void Weight::AddTF1SF(string label, string formula)
+void Weight::AddTF1SF(string label, string formula,string errFormula)
 {
     if (sf_db.find(label) != sf_db.end() )
     {
@@ -116,10 +116,10 @@ void Weight::AddTF1SF(string label, string formula)
     }
     SF_TF1 *p = new SF_TF1();
     p -> label = label; // before formula
-    p -> init(formula);
+    p -> init(formula,errFormula);
     sf_db[label] = p;
 }
-void Weight::AddTF2SF(string label, string formula)
+void Weight::AddTF2SF(string label, string formula,string errFormula)
 {
     if (sf_db.find(label) != sf_db.end() )
     {
@@ -128,7 +128,7 @@ void Weight::AddTF2SF(string label, string formula)
     }
     SF_TF2 *p = new SF_TF2();
     p -> label = label; // before formula
-    p -> init(formula);
+    p -> init(formula,errFormula);
     sf_db[label] = p;
 }
 

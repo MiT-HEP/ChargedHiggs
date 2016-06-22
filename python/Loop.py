@@ -208,9 +208,9 @@ for key in sfdb:
 	if key['type'] == 'csv':
 		loop.AddCSVSF(label, key['filename'])
 	if key['type'] == 'tf1':
-		loop.AddTF1SF(label, key['formula'])
+		loop.AddTF1SF(label, key['formula'],key['errFormula'])
 	if key['type'] == 'tf2':
-		loop.AddTF2SF(label, key['formula'])
+		loop.AddTF2SF(label, key['formula'],key['errFormula'])
 	if 'veto' in key:
 		if opts.verbose: print "  * setting veto for",label
 		sf = loop.GetSF(label).SetVeto()

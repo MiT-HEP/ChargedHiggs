@@ -50,6 +50,7 @@ btag csv aux/CSVv2.csv
 eleveto th2f aux/CutBasedID_VetoWP_76X_18Feb.txt_SF2D.root veto
 ## POG Tau
 tauid base 1.0 0.06
+tauid2 tf1 1.0 1.0+0.0002*x
 ## trigger
 tauLeg3p json-sami aux/tauLegTriggerEfficiency2015_3prong.json
 tauLeg13p json-sami aux/tauLegTriggerEfficiency2015_13prong.json
@@ -60,5 +61,11 @@ metLegBtagMedium json-sami aux/metLegTriggerEfficiency2015_btagMedium.json
 ### top reweighting ###
 #######################
 topreweight tf2 TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137*y))
-wreweight tf1 1./(1.1003+4.23574e-06*x+1.35084e-06*x*x)
+#wreweight tf1 1./(1.1003+4.23574e-06*x+1.35084e-06*x*x)
+#
+##recoil
+#wreweight tf1 9.43894e-01+1.52030e+00*TMath::Exp(-x*2.22628e-02) 
 ###
+#ht
+#wreweight tf1 1.14898-4.60339e-04*x+2.24492e-07*x*x
+wreweight tf1 9.36537e-01+8.31558e-05*x-2.76664e-07*x*x

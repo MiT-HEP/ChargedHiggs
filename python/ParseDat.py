@@ -346,6 +346,8 @@ def ReadSFDB(file,verbose=False):
 
 		elif type == 'tf1' or type=='tf2':
 			R['formula'] = l.split(' ' )[2]
+			try: R['errFormula'] = l.split(' ')[3]
+			except: R['errFormula']=''
 			sf=0.0 ## ignored
 			err=0.0 ## ignored
 

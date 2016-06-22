@@ -29,6 +29,7 @@ class SmearBase : public Named {
         // ---
         virtual int smear(Event *e){return 0;}; // 0 = success; 1 not applicable to the event
         virtual inline vector<Jet*> &GetJets(Event *e){return e->jets_;}
+        virtual inline vector<Tau*> &GetTaus(Event *e){return e->taus_;}
         virtual inline Met &GetMet(Event *e){return e->met_;}
 };
 
@@ -43,6 +44,13 @@ class SmearJes : virtual public SmearBase
 {
     public:
         SmearJes() : SmearBase(){ name_ = "JES";}
+        virtual int smear(Event*e);	
+};
+
+class SmearTauScale : virtual public SmearBase
+{
+    public:
+        SmearTauScale() : SmearBase(){ name_ = "TAUSCALE";}
         virtual int smear(Event*e);	
 };
 

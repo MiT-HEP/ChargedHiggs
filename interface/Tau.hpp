@@ -4,17 +4,20 @@
 #include "interface/Lepton.hpp"
 #include "interface/GenParticle.hpp"
 #include "interface/Trigger.hpp"
+#include "interface/Smearable.hpp"
 
 class Event;
 
 class Tau: virtual public Object,
     virtual public Lepton,
-    virtual public Trigger
+    virtual public Trigger,
+    virtual public SmearableBase
 {
     float etacut_; 
     bool doEleRej_;
     bool doMuRej_;
     int rematch_ {-1};
+    float escale_{0.03};
 
 
     public:
@@ -33,6 +36,10 @@ class Tau: virtual public Object,
     virtual int IsTau() const ;
     virtual int IsTauInvIso() const ;
     inline int IsObject() const override{ return IsTau(); }
+    inline float Pt() const override {
+        if (syst==0)return p4.Pt() ;
+        else return (p4.Pt() * (1.0+syst*escale_));
+    }
 
     // Return 15 = tau, 21 = Gluon, 1-4 = UDSC (maybe only 1) 
     // 0 no match
@@ -45,6 +52,7 @@ class Tau: virtual public Object,
     virtual void clearSyst(){
         Lepton::clearSyst(); 
         Object::clearSyst();
+        syst=0;
         }
 
     // --- REGRESSION 

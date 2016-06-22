@@ -6,7 +6,7 @@ namespace Smearer{
     enum smearType{
         JES=0,
         JER,
-        TAU,
+        TAUESCALE,
         NONE
     };
 
