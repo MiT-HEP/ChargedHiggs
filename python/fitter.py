@@ -94,6 +94,8 @@ if opts.classname== "Fitter" and doSyst:
 	## only in normalization, no shape morphing
 	fitter.systIn.push_back("JES");
 	fitter.systIn.push_back("TAU");
+	fitter.systIn.push_back("TAUHIGHPT");
+	fitter.systIn.push_back("TAUSCALE");
 	fitter.systIn.push_back("BTAG");
 	fitter.systIn.push_back("TRIG");
 	fitter.systIn.push_back("TRIGMET");

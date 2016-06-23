@@ -87,6 +87,7 @@ addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W3JetsToLNu_TuneCUETP8M1_13TeV-madg
 addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 
 addfiles=/store/user/amarini/Nero/%(tag)s/Tau
+addfiles=/store/user/amarini/Nero/v1.4.aele/Tau-Run2015C
 ####
 
 #__________________________________________________________________

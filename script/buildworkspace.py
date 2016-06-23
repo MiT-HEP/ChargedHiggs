@@ -122,7 +122,7 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 
 ### BKG ###
 ######### import mc based background contributions
-systs=["BTAG","JES","TAU","TRIG","TRIGMET"]
+systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
 #systs=["BTAG","TAU"]
 if opts.nosyst: systs=[]
 
@@ -156,7 +156,7 @@ for syst in systBkg:
    #	datacard.write("\n")
 
 ################# Import SIGNAL CONTRIBUTIONS ##############
-systs=["BTAG","TAU","JES","TRIG","TRIGMET"]
+systs=["BTAG","TAU","JES","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
 if opts.nosyst: systs=[]
 systSig=[""]
 for shift in ["Up","Down"]: 
@@ -393,6 +393,8 @@ writeSyst('BTAG')
 writeSyst('RFAC')
 writeSyst('TRIG')
 writeSyst('TRIGMET')
+writeSyst('TAUHIGHPT')
+writeSyst('TAUSCALE')
 ## write norm syst
 writeNormSyst("TTSCALE","0.965/1.024","TT")
 writeNormSyst("TTPDF","1.042","TT")
