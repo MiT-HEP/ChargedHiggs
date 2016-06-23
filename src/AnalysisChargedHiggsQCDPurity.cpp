@@ -284,12 +284,12 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
         if (inverse.passAllExcept(ChargedHiggsTauNu::AngRbb) ) 
             {
-                Fill( none + "RbbMin" +"_"+label,systname, e->RbbMin(3,tInv), e->weight() );
+                Fill( none + "RbbMinIsoInv" +"_"+label,systname, e->RbbMin(3,tInv), e->weight(false) );
             }
 
         if (inverse.passAllExcept(ChargedHiggsTauNu::AngColl) ) 
             {
-                Fill( none + "RCollMin" +"_"+label,systname, e->RCollMin(3,tInv), e->weight() );
+                Fill( none + "RCollMinIsoInv" +"_"+label,systname, e->RCollMin(3,tInv), e->weight(false) );
             }
 
         // remove trigger & met

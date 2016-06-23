@@ -1,7 +1,6 @@
 #ifndef FITTER_H
 #define FITTER_H
 
-#ifdef HAVE_COMBINE
 
 // --- STD ---
 #include <string>
@@ -32,9 +31,8 @@ using namespace std;
 //using namespace RooFit;
 class RooSpline1D;
 
+
 #include "interface/BaseFitter.hpp"
-
-
 
 class Fitter : virtual public BaseFitter{
     /* Original Author: Andrea C. Marini 
@@ -42,8 +40,6 @@ class Fitter : virtual public BaseFitter{
      * This class provide an interface to create 
      * smooth workspace for combine
      */
-
-    // private members end with _
     //
     RooWorkspace *w_{0};
     RooRealVar *mh_{0}; // truth
@@ -57,6 +53,8 @@ class Fitter : virtual public BaseFitter{
     map<string, RooSpline1D*> splines_;
     // save RooRealVars used for fit
     map<string, RooRealVar*> vars_;
+
+    float lastMass{-10}; //last Mass point fitted
 
     public:
     string datasetMask_ ;
@@ -97,7 +95,6 @@ class Fitter : virtual public BaseFitter{
 
 };
 
-#endif
 
 #endif
 
