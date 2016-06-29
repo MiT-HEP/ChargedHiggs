@@ -27,6 +27,7 @@ obj  = ewk,tt,st,qcdinvisocorr
 
 [data]
 rebin=10
+blind=50,1000
 
 [ewk]
 rebin=10

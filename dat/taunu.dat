@@ -6,3 +6,4 @@ config=ChargedHiggsTauNu|AddLabel('DY')
 addConfig=ChargedHiggsTauNu|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-350_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo')
 addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('QCD'),AddLabel('WJets')
 addConfig=ChargedHiggsTauNu|AddLabel('ST')
+addConfig=ChargedHiggsTauNu|unblind=1

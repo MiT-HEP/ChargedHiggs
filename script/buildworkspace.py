@@ -120,6 +120,61 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 
 	return
 
+def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w is global as arglist_obs and argset_obs and rebin
+	''' It is not working properly. Limits are better'''
+	if tfile == None:
+		print "<*> File not exists"
+	h = tfile.Get(name)
+
+	if h == None:
+		print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetName())
+		raise Exception("No Such Histogram")
+
+	if opts.rebin >0 :
+		h.Rebin(opts.rebin)
+
+	for name2,c in add:
+		h_tmp=tfile.Get(name2)
+		if h_tmp==None:
+			print "<*> Unable to find '%s' in '%s': Ignoring it!"%(name2,tfile.GetTitle())
+			continue
+		h_tmp.Scale(c)
+		h.Add(h_tmp)
+
+	if h.Integral() <= 0.: 
+		print " Integral for hist '%s' is null"%name
+		print "FIXME implement a negligible shape with constrain"
+		return
+	else:
+		print "Normalization for '%s' is %e"%(name,h.Integral())
+	
+	## ---ZERO ---
+	for i in range(0,h.GetNbinsX()):
+		if h.GetBinContent(i+1)<0: h.SetBinContent(i+1,0)
+
+	hup=h.Clone(h.GetName() +"_STATUp")
+	hdn=h.Clone(h.GetName() +"_STATDown")
+
+	for i in range(0,h.GetNbinsX()):
+		hup.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+		hdn.SetBinContent(i+1, h.GetBinContent(i+1) - h.GetBinError(i+1) )
+
+	roo_mc_up = ROOT.RooDataHist("hist_"+target+"_"+syst+"Up",target,arglist_obs,hup)
+	pdf_mc_up = ROOT.RooHistPdf(target+"_"+syst+"Up", target+"_"+syst+"Up",argset_obs, roo_mc_up)
+	roo_mc_dn = ROOT.RooDataHist("hist_"+target+"_"+syst+"Down",target,arglist_obs,hdn)
+	pdf_mc_dn = ROOT.RooHistPdf(target +"_"+syst+"Down", target+"_"+syst+"Down",argset_obs, roo_mc_dn)
+
+	## NORM
+	getattr(w,'import')(pdf_mc_up,ROOT.RooCmdArg())
+	w.factory(target +"_"+syst+"Up"+ "_norm[%e]"% hup.Integral())
+	g.extend([hup,roo_mc_up,pdf_mc_up])
+
+	getattr(w,'import')(pdf_mc_dn,ROOT.RooCmdArg())
+	w.factory(target +"_"+syst+"Up"+ "_norm[%e]"% hdn.Integral())
+	g.extend([hdn,roo_mc_dn,pdf_mc_dn])
+
+	return
+
 ### BKG ###
 ######### import mc based background contributions
 systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
@@ -148,6 +203,7 @@ for syst in systBkg:
 	target="pdf_cat%d_"%cat + mc + systName
 	print "*** Considering MC=",mc,"cat=",cat,"syst=",syst,"target=",target
 	ImportPdfFromTH1(fIn,lastget,target )
+	ImportPdfStatUncFromTH1(fIn, lastget,mc+"STAT", target)
 
    #if syst=="":
    #	datacard.write("shapes %s *\t"%mc + opts.output)
@@ -223,6 +279,7 @@ if opts.qcd != "":
 	target="pdf_inviso_cat%d_QCD"%cat + systName
 	print "*** Considering QCD","syst=",syst,"target=",target
 	ImportPdfFromTH1(fInQCD, lastget,target ,addlist)
+	ImportPdfStatUncFromTH1(fInQCD, lastget,"QCDSTAT", target,addlist)
 
    datacard.write("shapes QCD *\t"+opts.output)
    datacard.write("\tw:"+"pdf_inviso_$CHANNEL_QCD" )
@@ -367,7 +424,12 @@ if opts.nosyst:
 def writeSyst(syst="JES"):
 	datacard.write(syst+" shape")
 	for proc in mcAll:
-		if proc=="QCD":
+		if 'STAT' in syst:
+			if proc in re.sub('STAT','',syst):
+	        		datacard.write("\t1")
+			else:
+	        		datacard.write("\t-")
+		elif proc=="QCD":
 			if opts.qcd !="" and syst + "Up"  in systQCD:
 	        		datacard.write("\t1")
 			else: datacard.write("\t-")
@@ -395,6 +457,11 @@ writeSyst('TRIG')
 writeSyst('TRIGMET')
 writeSyst('TAUHIGHPT')
 writeSyst('TAUSCALE')
+##
+## write STAT syst
+for mc in mcAll:
+ 	if 'Hplus' in mc: continue
+ 	writeSyst(mc+'STAT')
 ## write norm syst
 writeNormSyst("TTSCALE","0.965/1.024","TT")
 writeNormSyst("TTPDF","1.042","TT")

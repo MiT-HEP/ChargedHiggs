@@ -34,7 +34,8 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
     if ( not passLoose) return EVENT_NOT_USED;
     Fill( dir + "EtMiss_Loose_" + label,systname,e->GetMet().Pt(),e->weight() );
 
-    if (muon.passAllExcept(ChargedHiggsTauNu::Met) ) 
+#warning Muon90EWKPurity
+    if (muon.passAllExcept(ChargedHiggsTauNu::Met) and e->GetMuon(0)->Pt() >90) 
     {
     	Fill( dir + "EtMiss_Full_" + label,systname,e->GetMet().Pt(),e->weight() );
     	Fill( dir + "HT_Full_" + label,systname,e->Ht(),e->weight() );

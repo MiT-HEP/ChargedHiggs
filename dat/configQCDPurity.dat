@@ -26,4 +26,5 @@ addConfig=ChargedHiggsQCDPurity|PtBins.push_back(70),PtBins.push_back(80),PtBins
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(125),PtBins.push_back(150),PtBins.push_back(175),PtBins.push_back(200)
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(250),PtBins.push_back(500),PtBins.push_back(750),PtBins.push_back(1000)
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(8000)
+addConfig=ChargedHiggsQCDPurity|unblind=1
 

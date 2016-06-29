@@ -139,8 +139,12 @@ for mass in drange(opts.begin,opts.end,opts.step):
 	if opts.nosyst: combine += " -S 0 "
 	combine += "  --cminDefaultMinimizerType=Minuit2 "
 	#combine += " -H ProfileLikelihood " ## hint, it's not working
-	if opts.exp : combine += " --run=expected --expectSignal=1 --expectSignalMass="+str(mass) + " "
-	combine += " --rMax=%f "%opts.rmax
+	if opts.exp and  opts.method=="MultiDimFit": combine += " -t -1 --expectSignal=1 --expectSignalMass="+str(mass) + " "
+	elif opts.exp : combine += " -t -1 --run=expected --expectSignal=1 --expectSignalMass="+str(mass) + " "
+
+	if opts.method=="MultiDimFit": combine += " --algo=grid  --points=100 --firstPoint=0 --lastPoint=49 --squareDistPoi --rMin=-1 --rMax=10. "
+
+	if not opts.method=="MultiDimFit": combine += " --rMax=%f "%opts.rmax ## already taken into account
 	combine += datacard
 	sh.write( combine + "\n" )
 	sh.write('EXITCODE=$?\n')

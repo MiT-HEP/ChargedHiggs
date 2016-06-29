@@ -426,6 +426,38 @@ for idx in range(0, len(list_exp) ) :
 	if idx==0:
 		leg.AddEntry(list_oneSigma[idx], "1 #sigma","FL") 
 		leg.AddEntry(list_twoSigma[idx], "2 #sigma","FL") 
+
+##### PRINT TABLE LATEX
+doTable=True
+if doTable:
+	tex=open(opts.outname +".tex","w")
+	print>>tex, "\\begin{tabular}{lcccccc}"
+	print>>tex, "\\hlinewd{1.2pt}"
+	print>>tex, "\\multirow{2}{*}{$m_\\textup{H}$ [GeV]} & \\multicolumn{5}{c}{Expected Limits} & \multirow{2}{*}{Observed limit} \\\\"
+	print>>tex, "\\cline{2-6}"
+	print>>tex,"& $-2\\sigma$ & $-1\\sigma$ & median  & $1\\sigma$ & $2\\sigma$ & \\\\"
+	print>>tex, "\\hline"
+	for i in range(0,list_exp[0].GetN()):
+		print>>tex, "%.0f"%list_exp[0].GetX()[i],"&",
+		print>>tex, "%.2f"%(list_twoSigma[0].GetY()[i]-list_twoSigma[0].GetEYlow()[i]),
+		print>>tex, "&",
+		print>>tex, "%.2f"%(list_oneSigma[0].GetY()[i]-list_oneSigma[0].GetEYlow()[i]),
+		print>>tex, "&",
+		print>>tex, "%.2f"%list_exp[0].GetY()[i], ## median
+		print>>tex, "&",
+		print>>tex, "%.2f"%(list_oneSigma[0].GetY()[i]+list_oneSigma[0].GetEYhigh()[i]),
+		print>>tex, "&",
+		print>>tex, "%.2f"%(list_twoSigma[0].GetY()[i]+list_twoSigma[0].GetEYhigh()[i]),
+		print>>tex, "&",
+		if opts.unblind:
+			print>>tex, "%.2f"%list_data[0].GetY()[i], ## data
+		else:
+			print>>tex, "-", ## nothing
+		print>>tex, "\\\\"
+	print>>tex, "\\hlinewd{1.2pt}"
+	print>>tex, "\\end{tabular}"
+########
+
 if opts.xsec:
 	leg.AddEntry(exp8TeV, "expected (8TeV)","L")
 	leg.AddEntry(obs8TeV, "observed (8TeV)","PL")
