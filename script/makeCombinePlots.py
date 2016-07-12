@@ -275,8 +275,8 @@ for idx,f in enumerate(opts.file.split(',')):
 		oneSigma.SetLineStyle(2)
 		twoSigma.SetLineStyle(2)
 		
-		oneSigma.SetFillColor(ROOT.kGreen)
-		twoSigma.SetFillColor(ROOT.kYellow)
+		oneSigma.SetFillColor(ROOT.kGreen+1)
+		twoSigma.SetFillColor(ROOT.kOrange)
 
 		### PRINT MORE ##
 		if opts.unblind:
@@ -325,18 +325,18 @@ for idx,f in enumerate(opts.file.split(',')):
 	list_oneSigma.append(oneSigma)
 	list_twoSigma.append(twoSigma)
 
-if opts.xsec:
-	exp8TeV, obs8TeV= EigthTeVGraph()
-
-	exp8TeV.SetLineColor(ROOT.kRed+2)
-	exp8TeV.SetLineStyle(7)
-	exp8TeV.SetFillStyle(0)
-
-	obs8TeV.SetMarkerColor(ROOT.kRed+2)
-	obs8TeV.SetLineColor(ROOT.kRed+2)
-	obs8TeV.SetMarkerSize(0.8)
-	obs8TeV.SetMarkerStyle(21)
-	obs8TeV.SetFillStyle(0)
+#if opts.xsec:
+#	exp8TeV, obs8TeV= EigthTeVGraph()
+#
+#	exp8TeV.SetLineColor(ROOT.kRed+2)
+#	exp8TeV.SetLineStyle(7)
+#	exp8TeV.SetFillStyle(0)
+#
+#	obs8TeV.SetMarkerColor(ROOT.kRed+2)
+#	obs8TeV.SetLineColor(ROOT.kRed+2)
+#	obs8TeV.SetMarkerSize(0.8)
+#	obs8TeV.SetMarkerStyle(21)
+#	obs8TeV.SetFillStyle(0)
 
 ## Start Drawing
 c=ROOT.TCanvas()
@@ -344,7 +344,7 @@ c=ROOT.TCanvas()
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 
-dummy = ROOT.TH1D("dummy","dummy",1000, 0, 1000)
+dummy = ROOT.TH1D("dummy","dummy",1000, 0, 2000)
 dummy.GetXaxis().SetRangeUser(200,900)
 dummy.GetYaxis().SetRangeUser(1e2,1e8)
 
@@ -387,14 +387,14 @@ for idx in range(0,len(list_exp) ):
 
 line.Draw("L SAME")
 
-if opts.xsec:
-	exp8TeV.Draw("L SAME")
-	obs8TeV.Draw("PL SAME")
-	l2= ROOT.TLatex()
-	l2.SetTextSize(0.03)
-	l2.SetTextColor(ROOT.kRed+2)
-	l2.SetTextAlign(22)
-	l2.DrawLatex(600,0.08,"19.7 fb^{-1} (8 TeV)")
+#if opts.xsec:
+#	exp8TeV.Draw("L SAME")
+#	obs8TeV.Draw("PL SAME")
+#	l2= ROOT.TLatex()
+#	l2.SetTextSize(0.03)
+#	l2.SetTextColor(ROOT.kRed+2)
+#	l2.SetTextAlign(22)
+#	l2.DrawLatex(600,0.08,"19.7 fb^{-1} (8 TeV)")
 
 
 dummy.Draw("AXIS SAME")
@@ -424,8 +424,8 @@ for idx in range(0, len(list_exp) ) :
 	leg.AddEntry(list_exp[idx], label, "L" )
 	
 	if idx==0:
-		leg.AddEntry(list_oneSigma[idx], "1 #sigma","FL") 
-		leg.AddEntry(list_twoSigma[idx], "2 #sigma","FL") 
+		leg.AddEntry(list_oneSigma[idx], "1 s.d.","FL") 
+		leg.AddEntry(list_twoSigma[idx], "2 s.d.","FL") 
 
 ##### PRINT TABLE LATEX
 doTable=True
@@ -458,9 +458,9 @@ if doTable:
 	print>>tex, "\\end{tabular}"
 ########
 
-if opts.xsec:
-	leg.AddEntry(exp8TeV, "expected (8TeV)","L")
-	leg.AddEntry(obs8TeV, "observed (8TeV)","PL")
+#if opts.xsec:
+#	leg.AddEntry(exp8TeV, "expected (8TeV)","L")
+#	leg.AddEntry(obs8TeV, "observed (8TeV)","PL")
 
 leg.Draw()
 

@@ -81,8 +81,8 @@ void ChargedHiggsQCDPurity::Init()
 
         }
         // I don't need to split it by pt
-            Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),1000,0.,1000); // same binning in TauNu
-            Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),1000,0.,1000.);
+            Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),8000,0.,8000); // same binning in TauNu
+            Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),8000,0.,8000.);
             Book( none + "EtMissIsoInv"+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),1000,0.,1000.);
             Book( none + "EtMiss"+"_"+ l  , ("EtMiss "+ l).c_str(),1000,0.,1000.); // copy of the Tau Nu ? 
 
@@ -145,7 +145,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection
     bool passPrescale=false;
-    if (not e->IsRealData()) passPrescale=true;
+    //if (not e->IsRealData()) passPrescale=true;
     if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
     //#warning MET80 TRigger in QCD
     //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") ) passPrescale=true;
@@ -205,7 +205,9 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
     }
 
-
+    // not in the LOOSE --- BTAG SF, only MC
+    //#warning no-btag-sf
+    if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
     // -------------------------- FULL SELECTION -----------------------------------------------
     
     // N minus one direct

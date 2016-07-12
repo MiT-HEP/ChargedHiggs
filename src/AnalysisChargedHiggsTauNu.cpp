@@ -45,6 +45,8 @@ void ChargedHiggsTauNu::Init()
 
         Book(    "ChargedHiggsTauNu/NOne/NBjets_"+l,"NBjets "+l + ";Number of selected b jets",1000,0,1000);
 
+        Book(    "ChargedHiggsTauNu/NOne/Bdiscr_"+l,"BDiscr "+l + ";Btag Discr",1000,-2,2);
+
         Book(    "ChargedHiggsTauNu/NOne/Bjet1Pt_"+l,"Bjet1Pt "+l+"p_{T}^{b-tagged jet} [GeV]",1000,0,1000);
 
         Book(    "ChargedHiggsTauNu/NOne/Bjet1Eta_"+l,"Bjet1Eta "+l+";#eta^{b-tagged jet} [GeV]",100,-5,5);
@@ -96,14 +98,9 @@ void ChargedHiggsTauNu::Init()
         /**********************************************
          *                   MT                       *
          **********************************************/
-        Book(    "ChargedHiggsTauNu/Vars/Mt_"+l,"Mt "+l + ";m_{T} [GeV]",1000,0,1000); // the Vars directory contains the full selection
+        Book(    "ChargedHiggsTauNu/Vars/Mt_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
 
         // Study NLO Positive and negative shapes for interpolation and subtraction
-        if (l == "WJets" or l == "DY")
-        {
-            Book(    "ChargedHiggsTauNu/Vars/Mt_wPlus_"+l,"Mt "+l,1000,0,1000);
-            Book(    "ChargedHiggsTauNu/Vars/Mt_wMinus_"+l,"Mt "+l,1000,0,1000);
-        }
 
     }
 
@@ -149,7 +146,15 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon){
          fabs(t->Eta() ) <2.1
             ) cut.SetCutBit(OneTau) ;
 
-    if ( e->Nleps() == 0 and not muon) cut.SetCutBit(NoLep);
+    bool lepVeto=false;
+    if (e->Nleps() ==0 ) lepVeto=true;
+    else if( e->GetMuon(0) == NULL){ // no 10 GeV muon
+        
+        if (e->GetElectron(0) !=NULL and e->GetElectron(0)->Pt() <15) lepVeto=true; // pt ordered
+    
+    }
+
+    if ( lepVeto and not muon) cut.SetCutBit(NoLep);
     if ( muon  and e->Nleps() ==1) cut.SetCutBit(NoLep);;
 
     // ---- At least 3 jets
@@ -161,16 +166,17 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon){
     if ( not direct and e->BjetsInvIso() >=1 ) cut.SetCutBit(OneBjet) ;
 
     // apply bjets sf -- TEST FIXME
-    if ( cut.pass(OneBjet)) {
-        //if( not e->ExistSF("btag") ){ Log(__FUNCTION__, "WARNING" , "no btag SF" ); } 
-        if( not e->ExistSF("btag") ){ Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , "no btag SF" ); } 
-        if (direct)
-            e->SetPtEtaSF("btag",e->GetBjet(0)->Pt(), e->GetBjet(0)->Eta() );
-        else
-            e->SetPtEtaSF("btag",e->GetBjetInvIso(0)->Pt(), e->GetBjetInvIso(0)->Eta() );
-        e->SetWPSF("btag",1); // medium, for sf
-        e->SetJetFlavorSF("btag",0);
-    }
+    //if ( cut.pass(OneBjet)) {
+    //    //if( not e->ExistSF("btag") ){ Log(__FUNCTION__, "WARNING" , "no btag SF" ); } 
+    //    if( not e->ExistSF("btag") ){ Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , "no btag SF" ); } 
+    //    if (direct)
+    //        e->SetPtEtaSF("btag",e->GetBjet(0)->Pt(), e->GetBjet(0)->Eta() );
+    //    else
+    //        e->SetPtEtaSF("btag",e->GetBjetInvIso(0)->Pt(), e->GetBjetInvIso(0)->Eta() );
+    //    //e->SetWPSF("btag",1); // medium, for sf
+    //    e->SetWPSF("btag",0); // loose, for sf
+    //    e->SetJetFlavorSF("btag",0);
+    //}
 
     //Uncorr Pt does not include met phi corrections, and Tau Nu regression
     //if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
@@ -182,7 +188,6 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon){
     // if (e->IsRealData() and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") )
     //     Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , Form("GREPMEAAA Found Data Event (%d,%d,%u) trigger by Tau+120 and not by Tau+80",e->runNum(),e->lumiNum(), e->eventNum()) ); 
    
-    #warning "MET 100" 
     if ( e->GetMet().Pt() >= 100 ) cut.SetCutBit(Met); // or PtUncorr
 
     double RbbMin= e->RbbMin(3,t);
@@ -223,10 +228,17 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     if ( cut.pass(NoLep) and not e->IsRealData() ){
         // SF for Veto
-        GenParticle * gp  = e->GetGenElectron(0,2.4);
-        if (not e->ExistSF("eleveto")) Log(__FUNCTION__,"WARNING","No eleveto SF"); //FIXME Remove this line, may be slow
-        if (gp != NULL and gp->Pt() > 15) {e->SetPtEtaSF("eleveto",gp->Pt(),fabs(gp->Eta())); e->ApplySF("eleveto");}  // this should be SC-eta, some how propagated
-        //TODO Muon
+        {
+            GenParticle * gp  = e->GetGenElectron(0,2.4);
+            if (not e->ExistSF("eleveto")) Log(__FUNCTION__,"WARNING","No eleveto SF"); //FIXME Remove this line, may be slow
+            if (gp != NULL and gp->Pt() > 15) {e->SetPtEtaSF("eleveto",gp->Pt(),fabs(gp->Eta())); e->ApplySF("eleveto");}  // this should be SC-eta, some how propagated
+        }
+        //Muon
+        {
+            GenParticle * gp  = e->GetGenMuon(0,2.4);
+            if (not e->ExistSF("muveto")) Log(__FUNCTION__,"WARNING","No muveto SF"); //FIXME Remove this line, may be slow
+            if (gp != NULL and gp->Pt() > 10) {e->SetPtEtaSF("muveto",gp->Pt(),fabs(gp->Eta())); e->ApplySF("muveto");}  // this should be SC-eta, some how propagated
+        }
     }
  
     //#warning no sf  trigger
@@ -239,6 +251,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     }  
 
     //if (cut.pass(OneBjet) and not e->IsRealData()) e->ApplySF("btag");
+    //#warning nobtag-sf
+    if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
 
     if( cut.passAllUpTo( OneTau)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneTau,e->weight());
     if( cut.passAllUpTo(NoLep)     ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());
@@ -359,7 +373,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if (cut.passAllExcept(OneBjet) )
     {
         Fill("ChargedHiggsTauNu/NOne/NBjets_"+label,systname, e->Bjets() ,e->weight());
-        //At least one b-jet
+        if( e->GetCentralJet(0)) Fill("ChargedHiggsTauNu/NOne/Bdiscr_"+label,systname, e->GetCentralJet(0)->bdiscr ,e->weight()); // of the leading jet or of the b?
         if (bj1 != NULL) 
             {        
                 Fill("ChargedHiggsTauNu/NOne/Bjet1Pt_"+label,systname, bj1->Pt() ,e->weight());
@@ -386,13 +400,6 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         Fill("ChargedHiggsTauNu/Vars/Jet13InvMass_"+label,systname,e->GetJet(0)->InvMass(e->GetJet(2)) , e->weight() );
         Fill("ChargedHiggsTauNu/Vars/Jet23InvMass_"+label,systname,e->GetJet(1)->InvMass(e->GetJet(2)) , e->weight() );
 
-        if ( (label=="WJets" or label=="DY") and (systname =="" or systname == "NONE"))
-        {
-            if (e->weight()> 0 )
-                Fill("ChargedHiggsTauNu/Vars/Mt_wPlus_"+label , systname,e->Mt(), e->weight() );
-            else 
-                Fill("ChargedHiggsTauNu/Vars/Mt_wMinus_"+label , systname,e->Mt(), e->weight() );
-        }
         return EVENT_USED;
     }
     else { return EVENT_NOT_USED; }

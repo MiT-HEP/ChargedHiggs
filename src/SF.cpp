@@ -189,7 +189,8 @@ void SF_CSV::init(string filename)
 {
     //---
     Log(__FUNCTION__,"INFO",string("Loading '") +filename+"' in SF CSV " + label );
-    string meas="incl";
+    //string meas="incl";
+    string meas="mujets";
     calib=new BTagCalibration("CSVv2",filename);
     readerL=new BTagCalibrationReader( BTagEntry::OP_LOOSE,  // operating point 
                     "central"           // systematics type

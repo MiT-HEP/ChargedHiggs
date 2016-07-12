@@ -23,7 +23,7 @@ parser=OptionParser(usage=usage)
 parser.add_option("-i","--input" ,dest='input',type='string',help="Input Datacard [Default=%default]",default="")
 parser.add_option("-d","--dir" ,dest='dir',type='string',help="Directory where to write the configuration [Default=%default]",default="submit")
 #parser.add_option("-n","--njobs" ,dest='njobs',type='int',help="Number of Job to submit [Default=%default]",default=50)
-parser.add_option("","--begin" ,dest='begin',type='float',help="Begin Mass [Default=%default]",default=200)
+parser.add_option("","--begin" ,dest='begin',type='string',help="Begin Mass [Default=%default]",default=200)
 parser.add_option("","--end" ,dest='end',type='float',help="End Mass [Default=%default]",default=900)
 parser.add_option("","--step" ,dest='step',type='float',help="Step [Default=%default]",default=100)
 parser.add_option("-q","--queue" ,dest='queue',type='string',help="Queue [Default=%default]",default="1nh")
@@ -78,7 +78,12 @@ def parallel(text2ws, bsub=""):
 		call(bsub,shell=True)
 	return 0 
 
-for mass in drange(opts.begin,opts.end,opts.step):
+if ',' not in opts.begin:
+	massList=drange(float(opts.begin),opts.end,opts.step)
+else:
+	massList=[ float(m) for m in opts.begin.split(',')]
+
+for mass in massList:
 	iJob += 1
 	basedir=opts.dir
 	if basedir[0] != '/': basedir=os.environ['PWD'] + "/" + opts.dir

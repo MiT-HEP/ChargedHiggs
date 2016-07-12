@@ -1,5 +1,7 @@
 import sys, os
 import re
+from array import array
+import math
 from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
@@ -12,7 +14,7 @@ parser.add_option("-n","--ncat",type='int',help="Number of cat. [%default]", def
 parser.add_option("","--nosyst",action='store_true',help="Do not look for syst. [%default]", default=False)
 
 extra = OptionGroup(parser,"Extra options:","")
-extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. [%default]", default=-1)
+extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=-1)
 extra.add_option("","--datacard",type='string',help="Output datacard extra. [%default]", default="")
 extra.add_option("","--basedir",type='string',help="Base Dir. [%default]", default="ChargedHiggsTauNu/Vars/")
 
@@ -26,6 +28,30 @@ import ROOT
 ROOT.gROOT.SetBatch()
 
 g=[] ## garbage un-collector
+
+fullstat=True
+
+#systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
+def WorkspaceSubstitution(string):
+	res = re.sub('JES','CMS_scale_j',string)	
+	res = re.sub('JER','CMS_res_j',res)	
+	res = re.sub('BTAG','CMS_eff_b',res)	
+	res = re.sub('TAUSCALE','CMS_scale_t',res)	
+	res = re.sub('TAUHIGHPT','CMS_eff_t_highpt',res)	
+	res = re.sub('TAU','CMS_eff_t',res)	
+	res = re.sub('TRIGMET','CMS_trig_met',res)	
+	res = re.sub('TRIG','CMS_trig_t',res)	
+	res = re.sub('RFAC','CMS_fake_t',res)	
+	res = re.sub('ELEVETO','CMS_eff_e',res)	
+	res = re.sub('MUVETO','CMS_eff_m',res)	
+	return res
+
+def Rebin(h):
+	''' Rebin with un-even bins '''
+	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,2000,8000])
+	#h1 = ROOT.TH1D(h.GetName()+"_rebin",h.GetTitle(),len(mybins)-1,mybins)
+	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+	return h1
 
 #mcList=['DY','TT','WW','WZ','ZZ','WJets']
 mcList=['DY','TT','ST','WW','WZ','ZZ','WJets']
@@ -67,9 +93,13 @@ for cat in range(0,opts.ncat):
 	else:
 		lastget=basedir+"Mt_cat%d_Data"%cat
 	h_data = fIn.Get( lastget)
-	if h_data == None: print "<*> No Data Found for cat%d last get '%s'"%(cat,lastget)
+	if h_data == None: 
+		print "<*> No Data Found for cat%d last get '%s'"%(cat,lastget)
+		raise IOError
 
-	if opts.rebin >0 :
+	if opts.rebin>999:
+		h_data=Rebin(h_data)
+	elif opts.rebin >0 :
 		h_data.Rebin(opts.rebin)
 
 	roo_data= ROOT.RooDataHist("data_obs_cat%d"%cat,"M_{T}",arglist_obs,h_data)
@@ -80,29 +110,89 @@ datacard.write("shapes data_obs *\t" + opts.output)
 datacard.write("\tw:data_obs_$CHANNEL")
 datacard.write("\n")
 
+
+def Smooth(h):
+	''' Smooth out the tail of the mT distribution'''
+	return;### It's not working ... need to figure out the range dynamically
+	### wjets has some problem
+
+	if True and \
+	   'WJets' not in h.GetName() and \
+	   'TT' not in h.GetName() and \
+	   'MtIsoInv_Data' not in h.GetName() : 
+		   return
+	x0=200.
+	bin0=h.FindBin(x0)
+	bin1=h.GetNbinsX()
+	n=h.Integral(bin0,bin1)
+	print "*** Considering hist",h.GetName() ## DEBUG
+	print "*** Integral is ",n
+	print "*** Function is","[0]*TMath::Exp(-(x-%f)*[1])"%(x0)
+	f=ROOT.TF1("myfunc","[0]*TMath::Exp(-(x-%f)/[1])"%(x0),200,1000)
+	f.SetParameter(0,n)
+	f.SetParameter(1,1)
+	h.Fit(f,"NQR")
+	h.Fit(f,"NQMR")
+	
+	h0=h.Clone("tmp")  ### DEBUG
+	for i in range(bin0,bin1+1):
+		x=h.GetBinCenter(i)
+		h.SetBinContent(i,f.Eval(x))
+		h.SetBinError(i,h0.GetBinError(i))
+		print "*** DEBUG [0]=",f.GetParameter(0),"[1]=",f.GetParameter(1),"x=",x,"y=",f.Eval(x),"y0=",h0.GetBinContent(i)
+	c=ROOT.TCanvas() ### DEBUG
+	c.SetLogy()
+	h0.SetLineColor(ROOT.kGreen+2)
+	h0.SetMarkerColor(ROOT.kGreen+2)
+	h0.Draw("PE")
+	h.Draw("HIST SAME")
+	h.Draw("PE SAME")
+	f.SetLineColor(ROOT.kRed)
+	f.Draw("L SAME")
+	c.SaveAs("plot/smooth/"+re.sub('/','_',h.GetName()) + ".pdf")
+	f.Delete()
+	h0.Delete()
+	return
+
+	
+
 def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs and argset_obs and rebin
 	''' Import the pdf a th1 in tfile, with name and renaming it as target. You can add a set of (name,scale) to the base hist'''
+	target=WorkspaceSubstitution(target)
 	if tfile == None:
 		print "<*> File not exists"
+		raise IOError
 	h = tfile.Get(name)
 
 	if h == None:
 		print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetName())
 		raise Exception("No Such Histogram")
 
-	if opts.rebin >0 :
+	if opts.rebin>999:
+		h=Rebin(h)
+	elif opts.rebin >0 :
 		h.Rebin(opts.rebin)
 
 	for name2,c in add:
-		h_tmp=tfile.Get(name2)
+		h_tmp=tfile.Get(name2).Clone(name2)
 		if h_tmp==None:
 			print "<*> Unable to find '%s' in '%s': Ignoring it!"%(name2,tfile.GetTitle())
 			continue
+		if opts.rebin>999:
+			h_tmp=Rebin(h_tmp)
+		elif opts.rebin >0 :
+			h_tmp.Rebin(opts.rebin)
+
 		h_tmp.Scale(c)
 		h.Add(h_tmp)
 
+	if 'Hplus' not in name:
+		Smooth(h)
+
+
 	if h.Integral() <= 0.: 
 		print " Integral for hist '%s' is null"%name
+		print " Integral=",h.Integral()
 		print "FIXME implement a negligible shape with constrain"
 		return
 	else:
@@ -122,6 +212,7 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 
 def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w is global as arglist_obs and argset_obs and rebin
 	''' It is not working properly. Limits are better'''
+	target=WorkspaceSubstitution(target)
 	if tfile == None:
 		print "<*> File not exists"
 	h = tfile.Get(name)
@@ -130,7 +221,9 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 		print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetName())
 		raise Exception("No Such Histogram")
 
-	if opts.rebin >0 :
+	if opts.rebin>999:
+		h=Rebin(h)
+	elif opts.rebin >0 :
 		h.Rebin(opts.rebin)
 
 	for name2,c in add:
@@ -138,8 +231,15 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 		if h_tmp==None:
 			print "<*> Unable to find '%s' in '%s': Ignoring it!"%(name2,tfile.GetTitle())
 			continue
+		if opts.rebin>999:
+			h_tmp=Rebin(h_tmp)
+		elif opts.rebin >0 :
+			h_tmp.Rebin(opts.rebin)
 		h_tmp.Scale(c)
 		h.Add(h_tmp)
+
+	if 'Hplus' not in name:
+		Smooth(h)
 
 	if h.Integral() <= 0.: 
 		print " Integral for hist '%s' is null"%name
@@ -156,6 +256,26 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 	hdn=h.Clone(h.GetName() +"_STATDown")
 
 	for i in range(0,h.GetNbinsX()):
+		## one of these guys per bin
+		if fullstat:
+			hupbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
+			hdnbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
+			hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+			hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+			roo_mc_binup = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Up",target,arglist_obs,hupbin)
+			pdf_mc_binup = ROOT.RooHistPdf(target+"_Bin%d"%(i+1)+"_"+syst+"Up", target+"_"+syst+"Up",argset_obs, roo_mc_binup)
+			roo_mc_bindn = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Down",target,arglist_obs,hdnbin)
+			pdf_mc_bindn = ROOT.RooHistPdf(target +"_Bin%d"%(i+1)+"_"+syst+"Down", target+"_"+syst+"Down",argset_obs, roo_mc_bindn)
+
+			getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
+			w.factory(target +"_Bin%d"%(i+1)+"_"+syst+"Up"+ "_norm[%e]"% hupbin.Integral())
+			g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
+
+			getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
+			w.factory(target +"_Bin%d"%(i+1)+"_"+syst+"Up"+ "_norm[%e]"% hdnbin.Integral())
+			g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
+
+		## total
 		hup.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
 		hdn.SetBinContent(i+1, h.GetBinContent(i+1) - h.GetBinError(i+1) )
 
@@ -177,7 +297,7 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 
 ### BKG ###
 ######### import mc based background contributions
-systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
+systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER"]
 #systs=["BTAG","TAU"]
 if opts.nosyst: systs=[]
 
@@ -203,7 +323,8 @@ for syst in systBkg:
 	target="pdf_cat%d_"%cat + mc + systName
 	print "*** Considering MC=",mc,"cat=",cat,"syst=",syst,"target=",target
 	ImportPdfFromTH1(fIn,lastget,target )
-	ImportPdfStatUncFromTH1(fIn, lastget,mc+"STAT", target)
+	if syst=="":
+		ImportPdfStatUncFromTH1(fIn, lastget,mc+"STAT", target)
 
    #if syst=="":
    #	datacard.write("shapes %s *\t"%mc + opts.output)
@@ -212,7 +333,7 @@ for syst in systBkg:
    #	datacard.write("\n")
 
 ################# Import SIGNAL CONTRIBUTIONS ##############
-systs=["BTAG","TAU","JES","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
+systs=["BTAG","TAU","JES","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER"]
 if opts.nosyst: systs=[]
 systSig=[""]
 for shift in ["Up","Down"]: 
@@ -223,7 +344,7 @@ for shift in ["Up","Down"]:
 ## print "     FIX MH POINTS       "
 ## print "#########################"
 for syst in systSig:
- for sigMH in [ 200,220,250,300,350,400,500]:
+ for sigMH in [ 200,220,250,300,350,400,500,1500]:
  #for sigMH in [ 200,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
@@ -251,7 +372,9 @@ if opts.qcd != "":
    #print "FIXME ISOInv"
    fInQCD=ROOT.TFile.Open(opts.qcd,"READ")
 
-   if fInQCD == None: print "<*> NO QCD File '%s'"%opts.qcd
+   if fInQCD == None: 
+	   print "<*> NO QCD File '%s'"%opts.qcd
+	   raise IOError
 
    systs=["BTAG","RFAC"] ## no JES here
    #systs=["BTAG","RFAC"]
@@ -277,9 +400,10 @@ if opts.qcd != "":
 	for bkg in ['WJets','TT','WW','WZ','ZZ','DY']:
 		addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) ## the scaling to 5 is done later in the datacard, minus because needs to be subtracted
 	target="pdf_inviso_cat%d_QCD"%cat + systName
-	print "*** Considering QCD","syst=",syst,"target=",target
+	print "*** Considering QCD","syst=",syst,"target=",target,"addlist=",addlist
 	ImportPdfFromTH1(fInQCD, lastget,target ,addlist)
-	ImportPdfStatUncFromTH1(fInQCD, lastget,"QCDSTAT", target,addlist)
+	if syst=="":
+		ImportPdfStatUncFromTH1(fInQCD, lastget,"QCDSTAT", target,addlist)
 
    datacard.write("shapes QCD *\t"+opts.output)
    datacard.write("\tw:"+"pdf_inviso_$CHANNEL_QCD" )
@@ -347,104 +471,66 @@ def writeNormSyst(name="lumi",value="1.027", regexp=".*"):
 		   datacard.write("\t-")
 	datacard.write("\n")
 
+def writeNormSystList(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST"]):
+	########## LUMI ###
+	datacard.write(name+"\tlnN")
+	invert=False
+
+	for cat in range(0,opts.ncat):
+	   for proc in mcAll:
+		idx=-1
+		invert=False
+		for i,regexp in enumerate(regexpL):
+			match=re.search(regexp,proc)
+			if regexp != "" and regexp[0] == '!':
+				invert=True
+				regexp=regexp[1:]
+			if (match and not invert) or (not match and invert): 
+				idx=i
+				break
+
+		if (idx>=0):
+		   datacard.write("\t"+valueL[idx])
+		else:
+		   datacard.write("\t-")
+	datacard.write("\n")
+
 if opts.qcd=="":
-	writeNormSyst("lumi","1.027","")
+	writeNormSyst("lumi_13TeV","1.027","")
 else:
-	writeNormSyst("lumi","1.027","!QCD")
-########## LUMI ###
-### datacard.write("lumi\tlnN")
-### for cat in range(0,opts.ncat):
-###    for proc in mcAll:
-### 	if proc=="QCD" and opts.qcd!="":
-### 	   datacard.write("\t-")
-### 	else:
-### 	   datacard.write("\t1.027")
-### datacard.write("\n")
+	writeNormSyst("lumi_13TeV","1.027","!QCD")
 
 if opts.nosyst: 
 	w.writeToFile(opts.output)
 	print " --- DONE --- "
 	exit(0)
 
-########### RFAC ###############
-##if opts.qcd != "":
-##   datacard.write("RFAC shape")
-##   #RFACUp RFACDown
-##   for proc in mcAll:
-##	if proc=="QCD":
-##	   datacard.write("\t1")
-##	else:
-##	   datacard.write("\t-")
-##   datacard.write("\n")
-############ BTAG ###############
-##datacard.write("BTAG shape")
-##syst="BTAG"
-##for proc in mcAll:
-##	if proc=="QCD":
-##		if opts.qcd !="" and syst in systQCD:
-##        		datacard.write("\t1")
-##		else: datacard.write("\t-")
-##	else:
-##        	datacard.write("\t1")
-##datacard.write("\n")
-############ JES ###############
-##datacard.write("JES shape")
-##syst="JES"
-##for proc in mcAll:
-##	if proc=="QCD":
-##		if opts.qcd !="" and syst in systQCD:
-##        		datacard.write("\t1")
-##		else: datacard.write("\t-")
-##	else:
-##        	datacard.write("\t1")
-##datacard.write("\n")
-########## JER ###############
-#datacard.write("JER shape")
-#syst="JER"
-#for proc in mcAll:
-#	if proc=="QCD":
-#		if opts.qcd !="" and syst in systQCD:
-#        		datacard.write("\t1")
-#		else: datacard.write("\t-")
-#	else:
-#        	datacard.write("\t1")
-#datacard.write("\n")
-########## TAU ###############
-##datacard.write("TAU shape")
-##syst="TAU"
-##for proc in mcAll:
-##	if proc=="QCD":
-##		if opts.qcd !="" and syst in systQCD:
-##        		datacard.write("\t1")
-##		else: datacard.write("\t-")
-##	else:
-##        	datacard.write("\t1")
-##datacard.write("\n")
-
 def writeSyst(syst="JES"):
+	systOrig=syst[:]
+	syst=WorkspaceSubstitution(syst)
 	datacard.write(syst+" shape")
 	for proc in mcAll:
-		if 'STAT' in syst:
-			if proc in re.sub('STAT','',syst):
+		if 'STAT' in systOrig:
+			if proc in re.sub('STAT','',systOrig):
 	        		datacard.write("\t1")
 			else:
 	        		datacard.write("\t-")
 		elif proc=="QCD":
-			if opts.qcd !="" and syst + "Up"  in systQCD:
+			if opts.qcd !="" and systOrig + "Up"  in systQCD:
 	        		datacard.write("\t1")
 			else: datacard.write("\t-")
 		elif proc in mcList :
-			if syst + "Up" in systBkg:
+			if systOrig + "Up" in systBkg:
 	        		datacard.write("\t1")
 			else:
 	        		datacard.write("\t-")
 		elif proc == "Hplus" :
-			if syst + "Up" in systSig:
+			if systOrig + "Up" in systSig:
 	        		datacard.write("\t1")
 			else:
 	        		datacard.write("\t-")
 		else:
-			print "DONT KNOW WHAT TO DO WITH proc=",proc,"syst=",syst
+			print "DONT KNOW WHAT TO DO WITH proc=",proc,"syst=",syst,"systOrig=",systOrig
 	datacard.write("\n")
 
 ### write shape syst
@@ -457,36 +543,41 @@ writeSyst('TRIG')
 writeSyst('TRIGMET')
 writeSyst('TAUHIGHPT')
 writeSyst('TAUSCALE')
+writeSyst('ELEVETO')
+writeSyst('MUVETO')
 ##
 ## write STAT syst
 for mc in mcAll:
  	if 'Hplus' in mc: continue
- 	writeSyst(mc+'STAT')
-## write norm syst
-writeNormSyst("TTSCALE","0.965/1.024","TT")
-writeNormSyst("TTPDF","1.042","TT")
-writeNormSyst("TTMASS","1.027","TT")
+	#not full stat
+	#fullstat
+	if fullstat:
+		for i in range(0, g[0].GetNbinsX() ): ## mt data
+			writeSyst("Bin%d"%(i+1)+"_"+mc+'STAT')
+	else:
+ 		writeSyst(mc+'STAT')
 
-writeNormSyst("STSCALE","0.977/1.028","ST")
-writeNormSyst("STPDF","1.026","ST")
-writeNormSyst("STMASS","1.022","ST")
+## write norm syst ### FIXME
+writeNormSystList("CMS_scale_ttbar",["0.965/1.024","0.977/1.028"],["TT","ST"])
+writeNormSystList("CMS_pdf_ttbar",["1.042","1.026"],["TT","ST"])
+writeNormSystList("CMS_mass_ttbar",["1.027","1.022"],["TT","ST"])
+###
 
-writeNormSyst("DYSCALE","0.9963/1.0065","DY")
-writeNormSyst("DYPDF","1.037","DY")
+writeNormSyst("CMS_scale_dy","0.9963/1.0065","DY")
+writeNormSyst("CMS_pdf_dy","1.037","DY")
 
-writeNormSyst("WJetsSCALE","0.996/1.008","WJets")
-writeNormSyst("WJetsPDF","1.0375","WJets")
+writeNormSyst("CMS_scale_wjets","0.996/1.008","WJets")
+writeNormSyst("CMS_pdf_wjets","1.0375","WJets")
 
-writeNormSyst("WWSCALE","1.025","WW")
-writeNormSyst("WWPDF","1.022","WW")
+writeNormSyst("CMS_scale_ww","1.025","WW")
+writeNormSyst("CMS_pdf_ww","1.022","WW")
 
-writeNormSyst("WZSCALE","1.032","WZ")
-writeNormSyst("WZPDF","1.044","WZ")
+writeNormSyst("CMS_scale_wz","1.032","WZ")
+writeNormSyst("CMS_pdf_wz","1.044","WZ")
 
-writeNormSyst("ZZSCALE","1.031","ZZ")
-writeNormSyst("ZZPDF","1.037","ZZ")
+writeNormSyst("CMS_scale_zz","1.031","ZZ")
+writeNormSyst("CMS_pdf_zz","1.037","ZZ")
 
-#fOut=ROOT.TFile.Open(opts.output,"RECREATE")
 w.writeToFile(opts.output)
 
 print "--------------------" 

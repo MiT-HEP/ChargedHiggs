@@ -32,10 +32,11 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
     muon.SetCut(ChargedHiggsTauNu::Selection(e,true,true));
     bool passLoose=muon.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
     if ( not passLoose) return EVENT_NOT_USED;
+    if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
+
     Fill( dir + "EtMiss_Loose_" + label,systname,e->GetMet().Pt(),e->weight() );
 
-#warning Muon90EWKPurity
-    if (muon.passAllExcept(ChargedHiggsTauNu::Met) and e->GetMuon(0)->Pt() >90) 
+    if (muon.passAllExcept(ChargedHiggsTauNu::Met) ) 
     {
     	Fill( dir + "EtMiss_Full_" + label,systname,e->GetMet().Pt(),e->weight() );
     	Fill( dir + "HT_Full_" + label,systname,e->Ht(),e->weight() );

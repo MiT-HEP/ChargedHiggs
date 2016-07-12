@@ -1,0 +1,86 @@
+[base]
+type = 1D
+yrange = 1e-3,100
+xrange = 0,2200
+canv = 800,800
+ratio = True
+yLog = True
+xLog = True
+output= plot/Signal
+format= pdf,root
+drawList= chhiggs200,chhiggs300,chhiggs400,chhiggs500,chhiggs1500
+xtitle = m_{T}~[GeV]
+ytitle = a.u.
+
+[text]
+#text = Preliminary
+text = Internal
+position = tl 
+lumi = 2.3~fb^{-1}~(13~TeV)
+
+[legend]
+draw =  True
+legendList = chhiggs200,chhiggs300,chhiggs400,chhiggs500,chhiggs1500   ## if name1 == band and name3 == line, join them, will use the first for the label
+position = .60,.65,.90,.90
+
+
+[chhiggs200]
+type = th1d
+file = ChHiggs.root
+obj = ChargedHiggsTauNu/Vars/Mt_HplusToTauNu_M-200_13TeV_amcatnlo
+style = line
+styleopt = 7
+color=ROOT.kBlue
+label= H^{+}~(m=200GeV)
+norm=True
+width=2
+rebin=20
+
+[chhiggs300]
+type = th1d
+file = ChHiggs.root
+obj = ChargedHiggsTauNu/Vars/Mt_HplusToTauNu_M-300_13TeV_amcatnlo
+style = line
+styleopt = 7
+color=ROOT.kGreen+2
+label= H^{+}~(m=300GeV)
+width=2
+norm=True
+rebin=20
+
+[chhiggs400]
+type = th1d
+file = ChHiggs.root
+obj = ChargedHiggsTauNu/Vars/Mt_HplusToTauNu_M-400_13TeV_amcatnlo
+style = line
+styleopt = 4
+color=ROOT.kMagenta+2
+label= H^{+}~(m=400GeV)
+width=2
+norm=True
+rebin=20
+
+[chhiggs500]
+type = th1d
+file = ChHiggs.root
+obj = ChargedHiggsTauNu/Vars/Mt_HplusToTauNu_M-500_13TeV_amcatnlo
+style = line
+styleopt = 3
+color=ROOT.kRed
+label= H^{+}~(m=500GeV)
+width=2
+norm=True
+rebin=20
+
+[chhiggs1500]
+type = th1d
+file = ChHiggs.root
+obj = ChargedHiggsTauNu/Vars/Mt_HplusToTauNu_M-1500_13TeV_amcatnlo
+style = line
+styleopt = 1
+color=ROOT.kOrange
+label= H^{+}~(m=1500GeV)
+width=2
+norm=True
+rebin=20
+
