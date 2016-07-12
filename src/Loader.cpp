@@ -288,6 +288,15 @@ void LoadNero::FillTaus(){
         t-> match = bt -> match -> at(iL);
         t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumIsolationMVArun2v1DBoldDMwLT); 
+        if (bt -> selBits -> at(iL) & BareTaus::Selection::OneProng) t-> SetNProng( 1 );
+        else if (bt -> selBits -> at(iL) & BareTaus::Selection::TwoProng) t-> SetNProng( 2 );
+        else if (bt -> selBits -> at(iL) & BareTaus::Selection::ThreeProng) t-> SetNProng( 3 );
+        else t->SetNProng(0);
+
+        if (bt -> selBits -> at(iL) & BareTaus::Selection::OnePiZero) t-> SetNPiZero( 1 );
+        else if (bt -> selBits -> at(iL) & BareTaus::Selection::TwoPiZero) t-> SetNPiZero( 2 );
+        else if (bt -> selBits -> at(iL) & BareTaus::Selection::ThreePiZero) t-> SetNPiZero( 3 );
+        else t->SetNPiZero(0);
 
 
 
