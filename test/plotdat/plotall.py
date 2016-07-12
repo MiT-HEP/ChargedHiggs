@@ -17,16 +17,19 @@ dat={
 	"plotdat/chhiggs_met.txt":"plot/EtMiss.pdf",
 	"plotdat/chhiggs_tau1pt.txt":"plot/Tau1Pt.pdf",
 	"plotdat/chhiggs_mt.txt":"plot/Mt.pdf",
-	"plotdat/chhiggs_mtmc.txt":"plot/MtMC.pdf",
+	#"plotdat/chhiggs_mtmc.txt":"plot/MtMC.pdf",
 	#"plotdat/tmva_bdt0.txt":"plot/Bdt0.pdf",
 	#"plotdat/tmva_bdt1.txt":"plot/Bdt1.pdf",
 	#"plotdat/tmva_cutflow.txt":"plot/TmvaCutFlow.pdf",
 	#"plotdat/tmva_mt.txt":"plot/TmvaMt.pdf",
 	"plotdat/chhiggs_metqcd.txt":"plot/EtMissQCDInvIso.pdf",
-	"plotdat/chhiggs_metband.txt":"plot/EtMissBand.pdf",
+	#"plotdat/chhiggs_metband.txt":"plot/EtMissBand.pdf",
 	"plotdat/qcdpurity_control_etmiss.txt":"plot/EtMiss_Control.pdf",
-	"plotdat/qcdpurity_control_taupt.txt":"plot/EtMiss_Control_v2.pdf",
-	"plotdat/qcdpurity_mt.txt":"plot/plot/MtQCDOnly.pdf",
+	"plotdat/qcdpurity_control_taupt.txt":"plot/TauPt_Control.pdf",
+	#"plotdat/qcdpurity_mt.txt":"plot/MtQCDOnly.pdf",
+	"plotdat/chhiggs_yields.txt": "plot/Yields.pdf",
+	"plotdat/ewk_full.txt":"plot/EWK_EtMiss_Full.pdf",
+	"plotdat/ewk_ht_full.txt":"plot/EWK_HT_Full.pdf",
 	}
 
 print "I will consider the following files",dat.keys()

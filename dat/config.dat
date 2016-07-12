@@ -22,7 +22,7 @@ Files=%(klute)s/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=%(klute)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 #addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 # rerun with more mc info
-addfiles=%(amarini)s/1.4.prong/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+addfiles=/eos/user/a/amarini/Nero/v1.4.prong/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 
 ## Single Top
 addfiles=%(jan)s/%(tag)s/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8
@@ -58,36 +58,39 @@ addfiles=%(amarini)s/v1.4.lhe/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amca
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/v1.4.nopujet/ChargedHiggs_HplusTB_HplusToTauNu_M-1500_13TeV_amcatnlo_pythia8
 #addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
 #addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
 #addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
 ### QCD
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
-addfiles=%(amarini)s/%(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
+#addfiles=%(amarini)s/%(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
 
 
+#addfiles=%(amarini)s/v1.4.nopujet/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 ## WNJets
-addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W0JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/eos/user/k/klute/Nero/v1.4.prong/W0JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/eos/user/k/klute/Nero/v1.4.prong/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/eos/user/k/klute/Nero/v1.4.prong/W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 
 addfiles=/store/user/amarini/Nero/%(tag)s/Tau
-addfiles=/store/user/amarini/Nero/v1.4.aele/Tau-Run2015C
+#addfiles=/store/user/amarini/Nero/v1.4.aele/Tau-Run2015C
+addfiles=/eos/user/a/amarini/Nero/v1.4.aele/Tau-Run2015C
 ####
 
 #__________________________________________________________________
