@@ -33,6 +33,15 @@ class abort : public exception
             }
 };
 
+class slow : public exception
+{
+    public:
+        virtual const char*what() const throw()
+            {
+            return "Slow machine..." ;
+            }
+};
+
 #endif
 // Local Variables:
 // mode:c++

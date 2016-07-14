@@ -47,7 +47,8 @@ ele pteta 55 8000 2.0 2.5 1.040 0.028
 #include aux/R_trmet80.txt
 #include aux/R.txt
 #include aux/R_GammaWTR.txt
-include aux/R_NoWTR.txt
+#include aux/R_NoWTR.txt
+include aux/Raelemedium.txt
 ## BTag from POG
 btag csv aux/CSVv2.csv
 ## electron veto from egamma POG
@@ -84,6 +85,6 @@ topreweight tf2 TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137
 #wreweight base 1 0
 #
 #amcatnlo
-#wreweight tf1 9.36921e-01-5.20979e-05*x
+wreweight tf1 9.36921e-01-5.20979e-05*x
 #wnjets
-wreweight tf1 9.07538e-01+8.98994e-05*x-2.90660e-07*x*x
+#wreweight tf1 9.07538e-01+8.98994e-05*x-2.90660e-07*x*x

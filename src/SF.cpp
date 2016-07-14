@@ -295,6 +295,9 @@ void SF_TF1::set(double pt)
     sf = f_sf_->Eval(pt);
     if(f_err_) err = f_err_->Eval(pt);
     else err=0;
+
+    //if (get()< 1.e-5)
+    //    Log(__FUNCTION__,"DEBUG",Form("Very little scale factor: pt=%.5f sf=%g",pt,get()));
 }
 
 void SF_TF1::print(){

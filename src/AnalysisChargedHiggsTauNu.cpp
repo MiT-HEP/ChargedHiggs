@@ -246,8 +246,12 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         if( not e->ExistSF("tauLeg13p") ) Log(__FUNCTION__,"WARING" ,"No Tau Trigger SF");  
         if( t!=NULL){ e->SetPtEtaSF("tauLeg13p",t->Pt(),t->Eta()); e->ApplySF("tauLeg13p");}
         if( not e->ExistSF("metLegBtagMedium") ) Log(__FUNCTION__,"WARING" ,"No Tau metLegBtagMedium SF");  
-        e->SetPtEtaSF("metLegBtagMedium",e->GetMet().Pt(),0);
-        e->ApplySF("metLegBtagMedium");
+
+        if (e->GetMet().Pt()>20) // we have it only for met>20
+        {
+            e->SetPtEtaSF("metLegBtagMedium",e->GetMet().Pt(),0);
+            e->ApplySF("metLegBtagMedium");
+        }
     }  
 
     //if (cut.pass(OneBjet) and not e->IsRealData()) e->ApplySF("btag");

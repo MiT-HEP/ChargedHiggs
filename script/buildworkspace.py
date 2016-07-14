@@ -44,11 +44,12 @@ def WorkspaceSubstitution(string):
 	res = re.sub('RFAC','CMS_fake_t',res)	
 	res = re.sub('ELEVETO','CMS_eff_e',res)	
 	res = re.sub('MUVETO','CMS_eff_m',res)	
+	res = re.sub("UNCLUSTER","CMS_scale_uncluster",res)
 	return res
 
 def Rebin(h):
 	''' Rebin with un-even bins '''
-	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,2000,8000])
+	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000])
 	#h1 = ROOT.TH1D(h.GetName()+"_rebin",h.GetTitle(),len(mybins)-1,mybins)
 	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
 	return h1
@@ -260,8 +261,10 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 		if fullstat:
 			hupbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
 			hdnbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
-			hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
-			hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+			cont=h.GetBinContent(i+1)
+			# 0 is for sure wrong in case of mc
+			if (cont != 0 ) hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+			if (cont != 0 ) hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
 			roo_mc_binup = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Up",target,arglist_obs,hupbin)
 			pdf_mc_binup = ROOT.RooHistPdf(target+"_Bin%d"%(i+1)+"_"+syst+"Up", target+"_"+syst+"Up",argset_obs, roo_mc_binup)
 			roo_mc_bindn = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Down",target,arglist_obs,hdnbin)
@@ -297,7 +300,7 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 
 ### BKG ###
 ######### import mc based background contributions
-systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER"]
+systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER"]
 #systs=["BTAG","TAU"]
 if opts.nosyst: systs=[]
 
@@ -333,7 +336,7 @@ for syst in systBkg:
    #	datacard.write("\n")
 
 ################# Import SIGNAL CONTRIBUTIONS ##############
-systs=["BTAG","TAU","JES","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER"]
+systs=["BTAG","TAU","JES","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER"]
 if opts.nosyst: systs=[]
 systSig=[""]
 for shift in ["Up","Down"]: 
@@ -545,6 +548,7 @@ writeSyst('TAUHIGHPT')
 writeSyst('TAUSCALE')
 writeSyst('ELEVETO')
 writeSyst('MUVETO')
+writeSyst('UNCLUSTER')
 ##
 ## write STAT syst
 for mc in mcAll:
