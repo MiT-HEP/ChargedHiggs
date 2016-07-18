@@ -150,8 +150,22 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     //#warning MET80 TRigger in QCD
     //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") ) passPrescale=true;
     //LogN(__FUNCTION__,"WARNING","MET 80 in QCD Loose",10);
+    //
+    bool passMatchDirect=true;
+    bool passMatchInverse=true;
+    /*
+    #warning Tau Match
+    bool passMatchDirect=false;
+    bool passMatchInverse=false;
+    if (e->IsRealData()) { passMatchDirect=true; passMatchInverse=true;}
+    else {  
+        if (e->GetTau(0) !=NULL and e->GetTau(0)->Rematch(e)==15) passMatchDirect=true;
+        if (e->GetTauInvIso(0) !=NULL and e->GetTauInvIso(0)->Rematch(e)==15) passMatchInverse=true;
+    }
+    */
+    //--------------
 
-    if (t != NULL and passDirectLoose and passPrescale) // direct
+    if (t != NULL and passMatchDirect and passDirectLoose and passPrescale) // direct
     {
         float pt = t->Pt();
         int flavor= t->Rematch(e);
@@ -183,7 +197,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     }
 
-    if (tInv != NULL and passInverseLoose and passPrescale) // inv iso
+    if (tInv != NULL and passMatchInverse and passInverseLoose and passPrescale) // inv iso
     {
         float pt = tInv->Pt();
         int flavor= tInv->Rematch(e);
@@ -211,22 +225,22 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // -------------------------- FULL SELECTION -----------------------------------------------
     
     // N minus one direct
-    if (t!=NULL and direct.passAllExcept(ChargedHiggsTauNu::Met) ) 
+    if (t!=NULL and passMatchDirect and direct.passAllExcept(ChargedHiggsTauNu::Met) ) 
         {
             Fill( none + "EtMiss" +"_"+label,systname, e->GetMet().Pt(), e->weight() );
         }
 
-    if (t!=NULL and direct.passAllExcept(ChargedHiggsTauNu::AngRbb) ) 
+    if (t!=NULL and passMatchDirect and direct.passAllExcept(ChargedHiggsTauNu::AngRbb) ) 
         {
             Fill( none + "RbbMin" +"_"+label,systname, e->RbbMin(), e->weight() );
         }
 
-    if (t!=NULL and direct.passAllExcept(ChargedHiggsTauNu::AngColl) ) 
+    if (t!=NULL and passMatchDirect and direct.passAllExcept(ChargedHiggsTauNu::AngColl) ) 
         {
             Fill( none + "RCollMin" +"_"+label,systname, e->RCollMin(), e->weight() );
         }
 
-    if (t!=NULL and direct.passAll() ) 
+    if (t!=NULL and passMatchDirect and direct.passAll() ) 
     {
             //if ( not e->IsRealData()) e->ApplySF("btag");
             #ifdef VERBOSE
@@ -256,7 +270,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     // ---------------------- INF TAU SF 
     //
-    if (tInv != NULL and passInverseLoose ){ // USE weight(false) to apply TF on data!
+    if (tInv != NULL and passMatchInverse and passInverseLoose ){ // USE weight(false) to apply TF on data!
         float pt = tInv->Pt();                                                   
         //const string sf="tauinviso";
         const string sfname="tauinvisospline";

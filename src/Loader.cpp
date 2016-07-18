@@ -206,10 +206,17 @@ void LoadNero::FillLeptons(){
         l-> type = abs((*bl->pdgId)[iL]);
         //l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
         TLorentzVector lp4= *(TLorentzVector*) ((*bl->p4)[iL]);
-#warning Using Electrons MiniAOD P4 as is w/o corrections
-        if (l->type == 11) lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
+        #warning Using Electrons MiniAOD P4 as is w/o corrections
+        if (l->type == 11) {
+            lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
+        }
+        l-> iso = ( (*bl->iso) [iL]);
+        #warning ELE DELTA BETA
+        if (l->type == 11) {
+            l->iso = ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
+        }
         l-> SetP4( lp4 );
-        l-> iso = ((*bl->iso) [iL])/(l->Pt());
+        //l-> iso = ((*bl->iso) [iL])/(l->Pt());
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> tightId = ( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight); 
 
@@ -283,7 +290,9 @@ void LoadNero::FillTaus(){
         //t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
         //t-> iso2 = bt -> isoMva -> at(iL);
-        t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleMedium ; 
+        //t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleMedium ; 
+#warning EleTight
+        t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleTight ; 
         t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
         t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 

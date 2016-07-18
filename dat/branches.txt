@@ -10,6 +10,7 @@ lepIso
 lepPdgId
 lepSelBits
 lepPfPt
+lep*
 ### TAU
 tauP4
 #tauId

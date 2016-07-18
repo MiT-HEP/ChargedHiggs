@@ -1,3 +1,4 @@
+#!env python
 import sys, os
 import re
 from array import array
@@ -29,7 +30,7 @@ ROOT.gROOT.SetBatch()
 
 g=[] ## garbage un-collector
 
-fullstat=True
+fullstat=False
 
 #systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
 def WorkspaceSubstitution(string):
@@ -122,7 +123,7 @@ def Smooth(h):
 	   'TT' not in h.GetName() and \
 	   'MtIsoInv_Data' not in h.GetName() : 
 		   return
-	x0=200.
+	x0=250.
 	bin0=h.FindBin(x0)
 	bin1=h.GetNbinsX()
 	n=h.Integral(bin0,bin1)
@@ -263,8 +264,8 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 			hdnbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
 			cont=h.GetBinContent(i+1)
 			# 0 is for sure wrong in case of mc
-			if (cont != 0 ) hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
-			if (cont != 0 ) hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+			if cont != 0 : hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+			if cont != 0 : hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
 			roo_mc_binup = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Up",target,arglist_obs,hupbin)
 			pdf_mc_binup = ROOT.RooHistPdf(target+"_Bin%d"%(i+1)+"_"+syst+"Up", target+"_"+syst+"Up",argset_obs, roo_mc_binup)
 			roo_mc_bindn = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Down",target,arglist_obs,hdnbin)
@@ -379,7 +380,8 @@ if opts.qcd != "":
 	   print "<*> NO QCD File '%s'"%opts.qcd
 	   raise IOError
 
-   systs=["BTAG","RFAC"] ## no JES here
+   #systs=["BTAG","RFAC"] ## no JES here
+   systs=["RFAC"] ## no JES here
    #systs=["BTAG","RFAC"]
    if opts.nosyst: systs=[]
    systQCD=[""]

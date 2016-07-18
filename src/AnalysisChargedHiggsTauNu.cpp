@@ -95,6 +95,12 @@ void ChargedHiggsTauNu::Init()
 
         Book(    "ChargedHiggsTauNu/Vars/MtDecoQ_" + l ,"Mt deco;MtQ",1000,0,1000) ;
         Book(    "ChargedHiggsTauNu/Vars/MtDecoCosPhi_" + l ,"Mt deco;MtCosPhi",1000,-1,1) ;
+
+        Book(    "ChargedHiggsTauNu/Vars/Mt_matchTau_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
+        Book(    "ChargedHiggsTauNu/Vars/Mt_matchEle_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
+        Book(    "ChargedHiggsTauNu/Vars/Mt_matchMu_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
+        Book(    "ChargedHiggsTauNu/Vars/Mt_matchJet_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
+        Book(    "ChargedHiggsTauNu/Vars/Mt_matchOther_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
         /**********************************************
          *                   MT                       *
          **********************************************/
@@ -258,6 +264,15 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //#warning nobtag-sf
     if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
 
+    /*
+    #warning TauMatch
+    if (not e->IsRealData() ) 
+        {
+        if (e->GetTau(0) == NULL )  return 0;
+        if (e->GetTau(0)->Rematch(e) !=15) return 0;
+        }
+    */
+
     if( cut.passAllUpTo( OneTau)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneTau,e->weight());
     if( cut.passAllUpTo(NoLep)     ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());
     if( cut.passAllUpTo(ThreeJets) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,ThreeJets,e->weight());
@@ -397,6 +412,22 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoQ_"+label,systname, e->MtDecoQ() ,e->weight());
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoCosPhi_"+label,systname, e->MtDecoCosPhi() ,e->weight());
+
+        // -- Book(    "ChargedHiggsTauNu/Vars/Mt_matchTau_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
+        // -- Book(    "ChargedHiggsTauNu/Vars/Mt_matchEle_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
+        // -- Book(    "ChargedHiggsTauNu/Vars/Mt_matchMu_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
+        // -- Book(    "ChargedHiggsTauNu/Vars/Mt_matchJet_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
+        // -- Book(    "ChargedHiggsTauNu/Vars/Mt_matchOther_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
+
+        if (not e->IsRealData() )
+        {
+            int pdgid=e->GetTau(0)->Rematch(e);
+            if (pdgid==15)Fill("ChargedHiggsTauNu/Vars/Mt_matchTau_"+label,systname, e->Mt() ,e->weight());
+            else if (pdgid==11)Fill("ChargedHiggsTauNu/Vars/Mt_matchEle_"+label,systname, e->Mt() ,e->weight());
+            else if (pdgid==13)Fill("ChargedHiggsTauNu/Vars/Mt_matchMu_"+label,systname, e->Mt() ,e->weight());
+            else if (pdgid==21 or pdgid==1 )Fill("ChargedHiggsTauNu/Vars/Mt_matchJet_"+label,systname, e->Mt() ,e->weight());
+            else Fill("ChargedHiggsTauNu/Vars/Mt_matchOther_"+label,systname, e->Mt() ,e->weight());
+        }
 
         Fill("ChargedHiggsTauNu/Vars/Jet1QGL_"+label,systname,e->GetJet(0)->QGL() , e->weight() );
         Fill("ChargedHiggsTauNu/Vars/Jet2QGL_"+label,systname,e->GetJet(1)->QGL() , e->weight() );
