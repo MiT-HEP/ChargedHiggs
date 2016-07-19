@@ -154,8 +154,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         }
     }
 
-    bool do1lAnalysis=false;
-    bool do2lAnalysis=true;
+    //    bool do1lAnalysis=true;
+    //    bool do2lAnalysis=false;
 
     ////// --> 1l analysis
     if(do1lAnalysis) {

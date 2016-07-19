@@ -101,8 +101,6 @@ include=dat/json.dat
 include=dat/topBot.dat
 include=dat/tmva.dat
 
-Output=ChHiggs.root
-
 MCDB=dat/mc_database.txt
 SFDB=aux/sf_database.txt
 Branches=dat/branches.txt
@@ -143,4 +141,11 @@ Analysis=JsonAnalysis,Preselection,ChargedHiggsTopBottom
 #config=AnalysisBase|Init()
 #config=Preselection|
 #config=MetPhiCorrector|fileName=""
+
+addConfig=ChargedHiggsTopBottom|do1lAnalysis=1,do2lAnalysis=0
+Output=ChHiggs_1l.root
+
+#addConfig=ChargedHiggsTopBottom|do1lAnalysis=0,do2lAnalysis=1
+#Output=ChHiggs_2l.root
+
 

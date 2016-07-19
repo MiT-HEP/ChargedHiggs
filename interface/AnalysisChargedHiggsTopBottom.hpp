@@ -10,6 +10,8 @@ public:
     ChargedHiggsTopBottom() : AnalysisBase () {}
     virtual ~ChargedHiggsTopBottom () {}
 
+    bool do1lAnalysis=false;
+    bool do2lAnalysis=false;
 
     void Init() override;
 

@@ -68,7 +68,7 @@ W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4
 TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/cmst3/user/dalfonso/NERO/v1.4/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 214213.0 103.599517822
 TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/cmst3/user/dalfonso/NERO/v1.4/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 185787.0 108.452911377 
 TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/cmst3/user/dalfonso/NERO/v1.4/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 409436.0 56.276386261 
-#TanBeta 30: xsection from http://www.hephy.at/user/mflechl/hp_xsec/xsec_13TeV_tHp_08Apr2015.txt BR from marini 400=0.31676*0.634 300=0.31676*0.634
+#TanBeta 30: xsection from http://www.hephy.at/user/mflechl/hp_xsec/xsec_13TeV_tHp_08Apr2015.txt BR from marini 400=0.144603*0.700 300=0.31676*0.634
 ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 /store/cmst3/user/dalfonso/NERO/v1.4/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 1120.14382419 0.1012221
 ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8 /store/cmst3/user/dalfonso/NERO/v1.4/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8 4585.08711398 0.20082584
 #TanBeta 5: xsection from http://www.hephy.at/user/mflechl/hp_xsec/xsec_13TeV_tHp_08Apr2015.txt BR from marini 400=0.0302237*0.95 300=0.0650948*0.93
