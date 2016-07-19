@@ -24,6 +24,7 @@ class Tau: virtual public Object,
     void SetEtaCut(float x){etacut_=x;}
     void SetMuRej(bool x ) { doMuRej_ = x;}
     void SetEleRej(bool x ) { doEleRej_ = x;}
+    void SetIsoCut(bool x ) { isocut_ = x;}
 
     Tau() ;
     bool id;
