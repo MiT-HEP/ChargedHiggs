@@ -275,8 +275,8 @@ for idx,f in enumerate(opts.file.split(',')):
 		oneSigma.SetLineStyle(2)
 		twoSigma.SetLineStyle(2)
 		
-		oneSigma.SetFillColor(ROOT.kGreen)
-		twoSigma.SetFillColor(ROOT.kYellow)
+		oneSigma.SetFillColor(ROOT.kGreen+1)
+		twoSigma.SetFillColor(ROOT.kOrange)
 
 		### PRINT MORE ##
 		if opts.unblind:
@@ -325,18 +325,18 @@ for idx,f in enumerate(opts.file.split(',')):
 	list_oneSigma.append(oneSigma)
 	list_twoSigma.append(twoSigma)
 
-if opts.xsec:
-	exp8TeV, obs8TeV= EigthTeVGraph()
-
-	exp8TeV.SetLineColor(ROOT.kRed+2)
-	exp8TeV.SetLineStyle(7)
-	exp8TeV.SetFillStyle(0)
-
-	obs8TeV.SetMarkerColor(ROOT.kRed+2)
-	obs8TeV.SetLineColor(ROOT.kRed+2)
-	obs8TeV.SetMarkerSize(0.8)
-	obs8TeV.SetMarkerStyle(21)
-	obs8TeV.SetFillStyle(0)
+#if opts.xsec:
+#	exp8TeV, obs8TeV= EigthTeVGraph()
+#
+#	exp8TeV.SetLineColor(ROOT.kRed+2)
+#	exp8TeV.SetLineStyle(7)
+#	exp8TeV.SetFillStyle(0)
+#
+#	obs8TeV.SetMarkerColor(ROOT.kRed+2)
+#	obs8TeV.SetLineColor(ROOT.kRed+2)
+#	obs8TeV.SetMarkerSize(0.8)
+#	obs8TeV.SetMarkerStyle(21)
+#	obs8TeV.SetFillStyle(0)
 
 ## Start Drawing
 c=ROOT.TCanvas()
@@ -344,7 +344,7 @@ c=ROOT.TCanvas()
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 
-dummy = ROOT.TH1D("dummy","dummy",1000, 0, 1000)
+dummy = ROOT.TH1D("dummy","dummy",1000, 0, 2000)
 dummy.GetXaxis().SetRangeUser(200,900)
 dummy.GetYaxis().SetRangeUser(1e2,1e8)
 
@@ -387,14 +387,14 @@ for idx in range(0,len(list_exp) ):
 
 line.Draw("L SAME")
 
-if opts.xsec:
-	exp8TeV.Draw("L SAME")
-	obs8TeV.Draw("PL SAME")
-	l2= ROOT.TLatex()
-	l2.SetTextSize(0.03)
-	l2.SetTextColor(ROOT.kRed+2)
-	l2.SetTextAlign(22)
-	l2.DrawLatex(600,0.08,"19.7 fb^{-1} (8 TeV)")
+#if opts.xsec:
+#	exp8TeV.Draw("L SAME")
+#	obs8TeV.Draw("PL SAME")
+#	l2= ROOT.TLatex()
+#	l2.SetTextSize(0.03)
+#	l2.SetTextColor(ROOT.kRed+2)
+#	l2.SetTextAlign(22)
+#	l2.DrawLatex(600,0.08,"19.7 fb^{-1} (8 TeV)")
 
 
 dummy.Draw("AXIS SAME")
@@ -424,11 +424,43 @@ for idx in range(0, len(list_exp) ) :
 	leg.AddEntry(list_exp[idx], label, "L" )
 	
 	if idx==0:
-		leg.AddEntry(list_oneSigma[idx], "1 #sigma","FL") 
-		leg.AddEntry(list_twoSigma[idx], "2 #sigma","FL") 
-if opts.xsec:
-	leg.AddEntry(exp8TeV, "expected (8TeV)","L")
-	leg.AddEntry(obs8TeV, "observed (8TeV)","PL")
+		leg.AddEntry(list_oneSigma[idx], "1 s.d.","FL") 
+		leg.AddEntry(list_twoSigma[idx], "2 s.d.","FL") 
+
+##### PRINT TABLE LATEX
+doTable=True
+if doTable:
+	tex=open(opts.outname +".tex","w")
+	print>>tex, "\\begin{tabular}{lcccccc}"
+	print>>tex, "\\hlinewd{1.2pt}"
+	print>>tex, "\\multirow{2}{*}{$m_\\textup{H}$ [GeV]} & \\multicolumn{5}{c}{Expected Limits} & \multirow{2}{*}{Observed limit} \\\\"
+	print>>tex, "\\cline{2-6}"
+	print>>tex,"& $-2\\sigma$ & $-1\\sigma$ & median  & $1\\sigma$ & $2\\sigma$ & \\\\"
+	print>>tex, "\\hline"
+	for i in range(0,list_exp[0].GetN()):
+		print>>tex, "%.0f"%list_exp[0].GetX()[i],"&",
+		print>>tex, "%.2f"%(list_twoSigma[0].GetY()[i]-list_twoSigma[0].GetEYlow()[i]),
+		print>>tex, "&",
+		print>>tex, "%.2f"%(list_oneSigma[0].GetY()[i]-list_oneSigma[0].GetEYlow()[i]),
+		print>>tex, "&",
+		print>>tex, "%.2f"%list_exp[0].GetY()[i], ## median
+		print>>tex, "&",
+		print>>tex, "%.2f"%(list_oneSigma[0].GetY()[i]+list_oneSigma[0].GetEYhigh()[i]),
+		print>>tex, "&",
+		print>>tex, "%.2f"%(list_twoSigma[0].GetY()[i]+list_twoSigma[0].GetEYhigh()[i]),
+		print>>tex, "&",
+		if opts.unblind:
+			print>>tex, "%.2f"%list_data[0].GetY()[i], ## data
+		else:
+			print>>tex, "-", ## nothing
+		print>>tex, "\\\\"
+	print>>tex, "\\hlinewd{1.2pt}"
+	print>>tex, "\\end{tabular}"
+########
+
+#if opts.xsec:
+#	leg.AddEntry(exp8TeV, "expected (8TeV)","L")
+#	leg.AddEntry(obs8TeV, "observed (8TeV)","PL")
 
 leg.Draw()
 

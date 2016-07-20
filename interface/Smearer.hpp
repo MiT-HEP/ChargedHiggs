@@ -62,6 +62,13 @@ class SmearJer:virtual public SmearBase
 
 };
 
+class SmearUncluster : virtual public SmearBase
+{
+    public:
+        SmearUncluster() : SmearBase(){ name_ = "UNCLUSTER";}
+        virtual int smear(Event*e);	
+};
+
 class SmearSF : virtual public SmearBase
 {
     string sfname_{""};

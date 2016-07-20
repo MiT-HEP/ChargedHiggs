@@ -240,7 +240,14 @@ if opts.hadd:
 	cmd = "[ -f %s%s.root ] && rm -v %s/%s.root"%(opts.dir,name,opts.dir,name) ## remove the file in oredr not to double count
 	call(cmd,shell=True)
 	cmd = "hadd -f %s/%s.root "%(opts.dir, name ) + " ".join(filelist)
-	call(cmd,shell=True)
+	st=call(cmd,shell=True)
+
+	if st !=0 :
+		print "-> Unsuccessfull hadd. (in case refuse to clear). Removing created file."
+		cmd="rm -v %s/%s.root "%(opts.dir, name )
+		call(cmd,shell=True)
+		opts.clear = False
+
 	if opts.clear: 
 		filelist = glob(opts.dir + "/*")
 		rmlist = [ f for f in filelist if  re.sub('^.*/','',f) != name + ".root"]
@@ -328,6 +335,9 @@ if True:
 			list=glob(f)
 			if list == []: ### maybe remote ?
 				list=f
+		if len(list)==0:
+			print "<*> Error in File list from",f,"-- No File Found"
+			raise IOError
 		fileList.extend(list)
 	config['Files']=fileList
 	splittedInput=chunkIt(config['Files'],opts.njobs )
@@ -491,7 +501,7 @@ if not opts.hadoop:
 
 	if opts.tar:
 		if basedir != opts.dir : 
-			sh.write("[ $EXITCODE == 0 ] && mv -v %s/%s %s/\n"%(opts.dir,outname,basedir))
+			sh.write("[ $EXITCODE == 0 ] && mv -v %s/%s %s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(opts.dir,outname,basedir,basedir,iJob,basedir,iJob))
 		if opts.compress:
 			sh.write("mv %s/log%d.txt.gz %s/log%d.txt.gz\n"%(opts.dir,iJob,basedir,iJob) )
 	sh.write('echo "Finished At:"\n')

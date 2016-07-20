@@ -1,0 +1,10 @@
+[include]
+file = plotdat/ewk_loose.txt
+sub =  Loose:Full,EtMiss:Recoil
+
+[ratio]
+draw = True
+base = mc  ## denominator, for now TH1
+fraction = 0.25
+yrange = 0.5,1.5
+ytitle = Data/MC

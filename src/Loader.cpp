@@ -133,7 +133,7 @@ void LoadNero::FillJets(){
             cout <<"\t\t * puId :"<<  bj -> puId -> size() <<endl;
         }
 #endif
-
+//
         bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
         if (not id) continue;
 
@@ -206,10 +206,17 @@ void LoadNero::FillLeptons(){
         l-> type = abs((*bl->pdgId)[iL]);
         //l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
         TLorentzVector lp4= *(TLorentzVector*) ((*bl->p4)[iL]);
-#warning Using Electrons MiniAOD P4 as is w/o corrections
-        if (l->type == 11) lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
+        #warning Using Electrons MiniAOD P4 as is w/o corrections
+        if (l->type == 11) {
+            lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
+        }
+        l-> iso = ( (*bl->iso) [iL]);
+        #warning ELE DELTA BETA
+        if (l->type == 11) {
+            l->iso = ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
+        }
         l-> SetP4( lp4 );
-        l-> iso = ((*bl->iso) [iL])/(l->Pt());
+        //l-> iso = ((*bl->iso) [iL])/(l->Pt());
         l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
         l-> tightId = ( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight); 
 
@@ -283,11 +290,22 @@ void LoadNero::FillTaus(){
         //t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
         //t-> iso2 = bt -> isoMva -> at(iL);
-        t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleLoose ; 
+        //t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleMedium ; 
+#warning EleTight
+        t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleTight ; 
         t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
         t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumIsolationMVArun2v1DBoldDMwLT); 
+        if (bt -> selBits -> at(iL) & BareTaus::Selection::OneProng) t-> SetNProng( 1 );
+        else if (bt -> selBits -> at(iL) & BareTaus::Selection::TwoProng) t-> SetNProng( 2 );
+        else if (bt -> selBits -> at(iL) & BareTaus::Selection::ThreeProng) t-> SetNProng( 3 );
+        else t->SetNProng(0);
+
+        if (bt -> selBits -> at(iL) & BareTaus::Selection::OnePiZero) t-> SetNPiZero( 1 );
+        else if (bt -> selBits -> at(iL) & BareTaus::Selection::TwoPiZero) t-> SetNPiZero( 2 );
+        else if (bt -> selBits -> at(iL) & BareTaus::Selection::ThreePiZero) t-> SetNPiZero( 3 );
+        else t->SetNPiZero(0);
 
 
 
@@ -366,26 +384,37 @@ void LoadNero::FillMet(){
 
     // ---  JES ---
     // Log(__FUNCTION__,"DEBUG","Going to Fill Jes MET");
-    #warning Computing Met JES from jets
-    LogN(__FUNCTION__,"INFO","Met JES computed from jets",5);
-    BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "BareJets" ] ] ); assert (bj !=NULL);
-    TLorentzVector jesUp, jesDown;
-    jesUp  = *(TLorentzVector*)(*met -> p4) [0];
-    jesDown= *(TLorentzVector*)(*met -> p4) [0];
-    for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)  
-    {
-        TLorentzVector delta;
-        delta.SetPtEtaPhiE(  bj -> unc -> at(iJet) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt(), ((TLorentzVector*)(*bj->p4)[iJet])->Eta(), ((TLorentzVector*)(*bj->p4)[iJet])->Phi(), ((TLorentzVector*)(*bj->p4)[iJet])->E() * bj -> unc -> at(iJet));
-        jesUp += delta;
-        jesDown -= delta;
-    }
-    event_ -> met_ . SetValueUp  (Smearer::JES , jesUp.Pt() ); 
-    event_ -> met_ . SetValueDown(Smearer::JES , jesDown.Pt() );
+    // -- #warning Computing Met JES from jets
+    // -- LogN(__FUNCTION__,"INFO","Met JES computed from jets",5);
+    // -- BareJets *bj = dynamic_cast<BareJets*> ( bare_ [ names_[ "BareJets" ] ] ); assert (bj !=NULL);
+    // -- TLorentzVector jesUp, jesDown;
+    // -- jesUp  = *(TLorentzVector*)(*met -> p4) [0];
+    // -- jesDown= *(TLorentzVector*)(*met -> p4) [0];
+    // -- for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)  
+    // -- {
+    // --     TLorentzVector delta;
+    // --     delta.SetPtEtaPhiE(  bj -> unc -> at(iJet) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt(), ((TLorentzVector*)(*bj->p4)[iJet])->Eta(), ((TLorentzVector*)(*bj->p4)[iJet])->Phi(), ((TLorentzVector*)(*bj->p4)[iJet])->E() * bj -> unc -> at(iJet));
+    // --     jesUp += delta;
+    // --     jesDown -= delta;
+    // -- }
+    // -- event_ -> met_ . SetValueUp  (Smearer::JES , jesUp.Pt() ); 
+    // -- event_ -> met_ . SetValueDown(Smearer::JES , jesDown.Pt() );
 
     // JES from MiniAOD
-    //event_ -> met_ . SetValueUp  (Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt() );
-    //event_ -> met_ . SetValueDown(Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesDown]) -> Pt() );
+    event_ -> met_ . SetValueUp  (Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt() );
+    event_ -> met_ . SetValueDown(Smearer::JES , ((TLorentzVector*)(*met->metSyst)[BareMet::JesDown]) -> Pt() );
     event_-> met_ . SetFilled(Smearer::JES);
+
+    // JER
+    event_ -> met_ . SetValueUp  (Smearer::JER , ((TLorentzVector*)(*met->metSyst)[BareMet::JerUp]) -> Pt() );
+    event_ -> met_ . SetValueDown(Smearer::JER , ((TLorentzVector*)(*met->metSyst)[BareMet::JerDown]) -> Pt() );
+    event_-> met_ . SetFilled(Smearer::JER);
+
+    // Unclustered
+    // UnclusterUp, UnclusterDown
+    event_ -> met_ . SetValueUp  (Smearer::UNCLUSTER , ((TLorentzVector*)(*met->metSyst)[BareMet::UnclusterUp]) -> Pt() );
+    event_ -> met_ . SetValueDown(Smearer::UNCLUSTER , ((TLorentzVector*)(*met->metSyst)[BareMet::UnclusterDown]) -> Pt() );
+    event_-> met_ . SetFilled(Smearer::UNCLUSTER);
 
     // ---- TAU SCALE
     BareTaus *bt = dynamic_cast<BareTaus*> ( bare_ [ names_[ "BareTaus" ] ] ); assert (bt !=NULL);

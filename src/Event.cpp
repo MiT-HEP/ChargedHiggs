@@ -549,6 +549,42 @@ void Event::ApplyWReweight(){
     ApplySF("wreweight");
 
 }
+
+//#define VERBOSE 2
+void Event::ApplyBTagSF(int wp)
+{
+    SetWPSF("btag",0); // loose, for sf 
+
+#ifdef VERBOSE
+    if (VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","Starting BTAG SF"); 
+#endif
+    for (int i=0;i<NcentralJets() ;++i)
+    {
+     Jet *j=GetCentralJet(i);
+     SetJetFlavorSF("btag",j->Flavor());  
+
+     if (j->IsBJet() ) // is btagged
+     {
+         GetWeight()->GetSF("btag")->SetVeto(0);
+     }
+     else{
+         GetWeight()->GetSF("btag")->SetVeto(1); //1.-x
+     }
+
+     SetPtEtaSF("btag",j->Pt(), j->Eta() );
+
+#ifdef VERBOSE
+     if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Applying btag sf for jet: %f,%f,%d = %f",j->Pt(),j->Eta(),j->Flavor(),GetWeight()->GetSF("btag")->get()));
+#endif
+     if (GetWeight()->GetSF("btag")->get() <.2 or GetWeight()->GetSF("btag")->get()>2.) continue; // not believable
+     ApplySF("btag");
+    }
+#ifdef VERBOSE
+   if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","End BTAG SF"); 
+#endif
+}
+
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

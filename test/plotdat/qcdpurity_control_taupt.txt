@@ -63,7 +63,7 @@ style = line
 fillcolor = ROOT.kOrange
 fillstyle=1000
 color=ROOT.kBlack
-label=QCD~@it{@scale[0.6]{(Data)}}
+label=mis-ID~@tau_{h}~(@scale[0.6]{Data})
 width=2
 
 [tt]

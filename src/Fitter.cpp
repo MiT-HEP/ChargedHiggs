@@ -251,7 +251,10 @@ void Fitter::fit(){
                 {
                 pars[i].setVal(initPars_[Form("c%d_%.0f",i,m)] );
                 //cout <<"INIT "<<i<<": "<<initPars_[Form("c%d_%.0f",i,m)] <<endl;
+                // follow
+                if (lastMass >0)pars[i].setVal(initPars_[Form("c%d_%.0f",i,lastMass)] ); 
                 }
+            lastMass=m; // set last Mass
             // ------------------------- FIT ----------------
             string mass = Form( massMask_.c_str(), m );
             string name =  Form("cat_%d_mass_%s%s",cat,mass.c_str(),systLabel_.c_str());  
@@ -269,11 +272,13 @@ void Fitter::fit(){
             // -- fit
             fitModel.fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
             fitModel.fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
+
             // -- print or follow
-            //for(int i=0;i<pars.size() ;++i) 
-            //    {
-            //    cout <<"FIT "<<i<<": "<<pars[i].getVal() <<endl;
-            //    }
+            for(int i=0;i<pars.size() ;++i) 
+                {
+                // set to the current fitted value
+                initPars_[Form("c%d_%.0f",i,m)] = pars[i].getVal();
+                }
 
             // -- Plot
             if (plot ) {
