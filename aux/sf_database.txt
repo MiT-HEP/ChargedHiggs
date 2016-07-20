@@ -49,7 +49,8 @@ ele pteta 55 8000 2.0 2.5 1.040 0.028
 #include aux/R_GammaWTR.txt
 #include aux/R_NoWTR.txt
 #include aux/Raelemedium.txt
-include aux/Rantietight.txt
+#include aux/Rantietight.txt
+include aux/RAntiE_v2.txt
 ## BTag from POG
 btag csv aux/CSVv2.csv
 ## electron veto from egamma POG
@@ -83,11 +84,14 @@ topreweight tf2 TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137
 #   2  p1           1.21489e+02   1.02786e+01   1.58847e-02  -3.34746e-07
 #   3  p2           1.75524e+03   2.40305e+02   2.56305e-05   2.61433e-02
 #   4  p3           2.87051e+03   2.75797e+02   8.61153e-02  -1.44657e-05
-#wreweight base 1 0
+wreweight base 1 0
 #
 #amcatnlo
 #wreweight tf1 9.36921e-01-5.20979e-05*x
 #wnjets
 #wreweight tf1 9.07538e-01+8.98994e-05*x-2.90660e-07*x*x
 #antiE
-wreweight tf1 (9.36921e-01-5.20979e-05*x)*(9.81333e-01-9.89856e-05*x)
+#wreweight tf1 (9.36921e-01-5.20979e-05*x)*(9.81333e-01-9.89856e-05*x)
+#wreweight tf1 8.73263e-01+4.27210e-05*TMath::Min(x,1000)-2.25935e-07*TMath::Min(x,1000)*TMath::Min(x,1000)
+#TightIso
+wreweight tf1 8.55806e-01+6.98234e-05*TMath::Min(x,1000)-2.40205e-07*TMath::Min(x,1000)*TMath::Min(x,1000)

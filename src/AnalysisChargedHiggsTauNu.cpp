@@ -171,20 +171,6 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon){
     if ( direct and e->Bjets() >=1 ) cut.SetCutBit(OneBjet) ;
     if ( not direct and e->BjetsInvIso() >=1 ) cut.SetCutBit(OneBjet) ;
 
-    // apply bjets sf -- TEST FIXME
-    //if ( cut.pass(OneBjet)) {
-    //    //if( not e->ExistSF("btag") ){ Log(__FUNCTION__, "WARNING" , "no btag SF" ); } 
-    //    if( not e->ExistSF("btag") ){ Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , "no btag SF" ); } 
-    //    if (direct)
-    //        e->SetPtEtaSF("btag",e->GetBjet(0)->Pt(), e->GetBjet(0)->Eta() );
-    //    else
-    //        e->SetPtEtaSF("btag",e->GetBjetInvIso(0)->Pt(), e->GetBjetInvIso(0)->Eta() );
-    //    //e->SetWPSF("btag",1); // medium, for sf
-    //    e->SetWPSF("btag",0); // loose, for sf
-    //    e->SetJetFlavorSF("btag",0);
-    //}
-
-    //Uncorr Pt does not include met phi corrections, and Tau Nu regression
     //if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
     //if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
     if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);

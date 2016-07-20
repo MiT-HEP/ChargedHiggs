@@ -30,6 +30,8 @@ dat={
 	"plotdat/chhiggs_yields.txt": "plot/Yields.pdf",
 	"plotdat/ewk_full.txt":"plot/EWK_EtMiss_Full.pdf",
 	"plotdat/ewk_ht_full.txt":"plot/EWK_HT_Full.pdf",
+	"plotdat/chhiggs_rbb.txt":"plot/RbbMin.pdf",
+	"plotdat/chhiggs_rcoll.txt":"plot/RCollMin.pdf",
 	}
 
 print "I will consider the following files",dat.keys()

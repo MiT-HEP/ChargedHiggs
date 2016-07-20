@@ -115,7 +115,7 @@ datacard.write("\n")
 
 def Smooth(h):
 	''' Smooth out the tail of the mT distribution'''
-	return;### It's not working ... need to figure out the range dynamically
+	#return;### It's not working ... need to figure out the range dynamically
 	### wjets has some problem
 
 	if True and \
@@ -130,11 +130,30 @@ def Smooth(h):
 	print "*** Considering hist",h.GetName() ## DEBUG
 	print "*** Integral is ",n
 	print "*** Function is","[0]*TMath::Exp(-(x-%f)*[1])"%(x0)
-	f=ROOT.TF1("myfunc","[0]*TMath::Exp(-(x-%f)/[1])"%(x0),200,1000)
+	## evaluate parameters
+	    
+
+	f=ROOT.TF1("myfunc","[0]*TMath::Exp(-(x-%f)/[1])"%(x0),x0,8000)
 	f.SetParameter(0,n)
 	f.SetParameter(1,1)
+	if True:
+		#linear fit is more robust
+		h2=h.Clone("myH")
+		for i in range(1,h2.GetNbinsX()+1):
+			x=h2.GetBinCenter(i)
+			c=h2.GetBinContent(i)
+			if x<x0: h2.SetBinContent(i,0)
+			elif c>0: h2.SetBinContent(i, ROOT.TMath.Log( c) )
+			else : h2.SetBinContent(i,0)
+		f2=ROOT.TF1("myfunc2","[0]+x*[1]",x0,8000)
+		h2.Fit(f2,"NQR")
+		h2.Fit(f2,"NQMR")
+		beta=-1./f2.GetParameter(1)
+		alpha=ROOT.TMath.Exp(f2.GetParameter(0) + x0/beta)
+		f.SetParameter(0,alpha)
 	h.Fit(f,"NQR")
 	h.Fit(f,"NQMR")
+	h.Fit(f,"LNQMR")
 	
 	h0=h.Clone("tmp")  ### DEBUG
 	for i in range(bin0,bin1+1):
@@ -147,6 +166,7 @@ def Smooth(h):
 	h0.SetLineColor(ROOT.kGreen+2)
 	h0.SetMarkerColor(ROOT.kGreen+2)
 	h0.Draw("PE")
+	h0.GetXaxis().SetRangeUser(200,1000)
 	h.Draw("HIST SAME")
 	h.Draw("PE SAME")
 	f.SetLineColor(ROOT.kRed)
