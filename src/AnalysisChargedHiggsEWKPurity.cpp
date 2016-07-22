@@ -172,7 +172,7 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
 
             //-----
             double mt=ChargedHiggs::mt(tauReco.Pt(),metReco.Pt(),tauReco.Phi(),metReco.Phi());
-    	    Fill( dir + "Mt_Embed_" + label,systname,mt,e->weight() );
+            if (tauReco.Pt() > 60 and metReco.Pt() > 100)  Fill( dir + "Mt_Embed_" + label,systname,mt,e->weight() ); // check again the selection on met and tau
 
         #else
             Log(__FUNCTION__,"ERROR","Cannot do pythia w/o CMSSW");
