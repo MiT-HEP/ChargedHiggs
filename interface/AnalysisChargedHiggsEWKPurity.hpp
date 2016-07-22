@@ -5,6 +5,18 @@
 #include "interface/AnalysisBase.hpp"
 #include "interface/GeneralFunctions.hpp"
 
+// FWD Declaration
+namespace Pythia8{
+    class Pythia;
+};
+
+namespace CLHEP {
+  class HepRandomEngine;
+}
+
+#include "TRandom.h"
+#include "TRandom3.h"
+
 class ChargedHiggsEWKPurity:  virtual public AnalysisBase
 {
     public:
@@ -13,6 +25,12 @@ class ChargedHiggsEWKPurity:  virtual public AnalysisBase
         const string name() const override{return "ChargedHiggsEWKPurity";}
         const string dir="ChargedHiggsEWKPurity/Vars/";
         const string none="ChargedHiggsEWKPurity/NOne/";
+
+        bool doPythia{false};
+
+    private:
+        std::auto_ptr<Pythia8::Pythia> fMasterGen;
+        std::auto_ptr<TRandom> random;
 };
 
 #endif
