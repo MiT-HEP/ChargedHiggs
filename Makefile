@@ -42,6 +42,9 @@ $(info CMSSW found: $(CMSSW_BASE) )
 COMBINELIBFILE = $(wildcard $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/libHiggsAnalysisCombinedLimit.so)
 COMBINELIB = HiggsAnalysisCombinedLimit
 COMBINELIBDIR = $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/
+CXXFLAGS += -D HAVE_PYTHIA -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/212/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/212/lib  -lpythia8
+#-I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/clhep/2.2.0.4-kpegke/include
+#"-lpythia8 -lclhep "
 endif
 
 # check if Combine is present and compiled 

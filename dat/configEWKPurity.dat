@@ -39,3 +39,4 @@ Analysis=JsonAnalysis,MetFiltersAnalysis,ChargedHiggsEWKPurity
 config=ChargedHiggsEWKPurity|AddLabel('DY')
 addConfig=ChargedHiggsEWKPurity|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('QCD'),AddLabel('WJets')
 addConfig=ChargedHiggsEWKPurity|AddLabel('ST')
+addConfig=ChargedHiggsEWKPurity|doPythia=1
