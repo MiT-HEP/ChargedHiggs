@@ -18,7 +18,6 @@ void ChargedHiggsTopBottom::SetJetCuts(Jet *j){
 
 void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
     // these are used for the Veto
-    t->SetIsoCut(1.5);
     t->SetPtCut(20);
     t->SetEtaCut(2.4);
     t->SetMuRej(false);

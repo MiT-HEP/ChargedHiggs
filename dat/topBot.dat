@@ -6,5 +6,5 @@ config=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-400_13Te
 addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottom|AddLabel('TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8')
 addConfig=ChargedHiggsTopBottom|AddLabel('TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8')
-addConfig=ChargedHiggsTopBottom|AddLabel('TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'),doAAA=1
+addConfig=ChargedHiggsTopBottom|AddLabel('TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8')
 
