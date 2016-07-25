@@ -18,6 +18,8 @@ class Tau: virtual public Object,
     bool doMuRej_;
     int rematch_ {-1};
     float escale_{0.03};
+    int nprong=0;
+    int npizero = 0;
 
 
     public:
@@ -25,6 +27,12 @@ class Tau: virtual public Object,
     void SetMuRej(bool x ) { doMuRej_ = x;}
     void SetEleRej(bool x ) { doEleRej_ = x;}
     void SetIsoCut(bool x ) { isocut_ = x;}
+
+    void SetNProng(int n) {nprong=n;}
+    void SetNPiZero(int n){npizero=n;}
+
+    int GetNProng() const { return nprong;}
+    int GetNPiZero() const { return npizero;}
 
     Tau() ;
     bool id;

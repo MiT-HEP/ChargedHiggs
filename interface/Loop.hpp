@@ -31,6 +31,9 @@ class Looper{
         TChain *tree_; 
         int fNumber;
 
+        //
+        int minEntries_{-1};
+
         //vector<BareCollection*> bare_; // should be in the Loader?
         //map<string,int> names_;
 
@@ -50,7 +53,8 @@ class Looper{
 
         Loader* loader_; // translate the information in the ntuples in the information in the fwk
 
-        void Log(const string& func, const string& state, const string& mex){ Logger::getInstance().Log(name(),func,state, mex); };
+        void Log(const string& func, const string& state, const string& mex)  { Logger::getInstance().Log(name(),func,state, mex); };
+        void LogErr(const string& func, const string& state, const string& mex) { Logger::getInstance().LogErr(name(),func,state, mex); };
 
     protected:
         //
@@ -65,6 +69,8 @@ class Looper{
         // -- constructor
         Looper();
         ~Looper(){ClearEvent();}
+        // --
+        void SetEntryPerSecond(int n){minEntries_=n;}
         // ---
         const string name(){return "Looper";}
         // ---

@@ -11,6 +11,11 @@ void Named::LogN(const string & function, const string &level, const string &mes
     Logger::getInstance().LogN(this->name(),function,level,message,N );
 }
 
+void Named::LogErr(const string & function, const string &level, const string &message) const
+{	
+    Logger::getInstance().LogErr(this,function,level,message );
+}
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

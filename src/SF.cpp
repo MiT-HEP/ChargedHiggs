@@ -189,7 +189,8 @@ void SF_CSV::init(string filename)
 {
     //---
     Log(__FUNCTION__,"INFO",string("Loading '") +filename+"' in SF CSV " + label );
-    string meas="incl";
+    //string meas="incl";
+    string meas="mujets";
     calib=new BTagCalibration("CSVv2",filename);
     readerL=new BTagCalibrationReader( BTagEntry::OP_LOOSE,  // operating point 
                     "central"           // systematics type
@@ -294,6 +295,9 @@ void SF_TF1::set(double pt)
     sf = f_sf_->Eval(pt);
     if(f_err_) err = f_err_->Eval(pt);
     else err=0;
+
+    //if (get()< 1.e-5)
+    //    Log(__FUNCTION__,"DEBUG",Form("Very little scale factor: pt=%.5f sf=%g",pt,get()));
 }
 
 void SF_TF1::print(){

@@ -38,6 +38,7 @@ for file in opts.sfdb.split(","):
 		g.SetPoint(n,pt,sf)
 		#gErr.SetPoint(n,pt,sf)
 		#gErr.SetPointError(n,0,0,err,err)
+	print "Graph for file",file,"has",g.GetN(),"points"
 	graphs.append(g)
 
 c=r.TCanvas("c","c",800,800)

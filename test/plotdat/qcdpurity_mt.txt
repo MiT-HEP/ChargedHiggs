@@ -19,7 +19,7 @@ lumi = 2.3~fb^{-1}~(13~TeV)
 [legend]
 draw =  True
 header = ~
-legendList = data,qcdinvisocorr,tt,st,ewk,chhiggs200,chhiggs500   
+legendList = data,qcdinvisocorr,tt,st,ewk,chhiggs200,chhiggs500
 position = .60,.7,.90,.95
 
 [data]
@@ -28,10 +28,12 @@ file = QCDPurity.root
 obj  = ChargedHiggsQCDPurity/Vars/Mt_Data
 style = marker
 styleopt = 20
-rebin=10
+#rebin=10
 color = ROOT.kBlack
 label = Data
 yerror=True
+blind=80,1000
+rebinList=0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000
 
 [mc]
 type = stack
@@ -39,7 +41,8 @@ file = QCDPurity.root
 obj  = ewk,tt,st,qcdinvisocorr
 
 [tt]
-rebin=10
+#rebin=10
+rebinList=0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000
 type = th1d
 file = QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/Mt_TT
@@ -52,7 +55,8 @@ scale=2308
 width=2
 
 [st]
-rebin=10
+#rebin=10
+rebinList=0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000
 type = th1d
 file = QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/Mt_ST
@@ -65,7 +69,8 @@ scale=2308
 width=2
 
 [ewk]
-rebin=10
+rebinList=0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000
+#rebin=10
 type = add
 file = QCDPurity.root
 obj  = ChargedHiggsQCDPurity/Vars/Mt_DY,ChargedHiggsQCDPurity/Vars/Mt_WJets,ChargedHiggsQCDPurity/Vars/Mt_WW,ChargedHiggsQCDPurity/Vars/Mt_WZ,ChargedHiggsQCDPurity/Vars/Mt_ZZ
@@ -79,7 +84,8 @@ scale=2308
 width=2
 
 [chhiggs200]
-rebin=10
+#rebin=10
+rebinList=0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000
 type = th1d
 file = QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/Mt_HplusToTauNu_M-200_13TeV_amcatnlo
@@ -91,7 +97,8 @@ scale=230800
 width=2
 
 [chhiggs500]
-rebin=10
+#rebin=10
+rebinList=0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000
 type = th1d
 file = QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/Mt_HplusToTauNu_M-500_13TeV_amcatnlo
@@ -102,9 +109,23 @@ label= H^{+}~(m=500GeV)~x10^{4}
 scale=2308e4
 width=2
 
+[chhiggs1500]
+#rebin=10
+rebinList=0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/Vars/Mt_HplusToTauNu_M-1500_13TeV_amcatnlo
+style = line
+styleopt = 3
+color=ROOT.kCyan
+label= H^{+}~(m=1500GeV)~x10^{6}
+scale=2308e6
+width=2
+
 
 [qcdinvisocorr]
-rebin=10
+#rebin=10
+rebinList=0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000
 type = add
 file = QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data,ChargedHiggsQCDPurity/Vars/MtIsoInv_TT,ChargedHiggsQCDPurity/Vars/MtIsoInv_DY,ChargedHiggsQCDPurity/Vars/MtIsoInv_WJets,ChargedHiggsQCDPurity/Vars/MtIsoInv_WW,ChargedHiggsQCDPurity/Vars/MtIsoInv_WZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ZZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ST

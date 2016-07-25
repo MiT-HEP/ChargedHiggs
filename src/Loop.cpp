@@ -105,6 +105,24 @@ void Looper::Loop()
 			if(iEntry %10000 == 0 ) {
 				sw_.Stop();
 				Log(__FUNCTION__,"INFO",Form("Getting Entry %lu / %lu in (Cpu) %.4f (Real) %.4f",iEntry,nEntries, sw_.CpuTime(),sw_.RealTime()) );
+				//LogErr(__FUNCTION__,"INFO",Form("Getting Entry %lu / %lu in (Cpu) %.4f (Real) %.4f",iEntry,nEntries, sw_.CpuTime(),sw_.RealTime()) );
+				static int slow_machine=0;
+				// min entries per second
+				if (iEntry >30000 and minEntries_>0 and 10000./sw_.RealTime() < minEntries_){
+					Log(__FUNCTION__,"ERROR",Form("Machine is too slow e/s=%.3f",10000./sw_.RealTime()));
+					++slow_machine;
+					if (slow_machine> 3)throw slow();
+				}
+				// check that real time is within a ord of magn of cpu time
+				else if (iEntry >30000 and minEntries_>0 and sw_.RealTime() > 100* sw_.CpuTime()){
+					Log(__FUNCTION__,"ERROR","Real time too big wrt cpu time. I/O Problems?");
+					++slow_machine;
+					if(slow_machine>3)throw slow();
+				}
+				else
+				{
+					slow_machine=0;
+				}
 				sw_ .Reset();
 				sw_ .Start();
 			}
@@ -208,6 +226,7 @@ void Looper::NewFile()
 			if (token.find("root") != string::npos) continue;
 			if (token.find("eos") != string::npos) continue;
 			if (token.find("cms") != string::npos) continue;
+			if (token.find("user") != string::npos) continue;
 			if (token == "" ) continue;
 			dirs.push_back(token); 
 		} 

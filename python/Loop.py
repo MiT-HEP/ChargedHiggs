@@ -72,6 +72,7 @@ from ROOT import LoaderFactory
 
 loop = Looper()
 
+loop.SetEntryPerSecond(100);
 
 ################ LOAD CONFIGURATION ########
 from ParseDat import *

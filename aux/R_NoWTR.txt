@@ -1,0 +1,30 @@
+# QCD R-factor computed by PurityFit
+tauinviso pteta 60 65 -2.1 2.1 0.269799 0
+tauinviso pteta 65 70 -2.1 2.1 0.272623 0
+tauinviso pteta 70 80 -2.1 2.1 0.282459 0
+tauinviso pteta 80 90 -2.1 2.1 0.296221 0
+tauinviso pteta 90 100 -2.1 2.1 0.276231 0
+tauinviso pteta 100 125 -2.1 2.1 0.255246 0
+tauinviso pteta 125 150 -2.1 2.1 0.239691 0
+tauinviso pteta 150 175 -2.1 2.1 0.200058 0
+tauinviso pteta 175 200 -2.1 2.1 0.205465 0
+tauinviso pteta 200 250 -2.1 2.1 0.178601 0
+tauinviso pteta 250 500 -2.1 2.1 0.193923 0
+tauinviso pteta 500 750 -2.1 2.1 0.106441 0
+tauinviso pteta 750 1000 -2.1 2.1 0.161829 0
+tauinviso pteta 1000 8000 -2.1 2.1 0.000357636 0
+tauinvisospline spline 0.00000 0.269799 -0.001375
+tauinvisospline spline 62.4345 0.269799 -0.001375
+tauinvisospline spline 67.4015 0.272623 0.01983  
+tauinvisospline spline 74.6841 0.282459 0.02116  
+tauinvisospline spline 84.6391 0.296221 0.007494 
+tauinvisospline spline 94.6242 0.276231 0.027195 
+tauinvisospline spline 110.832 0.255246 0.029146 
+tauinvisospline spline 135.862 0.239691 0.010616 
+tauinvisospline spline 161.079 0.200058 0.025986 
+tauinvisospline spline 185.942 0.205465 0.0383   
+tauinvisospline spline 221.013 0.178601 0.039481 
+tauinvisospline spline 305.534 0.193923 0.028873 
+tauinvisospline spline 544.276 0.106441 0.03
+tauinvisospline spline 882.943 0.161829 0.03
+tauinvisospline spline 8000.00 0.161829 0.03

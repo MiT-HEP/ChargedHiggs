@@ -31,6 +31,18 @@ public:
 	}
 
     void LogN( const string & name, const string& function, const string & level, const string & message,int N);
+    
+    // --- on stderr
+    inline void LogErr(const Named*a ,const string & function, const string &level, const string & message)
+    {
+        return LogErr(a->name(), function,level,message);
+    }
+
+	inline void LogErr(const string& name,const string& function, const string & level, const string& message){
+		cerr <<"["<<name
+			<<"]::["<<function <<"]::["<<level<<"]: "
+			<<message<<endl;
+	}
 };
 
 #endif

@@ -81,8 +81,8 @@ void ChargedHiggsQCDPurity::Init()
 
         }
         // I don't need to split it by pt
-            Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),1000,0.,1000); // same binning in TauNu
-            Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),1000,0.,1000.);
+            Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),8000,0.,8000); // same binning in TauNu
+            Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),8000,0.,8000.);
             Book( none + "EtMissIsoInv"+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),1000,0.,1000.);
             Book( none + "EtMiss"+"_"+ l  , ("EtMiss "+ l).c_str(),1000,0.,1000.); // copy of the Tau Nu ? 
 
@@ -145,13 +145,27 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection
     bool passPrescale=false;
-    if (not e->IsRealData()) passPrescale=true;
+    //if (not e->IsRealData()) passPrescale=true;
     if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
     //#warning MET80 TRigger in QCD
     //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") ) passPrescale=true;
     //LogN(__FUNCTION__,"WARNING","MET 80 in QCD Loose",10);
+    //
+    bool passMatchDirect=true;
+    bool passMatchInverse=true;
+    /*
+    #warning Tau Match
+    bool passMatchDirect=false;
+    bool passMatchInverse=false;
+    if (e->IsRealData()) { passMatchDirect=true; passMatchInverse=true;}
+    else {  
+        if (e->GetTau(0) !=NULL and e->GetTau(0)->Rematch(e)==15) passMatchDirect=true;
+        if (e->GetTauInvIso(0) !=NULL and e->GetTauInvIso(0)->Rematch(e)==15) passMatchInverse=true;
+    }
+    */
+    //--------------
 
-    if (t != NULL and passDirectLoose and passPrescale) // direct
+    if (t != NULL and passMatchDirect and passDirectLoose and passPrescale) // direct
     {
         float pt = t->Pt();
         int flavor= t->Rematch(e);
@@ -183,7 +197,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     }
 
-    if (tInv != NULL and passInverseLoose and passPrescale) // inv iso
+    if (tInv != NULL and passMatchInverse and passInverseLoose and passPrescale) // inv iso
     {
         float pt = tInv->Pt();
         int flavor= tInv->Rematch(e);
@@ -205,26 +219,28 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
     }
 
-
+    // not in the LOOSE --- BTAG SF, only MC
+    //#warning no-btag-sf
+    if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
     // -------------------------- FULL SELECTION -----------------------------------------------
     
     // N minus one direct
-    if (t!=NULL and direct.passAllExcept(ChargedHiggsTauNu::Met) ) 
+    if (t!=NULL and passMatchDirect and direct.passAllExcept(ChargedHiggsTauNu::Met) ) 
         {
             Fill( none + "EtMiss" +"_"+label,systname, e->GetMet().Pt(), e->weight() );
         }
 
-    if (t!=NULL and direct.passAllExcept(ChargedHiggsTauNu::AngRbb) ) 
+    if (t!=NULL and passMatchDirect and direct.passAllExcept(ChargedHiggsTauNu::AngRbb) ) 
         {
             Fill( none + "RbbMin" +"_"+label,systname, e->RbbMin(), e->weight() );
         }
 
-    if (t!=NULL and direct.passAllExcept(ChargedHiggsTauNu::AngColl) ) 
+    if (t!=NULL and passMatchDirect and direct.passAllExcept(ChargedHiggsTauNu::AngColl) ) 
         {
             Fill( none + "RCollMin" +"_"+label,systname, e->RCollMin(), e->weight() );
         }
 
-    if (t!=NULL and direct.passAll() ) 
+    if (t!=NULL and passMatchDirect and direct.passAll() ) 
     {
             //if ( not e->IsRealData()) e->ApplySF("btag");
             #ifdef VERBOSE
@@ -254,7 +270,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     // ---------------------- INF TAU SF 
     //
-    if (tInv != NULL and passInverseLoose ){ // USE weight(false) to apply TF on data!
+    if (tInv != NULL and passMatchInverse and passInverseLoose ){ // USE weight(false) to apply TF on data!
         float pt = tInv->Pt();                                                   
         //const string sf="tauinviso";
         const string sfname="tauinvisospline";
@@ -284,12 +300,12 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
         if (inverse.passAllExcept(ChargedHiggsTauNu::AngRbb) ) 
             {
-                Fill( none + "RbbMin" +"_"+label,systname, e->RbbMin(3,tInv), e->weight() );
+                Fill( none + "RbbMinIsoInv" +"_"+label,systname, e->RbbMin(3,tInv), e->weight(false) );
             }
 
         if (inverse.passAllExcept(ChargedHiggsTauNu::AngColl) ) 
             {
-                Fill( none + "RCollMin" +"_"+label,systname, e->RCollMin(3,tInv), e->weight() );
+                Fill( none + "RCollMinIsoInv" +"_"+label,systname, e->RCollMin(3,tInv), e->weight(false) );
             }
 
         // remove trigger & met

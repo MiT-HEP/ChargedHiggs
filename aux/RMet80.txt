@@ -1,24 +1,18 @@
 # QCD R-factor computed by PurityFit
 # this file includes the results from RMet80_nofit 
 # and the uncertainties derived from OneB_nofit
-#tauinvisospline spline 0 60.0299 0
-tauinvisospline spline 53.0035 0.186054 0.023098
-tauinvisospline spline 57.4568 0.20713 0.006637
-tauinvisospline spline 62.4296 0.215069 -0.001375
-tauinvisospline spline 67.3942 0.221054 0.01983
-tauinvisospline spline 74.6998 0.233344 0.02116
-tauinvisospline spline 84.6437 0.246921 0.007494
-tauinvisospline spline 94.5923 0.227595 0.027195
-tauinvisospline spline 110.874 0.214892 0.029146
-tauinvisospline spline 135.868 0.205346 0.010616
-tauinvisospline spline 161.163 0.173665 0.025986
-tauinvisospline spline 185.799 0.16892 0.0383
-tauinvisospline spline 221.27 0.154642 0.039481
-tauinvisospline spline 306.401 0.174399 0.028873
-##added to preserve linear behaviour, otherwise spline crazy
-tauinvisospline spline 429.57 0.1313 0.019
-tauinvisospline spline 552.75 0.0884851 0.01
-# idem
-tauinvisospline spline 717.84 0.081 0.03
-tauinvisospline spline 882.943 0.08 0.05
-tauinvisospline spline 8000 0.08 0.05
+tauinvisospline spline 0 0.231245 	-0.001375
+tauinvisospline spline 62.4354 0.231245 -0.001375
+tauinvisospline spline 67.4012 0.235978 0.01983  
+tauinvisospline spline 74.6847 0.248759 0.02116  
+tauinvisospline spline 84.6388 0.264654 0.007494 
+tauinvisospline spline 94.6198 0.244931 0.027195 
+tauinvisospline spline 110.836 0.228532 0.029146 
+tauinvisospline spline 135.84 0.218233  0.010616 
+tauinvisospline spline 161.099 0.183209 0.025986 
+tauinvisospline spline 185.922 0.18894  0.0383   
+tauinvisospline spline 220.961 0.164802 0.039481 
+tauinvisospline spline 305.586 0.180735 0.028873 
+tauinvisospline spline 544.276 0.101018 0.03
+tauinvisospline spline 882.943 0.159051 0.03
+tauinvisospline spline 8000 0.159051 	0.03
