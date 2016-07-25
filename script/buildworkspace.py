@@ -117,6 +117,7 @@ def Smooth(h):
 	''' Smooth out the tail of the mT distribution'''
 	#return;### It's not working ... need to figure out the range dynamically
 	### wjets has some problem
+	return 
 
 	if True and \
 	   'WJets' not in h.GetName() and \
@@ -175,7 +176,6 @@ def Smooth(h):
 	f.Delete()
 	h0.Delete()
 	return
-
 	
 
 def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs and argset_obs and rebin

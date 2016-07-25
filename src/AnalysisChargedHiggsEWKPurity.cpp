@@ -30,6 +30,9 @@ void ChargedHiggsEWKPurity::Init()
 
             hist= "Mt_Embed";
             Book( dir + hist+"_"+ l  , ("MtEmbed"+ l).c_str(),1000,0.,1000.); 
+
+            hist= "EtMiss_Embed";
+            Book( none + hist+"_"+ l  , ("EtMiss Embed"+ l).c_str(),1000,0.,1000.); 
     }
 
     if (doPythia)
@@ -280,14 +283,20 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
             if (metReco.Pt() <=100) pass=false;
             if (rbbmin <=0.8) pass=false;
 
-            if (pass){
-                e->SetPtEtaSF("metLegEff",metReco.Pt(),metReco.Eta());
-                e->ApplySF("metLegEff");
-                e->SetPtEtaSF("tauLeg13pEff",tauReco.Pt(),tauReco.Eta());
-                e->ApplySF("tauLeg13pEff");
+            e->SetPtEtaSF("metLegEff",metReco.Pt(),metReco.Eta());
+            e->ApplySF("metLegEff");
+            e->SetPtEtaSF("tauLeg13pEff",tauReco.Pt(),tauReco.Eta());
+            e->ApplySF("tauLeg13pEff");
 
+            if (pass){
                 Fill( dir + "Mt_Embed_" + label,systname,mt,e->weight(false) ); // check again the selection on met and tau
             }
+
+            //NONE
+            if (tauReco.Pt() > 60 and rbbmin >0.8) {
+                Fill( none + "EtMiss_Embed_" + label,systname,metReco.Pt(),e->weight(false) ); // check again the selection on met and tau
+            }
+
         #else
             Log(__FUNCTION__,"ERROR","Cannot do pythia w/o CMSSW");
             throw abortException();
