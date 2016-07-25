@@ -29,6 +29,7 @@ sub=zdemirag|/store/caf/user/dmytro/zdemirag/setup80x/Nero/
 #addfiles=%(amarini)s/1.4.prong/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 
 ## SIGNAL (updated jul19) more inside addfiles=%(jan)s/8X/
+addfiles=%(dalfonso)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8/
 addfiles=%(dalfonso)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8/
 addfiles=%(dalfonso)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8/
 
