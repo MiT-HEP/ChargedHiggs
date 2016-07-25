@@ -4,6 +4,12 @@ f=ROOT.TFile.Open("root://eoscms///store/user/amarini/Nero/v1.4.nopujet/DYJetsTo
 t=f.Get("nero/events")
 
 h=ROOT.TH1D("h","res",400,0,2);
+
+#reco efficiency th-> AntiE + DecayMode (NO ISO)
+Pass=0
+Tot=0
+
+
 for i in range(0,t.GetEntries()):
 	t.GetEntry(i)
 	myTau=-1

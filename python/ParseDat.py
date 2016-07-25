@@ -354,6 +354,11 @@ def ReadSFDB(file,verbose=False):
 		elif type == 'json-sami':
 			R['filename'] = l.split(' ')[2]
 			R['type'] = 'pteta'
+
+			doEffOnly=False
+			if 'effonly' in ' '.join(l.split()[3:]): 
+				doEffOnly=True
+				if verbose: print "  * EffOnly. MC eff=1"
 			try: 
 			   jstring = open(R['filename']).read()
 			except IOError as e:
@@ -381,6 +386,10 @@ def ReadSFDB(file,verbose=False):
 				errMc = mc[idx]["uncertaintyPlus"] 
 
 				if effMc == 0. : continue # bin not well populated
+
+				if doEffOnly:
+					effMc=1
+					errMc=0
 
 				try:
 					R["sf"] = effD/effMc

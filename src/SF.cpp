@@ -86,12 +86,12 @@ void SF_TH2F::init(string filename,string histname)
     TFile *f = TFile::Open(filename.c_str() ) ;
     if (f == NULL){
         Log(__FUNCTION__,"ERROR","file '" + filename + "' does not exist");
-        throw abort ;
+        throw abortException() ;
     }
     TH2F *h=(TH2F*)f->Get(histname.c_str());
     if (h==NULL){
         Log(__FUNCTION__,"ERROR","h '"+histname+"' does not exist");
-        throw abort ;
+        throw abortException() ;
     }
 
     for( int aetabin =1; aetabin <= h->GetNbinsX() ; ++aetabin)
@@ -279,7 +279,7 @@ void SF_CSV::set( float pt, float eta, int wp, int flavor)
     {
         nominal = readerT; up = readerT_up ; down=readerT_down;
     }
-    else { Log(__FUNCTION__,"ERROR","Unsupported WP"); throw abort ;}
+    else { Log(__FUNCTION__,"ERROR","Unsupported WP"); throw abortException() ;}
 
     sf=nominal->eval(BTEFlav, eta, pt);
     errUp=(up->eval(BTEFlav, eta, pt) -sf ) * scaleSyst;

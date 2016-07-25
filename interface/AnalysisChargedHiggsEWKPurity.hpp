@@ -28,6 +28,9 @@ class ChargedHiggsEWKPurity:  virtual public AnalysisBase
 
         bool doPythia{false};
 
+        // Isolation as for taus -- hard coded. The value here is used by the jet rejection
+        void SetLeptonCuts(Lepton *l) override { l->SetIsoCut(10); l->SetPtCut(10);l->SetIsoRelCut(-1);l->SetEtaCut(2.4); l->SetTightCut(false);}
+
     private:
         std::auto_ptr<Pythia8::Pythia> fMasterGen;
         std::auto_ptr<TRandom> random;

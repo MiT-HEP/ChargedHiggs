@@ -67,6 +67,10 @@ tauLeg13p json-sami aux/tauLegTriggerEfficiency2015_13prong.json
 tauLeg1p json-sami aux/tauLegTriggerEfficiency2015_1prong.json
 metLegBtagLoose json-sami aux/metLegTriggerEfficiency2015_btagLoose.json
 metLegBtagMedium json-sami aux/metLegTriggerEfficiency2015_btagMedium.json
+
+metLegEff json-sami aux/metLegTriggerEfficiency2015_btagLoose.json effonly
+tauLeg13pEff json-sami aux/tauLegTriggerEfficiency2015_13prong.json effonly
+
 #######################
 ### top reweighting ###
 #######################

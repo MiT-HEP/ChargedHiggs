@@ -50,14 +50,36 @@ void ChargedHiggsEWKPurity::Init()
         fMasterGen->settings.addMVec("ResonanceDecayFilter:daughters",std::vector<int>(),false,false,0,0);  
         //fMasterGen->setRndmEnginePtr( randomEngine.get() ); 
         fMasterGen->readString(Form("Random:seed=%u",random->Integer(999999999))); 
-        fMasterGen->readString("ParticleDecays:sophisticatedTau = 2");
-        fMasterGen->readString("ParticleDecays:tauPolarization = 0");
+
+        fMasterGen->readString("Tune:preferLHAPDF = 2");
+        fMasterGen->readString("Main:timesAllowErrors = 10000");
+        fMasterGen->readString("Check:epTolErr = 0.01");
+        fMasterGen->readString("Beams:setProductionScalesFromLHEF = off");
+        fMasterGen->readString("SLHA:keepSM = on");
+        fMasterGen->readString("SLHA:minMassSM = 1000.");
+        fMasterGen->readString("ParticleDecays:limitTau0 = on");
+        fMasterGen->readString("ParticleDecays:tau0Max = 10");
+        fMasterGen->readString("ParticleDecays:allowPhotonRadiation = on");
+        // Tune
+        fMasterGen->readString("Tune:pp 14");
+        fMasterGen->readString("Tune:ee 7");
+        //fMasterGen->readString("");
+        //fMasterGen->readString("");
         fMasterGen->readString("15:onMode = on"); // all taus !! -> eff
         //fMasterGen->readString("");
         fMasterGen->readString("Next:numberShowEvent = 0"); 
+        //fMasterGen->readString("ParticleDecays:sophisticatedTau = 2");
+        //fMasterGen->readString("ParticleDecays:tauPolarization = 0");
+        
+        // PGUN
+        fMasterGen->readString("ProcessLevel:all = off");
+        fMasterGen->readString("ProcessLevel::resonanceDecays=on");
+        //fMasterGen->readString("");
+
+        fMasterGen->init();
         #else
             Log(__FUNCTION__,"ERROR","Cannot do pythia w/o CMSSW");
-            throw abort;
+            throw abortException();
         #endif
     }
 }
@@ -86,18 +108,61 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
     
     }
 
-    if (muon.passAll() ) 
+    int muonIdx=-1;
+    {
+        Lepton *l=NULL;
+        for(int i=0;;++i)//muon
+        {
+            l=e->GetMuon(i);
+            if (l==NULL) break;
+            if (l->Pt()<10) break;
+            if ( fabs(l->Eta() )> 2.1 ) continue; // no lepton
+            if (l->Isolation() >0.15 ) continue; // ABS ISO
+            muonIdx=i;
+        }
+    }
+
+    bool lepVeto=false;
+    { // compute lepton veto
+        if (e->Nleps() ==0 ) lepVeto=true;
+        int nMuons=0;
+        int nElectrons=0;
+        Lepton *l=NULL;
+        for(int i=0;;++i)//muon
+        {
+            l=e->GetMuon(i);
+            if (l==NULL) break;
+            if (i==muonIdx) continue;
+            if (l->Pt()<10) break;
+            if (l->Isolation() >0.15*l->Pt() ) continue; // REL ISO
+            nMuons++;
+        }
+        for(int i=0;;++i)//electron
+        {
+            l=e->GetElectron(i);
+            if (l==NULL) break;
+            if (l->Pt()<15) break;
+            if (l->Isolation() >0.15*l->Pt() ) continue; // REL ISO
+            nElectrons++;
+        }
+        if (nMuons <=0 and nElectrons<=0) lepVeto=true; // 1 muon is the tau candidate <-> muon
+    } // end lepVeto
+
+    //if (muon.passAll() ) 
+    if (muon.passMask(ChargedHiggsTauNu::Trigger | ChargedHiggsTauNu::ThreeJets | ChargedHiggsTauNu::OneBjet) and muonIdx>=0 and lepVeto )  // Trigger=IsoMu, No Met, No Ang Var
     {
     
     	Fill( dir + "Mt_" + label,systname,e->Mt(Event::MtMuon),e->weight() );
         if ( doPythia )
         {
         #ifdef HAVE_PYTHIA
+            //Log(__FUNCTION__,"DEBUG","Doing Pythia");
             fMasterGen->event.reset();
-            int particleID = -15 * e->GetMuon(0)->Charge(); 
-            double phi = e->GetMuon(0)->Phi();
-            double eta = e->GetMuon(0)->Eta();
-            double pt  = e->GetMuon(0)->Pt();
+            Lepton *l =e->GetMuon(muonIdx);
+            int particleID = -15 * l->Charge(); 
+            double phi = l->Phi();
+            double eta = l->Eta();
+            double pt  = l->Pt();
             double mass = (fMasterGen->particleData).m0( particleID );
             double the = 2.*atan(exp(-eta));
 
@@ -109,21 +174,44 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
             double pz = pp * cos(the);
 
             (fMasterGen->event).append( particleID, 1, 0, 0, px, py, pz, ee, mass );
+            //DEBUG
+            //cout<<"DEBUG APPENDING"<<particleID<<" "<< 1<<" "<< 0<<" "<< 0<<" "<< px<<" "<< py<<" "<< pz<<" "<< ee<<" "<< mass<<endl;
+
             int eventSize = (fMasterGen->event).size()-1;
             double tauTmp = -(fMasterGen->event)[eventSize].tau0() * log(random->Uniform());
             (fMasterGen->event)[eventSize].tau( tauTmp );
 
-            if ( !fMasterGen->next() ) {
-                Log(__FUNCTION__,"WARNING","Failed to generate event");
-                return 0; // GENERATE EVENT
-            }  
+            // FIXME Make it a loop
+            //if ( !fMasterGen->next() ) {
+            //    Log(__FUNCTION__,"WARNING","Failed to generate event");
+            //    return 0; // GENERATE EVENT
+            //}  
+           
+            for(int iter=0;;++iter) 
+            {
+                //Log(__FUNCTION__,"INFO",Form("pythia iteration %d",iter));
+                int before = fMasterGen->event.size();
+                if ( !fMasterGen->next() ) {
+                    Log(__FUNCTION__,"WARNING","Failed to generate event");
+                    return 0; // GENERATE EVENT
+                }  
+                int after = fMasterGen->event.size();
+                if (before==after) break;
+            
+            }
+
+            // --- DEBUG
+            //fMasterGen->event.list();
+            // ----
 
             TLorentzVector tau;
             TLorentzVector nu;
             for (unsigned i=0; i<fMasterGen->event.size() ;++i)
             {
                 const auto & p = fMasterGen->event.at(i);
-                if ( p.status() != 1) continue;
+                //cout<<"DEBUG READING: "<< p.id()<<" "<< p.status()<<" | "<<p.px()<<" "<<p.py()<<" "<< p.pz()<<" " <<p.m()<<endl; ;
+                //if ( p.status() != 1) continue;
+                if ( p.status() <= 0) continue;
                 TLorentzVector myp;
                 myp.SetPxPyPzE( p.px(), p.py(), p.pz(), p.e());
                 if ( p.idAbs() ==11 or p.idAbs()==13 ){
@@ -172,11 +260,37 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
 
             //-----
             double mt=ChargedHiggs::mt(tauReco.Pt(),metReco.Pt(),tauReco.Phi(),metReco.Phi());
-            if (tauReco.Pt() > 60 and metReco.Pt() > 100)  Fill( dir + "Mt_Embed_" + label,systname,mt,e->weight() ); // check again the selection on met and tau
 
+            float dphietmisstau = TMath::Pi() - fabs(metReco.DeltaPhi( tauReco) );
+
+            float rbbmin = -1;
+            for(int i=0 ; i< 3; ++i){
+                if( e->GetJet(i) == NULL ) break;
+                float dphietmissjet= fabs( metReco.DeltaPhi( e->GetJet(i)->GetP4() ) );
+                float myrbb = sqrt(dphietmisstau*dphietmisstau + dphietmissjet*dphietmissjet) ;
+                if (rbbmin<0 or myrbb<rbbmin) rbbmin = myrbb;
+            }
+
+
+            //FIXME. 1) Recompute Ang Var. Rbb
+            //FIXME. 2) Apply Trigger efficiency (sf): Tau*Met/SingleMuon ; tau legs done, single muon leg not doen
+            //
+            bool pass=true;
+            if (tauReco.Pt() <= 60) pass=false;
+            if (metReco.Pt() <=100) pass=false;
+            if (rbbmin <=0.8) pass=false;
+
+            if (pass){
+                e->SetPtEtaSF("metLegEff",metReco.Pt(),metReco.Eta());
+                e->ApplySF("metLegEff");
+                e->SetPtEtaSF("tauLeg13pEff",tauReco.Pt(),tauReco.Eta());
+                e->ApplySF("tauLeg13pEff");
+
+                Fill( dir + "Mt_Embed_" + label,systname,mt,e->weight(false) ); // check again the selection on met and tau
+            }
         #else
             Log(__FUNCTION__,"ERROR","Cannot do pythia w/o CMSSW");
-            throw abort;
+            throw abortException();
         #endif
         
         }
