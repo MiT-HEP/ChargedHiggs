@@ -108,6 +108,12 @@ class Jet : virtual public Object, virtual public SmearableComplex
         return 1;
     }
 
+    inline int IsForwardJet() const {
+        if ( not IsJet() ) return 0;
+        if ( fabs(Eta()) < etacutcentral_ ) return 0;
+        return 1;
+    }
+
     inline float Btag() const { return bdiscr ; } // don't use this function, to check if it is a bjet
     inline int IsBJet() const { if( bdiscr > bcut_  and IsJet() and fabs(Eta()) <= betacut_ )   return 1; return 0;}
 

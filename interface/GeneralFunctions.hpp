@@ -9,8 +9,9 @@
 #include <string>
 #include <bitset>
 #include <cmath>
+#include <TLorentzVector.h>
 
-class TLorentzVector;
+//class TLorentzVector;
 
 namespace ChargedHiggs{
     // ---
@@ -19,6 +20,7 @@ namespace ChargedHiggs{
     template<typename T> 
     void Delete(T& x) { delete x; x=NULL; }
 
+    float mtMassive( const TLorentzVector p1,  const TLorentzVector p2);
     float mt(const float pt1, const float pt2, const float phi1, const float phi2);
 
     // use this for massive objects
