@@ -21,6 +21,11 @@ public:
 
     void Preselection();
 
+    // function with various plots
+    bool genInfo(Event* ) ;
+    void jetPlot(Event*e, string label , string systname);
+    void leptonicHiggs(Event*e, string label, string systname, int indexb1, int indexb2, TLorentzVector p4W, string combination);
+
     int analyze(Event*,string systname) override;
     const string name() const override {return "ChargedHiggsTopBottom";}
 
@@ -34,11 +39,10 @@ private:
                   NoTau,
                   Met,
                   Mt,
-                  FourJets,
-                  B1Pt,
+                  NJets,
                   NB,
+                  MaxCut
     };
-
 
 };
 
