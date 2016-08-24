@@ -10,9 +10,11 @@
 ### DATASETS ###
 ################
 #
-sub=tag|v1.4
-sub=amarini|/store/user/amarini/Nero
-sub=klute|/store/user/klute/Nero
+sub=tag|v1.4.genpart
+#sub=amarini|/store/user/amarini/Nero
+sub=amarini|/eos/user/a/amarini/Nero
+#sub=klute|/store/user/klute/Nero
+sub=klute|/eos/user/k/klute/Nero
 sub=jan|/store/user/jaeyserm/Nero
 
 #### BKG ###
@@ -21,25 +23,23 @@ Files=%(klute)s/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 #addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 addfiles=%(klute)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 #addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
-# rerun with more mc info
-addfiles=/eos/user/a/amarini/Nero/v1.4.prong/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 
 ## Single Top
-addfiles=%(jan)s/%(tag)s/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8
-addfiles=%(jan)s/%(tag)s/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1
-addfiles=%(jan)s/%(tag)s/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1
-addfiles=%(jan)s/%(tag)s/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1
-addfiles=%(jan)s/%(tag)s/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1
+addfiles=%(klute)s/%(tag)s/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8
+addfiles=%(klute)s/%(tag)s/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1
+addfiles=%(klute)s/%(tag)s/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1
+addfiles=%(klute)s/%(tag)s/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1
+addfiles=%(klute)s/%(tag)s/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1
 
 ##powehg diboson
-addfiles=%(amarini)s/%(tag)s/WWTo2L2Nu_13TeV-powheg
-addfiles=%(amarini)s/%(tag)s/WWToLNuQQ_13TeV-powheg
-addfiles=%(amarini)s/%(tag)s/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8
-addfiles=%(amarini)s/%(tag)s/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8
-addfiles=%(amarini)s/%(tag)s/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
-addfiles=%(amarini)s/%(tag)s/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8
-addfiles=%(amarini)s/%(tag)s/ZZTo2L2Nu_13TeV_powheg_pythia8
-addfiles=%(amarini)s/%(tag)s/ZZTo4L_13TeV-amcatnloFXFX-pythia8
+addfiles=%(klute)s/%(tag)s/WWTo2L2Nu_13TeV-powheg
+addfiles=%(klute)s/%(tag)s/WWToLNuQQ_13TeV-powheg
+addfiles=%(klute)s/%(tag)s/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(klute)s/%(tag)s/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(klute)s/%(tag)s/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(klute)s/%(tag)s/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8
+addfiles=%(klute)s/%(tag)s/ZZTo2L2Nu_13TeV_powheg_pythia8
+addfiles=%(klute)s/%(tag)s/ZZTo4L_13TeV-amcatnloFXFX-pythia8
 #addfiles=%(amarini)s/%(tag)s/
 
 ## pythia diboson
@@ -48,20 +48,20 @@ addfiles=%(amarini)s/%(tag)s/ZZTo4L_13TeV-amcatnloFXFX-pythia8
 ##addfiles=%(amarini)s/%(tag)s/ZZ_TuneCUETP8M1_13TeV-pythia8
 ### SIGNAL ###
 ## signal amc@nlo
+addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
-#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
-#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
-addfiles=%(amarini)s/v1.4.lhe/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
-addfiles=%(amarini)s/v1.4.lhe/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
-addfiles=%(amarini)s/v1.4.lhe/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
-addfiles=%(amarini)s/v1.4.lhe/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
+#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
-addfiles=%(amarini)s/v1.4.nopujet/ChargedHiggs_HplusTB_HplusToTauNu_M-1500_13TeV_amcatnlo_pythia8
-#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
-#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
-#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
+#addfiles=%(amarini)s/v1.4.nopujet/ChargedHiggs_HplusTB_HplusToTauNu_M-1500_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-750_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8
+#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8
+
 ### QCD
 #addfiles=%(amarini)s/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
 #addfiles=%(amarini)s/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
@@ -82,15 +82,15 @@ addfiles=%(amarini)s/v1.4.nopujet/ChargedHiggs_HplusTB_HplusToTauNu_M-1500_13TeV
 
 #addfiles=%(amarini)s/v1.4.nopujet/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 ## WNJets
-addfiles=/eos/user/k/klute/Nero/v1.4.prong/W0JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=/eos/user/k/klute/Nero/v1.4.prong/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=/eos/user/k/klute/Nero/v1.4.prong/W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=/eos/user/a/amarini/Nero/v1.4.prong/W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(klute)s/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(klute)s/%(tag)s/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(klute)s/%(tag)s/W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(klute)s/%(tag)s/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(klute)s/%(tag)s/W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 
-addfiles=/store/user/amarini/Nero/%(tag)s/Tau
+addfiles=%(klute)s/%(tag)s/Tau
 #addfiles=/store/user/amarini/Nero/v1.4.aele/Tau-Run2015C
-addfiles=/eos/user/a/amarini/Nero/v1.4.aele/Tau-Run2015C
+#addfiles=/eos/user/a/amarini/Nero/v1.4.aele/Tau-Run2015C
 ####
 
 #__________________________________________________________________
@@ -103,10 +103,10 @@ include=dat/tmva.dat
 
 Output=ChHiggs.root
 
-MCDB=dat/mc_database.txt
+MCDB=aux/mcdb.genpart
 SFDB=aux/sf_database.txt
 Branches=dat/branches.txt
-pileup=aux/pileup.root
+pileup=aux/pileup2.root
 #pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root
 #pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup_JSON_1p2_PRE_10-09-2015.root 
 #pileup=file,fileup,filedn TODO

@@ -288,6 +288,21 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
             e->SetPtEtaSF("tauLeg13pEff",tauReco.Pt(),tauReco.Eta());
             e->ApplySF("tauLeg13pEff");
 
+            e->SetPtEtaSF("singlemuonInvEff",pt,eta); // remove the SingleMuon Trigger Efficiency
+            e->ApplySF("singlemuonInvEff");
+
+            e->ApplySF("singlemuonRecoInvEff");
+
+            //#warning no tau id eff
+            e->SetPtEtaSF("tauIdEff",tau.Pt(),tau.Eta()); // remove the SingleMuon Trigger Efficiency -- Gen Level Hadronic Tau?
+            e->ApplySF("tauIdEff");
+
+            e->SetPtEtaSF("antiE",tau.Pt(),tau.Eta()); // remove the SingleMuon Trigger Efficiency -- Gen Level Hadronic Tau?
+            e->ApplySF("antiE");
+
+            e->ApplySF("tauid2"); // eff is 1 here.
+
+
             if (pass){
                 Fill( dir + "Mt_Embed_" + label,systname,mt,e->weight(false) ); // check again the selection on met and tau
             }

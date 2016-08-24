@@ -165,6 +165,7 @@ class Event{
     void ApplyTopReweight();
     void ApplyWReweight();
     void ApplyBTagSF(int wp=0);
+    void ApplyTauSF(Tau*t);
 };
 
 #endif

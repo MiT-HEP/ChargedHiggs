@@ -120,6 +120,24 @@ fitter.init()
 if opts.verbose: print "-> Fit"
 fitter.fit()
 
+if opts.classname== "PurityFit":
+	fitter.extra="_1p"
+	fitter.labelbin="tauinviso_1p"
+	fitter.labelspline="tauinvisospline_1p"
+	if opts.verbose: print "-> Fit2"
+	fitter.init()
+	fitter.fit()
+
+	fitter.extra="_3p"
+	fitter.labelbin="tauinviso_3p"
+	fitter.labelspline="tauinvisospline_3p"
+
+	if opts.verbose: print "-> Fit3"
+	fitter.init()
+	fitter.fit()
+
+
+
 if opts.verbose: print "-> End"
 fitter.end()
 

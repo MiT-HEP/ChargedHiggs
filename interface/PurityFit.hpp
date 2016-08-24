@@ -58,6 +58,11 @@ class PurityFit : public BaseFitter{
         string txtoutname;
         map<string,float> initvalues;
 
+        string what="EtMiss";
+        string extra=""; // "_1p"
+        string labelbin="tauinviso";
+        string labelspline="tauinvisospline";
+
         virtual void init();
         virtual void fit();
         const string name() const override { return "PurityFit";}

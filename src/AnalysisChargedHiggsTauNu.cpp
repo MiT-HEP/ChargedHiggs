@@ -235,7 +235,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
  
     //#warning no sf  trigger
     if (cut.pass(Trigger) and not e->IsRealData()) {
-        if( not e->ExistSF("tauLeg13p") ) Log(__FUNCTION__,"WARING" ,"No Tau Trigger SF");  
+        if (t!=NULL){e->ApplyTauSF(t);}
+
         if( t!=NULL){ e->SetPtEtaSF("tauLeg13p",t->Pt(),t->Eta()); e->ApplySF("tauLeg13p");}
         if( not e->ExistSF("metLegBtagMedium") ) Log(__FUNCTION__,"WARING" ,"No Tau metLegBtagMedium SF");  
 
@@ -250,14 +251,20 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //#warning nobtag-sf
     if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
 
-    /*
+
     #warning TauMatch
     if (not e->IsRealData() ) 
         {
         if (e->GetTau(0) == NULL )  return 0;
         if (e->GetTau(0)->Rematch(e) !=15) return 0;
         }
-    */
+
+    //if (not e->IsRealData() )
+    //{
+    //    e->SetPtEtaSF("antiE",e->GetTau(0)->Pt(),e->GetTau(0)->Eta() );
+    //    e->ApplySF("antiE");
+    //}
+    
 
     if( cut.passAllUpTo( OneTau)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneTau,e->weight());
     if( cut.passAllUpTo(NoLep)     ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());

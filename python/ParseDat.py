@@ -1,6 +1,7 @@
 import os,sys,re
 import math
 from subprocess import call,check_output
+import ROOT
 
 
 def FindBasePath(verbose=False):
@@ -38,7 +39,11 @@ def BoolKey(value):
 subdict={}
 
 def StringKey(value):
-	if '%' in value: value = value%subdict
+	try:
+		if '%' in value: value = value%subdict
+	except ValueError:
+		print "Unable to substitute in value",value,"with dict",subdict
+		raise ValueError
 	value = re.sub('\n','',value)
 	return value
 
@@ -350,6 +355,27 @@ def ReadSFDB(file,verbose=False):
 			except: R['errFormula']=''
 			sf=0.0 ## ignored
 			err=0.0 ## ignored
+
+		elif type == 'inverse-eff-xinmei':
+			R['filename'] = l.split(' ')[2]
+			R['type'] = 'pteta'
+			fIn = ROOT.TFile.Open(R['filename'])
+			hEff= fIn.Get("hEffEtaPt")
+			hErr= fIn.Get("hErrhEtaPt") ### high and symm
+			for xBin in range(1,hEff.GetXaxis().GetNbins()+1):
+			   for yBin in range(1,hEff.GetYaxis().GetNbins()+1):
+			      R['pt1'] = hEff.GetYaxis().GetBinLowEdge(yBin)
+			      R['pt2'] = hEff.GetYaxis().GetBinLowEdge(yBin+1)
+			      R['eta1'] = hEff.GetXaxis().GetBinLowEdge(xBin)
+			      R['eta2'] = hEff.GetXaxis().GetBinLowEdge(xBin+1)
+			      R['sf'] = 1./hEff.GetBinContent(xBin,yBin)
+			      R['err'] = hErr.GetBinContent(xBin,yBin)/(hEff.GetBinContent(xBin,yBin)**2)
+
+			      R1={} ## copy 
+			      for key in R: R1[key] = R[key]
+			      L.append(R1)
+			R=None
+			continue ## lines loop
 
 		elif type == 'json-sami':
 			R['filename'] = l.split(' ')[2]

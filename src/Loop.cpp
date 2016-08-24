@@ -209,6 +209,8 @@ void Looper::NewFile()
 	size_t last = fname.rfind('/');
 	//size_t prevLast = fname.rfind('/',last-1);
 	size_t eos = fname.find("/store/");
+	if (eos==string::npos)
+		eos=fname.find("/eos/"); // this make it working for eosuser as well
 	//string label=fname.substr(prevLast+1,last - 1 - prevLast ); //pos,len
 
 	string label="";
