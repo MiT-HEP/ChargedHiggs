@@ -6,7 +6,7 @@ Correct=NONE
 config=MitPhiCorrector|fileName="aux/MetPhi.root"
 #config=TauRegression|fileName="aux/bdt_regression_taugun.xml"
 #Smear=NONE
-Smear=NONE,JES,JER,@SmearSF("BTAG"!"btag"),@SmearSF("TAU"!"tauid"),@SmearSF("TAUHIGHPT"!"tauid2"),@SmearSF("TRIG"!"tauLeg13p"),@SmearSF("TRIGMET"!"metLegBtagMedium"),@SmearTauScale(),@SmearUncluster(),@SmearSF("ELEVETO"!"eleveto"),@SmearSF("MUVETO"!"muveto"),@SmearPu,@SmearSF("TAUANTIE"!"antiE")
+Smear=NONE,JES,JER,@SmearSF("BTAG"!"btag"),@SmearSF("TAU"!"tauid"),@SmearSF("TAUHIGHPT"!"tauid2"),@SmearSF("TRIG"!"tauLeg13p"),@SmearSF("TRIGMET"!"metLegBtagMedium"),@SmearTauScale(),@SmearUncluster(),@SmearSF("ELEVETO"!"eleveto"),@SmearSF("MUVETO"!"muveto"),@SmearPu
 ## QCD Purity
 #@SmearSF("RFAC","tauinvisospline")
 #Smear=@SmearScales(1!0),@SmearScales(0!1),@SmearScales(1!1)
