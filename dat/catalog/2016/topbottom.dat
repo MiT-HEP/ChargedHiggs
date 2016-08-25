@@ -1,0 +1,12 @@
+sub=tag|v1.4
+sub=amarini|/store/user/amarini/Nero
+sub=klute|/store/user/klute/Nero
+sub=jan|/store/user/jaeyserm/Nero
+sub=dalfonso|/store/cmst3/user/dalfonso/NERO
+sub=dabercro|/store/user/dabercro/Nero/zey_base/
+sub=zdemirag|/store/caf/user/dmytro/zdemirag/setup80x/Nero/
+
+## SIGNAL (updated aug16)
+addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/
+addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/
+addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/

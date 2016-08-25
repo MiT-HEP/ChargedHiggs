@@ -1,0 +1,15 @@
+
+sub=tag|v1.4.genpart
+sub=amarini|/eos/user/a/amarini/Nero
+sub=klute|/eos/user/k/klute/Nero
+sub=jan|/store/user/jaeyserm/Nero
+
+##powheg diboson
+addfiles=%(klute)s/%(tag)s/WWTo2L2Nu_13TeV-powheg
+addfiles=%(klute)s/%(tag)s/WWToLNuQQ_13TeV-powheg
+addfiles=%(klute)s/%(tag)s/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(klute)s/%(tag)s/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(klute)s/%(tag)s/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(klute)s/%(tag)s/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8
+addfiles=%(klute)s/%(tag)s/ZZTo2L2Nu_13TeV_powheg_pythia8
+addfiles=%(klute)s/%(tag)s/ZZTo4L_13TeV-amcatnloFXFX-pythia8

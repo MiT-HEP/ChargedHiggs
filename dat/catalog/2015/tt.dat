@@ -1,0 +1,6 @@
+sub=tag|v1.4.genpart
+sub=amarini|/eos/user/a/amarini/Nero
+sub=klute|/eos/user/k/klute/Nero
+sub=jan|/store/user/jaeyserm/Nero
+
+addfiles=%(klute)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8

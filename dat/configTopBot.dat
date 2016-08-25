@@ -27,25 +27,12 @@ sub=zdemirag|/store/caf/user/dmytro/zdemirag/setup80x/Nero/
 #addfiles=%(amarini)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 # rerun with more mc info
 #addfiles=%(amarini)s/1.4.prong/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+#
+include dat/catalog/2016/topbottom.dat
+include dat/catalog/2016/ttlep.dat
 
-## SIGNAL (updated aug16)
-addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/
-addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/
-addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/
 
 ## TTbar (updated aug16)
-## dalfonso has only a few files
-#addfiles=%(dalfonso)s/%(tag)s/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
-#addfiles=%(dalfonso)s/%(tag)s/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
-#addfiles=%(dalfonso)s/%(tag)s/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
-## dalfonso has larged files
-addfiles=%(dalfonso)s/ChHiggs/TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1
-addfiles=%(dalfonso)s/ChHiggs/TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1
-addfiles=%(dalfonso)s/ChHiggs/TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1
-## zdemirag maybe skimmed
-#addfiles=%(zdemirag)s/%(tag)s/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/TTJets_SingleLeptFromT/160609_194908
-#addfiles=%(zdemirag)s/%(tag)s/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/TTJets_SingleLeptFromTbar/160609_194926
-#addfiles=%(dabercro)s/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0/160616_143500/
 
 ## Wjets (updated jul19)
 #addfiles=%(zdemirag)s/%(tag)s/WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-100To200/160606_232501/0000
@@ -110,12 +97,8 @@ include=dat/tmva.dat
 MCDB=dat/mc_database.txt
 SFDB=aux/sf_database.txt
 Branches=dat/branches.txt
+
 pileup=
-#pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup.root
-#pileup=root://eoscms///store/user/amarini/Nero/pileup/aux/pileup_JSON_1p2_PRE_10-09-2015.root 
-#pileup=file,fileup,filedn TODO
-#pileup=aux/pileup_JSON_1p2_PRE_10-09-2015.root 
-##pileup=
 pileupRun=
 pileupLumi=
 Lumi=1
