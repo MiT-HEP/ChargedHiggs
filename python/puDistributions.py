@@ -19,7 +19,9 @@ EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
 if '/eos/user' in opts.eos: EOS += " root://eosuser"
 
 if opts.rec:
-	cmd = EOS +" find -d "+opts.eos
+	cmd = EOS +" find -d "
+	if '/eos/user' in opts.eos: cmd += " --childcount "
+	cmd+=opts.eos
 	list = check_output(cmd,shell=True);
 	for line in list.split('\n'):
 		if line =='': continue

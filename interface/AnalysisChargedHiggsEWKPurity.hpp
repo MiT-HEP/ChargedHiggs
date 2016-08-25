@@ -5,6 +5,18 @@
 #include "interface/AnalysisBase.hpp"
 #include "interface/GeneralFunctions.hpp"
 
+// FWD Declaration
+namespace Pythia8{
+    class Pythia;
+};
+
+namespace CLHEP {
+  class HepRandomEngine;
+}
+
+#include "TRandom.h"
+#include "TRandom3.h"
+
 class ChargedHiggsEWKPurity:  virtual public AnalysisBase
 {
     public:
@@ -13,6 +25,15 @@ class ChargedHiggsEWKPurity:  virtual public AnalysisBase
         const string name() const override{return "ChargedHiggsEWKPurity";}
         const string dir="ChargedHiggsEWKPurity/Vars/";
         const string none="ChargedHiggsEWKPurity/NOne/";
+
+        bool doPythia{false};
+
+        // Isolation as for taus -- hard coded. The value here is used by the jet rejection
+        void SetLeptonCuts(Lepton *l) override { l->SetIsoCut(10); l->SetPtCut(10);l->SetIsoRelCut(-1);l->SetEtaCut(2.4); l->SetTightCut(false);}
+
+    private:
+        std::auto_ptr<Pythia8::Pythia> fMasterGen;
+        std::auto_ptr<TRandom> random;
 };
 
 #endif

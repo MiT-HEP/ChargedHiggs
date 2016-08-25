@@ -20,7 +20,9 @@ EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
 if '/eos/user' in opts.eos: EOS += " root://eosuser"
 
 if opts.rec:
-	cmd = EOS +" find -d "+opts.eos
+	cmd = EOS +" find -d "
+	if '/eos/user' in opts.eos: cmd += " --childcount "
+	cmd+=opts.eos
 	list = check_output(cmd,shell=True);
 	for line in list.split('\n'):
 		if line =='': continue
@@ -106,13 +108,59 @@ print "---------------------------------------------"
 ### LABEL dir Entries xSec
 f = open (opts.file,"a")
 print>>f, opts.label,opts.eos, sum.GetBinContent(1),
-if opts.xsec >0 : print>>f, opts.xsec,
-else: print>>f,  h_xSec.GetBinContent(1)/h_xSec.GetBinContent(2),
+
+if opts.xsec >0 : 
+	print>>f, opts.xsec,
+else: 
+	## AUTOMAGIC CROSS SECTIONS -- INTERNAL if not written here
+	try:
+		xsec= h_xSec.GetBinContent(1)/h_xSec.GetBinContent(2)
+	except: 
+		xsec=0
+	## DY
+	if 'DYJets' in opts.label: xsec=6025.
+	## SIG
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-200' in opts.label: xsec=0.02952842256
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-300' in opts.label: xsec=0.002366
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-350' in opts.label: xsec=0.0013458646
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-400' in opts.label: xsec=0.000836289779
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-500' in opts.label: xsec=0.000382537512
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-220' in opts.label: xsec=0.005344 #???
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=0.005344 #??
+	### TT
+	elif 'TT' in opts.label: xsec=831
+	## ST
+	elif 'ST_s-channel_4f_InclusiveDecays' in opts.label: xsec=10.32
+	elif 'ST_t-channel_antitop_4f' in opts.label: xsec=80.95
+	elif 'ST_t-channel_top_4f' in opts.label: xsec=136.02
+	elif 'ST_tW_antitop_5f' in opts.label: xsec=30.09
+	elif 'ST_tW_top_5f' in opts.label: xsec=30.11
+	### WJETS
+	elif 'WJets' in opts.label: xsec=61526.7
+	elif 'W0' in opts.label: xsec=34273.632815
+	elif 'W1' in opts.label: xsec=18455.979619
+	elif 'W2' in opts.label: xsec=6035.904629
+	elif 'W3' in opts.label: xsec=1821.46719
+	elif 'W4' in opts.label: xsec=939.684984
+	##VV
+	elif 'WWTo2L2Nu-powheg' in opts.label: xsec=12.46
+	elif 'WZTo1L1Nu2Q' in opts.label: xsec=10.71
+	elif 'WZTo1L3Nu' in opts.label: xsec=3.033
+	elif 'WZTo2L2Q' in opts.label: xsec=5.595
+	elif 'WZTo3LNu' in opts.label: xsec=4.42965
+	elif 'ZZTo2L2Q' in opts.label: xsec=0.564
+	elif 'ZZTo4L' in opts.label: xsec=1.256
+	elif 'WWToLNuQQ' in opts.label: xsec=52
+	##
+	#elif '' in opts.label: xsec=
+	## INTERNAL
+	print>>f,  xsec,
 
 if hScales.GetBinContent(1) > 0:
 	print>>f, "SCALES",
 	for i in range(0,6):
 		print>>f, sum.GetBinContent(1)/hScales.GetBinContent(i+1),
+
 if hPdfs.GetBinContent(1) > 0:
 	print>>f, "PDFS",
 	for i in range(0,100):

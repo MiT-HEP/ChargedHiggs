@@ -11,13 +11,13 @@ void PurityFit::init(){
 
 void PurityFit::fit(){
     // Uperp, EtMiss
-    string what="EtMiss";
-    string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_Data";
-    string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_%s";
-    string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_%s";
-    string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_Data";
-    string fullselInv   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_FullSelection_Data";
+    string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv"+extra+"_Data";
+    string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f"+extra+"_%s";
+    string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv"+extra+"_%s";
+    string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f"+extra+"_Data";
+    string fullselInv   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_FullSelection"+extra+"_Data";
     string tauname="ChargedHiggsQCDPurity/Vars/TauPt_pt%.0f_%.0f_Data"; // use to compute the mean
+    if (extra !="")Log(__FUNCTION__,"FIXME","Implement the Tau Pt for extras");
 
     if (bkglabels.empty() )
     {
@@ -36,7 +36,7 @@ void PurityFit::fit(){
     fOut->Close();
 
     ofstream  fw;
-    fw.open(txtoutname.c_str());
+    fw.open(txtoutname.c_str(),ios::app|ios::out);
     fw <<"# QCD R-factor computed by "<<name()<<endl;
 
     for (size_t iBin=0;iBin+1<PtBins.size() ;++iBin)
@@ -185,8 +185,8 @@ void PurityFit::fit(){
             << " R "<< R <<" +"<<Rhi<<" -"<<Rlo
             <<endl;
         //  for SF DB
-        fw <<"tauinviso pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
-        fw <<"tauinvisospline spline "<<hTau->GetMean()<< " "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
+        fw <<labelbin<<" pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
+        fw <<labelspline<<" spline "<<hTau->GetMean()<< " "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
 
     } // bin loop
 

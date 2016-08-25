@@ -24,7 +24,7 @@ class sigint_exception: public exception
 } ;
 
 // don't catch this exception, may be something  we don't want
-class abort : public exception
+class abortException : public exception
 {
     public:
         virtual const char*what() const throw()

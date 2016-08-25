@@ -13,6 +13,8 @@ parser.add_option("-L","--lumi",type='float',help="Luminosity pb. [%default]", d
 parser.add_option("","--qcdlumi",type='float',help="QCD Luminosity pb. [%default]", default=2308)
 parser.add_option("-n","--ncat",type='int',help="Number of cat. [%default]", default=1)
 parser.add_option("","--nosyst",action='store_true',help="Do not look for syst. [%default]", default=False)
+parser.add_option("","--ewk",type='string',help="Input ROOT file for ewk. Set Null to use EWK from MC [%default]", default="")
+parser.add_option("","--ewklumi",type='float',help="QCD Luminosity pb. [%default]", default=2308)
 
 extra = OptionGroup(parser,"Extra options:","")
 extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=-1)
@@ -30,22 +32,31 @@ ROOT.gROOT.SetBatch()
 
 g=[] ## garbage un-collector
 
-fullstat=False
+######### EXTRA CONFIGURATION
+fullstat=True
+systsMC=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU"]
+systsQCD=["RFAC"]
+systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT"]
+###########################
 
 #systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
 def WorkspaceSubstitution(string):
 	res = re.sub('JES','CMS_scale_j',string)	
 	res = re.sub('JER','CMS_res_j',res)	
 	res = re.sub('BTAG','CMS_eff_b',res)	
+	res = re.sub('TAUANTIE','CMS_eff_t_ele',res)	
 	res = re.sub('TAUSCALE','CMS_scale_t',res)	
 	res = re.sub('TAUHIGHPT','CMS_eff_t_highpt',res)	
 	res = re.sub('TAU','CMS_eff_t',res)	
 	res = re.sub('TRIGMET','CMS_trig_met',res)	
-	res = re.sub('TRIG','CMS_trig_t',res)	
+	res = re.sub('TRIG','CMS_trg_t',res)	
 	res = re.sub('RFAC','CMS_fake_t',res)	
-	res = re.sub('ELEVETO','CMS_eff_e',res)	
-	res = re.sub('MUVETO','CMS_eff_m',res)	
+	res = re.sub('ELEVETO','CMS_eff_e_veto',res)	
+	res = re.sub('MUVETO','CMS_eff_m_veto',res)	
 	res = re.sub("UNCLUSTER","CMS_scale_uncluster",res)
+	res = re.sub("PU","CMS_pileup",res)
+	res = re.sub("MUEFF","CMS_eff_m_trigger",res)
+	res = re.sub("MUEFF","CMS_eff_m_reco",res)
 	return res
 
 def Rebin(h):
@@ -56,8 +67,10 @@ def Rebin(h):
 	return h1
 
 #mcList=['DY','TT','WW','WZ','ZZ','WJets']
-mcList=['DY','TT','ST','WW','WZ','ZZ','WJets']
+#mcList=['DY','TT','ST','WW','WZ','ZZ','WJets']
+mcList=[]
 if opts.qcd == "" : mcList.append("QCD")
+if opts.ewk == "" : mcList.extend(["DY","TT","ST","WW","WZ","ZZ","WJets"])
 
 ################### OPEN OUTPUT ############
 w = ROOT.RooWorkspace("w","w")
@@ -117,6 +130,7 @@ def Smooth(h):
 	''' Smooth out the tail of the mT distribution'''
 	#return;### It's not working ... need to figure out the range dynamically
 	### wjets has some problem
+	return  ## NO SMOOTH
 
 	if True and \
 	   'WJets' not in h.GetName() and \
@@ -176,34 +190,68 @@ def Smooth(h):
 	h0.Delete()
 	return
 
-	
+def GetHistoFromFile(tfile, name):
+	''' Get Histogram, Rebin, Smooth ...'''
 
-def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs and argset_obs and rebin
-	''' Import the pdf a th1 in tfile, with name and renaming it as target. You can add a set of (name,scale) to the base hist'''
-	target=WorkspaceSubstitution(target)
 	if tfile == None:
 		print "<*> File not exists"
 		raise IOError
+
 	h = tfile.Get(name)
 
 	if h == None:
 		print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetName())
 		raise Exception("No Such Histogram")
 
+
+	minError=-1
+	for iBin in range(1,h.GetNbinsX()+1):
+		c= h.GetBinContent(iBin)
+		if c<=0: continue;
+		e=h.GetBinError(iBin)
+		if e>0 and (e<minError or minError<0): 
+			minError=e
+
 	if opts.rebin>999:
 		h=Rebin(h)
+
 	elif opts.rebin >0 :
 		h.Rebin(opts.rebin)
 
+	## assign it after rebin
+	for iBin in range(1,h.GetNbinsX()+1):
+		c= h.GetBinContent(iBin)
+		if c<=0: continue;
+		h.SetBinError(iBin,minError)
+
+	return h
+
+def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs and argset_obs and rebin
+	''' Import the pdf a th1 in tfile, with name and renaming it as target. You can add a set of (name,scale) to the base hist'''
+	target=WorkspaceSubstitution(target)
+
+	h=GetHistoFromFile(tfile,name)
+	#h = tfile.Get(name)
+
+	#if h == None:
+	#	print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetName())
+	#	raise Exception("No Such Histogram")
+
+	#if opts.rebin>999:
+	#	h=Rebin(h)
+	#elif opts.rebin >0 :
+	#	h.Rebin(opts.rebin)
+
 	for name2,c in add:
-		h_tmp=tfile.Get(name2).Clone(name2)
-		if h_tmp==None:
-			print "<*> Unable to find '%s' in '%s': Ignoring it!"%(name2,tfile.GetTitle())
-			continue
-		if opts.rebin>999:
-			h_tmp=Rebin(h_tmp)
-		elif opts.rebin >0 :
-			h_tmp.Rebin(opts.rebin)
+		h_tmp=GetHistoFromFile(tfile,name2).Clone(name2)
+		#h_tmp=tfile.Get(name2).Clone(name2)
+		#if h_tmp==None:
+		#	print "<*> Unable to find '%s' in '%s': Ignoring it!"%(name2,tfile.GetTitle())
+		#	continue
+		#if opts.rebin>999:
+		#	h_tmp=Rebin(h_tmp)
+		#elif opts.rebin >0 :
+		#	h_tmp.Rebin(opts.rebin)
 
 		h_tmp.Scale(c)
 		h.Add(h_tmp)
@@ -223,6 +271,7 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 	## ---ZERO ---
 	for i in range(0,h.GetNbinsX()):
 		if h.GetBinContent(i+1)<0: h.SetBinContent(i+1,0)
+
 	roo_mc = ROOT.RooDataHist("hist_"+target,target,arglist_obs,h)
 	pdf_mc = ROOT.RooHistPdf(target, target,argset_obs, roo_mc)
 	## NORM
@@ -235,28 +284,11 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w is global as arglist_obs and argset_obs and rebin
 	''' It is not working properly. Limits are better'''
 	target=WorkspaceSubstitution(target)
-	if tfile == None:
-		print "<*> File not exists"
-	h = tfile.Get(name)
 
-	if h == None:
-		print "<*> Unable to find '%s' in '%s'"%(name,tfile.GetName())
-		raise Exception("No Such Histogram")
-
-	if opts.rebin>999:
-		h=Rebin(h)
-	elif opts.rebin >0 :
-		h.Rebin(opts.rebin)
+	h=GetHistoFromFile(tfile,name)
 
 	for name2,c in add:
-		h_tmp=tfile.Get(name2)
-		if h_tmp==None:
-			print "<*> Unable to find '%s' in '%s': Ignoring it!"%(name2,tfile.GetTitle())
-			continue
-		if opts.rebin>999:
-			h_tmp=Rebin(h_tmp)
-		elif opts.rebin >0 :
-			h_tmp.Rebin(opts.rebin)
+		h_tmp=GetHistoFromFile(tfile,name2).Clone(name2)
 		h_tmp.Scale(c)
 		h.Add(h_tmp)
 
@@ -283,9 +315,10 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 			hupbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
 			hdnbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
 			cont=h.GetBinContent(i+1)
-			# 0 is for sure wrong in case of mc
-			if cont != 0 : hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
-			if cont != 0 : hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+			# 0 is for sure wrong in case of mc, fixed in GetHisto
+			hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+			hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+
 			roo_mc_binup = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Up",target,arglist_obs,hupbin)
 			pdf_mc_binup = ROOT.RooHistPdf(target+"_Bin%d"%(i+1)+"_"+syst+"Up", target+"_"+syst+"Up",argset_obs, roo_mc_binup)
 			roo_mc_bindn = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Down",target,arglist_obs,hdnbin)
@@ -321,7 +354,7 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 
 ### BKG ###
 ######### import mc based background contributions
-systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER"]
+systs=systsMC[:]
 #systs=["BTAG","TAU"]
 if opts.nosyst: systs=[]
 
@@ -357,7 +390,7 @@ for syst in systBkg:
    #	datacard.write("\n")
 
 ################# Import SIGNAL CONTRIBUTIONS ##############
-systs=["BTAG","TAU","JES","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER"]
+systs=systsMC[:]
 if opts.nosyst: systs=[]
 systSig=[""]
 for shift in ["Up","Down"]: 
@@ -368,7 +401,7 @@ for shift in ["Up","Down"]:
 ## print "     FIX MH POINTS       "
 ## print "#########################"
 for syst in systSig:
- for sigMH in [ 200,220,250,300,350,400,500,1500]:
+ for sigMH in [ 200,250,300,350,400,500,750,1000,3000]:
  #for sigMH in [ 200,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
@@ -401,15 +434,16 @@ if opts.qcd != "":
 	   raise IOError
 
    #systs=["BTAG","RFAC"] ## no JES here
-   systs=["RFAC"] ## no JES here
+   #systs=["RFAC"] ## no JES here
+   systs=systsQCD[:]
    #systs=["BTAG","RFAC"]
    if opts.nosyst: systs=[]
-   systQCD=[""]
+   _systQCD_=[""]
    for shift in ["Up","Down"]: 
    	for s in systs: 
-   		systQCD.append(s + shift)
+   		_systQCD_.append(s + shift)
 
-   for syst in systQCD:
+   for syst in _systQCD_:
     for cat in range(0,opts.ncat):
 	if opts.ncat == 1:
 		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
@@ -435,6 +469,43 @@ if opts.qcd != "":
    datacard.write("\tw:"+"pdf_inviso_$CHANNEL_QCD_$SYSTEMATIC" )
    datacard.write("\n")
 
+if opts.ewk!="":
+   fInEWK=ROOT.TFile.Open(opts.ewk,"READ")
+
+   if fInEWK == None: 
+	   print "<*> NO EWK File '%s'"%opts.ewk
+	   raise IOError
+
+   systs=systsEWK[:]
+   if opts.nosyst: systs=[]
+   _systEWK_=[""]
+   for shift in ["Up","Down"]: 
+   	for s in systs: 
+   		_systEWK_.append(s + shift)
+
+   for syst in _systEWK_:
+    for cat in range(0,opts.ncat):
+	if opts.ncat == 1:
+		lastget="ChargedHiggsQCDPurity/Vars/Mt_Embed_Data"
+	else:
+		lastget="ChargedHiggsQCDPurity/Vars/Mt_Embed_cat%d_Data"%cat
+
+	if syst !="":lastget+="_"+syst
+
+	if syst == "": systName=""
+	else: systName="_"+syst
+
+	target="pdf_cat%d_ewkembed"%cat + systName
+	print "*** Considering EWK","syst=",syst,"target=",target,"addlist=",addlist
+	ImportPdfFromTH1(fInQCD, lastget,target ,addlist)
+	if syst=="":
+		ImportPdfStatUncFromTH1(fInQCD, lastget,"QCDSTAT", target,addlist)
+
+   datacard.write("shapes EWK *\t"+opts.output)
+   datacard.write("\tw:"+"pdf_$CHANNEL_ewkembed" )
+   datacard.write("\tw:"+"pdf_$CHANNEL_ewkembed_$SYSTEMATIC" )
+   datacard.write("\n")
+
 ### GENERAL LINE
 datacard.write("shapes\t*\t*\t"+opts.output+"\tw:pdf_$CHANNEL_$PROCESS\tw:pdf_$CHANNEL_$PROCESS_$SYSTEMATIC\n")
 
@@ -452,6 +523,8 @@ datacard.write("\n")
 mcAll=["Hplus"]
 mcAll.extend(mcList)
 if 'QCD' not in mcAll: mcAll.append("QCD")
+if opts.ewk != "" : mcAll.append("EWK")
+
 datacard.write("-------------------------------------\n")
 datacard.write("bin\t")
 for cat in range(0,opts.ncat):
@@ -473,6 +546,8 @@ for cat in range(0,opts.ncat):
    for proc in mcAll:
 	if proc=="QCD" and opts.qcd!="":
 		datacard.write("\t%.2f"%(opts.lumi/opts.qcdlumi)) ## lumi factor 5000/2110, should be 1.00 FIXME
+	elif proc=="EWK" and opts.ewk!="":
+		datacard.write("\t%.2f"%(opts.lumi/opts.ewklumi)) ## lumi factor 5000/2110, should be 1.00 FIXME
 	else:
 		datacard.write("\t%.0f"%opts.lumi)
 datacard.write("\n")
@@ -521,9 +596,13 @@ def writeNormSystList(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST"])
 	datacard.write("\n")
 
 if opts.qcd=="":
-	writeNormSyst("lumi_13TeV","1.027","")
+	#writeNormSyst("lumi_13TeV","1.027","")
+	writeNormSyst("lumi_13TeV","1.023","")
+	writeNormSyst("lumi_13TeV_stability","1.015","")
 else:
-	writeNormSyst("lumi_13TeV","1.027","!QCD")
+	#writeNormSyst("lumi_13TeV","1.027","!QCD")
+	writeNormSyst("lumi_13TeV","1.023","!QCD")
+	writeNormSyst("lumi_13TeV_stability","1.015","!QCD")
 
 if opts.nosyst: 
 	w.writeToFile(opts.output)
@@ -541,11 +620,17 @@ def writeSyst(syst="JES"):
 			else:
 	        		datacard.write("\t-")
 		elif proc=="QCD":
-			if opts.qcd !="" and systOrig + "Up"  in systQCD:
+			#if opts.qcd !="" and systOrig + "Up"  in _systQCD_:
+			if opts.qcd !="" and systOrig  in systsQCD:
 	        		datacard.write("\t1")
 			else: datacard.write("\t-")
+		elif proc == "EWK" and opts.ewk != "":
+			if systOrig in systsEWK:
+	        		datacard.write("\t1")
+			else: datacard.write("\t-")
+
 		elif proc in mcList :
-			if systOrig + "Up" in systBkg:
+			if systOrig + "Up" in systBkg: ## Change to systsMC TODO
 	        		datacard.write("\t1")
 			else:
 	        		datacard.write("\t-")
@@ -568,9 +653,15 @@ writeSyst('TRIG')
 writeSyst('TRIGMET')
 writeSyst('TAUHIGHPT')
 writeSyst('TAUSCALE')
+writeSyst('TAUANTIE')
 writeSyst('ELEVETO')
 writeSyst('MUVETO')
 writeSyst('UNCLUSTER')
+writeSyst('PU')
+
+if opts.ewk !="" :
+	writeSyst('MUEFF')
+	writeSyst('MURECOEFF')
 ##
 ## write STAT syst
 for mc in mcAll:
@@ -589,20 +680,30 @@ writeNormSystList("CMS_pdf_ttbar",["1.042","1.026"],["TT","ST"])
 writeNormSystList("CMS_mass_ttbar",["1.027","1.022"],["TT","ST"])
 ###
 
-writeNormSyst("CMS_scale_dy","0.9963/1.0065","DY")
-writeNormSyst("CMS_pdf_dy","1.037","DY")
+## UNCORRELATED
+#writeNormSyst("CMS_scale_DY","0.9963/1.0065","DY")
+#writeNormSyst("CMS_pdf_DY","1.037","DY")
 
-writeNormSyst("CMS_scale_wjets","0.996/1.008","WJets")
-writeNormSyst("CMS_pdf_wjets","1.0375","WJets")
+#writeNormSyst("CMS_scale_Wjets","0.996/1.008","WJets")
+#writeNormSyst("CMS_pdf_Wjets","1.0375","WJets")
 
-writeNormSyst("CMS_scale_ww","1.025","WW")
-writeNormSyst("CMS_pdf_ww","1.022","WW")
+## CORRELATED
+writeNormSystList("CMS_scale_V",["0.9963/1.0065","0.996/1.008"],["DY","WJets"])
+writeNormSystList("CMS_pdf_V",["1.037","1.0375"],["DY","WJets"])
 
-writeNormSyst("CMS_scale_wz","1.032","WZ")
-writeNormSyst("CMS_pdf_wz","1.044","WZ")
+## UNCORRELATED
+#writeNormSyst("CMS_scale_ww","1.025","WW")
+#writeNormSyst("CMS_pdf_ww","1.022","WW")
+#
+#writeNormSyst("CMS_scale_wz","1.032","WZ")
+#writeNormSyst("CMS_pdf_wz","1.044","WZ")
+#
+#writeNormSyst("CMS_scale_zz","1.031","ZZ")
+#writeNormSyst("CMS_pdf_zz","1.037","ZZ")
 
-writeNormSyst("CMS_scale_zz","1.031","ZZ")
-writeNormSyst("CMS_pdf_zz","1.037","ZZ")
+## CORRELATED
+writeNormSystList("CMS_scale_VV",["1.025","1.032","1.031"],["WW","WZ","ZZ"])
+writeNormSystList("CMS_pdf_VV",["1.022","1.044","1.037"],["WW","WZ","ZZ"])
 
 w.writeToFile(opts.output)
 
