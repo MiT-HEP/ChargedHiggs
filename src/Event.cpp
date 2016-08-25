@@ -502,6 +502,7 @@ void Event::ApplyTopReweight(){
     // look for gen particles
     for(auto const &g : genparticles_)
     {
+        //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("considering particle with pt=%f, and pdg=%i",g->Pt(),g->GetPdgId()));
         if (g->GetPdgId() == 6 ) pt1 = g->Pt();
         if (g->GetPdgId() == -6) pt2 = g->Pt();
 
@@ -513,6 +514,9 @@ void Event::ApplyTopReweight(){
         Logger::getInstance().LogN("Event",__FUNCTION__,"WARNING",Form("I didn't find two tops for reweighting"),5);
         return;
     }
+    //else{
+    //    Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("I found two tops for reweighting, pt1=%f, pt2=%f",pt1,pt2));
+    //}
 
     SetPtEtaSF("topreweight",pt1,pt2);
 
@@ -534,11 +538,11 @@ void Event::ApplyWReweight(){
     */
 
     if( GetWeight() -> GetMC() . find("TT") == string::npos and
-            GetWeight() -> GetMC() . find("W0JetsToLNu") == string::npos and
-            GetWeight() -> GetMC() . find("W1JetsToLNu") == string::npos and 
-            GetWeight() -> GetMC() . find("W2JetsToLNu") == string::npos and 
-            GetWeight() -> GetMC() . find("W3JetsToLNu") == string::npos and 
-            GetWeight() -> GetMC() . find("W4JetsToLNu") == string::npos
+            GetWeight() -> GetMC() . find("W0Jets") == string::npos and
+            GetWeight() -> GetMC() . find("W1Jets") == string::npos and 
+            GetWeight() -> GetMC() . find("W2Jets") == string::npos and 
+            GetWeight() -> GetMC() . find("W3Jets") == string::npos and 
+            GetWeight() -> GetMC() . find("W4Jets") == string::npos
       )
     { // not ttbar sample
         return;
@@ -552,8 +556,11 @@ void Event::ApplyWReweight(){
     
     Logger::getInstance().LogN("Event",__FUNCTION__,"INFO","Top And W Reweighting",5);
     //SetPtEtaSF("wreweight",GetMet().Pt(),0.);
+    //
+    //Logger::getInstance().Log("Event",__FUNCTION__,"INFO",Form("[0] EW %f",weight()));
     SetPtEtaSF("wreweight",Ht(),0.);
     ApplySF("wreweight");
+    //Logger::getInstance().Log("Event",__FUNCTION__,"INFO",Form("[0] EW %f",weight()));
 
 }
 
@@ -589,6 +596,18 @@ void Event::ApplyBTagSF(int wp)
 #ifdef VERBOSE
    if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","End BTAG SF"); 
 #endif
+}
+
+void Event::ApplyTauSF(Tau*t)
+{
+    if (IsRealData()) return;
+    string sfname="";//
+    if (t->GetNProng() ==1 ) sfname="tauLeg1p";
+    else sfname="tauLeg3p";
+    if( not ExistSF(sfname) ) Logger::getInstance().Log("Event",__FUNCTION__,"WARING" ,"No Tau Trigger SF");  
+    SetPtEtaSF(sfname,t->Pt(),t->Eta());
+    ApplySF(sfname);
+
 }
 
 

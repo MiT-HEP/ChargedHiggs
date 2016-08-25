@@ -232,6 +232,7 @@ void Weight::ApplySF(string label){
             Log(__FUNCTION__,"WARNING",Form("SF for %s is very little: %f",label.c_str(),sf_db[label] -> get() ));
             return;
         }
+        //Log(__FUNCTION__,"DEBUG",Form("Apply SF for '%s': %f",label.c_str(),sf_db[label] -> get() ));
         sf_ *= sf_db[label] -> get(); 
     }
 

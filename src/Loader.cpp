@@ -514,8 +514,11 @@ void LoadNero::FillMC(){
         int apdg = abs(mc -> pdgId -> at(iGP) );
         bool keep=false;
         if (  (apdg == 11 or apdg ==13) and (mc -> flags ->at(iGP) & BareMonteCarlo::PromptFinalState) ) keep=true; // keep status 1 electrons and muons
+        // keep all regardless to the flag
+        if (  (apdg == 11 or apdg ==13) ) keep=true; // keep status 1 electrons and muons
         // keep Q/G/Tau
         if ( (apdg == 15 or apdg==21 or apdg <6 ) and (mc->flags->at(iGP) & ( BareMonteCarlo::HardProcess | BareMonteCarlo::HardProcessBeforeFSR | BareMonteCarlo::HardProcessDecayed) )) keep=true;
+        if (apdg==6) keep=true; //top reweight
 
         if (not keep) continue;
 
