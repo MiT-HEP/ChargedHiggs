@@ -28,16 +28,21 @@ sub=zdemirag|/store/caf/user/dmytro/zdemirag/setup80x/Nero/
 # rerun with more mc info
 #addfiles=%(amarini)s/1.4.prong/TT_TuneCUETP8M1_13TeV-powheg-pythia8
 
-## SIGNAL (updated jul19) more inside addfiles=%(jan)s/8X/
-addfiles=%(dalfonso)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8/
-addfiles=%(dalfonso)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8/
-addfiles=%(dalfonso)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8/
+## SIGNAL (updated aug16)
+addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/
+addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/
+addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/
 
-## TTbar (updated jul19)
-## dalfonso has only a few files now -- zdemirag has large dataset
-addfiles=%(dalfonso)s/%(tag)s/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
-addfiles=%(dalfonso)s/%(tag)s/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
-addfiles=%(dalfonso)s/%(tag)s/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
+## TTbar (updated aug16)
+## dalfonso has only a few files
+#addfiles=%(dalfonso)s/%(tag)s/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
+#addfiles=%(dalfonso)s/%(tag)s/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
+#addfiles=%(dalfonso)s/%(tag)s/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/
+## dalfonso has larged files
+addfiles=%(dalfonso)s/ChHiggs/TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1
+addfiles=%(dalfonso)s/ChHiggs/TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1
+addfiles=%(dalfonso)s/ChHiggs/TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1
+## zdemirag maybe skimmed
 #addfiles=%(zdemirag)s/%(tag)s/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/TTJets_SingleLeptFromT/160609_194908
 #addfiles=%(zdemirag)s/%(tag)s/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/TTJets_SingleLeptFromTbar/160609_194926
 #addfiles=%(dabercro)s/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0/160616_143500/
@@ -143,10 +148,10 @@ Analysis=JsonAnalysis,Preselection,ChargedHiggsTopBottom
 #config=Preselection|
 #config=MetPhiCorrector|fileName=""
 
-addConfig=ChargedHiggsTopBottom|do1lAnalysis=1,do2lAnalysis=0
-Output=ChHiggs_1l.root
+#addConfig=ChargedHiggsTopBottom|do1lAnalysis=1,do2lAnalysis=0
+#Output=ChHiggs_1l.root
 
-#addConfig=ChargedHiggsTopBottom|do1lAnalysis=0,do2lAnalysis=1
-#Output=ChHiggs_2l.root
+addConfig=ChargedHiggsTopBottom|do1lAnalysis=0,do2lAnalysis=1
+Output=ChHiggs_2l.root
 
 
