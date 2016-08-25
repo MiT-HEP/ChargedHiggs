@@ -1,6 +1,6 @@
 include=dat/config.dat
 Smear=NONE
-Smear=NONE,@SmearSF("TRIGMET"!"metLegEff"),@SmearSF("TRIG"!"tauLeg13pEff"),@SmearSF("MUEFF","singlemuonInvEff"),@SmearSF("MURECOEFF"!"singlemuonRecoInvEff"),@SmearSF("TAU"!"tauIdEff"),@SmearSF("TAUINTIE"!"antiE"),@SmearSF("TAUHIGHPT"!"tauid2")
+Smear=NONE,@SmearSF("TRIGMET"!"metLegEff"),@SmearSF("TRIG"!"tauLeg13pEff"),@SmearSF("MUEFF"!"singlemuonInvEff"),@SmearSF("MURECOEFF"!"singlemuonRecoInvEff"),@SmearSF("TAU"!"tauIdEff"),@SmearSF("TAUINTIE"!"antiE"),@SmearSF("TAUHIGHPT"!"tauid2")
 
 Files=%(klute)s/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 addfiles=%(klute)s/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8

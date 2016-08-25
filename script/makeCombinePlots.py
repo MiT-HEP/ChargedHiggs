@@ -16,6 +16,7 @@ parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
 parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true",help="Draw observation")
 parser.add_option("-x","--xSec",dest="xsec",help="Print limit vs xSec instead of mu",default=False,action="store_true")
 parser.add_option("","--xSecName",dest="xsecname",help="extra string to be match in the mc_database",default="ChargedHiggs")
+parser.add_option("","--mcdb",dest="mcdb",help="the mc_database",default="aux/mcdb.txt")
 parser.add_option(""  ,"--yaxis",help="Y axis range Y1,Y2 [%default]",default="")
 parser.add_option(""  ,"--xaxis",help="X axis range X1,X2 [%default]",default="")
 parser.add_option("","--exclude",dest="exclude",help="Exclude mh points MH1,MH2,.. [%default]",default="")
@@ -160,7 +161,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 		if 'FixQCD' in inputFile:
 			print "->Reading from OLD"
 			mcdb=ReadMCDB(basepath+"/dat/mc_database.old") 
-		mcdb=ReadMCDB(basepath+"/dat/mc_database.txt") 
+		mcdb=ReadMCDB(basepath+"/"+opts.mcdb) 
 		#R[label] = (dir,sumw,xsec)
 
 
@@ -344,8 +345,8 @@ c=ROOT.TCanvas()
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 
-dummy = ROOT.TH1D("dummy","dummy",1000, 0, 2000)
-dummy.GetXaxis().SetRangeUser(200,900)
+dummy = ROOT.TH1D("dummy","dummy",1000, 0, 3000)
+dummy.GetXaxis().SetRangeUser(200,3000)
 dummy.GetYaxis().SetRangeUser(1e2,1e8)
 
 dummy.GetXaxis().SetTitle("m_{H^{+}}")
@@ -353,7 +354,7 @@ dummy.GetYaxis().SetTitle("#sigma/#sigma_{MSSM}")
 
 if opts.xsec:
 	dummy.GetYaxis().SetTitle("#sigma [pb]")
-	dummy.GetXaxis().SetRangeUser(200,900)
+	dummy.GetXaxis().SetRangeUser(200,3000)
 	dummy.GetYaxis().SetRangeUser(1e-2,1e2)
 
 if opts.yaxis != "":

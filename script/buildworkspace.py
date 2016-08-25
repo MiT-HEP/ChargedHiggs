@@ -34,9 +34,9 @@ g=[] ## garbage un-collector
 
 ######### EXTRA CONFIGURATION
 fullstat=True
-systsMC=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TAUANTIE"]
+systsMC=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU"]
 systsQCD=["RFAC"]
-systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT","TAUANTIE"]
+systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT"]
 ###########################
 
 #systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
@@ -44,7 +44,7 @@ def WorkspaceSubstitution(string):
 	res = re.sub('JES','CMS_scale_j',string)	
 	res = re.sub('JER','CMS_res_j',res)	
 	res = re.sub('BTAG','CMS_eff_b',res)	
-	res = re.sub('TAUANTIE','CMS_eff_t_antie',res)	
+	res = re.sub('TAUANTIE','CMS_eff_t_ele',res)	
 	res = re.sub('TAUSCALE','CMS_scale_t',res)	
 	res = re.sub('TAUHIGHPT','CMS_eff_t_highpt',res)	
 	res = re.sub('TAU','CMS_eff_t',res)	

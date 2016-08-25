@@ -228,7 +228,7 @@ if opts.hadd:
 		cmd = "zcat %s/log*.txt.gz | grep -i error | sort | uniq -c "%dir
 		st=call(cmd,shell=True)
 
-		cmd = "zcat %s/log*.txt.gz | grep -i error > /dev/null "%dir
+		cmd = "zcat %s/log*.txt.gz | grep -i '\[error\]' > /dev/null "%dir
 		st=call(cmd,shell=True)
 		if st == 0 and opts.clear:
 			print "-> Errors have been found. Refusing to clear"

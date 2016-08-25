@@ -63,7 +63,7 @@ muveto th2f aux/scalefactors_mu_76x.root:scalefactors_Loose_Muon veto
 ## POG Tau ##
 #############
 tauid base 1.0 0.06
-tauid2 tf1 1.0 1.0+0.0002*x
+tauid2 tf1 1.0 0.0002*x
 
 ########################
 ## Tau Triggertrigger ##

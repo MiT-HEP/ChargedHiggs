@@ -237,7 +237,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if (cut.pass(Trigger) and not e->IsRealData()) {
         if (t!=NULL){e->ApplyTauSF(t);}
 
-        if( t!=NULL){ e->SetPtEtaSF("tauLeg13p",t->Pt(),t->Eta()); e->ApplySF("tauLeg13p");}
+        //if( t!=NULL){ e->SetPtEtaSF("tauLeg13p",t->Pt(),t->Eta()); e->ApplySF("tauLeg13p");}
         if( not e->ExistSF("metLegBtagMedium") ) Log(__FUNCTION__,"WARING" ,"No Tau metLegBtagMedium SF");  
 
         if (e->GetMet().Pt()>20) // we have it only for met>20
@@ -397,7 +397,11 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if (cut.passAll() ) 
     {
         e->ApplySF("tauid"); // only in MC
+
+        //Log(__FUNCTION__,"DEBUG",Form("Syst=%s, Weight Before=%le",systname.c_str(),e->weight()));
+        e->SetPtEtaSF("tauid2",e->GetTau(0)->Pt(),0.);
         e->ApplySF("tauid2"); // only in MC
+        //Log(__FUNCTION__,"DEBUG",Form("Syst=%s, Weight After=%le",systname.c_str(),e->weight()));
 
         //if(e->IsRealData() and (systname=="NONE" or systname=="")) Log(__FUNCTION__,"SYNC",Form("%d,%d,%ld",e->runNum(),e->lumiNum(),e->eventNum()) );
         //
