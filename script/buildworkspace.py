@@ -34,10 +34,14 @@ g=[] ## garbage un-collector
 
 ######### EXTRA CONFIGURATION
 fullstat=True
+savePdf=True
 systsMC=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU"]
 systsQCD=["RFAC"]
 systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT"]
 ###########################
+
+if not savePdf and opts.qcdlumi/opts.lumi !=1 : 
+	print "WARINING DONT WORK!!"
 
 #systs=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE"]
 def WorkspaceSubstitution(string):
@@ -228,6 +232,8 @@ def GetHistoFromFile(tfile, name):
 
 def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs and argset_obs and rebin
 	''' Import the pdf a th1 in tfile, with name and renaming it as target. You can add a set of (name,scale) to the base hist'''
+	print "ImportPdfFromTH1 name=",name,"target=",target,"add=",add
+
 	target=WorkspaceSubstitution(target)
 
 	h=GetHistoFromFile(tfile,name)
@@ -267,16 +273,42 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 		return
 	else:
 		print "Normalization for '%s' is %e"%(name,h.Integral())
+
+	h.SetBinContent(0,0) ##underflow
+	h.SetBinContent(h.GetNbinsX()+1,0) #overflow
 	
 	## ---ZERO ---
 	for i in range(0,h.GetNbinsX()):
 		if h.GetBinContent(i+1)<0: h.SetBinContent(i+1,0)
 
-	roo_mc = ROOT.RooDataHist("hist_"+target,target,arglist_obs,h)
-	pdf_mc = ROOT.RooHistPdf(target, target,argset_obs, roo_mc)
-	## NORM
-	getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
-	w.factory(target + "_norm[%e]"% h.Integral())
+	## save RooHistPdf
+	if savePdf:
+		roo_mc = ROOT.RooDataHist("hist_"+target,target,arglist_obs,h)
+		pdf_mc = ROOT.RooHistPdf(target, target,argset_obs, roo_mc)
+		getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
+		w.factory(target + "_norm[%e]"% h.Integral())
+
+		#if opts.qcd!="" and 'QCD' in target:
+		#	print "PDF WRITING NORM=%e"%(h.Integral()),target
+		#else:
+		#	print "PDF WRITING NORM=%e"%(h.Integral()*opts.lumi),target
+	else:
+	## save RooDataHist
+		if opts.qcd!="" and 'QCD' in target:
+			#print "HIST SCALING QCD by",opts.lumi/opts.qcdlumi,"I was",h.Integral()
+			h.Scale(opts.lumi/opts.qcdlumi)
+		elif opts.ewk!="" and 'EWK' in target:
+			#print "HIST SCALING EWK by",opts.lumi/opts.ewklumi
+			h.Scale(opts.lumi/opts.ewklumi)
+		else:
+			#print "HIST SCALING by",opts.lumi/opts.qcdlumi
+			h.Scale(opts.lumi) ## I need to scale it here
+
+		roo_mc = ROOT.RooDataHist(target,target,arglist_obs,h)
+		pdf_mc = roo_mc
+		getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
+		#print "HIST WRITING NORM=%e"%h.Integral(),target
+
 	g.extend([h,roo_mc,pdf_mc])
 
 	return
@@ -301,6 +333,8 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 		return
 	else:
 		print "Normalization for '%s' is %e"%(name,h.Integral())
+	h.SetBinContent(0,0) ##underflow
+	h.SetBinContent(h.GetNbinsX()+1,0) #overflow
 	
 	## ---ZERO ---
 	for i in range(0,h.GetNbinsX()):
@@ -318,37 +352,82 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 			# 0 is for sure wrong in case of mc, fixed in GetHisto
 			hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
 			hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+			
+			if savePdf:
+				roo_mc_binup = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Up",target,arglist_obs,hupbin)
+				pdf_mc_binup = ROOT.RooHistPdf(target+"_Bin%d"%(i+1)+"_"+syst+"Up", target+"_"+syst+"Up",argset_obs, roo_mc_binup)
+				roo_mc_bindn = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Down",target,arglist_obs,hdnbin)
+				pdf_mc_bindn = ROOT.RooHistPdf(target +"_Bin%d"%(i+1)+"_"+syst+"Down", target+"_"+syst+"Down",argset_obs, roo_mc_bindn)
 
-			roo_mc_binup = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Up",target,arglist_obs,hupbin)
-			pdf_mc_binup = ROOT.RooHistPdf(target+"_Bin%d"%(i+1)+"_"+syst+"Up", target+"_"+syst+"Up",argset_obs, roo_mc_binup)
-			roo_mc_bindn = ROOT.RooDataHist("hist_"+target+"_Bin%d"%(i+1)+"_"+syst+"Down",target,arglist_obs,hdnbin)
-			pdf_mc_bindn = ROOT.RooHistPdf(target +"_Bin%d"%(i+1)+"_"+syst+"Down", target+"_"+syst+"Down",argset_obs, roo_mc_bindn)
+				getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
+				w.factory(target +"_Bin%d"%(i+1)+"_"+syst+"Up"+ "_norm[%e]"% hupbin.Integral())
+				g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
 
-			getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
-			w.factory(target +"_Bin%d"%(i+1)+"_"+syst+"Up"+ "_norm[%e]"% hupbin.Integral())
-			g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
+				getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
+				w.factory(target +"_Bin%d"%(i+1)+"_"+syst+"Up"+ "_norm[%e]"% hdnbin.Integral())
+				g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
+			else:
+				if opts.qcd!="" and 'QCD' in target:
+					hupbin.Scale(opts.lumi/opts.qcdlumi)
+					hdnbin.Scale(opts.lumi/opts.qcdlumi)
+				elif opts.ewk!="" and 'EWK' in target:
+					hupbin.Scale(opts.lumi/opts.ewklumi)
+					hdnbin.Scale(opts.lumi/opts.ewklumi)
+				else:
+					hupbin.Scale(opts.lumi) ## I need to scale it here
+					hdnbin.Scale(opts.lumi) ## I need to scale it here
+				roo_mc_binup = ROOT.RooDataHist(target+"_Bin%d"%(i+1)+"_"+syst+"Up",target,arglist_obs,hupbin)
+				pdf_mc_binup = roo_mc_binup
+				roo_mc_bindn = ROOT.RooDataHist(target+"_Bin%d"%(i+1)+"_"+syst+"Down",target,arglist_obs,hdnbin)
+				pdf_mc_bindn = roo_mc_bindn
 
-			getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
-			w.factory(target +"_Bin%d"%(i+1)+"_"+syst+"Up"+ "_norm[%e]"% hdnbin.Integral())
-			g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
+				getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
+				#w.factory(target +"_Bin%d"%(i+1)+"_"+syst+"Up"+ "_norm[%e]"% hupbin.Integral())
+				g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
+
+				getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
+				#w.factory(target +"_Bin%d"%(i+1)+"_"+syst+"Up"+ "_norm[%e]"% hdnbin.Integral())
+				g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
+
 
 		## total
 		hup.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
 		hdn.SetBinContent(i+1, h.GetBinContent(i+1) - h.GetBinError(i+1) )
 
-	roo_mc_up = ROOT.RooDataHist("hist_"+target+"_"+syst+"Up",target,arglist_obs,hup)
-	pdf_mc_up = ROOT.RooHistPdf(target+"_"+syst+"Up", target+"_"+syst+"Up",argset_obs, roo_mc_up)
-	roo_mc_dn = ROOT.RooDataHist("hist_"+target+"_"+syst+"Down",target,arglist_obs,hdn)
-	pdf_mc_dn = ROOT.RooHistPdf(target +"_"+syst+"Down", target+"_"+syst+"Down",argset_obs, roo_mc_dn)
+	if savePdf:
+		roo_mc_up = ROOT.RooDataHist("hist_"+target+"_"+syst+"Up",target,arglist_obs,hup)
+		pdf_mc_up = ROOT.RooHistPdf(target+"_"+syst+"Up", target+"_"+syst+"Up",argset_obs, roo_mc_up)
+		roo_mc_dn = ROOT.RooDataHist("hist_"+target+"_"+syst+"Down",target,arglist_obs,hdn)
+		pdf_mc_dn = ROOT.RooHistPdf(target +"_"+syst+"Down", target+"_"+syst+"Down",argset_obs, roo_mc_dn)
+		getattr(w,'import')(pdf_mc_up,ROOT.RooCmdArg())
+		w.factory(target +"_"+syst+"Up"+ "_norm[%e]"% hup.Integral())
+		g.extend([hup,roo_mc_up,pdf_mc_up])
+
+		getattr(w,'import')(pdf_mc_dn,ROOT.RooCmdArg())
+		w.factory(target +"_"+syst+"Up"+ "_norm[%e]"% hdn.Integral())
+		g.extend([hdn,roo_mc_dn,pdf_mc_dn])
+	else:
+		if opts.qcd!="" and 'QCD' in target:
+			hup.Scale(opts.lumi/opts.qcdlumi)
+			hdn.Scale(opts.lumi/opts.qcdlumi)
+		if opts.ewk!="" and 'EWK' in target:
+			hup.Scale(opts.lumi/opts.ewklumi)
+			hdn.Scale(opts.lumi/opts.ewklumi)
+		else:
+			hup.Scale(opts.lumi) ## I need to scale it here
+			hdn.Scale(opts.lumi) ## I need to scale it here
+		roo_mc_up = ROOT.RooDataHist(target+"_"+syst+"Up",target,arglist_obs,hup)
+		pdf_mc_up = roo_mc_up
+		roo_mc_dn = ROOT.RooDataHist(target+"_"+syst+"Down",target,arglist_obs,hdn)
+		pdf_mc_dn = roo_mc_dn
+
+		getattr(w,'import')(pdf_mc_up,ROOT.RooCmdArg())
+		g.extend([hup,roo_mc_up,pdf_mc_up])
+
+		getattr(w,'import')(pdf_mc_dn,ROOT.RooCmdArg())
+		g.extend([hdn,roo_mc_dn,pdf_mc_dn])
 
 	## NORM
-	getattr(w,'import')(pdf_mc_up,ROOT.RooCmdArg())
-	w.factory(target +"_"+syst+"Up"+ "_norm[%e]"% hup.Integral())
-	g.extend([hup,roo_mc_up,pdf_mc_up])
-
-	getattr(w,'import')(pdf_mc_dn,ROOT.RooCmdArg())
-	w.factory(target +"_"+syst+"Up"+ "_norm[%e]"% hdn.Integral())
-	g.extend([hdn,roo_mc_dn,pdf_mc_dn])
 
 	return
 
@@ -545,11 +624,21 @@ datacard.write("rate\t")
 for cat in range(0,opts.ncat):
    for proc in mcAll:
 	if proc=="QCD" and opts.qcd!="":
-		datacard.write("\t%.2f"%(opts.lumi/opts.qcdlumi)) ## lumi factor 5000/2110, should be 1.00 FIXME
+		if savePdf:
+			datacard.write("\t%.2f"%(opts.lumi/opts.qcdlumi)) ## lumi factor 5000/2110, should be 1.00 FIXME
+		else:
+			datacard.write("\t-1")
 	elif proc=="EWK" and opts.ewk!="":
-		datacard.write("\t%.2f"%(opts.lumi/opts.ewklumi)) ## lumi factor 5000/2110, should be 1.00 FIXME
+		if savePdf:
+			datacard.write("\t%.2f"%(opts.lumi/opts.ewklumi) ) ## lumi factor 5000/2110, should be 1.00 FIXME
+		else:
+			datacard.write("\t-1")
+
 	else:
-		datacard.write("\t%.0f"%opts.lumi)
+		if savePdf:
+			datacard.write("\t%.0f"%(opts.lumi) )
+		else:
+			datacard.write("\t-1")
 datacard.write("\n")
 ############ SYST########
 datacard.write("-------------------------------------\n")
@@ -708,6 +797,8 @@ writeNormSystList("CMS_pdf_VV",["1.022","1.044","1.037"],["WW","WZ","ZZ"])
 w.writeToFile(opts.output)
 
 print "--------------------" 
+print "savePdf=",savePdf
+print "fullstat=",fullstat
 print "datacard=",datName
 print "ws=",opts.output
 print " --- DONE --- "
