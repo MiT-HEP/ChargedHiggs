@@ -237,17 +237,16 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 #endif
     string label = GetLabel(e);
 
-    if(e->weight() == 0. ) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
+    if(e->weight() == 0.) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
     
     e->ApplyTopReweight();
     e->ApplyWReweight();
-    e->ApplyTauReweight();
-    e->ApplyMETReweight();
+
+    
 
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Total,e->weight());
     Fill("ChargedHiggsTauNu/NOne/NTaus_"+label,systname, e->Ntaus() ,e->weight());
     
-
     Tau *t= e->GetTau(0);
 
     cut.reset();
@@ -271,32 +270,53 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         }
     }
  
-    //#warning no sf  trigger
-    /*
-    if (cut.pass(Trigger) and not e->IsRealData()) {
-        if( not e->ExistSF("tauLeg13p") ) Log(__FUNCTION__,"WARING" ,"No Tau Trigger SF");  
-        if( t!=NULL){ e->SetPtEtaSF("tauLeg13p",t->Pt(),t->Eta()); e->ApplySF("tauLeg13p");}
-        if( not e->ExistSF("metLegBtagMedium") ) Log(__FUNCTION__,"WARING" ,"No Tau metLegBtagMedium SF");  
+    
+    // Tau and Trigger efficiency (SAMI)
+    // For non re-HLT samples --> apply directly the efficiencies in data
+    // For all the oters, apply data/mc efficiencies
+    string tauLegSF, metLegSF;
 
-        if (e->GetMet().Pt()>20) // we have it only for met>20
-        {
-            e->SetPtEtaSF("metLegBtagMedium",e->GetMet().Pt(),0);
-            e->ApplySF("metLegBtagMedium");
+    if(e->GetWeight()->GetMC().find("ST") != string::npos || e->GetWeight()->GetMC().find("WZ") != string::npos || e->GetWeight()->GetMC().find("WW") != string::npos || e->GetWeight()->GetMC().find("ZZ") != string::npos) {
+        
+        // non reHT
+        tauLegSF = "tauLegData";
+        metLegSF = "tauLegData";
+    }
+    else {
+        
+        // reHLT
+        tauLegSF = "tauLeg";
+        metLegSF = "metLeg";  
+    }
+
+
+    //#warning no sf trigger
+    if (cut.pass(Trigger) and not e->IsRealData()) {
+        
+        // Tau SF only for pT > 20, but cut on tau is already 60 GeV
+        if(not e->ExistSF(tauLegSF)) Log(__FUNCTION__, "WARNING" , "No Tau Trigger SF"); 
+        else if(t != NULL) {
+            e->SetPtEtaSF(tauLegSF, t->Pt(), t->Eta());
+            e->ApplySF(tauLegSF);
+        }
+        
+        // Met SF only for pT > 20
+        if(not e->ExistSF(metLegSF)) Log(__FUNCTION__,"WARING" ,"No Tau metLeg SF");
+        else if(e->GetMet().Pt()>20) {
+            e->SetPtEtaSF(metLegSF, e->GetMet().Pt(), 0);
+            e->ApplySF(metLegSF);
         }
     } 
-    */ 
 
     //if (cut.pass(OneBjet) and not e->IsRealData()) e->ApplySF("btag");
     //#warning nobtag-sf
     if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
 
-    
     #warning TauMatch
-    if (not e->IsRealData() ) 
-        {
-        if (e->GetTau(0) == NULL )  return 0;
-        if (e->GetTau(0)->Rematch(e) !=15) return 0; // --> select only the real taus
-        }
+    if(not e->IsRealData()) {
+        if(e->GetTau(0) == NULL)  return 0;
+        if(e->GetTau(0)->Rematch(e) !=15) return 0; // --> select only the real taus
+    }
     
 
     if( cut.passAllUpTo( OneTau)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneTau,e->weight());
@@ -307,9 +327,9 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if( cut.passAllUpTo(Trigger)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Trigger,e->weight());
 
     
-    if( cut.passAllUpTo(ThreeJets) && cut.pass(Trigger)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,1,e->weight());
-    if( cut.passAllUpTo(OneBjet)   ) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,2,e->weight());
-    if( cut.passAllUpTo(Met)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,3,e->weight());
+    if( cut.passAllUpTo(ThreeJets) && cut.pass(Trigger)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,0,e->weight());
+    if( cut.passAllUpTo(OneBjet) && cut.pass(ChargedHiggsTauNu::Trigger)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,1,e->weight());
+    if( cut.passAllUpTo(Met)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,2,e->weight());
 
     // VARS, N-1 ,
     // 1 hadronic tau only. with Pt> 50 and eta <2.1
@@ -370,7 +390,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     if(cut.passAllUpTo(AngRbb) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,AngRbb,e->weight());
 
-    if(cut.passAllUpTo(AngRbb) ) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,4,e->weight());
+    if(cut.passAllUpTo(AngRbb) ) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,3,e->weight());
     
     // ------------------- N-1 SELECTIONS
     if( cut.passAllExcept(Met) )
