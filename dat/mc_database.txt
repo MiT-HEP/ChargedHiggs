@@ -1,69 +1,52 @@
-## = BR x xsec = 0.19384*0.152334
-ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8/160513_180048/0000 3824.21193987 0.02952842256
-## BR x xsec =  0.03635 * 0.0650948
-ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8/160513_180108/0000 53.8136832915 0.002366
-## 0.0304316159251* 0.04422586755
-ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8/160513_180129/0000 19.9723819789 0.0013458646
-## 0.2767E-01 * 0.0302237
-ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8/160513_180000/0000 8.82172987683 0.000836289779
-## 0.2538E-01 * 0.0150724
-ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8/160513_175940/0000 2.36038155917 0.000382537512
-### TODO BR=0.785424  XSEC starts from 200 :(
-ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4.lhe/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 41225.9245647 0.0599630833405  
-### 220 = 0.9139E-01 * 0.128284 
-ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4.lhe/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 1139.18471899 0.005344 
-## 250 0.5387E-01 * 0.099196
-ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4.lhe/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 234.780327005 0.005344
-DY3Jets-madgraph /store/user/amarini/Nero/v1.4/DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/DY3Jets-madgraph/160513_180212/0000 5701878.0 103.338850911
-#DY-amcatnlo /store/user/amarini/Nero/v1.4/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/DY-amcatnlo/160513_180152/0000 4.27792831692e+11 3970.62040569
-### NNLO
-DY-amcatnlo /store/user/amarini/Nero/v1.4/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/DY-amcatnlo/160513_180152/0000 4.27792831692e+11 6025.2
-QCD-15-30 /store/user/amarini/Nero/v1.4/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/QCD-15-30/160513_175413/0000 36314150.0 1753278066.79
-QCD-30-50 /store/user/amarini/Nero/v1.4/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/QCD-30-50/160513_175434/0000 9434585.73864 139126648.089
-QCD-50-80 /store/user/amarini/Nero/v1.4/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/QCD-50-80/160513_175455/0000 9775360.0 19084720.8228
-QCD-80-120 /store/user/amarini/Nero/v1.4/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/QCD-80-120/160513_175519/0000 6131452.68331 2700760.35761
-QCD-120-170 /store/user/amarini/Nero/v1.4/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/QCD-120-170/160513_175541/0000 6848308.65823 469202.608586
-QCD-170-300 /store/user/amarini/Nero/v1.4/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/QCD-170-300/160513_175601/0000 5634367.0 117241.634689
-QCD-300-470 /store/user/amarini/Nero/v1.4/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/QCD-300-470/160513_175624/0000 4291040.0 7802.32328868
-QCD-470-600 /store/user/amarini/Nero/v1.4/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/QCD-470-600/160513_175646/0000 1733914.40519 646.066116294
-QCD-600-800 /store/user/amarini/Nero/v1.4/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/QCD-600-800/160513_175708/0000 3534700.0 183.354119673
-QCD-800-1000 /store/user/amarini/Nero/v1.4/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/QCD-800-1000/160513_175732/0000 2784248.23049 33.2672244814
-QCD-1000-1400 /store/user/amarini/Nero/v1.4/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/QCD-1000-1400/160513_175752/0000 2212507.0 9.28701681343
-QCD-1800-2400 /store/user/amarini/Nero/v1.4/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/QCD-1800-2400/160513_175836/0000 393760.0 0.113953207984
-QCD-3200-Inf /store/user/amarini/Nero/v1.4/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/QCD-3200-Inf/160513_175917/0000 391108.0 0.000200342332318
-#TT-powheg-ext3 /store/user/amarini/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160513_180234/0000 94495075.0 831
-## NNLO
-#WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160513_180301/0000 3.73197735021e+12 61526.7
-WWTo2L2Nu-powheg /store/user/amarini/Nero/v1.4/WWTo2L2Nu_13TeV-powheg/WWTo2L2Nu-powheg/160513_180345/0000 1979988.0 12.46
-WZJJ_EWK /store/user/amarini/Nero/v1.4/WZJJ_EWK_13TeV-madgraph-pythia8/WZJJ_EWK/160513_180727/0000 492200.0 0.0346049666405
-WZJJ_EWK_QCD /store/user/amarini/Nero/v1.4/WZJJ_EWK_QCD_13TeV-madgraph-pythia8/WZJJ_EWK_QCD/160513_180702/0000 499800.0 0.488976279895
-WZJJ_QCD /store/user/amarini/Nero/v1.4/WZJJ_QCD_13TeV-madgraph-pythia8/WZJJ_QCD/160513_180747/0000 500000.0 0.458641727765
-WZJToLLLNu /store/user/amarini/Nero/v1.4/WZJToLLLNu_TuneCUETP8M1_13TeV-amcnlo-pythia8/WZJToLLLNu/160513_180641/0000 15850755.8094 4.08314795171
-WZTo1L1Nu2Q /store/user/amarini/Nero/v1.4/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/WZTo1L1Nu2Q/160513_180430/0000 342983632.074 10.71
-WZTo1L3Nu /store/user/amarini/Nero/v1.4/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8/WZTo1L3Nu/160513_180450/0000 9357734.25606 3.033
-WZTo2L2Q /store/user/amarini/Nero/v1.4/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/WZTo2L2Q/160513_180514/0000 220400141.465 5.595 
-WZTo3LNu /store/user/amarini/Nero/v1.4/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8/WZTo3LNu/160513_180535/0000 2000000.0 4.42965
-ZZTo2L2Q /store/user/amarini/Nero/v1.4/ZZTo2L2Nu_13TeV_powheg_pythia8/ZZTo2L2Q/160513_180621/0000 8597925.0 0.564
-ZZTo4L /store/user/amarini/Nero/v1.4/ZZTo4L_13TeV-amcatnloFXFX-pythia8/ZZTo4L/160513_180556/0000 20550058.4207 1.256
-WWToLNuQQ /store/user/amarini/Nero/v1.4/WWToLNuQQ_13TeV-powheg/WWToLNuQQ/160513_180409/0000 1924400.0 52
-#TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160513_180234/0000 94495075.0 831
-#TT-powheg-ext3 /store/user/amarini/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160520_195211/0000 75862400.0 831
-# this is the sum of the previous two
-# sum of klute + v1.4
-#TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160520_195211/0000 170357475.0 831
-## sum of klute + v1.4.prong
-TT-powheg-ext3 /store/user/klute/Nero/v1.4/TT_TuneCUETP8M1_13TeV-powheg-pythia8/TT-powheg-ext3/160520_195211/0000 180390675.0 831
-#WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160513_180301/0000 3.73197735021e+12 40472.4644846
-#WJets-amcatnlo /store/user/amarini/Nero/v1.4/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160520_195401/0000 2.98163086304e+13 61526.7
-WJets-amcatnlo /store/user/amarini/Nero/v1.4.nopujet/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets-amcatnlo/160708_092310/0000 3.16780602407e+13 61526.7
-ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8 /store/user/jaeyserm/Nero/v1.4/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8/ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8/160521_081438/0000 29044072.1216 10.32
-ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8-resub /store/user/jaeyserm/Nero/v1.4/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8-resub/160522_004517/0000 38932192.0 80.95
-ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1 /store/user/jaeyserm/Nero/v1.4/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/160521_081519/0000 64957724.0 136.02
-ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8 /store/user/jaeyserm/Nero/v1.4/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8/160521_081545/0000 999400.0 30.09
-ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8 /store/user/jaeyserm/Nero/v1.4/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8/160521_081607/0000 1000000.0 30.11
-W0JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W0JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 24328832.0 34273.632815
-W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 45442170.0 18455.979619
-W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 30190119.0 6035.904629 
-W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 19141299.0 1821.46719
-W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /eos/user/a/amarini/Nero/v1.4.prong/W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 9533327.0 939.684984
-ChargedHiggs_HplusTB_HplusToTauNu_M-1500_13TeV_amcatnlo_pythia8 /store/user/amarini/Nero/v1.4.nopujet/ChargedHiggs_HplusTB_HplusToTauNu_M-1500_13TeV_amcatnlo_pythia8 75.6435105065 0.00143545742907 SCALES 1.07261279129 0.927879350362 1.10769014271 1.1996562575 0.901600960005 0.849380449702 PDFS 0.983203818306 0.909423210195 1.00994534785 1.00799358032 1.00338588961 0.943850830887 1.04892819468 0.952119544051 1.01783781852 0.990026561955 0.98146889459 1.00648267622 0.910214691777 0.939229943958 0.936204602746 1.0282215464 0.76624709916 0.89586302115 1.0795005411 1.08047276319 1.09461028809 1.19667408955 1.14087614408 1.18982906388 0.984811242332 1.04463582397 0.802858456829 0.879420894809 0.920116884488 1.12314178018 1.07423609996 1.04761263837 1.03684777858 1.26272445797 0.956536050103 1.03531554891 0.913976867445 1.08740069822 1.08977231898 1.05536719787 1.14787119377 1.00274745559 1.13060112799 1.0391319463 1.1926381844 1.33643980207 0.876226065339 0.923385276726 0.939361054076 0.987720465001 1.00810421378 0.9806202498 1.13374152548 0.897947972064 1.01068424048 0.867733079451 1.03678256153 0.957774027215 1.01959652082 1.07562098143 1.09261042715 1.0816616593 0.974585261498 0.841944677493 1.0302926481 1.04701521279 1.06939968776 1.02506879313 0.919584756228 0.886743947272 1.16198859057 1.02047087159 0.934519038525 0.935496311709 0.961885467632 1.12185214429 1.10149343227 0.971280794796 1.03866933402 1.03267181712 1.13034830555 1.00148761435 0.939514847754 1.04286423845 0.895005999338 0.905251263954 0.946120932823 0.922483850622 0.962676973261 0.965793772313 0.954065574771 1.08846383433 0.932920201073 1.15771622459 0.784036166113 1.05710846961 1.00036655102 1.19618977539 0.929436421768 0.844477282933 
+# Signal (reHLT)
+ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 39879.6403844 0.0599630833405  
+ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 3811.50329334 0.02952842256
+ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 1130.69397272 0.005344 
+ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 225.318087844 0.005344
+ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 53.8926131385 0.002366
+ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8 19.9997309995 0.0013458646
+ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 8.45171876984 0.000836289779
+ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 2.36727332073 0.000382537512
+ChargedHiggs_HplusTB_HplusToTauNu_M-800_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-800_13TeV_amcatnlo_pythia8 66870.1428422 0.0266787127856
+ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8 24252.7495015 0.0137303021459
+ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8 432.359932559 0.000167866833453
+ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8 16.9307996328 8.08827223332e-06
+## DY (reHLT)
+DYJetsToLL-acmatnlo /eos/user/j/jaeyserm/Nero/8X/DYJetsToLL-acmatnlo 1.63557608427e+12 6025.2
+DYJetsToLL-madgraph /eos/user/m/mpedraza/Nero/8X/DYJetsToLL-madgraph 88661461.0 6025.2
+## WJets (reHLT)
+WJetsToLNu-amcatnlo /eos/user/j/jaeyserm/Nero/8X/WJetsToLNu-amcatnlo 7.33979336534e+12 61526.7
+WJetsToLNu-madgraph /eos/user/m/mpedraza/Nero/8X/WJetsToLNu-madgraph 95348018.0 61526.7
+# Diboson (non reHLT)
+WWTo2L2Nu_13TeV-powheg /store/user/mpedraza/Nero/8X/WWTo2L2Nu_13TeV-powheg 1996600.0 12.46
+WWToLNuQQ_13TeV-powheg /store/user/mpedraza/Nero/8X/WWToLNuQQ_13TeV-powheg 1951000.0 52
+WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/mpedraza/Nero/8X/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 338780513.755 10.71 
+WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/mpedraza/Nero/8X/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8 9089293.63795 3.033
+WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/mpedraza/Nero/8X/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 229406443.905 5.595 
+WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8 /store/user/mpedraza/Nero/8X/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8 2000000 4.42965
+ZZTo2L2Nu_13TeV_powheg_pythia8 /store/user/mpedraza/Nero/8X/ZZTo2L2Nu_13TeV_powheg_pythia8 8968000.0 0.564
+ZZTo4L_13TeV_powheg_pythia8 /store/user/mpedraza/Nero/8X/ZZTo4L_13TeV_powheg_pythia8 6638328 1.256
+# TT (reHLT)
+TT /eos/user/m/mpedraza/Nero/8X/TT 92255310.0 831
+TTJets /eos/user/m/mpedraza/Nero/8X/TTJets 81069486659.3 831
+# SingleTop (non reHLT)
+ST_tW_top /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_top 998400.0 30.11
+ST_tW_antitop /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_antitop 985000.0 30.09
+ST_t-channel_top /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_t-channel_top 30234312.0 136.02
+ST_t-channel_antitop /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_t-channel_antitop 19825855.0 80.95
+# QCD (reHLT)
+#QCD_Pt_15to30 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_15to30 998420.0 1954717132.37
+#QCD_Pt_30to50 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_30to50 984676.018179 140581825.84
+#QCD_Pt_50to80 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_50to80 981094.0 19514723.1492
+#QCD_Pt_80to120 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_80to120 699585.934741 2706834.0663
+#QCD_Pt_120to170 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_120to170 698564.393486 424759.828516
+#QCD_Pt_170to300 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_170to300 699973.0 120301.87639
+#QCD_Pt_300to470 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_300to470 2482816.0 7875.39784346
+#QCD_Pt_470to600 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_470to600 1998654.75597 645.261948785
+#QCD_Pt_600to800 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_600to800 1377400.0 182.825334545
+#QCD_Pt_800to1000 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_800to1000 395328.007576 30.8477894098 
+#QCD_Pt_1000to1400 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_1000to1400 299967.0 9.61097962443
+#QCD_Pt_1400to1800 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_1400to1800 38848.0 0.891756904279
+#QCD_Pt_1800to2400 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_1800to2400 39975.0 0.11340744838
+#QCD_Pt_2400to3200 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_2400to3200 39990.0 0.00677059467135
+#QCD_Pt_3200toInf /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_3200toInf 39988.0 0.000150275124217
