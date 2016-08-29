@@ -34,7 +34,7 @@ g=[] ## garbage un-collector
 
 ######### EXTRA CONFIGURATION
 fullstat=True
-savePdf=True
+savePdf=False
 systsMC=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU"]
 systsQCD=["RFAC"]
 systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT"]
