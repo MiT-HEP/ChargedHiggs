@@ -283,10 +283,10 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
             if (metReco.Pt() <=100) pass=false;
             if (rbbmin <=0.8) pass=false;
 
-            e->SetPtEtaSF("metLegEff",metReco.Pt(),metReco.Eta());
-            e->ApplySF("metLegEff");
-            e->SetPtEtaSF("tauLeg13pEff",tauReco.Pt(),tauReco.Eta());
-            e->ApplySF("tauLeg13pEff");
+            e->SetPtEtaSF("metLegData",metReco.Pt(),metReco.Eta());
+            e->ApplySF("metLegData");
+            e->SetPtEtaSF("tauLeg13pData",tauReco.Pt(),tauReco.Eta());
+            e->ApplySF("tauLeg13pData");
 
             e->SetPtEtaSF("singlemuonInvEff",pt,eta); // remove the SingleMuon Trigger Efficiency
             e->ApplySF("singlemuonInvEff");

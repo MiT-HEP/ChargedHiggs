@@ -1,0 +1,4 @@
+include=dat/configTauNu.dat
+include=dat/config.2016.dat
+
+addConfig=ChargeHiggsTauNu|is80X=1

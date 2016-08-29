@@ -1,0 +1,13 @@
+sub=tag|v1.4
+sub=amarini|/store/user/amarini/Nero
+sub=klute|/store/user/klute/Nero
+sub=jan|/store/user/jaeyserm/Nero
+
+addfiles=/store/user/mpedraza/Nero/8X/WWTo2L2Nu_13TeV-powheg
+addfiles=/store/user/mpedraza/Nero/8X/WWToLNuQQ_13TeV-powheg
+addfiles=/store/user/mpedraza/Nero/8X/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=/store/user/mpedraza/Nero/8X/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=/store/user/mpedraza/Nero/8X/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=/store/user/mpedraza/Nero/8X/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8
+addfiles=/store/user/mpedraza/Nero/8X/ZZTo4L_13TeV_powheg_pythia8
+addfiles=/store/user/mpedraza/Nero/8X/ZZTo2L2Nu_13TeV_powheg_pythia8

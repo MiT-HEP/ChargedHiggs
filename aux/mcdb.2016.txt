@@ -1,0 +1,52 @@
+# Signal (reHLT)
+ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 39879.6403844 0.0599630833405  
+ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 3811.50329334 0.02952842256
+ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 1130.69397272 0.005344 
+ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 225.318087844 0.005344
+ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 53.8926131385 0.002366
+ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8 19.9997309995 0.0013458646
+ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 8.45171876984 0.000836289779
+ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 2.36727332073 0.000382537512
+ChargedHiggs_HplusTB_HplusToTauNu_M-800_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-800_13TeV_amcatnlo_pythia8 66870.1428422 0.0266787127856
+ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8 24252.7495015 0.0137303021459
+ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8 432.359932559 0.000167866833453
+ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8 16.9307996328 8.08827223332e-06
+## DY (reHLT)
+DYJetsToLL-acmatnlo /eos/user/j/jaeyserm/Nero/8X/DYJetsToLL-acmatnlo 1.63557608427e+12 6025.2
+DYJetsToLL-madgraph /eos/user/m/mpedraza/Nero/8X/DYJetsToLL-madgraph 88661461.0 6025.2
+## WJets (reHLT)
+WJetsToLNu-amcatnlo /eos/user/j/jaeyserm/Nero/8X/WJetsToLNu-amcatnlo 7.33979336534e+12 61526.7
+WJetsToLNu-madgraph /eos/user/m/mpedraza/Nero/8X/WJetsToLNu-madgraph 95348018.0 61526.7
+# Diboson (non reHLT)
+WWTo2L2Nu_13TeV-powheg /store/user/mpedraza/Nero/8X/WWTo2L2Nu_13TeV-powheg 1996600.0 12.46
+WWToLNuQQ_13TeV-powheg /store/user/mpedraza/Nero/8X/WWToLNuQQ_13TeV-powheg 1951000.0 52
+WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/mpedraza/Nero/8X/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 338780513.755 10.71 
+WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/mpedraza/Nero/8X/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8 9089293.63795 3.033
+WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/mpedraza/Nero/8X/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 229406443.905 5.595 
+WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8 /store/user/mpedraza/Nero/8X/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8 2000000 4.42965
+ZZTo2L2Nu_13TeV_powheg_pythia8 /store/user/mpedraza/Nero/8X/ZZTo2L2Nu_13TeV_powheg_pythia8 8968000.0 0.564
+ZZTo4L_13TeV_powheg_pythia8 /store/user/mpedraza/Nero/8X/ZZTo4L_13TeV_powheg_pythia8 6638328 1.256
+# TT (reHLT)
+TT /eos/user/m/mpedraza/Nero/8X/TT 92255310.0 831
+TTJets /eos/user/m/mpedraza/Nero/8X/TTJets 81069486659.3 831
+# SingleTop (non reHLT)
+ST_tW_top /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_top 998400.0 30.11
+ST_tW_antitop /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_antitop 985000.0 30.09
+ST_t-channel_top /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_t-channel_top 30234312.0 136.02
+ST_t-channel_antitop /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_t-channel_antitop 19825855.0 80.95
+# QCD (reHLT)
+#QCD_Pt_15to30 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_15to30 998420.0 1954717132.37
+#QCD_Pt_30to50 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_30to50 984676.018179 140581825.84
+#QCD_Pt_50to80 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_50to80 981094.0 19514723.1492
+#QCD_Pt_80to120 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_80to120 699585.934741 2706834.0663
+#QCD_Pt_120to170 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_120to170 698564.393486 424759.828516
+#QCD_Pt_170to300 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_170to300 699973.0 120301.87639
+#QCD_Pt_300to470 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_300to470 2482816.0 7875.39784346
+#QCD_Pt_470to600 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_470to600 1998654.75597 645.261948785
+#QCD_Pt_600to800 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_600to800 1377400.0 182.825334545
+#QCD_Pt_800to1000 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_800to1000 395328.007576 30.8477894098 
+#QCD_Pt_1000to1400 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_1000to1400 299967.0 9.61097962443
+#QCD_Pt_1400to1800 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_1400to1800 38848.0 0.891756904279
+#QCD_Pt_1800to2400 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_1800to2400 39975.0 0.11340744838
+#QCD_Pt_2400to3200 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_2400to3200 39990.0 0.00677059467135
+#QCD_Pt_3200toInf /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_3200toInf 39988.0 0.000150275124217

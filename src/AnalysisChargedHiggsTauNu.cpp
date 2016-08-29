@@ -122,7 +122,7 @@ void ChargedHiggsTauNu::Init()
 }
 
 
-unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
+unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80X) {
     
     CutSelector cut; 
     cut.SetMask(MaxCut-1);
@@ -182,15 +182,11 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
     if ( direct and e->Bjets() >=1 ) cut.SetCutBit(OneBjet) ;
     if ( not direct and e->BjetsInvIso() >=1 ) cut.SetCutBit(OneBjet) ;
 
-    //if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
-    //if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
-    //if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
-    //else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
-    //if ( e->IsTriggered("HLT_PFMET120_NoiseCleaned_BtagCSV0p72"))  cut.SetCutBit(Trigger);
-
-    // if (e->IsRealData() and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") and not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") )
-    //     Logger::getInstance().Log("ChargedHiggsTauNu",__FUNCTION__, "WARNING" , Form("GREPMEAAA Found Data Event (%d,%d,%u) trigger by Tau+120 and not by Tau+80",e->runNum(),e->lumiNum(), e->eventNum()) ); 
-   
+    if (not is80X)
+    {
+        if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
+        else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
+    }
     
     if (muon) { // special treatment for muons..
         
@@ -201,17 +197,17 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
         else cout << "not triggered" << endl;
         
     }
-    else {
     
-    // No reHLT for singleT, WZ, WW and ZZ
-    if(e->GetWeight()->GetMC().find("ST") != string::npos || e->GetWeight()->GetMC().find("WZ") != string::npos || e->GetWeight()->GetMC().find("WW") != string::npos || e->GetWeight()->GetMC().find("ZZ") != string::npos) {
-        
-        cut.SetCutBit(Trigger); // set trigger, but apply SF!
-    }
-    else {
-        
-        if(e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET90")) cut.SetCutBit(Trigger);   
-    }
+    if (is80X and not muon){
+        // No reHLT for singleT, WZ, WW and ZZ
+        if(e->GetWeight()->GetMC().find("ST") != string::npos || e->GetWeight()->GetMC().find("WZ") != string::npos || e->GetWeight()->GetMC().find("WW") != string::npos || e->GetWeight()->GetMC().find("ZZ") != string::npos) {
+
+            cut.SetCutBit(Trigger); // set trigger, but apply SF!
+        }
+        else {
+
+            if(e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET90")) cut.SetCutBit(Trigger);   
+        }
     }
     
     // MET 
@@ -251,7 +247,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     cut.reset();
     cut.SetMask(MaxCut-1) ;
-    cut.SetCut( Selection(e,true) );
+    cut.SetCut( Selection(e,true, false, is80X) );
 
     //Log(__FUNCTION__,"DEBUG","Analyze event with syst "+ systname + Form(" Njets=%d NB=%d PassAll=%d cuts=%s", e->Njets(),e->Bjets() ,cut.passAll(), ChargedHiggs::printBinary(cut.raw()).c_str() ));
 
@@ -294,13 +290,13 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //#warning no sf trigger
     if (cut.pass(Trigger) and not e->IsRealData()) {
 
-        if (is80X and t!=NULL)
+        if (is80X and t!=NULL) // 80X tauLeg13p
         {
             if (tauLegSF=="tauLegData"){e->ApplyTauSF(t,false,"Data");}
-            else e->ApplyTauSF(t);
+            else e->ApplyTauSF(t,false,""); 
 
         }
-        else // 76X
+        else // 76X tauLeg 1p and 3p
         {
             if (t!=NULL){e->ApplyTauSF(t);}
         }

@@ -23,6 +23,7 @@ class ChargedHiggsQCDPurity:  virtual public AnalysisBase
     float Uperp(Event*e, Tau*t){ return e->GetMet().Pt() * TMath::Sin( e->GetMet().DeltaPhi( *t) );}; // this is positive, deltaPhi>0
     
     bool Unblind(Event *e) { if (e->IsRealData() and e->Mt() > 50) return unblind; return true;} // if is not data, no need to return something else
+    bool is80X{false};
 };
 
 #endif

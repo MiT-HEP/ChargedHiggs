@@ -1,0 +1,24 @@
+##configure Looper
+##### This file store the configuratino to run all the analysis
+##### if you want to make a config file that overwrite some changes just create a new one with the line
+
+include=dat/configEWKPurity.dat
+include=dat/config.2016.dat
+
+Files=
+## ttbar
+include=dat/catalog/2016/tt.dat
+## SingleTop
+include=dat/catalog/2016/st.dat
+## Drell-Yan
+include=dat/catalog/2016/dy.dat
+## Wjets
+include=dat/catalog/2016/wjets.dat
+## DIBOSON
+include=dat/catalog/2016/vv.dat
+### SIGNAL ###
+include=dat/catalog/2016/taunu.dat
+
+### DATA
+addfiles=/eos/user/j/jaeyserm/Nero/8X/SingleMuon
+

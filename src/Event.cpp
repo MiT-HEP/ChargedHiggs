@@ -598,7 +598,7 @@ void Event::ApplyBTagSF(int wp)
 #endif
 }
 
-void Event::ApplyTauSF(Tau*t,bool prongs=true, extra="")
+void Event::ApplyTauSF(Tau*t,bool prongs,const string& extra)
 {
     if (IsRealData()) return;
     string sfname="tauLeg";//

@@ -19,10 +19,11 @@ sub=jan|/store/user/jaeyserm/Nero
 
 #### BKG ###
 Files=
-include dat/catalog/2015/dy.dat
-include dat/catalog/2015/tt.dat
-include dat/catalog/2015/st.dat
-include dat/catalog/2015/vv.dat
+include=dat/catalog/2015/dy.dat
+include=dat/catalog/2015/tt.dat
+include=dat/catalog/2015/st.dat
+include=dat/catalog/2015/vv.dat
+include=dat/catalog/2015/wnjets.dat 
 
 ### SIGNAL ###
 include dat/catalog/2015/taunu.dat

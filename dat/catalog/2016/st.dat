@@ -1,0 +1,10 @@
+sub=tag|v1.4
+sub=amarini|/store/user/amarini/Nero
+sub=klute|/store/user/klute/Nero
+sub=jan|/store/user/jaeyserm/Nero
+
+addfiles=/eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_top
+addfiles=/eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_antitop
+addfiles=/eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_t-channel_top
+addfiles=/eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_t-channel_antitop
+
