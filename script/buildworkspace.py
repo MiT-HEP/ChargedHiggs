@@ -35,9 +35,12 @@ g=[] ## garbage un-collector
 ######### EXTRA CONFIGURATION
 fullstat=True
 savePdf=False
-systsMC=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU"]
-systsQCD=["RFAC"]
+#systsMC=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW"]
+systsMC=["BTAG","JES","TAU","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW","TRIG1p","TRIG3p"]
+#systsQCD=["RFAC"]
+systsQCD=["RFAC1p","RFAC3p"]
 systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT"]
+
 ###########################
 
 if not savePdf and opts.qcdlumi/opts.lumi !=1 : 
@@ -53,7 +56,11 @@ def WorkspaceSubstitution(string):
 	res = re.sub('TAUHIGHPT','CMS_eff_t_highpt',res)	
 	res = re.sub('TAU','CMS_eff_t',res)	
 	res = re.sub('TRIGMET','CMS_trig_met',res)	
+	res = re.sub('TRIG1p','CMS_trg_t_1p',res)	
+	res = re.sub('TRIG3p','CMS_trg_t_3p',res)	
 	res = re.sub('TRIG','CMS_trg_t',res)	
+	res = re.sub('RFAC1p','CMS_fake_t_1p',res)	
+	res = re.sub('RFAC3p','CMS_fake_t_3p',res)	
 	res = re.sub('RFAC','CMS_fake_t',res)	
 	res = re.sub('ELEVETO','CMS_eff_e_veto',res)	
 	res = re.sub('MUVETO','CMS_eff_m_veto',res)	
@@ -61,6 +68,7 @@ def WorkspaceSubstitution(string):
 	res = re.sub("PU","CMS_pileup",res)
 	res = re.sub("MUEFF","CMS_eff_m_trigger",res)
 	res = re.sub("MUEFF","CMS_eff_m_reco",res)
+	res = re.sub("TOPRW","CMS_topreweight",res)
 	return res
 
 def Rebin(h):
@@ -732,25 +740,33 @@ def writeSyst(syst="JES"):
 			print "DONT KNOW WHAT TO DO WITH proc=",proc,"syst=",syst,"systOrig=",systOrig
 	datacard.write("\n")
 
-### write shape syst
-writeSyst('JES')
-writeSyst('JER')
-writeSyst('TAU')
-writeSyst('BTAG')
-writeSyst('RFAC')
-writeSyst('TRIG')
-writeSyst('TRIGMET')
-writeSyst('TAUHIGHPT')
-writeSyst('TAUSCALE')
-writeSyst('TAUANTIE')
-writeSyst('ELEVETO')
-writeSyst('MUVETO')
-writeSyst('UNCLUSTER')
-writeSyst('PU')
+allSyst=set(systsMC) 
+if opts.qcd!="":
+	allSyst |= set(systsQCD)
+if opts.ewk!="":
+	allSyst |= set(systsEWK)
 
-if opts.ewk !="" :
-	writeSyst('MUEFF')
-	writeSyst('MURECOEFF')
+for x in allSyst:
+	writeSyst(x)
+### write shape syst
+#writeSyst('JES')
+#writeSyst('JER')
+#writeSyst('TAU')
+#writeSyst('BTAG')
+#writeSyst('RFAC')
+#writeSyst('TRIG')
+#writeSyst('TRIGMET')
+#writeSyst('TAUHIGHPT')
+#writeSyst('TAUSCALE')
+#writeSyst('TAUANTIE')
+#writeSyst('ELEVETO')
+#writeSyst('MUVETO')
+#writeSyst('UNCLUSTER')
+#writeSyst('PU')
+
+#if opts.ewk !="" :
+#	writeSyst('MUEFF')
+#	writeSyst('MURECOEFF')
 ##
 ## write STAT syst
 for mc in mcAll:
