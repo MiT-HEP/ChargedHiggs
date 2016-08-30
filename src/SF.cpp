@@ -81,7 +81,7 @@ void SF_PtEta::print(){
 }
 // --- TH1F 
 
-void SF_TH2F::init(string filename,string histname)
+void SF_TH2F::init(string filename,string histname,string errorname)
 {
     TFile *f = TFile::Open(filename.c_str() ) ;
     if (f == NULL){
@@ -94,6 +94,17 @@ void SF_TH2F::init(string filename,string histname)
         throw abortException() ;
     }
 
+    TH2F *errHist=NULL;
+
+    if (errorname!="")
+    {
+        errHist=(TH2F*)f->Get(errorname.c_str());
+        if (errHist==NULL){
+            Log(__FUNCTION__,"ERROR","error name '"+errorname+"' does not exist");
+            throw abortException() ;
+        }
+    }
+
     for( int aetabin =1; aetabin <= h->GetNbinsX() ; ++aetabin)
     for( int ptbin =1; ptbin <= h->GetNbinsY() ; ++ptbin)
     {
@@ -103,6 +114,10 @@ void SF_TH2F::init(string filename,string histname)
         float aetamax = h->GetXaxis()->GetBinLowEdge(aetabin+1); 
         float sf = h->GetBinContent(aetabin,ptbin);
         float err = h->GetBinError(aetabin,ptbin);
+        if (errHist)
+        {
+            err=errHist->GetBinContent(aetabin,ptbin);
+        }
         if (ptbin == h->GetNbinsY() ) ptmax = 8000.; // highest is open, current recommendation
         add(ptmin,ptmax,aetamin,aetamax,sf,err);
     }

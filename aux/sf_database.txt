@@ -56,8 +56,8 @@ btag csv aux/CSVv2.csv
 ## electron veto ##
 ###################
 #eleveto th2f aux/CutBasedID_VetoWP_76X_18Feb.txt_SF2D.root veto ## pog
-eleveto th2f aux/scalefactors_ele_76x.root:scalefactors_Veto_Electron veto
-muveto th2f aux/scalefactors_mu_76x.root:scalefactors_Loose_Muon veto
+eleveto th2f aux/scalefactors_ele_76x.root:scalefactors_Veto_Electron:scalefactors_Veto_Electron_stat_error_hi veto
+muveto th2f aux/scalefactors_mu_76x.root:scalefactors_Loose_Muon:scalefactors_Loose_Muon_stat_error_hi veto
 
 #############
 ## POG Tau ##
