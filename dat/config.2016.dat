@@ -24,7 +24,7 @@ include=dat/catalog/2016/taunu.dat
 ### DATA
 include=dat/catalog/2016/tau.dat
 #
-pileup=aux/pileup.2016.root
+pileup=aux/pileup.2016.BCDEFG.root
 
 MCDB=aux/mcdb.2016.txt
 SFDB=aux/sf_database.2016.txt
