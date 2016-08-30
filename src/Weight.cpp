@@ -103,13 +103,20 @@ void Weight::AddTh2fSF(string label, string filename)
     }
     SF_TH2F *p = new SF_TH2F();
     if (filename.find(":") !=string::npos)
-        {
+    {
         string fname=filename.substr(0,filename.find(":"));
         string hname=filename.substr(filename.find(":")+1);  
-        p->init(fname,hname);
+        if (hname.find(":") == string::npos) p->init(fname,hname);
+        else { // errhist is present
+            string errname = hname.substr( hname.find(":") +1);
+            hname  = hname.substr(0,hname.find(":") );
+            p->init(fname,hname,errname);
         }
+    }
     else
+    {
         p -> init(filename);
+    }
     p -> label = label;
     sf_db[label] = p;
 }

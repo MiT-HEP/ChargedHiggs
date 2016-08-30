@@ -271,6 +271,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     // For all the oters, apply data/mc efficiencies
     string tauLegSF, metLegSF;
 
+    // ---------------- 80X ------------------------
     if (is80X)
     {
         if(e->GetWeight()->GetMC().find("ST") != string::npos || e->GetWeight()->GetMC().find("WZ") != string::npos || e->GetWeight()->GetMC().find("WW") != string::npos || e->GetWeight()->GetMC().find("ZZ") != string::npos) {
@@ -285,11 +286,17 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
             metLegSF = "metLeg";  
         }
     }
+    else
+    {
+        metLegSF="metLegBtagLoose";
+    }
+    // --------------------------------------------
 
 
     //#warning no sf trigger
     if (cut.pass(Trigger) and not e->IsRealData()) {
-
+        
+        //--------------- 80X ---------------------
         if (is80X and t!=NULL) // 80X tauLeg13p
         {
             if (tauLegSF=="tauLegData"){e->ApplyTauSF(t,false,"Data");}
@@ -300,6 +307,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         {
             if (t!=NULL){e->ApplyTauSF(t);}
         }
+        // ----------------------------------------
 
         if( not e->ExistSF(metLegSF) ) Log(__FUNCTION__,"WARING" ,"No Tau"+metLegSF+" SF");  
         

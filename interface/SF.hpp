@@ -71,7 +71,7 @@ class SF_TH2F : virtual public SF_PtEta
     public:
         SF_TH2F() : SF_PtEta(),SF(){}
         SF_TH2F(string filename) : SF_PtEta(),SF(){ init(filename); }
-        void init(string filename,string histname="EGamma_SF2D");
+        void init(string filename,string histname="EGamma_SF2D",string errorhist=""); // ""== binerror
         const string name() const {return "SF_TH2F";}
 };
 
