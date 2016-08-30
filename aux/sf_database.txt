@@ -98,7 +98,7 @@ antiE pteta 0 8000 1.460 5.0 1.3 0.42
 #######################
 ### top reweighting ###
 #######################
-topreweight tf2 TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137*y))
+topreweight tf2 TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137*y)) 1.-TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137*y))
 
 ###################
 ## W reweighting ##
