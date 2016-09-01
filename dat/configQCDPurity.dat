@@ -15,7 +15,8 @@ Analysis=JsonAnalysis,MetFiltersAnalysis,ChargedHiggsQCDPurity
 #Smear=JER,JES,@SmearBase
 #Smear=NONE,JER,JES
 #Smear=NONE
-Smear=NONE,JES,JER,@SmearSF("BTAG"!"btag"),@SmearSF("RFAC"!"tauinvisospline"),@SmearPu,@SmearSF("RFAC1p"!"tauinvisospline_1p"),@SmearSF("RFAC3p"!"tauinvisospline_3p")
+#Smear=NONE,JES,JER,@SmearSF("BTAG"!"btag"),@SmearSF("RFAC"!"tauinvisospline"),@SmearPu,@SmearSF("RFAC1p"!"tauinvisospline_1p"),@SmearSF("RFAC3p"!"tauinvisospline_3p")
+Smear=NONE,JES,JER,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("RFAC"!"tauinvisospline"),@SmearPu,@SmearSF("RFAC1p"!"tauinvisospline_1p"),@SmearSF("RFAC3p"!"tauinvisospline_3p")
 
 config=ChargedHiggsQCDPurity|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
 addConfig=ChargedHiggsQCDPurity|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo')

@@ -48,12 +48,12 @@ class WsHandler():
             raise IOError
         #for nuis in argset:
         #    self.nuisances.append( nuis.GetName() )
-	iter = argset.createIterator()
-	nuis = iter.Next()
-	while nuis :
-	   if 'STAT' not in nuis.GetName():  ## don't look for STAT stuff
-	      self.nuisances.append( nuis.GetName() ) 
-	   nuis = iter.Next()
+        iter = argset.createIterator()
+        nuis = iter.Next()
+        while nuis :
+           if 'STAT' not in nuis.GetName():  ## don't look for STAT stuff
+              self.nuisances.append( nuis.GetName() ) 
+           nuis = iter.Next()
         return self
 
     def getNuisances(self):
@@ -63,7 +63,7 @@ class WsHandler():
     def _getProcesses(self):
         ''' TODO, Read from datacard'''
         self.processes=["DY","ST","TT","WJets","WW","WZ","ZZ","QCD","Hplus"]
-	self.collapse={ "EWK": ["DY","WJets","WW","WZ","ZZ"],"Top":["TT","ST"],"QCD":["QCD"],"Hplus":["Hplus"]}
+        self.collapse={ "EWK": ["DY","WJets","WW","WZ","ZZ"],"Top":["TT","ST"],"QCD":["QCD"],"Hplus":["Hplus"]}
         return self
 
     def getProcesses(self):
@@ -102,40 +102,46 @@ class WsHandler():
 
          for proc in self.processes:
              nominal= self._getValue("nominal",proc)
-	     #print "Yield for proc",proc,"is",nominal ### DEBUG
-	     if  (map[proc],None) not in self.yields : self.yields[ (map[proc],None) ] = 0.0
+             #print "Yield for proc",proc,"is",nominal ### DEBUG
+             if  (map[proc],None) not in self.yields : self.yields[ (map[proc],None) ] = 0.0
              self.yields[ (map[proc],None) ] += nominal
              for syst in self.nuisances:
                  newvalues={}
                  for shift in [1,-1]:
                      name=proc +"_" +syst + ("Up" if shift>0 else "Down")
-		     self._snapshot( name, {syst:shift} )
+                     self._snapshot( name, {syst:shift} )
                      newvalues[shift] = self._getValue(name, proc)
                  print "Process",proc,"Nuisance",syst,"is ", (newvalues[-1]/nominal-1)*100,"/", (newvalues[1]/nominal-1)*100
-		 if (map[proc],syst) not in self.yields:
-			 self.yields[ map[proc],syst ] = [0.0,0.0,0.0]
-		 #self.yields[ map[proc],syst ] += nominal, newvalues[1],newvalues[-1]
-		 #print "DEBUG",self.yields[ map[proc],syst ],self.yields[ map[proc],syst ][0],nominal
-		 self.yields[ (map[proc],syst) ][0] += nominal
-		 self.yields[ (map[proc],syst) ][1] += newvalues[1]
-		 self.yields[ (map[proc],syst) ][2] += newvalues[-1]
+                 if (map[proc],syst) not in self.yields:
+                     self.yields[ map[proc],syst ] = [0.0,0.0,0.0]
+                 #self.yields[ map[proc],syst ] += nominal, newvalues[1],newvalues[-1]
+                 #print "DEBUG",self.yields[ map[proc],syst ],self.yields[ map[proc],syst ][0],nominal
+                 self.yields[ (map[proc],syst) ][0] += nominal
+                 self.yields[ (map[proc],syst) ][1] += newvalues[1]
+                 self.yields[ (map[proc],syst) ][2] += newvalues[-1]
+
+         return self
 
     def getNorm(self):
          return self.getProcesses().getNuisances()._getNorm()
 
+    def _printSeparator(self): 
+        print "-----------------------------"
+        return self
+
     def printYields(self):
-         self.getNorm()
+         self.getNorm()._printSeparator()
          #for proc, syst in self.yields:
-	 for proc in self.collapse :
+         for proc in self.collapse :
             for syst in self.nuisances:
              print "Process",proc,"syst",syst,"Yield=",self.yields[proc,syst][0],
              try:
                  print "Up",(self.yields[proc,syst][1]/self.yields[proc,syst][0]-1)*100,
-	     except ZeroDivisionError:
+             except ZeroDivisionError:
                  pass
              try:
                  print "Down",(self.yields[proc,syst][2]/self.yields[proc,syst][0]-1)*100,
-	     except ZeroDivisionError:
+             except ZeroDivisionError:
                  pass
              print  #close line
          return self
@@ -149,10 +155,10 @@ class WsHandler():
     def write(self, name="/dev/stdout"):
          self.printYields().printDataYields()
          out = open(name,"w")
-	 for proc in self.collapse :
+         for proc in self.collapse :
              out.write("%s %.1f\n"%(proc,self.yields[proc,None]))
          out.write("%s %.1f\n"%("data",self.yields["data",None]))
-	 out.close()
+         out.close()
          return self
 
 ##########################end Handler ##########################

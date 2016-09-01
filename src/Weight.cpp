@@ -149,7 +149,8 @@ void Weight::AddTF2SF(string label, string formula,string errFormula)
 
 void Weight::resetSystSF(){
     for (auto o : sf_db)
-        o.second->syst = 0;
+        o.second->reset();
+    //o.second->syst = 0;
 }
 
 void Weight::SetPtEtaSF(string label,double pt, double eta)
