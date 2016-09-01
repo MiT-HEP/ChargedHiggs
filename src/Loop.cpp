@@ -312,6 +312,25 @@ void Looper::FillEvent(){
 #endif 
 }
 
+int Looper::AddSmear(SmearBase*s)
+{ 
+	SmearBjets* bj= dynamic_cast<SmearBjets*>(s);
+	if (bj!=NULL ) 
+	{ 
+		SF_CSV * sf = dynamic_cast<SF_CSV*>(event_->GetWeight()->GetSF(bj->sfname()));
+		if (sf == NULL) 
+		{
+			Log(__FUNCTION__,"ERROR","SF"+bj->sfname()+"does not exist or is not SF_CSV");
+			throw abort;
+		}
+		sf->simpleError=false; 
+		Log(__FUNCTION__ ,"INFO","Setting SF simpleErrors to false for " + bj->sfname()) ;
+	}  
+	systs_ .push_back(s) ; 
+	return 0; 
+}
+
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

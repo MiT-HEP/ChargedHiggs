@@ -565,6 +565,7 @@ void Event::ApplyBTagSF(int wp)
 #ifdef VERBOSE
     if (VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","Starting BTAG SF"); 
 #endif
+    //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("-> Considering NCJ=%d",NcentralJets() ));
     for (int i=0;i<NcentralJets() ;++i)
     {
      Jet *j=GetCentralJet(i);
@@ -575,7 +576,9 @@ void Event::ApplyBTagSF(int wp)
          GetWeight()->GetSF("btag")->SetVeto(0);
      }
      else{
-         GetWeight()->GetSF("btag")->SetVeto(1); //1.-x
+         //GetWeight()->GetSF("btag")->SetVeto(1); //1.-x
+         //GetWeight()->GetSF("btag")->SetVeto(0); //???
+         continue;
      }
 
      SetPtEtaSF("btag",j->Pt(), j->Eta() );
@@ -583,7 +586,10 @@ void Event::ApplyBTagSF(int wp)
 #ifdef VERBOSE
      if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Applying btag sf for jet: %f,%f,%d = %f",j->Pt(),j->Eta(),j->Flavor(),GetWeight()->GetSF("btag")->get()));
 #endif
+     //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("-> Applying SF of %e for bjet=%d flavor=%d",GetWeight()->GetSF("btag")->get(),j->IsBJet(),j->Flavor()));
+
      if (GetWeight()->GetSF("btag")->get() <.2 or GetWeight()->GetSF("btag")->get()>2.) continue; // not believable
+
      ApplySF("btag");
     }
 #ifdef VERBOSE

@@ -35,8 +35,10 @@ g=[] ## garbage un-collector
 ######### EXTRA CONFIGURATION
 fullstat=True
 savePdf=False
+tailfit=False
 #systsMC=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW"]
-systsMC=["BTAG","JES","TAU","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW","TRIG1p","TRIG3p"]
+#systsMC=["BTAG","JES","TAU","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW","TRIG1p","TRIG3p"]
+systsMC=["BTAGB","BTAGL","JES","TAU","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW","TRIG1p","TRIG3p"]
 #systsQCD=["RFAC"]
 systsQCD=["RFAC1p","RFAC3p"]
 systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT"]
@@ -50,6 +52,8 @@ if not savePdf and opts.qcdlumi/opts.lumi !=1 :
 def WorkspaceSubstitution(string):
 	res = re.sub('JES','CMS_scale_j',string)	
 	res = re.sub('JER','CMS_res_j',res)	
+	res = re.sub('BTAGB','CMS_eff_b',res)	
+	res = re.sub('BTAGL','CMS_fake_b',res)	
 	res = re.sub('BTAG','CMS_eff_b',res)	
 	res = re.sub('TAUANTIE','CMS_eff_t_ele',res)	
 	res = re.sub('TAUSCALE','CMS_scale_t',res)	
@@ -142,7 +146,8 @@ def Smooth(h):
 	''' Smooth out the tail of the mT distribution'''
 	#return;### It's not working ... need to figure out the range dynamically
 	### wjets has some problem
-	return  ## NO SMOOTH
+	if not tailfit:
+		return  ## NO SMOOTH
 
 	if True and \
 	   'WJets' not in h.GetName() and \
@@ -815,6 +820,7 @@ w.writeToFile(opts.output)
 print "--------------------" 
 print "savePdf=",savePdf
 print "fullstat=",fullstat
+print "tailfit=",tailfit
 print "datacard=",datName
 print "ws=",opts.output
 print " --- DONE --- "
