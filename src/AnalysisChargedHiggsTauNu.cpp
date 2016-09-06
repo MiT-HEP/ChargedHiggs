@@ -23,6 +23,9 @@ void ChargedHiggsTauNu::Init()
         GetHisto("ChargedHiggsTauNu/CutFlow/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(AngRbb,"R_{bb}^{Min}>40");
         //GetHisto("ChargedHiggsTauNu/CutFlow/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(7,"#Delta #phi (Tau,Jet1)<2.09");
 
+        // -- cut flow 2 is the one used to synchronized with HIP
+        Book(    "ChargedHiggsTauNu/CutFlow/CutFlow2_"+ l  , ("CutFlow "+ l).c_str(),100,-.5,100-.5);
+
         Book(    "ChargedHiggsTauNu/NOne/NTaus_"+l,"NTaus "+l +";Number of selected hadronic tau" ,1000,0,1000);
 
         Book(    "ChargedHiggsTauNu/NOne/Tau1Pt_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
@@ -207,14 +210,49 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     e->ApplyTopReweight();
     e->ApplyWReweight();
 
+
+
     Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,Total,e->weight());
     Fill("ChargedHiggsTauNu/NOne/NTaus_"+label,systname, e->Ntaus() ,e->weight());
 
     Tau *t= e->GetTau(0);
 
+
     cut.reset();
     cut.SetMask(MaxCut-1) ;
     cut.SetCut( Selection(e,true) );
+
+    // here I have the PV and the MET Filters
+    if (e->IsRealData() ) 
+        { 
+            int pos=0;
+            Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            CutSelector mymask(MaxCut);
+            mymask.reset();
+
+            mymask.SetCutBit(Trigger);; ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(OneTau);++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(NoLep); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(ThreeJets); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(OneBjet); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(Met); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(AngRbb); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+        }
 
     //Log(__FUNCTION__,"DEBUG","Analyze event with syst "+ systname + Form(" Njets=%d NB=%d PassAll=%d cuts=%s", e->Njets(),e->Bjets() ,cut.passAll(), ChargedHiggs::printBinary(cut.raw()).c_str() ));
 
@@ -235,29 +273,40 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
  
     //#warning no sf  trigger
     if (cut.pass(Trigger) and not e->IsRealData()) {
-        if( not e->ExistSF("tauLeg13p") ) Log(__FUNCTION__,"WARING" ,"No Tau Trigger SF");  
-        if( t!=NULL){ e->SetPtEtaSF("tauLeg13p",t->Pt(),t->Eta()); e->ApplySF("tauLeg13p");}
-        if( not e->ExistSF("metLegBtagMedium") ) Log(__FUNCTION__,"WARING" ,"No Tau metLegBtagMedium SF");  
+        if (t!=NULL){e->ApplyTauSF(t);}
+
+        //if( t!=NULL){ e->SetPtEtaSF("tauLeg13p",t->Pt(),t->Eta()); e->ApplySF("tauLeg13p");}
+        if( not e->ExistSF("metLegBtagLoose") ) Log(__FUNCTION__,"WARING" ,"No Tau metLegBtagLoose SF");  
 
         if (e->GetMet().Pt()>20) // we have it only for met>20
         {
-            e->SetPtEtaSF("metLegBtagMedium",e->GetMet().Pt(),0);
-            e->ApplySF("metLegBtagMedium");
+            e->SetPtEtaSF("metLegBtagLoose",e->GetMet().Pt(),0);
+            e->ApplySF("metLegBtagLoose");
         }
     }  
 
     //if (cut.pass(OneBjet) and not e->IsRealData()) e->ApplySF("btag");
     //#warning nobtag-sf
+    //Log(__FUNCTION__,"DEBUG",Form("syst is=%s weight before=%e",systname.c_str(),e->weight()) ) ;
+    
     if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
 
-    /*
+    //Log(__FUNCTION__,"DEBUG",Form("syst is=%s weight after=%e",systname.c_str(),e->weight()) ) ;
+
+
     #warning TauMatch
     if (not e->IsRealData() ) 
         {
         if (e->GetTau(0) == NULL )  return 0;
         if (e->GetTau(0)->Rematch(e) !=15) return 0;
         }
-    */
+
+    //if (not e->IsRealData() )
+    //{
+    //    e->SetPtEtaSF("antiE",e->GetTau(0)->Pt(),e->GetTau(0)->Eta() );
+    //    e->ApplySF("antiE");
+    //}
+    
 
     if( cut.passAllUpTo( OneTau)   ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,OneTau,e->weight());
     if( cut.passAllUpTo(NoLep)     ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());
@@ -390,7 +439,11 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if (cut.passAll() ) 
     {
         e->ApplySF("tauid"); // only in MC
+
+        //Log(__FUNCTION__,"DEBUG",Form("Syst=%s, Weight Before=%le",systname.c_str(),e->weight()));
+        e->SetPtEtaSF("tauid2",e->GetTau(0)->Pt(),0.);
         e->ApplySF("tauid2"); // only in MC
+        //Log(__FUNCTION__,"DEBUG",Form("Syst=%s, Weight After=%le",systname.c_str(),e->weight()));
 
         //if(e->IsRealData() and (systname=="NONE" or systname=="")) Log(__FUNCTION__,"SYNC",Form("%d,%d,%ld",e->runNum(),e->lumiNum(),e->eventNum()) );
         //

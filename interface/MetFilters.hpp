@@ -14,7 +14,7 @@ class MetFiltersAnalysis : virtual public AnalysisBase
 
         int analyze(Event*,string systname) override;
         const string name() const override {return "MetFilterAnalysis";}
-        void Init() override {};
+        void Init() override ;
 
 };
 

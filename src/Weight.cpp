@@ -103,13 +103,20 @@ void Weight::AddTh2fSF(string label, string filename)
     }
     SF_TH2F *p = new SF_TH2F();
     if (filename.find(":") !=string::npos)
-        {
+    {
         string fname=filename.substr(0,filename.find(":"));
         string hname=filename.substr(filename.find(":")+1);  
-        p->init(fname,hname);
+        if (hname.find(":") == string::npos) p->init(fname,hname);
+        else { // errhist is present
+            string errname = hname.substr( hname.find(":") +1);
+            hname  = hname.substr(0,hname.find(":") );
+            p->init(fname,hname,errname);
         }
+    }
     else
+    {
         p -> init(filename);
+    }
     p -> label = label;
     sf_db[label] = p;
 }
@@ -142,7 +149,8 @@ void Weight::AddTF2SF(string label, string formula,string errFormula)
 
 void Weight::resetSystSF(){
     for (auto o : sf_db)
-        o.second->syst = 0;
+        o.second->reset();
+    //o.second->syst = 0;
 }
 
 void Weight::SetPtEtaSF(string label,double pt, double eta)
@@ -232,6 +240,7 @@ void Weight::ApplySF(string label){
             Log(__FUNCTION__,"WARNING",Form("SF for %s is very little: %f",label.c_str(),sf_db[label] -> get() ));
             return;
         }
+        //Log(__FUNCTION__,"DEBUG",Form("Apply SF for '%s': %f",label.c_str(),sf_db[label] -> get() ));
         sf_ *= sf_db[label] -> get(); 
     }
 
