@@ -12,7 +12,6 @@ void ChargedHiggsTauNu::Init()
 
         Log(__FUNCTION__,"INFO", "Booking Histo CutFlow_" + l);
   
-        Book(    "ChargedHiggsTauNu/CutFlow/CutFlow2_"+ l  , ("CutFlow "+ l).c_str(),100,-.5,100-.5);
         Book(    "ChargedHiggsTauNu/CutFlow/CutFlow_"+ l  , ("CutFlow "+ l).c_str(),100,-.5,100-.5);
         GetHisto("ChargedHiggsTauNu/CutFlow/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(Total+1,"Total"); // bin shift
         GetHisto("ChargedHiggsTauNu/CutFlow/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(OneTau+1,"N_{taus} #geq 1");
@@ -33,8 +32,9 @@ void ChargedHiggsTauNu::Init()
         GetHisto("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+l,"")->GetXaxis()->SetBinLabel(3,"MET > 60 GeV");
         GetHisto("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+l,"")->GetXaxis()->SetBinLabel(4,"R_{bb}^{Min}>40");
 
-        
-        
+        // -- cut flow 2 is the one used to synchronized with HIP
+        Book(    "ChargedHiggsTauNu/CutFlow/CutFlow2_"+ l  , ("CutFlow "+ l).c_str(),100,-.5,100-.5);
+
         Book(    "ChargedHiggsTauNu/NOne/NTaus_"+l,"NTaus "+l +";Number of selected hadronic tau" ,1000,0,1000);
 
         Book(    "ChargedHiggsTauNu/NOne/Tau1Pt_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
@@ -262,6 +262,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     
     Tau *t= e->GetTau(0);
 
+
     cut.reset();
     cut.SetMask(MaxCut-1) ;
     cut.SetCut( Selection(e,true, false, is80X) );
@@ -301,6 +302,38 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
             mymask.reset();
 
             mymask.SetCutBit(Trigger); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(OneTau);++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(NoLep); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(ThreeJets); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(OneBjet); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(Met); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(AngRbb); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+        }
+
+    // here I have the PV and the MET Filters
+    if (e->IsRealData() ) 
+        { 
+            int pos=0;
+            Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            CutSelector mymask(MaxCut);
+            mymask.reset();
+
+            mymask.SetCutBit(Trigger);; ++pos;
             if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
 
             mymask.SetCutBit(OneTau);++pos;
@@ -394,7 +427,9 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     //#warning nobtag-sf
     //Log(__FUNCTION__,"DEBUG",Form("syst is=%s weight before=%e",systname.c_str(),e->weight()) ) ;
+    
     if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
+
     //Log(__FUNCTION__,"DEBUG",Form("syst is=%s weight after=%e",systname.c_str(),e->weight()) ) ;
 
     #warning TauMatch

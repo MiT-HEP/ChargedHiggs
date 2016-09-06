@@ -627,6 +627,7 @@ void Event::ApplyTauSF(Tau*t,bool prongs,const string& extra)
     if( not ExistSF(sfname) ) Logger::getInstance().Log("Event",__FUNCTION__,"WARING" ,"No Tau Trigger SF"+sfname);  
 
     if (t->Pt() <10 ) return; // no sf for pt<10 taus
+
     SetPtEtaSF(sfname,t->Pt(),t->Eta());
     ApplySF(sfname);
 

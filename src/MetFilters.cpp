@@ -5,11 +5,20 @@
 
 #define VERBOSE 0
 
+void MetFiltersAnalysis::Init() 
+{
+    Book(    "MetFilters/CutFlow/CutFlow_Data"  , "CutFlow ",100,-.5,100-.5);
+}
+
 int MetFiltersAnalysis::analyze(Event *e,string systname) 
 {
     if (not e->IsRealData() ) return MET_EVENT_PASS;
+
+    Fill("MetFilters/CutFlow/CutFlow_Data",systname,0,1);
+
     if (e->GetMet() . passFullRecommendation()) { 
         if(VERBOSE>0)Log(__FUNCTION__,"INFO",Form("Event (%d,%d,%u) PASS met filters",e->runNum(),e->lumiNum(),e->eventNum()));
+        Fill("MetFilters/CutFlow/CutFlow_Data",systname,1,1);
         return MET_EVENT_PASS;
     }
     if(VERBOSE>0)Log(__FUNCTION__,"INFO",Form("Event (%d,%d,%u) have been rejected by met filters",e->runNum(),e->lumiNum(),e->eventNum()));
