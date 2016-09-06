@@ -600,9 +600,9 @@ void Event::ApplyBTagSF(int wp)
 void Event::ApplyTauSF(Tau*t)
 {
     if (IsRealData()) return;
-    string sfname="";//
-    if (t->GetNProng() ==1 ) sfname="tauLeg1p";
-    else sfname="tauLeg3p";
+    string sfname="tauLeg";//
+    //if (t->GetNProng() ==1 ) sfname="tauLeg1p";
+    //else sfname="tauLeg3p";
     if( not ExistSF(sfname) ) Logger::getInstance().Log("Event",__FUNCTION__,"WARING" ,"No Tau Trigger SF");  
     SetPtEtaSF(sfname,t->Pt(),t->Eta());
     ApplySF(sfname);

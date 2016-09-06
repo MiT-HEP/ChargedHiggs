@@ -9,6 +9,8 @@ void JsonAnalysis::Init(){
     Log(__FUNCTION__,"INFO","Init JSON Analysis");
     if (goodLumis_.empty()) Log(__FUNCTION__,"WARNING","No Good luminosity selection");
     else Log(__FUNCTION__,"INFO",Form("Good Lumi selection based on %u runs ", goodLumis_.size()) ) ;
+
+    Book(    "Json/CutFlow/CutFlow_Data"  , "CutFlow ",100,-.5,100-.5);
 }
 
 
@@ -38,7 +40,12 @@ int JsonAnalysis::analyze(Event* e,string systname)
     // -- all MC event should pass
     if (not e->IsRealData() ) return JSON_EVENT_PASS;
 
-    if ( CheckLumi(e->runNum(), e->lumiNum()  )) return JSON_EVENT_PASS;
+    Fill("Json/CutFlow/CutFlow_Data",systname,0,1);
+
+    if ( CheckLumi(e->runNum(), e->lumiNum()  )){
+        Fill("Json/CutFlow/CutFlow_Data",systname,1,1); // pass
+        return JSON_EVENT_PASS;
+    }
 
     return JSON_EVENT_FAIL;
 

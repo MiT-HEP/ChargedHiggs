@@ -14,7 +14,7 @@ parser.add_option("","--qcdlumi",type='float',help="QCD Luminosity pb. [%default
 parser.add_option("-n","--ncat",type='int',help="Number of cat. [%default]", default=1)
 parser.add_option("","--nosyst",action='store_true',help="Do not look for syst. [%default]", default=False)
 parser.add_option("","--ewk",type='string',help="Input ROOT file for ewk. Set Null to use EWK from MC [%default]", default="")
-parser.add_option("","--ewklumi",type='float',help="QCD Luminosity pb. [%default]", default=2308)
+parser.add_option("","--ewklumi",type='float',help="EWK Luminosity pb. [%default]", default=2308)
 
 extra = OptionGroup(parser,"Extra options:","")
 extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=-1)
@@ -308,10 +308,10 @@ def ImportPdfFromTH1(tfile, name, target, add=[]): ## w is global as arglist_obs
 	else:
 	## save RooDataHist
 		if opts.qcd!="" and 'QCD' in target:
-			#print "HIST SCALING QCD by",opts.lumi/opts.qcdlumi,"I was",h.Integral()
+			print "HIST SCALING QCD by",opts.lumi/opts.qcdlumi,"I was",h.Integral()
 			h.Scale(opts.lumi/opts.qcdlumi)
-		elif opts.ewk!="" and 'EWK' in target:
-			#print "HIST SCALING EWK by",opts.lumi/opts.ewklumi
+		elif opts.ewk!="" and 'ewk' in target:
+			print "HIST SCALING EWK by",opts.lumi/opts.ewklumi,"I was",h.Integral()
 			h.Scale(opts.lumi/opts.ewklumi)
 		else:
 			#print "HIST SCALING by",opts.lumi/opts.qcdlumi
@@ -383,7 +383,7 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 				if opts.qcd!="" and 'QCD' in target:
 					hupbin.Scale(opts.lumi/opts.qcdlumi)
 					hdnbin.Scale(opts.lumi/opts.qcdlumi)
-				elif opts.ewk!="" and 'EWK' in target:
+				elif opts.ewk!="" and 'ewk' in target:
 					hupbin.Scale(opts.lumi/opts.ewklumi)
 					hdnbin.Scale(opts.lumi/opts.ewklumi)
 				else:
@@ -423,7 +423,7 @@ def ImportPdfStatUncFromTH1(tfile, name,syst="TTSTAT", target="", add=[]): ## w 
 		if opts.qcd!="" and 'QCD' in target:
 			hup.Scale(opts.lumi/opts.qcdlumi)
 			hdn.Scale(opts.lumi/opts.qcdlumi)
-		if opts.ewk!="" and 'EWK' in target:
+		elif opts.ewk!="" and 'ewk' in target:
 			hup.Scale(opts.lumi/opts.ewklumi)
 			hdn.Scale(opts.lumi/opts.ewklumi)
 		else:
@@ -578,20 +578,21 @@ if opts.ewk!="":
    for syst in _systEWK_:
     for cat in range(0,opts.ncat):
 	if opts.ncat == 1:
-		lastget="ChargedHiggsQCDPurity/Vars/Mt_Embed_Data"
+		lastget="ChargedHiggsEWKPurity/Vars/Mt_Embed_Data"
 	else:
-		lastget="ChargedHiggsQCDPurity/Vars/Mt_Embed_cat%d_Data"%cat
+		lastget="ChargedHiggsEWKPurity/Vars/Mt_Embed_cat%d_Data"%cat
 
 	if syst !="":lastget+="_"+syst
 
 	if syst == "": systName=""
 	else: systName="_"+syst
 
+	addlist=[]
 	target="pdf_cat%d_ewkembed"%cat + systName
 	print "*** Considering EWK","syst=",syst,"target=",target,"addlist=",addlist
-	ImportPdfFromTH1(fInQCD, lastget,target ,addlist)
+	ImportPdfFromTH1(fInEWK, lastget,target ,addlist)
 	if syst=="":
-		ImportPdfStatUncFromTH1(fInQCD, lastget,"QCDSTAT", target,addlist)
+		ImportPdfStatUncFromTH1(fInEWK, lastget,"EWKSTAT", target,addlist)
 
    datacard.write("shapes EWK *\t"+opts.output)
    datacard.write("\tw:"+"pdf_$CHANNEL_ewkembed" )
