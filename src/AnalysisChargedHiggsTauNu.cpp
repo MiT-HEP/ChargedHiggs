@@ -303,9 +303,9 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
             else e->ApplyTauSF(t,false,""); 
 
         }
-        else // 76X tauLeg 1p and 3p
+        else // 76X tauLeg 13p
         {
-            if (t!=NULL){e->ApplyTauSF(t);}
+            if (t!=NULL){e->ApplyTauSF(t,false,"");}
         }
         // ----------------------------------------
 

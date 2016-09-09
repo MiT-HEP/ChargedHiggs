@@ -153,7 +153,7 @@ void Weight::resetSystSF(){
     //o.second->syst = 0;
 }
 
-void Weight::SetPtEtaSF(string label,double pt, double eta)
+void Weight::SetPtEtaSF(const string& label,double pt, double eta)
 {
     #ifdef VERBOSE
         if(VERBOSE>0) cout <<"[Weight]::[SetPtEtaSF]::[DEBUG1] label='"<<label<<"'"<<endl;
@@ -176,13 +176,13 @@ void Weight::SetPtEtaSF(string label,double pt, double eta)
 }
 
 // ------------- CVS  ---
-void Weight::SetWPSF(string label, int wp)
+void Weight::SetWPSF(const string& label, int wp)
 {
     SF_CSV *p =  dynamic_cast<SF_CSV*> ( sf_db[label] );
     if (p==NULL) Log(__FUNCTION__,"ERROR", " SF '" + label + "' is not CSV" );
     p->setWP(wp);
 }
-void Weight::SetJetFlavorSF(string label, int flavor)
+void Weight::SetJetFlavorSF(const string& label, int flavor)
 {
     SF_CSV *p =  dynamic_cast<SF_CSV*> ( sf_db[label] );
     if (p==NULL) Log(__FUNCTION__,"ERROR", " SF '" + label + "' is not CSV" );
@@ -234,7 +234,7 @@ string Weight::LoadMCbyDir( string dir )	 // return "" if failed otherwise label
     return label;
 }
 
-void Weight::ApplySF(string label){
+void Weight::ApplySF(const string& label){
         if (sf_db[label] -> get() < 1e-5) 
         {
             Log(__FUNCTION__,"WARNING",Form("SF for %s is very little: %f",label.c_str(),sf_db[label] -> get() ));
@@ -243,6 +243,12 @@ void Weight::ApplySF(string label){
         //Log(__FUNCTION__,"DEBUG",Form("Apply SF for '%s': %f",label.c_str(),sf_db[label] -> get() ));
         sf_ *= sf_db[label] -> get(); 
     }
+
+void Weight::SetSystSF( const string & label, int s)
+{
+    if ( not ExistSF(label) ) Log(__FUNCTION__,"ERROR", string("SF syst ") + label+" not in the sf db" );
+    sf_db[label] -> syst = s;
+}
 
 // Local Variables:
 // mode:c++

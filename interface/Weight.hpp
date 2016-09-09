@@ -82,14 +82,14 @@ class Weight : virtual public SmearableBase {
 
     void clearSF( ){ sf_ =1.0;}
     void clearPU( ){ pu_ . clearTarget() ;};
-    void SetPUTarget(string name) { pu_ . SetTarget( name ) ; } 
-    void SetSystSF(string label, int s ) { sf_db[label] -> syst = s;}
+    void SetPUTarget(const string& name) { pu_ . SetTarget( name ) ; } 
+    void SetSystSF(const string& label, int s );// { sf_db[label] -> syst = s;}
     void resetSystSF( ) ;
-    void SetPtEtaSF(string label,double pt , double eta);
-    void SetWPSF(string label, int wp);
-    void SetJetFlavorSF(string label, int flavor);
-    void ApplySF(string label);
-    inline bool ExistSF(string label){ if (sf_db.find(label) != sf_db.end() ) return true; else return false; }
+    void SetPtEtaSF(const string& label,double pt , double eta);
+    void SetWPSF(const string& label, int wp);
+    void SetJetFlavorSF(const string& label, int flavor);
+    void ApplySF(const string& label);
+    inline bool ExistSF(const string& label){ if (sf_db.find(label) != sf_db.end() ) return true; else return false; }
 
     // --- PU Reweight
     inline void AddTarget( TH1*h, int runMin=-1, int runMax =-1,double lumi=-1)
