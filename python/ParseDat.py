@@ -139,6 +139,8 @@ def ParseDat(name):
 				if key == 'config':
 					for type in R[key]:
 						config[key][type] = R[key][type]
+				elif key == 'Files' and 'Files' in config: ## if already exists, extend it, otherwise cgo to default (sub)
+					config['Files'].extend( R['Files'] )
 				else:
 					config[key] = R[key]
 	return config
