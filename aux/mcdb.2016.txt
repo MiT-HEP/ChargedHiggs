@@ -11,6 +11,16 @@ ChargedHiggs_HplusTB_HplusToTauNu_M-800_13TeV_amcatnlo_pythia8 /eos/user/j/jaeys
 ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8 24252.7495015 0.0137303021459
 ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8 432.359932559 0.000167866833453
 ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8 16.9307996328 8.08827223332e-06
+
+### FULL DATASET FOR THE HplusToTB
+ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 69033.7915456 0.20082584
+ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 16760.5181003 0.1012221
+ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2 4959.57890652 0.05123009466
+ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 50764.492235 0.00866055216
+ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 18088.6742463 0.00310183794
+ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 324.019860741 0.000238096317513 
+ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 12.7288425391 9.24047058987e-06 
+
 ## DY (reHLT)
 DYJetsToLL-acmatnlo /eos/user/j/jaeyserm/Nero/8X/DYJetsToLL-acmatnlo 1.63557608427e+12 6025.2
 DYJetsToLL-madgraph /eos/user/m/mpedraza/Nero/8X/DYJetsToLL-madgraph 88661461.0 6025.2
@@ -29,6 +39,10 @@ ZZTo4L_13TeV_powheg_pythia8 /store/user/mpedraza/Nero/8X/ZZTo4L_13TeV_powheg_pyt
 # TT (reHLT)
 TT /eos/user/m/mpedraza/Nero/8X/TT 92255310.0 831
 TTJets /eos/user/m/mpedraza/Nero/8X/TTJets 81069486659.3 831
+# TT (non reHLT)
+TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 10299669.0 115.397473145
+TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 11947951.0 116.361083984
+TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 16973173.0 58.3065083822
 # SingleTop (non reHLT)
 ST_tW_top /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_top 998400.0 30.11
 ST_tW_antitop /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_antitop 985000.0 30.09
