@@ -71,7 +71,7 @@ tauid2 tf1 1.0 0.0002*x
 tauLeg3p json-sami aux/tauLegTriggerEfficiency2015_3prong.json
 tauLeg json-sami aux/tauLegTriggerEfficiency2015_13prong.json
 tauLeg1p json-sami aux/tauLegTriggerEfficiency2015_1prong.json
-metLegBtagLoose json-sami aux/metLegTriggerEfficiency2015_btagLoose.json
+metLegLoose json-sami aux/metLegTriggerEfficiency2015_btagLoose.json
 metLeg json-sami aux/metLegTriggerEfficiency2015_btagMedium.json
 metLegData json-sami aux/metLegTriggerEfficiency2015_btagLoose.json effonly
 tauLeg13pData json-sami aux/tauLegTriggerEfficiency2015_13prong.json effonly

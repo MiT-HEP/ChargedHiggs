@@ -286,9 +286,9 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
             metLegSF = "metLeg";  
         }
     }
-    else
+    else // 76X
     {
-        metLegSF="metLegBtagLoose";
+        metLegSF="metLegLoose";
     }
     // --------------------------------------------
 
