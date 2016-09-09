@@ -36,7 +36,7 @@ if opts.eos=="" and opts.mcdb!="":
 		if toRun:
 			cmd = "python %s -e %s -l %s -f %s --run '%s'"%(sys.argv[0],mcdb[key][0],key,opts.file,opts.run)
 			print "going to execute",cmd
-			#call(cmd,shell=True)
+			call(cmd,shell=True)
 	exit(0)	
 
 if opts.rec:
