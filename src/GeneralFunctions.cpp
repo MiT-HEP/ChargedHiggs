@@ -15,6 +15,14 @@ float ChargedHiggs::mt( const float pt1,  const float pt2, const  float phi1, co
     return TMath::Sqrt( 2* pt1 * pt2 * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi1,phi2)) ) );
 }
 
+float ChargedHiggs::mtMassive( const TLorentzVector p1,  const TLorentzVector p2)
+{
+    return TMath::Sqrt( (p1.E() + p2.E())*(p1.E() + p2.E()) - ((p1 + p2).Px()*(p1 + p2).Px() + (p1 + p2).Py()*(p1 + p2).Py()) );
+
+    //   2* pt1 * pt2 * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi1,phi2)) ) );
+    //    return TMath::Sqrt( 2* pt1 * pt2 * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi1,phi2)) ) );
+}
+
 #include "TLorentzVector.h"
 
 double ChargedHiggs::CosThetaCS( const TLorentzVector *v1, const TLorentzVector *v2,float sqrtS){
