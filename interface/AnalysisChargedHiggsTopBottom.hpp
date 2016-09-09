@@ -22,9 +22,9 @@ public:
     void Preselection();
 
     // function with various plots
-    bool genInfo(Event* ) ;
+    bool genInfo(Event*e, GenParticle * & bAss, GenParticle * & bFromTopH , GenParticle * & bFromTopAss, GenParticle * & bFromH);
     void jetPlot(Event*e, string label , string systname);
-    void leptonicHiggs(Event*e, string label, string systname, int indexb1, int indexb2, TLorentzVector p4W, string combination);
+    void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
     int analyze(Event*,string systname) override;
     const string name() const override {return "ChargedHiggsTopBottom";}
