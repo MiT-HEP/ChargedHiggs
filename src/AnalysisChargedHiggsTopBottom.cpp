@@ -29,6 +29,9 @@ void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
 void ChargedHiggsTopBottom::Init()
 {
 
+    Log(__FUNCTION__,"INFO",Form("do1lAnalysis=%d",do1lAnalysis));
+    Log(__FUNCTION__,"INFO",Form("do2lAnalysis=%d",do2lAnalysis));
+
     Preselection();
 
 }
@@ -444,7 +447,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
     }
 
-
     int nTau=0;
     if(nGoodLepton==1) {
         for(int i=0;i!=e->Ntaus();++i) {
@@ -452,7 +454,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             if(it->DeltaR(*leadLep)>0.4) nTau++;
         }
     }
-
     //    bool do1lAnalysis=true;
     //    bool do2lAnalysis=false;
 

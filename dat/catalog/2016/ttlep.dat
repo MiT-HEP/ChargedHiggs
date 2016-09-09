@@ -1,10 +1,4 @@
-sub=tag|v1.4
-sub=amarini|/store/user/amarini/Nero
-sub=klute|/store/user/klute/Nero
-sub=jan|/store/user/jaeyserm/Nero
 sub=dalfonso|/store/cmst3/user/dalfonso/NERO
-sub=dabercro|/store/user/dabercro/Nero/zey_base/
-sub=zdemirag|/store/caf/user/dmytro/zdemirag/setup80x/Nero/
 
 ## dalfonso has only a few files
 addfiles=%(dalfonso)s/ChHiggs/TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1
