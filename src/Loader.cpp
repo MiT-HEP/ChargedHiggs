@@ -516,12 +516,24 @@ void LoadNero::FillMC(){
         if (  (apdg == 11 or apdg ==13) and (mc -> flags ->at(iGP) & BareMonteCarlo::PromptFinalState) ) keep=true; // keep status 1 electrons and muons
         // keep Q/G/Tau
         if ( (apdg == 15 or apdg==21 or apdg <6 ) and (mc->flags->at(iGP) & ( BareMonteCarlo::HardProcess | BareMonteCarlo::HardProcessBeforeFSR | BareMonteCarlo::HardProcessDecayed) )) keep=true;
+        if (  (apdg == 24 or apdg ==23 or apdg ==37) )  keep=true; // keep W/Z/chHiggs
+        if (  (apdg == 5 or apdg ==6 ) ) keep=true; // keep top bottom
 
         if (not keep) continue;
+
+        int motherPdgId = -1;
+        int motherPdgIdx = -1;
+        int grandMotherPdgId = -1;
+
+        if(mc -> parent -> at(iGP) != -1) { motherPdgIdx = mc ->parent -> at(iGP); motherPdgId = mc -> pdgId -> at(motherPdgIdx); }
+        if(motherPdgIdx != -1 and mc -> parent -> at(motherPdgIdx) != -1) { grandMotherPdgId = mc -> pdgId -> at( mc ->parent -> at(motherPdgIdx)); }
 
         GenParticle *g =new GenParticle();
         g->SetP4( *(TLorentzVector*) ((*mc->p4)[iGP]) );
         g->SetPdgId( mc -> pdgId -> at(iGP));
+        g->SetParentIdx( mc ->parent -> at(iGP));
+        g->SetParentPdgId(motherPdgId);
+        g->SetGrandParentPdgId(grandMotherPdgId);
         g->SetFlags( mc ->flags ->at(iGP) );
         event_ -> genparticles_ . push_back(g);
     }
