@@ -155,7 +155,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80
     if (muon) sub=e->GetMuon(1);
 
     if (t== NULL) return cut.raw();
-    if (sub != NULL) return cut.raw(); //multiple taus
+    //if (sub != NULL) return cut.raw(); //multiple taus
 
     //----------------- ONE TAU -------------
     if (  // pt 20, Iso 1.5
