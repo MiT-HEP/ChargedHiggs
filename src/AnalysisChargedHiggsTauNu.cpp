@@ -3,7 +3,7 @@
 #include "interface/Logger.hpp" // for static functions
 #include <memory>
 
-//#define SYNC 1
+#define SYNC 1
 
 void ChargedHiggsTauNu::Init()
 {
@@ -157,39 +157,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80
     if (direct and not muon) sub = e->GetTau(1);
     if (muon) sub=e->GetMuon(1);
 
-    /* FOR SYNC
-    if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
-    else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
-    */
-
-    if (t== NULL) return cut.raw();
-    //if (sub != NULL) return cut.raw(); //multiple taus
-
-    //----------------- ONE TAU -------------
-    if (  // pt 20, Iso 1.5
-         t->Pt()>= 60 and 
-         fabs(t->Eta() ) <2.1
-            ) cut.SetCutBit(OneTau) ;
-
-    bool lepVeto=false;
-    if (e->Nleps() ==0 ) lepVeto=true;
-    else if( e->GetMuon(0) == NULL){ // no 10 GeV muon
-        
-        if (e->GetElectron(0) !=NULL and e->GetElectron(0)->Pt() <15) lepVeto=true; // pt ordered
-    
-    }
-
-    if ( lepVeto and not muon) cut.SetCutBit(NoLep);
-    if ( muon  and e->Nleps() ==1) cut.SetCutBit(NoLep);;
-
-    // ---- At least 3 jets
-    if ( direct and e->Njets() >=3 ) cut.SetCutBit(ThreeJets);
-    if ( not direct and e->NjetsInvIso() >=3 ) cut.SetCutBit(ThreeJets);
-
-    // --- At least 1 b-jet
-    if ( direct and e->Bjets() >=1 ) cut.SetCutBit(OneBjet) ;
-    if ( not direct and e->BjetsInvIso() >=1 ) cut.SetCutBit(OneBjet) ;
-
+    //------------- TRIGGER -----------
     if (not is80X)
     {
         if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
@@ -220,6 +188,36 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80
             if(e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET90")) cut.SetCutBit(Trigger);   
         }
     }
+    // --------------END TRIGGER
+
+    if (t== NULL) return cut.raw();
+    //if (sub != NULL) return cut.raw(); //multiple taus
+
+    //----------------- ONE TAU -------------
+    if (  // pt 20, Iso 1.5
+         t->Pt()>= 60 and 
+         fabs(t->Eta() ) <2.1
+            ) cut.SetCutBit(OneTau) ;
+
+    bool lepVeto=false;
+    if (e->Nleps() ==0 ) lepVeto=true;
+    else if( e->GetMuon(0) == NULL){ // no 10 GeV muon
+        
+        if (e->GetElectron(0) !=NULL and e->GetElectron(0)->Pt() <15) lepVeto=true; // pt ordered
+    
+    }
+
+    if ( lepVeto and not muon) cut.SetCutBit(NoLep);
+    if ( muon  and e->Nleps() ==1) cut.SetCutBit(NoLep);;
+
+    // ---- At least 3 jets
+    if ( direct and e->Njets() >=3 ) cut.SetCutBit(ThreeJets);
+    if ( not direct and e->NjetsInvIso() >=3 ) cut.SetCutBit(ThreeJets);
+
+    // --- At least 1 b-jet
+    if ( direct and e->Bjets() >=1 ) cut.SetCutBit(OneBjet) ;
+    if ( not direct and e->BjetsInvIso() >=1 ) cut.SetCutBit(OneBjet) ;
+
     
     // MET 
     if ( e->GetMet().Pt() >= 100 ) cut.SetCutBit(Met); // or PtUncorr
@@ -279,11 +277,6 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         CutSelector mymask(MaxCut);
         mymask.reset();
         mymask.SetCutBit(Trigger);
-        if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80")  and not e->GetBareTrigger()[2] ) 
-            Log(__FUNCTION__,"SYNC-ERROR",Form("(%d,%d,%u) event triggered but should not",e->runNum(),e->lumiNum(),e->eventNum()));
-
-        if ( not e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80")  and e->GetBareTrigger()[2] ) 
-            Log(__FUNCTION__,"SYNC-ERROR",Form("(%d,%d,%u) event not triggered but should be",e->runNum(),e->lumiNum(),e->eventNum()));
 
         if (cut.passMask(mymask) ) Log(__FUNCTION__,"SYNC",Form("(%d,%d,%u) Trigger",e->runNum(),e->lumiNum(),e->eventNum()) ) ; 
         mymask.SetCutBit(OneTau);
