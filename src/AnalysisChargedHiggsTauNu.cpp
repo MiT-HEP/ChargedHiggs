@@ -12,6 +12,7 @@ void ChargedHiggsTauNu::Init()
 
         Log(__FUNCTION__,"INFO", "Booking Histo CutFlow_" + l);
   
+        Book(    "ChargedHiggsTauNu/CutFlow/CutFlow2_"+ l  , ("CutFlow "+ l).c_str(),100,-.5,100-.5);
         Book(    "ChargedHiggsTauNu/CutFlow/CutFlow_"+ l  , ("CutFlow "+ l).c_str(),100,-.5,100-.5);
         GetHisto("ChargedHiggsTauNu/CutFlow/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(Total+1,"Total"); // bin shift
         GetHisto("ChargedHiggsTauNu/CutFlow/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(OneTau+1,"N_{taus} #geq 1");
