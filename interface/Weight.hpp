@@ -106,6 +106,15 @@ class Weight : virtual public SmearableBase {
     inline void clearSystPU(){ pu_ .clearSyst();}
     inline int GetPU() const { return puInt_ ; } 
 
+    // SYNC -- WARNING, NOT implemented the Theory Unc in these function. Use for sync purposes
+    inline double GetBareMCWeight() const { return mcWeight_ ;} // internal mcWeight
+    inline double GetBarePUWeight()  { return pu_.GetPUWeight(mcName_,puInt_,runNum_);} // not const because pu is caching
+    inline double GetBareMCXsec() const { return mcXsec_;}
+    inline double GetBareNevents() const{ return nEvents_;}
+    inline double GetBareSF() const {return sf_;}
+    inline double GetBareLumi() const { return lumi_;}
+    // --------
+
     // ---  check what happen with data, TODO CHECK LUMI
     inline double doWeight() { 
         //Log(__FUNCTION__,"DEBUG",Form("Weight: Mc=%lf mcXsec=%lf sf=%lf pu=%lf nevents=%lf",mcWeight_, mcXsec_ ,sf_,pu_.GetPUWeight(mcName_,puInt_,runNum_), nEvents_));
