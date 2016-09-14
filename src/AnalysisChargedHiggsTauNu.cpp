@@ -3,7 +3,7 @@
 #include "interface/Logger.hpp" // for static functions
 #include <memory>
 
-#define SYNC 1
+//#define SYNC 1
 
 void ChargedHiggsTauNu::Init()
 {

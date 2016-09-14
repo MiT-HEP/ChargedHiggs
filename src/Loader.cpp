@@ -507,6 +507,7 @@ void LoadNero::FillMC(){
         << mc->p4->GetEntries()<<":"
             << mc->pdgId->size()<<":"
             << mc->flags->size()<<":"
+            << mc->parent->size()<<":"
             <<endl;
 #endif
 
@@ -528,13 +529,16 @@ void LoadNero::FillMC(){
         int motherPdgIdx = -1;
         int grandMotherPdgId = -1;
 
-        if(mc -> parent -> at(iGP) != -1) { motherPdgIdx = mc ->parent -> at(iGP); motherPdgId = mc -> pdgId -> at(motherPdgIdx); }
-        if(motherPdgIdx != -1 and mc -> parent -> at(motherPdgIdx) != -1) { grandMotherPdgId = mc -> pdgId -> at( mc ->parent -> at(motherPdgIdx)); }
+        // 76X has no gen parent inforamtion, 
+        if (mc->parent->size()>0){
+            if( mc -> parent -> at(iGP) != -1) { motherPdgIdx = mc ->parent -> at(iGP); motherPdgId = mc -> pdgId -> at(motherPdgIdx); }
+            if(motherPdgIdx != -1 and mc -> parent -> at(motherPdgIdx) != -1) { grandMotherPdgId = mc -> pdgId -> at( mc ->parent -> at(motherPdgIdx)); }
+        }
 
         GenParticle *g =new GenParticle();
         g->SetP4( *(TLorentzVector*) ((*mc->p4)[iGP]) );
         g->SetPdgId( mc -> pdgId -> at(iGP));
-        g->SetParentIdx( mc ->parent -> at(iGP));
+        if (mc->parent->size()>0) g->SetParentIdx( mc ->parent -> at(iGP));
         g->SetParentPdgId(motherPdgId);
         g->SetGrandParentPdgId(grandMotherPdgId);
         g->SetFlags( mc ->flags ->at(iGP) );
