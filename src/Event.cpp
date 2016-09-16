@@ -209,7 +209,10 @@ void Event::validate(){
         for(auto l : leps_)
             if(l->IsLep() )j-> computeValidity(l);
         for(auto t: taus_)
+        {
+            if(t->IsTau() )j-> computeValidity(t);
             if(t->IsTauInvIso() )j-> computeValidity(t,0.4,true);
+        }
     }
     return ;
 }
