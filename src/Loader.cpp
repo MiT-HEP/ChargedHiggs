@@ -291,13 +291,14 @@ void LoadNero::FillTaus(){
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
         //t-> iso2 = bt -> isoMva -> at(iL);
         //t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleMedium ; 
-        #warning EleTight
         t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleTight ; 
         t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
         t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byLooseCombinedIsolationDeltaBetaCorr3Hits); 
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumIsolationMVArun2v1DBoldDMwLT); 
+        t->SetTrackPt( bt->leadTrackPt -> at(iL) ) ;
+
         if (bt -> selBits -> at(iL) & BareTaus::Selection::OneProng) t-> SetNProng( 1 );
         else if (bt -> selBits -> at(iL) & BareTaus::Selection::TwoProng) t-> SetNProng( 2 );
         else if (bt -> selBits -> at(iL) & BareTaus::Selection::ThreeProng) t-> SetNProng( 3 );
