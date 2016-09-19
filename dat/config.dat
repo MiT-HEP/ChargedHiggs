@@ -34,7 +34,7 @@ include dat/catalog/2015/taunu.dat
 ############
 ### DATA ###
 ############
-include dat/catalog/2015/tau.dat
+include=dat/catalog/2015/tau.dat
 
 ####
 
