@@ -125,7 +125,7 @@ void ChargedHiggsTauNu::Init()
 }
 
 
-unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80X) {
+unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80X,bool isLightMass) {
     
     CutSelector cut; 
     cut.SetMask(MaxCut-1);
@@ -194,10 +194,18 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80
     //if (sub != NULL) return cut.raw(); //multiple taus
 
     //----------------- ONE TAU -------------
-    if (  // pt 20, Iso 1.5
-         t->Pt()>= 60 and 
-         fabs(t->Eta() ) <2.1
-            ) cut.SetCutBit(OneTau) ;
+    if (isLightMass){
+        if (  // pt 20, Iso 1.5
+             t->Pt()>= 50 and 
+             fabs(t->Eta() ) <2.1
+                ) cut.SetCutBit(OneTau) ;
+    }
+    else{//high mass
+        if (  // pt 20, Iso 1.5
+             t->Pt()>= 60 and 
+             fabs(t->Eta() ) <2.1
+                ) cut.SetCutBit(OneTau) ;
+    }
 
     bool lepVeto=false;
     if (e->Nleps() ==0 ) lepVeto=true;
@@ -220,7 +228,13 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80
 
     
     // MET 
-    if ( e->GetMet().Pt() >= 100 ) cut.SetCutBit(Met); // or PtUncorr
+    if (isLightMass){
+        if (is80X){if ( e->GetMet().Pt() >= 90 ) cut.SetCutBit(Met);}
+        else {if ( e->GetMet().Pt() >= 80 ) cut.SetCutBit(Met); }
+    }
+    else{
+        if ( e->GetMet().Pt() >= 100 ) cut.SetCutBit(Met); // or PtUncorr
+    }
 
     double RbbMin= e->RbbMin(3,t);
     double RCollMin= e-> RCollMin(3,t);
@@ -263,7 +277,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     cut.reset();
     cut.SetMask(MaxCut-1) ;
-    cut.SetCut( Selection(e,true, false, is80X) );
+    cut.SetCut( Selection(e,true, false, is80X,isLightMass) );
 
     #ifdef SYNC
     if (SYNC>0){

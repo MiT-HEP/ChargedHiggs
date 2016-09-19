@@ -1,0 +1,2 @@
+include=dat/configQCDPurity.dat
+addConfig=ChargeHiggsQCDPurity|isLightMass=1
