@@ -1,19 +1,23 @@
 
-sub=tag|v1.4.genpart
-sub=amarini|/eos/user/a/amarini/Nero
-sub=klute|/eos/user/k/klute/Nero
-sub=jan|/store/user/jaeyserm/Nero
+##sub=tag|v1.4.genpart
+##sub=amarini|/eos/user/a/amarini/Nero
+##sub=klute|/eos/user/k/klute/Nero
+##sub=jan|/store/user/jaeyserm/Nero
+
+sub=tag|v1.4.leadtrack
+sub=amarini|/store/user/amarini/Nero
 
 ## signal amc@nlo
-#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
+## addfiles=%(amarini)s/v1.4.nopujet/ChargedHiggs_HplusTB_HplusToTauNu_M-1500_13TeV_amcatnlo_pythia8
+
+addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
-#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
+addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
-#addfiles=%(amarini)s/v1.4.nopujet/ChargedHiggs_HplusTB_HplusToTauNu_M-1500_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-750_13TeV_amcatnlo_pythia8
 addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8
 #addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8

@@ -1,7 +1,9 @@
 
-sub=tag|v1.4.genpart
-sub=amarini|/eos/user/a/amarini/Nero
-sub=klute|/eos/user/k/klute/Nero
-sub=jan|/store/user/jaeyserm/Nero
+#sub=tag|v1.4.genpart
+#sub=amarini|/eos/user/a/amarini/Nero
+#sub=klute|/eos/user/k/klute/Nero
+#addfiles=%(klute)s/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 
-addfiles=%(klute)s/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+sub=tag|v1.4.leadtrack
+sub=amarini|/store/user/amarini/Nero
+addfiles=%(amarini)s/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8

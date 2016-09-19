@@ -1,6 +1,10 @@
-sub=tag|v1.4.genpart
-sub=amarini|/eos/user/a/amarini/Nero
-sub=klute|/eos/user/k/klute/Nero
-sub=jan|/store/user/jaeyserm/Nero
+#sub=tag|v1.4.genpart
+#sub=amarini|/eos/user/a/amarini/Nero
+#sub=klute|/eos/user/k/klute/Nero
+#sub=jan|/store/user/jaeyserm/Nero
+#
+#addfiles=%(klute)s/%(tag)s/Tau
 
-addfiles=%(klute)s/%(tag)s/Tau
+sub=tag|v1.4.leadtrack
+sub=amarini|/store/user/amarini/Nero
+addfiles=%(amarini)s/%(tag)s/Tau

@@ -21,7 +21,8 @@ if '/eos/user' in opts.eos: EOS += " root://eosuser"
 
 if opts.rec:
 	cmd = EOS +" find -d "
-	if '/eos/user' in opts.eos: cmd += " --childcount "
+	#if '/eos/user' in opts.eos: 
+	cmd += " --childcount "
 	cmd+=opts.eos
 	list = check_output(cmd,shell=True);
 	for line in list.split('\n'):
@@ -47,7 +48,7 @@ if opts.rec:
 				break
 		if idx <0: label = re.sub('.*/','',dir)
 		## 
-		if nd==0 and nf >0 and not re.match("Run2015",dir): ## remove data
+		if nf >0 and not re.match("Run2015",dir) and not re.match("Run2016",dir) and "/failed" not in dir: ## remove data
 			print "Found one directory:",dir
 			cmd = "python %s -e %s -x %f -l %s -f %s"%(sys.argv[0],dir,opts.xsec,label,opts.file)
 			print "going to execute",cmd
@@ -118,7 +119,7 @@ else:
 	except: 
 		xsec=0
 	## DY
-	if 'DYJets' in opts.label: xsec=6025.
+	if 'DYJets' in opts.label or 'DY' in opts.label: xsec=6025.
 	## SIG
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-200' in opts.label: xsec=0.02952842256
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-300' in opts.label: xsec=0.002366
