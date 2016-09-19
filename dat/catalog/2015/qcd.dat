@@ -1,8 +1,10 @@
 
-sub=tag|v1.4.genpart
-sub=amarini|/eos/user/a/amarini/Nero
-sub=klute|/eos/user/k/klute/Nero
-sub=jan|/store/user/jaeyserm/Nero
+## sub=tag|v1.4.genpart
+## sub=amarini|/eos/user/a/amarini/Nero
+## sub=klute|/eos/user/k/klute/Nero
+## sub=jan|/store/user/jaeyserm/Nero
+sub=tag|v1.4.leadtrack
+sub=amarini|/store/user/amarini/Nero
 
 addfiles=%(amarini)s/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
 addfiles=%(amarini)s/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
