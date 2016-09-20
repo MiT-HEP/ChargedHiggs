@@ -88,7 +88,11 @@ class WsHandler():
     def _getValue(self,snapshot,proc):
          self.w.loadSnapshot("nominal")
          self.w.loadSnapshot(snapshot)
-         return self.w.function("n_exp_final_bincat0_proc_"+proc).getVal()
+	 name="n_exp_final_bincat0_proc_"+proc
+	 #name="n_exp_bincat0_proc_"+proc
+	 if self.w.function(name) == None:
+		 print "Unable to get function:",name
+         return self.w.function(name).getVal()
 
     def _getNorm(self):
          map = {} #construct reverse map in collapse

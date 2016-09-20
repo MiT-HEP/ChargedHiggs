@@ -1,2 +1,2 @@
 include=dat/configQCDPurity.dat
-addConfig=ChargeHiggsQCDPurity|isLightMass=1
+addConfig=ChargedHiggsQCDPurity|isLightMass=1

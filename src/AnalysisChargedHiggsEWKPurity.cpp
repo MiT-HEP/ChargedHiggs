@@ -300,8 +300,8 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
             e->SetPtEtaSF("tauIdEff",tau.Pt(),tau.Eta()); // remove the SingleMuon Trigger Efficiency -- Gen Level Hadronic Tau?
             e->ApplySF("tauIdEff");
 
-            e->SetPtEtaSF("antiE",tau.Pt(),tau.Eta()); // remove the SingleMuon Trigger Efficiency -- Gen Level Hadronic Tau?
-            e->ApplySF("antiE");
+            //e->SetPtEtaSF("antiE",tau.Pt(),tau.Eta()); // remove the SingleMuon Trigger Efficiency -- Gen Level Hadronic Tau?
+            //e->ApplySF("antiE");
 
             e->ApplySF("tauid2"); // eff is 1 here.
 

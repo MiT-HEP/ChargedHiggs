@@ -377,7 +377,7 @@ for syst in systAll:
 	if syst=="" or syst not in systsQCD:
 		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
 		addlist=[]
-		for bkg in ['WJets','TT','WW','WZ','ZZ','DY']:
+		for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
 			addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
 
 		h_qcd=GetHistoFromFile(fInQCD,lastget)
@@ -402,7 +402,7 @@ for syst in systAll:
 		lastget+="_"+syst
 		lastget+="Up"
 		addlist=[]
-		for bkg in ['WJets','TT','WW','WZ','ZZ','DY']:
+		for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
 			addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
 
 		h_qcd_up=GetHistoFromFile(fInQCD,lastget)
@@ -418,7 +418,7 @@ for syst in systAll:
 		lastget+="_"+syst
 		lastget+="Down"
 		addlist=[]
-		for bkg in ['WJets','TT','WW','WZ','ZZ','DY']:
+		for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
 			addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
 
 		h_qcd_dn=GetHistoFromFile(fInQCD,lastget)

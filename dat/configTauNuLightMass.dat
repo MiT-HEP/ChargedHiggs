@@ -1,2 +1,2 @@
 include=dat/configTauNu.dat
-addConfig=ChargeHiggsTauNu|isLightMass=1
+addConfig=ChargedHiggsTauNu|isLightMass=1
