@@ -22,6 +22,8 @@ int Tau::IsTau() const {
     if ( fabs(Eta() ) > etacut_) return 0;
     if ( trackptcut_ >0 and trackptcut_ > trackpt_) return 0;
     if ( not id_iso ) return 0; // this include additional cuts on top of the iso cut
+    #warning ONE PRONG
+    if (GetNProng() != 1 ) return 0;
     return 1;
 }
 
@@ -35,6 +37,7 @@ int Tau::IsTauInvIso() const {
     if (iso2 > 20.0 ) return 0;
     if ( Pt() < ptcut_ ) return 0;
     if ( trackptcut_ >0 and trackptcut_ > trackpt_) return 0;
+    if (GetNProng() != 1 ) return 0;
     return 1;
 }
 
