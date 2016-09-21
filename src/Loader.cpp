@@ -420,18 +420,43 @@ void LoadNero::FillMet(){
     event_-> met_ . SetFilled(Smearer::UNCLUSTER);
 
     // ---- TAU SCALE
-    BareTaus *bt = dynamic_cast<BareTaus*> ( bare_ [ names_[ "BareTaus" ] ] ); assert (bt !=NULL);
+    // Taus are already filled
+    /* tau scale propagated on the all miniaod tau collection
+        BareTaus *bt = dynamic_cast<BareTaus*> ( bare_ [ names_[ "BareTaus" ] ] ); assert (bt !=NULL);
+        TLorentzVector tauUp, tauDown;
+        tauUp  = *(TLorentzVector*)(*met -> p4) [0];
+        tauDown= *(TLorentzVector*)(*met -> p4) [0];
+        for (int iTau=0;iTau< bt -> p4 ->GetEntries() ; ++iTau)  
+        {
+            TLorentzVector delta;
+            delta.SetPtEtaPhiE(  1.03 * ((TLorentzVector*)(*bt->p4)[iTau])->Pt(), ((TLorentzVector*)(*bt->p4)[iTau])->Eta(), ((TLorentzVector*)(*bt->p4)[iTau])->Phi(), ((TLorentzVector*)(*bt->p4)[iTau])->E() * 1.03);
+            tauUp += delta;
+            tauDown -= delta;
+        }
+    */
+    
+    // tau scale propagated only on the leading tau
     TLorentzVector tauUp, tauDown;
     tauUp  = *(TLorentzVector*)(*met -> p4) [0];
     tauDown= *(TLorentzVector*)(*met -> p4) [0];
-    for (int iTau=0;iTau< bt -> p4 ->GetEntries() ; ++iTau)  
-    {
-        TLorentzVector delta;
-        delta.SetPtEtaPhiE(  1.03 * ((TLorentzVector*)(*bt->p4)[iTau])->Pt(), ((TLorentzVector*)(*bt->p4)[iTau])->Eta(), ((TLorentzVector*)(*bt->p4)[iTau])->Phi(), ((TLorentzVector*)(*bt->p4)[iTau])->E() * 1.03);
-        tauUp += delta;
-        tauDown -= delta;
+
+    for (auto& t : event_->taus_) { 
+        t->SetIsoCut(2.5); 
+        t->SetEtaCut(2.1); 
+        t->SetPtCut(20); 
+        t->SetMuRej(true); 
+        t->SetEleRej(true);
+        t->SetTrackPtCut(30.);
     }
-    event_ -> met_ . SetValueDown  (Smearer::TAUESCALE , tauUp.Pt() ); 
+    Tau*t = event_->GetTau(0);
+    if (t!=NULL){
+            TLorentzVector delta;
+            delta.SetPtEtaPhiE(  .03 * t->Pt(), t->Eta(), t->Phi(), t->E() * .03);
+            tauUp += delta;
+            tauDown -= delta;
+    }
+
+    event_ -> met_ . SetValueDown(Smearer::TAUESCALE , tauUp.Pt() );
     event_ -> met_ . SetValueUp(Smearer::TAUESCALE , tauDown.Pt() );
     event_-> met_ . SetFilled(Smearer::TAUESCALE);
 
