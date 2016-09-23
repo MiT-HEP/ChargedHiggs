@@ -493,7 +493,7 @@ for shift in ["Up","Down"]:
 ## print "     FIX MH POINTS       "
 ## print "#########################"
 for syst in systSig:
- for sigMH in [ 200,250,300,350,400,500,750,1000,3000]:
+ for sigMH in [ 200,250,300,350,400,500,750,1000,2000,3000]:
  #for sigMH in [ 200,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"

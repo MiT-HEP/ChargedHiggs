@@ -528,25 +528,18 @@ void Event::ApplyTopReweight(){
     //else{
     //    Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("I found two tops for reweighting, pt1=%f, pt2=%f",pt1,pt2));
     //}
+    //
 
     SetPtEtaSF("topreweight",pt1,pt2);
-
     ApplySF("topreweight");
+
+    if (GetWeight()->GetSF("topreweight")->get() < .001) {
+        Logger::getInstance().LogN("Event",__FUNCTION__,"WARNING","Top Reweight very small:",20,Form("sf=%lf, pt1=%f pt2=%f",GetWeight()->GetSF("topreweight")->get(),pt1,pt2));
+    }
 }
 
 void Event::ApplyWReweight(){
-
-// #warning noWR
-//     return ; 
-    //Logger::getInstance().LogN("Event",__FUNCTION__,"LOG","ApplyWReweight Macro called" + GetWeight() -> GetMC() ,5);
-    /*if (
-            GetWeight() -> GetMC() . find("W0JetsToLNu") != string::npos or
-            GetWeight() -> GetMC() . find("W1JetsToLNu") != string::npos or 
-            GetWeight() -> GetMC() . find("W2JetsToLNu") != string::npos or 
-            GetWeight() -> GetMC() . find("W3JetsToLNu") != string::npos or 
-            GetWeight() -> GetMC() . find("W4JetsToLNu") != string::npos
-       ){ ApplySF("wreweight2");}
-    */
+    return; // make sure no reweight is applied. TODO Remove the function directly
 
     if( GetWeight() -> GetMC() . find("TT") == string::npos and
             GetWeight() -> GetMC() . find("W0Jets") == string::npos and

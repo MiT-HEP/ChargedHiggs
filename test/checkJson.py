@@ -2,7 +2,9 @@ import os,sys
 import json
 
 from optparse import OptionParser
-parser = OptionParser()
+
+usage="checkJson -j Json run lumi: check if run and lumi are in the json file "
+parser = OptionParser(usage=usage)
 parser.add_option("-j","--json",dest="json",type='string',help="Json file",default='aux/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_v2.txt')
 (opts,args) = parser.parse_args()
 

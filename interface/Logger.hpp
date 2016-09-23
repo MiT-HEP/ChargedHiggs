@@ -24,13 +24,13 @@ public:
         return Log(a->name(), function,level,message);
     }
 
-	inline void Log(const string& name,const string& function, const string & level, const string& message){
-		cout <<"["<<name
-			<<"]::["<<function <<"]::["<<level<<"]: "
-			<<message<<endl;
-	}
+    inline void Log(const string& name,const string& function, const string & level, const string& message){
+        cout <<"["<<name
+            <<"]::["<<function <<"]::["<<level<<"]: "
+            <<message<<endl;
+    }
 
-    void LogN( const string & name, const string& function, const string & level, const string & message,int N);
+    void LogN( const string & name, const string& function, const string & level, const string & message,int N,const string& extra="");
     
     // --- on stderr
     inline void LogErr(const Named*a ,const string & function, const string &level, const string & message)

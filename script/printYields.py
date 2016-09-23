@@ -5,6 +5,9 @@ parser = OptionParser(usage="parse the datacard to get the differences on the nu
 parser.add_option("-f","--file",help="Input file. combine binary datacard [%default]",default="cms_datacard_ws_qcddata_Augustv4_M200.root")
 parser.add_option("-b","--batch",action='store_true',help="Batch [%default]",default=True)
 parser.add_option("-x","--no-batch",dest='batch',action='store_false',help="non batch")
+parser.add_option("","--bin",dest='bin',help="bin name[%default]",default="cat0")
+parser.add_option("","--processes",dest='processes',help="comma separeted processes [%default]",default=','.join(["DY","ST","TT","WJets","WW","WZ","ZZ","QCD","Hplus"]))
+parser.add_option("","--collapse",dest='collapse',help="dictonary for counting [%default]",default="EWK:DY,WJets,WW,WZ,ZZ;Top:TT,ST;QCD:QCD;Hplus:Hplus")
 
 opts,args= parser.parse_args()
 
@@ -19,17 +22,34 @@ class WsHandler():
         self.nuisances=[]
         self.processes=[]
         self.collapse={}
+        self.binname="cat0"
+        ## bash color
+        self.red="\033[01;31m"
+        self.green = "\033[01;32m"
+        self.yellow = "\033[01;33m"
+        self.cyan = "\033[01;36m"
+        self.white = "\033[00m"
         pass
+
+    def _printError(self,mex):
+        print self.red+"ERROR: "+self.white,mex
+
+    def _printWarning(self,mex):
+        print self.yellow+"WARNING: "+self.white,mex
+
+    def _printInfo(self,mex):
+        print self.cyan+"INFO: "+self.white,mex
+
 
     def _getWorkspace(self):
         ''' Implementation of getting workspace '''
         self.fIn=ROOT.TFile.Open(self.fileName)
         if self.fIn==None:
-            print "ERROR: Unable to open file",self.fileName
+            self._printError("Unable to open file '" + self.fileName+"'")
             raise IOError
         self.w=self.fIn.Get("w")
         if self.w==None:
-            print "Unable to find Workspace"
+            self._printError("Unable to find Workspace 'w'")
             raise IOError
         return self
 
@@ -44,7 +64,7 @@ class WsHandler():
         self.nuisances = []
         argset=self.w.set("ModelConfig_NuisParams")
         if argset == None:
-            print "Unable to locate nuisances"
+            self._printError("Unable to locate nuisances")
             raise IOError
         #for nuis in argset:
         #    self.nuisances.append( nuis.GetName() )
@@ -67,7 +87,7 @@ class WsHandler():
         return self
 
     def getProcesses(self):
-        if self.processes==None:
+        if self.processes!=None:
             return self
         else:
             return self._getProcesses()
@@ -88,10 +108,13 @@ class WsHandler():
     def _getValue(self,snapshot,proc):
          self.w.loadSnapshot("nominal")
          self.w.loadSnapshot(snapshot)
-	 name="n_exp_final_bincat0_proc_"+proc
-	 #name="n_exp_bincat0_proc_"+proc
-	 if self.w.function(name) == None:
-		 print "Unable to get function:",name
+         name="n_exp_final_bin"+self.binname+"_proc_"+proc
+         #name="n_exp_bincat0_proc_"+proc
+         if self.w.function(name) == None:
+              self._printWarning("Unable to get function: '" +name +"'. It is correct if the process is not related to any shape uncertainties")
+              name="n_exp_bin"+self.binname+"_proc_"+proc
+              if self.w.function(name) == None:
+                      self._printError( "Unable to get function: '" +name+ "' process not correct.")
          return self.w.function(name).getVal()
 
     def _getNorm(self):
@@ -99,6 +122,11 @@ class WsHandler():
          for key in self.collapse:
             for proc in self.collapse[key]:
                 map[proc]=key
+         for proc in self.processes:
+             if   proc not in map: 
+                  map[proc]="tot"
+                  if "tot" not in self.collapse: self.collapse["tot"]=[]
+                  self.collapse["tot"].append( proc )
 
          self._snapshot("nominal")
 
@@ -115,7 +143,7 @@ class WsHandler():
                      name=proc +"_" +syst + ("Up" if shift>0 else "Down")
                      self._snapshot( name, {syst:shift} )
                      newvalues[shift] = self._getValue(name, proc)
-                 print "Process",proc,"Nuisance",syst,"is ", (newvalues[-1]/nominal-1)*100,"/", (newvalues[1]/nominal-1)*100
+                 self._printInfo("Process " + proc + " Nuisance " + syst+ " is "+ "%.2f"%((newvalues[-1]/nominal-1)*100) + "/"+ "%.2f"%((newvalues[1]/nominal-1)*100))
                  if (map[proc],syst) not in self.yields:
                      self.yields[ map[proc],syst ] = [0.0,0.0,0.0]
                  #self.yields[ map[proc],syst ] += nominal, newvalues[1],newvalues[-1]
@@ -138,7 +166,7 @@ class WsHandler():
          #for proc, syst in self.yields:
          for proc in self.collapse :
             for syst in self.nuisances:
-             print "Process",proc,"syst",syst,"Yield=",self.yields[proc,syst][0],
+             print "Aggregate",proc,"syst",syst,"Yield=",self.yields[proc,syst][0],
              try:
                  print "Up",(self.yields[proc,syst][1]/self.yields[proc,syst][0]-1)*100,
              except ZeroDivisionError:
@@ -175,6 +203,13 @@ if __name__ == "__main__":
     if opts.batch:
         ROOT.gROOT.SetBatch()
     wh = WsHandler(opts.file)
+    wh.binname=opts.bin
+    wh.processes=opts.processes.split(',')
+    wh.collapse={}
+    for s in opts.collapse.split(';'):
+          if len(s.split(":")) <2 : continue
+          key=s.split(":")[0]
+          wh.collapse[key] = s.split(":")[1].split(',')
     #wh.printYields().printDataYields()
     wh.write("yields.txt")
 

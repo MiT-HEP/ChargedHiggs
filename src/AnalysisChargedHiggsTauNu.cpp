@@ -296,6 +296,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         mymask.SetCutBit(OneTau);
         if (cut.passMask(mymask) ) Log(__FUNCTION__,"SYNC",Form("(%d,%d,%u) Selected tau: pt=%e eta=%e",e->runNum(),e->lumiNum(),e->eventNum(),e->GetTau(0)->Pt(),e->GetTau(0)->Eta()) ) ; 
         if (cut.passMask(mymask) ) Log(__FUNCTION__,"SYNC",Form("(%d,%d,%u) Njets %d Bjets %d",e->runNum(),e->lumiNum(),e->eventNum(),e->Njets(), e->Bjets()) ) ; 
+        if (cut.passMask(mymask) ) Log(__FUNCTION__,"SYNC",Form("(%d,%d,%u) TauSel metPt=%e metPhi=%e mT=%e",e->runNum(),e->lumiNum(),e->eventNum(),e->GetMet().Pt(),e->GetMet().Phi(),e->Mt()) ) ; 
     }
     #endif
 
