@@ -10,9 +10,13 @@ include=dat/config.2016.dat
 include=dat/topBot.dat
 
 Files=
+include=dat/catalog/2016/vv.dat
 include=dat/catalog/2016/ttlep.dat
+include=dat/catalog/2016/st.dat
 include=dat/catalog/2016/topbottom.dat
 include=dat/catalog/2016/singleMuon_ICHEP.dat
+include=dat/catalog/2016/dy.dat
+include=dat/catalog/2016/wjets.dat
 
 ####
 
@@ -25,7 +29,8 @@ include=dat/catalog/2016/singleMuon_ICHEP.dat
 Smear=NONE
 #,JER,JES
 
-pileup=
+#pileup=aux
+pileup=aux/pileup.2016.BCD.root
 
 ################################# ANALYSIS CONFIGURATION ############################
 
@@ -38,7 +43,7 @@ Correct=NONE
 #____________________ CONFIGURATION _____________________________
 #
 ##########  ANALYSIS  ################
-Analysis=JsonAnalysis,Preselection,ChargedHiggsTopBottom
+Analysis=JsonAnalysis,ChargedHiggsTopBottom
 
 #configure Analysis
 #config=AnalysisBase|Init()
