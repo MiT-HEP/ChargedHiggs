@@ -7,6 +7,7 @@ Tau::Tau() : Lepton(){
     etacut_= 0;
     ptcut_ = 0;
     isocut_= 0;  // inv iso may be different
+    trackptcut_=-1;
 
     match = -999; ;  // matching with generator
     iso2 = -999;  // Iso with Delta beta correction
@@ -19,7 +20,10 @@ int Tau::IsTau() const {
     if ( isocut_ >=0 and iso2 >= isocut_ ) return 0;
     if ( Pt() < ptcut_ ) return 0;
     if ( fabs(Eta() ) > etacut_) return 0;
+    if ( trackptcut_ >0 and trackptcut_ > trackpt_) return 0;
     if ( not id_iso ) return 0; // this include additional cuts on top of the iso cut
+    #warning ONE PRONG
+    if (GetNProng() != 1 ) return 0;
     return 1;
 }
 
@@ -32,6 +36,8 @@ int Tau::IsTauInvIso() const {
     //if (iso2 < 2.5 ) return 0;
     if (iso2 > 20.0 ) return 0;
     if ( Pt() < ptcut_ ) return 0;
+    if ( trackptcut_ >0 and trackptcut_ > trackpt_) return 0;
+    if (GetNProng() != 1 ) return 0;
     return 1;
 }
 

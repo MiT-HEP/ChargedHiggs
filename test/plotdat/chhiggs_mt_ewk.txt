@@ -4,13 +4,14 @@ sub= XXX:Mt,NOne:Vars
 
 [base]
 yrange=1e-3,1e3
-xrange=0,2000
+#xrange=0,2000
+xrange=0,500
 xtitle=m_{T}~[GeV]
-output= plot/Mt
-drawList= mc,chhiggs200,chhiggs500,data,box
+output= plot/Mt_Embed
+drawList= mc,chhiggs200,chhiggs500,chhiggs1500,data,embed,box
 
 [legend]
-legendList = data,qcdinvisocorr,tt,st,ewk,chhiggs200,chhiggs500
+legendList = data,qcdinvisocorr,tt,st,ewk,chhiggs200,chhiggs500,chhiggs1500
 
 [box]
 type=box
@@ -83,10 +84,32 @@ rebinList=0,10,20,30,40,50,60,70,80,100,120,140,160,180,200,220,240,260,280,300,
 #rebin=10
 rebinList=0,10,20,30,40,50,60,70,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000
 
+[chhiggs1500]
+rebinList=0,10,20,30,40,50,60,70,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000
+type = th1d
+file = ChHiggs.root
+obj = ChargedHiggsTauNu/Vars/Mt_HplusToTauNu_M-1500_13TeV_amcatnlo
+style = line
+styleopt = 2
+color=ROOT.kMagenta
+label= H^{+}~(m=1500GeV)~x10^{2}
+scale=2308e2
+width=2
 
-#[ratio]
-#draw = True
-#base = mc  ## denominator, for now TH1
-#fraction = 0.25
-#yrange = 0,2
-#ytitle = Data/MC
+[embed]
+rebinList=0,10,20,30,40,50,60,70,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000
+type = th1d
+file = EWKPurity.root
+obj = ChargedHiggsEWKPurity/Vars/Mt_Embed_Data
+style = marker
+styleopt = 24
+color=ROOT.kBlack
+label= Embed
+width=2
+
+[ratio]
+draw = True
+base = mc  ## denominator, for now TH1
+fraction = 0.25
+yrange = 0,2
+ytitle = Data/MC

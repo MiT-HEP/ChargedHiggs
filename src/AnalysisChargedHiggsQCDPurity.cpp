@@ -130,10 +130,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // --- take the selection from the tau nu analysis
     CutSelector direct; 
         direct.SetMask(ChargedHiggsTauNu::MaxCut-1);
-        direct.SetCut(ChargedHiggsTauNu::Selection(e,true,false,is80X));
+        direct.SetCut(ChargedHiggsTauNu::Selection(e,true,false,is80X,isLightMass));
     CutSelector inverse;
         inverse.SetMask(ChargedHiggsTauNu::MaxCut-1);
-        inverse.SetCut(ChargedHiggsTauNu::Selection(e,false,false,is80X));
+        inverse.SetCut(ChargedHiggsTauNu::Selection(e,false,false,is80X,isLightMass));
 
     // TODO:
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 

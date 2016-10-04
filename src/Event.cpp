@@ -1,6 +1,7 @@
 #include "interface/Event.hpp"
 #include "interface/GeneralFunctions.hpp"
 #include "TMath.h"
+#include "interface/Logger.hpp"
 #include <iostream>
 
 //#define VERBOSE 2
@@ -208,7 +209,10 @@ void Event::validate(){
         for(auto l : leps_)
             if(l->IsLep() )j-> computeValidity(l);
         for(auto t: taus_)
+        {
+            if(t->IsTau() )j-> computeValidity(t);
             if(t->IsTauInvIso() )j-> computeValidity(t,0.4,true);
+        }
     }
     return ;
 }
@@ -394,22 +398,26 @@ Tau * Event::GetTauInvIso( int iTau )
     return taus_[ valid[iTau].second];
 }
 
+//#define VERBOSE 1
 bool Event::IsTriggered( string name ,Trigger *trigger, bool isNone)
 {
     // TODO: make event inheriths from trigger, and remove this switch
     #ifdef VERBOSE
-    if (VERBOSE >1) cout <<"[Event]::[IsTriggered]::[DEBUG] name="<<name<<" trigger="<<trigger<<endl;
+        if(VERBOSE>0)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("(%d,%d,%u) Trigger name=%s",runNum(),lumiNum(),eventNum(),name.c_str()) );
     #endif
     
     static string lastName = "";
     static int lastPos = -1;
 
-    //cout <<"name = "<<name<<" last="<<lastName<<" lastPos="<<lastPos<<endl;
-
     if (name == lastName and lastPos >=0 )
     {
         if (trigger == NULL)
+        {
+#ifdef VERBOSE
+            if(VERBOSE>0)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Returning trigger in pos %d and name=%s",lastPos,lastName.c_str()));
+#endif
             return triggerFired_[ lastPos ] ;
+        }
         else 
         {
             if (isNone)  return trigger -> IsTriggeredNone ( lastPos ) ;
@@ -423,13 +431,17 @@ bool Event::IsTriggered( string name ,Trigger *trigger, bool isNone)
         if (name == triggerNames_[i] ) { lastPos=i; break;} 
     }
     lastName = name;
-    //cout <<"[Event]::[IsTriggered]::[DEBUG] Found trigger menu with name '"<<name<<"' at pos "<<lastPos<<endl;
     if (lastPos >=0 ) {
         #ifdef VERBOSE
         if (VERBOSE >1) cout <<"[Event]::[IsTriggered]::[DEBUG] grace exit"<<endl;
         #endif
         if (trigger == NULL)
+        {
+#ifdef VERBOSE
+            if(VERBOSE>0)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Returning trigger in pos %d and name=%s",lastPos,lastName.c_str()));
+#endif
             return triggerFired_[ lastPos ] ; 
+        }
         else 
         {
             if (isNone) return trigger->IsTriggeredNone (lastPos ) ;
@@ -441,7 +453,7 @@ bool Event::IsTriggered( string name ,Trigger *trigger, bool isNone)
     if (name != "") cout<<"[Event]::[IsTriggered]::[WARNING] Trigger menu not found: '"<<name<<"'"<<endl;
     return false;
 }
-
+//#define VERBOSE 0
 GenParticle * Event::GetGenParticle( int iGenPar ) 
 {  
     //FIXME: what is the purpose of this function ? 
@@ -485,7 +497,6 @@ Photon * Event::GetPhoton( int iPho )
     return phos_[ valid[iPho].second];
 }
 
-#include "interface/Logger.hpp"
 void Event::ApplyTopReweight(){
     if( GetWeight() -> GetMC() . find("TT") == string::npos)
     { // not ttbar sample
@@ -517,25 +528,18 @@ void Event::ApplyTopReweight(){
     //else{
     //    Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("I found two tops for reweighting, pt1=%f, pt2=%f",pt1,pt2));
     //}
+    //
 
     SetPtEtaSF("topreweight",pt1,pt2);
-
     ApplySF("topreweight");
+
+    if (GetWeight()->GetSF("topreweight")->get() < .001) {
+        Logger::getInstance().LogN("Event",__FUNCTION__,"WARNING","Top Reweight very small:",20,Form("sf=%lf, pt1=%f pt2=%f",GetWeight()->GetSF("topreweight")->get(),pt1,pt2));
+    }
 }
 
 void Event::ApplyWReweight(){
-
-// #warning noWR
-//     return ; 
-    //Logger::getInstance().LogN("Event",__FUNCTION__,"LOG","ApplyWReweight Macro called" + GetWeight() -> GetMC() ,5);
-    /*if (
-            GetWeight() -> GetMC() . find("W0JetsToLNu") != string::npos or
-            GetWeight() -> GetMC() . find("W1JetsToLNu") != string::npos or 
-            GetWeight() -> GetMC() . find("W2JetsToLNu") != string::npos or 
-            GetWeight() -> GetMC() . find("W3JetsToLNu") != string::npos or 
-            GetWeight() -> GetMC() . find("W4JetsToLNu") != string::npos
-       ){ ApplySF("wreweight2");}
-    */
+    return; // make sure no reweight is applied. TODO Remove the function directly
 
     if( GetWeight() -> GetMC() . find("TT") == string::npos and
             GetWeight() -> GetMC() . find("W0Jets") == string::npos and
@@ -619,6 +623,7 @@ void Event::ApplyTauSF(Tau*t,bool prongs,const string& extra)
     if( not ExistSF(sfname) ) Logger::getInstance().Log("Event",__FUNCTION__,"WARING" ,"No Tau Trigger SF"+sfname);  
 
     if (t->Pt() <10 ) return; // no sf for pt<10 taus
+
     SetPtEtaSF(sfname,t->Pt(),t->Eta());
     ApplySF(sfname);
 

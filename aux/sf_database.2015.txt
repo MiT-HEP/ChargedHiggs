@@ -45,7 +45,9 @@ ele pteta 55 8000 2.0 2.5 1.040 0.028
 ## tau invisolation: transfer factors ##
 ########################################
 #include aux/RProng.txt
-include aux/RAugust.txt
+#include aux/RAugust.txt
+include aux/R.txt
+#include aux/RLM.txt
 
 ###################
 ## BTag from POG ##

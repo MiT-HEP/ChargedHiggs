@@ -26,7 +26,7 @@ include=dat/catalog/2015/vv.dat
 include=dat/catalog/2015/wnjets.dat 
 
 ### SIGNAL ###
-include dat/catalog/2015/taunu.dat
+include=dat/catalog/2015/taunu.dat
 
 ### QCD
 #include dat/catalog/2015/qcd.dat
@@ -34,7 +34,7 @@ include dat/catalog/2015/taunu.dat
 ############
 ### DATA ###
 ############
-include dat/catalog/2015/tau.dat
+include=dat/catalog/2015/tau.dat
 
 ####
 
