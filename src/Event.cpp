@@ -571,7 +571,7 @@ void Event::ApplyWReweight(){
 //#define VERBOSE 2
 void Event::ApplyBTagSF(int wp)
 {
-    SetWPSF("btag",0); // loose, for sf 
+    SetWPSF("btag",wp); // loose, for sf
 
 #ifdef VERBOSE
     if (VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","Starting BTAG SF"); 
