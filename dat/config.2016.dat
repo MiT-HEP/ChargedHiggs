@@ -1,4 +1,4 @@
-include=dat/config.dat
+#include=dat/config.dat
 
 ################
 ### DATASETS ###
@@ -8,23 +8,62 @@ include=dat/config.dat
 ## remove previous
 Files=
 ## ttbar
-include=dat/catalog/2016/tt.dat
+#include=dat/catalog/2016/tt.dat
 ## SingleTop
-include=dat/catalog/2016/st.dat
+#include=dat/catalog/2016/st.dat
 ## Drell-Yan
-include=dat/catalog/2016/dy.dat
+#include=dat/catalog/2016/dy.dat
 ## Wjets
-include=dat/catalog/2016/wjets.dat
+#include=dat/catalog/2016/wjets.dat
 ## DIBOSON
-include=dat/catalog/2016/vv.dat
+#include=dat/catalog/2016/vv.dat
 ### SIGNAL ###
-include=dat/catalog/2016/taunu.dat
+#include=dat/catalog/2016/taunu.dat
 ## QCD
 
+Files=/store/user/mpedraza/Nero/80X/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/store/user/mpedraza/Nero/80X/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=/store/user/mpedraza/Nero/80X/TT_TuneCUETP8M1_13TeV-powheg-pythia8
+
+addfiles=/store/user/jaeyserm/Nero/8X/ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1
+addfiles=/store/user/jaeyserm/Nero/8X/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1
+addfiles=/store/user/jaeyserm/Nero/8X/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1
+addfiles=/store/user/jaeyserm/Nero/8X/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1
+addfiles=/store/user/jaeyserm/Nero/8X/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1
+
+
+addfiles=/store/user/jaeyserm/Nero/8X/WWTo2L2Nu_13TeV-powheg
+addfiles=/store/user/jaeyserm/Nero/8X/WWToLNuQQ_13TeV-powheg
+addfiles=/store/user/jaeyserm/Nero/8X/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=/store/user/jaeyserm/Nero/8X/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=/store/user/jaeyserm/Nero/8X/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=/store/user/jaeyserm/Nero/8X/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8
+addfiles=/store/user/jaeyserm/Nero/8X/ZZTo4L_13TeV_powheg_pythia8
+addfiles=/store/user/jaeyserm/Nero/8X/ZZTo2L2Nu_13TeV_powheg_pythia8
+
+
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8
+
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-800_13TeV_amcatnlo_pythia8
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8
+addfiles=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8
+
+# Tau BCD
+addfiles=/store/user/jaeyserm/Nero/8X/Tau
+
+#Files=/store/user/mpedraza/Nero/80X/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
+
 ### DATA
-include=dat/catalog/2016/tau.dat
+#include=dat/catalog/2016/tau.dat
 #
-pileup=aux/pileup.2016.BCDEFG.root
+pileup=aux/pileup.ichep.root
 
 MCDB=aux/mcdb.2016.txt
 SFDB=aux/sf_database.2016.txt

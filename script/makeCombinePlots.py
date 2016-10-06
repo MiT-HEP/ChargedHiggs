@@ -16,7 +16,7 @@ parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
 parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true",help="Draw observation")
 parser.add_option("-x","--xSec",dest="xsec",help="Print limit vs xSec instead of mu",default=False,action="store_true")
 parser.add_option("","--xSecName",dest="xsecname",help="extra string to be match in the mc_database",default="ChargedHiggs")
-parser.add_option("","--mcdb",dest="mcdb",help="the mc_database",default="aux/mcdb.txt")
+parser.add_option("","--mcdb",dest="mcdb",help="the mc_database",default="aux/mcdb.2016.txt")
 parser.add_option(""  ,"--yaxis",help="Y axis range Y1,Y2 [%default]",default="")
 parser.add_option(""  ,"--xaxis",help="X axis range X1,X2 [%default]",default="")
 parser.add_option("","--exclude",dest="exclude",help="Exclude mh points MH1,MH2,.. [%default]",default="")
@@ -150,6 +150,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 				basepath = os.path.abspath(mypath)
 			mypath = os.path.dirname(mypath)
 		
+		basepath = "/afs/cern.ch/work/j/jaeyserm/ChargedHiggs/Workspace06/CMSSW_7_6_5/src/ChargedHiggs"
 		if opts.verbose: print "-> Base Path is " + basepath
 		
 		sys.path.insert(0,basepath)
@@ -178,7 +179,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 				#if "M%.0f"%mh in label:
 				if 'amcatnlo' not in label : continue
 				if opts.xsecname not in label: continue
-				if "M-%.0f"%mh in label: #amcatnlo
+				if "M-%.0f_"%mh in label: #amcatnlo
 					labelFound=label[:]
 					xSec = mcdb[label][2]
 			if xSec <0 :  continue
@@ -367,7 +368,7 @@ dummy.Draw("AXIS")
 line = ROOT.TGraph()
 line.SetLineColor(ROOT.kGray)
 line.SetPoint(0,0,1)
-line.SetPoint(1,1000,1)
+line.SetPoint(1,3000,1)
 
 c.SetLogy()
 
@@ -386,7 +387,7 @@ for idx in range(0,len(list_exp) ):
 #mg.Draw("3")
 #mg.Draw("LPX")
 
-line.Draw("L SAME")
+#line.Draw("L SAME")
 
 #if opts.xsec:
 #	exp8TeV.Draw("L SAME")
@@ -411,10 +412,10 @@ l.SetTextAlign(13)
 l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
 l.SetTextSize(0.03)
 l.SetTextAlign(31)
-l.DrawLatex(0.89,.91,"2.3 fb^{-1} (13 TeV)")
+l.DrawLatex(0.89,.91,"12.9 fb^{-1} (13 TeV)")
 
 #draw legend
-leg = ROOT.TLegend(0.65,.55,.88,.88)
+leg = ROOT.TLegend(0.6,.6,.88,.8)
 leg.SetFillStyle(0)
 leg.SetBorderSize(0)
 
@@ -427,6 +428,12 @@ for idx in range(0, len(list_exp) ) :
 	if idx==0:
 		leg.AddEntry(list_oneSigma[idx], "1 s.d.","FL") 
 		leg.AddEntry(list_twoSigma[idx], "2 s.d.","FL") 
+  
+  
+for idx in range(0, len(list_data) ) :
+	label = "observed"
+	leg.AddEntry(list_data[idx], label, "P" )
+
 
 ##### PRINT TABLE LATEX
 doTable=True

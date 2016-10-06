@@ -622,8 +622,8 @@ void Event::ApplyTauSF(Tau*t,bool prongs,const string& extra)
 
     if (prongs)
     {
-        if (t->GetNProng() ==1 ) sfname="tauLeg1p";
-        else sfname="tauLeg3p";
+        //if (t->GetNProng() ==1 ) sfname="tauLeg1p";
+        //else sfname="tauLeg3p";
     }
 
     sfname +=extra;

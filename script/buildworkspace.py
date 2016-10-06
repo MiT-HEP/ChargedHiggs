@@ -9,12 +9,12 @@ parser= OptionParser()
 parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="ChHiggs.root")
 parser.add_option("","--qcd",type='string',help="Input ROOT file. Set Null to use QCD from above [%default]", default="QCDPurity.root")
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="ChHiggsWs.root")
-parser.add_option("-L","--lumi",type='float',help="Luminosity pb. [%default]", default=2308)
-parser.add_option("","--qcdlumi",type='float',help="QCD Luminosity pb. [%default]", default=2308)
+parser.add_option("-L","--lumi",type='float',help="Luminosity pb. [%default]", default=12888.61)
+parser.add_option("","--qcdlumi",type='float',help="QCD Luminosity pb. [%default]", default=12888.61)
 parser.add_option("-n","--ncat",type='int',help="Number of cat. [%default]", default=1)
 parser.add_option("","--nosyst",action='store_true',help="Do not look for syst. [%default]", default=False)
 parser.add_option("","--ewk",type='string',help="Input ROOT file for ewk. Set Null to use EWK from MC [%default]", default="")
-parser.add_option("","--ewklumi",type='float',help="EWK Luminosity pb. [%default]", default=2308)
+parser.add_option("","--ewklumi",type='float',help="EWK Luminosity pb. [%default]", default=12888.61)
 
 extra = OptionGroup(parser,"Extra options:","")
 extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=-1)
@@ -38,9 +38,9 @@ savePdf=False
 tailfit=False
 #systsMC=["BTAG","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW"]
 #systsMC=["BTAG","JES","TAU","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW","TRIG1p","TRIG3p"]
-systsMC=["BTAGB","BTAGL","JES","TAU","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW","TRIG1p","TRIG3p"]
-#systsQCD=["RFAC"]
-systsQCD=["RFAC1p","RFAC3p"]
+systsMC=["BTAGB","BTAGL","JES","TAU","TRIG","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW"]
+systsQCD=["RFAC"]
+#systsQCD=["RFAC1p","RFAC3p"]
 systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT"]
 
 ###########################
@@ -493,7 +493,7 @@ for shift in ["Up","Down"]:
 ## print "     FIX MH POINTS       "
 ## print "#########################"
 for syst in systSig:
- for sigMH in [ 200,250,300,350,400,500,750,1000,3000]:
+ for sigMH in [ 180,200,220,250,300,400,500,800,1000,2000,3000]:
  #for sigMH in [ 200,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
@@ -701,11 +701,11 @@ def writeNormSystList(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST"])
 if opts.qcd=="":
 	#writeNormSyst("lumi_13TeV","1.027","")
 	writeNormSyst("lumi_13TeV","1.023","")
-	writeNormSyst("lumi_13TeV_stability","1.015","")
+	writeNormSyst("lumi_13TeV_stability","1.058","")
 else:
 	#writeNormSyst("lumi_13TeV","1.027","!QCD")
 	writeNormSyst("lumi_13TeV","1.023","!QCD")
-	writeNormSyst("lumi_13TeV_stability","1.015","!QCD")
+	writeNormSyst("lumi_13TeV_stability","1.058","!QCD")
 
 if opts.nosyst: 
 	w.writeToFile(opts.output)

@@ -88,7 +88,8 @@ void LoadNero::FillEventInfo(){
     event_ -> rho_ = e->rho;
 
     event_ -> met_ . setFullRecommendation ( e->selBits & BareEvent::FullRecommendation );
-
+    //event_ -> met_ . setFullRecommendation ( e->selBits & BareEvent::FullRecommendation && e-> filterbadChCandidate && e-> filterbadPFMuon );
+    
     BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["BareVertex"] ] ) ; assert(v!=NULL);
     event_ -> npv_ = v->npv;
 }
@@ -420,6 +421,7 @@ void LoadNero::FillMet(){
     event_-> met_ . SetFilled(Smearer::UNCLUSTER);
 
     // ---- TAU SCALE
+    /*
     BareTaus *bt = dynamic_cast<BareTaus*> ( bare_ [ names_[ "BareTaus" ] ] ); assert (bt !=NULL);
     TLorentzVector tauUp, tauDown;
     tauUp  = *(TLorentzVector*)(*met -> p4) [0];
@@ -431,8 +433,31 @@ void LoadNero::FillMet(){
         tauUp += delta;
         tauDown -= delta;
     }
-    event_ -> met_ . SetValueUp  (Smearer::TAUESCALE , tauUp.Pt() ); 
-    event_ -> met_ . SetValueDown(Smearer::TAUESCALE , tauDown.Pt() );
+     */
+    // tau scale propagated only on the leading tau
+    TLorentzVector tauUp, tauDown;
+    tauUp  = *(TLorentzVector*)(*met -> p4) [0];
+    tauDown= *(TLorentzVector*)(*met -> p4) [0];
+
+    for (auto& t : event_->taus_) { 
+        t->SetIsoCut(2.5); 
+        t->SetEtaCut(2.1); 
+        t->SetPtCut(20); 
+        t->SetMuRej(true); 
+        t->SetEleRej(true);
+        t->SetTrackPtCut(30.);
+    }
+    Tau*t = event_->GetTau(0);
+    if (t!=NULL){
+            TLorentzVector delta;
+            delta.SetPtEtaPhiE(  .03 * t->Pt(), t->Eta(), t->Phi(), t->E() * .03);
+            tauUp += delta;
+            tauDown -= delta;
+    }
+    
+    
+    event_ -> met_ . SetValueDown  (Smearer::TAUESCALE , tauUp.Pt() ); 
+    event_ -> met_ . SetValueUp(Smearer::TAUESCALE , tauDown.Pt() );
     event_-> met_ . SetFilled(Smearer::TAUESCALE);
 
     //Log(__FUNCTION__,"DEBUG",Form("Met=%f MetJesUp=%f",((TLorentzVector*)(*met -> p4) [0])->Pt() , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt()));

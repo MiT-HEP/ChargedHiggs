@@ -59,3 +59,5 @@ jetMotherPdgId
 jetGrMotherPdgId
 jetPuId
 jetPt*
+#filterbadChCandidate
+#filterbadPFMuon

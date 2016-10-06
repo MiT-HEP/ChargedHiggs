@@ -1,4 +1,20 @@
 include=dat/configTauNu.dat
+Files=
 include=dat/config.2016.dat
 
-addConfig=ChargeHiggsTauNu|is80X=1
+#Smear=NONE
+
+#Files=/store/user/jaeyserm/Nero/8X/Tau/Tau-Run2016C
+#Files=/store/user/amarini/Nero/80X/Tau/Tau-Run2016C 
+# amarini with MET filters
+
+config=ChargedHiggsTauNu|AddLabel('DY')
+addConfig=ChargedHiggsTauNu|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-350_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-800_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-1000_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-2000_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-3000_13TeV_amcatnlo')
+addConfig=ChargedHiggsTauNu|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('WJets')
+addConfig=ChargedHiggsTauNu|AddLabel('ST'),AddLabel('QCD')
+addConfig=ChargedHiggsTauNu|is80X=1,unblind=1
+
+
+
+
+

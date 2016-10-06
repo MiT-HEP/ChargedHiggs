@@ -395,8 +395,8 @@ def ReadSFDB(file,verbose=False):
 		        j=json.loads( jstring )
 			"dataParameters"
 			"mcParameters"
-			run="runs_256629_260627"
-			runMC="2015D"
+			run="runs_271036_276811" # 15: runs_256629_260627 16: runs_271036_276811
+			runMC="2016ICHEP" # 15: 2015D 16: 2016ICHEP
 			for idx,params in enumerate(j["dataParameters"][run]["bins"]):
 				R["pt1"] =params["pt"] 
 				if len(j["dataParameters"][run]["bins"]) > idx+1:

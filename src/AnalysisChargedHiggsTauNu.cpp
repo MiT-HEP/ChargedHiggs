@@ -120,6 +120,8 @@ void ChargedHiggsTauNu::Init()
 
         // Study NLO Positive and negative shapes for interpolation and subtraction
 
+         Book(    "ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ l  , ("CutFlow Sync "+ l).c_str(),100,-.5,100-.5);
+
     }
 
 }
@@ -258,6 +260,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     if(e->weight() == 0.) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
 
+    
+    
     #ifdef SYNC
         if (not e->IsRealData() and e->GetWeight() ->GetBareSF() != 1.0)  Log(__FUNCTION__,"SYNC-ERROR",Form("SF at the beginning is not 1: %lf",e->GetWeight() ->GetBareSF()));
     #endif
@@ -278,6 +282,96 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     cut.reset();
     cut.SetMask(MaxCut-1) ;
     cut.SetCut( Selection(e,true, false, is80X,isLightMass) );
+    
+    // 2016 SYNC
+    
+    CutSelector mymask(MaxCut);
+    mymask.reset();
+    
+    // All events = JSON passed
+    Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 0, 1);
+    
+    // Trigger MET90
+    mymask.SetCutBit(Trigger);
+    if(cut.passMask(mymask)) Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 1, 1);
+   
+    // 1 Tau
+    mymask.SetCutBit(OneTau);
+    if(cut.passMask(mymask)) Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 2, 1);
+        
+    bool eleveto = false;
+    bool veto = false;
+    if(cut.passMask(mymask) and e->GetElectron(0) == NULL) {
+        
+        eleveto = true;
+        Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 3, 1);
+    }
+        
+    if(cut.passMask(mymask) and e->GetMuon(0) == NULL and eleveto) {
+        Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 4, 1);
+        veto = true;
+    }
+    
+    //mymask.SetCutBit(NoLep); // trick: set always//
+
+    mymask.SetCutBit(ThreeJets);
+    if(cut.passMask(mymask) and veto) Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 5, 1);
+
+      
+    mymask.SetCutBit(OneBjet);
+    if(cut.passMask(mymask) and veto) Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 6, 1);
+    
+  
+    mymask.SetCutBit(Met);
+    if(cut.passMask(mymask) and veto) Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 7, 1);
+    
+    
+  
+    mymask.SetCutBit(AngRbb);
+    if(cut.passMask(mymask) and veto) Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 8, 1);
+    
+    
+    if(cut.passAll() and e->GetMet().Pt() > 1000) {
+        
+        Fill("ChargedHiggsTauNu/CutFlowSync/CutFlowSync_"+ label,systname, 10, 1);
+    }
+    
+    
+    
+    
+    
+            int pos=0;
+            Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+
+            mymask.reset();
+
+            mymask.SetCutBit(Trigger);; ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(OneTau);++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(NoLep); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(ThreeJets); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(OneBjet); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(Met); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+            mymask.SetCutBit(AngRbb); ++pos;
+            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
+
+    
+    
+    
+    
+    
 
     #ifdef SYNC
     if (SYNC>0){
@@ -300,6 +394,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     #endif
 
     // here I have the PV and the MET Filters
+    /*
     if (e->IsRealData() ) 
         { 
             int pos=0;
@@ -362,7 +457,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
             if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
 
         }
-
+     */
     //Log(__FUNCTION__,"DEBUG","Analyze event with syst "+ systname + Form(" Njets=%d NB=%d PassAll=%d cuts=%s", e->Njets(),e->Bjets() ,cut.passAll(), ChargedHiggs::printBinary(cut.raw()).c_str() ));
 
     if ( cut.pass(NoLep) and not e->IsRealData() ){
@@ -423,7 +518,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         }
         // ----------------------------------------
 
-        if( not e->ExistSF(metLegSF) ) Log(__FUNCTION__,"WARING" ,"No Tau"+metLegSF+" SF");  
+        if( not e->ExistSF(metLegSF) ) Log(__FUNCTION__,"WARING" ,"No "+metLegSF+" SF");  
         
         // Met SF only for pT > 20
         if(e->GetMet().Pt()>20) {
@@ -468,6 +563,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //CutSelector s; s.SetCutBit(Met);
     //cout <<"met = "<<s<<endl;
     // -------------------- ANGULAR VARIABLES -----------
+    
+    /*
     double DEtaMax=0.;
     double InvMassMax=0.;
   
@@ -486,6 +583,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     double DPhiEtMissJet2=e->DPhiEtMissJet(1); 
     double DPhiEtMissJet3=e->DPhiEtMissJet(2); 
     double DPhiEtMissTau= ( t== NULL) ? -1 : fabs(e->GetMet().DeltaPhi(t));
+     */
 
     // up To angular variables
     double RbbMin= e->RbbMin();
@@ -493,9 +591,10 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     double RsrMax= e->RsrMax();
 
 
-    double DPhiTauJet1=e->DPhiTauJet(t,0);
+    //double DPhiTauJet1=e->DPhiTauJet(t,0);
 
     // --- studies for angular variables
+    /*
     if ( cut.passAllUpTo(Met) ){
         Fill("ChargedHiggsTauNu/NOne/MaxDEtaBjetJets_"+label,systname, DEtaMax ,e->weight());
         Fill("ChargedHiggsTauNu/NOne/MaxInvMassBjetJets_"+label,systname, InvMassMax ,e->weight());
@@ -508,6 +607,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         Fill("ChargedHiggsTauNu/NOne/DPhiTauJet1_"+label,systname,DPhiTauJet1,e->weight());
         Fill2D("ChargedHiggsTauNu/NOne/DPhiTauJet1VsMt_"+label,systname,e->Mt(),DPhiTauJet1,e->weight());
     }
+     */
 
 
     //Angular Cuts
@@ -572,12 +672,14 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     if (cut.passAllExcept(OneBjet) )
     {
         Fill("ChargedHiggsTauNu/NOne/NBjets_"+label,systname, e->Bjets() ,e->weight());
+        /*
         if( e->GetCentralJet(0)) Fill("ChargedHiggsTauNu/NOne/Bdiscr_"+label,systname, e->GetCentralJet(0)->bdiscr ,e->weight()); // of the leading jet or of the b?
         if (bj1 != NULL) 
             {        
                 Fill("ChargedHiggsTauNu/NOne/Bjet1Pt_"+label,systname, bj1->Pt() ,e->weight());
                 Fill("ChargedHiggsTauNu/NOne/Bjet1Eta_"+label,systname,bj1->Eta(),e->weight());
             }
+         */
     }
 
     // ------------------------ FULL SELECTION ---------------
@@ -594,8 +696,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         //
 
         if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/Mt_"+label,systname, e->Mt() ,e->weight());
-        if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoQ_"+label,systname, e->MtDecoQ() ,e->weight());
-        if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoCosPhi_"+label,systname, e->MtDecoCosPhi() ,e->weight());
+        //if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoQ_"+label,systname, e->MtDecoQ() ,e->weight());
+        //if ( Unblind(e) ) Fill("ChargedHiggsTauNu/Vars/MtDecoCosPhi_"+label,systname, e->MtDecoCosPhi() ,e->weight());
 
         // -- Book(    "ChargedHiggsTauNu/Vars/Mt_matchTau_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
         // -- Book(    "ChargedHiggsTauNu/Vars/Mt_matchEle_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
@@ -603,6 +705,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         // -- Book(    "ChargedHiggsTauNu/Vars/Mt_matchJet_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
         // -- Book(    "ChargedHiggsTauNu/Vars/Mt_matchOther_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
 
+        /*
         if (not e->IsRealData() )
         {
             int pdgid=e->GetTau(0)->Rematch(e);
@@ -618,7 +721,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         Fill("ChargedHiggsTauNu/Vars/JetInvMass_"+label,systname,e->GetJet(0)->InvMass(e->GetJet(1)) , e->weight() );
         Fill("ChargedHiggsTauNu/Vars/Jet13InvMass_"+label,systname,e->GetJet(0)->InvMass(e->GetJet(2)) , e->weight() );
         Fill("ChargedHiggsTauNu/Vars/Jet23InvMass_"+label,systname,e->GetJet(1)->InvMass(e->GetJet(2)) , e->weight() );
-
+         */
         return EVENT_USED;
     }
     else { return EVENT_NOT_USED; }

@@ -46,6 +46,15 @@ void ChargedHiggsQCDPurity::Init()
     // --- for event NOT BINNED! CONTROL PLOTS
     for (string &l : AllLabel() )
     {
+        
+            // Cut flow with QCD
+        Book(    "ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+l , ("CutFlowQCD "+ l).c_str(), 10, -.5, 10.0-.5);
+        GetHisto("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+l,"")->GetXaxis()->SetBinLabel(1, "N_{taus} #geq 1 \\ N_{leps} = 0 \\ N_{jets} #geq 3 \\ Trigger");
+        GetHisto("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+l,"")->GetXaxis()->SetBinLabel(2,"N_{Bjets} #geq 1");
+        GetHisto("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+l,"")->GetXaxis()->SetBinLabel(3,"MET > 60 GeV");
+        GetHisto("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+l,"")->GetXaxis()->SetBinLabel(4,"R_{bb}^{Min}>40");
+    
+    
             //  Used for control plots
             string hist= "TauPt_IsoInv_Control";
             Book( dir + hist+"_"+ l  , ("PtTauIsoInv "+ l).c_str(),1000,0.,1000.); // this guys has the R factor applied in the loos selection
@@ -101,6 +110,16 @@ void ChargedHiggsQCDPurity::Init()
 
         Book(    none+"RbbMinIsoInv_"+l,"RbbMin IsoInv "+l+";R_{bb}^{min}",100,0,2*TMath::Pi());
         Book(    none+"RCollMinIsoInv_"+l,"RCollMin IsoInv "+l+";R_{coll}^{min}",100,0,2*TMath::Pi());
+ 
+        
+        Book(    none+"NBjets_"+l,"NBjets "+l+";NBjets",1000,0,1000);
+        Book(    none+"NBjetsIsoInv_"+l,"NBjets IsoInv "+l+";NBjets",1000,0,1000);
+        
+        Book(    none+"Tau1Pt_"+l,"Tau1Pt "+l+";Tau1Pt",1000,0,1000);
+        Book(    none+"Tau1PtIsoInv_"+l,"Tau1Pt IsoInv "+l+";Tau1Pt",1000,0,1000);
+
+    
+    
     }
 
 }
@@ -139,12 +158,12 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
     // * put a limit on the TauInv sideband ? 3.0 -20 GeV
 
-   bool passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
+    bool passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
    bool passInverseLoose=inverse.passAllUpTo(ChargedHiggsTauNu::ThreeJets);
 
     
-    //bool passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::OneBjet);
-    //bool passInverseLoose=inverse.passAllUpTo(ChargedHiggsTauNu::OneBjet);
+  // bool passDirectLoose=direct.passAllUpTo(ChargedHiggsTauNu::OneBjet);
+  // bool passInverseLoose=inverse.passAllUpTo(ChargedHiggsTauNu::OneBjet);
     //#warning QCD BJets
     //LogN(__FUNCTION__,"WARNING","ONE B REQUIRED FOR QCD LOOSE",10);
     
@@ -153,14 +172,44 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     if ( not passDirectLoose
          and not  passInverseLoose
        ) return EVENT_NOT_USED;
+   
+   
+    bool passPrescale=false;
+    if(e->GetWeight()->GetMC().find("ST") != string::npos || e->GetWeight()->GetMC().find("WZ") != string::npos || e->GetWeight()->GetMC().find("WW") != string::npos || e->GetWeight()->GetMC().find("ZZ") != string::npos) {
+        
+        passPrescale=true; // set trigger, but apply SF!
+ 
+        // Met SF only for pT > 20 (only for MC)
+        string metLegSF = "metLegData";
+        if(not e->ExistSF(metLegSF)) Log(__FUNCTION__,"WARING" ,"No Tau metLeg SF");
+        else if(e->GetMet().Pt()>20 and not e->IsRealData()) {
+            e->SetPtEtaSF(metLegSF, e->GetMet().Pt(), 0);
+            e->ApplySF(metLegSF);
+        }
+    }
+    else {
+        
 
+        // Apply MET leg SF (only on MC)
+        // NEGLECT IT
+        /*
+        string metLegSF = "metLeg";
+        if(not e->ExistSF(metLegSF)) Log(__FUNCTION__,"WARING" ,"No Tau metLeg SF");
+        else if(e->GetMet().Pt()>20 and not e->IsRealData()) {
+            e->SetPtEtaSF(metLegSF, e->GetMet().Pt(), 0);
+            e->ApplySF(metLegSF);
+        }
+        */
+        if(e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET90")) passPrescale=true;   
+    }
+   
 
     //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection
-    bool passPrescale=false;
+    //bool passPrescale=false;
     //if (not e->IsRealData()) passPrescale=true;
-    if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
+    //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
     //#warning MET80 TRigger in QCD
-    //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") ) passPrescale=true;
+    //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET90") ) passPrescale=true;
     //LogN(__FUNCTION__,"WARNING","MET 80 in QCD Loose",10);
     //
     //bool passMatchDirect=true;
@@ -209,12 +258,14 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         hist = HistName(pt, true, false, "TauPt") ;
         Fill( dir+hist +"_"+label,systname, t->Pt(), e->weight() );
 
+        /*
         hist = HistName(pt, true, false) ;
         if (flavor == 15) hist += "_T";
         else if (flavor == 21 ) hist+="_G";
         else if (flavor <5 and flavor != 0 ) hist+="_Q";
         else hist += "_U";
         Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+         */
 
         hist = HistName(pt, true, false) ;
         if (t->GetNProng()==1) hist +="_1p";
@@ -244,13 +295,14 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         hist = HistName(pt, false, false, "TauPt") ;
         Fill( dir+hist +"_"+label,systname, tInv->Pt(), e->weight() );
 
+        /*
         hist = HistName(pt, false, false) ;
         if (flavor == 15) hist += "_T";
         else if (flavor == 21 ) hist+="_G";
         else if (flavor <5 and flavor != 0 ) hist+="_Q";
         else hist += "_U";
         Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
-
+         */
         hist = HistName(pt, false, false) ;
         if (tInv->GetNProng()==1) hist+="_1p";
         else hist+="_3p";
@@ -264,7 +316,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     //
     if (t!=NULL and passMatchDirect and not e->IsRealData()) 
     {
-        e->ApplyTauSF(t); 
+        e->ApplyTauSF(t, false); 
     }
     
     // N minus one direct
@@ -281,6 +333,11 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     if (t!=NULL and passMatchDirect and direct.passAllExcept(ChargedHiggsTauNu::AngColl) ) 
         {
             Fill( none + "RCollMin" +"_"+label,systname, e->RCollMin(), e->weight() );
+        }
+    
+    if (t!=NULL and passMatchDirect and direct.passAllExcept(ChargedHiggsTauNu::OneTau) ) 
+        {
+            Fill( none + "Tau1Pt" +"_"+label,systname, t->Pt(), e->weight() );
         }
 
     if (t!=NULL and passMatchDirect and direct.passAll() ) 
@@ -322,8 +379,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         float pt = tInv->Pt();                                                   
         //const string sf="tauinviso";
         string sfname="tauinvisospline";
-        if (tInv->GetNProng() ==1 ) sfname+="_1p";
-        else sfname+="_3p";
+        //if (tInv->GetNProng() ==1 ) sfname+="_1p";
+        //else sfname+="_3p";
         // if the SF don't exist go on, but don't fill inconsistent events
         if( not e->ExistSF(sfname) ){
             LogN(__FUNCTION__,"WARNING","Tau inviso SF does not exist",10);
@@ -332,6 +389,13 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         e->SetPtEtaSF(sfname,tInv->Pt(),tInv->Eta());
         e->ApplySF(sfname); // only in weight(false) sf are applied in data
 
+        if(inverse.passAllUpTo(ChargedHiggsTauNu::ThreeJets) && inverse.pass(ChargedHiggsTauNu::Trigger)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,0,e->weight(false));
+        if(inverse.passAllUpTo(ChargedHiggsTauNu::OneBjet) && inverse.pass(ChargedHiggsTauNu::Trigger)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,1,e->weight(false));
+        if(inverse.passAllUpTo(ChargedHiggsTauNu::Met)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,2,e->weight(false));
+        if(inverse.passAllUpTo(ChargedHiggsTauNu::AngRbb)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,3,e->weight(false));
+     
+        
+        
         //Log(__FUNCTION__,"DEBUG",string("syst name is ") + systname + Form("weight is %f",e->weight(false)) );
         if (tInv != NULL and passInverseLoose and passPrescale){ // CONTROL PLOTS -- LOOSE SELECTION
             string hist= "TauPt_IsoInv_Control";
@@ -357,8 +421,21 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             {
                 Fill( none + "RCollMinIsoInv" +"_"+label,systname, e->RCollMin(3,tInv), e->weight(false) );
             }
+        
+        
+        if (inverse.passAllExcept(ChargedHiggsTauNu::OneBjet) ) 
+        {
+            Fill( none + "NBjetsIsoInv" +"_"+label,systname, e->Bjets(), e->weight(false) );
+        }
+        
+        // TauPtIsoInv
+        if (inverse.passAllExcept(ChargedHiggsTauNu::OneTau) ) 
+        {
+            Fill( none + "Tau1PtIsoInv" +"_"+label,systname, pt, e->weight(false) );
+        }        
 
         // remove trigger & met
+        /*
         unsigned mymask =  0 ;
         for(unsigned i=0;i<ChargedHiggsTauNu::MaxCut;++i){
             if (i==ChargedHiggsTauNu::Trigger) continue;
@@ -372,6 +449,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             string hist=HistName(pt, false, true)+"_NoR";
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight(true));
         }
+         */
 
         if (inverse.passAll()) { // FULL SELECTION
             //if ( not e->IsRealData()) e->ApplySF("btag");
@@ -395,17 +473,19 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             hist = HistName(pt,false, true,"Upar");
             Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight(false) );
 
+            /*
             hist = HistName(pt, false, true) ;
             if (flavor == 15) hist += "_T";
             else if (flavor == 21 ) hist+="_G";
             else if (flavor <5 and flavor != 0 ) hist+="_Q";
             else hist += "_U";
             Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
-
+            */
             hist = HistName(pt, false, true) ;
             if (tInv->GetNProng() ==1 ) hist+="_1p";
             else hist+="_3p";
             Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
+             
         } // inverse.passAll
     } // tInv
 
