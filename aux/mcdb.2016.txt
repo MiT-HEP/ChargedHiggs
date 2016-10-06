@@ -23,31 +23,38 @@ ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-p
 
 ## DY (reHLT)
 DYJetsToLL-acmatnlo /eos/user/j/jaeyserm/Nero/8X/DYJetsToLL-acmatnlo 1.63557608427e+12 6025.2
-DYJetsToLL-madgraph /eos/user/m/mpedraza/Nero/8X/DYJetsToLL-madgraph 88661461.0 6025.2
+DYJets-madgraph /store/user/mpedraza/Nero/80X/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 91350867 6025.0
 ## WJets (reHLT)
 WJetsToLNu-amcatnlo /eos/user/j/jaeyserm/Nero/8X/WJetsToLNu-amcatnlo 7.33979336534e+12 61526.7
-WJetsToLNu-madgraph /eos/user/m/mpedraza/Nero/8X/WJetsToLNu-madgraph 95348018.0 61526.7
+WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/user/mpedraza/Nero/80X/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 99699582 61526.7
+
 # Diboson (non reHLT)
-WWTo2L2Nu_13TeV-powheg /store/user/mpedraza/Nero/8X/WWTo2L2Nu_13TeV-powheg 1996600.0 12.46
-WWToLNuQQ_13TeV-powheg /store/user/mpedraza/Nero/8X/WWToLNuQQ_13TeV-powheg 1951000.0 52
-WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/mpedraza/Nero/8X/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 338780513.755 10.71 
-WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/mpedraza/Nero/8X/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8 9089293.63795 3.033
-WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/mpedraza/Nero/8X/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 229406443.905 5.595 
-WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8 /store/user/mpedraza/Nero/8X/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8 2000000 4.42965
-ZZTo2L2Nu_13TeV_powheg_pythia8 /store/user/mpedraza/Nero/8X/ZZTo2L2Nu_13TeV_powheg_pythia8 8968000.0 0.564
-ZZTo4L_13TeV_powheg_pythia8 /store/user/mpedraza/Nero/8X/ZZTo4L_13TeV_powheg_pythia8 6638328 1.256
+# cross section from https://twiki.cern.ch/twiki/bin/view/CMS/SummaryTable1G25ns#Diboson
+WWTo2L2Nu_13TeV-powheg /eos/user/m/mpedraza/Nero/8X/WWTo2L2Nu_13TeV-powheg/WWTo2L2Nu_13TeV-powheg/160917_081227/0000 1996600.0 12.178
+WWToLNuQQ_13TeV-powheg /eos/user/m/mpedraza/Nero/8X/WWToLNuQQ_13TeV-powheg/WWToLNuQQ_13TeV-powheg/160917_081245/0000 1951000.0 49.997
+WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8 /eos/user/m/mpedraza/Nero/8X/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8/160917_081326/0000 9089293.63795 3.033 
+WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 /eos/user/m/mpedraza/Nero/8X/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/160917_081308/0000 338780513.755 10.71 
+WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 /eos/user/m/mpedraza/Nero/8X/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/160917_081342/0000 229406443.905 5.595 
+WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8 /eos/user/m/mpedraza/Nero/8X/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8/160917_081358/0000 2000000.0 4.42965
+ZZTo2L2Nu_13TeV_powheg_pythia8 /eos/user/m/mpedraza/Nero/8X/ZZTo2L2Nu_13TeV_powheg_pythia8/ZZTo2L2Nu_13TeV_powheg_pythia8/160917_081452/0000 8968000.0 5.26
+ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 /eos/user/m/mpedraza/Nero/8X/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/160917_081528/0000 78628724.9472 3.22
+ZZTo4L_13TeV_powheg_pythia8 /eos/user/m/mpedraza/Nero/8X/ZZTo4L_13TeV_powheg_pythia8/ZZTo4L_13TeV_powheg_pythia8/160917_081420/0000 6638328.0 1.256
+
 # TT (reHLT)
 TT /eos/user/m/mpedraza/Nero/8X/TT 92255310.0 831
 TTJets /eos/user/m/mpedraza/Nero/8X/TTJets 81069486659.3 831
 # TT (non reHLT)
-TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 10299669.0 115.397473145
-TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 11947951.0 116.361083984
-TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 16973173.0 58.3065083822
-# SingleTop (non reHLT)
-ST_tW_top /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_top 998400.0 30.11
-ST_tW_antitop /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_tW_antitop 985000.0 30.09
-ST_t-channel_top /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_t-channel_top 30234312.0 136.02
-ST_t-channel_antitop /eos/user/j/jaeyserm/Nero/8X/SingleTop/ST_t-channel_antitop 19825855.0 80.95
+TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 1680008.0 182.17540224
+TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 2815829.0 182.17540224
+TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1 16973173.0 87.31483776
+
+##### SingleTop (non reHLT)
+# taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopRefXsec#Predictions_at_7_8_13_and_14_TeV
+ST_t-channel_antitop /eos/user/m/mpedraza/Nero/8X/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/ST_t-channel_antitop/160917_081152/0000 19825855.0 80.95
+ST_t-channel_top /eos/user/m/mpedraza/Nero/8X/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/ST_t-channel_top/160917_081130/0000 30234312.0 136.02
+ST_tW_antitop /eos/user/m/mpedraza/Nero/8X/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_antitop/160917_081110/0000 985000.0 35.85
+ST_tW_top /eos/user/m/mpedraza/Nero/8X/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_top/160917_081050/0000 998400.0 35.85
+
 # QCD (reHLT)
 #QCD_Pt_15to30 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_15to30 998420.0 1954717132.37
 #QCD_Pt_30to50 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_30to50 984676.018179 140581825.84
