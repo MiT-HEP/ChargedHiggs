@@ -115,6 +115,21 @@ class SmearPdfs : virtual public SmearBase
         virtual int smear(Event*e);	
 };
 
+class SmearBjets : virtual public SmearBase
+{
+    /* for simple smearing, correlated use SmearSF*/
+    bool doL{false},doB{false};
+    string sfname_;
+
+    public:
+        SmearBjets(){}
+        SmearBjets(bool bjets, bool udsc,string sf){ doL=udsc; doB=bjets; name_= string("BTAG") + ((doB)?"B":"") + ((doL)?"L":""); sfname_=sf;}
+        ~SmearBjets(){}
+        virtual int smear(Event*e);	
+        const string sfname(){ return sfname_ ;}
+
+};
+
 #endif
 // Local Variables:
 // mode:c++

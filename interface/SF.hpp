@@ -32,6 +32,7 @@ class  SF : public Named{
         const string name() const {return "SF";}
         virtual void SetVeto(int x=1){veto_=x;}
         virtual void print() const ;
+        virtual void reset(){ syst=0;}
 };
 
 class SF_Asymm : public SF
@@ -71,7 +72,7 @@ class SF_TH2F : virtual public SF_PtEta
     public:
         SF_TH2F() : SF_PtEta(),SF(){}
         SF_TH2F(string filename) : SF_PtEta(),SF(){ init(filename); }
-        void init(string filename,string histname="EGamma_SF2D");
+        void init(string filename,string histname="EGamma_SF2D",string errorhist=""); // ""== binerror
         const string name() const {return "SF_TH2F";}
 };
 
@@ -184,7 +185,16 @@ class SF_CSV : public SF_Asymm
         void setJetFlavor(int flavor);
         void print(){};
         const string name() const {return "SF_CSV";}
+        
 
+        /* Correlations between the SF measurements: SFlight is mostly uncorrelated to SFc and SFb, while SFc is conservatively taken as correlated to SFb. When varying SFb by +/- 1 sigma, one has to vary SFc by +/- 1 sigma simultaneously. SFlight can be independently varied by +/-1 sigma and the resulting uncertainty added in quadrature to that of SFc and SFb. The SF +/- 1 sigma are obtained by retrieving the "up" and "down" values as usual. Additional breakdown of the systematics is also available for combination of 2015 and 2016 data (see below) . 
+         */
+
+        bool simpleError{true};
+        int systL{0},systB{0};
+
+        virtual double get();
+        virtual void reset(){ SF_Asymm::reset(); systL=0; systB=0;}
 };
 
 

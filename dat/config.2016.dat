@@ -1,0 +1,31 @@
+include=dat/config.dat
+
+################
+### DATASETS ###
+################
+
+#### BKG ###
+## remove previous
+Files=
+## ttbar
+include=dat/catalog/2016/tt.dat
+## SingleTop
+include=dat/catalog/2016/st.dat
+## Drell-Yan
+include=dat/catalog/2016/dy.dat
+## Wjets
+include=dat/catalog/2016/wjets.dat
+## DIBOSON
+include=dat/catalog/2016/vv.dat
+### SIGNAL ###
+include=dat/catalog/2016/taunu.dat
+## QCD
+
+### DATA
+include=dat/catalog/2016/tau.dat
+#
+pileup=aux/pileup.2016.BCDEFG.root
+
+MCDB=aux/mcdb.2016.txt
+SFDB=aux/sf_database.2016.txt
+include=dat/json.2016.dat

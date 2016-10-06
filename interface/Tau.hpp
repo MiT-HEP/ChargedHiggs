@@ -20,9 +20,13 @@ class Tau: virtual public Object,
     float escale_{0.03};
     int nprong=0;
     int npizero = 0;
+    float trackpt_{0};
+    float trackptcut_{0};
 
 
     public:
+    void SetTrackPt(const float& x){trackpt_=x;}
+    void SetTrackPtCut(const float& x){trackptcut_=x;}
     void SetEtaCut(float x){etacut_=x;}
     void SetMuRej(bool x ) { doMuRej_ = x;}
     void SetEleRej(bool x ) { doEleRej_ = x;}

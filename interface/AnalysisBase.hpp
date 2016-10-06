@@ -19,7 +19,7 @@ class AnalysisBase : public Named
     virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.15);l->SetEtaCut(2.4); l->SetTightCut(false);}
     //virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.25);l->SetEtaCut(2.4); l->SetTightCut(false);}
     virtual inline void SetPhotonCuts(Photon *p){p->SetIsoCut(-1); p->SetPtCut(30);}
-    virtual inline void SetTauCuts(Tau *t){ t->SetIsoCut(1.5); t->SetEtaCut(2.1); t->SetPtCut(20); t->SetMuRej(true); t->SetEleRej(true);}
+    virtual inline void SetTauCuts(Tau *t){ t->SetIsoCut(2.5); t->SetEtaCut(2.1); t->SetPtCut(20); t->SetMuRej(true); t->SetEleRej(true);t->SetTrackPtCut(30.);}
     virtual inline void SetJetCuts(Jet *j){ j->SetBCut(0.460);j->SetEtaCut(4.7); j->SetEtaCutCentral(2.5);j->SetPtCut(30);j->SetPuIdCut(-.63);}
     virtual void SetGenCuts(GenParticle *g){};
     

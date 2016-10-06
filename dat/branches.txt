@@ -50,6 +50,7 @@ metP4_GEN
 #
 genP4*
 genPdgId
+genParent
 genFlags
 ## JET
 jetFlavour

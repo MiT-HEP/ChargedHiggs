@@ -1,0 +1,85 @@
+[include]
+file= plotdat/chhiggs_none_template.txt
+sub= XXX:EtMiss
+
+[base]
+yrange=1.1e-1,1e6
+xrange=0,500
+output= plot/EtMiss_Embed
+xtitle=E_{T}^{miss}~[GeV]
+#drawList= mc,qcdinviso,chhiggs200,chhiggs500,data
+drawList= mc,chhiggs200,chhiggs500,data,embed
+
+[legend]
+#legendList = data,qcdinviso,tt,ewk,chhiggs200,chhiggs500   
+legendList = data,qcdinvisocorr,tt,ewk,chhiggs200,chhiggs500   
+
+[mc]
+#obj  = ewk,tt,qcdinviso
+obj  = ewk,tt,st,qcdinvisocorr
+
+[data]
+rebin=10
+
+[ewk]
+rebin=10
+
+[qcd]
+rebin=10
+
+[qcdinviso]
+rebin=10 
+type = th1d
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data
+style = line
+fillcolor = RGB,0.1,.4,1.
+fillstyle=1000
+color=ROOT.kBlack
+label=QCD~(Data)~notcorr
+scale=1
+width=2
+
+[qcdinvisocorr]
+rebin=10
+type = add
+file = QCDPurity.root
+obj = ChargedHiggsQCDPurity/NOne/EtMissIsoInv_Data,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_TT,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_DY,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WJets,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WW,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_WZ,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_ZZ,ChargedHiggsQCDPurity/NOne/EtMissIsoInv_ST
+### FIXME
+scale = 1.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308.
+style = line
+fillcolor = ROOT.kOrange
+fillstyle=1000
+color=ROOT.kBlack
+label=mis-ID~@tau_{h}~(@scale[0.6]{Data})
+width=2
+
+[tt]
+rebin=10
+
+[st]
+rebin=10
+
+[chhiggs500]
+rebin=10
+
+[chhiggs200]
+rebin=10
+
+[embed]
+rebin=10
+type = th1d
+file = EWKPurity.root
+obj = ChargedHiggsEWKPurity/NOne/EtMiss_Embed_Data
+style = marker
+styleopt = 24
+color=ROOT.kBlack
+label= Embed
+width=2
+
+[ratio]
+draw = True
+base = mc  ## denominator, for now TH1
+fraction = 0.25
+yrange = 0,2
+ytitle = Data/MC

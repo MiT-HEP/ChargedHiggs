@@ -285,18 +285,21 @@ void LoadNero::FillTaus(){
         t-> iso = (*bt->iso) [iL];
         t-> charge = bt -> Q -> at(iL);
         t-> type = 15;
-        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
+        //        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
         //#warning "NEW ID for TAUS"
-        //t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
+        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
         //t-> iso2 = bt -> isoMva -> at(iL);
         //t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleMedium ; 
-#warning EleTight
         t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleTight ; 
         t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
         t-> match = bt -> match -> at(iL);
-        t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
+        //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
+        t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byLooseCombinedIsolationDeltaBetaCorr3Hits); 
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumIsolationMVArun2v1DBoldDMwLT); 
+        if(bt->leadTrackPt->size() >iL ) t->SetTrackPt( bt->leadTrackPt -> at(iL) ) ;
+        else LogN(__FUNCTION__,"WARNING","Lead Track PT not filled",30);
+
         if (bt -> selBits -> at(iL) & BareTaus::Selection::OneProng) t-> SetNProng( 1 );
         else if (bt -> selBits -> at(iL) & BareTaus::Selection::TwoProng) t-> SetNProng( 2 );
         else if (bt -> selBits -> at(iL) & BareTaus::Selection::ThreeProng) t-> SetNProng( 3 );
@@ -417,19 +420,44 @@ void LoadNero::FillMet(){
     event_-> met_ . SetFilled(Smearer::UNCLUSTER);
 
     // ---- TAU SCALE
-    BareTaus *bt = dynamic_cast<BareTaus*> ( bare_ [ names_[ "BareTaus" ] ] ); assert (bt !=NULL);
+    // Taus are already filled
+    /* tau scale propagated on the all miniaod tau collection
+        BareTaus *bt = dynamic_cast<BareTaus*> ( bare_ [ names_[ "BareTaus" ] ] ); assert (bt !=NULL);
+        TLorentzVector tauUp, tauDown;
+        tauUp  = *(TLorentzVector*)(*met -> p4) [0];
+        tauDown= *(TLorentzVector*)(*met -> p4) [0];
+        for (int iTau=0;iTau< bt -> p4 ->GetEntries() ; ++iTau)  
+        {
+            TLorentzVector delta;
+            delta.SetPtEtaPhiE(  1.03 * ((TLorentzVector*)(*bt->p4)[iTau])->Pt(), ((TLorentzVector*)(*bt->p4)[iTau])->Eta(), ((TLorentzVector*)(*bt->p4)[iTau])->Phi(), ((TLorentzVector*)(*bt->p4)[iTau])->E() * 1.03);
+            tauUp += delta;
+            tauDown -= delta;
+        }
+    */
+    
+    // tau scale propagated only on the leading tau
     TLorentzVector tauUp, tauDown;
     tauUp  = *(TLorentzVector*)(*met -> p4) [0];
     tauDown= *(TLorentzVector*)(*met -> p4) [0];
-    for (int iTau=0;iTau< bt -> p4 ->GetEntries() ; ++iTau)  
-    {
-        TLorentzVector delta;
-        delta.SetPtEtaPhiE(  1.03 * ((TLorentzVector*)(*bt->p4)[iTau])->Pt(), ((TLorentzVector*)(*bt->p4)[iTau])->Eta(), ((TLorentzVector*)(*bt->p4)[iTau])->Phi(), ((TLorentzVector*)(*bt->p4)[iTau])->E() * 1.03);
-        tauUp += delta;
-        tauDown -= delta;
+
+    for (auto& t : event_->taus_) { 
+        t->SetIsoCut(2.5); 
+        t->SetEtaCut(2.1); 
+        t->SetPtCut(20); 
+        t->SetMuRej(true); 
+        t->SetEleRej(true);
+        t->SetTrackPtCut(30.);
     }
-    event_ -> met_ . SetValueUp  (Smearer::TAUESCALE , tauUp.Pt() ); 
-    event_ -> met_ . SetValueDown(Smearer::TAUESCALE , tauDown.Pt() );
+    Tau*t = event_->GetTau(0);
+    if (t!=NULL){
+            TLorentzVector delta;
+            delta.SetPtEtaPhiE(  .03 * t->Pt(), t->Eta(), t->Phi(), t->E() * .03);
+            tauUp += delta;
+            tauDown -= delta;
+    }
+
+    event_ -> met_ . SetValueDown(Smearer::TAUESCALE , tauUp.Pt() );
+    event_ -> met_ . SetValueUp(Smearer::TAUESCALE , tauDown.Pt() );
     event_-> met_ . SetFilled(Smearer::TAUESCALE);
 
     //Log(__FUNCTION__,"DEBUG",Form("Met=%f MetJesUp=%f",((TLorentzVector*)(*met -> p4) [0])->Pt() , ((TLorentzVector*)(*met->metSyst)[BareMet::JesUp]) -> Pt()));
@@ -506,6 +534,7 @@ void LoadNero::FillMC(){
         << mc->p4->GetEntries()<<":"
             << mc->pdgId->size()<<":"
             << mc->flags->size()<<":"
+            << mc->parent->size()<<":"
             <<endl;
 #endif
 
@@ -514,14 +543,31 @@ void LoadNero::FillMC(){
         int apdg = abs(mc -> pdgId -> at(iGP) );
         bool keep=false;
         if (  (apdg == 11 or apdg ==13) and (mc -> flags ->at(iGP) & BareMonteCarlo::PromptFinalState) ) keep=true; // keep status 1 electrons and muons
+        // keep all regardless to the flag
+        if (  (apdg == 11 or apdg ==13) ) keep=true; // keep status 1 electrons and muons
         // keep Q/G/Tau
         if ( (apdg == 15 or apdg==21 or apdg <6 ) and (mc->flags->at(iGP) & ( BareMonteCarlo::HardProcess | BareMonteCarlo::HardProcessBeforeFSR | BareMonteCarlo::HardProcessDecayed) )) keep=true;
+        if (  (apdg == 24 or apdg ==23 or apdg ==37) )  keep=true; // keep W/Z/chHiggs
+        if (  (apdg == 5 or apdg ==6 ) ) keep=true; // keep top bottom
 
         if (not keep) continue;
+
+        int motherPdgId = -1;
+        int motherPdgIdx = -1;
+        int grandMotherPdgId = -1;
+
+        // 76X has no gen parent inforamtion, 
+        if (mc->parent->size()>0){
+            if( mc -> parent -> at(iGP) != -1) { motherPdgIdx = mc ->parent -> at(iGP); motherPdgId = mc -> pdgId -> at(motherPdgIdx); }
+            if(motherPdgIdx != -1 and mc -> parent -> at(motherPdgIdx) != -1) { grandMotherPdgId = mc -> pdgId -> at( mc ->parent -> at(motherPdgIdx)); }
+        }
 
         GenParticle *g =new GenParticle();
         g->SetP4( *(TLorentzVector*) ((*mc->p4)[iGP]) );
         g->SetPdgId( mc -> pdgId -> at(iGP));
+        if (mc->parent->size()>0) g->SetParentIdx( mc ->parent -> at(iGP));
+        g->SetParentPdgId(motherPdgId);
+        g->SetGrandParentPdgId(grandMotherPdgId);
         g->SetFlags( mc ->flags ->at(iGP) );
         event_ -> genparticles_ . push_back(g);
     }

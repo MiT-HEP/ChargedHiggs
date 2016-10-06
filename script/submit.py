@@ -228,7 +228,7 @@ if opts.hadd:
 		cmd = "zcat %s/log*.txt.gz | grep -i error | sort | uniq -c "%dir
 		st=call(cmd,shell=True)
 
-		cmd = "zcat %s/log*.txt.gz | grep -i error > /dev/null "%dir
+		cmd = "zcat %s/log*.txt.gz | grep -i '\[error\]' > /dev/null "%dir
 		st=call(cmd,shell=True)
 		if st == 0 and opts.clear:
 			print "-> Errors have been found. Refusing to clear"
@@ -292,8 +292,9 @@ if opts.tar:
 	cmd.extend( glob("bin/*so" ) )
 	cmd.extend( glob("bin/dict*" ) )
 	#cmd.extend( glob("bin/tag.txt" ) )
-	cmd.extend( glob("dat/*dat" ) )
-	cmd.extend( glob("dat/*txt" ) )
+	#cmd.extend( glob("dat/*dat" ) )
+	#cmd.extend( glob("dat/*txt" ) )
+	cmd.extend( glob("dat/*" ) )
 	cmd.extend( glob("aux/*" ) )
 	cmd.extend( glob("python/*py") )
 	#cmd.extend( glob("test/*") )
@@ -353,6 +354,7 @@ if opts.hadoop:
    run.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
    # if x509 proxy is copied to the workspace
    # export X509_USER_PROXY=x509up_u$(id -u)
+   #use_x509userproxy = true
    run.write("scram p CMSSW %s\n"%os.environ['CMSSW_VERSION'])
    run.write("cd %s/src\n"%os.environ['CMSSW_VERSION'])
    run.write("eval `scram runtime -sh`\n")
@@ -403,6 +405,7 @@ if opts.hadoop:
    condor.write("error = test.$(Process).err\n")
    condor.write("requirements = Arch == \"X86_64\" && OpSysAndVer == \"SL6\" && HasFileTransfer\n")
    condor.write("arguments = $(Process)\n")
+   condor.write("use_x509userproxy = true\n") ## X509 should work
    condor.write("queue %d\n"%(len(inputLs)))
    condor.close()
    cmdFile.write("cd %s\n"%opts.dir)

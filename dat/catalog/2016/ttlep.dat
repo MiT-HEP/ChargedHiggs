@@ -1,0 +1,6 @@
+sub=dalfonso|/store/cmst3/user/dalfonso/NERO
+
+## dalfonso has only a few files
+addfiles=%(dalfonso)s/ChHiggs/TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1
+addfiles=%(dalfonso)s/ChHiggs/TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1
+addfiles=%(dalfonso)s/ChHiggs/TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1

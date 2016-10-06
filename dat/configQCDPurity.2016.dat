@@ -1,0 +1,4 @@
+include=dat/configQCDPurity.dat
+include=dat/config.2016.dat
+
+addConfig=ChargeHiggsQCDPurity|is80X=1

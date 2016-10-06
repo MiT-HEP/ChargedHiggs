@@ -7,10 +7,10 @@ yrange=1e-3,1e3
 xrange=0,2000
 xtitle=m_{T}~[GeV]
 output= plot/Mt
-drawList= mc,chhiggs200,chhiggs500,chhiggs1500,data,box
+drawList= mc,chhiggs200,chhiggs500,data,box
 
 [legend]
-legendList = data,qcdinvisocorr,tt,st,ewk,chhiggs200,chhiggs500,chhiggs1500
+legendList = data,qcdinvisocorr,tt,st,ewk,chhiggs200,chhiggs500
 
 [box]
 type=box
@@ -83,17 +83,6 @@ rebinList=0,10,20,30,40,50,60,70,80,100,120,140,160,180,200,220,240,260,280,300,
 #rebin=10
 rebinList=0,10,20,30,40,50,60,70,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000
 
-[chhiggs1500]
-rebinList=0,10,20,30,40,50,60,70,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000
-type = th1d
-file = ChHiggs.root
-obj = ChargedHiggsTauNu/Vars/Mt_HplusToTauNu_M-1500_13TeV_amcatnlo
-style = line
-styleopt = 2
-color=ROOT.kMagenta
-label= H^{+}~(m=1500GeV)~x10^{2}
-scale=2308e2
-width=2
 
 #[ratio]
 #draw = True

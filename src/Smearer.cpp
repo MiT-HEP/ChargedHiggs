@@ -1,4 +1,6 @@
 #include "interface/Smearer.hpp"
+#include "interface/Handlers.hpp"
+
 int SmearJes::smear(Event *e)
 {
     // only on data apply Jes
@@ -141,6 +143,28 @@ int SmearTauScale::smear(Event *e)
     if ( not GetMet(e) . IsFilled() ) Log(__FUNCTION__,"WARNING","JES Smearing not filled in MET");
 
     return SMEAR_OK;
+}
+
+int SmearBjets::smear(Event *e)
+{
+    //e -> GetWeight()-> SetSystSF (sfname_,syst_);
+    SF_CSV* sf = dynamic_cast<SF_CSV*>(e -> GetWeight()-> GetSF (sfname_) );
+    if (sf==NULL)
+    {
+        Log(__FUNCTION__,"ERROR","Unable to locate SF with name "+sfname_);
+        throw abort;
+    }
+    if (sf->simpleError){
+        Log(__FUNCTION__,"ERROR","SF" + sf->name() +" has simpleErrors");
+        throw abort;
+    }
+
+    if (doB) sf->systB = syst_;
+    if (doL) sf->systL = syst_;
+    if (not doB and not doL) { Log(__FUNCTION__,"ERROR","Should smear something"); throw abort; }
+
+    return SMEAR_OK;
+
 }
 
 

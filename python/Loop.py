@@ -88,6 +88,7 @@ loop.InitLoader(cfg['Loader']);
 
 for file in cfg['Files']:
     for f in FindEOS(file):
+	if f == '': continue
 	if opts.verbose: print "Adding file: '"+f+"'"
 	loop.AddToChain(f)
 

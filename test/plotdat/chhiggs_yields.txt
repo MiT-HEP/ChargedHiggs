@@ -3,7 +3,7 @@ file= plotdat/chhiggs_none_template.txt
 sub= XXX:Mt,NOne:Vars
 
 [base]
-yrange=1.5e3,2.e3
+yrange=0,3000
 xrange=0,1000
 xtitle=yields
 output= plot/Yields

@@ -12,14 +12,37 @@ parser.add_option("-l","--label",dest="label",type="string",help="MC label",defa
 parser.add_option("-f","--file",dest="file",type="string",help="Pileup file (Output in UPDATE mode)",default="aux/pileup.root");
 parser.add_option("","--run",dest="run",type="string",help="run list",default="");
 parser.add_option("-r","--recursive", dest='rec', action= 'store_true', help="do same for each subdir", default =False);
+parser.add_option("","--mcdb",dest="mcdb",type="string",help="dump from mcdb",default="");
 
 (opts,args)=parser.parse_args()
 
 EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
 if '/eos/user' in opts.eos: EOS += " root://eosuser"
 
+if opts.eos=="" and opts.mcdb!="":
+	print "Inserting python in path"
+	sys.path.insert(0,os.getcwd())
+	sys.path.insert(0,os.getcwd()+"/python")
+	from  ParseDat import ReadMCDB
+	import ROOT
+	ROOT.gROOT.SetBatch()
+	mcdb=ReadMCDB(opts.mcdb)
+	for key in mcdb:
+		fIn=ROOT.TFile.Open(opts.file)
+		h = fIn.Get("PU-" + key ) 		
+		toRun=False ## make sure fIn is closed correctly
+		if h==None:toRun=True
+		fIn.Close()
+		if toRun:
+			cmd = "python %s -e %s -l %s -f %s --run '%s'"%(sys.argv[0],mcdb[key][0],key,opts.file,opts.run)
+			print "going to execute",cmd
+			call(cmd,shell=True)
+	exit(0)	
+
 if opts.rec:
-	cmd = EOS +" find -d "+opts.eos
+	cmd = EOS +" find -d "
+	if '/eos/user' in opts.eos: cmd += " --childcount "
+	cmd+=opts.eos
 	list = check_output(cmd,shell=True);
 	for line in list.split('\n'):
 		if line =='': continue

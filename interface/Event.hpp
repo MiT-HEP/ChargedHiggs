@@ -106,7 +106,9 @@ class Event{
     inline int Njets(){int n=0; for(auto j : jets_) if(j->IsJet()) n++; return n;}
     inline int NjetsInvIso(){int n=0; for(auto j : jets_) if(j->IsJetInvIso()) n++; return n;}
     inline int NcentralJets(){int n=0; for(auto j : jets_) if(j->IsCentralJet()) n++; return n;}
+    inline int NforwardJets(){int n=0; for(auto j : jets_) if(j->IsForwardJet()) n++; return n;}
     inline int Bjets(){int n=0; for(auto j : jets_) if(j->IsBJet()) n++; return n;}
+    inline int Ljets(){int n=0; for(auto j : jets_) if(not j->IsBJet()) n++; return n;}
     inline int BjetsInvIso(){int n=0; for(auto j : jets_) if(j->IsBJetInvIso()) n++; return n;}
     inline int Ntaus(){int n=0; for(auto t : taus_) if(t->IsTau()) n++; return n;}
     inline int Nleps(){int n=0; for(auto t : leps_) if(t->IsLep()) n++; return n;}
@@ -165,6 +167,7 @@ class Event{
     void ApplyTopReweight();
     void ApplyWReweight();
     void ApplyBTagSF(int wp=0);
+    void ApplyTauSF(Tau*t,bool prongs=true,const string& extra="");
 };
 
 #endif

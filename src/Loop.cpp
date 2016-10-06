@@ -109,13 +109,13 @@ void Looper::Loop()
 				static int slow_machine=0;
 				// min entries per second
 				if (iEntry >30000 and minEntries_>0 and 10000./sw_.RealTime() < minEntries_){
-					Log(__FUNCTION__,"ERROR",Form("Machine is too slow e/s=%.3f",10000./sw_.RealTime()));
+					Log(__FUNCTION__,"WARNING",Form("Machine is too slow e/s=%.3f",10000./sw_.RealTime()));
 					++slow_machine;
 					if (slow_machine> 3)throw slow();
 				}
 				// check that real time is within a ord of magn of cpu time
 				else if (iEntry >30000 and minEntries_>0 and sw_.RealTime() > 100* sw_.CpuTime()){
-					Log(__FUNCTION__,"ERROR","Real time too big wrt cpu time. I/O Problems?");
+					Log(__FUNCTION__,"WARNING","Real time too big wrt cpu time. I/O Problems?");
 					++slow_machine;
 					if(slow_machine>3)throw slow();
 				}
@@ -209,6 +209,8 @@ void Looper::NewFile()
 	size_t last = fname.rfind('/');
 	//size_t prevLast = fname.rfind('/',last-1);
 	size_t eos = fname.find("/store/");
+	if (eos==string::npos)
+		eos=fname.find("/eos/"); // this make it working for eosuser as well
 	//string label=fname.substr(prevLast+1,last - 1 - prevLast ); //pos,len
 
 	string label="";
@@ -240,6 +242,8 @@ void Looper::NewFile()
 	else {
 		// try as labels all the directories in the given order
 		//
+		bool success = false; // should load a MC
+
 		string savedDir= "" ;
 		int iDir= dirs.size()-1;
 		while ( savedDir == "" and iDir>=0 )
@@ -249,6 +253,8 @@ void Looper::NewFile()
 			--iDir;
 		}
 
+		if (savedDir != "") success = true;
+ 
 		// last change
 		if (savedDir =="")
 		{
@@ -257,10 +263,19 @@ void Looper::NewFile()
 			label = event_ -> GetWeight() -> LoadMCbyDir(dir);
 			savedDir = dir;
 			cout<<"[Looper]::[NewFile]::[WARNING] label found '"<<label<<"'"<<endl;
+			if (label != "") success=true;
 		}
 
+
 		if ( dir != savedDir or label == "")
+			{
 			cout<<"[Looper]::[NewFile]::[WARNING] saved dir '"<<savedDir<<"' and current dir '"<< dir <<"' label '"<<label<<"'"<<endl;
+			}
+		if (not success)
+		{
+			Log(__FUNCTION__,"ERROR","Unable to find correct MC in MCDB. Normalization uncorrect");	
+			throw abortException();
+		}
 
 	} // end MC
 
@@ -296,6 +311,25 @@ void Looper::FillEvent(){
 	if(VERBOSE>0) Log(__FUNCTION__,"DONE","");
 #endif 
 }
+
+int Looper::AddSmear(SmearBase*s)
+{ 
+	SmearBjets* bj= dynamic_cast<SmearBjets*>(s);
+	if (bj!=NULL ) 
+	{ 
+		SF_CSV * sf = dynamic_cast<SF_CSV*>(event_->GetWeight()->GetSF(bj->sfname()));
+		if (sf == NULL) 
+		{
+			Log(__FUNCTION__,"ERROR","SF"+bj->sfname()+"does not exist or is not SF_CSV");
+			throw abort;
+		}
+		sf->simpleError=false; 
+		Log(__FUNCTION__ ,"INFO","Setting SF simpleErrors to false for " + bj->sfname()) ;
+	}  
+	systs_ .push_back(s) ; 
+	return 0; 
+}
+
 
 // Local Variables:
 // mode:c++

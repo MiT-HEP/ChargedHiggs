@@ -19,7 +19,13 @@ public:
     void SetJetCuts(Jet*j) override;
     void SetTauCuts(Tau*t) override;
 
+    void BookHisto(string l, string category);
     void Preselection();
+
+    // function with various plots
+    bool genInfo(Event*e, GenParticle * & bAss, GenParticle * & bFromTopH , GenParticle * & bFromTopAss, GenParticle * & bFromH);
+    void jetPlot(Event*e, string label , string category,string systname);
+    void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
     int analyze(Event*,string systname) override;
     const string name() const override {return "ChargedHiggsTopBottom";}
@@ -34,11 +40,10 @@ private:
                   NoTau,
                   Met,
                   Mt,
-                  FourJets,
-                  B1Pt,
+                  NJets,
                   NB,
+                  MaxCut
     };
-
 
 };
 

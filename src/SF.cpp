@@ -81,17 +81,28 @@ void SF_PtEta::print(){
 }
 // --- TH1F 
 
-void SF_TH2F::init(string filename,string histname)
+void SF_TH2F::init(string filename,string histname,string errorname)
 {
     TFile *f = TFile::Open(filename.c_str() ) ;
     if (f == NULL){
         Log(__FUNCTION__,"ERROR","file '" + filename + "' does not exist");
-        throw abort ;
+        throw abortException() ;
     }
     TH2F *h=(TH2F*)f->Get(histname.c_str());
     if (h==NULL){
         Log(__FUNCTION__,"ERROR","h '"+histname+"' does not exist");
-        throw abort ;
+        throw abortException() ;
+    }
+
+    TH2F *errHist=NULL;
+
+    if (errorname!="")
+    {
+        errHist=(TH2F*)f->Get(errorname.c_str());
+        if (errHist==NULL){
+            Log(__FUNCTION__,"ERROR","error name '"+errorname+"' does not exist");
+            throw abortException() ;
+        }
     }
 
     for( int aetabin =1; aetabin <= h->GetNbinsX() ; ++aetabin)
@@ -103,6 +114,10 @@ void SF_TH2F::init(string filename,string histname)
         float aetamax = h->GetXaxis()->GetBinLowEdge(aetabin+1); 
         float sf = h->GetBinContent(aetabin,ptbin);
         float err = h->GetBinError(aetabin,ptbin);
+        if (errHist)
+        {
+            err=errHist->GetBinContent(aetabin,ptbin);
+        }
         if (ptbin == h->GetNbinsY() ) ptmax = 8000.; // highest is open, current recommendation
         add(ptmin,ptmax,aetamin,aetamax,sf,err);
     }
@@ -190,34 +205,35 @@ void SF_CSV::init(string filename)
     //---
     Log(__FUNCTION__,"INFO",string("Loading '") +filename+"' in SF CSV " + label );
     //string meas="incl";
-    string meas="mujets";
+    string measB="mujets";
+    string measL="incl";
     calib=new BTagCalibration("CSVv2",filename);
     readerL=new BTagCalibrationReader( BTagEntry::OP_LOOSE,  // operating point 
                     "central"           // systematics type
                      );
-    readerL->load( *calib, BTagEntry::FLAV_B,meas); readerL->load( *calib, BTagEntry::FLAV_C,meas); readerL->load( *calib, BTagEntry::FLAV_UDSG,meas);
+    readerL->load( *calib, BTagEntry::FLAV_B,measB); readerL->load( *calib, BTagEntry::FLAV_C,measB); readerL->load( *calib, BTagEntry::FLAV_UDSG,measL);
 
     readerL_up=new BTagCalibrationReader( BTagEntry::OP_LOOSE,"up" );
     readerL_down=new BTagCalibrationReader( BTagEntry::OP_LOOSE, "down" );
 
-    readerL_up->load( *calib, BTagEntry::FLAV_B,meas); readerL_up->load( *calib, BTagEntry::FLAV_C,meas); readerL_up->load( *calib, BTagEntry::FLAV_UDSG,meas);
-    readerL_down->load( *calib, BTagEntry::FLAV_B,meas); readerL_down->load( *calib, BTagEntry::FLAV_C,meas); readerL_down->load( *calib, BTagEntry::FLAV_UDSG,meas);
+    readerL_up->load( *calib, BTagEntry::FLAV_B,measB); readerL_up->load( *calib, BTagEntry::FLAV_C,measB); readerL_up->load( *calib, BTagEntry::FLAV_UDSG,measL);
+    readerL_down->load( *calib, BTagEntry::FLAV_B,measB); readerL_down->load( *calib, BTagEntry::FLAV_C,measB); readerL_down->load( *calib, BTagEntry::FLAV_UDSG,measL);
 
     readerM=new BTagCalibrationReader( BTagEntry::OP_MEDIUM, "central" );
     readerM_up=new BTagCalibrationReader(  BTagEntry::OP_MEDIUM,  "up" );
     readerM_down=new BTagCalibrationReader(  BTagEntry::OP_MEDIUM,  "down" );
 
-    readerM->load( *calib, BTagEntry::FLAV_B,meas); readerM->load( *calib, BTagEntry::FLAV_C,meas); readerM->load( *calib, BTagEntry::FLAV_UDSG,meas);
-    readerM_up->load( *calib, BTagEntry::FLAV_B,meas); readerM_up->load( *calib, BTagEntry::FLAV_C,meas); readerM_up->load( *calib, BTagEntry::FLAV_UDSG,meas);
-    readerM_down->load( *calib, BTagEntry::FLAV_B,meas); readerM_down->load( *calib, BTagEntry::FLAV_C,meas); readerM_down->load( *calib, BTagEntry::FLAV_UDSG,meas);
+    readerM->load( *calib, BTagEntry::FLAV_B,measB); readerM->load( *calib, BTagEntry::FLAV_C,measB); readerM->load( *calib, BTagEntry::FLAV_UDSG,measL);
+    readerM_up->load( *calib, BTagEntry::FLAV_B,measB); readerM_up->load( *calib, BTagEntry::FLAV_C,measB); readerM_up->load( *calib, BTagEntry::FLAV_UDSG,measL);
+    readerM_down->load( *calib, BTagEntry::FLAV_B,measB); readerM_down->load( *calib, BTagEntry::FLAV_C,measB); readerM_down->load( *calib, BTagEntry::FLAV_UDSG,measL);
 
     readerT=new BTagCalibrationReader( BTagEntry::OP_TIGHT, "central" );
     readerT_up=new BTagCalibrationReader( BTagEntry::OP_TIGHT,  "up" );
     readerT_down=new BTagCalibrationReader( BTagEntry::OP_TIGHT,  "down" );
 
-    readerT->load( *calib, BTagEntry::FLAV_B,meas); readerT->load( *calib, BTagEntry::FLAV_C,meas); readerT->load( *calib, BTagEntry::FLAV_UDSG,meas);
-    readerT_up->load( *calib, BTagEntry::FLAV_B,meas); readerT_up->load( *calib, BTagEntry::FLAV_C,meas); readerT_up->load( *calib, BTagEntry::FLAV_UDSG,meas);
-    readerT_down->load( *calib, BTagEntry::FLAV_B,meas); readerT_down->load( *calib, BTagEntry::FLAV_C,meas); readerT_down->load( *calib, BTagEntry::FLAV_UDSG,meas);
+    readerT->load( *calib, BTagEntry::FLAV_B,measB); readerT->load( *calib, BTagEntry::FLAV_C,measB); readerT->load( *calib, BTagEntry::FLAV_UDSG,measL);
+    readerT_up->load( *calib, BTagEntry::FLAV_B,measB); readerT_up->load( *calib, BTagEntry::FLAV_C,measB); readerT_up->load( *calib, BTagEntry::FLAV_UDSG,measL);
+    readerT_down->load( *calib, BTagEntry::FLAV_B,measB); readerT_down->load( *calib, BTagEntry::FLAV_C,measB); readerT_down->load( *calib, BTagEntry::FLAV_UDSG,measL);
 
     return;
 }
@@ -279,14 +295,43 @@ void SF_CSV::set( float pt, float eta, int wp, int flavor)
     {
         nominal = readerT; up = readerT_up ; down=readerT_down;
     }
-    else { Log(__FUNCTION__,"ERROR","Unsupported WP"); throw abort ;}
+    else { Log(__FUNCTION__,"ERROR","Unsupported WP"); throw abortException() ;}
 
     sf=nominal->eval(BTEFlav, eta, pt);
-    errUp=(up->eval(BTEFlav, eta, pt) -sf ) * scaleSyst;
-    errDown=(sf - down->eval(BTEFlav, eta, pt) ) * scaleSyst;
+
+    if (simpleError){
+        errUp=(up->eval(BTEFlav, eta, pt) -sf ) * scaleSyst;
+        errDown=(sf - down->eval(BTEFlav, eta, pt) ) * scaleSyst;
+    }
+    else // independent errors for L and B/C
+    {
+        double active=1.0;
+
+        if (BTEFlav == BTagEntry::FLAV_B or BTEFlav== BTagEntry::FLAV_C and systB==0) active=0.0;
+        if (BTEFlav == BTagEntry::FLAV_UDSG and systL==0) active=0.0;
+
+
+        errUp=(up->eval(BTEFlav, eta, pt) -sf ) * scaleSyst * active ;
+        errDown=(sf - down->eval(BTEFlav, eta, pt) ) * scaleSyst *active ;
+    }
 
     return;
 }
+
+double SF_CSV::get() { 
+    if (simpleError) return SF_Asymm::get() ;
+
+    if (systL==0  and systB==0) return sf; 
+    if (systL !=0  and systB !=0 ) Log(__FUNCTION__,"ERROR","SystL and SystB cannot be both !=0 simultaneously");
+    if (systL>0 ) return sf + errUp *systL  ; 
+    if (systL<0) return sf + errDown * systL ;
+    if (systB>0 ) return sf + errUp *systB  ; 
+    if (systB<0) return sf + errDown * systB ;
+
+    return 0.; 
+}
+
+
 
 // ------------ TF1 -----------------
 
