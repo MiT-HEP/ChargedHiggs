@@ -87,6 +87,7 @@ class Weight : virtual public SmearableBase {
     void SetSystSF(const string& label, int s );// { sf_db[label] -> syst = s;}
     void resetSystSF( ) ;
     void SetPtEtaSF(const string& label,double pt , double eta);
+    void SetPtEtaTimeSF(const string& label,double pt , double eta,long run ,long lumi);
     void SetWPSF(const string& label, int wp);
     void SetJetFlavorSF(const string& label, int flavor);
     void ApplySF(const string& label);

@@ -195,6 +195,20 @@ void Weight::SetPtEtaSF(const string& label,double pt, double eta)
     return;
 }
 
+void Weight::SetPtEtaTimeSF(const string& label,double pt, double eta,long run ,long lumi)
+{
+    #ifdef VERBOSE
+        if(VERBOSE>0) cout <<"[Weight]::[SetPtEtaSF]::[DEBUG1] label='"<<label<<"'"<<endl;
+    #endif
+    SF_PtEtaTime *p =  dynamic_cast<SF_PtEtaTime*> ( sf_db[label] );
+
+    if (p == NULL )
+        Log(__FUNCTION__,"ERROR", " SF '" + label + "' is not Pt Eta Time dependent" );
+
+    if (p) p->set(pt,eta,run,lumi);
+    return;
+}
+
 // ------------- CVS  ---
 void Weight::SetWPSF(const string& label, int wp)
 {

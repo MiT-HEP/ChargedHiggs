@@ -352,7 +352,7 @@ def ReadSFDB(file,verbose=False):
 			R['lumi1']=lumi1
 			R['lumi2']=lumi2
 
-		elif type =='xinmei-dir':
+		elif type =='xinmei-dir-inveff':
 			R['dir']  =  l.split(' ')[2] 
 			R['type'] = 'ptetatime'
 			lumibound=open(R['dir']+"/lumibound.txt")
@@ -414,8 +414,13 @@ def ReadSFDB(file,verbose=False):
 				      R['pt2'] = hEff.GetYaxis().GetBinLowEdge(yBin+1)
 				      R['eta1'] = hEff.GetXaxis().GetBinLowEdge(xBin)
 				      R['eta2'] = hEff.GetXaxis().GetBinLowEdge(xBin+1)
-				      R['sf'] =  hEff.GetBinContent(xBin,yBin)
-				      R['err'] = hErr.GetBinContent(xBin,yBin)
+				      try:
+			      	      	R['sf'] = 1./hEff.GetBinContent(xBin,yBin)
+			      	      	R['err'] = hErr.GetBinContent(xBin,yBin)/(hEff.GetBinContent(xBin,yBin)**2)
+				      except ZeroDivisionError:
+					print "<> Error Efficiency for bin:" ,xBin,",",yBin,"in file",R['filename'],"is 0, setting inveff to 1+/-1"
+				        R['sf']=1.
+					R['err']=1.
 
 				      R1={} ## copy 
 				      for key in R: R1[key] = R[key]

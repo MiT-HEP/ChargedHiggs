@@ -53,7 +53,7 @@ btag csv aux/CSVv2_ichep.csv
 #eleveto th2f aux/CutBasedID_VetoWP_76X_18Feb.txt_SF2D.root veto
 eleveto th2f aux/scalefactors_ele_80x.root:scalefactors_Veto_Electron veto
 muveto th2f aux/scalefactors_mu_80x.root:scalefactors_Loose_Muon veto
-mutrg xinmei-dir aux/xinmei
+mutrg xinmei-dir-inveff aux/xinmei
 #############
 ## POG Tau ##
 #############
