@@ -35,6 +35,20 @@ h.Draw("HIST")
 hUp.Draw("HIST SAME")
 hDown.Draw("HIST SAME")
 
+c2=ROOT.TCanvas("c2")
+r=h.Clone("r")
+rUp=hUp.Clone("rUp")
+rDown=hDown.Clone("rDown")
+
+r.Divide(h)
+rUp.Divide(h)
+rDown.Divide(h)
+
+r.Draw("HIST")
+rUp.Draw("HIST SAME")
+rDown.Draw("HIST SAME")
+
+r.GetYaxis().SetRangeUser(0.,2.)
 raw_input("ok?")
 
 

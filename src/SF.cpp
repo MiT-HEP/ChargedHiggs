@@ -367,6 +367,96 @@ void SF_TF2::print(){
     Log(__FUNCTION__,"INFO","------------------------------");
 }
 
+// ---------------- PT ETA TIME
+void SF_PtEtaTime::add(double pt1, double pt2,double eta1, double eta2,long run1,long run2, long lumi1,long lumi2, double sf, double err)
+{
+    range r;
+    r.pt1 = pt1;
+    r.pt2 = pt2;
+    r.eta1 = eta1;
+    r.eta2 = eta2;
+    r.run1= run1;
+    r.run2= run2;
+    r.lumi1= lumi1;
+    r.lumi2= lumi2;
+
+    store[r].first = sf;
+    store[r].second = err;
+
+#ifdef VERBOSE
+    if(VERBOSE>0)cout <<"[SF_PtEtaTime]::[add]::[DEBUG] Adding SF Pt Eta:"<<pt1<<":"<<pt2<<"|"<<eta1<<":"<<eta2<<":"<<run1<<":"<<run2<<":"<<lumi1<<":"<<lumi2<<"|"<<sf<<":"<<err<<endl;
+#endif
+}
+
+void SF_PtEtaTime::set( double pt, double eta, long run ,long lumi )
+{
+    int change = 0;
+    for(auto s : store)
+    {
+        if ( pt < s.first.pt1 ) continue;
+        if ( s.first.pt2  <= pt ) continue;
+        if ( eta < s.first.eta1 ) continue;
+        if ( s.first.eta2  <= eta ) continue;
+        // run range selection is [run1,run2]
+        if ( s.first.run2 >=0 and run > s.first.run2  ) continue;
+        if ( s.first.run1 >=0 and run < s.first.run1  ) continue;
+        // lumi range selection is [lumi1,lumi2], these checks needs to be made only if in the run boundaries
+        if ( s.first.run1 == run and s.first.lumi1 >=0 and lumi < s.first.lumi1  ) continue;
+        if ( s.first.run2 == run and s.first.lumi2 >=0 and lumi > s.first.lumi2  ) continue;
+        sf = s.second.first;	
+        err = s.second.second;
+        change = 1;
+        break;
+    }
+    if (not change)
+    {
+        cout<<"[SF_PtEta]::[set]::[ERROR] no PT ETA RANGE for SF '"<<label<<"' in pt="<<pt<<" eta="<<eta<<endl;
+        sf = 1.0;
+        err = 0.0;
+    }
+}
+
+const bool operator<( const SF_PtEtaTime::range&r1 , const SF_PtEtaTime::range &r2)
+{
+    // on pt1
+    if (r1.pt1 < r2.pt1) return true;
+    if (r1.pt1 > r2.pt1) return false;
+    // -- pt2
+    if (r1.pt2 < r2.pt2) return true;
+    if (r1.pt2 > r2.pt2) return false;
+    // -- eta1
+    if (r1.eta1 < r2.eta1) return true;
+    if (r1.eta1 > r2.eta1) return false;
+    // -- eta2
+    if (r1.eta2 < r2.eta2) return true;
+    if (r1.eta2 > r2.eta2) return false;
+    // -- run1
+    if (r1.run1 < r2.run1) return true;
+    if (r1.run1 > r2.run1) return false;
+    // -- run2
+    if (r1.run2 < r2.run2) return true;
+    if (r1.run2 > r2.run2) return false;
+    // -- lumi1
+    if (r1.lumi1 < r2.lumi1) return true;
+    if (r1.lumi1 > r2.lumi1) return false;
+    // -- lumi2
+    if (r1.lumi2 < r2.lumi2) return true;
+    if (r1.lumi2 > r2.lumi2) return false;
+    // they are equal
+    return false;
+}
+
+void SF_PtEtaTime::print(){
+    cout <<" ----- SF Pt Eta ------"<<endl;
+    cout <<"label='"<<label<<"'"<<endl;
+    for(auto& p : store ) 
+    {
+    cout << p.first.pt1<<":"<<p.first.pt2<<"|"<<p.first.eta1<<":"<<p.first.eta2<<"|"<<p.first.run1<<":"<<p.first.run2<<"|"<<p.first.lumi1<<":"<<p.first.lumi2<<"||"<< p.second.first<<":"<<p.second.second<<endl;
+    }
+    cout <<" ----------------------"<<endl;
+}
+
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

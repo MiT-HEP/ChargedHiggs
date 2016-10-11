@@ -69,6 +69,26 @@ void Weight::AddPtEtaSF( string label,double pt1, double pt2 , double eta1, doub
     return;
 }
 
+void Weight::AddPtEtaTimeSF( string label,double pt1, double pt2 , double eta1, double eta2, long run1,long run2,long lumi1,long lumi2, double sf, double err){
+    #ifdef VERBOSE
+        if(VERBOSE>0) cout <<"[Weight]::[AddPtEtaTimeSF]::[DEBUG1] adding sf label '"<<label<<"'"<<endl;
+    #endif
+    if ( sf_db.find(label) == sf_db.end() )
+    {
+        sf_db[label] = new SF_PtEtaTime();
+        sf_db[label]->label= label;
+        #ifdef VERBOSE
+            if(VERBOSE>0) cout <<"[Weight]::[AddPtEtaTimeSF]::[DEBUG1] Constructing PtEta"<<endl;
+        #endif
+    }
+    SF_PtEtaTime *p =  dynamic_cast<SF_PtEtaTime*> ( sf_db[label] );
+    if (p == NULL)
+        cout <<"[Weight]::[AddPtEtaTimeSF]::[ERROR] SF "<<label<<" is not Pt Eta dependent"<<endl;
+
+    p->add(pt1, pt2, eta1,eta2,run1,run2,lumi1,lumi2,sf,err);
+    return;
+}
+
 void Weight::AddSplineSF(string label, double pt, double sf, double err)
 {
     if(sf_db.find(label ) == sf_db.end() )

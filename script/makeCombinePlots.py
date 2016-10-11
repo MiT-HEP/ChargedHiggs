@@ -381,7 +381,7 @@ for idx in range(0,len(list_exp) ):
 		list_oneSigma[idx].Draw("PE3 SAME")
 	#mg.Add(list_exp[idx])
 	list_exp[idx].Draw("L SAME")
-	if opts.unblind: list_data[idx].Draw("P SAME")
+	if opts.unblind: list_data[idx].Draw("PL SAME")
 
 #mg.Draw("3")
 #mg.Draw("LPX")

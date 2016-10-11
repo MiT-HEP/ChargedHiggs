@@ -53,6 +53,7 @@ btag csv aux/CSVv2_ichep.csv
 #eleveto th2f aux/CutBasedID_VetoWP_76X_18Feb.txt_SF2D.root veto
 eleveto th2f aux/scalefactors_ele_80x.root:scalefactors_Veto_Electron veto
 muveto th2f aux/scalefactors_mu_80x.root:scalefactors_Loose_Muon veto
+mutrg xinmei-dir aux/xinmei
 #############
 ## POG Tau ##
 #############
@@ -63,8 +64,8 @@ tauid2 tf1 1.0 0.0002*x
 ## Tau Triggertrigger ##
 ########################
 ### SAMI MET 90 SF
-metLeg json-sami aux/metLegTriggerEfficiency2016.json
-tauLeg json-sami aux/tauLegTriggerEfficiency2016.json
+#metLeg json-sami aux/metLegTriggerEfficiency2016.json
+#tauLeg json-sami aux/tauLegTriggerEfficiency2016.json
 #######################
 ### top reweighting ###
 #######################
@@ -78,5 +79,5 @@ wreweight tf1 1 0
 ##################################
 ## MET TAU TRIGGER EFFICIENCIES ## (DATA ONLY, MC = 1)
 ##################################
-metLegData json-sami aux/metLegTriggerEfficiency2016Data.json
-tauLegData json-sami aux/tauLegTriggerEfficiency2016Data.json
+#metLegData json-sami aux/metLegTriggerEfficiency2016Data.json
+#tauLegData json-sami aux/tauLegTriggerEfficiency2016Data.json

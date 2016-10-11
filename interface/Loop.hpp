@@ -105,6 +105,8 @@ class Looper{
         inline void AddSF( string label, double sf, double err){ event_->GetWeight() -> AddSF(label,sf,err);}
         inline void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err)
         {event_ -> GetWeight()  -> AddPtEtaSF(label,pt1,pt2,eta1,eta2,sf,err); }
+        inline void AddPtEtaTimeSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,long run1,long run2, long lumi1,long lumi2,double sf, double err)
+        {event_ -> GetWeight()  -> AddPtEtaTimeSF(label,pt1,pt2,eta1,eta2,run1,run2,lumi1,lumi2,sf,err); }
         inline void AddSplineSF(string label, double pt, double sf, double err){ event_->GetWeight() -> AddSplineSF(label,pt,sf,err);}
         inline void AddCSVSF(string label, string filename){event_->GetWeight() ->AddCSVSF(label,filename);}
         inline void AddTh2fSF(string label, string filename){event_->GetWeight() ->AddTh2fSF(label,filename);}
