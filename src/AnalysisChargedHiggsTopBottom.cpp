@@ -136,6 +136,10 @@ void ChargedHiggsTopBottom::setTree(Event*e, Lepton* leadLep, Lepton* trailLep, 
 
     SetTreeVar("mc",mc);
 
+=======
+    t->SetProngsCut(-1);
+    t->SetDecayMode(0);
+>>>>>>> 095e566... tau configuration
 }
 
 void ChargedHiggsTopBottom::Init()
