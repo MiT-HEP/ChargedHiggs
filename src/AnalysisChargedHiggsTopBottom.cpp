@@ -27,6 +27,8 @@ void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
     t->SetMuRej(false);
     t->SetEleRej(false);
     t->SetTrackPtCut(-1.);
+    t->SetProngsCut(-1);
+    t->SetDecayMode(0);
 }
 
 void ChargedHiggsTopBottom::setTree(Event*e, Lepton* leadLep, Lepton* trailLep, string label, string category )
