@@ -4,11 +4,12 @@
 #include "TString.h"
 
 double lumi=12.9;
+double eff=1.;
 //12878700468.905
 
   //  histoName="HT_"; dirName="ChargedHiggsTopBottom/Baseline"; 
   //  histoName="CutFlow_"; dirName="ChargedHiggsTopBottom/CutFlow"; 
-TCanvas *dataMCstackPlot( TString histoName="",TString dirName="", bool doLog=false, int LepCat=0) {
+TCanvas *dataMCstackPlot( TString histoName="",TString dirName="", bool doLog=false, int LepCat=0, TString dirPlot="") {
 
 
   //  bool do1l=true;
@@ -116,9 +117,14 @@ TCanvas *dataMCstackPlot( TString histoName="",TString dirName="", bool doLog=fa
     if(sampleI==16) { sampleName="DYJets-madgraph"; sampleLabel="DYJetsToLL"; color=kYellow-9;}
     if(sampleI==17) { sampleName="WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"; sampleLabel="WJetsToLNu"; color=kGreen-9;}
 
+    if(LepCat==0) eff=(0.85); //1mu
+    if(LepCat==1) eff==1-(0.15*0.15); // dimu
+    if(LepCat==2) eff==0.85; //mue
+
     TH1 * h=getHisto (fileName, dirName, histoName+sampleName, color, 1,1);
     //    if(h) h->SetFillStyle(3354);
-    h->Scale(lumi*1000);
+    h->Scale(lumi*1000*eff);
+    //    h->Scale(lumi*1000);
     //    if(sampleI==0 || sampleI==1 || sampleI==2) {
       //      h->Scale(lumi*1000/1.5);
       //      h->Scale(lumi*1000);
@@ -177,26 +183,34 @@ TCanvas *dataMCstackPlot( TString histoName="",TString dirName="", bool doLog=fa
   if(hdata) hdata->Draw("p e");
   if(hs) hs->Draw("hist sames");
   if(hdata) hdata->Draw("p e sames");
-  if(h500) h500->Draw("hist sames");
-  if(h500) this_leg->AddEntry(h500, "M500 x 10 000 000", "l");
-  if(h1000) h1000->Draw("hist sames");
-  if(h1000) this_leg->AddEntry(h1000, "M1000 x 100 000 000", "l");
+  if(!(dirPlot.Contains("topCR") || dirPlot.Contains("extraRadCR"))) {
+    if(h500) h500->Draw("hist sames");
+    if(h500) this_leg->AddEntry(h500, "M500 x 10 000 000", "l");
+    if(h1000) h1000->Draw("hist sames");
+    if(h1000) this_leg->AddEntry(h1000, "M1000 x 100 000 000", "l");
+  }
   this_leg->Draw("sames");
 
 
   TLatex latexLabel;
-  latexLabel.SetTextSize(0.04);
+  latexLabel.SetTextSize(0.08);
   latexLabel.SetNDC();
   if(LepCat==0) latexLabel.DrawLatex(0.2, 0.9+0.04, "1#mu");
   if(LepCat==1) latexLabel.DrawLatex(0.2, 0.9+0.04, "2#mu");
   if(LepCat==2) latexLabel.DrawLatex(0.2, 0.9+0.04, "e#mu");
+  if(LepCat==0 && dirPlot.Contains("topCR")) latexLabel.DrawLatex(0.28, 0.9+0.04, "+ 4jets");
+  if((LepCat==1 || LepCat==2) && dirPlot.Contains("topCR")) latexLabel.DrawLatex(0.28, 0.9+0.04, "+ 2jets");
+  if(LepCat==0 && dirPlot.Contains("extraRadCR")) latexLabel.DrawLatex(0.28, 0.9+0.04, "+ 1b + >=5jets");
+  if((LepCat==1 || LepCat==2) && dirPlot.Contains("extraRadCR")) latexLabel.DrawLatex(0.28, 0.9+0.04, "+ 1b + >=3jets");
+
 
   pad2->cd();
   //  TH1* mcTOT=hs->GetHistogram(); // get tot MC from stack
   TH1 *mcTOT = ((TH1 *)(hs->GetStack()->Last())); // the "SUM"
   TH1F *hdataRatio = (TH1F*) hdata->Clone();
   hdataRatio->Divide(mcTOT);
-  hdataRatio->GetYaxis()->SetRangeUser(0.,2.);
+  //  hdataRatio->GetYaxis()->SetRangeUser(0.,2.);
+  hdataRatio->GetYaxis()->SetRangeUser(0.5,1.5);
   hdataRatio->SetTitle("");
   hdataRatio->Draw("p e");
 
@@ -219,10 +233,25 @@ TCanvas *dataMCstackPlot( TString histoName="",TString dirName="", bool doLog=fa
     if(LepCat==1) cst->SaveAs(Form("plots/N-1/N-1_%s2l.png",histoName.Data())); 
     if(LepCat==2) cst->SaveAs(Form("plots/N-1/N-1_%s2l_emu.png",histoName.Data())); 
   } else {
-    if(LepCat==0) cst->SaveAs(Form("plots/%s1l.png",histoName.Data())); 
-    if(LepCat==1) cst->SaveAs(Form("plots/%s2l.png",histoName.Data())); 
-    if(LepCat==2) cst->SaveAs(Form("plots/%s2l_emu.png",histoName.Data())); 
-  }
+    if(dirPlot.Contains("topCR"))   {
+      if(LepCat==0) cst->SaveAs(Form("topCR/%s1l.png",histoName.Data()));
+      if(LepCat==1) cst->SaveAs(Form("topCR/%s2l.png",histoName.Data()));
+      if(LepCat==2) cst->SaveAs(Form("topCR/%s2l_emu.png",histoName.Data()));
+    } else if(dirPlot.Contains("extraRadCR"))   {
+      if(LepCat==0) cst->SaveAs(Form("extraRadCR/%s1l.png",histoName.Data()));
+      if(LepCat==1) cst->SaveAs(Form("extraRadCR/%s2l.png",histoName.Data()));
+      if(LepCat==2) cst->SaveAs(Form("extraRadCR/%s2l_emu.png",histoName.Data()));
+    } else if(dirPlot.Contains("properties"))   {
+      if(LepCat==0) cst->SaveAs(Form("plots/properties/%s1l.png",histoName.Data()));
+      if(LepCat==1) cst->SaveAs(Form("plots/properties/%s2l.png",histoName.Data()));
+      if(LepCat==2) cst->SaveAs(Form("plots/properties/%s2l_emu.png",histoName.Data()));
+    } else {
+      if(LepCat==0) cst->SaveAs(Form("plots/%s1l.png",histoName.Data()));
+      if(LepCat==1) cst->SaveAs(Form("plots/%s2l.png",histoName.Data()));
+      if(LepCat==2) cst->SaveAs(Form("plots/%s2l_emu.png",histoName.Data()));
+    }
+
+    }
 
   return cst;
 
@@ -263,8 +292,23 @@ void dataMCstack() {
   c = dataMCstackPlot("NextLeadingBPt_",dirName,true,lepCat);
   c = dataMCstackPlot("NextLeadingBDiscr_",dirName,true,lepCat);
   c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat);
-  c = dataMCstackPlot("minDRbb_",dirName,false,lepCat);
-  c = dataMCstackPlot("dRlb_",dirName,false,lepCat);
+  c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat);
+  c = dataMCstackPlot("minDRbb_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("dRlb_",dirName,false,lepCat,"properties");
+  //  c = dataMCstackPlot("ptWb_",dirName,false,lepCat);
+
+  dirName="ChargedHiggsTopBottom/topCR_1Mu";
+  c = dataMCstackPlot("NBjets_",dirName,false,lepCat,"topCR");
+  c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"topCR");
+  c = dataMCstackPlot("minDRbb_",dirName,false,lepCat,"topCR");
+  c = dataMCstackPlot("HT_",dirName,true,lepCat,"topCR");
+
+  dirName="ChargedHiggsTopBottom/extraRadCR_1Mu";
+  c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat,"extraRadCR");
+  c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat,"extraRadCR");
+  //  c = dataMCstackPlot("Njets_",dirName,false,lepCat,"extraRadCR");
+  c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"extraRadCR");
+  c = dataMCstackPlot("HT_",dirName,true,lepCat,"extraRadCR");
 
   //// doing 2l
 
@@ -283,12 +327,32 @@ void dataMCstack() {
   c = dataMCstackPlot("LeptonTrailEta_",dirName,false,lepCat);
   c = dataMCstackPlot("LeptonTrailPt_",dirName,false,lepCat);
   c = dataMCstackPlot("LeptonTrailIso_",dirName,true,lepCat);
-  c = dataMCstackPlot("DiLeptonM_",dirName,false,lepCat);
+  c = dataMCstackPlot("DiLeptonM_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("DiLeptonPT_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("DiLeptonDeltaR_",dirName,false,lepCat,"properties");
   c = dataMCstackPlot("HT_",dirName,true,lepCat);
   c = dataMCstackPlot("Vertices_",dirName,false,lepCat);
-  c = dataMCstackPlot("minDRbb_",dirName,false,lepCat);
-  c = dataMCstackPlot("dRlb_",dirName,false,lepCat);
+  c = dataMCstackPlot("minDRbb_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("dRlb_",dirName,false,lepCat,"properties");
   c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat);
+  c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat);
+  c = dataMCstackPlot("minMT_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("maxMT_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("totMT_",dirName,false,lepCat,"properties");
+  //  c = dataMCstackPlot("ptWb_",dirName,false,lepCat);
+
+  dirName="ChargedHiggsTopBottom/topCR_2Mu";
+  c = dataMCstackPlot("NBjets_",dirName,false,lepCat,"topCR");
+  c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"topCR");
+  c = dataMCstackPlot("minDRbb_",dirName,false,lepCat,"topCR");
+  c = dataMCstackPlot("HT_",dirName,true,lepCat,"topCR");
+
+  dirName="ChargedHiggsTopBottom/extraRadCR_2Mu";
+  c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat,"extraRadCR");
+  c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat,"extraRadCR");
+  //  c = dataMCstackPlot("Njets_",dirName,false,lepCat,"extraRadCR");
+  c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"extraRadCR");
+  c = dataMCstackPlot("HT_",dirName,true,lepCat,"extraRadCR");
 
   lepCat=2;
 
@@ -307,7 +371,9 @@ void dataMCstack() {
   c = dataMCstackPlot("LeptonTrailEta_",dirName,false,lepCat);
   c = dataMCstackPlot("LeptonTrailPt_",dirName,false,lepCat);
   c = dataMCstackPlot("LeptonTrailIso_",dirName,true,lepCat);
-  c = dataMCstackPlot("DiLeptonM_",dirName,false,lepCat);
+  c = dataMCstackPlot("DiLeptonM_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("DiLeptonPT_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("DiLeptonDeltaR_",dirName,false,lepCat,"properties");
   c = dataMCstackPlot("HT_",dirName,true,lepCat);
   c = dataMCstackPlot("Vertices_",dirName,false,lepCat);
   c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat);
@@ -316,9 +382,25 @@ void dataMCstack() {
   c = dataMCstackPlot("NextLeadingBDiscr_",dirName,true,lepCat);
   c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat);
   c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat);
-  c = dataMCstackPlot("minDRbb_",dirName,false,lepCat);
-  c = dataMCstackPlot("dRlb_",dirName,false,lepCat);
+  c = dataMCstackPlot("minDRbb_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("dRlb_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("minMT_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("maxMT_",dirName,false,lepCat,"properties");
+  c = dataMCstackPlot("totMT_",dirName,false,lepCat,"properties");
 
+  dirName="ChargedHiggsTopBottom/topCR_1Mu1Ele";
+  c = dataMCstackPlot("NBjets_",dirName,false,lepCat,"topCR");
+  c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"topCR");
+  c = dataMCstackPlot("minDRbb_",dirName,false,lepCat,"topCR");
+  c = dataMCstackPlot("HT_",dirName,true,lepCat,"topCR");
 
+  dirName="ChargedHiggsTopBottom/extraRadCR_1Mu1Ele";
+  c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat,"extraRadCR");
+  c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat,"extraRadCR");
+  //  c = dataMCstackPlot("Njets_",dirName,false,lepCat,"extraRadCR");
+  c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"extraRadCR");
+  c = dataMCstackPlot("HT_",dirName,true,lepCat,"extraRadCR");
+
+  //  c = dataMCstackPlot("ptWb_",dirName,false,lepCat);
 }
 
