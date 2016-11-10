@@ -23,14 +23,21 @@ class Tau: virtual public Object,
     float trackpt_{0};
     float trackptcut_{0};
 
+    int selectprongs_{-1};
+    bool oldId{0};
+
+    int selectdecay_{-1};
+
 
     public:
     void SetTrackPt(const float& x){trackpt_=x;}
     void SetTrackPtCut(const float& x){trackptcut_=x;}
-    void SetEtaCut(float x){etacut_=x;}
+    void SetEtaCut(const float& x){etacut_=x;}
+    void SetProngsCut(const int& x){selectprongs_=x;}
+    void SetDecayMode(const int& x){selectdecay_=x;} // 0=NEW, 1=OLD
+
     void SetMuRej(bool x ) { doMuRej_ = x;}
     void SetEleRej(bool x ) { doEleRej_ = x;}
-
     void SetNProng(int n) {nprong=n;}
     void SetNPiZero(int n){npizero=n;}
 
