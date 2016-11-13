@@ -185,11 +185,26 @@ bool Output::Exists(string name){
     return false;
 }
 // ---------------------------- TREE -----------------
-void Output::Branch(string tree,string name, char type){ 
-    varValues_.Add(name,type); 
-    if (type != 'T')
+void Output::Branch(string tree,string name, char type,int MAXN,string num){ 
+    bool isArray = (type =='d' or type=='f' or type =='i');
+
+    // create variables
+    if (isArray)
+        varValues_.Add(name,type,MAXN); 
+    else
+        varValues_.Add(name,type); 
+    // ---- create branches
+    // array: fixed leghth, variable leght
+    if (isArray and num =="") 
+       trees_[tree]->Branch(name.c_str(), varValues_.GetPointer(name), (name+Form("[%d]",MAXN)+"/"+type).c_str() ) ;
+    if (isArray and num !="") 
+       trees_[tree]->Branch(name.c_str(), varValues_.GetPointer(name), (name+"["+num+"]/"+type).c_str() ) ;
+        
+    // float, int double
+    if (type == 'D' or type =='F' or type == 'I')
        trees_[tree]->Branch(name.c_str(), varValues_.GetPointer(name), (name+"/"+type).c_str() ) ;
-    else //if (type == 'T')
+    // TLorentzVectors
+    if (type == 'T')
         trees_[tree]->Branch(name.c_str(),"TLorentzVector", varValues_.GetPointer(name)) ;
 }
 
@@ -209,6 +224,9 @@ bool DataStore::Exists(string name)
    if( valuesF_.find( name ) != valuesF_.end() ) return true;
    if( valuesI_.find( name ) != valuesI_.end() ) return true;
    if( valuesP4_.find( name ) != valuesP4_.end() ) return true;
+   if( valuesDD_.find( name ) != valuesDD_.end() ) return true;
+   if( valuesFF_.find( name ) != valuesFF_.end() ) return true;
+   if( valuesII_.find( name ) != valuesII_.end() ) return true;
    return false;
 }
 void DataStore::Add(string name, char type)
@@ -220,24 +238,51 @@ void DataStore::Add(string name, char type)
         case 'D': valuesD_[name] = 0.0; break;
         case 'I': valuesI_[name] = 0;   break;
         case 'T': valuesP4_[name] = new TLorentzVector(0,0,0,0); break;
+        //arrays
+        case 'd': Add(name,type,10); break;
+        case 'f': Add(name,type,10); break;
+        case 'i': Add(name,type,10); break;
+
         default: Logger::getInstance().Log("DataStore","Add","ERROR", string("type '") + type + "' not defined" ); break;
     }
     return;
 }
+
+void DataStore::Add(string name, char type, int N)
+{
+    if(Exists(name)) return;
+
+    switch (type)
+    {
+        //arrays
+        case 'd': valuesDD_[name] . reset (new double [N]); break;
+        case 'f': valuesFF_[name] . reset (new float [N] ); break;
+        case 'i': valuesII_[name] . reset (new int [N] ); break;
+
+        default: Logger::getInstance().Log("DataStore","Add","ERROR", string("type '") + type + "' not defined for arrays" ); break;
+    }
+}
+
 void* DataStore::GetPointer(string name){
    if( valuesD_.find( name ) != valuesD_.end() ) return &valuesD_[ name ];
    if( valuesF_.find( name ) != valuesF_.end() ) return &valuesF_[ name ];
    if( valuesI_.find( name ) != valuesI_.end() ) return &valuesI_[ name ];
    if( valuesP4_.find( name ) != valuesP4_.end() ) return &valuesP4_[ name ];
+   if( valuesDD_.find( name ) != valuesDD_.end() ) return valuesDD_[ name ].get();
+   if( valuesFF_.find( name ) != valuesFF_.end() ) return valuesFF_[ name ].get();
+   if( valuesII_.find( name ) != valuesII_.end() ) return valuesII_[ name ].get();
    return NULL;
 }
 
 void DataStore::Print(){
     cout <<" ---- DATASTORE ----"<<endl;
-    for(auto p :valuesD_ ) cout<<p.first<<"| 'D': "<<p.second<<endl;
-    for(auto p :valuesF_ ) cout<<p.first<<"| 'F': "<<p.second<<endl;
-    for(auto p :valuesI_ ) cout<<p.first<<"| 'I': "<<p.second<<endl;
-    for(auto p :valuesP4_ ) cout<<p.first<<"| 'T': x="<<p.second->Px()<< " y="<< p.second->Py()<< " z=" << p.second->Pz() << " t="<<p.second->E() <<endl;
+    for(const auto& p :valuesD_ ) cout<<p.first<<"| 'D': "<<p.second<<endl;
+    for(const auto& p :valuesF_ ) cout<<p.first<<"| 'F': "<<p.second<<endl;
+    for(const auto& p :valuesI_ ) cout<<p.first<<"| 'I': "<<p.second<<endl;
+    for(const auto& p :valuesP4_ ) cout<<p.first<<"| 'T': x="<<p.second->Px()<< " y="<< p.second->Py()<< " z=" << p.second->Pz() << " t="<<p.second->E() <<endl;
+    for(const auto& p :valuesDD_ ) cout<<p.first<<"| 'DD'[0]: "<<p.second.get()[0]<<endl;
+    for(const auto& p :valuesFF_ ) cout<<p.first<<"| 'FF'[0]: "<<p.second.get()[0]<<endl;
+    for(const auto& p :valuesII_ ) cout<<p.first<<"| 'II'[0]: "<<p.second.get()[0]<<endl;
     cout <<" -------------------"<<endl;
 }
 
