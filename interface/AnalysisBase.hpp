@@ -57,9 +57,11 @@ class AnalysisBase : public Named
     inline TFile* GetOutputFile(){ return output_->GetFile() ;} // TMVA wants the file pointer
     // Tree Operations ---- 
     inline void InitTree(string name){ output_->InitTree(name);}
-    inline void Branch(string tree,string name,char type){ output_->Branch(tree,name,type);}
+    inline void Branch(string tree,string name,char type,int MAXN=10, string num=""){ output_->Branch(tree,name,type,MAXN,num);}
     template<class T>
     inline void SetTreeVar(string name, T value) { output_->SetTreeVar(name,value);}
+    template<class T>
+    inline void SetTreeVar(string name, int N, T value) { output_->SetTreeVar(name,N,value);}
     inline void PrintTreeVar(){output_->PrintTreeVar() ;}
     inline void FillTree(string tree){output_->FillTree(tree);}
     inline void PrintTree(string tree){output_->PrintTree(tree);}

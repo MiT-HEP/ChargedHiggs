@@ -8,6 +8,8 @@
 #include "TLorentzVector.h"
 
 #include <map>
+#include <memory>
+
 using namespace std;
 
 // class design to store tree variables
@@ -17,17 +19,26 @@ class DataStore{
         map<string,float> valuesF_;
         map<string,int >  valuesI_;
 
+        // to save arrays
+        map<string, std::unique_ptr<double> > valuesDD_;
+        map<string, std::unique_ptr<float> > valuesFF_;
+        map<string, std::unique_ptr<int> > valuesII_;
+
     public:
         DataStore(){};
         ~DataStore();
 
         void Add(string name, char type);
+        void Add(string name, char type,int N);
         bool Exists(string name);
         void* GetPointer(string name);
        
         //int float and double can be cast between them 
-        template<class T>
+        template<typename T>
         void Set(string name, const T & value);
+
+        template<typename T>
+        void Set(string name, int N,const T & value); // for array
 
         void Print();
 };
@@ -75,10 +86,17 @@ class Output{
     public:
 
         inline void InitTree(string name){ file_->cd(); trees_[name]= new TTree(name.c_str(),name.c_str());}
-        void Branch(string tree,string name, char type);
 
+        // N used only for arays types
+        void Branch(string tree,string name, char type,int MAXN=10,string num="");
+
+        //for vars
         template<class T>
         void SetTreeVar(string name, const T & value) { varValues_.Set(name,value);}
+
+        // for arrays
+        template<class T>
+        void SetTreeVar(string name, int N,const T & value) { varValues_.Set(name,N,value);}
 
         inline void FillTree(string tree){ trees_[tree]->Fill();}
         inline void PrintTreeVar(){ varValues_.Print() ;}
@@ -106,6 +124,18 @@ void DataStore::Set(string name, const T & value)
             valuesF_[name] = float( value) ;
    if( valuesI_.find( name ) != valuesI_.end() ) 
             valuesI_[name] = int( value) ;
+   return ;
+}
+
+template<class T>
+void DataStore::Set(string name,int N, const T & value)
+{
+   if( valuesDD_.find( name ) != valuesDD_.end() ) 
+            valuesDD_[name].get()[N] = double( value) ;
+   if( valuesFF_.find( name ) != valuesFF_.end() ) 
+            valuesFF_[name].get()[N] = float( value) ;
+   if( valuesII_.find( name ) != valuesII_.end() ) 
+            valuesII_[name].get()[N] = int( value) ;
    return ;
 }
 
