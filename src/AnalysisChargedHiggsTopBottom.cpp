@@ -27,6 +27,7 @@ void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
     t->SetMuRej(false);
     t->SetEleRej(false);
     t->SetTrackPtCut(-1.);
+    t->SetIsoRelCut(-1);
     t->SetProngsCut(-1);
     t->SetDecayMode(0);
 }
