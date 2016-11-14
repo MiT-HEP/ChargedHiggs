@@ -28,10 +28,10 @@ int Tau::IsTau() const {
     if ( trackptcut_ >0 and trackptcut_ > trackpt_) return 0;
     if ( not id_iso ) return 0; // this include additional cuts on top of the iso cut
     //if (GetNProng() != 1 ) return 0;
-    if ( selectprogs_ >=0 )
+    if ( selectprongs_ >=0 )
         {
-        if (selectprongs_<10 and selectprongs_ != GenNProng()) return 0;
-        if (selectprongs_== 13 and (GetNProng() !=1 and GetNProng() !=3) return 0;
+        if (selectprongs_<10 and selectprongs_ != GetNProng()) return 0;
+        if (selectprongs_== 13 and GetNProng() !=1 and GetNProng() !=3) return 0;
         }
 
     return 1;
@@ -47,7 +47,11 @@ int Tau::IsTauInvIso() const {
     if (iso2 > 20.0 ) return 0;
     if ( Pt() < ptcut_ ) return 0;
     if ( trackptcut_ >0 and trackptcut_ > trackpt_) return 0;
-    if (GetNProng() != 1 ) return 0;
+    if ( selectprongs_ >=0 )
+        {
+        if (selectprongs_<10 and selectprongs_ != GetNProng()) return 0;
+        if (selectprongs_== 13 and GetNProng() !=1 and GetNProng() !=3) return 0;
+        }
     return 1;
 }
 
