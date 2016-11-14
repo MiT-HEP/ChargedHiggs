@@ -205,7 +205,8 @@ void SF_CSV::init(string filename)
     //---
     Log(__FUNCTION__,"INFO",string("Loading '") +filename+"' in SF CSV " + label );
     //string meas="incl";
-    string measB="mujets";
+    //    string measB="mujets";
+    string measB="comb";
     string measL="incl";
     calib=new BTagCalibration("CSVv2",filename);
     readerL=new BTagCalibrationReader( BTagEntry::OP_LOOSE,  // operating point 
