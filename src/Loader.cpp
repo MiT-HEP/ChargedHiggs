@@ -286,7 +286,7 @@ void LoadNero::FillTaus(){
         t-> charge = bt -> Q -> at(iL);
         t-> type = 15;
         t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
-        t-> oldId =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding;
+        t-> SetOldId(  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding ) ;
         t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
         //t-> iso2 = bt -> isoMva -> at(iL);
         //t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleMedium ; 
