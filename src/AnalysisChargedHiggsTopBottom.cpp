@@ -42,7 +42,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, Lepton* leadLep, Lepton* trailLep, 
 
     SetTreeVar("NJets",e->Njets());
     SetTreeVar("NBJets",e->Bjets());
-    SetTreeVar("met",e->GetMet().Pt());
+    SetTreeVar("met_pt",e->GetMet().Pt());
     SetTreeVar("met_phi",e->GetMet().Phi());
 
     SetTreeVar("lep1_pt",leadLep->Pt());
@@ -78,14 +78,14 @@ void ChargedHiggsTopBottom::setTree(Event*e, Lepton* leadLep, Lepton* trailLep, 
     // Fill various event categories
     //
 
-    if (category.find("_1Mu")) SetTreeVar("lep_category",1);
-    if (category.find("_1Ele")) SetTreeVar("lep_category",2);
-    if (category.find("_2Mu")) SetTreeVar("lep_category",3);
-    if (category.find("_2Ele")) SetTreeVar("lep_category",4);
-    if (category.find("_1Mu1Ele")) SetTreeVar("lep_category",5);
+    if (category.find("_1Mu")    !=string::npos) SetTreeVar("lep_category",1);
+    if (category.find("_1Ele")   !=string::npos) SetTreeVar("lep_category",2);
+    if (category.find("_2Mu")    !=string::npos) SetTreeVar("lep_category",3);
+    if (category.find("_2Ele")   !=string::npos) SetTreeVar("lep_category",4);
+    if (category.find("_1Mu1Ele")!=string::npos) SetTreeVar("lep_category",5);
 
 
-    if (label.find("Hplus"))  // SIG
+    if (label.find("Hplus") !=string::npos)  // SIG
         {
             SetTreeVar("sig",1);
         }
@@ -94,43 +94,43 @@ void ChargedHiggsTopBottom::setTree(Event*e, Lepton* leadLep, Lepton* trailLep, 
     }
 
     int mc=0;
-    if (label.find("Hplus"))  //sig
+    if (label.find("Hplus") !=string::npos)  //sig
         {
             mc = 0;
-            if (label.find("M-300")) mc += 1;
-            if (label.find("M-400")) mc += 2;
-            if (label.find("M-500")) mc += 3;
-            if (label.find("M-800")) mc += 4;
-            if (label.find("M-1000")) mc += 5;
-            if (label.find("M-2000")) mc += 6;
-            if (label.find("M-3000")) mc += 7;
+            if (label.find("M-300") !=string::npos) mc += 1;
+            if (label.find("M-400") !=string::npos) mc += 2;
+            if (label.find("M-500") !=string::npos) mc += 3;
+            if (label.find("M-800") !=string::npos) mc += 4;
+            if (label.find("M-1000")!=string::npos) mc += 5;
+            if (label.find("M-2000")!=string::npos) mc += 6;
+            if (label.find("M-3000")!=string::npos) mc += 7;
         }
     else  // bkg
         {
             // ttbar + single top + ttV
             mc = 100;
-            if(label.find("TTJets_DiLept")) mc +=1 ;
-            if(label.find("TTJets_SingleLeptFromT")) mc +=2 ;
-            if(label.find("TTJets_SingleLeptFromTbar")) mc +=3 ;
-            if(label.find("ST_tW_top")) mc +=11 ;
-            if(label.find("ST_tW_antitop")) mc +=12 ;
-            if(label.find("ST_t-channel_top")) mc +=13 ;
-            if(label.find("ST_t-channel_antitop")) mc +=14 ;
+            if(label.find("TTJets_DiLept") !=string::npos) mc +=1 ;
+            if(label.find("TTJets_SingleLeptFromT") !=string::npos) mc +=2 ;
+            if(label.find("TTJets_SingleLeptFromTbar") !=string::npos) mc +=3 ;
+            if(label.find("ST_tW_top") !=string::npos) mc +=11 ;
+            if(label.find("ST_tW_antitop") !=string::npos) mc +=12 ;
+            if(label.find("ST_t-channel_top") !=string::npos) mc +=13 ;
+            if(label.find("ST_t-channel_antitop") !=string::npos) mc +=14 ;
             // V+jets
             mc = 200;
-            if(label.find("DYJets-madgraph")) mc +=21 ;
-            if(label.find("WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8")) mc +=22;
+            if(label.find("DYJets-madgraph") !=string::npos) mc +=21 ;
+            if(label.find("WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8")!=string::npos) mc +=22;
             // EWK
             mc = 300;
-            if(label.find("WWTo2L2Nu")) mc +=31 ;
-            if(label.find("WWToLNuQQ")) mc +=32 ;
-            if(label.find("WZTo1L1Nu2Q")) mc +=33 ;
-            if(label.find("WZTo1L3Nu")) mc +=34 ;
-            if(label.find("WZTo2L2Q")) mc +=35 ;
-            if(label.find("WZTo3LNu")) mc +=36 ;
-            if(label.find("ZZTo2L2Nu")) mc +=37 ;
-            if(label.find("ZZTo2L2Q")) mc +=38 ;
-            if(label.find("ZZTo4L")) mc +=39 ;
+            if(label.find("WWTo2L2Nu") !=string::npos) mc +=31 ;
+            if(label.find("WWToLNuQQ") !=string::npos) mc +=32 ;
+            if(label.find("WZTo1L1Nu2Q") !=string::npos) mc +=33 ;
+            if(label.find("WZTo1L3Nu") !=string::npos) mc +=34 ;
+            if(label.find("WZTo2L2Q") !=string::npos) mc +=35 ;
+            if(label.find("WZTo3LNu") !=string::npos) mc +=36 ;
+            if(label.find("ZZTo2L2Nu") !=string::npos) mc +=37 ;
+            if(label.find("ZZTo2L2Q") !=string::npos) mc +=38 ;
+            if(label.find("ZZTo4L") !=string::npos) mc +=39 ;
         }
 
     SetTreeVar("mc",mc);
@@ -185,9 +185,9 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","ht",'F');
 
     // fill all the object vector
-    Branch("tree_tb","jet_pt",'d' ) ;
-    Branch("tree_tb","jet_eta",'d') ;
-    Branch("tree_tb","jet_phi",'d') ;
+    Branch("tree_tb","jet_pt",'d',10,"NJets" );
+    Branch("tree_tb","jet_eta",'d',10,"NJets" );
+    Branch("tree_tb","jet_phi",'d',10,"NJets" );
 
 }
 
@@ -198,7 +198,7 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
 
 
         // do1lAnalysis
-        if(do1lAnalysis && (category.find("_1Mu") || category.find("_1Ele"))) { 
+        if(do1lAnalysis && (category.find("_1Mu") || category.find("_1Ele"))) {
             Book(    "ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+ l  , ("CutFlow "+ l).c_str(),10,-.5,10-.5);
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(Total+1,"Total");
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(OneLep+1,"N_{lep} >= 1");
@@ -212,7 +212,7 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
         }
 
         // do2lAnalysis
-        if(do2lAnalysis && (category.find("_2Mu") || category.find("_2Ele") || category.find("_1Mu1Ele"))) {
+        if(do2lAnalysis && (category.find("_2Mu") || category.find("_2Ele") || category.find("_1Mu1Ele")))  {
             Book(    "ChargedHiggsTopBottom/CutFlow"+category+"/CutFlowDilep_"+ l  , ("CutFlow "+ l).c_str(),10,-.5,10-.5);
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlowDilep_"+l,"")->GetXaxis()->SetBinLabel(Total+1,"Total");
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlowDilep_"+l,"")->GetXaxis()->SetBinLabel(OneLep+1,"N_{lep} >= 2");
@@ -553,8 +553,8 @@ void ChargedHiggsTopBottom::leptonicHiggs(Event*e,string label, string systname,
 
 void ChargedHiggsTopBottom::jetPlot(Event*e, Lepton* leadLep, Lepton* trailLep, string label, string category, string systname, string phasespace) {
 
-    bool filldo1l=(do1lAnalysis && (category.find("_1Mu") || category.find("_1Ele")));
-    bool filldo2l=(do2lAnalysis && (category.find("_2Mu") || category.find("_2Ele") || category.find("_1Mu1Ele"))); 
+    bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) ));
+    bool filldo2l=(do2lAnalysis && ( (category.find("_2Mu")  !=string::npos ) || ( category.find("_2Ele") !=string::npos ) || ( category.find("_1Mu1Ele")  !=string::npos ) ));
 
     if(not (filldo1l || filldo2l)) return;
 
@@ -812,7 +812,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             cut.SetCutBit(OneLep); // one lep
         }
         if( cut.passAllUpTo(OneLep) ) {
-            if(leadLep->IsMuon() && passTriggerMu) {
+            if(leadLep->IsMuon() && leadLep->IsTight() && passTriggerMu) {
                 category="_1Mu";
                 if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
             }
@@ -834,7 +834,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             cut.SetCutBit(OneLep); // one OS lepton Pair + leading above trigger threshould
         }
         if( cut.passAllUpTo(OneLep) ) {
-            if(leadLep->IsMuon() && trailLep->IsMuon() && passTriggerMu) {
+            if(leadLep->IsMuon() && leadLep->IsTight() && trailLep->IsMuon() && passTriggerMu) {
                 category="_2Mu";
                 if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
                 if (not e->IsRealData()) e->SetPtEtaSF("mureco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("mureco");
@@ -1035,7 +1035,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     GenParticle *bFromTopAss=NULL;
     GenParticle *bFromH=NULL;
 
-    if ( not e->IsRealData() and label.find("Higgs")){
+    if ( not e->IsRealData() and (label.find("Higgs")  !=string::npos ) ){
 
         rightCombination=false; // reset for Higgs
         rightCombination=genInfo(e,bAss,bFromTopH,bFromTopAss,bFromH); // compute the right combination in the higgs case
@@ -1103,7 +1103,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     //// ===> genInformation
 
-    if ( not e->IsRealData() and label.find("Higgs")){
+    if ( not e->IsRealData() and (label.find("Higgs")  !=string::npos) ){
 
         if(bFromTopH != NULL) p4b2 = bFromTopH->GetP4();
         if(bFromH != NULL) p4b1 = bFromH->GetP4();
