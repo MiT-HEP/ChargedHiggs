@@ -25,11 +25,11 @@ public:
 
     // function with various plots
     bool genInfo(Event*e, GenParticle * & bAss, GenParticle * & bFromTopH , GenParticle * & bFromTopAss, GenParticle * & bFromH);
-    void jetPlot(Event*e, Lepton* leadLep, Lepton* trailLep, string label, string category, string systname, string jetname);
+    void jetPlot(Event*e, string label, string category, string systname, string jetname);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
     // function for the mini-tree
-    void setTree(Event*e, Lepton* leadLep, Lepton* trailLep, string label, string  category);
+    void setTree(Event*e, string label, string  category);
 
     int analyze(Event*,string systname) override;
     const string name() const override {return "ChargedHiggsTopBottom";}
@@ -48,6 +48,15 @@ private:
                   NB,
                   MaxCut
     };
+
+    Lepton* leadLep;
+    Lepton* trailLep;
+
+    double evt_HT=-1;
+    double evt_minDRbb=-1;
+
+    double evt_DRl1b1=-1;
+    double evt_DRl2b1=-1;
 
 };
 
