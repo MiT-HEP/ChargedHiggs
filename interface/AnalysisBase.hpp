@@ -47,6 +47,8 @@ class AnalysisBase : public Named
     void Fill2D(string name, string syst , double valueX,double valueY, double weight=1);
     TH1D* GetHisto(string name, string systname);
     TH2D* GetHisto2D(string name, string systname);
+    void AddFinalHisto(const string&name) {output_ -> AddFinalHisto(name); }
+    void SetOnlyFinal(bool x=true) { output_->SetOnlyFinal(x) ; }
 
     vector<string> labels;
     inline vector<string>& AllLabel(){return labels;}

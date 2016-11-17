@@ -6,6 +6,8 @@ using namespace std;
 //
 void Output::Fill(string name, string syst , double value, double weight)
 {
+    if (not PassFinal(name) ) return ;
+
     string fullname = name + "_" + syst;
     if ( syst == "" or syst == "NONE")
         fullname = name;
@@ -24,6 +26,8 @@ void Output::Fill(string name, string syst , double value, double weight)
 
 void Output::Fill2D(string name, string syst , double valueX,double valueY, double weight)
 {
+    if (not PassFinal(name) ) return ;
+
     string fullname = name + "_" + syst;
     if ( syst == "" or syst == "NONE")
         fullname = name;
@@ -132,6 +136,8 @@ void Output::Write(){
 
 void Output::Book(string name, string title,int nBins, double xmin, double xmax)
 { 
+    if (not PassFinal(name) ) return ;
+
     if ( Exists(name) )
         cout <<"[Output]::[Book]::[ERROR] a TH1D/TH2D histo with the same name '"<<name<<"' already exist"<<endl;
     histos_ [name] = new TH1D(name.c_str(),
@@ -142,6 +148,8 @@ void Output::Book(string name, string title,int nBins, double xmin, double xmax)
 
 void Output::Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2, double ymin,double ymax)
 { 
+    if (not PassFinal(name) ) return ;
+
     if ( Exists(name) )
         cout <<"[Output]::[Book2D]::[ERROR] a TH1D/TH2D histo with the same name '"<<name<<"' already exist"<<endl;
 
@@ -155,6 +163,8 @@ void Output::Book2D(string name, string title,int nBins, double xmin, double xma
 
 void Output::Book(string name, string title,int nBins, double *xbound)
 { 
+    if (not PassFinal(name) ) return ;
+
     if ( Exists(name) )
         cout <<"[Output]::[Book]::[ERROR] a TH1/TH2 histo with the same name '"<<name<<"' already exist"<<endl;
 

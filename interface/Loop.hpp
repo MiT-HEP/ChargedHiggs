@@ -96,6 +96,8 @@ class Looper{
         int InitAnalysis() ;//{ for(auto a : analysis_ ) { a->SetOutput(output_); a->doInit() ;}  return 0;}
         int PrintInfo();
         int InitOutput(string name){output_ -> Open(name); return 0;}
+        void AddFinalHisto(const string&name) {output_ -> AddFinalHisto(name); }
+        void SetOnlyFinal(bool x=true) { output_->SetOnlyFinal(x) ; }
         //
         void Loop();
 
