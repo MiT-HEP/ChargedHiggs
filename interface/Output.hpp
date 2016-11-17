@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 
 using namespace std;
 
@@ -51,15 +52,32 @@ class Output{
         TFile *file_;
         map<string,TH1D*> histos_;
         map<string,TH2D*> histos2D_;
+        
 
 
-        inline TH1D* Get(string name){ return histos_[name];}
-        inline TH2D* Get2D(string name){ return histos2D_[name];}
+        inline TH1D* Get(string name){ 
+            if (not PassFinal(name) ) return dummy.get();
+            return histos_[name];
+        }
+        inline TH2D* Get2D(string name){ 
+            if (not PassFinal(name) ) return dummy2D.get();
+            return histos2D_[name];
+        }
 
         void CreateDir(string dir); // called by Write
 
+        // this option can be used to check name against 
+        // histo and avoid booking and filling
+        // use to make everything faster, don't use too many "final" objects
+        set<string> finalHistos_;
+        bool onlyFinal_{false};
+        inline bool PassFinal(const string&name) { return (not onlyFinal_) or finalHistos_.find(name) != finalHistos_.end() ; }
+        // create a fake histogram for not final return pointers
+        std::unique_ptr<TH1D> dummy;
+        std::unique_ptr<TH2D> dummy2D;
+
     public:
-        Output(){file_=NULL;}
+        Output(){file_=NULL;dummy.reset(new TH1D("dummy","dummy",100,0,1));dummy2D.reset(new TH2D("dummy","dummy",10,0,10,10,0,10));}
         ~Output(){}
         void Close();
         void Open(string name) ;
@@ -78,6 +96,10 @@ class Output{
         TH2D* Get2D(string name,string systname);
 
         inline TFile * GetFile(){ return file_;} // TMVA wants the file pointer
+
+        // Final objects
+        void SetOnlyFinal(bool x=true) {onlyFinal_ = x;}
+        void AddFinalHisto(string s){ finalHistos_.insert(s) ;}
 
         // ---- Tree Operations
     private:
