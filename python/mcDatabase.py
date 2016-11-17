@@ -24,6 +24,7 @@ if opts.rec:
 	#if '/eos/user' in opts.eos: 
 	cmd += " --childcount "
 	cmd+=opts.eos
+	cmd += " || true" ##FIXME
 	list = check_output(cmd,shell=True);
 	for line in list.split('\n'):
 		if line =='': continue

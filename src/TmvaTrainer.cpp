@@ -7,28 +7,18 @@
 using namespace std;
 
 
-TmvaTrainer::TmvaTrainer() : AnalysisBase(){
-    factory_=NULL;
-    train = true;
-}
-
-TmvaTrainer::~TmvaTrainer() {
-    if(factory_!=NULL) delete factory_;
-}
-
 
 void TmvaTrainer::AddVariable(string name, char type ,double xmin,double xmax)
 {
     cout<<"[TmvaTrainer]::[AddVariable]::[INFO] : "<<name<<" '"<<type<<"' "<<xmin<<" -- "<<xmax<<endl;
-    if (train) factory_ -> AddVariable(name.c_str(),type,xmin,xmax); 
     Branch("tmva_tree",name,type);
 
 }
 
 int TmvaTrainer::analyzeInvIso(Event*e,string systname)
 {
-    Jet* j1 = e->LeadJet(); 
-    Jet * bj1 = e->LeadBjet();
+    Jet* j1 = e->GetJetInvIso(0); 
+    Jet * bj1 = e->GetBjetInvIso(0);
     Tau *t1 = e->GetTauInvIso(0);
 
     if (e->Nleps() >0 ) return 0;
@@ -41,14 +31,15 @@ int TmvaTrainer::analyzeInvIso(Event*e,string systname)
     SetTreeVar("sig",0);
     SetTreeVar("mc",-200); // data driven bkg
 
-    SetTreeVar("NJets",e->Njets());
-    SetTreeVar("NCJets",e->NcentralJets());
-    SetTreeVar("BJets",e->Bjets());
+    SetTreeVar("NJets",e->NjetsInvIso());
+    SetTreeVar("NCJets",e->NcentralJetsInvIso());
+    SetTreeVar("BJets",e->BjetsInvIso());
     SetTreeVar("etat1",t1->Eta());
     SetTreeVar("phit1",t1->Phi());
     SetTreeVar("phimet",e->GetMet().Phi());
     SetTreeVar("ht",e->Ht());
     SetTreeVar("weight",e->weight());
+    SetTreeVar("mt",e->Mt());
 
     if (j1 != NULL ) SetTreeVar("pTj1",j1->Pt());
               else  SetTreeVar("pTj1",0);
@@ -101,6 +92,7 @@ int TmvaTrainer::analyze(Event*e, string systname)
     SetTreeVar("phimet",e->GetMet().Phi());
     SetTreeVar("ht",e->Ht());
     SetTreeVar("weight",e->weight());
+    SetTreeVar("mt",e->Mt());
 
     if (j1 != NULL ) SetTreeVar("pTj1",j1->Pt());
               else  SetTreeVar("pTj1",0);
@@ -120,27 +112,24 @@ int TmvaTrainer::analyze(Event*e, string systname)
     if (label.find("amcatnlo") != string::npos) 
     {
         mc= 200;
-        if (label.find("M-180") !=string::npos) mc += 1;
-        if (label.find("M-200") !=string::npos) mc += 2;
-        if (label.find("M-220") !=string::npos) mc += 3;
-        if (label.find("M-250") !=string::npos) mc += 4;
-        if (label.find("M-300") !=string::npos) mc += 5;
-        if (label.find("M-400") !=string::npos) mc += 6;
-    }
-    else if (label.find("Hplus") !=string::npos) 
-    {
-        mc=100 ;
-        if (label.find("M200") !=string::npos) mc += 1;
-        if (label.find("M250") !=string::npos) mc += 2;
-        if (label.find("M500") !=string::npos) mc += 3;
-        if (label.find("M900") !=string::npos) mc += 4;
+        if (label.find("M-180_") !=string::npos) mc += 1;
+        else if (label.find("M-200_") !=string::npos) mc += 2;
+        else if (label.find("M-220_") !=string::npos) mc += 3;
+        else if (label.find("M-250_") !=string::npos) mc += 4;
+        else if (label.find("M-300_") !=string::npos) mc += 5;
+        else if (label.find("M-400_") !=string::npos) mc += 6;
+        else if (label.find("M-500_") !=string::npos) mc += 7;
+        else if (label.find("M-800_") !=string::npos) mc += 8;
+        else if (label.find("M-1000_") !=string::npos) mc += 9;
+        else if (label.find("M-2000_") !=string::npos) mc += 10;
+        else if (label.find("M-3000_") !=string::npos) mc += 11;
     }
     else  // bkg
     {
         mc = -100;
         if(label.find("QCD") != string::npos) mc -=1 ;
         if(label.find("DY") != string::npos) mc -=2 ;
-        if(label.find("TTJets") != string::npos) mc -=3 ;
+        if(label.find("TT") != string::npos) mc -=3 ;
         if(label.find("WJets") != string::npos) mc -=4 ;
         if(label.find("WW") != string::npos) mc -=5 ;
         if(label.find("WZ") != string::npos) mc -=6 ;
@@ -170,17 +159,11 @@ int TmvaTrainer::analyze(Event*e, string systname)
 
 void TmvaTrainer::Init(){
     // output is already set
-    if(VERBOSE>0) cout<<"[TmvaTrainer]::[Init]::[DEBUG]::[1] InstanceTMVA "<<endl; 
 
     // -- Create a tree for TMVA
     InitTree("tmva_tree");
 
     // book factory
-    if(train) TMVA::Tools::Instance();
-    if(VERBOSE>0) cout<<"[TmvaTrainer]::[Init]::[DEBUG]::[1] Construct Factory "<<endl; 
-    if(train)factory_ = new TMVA::Factory("TMVAClassification", GetOutputFile(),
-            //"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
-            "!V:!Silent:Color:DrawProgressBar:Transformations=I;P;G,D:AnalysisType=Classification");
 
     if(VERBOSE>0) cout<<"[TmvaTrainer]::[Init]::[DEBUG]::[1] AddVariables "<<endl; 
    
@@ -194,6 +177,7 @@ void TmvaTrainer::Init(){
     AddVariable("phimet",'F',-10,10);
     AddVariable("phit1",'F',-10,10);
     AddVariable("ht",'F',0,10000);
+    AddVariable("mt",'F',0,10000);
     // -- Angular Variables
     AddVariable("rbb",'F',0,3.1415*2);
     AddVariable("rcoll",'F',0,3.1415*2);
@@ -209,39 +193,9 @@ void TmvaTrainer::Init(){
     Branch("tmva_tree","mc",'I'); // to distinguish between the different mc
     // tell tmva about weight
     Branch("tmva_tree","weight",'D');
-    if(train)factory_->SetWeightExpression("weight");
 
 }
 
-void TmvaTrainer::End(){
-
-    // if I just want to save the tree
-    if (not train) return;
-    //TODO, outdated, update with the offline one
-    if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] AddSignal and Bkg "<<endl; 
-    if(VERBOSE>0) PrintTree("tmva_tree");
-
-    factory_->AddSignalTree( GetTree("tmva_tree"));
-    factory_->AddBackgroundTree( GetTree("tmva_tree"));
-     
-    TCut sigCut ("sig > 0.5");
-    TCut bgCut  ("sig <= 0.5");
-     
-    factory_-> PrepareTrainingAndTestTree(sigCut,   bgCut,   
-        "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V");
-    
-    if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] Book Methods "<<endl; 
-    factory_ ->BookMethod(TMVA::Types::kBDT, "BDT",
-            "!H:!V:NTrees=850:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning"
-            );
-    if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] Train"<<endl;
-    factory_ -> TrainAllMethods();
-    if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] Test"<<endl;
-    factory_ -> TestAllMethods();
-    if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1] Evaluate"<<endl;
-    factory_ -> EvaluateAllMethods();
-    if(VERBOSE>0) cout<<"[TmvaTrainer]::[End]::[DEBUG]::[1]  >-> DONE <-<"<<endl;
-}
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil
