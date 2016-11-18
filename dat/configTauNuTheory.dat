@@ -1,13 +1,10 @@
 include=dat/configTauNu.dat
 sub=tag|v1.4.lhe
-Files=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8
-#addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8
-addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8
-addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8
-addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8
-addfiles=%(amarini)s/%(tag)s/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8
-MCDB=dat/mc_db_scales.dat 
+Files=
+include=dat/catalog/2015/taunu.dat
+#MCDB=dat/mc_db_scales.dat 
 #Smear=NONE
 ## the %% is because the is a substitution before with the dictionaries
 Smear=NONE,@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1),*[0!50]SmearPdfs(%%d)
 Output=ChHiggsTheory.root
+Final=true
