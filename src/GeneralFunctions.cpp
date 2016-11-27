@@ -1,4 +1,5 @@
 #include "interface/GeneralFunctions.hpp"
+#include "interface/Davismt2.hpp"
 #include "TMath.h"
 #include <cmath>
 
@@ -21,6 +22,26 @@ float ChargedHiggs::mtMassive( const TLorentzVector p1,  const TLorentzVector p2
 
     //   2* pt1 * pt2 * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi1,phi2)) ) );
     //    return TMath::Sqrt( 2* pt1 * pt2 * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi1,phi2)) ) );
+}
+
+
+float ChargedHiggs::mt2( const TLorentzVector visa,  const TLorentzVector visb,  const TLorentzVector metVec)
+{
+
+    Davismt2 davismt2;
+
+    // Format: M, px, py
+    double visaVector[3] = { visa.M() , visa.Px(), visa.Py() };
+    double visbVector[3] = { visb.M(), visb.Px(), visb.Py() };
+    double metVector[3] = { 0, metVec.Px(), metVec.Py() };
+
+    double mn    = 0.; // Neutrino mass
+
+    davismt2.set_momenta(visaVector,visbVector,metVector);
+    davismt2.set_mn(0);
+
+    return davismt2.get_mt2();
+
 }
 
 #include "TLorentzVector.h"
