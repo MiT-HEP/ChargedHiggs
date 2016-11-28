@@ -19,7 +19,7 @@ class AnalysisBase : public Named
     virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.15);l->SetEtaCut(2.4); l->SetTightCut(false);}
     //virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.25);l->SetEtaCut(2.4); l->SetTightCut(false);}
     virtual inline void SetPhotonCuts(Photon *p){p->SetIsoCut(-1); p->SetPtCut(30);}
-    virtual inline void SetTauCuts(Tau *t){ t->SetIsoCut(2.5); t->SetEtaCut(2.1); t->SetPtCut(20); t->SetMuRej(true); t->SetEleRej(true);t->SetTrackPtCut(30.);}
+    virtual inline void SetTauCuts(Tau *t){ t->SetIsoCut(2.5); t->SetEtaCut(2.1); t->SetPtCut(20); t->SetMuRej(true); t->SetEleRej(true);t->SetTrackPtCut(30.);t->SetProngsCut(1); t->SetDecayMode(1);}
     virtual inline void SetJetCuts(Jet *j){ j->SetBCut(0.460);j->SetEtaCut(4.7); j->SetEtaCutCentral(2.5);j->SetPtCut(30);j->SetPuIdCut(-.63);}
     virtual void SetGenCuts(GenParticle *g){};
     
@@ -47,6 +47,8 @@ class AnalysisBase : public Named
     void Fill2D(string name, string syst , double valueX,double valueY, double weight=1);
     TH1D* GetHisto(string name, string systname);
     TH2D* GetHisto2D(string name, string systname);
+    void AddFinalHisto(const string&name) {output_ -> AddFinalHisto(name); }
+    void SetOnlyFinal(bool x=true) { output_->SetOnlyFinal(x) ; }
 
     vector<string> labels;
     inline vector<string>& AllLabel(){return labels;}
@@ -57,9 +59,11 @@ class AnalysisBase : public Named
     inline TFile* GetOutputFile(){ return output_->GetFile() ;} // TMVA wants the file pointer
     // Tree Operations ---- 
     inline void InitTree(string name){ output_->InitTree(name);}
-    inline void Branch(string tree,string name,char type){ output_->Branch(tree,name,type);}
+    inline void Branch(string tree,string name,char type,int MAXN=10, string num=""){ output_->Branch(tree,name,type,MAXN,num);}
     template<class T>
     inline void SetTreeVar(string name, T value) { output_->SetTreeVar(name,value);}
+    template<class T>
+    inline void SetTreeVar(string name, int N, T value) { output_->SetTreeVar(name,N,value);}
     inline void PrintTreeVar(){output_->PrintTreeVar() ;}
     inline void FillTree(string tree){output_->FillTree(tree);}
     inline void PrintTree(string tree){output_->PrintTree(tree);}

@@ -23,19 +23,27 @@ class Tau: virtual public Object,
     float trackpt_{0};
     float trackptcut_{0};
 
+    int selectprongs_{-1};
+    bool oldId{0};
+
+    int selectdecay_{-1};
+
 
     public:
-    void SetTrackPt(const float& x){trackpt_=x;}
-    void SetTrackPtCut(const float& x){trackptcut_=x;}
-    void SetEtaCut(float x){etacut_=x;}
-    void SetMuRej(bool x ) { doMuRej_ = x;}
-    void SetEleRej(bool x ) { doEleRej_ = x;}
+    void inline SetOldId(const bool &x){oldId=x;}
+    void inline SetTrackPt(const float& x){trackpt_=x;}
+    void inline SetTrackPtCut(const float& x){trackptcut_=x;}
+    void inline SetEtaCut(const float& x){etacut_=x;}
+    void inline SetProngsCut(const int& x){selectprongs_=x;}
+    void inline SetDecayMode(const int& x){selectdecay_=x;} // 0=NEW, 1=OLD
 
-    void SetNProng(int n) {nprong=n;}
-    void SetNPiZero(int n){npizero=n;}
+    void inline SetMuRej(bool x ) { doMuRej_ = x;}
+    void inline SetEleRej(bool x ) { doEleRej_ = x;}
+    void inline SetNProng(int n) {nprong=n;}
+    void inline SetNPiZero(int n){npizero=n;}
 
-    int GetNProng() const { return nprong;}
-    int GetNPiZero() const { return npizero;}
+    int inline GetNProng() const { return nprong;}
+    int inline GetNPiZero() const { return npizero;}
 
     Tau() ;
     bool id;

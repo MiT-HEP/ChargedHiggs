@@ -8,6 +8,9 @@
 #include "TLorentzVector.h"
 
 #include <map>
+#include <memory>
+#include <set>
+
 using namespace std;
 
 // class design to store tree variables
@@ -17,17 +20,26 @@ class DataStore{
         map<string,float> valuesF_;
         map<string,int >  valuesI_;
 
+        // to save arrays
+        map<string, std::unique_ptr<double> > valuesDD_;
+        map<string, std::unique_ptr<float> > valuesFF_;
+        map<string, std::unique_ptr<int> > valuesII_;
+
     public:
         DataStore(){};
         ~DataStore();
 
         void Add(string name, char type);
+        void Add(string name, char type,int N);
         bool Exists(string name);
         void* GetPointer(string name);
        
         //int float and double can be cast between them 
-        template<class T>
+        template<typename T>
         void Set(string name, const T & value);
+
+        template<typename T>
+        void Set(string name, int N,const T & value); // for array
 
         void Print();
 };
@@ -40,15 +52,32 @@ class Output{
         TFile *file_;
         map<string,TH1D*> histos_;
         map<string,TH2D*> histos2D_;
+        
 
 
-        inline TH1D* Get(string name){ return histos_[name];}
-        inline TH2D* Get2D(string name){ return histos2D_[name];}
+        inline TH1D* Get(string name){ 
+            if (not PassFinal(name) ) return dummy.get();
+            return histos_[name];
+        }
+        inline TH2D* Get2D(string name){ 
+            if (not PassFinal(name) ) return dummy2D.get();
+            return histos2D_[name];
+        }
 
         void CreateDir(string dir); // called by Write
 
+        // this option can be used to check name against 
+        // histo and avoid booking and filling
+        // use to make everything faster, don't use too many "final" objects
+        set<string> finalHistos_;
+        bool onlyFinal_{false};
+        inline bool PassFinal(const string&name) { return (not onlyFinal_) or finalHistos_.find(name) != finalHistos_.end() ; }
+        // create a fake histogram for not final return pointers
+        std::unique_ptr<TH1D> dummy;
+        std::unique_ptr<TH2D> dummy2D;
+
     public:
-        Output(){file_=NULL;}
+        Output(){file_=NULL;dummy.reset(new TH1D("dummy","dummy",100,0,1));dummy2D.reset(new TH2D("dummy","dummy",10,0,10,10,0,10));}
         ~Output(){}
         void Close();
         void Open(string name) ;
@@ -68,6 +97,10 @@ class Output{
 
         inline TFile * GetFile(){ return file_;} // TMVA wants the file pointer
 
+        // Final objects
+        void SetOnlyFinal(bool x=true) {onlyFinal_ = x;}
+        void AddFinalHisto(string s){ finalHistos_.insert(s) ;}
+
         // ---- Tree Operations
     private:
         DataStore varValues_;
@@ -75,10 +108,17 @@ class Output{
     public:
 
         inline void InitTree(string name){ file_->cd(); trees_[name]= new TTree(name.c_str(),name.c_str());}
-        void Branch(string tree,string name, char type);
 
+        // N used only for arays types
+        void Branch(string tree,string name, char type,int MAXN=10,string num="");
+
+        //for vars
         template<class T>
         void SetTreeVar(string name, const T & value) { varValues_.Set(name,value);}
+
+        // for arrays
+        template<class T>
+        void SetTreeVar(string name, int N,const T & value) { varValues_.Set(name,N,value);}
 
         inline void FillTree(string tree){ trees_[tree]->Fill();}
         inline void PrintTreeVar(){ varValues_.Print() ;}
@@ -106,6 +146,18 @@ void DataStore::Set(string name, const T & value)
             valuesF_[name] = float( value) ;
    if( valuesI_.find( name ) != valuesI_.end() ) 
             valuesI_[name] = int( value) ;
+   return ;
+}
+
+template<class T>
+void DataStore::Set(string name,int N, const T & value)
+{
+   if( valuesDD_.find( name ) != valuesDD_.end() ) 
+            valuesDD_[name].get()[N] = double( value) ;
+   if( valuesFF_.find( name ) != valuesFF_.end() ) 
+            valuesFF_[name].get()[N] = float( value) ;
+   if( valuesII_.find( name ) != valuesII_.end() ) 
+            valuesII_[name].get()[N] = int( value) ;
    return ;
 }
 

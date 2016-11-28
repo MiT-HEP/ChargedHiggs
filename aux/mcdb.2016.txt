@@ -55,7 +55,16 @@ ST_t-channel_top /eos/user/m/mpedraza/Nero/8X/ST_t-channel_top_4f_inclusiveDecay
 ST_tW_antitop /eos/user/m/mpedraza/Nero/8X/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_antitop/160917_081110/0000 985000.0 35.85
 ST_tW_top /eos/user/m/mpedraza/Nero/8X/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_top/160917_081050/0000 998400.0 35.85
 
-# QCD (reHLT)
+##### RARES with tops (non reHLT)
+TTTT /eos/user/j/jaeyserm/Nero/8X/TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8/TTTT/161109_094832/0000 9011.12 0.009103
+TTZToQQ /eos/user/j/jaeyserm/Nero/8X/TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8/TTZToQQ/161109_094638/0000 396340.938017 0.5297
+TTZToLLNuNu /eos/user/j/jaeyserm/Nero/8X/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8/TTZToLLNuNu/161112_085229/0000 100243.216106 0.2529
+TTWJetsToQQ /eos/user/j/jaeyserm/Nero/8X/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/TTWJetsToQQ/161109_094734/0000 569424.146326 0.40620
+TTWJetsToLNu /eos/user/j/jaeyserm/Nero/8X/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/TTWJetsToLNu/161109_094716/0000 85686.5966678 0.2043
+VHToNonbb_M125 /eos/user/j/jaeyserm/Nero/8X/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/VHToNonbb_M125/161113_081235/0000 5256730.36194 0.9561
+tZq_ll_4f /eos/user/j/jaeyserm/Nero/8X/tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1/tZq_ll_4f/161109_094916/0000 229544.813892 0.0758
+
+##### QCD (reHLT)
 #QCD_Pt_15to30 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_15to30 998420.0 1954717132.37
 #QCD_Pt_30to50 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_30to50 984676.018179 140581825.84
 #QCD_Pt_50to80 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_50to80 981094.0 19514723.1492
