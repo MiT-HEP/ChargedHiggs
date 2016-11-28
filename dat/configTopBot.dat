@@ -17,6 +17,7 @@ include=dat/catalog/2016/topbottom.dat
 include=dat/catalog/2016/singleMuon_ICHEP.dat
 include=dat/catalog/2016/dy.dat
 include=dat/catalog/2016/wjets.dat
+include=dat/catalog/2016/rares.dat
 
 ####
 

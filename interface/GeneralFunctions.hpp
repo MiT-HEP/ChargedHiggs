@@ -10,6 +10,7 @@
 #include <bitset>
 #include <cmath>
 #include <TLorentzVector.h>
+//#include "interface/Davismt2.hpp"
 
 namespace ChargedHiggs{
 
@@ -24,6 +25,9 @@ namespace ChargedHiggs{
     float mtMassive( const TLorentzVector p1,  const TLorentzVector p2);
     // mt for massless particles
     float mt(const float pt1, const float pt2, const float phi1, const float phi2);
+    // compute mt2
+    float mt2( const TLorentzVector visa,  const TLorentzVector visb,  const TLorentzVector metVec);
+
 
     // use this for massive objects
     template <typename T>

@@ -111,7 +111,7 @@ for x in basecat:
 	       catStore[name]["hasMC"]=["WW","WZ","ZZ","TT","ST","HPlus"]
 
 mcStore={
-	"HPlus":{"name":"HPlus", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0},
+	"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0},
 	"WJets":{"name":"WJets", "hist":["WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"],"num":1 },
 	"WW":{ "name":"WW","hist":[ "WWTo2L2Nu","WWToLNuQQ"],"num":2},
 	"WZ":{ "name":"WZ","hist":["WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu"],"num":3},

@@ -3,6 +3,11 @@
 #include "interface/AnalysisBase.hpp"
 #include "interface/CutSelector.hpp"
 
+
+#include "interface/Output.hpp" // DataStore
+#include "TMVA/Reader.h"
+#include "TMVA/Tools.h"
+
 class ChargedHiggsTopBottom:  virtual public AnalysisBase
 {
 public:
@@ -19,16 +24,31 @@ public:
     void SetJetCuts(Jet*j) override;
     void SetTauCuts(Tau*t) override;
 
-    void BookHisto(string l, string category);
+    void BookCutFlow(string l, string category);
+    void BookHisto(string l, string category, string phasespace);
     void Preselection();
 
     // function with various plots
-    bool genInfo(Event*e, GenParticle * & bAss, GenParticle * & bFromTopH , GenParticle * & bFromTopAss, GenParticle * & bFromH);
-    void jetPlot(Event*e, string label , string category,string systname);
+    void jetPlot(Event*e, string label, string category, string systname, string jetname);
+    void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
+
+    int genInfoForBKG(Event*e);
+    bool genInfoForSignal(Event*e);
+
+    // function for the mini-tree
+    void setTree(Event*e, string label, string  category);
 
     int analyze(Event*,string systname) override;
     const string name() const override {return "ChargedHiggsTopBottom";}
+
+    // Variables for MVA
+    template<class T>
+    void SetVariable( string name, T value){ varValues_.Set(name, value); }
+    void AddVariable( string name, char type);
+
+    vector<string> weights;
+
 
 private:
 
@@ -44,6 +64,48 @@ private:
                   NB,
                   MaxCut
     };
+
+    Lepton* leadLep=NULL;
+    Lepton* trailLep=NULL;
+
+    double evt_HT=-1;
+    double evt_minDRbb=-1;
+
+    double evt_MT=-1;
+    double evt_MT2bb=-1;
+    double evt_DRl1b1=-1;
+
+    // these are defined only for 2l
+    double evt_DRl2b1=-1;
+    double evt_MT2ll=-1;
+    double evt_MTmin=-1;
+    double evt_MTmax=-1;
+    double evt_MTtot=-1;
+
+
+    vector<float> bdt;
+
+    int nGenB = 0 ;
+
+    /////
+    /////
+
+    GenParticle * bAss=NULL;
+    GenParticle * bFromTopH=NULL;
+    GenParticle * bFromTopAss=NULL;
+    GenParticle * bFromH=NULL;
+    GenParticle * leptonFromTopH=NULL;
+    GenParticle * leptonTopAssH=NULL;
+
+    /////
+    /////
+
+    DataStore varValues_;
+
+    //
+    //TMVA::Reader *reader_ ;
+    vector<TMVA::Reader*> readers_;
+
 
 };
 
