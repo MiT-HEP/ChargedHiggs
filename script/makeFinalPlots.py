@@ -13,6 +13,9 @@ parser.add_option("","--ewklumi",type='float',help="EWK Luminosity pb. [%default
 parser.add_option("-b","--batch",action='store_true',help="Batch [%default]",default=True)
 parser.add_option("-x","--no-batch",dest='batch',action='store_false',help="non batch")
 
+parser.add_option("","--base",type='string',help="BaseDirectory. [%default]", default="Vars")
+parser.add_option("","--var",type='string',help="Variable. [%default]", default="Mt")
+
 extra = OptionGroup(parser,"Extra options:","")
 extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=1000)
 
@@ -43,7 +46,7 @@ def Smooth(h):
 	if True and \
 	   'WJets' not in h.GetName() and \
 	   'TT' not in h.GetName() and \
-	   'MtIsoInv_Data' not in h.GetName() : 
+	   opts.var+'IsoInv_Data' not in h.GetName() : 
 		   return
 	x0=250.
 	bin0=h.FindBin(x0)
@@ -222,7 +225,8 @@ if opts.ewk == "" : mcList.extend(["DY","TT","ST","WW","WZ","ZZ","WJets"])
 #from buildworkspace import systsMC,systsQCD,systsEWK,tailfit,Rebin,Smooth, GetHistoFromFile
 tailfit=False
 systsMC=["BTAGB","BTAGL","JES","TAU","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW","TRIG"]
-systsQCD=["RFAC1p","RFAC3p"]
+systsQCD=["RFAC"]
+#systsQCD=["RFAC1p","RFAC3p"]
 systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT"]
 systsNorm={"CMS_scale_ttbar":(["0.965/1.024","0.977/1.028"],["TT","ST"]),
  	   "CMS_pdf_ttbar": (["1.042","1.026"],["TT","ST"]),
@@ -233,7 +237,6 @@ systsNorm={"CMS_scale_ttbar":(["0.965/1.024","0.977/1.028"],["TT","ST"]),
  	   "CMS_pdf_VV":(["1.022","1.044","1.037"],["WW","WZ","ZZ"]) 
 }
 ##  systsNorm={}
-
 
 ## get files
 fIn = ROOT.TFile.Open(opts.input,"READ")
@@ -258,15 +261,17 @@ if opts.ewk != "":
 #################
 ### Get Data  ###
 #################
-basedir = "ChargedHiggsTauNu/Vars/"
+basedir = "ChargedHiggsTauNu/" + opts.base +"/"
 
-lastget=basedir+"Mt_Data"
+lastget=basedir+opts.var+"_Data"
 h_data = fIn.Get( lastget)
+if h_data==None:
+	print "-> Unable to find histogram '"+lastget+"'"
 if opts.rebin>999:
 	h_data=Rebin(h_data)
 elif opts.rebin >0 :
 	h_data.Rebin(opts.rebin)
-Blind(h_data)
+#Blind(h_data)
 
 #################
 ### Get BKG   ###
@@ -320,7 +325,7 @@ for syst in systAll:
 			isNormForMC=True
 
 	if syst=="" or (syst not in systsMC and not isNormForMC):
-		lastget=basedir+"Mt_"+ mc
+		lastget=basedir+opts.var+"_"+ mc
 		h_mc=GetHistoFromFile(fIn,lastget)
 		if 'Hplus' not in mc:
 			Smooth(h_mc)
@@ -359,14 +364,14 @@ for syst in systAll:
 		h_bkg_syst_up.Add(h_mc_up)
 		h_bkg_syst_dn.Add(h_mc_dn)
 	else:
-		lastget=basedir+"Mt_"+ mc + "_" + syst +"Up"
+		lastget=basedir+opts.var+"_"+ mc + "_" + syst +"Up"
 		h_mc_up=GetHistoFromFile(fIn,lastget)
 		if 'Hplus' not in lastget:
 			Smooth(h_mc_up)
 		Normalize(h_mc_up)
 		h_bkg_syst_up.Add(h_mc_up)
 
-		lastget=basedir+"Mt_"+ mc + "_" + syst +"Down"
+		lastget=basedir+opts.var+"_"+ mc + "_" + syst +"Down"
 		h_mc_dn=GetHistoFromFile(fIn,lastget)
 		if 'Hplus' not in lastget:
 			Smooth(h_mc_dn)
@@ -375,7 +380,7 @@ for syst in systAll:
 
   if opts.qcd!="" :
 	if syst=="" or syst not in systsQCD:
-		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
+		lastget="ChargedHiggsQCDPurity/"+opts.base+"/"+opts.var+"IsoInv_Data"
 		addlist=[]
 		for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
 			addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
@@ -398,7 +403,7 @@ for syst in systAll:
 			h_bkg_syst_dn.Add(h_qcd)
 
 	else:
-		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
+		lastget="ChargedHiggsQCDPurity/"+opts.base+"/"+opts.var+"IsoInv_Data"
 		lastget+="_"+syst
 		lastget+="Up"
 		addlist=[]
@@ -414,7 +419,7 @@ for syst in systAll:
 		Normalize(h_qcd_up)
 		h_bkg_syst_up.Add(h_qcd_up)
 
-		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
+		lastget="ChargedHiggsQCDPurity/"+opts.base+"/"+opts.var+"IsoInv_Data"
 		lastget+="_"+syst
 		lastget+="Down"
 		addlist=[]
@@ -541,8 +546,8 @@ print "BKG",h_bkg.GetBinContent(1)
 st.GetXaxis().SetTitle("m_{T} [GeV]")
 st.GetXaxis().SetTitleOffset(1.4)
 st.GetXaxis().SetRangeUser(0,500)
-st.GetYaxis().SetRangeUser(0,1000)
-st.SetMaximum(850)
+st.GetYaxis().SetRangeUser(0,2000)
+st.SetMaximum(2000)
 st.GetYaxis().SetTitle("Events")
 st.GetYaxis().SetTitleOffset(1.4)
 

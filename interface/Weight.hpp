@@ -73,6 +73,7 @@ class Weight : virtual public SmearableBase {
     SF* GetSF(string label){ if (sf_db.find(label) == sf_db.end() ) return NULL; return sf_db[label]; } // avoid to create label if not there
     void AddSF( string label, double sf, double err);
     void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err);
+    void AddPtEtaTimeSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,long run1,long run2,long lumi1,long lumi2,double sf, double err);
     void AddTh2fSF(string label, string filename);
     void AddSplineSF(string label, double pt, double sf, double err);
     void AddCSVSF(string label, string filename);
@@ -86,6 +87,7 @@ class Weight : virtual public SmearableBase {
     void SetSystSF(const string& label, int s );// { sf_db[label] -> syst = s;}
     void resetSystSF( ) ;
     void SetPtEtaSF(const string& label,double pt , double eta);
+    void SetPtEtaTimeSF(const string& label,double pt , double eta,long run ,long lumi);
     void SetWPSF(const string& label, int wp);
     void SetJetFlavorSF(const string& label, int flavor);
     void ApplySF(const string& label);

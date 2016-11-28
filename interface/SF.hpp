@@ -66,6 +66,28 @@ class SF_PtEta : virtual public SF
 
 const bool operator<( const SF_PtEta::range&r1 , const SF_PtEta::range &r2);
 
+class SF_PtEtaTime : virtual public SF_PtEta
+{
+
+    public: 
+        struct range : public SF_PtEta::range{
+            long run1{-1}, run2{-1};
+            long lumi1{-1}, lumi2{-1};
+        };
+
+    private:
+        map < range, pair<double,double> >  store;
+    public:
+
+        virtual void add(double pt1, double pt2 , double eta1, double eta2, long run1,long run2, long lumi1,long lumi2,double sf, double err);
+        // will copy the right SF and err in the mother members sf,err
+        virtual void set(double pt,double eta,long run, long lumi);
+        void print();
+        const string name() const {return "SF_PtEtaTime";}
+};
+
+const bool operator<( const SF_PtEtaTime::range&r1 , const SF_PtEtaTime::range &r2);
+
 
 class SF_TH2F : virtual public SF_PtEta
 {
