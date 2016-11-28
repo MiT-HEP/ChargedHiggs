@@ -361,8 +361,8 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
         Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/Mt_"+l,"Mt "+l+";M_{T} [GeV]",60,0,300);
         Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/EtMiss_"+l,"EtMiss "+l+";E_{T}^{miss} [GeV]",30,0,300);
         Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/Njets_"+l,"Njets "+l + ";Number of jets P_{T}>40 [GeV]",15,0,15);
-        Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/Nforwardjets_"+l,"Njcentraljets "+l + ";Number of jets P_{T}>40 [GeV] |#eta| <2.4",10,0,10);
-        Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/Ncentraljets_"+l,"Nforwardjets "+l + ";Number of jets P_{T}>40 [GeV] |#eta| >2.4",10,0,10);
+        Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/Ncentraljets_"+l,"Ncentraljets "+l + ";Number of jets P_{T}>40 [GeV] |#eta| <2.4",10,0,10);
+        Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/Nforwardjets_"+l,"Nforwardjets "+l + ";Number of jets P_{T}>40 [GeV] |#eta| >2.4",10,0,10);
         Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/NBjets_"+l,"NBjets "+l + ";Number of b jets P_{T}>40 [GeV]",10,0,10);
 
 }
@@ -378,6 +378,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+l,"LeptonTrailEta "+l + ";#eta (lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+l,"LeptonTrailPt "+l + ";p_{T} (lepton)",50,0.,200.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+l,"LeptonTrailIso "+l + ";iso (lepton)",50,0.,100.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+l,"Mt "+l+";M_{T} [GeV]",60,0,300);
 
         /// Vertices
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Vertices_"+l,"Vertices "+l + ";Number of vertices",50,0.,50.);
@@ -385,8 +386,8 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         /////
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/NBjets_"+l,"NBjets "+l + ";Number of b jets P_{T}>40 [GeV]",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Njets_"+l,"Njets "+l + ";Number of jets P_{T}>40 |#eta|>2.4",10,0,10);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/Ncentraljets_"+l,"Njets "+l + ";Number of jets P_{T}>40 |#eta|<=2.4",10,0,10);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/Nforwardjets_"+l,"Njets "+l + ";Number of jets P_{T}>40 |#eta|>2.4",10,0,10);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/Ncentraljets_"+l,"Ncentraljets "+l + ";Number of jets P_{T}>40 |#eta|<=2.4",10,0,10);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/Nforwardjets_"+l,"Nforwardjets "+l + ";Number of jets P_{T}>40 |#eta|>2.4",10,0,10);
 
         /////
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",30,0,1500); // bins of 50 GeV
@@ -1083,7 +1084,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     if(do1lAnalysis && leadLep!=NULL) {
         cut.SetCutBit(Mt); // Mt -- not applied put in the various lepton categories
-        //        if ( e->Mt(evt_MT<110) cut.SetCutBit(Mt); // dilepton Killer
+        //        if ( e->Mt(evt_MT<120) cut.SetCutBit(Mt); // dilepton Killer
     } else {
         cut.SetCutBit(Mt); // Mt -- not needed
     }
@@ -1204,7 +1205,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     //// Fill tree
     ////
 
-    if( e->Bjets() > 0 && ( ( do1lAnalysis && e->Njets() >3 ) || ( do2lAnalysis && e->Njets() >1 ))) {
+    if( e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 ))) {
         setTree(e,label,category);
         FillTree("tree_tb");
     }
@@ -1221,15 +1222,15 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     bool lowMTCR=false;
 
     // 4jets, ==3b
-    if( do1lAnalysis && e->Njets() >= 4 && e->Bjets() == 3 ) charmCR=true;
-    if( do1lAnalysis && e->Njets() >= 5 && e->Bjets() == 1 ) extraRadCR=true;
-    if( do2lAnalysis && e->Njets() >= 3 && e->Bjets() == 1 ) extraRadCR=true;
+    if( do1lAnalysis && e->NcentralJets() >= 4 && e->Bjets() == 3 ) charmCR=true;
+    if( do1lAnalysis && e->NcentralJets() >= 5 && e->Bjets() == 1 ) extraRadCR=true;
+    if( do2lAnalysis && e->NcentralJets() >= 3 && e->Bjets() == 1 ) extraRadCR=true;
 
-    if( do1lAnalysis && e->Njets() == 4 && e->Bjets() > 0 ) topCR=true;
-    if( do2lAnalysis && e->Njets() == 2 && e->Bjets() > 0 ) topCR=true;
+    if( do1lAnalysis && e->NcentralJets() == 4 && e->Bjets() > 0 ) topCR=true;
+    if( do2lAnalysis && e->NcentralJets() == 2 && e->Bjets() > 0 ) topCR=true;
 
-    if( do1lAnalysis && evt_MT>=110 ) highMTCR=true;
-    if( do1lAnalysis && evt_MT<110 ) lowMTCR=true;
+    if( do1lAnalysis && evt_MT>=120 ) highMTCR=true;
+    if( do1lAnalysis && evt_MT<120 ) lowMTCR=true;
 
     if(topCR) jetPlot(e, label, category, systname,"topCR");
     if(topCR) leptonPlot(e,label, category, systname,"topCR");
