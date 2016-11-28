@@ -115,6 +115,9 @@ def ParseDat(name):
 		####### FLOAT ##########
 		if key == 'Lumi':
 			config[key]=FloatKey(value)
+		####### INT ##########
+		if key == 'EntryPerSecond':
+			config[key]=IntKey(value)
 		####### V FLOAT ##########
 		if key == 'pileupLumi':
 			config[key]=vFloatKey(value)

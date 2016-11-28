@@ -81,6 +81,9 @@ cfg = ParseDat(opts.dat)
 if opts.verbose:
 	PrintDat(cfg)
 
+if 'EntryPerSecond' in cfg:
+	loop.SetEntryPerSecond( cfg['EntryPerSecond'])
+
 ################ Loader ####
 if opts.verbose: print "-> Init Loader:",cfg['Loader']
 loop.InitLoader(cfg['Loader']);
