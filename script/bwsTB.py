@@ -84,7 +84,10 @@ if fIn2L == None:
 	exit(1)
 
 channel =  ["1Ele","1Mu","1Mu1Ele","2Mu","2Ele"]
-basecat = ["Baseline","charmCR","extraRadCR","topCR"]
+#channel = ["1Mu"]
+#channel =  ["1Mu","1Mu1Ele","2Mu"]
+##basecat = ["Baseline","charmCR","extraRadCR","topCR"]
+basecat = ["Baseline","extraRadCR","topCR"]
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 
@@ -98,26 +101,28 @@ for x in basecat:
 
        #these have null norm so far
        if x=="charmCR":
-	       catStore[name]["hasMC"]=["WW","WZ","ZZ","WJets"]
+	              catStore[name]["hasMC"]=["VV","WJets"]
        if x=="topCR":
-	       catStore[name]["hasMC"]=["TT","ST"]
+	              catStore[name]["hasMC"]=["TT","TTX","ST"]
        if x=="Baseline" and y=="2Mu":
-	       catStore[name]["hasMC"]=["WW","WZ","ZZ","TT","ST","HPlus"]
+	              catStore[name]["hasMC"]=["VV","TT","TTX","ST","HPlus"]
        if x=="Baseline" and y=="2Ele":
-	       catStore[name]["hasMC"]=["WW","WZ","ZZ","TT","ST","HPlus"]
+	              catStore[name]["hasMC"]=["VV","TT","TTX","ST","HPlus"]
        if x=="charmCR"  and (y=="2Mu" or y=="2Ele" or "1Mu1Ele"):
-	       catStore[name]["hasMC"]=["xxx"]
+	              catStore[name]["hasMC"]=["xxx"]
        if x=="Baseline" and y=="1Mu1Ele":
-	       catStore[name]["hasMC"]=["WW","WZ","ZZ","TT","ST","HPlus"]
+	              catStore[name]["hasMC"]=["VV","TT","TTX","ST","HPlus"]
 
 mcStore={
 	"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0},
-	"WJets":{"name":"WJets", "hist":["WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"],"num":1 },
-	"WW":{ "name":"WW","hist":[ "WWTo2L2Nu","WWToLNuQQ"],"num":2},
-	"WZ":{ "name":"WZ","hist":["WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu"],"num":3},
-	"ZZ":{ "name":"ZZ","hist":["ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":4},
-	"TT":{ "name":"TT","hist":["TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1","TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"],"num":5},
-	"ST":{ "name":"ST","hist":["ST_t-channel_antitop","ST_t-channel_top","ST_tW_antitop","ST_tW_top"],"num":6}
+	"WJets":{"name":"WJets", "hist":["WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8","DYJets-madgraph"],"num":1 },
+	"VV":{ "name":"VV","hist":["WWTo2L2Nu","WWToLNuQQ","WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu","ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":2},
+#	"WW":{ "name":"WW","hist":["WWTo2L2Nu","WWToLNuQQ"],"num":2},
+#	"WZ":{ "name":"WZ","hist":["WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu"],"num":3},
+#	"ZZ":{ "name":"ZZ","hist":["ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":4},
+	"TT":{ "name":"TT","hist":["TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1", "TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1","TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"],"num":3},
+	"ST":{ "name":"ST","hist":["ST_t-channel_antitop","ST_t-channel_top","ST_tW_antitop","ST_tW_top"],"num":4},
+	"TTX":{ "name":"TTX","hist":["TTTT","TTZToQQ","TTZToLLNuNu","TTWJetsToQQ","TTWJetsToLNu"],"num":5}
 	}
 systStore={
 	"None":None,
@@ -287,7 +292,7 @@ def importPdfFromTH1(cat,mc,syst=None):
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
-	if mc["name"]=="HPlus":masses=[300,400,500]	
+	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000]
 	else: masses=[0]
 
 	if syst == None: shifts=["x"]
@@ -331,7 +336,7 @@ def importPdfFromTH1(cat,mc,syst=None):
 		for i in range(0,h.GetNbinsX()):
 			#hupbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
 			statsyst = { "wsname":"Bin%d"%(i+1) +"_"+mc["name"]+ "_STAT" , "name": "Bin%d"%(i+1) +"_"+mc["name"]+"_STAT"}
-			writeSystShape(statsyst,[mc["name"]])
+			writeSystShape(statsyst,[mc["name"]+"_"])
 	return
 
 #import MC
