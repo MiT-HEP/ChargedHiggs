@@ -8,3 +8,5 @@ include=dat/catalog/2015/taunu.dat
 Smear=NONE,@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1),*[0!50]SmearPdfs(%%d)
 Output=ChHiggsTheory.root
 Final=true
+## be less peaky, given the n. of systs
+EntryPerSecond=10

@@ -121,7 +121,7 @@ void ChargedHiggsTauNu::Init()
          *                   MT                       *
          **********************************************/
         Book(    "ChargedHiggsTauNu/Vars/Mt_"+l,"Mt "+l + ";m_{T} [GeV]",8000,0,8000); // the Vars directory contains the full selection
-        AddFinalHisto("ChargedHiggsTauNu/Vars/Mt_"+);
+        AddFinalHisto("ChargedHiggsTauNu/Vars/Mt_"+l);
         // study categorization
         for(int i=0;i<=1;++i)
         {
