@@ -57,7 +57,7 @@ class AnalysisBase : public Named
     inline void AddLabel(string s) {labels.push_back(s);}
     inline void AddLabels(vector<string> &v) { for(string &s : v ) labels.push_back(s);}
     // 
-    inline void SetMultiPrimaryDataset(bool x) { multipd_=x;}
+    inline void SetMultiPrimaryDataset(bool x=true) { multipd_=x;}
 
     inline TFile* GetOutputFile(){ return output_->GetFile() ;} // TMVA wants the file pointer
     // Tree Operations ---- 
