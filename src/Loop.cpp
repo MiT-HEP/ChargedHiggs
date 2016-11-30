@@ -236,7 +236,7 @@ void Looper::NewFile()
 
 	if ( event_->IsRealData() ) {  
 		cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<endl;;
-		event_ -> GetWeight() -> LoadMC("data");
+		event_ -> GetWeight() -> LoadMC("data"); 
 	}
 	// -- Load current MC --
 	else {

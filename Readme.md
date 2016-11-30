@@ -10,7 +10,7 @@
 
 
 ## Installation
-* Install Nero package and compile the Core (_not_ scram)
+* Install Nero package and compile the Core (_not_ scram). Though CMSSW is not required latest full work recipe has been tested in CMSSW_7_6_5.
 ```
 BASE=$PWD [ $CMSSW_BASE/src ]
 cd $BASE
@@ -31,7 +31,7 @@ cd $CMSSW_BASE/src
 cmsenv
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
 cd HiggsAnalysis/CombinedLimit
-git checkout 01bb477 ## (31cc693) ## ( 74x-root6 )
+git checkout v6.3.0 ##01bb477 ## (31cc693) ## ( 74x-root6 )
 scram b -j 16 
 ```
 

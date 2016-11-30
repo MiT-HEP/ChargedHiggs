@@ -91,7 +91,7 @@ def ParseDat(name):
 		value = ''
 		if '=' in l : value = '='.join(l.split('=')[1:])
 		######### BOOL  ###########
-		if key == "Dump":
+		if key == "Dump" or key=="Final":
 			config[key]=BoolKey(value)
 		######### SUB ######
 		if key == 'sub':
@@ -163,6 +163,7 @@ def FindEOS(name,mount=""):
 	if '/eos/cms/store/' in name: return [name] # likely already parsed
 	if 'root://eoscms//' in name: return [name] # already parsed
 	if 'root://eosuser//' in name: return [name] # already parsed
+	if 'root://' in name: return [name] # already parsed
 	if os.path.isfile(name): return [name] ## file exists
 	
 	userInstance=""
