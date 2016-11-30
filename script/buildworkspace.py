@@ -493,7 +493,7 @@ for shift in ["Up","Down"]:
 ## print "     FIX MH POINTS       "
 ## print "#########################"
 for syst in systSig:
- for sigMH in [ 200,250,300,350,400,500,750,1000,2000,3000]:
+ for sigMH in [ 200,250,300,350,400,500,750,1000,3000]:
  #for sigMH in [ 200,350,400,500]:
    for cat in range(0,opts.ncat):
 	sigStr="HplusToTauNu_M-"+str(sigMH)+"_13TeV_amcatnlo"
@@ -690,7 +690,7 @@ def writeNormSystList(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST"])
 				regexp=regexp[1:]
 			if (match and not invert) or (not match and invert): 
 				idx=i
-				break
+				continue
 
 		if (idx>=0):
 		   datacard.write("\t"+valueL[idx])
@@ -716,7 +716,8 @@ def writeSyst(syst="JES"):
 	systOrig=syst[:]
 	syst=WorkspaceSubstitution(syst)
 	datacard.write(syst+" shape")
-	for proc in mcAll:
+	for cat in range(0,opts.ncat):
+	   for proc in mcAll:
 		if 'STAT' in systOrig:
 			if proc in re.sub('STAT','',systOrig):
 	        		datacard.write("\t1")

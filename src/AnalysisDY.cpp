@@ -1,10 +1,10 @@
 #include "interface/AnalysisDY.hpp"
 
-#warning DY ANALYSIS NON ISO
+//#warning DY ANALYSIS NON ISO
 void DYAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
     l->SetPtCut(25); 
-    l->SetIsoRelCut(-1);
+    l->SetIsoRelCut(0.20);
     l->SetEtaCut(2.4);
 }
 
@@ -46,6 +46,19 @@ void DYAnalysis::Init(){
 	    Book ("DYAnalysis/Vars/MCloseJZ_"+ l ,"MCloseJZ", 1000,0,1000);
         //
 	    Book ("DYAnalysis/Vars/Pt20mm_"+ l ,"Ptmm20", 1000,0,1000);
+
+	    Book ("DYAnalysis/Vars/Accmm_"+ l ,";Events", 10,0,10);
+        {
+            GetHisto("DYAnalysis/Vars/Accmm_"+ l,"") ->GetXaxis() ->SetBinLabel(1,"Gen-Reco");
+            GetHisto("DYAnalysis/Vars/Accmm_"+ l,"") ->GetXaxis() ->SetBinLabel(2,"Gen-!Reco");
+            GetHisto("DYAnalysis/Vars/Accmm_"+ l,"") ->GetXaxis() ->SetBinLabel(3,"!Gen-Reco");
+        }
+	    Book ("DYAnalysis/Vars/Accee_"+ l ,";Events", 10,0,10);
+        {
+            GetHisto("DYAnalysis/Vars/Accee_"+ l,"") ->GetXaxis() ->SetBinLabel(1,"Gen-Reco");
+            GetHisto("DYAnalysis/Vars/Accee_"+ l,"") ->GetXaxis() ->SetBinLabel(2,"Gen-!Reco");
+            GetHisto("DYAnalysis/Vars/Accee_"+ l,"") ->GetXaxis() ->SetBinLabel(3,"!Gen-Reco");
+        }
     }
 
 }
@@ -62,16 +75,42 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
     Jet *j0 = e->GetJet(0);
     Jet *j1 = e->GetJet(1);
 
-    if (mu0 == NULL or mu1 == NULL) return 0;
+    // Truth
+    GenParticle *genmu0=NULL; GenParticle *genmu1=NULL;
 
-    if (mu0->Pt() > 25 and fabs(mu0->Eta())< 2.4) 
+    for( int iGen=0 ; /*empty*/ ; ++iGen)
+    {
+        GenParticle *g = e->GetGenParticle(iGen); 
+        if (g==NULL ) break;  // end loop statement
+        if (not g->IsDressed()) continue;
+        if (not abs(g->GetPdgId())==13) continue;
+        
+        if (genmu0== NULL) genmu0=g;
+        else if (genmu1==NULL) {genmu1=g; break;}
+    }
+
+    bool genMuons = genmu0!=NULL and genmu1 !=NULL;
+
+    bool isGen=false;
+    bool isReco=false;
+    if (genMuons) // no requirement on pT
+    {
+        Object Ztruth(*genmu0); 
+        Ztruth += *genmu1;
+        if (Ztruth.M() > 60 and Ztruth.M()<120) isGen=true;
+    }
+
+    bool recoMuons= mu0 != NULL and mu1 !=NULL; 
+    //if (not recoMuons) return 0;
+
+    if (mu0!=NULL and mu0->Pt() > 25 and fabs(mu0->Eta())< 2.4) 
     {
         if (e->IsTriggered("HLT_IsoMu20") ) {
             Fill("DYAnalysis/Vars/MuonIso_"+ label,systname, mu0->Isolation(),e->weight()) ;
         }
     }
 
-    if ( mu1->Pt() >20)
+    if (recoMuons and mu1->Pt() >20)
     { // ------------------- 20 -------------------
         Object Z(*mu0);
         Z += *mu1;
@@ -82,7 +121,7 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
     }
 
     // ---------------------- 25 -------------------
-    if (mu1->Pt() >25)
+    if ( recoMuons and mu1->Pt() >25)
     {
         cut.SetCutBit(Leptons);
         if (e->IsTriggered("HLT_IsoMu20") ) cut.SetCutBit(Trigger);
@@ -101,6 +140,7 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
        	    Fill("DYAnalysis/Vars/Npvmm_"+ label,systname, e->Npv(),e->weight()) ;
             Fill("DYAnalysis/Vars/NJmm_"+ label,systname, e->NcentralJets(),e->weight()) ;
             Fill("DYAnalysis/Vars/PtmmUW_"+ label,systname, Z.Pt(),1.0) ;
+            isReco=true;
         }
 
         if ( Z.Pt() > 500) // NoSingleMuon Trigger -> ISO
@@ -114,6 +154,10 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
 	        if (j0!=NULL)Fill ("DYAnalysis/Vars/MCloseJZ_"+ label,systname,j0->InvMass(&Z)  , e->weight());
         }
     }
+
+    if (isReco and isGen) Fill("DYAnalysis/Vars/Accmm_"+label,systname, 0);
+    else if ( isGen ) Fill("DYAnalysis/Vars/Accmm_"+label,systname, 1);
+    else if ( isReco ) Fill("DYAnalysis/Vars/Accmm_"+label,systname, 2); 
     return 0;
 }
 
@@ -132,9 +176,34 @@ int DYAnalysis::analyzeEE(Event *e, string systname)
     Jet *j0 = e->GetJet(0);
     Jet *j1 = e->GetJet(1);
 
-    if (e0 == NULL or e1 == NULL) return 0;
+    bool recoEles = e0 !=NULL and e1 !=NULL;
+    //if (e0 == NULL or e1 == NULL) return 0;
 
-    if ( e1->Pt() >25)
+    GenParticle *genele0=NULL; GenParticle *genele1=NULL;
+
+    for( int iGen=0 ; /*empty*/ ; ++iGen)
+    {
+        GenParticle *g = e->GetGenParticle(iGen); 
+        if (g==NULL ) break;  // end loop statement
+        if (not g->IsDressed()) continue;
+        if (not abs(g->GetPdgId())==11) continue;
+        
+        if (genele0== NULL) genele0=g;
+        else if (genele1==NULL) {genele1=g; break;}
+    }
+
+    bool genEles = genele0!=NULL and genele1 !=NULL;
+
+    bool isGen=false;
+    bool isReco=false;
+    if (genEles) // no requirement on pT
+    {
+        Object Ztruth(*genele0); 
+        Ztruth += *genele1;
+        if (Ztruth.M() > 60 and Ztruth.M()<120) isGen=true;
+    }
+
+    if ( recoEles and e1->Pt() >25)
     {
         cut.SetCutBit(Leptons);
         //if (e->IsTriggered("HLT_Ele27_eta2p1_WPLoose_Gsf") ) cut.SetCutBit(Trigger);
@@ -149,6 +218,7 @@ int DYAnalysis::analyzeEE(Event *e, string systname)
        	    Fill("DYAnalysis/Vars/Ptee_"+ label,systname, Z.Pt(),e->weight()) ;
             Fill("DYAnalysis/Vars/NJee_"+ label,systname, e->NcentralJets(),e->weight()) ;
        	    Fill("DYAnalysis/Vars/Npvee_"+ label,systname, e->Npv(),e->weight()) ;
+            isReco=true;
         }
 
         if ( Z.Pt() > 500)
@@ -157,6 +227,10 @@ int DYAnalysis::analyzeEE(Event *e, string systname)
             if( j1 != NULL ) Fill( "DYAnalysis/Vars/MJHighPtee_" + label,systname, j1->InvMass(j0) ,e->weight() ) ;
         }
     }
+
+    if (isReco and isGen) Fill("DYAnalysis/Vars/Accee_"+label,systname, 0);
+    else if ( isGen ) Fill("DYAnalysis/Vars/Accee_"+label,systname, 1);
+    else if ( isReco ) Fill("DYAnalysis/Vars/Accee_"+label,systname, 2); 
 
     return 0;
 }

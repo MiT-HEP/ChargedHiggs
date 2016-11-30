@@ -19,6 +19,7 @@ public:
     unsigned GetFlag() const { return flags_;}
     void SetFlags(unsigned x) { flags_ = x;}
     bool IsPromptFinalState() const { return flags_ & BareMonteCarlo::PromptFinalState ;}
+    bool IsDressed() const { return flags_ & BareMonteCarlo::Dressed;}
 
     int GetParentPdgId() const { return mopdgid_;}
     int GetParentIdx() const {return moidx_;}
