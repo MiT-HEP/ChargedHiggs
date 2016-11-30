@@ -63,6 +63,8 @@ TTWJetsToQQ /eos/user/j/jaeyserm/Nero/8X/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnlo
 TTWJetsToLNu /eos/user/j/jaeyserm/Nero/8X/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/TTWJetsToLNu/161109_094716/0000 85686.5966678 0.2043
 VHToNonbb_M125 /eos/user/j/jaeyserm/Nero/8X/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/VHToNonbb_M125/161113_081235/0000 5256730.36194 0.9561
 tZq_ll_4f /eos/user/j/jaeyserm/Nero/8X/tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1/tZq_ll_4f/161109_094916/0000 229544.813892 0.0758
+ttHJetTobb /eos/user/j/jaeyserm/Nero/8X/ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8/ttHJetTobb/161109_094755/0000 9919444.60896 0.2934045
+ttHJetToNonbb /eos/user/j/jaeyserm/Nero/8X/ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix/ttHJetToNonbb/161109_094813/0000 10067713.3673 0.2150955
 
 ##### QCD (reHLT)
 #QCD_Pt_15to30 /eos/user/j/jaeyserm/Nero/8X/QCD/QCD_Pt_15to30 998420.0 1954717132.37

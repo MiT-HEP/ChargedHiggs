@@ -4,3 +4,6 @@ addfiles=/eos/user/j/jaeyserm/Nero/8X/TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia
 addfiles=/eos/user/j/jaeyserm/Nero/8X/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 addfiles=/eos/user/j/jaeyserm/Nero/8X/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8
 addfiles=/eos/user/j/jaeyserm/Nero/8X/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8
+addfiles=/eos/user/j/jaeyserm/Nero/8X/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/
+addfiles=/eos/user/j/jaeyserm/Nero/8X/ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=/eos/user/j/jaeyserm/Nero/8X/ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix

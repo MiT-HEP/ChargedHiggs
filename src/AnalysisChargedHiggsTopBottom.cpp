@@ -154,6 +154,8 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             if(label.find("TTZToLLNuNu") !=string::npos) mc +=22 ;
             if(label.find("TTWJetsToQQ") !=string::npos) mc +=23 ;
             if(label.find("TTWJetsToLNu") !=string::npos) mc +=24 ;
+            if(label.find("ttHJetTobb") !=string::npos) mc +=25 ;
+            if(label.find("ttHJetToNonbb") !=string::npos) mc +=26 ;
 
             // V+jets
             mc = 200;
@@ -728,6 +730,7 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+label,systname,leadLep->Isolation(),e->weight());
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/ptW_"+label,systname, (e->GetMet().GetP4()+leadLep->GetP4()).Pt(), e->weight() );
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+label,systname, evt_MT, e->weight() );
 
     if(do1lAnalysis) return;
     if(trailLep==NULL) return;
@@ -990,18 +993,19 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     bool passTriggerMu=true;
     bool passTriggerEle=true;
-    if (e->IsRealData()) passTriggerMu=(e->IsTriggered("HLT_IsoMu27_v")
-                                        //                                        or e->IsTriggered("HLT_IsoTkMu22_v")
-                                        //                                        or e->IsTriggered("HLT_IsoMu22_v")
-                                        or e->IsTriggered("HLT_IsoMu24_v")
-                                        //                                        or e->IsTriggered("HLT_IsoTkMu24_v")
-                                        );
-    /* //only for electron dataset otherwise on muon trigger a lot of flags
-    if (e->IsRealData()) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPLoose_Gsf_v")
-                                         or e->IsTriggered("HLT_Ele27_WPTight_Gsf_v")
-                                         or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")
-                                         );
-    */
+
+    if (e->IsRealData() and
+        e->GetName().find("SingleMuon")!=string::npos) passTriggerMu=(e->IsTriggered("HLT_IsoMu27_v")
+                                                                      //                                        or e->IsTriggered("HLT_IsoTkMu22_v")
+                                                                      //                                        or e->IsTriggered("HLT_IsoMu22_v")
+                                                                      or e->IsTriggered("HLT_IsoMu24_v")
+                                                                      //                                        or e->IsTriggered("HLT_IsoTkMu24_v")
+                                                                      );
+    if (e->IsRealData() and
+        e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPLoose_Gsf_v")
+                                                                           //                                         or e->IsTriggered("HLT_Ele27_WPTight_Gsf_v")
+                                                                           //                                         or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")
+                                                                           );
 
     CutSelector cut;
     cut.SetMask(MaxCut-1);
