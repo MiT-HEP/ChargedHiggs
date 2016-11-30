@@ -51,8 +51,25 @@ string AnalysisBase::GetLabel(Event *e){
     //	return label;
 
     label = "Other";
+    
+    if (multipd_ and  e->IsRealData() )
+    {
+        // filename
+        label = "Data"; // general backup option
+        for (string& s:  AllLabel() )
+        {
 
-    if (e->IsRealData()) label = "Data";
+            if (e->GetName().find(s) != string::npos ) 
+            {
+                label=s;
+                break; // match the first
+            }
+        }
+    }
+    else if (e->IsRealData()) 
+    {
+        label = "Data";
+    }
     else{
         for (string& s:  AllLabel() )
         {

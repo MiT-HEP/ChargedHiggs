@@ -37,3 +37,9 @@ __init__.py
 
 ## ROOT OBJECT
 *.root
+
+### TEST
+test/combine*
+test/mysub*
+test/sub*
+test/crabTest/*dat
