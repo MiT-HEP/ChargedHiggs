@@ -13,6 +13,7 @@ class AnalysisBase : public Named
 {
     private:
     Output *output_; // set automatically
+    bool multipd_{false};
 
     protected:
     // --- this are the default values. override these functions
@@ -32,7 +33,7 @@ class AnalysisBase : public Named
     void doInit() {Init();}
     void doEnd() { End();} 
     int doAnalyze(Event*e,string systname){ SetCuts(e); return analyze(e,systname);}
-    // 
+    //
     virtual void inline SetOutput( Output *o ) { output_ = o ;}
     virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}
     virtual void Init(){}
@@ -55,6 +56,8 @@ class AnalysisBase : public Named
     string GetLabel(Event *e);
     inline void AddLabel(string s) {labels.push_back(s);}
     inline void AddLabels(vector<string> &v) { for(string &s : v ) labels.push_back(s);}
+    // 
+    inline void SetMultiPrimaryDataset(bool x=true) { multipd_=x;}
 
     inline TFile* GetOutputFile(){ return output_->GetFile() ;} // TMVA wants the file pointer
     // Tree Operations ---- 
