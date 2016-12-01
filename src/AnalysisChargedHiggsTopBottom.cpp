@@ -1035,7 +1035,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                 category="_1Mu";
                 if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
             }
-            if(leadLep->IsElectron()) {
+            if(leadLep->IsElectron() and passTriggerEle) {
                 category="_1Ele";
                 if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
             }
@@ -1058,7 +1058,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                 if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
                 if (not e->IsRealData()) e->SetPtEtaSF("mureco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("mureco");
             }
-            if(leadLep->IsElectron() and trailLep->IsElectron()) {
+            if(leadLep->IsElectron() and trailLep->IsElectron() and passTriggerEle) {
                 category="_2Ele";
                 if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
                 if (not e->IsRealData()) e->SetPtEtaSF("elereco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("elereco");
