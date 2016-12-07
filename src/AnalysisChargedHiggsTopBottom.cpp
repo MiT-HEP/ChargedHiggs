@@ -27,6 +27,7 @@ void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
     t->SetEleRej(false);
     t->SetTrackPtCut(-1.); // no requirement on the leading Track
     t->SetIsoRelCut(-1); // LooseCombinedIsolationDeltaBetaCorr3Hits
+    t->SetIsoCut(2.5);
     t->SetProngsCut(-1); // all Prong
     t->SetDecayMode(0);  // TauDecayModeFindingNewDMs
 }
@@ -44,6 +45,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("weight_pu",e->GetWeight()->GetBarePUWeight());
     SetTreeVar("weight_bTag",e->GetWeight()->GetSF("btag")->get());
     SetTreeVar("weight_topPt",e->GetWeight()->GetSF("topreweight")->get());
+    SetTreeVar("weight_nEv",e->GetWeight()->GetBareNevents());
     SetTreeVar("xsec",e->GetWeight()->GetBareMCXsec());
 
     SetTreeVar("lep1_pt",leadLep->Pt());
@@ -138,44 +140,44 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
         } else  // bkg
         {
             // ttbar + single top + ttV
-            mc = 100;
-            if(label.find("TTJets_DiLept") !=string::npos) mc +=1 ;
-            if(label.find("TTJets_SingleLeptFromT") !=string::npos) mc +=2 ;
-            if(label.find("TTJets_SingleLeptFromTbar") !=string::npos) mc +=3 ;
+            //            mc = 100;
+            if(label.find("TTJets_DiLept") !=string::npos) mc =101 ;
+            if(label.find("TTJets_SingleLeptFromT") !=string::npos) mc =102 ;
+            if(label.find("TTJets_SingleLeptFromTbar") !=string::npos) mc =103 ;
 
-            if(label.find("ST_tW_top") !=string::npos) mc +=11 ;
-            if(label.find("ST_tW_antitop") !=string::npos) mc +=12 ;
-            if(label.find("ST_t-channel_top") !=string::npos) mc +=13 ;
-            if(label.find("ST_t-channel_antitop") !=string::npos) mc +=14 ;
+            if(label.find("ST_tW_top") !=string::npos) mc =111 ;
+            if(label.find("ST_tW_antitop") !=string::npos) mc =112 ;
+            if(label.find("ST_t-channel_top") !=string::npos) mc =113 ;
+            if(label.find("ST_t-channel_antitop") !=string::npos) mc =114 ;
             // s channel
-            if(label.find("tZq_ll_4f") !=string::npos) mc +=15 ;
-            if(label.find("TTTT") !=string::npos) mc +=16 ;
+            if(label.find("tZq_ll_4f") !=string::npos) mc =115 ;
+            if(label.find("TTTT") !=string::npos) mc =116 ;
 
             // ttH
-            if(label.find("TTZToQQ") !=string::npos) mc += 21;
-            if(label.find("TTZToLLNuNu") !=string::npos) mc +=22 ;
-            if(label.find("TTWJetsToQQ") !=string::npos) mc +=23 ;
-            if(label.find("TTWJetsToLNu") !=string::npos) mc +=24 ;
-            if(label.find("ttHJetTobb") !=string::npos) mc +=25 ;
-            if(label.find("ttHJetToNonbb") !=string::npos) mc +=26 ;
+            if(label.find("TTZToQQ") !=string::npos) mc = 121;
+            if(label.find("TTZToLLNuNu") !=string::npos) mc =122 ;
+            if(label.find("TTWJetsToQQ") !=string::npos) mc =123 ;
+            if(label.find("TTWJetsToLNu") !=string::npos) mc =124 ;
+            if(label.find("ttHJetTobb") !=string::npos) mc =125 ;
+            if(label.find("ttHJetToNonbb") !=string::npos) mc =126 ;
 
             // V+jets
-            mc = 200;
-            if(label.find("DYJets-madgraph") !=string::npos) mc +=21 ;
-            if(label.find("WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8")!=string::npos) mc +=22;
+            //            mc = 200;
+            if(label.find("DYJets-madgraph") !=string::npos) mc =221 ;
+            if(label.find("WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8")!=string::npos) mc =222;
 
             // EWK
             // missing tribosons
-            mc = 300;
-            if(label.find("WWTo2L2Nu") !=string::npos) mc +=31 ;
-            if(label.find("WWToLNuQQ") !=string::npos) mc +=32 ;
-            if(label.find("WZTo1L1Nu2Q") !=string::npos) mc +=33 ;
-            if(label.find("WZTo1L3Nu") !=string::npos) mc +=34 ;
-            if(label.find("WZTo2L2Q") !=string::npos) mc +=35 ;
-            if(label.find("WZTo3LNu") !=string::npos) mc +=36 ;
-            if(label.find("ZZTo2L2Nu") !=string::npos) mc +=37 ;
-            if(label.find("ZZTo2L2Q") !=string::npos) mc +=38 ;
-            if(label.find("ZZTo4L") !=string::npos) mc +=39 ;
+            //            mc = 300;
+            if(label.find("WWTo2L2Nu") !=string::npos) mc =331 ;
+            if(label.find("WWToLNuQQ") !=string::npos) mc =332 ;
+            if(label.find("WZTo1L1Nu2Q") !=string::npos) mc =333 ;
+            if(label.find("WZTo1L3Nu") !=string::npos) mc =334 ;
+            if(label.find("WZTo2L2Q") !=string::npos) mc =335 ;
+            if(label.find("WZTo3LNu") !=string::npos) mc =336 ;
+            if(label.find("ZZTo2L2Nu") !=string::npos) mc =337 ;
+            if(label.find("ZZTo2L2Q") !=string::npos) mc =338 ;
+            if(label.find("ZZTo4L") !=string::npos) mc =339 ;
         }
 
     SetTreeVar("mc",mc);
@@ -262,6 +264,9 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","isRealData",'I');
 
     Branch("tree_tb","weight_pu",'D');
+    Branch("tree_tb","weight_bTag",'D');
+    Branch("tree_tb","weight_nEv",'D');
+    Branch("tree_tb","weight_topPt",'D');
     Branch("tree_tb","xsec",'F');
 
     // fill lepton quantities
@@ -1019,6 +1024,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         }
     }
 
+
     ////$$$$$$$$$$$$$$$$$$$$$
     ////$$$$$$$$$$$$$$$$$$$$$
     ////$$$$$$$
@@ -1041,6 +1047,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                                                                            //                                         or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")
                                                                            );
 
+
     CutSelector cut;
     cut.SetMask(MaxCut-1);
     cut.SetCutBit(Total);
@@ -1049,9 +1056,11 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         Fill("ChargedHiggsTopBottom/CutFlow_1Mu/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_1Ele/CutFlow_"+label,systname,0,e->weight());
         ///
-        Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,1);
-        Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu/CutFlowNoWei_"+label,systname,0,1);
-        Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Ele/CutFlowNoWei_"+label,systname,0,1);
+        if(!e->IsRealData()) {
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+        }
     }
     if(do2lAnalysis) {
         Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,0,e->weight());
@@ -1059,10 +1068,12 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         Fill("ChargedHiggsTopBottom/CutFlow_1Mu1Ele/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_2Ele/CutFlow_"+label,systname,0,e->weight());
         ///
-        Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,1);
-        Fill("ChargedHiggsTopBottom/CutFlowNoWei_2Mu/CutFlowNoWei_"+label,systname,0,1);
-        Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu1Ele/CutFlowNoWei_"+label,systname,0,1);
-        Fill("ChargedHiggsTopBottom/CutFlowNoWei_2Ele/CutFlowNoWei_"+label,systname,0,1);
+        if(!e->IsRealData()) {
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei_2Mu/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu1Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei_2Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+        }
     }
 
     string category="";
@@ -1070,17 +1081,21 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     ////// --> 1l analysis
     if(do1lAnalysis && leadLep!=NULL) {
-        if ( leadLep->GetP4().Pt()>LeadingLeptonPt_) {
+
+        bool onemu=(leadLep->IsMuon() and passTriggerMu);
+        bool oneele=(leadLep->IsElectron() and passTriggerEle);
+
+        if ( leadLep->GetP4().Pt()>LeadingLeptonPt_ && (onemu or oneele)) {
             cut.SetCutBit(OneLep); // one lep
         }
         if( cut.passAllUpTo(OneLep) ) {
-            if(leadLep->IsMuon() and passTriggerMu) {
+            if(onemu) {
                 category="_1Mu";
-                if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
+                //                if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
             }
-            if(leadLep->IsElectron() and passTriggerEle) {
+            if(oneele) {
                 category="_1Ele";
-                if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
+                //                if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
             }
         }
 
@@ -1089,26 +1104,33 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     }
 
-
     ////// --> 2l analysis
-    if(do2lAnalysis) {
-        if ( nOSLepPair == 1 and leadLep->GetP4().Pt()>LeadingLeptonPt_) {
+    if(do2lAnalysis and leadLep!=NULL and trailLep!=NULL) {
+
+        bool twomu=(leadLep->IsMuon() and trailLep->IsMuon() and passTriggerMu);
+        bool twoele=(leadLep->IsElectron() and trailLep->IsElectron() and passTriggerEle);
+        bool onemuoneele=(((leadLep->IsElectron() and trailLep->IsMuon() and trailLep->GetP4().Pt()>LeadingLeptonPt_) ||
+                           (trailLep->IsElectron() and leadLep->IsMuon())) and passTriggerMu);
+
+
+        if ( nOSLepPair == 1 and leadLep->GetP4().Pt()>LeadingLeptonPt_ and (twomu or twoele or onemuoneele) ) {
             cut.SetCutBit(OneLep); // one OS lepton Pair + leading above trigger threshould
         }
         if( cut.passAllUpTo(OneLep) ) {
-            if(leadLep->IsMuon() and trailLep->IsMuon() and passTriggerMu) {
+            if(twomu) {
                 category="_2Mu";
-                if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
-                if (not e->IsRealData()) e->SetPtEtaSF("mureco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("mureco");
+                //                if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
+                //                if (not e->IsRealData()) e->SetPtEtaSF("mureco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("mureco");
             }
-            if(leadLep->IsElectron() and trailLep->IsElectron() and passTriggerEle) {
+            if(twoele) {
                 category="_2Ele";
-                if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
-                if (not e->IsRealData()) e->SetPtEtaSF("elereco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("elereco");
+                //                if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
+                //                if (not e->IsRealData()) e->SetPtEtaSF("elereco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("elereco");
             }
             // this 1Mu1Ele muon above the trigger threshould otherwise bias in the turnon
-            if(((leadLep->IsElectron() and trailLep->IsMuon() and trailLep->GetP4().Pt()>LeadingLeptonPt_) || (trailLep->IsElectron() and leadLep->IsMuon())) and passTriggerMu) {
+            if(onemuoneele) {
                 category="_1Mu1Ele";
+                /*
                 if(leadLep->IsElectron() and trailLep->IsMuon()) {
                     if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
                     if (not e->IsRealData()) e->SetPtEtaSF("mureco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("mureco");
@@ -1117,6 +1139,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                     if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
                     if (not e->IsRealData()) e->SetPtEtaSF("elereco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("elereco");
                 }
+                */
 
             }
         }
@@ -1163,12 +1186,14 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(Mt)          ) Fill("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+label,systname,Mt,e->weight());
         if( cut.passAllUpTo(NJets)       ) Fill("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+label,systname,NJets,e->weight());
         ///
-        if( cut.passAllUpTo(OneLep)      ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,OneLep,1);
-        if( cut.passAllUpTo(NoSecondLep) ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NoSecondLep,1);
-        if( cut.passAllUpTo(NoTau)       ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NoTau,1);
-        if( cut.passAllUpTo(Met)         ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,Met,1);
-        if( cut.passAllUpTo(Mt)          ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,Mt,1);
-        if( cut.passAllUpTo(NJets)       ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NJets,1);
+        if(!e->IsRealData()) {
+            if( cut.passAllUpTo(OneLep)      ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,OneLep,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(NoSecondLep) ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NoSecondLep,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(NoTau)       ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NoTau,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(Met)         ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,Met,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(Mt)          ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,Mt,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(NJets)       ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NJets,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+        }
     }
 
     if(do2lAnalysis ) {
@@ -1180,12 +1205,14 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(Mt)          ) Fill("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+label,systname,Mt,e->weight());
         if( cut.passAllUpTo(NJets)       ) Fill("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+label,systname,NJets,e->weight());
         ///
-        if( cut.passAllUpTo(OneLep)      ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,OneLep,1);
-        if( cut.passAllUpTo(NoSecondLep) ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NoSecondLep,1);
-        if( cut.passAllUpTo(NoTau)       ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NoTau,1);
-        if( cut.passAllUpTo(Met)         ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,Met,1);
-        if( cut.passAllUpTo(Mt)          ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,Mt,1);
-        if( cut.passAllUpTo(NJets)       ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NJets,1);
+        if(!e->IsRealData()) {
+            if( cut.passAllUpTo(OneLep)      ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,OneLep,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(NoSecondLep) ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NoSecondLep,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(NoTau)       ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NoTau,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(Met)         ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,Met,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(Mt)          ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,Mt,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            if( cut.passAllUpTo(NJets)       ) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NJets,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+        }
     }
 
     if (not e->IsRealData()) {
@@ -1195,11 +1222,11 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     if( cut.passAllUpTo(NB) && do1lAnalysis ) {
         Fill("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+label,systname,NB,e->weight());
-        Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NB,e->weight());
+        if(!e->IsRealData()) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NB,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
     }
     if( cut.passAllUpTo(NB) && do2lAnalysis ) {
-        Fill("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+label,systname,NB,1);
-        Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NB,1);
+        Fill("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+label,systname,NB,e->weight());
+        if(!e->IsRealData()) Fill("ChargedHiggsTopBottom/CutFlowNoWei"+category+"/CutFlowNoWei_"+label,systname,NB,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
     }
     ////$$$$$$$
     ////$$$$$$$ pre-selection N-1
@@ -1325,7 +1352,27 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     jetPlot(e, label, category, systname,"Baseline");
     leptonPlot(e, label, category, systname,"Baseline");
 
+    /*
+    std::cout << "=======================================" << endl;
 
+    std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum();
+    std::cout << " leadLep->Pt()=" << leadLep->Pt();
+    std::cout << " leadLep->Eta()=" << leadLep->Eta();
+    std::cout << " leadLep->Phi()=" << leadLep->Phi();
+    std::cout << " leadLep->IsMuon()=" << leadLep->IsMuon() << " leadLep->IsElectron()=" << leadLep->IsElectron();
+    std::cout << " nCentralJets=" << e->NcentralJets();
+    std::cout << " nTaus=" << e->Ntaus();
+    if(e->Ntaus()>0) std::cout << " tauPt=" << e->GetTau(0)->Pt() << " tauEta=" << e->GetTau(0)->Eta() << " tauPhi=" << e->GetTau(0)->Phi();
+    if(e->Ntaus()>1) std::cout << " tauPt=" << e->GetTau(1)->Pt() << " tauEta=" << e->GetTau(1)->Eta() << " tauPhi=" << e->GetTau(1)->Phi();
+    std::cout << " totalweight=" << e->weight() ;
+    std::cout << " systname=" << systname << std::endl;
+
+    for(int i=0;i!=min(e->Njets(),10);++i) {
+        std::cout << "    pt[" <<i<<"]="<< e->GetJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetJet(i)->GetP4().Eta() << " phi[" <<i<<"]="<< e->GetJet(i)->GetP4().Phi();
+    }
+
+    std::cout << "=======================================" << std::endl;
+    */
     ////////
     ////
     //// Read MVA
