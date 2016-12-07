@@ -47,4 +47,5 @@ addConfig=ChargedHiggsTopBottom|AddLabel('tZq_ll_4f')
 addConfig=ChargedHiggsTopBottom|AddLabel('ttHJetTobb')
 addConfig=ChargedHiggsTopBottom|AddLabel('ttHJetToNonbb')
 
+addConfig=ChargedHiggsTopBottom|SetMultiPrimaryDataset(),AddLabel("SingleElectron"),AddLabel("SingleMuon")
 addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_PR87_TMVA_BDT.weights.xml")
