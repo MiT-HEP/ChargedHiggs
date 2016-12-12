@@ -4,7 +4,7 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
     // these are used for the Veto
     l->SetPtCut(10);
     l->SetIsoCut(-1.); // absolute isolation
-    l->SetIsoRelCut(0.25); // relative isolation
+    l->SetIsoRelCut(0.10); // relative isolation
     l->SetEtaCut(2.4);
     l->SetTightCut(false); // use the loose selection for now
 }
@@ -65,6 +65,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     if(trailLep!=NULL && trailLep->IsElectron()) SetTreeVar("lep2_id",11);
 
     SetTreeVar("NJets",e->Njets());
+    SetTreeVar("NcentralJets",e->NcentralJets());
     SetTreeVar("NBJets",e->Bjets());
 
     for(int i=0;i!=min(e->Njets(),10);++i) {
@@ -285,6 +286,7 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","lep2_id",'F');
 
     // fill counter and scalar
+    Branch("tree_tb","NcentralJets",'I');
     Branch("tree_tb","NJets",'I');
     Branch("tree_tb","NBJets",'I');
 
@@ -1169,8 +1171,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////$$$$$$$ Apply SF
     ////$$$$$$$
 
-    if (not e->IsRealData()) {
-        e->ApplyTopReweight();
+    if (not e->IsRealData() and
+        ((label.find("TTJets_DiLept")!=string::npos) || (label.find("TTJets_SingleLeptFromT")!=string::npos) || (label.find("TTJets_SingleLeptFromTbar")!=string::npos))) {
+            e->ApplyTopReweight();
     }
 
     ////$$$$$$$
