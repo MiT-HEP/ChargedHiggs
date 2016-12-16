@@ -43,3 +43,6 @@ test/combine*
 test/mysub*
 test/sub*
 test/crabTest/*dat
+
+# emacs
+*~
