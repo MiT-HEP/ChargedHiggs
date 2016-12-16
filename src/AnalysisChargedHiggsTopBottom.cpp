@@ -95,6 +95,9 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("mt2ll",evt_MT2ll);
     SetTreeVar("mt2bb",evt_MT2bb);
     if(bdt.size()>0) { SetTreeVar("bdt",bdt[0]); } else {SetTreeVar("bdt",-1);}
+    SetTreeVar("mtMin",evt_MTmin);
+    SetTreeVar("mtMax",evt_MTmax);
+    SetTreeVar("mtTot",evt_MTtot);
 
     //////
     //
@@ -303,6 +306,9 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","mt",'F');
     Branch("tree_tb","mt2ll",'F');
     Branch("tree_tb","mt2bb",'F');
+    Branch("tree_tb","mtMin",'F');
+    Branch("tree_tb","mtMax",'F');
+    Branch("tree_tb","mtTot",'F');
 
     // fill all the object vector
     Branch("tree_tb","jet_pt",'d',10,"NJets");
@@ -420,6 +426,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+l,"LeptonTrailPt "+l + ";p_{T} (lepton)",50,0.,200.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+l,"LeptonTrailIso "+l + ";iso (lepton)",50,0.,100.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+l,"Mt "+l+";M_{T} [GeV]",60,0,300);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/Met_"+l,"Met "+l+";MET [GeV]",50,0,1000);
 
         /// Vertices
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Vertices_"+l,"Vertices "+l + ";Number of vertices",50,0.,50.);
@@ -777,6 +784,7 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/ptW_"+label,systname, (e->GetMet().GetP4()+leadLep->GetP4()).Pt(), e->weight() );
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+label,systname, evt_MT, e->weight() );
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Met_"+label,systname, e->GetMet().GetP4().Pt(), e->weight() );
 
     if(do1lAnalysis) return;
     if(trailLep==NULL) return;
