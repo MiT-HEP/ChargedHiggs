@@ -9,6 +9,12 @@ addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-800_13TeV_amcatnlo_pythia8
 addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-1000_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-2000_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-3000_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-180')
+###addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-200')
+addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-220')
+addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-250')
+addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-350')
+addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-450')
 
 addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo_pythia8')

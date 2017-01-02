@@ -126,13 +126,22 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     if (label.find("HplusToTB") !=string::npos)  //sig
         {
             mc = 0;
-            if (label.find("M-300") !=string::npos) mc += 1;
-            if (label.find("M-400") !=string::npos) mc += 2;
-            if (label.find("M-500") !=string::npos) mc += 3;
-            if (label.find("M-800") !=string::npos) mc += 4;
-            if (label.find("M-1000")!=string::npos) mc += 5;
-            if (label.find("M-2000")!=string::npos) mc += 6;
-            if (label.find("M-3000")!=string::npos) mc += 7;
+            // low mass
+            if (label.find("M-180") !=string::npos) mc += 1;
+            if (label.find("M-200") !=string::npos) mc += 2;
+            if (label.find("M-220") !=string::npos) mc += 3;
+            if (label.find("M-250") !=string::npos) mc += 4;
+            if (label.find("M-300") !=string::npos) mc += 5;
+            if (label.find("M-350") !=string::npos) mc += 6;
+            if (label.find("M-400") !=string::npos) mc += 7;
+            if (label.find("M-450") !=string::npos) mc += 8;
+            if (label.find("M-500") !=string::npos) mc += 9;
+            // high mass
+            if (label.find("M-800") !=string::npos) mc += 10;
+            if (label.find("M-1000")!=string::npos) mc += 11;
+            if (label.find("M-2000")!=string::npos) mc += 12;
+            if (label.find("M-3000")!=string::npos) mc += 13;
+
 
         } else if (label.find("HplusToTauNu") !=string::npos) //sig TauNu
         {
@@ -534,10 +543,31 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/totMT_"+l,"totMT "+l+";totMT [ MT(b1,(l1,MET))^2 + MT(b1,(l2,MET))^2 ] [GeV]",50,0,1000);
 
         //BDT plot
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+l,"bdt1lh "+l+";bdt (1l high)",100,-1.,1.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+l,"bdt1ll "+l+";bdt (1l low)",100,-1.,1.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+l,"bdt2lh "+l+";bdt (2l high)",100,-1.,1.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+l,"bdt2ll "+l+";bdt (2l low)",100,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR1_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR1_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR1_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR1_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR2_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR2_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR2_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR2_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR3_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR3_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR3_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR3_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR4_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR4_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR4_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR4_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+
         //        cout <<"[ChargedHiggsTopBottom]::[Init]::[INFO] Filling Histo CutFlow/Baseline" <<l<<endl;
 
 }
@@ -1159,7 +1189,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if(do1lAnalysis && leadLep!=NULL) {
 
         bool onemu=(leadLep->IsMuon() and passTriggerMu);
-        bool oneele=(leadLep->IsElectron() and passTriggerEle);
+        bool oneele=(leadLep->IsElectron() and fabs(leadLep->Eta())<2.1 and passTriggerEle);
 
         if ( leadLep->Pt()>LeadingLeptonPt_ && (onemu or oneele)) {
             cut.SetCutBit(OneLep); // one lep
@@ -1184,7 +1214,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if(do2lAnalysis and leadLep!=NULL and trailLep!=NULL) {
 
         bool twomu=(leadLep->IsMuon() and trailLep->IsMuon() and passTriggerMu);
-        bool twoele=(leadLep->IsElectron() and trailLep->IsElectron() and passTriggerEle);
+        bool twoele=(leadLep->IsElectron() and trailLep->IsElectron() and fabs(leadLep->Eta())<2.1 and passTriggerEle);
         bool onemuoneele=(((leadLep->IsElectron() and trailLep->IsMuon() and trailLep->Pt()>LeadingLeptonPt_) ||
                            (trailLep->IsElectron() and leadLep->IsMuon())) and passTriggerMu);
 
@@ -1523,6 +1553,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     jetPlot(e, label, category, systname,"Baseline");
     leptonPlot(e, label, category, systname,"Baseline");
 
+    /*
     if( do1lAnalysis and evt_MT<120  and e->Bjets()==2 and e->NcentralJets()>4) Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR1_"+label,systname, evt_HT ,e->weight());
     if( do1lAnalysis and evt_MT>=120 and e->Bjets()==2 and e->NcentralJets()>4) Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR2_"+label,systname, evt_HT ,e->weight());
     if( do1lAnalysis and evt_MT<120  and e->Bjets()>2  and e->NcentralJets()>4) Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR3_"+label,systname, evt_HT ,e->weight());
@@ -1532,6 +1563,107 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if( do2lAnalysis and evt_MTmin>=200 and e->Bjets()==2 and e->NcentralJets()>2) Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR2_"+label,systname, evt_HT ,e->weight());
     if( do2lAnalysis and evt_MTmin<200 and e->Bjets()>2 and e->NcentralJets()>2) Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR3_"+label,systname, evt_HT ,e->weight());
     if( do2lAnalysis and evt_MTmin>=200 and e->Bjets()>2 and e->NcentralJets()>2) Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR4_"+label,systname, evt_HT ,e->weight());
+    */
+
+    /// bdt1, bdt2 is the 1l
+    if( do1lAnalysis and e->Bjets()==2 and e->NcentralJets()==5) {
+        if(bdt.size()>0) {
+            if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR1_"+label,systname,bdt[0],e->weight());
+            if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR1_"+label,systname,bdt[1],e->weight());
+        } else {
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR1_"+label,systname,-1,e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR1_"+label,systname,-1,e->weight());
+        }
+    }
+
+    /// bdt1, bdt2 is the 1l
+    if( do1lAnalysis and e->Bjets()==2 and e->NcentralJets()>5) {
+        if(bdt.size()>0) {
+            if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR3_"+label,systname,bdt[0],e->weight());
+            if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR3_"+label,systname,bdt[1],e->weight());
+        } else {
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR3_"+label,systname,-1,e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR3_"+label,systname,-1,e->weight());
+        }
+    }
+
+    /// bdt1, bdt2 is the 1l
+    if( do1lAnalysis and e->Bjets()>2 and e->NcentralJets()==5) {
+        if(bdt.size()>0) {
+            if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR2_"+label,systname,bdt[0],e->weight());
+            if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR2_"+label,systname,bdt[1],e->weight());
+        } else {
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR2_"+label,systname,-1,e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR2_"+label,systname,-1,e->weight());
+        }
+    }
+
+    /// bdt1, bdt2 is the 1l
+    if( do1lAnalysis and e->Bjets()>2 and e->NcentralJets()>5) {
+        if(bdt.size()>0) {
+            if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR4_"+label,systname,bdt[0],e->weight());
+            if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR4_"+label,systname,bdt[1],e->weight());
+        } else {
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR4_"+label,systname,-1,e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR4_"+label,systname,-1,e->weight());
+        }
+    }
+
+    /////////
+    /////////
+    /////////
+    /////////
+
+    /// bdt1, bdt2 is the 1l
+    if( do2lAnalysis and e->Bjets()==2 and e->NcentralJets()==3) {
+        if(bdt.size()>0) {
+            if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3_SR1_"+label,systname,bdt[0],e->weight());
+            if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR1_"+label,systname,bdt[1],e->weight());
+        } else {
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3_SR1_"+label,systname,-1,e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR1_"+label,systname,-1,e->weight());
+        }
+    }
+
+    /// bdt1, bdt2 is the 1l
+    if( do2lAnalysis and e->Bjets()==2 and e->NcentralJets()>3) {
+        if(bdt.size()>0) {
+            if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3_SR3_"+label,systname,bdt[0],e->weight());
+            if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR3_"+label,systname,bdt[1],e->weight());
+        } else {
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3_SR3_"+label,systname,-1,e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR3_"+label,systname,-1,e->weight());
+        }
+    }
+
+    /// bdt1, bdt2 is the 1l
+    if( do2lAnalysis and e->Bjets()>2 and e->NcentralJets()==3) {
+        if(bdt.size()>0) {
+            if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3_SR2_"+label,systname,bdt[0],e->weight());
+            if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR2_"+label,systname,bdt[1],e->weight());
+        } else {
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3_SR2_"+label,systname,-1,e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR2_"+label,systname,-1,e->weight());
+        }
+    }
+
+    /// bdt1, bdt2 is the 1l
+    if( do2lAnalysis and e->Bjets()>2 and e->NcentralJets()>3) {
+        if(bdt.size()>0) {
+            if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3_SR4_"+label,systname,bdt[0],e->weight());
+            if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR4_"+label,systname,bdt[1],e->weight());
+        } else {
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3_SR4_"+label,systname,-1,e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR4_"+label,systname,-1,e->weight());
+        }
+    }
+
+    //////////////
+    //////////////
+    //////////////
+    //////////////
+
+
 
     /*
     std::cout << "=======================================" << endl;

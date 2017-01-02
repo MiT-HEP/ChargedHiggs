@@ -41,7 +41,8 @@ if opts.eos=="" and opts.mcdb!="":
 
 if opts.rec:
 	cmd = EOS +" find -d "
-	if '/eos/user' in opts.eos: cmd += " --childcount "
+##	if '/eos/user' in opts.eos: cmd += " --childcount "
+	cmd += " --childcount "
 	cmd+=opts.eos
 	list = check_output(cmd,shell=True);
 	for line in list.split('\n'):
