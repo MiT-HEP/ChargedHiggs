@@ -55,14 +55,13 @@ def WorkspaceSubstitution(string):
 
 def Rebin(h):
 	''' Rebin with un-even bins '''
-##	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000])
-##	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-	h1=h.Rebin(5)
+	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000])
+	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
 	return h1
 
 
 w = ROOT.RooWorkspace("w","w")
-datName = "cms_datacard_topbottom.txt"
+datName = "cms_datacard_taunu.txt"
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -86,11 +85,12 @@ if fIn2L == None:
 	print "ERROR: file",opts.input2L,"doesn't exist"
 	exit(1)
 
-#channel = ["1Mu","1Ele"]
-#channel = ["1Mu1Ele","2Mu","2Ele"]
-channel = ["1Ele","1Mu","1Mu1Ele","2Mu","2Ele"]
+#channel = ["1Mu"]
+channel =  ["1Mu","1Mu1Ele","2Mu","1Ele","2Ele"]
+##channel =  ["1Ele","1Mu","1Mu1Ele","2Mu","2Ele"]
 ##basecat = ["Baseline","charmCR","extraRadCR","topCR"]
 basecat = ["Baseline","extraRadCR","topCR"]
+##basecat = ["highMTCR","lowMTCR"]
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 
@@ -99,30 +99,20 @@ for x in basecat:
 		name= x+ "_" + y
 #       catStore [ name ] = { "name": name,"file": None, "hasMC":["all"],"var":"HT"}
 		srList = [""]
-		if x=="Baseline" or x=="extraRadCR" or x=="topCR":
+		if x=="Baseline":
 ##			if y == "1Ele" or y == "1Mu": srList = ["_SR1","_SR2","_SR3","_SR4"]
-##			if y == "1Ele" or y == "1Mu": srList = [""]
-			## BDT1 is 1l high mass
-			## BDT2 is 1l low mass
-			## BDT3 is 2l high mass
-			## BDT4 is 2l low mass
-			if y == "1Ele" or y == "1Mu": srList = ["1","2"]
-##			if y == "1Ele" or y == "1Mu": srList = ["1"]
-##			if y == "1Ele" or y == "1Mu": srList = ["2"]
-##			else : srList = ["_SR1","_SR2","_SR3","_SR4"]
-##			else : srList = [""]
-			else : srList = ["3","4"]
-##			else : srList = ["3"]
-##			else : srList = ["4"]
+			if y == "1Ele" or y == "1Mu": srList = [""]
+##			else : srList = ["_SR1","_SR2"]
+			else : srList = [""]
 		for sr in srList:
 			name= x+ "_" + y + "" + sr
 ##			catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"HT"+sr}
-			catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"bdt"+sr}
+			catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"Met"+sr}
 
        ## set files
 			if y == "1Ele" or y == "1Mu": catStore [ name ]['file'] = fIn1L
 			else : catStore[name]['file'] = fIn2L
-
+			
        #these have null norm so far
 			if x=="charmCR":
 ##				catStore[name]["hasMC"]=["VV","WJets"]
@@ -137,9 +127,10 @@ for x in basecat:
 				catStore[name]["hasMC"]=["xxx"]
 			if x=="Baseline" and y=="1Mu1Ele":
 				catStore[name]["hasMC"]=["VV","TT","TTX","ST","HPlus"]
-
+				
 			mcStore={
-				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0},
+##				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0},
+				"HPlus":{"name":"HPlus", "hist":["HplusToTauNu_M-%d_13TeV_amcatnlo_pythia8"], "num":0},
 ##				"WJets":{"name":"WJets", "hist":["WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8","DYJets-madgraph"],"num":1 },
 				"VV":{ "name":"VV","hist":["WWTo2L2Nu","WWToLNuQQ","WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu","ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":2},
 				#	"WW":{ "name":"WW","hist":["WWTo2L2Nu","WWToLNuQQ"],"num":2},
@@ -317,7 +308,8 @@ def importPdfFromTH1(cat,mc,syst=None):
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
-	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000]
+##	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000]
+	if mc["name"]=="HPlus":masses=[300,400,500,750,1000,2000,3000]
 	else: masses=[0]
 
 	if syst == None: shifts=["x"]

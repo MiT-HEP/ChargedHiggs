@@ -45,7 +45,7 @@ public:
     // Variables for MVA
     template<class T>
     void SetVariable( string name, T value){ varValues_.Set(name, value); }
-    void AddVariable( string name, char type);
+    void AddVariable( string name, char type, int r);
 
     vector<string> weights;
 
