@@ -16,9 +16,36 @@ void Weight::PrintInfo() {
     Log(__FUNCTION__,"INFO",Form("puInt:%lf",puInt_));
     Log(__FUNCTION__,"INFO",Form("scales=%d pdfs=%d",int(scales_),int(pdfs_)));
     Log(__FUNCTION__,"INFO",Form("syst=%d",int(syst) ) );
-    Log(__FUNCTION__,"INFO",Form("systPdf=%d",int(syst) ) );
+    Log(__FUNCTION__,"INFO",Form("systPdf=%d",int(systPdf) ) );
     Log(__FUNCTION__,"INFO",Form("pu=%lf", pu_.GetPUWeight(mcName_,puInt_,runNum_) ) );
     Log(__FUNCTION__,"INFO",Form("weight=%le", doWeight() ) );
+    
+    if (syst == MC::none and systPdf <0 ) 
+    {
+        //return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        Log(__FUNCTION__,"INFO","--- CENTRAL WEIGHTS ---" );
+        Log(__FUNCTION__,"INFO",Form("step 1=%lf",mcWeight_* mcXsec_));
+        Log(__FUNCTION__,"INFO",Form("step 2=%lf",mcWeight_* mcXsec_ *lumi_));
+        Log(__FUNCTION__,"INFO",Form("step 3=%lf",mcWeight_* mcXsec_ * lumi_ * sf_));
+        Log(__FUNCTION__,"INFO",Form("step 4=%lf",mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)));
+        Log(__FUNCTION__,"INFO",Form("step 5=%lf",mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_) / nEvents_));
+
+    }
+
+    if (syst == MC::none and systPdf>=0)
+    {
+        Log(__FUNCTION__,"INFO",Form("step 6 (W) =%lf",pdfsWeights_[systPdf] * pdfsNeventReweight_[systPdf]));
+        Log(__FUNCTION__,"INFO",Form("step 7 (NeRW)=%lf",pdfsNeventReweight_[systPdf]));
+    
+    }
+
+    if (syst != MC::none and systPdf<0)
+    {
+        Log(__FUNCTION__,"INFO",Form("step 6 (W) =%lf",scalesWeights_[syst] * pdfsNeventReweight_[syst]));
+        Log(__FUNCTION__,"INFO",Form("step 7 (NeRW)=%lf",scalesNeventReweight_[syst]));
+    
+    }
+
     if (syst != MC::none){
         Log(__FUNCTION__,"INFO"," --- SCALES ---");
         for(int i=0;i< MC_MAX_SCALES ;++i)  

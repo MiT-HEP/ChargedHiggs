@@ -8,41 +8,15 @@ sub=tag|v1.4
 sub=amarini|/store/user/amarini/Nero
 sub=klute|/store/user/klute/Nero
 
+include=dat/config.dat
+
 ################
 ### DATASETS ###
 ################
 
-#### BKG ###
-Files=%(klute)s/%(tag)s/SingleMuon
-#/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-#addfiles=/store/user/amarini/Nero/v1.2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-##addfiles=/store/user/amarini/Nero/%(tag)s/TT_TuneCUETP8M1_13TeV-powheg-pythia8
-#### WW/WZ/ZZ###
-#addfiles=/store/user/amarini/Nero/%(tag)s/WW_TuneCUETP8M1_13TeV-pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/WZ_TuneCUETP8M1_13TeV-pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/ZZ_TuneCUETP8M1_13TeV-pythia8
-#### SIGNAL ###
-#### QCD
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
-#####
-##### DATA
-#addfiles=/store/user/amarini/Nero/%(tag)s/SingleMuon
-#addfiles=/store/user/amarini/Nero/%(tag)s/SingleElectron
+Files=
+include=dat/catalog/2015/dy.dat
+#addfiles=%(amarini)s/%(tag)s/SingleMuon
 
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
@@ -52,16 +26,6 @@ Output=DY.root
 ## Preselection:1,Preselection:2
 Analysis=JsonAnalysis,DYAnalysis
 
-MCDB=dat/mc_database.txt
-SFDB=aux/sf_database.txt
-Branches=dat/branches.txt
-###
-pileup=aux/pileup.root
-pileupRun=
-pileupLumi=
-#Lumi=2110 ## doing nothing
-Lumi=1
-###
 # additional JSON FILE for Data selection
 
 # Smearer
@@ -74,7 +38,6 @@ Correct=NONE
 #________________________________________________________________
 #____________________ CONFIGURATION _____________________________
 #
-config=MitPhiCorrector|fileName="aux/MetPhi.root"
 ##########  ANALYSIS  ################
 
 #############
@@ -90,9 +53,4 @@ addConfig=DYAnalysis|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT')
 
 include=dat/json.dat
 
-
-#configure Analysis
-#config=AnalysisBase|Init()
-#config=Preselection|
-#config=MetPhiCorrector|fileName=""
 

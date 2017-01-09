@@ -91,16 +91,22 @@ void ChargedHiggsQCDPurity::Init()
 
         }
         // I don't need to split it by pt
-            Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),8000,0.,8000); // same binning in TauNu
-            Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),8000,0.,8000.);
-            Book( none + "EtMissIsoInv"+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),1000,0.,1000.);
-            Book( none + "EtMiss"+"_"+ l  , ("EtMiss "+ l).c_str(),1000,0.,1000.); // copy of the Tau Nu ? 
+        Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),8000,0.,8000); // same binning in TauNu
+        Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),8000,0.,8000.);
+        Book( none + "EtMissIsoInv"+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),1000,0.,1000.);
+        Book( none + "EtMiss"+"_"+ l  , ("EtMiss "+ l).c_str(),1000,0.,1000.); // copy of the Tau Nu ? 
 
         Book(    none+"RbbMin_"+l,"RbbMin "+l+";R_{bb}^{min}",100,0,2*TMath::Pi());
         Book(    none+"RCollMin_"+l,"RCollMin "+l+";R_{coll}^{min}",100,0,2*TMath::Pi());
 
         Book(    none+"RbbMinIsoInv_"+l,"RbbMin IsoInv "+l+";R_{bb}^{min}",100,0,2*TMath::Pi());
         Book(    none+"RCollMinIsoInv_"+l,"RCollMin IsoInv "+l+";R_{coll}^{min}",100,0,2*TMath::Pi());
+        // study categorization
+        for(int i=0;i<=1;++i)
+        {
+            Book( dir + "Mt_"+Form("cat%d",i)+"_"+ l  , ("Mt "+ l).c_str(),8000,0.,8000); // same binning in TauNu
+            Book( dir + "MtIsoInv_"+Form("cat%d",i)+"_"+ l  , ("MtIsoInv "+ l).c_str(),8000,0.,8000.);
+        }
     }
 
 }
@@ -314,6 +320,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             if (t->GetNProng()==1) hist+="_1p";
             else hist+="_3p";
             Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+
+            if( e->Bjets()> 1)hist = "Mt_cat0";
+            else hist = "Mt_cat1";
+            Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight(false));
     }
 
     // ---------------------- INF TAU SF 
@@ -394,6 +404,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill( dir+hist +"_"+label,systname, Upar(e,tInv), e->weight(false) );
             hist = HistName(pt,false, true,"Upar");
             Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight(false) );
+
+            if( e->Bjets()> 1)hist = "MtIsoInv_cat0";
+            else hist = "MtIsoInv_cat1";
+            Fill(dir+hist+"_"+label,systname, e->Mt(Event::MtTauInv) ,e->weight(false));
 
             hist = HistName(pt, false, true) ;
             if (flavor == 15) hist += "_T";

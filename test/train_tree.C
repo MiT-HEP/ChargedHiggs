@@ -54,15 +54,16 @@ void train( string fileName="test/mysub/Tmva/TmvaOutput.root",string bkg="QCD", 
 	int mcSig =0;
 
 	if (sig == "200") mcSig = 202;
-	else if (sig == "400") mcSig = 206;
 	else if (sig == "180") mcSig = 201;
-	else if (sig=="200LO") mcSig=101;
-	else if (sig=="500LO") mcSig=103;
-	else if (sig=="900LO") mcSig=104;
+	else if (sig == "400") mcSig = 206;
+	else if (sig == "500") mcSig = 207;
+	else if (sig == "800") mcSig = 208;
+	else if (sig == "1000") mcSig = 209;
 	else cout<<"ERROR: NO sig "<<sig<<endl;
 
 	if(bkg =="QCD") mcBkg = -101;
 	else if(bkg=="TTJets") mcBkg =-103;
+	else if(bkg=="WJets") mcBkg =-104;
 	else if(bkg=="DY") mcBkg =-102;
 	else if(bkg=="QCDData") mcBkg = -200;
 	else cout<<"ERROR: No bkg "<< bkg<<endl;

@@ -99,17 +99,19 @@ class Event{
     //
     inline Met GetMet( ) const { return met_;} // should be const,  -- FIXED? but noCorrPt is not set correctly without &
 
-    inline float Rho() { return rho_; }
-    inline int Npv() { return npv_ ;} 
-    inline float Ht()   { float ht=0 ; for(auto j : jets_ ) if( j->IsJet()  ) ht+= j->Pt() ; return ht;}
+    inline float Rho() const { return rho_; }
+    inline int Npv() const { return npv_ ;} 
+    inline float Ht() const   { float ht=0 ; for(auto j : jets_ ) if( j->IsJet()  ) ht+= j->Pt() ; return ht;}
+    inline float HtInvIso() const   { float ht=0 ; for(auto j : jets_ ) if( j->IsJetInvIso()  ) ht+= j->Pt() ; return ht;}
 
-    inline int Njets(){int n=0; for(auto j : jets_) if(j->IsJet()) n++; return n;}
-    inline int NjetsInvIso(){int n=0; for(auto j : jets_) if(j->IsJetInvIso()) n++; return n;}
-    inline int NcentralJets(){int n=0; for(auto j : jets_) if(j->IsCentralJet()) n++; return n;}
-    inline int NforwardJets(){int n=0; for(auto j : jets_) if(j->IsForwardJet()) n++; return n;}
-    inline int Bjets(){int n=0; for(auto j : jets_) if(j->IsBJet()) n++; return n;}
-    inline int Ljets(){int n=0; for(auto j : jets_) if(not j->IsBJet()) n++; return n;}
-    inline int BjetsInvIso(){int n=0; for(auto j : jets_) if(j->IsBJetInvIso()) n++; return n;}
+    inline int Njets()const {int n=0; for(auto j : jets_) if(j->IsJet()) n++; return n;}
+    inline int NjetsInvIso()const {int n=0; for(auto j : jets_) if(j->IsJetInvIso()) n++; return n;}
+    inline int NcentralJets() const {int n=0; for(auto j : jets_) if(j->IsCentralJet()) n++; return n;}
+    inline int NcentralJetsInvIso() const {int n=0; for(auto j : jets_) if(j->IsCentralJetInvIso()) n++; return n;}
+    inline int NforwardJets()const {int n=0; for(auto j : jets_) if(j->IsForwardJet()) n++; return n;}
+    inline int Bjets()const {int n=0; for(auto j : jets_) if(j->IsBJet()) n++; return n;}
+    inline int Ljets()const {int n=0; for(auto j : jets_) if(not j->IsBJet()) n++; return n;}
+    inline int BjetsInvIso()const {int n=0; for(auto j : jets_) if(j->IsBJetInvIso()) n++; return n;}
     inline int Ntaus(){int n=0; for(auto t : taus_) if(t->IsTau()) n++; return n;}
     inline int Nleps(){int n=0; for(auto t : leps_) if(t->IsLep()) n++; return n;}
     inline int NGenPar(){return genparticles_.size();}

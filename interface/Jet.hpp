@@ -108,6 +108,12 @@ class Jet : virtual public Object, virtual public SmearableComplex
         return 1;
     }
 
+    inline int IsCentralJetInvIso() const {
+        if ( not IsJetInvIso() ) return 0;
+        if ( fabs(Eta()) >= etacutcentral_ ) return 0;
+        return 1;
+    }
+
     inline int IsForwardJet() const {
         if ( not IsJet() ) return 0;
         if ( fabs(Eta()) < etacutcentral_ ) return 0;
