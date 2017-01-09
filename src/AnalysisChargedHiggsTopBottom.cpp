@@ -90,6 +90,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("DRl1b1",evt_DRl1b1);
     SetTreeVar("DRl2b1",evt_DRl2b1);
     SetTreeVar("DRbbmin",evt_minDRbb);
+    SetTreeVar("MassDRbbmin",evt_minDRbb_invMass);
 
     SetTreeVar("mt",evt_MT);
     SetTreeVar("mt2ll",evt_MT2ll);
@@ -125,33 +126,34 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     int mc=0;
     if (label.find("HplusToTB") !=string::npos)  //sig
         {
-            mc = 0;
+            //            mc = 0;
             // low mass
-            if (label.find("M-180") !=string::npos) mc += 1;
-            if (label.find("M-200") !=string::npos) mc += 2;
-            if (label.find("M-220") !=string::npos) mc += 3;
-            if (label.find("M-250") !=string::npos) mc += 4;
-            if (label.find("M-300") !=string::npos) mc += 5;
-            if (label.find("M-350") !=string::npos) mc += 6;
-            if (label.find("M-400") !=string::npos) mc += 7;
-            if (label.find("M-450") !=string::npos) mc += 8;
-            if (label.find("M-500") !=string::npos) mc += 9;
+            if (label.find("M-180") !=string::npos) mc = 1;
+            if (label.find("M-200") !=string::npos) mc = 2;
+            if (label.find("M-220") !=string::npos) mc = 3;
+            if (label.find("M-250") !=string::npos) mc = 4;
+            if (label.find("M-300") !=string::npos) mc = 5;
+            if (label.find("M-350") !=string::npos) mc = 6;
+            if (label.find("M-400") !=string::npos) mc = 7;
+            if (label.find("M-450") !=string::npos) mc = 8;
+            if (label.find("M-500") !=string::npos) mc = 9;
             // high mass
-            if (label.find("M-800") !=string::npos) mc += 10;
-            if (label.find("M-1000")!=string::npos) mc += 11;
-            if (label.find("M-2000")!=string::npos) mc += 12;
-            if (label.find("M-3000")!=string::npos) mc += 13;
+            if (label.find("M-750") !=string::npos) mc = 10;
+            if (label.find("M-800") !=string::npos) mc = 11;
+            if (label.find("M-1000")!=string::npos) mc = 12;
+            if (label.find("M-2000")!=string::npos) mc = 13;
+            if (label.find("M-3000")!=string::npos) mc = 14;
 
 
         } else if (label.find("HplusToTauNu") !=string::npos) //sig TauNu
         {
-            mc = 50;
-            if (label.find("M-300") !=string::npos) mc += 1;
-            if (label.find("M-500") !=string::npos) mc += 3;
-            if (label.find("M-800") !=string::npos) mc += 4;
-            if (label.find("M-1000")!=string::npos) mc += 5;
-            if (label.find("M-2000")!=string::npos) mc += 6;
-            if (label.find("M-3000")!=string::npos) mc += 7;
+            //            mc = 50;
+            if (label.find("M-300") !=string::npos) mc = 55;
+            if (label.find("M-500") !=string::npos) mc = 59;
+            if (label.find("M-800") !=string::npos) mc = 61;
+            if (label.find("M-1000")!=string::npos) mc = 62;
+            if (label.find("M-2000")!=string::npos) mc = 63;
+            if (label.find("M-3000")!=string::npos) mc = 64;
 
         } else  // bkg
         {
@@ -165,17 +167,18 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             if(label.find("ST_tW_antitop") !=string::npos) mc =112 ;
             if(label.find("ST_t-channel_top") !=string::npos) mc =113 ;
             if(label.find("ST_t-channel_antitop") !=string::npos) mc =114 ;
-            // s channel
-            if(label.find("tZq_ll_4f") !=string::npos) mc =115 ;
-            if(label.find("TTTT") !=string::npos) mc =116 ;
+            if(label.find("ST_s-channel_4f") !=string::npos) mc =115 ;
+            if(label.find("tZq_ll_4f") !=string::npos) mc =116 ;
+            if(label.find("tZq_nunu_4f") !=string::npos) mc =117 ;
 
-            // ttH
+            // tt+X with X=Z,W,H,TT
             if(label.find("TTZToQQ") !=string::npos) mc = 121;
             if(label.find("TTZToLLNuNu") !=string::npos) mc =122 ;
             if(label.find("TTWJetsToQQ") !=string::npos) mc =123 ;
             if(label.find("TTWJetsToLNu") !=string::npos) mc =124 ;
             if(label.find("ttHJetTobb") !=string::npos) mc =125 ;
             if(label.find("ttHJetToNonbb") !=string::npos) mc =126 ;
+            if(label.find("TTTT") !=string::npos) mc =127 ;
 
             // V+jets
             //            mc = 200;
@@ -194,6 +197,9 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             if(label.find("ZZTo2L2Nu") !=string::npos) mc =337 ;
             if(label.find("ZZTo2L2Q") !=string::npos) mc =338 ;
             if(label.find("ZZTo4L") !=string::npos) mc =339 ;
+            if(label.find("VHToNonbb_M125") !=string::npos) mc =340 ;
+            if(label.find("WH_HToBB_WToLNu_M125") !=string::npos) mc =341 ;
+
         }
 
     SetTreeVar("mc",mc);
@@ -342,6 +348,7 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","DRl1b1",'F');
     Branch("tree_tb","DRl2b1",'F');
     Branch("tree_tb","DRbbmin",'F');
+    Branch("tree_tb","MassDRbbmin",'F');
 
     // various masses
     Branch("tree_tb","bdt1lh",'F');
@@ -503,7 +510,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMax_"+l,"DEtaMax "+l+";dEta_{j^{i},b^{1}}^{max}",100,0,10);
         // min DRbb
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+l,"minDRbb"+l+";dR_{bb}^{min}",50,0,2*TMath::Pi()); // <-- this has signal discrimination
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+l,"minDRbb_mass "+l+";m(bb)^{dR^{min}})",100,0,300);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+l,"minDRbb_mass "+l+";m(bb)^{dR^{min}})",100,0,500);
         // b1b2
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/DRb1b2_"+l,"DRb1b2"+l+";dR_{b^{1}b^{2}}",100,0,10);
         //        Book2D( "ChargedHiggsTopBottom/Baseline"+category+"/DRVsMassb1b2_"+l,"DRVsMassb1b2"+l+";mass(b^{1},b^{2});dR(b^{1},b^{2})",100,0,1000,100,0,10);
@@ -985,10 +992,11 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
     }
 
     evt_minDRbb=minDRbb;
+    evt_minDRbb_invMass=minDRbb_invMass;
 
     if(e->Bjets()>1) {
-        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+label, systname, minDRbb , e->weight() );
-        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+label, systname, minDRbb_invMass , e->weight() );
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+label, systname, evt_minDRbb , e->weight() );
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+label, systname, evt_minDRbb_invMass , e->weight() );
         evt_MT2bb=ChargedHiggs::mt2(e->GetBjet(0)->GetP4(),e->GetBjet(1)->GetP4(),e->GetMet().GetP4());
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb_"+label, systname, evt_MT2bb , e->weight() );
 
@@ -1503,9 +1511,11 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     //// Fill tree
     ////
 
-    if( e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 ))) {
-        setTree(e,label,category);
-        FillTree("tree_tb");
+    if (systname.find("NONE")    !=string::npos) {
+        if( e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 ))) {
+            setTree(e,label,category);
+            FillTree("tree_tb");
+        }
     }
 
     ////////
