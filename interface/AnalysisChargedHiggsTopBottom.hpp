@@ -70,6 +70,7 @@ private:
 
     double evt_HT=-1;
     double evt_minDRbb=-1;
+    double evt_minDRbb_invMass=-1;
 
     double evt_MT=-1;
     double evt_MT2bb=-1;

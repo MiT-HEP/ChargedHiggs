@@ -8,3 +8,12 @@ addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnl
 addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1
 addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1
 addfiles=%(dalfonso)s/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1
+
+sub=jan|/store/user/jaeyserm/Nero/80X/
+addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-180
+addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-200
+addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-220
+addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-250
+addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-350
+addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-450_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-450
+addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-750_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-750
