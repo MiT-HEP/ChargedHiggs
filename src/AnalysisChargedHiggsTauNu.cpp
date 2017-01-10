@@ -134,7 +134,7 @@ void ChargedHiggsTauNu::Init()
 }
 
 
-unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80X,bool isLightMass) {
+unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
     
     CutSelector cut; 
     cut.SetMask(MaxCut-1);
@@ -167,9 +167,8 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80
     if (muon) sub=e->GetMuon(1);
 
     //------------- TRIGGER -----------
-    if (not is80X)
     {
-        if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80"))  cut.SetCutBit(Trigger);
+        if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110"))  cut.SetCutBit(Trigger);
         else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
     }
     
@@ -183,20 +182,6 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80
         
     }
     
-    if (is80X and not muon){
-        // No reHLT for singleT, WZ, WW and ZZ
-        if(e->GetWeight()->GetMC().find("ST") != string::npos || e->GetWeight()->GetMC().find("WZ") != string::npos || e->GetWeight()->GetMC().find("WW") != string::npos || e->GetWeight()->GetMC().find("ZZ") != string::npos) {
-
-            cut.SetCutBit(Trigger); // set trigger, but apply SF!
-        }
-        else {
-            //if ( not e->IsRealData() or e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
-            //if ( e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120"))  cut.SetCutBit(Trigger);
-            //if ( e->IsTriggered("HLT_PFMET120_NoiseCleaned_BtagCSV0p72"))  cut.SetCutBit(Trigger);
-
-            if(e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET90")) cut.SetCutBit(Trigger);   
-        }
-    }
     // --------------END TRIGGER
 
     if (t== NULL) return cut.raw();
@@ -215,6 +200,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80
              fabs(t->Eta() ) <2.1
                 ) cut.SetCutBit(OneTau) ;
     }
+
 
     bool lepVeto=false;
     if (e->Nleps() ==0 ) lepVeto=true;
@@ -238,8 +224,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon,bool is80
     
     // MET 
     if (isLightMass){
-        if (is80X){if ( e->GetMet().Pt() >= 90 ) cut.SetCutBit(Met);}
-        else {if ( e->GetMet().Pt() >= 80 ) cut.SetCutBit(Met); }
+        if ( e->GetMet().Pt() >= 90 ) cut.SetCutBit(Met);
     }
     else{
         if ( e->GetMet().Pt() >= 100 ) cut.SetCutBit(Met); // or PtUncorr
@@ -272,7 +257,6 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     #endif
     
     e->ApplyTopReweight();
-    e->ApplyWReweight();
 
     #ifdef SYNC
         double toprw = e->GetWeight()->GetBareSF();
@@ -286,7 +270,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
     cut.reset();
     cut.SetMask(MaxCut-1) ;
-    cut.SetCut( Selection(e,true, false, is80X,isLightMass) );
+    cut.SetCut( Selection(e,true, false) );
 
     #ifdef SYNC
     if (SYNC>0){
@@ -394,44 +378,14 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     // For non re-HLT samples --> apply directly the efficiencies in data
     // For all the oters, apply data/mc efficiencies
     string tauLegSF, metLegSF;
-
-    // ---------------- 80X ------------------------
-    if (is80X)
-    {
-        if(e->GetWeight()->GetMC().find("ST") != string::npos || e->GetWeight()->GetMC().find("WZ") != string::npos || e->GetWeight()->GetMC().find("WW") != string::npos || e->GetWeight()->GetMC().find("ZZ") != string::npos) {
-            
-            // non reHT
-            tauLegSF = "tauLegData";
-            metLegSF = "metLegData";
-        }
-        else {
-            // reHLT
-            tauLegSF = "tauLeg";
-            metLegSF = "metLeg";  
-        }
-    }
-    else // 76X
-    {
-        metLegSF="metLegLoose";
-    }
-    // --------------------------------------------
+    tauLegSF = "tauLeg";
+    metLegSF = "metLeg";  
 
 
     //#warning no sf trigger
     if (cut.pass(Trigger) and not e->IsRealData()) {
         
-        //--------------- 80X ---------------------
-        if (is80X and t!=NULL) // 80X tauLeg13p
-        {
-            if (tauLegSF=="tauLegData"){e->ApplyTauSF(t,false,"Data");}
-            else e->ApplyTauSF(t,false,""); 
-
-        }
-        else // 76X tauLeg 13p
-        {
-            if (t!=NULL){e->ApplyTauSF(t,false,"");}
-        }
-        // ----------------------------------------
+        if (t!=NULL){e->ApplyTauSF(t,false,"");}
 
         if( not e->ExistSF(metLegSF) ) Log(__FUNCTION__,"WARING" ,"No Tau"+metLegSF+" SF");  
         

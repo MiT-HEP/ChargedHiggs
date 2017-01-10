@@ -4,6 +4,7 @@
 
 #include "interface/AnalysisBase.hpp"
 #include "interface/GeneralFunctions.hpp"
+#include "interface/AnalysisChargedHiggsTauNu.hpp"
 
 // FWD Declaration
 namespace Pythia8{
@@ -17,7 +18,7 @@ namespace CLHEP {
 #include "TRandom.h"
 #include "TRandom3.h"
 
-class ChargedHiggsEWKPurity:  virtual public AnalysisBase
+class ChargedHiggsEWKPurity:  virtual public ChargedHiggsTauNu
 {
     public:
         void Init() override;
