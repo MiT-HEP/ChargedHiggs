@@ -4,7 +4,9 @@
 #include "interface/AnalysisBase.hpp"
 #include "interface/GeneralFunctions.hpp"
 
-class ChargedHiggsQCDPurity:  virtual public AnalysisBase
+#include "interface/AnalysisChargedHiggsTauNu.hpp"
+
+class ChargedHiggsQCDPurity:  virtual public ChargedHiggsTauNu
 {
     public:
         void Init() override;
@@ -21,10 +23,7 @@ class ChargedHiggsQCDPurity:  virtual public AnalysisBase
 
     float Upar(Event*e,Tau *t ){ return e->GetMet().Pt() * TMath::Cos( e->GetMet().DeltaPhi( *t ) ) ; };
     float Uperp(Event*e, Tau*t){ return e->GetMet().Pt() * TMath::Sin( e->GetMet().DeltaPhi( *t) );}; // this is positive, deltaPhi>0
-    
-    bool Unblind(Event *e) { if (e->IsRealData() and e->Mt() > 50) return unblind; return true;} // if is not data, no need to return something else
-    bool is80X{false};
-    bool isLightMass{false};
+
 };
 
 #endif

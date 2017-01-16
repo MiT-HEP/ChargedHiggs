@@ -91,7 +91,6 @@ int ChargedHiggsEWKPurity::analyze(Event*e,string systname)
 {
     string label = GetLabel(e);
     e->ApplyTopReweight();
-    e->ApplyWReweight();
     CutSelector muon; 
     muon.SetMask(ChargedHiggsTauNu::MaxCut-1);
     muon.SetCut(ChargedHiggsTauNu::Selection(e,true,true));

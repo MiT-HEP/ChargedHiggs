@@ -126,8 +126,6 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     e->ApplyTopReweight();
 
-    e->ApplyWReweight();
-
     #ifdef VERBOSE
     if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is Tau? "<< (t==NULL) <<endl;
     if (VERBOSE >0 ) cout<<"[ChargedHiggsQCDPurity]::[analyze]::[DEBUG1] is TauInv? "<< (tInv == NULL)<<endl;
@@ -136,10 +134,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     // --- take the selection from the tau nu analysis
     CutSelector direct; 
         direct.SetMask(ChargedHiggsTauNu::MaxCut-1);
-        direct.SetCut(ChargedHiggsTauNu::Selection(e,true,false,is80X,isLightMass));
+        direct.SetCut(Selection(e,true,false));
     CutSelector inverse;
         inverse.SetMask(ChargedHiggsTauNu::MaxCut-1);
-        inverse.SetCut(ChargedHiggsTauNu::Selection(e,false,false,is80X,isLightMass));
+        inverse.SetCut(Selection(e,false,false));
 
     // TODO:
     // * what do I do with event with a Tau and an Inv tau? -> DY ? 
@@ -180,22 +178,6 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         if (e->GetTau(0) !=NULL and e->GetTau(0)->Rematch(e)==15) passMatchDirect=true;
         if (e->GetTauInvIso(0) !=NULL and e->GetTauInvIso(0)->Rematch(e)==15) passMatchInverse=true;
     }
-
-    /*
-    if (not e->IsRealData() )
-    {
-        if (passDirectLoose)
-        {
-            e->SetPtEtaSF("antiE",e->GetTau(0)->Pt(),e->GetTau(0)->Eta() );
-            e->ApplySF("antiE");
-        }
-        else if (passInverseLoose) // don't apply them twice
-        {
-            e->SetPtEtaSF("antiE",e->GetTauInvIso(0)->Pt(),e->GetTauInvIso(0)->Eta() );
-            e->ApplySF("antiE");
-        }
-    }
-    */
 
     //--------------
 
