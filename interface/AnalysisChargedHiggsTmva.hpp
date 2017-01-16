@@ -4,11 +4,12 @@
 #include "interface/AnalysisBase.hpp"
 #include "interface/Output.hpp" // DataStore
 #include "interface/CatSelector.hpp"
+#include "interface/AnalysisChargedHiggsTauNu.hpp"
 
 #include "TMVA/Reader.h"
 #include "TMVA/Tools.h"
 
-class TmvaAnalysis : virtual public AnalysisBase
+class TmvaAnalysis : virtual public ChargedHiggsTauNu
 {
     public:
         TmvaAnalysis(){};
@@ -28,8 +29,6 @@ class TmvaAnalysis : virtual public AnalysisBase
 
         // multi category analysis
         CatSelector categories;
-
-        bool Unblind(Event *e) { if (e->IsRealData() and e->Mt() > 50) return unblind; return true;} // if is not data, no need to return something else
 
     private:
         // this allows to handle different data type (namely float int) in a unique structure. -- Like Trees

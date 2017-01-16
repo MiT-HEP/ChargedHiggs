@@ -101,7 +101,7 @@ int TmvaAnalysis::analyze(Event*e,string systname){
     // DEBUG FROM CUT BASED
     CutSelector direct;  int index=0;
         direct.SetMask(ChargedHiggsTauNu::MaxCut-1);
-        direct.SetCut(ChargedHiggsTauNu::Selection(e,true));
+        direct.SetCut(Selection(e,true));
     Fill("ChargedHiggsTmva/TauNu/CutFlow_"+label,systname,index,e->weight());
 
     size_t mask=ChargedHiggsTauNu::OneTau;  index++;
