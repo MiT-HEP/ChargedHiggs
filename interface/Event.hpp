@@ -160,6 +160,7 @@ class Event{
 
     // SF utils
     inline void SetPtEtaSF(string label, float pt, float eta){  weight_ -> SetPtEtaSF(label,pt,eta);}
+    inline void SetPtEtaTimeSF(string label, float pt, float eta,long run, long lumi){  weight_ -> SetPtEtaTimeSF(label,pt,eta,run,lumi);}
     inline void SetWPSF(string label, int wp){  weight_ -> SetWPSF(label,wp);}
     inline void SetJetFlavorSF(string label, int flavor){  weight_ -> SetJetFlavorSF(label,flavor);}
     void ApplySF(string label){ weight_ -> ApplySF(label) ; } 

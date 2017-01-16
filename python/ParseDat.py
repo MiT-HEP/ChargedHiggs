@@ -133,6 +133,9 @@ def ParseDat(name):
 		if key == 'addConfig': # dict
 			key = 'config'
 			type= value.split('|')[0]
+			#if type not in config[key]: 
+			#	config[key][type] = vStringKey(  '|'.join(value.split('|')[1:])  )
+			#else:
 			config[key][type].extend(vStringKey(  '|'.join(value.split('|')[1:])  )  )
 		
 		######## INCLUDE ###########
@@ -332,6 +335,103 @@ def ReadSFDB(file,verbose=False):
 			R['pt2']=pt2
 			R['eta1']=eta1
 			R['eta2']=eta2
+
+		elif type =='ptetatime':
+			pt1  = float ( l.split(' ')[2] )
+			pt2  = float ( l.split(' ')[3] )
+			eta1 = float ( l.split(' ')[4] )
+			eta2 = float ( l.split(' ')[5] )
+			run1 = int   ( l.split(' ')[6] )
+			run2 = int   ( l.split(' ')[7] )
+			lumi1= int   ( l.split(' ')[8] )
+			lumi2= int   ( l.split(' ')[9] )
+			sf   = float ( l.split(' ')[10] )
+			err  = float ( l.split(' ')[11] )
+			R['pt1']=pt1
+			R['pt2']=pt2
+			R['eta1']=eta1
+			R['eta2']=eta2
+			R['run1']=run1
+			R['run2']=run2
+			R['lumi1']=lumi1
+			R['lumi2']=lumi2
+
+		elif type =='xinmei-dir-inveff':
+			R['dir']  =  l.split(' ')[2] 
+			R['type'] = 'ptetatime'
+			lumibound=open(R['dir']+"/lumibound.txt")
+			g0=""
+			for g in lumibound:
+				g1= re.sub('\n',' ',re.sub('\[[0-9]*\]=','=',g0+g))
+				if g0 != "":
+					print "eval '"+g1+"'" ##DEBUG
+					exec(g1)
+					g0=""
+				else:
+					g0=g[:]
+			for i in range(0,len(LS_bound)+1):
+				#reset
+				R['run1'] = -1
+				R['run2'] = -1
+				R['lumi1'] = -1
+				R['lumi2'] = -1
+
+				try:
+					R['lumi2'] = LS_bound[i]
+					R['run2'] = Run_bound[i]
+				except IndexError:
+					pass
+
+				if i>=0: ## list[-1] is not an exception
+					R['lumi1'] = LS_bound[i-1]
+					R['run1'] = Run_bound[i-1]
+				
+				# small checks on when open ranges should be acceptable
+				if i!=0 and R['run1'] <=0 :
+					print "ERROR,run range1"
+					raise IOError
+
+				if i!=len(LS_bound) and R['run2'] <=0 :
+					print "ERROR,run range2"
+					raise IOError
+
+				j=i
+
+				if R['run1'] == -1: j =1
+				if R['run2'] == -1: j = len(LS_bound)-1
+				
+				R['filename'] = R['dir'] + "/eff_MG_DataSet_%d.root"%j
+				R['fileMC']   = R['dir'] + "/eff_CT_DataSet_%d.root"%j
+
+				#print "DEBUG: Parsing: i=",i,"j=",j,"run=[",R['run1'],",",R['run2'],"]","file=",R['filename']
+
+				fIn = ROOT.TFile.Open(R['filename'])
+
+				if fIn == None :
+					print "<> Error: file",R['filename'],"does not exist"
+
+				hEff= fIn.Get("hEffEtaPt")
+				hErr= fIn.Get("hErrhEtaPt") ### high and symm
+				for xBin in range(1,hEff.GetXaxis().GetNbins()+1):
+				   for yBin in range(1,hEff.GetYaxis().GetNbins()+1):
+				      R['pt1'] = hEff.GetYaxis().GetBinLowEdge(yBin)
+				      R['pt2'] = hEff.GetYaxis().GetBinLowEdge(yBin+1)
+				      R['eta1'] = hEff.GetXaxis().GetBinLowEdge(xBin)
+				      R['eta2'] = hEff.GetXaxis().GetBinLowEdge(xBin+1)
+				      try:
+			      	      	R['sf'] = 1./hEff.GetBinContent(xBin,yBin)
+			      	      	R['err'] = hErr.GetBinContent(xBin,yBin)/(hEff.GetBinContent(xBin,yBin)**2)
+				      except ZeroDivisionError:
+					print "<> Error Efficiency for bin:" ,xBin,",",yBin,"in file",R['filename'],"is 0, setting inveff to 1+/-1"
+				        R['sf']=1.
+					R['err']=1.
+
+				      R1={} ## copy 
+				      for key in R: R1[key] = R[key]
+				      L.append(R1)
+			R=None
+			continue ## lines loop
+
 		elif type == 'spline':
 			pt = float( l.split(' ')[2])
 			sf   = float ( l.split(' ')[3] )
