@@ -96,6 +96,8 @@ def ParseDat(name):
 		######### SUB ######
 		if key == 'sub':
 			## make sure that is well formatted
+			if value.split('|')[0] in subdict and subdict[value.split('|')[0] ] != StringKey(value.split('|')[1]):
+				print "WARNING: overriding substitution:",value.split('|')[0],"-> '" + StringKey(value.split('|')[1]) + "' (old value was '"+ subdict[value.split('|')[0] ]+"')" 
 			subdict[value.split('|')[0] ]= StringKey( value.split('|')[1] )
 		######### STRING ###########
 		if key == 'MCDB' or key =='SFDB' or key =='Output' or key == 'pileup' or key =='DumpDir' or key == 'Loader':

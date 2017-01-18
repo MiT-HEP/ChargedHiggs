@@ -1,0 +1,3 @@
+sub=zdexo|/store/group/phys_exotica/monojet/zdemirag/moriond80x/Nero/v2.0
+sub=amarini|/store/user/amarini/Nero/v2.1
+addfiles=%(amarini)s/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8

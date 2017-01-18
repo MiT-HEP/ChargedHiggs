@@ -8,6 +8,7 @@ from subprocess import call, check_output
 
 parser = OptionParser(usage = "usage");
 parser.add_option("-e","--eos",dest="eos",type="string",help="eos directory to scout, will not read the files in the pSet",default="");
+parser.add_option("-i","--dat",dest="dat",type="string",help="Input dat to scout. Either this is '' or eos is ''",default="");
 parser.add_option("-x","--xsec",dest="xsec",type="float",help="Use external cross-section",default=-1);
 parser.add_option("-l","--label",dest="label",type="string",help="MC label",default="DYamcatnlo");
 parser.add_option("-f","--file",dest="file",type="string",help="mc_database file name",default="dat/mc_database.txt");
@@ -55,6 +56,34 @@ if opts.rec:
 			print "going to execute",cmd
 			call(cmd,shell=True)
 	exit(0)
+
+if opts.dat != "":
+	if opts.eos != "": 
+		print "IGNORING eos option! don't put it with dat (-i) option"
+	from ParseDat import *
+	cfg = ParseDat(opts.dat)
+	for f in cfg['Files']:
+		#this are the datasets
+		if '.root' in f : continue
+
+		## find label: directory not containing only numbers, hyphens, underscore, or empty
+		dirs=f.split('/')
+		idx=len(dirs) -1 
+		while idx >=0 :
+			label = dirs[idx]
+			if re.match( '^[0-9_\-]*$',label): 
+				idx -= 1
+			else:
+				break
+		if idx <0: label = re.sub('.*/','',f)
+
+		if label == 'Tau': continue # exclude data
+
+		cmd = "python %s -e %s -x %f -l %s -f %s"%(sys.argv[0],f,opts.xsec,label,opts.file)
+		print "going to execute",cmd
+		call(cmd,shell=True)
+	exit(0)
+
 
 cmd = EOS+ " find -f " + opts.eos
 
@@ -120,15 +149,30 @@ else:
 	except: 
 		xsec=0
 	## DY
-	if 'DYJets' in opts.label or 'DY' in opts.label: xsec=6025.
+	#Bin=0,100      f=0.959886
+	#Bin=100,200    f=0.0302262
+	#Bin=200,400    f=0.00833685
+	#Bin=400,600    f=0.00113651
+	#Bin=600,800    f=0.000271553
+	#Bin=800,1200   f=0.000118071
+	#Bin=1200,13000 f=2.52766e-05
+	if 'DYJetsToLL_M-50_HT-0to100'      in opts.label: xsec=5534.126744
+	elif 'DYJetsToLL_M-50_HT-100to200'  in opts.label: xsec=174.266133
+	elif 'DYJetsToLL_M-50_HT-200to400'  in opts.label: xsec=48.065275
+	elif 'DYJetsToLL_M-50_HT-400to600'  in opts.label: xsec=6.552435
+	elif 'DYJetsToLL_M-50_HT-600to800'  in opts.label: xsec=1.565612
+	elif 'DYJetsToLL_M-50_HT-800to1200' in opts.label: xsec=0.680727
+	elif 'DYJetsToLL_M-50_HT-1200toInf' in opts.label: xsec=0.14573
+	elif 'DYJetsToLL' in opts.label or 'DY' in opts.label: xsec=5765.4 # nnpdf 3.0
+	#elif 'DYJets' in opts.label or 'DY' in opts.label: xsec=6025.
 	## SIG
-	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-200' in opts.label: xsec=0.02952842256
-	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-300' in opts.label: xsec=0.002366
-	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-350' in opts.label: xsec=0.0013458646
-	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-400' in opts.label: xsec=0.000836289779
-	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-500' in opts.label: xsec=0.000382537512
-	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-220' in opts.label: xsec=0.005344 #???
-	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=0.005344 #??
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-200' in opts.label: xsec=1
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-300' in opts.label: xsec=1
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-350' in opts.label: xsec=1
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-400' in opts.label: xsec=1
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-500' in opts.label: xsec=1
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-220' in opts.label: xsec=1
+	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=1
 	### TT
 	elif 'TT' in opts.label: xsec=831
 	## ST
@@ -137,7 +181,23 @@ else:
 	elif 'ST_t-channel_top_4f' in opts.label: xsec=136.02
 	elif 'ST_tW_antitop_5f' in opts.label: xsec=30.09
 	elif 'ST_tW_top_5f' in opts.label: xsec=30.11
-	### WJETS
+	### WJETS 20508.9 * 3 
+	#Bin=0,100      f=0.964414
+	#Bin=100,200    f=0.0270849
+	#Bin=200,400    f=0.00719491
+	#Bin=400,600    f=0.000958862
+	#Bin=600,800    f=0.000230162
+	#Bin=800,1200   f=9.69229e-05
+	#Bin=1200,2500  f=1.99723e-05
+	#Bin=2500,13000 f=1.76188e-07
+	elif 'WJetsToLNu_HT-0To100'     in opts.label: xsec=59337.210854
+	elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1666.444517
+	elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=442.679069
+	elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=58.995615
+	elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=14.161108
+	elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=5.963346
+	elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.22883
+	elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.01084
 	elif 'WJets' in opts.label: xsec=61526.7
 	elif 'W0' in opts.label: xsec=34273.632815
 	elif 'W1' in opts.label: xsec=18455.979619

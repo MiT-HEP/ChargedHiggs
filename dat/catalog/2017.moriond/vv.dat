@@ -1,0 +1,7 @@
+sub=zdexo|/store/group/phys_exotica/monojet/zdemirag/moriond80x/Nero/v2.0
+sub=amarini|/store/user/amarini/Nero/v2.1
+
+## we want the leptonic decays one day
+addfiles=%(zdexo)s/ZZ_TuneCUETP8M1_13TeV-pythia8
+addfiles=%(zdexo)s/WW_TuneCUETP8M1_13TeV-pythia8
+addfiles=%(zdexo)s/WZ_TuneCUETP8M1_13TeV-pythia8
