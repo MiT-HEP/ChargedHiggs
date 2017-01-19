@@ -79,6 +79,83 @@ void SF_PtEta::print(){
     }
     cout <<" ----------------------"<<endl;
 }
+// -------------- PT ETA RUN -----------------------
+void SF_PtEtaRun::add(double pt1, double pt2,double eta1, double eta2,unsigned long run1, unsigned long run2, double sf, double err)
+{
+    range3D r;
+    r.pt1 = pt1;
+    r.pt2 = pt2;
+    r.eta1 = eta1;
+    r.eta2 = eta2;
+    r.run1 = run1;
+    r.run2 = run2;
+
+    store[r].first = sf;
+    store[r].second = err;
+
+#ifdef VERBOSE
+    if(VERBOSE>0)cout <<"[SF_PtEtaRun]::[add]::[DEBUG] Adding SF Pt Eta Run:"<<pt1<<":"<<pt2<<"|"<<eta1<<":"<<eta2<<":"<<run1<<":"<<run2<<"|"<<sf<<":"<<err<<endl;
+#endif
+}
+
+void SF_PtEtaRun::set( double pt, double eta,unsigned long run)
+{
+    int change = 0;
+    for(auto s : store)
+    {
+        if ( pt < s.first.pt1 ) continue;
+        if ( s.first.pt2  <= pt ) continue;
+        if ( eta < s.first.eta1 ) continue;
+        if ( s.first.eta2  <= eta ) continue;
+        if ( run < s.first.run1 ) continue;
+        if ( s.first.run2  <= run ) continue;
+        sf = s.second.first;	
+        err = s.second.second;
+        change = 1;
+        break;
+    }
+    if (not change)
+    {
+        cout<<"[SF_PtEtaRun]::[set]::[ERROR] no PT ETA RUN RANGE for SF '"<<label<<"' in pt="<<pt<<" eta="<<eta<<" run="<<run<<endl;
+        sf = 1.0;
+        err = 0.0;
+    }
+}
+
+const bool operator<( const SF_PtEtaRun::range3D&r1 , const SF_PtEtaRun::range3D &r2)
+{
+    // on pt1
+    if (r1.pt1 < r2.pt1) return true;
+    if (r1.pt1 > r2.pt1) return false;
+    // -- pt2
+    if (r1.pt2 < r2.pt2) return true;
+    if (r1.pt2 > r2.pt2) return false;
+    // -- eta1
+    if (r1.eta1 < r2.eta1) return true;
+    if (r1.eta1 > r2.eta1) return false;
+    // -- eta2
+    if (r1.eta2 < r2.eta2) return true;
+    if (r1.eta2 > r2.eta2) return false;
+    // -- run1
+    if (r1.run1 < r2.run1) return true;
+    if (r1.run1 > r2.run1) return false;
+    // -- run2
+    if (r1.run2 < r2.run2) return true;
+    if (r1.run2 > r2.run2) return false;
+    // they are equal
+    return false;
+}
+
+void SF_PtEtaRun::print(){
+    cout <<" ----- SF Pt Eta Run ------"<<endl;
+    cout <<"label='"<<label<<"'"<<endl;
+    for(auto& p : store ) 
+    {
+    cout << p.first.pt1<<":"<<p.first.pt2<<"|"<<p.first.eta1<<":"<<p.first.eta2<<"|"<<p.first.run1<<":"<<p.first.run2<<"||"<< p.second.first<<":"<<p.second.second<<endl;
+    }
+    cout <<" ----------------------"<<endl;
+}
+
 // --- TH1F 
 
 void SF_TH2F::init(string filename,string histname,string errorname)
