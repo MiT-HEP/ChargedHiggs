@@ -53,6 +53,7 @@ class Tau: virtual public Object,
     bool id_iso = 0 ; // iso switch for isolation. In miniAOD they include more
     int match ; // is matched with a gen tau
 
+    virtual int MyIsTau() const ; // tmp delete
     virtual int IsTau() const ;
     virtual int IsTauInvIso() const ;
     inline int IsObject() const override{ return IsTau(); }

@@ -538,36 +538,6 @@ void Event::ApplyTopReweight(){
     }
 }
 
-// void Event::ApplyWReweight(){
-//     return; // make sure no reweight is applied. TODO Remove the function directly
-// 
-//     if( GetWeight() -> GetMC() . find("TT") == string::npos and
-//             GetWeight() -> GetMC() . find("W0Jets") == string::npos and
-//             GetWeight() -> GetMC() . find("W1Jets") == string::npos and 
-//             GetWeight() -> GetMC() . find("W2Jets") == string::npos and 
-//             GetWeight() -> GetMC() . find("W3Jets") == string::npos and 
-//             GetWeight() -> GetMC() . find("W4Jets") == string::npos
-//       )
-//     { // not ttbar sample
-//         return;
-//     }
-// 
-//     if (not ExistSF("wreweight") )
-//     {
-//         Logger::getInstance().LogN("Event",__FUNCTION__,"WARNING","TOP SF DOES NOT EXIST",5);
-//         return;
-//     }
-//     
-//     Logger::getInstance().LogN("Event",__FUNCTION__,"INFO","Top And W Reweighting",5);
-//     //SetPtEtaSF("wreweight",GetMet().Pt(),0.);
-//     //
-//     //Logger::getInstance().Log("Event",__FUNCTION__,"INFO",Form("[0] EW %f",weight()));
-//     SetPtEtaSF("wreweight",Ht(),0.);
-//     ApplySF("wreweight");
-//     //Logger::getInstance().Log("Event",__FUNCTION__,"INFO",Form("[0] EW %f",weight()));
-// 
-// }
-
 //#define VERBOSE 2
 void Event::ApplyBTagSF(int wp)
 {

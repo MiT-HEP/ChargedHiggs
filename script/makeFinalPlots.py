@@ -12,6 +12,8 @@ parser.add_option("","--ewk",type='string',help="Input ROOT file for ewk. Set Nu
 parser.add_option("","--ewklumi",type='float',help="EWK Luminosity pb. [%default]", default=2308)
 parser.add_option("-b","--batch",action='store_true',help="Batch [%default]",default=True)
 parser.add_option("-x","--no-batch",dest='batch',action='store_false',help="non batch")
+parser.add_option("-v","--var",dest='var',type="string",help="variable",default="Mt")
+parser.add_option("-d","--dir",dest='dir',type="string",help="directory",default="Vars")
 
 extra = OptionGroup(parser,"Extra options:","")
 extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=1000)
@@ -43,7 +45,7 @@ def Smooth(h):
 	if True and \
 	   'WJets' not in h.GetName() and \
 	   'TT' not in h.GetName() and \
-	   'MtIsoInv_Data' not in h.GetName() : 
+	   'IsoInv_Data' not in h.GetName() : 
 		   return
 	x0=250.
 	bin0=h.FindBin(x0)
@@ -149,7 +151,7 @@ def Normalize(h):
 		#print "Scaling EWK by",opts.lumi/opts.ewklumi
 		h.Scale(opts.lumi/opts.ewklumi)
 	else:
-		#print "Scaling MC",h.GetName(),"by",opts.lumi
+		print "Scaling MC",h.GetName(),"by",opts.lumi
 		h.Scale(opts.lumi) ## I need to scale it here
 	return h
 
@@ -224,6 +226,11 @@ tailfit=False
 systsMC=["BTAGB","BTAGL","JES","TAU","TRIGMET","TAUHIGHPT","TAUSCALE","ELEVETO","MUVETO","JER","UNCLUSTER","PU","TOPRW","TRIG"]
 systsQCD=["RFAC1p","RFAC3p"]
 systsEWK=["TRIGMET","TRIG","MUEFF","MURECOEFF","TAU","TAUHIGHPT"]
+
+print "--> NO SYST <--"
+systsMC=[]
+systsQCD=[]
+systsEWK=[]
 systsNorm={"CMS_scale_ttbar":(["0.965/1.024","0.977/1.028"],["TT","ST"]),
  	   "CMS_pdf_ttbar": (["1.042","1.026"],["TT","ST"]),
  	   "CMS_mass_ttbar":(["1.027","1.022"],["TT","ST"]),
@@ -258,15 +265,17 @@ if opts.ewk != "":
 #################
 ### Get Data  ###
 #################
-basedir = "ChargedHiggsTauNu/Vars/"
+basedir = "ChargedHiggsTauNu/"+opts.dir+"/"
 
-lastget=basedir+"Mt_Data"
+lastget=basedir+opts.var+"_Data"
 h_data = fIn.Get( lastget)
 if opts.rebin>999:
 	h_data=Rebin(h_data)
 elif opts.rebin >0 :
 	h_data.Rebin(opts.rebin)
-Blind(h_data)
+
+if opts.var == "Mt":
+	Blind(h_data)
 
 #################
 ### Get BKG   ###
@@ -320,7 +329,7 @@ for syst in systAll:
 			isNormForMC=True
 
 	if syst=="" or (syst not in systsMC and not isNormForMC):
-		lastget=basedir+"Mt_"+ mc
+		lastget=basedir+opts.var+"_"+ mc
 		h_mc=GetHistoFromFile(fIn,lastget)
 		if 'Hplus' not in mc:
 			Smooth(h_mc)
@@ -359,14 +368,14 @@ for syst in systAll:
 		h_bkg_syst_up.Add(h_mc_up)
 		h_bkg_syst_dn.Add(h_mc_dn)
 	else:
-		lastget=basedir+"Mt_"+ mc + "_" + syst +"Up"
+		lastget=basedir+opts.var+"_"+ mc + "_" + syst +"Up"
 		h_mc_up=GetHistoFromFile(fIn,lastget)
 		if 'Hplus' not in lastget:
 			Smooth(h_mc_up)
 		Normalize(h_mc_up)
 		h_bkg_syst_up.Add(h_mc_up)
 
-		lastget=basedir+"Mt_"+ mc + "_" + syst +"Down"
+		lastget=basedir+opts.var+"_"+ mc + "_" + syst +"Down"
 		h_mc_dn=GetHistoFromFile(fIn,lastget)
 		if 'Hplus' not in lastget:
 			Smooth(h_mc_dn)
@@ -375,7 +384,7 @@ for syst in systAll:
 
   if opts.qcd!="" :
 	if syst=="" or syst not in systsQCD:
-		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
+		lastget="ChargedHiggsQCDPurity/"+opts.dir+"/"+opts.var+"IsoInv_Data"
 		addlist=[]
 		for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
 			addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
@@ -398,7 +407,7 @@ for syst in systAll:
 			h_bkg_syst_dn.Add(h_qcd)
 
 	else:
-		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
+		lastget="ChargedHiggsQCDPurity/"+opts.dir+"/"+opts.var+"IsoInv_Data"
 		lastget+="_"+syst
 		lastget+="Up"
 		addlist=[]
@@ -414,7 +423,7 @@ for syst in systAll:
 		Normalize(h_qcd_up)
 		h_bkg_syst_up.Add(h_qcd_up)
 
-		lastget="ChargedHiggsQCDPurity/Vars/MtIsoInv_Data"
+		lastget="ChargedHiggsQCDPurity/"+opts.dir+"/"+opts.var+"IsoInv_Data"
 		lastget+="_"+syst
 		lastget+="Down"
 		addlist=[]

@@ -249,7 +249,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","analyze event with syst "+systname);
     #endif
     string label = GetLabel(e);
-
+    
     if(e->weight() == 0.) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
 
     #ifdef SYNC
@@ -284,6 +284,27 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         CutSelector mymask(MaxCut);
         mymask.reset();
         mymask.SetCutBit(Trigger);
+
+        // Print info
+        /*
+        Log(__FUNCTION__,"SYNC",Form("(%d,%d,%u) SELECTION=%s",e->runNum(),e->lumiNum(),e->eventNum(),ChargedHiggs::printBinary(cut.raw()).c_str()));
+        Log(__FUNCTION__,"SYNC",Form("Ntaus=%d",e->Ntaus()));
+        Log(__FUNCTION__,"SYNC",Form("NJets=%d",e->Njets()));
+        Log(__FUNCTION__,"SYNC",Form("NCJets=%d",e->NcentralJets()));
+        for(int i=0;;++i)
+        {
+            Tau* myt= e->GetBareTau(i);
+            if (myt==NULL) break;
+            Log(__FUNCTION__,"SYNC", Form("* Tau-%d: Npr=%d,Npi=%d,EleRej=%d,MuRej=%d,Iso=%.3f,IdIso=%d,Pt=%.1f",
+                        i, myt->GetNProng(),myt->GetNPiZero(),
+                        myt->id_ele,myt->id_mu,myt->iso2,
+                        myt->id_iso,myt->Pt()
+                        ) ) ;
+            cout <<endl;
+            myt->MyIsTau();
+            cout <<endl;
+        }
+        */
 
         if (cut.passMask(mymask) ) Log(__FUNCTION__,"SYNC",Form("(%d,%d,%u) Trigger",e->runNum(),e->lumiNum(),e->eventNum()) ) ; 
         mymask.SetCutBit(OneTau);

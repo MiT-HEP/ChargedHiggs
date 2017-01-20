@@ -13,6 +13,63 @@ Tau::Tau() : Lepton(){
     iso2 = -999;  // Iso with Delta beta correction
 }
 
+int Tau::MyIsTau() const {
+    if (selectdecay_ >=0 )
+    {
+        if (selectdecay_ == 0 and not id ) {
+            cout <<" - FAILED SELECT 0 DECAY+ID"<<endl;
+            return 0;
+        }
+        if (selectdecay_ == 1 and not oldId ) {
+            cout <<" - FAILED SELECT 1 DECAY+OLDID"<<endl;
+            return 0;
+        }
+    }
+
+    if ( doEleRej_   and not id_ele) {
+        cout <<" - FAILED ELE ID"<<endl;
+        return 0;
+    }
+    if ( doMuRej_    and not id_mu) {
+        cout <<" - FAILED MU ID"<<endl;
+        return 0;}
+
+    if ( isocut_ >=0 and iso2 >= isocut_ ) {
+        cout <<" - FAILED ISOCUT" <<endl;
+        return 0;
+    }
+    if ( Pt() < ptcut_ ) {
+        cout <<" - FAILED PT CUT "<<endl;
+        return 0;
+    }
+    if ( fabs(Eta() ) > etacut_) {
+        cout <<" - FAILED ETA CUT "<<endl;
+        return 0;
+    }
+    if ( trackptcut_ >0 and trackptcut_ > trackpt_) {
+        cout <<" _ FAILED TRACK PT CUT "<<endl;
+        return 0;
+    }
+    if ( not id_iso ) {
+        cout <<" - FAILED IDISO CUT "<<endl;
+        return 0; // this include additional cuts on top of the iso cut
+    }
+    //if (GetNProng() != 1 ) return 0;
+    if ( selectprongs_ >=0 )
+        {
+        if (selectprongs_<10 and selectprongs_ != GetNProng()) {
+            cout <<" - FAILED PRONG CUTS <10"<<endl;
+            return 0;
+        }
+        if (selectprongs_== 13 and GetNProng() !=1 and GetNProng() !=3) {
+            cout <<" - FAILD PRONG CUTS >10"<<endl;
+            return 0;
+        }
+        }
+    cout <<" - PASS ALL CUTS "<<endl;
+    return 1;
+}
+
 int Tau::IsTau() const {
     if (selectdecay_ >=0 )
     {

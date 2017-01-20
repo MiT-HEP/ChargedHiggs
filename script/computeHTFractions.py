@@ -48,7 +48,10 @@ try:
 	        #if verbose:
 	        #   print "\nEvent %d: run %6d, lumi %4d, event %12d" % (iev,event.eventAuxiliary().run(), event.eventAuxiliary().luminosityBlock(),event.eventAuxiliary().event())
 	        #   #if iev > 10: break
-	        event.getByLabel(lheLabel, lhe)
+		try:
+	        	event.getByLabel(lheLabel, lhe)
+		except RuntimeError:
+			continue
 		hepeup = lhe.product().hepeup()
 		ht=0.0
 		Q=ROOT.TLorentzVector()

@@ -157,12 +157,20 @@ else:
 	#Bin=800,1200   f=0.000118071
 	#Bin=1200,13000 f=2.52766e-05
 	if 'DYJetsToLL_M-50_HT-0to100'      in opts.label: xsec=5534.126744
-	elif 'DYJetsToLL_M-50_HT-100to200'  in opts.label: xsec=174.266133
-	elif 'DYJetsToLL_M-50_HT-200to400'  in opts.label: xsec=48.065275
-	elif 'DYJetsToLL_M-50_HT-400to600'  in opts.label: xsec=6.552435
-	elif 'DYJetsToLL_M-50_HT-600to800'  in opts.label: xsec=1.565612
-	elif 'DYJetsToLL_M-50_HT-800to1200' in opts.label: xsec=0.680727
-	elif 'DYJetsToLL_M-50_HT-1200toInf' in opts.label: xsec=0.14573
+	#elif 'DYJetsToLL_M-50_HT-100to200'  in opts.label: xsec=174.266133
+	#elif 'DYJetsToLL_M-50_HT-200to400'  in opts.label: xsec=48.065275
+	#elif 'DYJetsToLL_M-50_HT-400to600'  in opts.label: xsec=6.552435
+	#elif 'DYJetsToLL_M-50_HT-600to800'  in opts.label: xsec=1.565612
+	#elif 'DYJetsToLL_M-50_HT-800to1200' in opts.label: xsec=0.680727
+	#elif 'DYJetsToLL_M-50_HT-1200toInf' in opts.label: xsec=0.14573
+	## GenXsecAnalyzer
+	elif 'DYJetsToLL_M-50_HT-100to200'  in opts.label: xsec=181.302
+	elif 'DYJetsToLL_M-50_HT-200to400'  in opts.label: xsec=50.4177
+	elif 'DYJetsToLL_M-50_HT-400to600'  in opts.label: xsec=6.98394
+	elif 'DYJetsToLL_M-50_HT-600to800'  in opts.label: xsec=1.68141
+	elif 'DYJetsToLL_M-50_HT-800to1200' in opts.label: xsec=0.775392
+	elif 'DYJetsToLL_M-50_HT-1200to2500' in opts.label: xsec=0.186222
+	elif 'DYJetsToLL_M-50_HT-2500toInf' in opts.label: xsec=0.004385
 	elif 'DYJetsToLL' in opts.label or 'DY' in opts.label: xsec=5765.4 # nnpdf 3.0
 	#elif 'DYJets' in opts.label or 'DY' in opts.label: xsec=6025.
 	## SIG
@@ -182,22 +190,32 @@ else:
 	elif 'ST_tW_antitop_5f' in opts.label: xsec=30.09
 	elif 'ST_tW_top_5f' in opts.label: xsec=30.11
 	### WJETS 20508.9 * 3 
-	#Bin=0,100      f=0.964414
-	#Bin=100,200    f=0.0270849
-	#Bin=200,400    f=0.00719491
-	#Bin=400,600    f=0.000958862
-	#Bin=600,800    f=0.000230162
-	#Bin=800,1200   f=9.69229e-05
-	#Bin=1200,2500  f=1.99723e-05
+	#Bin=0,70 f=0.936856
+	#Bin=70,100 f=0.0275586
+	#Bin=100,200 f=0.0270849
+	#Bin=200,400 f=0.00719491
+	#Bin=400,600 f=0.000958862
+	#Bin=600,800 f=0.000230162
+	#Bin=800,1200 f=9.69229e-05
+	#Bin=1200,2500 f=1.99723e-05
 	#Bin=2500,13000 f=1.76188e-07
-	elif 'WJetsToLNu_HT-0To100'     in opts.label: xsec=59337.210854
-	elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1666.444517
-	elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=442.679069
-	elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=58.995615
-	elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=14.161108
-	elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=5.963346
-	elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.22883
-	elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.01084
+	elif 'WJetsToLNu_HT-0To70'      in opts.label: xsec=57641.658055
+	elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1695.589715
+	#elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1666.444517
+	#elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=442.679069
+	#elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=58.995615
+	#elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=14.161108
+	#elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=5.963346
+	#elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.22883
+	#elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.01084
+	## genXS Analyzer
+	elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1627.45
+	elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=435.237
+	elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=59.1811
+	elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=14.5805
+	elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=6.65621
+	elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.60809
+	elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.038914
 	elif 'WJets' in opts.label: xsec=61526.7
 	elif 'W0' in opts.label: xsec=34273.632815
 	elif 'W1' in opts.label: xsec=18455.979619
