@@ -33,6 +33,8 @@ public:
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
+    void printSynch(Event*e);
+
     int genInfoForBKG(Event*e);
     bool genInfoForSignal(Event*e);
 
@@ -69,6 +71,7 @@ private:
     Lepton* trailLep=NULL;
 
     double evt_HT=-1;
+    double evt_ST=-1;
     double evt_minDRbb=-1;
     double evt_minDRbb_invMass=-1;
 

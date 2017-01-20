@@ -22,6 +22,7 @@ ChargedHiggs_HplusTB_HplusToTB_M-350 /eos/cms/store/user/jaeyserm/Nero/80X/Charg
 ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 16760.5181003 1
 ChargedHiggs_HplusTB_HplusToTB_M-450 /eos/cms/store/user/jaeyserm/Nero/80X/ChargedHiggs_HplusTB_HplusToTB_M-450_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-450 9108.98902072 1
 ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2 4959.57890652 1
+ChargedHiggs_HplusTB_HplusToTB_M-750 /eos/cms/store/user/jaeyserm/Nero/80X/ChargedHiggs_HplusTB_HplusToTB_M-750_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-750 66165.2037158 1
 ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 50764.492235 1
 ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 18088.6742463 1
 ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 324.019860741 1
@@ -60,6 +61,7 @@ ST_t-channel_antitop /eos/user/m/mpedraza/Nero/8X/ST_t-channel_antitop_4f_inclus
 ST_t-channel_top /eos/user/m/mpedraza/Nero/8X/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/ST_t-channel_top/160917_081130/0000 30234312.0 136.02
 ST_tW_antitop /eos/user/m/mpedraza/Nero/8X/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_antitop/160917_081110/0000 985000.0 35.85
 ST_tW_top /eos/user/m/mpedraza/Nero/8X/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/ST_tW_top/160917_081050/0000 998400.0 35.85
+ST_s-channel_4f /store/user/jaeyserm/Nero/80X/ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1/ST_s-channel_4f/170102_091156/0000 3370668.41375 3.34368
 
 ##### RARES with tops (non reHLT)
 TTTT /eos/user/j/jaeyserm/Nero/8X/TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8/TTTT/161109_094832/0000 9011.12 0.009103
@@ -68,7 +70,9 @@ TTZToLLNuNu /eos/user/j/jaeyserm/Nero/8X/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amc
 TTWJetsToQQ /eos/user/j/jaeyserm/Nero/8X/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/TTWJetsToQQ/161109_094734/0000 569424.146326 0.40620
 TTWJetsToLNu /eos/user/j/jaeyserm/Nero/8X/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/TTWJetsToLNu/161109_094716/0000 85686.5966678 0.2043
 VHToNonbb_M125 /eos/user/j/jaeyserm/Nero/8X/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/VHToNonbb_M125/161113_081235/0000 5256730.36194 0.9561
+WH_HToBB_WToLNu_M125 /store/user/jaeyserm/Nero/80X/WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8/WH_HToBB_WToLNu_M125/170102_091502/0000 3138425.05338 0.419369894175
 tZq_ll_4f /eos/user/j/jaeyserm/Nero/8X/tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1/tZq_ll_4f/161109_094916/0000 229544.813892 0.0758
+tZq_nunu_4f /store/user/jaeyserm/Nero/80X/tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1/tZq_nunu_4f/170102_091325/0000 138419.494451 0.201032728607
 ttHJetTobb /eos/user/j/jaeyserm/Nero/8X/ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8/ttHJetTobb/161109_094755/0000 9919444.60896 0.2934045
 ttHJetToNonbb /eos/user/j/jaeyserm/Nero/8X/ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix/ttHJetToNonbb/161109_094813/0000 10067713.3673 0.2150955
 
