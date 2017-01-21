@@ -80,6 +80,13 @@ class Jet : virtual public Object, virtual public SmearableComplex
         if (syst == 0) return p4.E(); 
         else return Pt()/p4.Pt() *p4.E();
     }
+
+    inline TLorentzVector & GetP4() override {
+        if (syst == 0) return p4;
+        else return p4 *= (Pt()/p4.Pt());
+        //        else return p4 * 10.;
+    }
+
     inline float GetUnc() const { return Pt()/p4.Pt(); }
 
     inline void  clearSyst() override {Object::clearSyst() ;syst = 0; isValid=1;type=Smearer::NONE;} // reset smearing
