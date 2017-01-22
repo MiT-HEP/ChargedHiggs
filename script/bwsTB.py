@@ -6,8 +6,8 @@ import math
 from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN18all/1l/1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN18all/2l/2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN21bis/1l/1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN21bis/2l/2l.root")
 #parser.add_option("","--input1Lsig",type='string',help="Input ROOT file. [%default]", default="1l_signal.root")
 #parser.add_option("","--input2Lsig",type='string',help="Input ROOT file. [%default]", default="2l_signal.root")
 #parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
@@ -73,11 +73,19 @@ if fIn2L == None:
 	print "ERROR: file",opts.input2L,"doesn't exist"
 	exit(1)
 
+
+channel = []
+if opts.kTest==1 or opts.kTest==2 or opts.kTest==3:
+	channel = ["1Mu","1Ele"]
+if opts.kTest==4 or opts.kTest==5 or opts.kTest==6:
+	channel = ["1Mu1Ele","2Mu","2Ele"]
+
 #channel = ["1Mu","1Ele"]
-channel = ["1Mu1Ele","2Mu","2Ele"]
+#channel = ["1Mu1Ele","2Mu","2Ele"]
 #channel = ["1Ele","1Mu","1Mu1Ele","2Mu","2Ele"]
 #basecat = ["Baseline","charmCR","extraRadCR","topCR"]
 basecat = ["Baseline","extraRadCR","topCR"]
+#basecat = ["Baseline","topCR"]
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 
@@ -128,6 +136,7 @@ for x in basecat:
 			for reg in region:
 				name= x+ "_" + y + "" + sr
 ##			catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"HT"+sr}
+#				print 'name=',name,'sr=',sr,'reg=',reg,"VarTest=",VarTest
 				catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"bdt"+sr+""+reg}
 
        ## set files
@@ -150,12 +159,12 @@ for x in basecat:
 #				catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
 #			if x=="charmCR"  and (y=="2Mu" or y=="2Ele" or "1Mu1Ele"):
 #				catStore[name]["hasMC"]=["xxx"]
-			if x=="Baseline" and y=="1Mu1Ele" and opts.kTest==6 and reg=="_SR4":
-				catStore[name]["hasMC"]=[""]
-			if x=="Baseline" and y=="2Mu" and opts.kTest==6 and reg=="_SR4":
-				catStore[name]["hasMC"]=[""]
-			if x=="Baseline" and y=="2Ele" and opts.kTest==6 and reg=="_SR4":
-				catStore[name]["hasMC"]=[""]
+#			if x=="Baseline" and y=="1Mu1Ele" and opts.kTest==6 and reg=="_SR4":
+#				catStore[name]["hasMC"]=[""]
+#			if x=="Baseline" and y=="2Mu" and opts.kTest==6 and reg=="_SR4":
+#				catStore[name]["hasMC"]=[""]
+#			if x=="Baseline" and y=="2Ele" and opts.kTest==6 and reg=="_SR4":
+#				catStore[name]["hasMC"]=[""]
 
 			mcStore={
 ##				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
@@ -166,9 +175,10 @@ for x in basecat:
 				#	"WW":{ "name":"WW","hist":["WWTo2L2Nu","WWToLNuQQ"],"num":2},
 				#	"WZ":{ "name":"WZ","hist":["WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu"],"num":3},
 				#	"ZZ":{ "name":"ZZ","hist":["ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":4},
-				"TT":{ "name":"TT","hist":["TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1", "TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1","TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"],"num":1},
+				"TT":{ "name":"TT","hist":["TTJets_SingleLeptFromT","TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"],"num":1},
+#				"TT":{ "name":"TT","hist":["TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1", "TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1","TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"],"num":1},
 				"ST":{ "name":"ST","hist":["ST","tZq"],"num":4},
-				"TTX":{ "name":"TTX","hist":["TTTT","TTZ","TTW"],"num":5}
+				"TTX":{ "name":"TTX","hist":["TTTT","TTZ","TTW","ttH"],"num":5}
 				}
 			systStore={
 				"None":None,
@@ -180,12 +190,11 @@ for x in basecat:
 				"lumi13TeV":{"type":"lnN", "value":["1.06"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
 				}
 
-fileTmp="JAN18/"+label+VarTest+opts.output
+fileTmp="JAN21bis/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
-##datName = "cms_datacard_topbottom.txt"
 datNameTmp = opts.datCardName
-datName = "JAN18/"+ label + VarTest + datNameTmp
+datName = "JAN21bis/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -365,7 +374,6 @@ def importPdfFromTH1(cat,mc,syst=None):
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
-##	if mc["name"]=="HPlus":masses=[300]
 ##	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000,180,200,220,250,350,450,750]
 	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,180,200,220,250,350,450,750]
 ##	if mc["name"]=="HPlus":masses=[180,200,220,250,350,450,750]
@@ -439,7 +447,6 @@ for c in catStore:
 		raise IOError
 	base="ChargedHiggsTopBottom"
 	target = "data_obs_"+ cat["name"] 
-#	toget=base + "/" +cat["name"] + "/" +  cat["var"]  +"_Data"
 	toget=base + "/" +cat["dir"] + "/" +  cat["var"]  +"_Data"
 	h=tfile.Get(toget)
 	if h == None:
@@ -452,8 +459,7 @@ for c in catStore:
 
 w.writeToFile(fileTmp)
 print "--------------------" 
-print "datacard=",opts.datCardName
-print "ws=",opts.output
+print "datacard=",datName
+print "ws=",fileTmp
 print " --- DONE --- "
-
 

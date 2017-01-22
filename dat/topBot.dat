@@ -47,7 +47,7 @@ addConfig=ChargedHiggsTopBottom|AddLabel('TTZ')
 ##TTWJetsToQQ,TTWJetsToLNu
 addConfig=ChargedHiggsTopBottom|AddLabel('TTW')
 ##ttHJetTobb,ttHJetToNonbb
-addConfig=ChargedHiggsTopBottom|AddLabel('TTH')
+addConfig=ChargedHiggsTopBottom|AddLabel('ttH')
 ##tZq_ll_4f,tZq_nunu_4f
 addConfig=ChargedHiggsTopBottom|AddLabel('tZq')
 addConfig=ChargedHiggsTopBottom|SetMultiPrimaryDataset(),AddLabel("SingleElectron"),AddLabel("SingleMuon")

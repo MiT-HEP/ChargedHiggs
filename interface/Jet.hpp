@@ -83,8 +83,13 @@ class Jet : virtual public Object, virtual public SmearableComplex
 
     inline TLorentzVector & GetP4() override {
         if (syst == 0) return p4;
-        else return p4 *= (Pt()/p4.Pt());
-        //        else return p4 * 10.;
+        if (syst!=0 ) {
+            if (p4.Pt()>0) {
+                return p4 *= (Pt()/p4.Pt());
+            } else {
+                return p4;
+            }
+        }
     }
 
     inline float GetUnc() const { return Pt()/p4.Pt(); }

@@ -101,7 +101,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("mt2bb",evt_MT2bb);
     if(bdt.size()>0) { SetTreeVar("bdt1lh",bdt[0]); } else {SetTreeVar("bdt1lh",-1);}
     if(bdt.size()>1) { SetTreeVar("bdt1lm",bdt[1]); } else {SetTreeVar("bdt1lm",-1);}
-    if(bdt.size()>2) { SetTreeVar("bdt1ll",bdt[2]); } else {SetTreeVar("bdt2ll",-1);}
+    if(bdt.size()>2) { SetTreeVar("bdt1ll",bdt[2]); } else {SetTreeVar("bdt1ll",-1);}
     if(bdt.size()>3) { SetTreeVar("bdt2lh",bdt[3]); } else {SetTreeVar("bdt2lh",-1);}
     if(bdt.size()>4) { SetTreeVar("bdt2lm",bdt[4]); } else {SetTreeVar("bdt2lm",-1);}
     if(bdt.size()>5) { SetTreeVar("bdt2ll",bdt[5]); } else {SetTreeVar("bdt2ll",-1);}
@@ -1189,9 +1189,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 #ifdef VERBOSE
     if(VERBOSE>0)cout<<"[ChargedHiggsTopBottom]::[analyze]::[DEBUG] analyze event with syst: "<<systname<<endl;
 #endif
-
-
-    //    cout << " ------- analyze ---- " << endl;
 
     string label = GetLabel(e);
 
