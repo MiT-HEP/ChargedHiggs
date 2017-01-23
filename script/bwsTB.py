@@ -6,8 +6,8 @@ import math
 from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN21bis/1l/1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN21bis/2l/2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN23/1l/1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN23/2l/2l.root")
 #parser.add_option("","--input1Lsig",type='string',help="Input ROOT file. [%default]", default="1l_signal.root")
 #parser.add_option("","--input2Lsig",type='string',help="Input ROOT file. [%default]", default="2l_signal.root")
 #parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
@@ -56,11 +56,18 @@ def WorkspaceSubstitution(string):
 	res = re.sub("TOPRW","CMS_topreweight",res)
 	return res
 
-def Rebin(h):
+def Rebin5(h):
 	''' Rebin with un-even bins '''
 ##	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000])
 ##	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
 	h1=h.Rebin(5)
+	return h1
+
+def Rebin(h):
+	''' Rebin with un-even bins '''
+	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000])
+	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+##	h1=h.Rebin(5)
 	return h1
 
 fIn1L = ROOT.TFile.Open(opts.input1L,"READ")
@@ -75,9 +82,9 @@ if fIn2L == None:
 
 
 channel = []
-if opts.kTest==1 or opts.kTest==2 or opts.kTest==3:
+if opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==0:
 	channel = ["1Mu","1Ele"]
-if opts.kTest==4 or opts.kTest==5 or opts.kTest==6:
+if opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7:
 	channel = ["1Mu1Ele","2Mu","2Ele"]
 
 #channel = ["1Mu","1Ele"]
@@ -103,7 +110,6 @@ for x in basecat:
 		srList = [""]
 		region = [""]
 		if x=="Baseline" or x=="extraRadCR" or x=="topCR":
-##			if x=="Baseline": region = ["_SR1","_SR2","_SR3"]
 			if x=="Baseline": region = ["_SR1","_SR2","_SR3","_SR4"]
 ##			if y == "1Ele" or y == "1Mu": srList = ["_SR1","_SR2","_SR3","_SR4"]
 ##			if y == "1Ele" or y == "1Mu": srList = [""]
@@ -114,6 +120,7 @@ for x in basecat:
 			## BDT5 is 2l medium mass
 			## BDT6 is 2l low mass
 ##			if y == "1Ele" or y == "1Mu": srList = ["1","2"]
+			if opts.kTest==1 and (y == "1Ele" or y == "1Mu"): srList = [""] #this is the 1d
 			if opts.kTest==1 and (y == "1Ele" or y == "1Mu"): srList = ["1"]
 			if opts.kTest==2 and (y == "1Ele" or y == "1Mu"): srList = ["2"]
 			if opts.kTest==3 and (y == "1Ele" or y == "1Mu"): srList = ["3"]
@@ -125,7 +132,9 @@ for x in basecat:
 				if opts.kTest==4: srList = ["4"]
 				if opts.kTest==5: srList = ["5"]
 				if opts.kTest==6: srList = ["6"]
+				if opts.kTest==7: srList = [""]#this is the 1d
 ##			else : srList = ["4"]
+
 		for sr in srList:
 			if sr == "1" and opts.kTest==1: VarTest="high_"
 			if sr == "2" and opts.kTest==2: VarTest="medium_"
@@ -133,12 +142,14 @@ for x in basecat:
 			if sr == "4" and opts.kTest==4: VarTest="high_"
 			if sr == "5" and opts.kTest==5: VarTest="medium_"
 			if sr == "6" and opts.kTest==6: VarTest="low_"
+			if sr == "" and opts.kTest==7: VarTest="1d_"
+			if sr == "" and opts.kTest==0: VarTest="1d_"
+
 			for reg in region:
 				name= x+ "_" + y + "" + sr
-##			catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"HT"+sr}
-#				print 'name=',name,'sr=',sr,'reg=',reg,"VarTest=",VarTest
-				catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"bdt"+sr+""+reg}
-
+				print 'name=',name,'sr=',sr,'reg=',reg,"VarTest=",VarTest
+				if opts.kTest==0 or opts.kTest==7:catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"ST"+reg}
+				else: catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"bdt"+sr+""+reg}
        ## set files
 			if y == "1Ele" or y == "1Mu": catStore [ name ]['file'] = fIn1L
 			else : catStore[name]['file'] = fIn2L
@@ -374,8 +385,8 @@ def importPdfFromTH1(cat,mc,syst=None):
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
-##	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000,180,200,220,250,350,450,750]
-	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,180,200,220,250,350,450,750]
+	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000,180,200,220,250,350,450,750]
+##	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,180,200,220,250,350,450,750]
 ##	if mc["name"]=="HPlus":masses=[180,200,220,250,350,450,750]
 ##	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000]
 	else: masses=[0]
@@ -408,7 +419,8 @@ def importPdfFromTH1(cat,mc,syst=None):
 		if h==None:h = hTmp
 		else: h.Add(hTmp)
 	  #clean h
-	  h=Rebin(h)
+	  if opts.kTest==0 or opts.kTest==7: h=Rebin(h)
+	  else: h=Rebin5(h)
 	  for b in range(1,h.GetNbinsX()+1):
 		  if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
 	  #save RooDataHist
