@@ -95,6 +95,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("DRl2b1",evt_DRl2b1);
     SetTreeVar("DRbbmin",evt_minDRbb);
     SetTreeVar("MassDRbbmin",evt_minDRbb_invMass);
+    SetTreeVar("MassDRlbmin",evt_minDRlb_invMass);
 
     SetTreeVar("mt",evt_MT);
     SetTreeVar("mt2ll",evt_MT2ll);
@@ -784,10 +785,10 @@ void ChargedHiggsTopBottom::Preselection()
         Book("ChargedHiggsTopBottom/GENERATOR/ptbFromTopAss_"+l,"bFromTopAss"+l+"; p_{T}(from associated top)",50,0,500); // bins of 10 GeV
         Book("ChargedHiggsTopBottom/GENERATOR/ptbFromH_"+l,"bFromH"+l+"; p_{T}( form Higgs Decay)",50,0,500); // bins of 10 GeV
 
-        Book("ChargedHiggsTopBottom/GENERATOR/etabAss_"+l,"bAss"+l+"; p_{T}(associated b)",50,0,10);
-        Book("ChargedHiggsTopBottom/GENERATOR/etabFromTopH_"+l,"bFromTopH"+l+"; p_{T}(from top from the Higgs)",50,0,10);
-        Book("ChargedHiggsTopBottom/GENERATOR/etabFromTopAss_"+l,"bFromTopAss"+l+"; p_{T}(from associated top)",50,0,10);
-        Book("ChargedHiggsTopBottom/GENERATOR/etabFromH_"+l,"bFromH"+l+"; p_{T}( form Higgs Decay)",50,0,10);
+        Book("ChargedHiggsTopBottom/GENERATOR/etabAss_"+l,"bAss"+l+"; eta (associated b)",50,0,10);
+        Book("ChargedHiggsTopBottom/GENERATOR/etabFromTopH_"+l,"bFromTopH"+l+"; eta (from top from the Higgs)",50,0,10);
+        Book("ChargedHiggsTopBottom/GENERATOR/etabFromTopAss_"+l,"bFromTopAss"+l+"; eta (from associated top)",50,0,10);
+        Book("ChargedHiggsTopBottom/GENERATOR/etabFromH_"+l,"bFromH"+l+"; eta (from Higgs Decay)",50,0,10);
 
     }
 
@@ -843,10 +844,10 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
             }
         } else if(abs(genpar->GetPdgId()) == 5){
         /// b
-            if(genpar->GetParentPdgId()==37)  {
+            if(abs(genpar->GetParentPdgId())==37)  {
                 bFromH = genpar;
             } else if(abs(genpar->GetParentPdgId())==6) {
-                if(genpar->GetGrandParentPdgId()==37) {
+                if(abs(genpar->GetGrandParentPdgId())==37) {
                     bFromTopH = genpar;
                 } else {
                     bFromTopAss=genpar;
@@ -1141,11 +1142,35 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
 
             evt_DRl2b1=deltaRl2b;
         }
-
-
     }
 
+    ///////$$$$$$
+    ///////$$$$$$
+    ///////$$$$$$
 
+    double minDRlb=99999;
+    double maxDRlb=0;
+    double minDRlb_invMass=-1;
+    double maxDRlb_invMass=-1;
+
+    for(int i=0;i!=e->Bjets();++i) {
+        Jet* bjet = e->GetBjet(i);
+        double dr = bjet->DeltaR(leadLep);
+        double mass = (bjet->GetP4() + leadLep->GetP4()).M();
+        if(dr<minDRlb) { minDRlb=dr; minDRlb_invMass=mass; }
+    }
+
+    if(trailLep) {
+        for(int i=0;i!=e->Bjets();++i) {
+            Jet* bjet = e->GetBjet(i);
+            double dr = bjet->DeltaR(trailLep);
+            double mass = (bjet->GetP4() + trailLep->GetP4()).M();
+            if(dr<minDRlb) { minDRlb=dr; minDRlb_invMass=mass; }
+        }
+    }
+
+    evt_minDRlb_invMass=minDRlb_invMass;
+    if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_mass_"+label, systname, evt_minDRbb_invMass , e->weight() );
 
 }
 
@@ -1193,6 +1218,16 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     string label = GetLabel(e);
 
     if(e->weight() == 0. ) cout <<"[ChargedHiggsTopBottom]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
+
+    /*
+    std::cout << "---------------------------------------------------------------------------" << std::endl;
+    std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum() << " systname" << systname << std::endl;
+
+    for(int i=0;i!=min(e->NcentralJets(),10);++i) {
+        std::cout << " fromP4   pt[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Eta() << std::endl;
+        std::cout << " fromPt   pt[" <<i<<"]="<< e->GetCentralJet(i)->Pt() << " eta[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Eta() << std::endl;
+    }
+    */
 
     ////$$$$$$$
     ////$$$$$$$
@@ -1697,6 +1732,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     /// bdt1, bdt2 is the 1l
     if( do1lAnalysis and e->Bjets()==2 and e->NcentralJets()==5) {
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR1_"+label,systname, evt_HT ,e->weight());
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR1_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
             if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR1_"+label,systname,bdt[0],e->weight());
             if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR1_"+label,systname,bdt[1],e->weight());
@@ -1711,6 +1747,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     /// bdt1, bdt2 is the 1l
     if( do1lAnalysis and e->Bjets()==2 and e->NcentralJets()>5) {
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR3_"+label,systname, evt_HT ,e->weight());
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR3_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
             if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR3_"+label,systname,bdt[0],e->weight());
             if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR3_"+label,systname,bdt[1],e->weight());
@@ -1725,6 +1762,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     /// bdt1, bdt2 is the 1l
     if( do1lAnalysis and e->Bjets()>2 and e->NcentralJets()==5) {
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR2_"+label,systname, evt_HT ,e->weight());
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR2_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
             if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR2_"+label,systname,bdt[0],e->weight());
             if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR2_"+label,systname,bdt[1],e->weight());
@@ -1739,6 +1777,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     /// bdt1, bdt2 is the 1l
     if( do1lAnalysis and e->Bjets()>2 and e->NcentralJets()>5) {
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR4_"+label,systname, evt_HT ,e->weight());
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR4_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
             if(bdt.size()>0) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1_SR4_"+label,systname,bdt[0],e->weight());
             if(bdt.size()>1) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2_SR4_"+label,systname,bdt[1],e->weight());
@@ -1757,6 +1796,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     /// bdt1, bdt2 is the 1l
     if( do2lAnalysis and e->Bjets()==2 and e->NcentralJets()==3) {
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR1_"+label,systname, evt_HT ,e->weight());
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR1_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
             if(bdt.size()>3) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR1_"+label,systname,bdt[3],e->weight());
             if(bdt.size()>4) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt5_SR1_"+label,systname,bdt[4],e->weight());
@@ -1770,6 +1811,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     /// bdt1, bdt2 is the 1l
     if( do2lAnalysis and e->Bjets()==2 and e->NcentralJets()>3) {
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR3_"+label,systname, evt_HT ,e->weight());
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR3_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
             if(bdt.size()>3) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR3_"+label,systname,bdt[3],e->weight());
             if(bdt.size()>4) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt5_SR3_"+label,systname,bdt[4],e->weight());
@@ -1783,6 +1826,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     /// bdt1, bdt2 is the 1l
     if( do2lAnalysis and e->Bjets()>2 and e->NcentralJets()==3) {
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR2_"+label,systname, evt_HT ,e->weight());
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR2_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
             if(bdt.size()>3) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR2_"+label,systname,bdt[3],e->weight());
             if(bdt.size()>4) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt5_SR2_"+label,systname,bdt[4],e->weight());
@@ -1796,6 +1841,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     /// bdt1, bdt2 is the 1l
     if( do2lAnalysis and e->Bjets()>2 and e->NcentralJets()>3) {
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR4_"+label,systname, evt_HT ,e->weight());
+        Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR4_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
             if(bdt.size()>3) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR4_"+label,systname,bdt[3],e->weight());
             if(bdt.size()>4) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt5_SR4_"+label,systname,bdt[4],e->weight());
@@ -1857,7 +1904,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     std::cout << "=======================================" << std::endl;
     */
 
-    ///////////
+    if (!(systname.find("NONE")!=string::npos))      return EVENT_NOT_USED;
+
+    ////////////
+    /////
     //// TRY lepton to closest in DR
     ////
     ////
@@ -1968,9 +2018,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             if(drTrailLead<minDRbl2) { minDRbl2=drTrailLead; indexMinDRbl2=i;}
         }
     }
-
-    Fill("ChargedHiggsTopBottom/Baseline"+category+"/minDRlb_"+label, systname, minDRbl1 , e->weight() );
-    Fill("ChargedHiggsTopBottom/Baseline"+category+"/minDRlb_mass_"+label, systname, minDRlb_invMass , e->weight() );
 
     ////
     ////
