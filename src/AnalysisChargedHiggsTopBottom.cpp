@@ -100,6 +100,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("mt",evt_MT);
     SetTreeVar("mt2ll",evt_MT2ll);
     SetTreeVar("mt2bb",evt_MT2bb);
+    SetTreeVar("mt2bb1l",evt_MT2bb1l);
     if(bdt.size()>0) { SetTreeVar("bdt1lh",bdt[0]); } else {SetTreeVar("bdt1lh",-1);}
     if(bdt.size()>1) { SetTreeVar("bdt1lm",bdt[1]); } else {SetTreeVar("bdt1lm",-1);}
     if(bdt.size()>2) { SetTreeVar("bdt1ll",bdt[2]); } else {SetTreeVar("bdt1ll",-1);}
@@ -109,6 +110,9 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("mtMin",evt_MTmin);
     SetTreeVar("mtMax",evt_MTmax);
     SetTreeVar("mtTot",evt_MTtot);
+
+    SetTreeVar("Cen",evt_C);
+    SetTreeVar("HemiOut",evt_HemiMetOut);
 
     //////
     //
@@ -265,6 +269,7 @@ void ChargedHiggsTopBottom::Init()
 
     Log(__FUNCTION__,"INFO",Form("do1lAnalysis=%d",do1lAnalysis));
     Log(__FUNCTION__,"INFO",Form("do2lAnalysis=%d",do2lAnalysis));
+    Log(__FUNCTION__,"INFO",Form("doTaulAnalysis=%d",doTaulAnalysis));
 
     Preselection();
 
@@ -397,9 +402,14 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","mt",'F');
     Branch("tree_tb","mt2ll",'F');
     Branch("tree_tb","mt2bb",'F');
+    Branch("tree_tb","mt2bb1l",'F');
     Branch("tree_tb","mtMin",'F');
     Branch("tree_tb","mtMax",'F');
     Branch("tree_tb","mtTot",'F');
+
+    // Shape variables
+    Branch("tree_tb","Cen",'F');
+    Branch("tree_tb","HemiOut",'F');
 
     // fill all the object vector
     Branch("tree_tb","jet_pt",'d',10,"NJets");
@@ -573,6 +583,11 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/MT2ll_"+l,"MT2ll "+l + ";mT2(l^{1},l^{2},met) [GeV]",60,0.,300.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb_"+l,"MT2bb "+l + ";mT2(b^{1},b^{2},met) [GeV]",50,0.,250.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb1l_"+l,"MT2bb1l "+l + ";mT2((b^{1}b^{2}), met+l^{1} ) [GeV]",50,0.,250.);
+
+        /// Event Shapes
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/Centrality_"+l,"Centrality "+l + "; Sum Pt_{i} / Sum E_{i}",10, 0., 1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/HemiOut_"+l,"HemiOut "+l + "; (Jet+Lepton) opposite to MET",50, 0., 500.);
 
         /////
         // lb
@@ -914,6 +929,46 @@ void ChargedHiggsTopBottom::leptonicHiggs(Event*e,string label, string systname,
 
 }
 
+void ChargedHiggsTopBottom::eventShapePlot(Event*e, string label, string category, string systname, string phasespace) {
+
+    double hemiMetIn = 0.; // all objects inside MET hemisphere
+    double hemiMetOut = 0.; // all objects outside MET hemisphere
+
+    // check the impact of the HT(w/ central jet only)
+    for(int i=0;i!=e->NcentralJets();++i) {
+        if(e->GetCentralJet(i)->GetP4().Vect().Dot(e->GetMet().GetP4().Vect()) > 0 ) hemiMetIn += e->GetCentralJet(i)->GetP4().Pt();
+        else hemiMetOut += e->GetCentralJet(i)->GetP4().Pt();
+    }
+
+    if(leadLep->GetP4().Vect().Dot(e->GetMet().GetP4().Vect()) > 0 ) hemiMetIn += leadLep->GetP4().Pt();
+    else hemiMetOut += leadLep->GetP4().Pt();
+    if(trailLep!=NULL) {
+        if(trailLep->GetP4().Vect().Dot(e->GetMet().GetP4().Vect()) > 0 ) hemiMetIn += trailLep->GetP4().Pt();
+        else hemiMetOut += trailLep->GetP4().Pt();
+    }
+
+    evt_HemiMetOut=hemiMetOut;
+
+    //$$$$
+    //$$$$
+    //$$$$
+
+    float sumE=0;
+    float sumPt=0;
+    for(int i=0;i!=e->NcentralJets();++i) {
+        sumE += e->GetCentralJet(i)->GetP4().E();
+        sumPt += e->GetCentralJet(i)->GetP4().Pt();
+    }
+
+    if(sumE!=0) evt_C=sumPt/sumE;
+
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Centrality_"+label,systname,evt_C,e->weight());
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HemiOut_"+label,systname,evt_HemiMetOut,e->weight());
+
+
+
+}
+
 void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, string systname, string phasespace) {
 
     bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) ));
@@ -1075,7 +1130,9 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+label, systname, evt_minDRbb , e->weight() );
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+label, systname, evt_minDRbb_invMass , e->weight() );
         evt_MT2bb=ChargedHiggs::mt2(e->GetBjet(0)->GetP4(),e->GetBjet(1)->GetP4(),e->GetMet().GetP4());
+        evt_MT2bb1l=ChargedHiggs::mt2(e->GetBjet(0)->GetP4(),e->GetBjet(1)->GetP4(),e->GetMet().GetP4()+leadLep->GetP4());
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb_"+label, systname, evt_MT2bb , e->weight() );
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb1l_"+label, systname, evt_MT2bb1l , e->weight() );
 
         Jet* bjet1 = e->GetBjet(0);
         Jet* bjet2 = e->GetBjet(1);
@@ -1672,6 +1729,15 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         }
     }
 
+
+    if (systname.find("NONE")    !=string::npos) {
+        // this target the 1l final state
+        if( doTaulAnalysis &&  e->Bjets() > 0 && e->NcentralJets() >3 && evt_MT>=120) {
+            setTree(e,label,category);
+            FillTree("tree_tb");
+        }
+    }
+
     ////////
     ////
     //// Control regions
@@ -1696,9 +1762,12 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     if(topCR) jetPlot(e, label, category, systname,"topCR");
     if(topCR) leptonPlot(e,label, category, systname,"topCR");
+    if(topCR) eventShapePlot(e, label, category, systname,"topCR");
 
     if(extraRadCR) jetPlot(e, label, category, systname,"extraRadCR");
     if(extraRadCR) leptonPlot(e, label, category, systname,"extraRadCR");
+    if(extraRadCR) eventShapePlot(e, label, category, systname,"extraRadCR");
+
     //    if(charmCR) jetPlot(e, label, category, systname,"charmCR");
     //    if(charmCR) leptonPlot(e, label, category, systname,"charmCR");
 
@@ -1716,6 +1785,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     jetPlot(e, label, category, systname,"Baseline");
     leptonPlot(e, label, category, systname,"Baseline");
+    eventShapePlot(e, label, category, systname,"Baseline");
 
     /*
     if( do1lAnalysis and evt_MT<120  and e->Bjets()==2 and e->NcentralJets()>4) Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR1_"+label,systname, evt_HT ,e->weight());

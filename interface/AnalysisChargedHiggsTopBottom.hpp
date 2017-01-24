@@ -17,6 +17,7 @@ public:
 
     bool do1lAnalysis=false;
     bool do2lAnalysis=false;
+    bool doTaulAnalysis=false;
 
     void Init() override;
 
@@ -31,6 +32,7 @@ public:
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
+    void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
     void printSynch(Event*e);
@@ -78,6 +80,7 @@ private:
 
     double evt_MT=-1;
     double evt_MT2bb=-1;
+    double evt_MT2bb1l=-1;
     double evt_DRl1b1=-1;
 
     // these are defined only for 2l
@@ -87,6 +90,8 @@ private:
     double evt_MTmax=-1;
     double evt_MTtot=-1;
 
+    double evt_HemiMetOut=0;
+    double evt_C=0;
 
     vector<float> bdt;
 
