@@ -50,7 +50,7 @@ try:
 	        #   #if iev > 10: break
 		try:
 	        	event.getByLabel(lheLabel, lhe)
-		except RuntimeError:
+		except:
 			continue
 		hepeup = lhe.product().hepeup()
 		ht=0.0
