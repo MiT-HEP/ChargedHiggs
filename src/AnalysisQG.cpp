@@ -107,7 +107,7 @@ int QGAnalysis::analyzeMM(Event *e, string systname)
     if (mu0 == NULL or mu1 == NULL) return 0;
 
     cut.SetCutBit(Leptons);
-    if (e->IsTriggered("HLT_IsoMu20") ) cut.SetCutBit(Trigger);
+    if (e->IsTriggered("HLT_IsoMu24_v") ) cut.SetCutBit(Trigger);
     Fill("QGAnalysis/CutFlow/CutFlowZmm_"+label,systname,Trigger,e->weight());
 
     Object Z(*mu0);

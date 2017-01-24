@@ -66,6 +66,29 @@ class SF_PtEta : virtual public SF
 
 const bool operator<( const SF_PtEta::range&r1 , const SF_PtEta::range &r2);
 
+class SF_PtEtaRun : virtual public SF_PtEta
+{
+    // this class implements a SF that it is pt and eta dependent (2D dependent) on something
+    public:
+        struct range3D{
+            double pt1; double pt2; 
+            double eta1 ; double eta2; 
+            unsigned long run1; unsigned long run2;
+        };
+
+    private:
+        map < range3D, pair<double,double> >  store;
+    public:
+        SF_PtEtaRun() : SF_PtEta() {}
+        // add to the db a sf, and error in this range [pt1,pt2) [eta1,eta2)
+        virtual void add(double pt1, double pt2 , double eta1, double eta2, unsigned long run1,unsigned long run2,double sf, double err);
+        // will copy the right SF and err in the mother members sf,err
+        virtual void set(double pt,double eta,unsigned long run);
+        void print();
+        const string name() const {return "SF_PtEtaRun";}
+};
+const bool operator<( const SF_PtEtaRun::range3D&r1 , const SF_PtEtaRun::range3D &r2);
+
 
 class SF_TH2F : virtual public SF_PtEta
 {

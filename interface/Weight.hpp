@@ -73,6 +73,7 @@ class Weight : virtual public SmearableBase {
     SF* GetSF(string label){ if (sf_db.find(label) == sf_db.end() ) return NULL; return sf_db[label]; } // avoid to create label if not there
     void AddSF( string label, double sf, double err);
     void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err);
+    void AddPtEtaRunSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,unsigned long run1, unsigned long run2,double sf, double err);
     void AddTh2fSF(string label, string filename);
     void AddSplineSF(string label, double pt, double sf, double err);
     void AddCSVSF(string label, string filename);

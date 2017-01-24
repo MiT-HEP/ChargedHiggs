@@ -1,4 +1,8 @@
-include=dat/configTauNu.dat
-include=dat/config.2016.dat
+include=dat/config.2017.moriond.dat
 
-addConfig=ChargeHiggsTauNu|is80X=1
+addConfig=ChargedHiggsTauNu|is80X=1
+
+#Smear=NONE,JES,JER,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("TAU"!"tauid"),@SmearSF("TAUHIGHPT"!"tauid2"),@SmearSF("TRIG"!"tauLeg"),@SmearSF("TRIGMET"!"metLegLoose"),@SmearTauScale(),@SmearUncluster(),@SmearSF("ELEVETO"!"eleveto"),@SmearSF("MUVETO"!"muveto"),@SmearPu,@SmearSF("TOPRW"!"topreweight")
+Smear=NONE
+
+Analysis=JsonAnalysis,MetFiltersAnalysis,ChargedHiggsTauNu

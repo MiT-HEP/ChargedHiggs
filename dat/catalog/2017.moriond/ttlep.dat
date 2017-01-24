@@ -1,0 +1,3 @@
+sub=ghiggs|/store/group/phys_higgs/ceballos/Nero/v2.1
+addfiles=%(ghiggs)s/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8
+addfiles=%(ghiggs)s/TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8
