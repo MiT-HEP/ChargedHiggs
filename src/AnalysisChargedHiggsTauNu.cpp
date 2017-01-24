@@ -288,6 +288,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         // Print info
         /*
         Log(__FUNCTION__,"SYNC",Form("(%d,%d,%u) SELECTION=%s",e->runNum(),e->lumiNum(),e->eventNum(),ChargedHiggs::printBinary(cut.raw()).c_str()));
+        Log(__FUNCTION__,"SYNC","SYST="+systname);
         Log(__FUNCTION__,"SYNC",Form("Ntaus=%d",e->Ntaus()));
         Log(__FUNCTION__,"SYNC",Form("NJets=%d",e->Njets()));
         Log(__FUNCTION__,"SYNC",Form("NCJets=%d",e->NcentralJets()));
@@ -305,7 +306,18 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
             cout <<endl;
         }
         */
-
+        /*
+        cout <<endl;
+        for(int i=0;;++i)
+        {
+            Jet* myj= e->GetJet(i);
+            if (myj==NULL) break;
+            Log(__FUNCTION__,"SYNC", Form("* Jet-%d: Pt=%.1f",
+                        i, myj->Pt()
+                        ) ) ;
+        }
+        cout <<endl;
+        */
         if (cut.passMask(mymask) ) Log(__FUNCTION__,"SYNC",Form("(%d,%d,%u) Trigger",e->runNum(),e->lumiNum(),e->eventNum()) ) ; 
         mymask.SetCutBit(OneTau);
         if (cut.passMask(mymask) ) Log(__FUNCTION__,"SYNC",Form("(%d,%d,%u) Selected tau: pt=%e eta=%e",e->runNum(),e->lumiNum(),e->eventNum(),e->GetTau(0)->Pt(),e->GetTau(0)->Eta()) ) ; 
