@@ -95,6 +95,7 @@ basecat = ["Baseline","extraRadCR","topCR"]
 #basecat = ["Baseline","topCR"]
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
+statStore = {} ## used to store th1d for stat uncertainties
 
 label=""
 VarTest=""
@@ -338,6 +339,41 @@ def writeSystShape(syst,regexpL=[]):
 		   datacard.write("\t-")
 	datacard.write("\n")
 
+def importStat():
+	for stat in statStore:
+ 	   h=stat["hist"] ## all MC Sum up correctly
+	   h0=stat["hist0"] ## nominal
+ 	   for iBin in range(1,h.GetNbinsX()+1):
+ 	      c= h.GetBinContent(iBin)
+ 	      if c<=0: continue;
+ 	      e=h.GetBinError(iBin)
+ 	      if e>0 and (e<minError or minError<0): 
+ 	      	minError=e
+ 	   for iBin in range(1,h.GetNbinsX()+1):
+ 	      c= h.GetBinContent(iBin)
+ 	      if c<=0: continue;
+ 	      h.SetBinError(iBin,minError)
+	   for i in range(0,h.GetNbinsX()):
+	      statsyst = { "wsname": histName + "_Bin%d"%(i+1) +"_STAT" , "name": histName + "_Bin%d"%(i+1) + "_STAT"}
+	      hupbin=h0.Clone(h.GetName() +"_STATUp")
+	      hdnbin=h0.Clone(h.GetName() +"_STATDown")
+	      cont=h0.GetBinContent(i+1)
+	      err = h . GetBinError(i+1) ## err is referred to the sum
+	      hupbin.SetBinContent(i+1,cont+err)
+	      hdnbin.SetBinContent(i+1,cont-err)
+	      target = stat["target"]
+ 	      roo_mc_binup = ROOT.RooDataHist(target+statsyst["wsname"]+"Up",target + "STAT",arglist_obs,hupbin)
+ 	      pdf_mc_binup = roo_mc_binup
+ 	      roo_mc_bindn = ROOT.RooDataHist(target+statsyst["wsname"]+"Down",target + "STAT",arglist_obs,hdnbin)
+ 	      pdf_mc_bindn = roo_mc_bindn
+ 	      getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
+ 	      getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
+ 	      g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
+ 	      g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
+	
+	      ## attribute it only to one MC, since is summed
+	      writeSystShape(statsyst,[stat["mc"]+"_"])
+
 ################### WRITE SYST ################
 for syst in systStore:
 	if syst == "None": continue
@@ -347,36 +383,36 @@ for syst in systStore:
 		writeSystShape(systStore[syst],systStore[syst]["proc"])
 
 ################### IMPORT ################
-def importStat(h,target,syst="STAT"):
-	minError=-1
-	for iBin in range(1,h.GetNbinsX()+1):
-		c= h.GetBinContent(iBin)
-		if c<=0: continue;
-		e=h.GetBinError(iBin)
-		if e>0 and (e<minError or minError<0): 
-			minError=e
-	for iBin in range(1,h.GetNbinsX()+1):
-		c= h.GetBinContent(iBin)
-		if c<=0: continue;
-		h.SetBinError(iBin,minError)
-
-	hup=h.Clone(h.GetName() +"_STATUp")
-	hdn=h.Clone(h.GetName() +"_STATDown")
-	for i in range(0,h.GetNbinsX()):
-		hupbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
-		hdnbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
-		cont=h.GetBinContent(i+1)
-		# 0 is for sure wrong in case of mc, fixed in GetHisto
-		hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
-		hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
-		roo_mc_binup = ROOT.RooDataHist(target+"_Bin%d"%(i+1)+"_"+syst+"Up",target,arglist_obs,hupbin)
-		pdf_mc_binup = roo_mc_binup
-		roo_mc_bindn = ROOT.RooDataHist(target+"_Bin%d"%(i+1)+"_"+syst+"Down",target,arglist_obs,hdnbin)
-		pdf_mc_bindn = roo_mc_bindn
-		getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
-		getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
-		g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
-		g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
+## def importStat(h,target,syst="STAT"):
+## 	minError=-1
+## 	for iBin in range(1,h.GetNbinsX()+1):
+## 		c= h.GetBinContent(iBin)
+## 		if c<=0: continue;
+## 		e=h.GetBinError(iBin)
+## 		if e>0 and (e<minError or minError<0): 
+## 			minError=e
+## 	for iBin in range(1,h.GetNbinsX()+1):
+## 		c= h.GetBinContent(iBin)
+## 		if c<=0: continue;
+## 		h.SetBinError(iBin,minError)
+## 
+## 	hup=h.Clone(h.GetName() +"_STATUp")
+## 	hdn=h.Clone(h.GetName() +"_STATDown")
+## 	for i in range(0,h.GetNbinsX()):
+## 		hupbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
+## 		hdnbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
+## 		cont=h.GetBinContent(i+1)
+## 		# 0 is for sure wrong in case of mc, fixed in GetHisto
+## 		hupbin.SetBinContent(i+1, h.GetBinContent(i+1) + h.GetBinError(i+1) )
+## 		hdnbin.SetBinContent(i+1, h.GetBinContent(i+1) - h.GetBinError(i+1) )
+## 		roo_mc_binup = ROOT.RooDataHist(target+"_Bin%d"%(i+1)+"_"+syst+"Up",target,arglist_obs,hupbin)
+## 		pdf_mc_binup = roo_mc_binup
+## 		roo_mc_bindn = ROOT.RooDataHist(target+"_Bin%d"%(i+1)+"_"+syst+"Down",target,arglist_obs,hdnbin)
+## 		pdf_mc_bindn = roo_mc_bindn
+## 		getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
+## 		getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
+## 		g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
+## 		g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
 
 ## improt Everything in ws TODO
 def importPdfFromTH1(cat,mc,syst=None):
@@ -430,13 +466,17 @@ def importPdfFromTH1(cat,mc,syst=None):
 	  pdf_mc = roo_mc
 	  getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
 	  g.extend([h,roo_mc,pdf_mc])
-	  if syst==None: # DEBUG
+	  if syst==None and m< 10 : # not for signal,
 		print "DEBUG calling stat with target",target
-	  	importStat(h,target,mc["name"]+"_STAT")
-		for i in range(0,h.GetNbinsX()):
-			#hupbin=h.Clone(h.GetName()+ "_Bin%d"%(i+1)+"_STATUp")
-			statsyst = { "wsname":"Bin%d"%(i+1) +"_"+mc["name"]+ "_STAT" , "name": "Bin%d"%(i+1) +"_"+mc["name"]+"_STAT"}
-			writeSystShape(statsyst,[mc["name"]+"_"])
+		histName=cat["name"] 
+		if histName not in statStore: 
+			statStore[histName] = { "hist":h.Clone(histName + "_STAT"),
+					"mc":mc["name"],
+					"cat":cat["name"],
+					"target":target,
+					"hist0":h.Clone(histName + "_STAT0")
+					}
+		else:statStore[histName]["hist"] . Add (h ) 
 	return
 
 #import MC
@@ -449,6 +489,9 @@ for cat in catStore:
 		 print " * syst:", systStore[syst]
 		 if systStore[syst] == None or systStore[syst]["type"] == "shape" :
 		 	importPdfFromTH1(catStore[cat],mcStore[proc],systStore[syst])
+
+## import and write statistical uncertainties
+importStat()
 
 #import data
 for c in catStore:
