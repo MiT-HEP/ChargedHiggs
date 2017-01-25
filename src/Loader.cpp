@@ -500,6 +500,7 @@ void LoadNero::FillMC(){
     BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["BareMonteCarlo"]]);
 
     event_ -> GetWeight() -> SetMcWeight(  mc->mcWeight );
+    event_ -> SetGenTtbarId( mc->genTtbarId );
 
     if (tree_->GetBranchStatus("r1f2") )  // after setmcw, because it will reset the status of the scales
     {
