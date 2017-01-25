@@ -1,0 +1,57 @@
+hadd test/combine/JAN18/1l_high_SYST/TopBottom/TopBottom.root -f test/combine/JAN18/1l_high_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/JAN18/1l_medium_SYST/TopBottom/TopBottom.root -f test/combine/JAN18/1l_medium_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/JAN18/1l_low_SYST/TopBottom/TopBottom.root -f test/combine/JAN18/1l_low_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+
+hadd test/combine/JAN18/2l_high_SYST/TopBottom/TopBottom.root -f test/combine/JAN18/2l_high_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/JAN18/2l_medium_SYST/TopBottom/TopBottom.root -f test/combine/JAN18/2l_medium_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/JAN18/2l_low_SYST/TopBottom/TopBottom.root -f test/combine/JAN18/2l_low_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+
+python script/makeCombinePlots.py -f test/combine/JAN18/1l_high_SYST/TopBottom/TopBottom.root -o plot/brazilian_1l_high_SYST
+python script/makeCombinePlots.py -f test/combine/JAN18/1l_medium_SYST/TopBottom/TopBottom.root -o plot/brazilian_1l_medium_SYST
+python script/makeCombinePlots.py -f test/combine/JAN18/1l_low_SYST/TopBottom/TopBottom.root -o plot/brazilian_1l_low_SYST
+
+python script/makeCombinePlots.py -f test/combine/JAN18/2l_high_SYST/TopBottom/TopBottom.root -o plot/brazilian_2l_high_SYST
+python script/makeCombinePlots.py -f test/combine/JAN18/2l_medium_SYST/TopBottom/TopBottom.root -o plot/brazilian_2l_medium_SYST
+python script/makeCombinePlots.py -f test/combine/JAN18/2l_low_SYST/TopBottom/TopBottom.root -o plot/brazilian_2l_low_SYST
+
+
+hadd test/combine/JAN18/1l_high_STAT/TopBottom/TopBottom.root -f test/combine/JAN18/1l_high_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/JAN18/1l_medium_STAT/TopBottom/TopBottom.root -f test/combine/JAN18/1l_medium_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/JAN18/1l_low_STAT/TopBottom/TopBottom.root -f test/combine/JAN18/1l_low_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+
+hadd test/combine/JAN18/2l_high_STAT/TopBottom/TopBottom.root -f test/combine/JAN18/2l_high_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/JAN18/2l_medium_STAT/TopBottom/TopBottom.root -f test/combine/JAN18/2l_medium_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/JAN18/2l_low_STAT/TopBottom/TopBottom.root -f test/combine/JAN18/2l_low_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+
+python script/makeCombinePlots.py -f test/combine/JAN18/1l_high_STAT/TopBottom/TopBottom.root -o plot/brazilian_1l_high_STAT
+python script/makeCombinePlots.py -f test/combine/JAN18/1l_medium_STAT/TopBottom/TopBottom.root -o plot/brazilian_1l_medium_STAT
+python script/makeCombinePlots.py -f test/combine/JAN18/1l_low_STAT/TopBottom/TopBottom.root -o plot/brazilian_1l_low_STAT
+
+python script/makeCombinePlots.py -f test/combine/JAN18/2l_high_STAT/TopBottom/TopBottom.root -o plot/brazilian_2l_high_STAT
+python script/makeCombinePlots.py -f test/combine/JAN18/2l_medium_STAT/TopBottom/TopBottom.root -o plot/brazilian_2l_medium_STAT
+python script/makeCombinePlots.py -f test/combine/JAN18/2l_low_STAT/TopBottom/TopBottom.root -o plot/brazilian_2l_low_STAT
+
+exit
+
+
+python script/combine.py -i JAN18/1l_high_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/JAN18/1l_high_SYST/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/1l_medium_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/JAN18/1l_medium_SYST/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/1l_low_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/JAN18/1l_low_SYST/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/2l_high_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/JAN18/2l_high_SYST/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/2l_medium_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/JAN18/2l_medium_SYST/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/2l_low_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/JAN18/2l_low_SYST/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+
+
+######
+
+python script/combine.py -i JAN18/1l_high_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/JAN18/1l_high_STAT/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/1l_medium_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/JAN18/1l_medium_STAT/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/1l_low_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/JAN18/1l_low_STAT/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/2l_high_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/JAN18/2l_high_STAT/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/2l_medium_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/JAN18/2l_medium_STAT/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+python script/combine.py -i JAN18/2l_low_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/JAN18/2l_low_STAT/TopBottom --rmax=10000 --begin=180,200,220,250,300,400,450,500,750,800,1000,2000,3000
+
+
+######
+
+

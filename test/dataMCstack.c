@@ -44,20 +44,20 @@ TGraphAsymmErrors * TOTerror(TH1 *hmc, TH1 *hmcJECup, TH1 *hmcJECdown,
 
   for (int km = 1; km <= nvar; km++){
     //  for (int km = 1; km <= 8; km++){
-    double deltaUp = sqrt(hmc->GetBinError(km)*hmc->GetBinError(km) +
+    double deltaUp = sqrt(hmc->GetBinError(km)*hmc->GetBinError(km) + 
 			  (hmc->GetBinContent(km)-hmcJECup->GetBinContent(km))*(hmc->GetBinContent(km)-hmcJECup->GetBinContent(km)) +
 			  (hmc->GetBinContent(km)-mcTOT_BTAGBup->GetBinContent(km))*(hmc->GetBinContent(km)-mcTOT_BTAGBup->GetBinContent(km)) +
 			  (hmc->GetBinContent(km)-mcTOT_BTAGLup->GetBinContent(km))*(hmc->GetBinContent(km)-mcTOT_BTAGLup->GetBinContent(km)) +
 			  (hmc->GetBinContent(km)-mcTOT_PUup->GetBinContent(km))*(hmc->GetBinContent(km)-mcTOT_PUup->GetBinContent(km)) +
 			  (hmc->GetBinContent(km)-mcTOT_UNCLUSTERup->GetBinContent(km))*(hmc->GetBinContent(km)-mcTOT_UNCLUSTERup->GetBinContent(km))
-			  );
-    double deltaDown = sqrt(hmc->GetBinError(km)*hmc->GetBinError(km) +
+			  ); 
+    double deltaDown = sqrt(hmc->GetBinError(km)*hmc->GetBinError(km) + 
 			    (hmc->GetBinContent(km)-hmcJECdown->GetBinContent(km))*(hmc->GetBinContent(km)-hmcJECdown->GetBinContent(km)) +
 			    (hmc->GetBinContent(km)-mcTOT_BTAGBdown->GetBinContent(km))*(hmc->GetBinContent(km)-mcTOT_BTAGBdown->GetBinContent(km)) +
 			    (hmc->GetBinContent(km)-mcTOT_PUdown->GetBinContent(km))*(hmc->GetBinContent(km)-mcTOT_PUdown->GetBinContent(km)) +
 			    (hmc->GetBinContent(km)-mcTOT_UNCLUSTERdown->GetBinContent(km))*(hmc->GetBinContent(km)-mcTOT_UNCLUSTERdown->GetBinContent(km))
 			    );
-
+    
     den1->SetBinContent (km,hmc->GetBinContent (km) + deltaUp);
     den2->SetBinContent (km,hmc->GetBinContent (km) - deltaDown);
 
@@ -127,13 +127,13 @@ TGraphAsymmErrors * JESerror(TH1 *hmc, TH1 *hmcJECup, TH1 *hmcJECdown,
 
   for (int km = 1; km <= nvar; km++){
     //  for (int km = 1; km <= 8; km++){
-    double deltaUp = sqrt(hmc->GetBinError(km)*hmc->GetBinError(km) +
-			  (hmc->GetBinContent(km)-hmcJECup->GetBinContent(km))*(hmc->GetBinContent(km)-hmcJECup->GetBinContent(km))
-			  );
-    double deltaDown = sqrt(hmc->GetBinError(km)*hmc->GetBinError(km) +
+    double deltaUp = sqrt(hmc->GetBinError(km)*hmc->GetBinError(km) + 
+			  (hmc->GetBinContent(km)-hmcJECup->GetBinContent(km))*(hmc->GetBinContent(km)-hmcJECup->GetBinContent(km)) 
+			  ); 
+    double deltaDown = sqrt(hmc->GetBinError(km)*hmc->GetBinError(km) + 
 			    (hmc->GetBinContent(km)-hmcJECdown->GetBinContent(km))*(hmc->GetBinContent(km)-hmcJECdown->GetBinContent(km))
 			    );
-
+    
     den1->SetBinContent (km,hmc->GetBinContent (km) + deltaUp);
     den2->SetBinContent (km,hmc->GetBinContent (km) - deltaDown);
 
@@ -266,24 +266,25 @@ THStack *getMCStack( TString fileName="", TString histoName="",TString dirName="
 
   THStack *hs = new THStack("hs",Form("",histoName.Data()));
 
-  for(int sampleI=0; sampleI<15; sampleI++) {
+  for(int sampleI=0; sampleI<16; sampleI++) {
 
     if(sampleI==0) { sampleName="TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"; sampleLabel="TTJets_DiLept";  color=kRed;}   
-    if(sampleI==1) { sampleName="TTJets_SingleLeptFromT"; sampleLabel="TTJets_SingleLeptFromT"; color=kBlue;}
-    if(sampleI==2) { sampleName="ST"; sampleLabel="ST"; color=kMagenta;}
-    if(sampleI==3) { sampleName="WW"; sampleLabel="WW"; color=kGreen-8;}
-    if(sampleI==4) { sampleName="WZ"; sampleLabel="WZ"; color=kGreen-8;}
-    if(sampleI==5) { sampleName="ZZ"; sampleLabel="ZZ"; color=kGreen-8;}
-    if(sampleI==6) { sampleName="VHToNonbb_M125"; sampleLabel="VHToNonbb_M125"; color=kGreen-8;}
-    if(sampleI==7) { sampleName="WH_HToBB_WToLNu_M125"; sampleLabel="WH_HToBB_WToLNu_M125"; color=kGreen-8;}
+    if(sampleI==1) { sampleName="TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"; sampleLabel="TTJets_SingleLeptFromT"; color=kBlue;} 
+    if(sampleI==2) { sampleName="TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"; sampleLabel="TTJets_SingleLeptFromTbar"; color=kBlue;}  
+    if(sampleI==3) { sampleName="ST"; sampleLabel="ST"; color=kMagenta;}
+    if(sampleI==4) { sampleName="WW"; sampleLabel="WW"; color=kGreen-8;}
+    if(sampleI==5) { sampleName="WZ"; sampleLabel="WZ"; color=kGreen-8;}
+    if(sampleI==6) { sampleName="ZZ"; sampleLabel="ZZ"; color=kGreen-8;}
+    if(sampleI==7) { sampleName="VHToNonbb_M125"; sampleLabel="VHToNonbb_M125"; color=kGreen-8;}
+    if(sampleI==8) { sampleName="WH_HToBB_WToLNu_M125"; sampleLabel="WH_HToBB_WToLNu_M125"; color=kGreen-8;}
 
-    if(sampleI==8) { sampleName="DYJets-madgraph"; sampleLabel="DYJetsToLL"; color=kGreen-10;}
-    if(sampleI==9) { sampleName="WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"; sampleLabel="WJetsToLNu"; color=kGreen-9;}
-    if(sampleI==10) { sampleName="TTTT"; sampleLabel="TTTT"; color=kOrange;}
-    if(sampleI==11) { sampleName="TTW"; sampleLabel="TTW"; color=kOrange;}
-    if(sampleI==12) { sampleName="TTZ"; sampleLabel="TTZ"; color=kOrange;}
-    if(sampleI==13) { sampleName="tZq"; sampleLabel="tZq"; color=kOrange;}
-    if(sampleI==14) { sampleName="ttH"; sampleLabel="ttH"; color=kOrange;}
+    if(sampleI==9) { sampleName="DYJets-madgraph"; sampleLabel="DYJetsToLL"; color=kGreen-10;}
+    if(sampleI==10) { sampleName="WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"; sampleLabel="WJetsToLNu"; color=kGreen-9;}
+    if(sampleI==11) { sampleName="TTTT"; sampleLabel="TTTT"; color=kOrange;}
+    if(sampleI==12) { sampleName="TTW"; sampleLabel="TTW"; color=kOrange;}
+    if(sampleI==13) { sampleName="TTZ"; sampleLabel="TTZ"; color=kOrange;}
+    if(sampleI==14) { sampleName="tZq"; sampleLabel="tZq"; color=kOrange;}
+    if(sampleI==15) { sampleName="ttH"; sampleLabel="ttH"; color=kOrange;}
 
     /*
       // all splitted
@@ -345,12 +346,12 @@ THStack *getMCStack( TString fileName="", TString histoName="",TString dirName="
     if(!(variation.Contains("Up") || variation.Contains("Down"))) {
       if(h && sampleI==0) this_leg->AddEntry(h, "TTJets #rightarrow 2l " , "f");
       if(h && sampleI==1) this_leg->AddEntry(h, "TTJets #rightarrow 1l" , "f");
-      if(h && sampleI==2) this_leg->AddEntry(h, "Single Top" , "f");
+      if(h && sampleI==3) this_leg->AddEntry(h, "Single Top" , "f");
       //    if(h && sampleI==7) this_leg->AddEntry(h, "Diboson" , "f");
-      if(h && sampleI==11) this_leg->AddEntry(h, "rares" , "f");
+      if(h && sampleI==12) this_leg->AddEntry(h, "rares" , "f");
       //    if(h && sampleI==16) this_leg->AddEntry(h, "DY+jets" , "f");
       //    if(h && sampleI==17) this_leg->AddEntry(h, "W+jets" , "f");
-      if(h && sampleI==3) this_leg->AddEntry(h, "EWK" , "f");
+      if(h && sampleI==4) this_leg->AddEntry(h, "EWK" , "f");
     }
     if(h) hs->Add(h);
     //    if(h) this_leg->AddEntry(h, sampleLabel, "f");
@@ -378,8 +379,8 @@ TCanvas *dataMCstackPlot( TString histoName="", TString dirName="", bool doLog=f
   //  if(LepCat==1 || LepCat==2 || LepCat==4) fileName="JAN2/2l.root";
   //  TString fileName="JAN3syst/1l.root";
   //  if(LepCat==1 || LepCat==2 || LepCat==4) fileName="JAN3syst/2l.root";
-  TString fileName="JAN21bis/1l.root";
-  if(LepCat==1 || LepCat==2 || LepCat==4) fileName="JAN21bis/2l.root";
+  TString fileName="JAN18/1l.root";
+  if(LepCat==1 || LepCat==2 || LepCat==4) fileName="JAN18/2l.root";
 
   THStack *hs = getMCStack(fileName,histoName,dirName,doLog,LepCat,this_leg,"");
   THStack *hs_JESUp = getMCStack(fileName,histoName,dirName,doLog,LepCat,this_leg,"_JESUp");
@@ -419,7 +420,7 @@ TCanvas *dataMCstackPlot( TString histoName="", TString dirName="", bool doLog=f
   pad1->Draw();
 
   TPad *pad2 = new TPad("pad2", "",0.05,0,1,ydiv);
-  //  pad2->SetLogx(logx);
+  //  pad2->SetLogx(logx);                                                                                                                                              
   pad2->SetTickx(1);
   pad2->SetTicky(1);
   pad2->SetTopMargin(0);
@@ -518,7 +519,7 @@ TCanvas *dataMCstackPlot( TString histoName="", TString dirName="", bool doLog=f
 
     /*
     TGraphAsymmErrors * toterree= JESerror(mcTOT,mcTOT_JESUp,mcTOT_JESDown,
-					   hdataRatio);
+    					   hdataRatio);
     */
 
     TAxis *toterree_yaxis = toterree->GetYaxis ();
@@ -539,7 +540,7 @@ TCanvas *dataMCstackPlot( TString histoName="", TString dirName="", bool doLog=f
 
     toterree->SetFillColor(kGray+3);
     toterree->SetLineColor(kGray+3);
-    toterree->SetFillStyle(3010);
+    toterree->SetFillStyle(3010);                                   
     toterree->Draw("2 same");
     toterree->Draw("p");
     hdataRatio->Draw("p e sames");
@@ -547,7 +548,7 @@ TCanvas *dataMCstackPlot( TString histoName="", TString dirName="", bool doLog=f
     TLine *lineZero = new TLine(mcTOT->GetXaxis()->GetXmin(), 1.,  mcTOT->GetXaxis()->GetXmax(), 1.);
     lineZero->SetLineColor(11);
     lineZero->Draw("same");
-
+  
     hdataRatio->GetXaxis()->SetTitle(hdata->GetXaxis()->GetTitle());
     hdataRatio->GetXaxis()->SetTitleOffset(1.);
     hdataRatio->GetXaxis()->SetLabelSize(0.05*0.75/0.25);
@@ -589,11 +590,11 @@ TCanvas *dataMCstackPlot( TString histoName="", TString dirName="", bool doLog=f
       if(LepCat==3) cst->SaveAs(Form("extraRadCR/%s1Ele.png",histoName.Data())); 
       if(LepCat==4) cst->SaveAs(Form("extraRadCR/%s2Ele.png",histoName.Data())); 
     } else if(dirPlot.Contains("lowMTCR"))   {
-      if(LepCat==0) cst->SaveAs(Form("lowMTCR/%s1Mu.png",histoName.Data()));
-      if(LepCat==1) cst->SaveAs(Form("lowMTCR/%s2Mu.png",histoName.Data()));
-      if(LepCat==2) cst->SaveAs(Form("lowMTCR/%s2l_emu.png",histoName.Data()));
-      if(LepCat==3) cst->SaveAs(Form("lowMTCR/%s1Ele.png",histoName.Data()));
-      if(LepCat==4) cst->SaveAs(Form("lowMTCR/%s2Ele.png",histoName.Data()));
+      if(LepCat==0) cst->SaveAs(Form("lowMTCR/%s1Mu.png",histoName.Data())); 
+      if(LepCat==1) cst->SaveAs(Form("lowMTCR/%s2Mu.png",histoName.Data())); 
+      if(LepCat==2) cst->SaveAs(Form("lowMTCR/%s2l_emu.png",histoName.Data())); 
+      if(LepCat==3) cst->SaveAs(Form("lowMTCR/%s1Ele.png",histoName.Data())); 
+      if(LepCat==4) cst->SaveAs(Form("lowMTCR/%s2Ele.png",histoName.Data())); 
     } else if(dirPlot.Contains("properties"))   {
       if(LepCat==0) cst->SaveAs(Form("plots/properties/%s_%s1l.png",dirName.Data(),histoName.Data())); 
       if(LepCat==1) cst->SaveAs(Form("plots/properties/%s_%s2l.png",dirName.Data(),histoName.Data())); 
@@ -628,13 +629,13 @@ void dataMCstack(int lepCat) {
   if(lepCat==0) {
 
     c = dataMCstackPlot("CutFlow_","ChargedHiggsTopBottom/CutFlow_1Mu",true,lepCat);
-
+    
     //  dirName="ChargedHiggsTopBottom/PreselectionN1_1Mu";
     //  c = dataMCstackPlot("EtMiss_",dirName,true,lepCat);
     //  c = dataMCstackPlot("NBjets_",dirName,false,lepCat);
     //  c = dataMCstackPlot("Njets_",dirName,false,lepCat);
     //  c = dataMCstackPlot("Mt_",dirName,false,lepCat);
-
+    
     dirName="ChargedHiggsTopBottom/topCR_1Mu";
     c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat,"topCR");
@@ -647,7 +648,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("dRlb_",dirName,false,lepCat,"topCR");
     //  c = dataMCstackPlot("HT_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"topCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("Mt_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("Met_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"topCR");
@@ -660,7 +660,7 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("bdt4_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("bdt5_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("bdt6_",dirName,false,lepCat,"topCR");
-
+    
     dirName="ChargedHiggsTopBottom/extraRadCR_1Mu";
     c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat,"extraRadCR");
@@ -669,7 +669,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("Mt_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"extraRadCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("Met_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"extraRadCR");
@@ -680,7 +679,7 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("bdt4_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("bdt5_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("bdt6_",dirName,false,lepCat,"extraRadCR");
-
+    
     /*
       dirName="ChargedHiggsTopBottom/Baseline_1Mu";
       c = dataMCstackPlot("Vertices_",dirName,false,lepCat);
@@ -706,7 +705,7 @@ void dataMCstack(int lepCat) {
       c = dataMCstackPlot("bdt4_",dirName,false,lepCat);
       //  c = dataMCstackPlot("ptWb_",dirName,false,lepCat);
       c = dataMCstackPlot("MT2bb_",dirName,false,lepCat,"topCR");
-
+      
       dirName="ChargedHiggsTopBottom/lowMTCR_1Mu";
       c = dataMCstackPlot("NBjets_",dirName,false,lepCat,"lowMTCR");
       c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"lowMTCR");
@@ -717,7 +716,7 @@ void dataMCstack(int lepCat) {
       c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"lowMTCR");
       c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"lowMTCR");
       c = dataMCstackPlot("LeptonIso_",dirName,true,lepCat,"lowMTCR");
-
+      
       dirName="ChargedHiggsTopBottom/charmCR_1Mu";
       c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat,"charmCR");
       c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat,"charmCR");
@@ -736,6 +735,7 @@ void dataMCstack(int lepCat) {
       c = dataMCstackPlot("bdt3_",dirName,false,lepCat,"charmCR");
       c = dataMCstackPlot("bdt4_",dirName,false,lepCat,"charmCR");
     */
+    
   }
 
   /////////////////
@@ -754,7 +754,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("minDRbb_mass_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("dRlb_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"topCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("Mt_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("Met_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"topCR");
@@ -777,7 +776,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("Mt_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("Met_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"extraRadCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonIso_",dirName,true,lepCat,"extraRadCR");
@@ -787,7 +785,7 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("bdt4_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("bdt5_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("bdt6_",dirName,false,lepCat,"extraRadCR");
-
+    
     /*
       dirName="ChargedHiggsTopBottom/lowMTCR_1Ele";
       c = dataMCstackPlot("NBjets_",dirName,false,lepCat,"lowMTCR");
@@ -800,7 +798,7 @@ void dataMCstack(int lepCat) {
       c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"lowMTCR");
       c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"lowMTCR");
       c = dataMCstackPlot("LeptonIso_",dirName,true,lepCat,"lowMTCR");
-
+      
       dirName="ChargedHiggsTopBottom/charmCR_1Ele";
       c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat,"charmCR");
       c = dataMCstackPlot("Nforwardjets_",dirName,false,lepCat,"charmCR");
@@ -859,7 +857,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("thirdBDiscr_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"topCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("LeptonIso_",dirName,true,lepCat,"topCR");
@@ -890,7 +887,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("thirdBDiscr_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"extraRadCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonIso_",dirName,true,lepCat,"extraRadCR");
@@ -923,7 +919,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("thirdBDiscr_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"topCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("LeptonIso_",dirName,true,lepCat,"topCR");
@@ -944,8 +939,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("bdt2_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("bdt3_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("bdt4_",dirName,false,lepCat,"topCR");
-    c = dataMCstackPlot("bdt5_",dirName,false,lepCat,"topCR");
-    c = dataMCstackPlot("bdt6_",dirName,false,lepCat,"topCR");
     
     dirName="ChargedHiggsTopBottom/extraRadCR_2Ele";
     c = dataMCstackPlot("Ncentraljets_",dirName,false,lepCat,"extraRadCR");
@@ -954,7 +947,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("thirdBDiscr_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"extraRadCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("Met_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"extraRadCR");
@@ -1021,7 +1013,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("thirdBDiscr_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"topCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"topCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"topCR");
     c = dataMCstackPlot("LeptonIso_",dirName,true,lepCat,"topCR");
@@ -1053,7 +1044,6 @@ void dataMCstack(int lepCat) {
     c = dataMCstackPlot("LeadingBPt_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("thirdBDiscr_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("HT_zoom_",dirName,true,lepCat,"extraRadCR");
-    c = dataMCstackPlot("ST_zoom_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("Met_",dirName,true,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonPt_",dirName,false,lepCat,"extraRadCR");
     c = dataMCstackPlot("LeptonEta_",dirName,false,lepCat,"extraRadCR");
@@ -1099,12 +1089,12 @@ void dataMCstack(int lepCat) {
 
 void makeAllPlots(){
 
-  dataMCstack(0); //1Mu
-  dataMCstack(3); //1Ele
+  dataMCstack(0); //1Mu  
+  dataMCstack(3); //1Ele  
   dataMCstack(1); //2Mu
-  dataMCstack(4); //2Ele
-  dataMCstack(2); //1Mu1Ele
-
+  dataMCstack(4); //2Ele  
+  dataMCstack(2); //1Mu1Ele  
+  
 }
 
 void makeAllTable(){
