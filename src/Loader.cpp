@@ -211,6 +211,7 @@ void LoadNero::FillLeptons(){
             lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
         }
         l-> iso = ( (*bl->iso) [iL]);
+        l-> miniIso = ( (*bl->miniIso) [iL]);
         #warning ELE DELTA BETA
         if (l->type == 11) {
             l->iso = ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
