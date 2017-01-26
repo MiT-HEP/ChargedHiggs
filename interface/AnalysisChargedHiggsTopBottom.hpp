@@ -15,6 +15,7 @@ public:
     ChargedHiggsTopBottom() : AnalysisBase () {}
     virtual ~ChargedHiggsTopBottom () {}
 
+    bool doSynch = false;
     bool do1lAnalysis=false;
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;

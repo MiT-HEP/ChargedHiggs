@@ -315,11 +315,15 @@ def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST"]):
 		   datacard.write("\t-")
 	datacard.write("\n")
 
-def writeSystShape(syst,regexpL=[]):
+def writeSystShape(syst,regexpL=[],regexpCat=None):
 	name=syst["wsname"]
 	datacard.write(name+"\tshape")
 
         for cat in catStore:
+	    matchCat=True
+	    if regexpCat != None:
+		matchCat=re.search(regexpCat,cat)
+
             for proc in mcStore:
                 if skip(catStore[cat],mcStore[proc]): continue
 		idx=-1
@@ -329,7 +333,7 @@ def writeSystShape(syst,regexpL=[]):
 			if regexp != "" and regexp[0] == '!':
 				invert=True
 				regexp=regexp[1:]
-			if (match and not invert) or (not match and invert): 
+			if (match and matchCat and not invert) or (not match and matchCat and invert): 
 				idx=i
 				break
 
@@ -340,9 +344,11 @@ def writeSystShape(syst,regexpL=[]):
 	datacard.write("\n")
 
 def importStat():
-	for stat in statStore:
+	for statName in statStore:
+	   stat= statStore[statName]
  	   h=stat["hist"] ## all MC Sum up correctly
 	   h0=stat["hist0"] ## nominal
+	   minError=-1
  	   for iBin in range(1,h.GetNbinsX()+1):
  	      c= h.GetBinContent(iBin)
  	      if c<=0: continue;
@@ -354,17 +360,19 @@ def importStat():
  	      if c<=0: continue;
  	      h.SetBinError(iBin,minError)
 	   for i in range(0,h.GetNbinsX()):
-	      statsyst = { "wsname": histName + "_Bin%d"%(i+1) +"_STAT" , "name": histName + "_Bin%d"%(i+1) + "_STAT"}
+	      statsyst = { "wsname": statName + "_Bin%d"%(i+1) +"_STAT" , "name": statName + "_Bin%d"%(i+1) + "_STAT"}
 	      hupbin=h0.Clone(h.GetName() +"_STATUp")
 	      hdnbin=h0.Clone(h.GetName() +"_STATDown")
 	      cont=h0.GetBinContent(i+1)
 	      err = h . GetBinError(i+1) ## err is referred to the sum
+	      c = h.GetBinContent(i+1) ## this is to check the magnitude, not to apply it
+	      if err/c <.01: continue ## don't write less than 1%
 	      hupbin.SetBinContent(i+1,cont+err)
 	      hdnbin.SetBinContent(i+1,cont-err)
 	      target = stat["target"]
- 	      roo_mc_binup = ROOT.RooDataHist(target+statsyst["wsname"]+"Up",target + "STAT",arglist_obs,hupbin)
+ 	      roo_mc_binup = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Up",target + "STAT",arglist_obs,hupbin)
  	      pdf_mc_binup = roo_mc_binup
- 	      roo_mc_bindn = ROOT.RooDataHist(target+statsyst["wsname"]+"Down",target + "STAT",arglist_obs,hdnbin)
+ 	      roo_mc_bindn = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Down",target + "STAT",arglist_obs,hdnbin)
  	      pdf_mc_bindn = roo_mc_bindn
  	      getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
  	      getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
@@ -372,7 +380,9 @@ def importStat():
  	      g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
 	
 	      ## attribute it only to one MC, since is summed
-	      writeSystShape(statsyst,[stat["mc"]+"_"])
+	      #print "*** DEBUG *** writing matching for",stat["mc"]+"_","pdfname=",target+"_"+statsyst["wsname"]+"Up",
+	      #print "--- statsyst",statsyst
+	      writeSystShape(statsyst,[stat["mc"]+"$"],stat["cat"])
 
 ################### WRITE SYST ################
 for syst in systStore:
@@ -476,7 +486,12 @@ def importPdfFromTH1(cat,mc,syst=None):
 					"target":target,
 					"hist0":h.Clone(histName + "_STAT0")
 					}
-		else:statStore[histName]["hist"] . Add (h ) 
+		else:
+			statStore[histName]["hist"] . Add (h ) 
+			if mc["name"] == 'TT':  ## put TT and reference
+				statStore[histName]["mc"]= mc["name"]
+				statStore[histName]["hist0"] . Delete()
+				statStore[histName]["hist0"] = h.Clone(histName + "_STAT0")
 	return
 
 #import MC
