@@ -49,6 +49,8 @@ class Event{
     float rho_;
     int npv_;
 
+    int genTtbarId_;
+
     vector<string> triggerNames_;
 
     string fName_;
@@ -72,6 +74,11 @@ class Event{
     inline Tau * GetBareTau(unsigned iTau) const { if (taus_.size() <= iTau) return (Tau*) NULL; return taus_[iTau]; }
     inline Lepton * GetBareLepton(unsigned iLepton) const { if (leps_.size() <= iLepton) return (Lepton*) NULL; return leps_[iLepton]; }
     inline Photon * GetBarePhoton(unsigned iPhoton) const { if (phos_.size() <= iPhoton) return (Photon*) NULL; return phos_[iPhoton]; }
+
+    //
+
+    inline int GetGenTtbarId() const { return genTtbarId_; }
+    inline void SetGenTtbarId (const int x){ genTtbarId_=x; }
 
     // ---
     

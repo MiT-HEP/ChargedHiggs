@@ -6,15 +6,18 @@ import math
 from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/DEC18bis/1l/1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/DEC18bis/2l/2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN23/1l/1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JAN23/2l/2l.root")
 #parser.add_option("","--input1Lsig",type='string',help="Input ROOT file. [%default]", default="1l_signal.root")
 #parser.add_option("","--input2Lsig",type='string',help="Input ROOT file. [%default]", default="2l_signal.root")
-parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace.root")
+#parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
+#parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
+parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
+parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
 parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", default=36200)
 
-
-#extra = OptionGroup(parser,"Extra options:","")
+extra = OptionGroup(parser,"Extra options:","")
+extra.add_option("-k","--kTest",type='int',help = "Which test runs. [%default]", default=2)
 #extra.add_option("-r","--rebin",type='int',help = "Rebin Histogram. [%default]", default=-1)
 #
 #parser.add_option_group(extra)
@@ -53,28 +56,19 @@ def WorkspaceSubstitution(string):
 	res = re.sub("TOPRW","CMS_topreweight",res)
 	return res
 
-def Rebin(h):
+def Rebin5(h):
 	''' Rebin with un-even bins '''
 ##	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000])
 ##	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
 	h1=h.Rebin(5)
 	return h1
 
-
-w = ROOT.RooWorkspace("w","w")
-datName = "cms_datacard_topbottom.txt"
-
-datacard=open(datName,"w")
-datacard.write("-------------------------------------\n")
-datacard.write("imax *\n")
-datacard.write("jmax *\n")
-datacard.write("kmax *\n")
-datacard.write("-------------------------------------\n")
-
-w.factory("ht[0,8000]"); # RooRealVar
-ht=w.var("ht")
-arglist_obs = ROOT.RooArgList(ht)
-argset_obs = ROOT.RooArgSet(ht)
+def Rebin(h):
+	''' Rebin with un-even bins '''
+	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000])
+	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+##	h1=h.Rebin(5)
+	return h1
 
 fIn1L = ROOT.TFile.Open(opts.input1L,"READ")
 fIn2L = ROOT.TFile.Open(opts.input2L,"READ")
@@ -86,73 +80,147 @@ if fIn2L == None:
 	print "ERROR: file",opts.input2L,"doesn't exist"
 	exit(1)
 
+
+channel = []
+if opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==0:
+	channel = ["1Mu","1Ele"]
+if opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7:
+	channel = ["1Mu1Ele","2Mu","2Ele"]
+
 #channel = ["1Mu","1Ele"]
 #channel = ["1Mu1Ele","2Mu","2Ele"]
-channel = ["1Ele","1Mu","1Mu1Ele","2Mu","2Ele"]
-##basecat = ["Baseline","charmCR","extraRadCR","topCR"]
+#channel = ["1Ele","1Mu","1Mu1Ele","2Mu","2Ele"]
+#basecat = ["Baseline","charmCR","extraRadCR","topCR"]
 basecat = ["Baseline","extraRadCR","topCR"]
+#basecat = ["Baseline","topCR"]
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 
+label=""
+VarTest=""
+
 for x in basecat:
 	for y in channel:
+
+		label="2l_"
+		if y == "1Ele" or y == "1Mu": label="1l_"
+
 		name= x+ "_" + y
 #       catStore [ name ] = { "name": name,"file": None, "hasMC":["all"],"var":"HT"}
 		srList = [""]
+		region = [""]
 		if x=="Baseline" or x=="extraRadCR" or x=="topCR":
+			if x=="Baseline": region = ["_SR1","_SR2","_SR3","_SR4"]
 ##			if y == "1Ele" or y == "1Mu": srList = ["_SR1","_SR2","_SR3","_SR4"]
 ##			if y == "1Ele" or y == "1Mu": srList = [""]
 			## BDT1 is 1l high mass
-			## BDT2 is 1l low mass
-			## BDT3 is 2l high mass
-			## BDT4 is 2l low mass
-			if y == "1Ele" or y == "1Mu": srList = ["1","2"]
-##			if y == "1Ele" or y == "1Mu": srList = ["1"]
+			## BDT2 is 1l medium mass
+			## BDT3 is 1l low mass
+			## BDT4 is 2l high mass
+			## BDT5 is 2l medium mass
+			## BDT6 is 2l low mass
+##			if y == "1Ele" or y == "1Mu": srList = ["1","2"]
+			if opts.kTest==1 and (y == "1Ele" or y == "1Mu"): srList = [""] #this is the 1d
+			if opts.kTest==1 and (y == "1Ele" or y == "1Mu"): srList = ["1"]
+			if opts.kTest==2 and (y == "1Ele" or y == "1Mu"): srList = ["2"]
+			if opts.kTest==3 and (y == "1Ele" or y == "1Mu"): srList = ["3"]
 ##			if y == "1Ele" or y == "1Mu": srList = ["2"]
 ##			else : srList = ["_SR1","_SR2","_SR3","_SR4"]
 ##			else : srList = [""]
-			else : srList = ["3","4"]
-##			else : srList = ["3"]
+##			else : srList = ["3","4"]
+			else :
+				if opts.kTest==4: srList = ["4"]
+				if opts.kTest==5: srList = ["5"]
+				if opts.kTest==6: srList = ["6"]
+				if opts.kTest==7: srList = [""]#this is the 1d
 ##			else : srList = ["4"]
-		for sr in srList:
-			name= x+ "_" + y + "" + sr
-##			catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"HT"+sr}
-			catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"bdt"+sr}
 
+		for sr in srList:
+			if sr == "1" and opts.kTest==1: VarTest="high_"
+			if sr == "2" and opts.kTest==2: VarTest="medium_"
+			if sr == "3" and opts.kTest==3: VarTest="low_"
+			if sr == "4" and opts.kTest==4: VarTest="high_"
+			if sr == "5" and opts.kTest==5: VarTest="medium_"
+			if sr == "6" and opts.kTest==6: VarTest="low_"
+			if sr == "" and opts.kTest==7: VarTest="1d_"
+			if sr == "" and opts.kTest==0: VarTest="1d_"
+
+			for reg in region:
+				name= x+ "_" + y + "" + sr
+				print 'name=',name,'sr=',sr,'reg=',reg,"VarTest=",VarTest
+				if opts.kTest==0 or opts.kTest==7:catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"ST"+reg}
+				else: catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"bdt"+sr+""+reg}
        ## set files
 			if y == "1Ele" or y == "1Mu": catStore [ name ]['file'] = fIn1L
 			else : catStore[name]['file'] = fIn2L
 
        #these have null norm so far
-			if x=="charmCR":
+#			if x=="charmCR":
 ##				catStore[name]["hasMC"]=["VV","WJets"]
-				catStore[name]["hasMC"]=["VV"]
+#				catStore[name]["hasMC"]=["VV"]
+			if x=="extraRadCR":
+				catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
 			if x=="topCR":
-				catStore[name]["hasMC"]=["TT","TTX","ST"]
-			if x=="Baseline" and y=="2Mu":
-				catStore[name]["hasMC"]=["VV","TT","TTX","ST","HPlus"]
-			if x=="Baseline" and y=="2Ele":
-				catStore[name]["hasMC"]=["VV","TT","TTX","ST","HPlus"]
-			if x=="charmCR"  and (y=="2Mu" or y=="2Ele" or "1Mu1Ele"):
-				catStore[name]["hasMC"]=["xxx"]
-			if x=="Baseline" and y=="1Mu1Ele":
-				catStore[name]["hasMC"]=["VV","TT","TTX","ST","HPlus"]
+				catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+			if x=="Baseline":
+				catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+#			if x=="Baseline" and y=="2Mu":
+#				catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+#			if x=="Baseline" and y=="2Ele":
+#				catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+#			if x=="charmCR"  and (y=="2Mu" or y=="2Ele" or "1Mu1Ele"):
+#				catStore[name]["hasMC"]=["xxx"]
+#			if x=="Baseline" and y=="1Mu1Ele" and opts.kTest==6 and reg=="_SR4":
+#				catStore[name]["hasMC"]=[""]
+#			if x=="Baseline" and y=="2Mu" and opts.kTest==6 and reg=="_SR4":
+#				catStore[name]["hasMC"]=[""]
+#			if x=="Baseline" and y=="2Ele" and opts.kTest==6 and reg=="_SR4":
+#				catStore[name]["hasMC"]=[""]
 
 			mcStore={
-				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0},
+##				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
+				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d"], "num":0 },
 ##				"WJets":{"name":"WJets", "hist":["WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8","DYJets-madgraph"],"num":1 },
-				"VV":{ "name":"VV","hist":["WWTo2L2Nu","WWToLNuQQ","WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu","ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":2},
+##				"VV":{ "name":"VV","hist":["WWTo2L2Nu","WWToLNuQQ","WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu","ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":2},
+##				"VV":{ "name":"VV","hist":["WW","WZ","ZZ"],"num":2},
 				#	"WW":{ "name":"WW","hist":["WWTo2L2Nu","WWToLNuQQ"],"num":2},
 				#	"WZ":{ "name":"WZ","hist":["WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu"],"num":3},
 				#	"ZZ":{ "name":"ZZ","hist":["ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":4},
-				"TT":{ "name":"TT","hist":["TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1", "TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1","TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"],"num":3},
-				"ST":{ "name":"ST","hist":["ST_t-channel_antitop","ST_t-channel_top","ST_tW_antitop","ST_tW_top"],"num":4},
-				"TTX":{ "name":"TTX","hist":["TTTT","TTZToQQ","TTZToLLNuNu","TTWJetsToQQ","TTWJetsToLNu"],"num":5}
+				"TT":{ "name":"TT","hist":["TTJets_SingleLeptFromT","TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"],"num":1},
+#				"TT":{ "name":"TT","hist":["TTJets_SingleLeptFromTbar_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1", "TTJets_SingleLeptFromT_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1","TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"],"num":1},
+				"ST":{ "name":"ST","hist":["ST","tZq"],"num":4},
+				"TTX":{ "name":"TTX","hist":["TTTT","TTZ","TTW","ttH"],"num":5}
 				}
 			systStore={
 				"None":None,
+				"CMS_pileup":{"type":"shape", "wsname":"PU","name":"PU","proc":[".*"]}, ## name used for shape
+				"CMS_scale_uncluster":{"type":"shape", "wsname":"UNCLUSTER","name":"UNCLUSTER","proc":[".*"]}, ## name used for shape
+				"CMS_scale_j":{"type":"shape", "wsname":"JES","name":"JES","proc":[".*"]}, ## name used for shape
+				"CMS_eff_b":{"type":"shape", "wsname":"BTAGB","name":"BTAGB","proc":[".*"]}, ## name used for shape
+				"CMS_fake_b":{"type":"shape", "wsname":"BTAGL","name":"BTAGL","proc":[".*"]}, ## name used for shape
 				"lumi13TeV":{"type":"lnN", "value":["1.06"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
 				}
+
+fileTmp="JAN21bis/"+label+VarTest+opts.output
+
+w = ROOT.RooWorkspace("w","w")
+datNameTmp = opts.datCardName
+datName = "JAN21bis/"+ label + VarTest + datNameTmp
+
+datacard=open(datName,"w")
+datacard.write("-------------------------------------\n")
+datacard.write("imax *\n")
+datacard.write("jmax *\n")
+datacard.write("kmax *\n")
+datacard.write("-------------------------------------\n")
+
+
+w.factory("ht[0,8000]"); # RooRealVar
+ht=w.var("ht")
+#ht=w.var("bdt")
+arglist_obs = ROOT.RooArgList(ht)
+argset_obs = ROOT.RooArgSet(ht)
+
 
 def skip(cat,mc):
 	if cat["hasMC"][0] == "all": return False
@@ -163,16 +231,16 @@ def skip(cat,mc):
 
 ## write shapes
 if True: # data
-	datacard.write("shapes data_obs *\t" + opts.output +"\t")
+	datacard.write("shapes data_obs *\t" + fileTmp +"\t")
 	datacard.write("w:data_obs_$CHANNEL")
 	datacard.write("\n")
 if True: # Sig
-	datacard.write("shapes HPlus *\t" + opts.output +"\t")
+	datacard.write("shapes HPlus *\t" + fileTmp +"\t")
 	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL\t")
 	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
 	datacard.write("\n")
 if True: #bkg
-	datacard.write("shapes * * %s\t"%opts.output +"\t")
+	datacard.write("shapes * * %s\t"%fileTmp +"\t")
 	datacard.write("w:pdf_$PROCESS_$CHANNEL\t")
 	datacard.write("w:pdf_$PROCESS_$CHANNEL_$SYSTEMATIC\n")
 datacard.write("-------------------------------------\n")
@@ -276,7 +344,7 @@ for syst in systStore:
 	if systStore[syst]["type"] == "lnN":
 		writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 	if systStore[syst]["type"] == "shape":
-		writeSystShape(syst,systStore[syst]["proc"])
+		writeSystShape(systStore[syst],systStore[syst]["proc"])
 
 ################### IMPORT ################
 def importStat(h,target,syst="STAT"):
@@ -317,24 +385,29 @@ def importPdfFromTH1(cat,mc,syst=None):
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
-	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000]
+	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000,180,200,220,250,350,450,750]
+##	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,180,200,220,250,350,450,750]
+##	if mc["name"]=="HPlus":masses=[180,200,220,250,350,450,750]
+##	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000]
 	else: masses=[0]
 
 	if syst == None: shifts=["x"]
 	else: shifts=["Up","Down"]
+
 
 	for m in masses:
 	 for s in shifts:
 	  h=None
 	  target = "pdf_" + mc["name"] +"_"+ cat["name"] 
 	  if m >10 :
-	  	target = "pdf_" + mc["name"] +"_M-%d"%m+"_"+ cat["name"] 
+		  target = "pdf_" + mc["name"] +"_M-%d"%m+"_"+ cat["name"]
+
 	  if syst != None:
-		  target += syst["wsname"] + s
+		  target += "_" + syst["wsname"] + s
 
 	  for hname in mc["hist"]:
-#		toget=base + "/" +cat["name"] + "/" +  cat["var"] + "_" + hname
-		toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
+	        toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
+
 		if mc["name"]=="HPlus":
 		   toget=toget%m
 		if syst != None:
@@ -346,7 +419,8 @@ def importPdfFromTH1(cat,mc,syst=None):
 		if h==None:h = hTmp
 		else: h.Add(hTmp)
 	  #clean h
-	  h=Rebin(h)
+	  if opts.kTest==0 or opts.kTest==7: h=Rebin(h)
+	  else: h=Rebin5(h)
 	  for b in range(1,h.GetNbinsX()+1):
 		  if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
 	  #save RooDataHist
@@ -385,7 +459,6 @@ for c in catStore:
 		raise IOError
 	base="ChargedHiggsTopBottom"
 	target = "data_obs_"+ cat["name"] 
-#	toget=base + "/" +cat["name"] + "/" +  cat["var"]  +"_Data"
 	toget=base + "/" +cat["dir"] + "/" +  cat["var"]  +"_Data"
 	h=tfile.Get(toget)
 	if h == None:
@@ -396,10 +469,9 @@ for c in catStore:
 	getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
 	g.extend([h,roo_data])
 
-w.writeToFile(opts.output)
+w.writeToFile(fileTmp)
 print "--------------------" 
 print "datacard=",datName
-print "ws=",opts.output
+print "ws=",fileTmp
 print " --- DONE --- "
-
 

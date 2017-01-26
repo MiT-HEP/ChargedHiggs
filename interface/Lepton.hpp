@@ -33,6 +33,7 @@ class Lepton : virtual public Object,
         Lepton() ;
 
         float iso; // isolation 
+        float miniIso; // mini-isolation
         int charge; // charge +1 -1
         int type;// abspdgid 11 o 13 
         int tightId;
@@ -51,6 +52,7 @@ class Lepton : virtual public Object,
         virtual inline bool IsTight() const { return IsLep() and tightId; }
         inline int   IsObject() const override {return IsLep();} // TODO, const, check that nothing broke
         virtual inline float Isolation() const { return iso; } 
+        virtual inline float MiniIsolation() const { return miniIso; }
 
         // these functions are used in order to avoid the lep checks
         virtual inline bool IsElectronDirty() const { return type == 11; }

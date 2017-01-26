@@ -211,6 +211,7 @@ void LoadNero::FillLeptons(){
             lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
         }
         l-> iso = ( (*bl->iso) [iL]);
+        l-> miniIso = ( (*bl->miniIso) [iL]);
         #warning ELE DELTA BETA
         if (l->type == 11) {
             l->iso = ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
@@ -500,6 +501,7 @@ void LoadNero::FillMC(){
     BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["BareMonteCarlo"]]);
 
     event_ -> GetWeight() -> SetMcWeight(  mc->mcWeight );
+    event_ -> SetGenTtbarId( mc->genTtbarId );
 
     if (tree_->GetBranchStatus("r1f2") )  // after setmcw, because it will reset the status of the scales
     {

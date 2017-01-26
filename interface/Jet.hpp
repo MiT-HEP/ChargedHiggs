@@ -23,6 +23,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float  qgl_ ; // To Set
     float puidcut_{-100};
     float puId;
+    TLorentzVector pp4;
 
     // qgl vars
     std::map<std::string,float> qglVars_;
@@ -80,6 +81,19 @@ class Jet : virtual public Object, virtual public SmearableComplex
         if (syst == 0) return p4.E(); 
         else return Pt()/p4.Pt() *p4.E();
     }
+
+    inline TLorentzVector & GetP4() override {
+        pp4=p4;
+        if (syst == 0) return pp4;
+        if (syst!=0 ) {
+            if (p4.Pt()>0) {
+                return pp4 *= (Pt()/p4.Pt());
+            } else {
+                return pp4;
+            }
+        }
+    }
+
     inline float GetUnc() const { return Pt()/p4.Pt(); }
 
     inline void  clearSyst() override {Object::clearSyst() ;syst = 0; isValid=1;type=Smearer::NONE;} // reset smearing
