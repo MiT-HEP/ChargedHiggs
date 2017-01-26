@@ -11,11 +11,11 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
 
 void ChargedHiggsTopBottom::SetJetCuts(Jet *j){
     // https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80X
-    j->SetBCut(0.800); //0.800 medium // 0.460 loose
+    if(!doSynch) j->SetBCut(0.800); //0.800 medium // 0.460 loose
     //    j->SetBCut(0.460); //0.800 medium // 0.460 loose
     // https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80XReReco
     // doSynch
-    //    j->SetBCut(0.8484); //0.8484 medium // 0.5426 loose
+    if(doSynch) j->SetBCut(0.8484); //0.8484 medium // 0.5426 loose
     j->SetEtaCut(4.7);
     j->SetEtaCutCentral(2.4);
     j->SetPtCut(40);
@@ -270,10 +270,10 @@ void ChargedHiggsTopBottom::Init()
     Log(__FUNCTION__,"INFO",Form("do1lAnalysis=%d",do1lAnalysis));
     Log(__FUNCTION__,"INFO",Form("do2lAnalysis=%d",do2lAnalysis));
     Log(__FUNCTION__,"INFO",Form("doTaulAnalysis=%d",doTaulAnalysis));
+    Log(__FUNCTION__,"INFO",Form("doSynch=%d",doSynch));
 
     Preselection();
 
-    bool doSynch=false;
     if(doSynch) return;
 
     TMVA::Tools::Instance();
@@ -513,6 +513,7 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
         Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/Nforwardjets_"+l,"Nforwardjets "+l + ";Number of jets P_{T}>40 [GeV] |#eta| >2.4",10,0,10);
         Book("ChargedHiggsTopBottom/PreselectionN1"+category+"/NBjets_"+l,"NBjets "+l + ";Number of b jets P_{T}>40 [GeV]",10,0,10);
         */
+
 }
 
 
@@ -537,6 +538,19 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Njets_"+l,"Njets "+l + ";Number of jets P_{T}>40 |#eta|>2.4",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Ncentraljets_"+l,"Ncentraljets "+l + ";Number of jets P_{T}>40 |#eta|<=2.4",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Nforwardjets_"+l,"Nforwardjets "+l + ";Number of jets P_{T}>40 |#eta|>2.4",10,0,10);
+
+        ///////
+        Book("ChargedHiggsTopBottom/NBjets_"+l,"NBjets "+l + ";Number of b jets P_{T}>40 ",10,0,10);
+        Book("ChargedHiggsTopBottom/NBjets_tt2b_"+l,"NBjets "+l + ";Number of b jets P_{T}>40 ",10,0,10);
+        Book("ChargedHiggsTopBottom/NBjets_tt1b_"+l,"NBjets "+l + ";Number of b jets P_{T}>40 ",10,0,10);
+        Book("ChargedHiggsTopBottom/NBjets_ttc_"+l,"NBjets "+l + ";Number of b jets P_{T}>40 ",10,0,10);
+        Book("ChargedHiggsTopBottom/NBjets_ttlight_"+l,"NBjets "+l + ";Number of b jets P_{T}>40 ",10,0,10);
+        //
+        Book("ChargedHiggsTopBottom/Ndiscr_"+l,"NBjets "+l + ";discr ",50,0.,1.);
+        Book("ChargedHiggsTopBottom/Ndiscr_tt2b_"+l,"NBjets "+l + "; discr ",50,0.,1.);
+        Book("ChargedHiggsTopBottom/Ndiscr_tt1b_"+l,"NBjets "+l + "; discr ",50,0.,1.);
+        Book("ChargedHiggsTopBottom/Ndiscr_ttc_"+l,"NBjets "+l + "; discr ",50,0.,1.);
+        Book("ChargedHiggsTopBottom/Ndiscr_ttlight_"+l,"NBjets "+l + "; discr ",50,0.,1.);
 
         /////
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2000);
@@ -1068,12 +1082,27 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/NBjets_"+label,systname, e->Bjets() ,e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Njets_"+label,systname, e->Njets() ,e->weight());
 
-    double minDiscr=10;
+    ///////////
+    //// STUDY third b jet ()ordered by csv
+    ////
 
-    for(int i=0;i!=min(e->NcentralJets(),3);++i) {
-        if(e->GetCentralJet(i)->bdiscr<minDiscr) minDiscr=e->GetCentralJet(i)->bdiscr;
+    vector<pair<float,int> > valid; // csv, idx
+
+    for(int i = 0 ; i<e->NcentralJets() ;++i)
+        {
+            valid.push_back(pair<float,int>(e->GetCentralJet(i)->bdiscr,i));
+        }
+
+    std::sort(valid.begin(), valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    /*
+    if (valid.size() != 0 ) {
+        for(int i=0;i!=e->NcentralJets();++i) {
+            cout << " e->GetCentralJet discr=" << valid[i].first << " sec=" <<  valid[i].second  << endl;
+        }
     }
-    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/thirdBDiscr_"+label,systname, minDiscr,e->weight());
+    */
+
+    if(e->NcentralJets()>=3) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/thirdBDiscr_"+label,systname,  valid[2].first,e->weight());
 
     ///////////
     //// STUDY various jets properties
@@ -1234,24 +1263,36 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
 void ChargedHiggsTopBottom::printSynch(Event*e) {
 
     // NB to change miniISO,ptCutEle + tausID + Bjets medium
-    std::cout << "=======================================" << endl;
+    std::cout << "=======================================" << std::endl;
 
-    std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum();
+    std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum()<< std::endl;
     //        if(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger" << std::endl;
     if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger=" << std::endl;
     //        if(e->GetName().find("SingleElectron")!=string::npos and e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger" << std::endl;
     //        if(e->GetName().find("SingleMuon")!=string::npos and (e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger" << std::endl;
+    std::cout << " Nleps(pt>10, eta<2.4)=" << e->Nleps() << std::endl;
     if(leadLep != NULL) {
         std::cout << " leadLep->Pt()=" << leadLep->Pt();
         std::cout << " leadLep->Eta()=" << leadLep->Eta();
         std::cout << " leadLep->Phi()=" << leadLep->Phi();
+        std::cout << " leadLep->Isolation()=" << leadLep->Isolation();
+        std::cout << " leadLep->MiniIsolation()=" << leadLep->MiniIsolation();
         std::cout << " leadLep->IsMuon()=" << leadLep->IsMuon() << " leadLep->IsElectron()=" << leadLep->IsElectron();
+        std::cout << " " << std::endl;
     }
-    std::cout << " Nleps(pt>10, eta<2.4)=" << e->Nleps() << std::endl;
     std::cout << " nCentralJets(pt>40,absEta<2.4,looseId)=" << e->NcentralJets();
     std::cout << " nTaus=" << e->Ntaus();
     std::cout << " nBs=" << e->Bjets();
     std::cout << " met=" << e->GetMet().Pt();
+    std::cout << " " << std::endl;
+
+    std::cout << " genTTbar flag " << e->GetGenTtbarId() << std::endl;
+
+    if((e->GetGenTtbarId()%100)==55 || (e->GetGenTtbarId()%100)==54 || (e->GetGenTtbarId()%100)==53) cout << "  this is ttbar + "<< endl;
+    if((e->GetGenTtbarId()%100)==52 || (e->GetGenTtbarId()%100)==51) cout << "  this is ttbar + b"<< endl;
+    if((e->GetGenTtbarId()%100)==44 || (e->GetGenTtbarId()%100)==43 || (e->GetGenTtbarId()%100)==42 || (e->GetGenTtbarId()%100)==41) cout << "  this is ttbar + c(c)"<< endl;
+    if((e->GetGenTtbarId()%100)==00) cout << "  this is ttbar + light"<< endl;
+
     //    if(e->Ntaus()>0) std::cout << " tauPt=" << e->GetTau(0)->Pt() << " tauEta=" << e->GetTau(0)->Eta() << " tauPhi=" << e->GetTau(0)->Phi();
     //    if(e->Ntaus()>1) std::cout << " tauPt=" << e->GetTau(1)->Pt() << " tauEta=" << e->GetTau(1)->Eta() << " tauPhi=" << e->GetTau(1)->Phi();
     //        std::cout << " totalweight=" << e->weight() ;
@@ -1259,9 +1300,9 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
 
     //        for(int i=0;i!=min(e->Njets(),10);++i) {
     //            std::cout << "    pt[" <<i<<"]="<< e->GetJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetJet(i)->GetP4().Eta() << " phi[" <<i<<"]="<< e->GetJet(i)->GetP4().Phi();
-        //        }
+    //        }
 
-    std::cout << "=======================================" << std::endl;
+    //    std::cout << "=======================================" << std::endl;
 
 }
 
@@ -1309,8 +1350,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     double LeadingLeptonPt_= 30; // singleLepton
     //    doSynch
-    //    double LeadingLeptonElePt_= 35; // singleLepton
     double LeadingLeptonElePt_= 30; // singleLepton
+    if(doSynch) LeadingLeptonElePt_= 35; // singleLepton
     double NextLeadingLeptonPt_= 10; //
 
     for(int i=0;i!=e->Nleps();++i) {
@@ -1590,8 +1631,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     //// VARIOUS SYNCH printout
     ////$$$$$$$
     ////$$$$$$$
-    bool doSynch=false;
-    if(doSynch) { printSynch(e); return EVENT_NOT_USED;}
+
+    //    if(doSynch) { printSynch(e); return EVENT_NOT_USED;}
 
     ////////
     ////////
@@ -1627,6 +1668,45 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////
 
     if(!cut.passAllUpTo(Mt) )   return EVENT_NOT_USED;
+
+    ////////
+    //// UP TO NOW: LEPTONS selection only
+    ////
+
+    if(doSynch and label.find("TTToSemilepton")) {
+
+        string LabelHF="";
+
+        if((e->GetGenTtbarId()%100)==55 || (e->GetGenTtbarId()%100)==54 || (e->GetGenTtbarId()%100)==53) LabelHF="tt2b_";
+        if((e->GetGenTtbarId()%100)==52 || (e->GetGenTtbarId()%100)==51) LabelHF="tt1b_";
+        if((e->GetGenTtbarId()%100)==44 || (e->GetGenTtbarId()%100)==43 || (e->GetGenTtbarId()%100)==42 || (e->GetGenTtbarId()%100)==41) LabelHF="ttc_";
+        if((e->GetGenTtbarId()%100)==00) LabelHF="ttlight_";
+
+        Fill("ChargedHiggsTopBottom/NBjets_"+LabelHF+label,systname, e->Bjets() ,e->weight());
+
+        vector<pair<float,int> > valid; // csv, idx
+        for(int i = 0 ; i<e->NcentralJets() ;++i)
+            {
+                valid.push_back(pair<float,int>(e->GetCentralJet(i)->bdiscr,i));
+            }
+
+        std::sort(valid.begin(), valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+        if (valid.size() != 0 ) {
+            for(int i=0;i!=e->NcentralJets();++i) {
+                cout << " e->GetCentralJet discr=" << valid[i].first << " sec=" <<  valid[i].second  << endl;
+            }
+        }
+
+        if(e->NcentralJets()>=3) Fill("ChargedHiggsTopBottom/Ndiscr_"+LabelHF+label,systname, valid[2].first ,e->weight());
+
+    }
+
+    /////
+    /////
+    /////
+
+    if(doSynch) { printSynch(e); return EVENT_NOT_USED;}
 
     bool rightCombination =true; // for all the bkg
 
