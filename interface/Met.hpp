@@ -11,6 +11,7 @@ class Met :
         virtual public SmearableComplex
 {
 
+        TLorentzVector pp4;
     protected:
         // filters:
         bool FullRecommendation{false};
@@ -33,6 +34,18 @@ class Met :
             }
         }
         virtual inline float PtGen(){ return gen;} 
+
+        inline TLorentzVector & GetP4() override {
+            if (syst == 0) return pp4;
+            if (syst!=0 ) {
+                pp4=p4;
+                if (p4.Pt()>0) {
+                    return pp4 *= (Pt()/p4.Pt());
+                } else {
+                    return pp4;
+                }
+            }
+        }
 };
 #endif
 // Local Variables:
