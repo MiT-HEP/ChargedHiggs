@@ -4,7 +4,10 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
     // these are used for the Veto
     l->SetPtCut(10);
     l->SetIsoCut(-1.); // absolute isolation
-    l->SetIsoRelCut(0.10); // relative isolation
+    if(!doSynch) l->SetIsoRelCut(0.10); // relative isolation
+    if(!doSynch) l->SetMiniIsoRelCut(-1); // relative mini-isolation
+    if(doSynch) l->SetIsoRelCut(-1); // relative isolation
+    if(doSynch) l->SetMiniIsoRelCut(0.10); // relative mini-isolation
     l->SetEtaCut(2.4);
     l->SetTightCut(false); // use the loose selection for now
 }
@@ -333,7 +336,7 @@ void ChargedHiggsTopBottom::Init()
     for( size_t i=0;i<weights.size() ;++i)
         {
             cout <<"[TmvaAnalysis]::[Init]::[INFO] Loading weights idx="<<i<<": '"<< weights[i]<<"'"<<endl;
-            readers_[i]->BookMVA("BDTMitFisher",weights[i].c_str());
+            readers_[i]->BookMVA("BDTG",weights[i].c_str());
         }
     cout <<"[TmvaAnalysis]::[Init]::[INFO] Done"<<endl;
 
@@ -1266,18 +1269,28 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
     std::cout << "=======================================" << std::endl;
 
     std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum()<< std::endl;
-    //        if(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger" << std::endl;
-    if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger=" << std::endl;
+    if(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger(HLT_Ele32_eta2p1_WPTight_Gsf)" << std::endl;
+    if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger(HLT_IsoMu24 and HLT_IsoTkMu24)" << std::endl;
     //        if(e->GetName().find("SingleElectron")!=string::npos and e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger" << std::endl;
     //        if(e->GetName().find("SingleMuon")!=string::npos and (e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger" << std::endl;
-    std::cout << " Nleps(pt>10, eta<2.4)=" << e->Nleps() << std::endl;
+    std::cout << " Nleps(pt>10, eta<2.4, miniRelIso<0.1)=" << e->Nleps() << std::endl;
     if(leadLep != NULL) {
         std::cout << " leadLep->Pt()=" << leadLep->Pt();
         std::cout << " leadLep->Eta()=" << leadLep->Eta();
         std::cout << " leadLep->Phi()=" << leadLep->Phi();
         std::cout << " leadLep->Isolation()=" << leadLep->Isolation();
+        std::cout << " leadLep->Isolation()/leadLep->Pt()=" << leadLep->Isolation()/leadLep->Pt();
         std::cout << " leadLep->MiniIsolation()=" << leadLep->MiniIsolation();
         std::cout << " leadLep->IsMuon()=" << leadLep->IsMuon() << " leadLep->IsElectron()=" << leadLep->IsElectron();
+        std::cout << " " << std::endl;
+    }
+    if(trailLep != NULL) {
+        std::cout << " leadLep->Pt()=" << trailLep->Pt();
+        std::cout << " leadLep->Eta()=" << trailLep->Eta();
+        std::cout << " leadLep->Phi()=" << trailLep->Phi();
+        std::cout << " leadLep->Isolation()=" << trailLep->Isolation();
+        std::cout << " leadLep->MiniIsolation()=" << trailLep->MiniIsolation();
+        std::cout << " leadLep->IsMuon()=" << trailLep->IsMuon() << " leadLep->IsElectron()=" << trailLep->IsElectron();
         std::cout << " " << std::endl;
     }
     std::cout << " nCentralJets(pt>40,absEta<2.4,looseId)=" << e->NcentralJets();
@@ -1298,9 +1311,9 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
     //        std::cout << " totalweight=" << e->weight() ;
     //        std::cout << " systname=" << systname << std::endl;
 
-    //        for(int i=0;i!=min(e->Njets(),10);++i) {
-    //            std::cout << "    pt[" <<i<<"]="<< e->GetJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetJet(i)->GetP4().Eta() << " phi[" <<i<<"]="<< e->GetJet(i)->GetP4().Phi();
-    //        }
+    for(int i=0;i!=min(e->NcentralJets(),10);++i) {
+        std::cout << "    pt[" <<i<<"]="<< e->GetJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetJet(i)->GetP4().Eta() << " phi[" <<i<<"]="<< e->GetJet(i)->GetP4().Phi() << std::endl;
+    }
 
     //    std::cout << "=======================================" << std::endl;
 
@@ -1632,7 +1645,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////$$$$$$$
     ////$$$$$$$
 
-    //    if(doSynch) { printSynch(e); return EVENT_NOT_USED;}
+    if(doSynch) { printSynch(e); return EVENT_NOT_USED;}
 
     ////////
     ////////
@@ -1694,7 +1707,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
         if (valid.size() != 0 ) {
             for(int i=0;i!=e->NcentralJets();++i) {
-                cout << " e->GetCentralJet discr=" << valid[i].first << " sec=" <<  valid[i].second  << endl;
+                //                cout << " e->GetCentralJet discr=" << valid[i].first << " sec=" <<  valid[i].second  << endl;
             }
         }
 
@@ -1766,7 +1779,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             //    vector<float> bdt;
             for(unsigned i =0 ;i< readers_.size() ; ++i)
                 {
-                    bdt.push_back(readers_[i]->EvaluateMVA("BDTMitFisher") );
+                    bdt.push_back(readers_[i]->EvaluateMVA("BDTG") );
                 }
             
         } else if(do1lAnalysis) {
@@ -1788,7 +1801,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             //    vector<float> bdt;
             for(unsigned i =0 ;i< readers_.size() ; ++i)
                 {
-                    bdt.push_back(readers_[i]->EvaluateMVA("BDTMitFisher") );
+                    bdt.push_back(readers_[i]->EvaluateMVA("BDTG") );
                 }
 
         } else {
@@ -1812,7 +1825,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     if (systname.find("NONE")    !=string::npos) {
         // this target the 1l final state
-        if( doTaulAnalysis &&  e->Bjets() > 0 && e->NcentralJets() >3 && evt_MT>=120) {
+        // >=3 jets for 1l and >=1 jets for the 2l
+        bool taul1L=(trailLep==NULL and e->NcentralJets() >2);
+        bool taul2L=(trailLep!=NULL and e->NcentralJets() >0);
+        if( doTaulAnalysis &&  e->Bjets() > 0 &&  (taul1L or taul2L) && evt_MT>=120) {
             setTree(e,label,category);
             FillTree("tree_tb");
         }
