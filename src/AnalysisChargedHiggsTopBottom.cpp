@@ -390,10 +390,12 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","met_pt",'F');
     Branch("tree_tb","met_phi",'F');
     Branch("tree_tb","ht",'F');
+    Branch("tree_tb","st",'F');
     Branch("tree_tb","DRl1b1",'F');
     Branch("tree_tb","DRl2b1",'F');
     Branch("tree_tb","DRbbmin",'F');
     Branch("tree_tb","MassDRbbmin",'F');
+    Branch("tree_tb","MassDRlbmin",'F');
 
     // various masses
     Branch("tree_tb","bdt1lh",'F');
