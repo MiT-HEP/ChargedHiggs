@@ -36,6 +36,8 @@ public:
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
+    void computeVar(Event*e);
+
     void printSynch(Event*e);
 
     int genInfoForBKG(Event*e);
