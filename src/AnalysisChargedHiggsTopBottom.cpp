@@ -691,6 +691,11 @@ void ChargedHiggsTopBottom::Preselection()
         if(do2lAnalysis) BookHisto(l, "_2Mu","Baseline");
         if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","Baseline");
         if(do2lAnalysis) BookHisto(l, "_2Ele","Baseline");
+        if(doTaulAnalysis) BookHisto(l, "_1Mu","Baseline");
+        if(doTaulAnalysis) BookHisto(l, "_1Ele","Baseline");
+        if(doTaulAnalysis) BookHisto(l, "_2Mu","Baseline");
+        if(doTaulAnalysis) BookHisto(l, "_1Mu1Ele","Baseline");
+        if(doTaulAnalysis) BookHisto(l, "_2Ele","Baseline");
 
         BookHisto(l, "","topCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","topCR");
@@ -1502,7 +1507,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     evt_MT=e->Mt(Event::MtLepton);
 
     ////// --> 1l analysis
-    if(do1lAnalysis && leadLep!=NULL) {
+    if((do1lAnalysis or doTaulAnalysis) && leadLep!=NULL) {
 
         bool onemu=(leadLep->IsMuon() and passTriggerMu);
         bool oneele=(leadLep->IsElectron() and fabs(leadLep->Eta())<2.1 and passTriggerEle);
@@ -1527,7 +1532,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     }
 
     ////// --> 2l analysis
-    if(do2lAnalysis and leadLep!=NULL and trailLep!=NULL) {
+    if((do2lAnalysis or doTaulAnalysis) and leadLep!=NULL and trailLep!=NULL) {
 
         bool twomu=(leadLep->IsMuon() and trailLep->IsMuon() and passTriggerMu);
         bool twoele=(leadLep->IsElectron() and trailLep->IsElectron() and fabs(leadLep->Eta())<2.1 and passTriggerEle);
@@ -1574,13 +1579,13 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////// --> other cuts
     if ( e->GetMet().Pt() >= 30 ) cut.SetCutBit(Met);
 
-    if(do1lAnalysis && leadLep!=NULL) {
+    if((do1lAnalysis or doTaulAnalysis) && leadLep!=NULL) {
         cut.SetCutBit(Mt); // Mt -- not applied put in the various lepton categories
         //        if ( e->Mt(evt_MT<120) cut.SetCutBit(Mt); // dilepton Killer
     } else {
         cut.SetCutBit(Mt); // Mt -- not needed
     }
-    if(do1lAnalysis) {
+    if(do1lAnalysis or doTaulAnalysis) {
         if ( e->NcentralJets() >= 5 ) cut.SetCutBit(NJets);
     } else {
         if ( e->NcentralJets() >= 3 ) cut.SetCutBit(NJets);
@@ -1766,11 +1771,15 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     /////
     /////
 
+
     if(doSynch) { printSynch(e); return EVENT_NOT_USED;}
 
     bool rightCombination =true; // for all the bkg
 
-    if( e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 ))) {
+
+    bool Baseline=(e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 )));
+
+    if( Baseline or (doTaulAnalysis && e->Bjets() > 0 )) {
 
         ////////
         ////
@@ -1870,19 +1879,22 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////
 
     if (systname.find("NONE")    !=string::npos) {
+    // Andrea test
+    //    if (systname.find("JESUp")    !=string::npos) {
         if( e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 ))) {
             setTree(e,label,category);
             FillTree("tree_tb");
         }
     }
 
-
     if (systname.find("NONE")    !=string::npos) {
+        //        std::cout << "doTaulAnalysis" << doTaulAnalysis << std::endl;
         // this target the 1l final state
         // >=3 jets for 1l and >=1 jets for the 2l
         bool taul1L=(trailLep==NULL and e->NcentralJets() >2);
         bool taul2L=(trailLep!=NULL and e->NcentralJets() >0);
         if( doTaulAnalysis &&  e->Bjets() > 0 &&  (taul1L or taul2L) && evt_MT>=120) {
+            //            cout << "filling tree "<< endl;
             setTree(e,label,category);
             FillTree("tree_tb");
         }
