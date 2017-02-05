@@ -97,6 +97,8 @@ TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.1/TTZTo
 TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.1/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8 502198.857161 0.2529
 TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 /store/user/ceballos/Nero/v2.1/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 569424.146326 0.40620
 TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 /store/user/ceballos/Nero/v2.1/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 1054697.91821 0.2043
+TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 /store/user/ceballos/Nero/v2.1/TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 4870911 3.697
+
 VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.1/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8 5296350.95847 0.9561
 #WH_HToBB_WToLNu_M125 /store/user/jaeyserm/Nero/80X/WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8/WH_HToBB_WToLNu_M125/170102_091502/0000 3138425.05338 0.419369894175
 tZq_ll_4f_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.1/tZq_ll_4f_13TeV-amcatnlo-pythia8 1117499.73969 0.0758
