@@ -4,7 +4,8 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
     // these are used for the Veto
     l->SetPtCut(10);
     l->SetIsoCut(-1.); // absolute isolation
-    if(!doSynch) l->SetIsoRelCut(0.10); // relative isolation
+    //https://indico.cern.ch/event/594396/contributions/2402538/attachments/1389409/2116003/20161215_MuonPOG_GeneralPPD.pdf
+    if(!doSynch) l->SetIsoRelCut(0.15); // relative isolation // for muon 0.25 is loose, 0.15 is tight
     if(!doSynch) l->SetMiniIsoRelCut(-1); // relative mini-isolation
     if(doSynch) l->SetIsoRelCut(-1); // relative isolation
     if(doSynch) l->SetMiniIsoRelCut(0.10); // relative mini-isolation
@@ -14,11 +15,11 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
 
 void ChargedHiggsTopBottom::SetJetCuts(Jet *j){
     // https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80X
-    if(!doSynch) j->SetBCut(0.800); //0.800 medium // 0.460 loose
+    if(doICHEP) j->SetBCut(0.800); //0.800 medium // 0.460 loose
     //    j->SetBCut(0.460); //0.800 medium // 0.460 loose
     // https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80XReReco
     // doSynch
-    if(doSynch) j->SetBCut(0.8484); //0.8484 medium // 0.5426 loose
+    if(!doICHEP) j->SetBCut(0.8484); //0.8484 medium // 0.5426 loose
     j->SetEtaCut(4.7);
     j->SetEtaCutCentral(2.4);
     j->SetPtCut(40);
@@ -173,10 +174,15 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
         {
             // ttbar + single top + ttV
             //            mc = 100;
-            if(label.find("TTJets_DiLept") !=string::npos) mc =101 ;
-            if(label.find("TTJets_SingleLeptFrom") !=string::npos) mc =102 ;
+            if(doICHEP) {
+                if(label.find("TTJets_DiLept") !=string::npos) mc =101 ;
+                if(label.find("TTJets_SingleLeptFrom") !=string::npos) mc =102 ;
             //            if(label.find("TTJets_SingleLeptFromT") !=string::npos) mc =102 ;
             //            if(label.find("TTJets_SingleLeptFromTbar") !=string::npos) mc =103 ;
+            } else {
+                if(label.find("TTTo2L2Nu_TuneCUETP8M2") !=string::npos) mc =101 ;
+                if(label.find("TTToSemilepton_TuneCUETP8M2") !=string::npos) mc =102 ;
+            }
 
             if(label.find("ST") !=string::npos) mc =111 ;
             //            if(label.find("ST_tW_top") !=string::npos) mc =111 ;
@@ -199,24 +205,29 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             //            if(label.find("ttHJetTobb") !=string::npos) mc =125 ;
             //            if(label.find("ttHJetToNonbb") !=string::npos) mc =126 ;
             if(label.find("TTTT") !=string::npos) mc =127 ;
+            if(label.find("TTG") !=string::npos) mc =128 ;
 
             // V+jets
             //            mc = 200;
-            if(label.find("DYJets-madgraph") !=string::npos) mc =221 ;
-            if(label.find("WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8")!=string::npos) mc =222;
-
+            if(doICHEP) {
+                if(label.find("DYJets-madgraph") !=string::npos) mc =221 ;
+                if(label.find("WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8")!=string::npos) mc =222;
+            } else {
+                if(label.find("DYJetsToLL_M") !=string::npos) mc =221 ;
+                if(label.find("WJetsToLNu_TuneCUETP8M1")!=string::npos) mc =222;
+            }
             // EWK
             // missing tribosons
             //            mc = 300;
-            if(label.find("WW") !=string::npos) mc =331 ;
+            if(label.find("WWTo") !=string::npos) mc =331 ;
             //            if(label.find("WWTo2L2Nu") !=string::npos) mc =331 ;
             //            if(label.find("WWToLNuQQ") !=string::npos) mc =332 ;
-            if(label.find("WZ") !=string::npos) mc =333 ;
+            if(label.find("WZTo") !=string::npos) mc =333 ;
             //            if(label.find("WZTo1L1Nu2Q") !=string::npos) mc =333 ;
             //            if(label.find("WZTo1L3Nu") !=string::npos) mc =334 ;
             //            if(label.find("WZTo2L2Q") !=string::npos) mc =335 ;
             //            if(label.find("WZTo3LNu") !=string::npos) mc =336 ;
-            if(label.find("ZZ") !=string::npos) mc =337 ;
+            if(label.find("ZZTo") !=string::npos) mc =337 ;
             //            if(label.find("ZZTo2L2Nu") !=string::npos) mc =337 ;
             //            if(label.find("ZZTo2L2Q") !=string::npos) mc =338 ;
             //            if(label.find("ZZTo4L") !=string::npos) mc =339 ;
@@ -711,21 +722,21 @@ void ChargedHiggsTopBottom::Preselection()
         if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCR");
         if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCR");
 
-        BookHisto(l, "","charmCR"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "","charmCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","charmCR");
         if(do1lAnalysis) BookHisto(l, "_1Ele","charmCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Mu","charmCR");
         //        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","charmCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Ele","charmCR");
 
-        BookHisto(l, "","lowMTCR"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "","lowMTCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","lowMTCR");
         if(do1lAnalysis) BookHisto(l, "_1Ele","lowMTCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Mu","lowMTCR");
         //        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","lowMTCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Ele","lowMTCR");
 
-        BookHisto(l, "","highMTCR"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "","highMTCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","highMTCR");
         if(do1lAnalysis) BookHisto(l, "_1Ele","highMTCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Mu","highMTCR");
@@ -1381,7 +1392,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if(e->weight() == 0. ) cout <<"[ChargedHiggsTopBottom]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
 
     /*
-    cout<<endl;
+    std::cout << e->GetName() << std::endl;
+    if(e->GetName().find("SingleMuon")!=string::npos) std::cout << "this should be SingleMuon" << std::endl;
+    if(e->GetName().find("SingleElectron")!=string::npos) std::cout << "this should be SingleElectron" << std::endl;
+
     std::cout << "---------------------------------------------------------------------------" << std::endl;
 
     std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum() << " systname" << systname << std::endl;
@@ -1458,22 +1472,43 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////$$$$$$$ Building categories
     ////$$$$$$$
 
+
     bool passTriggerMu=true;
     bool passTriggerEle=true;
 
-    if (e->IsRealData() and
-        e->GetName().find("SingleMuon")!=string::npos) passTriggerMu=(e->IsTriggered("HLT_IsoMu27_v")
-                                                                      //                                        or e->IsTriggered("HLT_IsoTkMu22_v")
-                                                                      //                                        or e->IsTriggered("HLT_IsoMu22_v")
-                                                                      or e->IsTriggered("HLT_IsoMu24_v")
-                                                                      //                                        or e->IsTriggered("HLT_IsoTkMu24_v")
-                                                                      );
-    if (e->IsRealData() and
-        e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPLoose_Gsf_v")
-                                                                           //                                         or e->IsTriggered("HLT_Ele27_WPTight_Gsf_v")
-                                                                           //                                         or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")
-                                                                           );
+    if (!e->IsRealData()) {
+        // MC
+        passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"));
+        //        passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")); // added later, Julie
+        passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele30_WPTight_Gsf_v")); // Ele27_WPTight in runC/runH 2.0 ntuples
+        //        passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // to ask Dominick , used in stop
 
+    } else {
+        // DATA
+        if(e->GetName().find("SingleMuon")!=string::npos) passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"));
+        //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")); // added later, Julie
+        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele30_WPTight_Gsf_v")); //Ele27_WPTight exist in runC
+        //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // to ask Dominick , used in stop
+    }
+
+    if(doICHEP) {
+        // do not apply in MC
+        passTriggerMu=true;
+        passTriggerEle=true;
+
+        if (e->IsRealData() and
+            e->GetName().find("SingleMuon")!=string::npos) passTriggerMu=(e->IsTriggered("HLT_IsoMu27_v")
+                                                                          //                                        or e->IsTriggered("HLT_IsoTkMu22_v")
+                                                                          //                                        or e->IsTriggered("HLT_IsoMu22_v")
+                                                                          or e->IsTriggered("HLT_IsoMu24_v")
+                                                                          //                                        or e->IsTriggered("HLT_IsoTkMu24_v")
+                                                                          );
+        if (e->IsRealData() and
+            e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPLoose_Gsf_v")
+                                                                               //                                         or e->IsTriggered("HLT_Ele27_WPTight_Gsf_v")
+                                                                               //                                         or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")
+                                                                               );
+    }
 
     CutSelector cut;
     cut.SetMask(MaxCut-1);
@@ -1483,7 +1518,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         Fill("ChargedHiggsTopBottom/CutFlow_1Mu/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_1Ele/CutFlow_"+label,systname,0,e->weight());
         ///
-        if(!e->IsRealData()) {
+
+        if(!e->IsRealData() && (systname.find("NONE")    !=string::npos)) {
             Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
@@ -1495,7 +1531,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         Fill("ChargedHiggsTopBottom/CutFlow_1Mu1Ele/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_2Ele/CutFlow_"+label,systname,0,e->weight());
         ///
-        if(!e->IsRealData()) {
+        if(!e->IsRealData() && (systname.find("NONE")    !=string::npos)) {
             Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_2Mu/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu1Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
@@ -1518,11 +1554,17 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(OneLep) ) {
             if(onemu) {
                 category="_1Mu";
-                //                if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
+                // RECO
+                if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muIDtight"); }
+                // ISO
+                if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
+                // TRG
+                if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
             }
             if(oneele) {
                 category="_1Ele";
-                //                if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
+                // RECO, still missing ISO and TRG
+                if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
             }
         }
 
@@ -1546,27 +1588,37 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(OneLep) ) {
             if(twomu) {
                 category="_2Mu";
-                //                if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
-                //                if (not e->IsRealData()) e->SetPtEtaSF("mureco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("mureco");
+
+                // leading RECO-tight ISO-tight; subleading RECO-loose ISO-tight
+                // TRG
+                if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
+                // RECO-leading
+                if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muIDtight"); }
+                // ISO-leading
+                if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
+                // RECO-trailing
+                if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDtight"); }
+                // ISO-trailing
+                if (not e->IsRealData()) { e->SetPtEtaSF("muISO",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISO"); }
+
             }
             if(twoele) {
                 category="_2Ele";
-                //                if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
-                //                if (not e->IsRealData()) e->SetPtEtaSF("elereco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("elereco");
+                if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
+                if (not e->IsRealData()) { e->SetPtEtaSF("eletight",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eletight"); }
             }
             // this 1Mu1Ele muon above the trigger threshould otherwise bias in the turnon
             if(onemuoneele) {
                 category="_1Mu1Ele";
-                /*
+
                 if(leadLep->IsElectron() and trailLep->IsMuon()) {
-                    if (not e->IsRealData()) e->SetPtEtaSF("elereco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("elereco");
-                    if (not e->IsRealData()) e->SetPtEtaSF("mureco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("mureco");
+                    if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDtight"); }
                 }
                 if(leadLep->IsMuon() and trailLep->IsElectron()) {
-                    if (not e->IsRealData()) e->SetPtEtaSF("mureco",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("mureco");
-                    if (not e->IsRealData()) e->SetPtEtaSF("elereco",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("elereco");
+                    if (not e->IsRealData()) { e->SetPtEtaSF("eletight",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eletight"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muIDtight"); }
                 }
-                */
 
             }
         }
@@ -1596,9 +1648,16 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////$$$$$$$ Apply SF
     ////$$$$$$$
 
-    if (not e->IsRealData() and
-        ((label.find("TTJets_DiLept")!=string::npos) || (label.find("TTJets_SingleLeptFrom")!=string::npos))) {
+    if(doICHEP) {
+        if (not e->IsRealData() and
+            ((label.find("TTJets_DiLept")!=string::npos) || (label.find("TTJets_SingleLeptFrom")!=string::npos))) {
             e->ApplyTopReweight();
+        }
+    } else {
+        if (not e->IsRealData() and
+            ((label.find("TTTo2L2Nu_TuneCUETP8M2")!=string::npos) || (label.find("TTToSemilepton_TuneCUETP8M2")!=string::npos))) {
+            e->ApplyTopReweight();
+        }
     }
 
     ////$$$$$$$
@@ -1830,15 +1889,24 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             // 2l - high mass mass
             SetVariable("lep1_pt",leadLep->Pt());
             SetVariable("bjet_pt[0]",e->GetBjet(0)->Pt());
-            SetVariable("mt2bb",evt_MT2bb);
+            if( e->Bjets()>1 ) {
+                SetVariable("mt2bb",evt_MT2bb);
+            } else {
+                SetVariable("mt2bb",50);
+            }
             SetVariable("ht",evt_HT);
             SetVariable("met_pt",e->GetMet().Pt());
             SetVariable("mtMin",evt_MTmin);
 
             // 2l - low medium mass
             SetVariable("DRl1b1",evt_DRl1b1);
-            SetVariable("DRbbmin",evt_minDRbb);
-            SetVariable("MassDRbbmin",evt_minDRbb_invMass);
+            if( e->Bjets()>1 ) {
+                SetVariable("DRbbmin",evt_minDRbb);
+                SetVariable("MassDRbbmin",evt_minDRbb_invMass);
+            } else {
+                SetVariable("DRbbmin",3.);
+                SetVariable("MassDRbbmin",150.);
+            }
 
             //    vector<float> bdt;
             for(unsigned i =0 ;i< readers_.size() ; ++i)
@@ -1851,15 +1919,24 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             // 1l - high mass
             SetVariable("lep1_pt",leadLep->Pt());
             SetVariable("bjet_pt[0]",e->GetBjet(0)->Pt());
-            SetVariable("mt2bb",evt_MT2bb);
+            if( e->Bjets()>1 ) {
+                SetVariable("mt2bb",evt_MT2bb);
+            } else {
+                SetVariable("mt2bb",50.);
+            }
             SetVariable("DRl1b1",evt_DRl1b1);   //++
             SetVariable("ht",evt_HT);
             SetVariable("met_pt",e->GetMet().Pt());   //++
             
             // 1l - high mass
             SetVariable("mt",evt_MT);   //++
-            SetVariable("DRbbmin",evt_minDRbb);
-            SetVariable("MassDRbbmin",evt_minDRbb_invMass);
+            if( e->Bjets()>1 ) {
+                SetVariable("DRbbmin",evt_minDRbb);
+                SetVariable("MassDRbbmin",evt_minDRbb_invMass);
+            } else {
+                SetVariable("DRbbmin",3.);
+                SetVariable("MassDRbbmin",150.);
+            }
 
             //    vector<float> bdt;
             for(unsigned i =0 ;i< readers_.size() ; ++i)
@@ -1930,13 +2007,13 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if(extraRadCR) leptonPlot(e, label, category, systname,"extraRadCR");
     if(extraRadCR) eventShapePlot(e, label, category, systname,"extraRadCR");
 
-    //    if(charmCR) jetPlot(e, label, category, systname,"charmCR");
-    //    if(charmCR) leptonPlot(e, label, category, systname,"charmCR");
+    //    if(do1lAnalysis && charmCR) jetPlot(e, label, category, systname,"charmCR");
+    //    if(do1lAnalysis && charmCR) leptonPlot(e, label, category, systname,"charmCR");
 
-    //    if(topCR && highMTCR) jetPlot(e, label, category, systname,"highMTCR");
-    //    if(topCR && highMTCR) leptonPlot(e, label, category, systname,"highMTCR");
-    //    if(topCR && lowMTCR) jetPlot(e, label, category, systname,"lowMTCR");
-    //    if(topCR && lowMTCR) leptonPlot(e, label, category, systname,"lowMTCR");
+    //    if(do1lAnalysis && topCR && highMTCR) jetPlot(e, label, category, systname,"highMTCR");
+    //    if(do1lAnalysis && topCR && highMTCR) leptonPlot(e, label, category, systname,"highMTCR");
+    //    if(do1lAnalysis && topCR && lowMTCR) jetPlot(e, label, category, systname,"lowMTCR");
+    //    if(do1lAnalysis && topCR && lowMTCR) leptonPlot(e, label, category, systname,"lowMTCR");
 
     ////////
     ////

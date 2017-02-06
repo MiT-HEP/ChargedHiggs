@@ -19,6 +19,7 @@ public:
     bool do1lAnalysis=false;
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
+    bool doICHEP = false;
 
     void Init() override;
 
