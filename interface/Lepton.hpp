@@ -17,11 +17,13 @@ class Lepton : virtual public Object,
         float ptcut_;
         float etacut_;
         float isorelcut_ {-1};
+        float miniisorelcut_ {-1};
         bool   tightcut_ {0};  // ask for tight cut
     public:
         inline void SetIsoCut(float x){isocut_=x;}
         inline void SetPtCut( float x){ptcut_=x;}
         inline void SetIsoRelCut( float x){isorelcut_=x;}
+        inline void SetMiniIsoRelCut( float x){miniisorelcut_=x;}
         inline void SetEtaCut( float x){etacut_=x;}
         inline void SetTightCut( bool x=true){tightcut_=x;}
 
@@ -29,6 +31,7 @@ class Lepton : virtual public Object,
         inline float GetPtCut() const { return ptcut_;}
         inline float GetEtaCut() const { return etacut_;}
         inline float GetIsoRelCut() const { return isorelcut_;}
+        inline float GetMiniIsoRelCut() const { return miniisorelcut_;}
         inline bool  GetTightCut() const { return tightcut_;}
         inline int Charge() const { return charge; }
 
@@ -56,6 +59,7 @@ class Lepton : virtual public Object,
             if ( etacut_ >=0 and abs(Eta()) > etacut_) return 0;
             if ( isocut_ >=0 and iso > isocut_) return 0;
             if ( isorelcut_ >=0 and iso/Pt() > isorelcut_) return 0;
+            if ( miniisorelcut_ >=0 and miniIso/Pt() > miniisorelcut_) return 0;
             if ( Pt() < ptcut_ ) return 0;
             if ( tightcut_ and not tightId) return 0;
             return 1;
