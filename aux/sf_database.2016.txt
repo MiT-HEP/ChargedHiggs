@@ -45,7 +45,8 @@ include aux/RMet80.txt
 ###################
 ## BTag from POG ##
 ###################
-btag csv aux/CSVv2_ichep.csv
+#btag csv aux/CSVv2_ichep.csv
+btag csv aux/CSVv2Moriond17_2017_1_26_BtoH.csv
 
 ###################
 ## electron veto ##

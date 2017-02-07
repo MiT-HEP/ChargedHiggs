@@ -62,10 +62,10 @@ wreweight tf1 1 0
 ## Tau Triggertrigger ##
 ########################
 ### SAMI MET 90 SF
-#metLeg json-sami aux/metLegTriggerEfficiency2016.json run=runs_271036_279588 runMC=2016
-#tauLeg json-sami aux/tauLegTriggerEfficiency2016.json run=runs_273150_278800 runMC=2016B
+metLeg json-sami aux/metLegTriggerEfficiency2016.json run=runs_271036_279588 runMC=2016
+tauLeg json-sami aux/tauLegTriggerEfficiency2016.json run=runs_273150_278800 runMC=2016B
 ##################################
 ## MET TAU TRIGGER EFFICIENCIES ## (DATA ONLY, MC = 1)
 ##################################
-#metLegData json-sami aux/metLegTriggerEfficiency2016.json effonly run=runs_271036_279588 runMC=2016  
-#tauLegData json-sami aux/tauLegTriggerEfficiency2016.json effonly run=runs_273150_278800 runMC=2016B
+metLegData json-sami aux/metLegTriggerEfficiency2016.json effonly run=runs_271036_279588 runMC=2016  
+tauLegData json-sami aux/tauLegTriggerEfficiency2016.json effonly run=runs_273150_278800 runMC=2016B

@@ -1,5 +1,27 @@
 include=dat/config.2017.moriond.dat
 
+################
+### DATASETS ###
+################
+
+Files=
+## ttbar
+include=dat/catalog/2017.moriond/tt.dat
+## SingleTop
+include=dat/catalog/2017.moriond/st.dat
+## Drell-Yan
+include=dat/catalog/2017.moriond/dy.dat
+## Wjets
+include=dat/catalog/2017.moriond/wjets.dat
+## DIBOSON
+include=dat/catalog/2017.moriond/vv.dat
+
+## Signal
+
+
+### DATA
+include=dat/catalog/2017.moriond/tau.dat
+
 addConfig=ChargedHiggsTauNu|is80X=1
 
 #Smear=NONE,JES,JER,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("TAU"!"tauid"),@SmearSF("TAUHIGHPT"!"tauid2"),@SmearSF("TRIG"!"tauLeg"),@SmearSF("TRIGMET"!"metLegLoose"),@SmearTauScale(),@SmearUncluster(),@SmearSF("ELEVETO"!"eleveto"),@SmearSF("MUVETO"!"muveto"),@SmearPu,@SmearSF("TOPRW"!"topreweight")
