@@ -563,6 +563,57 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
 void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespace)
 {
 
+        /**********************************************                                                                                                                                                           *                   Final                     *                                                                                                                                                         **********************************************/
+
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+l);
+
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR1_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR2"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR3_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR4_"+l);
+
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR1_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR2"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR3_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR4_"+l);
+
+        //BDT plot
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+l);
+
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR1_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR1_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR1_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR1_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR1_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR1_"+l);
+
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR2_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR2_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR2_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR2_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR2_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR2_"+l);
+
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR3_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR3_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR3_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR3_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR3_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR3_"+l);
+
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR4_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR4_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR4_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR4_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR4_"+l);
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR4_"+l);
+
         // Control Plots leptons
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonEta_"+l,"LeptonEta "+l + ";#eta (lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+l,"LeptonPt "+l + ";p_{T}^{lepton} [GeV]",50,0.,250.);
@@ -709,57 +760,6 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
         //        cout <<"[ChargedHiggsTopBottom]::[Init]::[INFO] Filling Histo CutFlow/Baseline" <<l<<endl;
 
-
-        /**********************************************                                                                                                                                                           *                   Final                     *                                                                                                                                                         **********************************************/
-
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+l);
-
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR1_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR2"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR3_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR4_"+l);
-
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR1_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR2"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR3_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR4_"+l);
-
-        //BDT plot
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+l);
-
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR1_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR1_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR1_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR1_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR1_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR1_"+l);
-        
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR2_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR2_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR2_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR2_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR2_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR2_"+l);
-        
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR3_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR3_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR3_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR3_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR3_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR3_"+l);
-
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR4_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR4_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR4_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR4_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR4_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR4_"+l);
 
 }
 
@@ -1685,9 +1685,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                 // ISO-leading
                 if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
                 // RECO-trailing
-                if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDtight"); }
+                if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDtight",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDtight"); }
                 // ISO-trailing
-                if (not e->IsRealData()) { e->SetPtEtaSF("muISO",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISO"); }
+                if (not e->IsRealData()  && trailLep->Pt()>20) { e->SetPtEtaSF("muISO",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISO"); }
 
             }
             if(twoele) {
@@ -1700,7 +1700,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                 category="_1Mu1Ele";
                 if(leadLep->IsElectron() and trailLep->IsMuon()) {
                     if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
-                    if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDtight"); }
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDtight",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDtight"); }
                 }
                 if(leadLep->IsMuon() and trailLep->IsElectron()) {
                     if (not e->IsRealData()) { e->SetPtEtaSF("eletight",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eletight"); }
@@ -1973,10 +1973,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
             SetVariable("ht+met_pt+lep1_pt+lep2_pt",evt_ST);
             SetVariable("ht",evt_HT);
-            SetVariable("bjet_pt[0]",e->GetBjet(0)->Pt());
+            SetVariable("bjet_pt[0]",e->GetBjet(0)->GetP4().Pt());
             SetVariable("HemiOut",evt_HemiMetOut);
 
-            SetVariable("met_pt",e->GetMet().Pt());
+            SetVariable("met_pt",e->GetMet().GetP4().Pt());
             SetVariable("mtMin",evt_MTmin);
             //            SetVariable("lep1_pt",leadLep->Pt());
             SetVariable("DRl1b1",evt_DRl1b1);
@@ -2005,7 +2005,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             SetVariable("ht",evt_HT);
             SetVariable("st",evt_ST);
             SetVariable("HemiOut",evt_HemiMetOut);
-            SetVariable("bjet_pt[0]",e->GetBjet(0)->Pt());
+            SetVariable("bjet_pt[0]",e->GetBjet(0)->GetP4().Pt());
             SetVariable("MassDRlbmin",evt_minDRlb_invMass);
             SetVariable("DRl1b1",evt_DRl1b1);
 
@@ -2020,8 +2020,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
 
             ///
-            SetVariable("lep1_pt",leadLep->Pt());
-            SetVariable("met_pt",e->GetMet().Pt());
+            SetVariable("lep1_pt",leadLep->GetP4().Pt());
+            SetVariable("met_pt",e->GetMet().GetP4().Pt());
             SetVariable("mt",evt_MT);
 
             //    vector<float> bdt;
