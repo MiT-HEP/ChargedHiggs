@@ -1,3 +1,5 @@
+include=dat/config.dat
+
 ################
 ### DATASETS ###
 ################
@@ -7,40 +9,29 @@
 Files=
 ## ttbar
 include=dat/catalog/2017.moriond/tt.dat
+include=dat/catalog/2017.moriond/ttlep.dat
 ## SingleTop
 include=dat/catalog/2017.moriond/st.dat
 ## Drell-Yan
-#include=dat/catalog/2017.moriond/dy.dat
+include=dat/catalog/2017.moriond/dy.dat
 ## Wjets
 include=dat/catalog/2017.moriond/wjets.dat
 ## DIBOSON
 include=dat/catalog/2017.moriond/vv.dat
-### SIGNAL ###
-#include=dat/catalog/2017.moriond/taunu.dat
+## RARES
+include=dat/catalog/2017.moriond/rares.dat
 ## QCD
 
 ### DATA
-include=dat/catalog/2017.moriond/tau.dat
+include=dat/catalog/2017.moriond/doubleEG.dat
+include=dat/catalog/2017.moriond/doubleMuon.dat
+include=dat/catalog/2017.moriond/singleElecton.dat
+include=dat/catalog/2017.moriond/singleMuon.dat
 
-#
-#__________________________________________________________________
-#____________________ COMMON SETTINGS _____________________________
-#
-include=dat/json.2017.moriond.dat
-include=dat/taunu.dat
-include=dat/tmva.dat
-
-Branches=dat/branches.txt
-Output=ChHiggs.root
-
-pileup=aux/pileup.2017.moriond.root
+###
 MCDB=aux/mcdb.2017.moriond.txt
-SFDB=aux/sf_database.2016.txt
+SFDB=aux/sf_database.2017.moriond.txt
+include=dat/json.2017.moriond.dat
 
-Lumi=1
-Smear=NONE
-Correct=NONE
-#Correct=MetPhiCorrector
-Final=no
-
-Analysis=JsonAnalysis,Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsZW,ChargedHiggsMET,ChargedHiggsTopBottom
+###
+pileup=aux/pileup.2017.BCDEFGH.root
