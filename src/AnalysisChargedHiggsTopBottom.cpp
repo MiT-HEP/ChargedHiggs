@@ -214,7 +214,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
                 if(label.find("WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8")!=string::npos) mc =222;
             } else {
                 if(label.find("DYJetsToLL_M") !=string::npos) mc =221 ;
-                if(label.find("WJetsToLNu_TuneCUETP8M1")!=string::npos) mc =222;
+                if(label.find("WJetsToLNu_HT")!=string::npos) mc =222;
             }
             // EWK
             // missing tribosons
@@ -262,6 +262,20 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     }
 }
 
+void ChargedHiggsTopBottom::AddSpectator( string name, char type, int r){
+
+    cout<<"[TmvaAnalysis]::[AddSpectator]::[INFO] Adding variable: '"<<name<<"'"<<endl;
+    varValues_.Add(name,type);
+    cout<<"[TmvaAnalysis]::[DEBUG] AddSpectator of type F to reader "<<r <<" and name "<<name<<endl;
+    if ( type == 'I') readers_[r] -> AddSpectator(name.c_str(),  (int*)varValues_.GetPointer(name));
+    else if ( type == 'F') readers_[r] -> AddSpectator(name.c_str(),  (float*)varValues_.GetPointer(name));
+    //else if ( type == 'D') for(auto &r : readers_) r -> AddVariable(name.c_str(),  (double*)varValues_.GetPointer(name));
+    else {
+        cout <<"[TmvaAnalysis]::[AddSpectator]::[ERROR] type '"<<type<<"' not supported"<<endl;
+    }
+
+}
+
 
 void ChargedHiggsTopBottom::AddVariable( string name, char type, int r){
     cout<<"[TmvaAnalysis]::[AddVariable]::[INFO] Adding variable: '"<<name<<"'"<<endl;
@@ -296,52 +310,65 @@ void ChargedHiggsTopBottom::Init()
         readers_ . push_back( new TMVA::Reader() );
 
     // 1l - high mass
-    AddVariable("lep1_pt",'F',0);
-    AddVariable("bjet_pt[0]",'F',0);
-    AddVariable("mt2bb",'F',0);
-    AddVariable("DRl1b1",'F',0);   //++
     AddVariable("ht",'F',0);
-    AddVariable("met_pt",'F',0);   //++
+    AddVariable("st",'F',0);
+    AddVariable("HemiOut",'F',0);
+    AddVariable("bjet_pt[0]",'F',0);
+    AddVariable("MassDRlbmin",'F',0);
+    AddVariable("DRl1b1",'F',0);
+
+    AddSpectator("mc",'F',0); AddSpectator("run",'F',0); AddSpectator("lumi",'F',0); AddSpectator("evt",'F',0);
 
     // 1l - medium mass
-    AddVariable("DRbbmin",'F',1);
     AddVariable("bjet_pt[0]",'F',1);
-    AddVariable("mt2bb",'F',1);
-    AddVariable("DRl1b1",'F',1);   //++
     AddVariable("ht",'F',1);
-    AddVariable("mt",'F',1);
+    AddVariable("st",'F',1);
+    AddVariable("DRbbmin",'F',1);
+    AddVariable("MassDRlbmin",'F',1);
+    AddVariable("DRl1b1",'F',1);
+    AddVariable("met_pt",'F',1);
+
+    AddSpectator("mc",'F',1); AddSpectator("run",'F',1); AddSpectator("lumi",'F',1); AddSpectator("evt",'F',1);
 
     // 1l - low mass
     AddVariable("DRbbmin",'F',2);
-    AddVariable("MassDRbbmin",'F',2);
-    AddVariable("bjet_pt[0]",'F',2);
-    AddVariable("mt2bb",'F',2);
-    AddVariable("DRl1b1",'F',2);   //++
+    AddVariable("DRl1b1",'F',2);
+    AddVariable("HemiOut",'F',2);
     AddVariable("ht",'F',2);
+    AddVariable("met_pt",'F',2);
+    AddVariable("st",'F',2);
+    AddVariable("bjet_pt[0]",'F',2);
+
+    AddSpectator("mc",'F',2); AddSpectator("run",'F',2); AddSpectator("lumi",'F',2); AddSpectator("evt",'F',2);
 
     // 2l - high mass
-    AddVariable("lep1_pt",'F',3);
-    AddVariable("bjet_pt[0]",'F',3);
-    AddVariable("mt2bb",'F',3);
+    AddVariable("ht+met_pt+lep1_pt+lep2_pt",'F',3);
     AddVariable("ht",'F',3);
-    AddVariable("met_pt",'F',3);   //++
+    AddVariable("bjet_pt[0]",'F',3);
+    AddVariable("HemiOut",'F',3);
     AddVariable("mtMin",'F',3);   //++
+    AddVariable("MassDRlbmin",'F',3);   //++
+
+    AddSpectator("mc",'F',3); AddSpectator("run",'F',3); AddSpectator("lumi",'F',3); AddSpectator("evt",'F',3);
 
     // 2l - medium mass
-    AddVariable("DRbbmin",'F',4);
+    AddVariable("MassDRlbmin",'F',4);
+    AddVariable("mt2bb1l",'F',4);
     AddVariable("bjet_pt[0]",'F',4);
-    AddVariable("mt2bb",'F',4);
-    AddVariable("DRl1b1",'F',4);  //++
     AddVariable("ht",'F',4);
-    AddVariable("mtMin",'F',4);  //++
+    AddVariable("DRl1b1",'F',4);  //++
+    AddVariable("DRbbmin",'F',4);
+
+    AddSpectator("mc",'F',4); AddSpectator("run",'F',4); AddSpectator("lumi",'F',4); AddSpectator("evt",'F',4);
 
     // 2l - low mass mass
     AddVariable("DRbbmin",'F',5);
-    AddVariable("MassDRbbmin",'F',5);
-    AddVariable("lep1_pt",'F',5);
-    AddVariable("bjet_pt[0]",'F',5);
-    AddVariable("mt2bb",'F',5);
     AddVariable("ht",'F',5);
+    AddVariable("mt2bb1l",'F',5);
+    AddVariable("ht+met_pt+lep1_pt+lep2_pt",'F',5);
+    AddVariable("MassDRbbmin",'F',5);
+
+    AddSpectator("mc",'F',5); AddSpectator("run",'F',5); AddSpectator("lumi",'F',5); AddSpectator("evt",'F',5);
 
     // load weights
     for( size_t i=0;i<weights.size() ;++i)
@@ -722,6 +749,7 @@ void ChargedHiggsTopBottom::Preselection()
         if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCR");
         if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCR");
 
+        /*
         if(do1lAnalysis) BookHisto(l, "","charmCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","charmCR");
         if(do1lAnalysis) BookHisto(l, "_1Ele","charmCR");
@@ -742,6 +770,7 @@ void ChargedHiggsTopBottom::Preselection()
         //        if(do2lAnalysis) BookHisto(l, "_2Mu","highMTCR");
         //        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","highMTCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Ele","highMTCR");
+        */
 
         /////
 
@@ -1400,9 +1429,16 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum() << " systname" << systname << std::endl;
 
+
+    for(int i=0;i!=min(e->Nleps(),10);++i) {
+        std::cout << " lep fromP4   pt[" <<i<<"]="<< e->GetLepton(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetLepton(i)->GetP4().Eta() << std::endl;
+        std::cout << " lep fromPt   pt[" <<i<<"]="<< e->GetLepton(i)->Pt() << " eta[" <<i<<"]="<< e->GetLepton(i)->Eta() << std::endl;
+    }
+
+
     for(int i=0;i!=min(e->NcentralJets(),10);++i) {
-        std::cout << " fromP4   pt[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Eta() << std::endl;
-        std::cout << " fromPt   pt[" <<i<<"]="<< e->GetCentralJet(i)->Pt() << " eta[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Eta() << std::endl;
+        std::cout << " jet fromP4   pt[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Eta() << std::endl;
+        std::cout << " jet fromPt   pt[" <<i<<"]="<< e->GetCentralJet(i)->Pt() << " eta[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Eta() << std::endl;
     }
     */
 
@@ -1610,7 +1646,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             // this 1Mu1Ele muon above the trigger threshould otherwise bias in the turnon
             if(onemuoneele) {
                 category="_1Mu1Ele";
-
                 if(leadLep->IsElectron() and trailLep->IsMuon()) {
                     if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDtight"); }
@@ -1619,7 +1654,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                     if (not e->IsRealData()) { e->SetPtEtaSF("eletight",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eletight"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muIDtight"); }
                 }
-
             }
         }
 
@@ -1885,25 +1919,25 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
         if(do2lAnalysis)  {
 
-            
-            // 2l - high mass mass
-            SetVariable("lep1_pt",leadLep->Pt());
-            SetVariable("bjet_pt[0]",e->GetBjet(0)->Pt());
-            if( e->Bjets()>1 ) {
-                SetVariable("mt2bb",evt_MT2bb);
-            } else {
-                SetVariable("mt2bb",50);
-            }
+            SetVariable("ht+met_pt+lep1_pt+lep2_pt",evt_ST);
             SetVariable("ht",evt_HT);
+            SetVariable("bjet_pt[0]",e->GetBjet(0)->Pt());
+            SetVariable("HemiOut",evt_HemiMetOut);
+
             SetVariable("met_pt",e->GetMet().Pt());
             SetVariable("mtMin",evt_MTmin);
-
-            // 2l - low medium mass
+            //            SetVariable("lep1_pt",leadLep->Pt());
             SetVariable("DRl1b1",evt_DRl1b1);
+            SetVariable("MassDRlbmin",evt_minDRlb_invMass);
+
             if( e->Bjets()>1 ) {
                 SetVariable("DRbbmin",evt_minDRbb);
                 SetVariable("MassDRbbmin",evt_minDRbb_invMass);
+                SetVariable("mt2bb",evt_MT2bb);
+                SetVariable("mt2bb1l",evt_MT2bb1l);
             } else {
+                SetVariable("mt2bb",50);
+                SetVariable("mt2bb1l",50);
                 SetVariable("DRbbmin",3.);
                 SetVariable("MassDRbbmin",150.);
             }
@@ -1916,27 +1950,27 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             
         } else if(do1lAnalysis) {
 
-            // 1l - high mass
-            SetVariable("lep1_pt",leadLep->Pt());
-            SetVariable("bjet_pt[0]",e->GetBjet(0)->Pt());
-            if( e->Bjets()>1 ) {
-                SetVariable("mt2bb",evt_MT2bb);
-            } else {
-                SetVariable("mt2bb",50.);
-            }
-            SetVariable("DRl1b1",evt_DRl1b1);   //++
             SetVariable("ht",evt_HT);
-            SetVariable("met_pt",e->GetMet().Pt());   //++
-            
-            // 1l - high mass
-            SetVariable("mt",evt_MT);   //++
+            SetVariable("st",evt_ST);
+            SetVariable("HemiOut",evt_HemiMetOut);
+            SetVariable("bjet_pt[0]",e->GetBjet(0)->Pt());
+            SetVariable("MassDRlbmin",evt_minDRlb_invMass);
+            SetVariable("DRl1b1",evt_DRl1b1);
+
             if( e->Bjets()>1 ) {
                 SetVariable("DRbbmin",evt_minDRbb);
                 SetVariable("MassDRbbmin",evt_minDRbb_invMass);
+                //                SetVariable("mt2bb",evt_MT2bb); // unused
             } else {
                 SetVariable("DRbbmin",3.);
                 SetVariable("MassDRbbmin",150.);
+                //                SetVariable("mt2bb",50.); // unused
             }
+
+            ///
+            SetVariable("lep1_pt",leadLep->Pt());
+            SetVariable("met_pt",e->GetMet().Pt());
+            SetVariable("mt",evt_MT);
 
             //    vector<float> bdt;
             for(unsigned i =0 ;i< readers_.size() ; ++i)
