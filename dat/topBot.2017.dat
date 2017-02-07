@@ -38,7 +38,7 @@ addConfig=ChargedHiggsTopBottom|AddLabel('ZZTo')
 addConfig=ChargedHiggsTopBottom|AddLabel('VHToNonbb_M125')
 addConfig=ChargedHiggsTopBottom|AddLabel('WH_HToBB_WToLNu_M125')
 addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M')
-addConfig=ChargedHiggsTopBottom|AddLabel('WJetsToLNu_TuneCUETP8M1')
+addConfig=ChargedHiggsTopBottom|AddLabel('WJetsToLNu_HT')
 addConfig=ChargedHiggsTopBottom|AddLabel('TTTT')
 ##TTZToQQ, TTZToLLNuNu
 addConfig=ChargedHiggsTopBottom|AddLabel('TTZ')
@@ -51,10 +51,10 @@ addConfig=ChargedHiggsTopBottom|AddLabel('TTG')
 ##tZq_ll_4f,tZq_nunu_4f
 addConfig=ChargedHiggsTopBottom|AddLabel('tZq')
 ## triboson
-addConfig=ChargedHiggsTopBottom|AddLabel('WWW')
-addConfig=ChargedHiggsTopBottom|AddLabel('WWZ')
-addConfig=ChargedHiggsTopBottom|AddLabel('WZZ')
-addConfig=ChargedHiggsTopBottom|AddLabel('ZZZ')
+#addConfig=ChargedHiggsTopBottom|AddLabel('WWW')
+#addConfig=ChargedHiggsTopBottom|AddLabel('WWZ')
+#addConfig=ChargedHiggsTopBottom|AddLabel('WZZ')
+#addConfig=ChargedHiggsTopBottom|AddLabel('ZZZ')
 
 addConfig=ChargedHiggsTopBottom|SetMultiPrimaryDataset(),AddLabel("SingleElectron"),AddLabel("SingleMuon")
 addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_1l_highMass_BDT.weights.xml")

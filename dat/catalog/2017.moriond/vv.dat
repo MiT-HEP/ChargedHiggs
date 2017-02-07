@@ -1,6 +1,6 @@
-sub=ceballosUser|/store/user/ceballos/Nero/v2.1/
+sub=ceballosUser|/store/user/ceballos/Nero/v2.2/
 sub=ceballosHig|/store/group/phys_higgs/ceballos/Nero/v2.1/
-sub=ceballosHigMono|/store/group/phys_higgs/ceballos/Nero/Monojet/v2.1/
+sub=zdemiragExoMono|/store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/
 
 addfiles=%(ceballosUser)s/WWTo2L2Nu_13TeV-powheg
 addfiles=%(ceballosUser)s/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8
@@ -8,14 +8,14 @@ addfiles=%(ceballosUser)s/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(ceballosUser)s/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(ceballosUser)s/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8
 addfiles=%(ceballosUser)s/ZZTo2L2Nu_13TeV_powheg_pythia8
-addfiles=%(ceballosUser)s/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+##addfiles=%(ceballosUser)s/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(ceballosUser)s/ZZTo4L_13TeV_powheg_pythia8
 
-addfiles=%(ceballosHigMono)s/WW_TuneCUETP8M1
-addfiles=%(ceballosHigMono)s/WW_TuneCUETP8M1_ext
-addfiles=%(ceballosHigMono)s/WZ_TuneCUETP8M1
-addfiles=%(ceballosHigMono)s/WZ_TuneCUETP8M1_ext
-addfiles=%(ceballosHigMono)s/ZZ_TuneCUETP8M1
-addfiles=%(ceballosHigMono)s/ZZ_TuneCUETP8M1_ext
+addfiles=%(zdemiragExoMono)s/WW_TuneCUETP8M1
+addfiles=%(zdemiragExoMono)s/WW_TuneCUETP8M1_ext
+addfiles=%(zdemiragExoMono)s/WZ_TuneCUETP8M1
+addfiles=%(zdemiragExoMono)s/WZ_TuneCUETP8M1_ext
+addfiles=%(zdemiragExoMono)s/ZZ_TuneCUETP8M1
+addfiles=%(zdemiragExoMono)s/ZZ_TuneCUETP8M1_ext
 
 

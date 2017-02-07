@@ -1,7 +1,7 @@
 sub=zdexo|/store/group/phys_exotica/monojet/zdemirag/moriond80x/Nero/v2.0
 sub=ceballosUser|/store/user/ceballos/Nero/v2.1/
 sub=ceballosHig|/store/group/phys_higgs/ceballos/Nero/v2.1/
-sub=ceballosHigMono|/store/group/phys_higgs/ceballos/Nero/Monojet/v2.1/
+sub=ceballosHigMono|/store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/
 sub=amarini|/store/user/amarini/Nero/v2.1
 
 addfiles=%(ceballosHigMono)s/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1

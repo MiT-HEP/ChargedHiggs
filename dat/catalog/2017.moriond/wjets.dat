@@ -1,15 +1,15 @@
 sub=ceballosHig|/store/group/phys_higgs/ceballos/Nero/v2.1/
-sub=ceballosHigMono|/store/group/phys_higgs/ceballos/Nero/Monojet/v2.1/
+sub=zdemiragExoMono|/store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/
 sub=ceballosUser|/store/user/ceballos/Nero/v2.1/
 
-addfiles=%(ceballosUser)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#addfiles=%(ceballosUser)s/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 
 #still miss the low ht part (no cross section for HT-70To100)
-#addfiles=%(ceballosHigMono)s/WJetsToLNu_HT-70To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=%(ceballosHigMono)s/WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=%(ceballosHigMono)s/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=%(ceballosHigMono)s/WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=%(ceballosHigMono)s/WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=%(ceballosHigMono)s/WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=%(ceballosHigMono)s/WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-addfiles=%(ceballosHigMono)s/WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=%(zdemiragExoMono)s/WJetsToLNu_HT-70To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(zdemiragExoMono)s/WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(zdemiragExoMono)s/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(zdemiragExoMono)s/WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(zdemiragExoMono)s/WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(zdemiragExoMono)s/WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(zdemiragExoMono)s/WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(zdemiragExoMono)s/WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8

@@ -1,5 +1,5 @@
 sub=ceballosHig|/store/group/phys_higgs/ceballos/Nero/v2.1/
-sub=ceballosHigMono|/store/group/phys_higgs/ceballos/Nero/Monojet/v2.1/
+sub=zdemiragExoMono|/store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/
 sub=amarini|/store/user/amarini/Nero/v2.1
 
-addfiles=%(ceballosHigMono)s/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8
+addfiles=%(zdemiragExoMono)s/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8
