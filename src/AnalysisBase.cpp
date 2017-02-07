@@ -58,7 +58,7 @@ string AnalysisBase::GetLabel(Event *e){
         label = "Data"; // general backup option
         for (string& s:  AllLabel() )
         {
-
+            if ( s== "Data") continue;
             if (e->GetName().find(s) != string::npos ) 
             {
                 label=s;

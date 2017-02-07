@@ -1,0 +1,11 @@
+sub=ceballosHigData|/store/group/phys_higgs/ceballos/setup80x_ichep/Data/Nero/v2.0
+
+addfiles=%(ceballosHigData)s/SingleMuon/
+
+#addfiles=%(ceballosHigData)s/SingleMuon/SingleMuon-Run2016C-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleMuon/SingleMuon-Run2016C-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleMuon/SingleMuon-Run2016D-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleMuon/SingleMuon-Run2016E-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleMuon/SingleMuon-Run2016F-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleMuon/SingleMuon-Run2016G-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleMuon/SingleMuon-Run2016H-PromptReco-v2

@@ -6,10 +6,12 @@
 #include "interface/Smearable.hpp"
 
 class Lepton : virtual public Object,
-    virtual public Trigger
+    virtual public Trigger,
+    virtual public SmearableBase
 {
     friend class TagAndProbe;
 
+        TLorentzVector pp4;
     protected:
         float isocut_;
         float ptcut_;
@@ -32,6 +34,18 @@ class Lepton : virtual public Object,
         inline float GetMiniIsoRelCut() const { return miniisorelcut_;}
         inline bool  GetTightCut() const { return tightcut_;}
         inline int Charge() const { return charge; }
+
+        inline TLorentzVector & GetP4() override {
+            if (syst == 0) return p4;
+            if (syst!=0 ) {
+                pp4=p4;
+                if (p4.Pt()>0) {
+                    return pp4 *= (Pt()/p4.Pt());
+                } else {
+                    return pp4;
+                }
+            }
+        }
 
         Lepton() ;
 

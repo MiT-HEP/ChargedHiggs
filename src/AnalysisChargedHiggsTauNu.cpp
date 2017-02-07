@@ -39,9 +39,26 @@ void ChargedHiggsTauNu::Init()
         // -- cut flow 2 is the one used to synchronized with HIP
         Book(    "ChargedHiggsTauNu/CutFlow/CutFlow2_"+ l  , ("CutFlow "+ l).c_str(),100,-.5,100-.5);
 
+        // study on base selection
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_0Pi_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_1Pi_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_2Pi_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_0Pi_TrSingleTau_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_1Pi_TrSingleTau_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_0Pi_TrMet110_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_1Pi_TrMet110_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_TrMet110_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_Met150_TrMet110_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_TrSingleTau_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_TrBoth_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        Book(    "ChargedHiggsTauNu/Base/Tau1Pt_Met150_TrBoth_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+        //
+
         Book(    "ChargedHiggsTauNu/NOne/NTaus_"+l,"NTaus "+l +";Number of selected hadronic tau" ,1000,0,1000);
 
         Book(    "ChargedHiggsTauNu/NOne/Tau1Pt_"+l,"Tau1Pt "+l +";p_{T}^{#tau}(leading #tau) [GeV]" ,1000,0,1000);
+
 
         //Book(    "ChargedHiggsTauNu/NOne/Tau1Eta_"+l,"Tau1Eta "+l +";#eta^{#tau}(leading #tau) [GeV]",100,-5,5);
 
@@ -168,7 +185,12 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
 
     //------------- TRIGGER -----------
     {
-        if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110"))  cut.SetCutBit(Trigger);
+        //if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110"))  cut.SetCutBit(Trigger);
+        /*HLT_VLooseIsoPFTau120_Trk50_eta2p1_v
+         * HLT_VLooseIsoPFTau140_Trk50_eta2p1_v
+         */
+#warning SingleTauTrigger
+        if ( not muon and (e->IsTriggered("HLT_VLooseIsoPFTau120_Trk50_eta2p1_v") or e->IsTriggered("HLT_VLooseIsoPFTau140_Trk50_eta2p1_v")))  cut.SetCutBit(Trigger);
         else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
     }
     
@@ -327,7 +349,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     #endif
 
     // here I have the PV and the MET Filters
-    if (e->IsRealData() ) 
+    //if (e->IsRealData() ) 
         { 
             int pos=0;
             Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
@@ -358,37 +380,6 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
 
         }
 
-    // here I have the PV and the MET Filters
-    if (e->IsRealData() ) 
-        { 
-            int pos=0;
-            Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
-
-            CutSelector mymask(MaxCut);
-            mymask.reset();
-
-            mymask.SetCutBit(Trigger);; ++pos;
-            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
-
-            mymask.SetCutBit(OneTau);++pos;
-            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
-
-            mymask.SetCutBit(NoLep); ++pos;
-            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
-
-            mymask.SetCutBit(ThreeJets); ++pos;
-            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
-
-            mymask.SetCutBit(OneBjet); ++pos;
-            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
-
-            mymask.SetCutBit(Met); ++pos;
-            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
-
-            mymask.SetCutBit(AngRbb); ++pos;
-            if( cut.passMask( mymask ) ) Fill("ChargedHiggsTauNu/CutFlow/CutFlow2_"+label,systname,pos,e->weight());
-
-        }
 
     //Log(__FUNCTION__,"DEBUG","Analyze event with syst "+ systname + Form(" Njets=%d NB=%d PassAll=%d cuts=%s", e->Njets(),e->Bjets() ,cut.passAll(), ChargedHiggs::printBinary(cut.raw()).c_str() ));
 
@@ -457,6 +448,30 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         if( cut.passAllUpTo(OneBjet) && cut.pass(ChargedHiggsTauNu::Trigger)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,1,e->weight());
         if( cut.passAllUpTo(Met)) Fill("ChargedHiggsTauNu/CutFlowQCD/CutFlowQCD_"+label,systname,2,e->weight());
     }
+
+    // fill tau1 pt base selection
+    if( cut.passAllUpTo(ThreeJets) ) 
+    {
+            //OneTau ,
+            //NoLep ,
+            //ThreeJets ,
+            bool singleTrigger= e->IsTriggered("HLT_VLooseIsoPFTau140_Trk50_eta2p1_v") or e->IsTriggered("HLT_VLooseIsoPFTau120_Trk50_eta2p1_v");
+            bool metTrigger=e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110");
+            Fill("ChargedHiggsTauNu/Base/Tau1Pt_"+label,systname, t->Pt() ,e->weight());
+            if( t->GetNPiZero() == 0 )Fill("ChargedHiggsTauNu/Base/Tau1Pt_0Pi_"+label,systname, t->Pt() ,e->weight());
+            if( t->GetNPiZero() == 1 )Fill("ChargedHiggsTauNu/Base/Tau1Pt_1Pi_"+label,systname, t->Pt() ,e->weight());
+            if( t->GetNPiZero() == 2 )Fill("ChargedHiggsTauNu/Base/Tau1Pt_2Pi_"+label,systname, t->Pt() ,e->weight());
+            if( t->GetNPiZero() == 0 and singleTrigger)Fill("ChargedHiggsTauNu/Base/Tau1Pt_0Pi_TrSingleTau_"+label,systname, t->Pt() ,e->weight());
+            if( t->GetNPiZero() == 1 and singleTrigger)Fill("ChargedHiggsTauNu/Base/Tau1Pt_1Pi_TrSingleTau_"+label,systname, t->Pt() ,e->weight());
+            if( t->GetNPiZero() == 0 and metTrigger)Fill("ChargedHiggsTauNu/Base/Tau1Pt_0Pi_TrMet110_"+label,systname, t->Pt() ,e->weight());
+            if( t->GetNPiZero() == 1 and metTrigger)Fill("ChargedHiggsTauNu/Base/Tau1Pt_1Pi_TrMet110_"+label,systname, t->Pt() ,e->weight());
+            if (metTrigger) Fill("ChargedHiggsTauNu/Base/Tau1Pt_TrMet110_"+label,systname, t->Pt() ,e->weight());
+            if (singleTrigger) Fill("ChargedHiggsTauNu/Base/Tau1Pt_TrSingleTau_"+label,systname, t->Pt() ,e->weight());
+            if (metTrigger and singleTrigger) Fill("ChargedHiggsTauNu/Base/Tau1Pt_TrBoth_"+label,systname, t->Pt() ,e->weight());
+            if (e->GetMet().Pt() >150 and metTrigger) Fill("ChargedHiggsTauNu/Base/Tau1Pt_Met150_TrMet110_"+label,systname, t->Pt() ,e->weight());
+            if (e->GetMet().Pt() >150 and metTrigger and singleTrigger) Fill("ChargedHiggsTauNu/Base/Tau1Pt_Met150_TrBoth_"+label,systname, t->Pt() ,e->weight());
+    }
+    
 
     // VARS, N-1 ,
     // 1 hadronic tau only. with Pt> 50 and eta <2.1

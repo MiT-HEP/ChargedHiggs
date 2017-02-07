@@ -27,6 +27,7 @@ class Tau: virtual public Object,
     bool oldId{0};
 
     int selectdecay_{-1};
+    TLorentzVector pp4;
 
 
     public:
@@ -44,6 +45,18 @@ class Tau: virtual public Object,
 
     int inline GetNProng() const { return nprong;}
     int inline GetNPiZero() const { return npizero;}
+
+    inline TLorentzVector & GetP4() override {
+        if (syst == 0) return p4;
+        if (syst!=0 ) {
+            pp4=p4;
+            if (p4.Pt()>0) {
+                return pp4 *= (Pt()/p4.Pt());
+            } else {
+                return pp4;
+            }
+        }
+    }
 
     Tau() ;
     bool id;
