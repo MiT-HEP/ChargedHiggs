@@ -37,8 +37,8 @@ include=dat/tmva.dat
 Branches=dat/branches.txt
 Output=ChHiggs.root
 
-pileup=aux/pileup.2017.moriond.root
-#pileup=aux/pileup.2017.BCDEFGH.root
+#pileup=aux/pileup.2017.moriond.root
+pileup=aux/pileup.2017.BCDEFGH.root
 MCDB=aux/mcdb.2017.moriond.txt
 SFDB=aux/sf_database.2017.moriond.txt
 

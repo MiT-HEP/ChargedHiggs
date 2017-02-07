@@ -53,7 +53,7 @@ int ChargedHiggsSync::analyze(Event*e,string systname)
         unsigned idx=0;
         Tau*bt;
         while( (bt=e->GetBareTau(idx)) != NULL){
-            s<<"|BT"<<idx<<"|"<<bt->Pt()<<":"<<bt->Eta()<<":"<<bt->Phi()<<":"<<bt->iso2<<":"<<bt->IsTau();
+            s<<"|BT"<<idx<<"|"<<bt->Pt()<<":"<<bt->Eta()<<":"<<bt->Phi()<<":"<<bt->GetIso2()<<":"<<bt->IsTau();
             ++idx;
             if (not oneline) s<<endl;
         }
