@@ -8,7 +8,7 @@ addfiles=%(ceballosUser)s/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(ceballosUser)s/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(ceballosUser)s/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8
 addfiles=%(ceballosUser)s/ZZTo2L2Nu_13TeV_powheg_pythia8
-##addfiles=%(ceballosUser)s/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(ceballosUser)s/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(ceballosUser)s/ZZTo4L_13TeV_powheg_pythia8
 
 addfiles=%(zdemiragExoMono)s/WW_TuneCUETP8M1
