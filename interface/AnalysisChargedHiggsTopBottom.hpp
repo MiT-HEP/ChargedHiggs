@@ -20,6 +20,7 @@ public:
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
     bool doICHEP = false;
+    bool writeTree = true;
 
     void Init() override;
 
@@ -29,6 +30,7 @@ public:
 
     void BookCutFlow(string l, string category);
     void BookHisto(string l, string category, string phasespace);
+    void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void Preselection();
 
     // function with various plots
