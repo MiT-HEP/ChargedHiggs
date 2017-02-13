@@ -1,11 +1,12 @@
-sub=jan|/store/user/jaeyserm/Nero/Moriond17
+#sub=jan|/store/user/jaeyserm/Nero/Moriond17
+sub=mariniUser|/eos/user/a/amarini/Nero/v2.2
 
-addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8
-addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8
-addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8
-addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8
-addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8
-addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8
-addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8
-addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8
-addfiles=%(jan)s/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8
+addfiles=%(mariniUser)s/ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8
+addfiles=%(mariniUser)s/ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8
+addfiles=%(mariniUser)s/ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8
+addfiles=%(mariniUser)s/ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8
+addfiles=%(mariniUser)s/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8
+addfiles=%(mariniUser)s/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8
+addfiles=%(mariniUser)s/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8
+addfiles=%(mariniUser)s/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8
+addfiles=%(mariniUser)s/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8
