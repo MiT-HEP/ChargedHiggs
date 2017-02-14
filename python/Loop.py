@@ -111,6 +111,7 @@ for b in branches:
 ## init output
 if opts.verbose: print "-> Opening output file '"+cfg['Output']+"'",
 loop.InitOutput( cfg['Output'] )
+if 'Final' in cfg and cfg['Final']: loop.SetOnlyFinal(True)
 if opts.verbose: print "DONE"
 ## add mc
 

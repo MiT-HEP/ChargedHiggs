@@ -1,37 +1,19 @@
-# Signal (THESE are the ICHEP ntuples)
-#ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 39879.6403844 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 3811.50329334 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 1130.69397272 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 225.318087844 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 53.8926131385 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-350_13TeV_amcatnlo_pythia8 19.9997309995 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 8.45171876984 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 2.36727332073 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-800_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-800_13TeV_amcatnlo_pythia8 66870.1428422 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8 24252.7495015 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-2000_13TeV_amcatnlo_pythia8 432.359932559 1
-#ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8 /eos/user/j/jaeyserm/Nero/8X/TauNu/ChargedHiggs_HplusTB_HplusToTauNu_M-3000_13TeV_amcatnlo_pythia8 16.9307996328 1
+### TB
+ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8 843375.239937 1
+ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8 748176.462146 1
+ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8 487968.51263 1
+ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8 181420.090862 1
+ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8 69754.1062671 1
+####ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8 XXXX 1
+ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 16800.6841735 1
+ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8 5460.38693736 1
+ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8 50586.6482911 1
+ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 12.7144972018 1
 
-### FULL DATASET FOR THE HplusToTB (THESE are the ICHEP ntuples)
-#ChargedHiggs_HplusTB_HplusToTB_M-180 /eos/cms/store/user/jaeyserm/Nero/80X/ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-180 840349.25239 1
-#ChargedHiggs_HplusTB_HplusToTB_M-200 /eos/cms/store/user/jaeyserm/Nero/80X/ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-200 757828.941865 1
-#ChargedHiggs_HplusTB_HplusToTB_M-220 /eos/cms/store/user/jaeyserm/Nero/80X/ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-220 495582.456606 1
-#ChargedHiggs_HplusTB_HplusToTB_M-250 /eos/cms/store/user/jaeyserm/Nero/80X/ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-250 185625.055568 1
-#ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 69033.7915456 1
-#ChargedHiggs_HplusTB_HplusToTB_M-350 /eos/cms/store/user/jaeyserm/Nero/80X/ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-350 32511.154681 1
-#ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1 16760.5181003 1
-#ChargedHiggs_HplusTB_HplusToTB_M-450 /eos/cms/store/user/jaeyserm/Nero/80X/ChargedHiggs_HplusTB_HplusToTB_M-450_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-450 9108.98902072 1
-#ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8_PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2 4959.57890652 1
-#ChargedHiggs_HplusTB_HplusToTB_M-750 /eos/cms/store/user/jaeyserm/Nero/80X/ChargedHiggs_HplusTB_HplusToTB_M-750_13TeV_amcatnlo_pythia8/ChargedHiggs_HplusTB_HplusToTB_M-750 66165.2037158 1
-#ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 50764.492235 1
-#ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 18088.6742463 1
-#ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 324.019860741 1
-#ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 /store/cmst3/user/dalfonso/NERO/ChHiggs/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8_Spring16MiniAODv2-premix_withHLT_v14-v1 12.7288425391 1
-
-##### V+jets 
-DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 49144274.0 6025.2
-DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 34706910.0 18610
-##WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 /store/user/ceballos/Nero/v2.1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8 1.89921587371e+12 61526.7
+##### V+jets
+DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 35291566.0 5765.4
+DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 49029673.0 18610
+WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/user/ceballos/Nero/v2.2/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 86533498 61526.7
 
 ##### DY+jets (1.23 kfactor)
 DYJetsToLL_M-50_HT-70to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/DYJetsToLL_M-50_HT-70to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 9616188.0 209.592
@@ -51,60 +33,62 @@ WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_
 WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 14908339.0 14.5805
 WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 6200954.0 6.65621
 WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 5831062.0 1.60809
-WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/v2.1/WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 2384260.0 0.0389136
+WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 2384260.0 0.0389136
 
 ##### Diboson
 # cross section from https://twiki.cern.ch/twiki/bin/view/CMS/SummaryTable1G25ns#Diboson
+
 #WWToLNuQQ_13TeV-powheg /eos/user/m/mpedraza/Nero/8X/WWToLNuQQ_13TeV-powheg/WWToLNuQQ_13TeV-powheg/160917_081245/0000 1951000.0 49.997
 WWTo2L2Nu_13TeV-powheg /store/user/ceballos/Nero/v2.2/WWTo2L2Nu_13TeV-powheg 1999000.0 12.178
-WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.2/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 420511500.327 10.71
+WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.2/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8 418713497.054 10.71
 WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.2/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8 9357734.25606 3.033
-WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.2/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 72068502.0711 5.595
+WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.2/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 230006595.895 5.595
 WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8 /store/user/ceballos/Nero/v2.2/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8 1993200.0 4.42965
-ZZTo2L2Nu_13TeV_powheg_pythia8 /store/user/ceballos/Nero/v2.2/ZZTo2L2Nu_13TeV_powheg_pythia8 8842475.0 5.26
-###ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.2/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 77855498.6433 3.22
-ZZTo4L_13TeV_powheg_pythia8 /store/user/ceballos/Nero/v2.2/ZZTo4L_13TeV_powheg_pythia8 6669988.0 1.256
+ZZTo2L2Nu_13TeV_powheg_pythia8 /store/user/ceballos/Nero/v2.2/ZZTo2L2Nu_13TeV_powheg_pythia8 8745375.0 5.26
+ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.2/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8 76652543.241 3.22
+ZZTo4L_13TeV_powheg_pythia8 /store/user/ceballos/Nero/v2.2/ZZTo4L_13TeV_powheg_pythia8  6669988 1.256
 
 WW_TuneCUETP8M1 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/WW_TuneCUETP8M1 32540.078371 115.04
 WW_TuneCUETP8M1_ext /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/WW_TuneCUETP8M1_ext 983814.149994 115.04
-WZ_TuneCUETP8M1 /store/group/phys_exotica/monojet/zdemirag/moriond80x/WZ_TuneCUETP8M1 355320.0 47.13
-WZ_TuneCUETP8M1_ext /store/group/phys_exotica/monojet/zdemirag/moriond80x/WZ_TuneCUETP8M1_ext 1558205.0 47.13
-ZZ_TuneCUETP8M1 /store/group/phys_exotica/monojet/zdemirag/moriond80x/ZZ_TuneCUETP8M1 74848.0 16.523
-ZZ_TuneCUETP8M1_ext /store/group/phys_exotica/monojet/zdemirag/moriond80x/ZZ_TuneCUETP8M1_ext 486057.0 16.523
+WZ_TuneCUETP8M1 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/WZ_TuneCUETP8M1 355320.0 47.13
+WZ_TuneCUETP8M1_ext /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/WZ_TuneCUETP8M1_ext 1558205.0 47.13
+ZZ_TuneCUETP8M1 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/ZZ_TuneCUETP8M1 74848.0 16.523
+ZZ_TuneCUETP8M1_ext /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/ZZ_TuneCUETP8M1_ext 486057.0 16.523
 
 ##### Triboson
 WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8 50012.9139991 0.2086
 WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 41171.8093378 0.1651
-##WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 13736.4203469 0.05565
-##ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 3499.44687032 0.01398
+WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 13736.4203469 0.05565
+ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 3499.44687032 0.01398
 
-##### TT
-TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 76876901.0 831
-TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 6857300.0 87.31483776
-TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 58973652.0 364.35
+#####
+TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 76734323 831
+TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 78278900 87.31483776
+TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 151140544 364.35
 
 ##### SingleTop
 # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopRefXsec#Predictions_at_7_8_13_and_14_TeV
 ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1 38811017.0 80.95
 ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1 64199764.0 136.02
-ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 6933094.0 35.85
-ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 6952830.0 35.85
+ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 /store/user/ceballos/Nero/v2.2/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 6933094 35.85
+ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 /store/user/ceballos/Nero/v2.2/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1 6825350 35.85
 ST-sch-lep /store/user/amarini/Nero/v2.1/ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1 3370668.41375 3.34368
+
 
 ##### RARES with tops
 #TTTT /eos/user/j/jaeyserm/Nero/8X/TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8/TTTT/161109_094832/0000 9011.12 0.009103
 TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 396340.938017 0.5297
 TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8 502198.857161 0.2529
 TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 /store/user/ceballos/Nero/v2.2/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 569424.146326 0.40620
-TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 /store/user/ceballos/Nero/v2.2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 1054697.91821 0.2043
-TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 /store/user/ceballos/Nero/v2.2/TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 4870911 3.697
+TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 /store/user/ceballos/Nero/v2.2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 1025660.17598 0.2043
+TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 /store/user/ceballos/Nero/v2.2/TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8 33378089.1466 3.697
 
-VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.2/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8 5296350.95847 0.9561
+VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8 /store/user/ceballos/Nero/v2.2/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8  5296350.95847 0.9561
 #WH_HToBB_WToLNu_M125 /store/user/jaeyserm/Nero/80X/WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8/WH_HToBB_WToLNu_M125/170102_091502/0000 3138425.05338 0.419369894175
-tZq_ll_4f_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/tZq_ll_4f_13TeV-amcatnlo-pythia8 1117499.73969 0.0758
+tZq_ll_4f_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/tZq_ll_4f_13TeV-amcatnlo-pythia8 1101395.78678 0.0758
 ##tZq_nunu_4f /store/user/jaeyserm/Nero/80X/tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1/tZq_nunu_4f/170102_091325/0000 138419.494451 0.201032728607
 ##ttHJetTobb /eos/user/j/jaeyserm/Nero/8X/ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8/ttHJetTobb/161109_094755/0000 9919444.60896 0.2934045
-##ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/user/ceballos/Nero/v2.2/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 2149307.30433 0.2150955
+ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/user/ceballos/Nero/v2.2/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 2149540.26632 0.2150955
 
 ##### QCD
 #QCD_HT100to200 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8

@@ -22,11 +22,10 @@ addfiles=%(ceballosUser)s/TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia
 ##addfiles=%(ceballosHig)s/ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8
 ##addfiles=%(ceballosUser)s/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8
 
-
 addfiles=%(ceballosUser)s/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 addfiles=%(ceballosUser)s/WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
-#addfiles=%(ceballosUser)s/WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
-#addfiles=%(ceballosUser)s/ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 
 
 
