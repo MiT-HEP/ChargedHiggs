@@ -1824,21 +1824,17 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(OneLep) ) {
             if(onemu) {
                 category="_1Mu";
-                /*
                 // RECO
                 if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muIDtight"); }
                 // ISO
                 if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
                 // TRG
                 if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
-                */
             }
             if(oneele) {
                 category="_1Ele";
-                /*
                 // RECO/ISO and missing TRG
                 if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
-                */
             }
         }
 
@@ -1863,7 +1859,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             if(twomu) {
                 category="_2Mu";
                 // leading RECO-tight ISO-tight; subleading RECO-loose ISO-tight
-                /*
                 // TRG
                 if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
                 // RECO-leading
@@ -1874,20 +1869,16 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                 if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
                 // ISO-trailing
                 if (not e->IsRealData()  && trailLep->Pt()>20) { e->SetPtEtaSF("muISOloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISOloose"); }
-                */
             }
             if(twoele) {
                 category="_2Ele";
-                /*
                 // RECO/ISO missing and ele TRG
                 if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleloose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleloose"); }
-                */
             }
             // this 1Mu1Ele muon above the trigger threshould otherwise bias in the turnon
             if(onemuoneele) {
                 category="_1Mu1Ele";
-                /*
                 if(leadLep->IsElectron() and trailLep->IsMuon()) {
                     if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
                     if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
@@ -1896,7 +1887,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                     if (not e->IsRealData()) { e->SetPtEtaSF("eleloose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleloose"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muIDtight"); }
                 }
-                */
             }
         }
 
