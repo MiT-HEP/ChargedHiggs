@@ -7,7 +7,7 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
     l->SetIsoRelCut(0.20);
     l->SetEtaCut(2.5);
     l->SetTightCut(false);
-    l->SetMediumCut(false)
+    l->SetMediumCut(false);
 }
 
 void HmumuAnalysis::Init(){
@@ -65,12 +65,14 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if ( recoMuons)
     {
         cut.SetCutBit(Leptons);
-        if (e->IsTriggered("HLT_IsoMu20") ) cut.SetCutBit(Trigger);
+        if (e->IsTriggered("HLT_IsoMu24_v") ) cut.SetCutBit(Trigger);
 
         Object Z(*mu0);
         Z += *mu1;
+        mass_=Z.M();
+
        	if (cut.passAllUpTo(Trigger) ){
-            Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, Z.M(),e->weight()) ;
+            if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         }
     }
 

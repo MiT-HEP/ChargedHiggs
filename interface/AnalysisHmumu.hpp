@@ -16,6 +16,9 @@ class HmumuAnalysis: virtual public AnalysisBase
         void SetLeptonCuts(Lepton *l) override ; 
         inline void SetJetCuts(Jet *j) override { j->SetBCut(0.460); j->SetEtaCut(4.7); j->SetEtaCutCentral(2.5); j->SetPtCut(30); j->SetPuIdCut(-100);}
 
+        float mass_;
+        bool Unblind(Event *e) override {if (e->IsRealData() and mass_ > 125-3 and mass_<125+3 ) return unblind; return true;} // if is not data, no need to return something else
+
     private:
         CutSelector cut;
 
