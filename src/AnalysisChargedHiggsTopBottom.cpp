@@ -735,17 +735,17 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
             Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_ttc_"+l,"minDRbb_mass "+l+";m(bb)^{dR^{min}})",50,0,500);
             Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_ttlight_"+l,"minDRbb_mass "+l+";m(bb)^{dR^{min}})",50,0,500);
 
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_other_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2000);
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_tt2b_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2000);
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_tt1b_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2000);
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_ttc_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2000);
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_ttlight_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2000);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_other_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",40,0,2000);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_tt2b_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",40,0,2000);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_tt1b_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",40,0,2000);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_ttc_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",40,0,2000);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_ttlight_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",40,0,2000);
 
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_other_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2500);
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_tt2b_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2500);
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_tt1b_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2500);
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_ttc_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2500);
-            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_ttlight_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2500);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_other_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",50,0,2500);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_tt2b_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",50,0,2500);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_tt1b_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",50,0,2500);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_ttc_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",50,0,2500);
+            Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_ttlight_"+l,"ST "+l+"; HT (P_{T}^{jet}>40 [GeV])",50,0,2500);
 
             Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_other_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2000);
             Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_tt2b_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2000);
@@ -762,7 +762,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         }
 
         /////
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",80,0,2000);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",40,0,2000);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR1_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR2_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
@@ -770,7 +770,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR4_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
 
         /////
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+l,"ST "+l+"; ST ( HT+met+lepsPt )",80,0,2500);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+l,"ST "+l+"; ST ( HT+met+lepsPt )",50,0,2500);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+l,"ST "+l+"; ST ( HT+MET+lepsPt )",800,0,8000);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR1_"+l,"ST "+l+"; ST ( HT+MET+lepsPt )",800,0,8000);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_SR2_"+l,"ST "+l+"; ST ( HT+MET+lepsPt )",800,0,8000);
@@ -1690,7 +1690,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     double LeadingLeptonPt_= 30; // singleLepton
     //    doSynch
     double LeadingLeptonElePt_= 35; // singleLepton
-    if(!doICHEP) LeadingLeptonElePt_= 30; // singleLepton
+    if(doICHEP) LeadingLeptonElePt_= 30; // singleLepton
     double NextLeadingLeptonPt_= 10; //
 
     for(int i=0;i!=e->Nleps();++i) {
