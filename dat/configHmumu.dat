@@ -1,0 +1,20 @@
+include=dat/config.2017.moriond.dat
+
+################
+### DATASETS ###
+################
+
+Files=
+## Drell-Yan
+include=dat/catalog/2017.moriond/dy.dat
+
+## Signal
+
+### DATA
+include=dat/catalog/2017.moriond/tau.dat
+
+Smear=NONE
+
+include=dat/hmumu.dat
+
+Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis

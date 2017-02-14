@@ -1,0 +1,4 @@
+
+config=HmumuAnalysis|AddLabel('DY')
+## need to add 125, in order to have different masses
+addConfig=DYAnalysis|AddLabel('ggH')
