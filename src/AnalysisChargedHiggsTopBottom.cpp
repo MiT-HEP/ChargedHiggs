@@ -313,10 +313,10 @@ void ChargedHiggsTopBottom::Init()
         readers_ . push_back( new TMVA::Reader() );
 
     // 1l - high mass
-    AddVariable("ht",'F',0);
     AddVariable("st",'F',0);
-    AddVariable("HemiOut",'F',0);
+    AddVariable("ht",'F',0);
     AddVariable("bjet_pt[0]",'F',0);
+    AddVariable("HemiOut",'F',0);
     AddVariable("MassDRlbmin",'F',0);
     AddVariable("DRl1b1",'F',0);
 
@@ -325,51 +325,54 @@ void ChargedHiggsTopBottom::Init()
     // 1l - medium mass
     AddVariable("bjet_pt[0]",'F',1);
     AddVariable("ht",'F',1);
-    AddVariable("st",'F',1);
-    AddVariable("DRbbmin",'F',1);
-    AddVariable("MassDRlbmin",'F',1);
     AddVariable("DRl1b1",'F',1);
-    AddVariable("met_pt",'F',1);
+    AddVariable("DRbbmin",'F',1);
+    AddVariable("st",'F',1);
+    AddVariable("MassDRlbmin",'F',1);
 
     AddSpectator("mc",'F',1); AddSpectator("run",'F',1); AddSpectator("lumi",'F',1); AddSpectator("evt",'F',1);
 
     // 1l - low mass
     AddVariable("DRbbmin",'F',2);
+    AddVariable("st",'F',2);
+    AddVariable("ht",'F',2);
     AddVariable("DRl1b1",'F',2);
     AddVariable("HemiOut",'F',2);
-    AddVariable("ht",'F',2);
-    AddVariable("met_pt",'F',2);
-    AddVariable("st",'F',2);
     AddVariable("bjet_pt[0]",'F',2);
+    AddVariable("met_pt",'F',2);
 
     AddSpectator("mc",'F',2); AddSpectator("run",'F',2); AddSpectator("lumi",'F',2); AddSpectator("evt",'F',2);
 
     // 2l - high mass
-    AddVariable("ht+met_pt+lep1_pt+lep2_pt",'F',3);
+    AddVariable("st",'F',3);
     AddVariable("ht",'F',3);
+    AddVariable("MassDRlbmin",'F',3);
     AddVariable("bjet_pt[0]",'F',3);
+    AddVariable("mtMin",'F',3);
+    AddVariable("DRl1b1",'F',3);
     AddVariable("HemiOut",'F',3);
-    AddVariable("mtMin",'F',3);   //++
-    AddVariable("MassDRlbmin",'F',3);   //++
 
     AddSpectator("mc",'F',3); AddSpectator("run",'F',3); AddSpectator("lumi",'F',3); AddSpectator("evt",'F',3);
 
     // 2l - medium mass
     AddVariable("MassDRlbmin",'F',4);
-    AddVariable("mt2bb1l",'F',4);
-    AddVariable("bjet_pt[0]",'F',4);
     AddVariable("ht",'F',4);
-    AddVariable("DRl1b1",'F',4);  //++
     AddVariable("DRbbmin",'F',4);
+    AddVariable("DRl1b1",'F',4);  //++
+    AddVariable("bjet_pt[0]",'F',4);
+    AddVariable("mt2bb1l",'F',4);
+    AddVariable("st",'F',4);
+    AddVariable("met_pt",'F',4);
 
     AddSpectator("mc",'F',4); AddSpectator("run",'F',4); AddSpectator("lumi",'F',4); AddSpectator("evt",'F',4);
 
     // 2l - low mass mass
     AddVariable("DRbbmin",'F',5);
+    AddVariable("st",'F',5);
+    AddVariable("MassDRbbmin",'F',5);
+    AddVariable("DRl1b1",'F',5);  //++
     AddVariable("ht",'F',5);
     AddVariable("mt2bb1l",'F',5);
-    AddVariable("ht+met_pt+lep1_pt+lep2_pt",'F',5);
-    AddVariable("MassDRbbmin",'F',5);
 
     AddSpectator("mc",'F',5); AddSpectator("run",'F',5); AddSpectator("lumi",'F',5); AddSpectator("evt",'F',5);
 
@@ -2125,7 +2128,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
         if(do2lAnalysis)  {
 
-            SetVariable("ht+met_pt+lep1_pt+lep2_pt",evt_ST);
+            SetVariable("st",evt_ST);
             SetVariable("ht",evt_HT);
             SetVariable("bjet_pt[0]",e->GetBjet(0)->GetP4().Pt());
             SetVariable("HemiOut",evt_HemiMetOut);
@@ -2139,10 +2142,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             if( e->Bjets()>1 ) {
                 SetVariable("DRbbmin",evt_minDRbb);
                 SetVariable("MassDRbbmin",evt_minDRbb_invMass);
-                SetVariable("mt2bb",evt_MT2bb);
+                //                SetVariable("mt2bb",evt_MT2bb);
                 SetVariable("mt2bb1l",evt_MT2bb1l);
             } else {
-                SetVariable("mt2bb",50);
+                //                SetVariable("mt2bb",50);
                 SetVariable("mt2bb1l",50);
                 SetVariable("DRbbmin",3.);
                 SetVariable("MassDRbbmin",150.);
@@ -2174,9 +2177,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
 
             ///
-            SetVariable("lep1_pt",leadLep->GetP4().Pt());
+            //            SetVariable("lep1_pt",leadLep->GetP4().Pt());
             SetVariable("met_pt",e->GetMet().GetP4().Pt());
-            SetVariable("mt",evt_MT);
+            //            SetVariable("mt",evt_MT);
 
             //    vector<float> bdt;
             for(unsigned i =0 ;i< readers_.size() ; ++i)
