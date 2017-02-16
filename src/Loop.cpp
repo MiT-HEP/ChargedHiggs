@@ -283,6 +283,7 @@ void Looper::NewFile()
 
 	// Dumper
 	dump_ -> NewFile( event_-> GetWeight() -> GetMC() ) ;
+	dump_ -> TriggerNames(event_->triggerNames_);
 
 	if (dynamic_cast<LoadNero*>(loader_) != NULL)
 		dump_ -> InitTree(dynamic_cast<LoadNero*>(loader_)->GetBare());

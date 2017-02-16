@@ -13,11 +13,14 @@ class CorrectorBase : public Named {
 		// implement read/write access to event	
 		Met & GetMet(Event *e) { return e->met_ ;}
 		vector<Tau *> & GetTauVector(Event *e) { return e->taus_;}
+        vector<Lepton *>& GetLepVector(Event *e) { return e->leps_;}
+        vector<GenParticle *>& GetGenVector(Event *e) { return e->genparticles_;}
         
         // R/W Access to Objects, private/protected members
         inline void Scale( Object&o, float value) { o.Scale(value);}
         inline void Add(Object &o, TLorentzVector&v, float c){o.Add(v,c);}
         inline void SetP4(Object&o, TLorentzVector &v){o.p4 = v; o.Scale(1.) ; } // the last set is Correct
+        inline void ResetUncorr(Object&o){o.ResetUncorr();}
 
 };
 

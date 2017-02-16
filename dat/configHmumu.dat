@@ -9,6 +9,7 @@ Files=
 include=dat/catalog/2017.moriond/dy.dat
 
 ## Signal
+include=dat/catalog/2017.moriond/hmm.dat
 
 ### DATA
 #not complete yet but for the moment is fine
@@ -18,5 +19,8 @@ addfiles=/store/group/phys_higgs/ceballos/Data//Nero/v2.2/SingleMuon
 Smear=NONE
 
 include=dat/hmumu.dat
+
+MCDB=aux/mcdb.TauNu.2017.dat
+pileup=aux/pileup.TauNu.moriond.root
 
 Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis

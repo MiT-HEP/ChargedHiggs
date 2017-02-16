@@ -51,6 +51,7 @@ int LoadNero::InitTree(){
 
     // Set Extra: Extend, match ...
     bare_[ names_ ["BareTaus"] ] -> SetExtend();
+    bare_[ names_ ["BarePhotons"] ] -> SetExtend();
     dynamic_cast<BareTaus*> (bare_[ names_ ["BareTaus"] ])  -> SetMatch();
 
     for (auto b : bare_ )
@@ -131,6 +132,10 @@ void LoadNero::FillJets(){
             cout <<"\t\t * mother :"<<bj->motherPdgId ->size()<<endl;
             cout <<"\t\t * gr mother:"<<  bj-> grMotherPdgId -> size()<<endl;
             cout <<"\t\t * puId :"<<  bj -> puId -> size() <<endl;
+
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Pt() <<endl;
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Phi() <<endl;
         }
 #endif
 //
@@ -381,10 +386,10 @@ void LoadNero::FillMet(){
         Log(__FUNCTION__,"ERROR",string("MET should have exactly 1 entry instead of") + Form("%u",met->p4->GetEntries()) );
 
     //event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
-#ifdef VERBOSE
-    if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size()<<endl;
-    if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
-#endif
+    // #ifdef VERBOSE
+    //     if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size()<<endl;
+    //     if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
+    // #endif
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;

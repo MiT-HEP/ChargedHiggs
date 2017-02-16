@@ -252,7 +252,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     //
     if (t!=NULL and passMatchDirect and not e->IsRealData()) 
     {
-        e->ApplyTauSF(t); 
+        e->ApplyTauSF(t,false,""); 
     }
     
     // N minus one direct

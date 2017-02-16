@@ -9,9 +9,9 @@ class Lepton : virtual public Object,
     virtual public Trigger,
     virtual public SmearableBase
 {
-    friend class TagAndProbe;
-        
-        TLorentzVector pp4;
+    friend class CorrectorBase;
+        //Temporary class        
+        TLorentzVector pp4; // temporary for syst -- will be overwritten
     protected:
         // these are the values for this lepton
         float iso {0}; // isolation 

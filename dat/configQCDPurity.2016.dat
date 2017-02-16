@@ -1,4 +1,53 @@
-include=dat/configQCDPurity.dat
-include=dat/config.2016.dat
+include=dat/config.2017.moriond.dat
+################
+### DATASETS ###
+################
 
-addConfig=ChargeHiggsQCDPurity|is80X=1
+Files=
+## ttbar
+include=dat/catalog/2017.moriond/tt.dat
+## SingleTop
+include=dat/catalog/2017.moriond/st.dat
+## Drell-Yan
+include=dat/catalog/2017.moriond/dy.dat
+## Wjets
+include=dat/catalog/2017.moriond/wjets.dat
+## DIBOSON
+include=dat/catalog/2017.moriond/vv.dat
+
+## Signal
+include=dat/catalog/2017.moriond/hplustaunu.dat
+
+
+
+### DATA
+include=dat/catalog/2017.moriond/tau.dat
+
+#####################
+### CONFIGURATION ###
+#####################
+
+Output=QCDPurity.root
+Analysis=JsonAnalysis,MetFiltersAnalysis,ChargedHiggsQCDPurity
+MCDB=aux/mcdb.TauNu.2017.dat
+pileup=aux/pileup.TauNu.moriond.root
+
+
+#Smear=NONE,JES,JER,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("RFAC"!"tauinvisospline"),@SmearPu,@SmearSF("RFAC1p"!"tauinvisospline_1p"),@SmearSF("RFAC3p"!"tauinvisospline_3p")
+Smear=NONE
+
+#####################
+### ANALYSIS SETS ###
+#####################
+
+config=ChargedHiggsQCDPurity|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('DY'),AddLabel('QCD'),AddLabel('WJets')
+addConfig=ChargedHiggsQCDPurity|AddLabel('HplusToTauNu_M-180_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-200_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-220_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-250_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-300_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-400_13TeV_amcatnlo'),AddLabel('HplusToTauNu_M-500_13TeV_amcatnlo')
+addConfig=ChargedHiggsQCDPurity|AddLabel('ST')
+#addConfig=ChargedHiggsQCDPurity|PtBins.push_back(50),PtBins.push_back(70),PtBins.push_back(100),PtBins.push_back(150),PtBins.push_back(8000)
+addConfig=ChargedHiggsQCDPurity|PtBins.push_back(50),PtBins.push_back(55),PtBins.push_back(60),PtBins.push_back(65)
+addConfig=ChargedHiggsQCDPurity|PtBins.push_back(70),PtBins.push_back(80),PtBins.push_back(90),PtBins.push_back(100)
+addConfig=ChargedHiggsQCDPurity|PtBins.push_back(125),PtBins.push_back(150),PtBins.push_back(175),PtBins.push_back(200)
+addConfig=ChargedHiggsQCDPurity|PtBins.push_back(250),PtBins.push_back(500),PtBins.push_back(750),PtBins.push_back(1000)
+addConfig=ChargedHiggsQCDPurity|PtBins.push_back(8000)
+addConfig=ChargedHiggsQCDPurity|unblind=1
+addConfig=ChargedHiggsQCDPurity|is80X=1

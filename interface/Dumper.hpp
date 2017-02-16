@@ -21,7 +21,7 @@ class BareCollection;
 class Dumper: public Named {
 
     private:
-
+        uint64_t nbytes_{0};
 
         string outdirname_;
         string basename_{"NeroNtuples_job%d.root"};
@@ -56,6 +56,7 @@ class Dumper: public Named {
 
         // init tree
         virtual void InitTree(const vector<BareCollection*> &bare);
+        void TriggerNames( const vector<string>& triggerNames );
 
         void Fill();
 

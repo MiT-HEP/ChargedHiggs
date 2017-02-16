@@ -185,12 +185,12 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
 
     //------------- TRIGGER -----------
     {
-        //if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110"))  cut.SetCutBit(Trigger);
+        if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110"))  cut.SetCutBit(Trigger);
         /*HLT_VLooseIsoPFTau120_Trk50_eta2p1_v
          * HLT_VLooseIsoPFTau140_Trk50_eta2p1_v
          */
-#warning SingleTauTrigger
-        if ( not muon and (e->IsTriggered("HLT_VLooseIsoPFTau120_Trk50_eta2p1_v") or e->IsTriggered("HLT_VLooseIsoPFTau140_Trk50_eta2p1_v")))  cut.SetCutBit(Trigger);
+        //#warning SingleTauTrigger
+        //if ( not muon and (e->IsTriggered("HLT_VLooseIsoPFTau120_Trk50_eta2p1_v") or e->IsTriggered("HLT_VLooseIsoPFTau140_Trk50_eta2p1_v")))  cut.SetCutBit(Trigger);
         else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
     }
     
@@ -393,8 +393,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         //Muon
         {
             GenParticle * gp  = e->GetGenMuon(0,2.4);
-            if (not e->ExistSF("muveto")) Log(__FUNCTION__,"WARNING","No muveto SF"); //FIXME Remove this line, may be slow
-            if (gp != NULL and gp->Pt() > 10) {e->SetPtEtaSF("muveto",gp->Pt(),fabs(gp->Eta())); e->ApplySF("muveto");}  // this should be SC-eta, some how propagated
+            if (not e->ExistSF("muIDloose")) Log(__FUNCTION__,"WARNING","No muveto SF"); //FIXME Remove this line, may be slow
+            if (gp != NULL and gp->Pt() > 10) {e->SetPtEtaSF("muIDloose",gp->Pt(),fabs(gp->Eta())); e->ApplySF("muIDloose");}  // this should be SC-eta, some how propagated
         }
     }
  
