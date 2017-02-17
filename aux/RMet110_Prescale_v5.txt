@@ -1,0 +1,64 @@
+# QCD R-factor computed by PurityFit
+##tauinviso pteta 1000 8000 -2.1 2.1 0.999728 0
+##tauinviso pteta 100 125 -2.1 2.1 0.335728 0
+##tauinviso pteta 125 150 -2.1 2.1 0.293721 0
+##tauinviso pteta 150 175 -2.1 2.1 0.276728 0
+##tauinviso pteta 175 200 -2.1 2.1 0.276782 0
+##tauinviso pteta 200 250 -2.1 2.1 0.258725 0
+##tauinviso pteta 250 500 -2.1 2.1 0.257033 0
+##tauinviso pteta 500 750 -2.1 2.1 0.279201 0
+##tauinviso pteta 50 55 -2.1 2.1 -nan -nan
+##tauinviso pteta 55 60 -2.1 2.1 -nan -nan
+##tauinviso pteta 60 65 -2.1 2.1 0.362494 0
+##tauinviso pteta 65 70 -2.1 2.1 0.352596 0
+##tauinviso pteta 70 80 -2.1 2.1 0.349037 0
+##tauinviso pteta 750 1000 -2.1 2.1 0.330547 0
+##tauinviso pteta 80 90 -2.1 2.1 0.353777 0
+##tauinviso pteta 90 100 -2.1 2.1 0.361289 0
+
+tauinvisospline spline 62.433 0.362494 0
+tauinvisospline spline 67.4184 0.352596 0
+tauinvisospline spline 74.663 0.349037 0
+tauinvisospline spline 84.6885 0.353777 0
+tauinvisospline spline 94.7172 0.361289 0
+tauinvisospline spline 111.108 0.335728 0
+tauinvisospline spline 136.194 0.293721 0
+tauinvisospline spline 161.457 0.276728 0
+tauinvisospline spline 186.253 0.276782 0
+tauinvisospline spline 221.182 0.258725 0
+tauinvisospline spline 306.722 0.257033 0
+tauinvisospline spline 566.642 0.279201 0
+tauinvisospline spline 811.343 0.330547 0
+tauinvisospline spline 8000.00 0.330547 0
+
+# QCD R-factor computed by PurityFit
+#tauinviso_1p pteta 1000 8000 -2.1 2.1 0.999728 0
+#tauinviso_1p pteta 100 125 -2.1 2.1 0.335728 0
+#tauinviso_1p pteta 125 150 -2.1 2.1 0.293721 0
+#tauinviso_1p pteta 150 175 -2.1 2.1 0.276728 0
+#tauinviso_1p pteta 175 200 -2.1 2.1 0.276782 0
+#tauinviso_1p pteta 200 250 -2.1 2.1 0.258725 0
+#tauinviso_1p pteta 250 500 -2.1 2.1 0.257033 0
+#tauinviso_1p pteta 500 750 -2.1 2.1 0.279201 0
+#tauinviso_1p pteta 50 55 -2.1 2.1 -nan -nan
+#tauinviso_1p pteta 55 60 -2.1 2.1 -nan -nan
+#tauinviso_1p pteta 60 65 -2.1 2.1 0.362494 0
+#tauinviso_1p pteta 65 70 -2.1 2.1 0.352596 0
+#tauinviso_1p pteta 70 80 -2.1 2.1 0.349037 0
+#tauinviso_1p pteta 750 1000 -2.1 2.1 0.330547 0
+#tauinviso_1p pteta 80 90 -2.1 2.1 0.353777 0
+#tauinviso_1p pteta 90 100 -2.1 2.1 0.361289 0
+tauinvisospline_1p spline 62.433 0.362494 0
+tauinvisospline_1p spline 67.4184 0.352596 0
+tauinvisospline_1p spline 74.663 0.349037 0
+tauinvisospline_1p spline 84.6885 0.353777 0
+tauinvisospline_1p spline 94.7172 0.361289 0
+tauinvisospline_1p spline 111.108 0.335728 0
+tauinvisospline_1p spline 136.194 0.293721 0
+tauinvisospline_1p spline 161.457 0.276728 0
+tauinvisospline_1p spline 186.253 0.276782 0
+tauinvisospline_1p spline 221.182 0.258725 0
+tauinvisospline_1p spline 306.722 0.257033 0
+tauinvisospline_1p spline 566.642 0.279201 0
+tauinvisospline_1p spline 811.343 0.330547 0
+tauinvisospline_1p spline 8000.00 0.330547 0
