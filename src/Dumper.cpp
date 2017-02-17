@@ -53,6 +53,7 @@ void Dumper::Close(){
 
 void Dumper::TriggerNames( const vector<string>& triggerNames )
 {
+    if (not dump_) return;
     out_->cd("nero");
     string tn="";
     for (unsigned i=0;i<triggerNames.size();++i)

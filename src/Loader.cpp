@@ -231,6 +231,10 @@ void LoadNero::FillLeptons(){
             l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::MuMediumB2F) );
         }
         //if (event_->IsRealData() and event_->runNum() >= 278802) // F->G (HIP_FIXED)
+        //
+        l-> SetPfPt  ( (*bl->lepPfPt) [iL]);
+        l-> SetR9    ( (*bl->r9) [iL]);
+        l-> SetEtaSC ( (*bl->etaSC) [iL]);
 
 #ifdef VERBOSE
         if(VERBOSE>1) cout<<"[LoadNero]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;

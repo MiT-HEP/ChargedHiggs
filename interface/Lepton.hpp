@@ -21,6 +21,11 @@ class Lepton : virtual public Object,
         int tightId {0};
         int mediumId {0};
 
+        // ele specific
+        float pfPt_{0}; // w/o scale and smears for ele, pf pt for muons
+        float r9_{0};
+        float etaSC_{0};
+
         //  these are the cut we want to apply
         float isocut_;
         float ptcut_;
@@ -31,6 +36,9 @@ class Lepton : virtual public Object,
         bool  mediumcut_ {0};
 
     public:
+        inline void SetR9(float x) { r9_=x;}
+        inline void SetEtaSC(float x) { etaSC_=x;}
+        inline void SetPfPt(float x) { pfPt_=x;}
         inline void SetIsoCut(float x){isocut_=x;}
         inline void SetPtCut( float x){ptcut_=x;}
         inline void SetIsoRelCut( float x){isorelcut_=x;}
@@ -53,6 +61,9 @@ class Lepton : virtual public Object,
         inline float GetIsoRelCut() const { return isorelcut_;}
         inline float GetMiniIsoRelCut() const { return miniisorelcut_;}
         inline bool  GetTightCut() const { return tightcut_;}
+        inline float GetPfPt() const {return pfPt_;}
+        inline float GetR9() const {return r9_;}
+        inline float GetEtaSC() const {return etaSC_;}
         inline int Charge() const { return charge; }
         inline int GetType() const { return type; } // bypass id
 
