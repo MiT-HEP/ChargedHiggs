@@ -13,15 +13,17 @@ parser= OptionParser()
 #parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/feb12final_1l.root")
 #parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/feb12final_2l.root")
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/feb14_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/feb14_2l.root")
+#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB15_final/2l/2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB17_final/1l/1l.root")
+#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB15_final/2l/2l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB17_final/2l/2l.root")
 
 #parser.add_option("","--input1Lsig",type='string',help="Input ROOT file. [%default]", default="1l_signal.root")
 #parser.add_option("","--input2Lsig",type='string',help="Input ROOT file. [%default]", default="2l_signal.root")
-parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
-parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
-#parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
-#parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
+#parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
+#parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
+parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
+parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
 parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", default=35867)
 
 extra = OptionGroup(parser,"Extra options:","")
@@ -114,6 +116,8 @@ statStore = {} ## used to store th1d for stat uncertainties
 label=""
 VarTest=""
 
+doSyst = True
+
 for x in basecat:
 	for y in channel:
 
@@ -180,14 +184,17 @@ for x in basecat:
 
        #these have null norm so far
 				if x=="charmCR":
-					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+#					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","TTX","ST","HPlus"]
 				if x=="extraRadCR":
-					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+#					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","TTX","ST","HPlus"]
 				if x=="topCR":
-					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+#					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","TTX","ST","HPlus"]
 				if x=="Baseline":
-					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
-
+#					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
+					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","TTX","ST","HPlus"]
 
 #			if x=="charmCR"  and (y=="2Mu" or y=="2Ele" or "1Mu1Ele"):
 #				catStore[name]["hasMC"]=["xxx"]
@@ -203,36 +210,33 @@ for x in basecat:
 #				catStore[name]["hasMC"]=[""]
 
 			mcStore={
-##				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-#				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d"], "num":0 },
 				"HPlus":{"name":"HPlus", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-####				"WJets":{"name":"WJets", "hist":["WJetsToLNu","DYJetsToLL_M"],"num":1 },
-####				"VV":{ "name":"VV","hist":["WWTo2L2Nu","WWToLNuQQ","WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu","ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":2},
-				"VV":{ "name":"VV","hist":["WWTo","WZTo","ZZTo"],"num":2},
-				#	"WW":{ "name":"WW","hist":["WWTo2L2Nu","WWToLNuQQ"],"num":2},
-				#	"WZ":{ "name":"WZ","hist":["WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu"],"num":3},
-				#	"ZZ":{ "name":"ZZ","hist":["ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":4},
-####				"TT":{ "name":"TT","hist":["TTJets_SingleLeptFromT","TTJets_DiLept_PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1"],"num":1},
-				"TT":{ "name":"TT","hist":["TTToSemilepton","TTTo2L2Nu"],"num":1},
-				"ST":{ "name":"ST","hist":["ST","tZq"],"num":4},
-####				"TTX":{ "name":"TTX","hist":["TTTT","TTZ","TTW","TTG","ttH"],"num":5}
-				"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH"],"num":5}
+###				"TT":{ "name":"TT","hist":["TTToSemilepton","TTTo2L2Nu"],"num":1},
+				"TTlight":{ "name":"TTlight","hist":["ttlight_TTToSemilepton","ttlight_TTTo2L2Nu"],"num":1},
+				"TT1b":{ "name":"TT1b","hist":["tt1b_TTToSemilepton","tt1b_TTTo2L2Nu"],"num":2},
+				"TT2b":{ "name":"TT2b","hist":["tt2b_TTToSemilepton","tt2b_TTTo2L2Nu"],"num":3},
+				"TTc":{ "name":"TTc","hist":["ttc_TTToSemilepton","ttc_TTTo2L2Nu"],"num":4},
+				"ST":{ "name":"ST","hist":["ST","tZq"],"num":5},
+				"EWK":{ "name":"EWK","hist":["WJetsToLNu","DYJetsToLL_M","WWTo","WZTo","ZZTo"],"num":6},
+###				"TTX":{ "name":"TTX","hist":["TTTT","TTZ","TTW","TTG","ttH"],"num":5}
+				"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG"],"num":7}
+###				"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH"],"num":7}
 				}
 			systStore={
 				"None":None,
-#				"CMS_pileup":{"type":"shape", "wsname":"PU","name":"PU","proc":[".*"]}, ## name used for shape
-#				"CMS_scale_uncluster":{"type":"shape", "wsname":"UNCLUSTER","name":"UNCLUSTER","proc":[".*"]}, ## name used for shape
-#				"CMS_scale_j":{"type":"shape", "wsname":"JES","name":"JES","proc":[".*"]}, ## name used for shape
+				"CMS_pileup":{"type":"shape", "wsname":"PU","name":"PU","proc":[".*"]}, ## name used for shape
+				"CMS_scale_uncluster":{"type":"shape", "wsname":"UNCLUSTER","name":"UNCLUSTER","proc":[".*"]}, ## name used for shape
+				"CMS_scale_j":{"type":"shape", "wsname":"JES","name":"JES","proc":[".*"]}, ## name used for shape
 ###				"CMS_res_j":{"type":"shape", "wsname":"JER","name":"JER","proc":[".*"]}, ## name used for shape
-#				"CMS_eff_b":{"type":"shape", "wsname":"BTAGB","name":"BTAGB","proc":[".*"]}, ## name used for shape
-#				"CMS_fake_b":{"type":"shape", "wsname":"BTAGL","name":"BTAGL","proc":[".*"]}, ## name used for shape
-#				"CMS_topreweight":{"type":"shape", "wsname":"TOPRW","name":"TOPRW","proc":[".*"]}, ## name used for shape
-#				"CMS_eff_m_trigger":{"type":"shape", "wsname":"muTRG","name":"muTRG","proc":[".*"]}, ## name used for shape
+				"CMS_eff_b":{"type":"shape", "wsname":"BTAGB","name":"BTAGB","proc":[".*"]}, ## name used for shape
+				"CMS_fake_b":{"type":"shape", "wsname":"BTAGL","name":"BTAGL","proc":[".*"]}, ## name used for shape
+				"CMS_topreweight":{"type":"shape", "wsname":"TOPRW","name":"TOPRW","proc":[".*"]}, ## name used for shape
+#				"CMS_eff_m_trigger":{"type":"shape", "wsname":"muTRG","name":"muTRG","proc":[".*"]}, ## name used for shae
 #				"CMS_eff_m_reco":{"type":"shape", "wsname":"muID","name":"muID","proc":[".*"]}, ## name used for shape
 #				"CMS_eff_m_iso":{"type":"shape", "wsname":"muISO","name":"muISO","proc":[".*"]}, ## name used for shape
 #				"lumi13TeV":{"type":"lnN", "value":["1.06"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
 				"lumi13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
-
+###
 				}
 
 print "--------- CAT STORE IS --------"
@@ -240,11 +244,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="FEB12/"+label+VarTest+opts.output
+fileTmp="FEB17/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "FEB12/"+ label + VarTest + datNameTmp
+datName = "FEB17/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -422,7 +426,7 @@ def importStat():
 	      roo_mc_binup = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Up",target + "STAT",al,hupbin)
 	      pdf_mc_binup = roo_mc_binup
 	      roo_mc_bindn = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Down",target + "STAT",al,hdnbin)
- 	      pdf_mc_bindn = roo_mc_bindn
+	      pdf_mc_bindn = roo_mc_bindn
  	      getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
  	      getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
  	      g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
@@ -440,6 +444,16 @@ for syst in systStore:
 		writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 	if systStore[syst]["type"] == "shape":
 		writeSystShape(systStore[syst],systStore[syst]["proc"])
+
+if doSyst: writeNormSyst("CMS_scale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.977/1.028"],["TTlight","TTc","TT1b","TT2b","ST"])
+if doSyst: writeNormSyst("CMS_pdf_ttbar",["1.042","1.042","1.042","1.042","1.026"],["TTlight","TTc","TT1b","TT2b","ST"])
+if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.022"],["TTlight","TTc","TT1b","TT2b","ST"])
+
+#writeNormSyst("CMS_scale_VV",["1.025","1.032","1.031"],["WWTo","WZTo","ZZTo"])
+#writeNormSyst("CMS_pdf_VV",["1.022","1.044","1.037"],["WWTo","WZTo","ZZTo"])
+
+#writeNormSyst("CMS_scale_V",["0.9963/1.0065","0.996/1.008"],["DYJetsToLL_M","WJetsToLNu"])
+#writeNormSyst("CMS_pdf_V",["1.037","1.0375"],["DYJetsToLL_M","WJetsToLNu"])
 
 ################### IMPORT ################
 ## def importStat(h,target,syst="STAT"):
@@ -528,7 +542,6 @@ def importPdfFromTH1(cat,mc,syst=None):
 	  #save RooDataHist
 	  h.Scale(opts.lumi)
 	  print "* Importing ",target
-
 	  al=arglist_obs_bdt
 	  if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4": al = arglist_obs
 	  print "-> with var", al[0]
@@ -568,7 +581,7 @@ for cat in catStore:
 		 	importPdfFromTH1(catStore[cat],mcStore[proc],systStore[syst])
 
 ## import and write statistical uncertainties
-##importStat()
+#if doSyst: importStat()
 
 #import data
 for c in catStore:
