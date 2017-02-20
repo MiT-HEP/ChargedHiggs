@@ -22,5 +22,6 @@ include=dat/hmumu.dat
 
 MCDB=aux/mcdb.TauNu.2017.dat
 pileup=aux/pileup.TauNu.moriond.root
+#Correct=ScaleAndSmear,KaMuCa
 
 Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis

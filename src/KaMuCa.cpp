@@ -1,4 +1,5 @@
 #include "interface/KaMuCa.hpp"
+#include "interface/Handlers.hpp"
 
 void KaMuCa::Init(){
     Log(__FUNCTION__,"INFO","Init KaMuCa Corrections with MC_80X_13TeV and DATA_80X_13TeV");
@@ -7,6 +8,49 @@ void KaMuCa::Init(){
 }
 
 int KaMuCa::correct(Event *e){
+
+    correctorDATA_ -> reset();
+    correctorMC_ -> reset();
+
+    if (syst!=0)
+    {
+        // check
+        if (syst >= correctorDATA_->getN()+1 or syst < -correctorDATA_->getN())
+        {
+            Log(__FUNCTION__,"ERROR",Form("CorrectorData has %d variations (2n+1), and position %d has been requested ",correctorDATA_->getN(),syst));
+            throw abortException();
+        }
+    
+        // check
+        if (syst >= correctorMC_->getN()+1 or syst < -correctorMC_->getN())
+        {
+            Log(__FUNCTION__,"ERROR",Form("CorrectorData has %d variations (2n+1), and position %d has been requested ",correctorMC_->getN(),syst));
+            throw abortException();
+        }
+
+        // set syst N+1 = closure
+        if (e->IsRealData() and syst ==  correctorDATA_->getN()+1)
+        {
+            correctorDATA_->varyClosure(+1) ;
+        }
+        else if (not e->IsRealData() and syst ==  correctorMC_->getN()+1)
+        {
+            correctorMC_->varyClosure(+1) ;
+        }
+        else if ( syst >0 )
+        {
+            if ( e->IsRealData() ) correctorDATA_->vary(syst,+1); 
+            else correctorMC_ -> vary ( syst , + 1);
+        }
+        else //(syst <0)
+        {
+            if ( e->IsRealData() ) correctorDATA_->vary(syst,-1); 
+            else correctorMC_ -> vary ( syst , -1);
+        }
+
+    }
+
+
     for (auto & lep : GetLepVector(e))
     {
         if (not lep->IsMuonDirty() ) continue; // check only it's muon w/o any Id
@@ -14,7 +58,6 @@ int KaMuCa::correct(Event *e){
         ResetUncorr(*lep);
         //
         if ( e->IsRealData()){
-            correctorDATA_ -> reset();
             double dataSF = correctorDATA_ ->getCorrectedPt(
                     lep->GetP4Dirty().Pt(), // bypass syst
                     lep->GetP4Dirty().Eta(),
@@ -23,7 +66,6 @@ int KaMuCa::correct(Event *e){
             Scale( *lep, dataSF);
         }
         else {
-            correctorMC_ -> reset();
             // correcting scale in MC, they should align everything to the best knowledge
             double mcSF = correctorMC_ ->getCorrectedPt(
                     lep->GetP4Dirty().Pt(), // bypass syst
@@ -54,7 +96,15 @@ int KaMuCa::correct(Event *e){
         //print 'After closure shift pt=', c.getCorrectedPt(40,0.0,0.0,1)
 
     }
+}
 
+int SmearKaMuCa::smear(CorrectorBase*c)
+{
+    //syst_
+    //check that the corrector is right, first should be faster
+    if (dynamic_cast<KaMuCa*>(c) == NULL ) return 0;
+    if (c->name() != "KaMuCa") return 0; // nothing to correct
+    dynamic_cast<KaMuCa*>(c)->syst = syst_;
 }
 
 
