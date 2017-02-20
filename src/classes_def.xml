@@ -12,7 +12,6 @@
 	<class name="SF_PtEta"/>
 	<class name="SF_Asymm"/>
 	<class name="SF_PtSpline"/>
-	<class name="SF_CSV"/>
 	<class name="SF_TH2F"/>
 	<class name="SF_TF1"/>
 	<class name="SF_TF2"/>
