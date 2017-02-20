@@ -6,18 +6,85 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
     l->SetPtCut(25); 
     l->SetIsoRelCut(0.20);
     l->SetEtaCut(2.5);
-    l->SetTightCut(false);
+    l->SetTightCut(true);
     l->SetMediumCut(false);
 }
 
+string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets){
+    // return the right category
+    if (mu0== NULL or mu1==NULL) return "";
+
+    float eta0 = mu0->Eta();
+    float eta1 = mu1->Eta();
+   
+   // construct a Higgs-like object  
+    Object Hmm;
+    Hmm += *mu0;
+    Hmm += *mu1;
+
+    string muStr ="";
+    if ( fabs(eta1) < 0.8 and fabs(eta0) <0.8) muStr = "BB";
+    else if (fabs(eta1) < 1.6 and fabs(eta0) <0.8) muStr =  "BO";
+    else if (fabs(eta1) < 0.8 and fabs(eta0) <1.6) muStr =  "BO";
+    else if (fabs(eta1) < 2.1 and fabs(eta0) <0.8) muStr =  "BE";
+    else if (fabs(eta1) < 0.8 and fabs(eta0) <2.1) muStr =  "BE";
+    else if (fabs(eta1) < 1.6 and fabs(eta0) <1.6) muStr =  "OO";
+    else if (fabs(eta1) < 1.6 and fabs(eta0) <2.1) muStr =  "OE";
+    else if (fabs(eta1) < 2.1 and fabs(eta0) <1.6) muStr =  "OE";
+    else if (fabs(eta1) < 2.1 and fabs(eta0) <2.1) muStr =  "EE";
+    else return "";
+
+    // vbf -- fully combinatorics
+    bool isTightVbf=false;
+    bool isTightGF=false;
+    bool isVbf=false;
+
+    for(unsigned i=0;i<jets.size() ;++i)
+    for (unsigned j=i+1;j<jets.size();++j)
+    {
+        // vbf preselection. jets are pt-sorted
+        if (jets[i]->Pt() >40 and jets[j]->Pt() >30) isVbf=true;
+        else continue;
+
+        double mjj= jets[i]->InvMass( jets[j] ) ;
+        double detajj= fabs( jets[i]->Eta() - jets[j]->Eta() );
+
+        if (mjj > 650 and detajj > 3.5)  isTightVbf = true;
+        if (mjj > 250 and Hmm.Pt() >50 )  isTightGF = true;
+    }
+
+    string vbfStr="";
+    if (isTightVbf ) vbfStr = "VBF0";
+    else if (isTightGF) vbfStr = "GF";
+    else if (isVbf) vbfStr = "VBF1";
+    else vbfStr = "Untag";
+
+    return vbfStr +"_" + muStr;
+}
+
 void HmumuAnalysis::Init(){
+    // define categories -- for booking histos
+    vector< string> mu_cats{"BB","BO","BE","OO","OE","EE"};
+    vector<string> vbf_cats{"VBF0","GF","VBF1","Untag"};
+
+    for( const auto & m : mu_cats)
+    for( const auto & v : vbf_cats)
+    {
+        categories_.push_back(v + "_" + m);
+    }
+    //
 
     for ( string l : AllLabel()  ) {
 	    Log(__FUNCTION__,"INFO","Booking Histo Mass");
-	    Book ("HmumuAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 100,50,200);
+	    Book ("HmumuAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
 	    // 
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
+        for(const auto & c : categories_)
+        {
+	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
+        }
     }
+
 
 }
 
@@ -32,6 +99,14 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     Lepton*mu1 = e->GetMuon(1);
     Jet *j0 = e->GetJet(0);
     Jet *j1 = e->GetJet(1);
+
+    vector<Jet*> selectedJets;
+    for(unsigned i=0;i<e->Njets() ; ++i)
+    {
+        selectedJets.push_back(e->GetJet(i));
+    }
+
+    string category = Category(mu0, mu1, selectedJets);
 
     // Truth
     GenParticle *genmu0=NULL; GenParticle *genmu1=NULL;
@@ -73,6 +148,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
        	if (cut.passAllUpTo(Trigger) ){
             if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
+            if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
         }
     }
 
