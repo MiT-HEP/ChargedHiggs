@@ -46,7 +46,7 @@ public:
   Double_t evaluate() const ;
   
 
-//  ClassDef(RooCMSShape,1);
+  ClassDef(RooCMSShape,1);
 
 protected:
 
@@ -57,5 +57,6 @@ protected:
   RooRealProxy peak ;
   
 };
+
  
 #endif

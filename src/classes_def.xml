@@ -1,0 +1,49 @@
+<lcgdict>
+	<!-- Base Objects -->
+	<class name="Object"/>
+	<class name="Jet"/>
+	<class name="GenParticle"/>
+	<class name="Lepton"/>
+	<class name="Met"/>
+	<class name="Tau"/>
+	<class name="MC"/>
+	<!-- Scale Factors. These are probably not need -->
+	<class name="SF"/>
+	<class name="SF_PtEta"/>
+	<class name="SF_Asymm"/>
+	<class name="SF_PtSpline"/>
+	<class name="SF_CSV"/>
+	<class name="SF_TH2F"/>
+	<class name="SF_TF1"/>
+	<class name="SF_TF2"/>
+	<class name="SF_CSV"/>
+	
+	<!-- Smear -->
+	<class name="SmearBase"/>
+	<class name="SmearSF"/>
+	<class name="SmearJes"/>
+	<class name="SmearJer"/>
+	<class name="SmearTauScale"/>
+	<class name="SmearUncluster"/>
+	<class name="SmearPu"/>
+	<class name="SmearScales"/>
+	<class name="SmearPdfs"/>
+	<class name="SmearBjets"/>
+	<class name="SmearKaMuCa"/>
+	
+	<!-- Looper -->
+	<class name="Weight"/>
+	<class name="Event"/>
+	<class name="Looper"/>
+	<class name="CutSelector"/>
+	
+	<!-- Fitter -->
+	<class name="BaseFitter"/>
+	<class name="Fitter"/>
+	<class name="PurityFit"/>
+	<class name="PurityFitAnalytic"/>
+	
+	<!-- Additional shapes -->
+	<class name="RooCMSShape"/>
+	<class name="RooVoigtianShape"/>
+</lcgdict>
