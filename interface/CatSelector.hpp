@@ -15,7 +15,8 @@ class CatSelector{
         int nCat=0;
         
 
-        map<pair<string,int> ,float> boundaries_;
+        map<pair<string,int> ,pair<float,bool> > boundaries_;
+        vector<string> names_;
 
     public:
 
@@ -31,11 +32,22 @@ class CatSelector{
         void inline SetVariable(string name, float value)
             {varvalues_.Set(name,value);}
 
-        void SetBoundary(string name, int cat, float value); // boundary = cat
+        void SetBoundary(string name, int cat, float value,bool less=true); // boundary = cat
 
         void inline reset () { nCat=0;nVars=0; boundaries_.clear() ;} // TODO datastore.clear/reset
         
         int computeCat( );
+
+        void setName(unsigned cat, const string& name) {
+            if (names_.size()<cat)for(unsigned i=names_.size(); i<=cat;++i) names_.push_back(Form("cat%u",i));
+            names_[cat] = name;
+        }
+
+        string catName(unsigned cat){
+            if (cat >= nCat) return "";
+            if (names_.size()<cat)for(unsigned i=names_.size(); i<=cat;++i) names_.push_back(Form("cat%u",i));
+            return names_[cat] ;
+        }
 
 };
 

@@ -157,7 +157,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
     cut.SetMask(MaxCut-1);
     cut.SetCutBit(Total);
 
-    std::unique_ptr<Tau> garbage; //if created will be deleted
+    std::unique_ptr<Tau> garbage; //if created will be deleted, garbage collector
 
     Tau *t =NULL;
     if (direct and not muon) t = e->GetTau(0); 
@@ -168,13 +168,13 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
         if (m!=NULL){
             t=new Tau();
             t->SetP4( m->GetP4() );
-            t-> iso =0;
-            t-> type =15;
-            t-> iso2=0;
-            t-> id=1;
-            t-> id_ele=1;
-            t-> id_mu=1;
-            t-> id_iso=1;
+            t-> SetIso(0);
+            t-> SetType(15);
+            t-> SetIso2(0);
+            t-> SetId(1);
+            t-> SetIdEle(1);
+            t-> SetIdMu(1);
+            t-> SetIdIso(1);
             garbage.reset(t); // make sure it will be deleted
         }
     }
@@ -185,12 +185,12 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
 
     //------------- TRIGGER -----------
     {
-        //if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110"))  cut.SetCutBit(Trigger);
+        if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110"))  cut.SetCutBit(Trigger);
         /*HLT_VLooseIsoPFTau120_Trk50_eta2p1_v
          * HLT_VLooseIsoPFTau140_Trk50_eta2p1_v
          */
-#warning SingleTauTrigger
-        if ( not muon and (e->IsTriggered("HLT_VLooseIsoPFTau120_Trk50_eta2p1_v") or e->IsTriggered("HLT_VLooseIsoPFTau140_Trk50_eta2p1_v")))  cut.SetCutBit(Trigger);
+        //#warning SingleTauTrigger
+        //if ( not muon and (e->IsTriggered("HLT_VLooseIsoPFTau120_Trk50_eta2p1_v") or e->IsTriggered("HLT_VLooseIsoPFTau140_Trk50_eta2p1_v")))  cut.SetCutBit(Trigger);
         else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
     }
     
@@ -393,8 +393,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
         //Muon
         {
             GenParticle * gp  = e->GetGenMuon(0,2.4);
-            if (not e->ExistSF("muveto")) Log(__FUNCTION__,"WARNING","No muveto SF"); //FIXME Remove this line, may be slow
-            if (gp != NULL and gp->Pt() > 10) {e->SetPtEtaSF("muveto",gp->Pt(),fabs(gp->Eta())); e->ApplySF("muveto");}  // this should be SC-eta, some how propagated
+            if (not e->ExistSF("muIDloose")) Log(__FUNCTION__,"WARNING","No muveto SF"); //FIXME Remove this line, may be slow
+            if (gp != NULL and gp->Pt() > 10) {e->SetPtEtaSF("muIDloose",gp->Pt(),fabs(gp->Eta())); e->ApplySF("muIDloose");}  // this should be SC-eta, some how propagated
         }
     }
  
@@ -423,7 +423,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //#warning nobtag-sf
     //Log(__FUNCTION__,"DEBUG",Form("syst is=%s weight before=%e",systname.c_str(),e->weight()) ) ;
     
-    if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
+    if (not e->IsRealData()) e->ApplyBTagSF(1);// 0=loos wp
 
     //Log(__FUNCTION__,"DEBUG",Form("syst is=%s weight after=%e",systname.c_str(),e->weight()) ) ;
 

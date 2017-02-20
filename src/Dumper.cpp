@@ -29,20 +29,50 @@ void Dumper::InitTree(const vector<BareCollection*> &bare)
 
 void Dumper::Fill(){
     if (not dump_) return;
-    tree_->Fill();
+    nbytes_+=tree_->Fill();
+
+    if (nbytes_ > 1LL<<30) // 1G
+    {
+        Close();
+        OpenNewFile();
+    }
 }
 
 void Dumper::Close(){
     // if open close, and set pointer to 0
-    if (out_) {out_->Write(); out_->Close(); Log(__FUNCTION__,"INFO","Dumper is closing files");}
+    if (out_) {
+        out_->cd("nero");
+        tree_->Write("",TObject::kOverwrite);
+        out_->Write(); 
+        out_->Close(); 
+        Log(__FUNCTION__,"INFO","Dumper is closing files");
+    }
     ChargedHiggs::Delete(out_);
-    ChargedHiggs::Delete(tree_);
+    //ChargedHiggs::Delete(tree_);
+}
+
+void Dumper::TriggerNames( const vector<string>& triggerNames )
+{
+    if (not dump_) return;
+    out_->cd("nero");
+    string tn="";
+    for (unsigned i=0;i<triggerNames.size();++i)
+    {
+        if (i!=0) tn+=",";
+
+        tn += triggerNames[i]; 
+    }
+    TNamed n("triggerNames",tn.c_str());
+    n.Write("",TObject::kOverwrite);
+    return;
 }
 
 void Dumper::OpenNewFile()
 {
     if (not dump_) return;
     Close();
+    //
+    nbytes_= 0; //reset number of bytes written
     // Open the new file
     string dname=outdirname_ +"/"+ cacheMC_  ;
 
@@ -69,8 +99,11 @@ void Dumper::OpenNewFile()
     out_->mkdir("nero");
     out_->cd("nero");
     tree_=new TTree("events","events");
+    //this is not working with subdirs
     //tree_->SetMaxTreeSize( 10ULL<<30 ); //10Gb
-    TTree::SetMaxTreeSize( 1LL<<30 ); //1Gb
+    //TTree::SetMaxTreeSize( 1LL<<30 ); //1Gb
+    //copy TriggerNames
+
 }
 
 // Local Variables:

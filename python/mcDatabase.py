@@ -46,6 +46,8 @@ if opts.rec:
 			label = dirs[idx]
 			if re.match( '^[0-9_\-]*$',label): 
 				idx -= 1
+			elif re.match( 'PUMoriond17',label) and '_' not in label:  ## avoid also  PU submissions
+				idx -= 1
 			else:
 				break
 		if idx <0: label = re.sub('.*/','',dir)
@@ -181,6 +183,8 @@ else:
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-500' in opts.label: xsec=1
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-220' in opts.label: xsec=1
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=1
+	### H-> mumu
+	elif 'HToMuMu' in opts.label: xsec=1
 	### TT
 	elif 'TT' in opts.label: xsec=831
 	## ST

@@ -14,21 +14,21 @@ type=add
 rebin=10
 file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data_RFACUp,ChargedHiggsTauNu/Vars/Mt_TT,ChargedHiggsTauNu/Vars/Mt_DY,ChargedHiggsTauNu/Vars/Mt_WJets,ChargedHiggsTauNu/Vars/Mt_WW,ChargedHiggsTauNu/Vars/Mt_WZ,ChargedHiggsTauNu/Vars/Mt_ZZ,ChargedHiggsTauNu/Vars/Mt_ST,ChargedHiggsQCDPurity/Vars/MtIsoInv_TT,ChargedHiggsQCDPurity/Vars/MtIsoInv_DY,ChargedHiggsQCDPurity/Vars/MtIsoInv_WJets,ChargedHiggsQCDPurity/Vars/MtIsoInv_WW,ChargedHiggsQCDPurity/Vars/MtIsoInv_WZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ZZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ST
-scale = 1,+2308,+2308,+2308,+2308,+2308,+2308,+2308,-2308,-2308,-2308,-2308,-2308,-2308,-2308
+scale = 1,+35867,+35867,+35867,+35867,+35867,+35867,+35867,-35867,-35867,-35867,-35867,-35867,-35867,-35867
 
 [qcdbanddown]
 type=add
 rebin=10
 file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data_RFACDown,ChargedHiggsTauNu/Vars/Mt_TT,ChargedHiggsTauNu/Vars/Mt_DY,ChargedHiggsTauNu/Vars/Mt_WJets,ChargedHiggsTauNu/Vars/Mt_WW,ChargedHiggsTauNu/Vars/Mt_WZ,ChargedHiggsTauNu/Vars/Mt_ZZ,ChargedHiggsTauNu/Vars/Mt_ST,ChargedHiggsQCDPurity/Vars/MtIsoInv_TT,ChargedHiggsQCDPurity/Vars/MtIsoInv_DY,ChargedHiggsQCDPurity/Vars/MtIsoInv_WJets,ChargedHiggsQCDPurity/Vars/MtIsoInv_WW,ChargedHiggsQCDPurity/Vars/MtIsoInv_WZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ZZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ST
-scale = 1,+2308,+2308,+2308,+2308,+2308,+2308,+2308,-2308,-2308,-2308,-2308,-2308,-2308,-2308
+scale = 1,+35867,+35867,+35867,+35867,+35867,+35867,+35867,-35867,-35867,-35867,-35867,-35867,-35867,-35867
 
 [qcdbandcentral]
 type=add
 rebin=10
 file = QCDPurity.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,ChHiggs.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root,QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data,ChargedHiggsTauNu/Vars/Mt_TT,ChargedHiggsTauNu/Vars/Mt_DY,ChargedHiggsTauNu/Vars/Mt_WJets,ChargedHiggsTauNu/Vars/Mt_WW,ChargedHiggsTauNu/Vars/Mt_WZ,ChargedHiggsTauNu/Vars/Mt_ZZ,ChargedHiggsTauNu/Vars/Mt_ST,ChargedHiggsQCDPurity/Vars/MtIsoInv_TT,ChargedHiggsQCDPurity/Vars/MtIsoInv_DY,ChargedHiggsQCDPurity/Vars/MtIsoInv_WJets,ChargedHiggsQCDPurity/Vars/MtIsoInv_WW,ChargedHiggsQCDPurity/Vars/MtIsoInv_WZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ZZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ST
-scale = 1,+2308,+2308,+2308,+2308,+2308,+2308,+2308,-2308,-2308,-2308,-2308,-2308,-2308,-2308
+scale = 1,+35867,+35867,+35867,+35867,+35867,+35867,+35867,-35867,-35867,-35867,-35867,-35867,-35867,-35867
 
 [qcdinvisoband]
 type=envelope

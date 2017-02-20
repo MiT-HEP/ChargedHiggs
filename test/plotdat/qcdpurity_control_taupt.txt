@@ -13,7 +13,7 @@ drawList= mc,chhiggs200,chhiggs500,data
 [text] 
 text = Internal
 position = tl
-lumi = 209~pb^{-1}~(13~TeV)
+lumi = 2.76~fb^{-1}~(13~TeV)
 
 [legend] 
 draw =  True
@@ -58,7 +58,7 @@ rebin=10
 type = add
 file = QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_Data,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_TT,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_DY,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_WJets,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_WW,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_WZ,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_ZZ,ChargedHiggsQCDPurity/Vars/TauPt_IsoInv_Control_ST
-scale = 1.,-209.,-209.,-209.,-209.,-209.,-209.,-209
+scale = 1.,-2768.,-2768.,-2768.,-2768.,-2768.,-2768.,-2768
 style = line
 fillcolor = ROOT.kOrange
 fillstyle=1000
@@ -76,7 +76,7 @@ fillcolor=ROOT.kMagenta+2
 fillstyle=1000
 color=ROOT.kBlack
 label=TTJets
-scale=209
+scale=2768
 width=2
 
 [st]
@@ -89,7 +89,7 @@ fillcolor=ROOT.kRed-4
 fillstyle=1000
 color=ROOT.kBlack
 label=ST
-scale=209
+scale=2768
 width=2
 
 [ewk]
@@ -103,7 +103,7 @@ fillstyle=1000
 fillcolor = RGB,.1,.8,0.2
 color=ROOT.kBlack
 label=EWK
-scale=209
+scale=2768
 width=2
 
 [chhiggs200]
@@ -115,7 +115,7 @@ style = line
 styleopt = 7
 color=ROOT.kBlue
 label= H^{+}~(m=200GeV)~x100
-scale=20900
+scale=276800
 width=2
 
 [chhiggs500]
@@ -127,7 +127,7 @@ style = line
 styleopt = 3
 color=ROOT.kRed
 label= H^{+}~(m=500GeV)~x10^{4}
-scale=209e4
+scale=2768e4
 width=2
 
 
