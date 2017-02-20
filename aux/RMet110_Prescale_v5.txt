@@ -1,5 +1,11 @@
 # QCD R-factor computed by PurityFit
-##tauinviso pteta 1000 8000 -2.1 2.1 0.999728 0
+##tauinviso pteta 50 55 -2.1 2.1 -nan -nan
+##tauinviso pteta 55 60 -2.1 2.1 -nan -nan
+##tauinviso pteta 60 65 -2.1 2.1 0.362494 0
+##tauinviso pteta 65 70 -2.1 2.1 0.352596 0
+##tauinviso pteta 70 80 -2.1 2.1 0.349037 0
+##tauinviso pteta 80 90 -2.1 2.1 0.353777 0
+##tauinviso pteta 90 100 -2.1 2.1 0.361289 0
 ##tauinviso pteta 100 125 -2.1 2.1 0.335728 0
 ##tauinviso pteta 125 150 -2.1 2.1 0.293721 0
 ##tauinviso pteta 150 175 -2.1 2.1 0.276728 0
@@ -7,14 +13,8 @@
 ##tauinviso pteta 200 250 -2.1 2.1 0.258725 0
 ##tauinviso pteta 250 500 -2.1 2.1 0.257033 0
 ##tauinviso pteta 500 750 -2.1 2.1 0.279201 0
-##tauinviso pteta 50 55 -2.1 2.1 -nan -nan
-##tauinviso pteta 55 60 -2.1 2.1 -nan -nan
-##tauinviso pteta 60 65 -2.1 2.1 0.362494 0
-##tauinviso pteta 65 70 -2.1 2.1 0.352596 0
-##tauinviso pteta 70 80 -2.1 2.1 0.349037 0
 ##tauinviso pteta 750 1000 -2.1 2.1 0.330547 0
-##tauinviso pteta 80 90 -2.1 2.1 0.353777 0
-##tauinviso pteta 90 100 -2.1 2.1 0.361289 0
+##tauinviso pteta 1000 8000 -2.1 2.1 0.999728 0
 
 tauinvisospline spline 62.433 0.362494 0
 tauinvisospline spline 67.4184 0.352596 0

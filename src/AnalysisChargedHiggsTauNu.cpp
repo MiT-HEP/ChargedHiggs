@@ -423,7 +423,7 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //#warning nobtag-sf
     //Log(__FUNCTION__,"DEBUG",Form("syst is=%s weight before=%e",systname.c_str(),e->weight()) ) ;
     
-    if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
+    if (not e->IsRealData()) e->ApplyBTagSF(1);// 0=loos wp
 
     //Log(__FUNCTION__,"DEBUG",Form("syst is=%s weight after=%e",systname.c_str(),e->weight()) ) ;
 
