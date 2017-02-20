@@ -16,11 +16,22 @@ public:
     virtual ~ChargedHiggsTopBottom () {}
 
     bool doSynch = false;
+    bool doICHEP = false;
+    bool writeTree = true;
+
+    // Analysis type
     bool do1lAnalysis=false;
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
-    bool doICHEP = false;
-    bool writeTree = true;
+
+    // trigger bits
+    bool passTriggerMu=true;
+    bool passTriggerEle=true;
+
+    bool passTriggerMuEle=true;
+    bool passTriggerMuMu=true;
+    bool passTriggerEleEle=true;
+
 
     void Init() override;
 

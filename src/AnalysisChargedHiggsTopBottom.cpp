@@ -36,7 +36,7 @@ void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
     t->SetIsoRelCut(-1); // LooseCombinedIsolationDeltaBetaCorr3Hits
     t->SetIsoCut(2.5);
     t->SetProngsCut(-1); // all Prong
-    t->SetDecayMode(0);  // TauDecayModeFindingNewDMs
+    t->SetDecayMode(1);  // 0=TauDecayModeFindingNewDMs 1=TauDecayModeFinding
 }
 
 void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
@@ -131,6 +131,9 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     if (category.find("_2Ele")   !=string::npos) SetTreeVar("lep_category",4);
     if (category.find("_1Mu1Ele")!=string::npos) SetTreeVar("lep_category",5);
 
+    int triggerMap=2*passTriggerMu + 20*passTriggerEle + 200*passTriggerMuMu + 2000*passTriggerMuEle + 20000*passTriggerEleEle ;
+
+    SetTreeVar("passTrigger",triggerMap);
 
     if (label.find("Hplus") !=string::npos)  // SIG
         {
@@ -396,6 +399,7 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","sig",'I');
     Branch("tree_tb","mc",'I'); // to distinguish between the different mc
     Branch("tree_tb","lep_category",'I'); // to distinguish between the different leptonCategory
+    Branch("tree_tb","passTrigger",'I'); // to distinguish between the various trigger bits
 
     Branch("tree_tb","run",'I');
     Branch("tree_tb","lumi",'I');
@@ -1753,15 +1757,36 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////$$$$$$$
 
 
-    bool passTriggerMu=true;
-    bool passTriggerEle=true;
-
     if (!e->IsRealData()) {
         // MC
         passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"));
         //        passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")); // added later, Julie
         //        passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele30_WPTight_Gsf_v")); // Ele27_WPTight in runC/runH 2.0 ntuples
         passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // asked Dominick , used in stop
+
+        /*
+        // to add in next ntuples HLT_TkMu50_v and HLT_Mu55_v Mu33
+        passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"));
+        //        passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v"));
+        //        passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele30_WPTight_Gsf_v"));
+        passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10"));
+
+        passTriggerMuEle=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v") or
+                          e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or
+                          e->IsTriggered("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") or e->IsTriggered("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") or
+                          e->IsTriggered("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") or e->IsTriggered("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+                          );
+
+        passTriggerEleEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or
+                           e->IsTriggered("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")
+                           );
+
+        // to add in next ntuples HLT TkMu17 TrkIsoVVL TkMu8 TrkIsoVVL DZ
+        passTriggerMuMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v") or
+                         e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or
+                         e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")
+                         );
+        */
 
     } else {
         // DATA
@@ -2249,7 +2274,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     //    bool lowMTCR=false;
 
     // 4jets, ==3b
-    if( do1lAnalysis and e->NcentralJets() >= 4 and e->Bjets() == 3 ) charmCR=true;
+    if( do1lAnalysis and e->NcentralJets() == 4 and e->Bjets() == 3 ) charmCR=true;
     if( do1lAnalysis and e->NcentralJets() >= 5 and e->Bjets() == 1 ) extraRadCR=true;
     if( do2lAnalysis and e->NcentralJets() >= 3 and e->Bjets() == 1 ) extraRadCR=true;
 
