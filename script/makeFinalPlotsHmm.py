@@ -32,12 +32,12 @@ sys.path.insert(0,os.getcwd()+'/python')
 ############# definitions
 categories=[]
 for m in [ "BB","BO","BE","OO","OE","EE" ]:
-   for v in ["VBF0","GF","VBF1","Untag"]:
+   for v in ["VBF0","OneB","GF","VBF1","Untag"]:
       categories.append(v + "_" + m )
 
-montecarlos= ["VBF_HToMuMu_M%d","GluGlu_HToMuMu_M%d","ZH_HToMuMu_M%d","WMinusH_HToMuMu_M%d","WPlusH_HToMuMu_M%d"]
+montecarlos= ["VBF_HToMuMu_M%d","GluGlu_HToMuMu_M%d","ZH_HToMuMu_M%d","WMinusH_HToMuMu_M%d","WPlusH_HToMuMu_M%d","ttH_HToMuMu_M%d"]
 
-masses = [120,125,130]
+masses = [125,120,130]
 
 ###############################
 
@@ -84,6 +84,9 @@ for cat in categories:
         ea=0.0
         for idx,m in enumerate(masses):
             h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) )
+	    if h==None:
+		    print "<*> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) 
+		    continue
             garbage.append(h)
             h.SetLineColor(ROOT.kBlack)
             h.SetLineWidth(2)
@@ -95,7 +98,6 @@ for cat in categories:
                 h.GetYaxis().SetTitle("#varepsilon A")
                 h.GetYaxis().SetTitleOffset(1.2)
                 h.GetXaxis().SetRangeUser(100,150)
-            if idx==1:
 		#color=38
 		color=46
                 h.SetLineColor(color)
