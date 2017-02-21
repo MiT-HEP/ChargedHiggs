@@ -1765,12 +1765,13 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     if (!e->IsRealData()) {
         // MC
+        /*
         passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"));
         //        passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")); // added later, Julie
         //        passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele30_WPTight_Gsf_v")); // Ele27_WPTight in runC/runH 2.0 ntuples
         passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // asked Dominick , used in stop
+        */
 
-        /*
         // to add in next ntuples HLT_TkMu50_v and HLT_Mu55_v Mu33
         passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"));
         //        passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v"));
@@ -1794,16 +1795,22 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                          e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or
                          e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")
                          );
-        */
+
 
     } else {
         // DATA
+        /*
         if(e->GetName().find("SingleMuon")!=string::npos) passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"));
         //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")); // added later, Julie
         //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele30_WPTight_Gsf_v")); //Ele27_WPTight exist in runC
         //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // asked Dominick , used in stop
         if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // asked Dominick , used in stop
         //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v")); // for the moment in the v2.0 tag
+        */
+
+        if(e->GetName().find("SingleMuon")!=string::npos) passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"));
+        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v"));
+
     }
 
     if(doICHEP) {
