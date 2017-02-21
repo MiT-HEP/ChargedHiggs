@@ -35,7 +35,7 @@ git checkout v6.3.0 ##01bb477 ## (31cc693) ## ( 74x-root6 )
 scram b -j 16 
 ```
 
-## Submission to Batch
+# Submission to Batch
 * Submission to the batch system is performed with the script/submit.py:
 ```
 $python script/submit.py  --help

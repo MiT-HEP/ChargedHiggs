@@ -11,6 +11,7 @@ Tau::Tau() : Lepton(){
 
     match = -999; ;  // matching with generator
     iso2 = -999;  // Iso with Delta beta correction
+    type= 15;
 }
 
 

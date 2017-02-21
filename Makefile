@@ -42,7 +42,7 @@ $(info CMSSW found: $(CMSSW_BASE) )
 COMBINELIBFILE = $(wildcard $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/libHiggsAnalysisCombinedLimit.so)
 COMBINELIB = HiggsAnalysisCombinedLimit
 COMBINELIBDIR = $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/
-CXXFLAGS += -D HAVE_PYTHIA -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/212/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/212/lib  -lpythia8
+CXXFLAGS += -D HAVE_PYTHIA -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/219/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/219/lib  -lpythia8
 #-I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/clhep/2.2.0.4-kpegke/include
 #"-lpythia8 -lclhep "
 endif
@@ -70,8 +70,10 @@ $(OBJ) : $(BINDIR)/%.o : $(SRCDIR)/%.cpp interface/%.hpp | $(BINDIR)
 Dict: $(BINDIR)/dict.o
 
 $(BINDIR)/dict.o: $(SRC) | $(BINDIR)
-	cd $(BINDIR) && rootcint -v4 -f dict.cc -c -I../../ -I../  $(HPPLINKDEF)  ../interface/LinkDef.hpp 
-	cd $(BINDIR) && $(GCC) -c -o dict.o $(CXXFLAGS) $(RPATH) -I../../ dict.cc
+	genreflex $(SRCDIR)/classes.h -s $(SRCDIR)/classes_def.xml -o $(BINDIR)/dict.cc --deep --fail_on_warnings --rootmap=$(BINDIR)/dict.rootmap --rootmap-lib=libChargedHiggs.so -I interface/
+	$(GCC) -c -o $(BINDIR)/dict.o $(CXXFLAGS) $(RPATH) -I interface $(BINDIR)/dict.cc
+	#cd $(BINDIR) && rootcint -v4 -f dict.cc -c -I../../ -I../  $(HPPLINKDEF)  ../interface/LinkDef.hpp 
+	#cd $(BINDIR) && $(GCC) -c -o dict.o $(CXXFLAGS) $(RPATH) -I../../ dict.cc
 
 $(BINDIR):
 	mkdir -p $(BINDIR)

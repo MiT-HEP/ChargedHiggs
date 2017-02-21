@@ -51,6 +51,7 @@ int LoadNero::InitTree(){
 
     // Set Extra: Extend, match ...
     bare_[ names_ ["BareTaus"] ] -> SetExtend();
+    bare_[ names_ ["BarePhotons"] ] -> SetExtend();
     dynamic_cast<BareTaus*> (bare_[ names_ ["BareTaus"] ])  -> SetMatch();
 
     for (auto b : bare_ )
@@ -131,6 +132,10 @@ void LoadNero::FillJets(){
             cout <<"\t\t * mother :"<<bj->motherPdgId ->size()<<endl;
             cout <<"\t\t * gr mother:"<<  bj-> grMotherPdgId -> size()<<endl;
             cout <<"\t\t * puId :"<<  bj -> puId -> size() <<endl;
+
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Pt() <<endl;
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Phi() <<endl;
         }
 #endif
 //
@@ -201,25 +206,43 @@ void LoadNero::FillLeptons(){
     for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
     {
         bool id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepLoose;
-        //if (not id) continue;
+        if (not id) continue;
         Lepton *l = new Lepton();
-        l-> type = abs((*bl->pdgId)[iL]);
+        l-> SetType( abs((*bl->pdgId)[iL]) );
         //l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
         TLorentzVector lp4= *(TLorentzVector*) ((*bl->p4)[iL]);
+
         #warning Using Electrons MiniAOD P4 as is w/o corrections
-        if (l->type == 11) {
+        if (l->GetType() == 11) {
             lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
         }
-        l-> iso = ( (*bl->iso) [iL]);
-        l-> miniIso = ( (*bl->miniIso) [iL]);
+
+        l-> SetIso ( (*bl->iso) [iL]) ;
+        l-> SetMva ( (*bl->mva) [iL]);
+        if(tree_->GetBranchStatus("lepMiniIso")) {
+            l-> SetMiniIso  ( (*bl->miniIso) [iL]);
+        } else {
+            l-> SetMiniIso  ( -999 );
+        }
+
         #warning ELE DELTA BETA
-        if (l->type == 11) {
-            l->iso = ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
+        if (l->GetType() == 11) {
+            l->SetIso ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
         }
         l-> SetP4( lp4 );
         //l-> iso = ((*bl->iso) [iL])/(l->Pt());
-        l-> charge = ((*bl->pdgId)[iL] >0) ?  -1: 1; 
-        l-> tightId = ( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight); 
+        l-> SetCharge (((*bl->pdgId)[iL] >0) ?  -1: 1 ); 
+        l-> SetTightId (( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight)); 
+        l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepMedium));
+        if (event_->IsRealData() and event_->runNum() <= 278801 and l->GetType() == 13) // B->F(HIP)
+        {
+            l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::MuMediumB2F) );
+        }
+        //if (event_->IsRealData() and event_->runNum() >= 278802) // F->G (HIP_FIXED)
+        //
+        l-> SetPfPt  ( (*bl->lepPfPt) [iL]);
+        l-> SetR9    ( (*bl->r9) [iL]);
+        l-> SetEtaSC ( (*bl->etaSC) [iL]);
 
 #ifdef VERBOSE
         if(VERBOSE>1) cout<<"[LoadNero]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;
@@ -283,19 +306,19 @@ void LoadNero::FillTaus(){
 #endif
         Tau *t = new Tau();
         t->SetP4( *(TLorentzVector*) ((*bt->p4)[iL]) );
-        t-> iso = (*bt->iso) [iL];
-        t-> charge = bt -> Q -> at(iL);
-        t-> type = 15;
-        t-> id =  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs;
+        t-> SetIso ((*bt->iso) [iL] );
+        t-> SetCharge( bt -> Q -> at(iL) );
+        t-> SetType( 15 );
+        t-> SetId  ((bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs );
         t-> SetOldId(  (bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFinding ) ;
-        t-> iso2 = bt -> isoDeltaBetaCorr -> at(iL);
+        t-> SetIso2 ( bt -> isoDeltaBetaCorr -> at(iL) );
         //t-> iso2 = bt -> isoMva -> at(iL);
         //t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleMedium ; 
-        t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleTight ; 
-        t-> id_mu = ( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose; 
-        t-> match = bt -> match -> at(iL);
+        t-> SetIdEle( (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleTight ); 
+        t-> SetIdMu (( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose ); 
+        t-> SetMatch( bt -> match -> at(iL) );
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
-        t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byLooseCombinedIsolationDeltaBetaCorr3Hits); 
+        t-> SetIdIso (( bt -> selBits -> at(iL) ) & (BareTaus::byLooseCombinedIsolationDeltaBetaCorr3Hits) ); 
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumIsolationMVArun2v1DBoldDMwLT); 
         if(bt->leadTrackPt->size() >iL ) t->SetTrackPt( bt->leadTrackPt -> at(iL) ) ;
         else LogN(__FUNCTION__,"WARNING","Lead Track PT not filled",30);
@@ -375,10 +398,10 @@ void LoadNero::FillMet(){
         Log(__FUNCTION__,"ERROR",string("MET should have exactly 1 entry instead of") + Form("%u",met->p4->GetEntries()) );
 
     //event_ -> met_ . SetP4 ( * met -> pfMet_e3p0 ) ;
-#ifdef VERBOSE
-    if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size()<<endl;
-    if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
-#endif
+    // #ifdef VERBOSE
+    //     if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtUp ==1: "<<met-> ptJESUP -> size()<<endl;
+    //     if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
+    // #endif
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
@@ -501,7 +524,12 @@ void LoadNero::FillMC(){
     BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["BareMonteCarlo"]]);
 
     event_ -> GetWeight() -> SetMcWeight(  mc->mcWeight );
-    event_ -> SetGenTtbarId( mc->genTtbarId );
+
+    if(tree_->GetBranchStatus("genTtbarId")) {
+        event_ -> SetGenTtbarId( mc->genTtbarId );
+    } else {
+        event_ -> SetGenTtbarId( -999 );
+    }
 
     if (tree_->GetBranchStatus("r1f2") )  // after setmcw, because it will reset the status of the scales
     {

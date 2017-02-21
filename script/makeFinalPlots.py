@@ -12,8 +12,8 @@ parser.add_option("","--ewk",type='string',help="Input ROOT file for ewk. Set Nu
 parser.add_option("","--ewklumi",type='float',help="EWK Luminosity pb. [%default]", default=2308)
 parser.add_option("-b","--batch",action='store_true',help="Batch [%default]",default=True)
 parser.add_option("-x","--no-batch",dest='batch',action='store_false',help="non batch")
-parser.add_option("-v","--var",dest='var',type="string",help="variable",default="Mt")
-parser.add_option("-d","--dir",dest='dir',type="string",help="directory",default="Vars")
+parser.add_option("-v","--var",dest='var',type="string",help="variable [%default]",default="Mt")
+parser.add_option("-d","--dir",dest='dir',type="string",help="directory [%default]",default="Vars")
 
 extra = OptionGroup(parser,"Extra options:","")
 extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=1000)
@@ -547,7 +547,13 @@ for mc in drawList:
 print "BKG",h_bkg.GetBinContent(1)
 
 #h_data.Draw("AXIS SAME")
-st.GetXaxis().SetTitle("m_{T} [GeV]")
+if opts.var == "Mt":
+	st.GetXaxis().SetTitle("m_{T} [GeV]")
+elif opts.var == "EtMiss":
+	st.GetXaxis().SetTitle("E_{T}^{miss} [GeV]")
+else:
+	st.GetXaxis().SetTitle(opts.var)
+
 st.GetXaxis().SetTitleOffset(1.4)
 st.GetXaxis().SetRangeUser(0,500)
 st.GetYaxis().SetRangeUser(0,1000)
@@ -571,7 +577,7 @@ txt.SetNDC()
 txt.SetTextFont(43)
 txt.SetTextSize(20)
 txt.SetTextAlign(31)
-txt.DrawLatex(.95,.96,"2.2 fb^{-1} (13 TeV)")
+txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(opts.lumi/1000.)))
 
 txt.SetTextSize(30)
 txt.SetTextAlign(13)

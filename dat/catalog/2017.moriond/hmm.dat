@@ -1,0 +1,32 @@
+sub=amariniUser|/store/user/amarini/Nero/v2.2
+
+###########
+### 120 ###
+###########
+
+addfiles=%(amariniUser)s/GluGlu_HToMuMu_M120_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/VBF_HToMuMu_M120_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/WMinusH_HToMuMu_M120_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/WPlusH_HToMuMu_M120_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/ZH_HToMuMu_M120_13TeV_powheg_pythia8
+
+###########
+### 125 ###
+###########
+
+addfiles=%(amariniUser)s/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/VBF_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/WMinusH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/WPlusH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/ZH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/ttH_HToMuMu_M125
+
+###########
+### 130 ###
+###########
+
+addfiles=%(amariniUser)s/GluGlu_HToMuMu_M130_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/VBF_HToMuMu_M130_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/WMinusH_HToMuMu_M130_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/WPlusH_HToMuMu_M130_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/ZH_HToMuMu_M130_13TeV_powheg_pythia8

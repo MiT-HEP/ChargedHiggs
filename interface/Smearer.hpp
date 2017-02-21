@@ -28,6 +28,7 @@ class SmearBase : public Named {
         virtual void inline SetSyst(int s){syst_=s;}
         // ---
         virtual int smear(Event *e){return 0;}; // 0 = success; 1 not applicable to the event
+        virtual int smear(CorrectorBase *c){return 0;}; // 0 = success; 1 not applicable to the event
         virtual inline vector<Jet*> &GetJets(Event *e){return e->jets_;}
         virtual inline vector<Tau*> &GetTaus(Event *e){return e->taus_;}
         virtual inline Met &GetMet(Event *e){return e->met_;}
@@ -37,28 +38,28 @@ class SmearLepSF : virtual public SmearBase
 {
     public:
         SmearLepSF() :SmearBase(){ Log(__FUNCTION__,"WARNING","Obsolete. Use SmearSF");name_= "LEPSF";}
-        virtual int smear(Event *e);
+        int smear(Event *e) override;
 };
 
 class SmearJes : virtual public SmearBase
 {
     public:
         SmearJes() : SmearBase(){ name_ = "JES";}
-        virtual int smear(Event*e);	
+        int smear(Event*e) override;	
 };
 
 class SmearTauScale : virtual public SmearBase
 {
     public:
         SmearTauScale() : SmearBase(){ name_ = "TAUSCALE";}
-        virtual int smear(Event*e);	
+        int smear(Event*e) override;	
 };
 
 class SmearJer:virtual public SmearBase
 {
     public:
         SmearJer() : SmearBase(){ name_ = "JER";}
-        virtual int smear(Event*e);	
+        int smear(Event*e) override;	
 
 };
 
@@ -66,7 +67,7 @@ class SmearUncluster : virtual public SmearBase
 {
     public:
         SmearUncluster() : SmearBase(){ name_ = "UNCLUSTER";}
-        virtual int smear(Event*e);	
+        int smear(Event*e) override;	
 };
 
 class SmearSF : virtual public SmearBase
@@ -75,14 +76,14 @@ class SmearSF : virtual public SmearBase
     public:
         SmearSF() :SmearBase(){ name_= "SF";}
         SmearSF(string name,string sf) :SmearBase(){ name_= name; sfname_=sf;}
-        virtual int smear(Event *e);
+        int smear(Event *e) override;
 };
 
 class SmearPu : virtual public SmearBase
 {
     public:
         SmearPu() : SmearBase(){ name_ = "PU";}
-        virtual int smear(Event*e);	
+        int smear(Event*e) override;	
 };
 
 class SmearScales : virtual public SmearBase
@@ -97,7 +98,7 @@ class SmearScales : virtual public SmearBase
     public: 
         SmearScales() : SmearBase(){ name_="Scale";}
         SmearScales(string name, bool ren, bool fac) : SmearBase(){ name_=name;doRen=ren,doFac=fac;}
-        virtual int smear(Event*e);	
+        int smear(Event*e) override;	
 };
 
 class SmearPdfs : virtual public SmearBase
@@ -111,8 +112,8 @@ class SmearPdfs : virtual public SmearBase
     public: 
         SmearPdfs() : SmearBase(){ name_="Pdf";num_=0;}
         SmearPdfs(int num) : SmearBase(){num_=num; name_="Pdf";}
-        const inline string name() const { return  name_ + Form("%d",GetPos());}
-        virtual int smear(Event*e);	
+        const inline string name() const override { return  name_ + Form("%d",GetPos());}
+        int smear(Event*e) override;	
 };
 
 class SmearBjets : virtual public SmearBase
@@ -125,7 +126,7 @@ class SmearBjets : virtual public SmearBase
         SmearBjets(){}
         SmearBjets(bool bjets, bool udsc,string sf){ doL=udsc; doB=bjets; name_= string("BTAG") + ((doB)?"B":"") + ((doL)?"L":""); sfname_=sf;}
         ~SmearBjets(){}
-        virtual int smear(Event*e);	
+        int smear(Event*e) override;	
         const string sfname(){ return sfname_ ;}
 
 };
