@@ -213,7 +213,7 @@ void LoadNero::FillLeptons(){
         l-> iso = ( (*bl->iso) [iL]);
         l-> mva = ( (*bl->mva) [iL]);
 
-        if(tree_->GetBranchStatus("miniIso")) {
+        if(tree_->GetBranchStatus("lepMiniIso")) {
             l-> miniIso = ( (*bl->miniIso) [iL]);
         } else {
             l-> miniIso = -999;
