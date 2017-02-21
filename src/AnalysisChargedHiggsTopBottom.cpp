@@ -131,7 +131,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     if (category.find("_2Ele")   !=string::npos) SetTreeVar("lep_category",4);
     if (category.find("_1Mu1Ele")!=string::npos) SetTreeVar("lep_category",5);
 
-    int triggerMap=2*passTriggerMu + 20*passTriggerEle + 200*passTriggerMuMu + 2000*passTriggerMuEle + 20000*passTriggerEleEle ;
+    int triggerMap=1*passTriggerMu + 10*passTriggerEle + 100*passTriggerMuMu + 1000*passTriggerMuEle + 10000*passTriggerEleEle ;
 
     SetTreeVar("passTrigger",triggerMap);
 
@@ -806,9 +806,11 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonEta_"+l,"LeptonEta "+l + ";#eta (lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+l,"LeptonPt "+l + ";p_{T}^{lepton} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+l,"LeptonIso "+l + ";iso (lepton) [GeV]",50,0.,50.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+l,"LeptonMva "+l + ";mva (lepton)",50,0.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+l,"LeptonTrailEta "+l + ";#eta (lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+l,"LeptonTrailPt "+l + ";p_{T}^{lepton} [GeV]",50,0.,200.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+l,"LeptonTrailIso "+l + ";iso (lepton) [GeV]",50,0.,50.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+l,"LeptonTrailMva "+l + ";mva (lepton)",50,0.,50.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+l,"Mt "+l+";M_{T} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Met_"+l,"Met "+l+";MET [GeV]",50,0.,1000.);
 
@@ -1321,6 +1323,7 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+label,systname,leadLep->Pt(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonEta_"+label,systname,leadLep->Eta(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+label,systname,leadLep->Isolation(),e->weight());
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+label,systname,leadLep->Mva(),e->weight());
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/ptW_"+label,systname, (e->GetMet().GetP4()+leadLep->GetP4()).Pt(), e->weight() );
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+label,systname, evt_MT, e->weight() );
@@ -1351,6 +1354,7 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+label,systname,trailLep->Pt(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+label,systname,trailLep->Eta(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+label,systname,trailLep->Isolation(),e->weight());
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+label,systname,trailLep->Mva(),e->weight());
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MT2ll_"+label, systname, evt_MT2ll , e->weight() );
 
@@ -1613,6 +1617,7 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
     //        if(e->GetName().find("SingleElectron")!=string::npos and e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger" << std::endl;
     //        if(e->GetName().find("SingleMuon")!=string::npos and (e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger" << std::endl;
     std::cout << " Nleps(pt>10, eta<2.4, miniRelIso<0.1)=" << e->Nleps() << std::endl;
+    std::cout << " leadLep " << leadLep << std::endl;
     if(leadLep != NULL) {
         std::cout << " leadLep->Pt()=" << leadLep->Pt();
         std::cout << " leadLep->Eta()=" << leadLep->Eta();
@@ -1620,6 +1625,7 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
         std::cout << " leadLep->Isolation()=" << leadLep->Isolation();
         std::cout << " leadLep->Isolation()/leadLep->Pt()=" << leadLep->Isolation()/leadLep->Pt();
         std::cout << " leadLep->MiniIsolation()=" << leadLep->MiniIsolation();
+        std::cout << " leadLep->Mva()=" << leadLep->Mva();
         std::cout << " leadLep->IsMuon()=" << leadLep->IsMuon() << " leadLep->IsElectron()=" << leadLep->IsElectron();
         std::cout << " " << std::endl;
     }
@@ -1769,15 +1775,17 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"));
         //        passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v"));
         //        passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele30_WPTight_Gsf_v"));
-        passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10"));
+        passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v"));
 
         passTriggerMuEle=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v") or
-                          e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or
+                          e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v") or e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v") or
+                          e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or
                           e->IsTriggered("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") or e->IsTriggered("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") or
                           e->IsTriggered("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") or e->IsTriggered("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
                           );
 
-        passTriggerEleEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or
+        passTriggerEleEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or
+                           e->IsTriggered("HLT_Photon165_HE10") or
                            e->IsTriggered("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")
                            );
 
@@ -1794,7 +1802,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")); // added later, Julie
         //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele30_WPTight_Gsf_v")); //Ele27_WPTight exist in runC
         //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // asked Dominick , used in stop
-        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v")); // for the moment in the v2.0 tag
+        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // asked Dominick , used in stop
+        //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v")); // for the moment in the v2.0 tag
     }
 
     if(doICHEP) {
@@ -1860,6 +1869,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////// --> 1l analysis
     if((do1lAnalysis or doTaulAnalysis) && leadLep!=NULL) {
 
+        // MARIA temporary commentig triggers
+        //        bool onemu=(leadLep->IsMuon());
+        //        bool oneele=(leadLep->IsElectron() and fabs(leadLep->Eta())<2.1);
+
         bool onemu=(leadLep->IsMuon() and passTriggerMu);
         bool oneele=(leadLep->IsElectron() and fabs(leadLep->Eta())<2.1 and passTriggerEle);
 
@@ -1890,6 +1903,13 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     ////// --> 2l analysis
     if((do2lAnalysis or doTaulAnalysis) and leadLep!=NULL and trailLep!=NULL) {
+
+        // MARIA temporary commentig triggers
+        //        bool twomu=(leadLep->IsMuon() and trailLep->IsMuon());
+        //        bool twoele=(leadLep->IsElectron() and trailLep->IsElectron() and fabs(leadLep->Eta())<2.1);
+        //        bool onemuoneele=(((leadLep->IsElectron() and trailLep->IsMuon()) ||
+        //                           (trailLep->IsElectron() and leadLep->IsMuon()) ));
+
 
         bool twomu=(leadLep->IsMuon() and trailLep->IsMuon() and passTriggerMu);
         bool twoele=(leadLep->IsElectron() and trailLep->IsElectron() and fabs(leadLep->Eta())<2.1 and passTriggerEle);
