@@ -9,6 +9,13 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
     l->SetTightCut(true);
     l->SetMediumCut(false);
 }
+void HmumuAnalysis::SetJetCuts(Jet *j) { 
+    j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535 
+    j->SetEtaCut(4.7); 
+    j->SetEtaCutCentral(2.5); 
+    j->SetPtCut(30); 
+    j->SetPuIdCut(-999);
+}
 
 string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets){
     // return the right category
@@ -53,8 +60,15 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
         if (mjj > 250 and Hmm.Pt() >50 )  isTightGF = true;
     }
 
+    int nbjets=0;
+    for(unsigned i=0;i<jets.size() ;++i)
+    {
+        if (jets[i]->IsBJet() and jets[i]->Pt() >30 and abs(jets[i]->Eta())<2.5)  nbjets +=1;
+    }
+
     string vbfStr="";
     if (isTightVbf ) vbfStr = "VBF0";
+    else if (nbjets >0 ) vbfStr="OneB";
     else if (isTightGF) vbfStr = "GF";
     else if (isVbf) vbfStr = "VBF1";
     else vbfStr = "Untag";
@@ -65,7 +79,7 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
 void HmumuAnalysis::Init(){
     // define categories -- for booking histos
     vector< string> mu_cats{"BB","BO","BE","OO","OE","EE"};
-    vector<string> vbf_cats{"VBF0","GF","VBF1","Untag"};
+    vector<string> vbf_cats{"VBF0","GF","VBF1","OneB","Untag"};
 
     for( const auto & m : mu_cats)
     for( const auto & v : vbf_cats)
@@ -81,7 +95,7 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
         for(const auto & c : categories_)
         {
-	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
+	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 1440,60,150);
         }
     }
 
@@ -107,6 +121,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     }
 
     string category = Category(mu0, mu1, selectedJets);
+    e->ApplyBTagSF(1); //0 loose, 1 medium, 2 tight
 
     // Truth
     GenParticle *genmu0=NULL; GenParticle *genmu1=NULL;
