@@ -206,17 +206,25 @@ void LoadNero::FillLeptons(){
     for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
     {
         bool id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepLoose;
-        //if (not id) continue;
+        if (not id) continue;
         Lepton *l = new Lepton();
         l-> SetType( abs((*bl->pdgId)[iL]) );
         //l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
         TLorentzVector lp4= *(TLorentzVector*) ((*bl->p4)[iL]);
-        //#warning Using Electrons MiniAOD P4 as is w/o corrections
-        //if (l->type == 11) {
-        //    lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
-        //}
+
+        #warning Using Electrons MiniAOD P4 as is w/o corrections
+        if (l->GetType() == 11) {
+            lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
+        }
+
         l-> SetIso ( (*bl->iso) [iL]) ;
-        l-> SetMiniIso  ( (*bl->miniIso) [iL]);
+        l-> SetMva ( (*bl->mva) [iL]);
+        if(tree_->GetBranchStatus("lepMiniIso")) {
+            l-> SetMiniIso  ( (*bl->miniIso) [iL]);
+        } else {
+            l-> SetMiniIso  ( -999 );
+        }
+
         #warning ELE DELTA BETA
         if (l->GetType() == 11) {
             l->SetIso ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
@@ -516,7 +524,12 @@ void LoadNero::FillMC(){
     BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["BareMonteCarlo"]]);
 
     event_ -> GetWeight() -> SetMcWeight(  mc->mcWeight );
-    event_ -> SetGenTtbarId( mc->genTtbarId );
+
+    if(tree_->GetBranchStatus("genTtbarId")) {
+        event_ -> SetGenTtbarId( mc->genTtbarId );
+    } else {
+        event_ -> SetGenTtbarId( -999 );
+    }
 
     if (tree_->GetBranchStatus("r1f2") )  // after setmcw, because it will reset the status of the scales
     {

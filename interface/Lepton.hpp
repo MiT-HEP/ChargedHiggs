@@ -20,6 +20,7 @@ class Lepton : virtual public Object,
         int type {11};// abspdgid 11 o 13 
         int tightId {0};
         int mediumId {0};
+        float mva{-1}; // mva
 
         // ele specific
         float pfPt_{0}; // w/o scale and smears for ele, pf pt for muons
@@ -53,6 +54,7 @@ class Lepton : virtual public Object,
         inline void SetCharge(int x){charge=x;}
         inline void SetTightId( bool x=true){tightId=x;}
         inline void SetMediumId( bool x=true){mediumId=x;}
+        inline void SetMva(int x){mva=x;}
 
 
         inline float GetIsoCut()const {return isocut_;}
@@ -100,6 +102,7 @@ class Lepton : virtual public Object,
         inline int   IsObject() const override {return IsLep();} // TODO, const, check that nothing broke
         virtual inline float Isolation() const { return iso; } 
         virtual inline float MiniIsolation() const { return miniIso; }
+        inline float Mva() const { return mva; }
 
         // these functions are used in order to avoid the lep checks
         virtual inline bool IsElectronDirty() const { return type == 11; }
