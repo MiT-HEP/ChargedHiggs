@@ -1,4 +1,4 @@
-sub=ceballosHigData|/store/group/phys_higgs/ceballos/RerecoData_v1/Data/Nero/v2.0/
+sub=ceballosHigData|/store/group/phys_higgs/ceballos/Data/Nero/v2.2/
 
 addfiles=%(ceballosHigData)s/SingleMuon/
 
