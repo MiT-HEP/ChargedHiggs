@@ -64,6 +64,13 @@ if opts.dat != "":
 		print "IGNORING eos option! don't put it with dat (-i) option"
 	from ParseDat import *
 	cfg = ParseDat(opts.dat)
+
+	print "* reading already parsed mcdb"
+	try:
+		mcdb= ReadMCDB(cfg['MCDB'])
+	except KeyError:
+		mcdb={}
+
 	for f in cfg['Files']:
 		#this are the datasets
 		if '.root' in f : continue
@@ -78,10 +85,17 @@ if opts.dat != "":
 			else:
 				break
 		if idx <0: label = re.sub('.*/','',f)
-
+		
 		if label == 'Tau': continue # exclude data
+		if label == 'SingleMuon': continue # exclude data
+		if label == 'SingleElectron': continue # exclude data
+		if label == 'DoubleMuon': continue # exclude data
+		if label == 'DoubleElectron': continue # exclude data
 
 		cmd = "python %s -e %s -x %f -l %s -f %s"%(sys.argv[0],f,opts.xsec,label,opts.file)
+		if label in mcdb:
+			print "* label", label, "already parsed. Cmd was:"
+			print "  ",cmd
 		print "going to execute",cmd
 		call(cmd,shell=True)
 	exit(0)

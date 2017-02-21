@@ -12,7 +12,8 @@ include=dat/catalog/2017.moriond/st.dat
 ## Drell-Yan
 include=dat/catalog/2017.moriond/dy.dat
 ## Wjets
-include=dat/catalog/2017.moriond/wjets.dat
+#include=dat/catalog/2017.moriond/wjets.dat
+include=dat/catalog/2017.moriond/wjets_ht.dat
 ## DIBOSON
 include=dat/catalog/2017.moriond/vv.dat
 
