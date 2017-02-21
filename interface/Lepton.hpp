@@ -33,7 +33,6 @@ class Lepton : virtual public Object,
         inline float GetIsoRelCut() const { return isorelcut_;}
         inline float GetMiniIsoRelCut() const { return miniisorelcut_;}
         inline bool  GetTightCut() const { return tightcut_;}
-        inline int Charge() const { return charge; }
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;
@@ -51,6 +50,7 @@ class Lepton : virtual public Object,
 
         float iso; // isolation 
         float miniIso; // mini-isolation
+        float mva; // mva
         int charge; // charge +1 -1
         int type;// abspdgid 11 o 13 
         int tightId;
@@ -71,6 +71,8 @@ class Lepton : virtual public Object,
         inline int   IsObject() const override {return IsLep();} // TODO, const, check that nothing broke
         virtual inline float Isolation() const { return iso; } 
         virtual inline float MiniIsolation() const { return miniIso; }
+        inline int Charge() const { return charge; }
+        inline float Mva() const { return mva; }
 
         // these functions are used in order to avoid the lep checks
         virtual inline bool IsElectronDirty() const { return type == 11; }

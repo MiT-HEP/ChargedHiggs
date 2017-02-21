@@ -211,6 +211,7 @@ void LoadNero::FillLeptons(){
             lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
         }
         l-> iso = ( (*bl->iso) [iL]);
+        l-> mva = ( (*bl->mva) [iL]);
 
         if(tree_->GetBranchStatus("miniIso")) {
             l-> miniIso = ( (*bl->miniIso) [iL]);
