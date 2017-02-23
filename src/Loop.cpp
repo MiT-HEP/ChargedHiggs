@@ -153,7 +153,10 @@ void Looper::Loop()
 					s->smear(event_);
 					//do the corrections on top
 					for(auto& c : correctors_)
+					{
+						s->smear(c);
 						c->correct(event_);
+					}
 
 					//do the analysis
 					for(auto a : analysis_)
@@ -168,7 +171,9 @@ void Looper::Loop()
 						if ( a->doAnalyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
 					}
 				}
+				// necessary for corrector smearer!
 				s->SetSyst(0); // not necessary, but cleaner in this way
+
 			}
 		}
 	}
@@ -283,6 +288,7 @@ void Looper::NewFile()
 
 	// Dumper
 	dump_ -> NewFile( event_-> GetWeight() -> GetMC() ) ;
+	dump_ -> TriggerNames(event_->triggerNames_);
 
 	if (dynamic_cast<LoadNero*>(loader_) != NULL)
 		dump_ -> InitTree(dynamic_cast<LoadNero*>(loader_)->GetBare());

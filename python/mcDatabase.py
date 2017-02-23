@@ -46,6 +46,8 @@ if opts.rec:
 			label = dirs[idx]
 			if re.match( '^[0-9_\-]*$',label): 
 				idx -= 1
+			elif re.match( 'PUMoriond17',label) and '_' not in label:  ## avoid also  PU submissions
+				idx -= 1
 			else:
 				break
 		if idx <0: label = re.sub('.*/','',dir)
@@ -62,6 +64,13 @@ if opts.dat != "":
 		print "IGNORING eos option! don't put it with dat (-i) option"
 	from ParseDat import *
 	cfg = ParseDat(opts.dat)
+
+	print "* reading already parsed mcdb"
+	try:
+		mcdb= ReadMCDB(cfg['MCDB'])
+	except KeyError:
+		mcdb={}
+
 	for f in cfg['Files']:
 		#this are the datasets
 		if '.root' in f : continue
@@ -76,10 +85,17 @@ if opts.dat != "":
 			else:
 				break
 		if idx <0: label = re.sub('.*/','',f)
-
+		
 		if label == 'Tau': continue # exclude data
+		if label == 'SingleMuon': continue # exclude data
+		if label == 'SingleElectron': continue # exclude data
+		if label == 'DoubleMuon': continue # exclude data
+		if label == 'DoubleElectron': continue # exclude data
 
 		cmd = "python %s -e %s -x %f -l %s -f %s"%(sys.argv[0],f,opts.xsec,label,opts.file)
+		if label in mcdb:
+			print "* label", label, "already parsed. Cmd was:"
+			print "  ",cmd
 		print "going to execute",cmd
 		call(cmd,shell=True)
 	exit(0)
@@ -181,6 +197,8 @@ else:
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-500' in opts.label: xsec=1
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-220' in opts.label: xsec=1
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=1
+	### H-> mumu
+	elif 'HToMuMu' in opts.label: xsec=1
 	### TT
 	elif 'TT' in opts.label: xsec=831
 	## ST

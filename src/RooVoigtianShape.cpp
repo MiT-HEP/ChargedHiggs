@@ -9,7 +9,7 @@
 #include "RooMath.h"
 #include "TMath.h"
 
-//ClassImp(RooVoigtianShape);
+ClassImp(RooVoigtianShape);
 
 
 //_____________________________________________________________________________

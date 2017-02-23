@@ -27,7 +27,15 @@ class Tau: virtual public Object,
     bool oldId{0};
 
     int selectdecay_{-1};
+    // 
     TLorentzVector pp4;
+
+    bool id;
+    float iso2;
+    bool id_ele =0;
+    bool id_mu =0 ;
+    bool id_iso = 0 ; // iso switch for isolation. In miniAOD they include more
+    int match ; // is matched with a gen tau
 
 
     public:
@@ -37,6 +45,13 @@ class Tau: virtual public Object,
     void inline SetEtaCut(const float& x){etacut_=x;}
     void inline SetProngsCut(const int& x){selectprongs_=x;}
     void inline SetDecayMode(const int& x){selectdecay_=x;} // 0=NEW, 1=OLD
+    void inline SetIso2(const float&x ) {iso2=x;}
+    void inline SetId( const int&x) {id=x;}
+    void inline SetIdEle( const int&x) {id_ele=x;}
+    void inline SetIdMu( const int&x) {id_mu=x;}
+    void inline SetIdIso( const int&x) {id_iso=x;}
+    void inline SetMatch(const int&x){match=x;}
+
 
     void inline SetMuRej(bool x ) { doMuRej_ = x;}
     void inline SetEleRej(bool x ) { doEleRej_ = x;}
@@ -45,6 +60,7 @@ class Tau: virtual public Object,
 
     int inline GetNProng() const { return nprong;}
     int inline GetNPiZero() const { return npizero;}
+    float inline GetIso2() const { return iso2;}
 
     inline TLorentzVector & GetP4() override {
         if (syst == 0) return p4;
@@ -59,12 +75,6 @@ class Tau: virtual public Object,
     }
 
     Tau() ;
-    bool id;
-    float iso2;
-    bool id_ele =0;
-    bool id_mu =0 ;
-    bool id_iso = 0 ; // iso switch for isolation. In miniAOD they include more
-    int match ; // is matched with a gen tau
 
     virtual int IsTau() const ;
     virtual int IsTauInvIso() const ;

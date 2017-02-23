@@ -1,4 +1,5 @@
-Files=/store/user/amarini/Nero/v1.3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#Files=/store/user/amarini/Nero/v2.2/GluGlu_HToMuMu_M120_13TeV_powheg_pythia8/GluGlu_HToMuMu_M120
+Files=/store/group/phys_higgs/ceballos/Nero/v2.2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8
 
 Dump=yes
 DumpDir=/afs/cern.ch/user/a/amarini/work/Flat/
@@ -11,10 +12,11 @@ pileupRun=
 pileupLumi=
 Lumi=1
 
-MCDB=dat/mc_database.txt
 SFDB=aux/sf_database.txt
+MCDB=aux/mcdb.TauNu.2017.dat
+pileup=aux/pileup.TauNu.moriond.root
+
 Branches=dat/branches.txt
-pileup=aux/pileup.root
 
 Analysis=AnalysisBase
 Output=XXX.root

@@ -1,9 +1,9 @@
 #include "interface/CatSelector.hpp"
 #include "interface/CutSelector.hpp"
 
-void CatSelector::SetBoundary(string name,int cat , float value)
+void CatSelector::SetBoundary(string name,int cat , float value,bool less)
 {
-    boundaries_[ make_pair(name,cat) ] = value; 
+    boundaries_[ make_pair(name,cat) ] = pair<float,bool>(value,less); 
     if( cat >= nCat ) nCat= cat+1;
 };
 
@@ -15,9 +15,15 @@ int CatSelector::computeCat(){
     {
         const string& name = b.first.first;
         const int& cat = b.first.second;
-        const float& bound= b.second;
+        const float& bound= b.second.first;
+        const bool & less = b.second.second;
         float myval = * (float*) varvalues_.GetPointer(name);
-        if (myval < bound) // WARNING-> cat are defined >=
+        if (myval < bound and not less) // WARNING-> cat are defined >=
+        {
+            sel.UnSetCutBit(cat); 
+        }
+
+        if (myval > bound and less) // WARNING-> cat are defined <=
         {
             sel.UnSetCutBit(cat); 
         }

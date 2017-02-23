@@ -33,6 +33,8 @@ public:
 
   inline virtual ~RooVoigtianShape() { }
 
+  ClassDef(RooVoigtianShape,1) // Crystal Ball lineshape PDF
+
 protected:
 
 
@@ -47,7 +49,6 @@ protected:
 private:
   Bool_t   _doFast;
   Double_t _invRootPi;
-//  ClassDef(RooVoigtianShape,1) // Crystal Ball lineshape PDF
 };
 
 #endif
