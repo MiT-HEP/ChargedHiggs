@@ -254,10 +254,22 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             SetTreeVar("bFromH_phi",bFromH->Phi());
         }
 
+        if(bFromTopAss!= NULL) {
+            SetTreeVar("bFromTopAss_pt",bFromTopAss->Pt());
+            SetTreeVar("bFromTopAss_eta",bFromTopAss->Eta());
+            SetTreeVar("bFromTopAss_phi",bFromTopAss->Phi());
+        }
+
         if(bFromTopH!= NULL) {
             SetTreeVar("bFromTopH_pt",bFromTopH->Pt());
             SetTreeVar("bFromTopH_eta",bFromTopH->Eta());
             SetTreeVar("bFromTopH_phi",bFromTopH->Phi());
+        }
+
+        if(topFromH!= NULL) {
+            SetTreeVar("topFromH_pt",topFromH->Pt());
+            SetTreeVar("topFromH_eta",topFromH->Eta());
+            SetTreeVar("topFromH_phi",topFromH->Phi());
         }
 
         if(leptonFromTopH!= NULL) {
@@ -265,6 +277,20 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             SetTreeVar("leptonFromTopH_eta",leptonFromTopH->Eta());
             SetTreeVar("leptonFromTopH_phi",leptonFromTopH->Phi());
         }
+
+        if(WFromTopH!= NULL) {
+            SetTreeVar("WFromTopH_pt",WFromTopH->Pt());
+            SetTreeVar("WFromTopH_eta",WFromTopH->Eta());
+            SetTreeVar("WFromTopH_phi",WFromTopH->Phi());
+        }
+
+        if(WFromTopAss!= NULL) {
+            SetTreeVar("WFromTopAss_pt",WFromTopAss->Pt());
+            SetTreeVar("WFromTopAss_eta",WFromTopAss->Eta());
+            SetTreeVar("WFromTopAss_phi",WFromTopAss->Phi());
+        }
+
+
     }
 }
 
@@ -494,6 +520,23 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","leptonFromTopH_pt",'F');
     Branch("tree_tb","leptonFromTopH_phi",'F');
     Branch("tree_tb","leptonFromTopH_eta",'F');
+
+    Branch("tree_tb","WFromTopH_pt",'F');
+    Branch("tree_tb","WFromTopH_phi",'F');
+    Branch("tree_tb","WFromTopH_eta",'F');
+
+    Branch("tree_tb","topFromH_pt",'F');
+    Branch("tree_tb","topFromH_phi",'F');
+    Branch("tree_tb","topFromH_eta",'F');
+
+    Branch("tree_tb","bFromTopAss_pt",'F');
+    Branch("tree_tb","bFromTopAss_phi",'F');
+    Branch("tree_tb","bFromTopAss_eta",'F');
+
+    Branch("tree_tb","WFromTopAss_pt",'F');
+    Branch("tree_tb","WFromTopAss_phi",'F');
+    Branch("tree_tb","WFromTopAss_eta",'F');
+
 
 }
 
@@ -834,7 +877,9 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/NextOverLeadingBPt_"+l,"NextOverLeadingBPt "+l+";P_{T}^{B2}/P_{T}^{B1} [GeV]",50,0,1);
         //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeadingBPt_OverHT_"+l,"LeadingBPt_OverHT "+l+";P_{T}^{B1}/HT [GeV]",50,0,1);
 
-        //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMax_"+l,"DEtaMax "+l+";dEta_{j^{i},b^{1}}^{max}",100,0,10);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+l,"DEtaMaxBB "+l+";dEta_{b^{i},b^{1}}^{max}",100,0,10);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMax_"+l,"DEtaMax "+l+";dEta_{j^{i},j^{1}}^{max}",100,0,10);
+
         // min DRbb
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+l,"minDRbb"+l+";dR_{bb}^{min}",50,0,2*TMath::Pi()); // <-- this has signal discrimination
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+l,"minDRbb_mass "+l+";m(bb)^{dR^{min}})",50,0,500);
@@ -1074,13 +1119,19 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
     if(verbose) cout << "====================================================" << endl;
 
     GenParticle *genW1 = 0, *genW2 = 0, *genH = 0, *genCH = 0, *lep;
-    GenParticle *topFromH = NULL;
     bAss=NULL;
-    bFromTopH=NULL;
-    bFromTopAss=NULL;
     bFromH=NULL;
-    leptonFromTopH=NULL;
+
+    bFromTopAss=NULL;
+    WFromTopAss=NULL;
+
     leptonTopAssH=NULL;
+
+    leptonFromTopH=NULL;
+    topFromH = NULL;
+    bFromTopH=NULL;
+    WFromTopH=NULL;
+
 
     bool rightComb=false;
 
@@ -1123,6 +1174,14 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
     for(Int_t i = 0; i < e->NGenPar(); i++){
         //FIXME: logic ?!?
         GenParticle *genpar = e->GetGenParticle(i);
+
+        if(abs(genpar->GetPdgId()) == 24 and abs(genpar->GetParentPdgId()) == 6) {
+        /// W
+            if(topFromH!=NULL) {
+                if ( topFromH->GetPdgId()*genpar->GetPdgId() ) WFromTopH=genpar;
+                if ( !(topFromH->GetPdgId()*genpar->GetPdgId()) )  WFromTopAss=genpar;
+            }
+        }
 
         if(abs(genpar->GetPdgId()) == 11 or abs(genpar->GetPdgId()) == 13) {
             // lepton in acceptance
@@ -1473,20 +1532,45 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
     //    if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/NextOverLeadingBPt_"+label,systname, e->GetBjet(1)->Pt()/e->GetBjet(0)->Pt() ,e->weight());
     //    if(e->Bjets()>0) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeadingBPt_OverHT_"+label,systname, e->GetBjet(0)->Pt()/evt_HT ,e->weight());
 
-    if(e->Bjets()>0) {
+    if(e->Bjets()>1) {
 
-        double DEtaMax=0.;
+        double DEtaMaxBB=0.;
 
-        for(int i=0;i!=e->Njets();++i) {
-            Jet* jet = e->GetJet(i);
-            Jet * bj1 = e->GetBjet(0);
-            if(bj1->DeltaEta(*jet)>DEtaMax) DEtaMax=bj1->DeltaEta(*jet);
+        for(int i=0;i!=e->Bjets();++i) {
+            Jet* bj = e->GetBjet(i);
+            for(int j=0;j!=e->Bjets();++j) {
+                if (j==i) continue;
+                Jet* bjet = e->GetBjet(j);
+                if(bj->DeltaEta(*bjet)>DEtaMaxBB) DEtaMaxBB=bj->DeltaEta(*bjet);
+
+                //                double dr = bjet->DeltaR(e->GetBjet(j));
+                //                double mass = (bjet->GetP4() + e->GetBjet(j)->GetP4()).M();
+                //                if(dr<minDRbb) { minDRbb=dr; minDRbb_invMass=mass; indexI=i; indexJ=j;}
+                //                if(dr>maxDRbb and i==0) { maxDRbb=dr; maxDRbb_invMass=mass; indexMaxJ=j;}
+            }
         }
 
-        //        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMax_"+label, systname, DEtaMax , e->weight() );
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+label, systname, DEtaMaxBB , e->weight() );
 
     }
 
+    double DEtaMaxJJ=0.;
+
+    for(int i=0;i!=e->Njets();++i) {
+        Jet* lj = e->GetJet(i);
+        for(int j=0;j!=e->Njets();++j) {
+            if (j==i) continue;
+            Jet* jet = e->GetJet(j);
+            if(lj->DeltaEta(*jet)>DEtaMaxJJ) DEtaMaxJJ=lj->DeltaEta(*jet);
+
+            //                double dr = bjet->DeltaR(e->GetBjet(j));
+            //                double mass = (bjet->GetP4() + e->GetBjet(j)->GetP4()).M();
+            //                if(dr<minDRbb) { minDRbb=dr; minDRbb_invMass=mass; indexI=i; indexJ=j;}
+            //                if(dr>maxDRbb and i==0) { maxDRbb=dr; maxDRbb_invMass=mass; indexMaxJ=j;}
+         }
+    }
+
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMax_"+label, systname, DEtaMaxJJ , e->weight() );
 
 
     ///////$$$$$$
@@ -1726,10 +1810,11 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     for(int i=0;i!=e->Nleps();++i) {
         Lepton *it = e->GetLepton(i);
 
-        //        if(it->Pt()<NextLeadingLeptonPt_) continue; // this is always >10
-        if(it->Pt()>LeadingLeptonPt_ and it->IsTight() and leadLep==NULL ) {
+        bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and leadLep==NULL );
+        bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsTight() and leadLep==NULL );
 
-            if(it->IsElectron() and it->Pt()<LeadingLeptonElePt_) continue;
+        if(muon or ele) {
+
             leadLep = it;
             if(it->IsMuon()) mu = it;
             if(it->IsElectron()) ele = it;

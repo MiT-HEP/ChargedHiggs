@@ -122,8 +122,11 @@ private:
     GenParticle * bAss=NULL;
     GenParticle * bFromTopH=NULL;
     GenParticle * bFromTopAss=NULL;
+    GenParticle * topFromH=NULL;
     GenParticle * bFromH=NULL;
     GenParticle * leptonFromTopH=NULL;
+    GenParticle * WFromTopH=NULL;
+    GenParticle * WFromTopAss=NULL;
     GenParticle * leptonTopAssH=NULL;
 
     /////
