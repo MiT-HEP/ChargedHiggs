@@ -1,0 +1,18 @@
+sub=ceballosHig|/store/group/phys_higgs/ceballos/Nero/v2.2/
+sub=zdemiragExoMono|/store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/
+sub=ceballosUser|/store/user/ceballos/Nero/v2.1/
+
+addfiles=%(ceballosHig)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(ceballosHig)s/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+
+#otherwise adding twice
+#addfiles=%(zdemiragExoMono)s/DYJetsToLL_M-50_HT-70to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=%(zdemiragExoMono)s/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=%(zdemiragExoMono)s/DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=%(zdemiragExoMono)s/DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=%(zdemiragExoMono)s/DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=%(zdemiragExoMono)s/DYJetsToLL_M-50_HT-800to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=%(zdemiragExoMono)s/DYJetsToLL_M-50_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=%(zdemiragExoMono)s/DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+
+

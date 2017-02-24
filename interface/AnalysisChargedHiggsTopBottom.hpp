@@ -16,9 +16,22 @@ public:
     virtual ~ChargedHiggsTopBottom () {}
 
     bool doSynch = false;
+    bool doICHEP = false;
+    bool writeTree = true;
+
+    // Analysis type
     bool do1lAnalysis=false;
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
+
+    // trigger bits
+    bool passTriggerMu=true;
+    bool passTriggerEle=true;
+
+    bool passTriggerMuEle=true;
+    bool passTriggerMuMu=true;
+    bool passTriggerEleEle=true;
+
 
     void Init() override;
 
@@ -28,13 +41,17 @@ public:
 
     void BookCutFlow(string l, string category);
     void BookHisto(string l, string category, string phasespace);
+    void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void Preselection();
 
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
+    void classifyHF(Event*e, string label, string category, string systname, string jetname, string SR);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
+
+    void computeVar(Event*e);
 
     void printSynch(Event*e);
 
@@ -51,6 +68,7 @@ public:
     template<class T>
     void SetVariable( string name, T value){ varValues_.Set(name, value); }
     void AddVariable( string name, char type, int r);
+    void AddSpectator( string name, char type, int r);
 
     vector<string> weights;
 

@@ -1,0 +1,85 @@
+##configure Looper
+##### This file store the configuratino to run all the analysis
+##### if you want to make a config file that overwrite some changes just create a new one with the line
+##### Loader=LoadNero
+##### include=dat/config.txt
+##### Files=....,....,...
+
+
+include=dat/config.2017.moriond.dat
+
+Files=
+include=dat/catalog/2017.moriond/ttlep.dat
+include=dat/catalog/2017.moriond/st.dat
+include=dat/catalog/2017.moriond/dy.dat
+include=dat/catalog/2017.moriond/wjets.dat
+include=dat/catalog/2017.moriond/vv.dat
+include=dat/catalog/2017.moriond/rares.dat
+## signal
+include=dat/catalog/2017.moriond/topbottom.dat
+## data
+include=dat/catalog/2017.moriond/singleElecton.dat
+include=dat/catalog/2017.moriond/singleMuon.dat
+
+
+include=dat/topBot.2017.dat
+pileup=aux/pileup.2017.BCDEFGH.root
+
+#__________________________________________________________________
+#____________________ ICHEP SETTINGS _____________________________
+#
+#include=dat/config.2016.dat
+#include=dat/topBot.dat
+
+#Files=
+#include=dat/catalog/2016/vv.dat
+#include=dat/catalog/2016/ttlep.dat
+#include=dat/catalog/2016/st.dat
+#include=dat/catalog/2016/topbottom.dat
+#include=dat/catalog/2016/taunu.dat
+#include=dat/catalog/2016/singleMuon_ICHEP.dat
+#include=dat/catalog/2016/singleElectron_ICHEP.dat
+#include=dat/catalog/2016/dy.dat
+#include=dat/catalog/2016/wjets.dat
+#include=dat/catalog/2016/rares.dat
+
+#pileup=aux/pileup.2016.BCD.root
+
+####
+
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+### Smearer
+
+Smear=NONE
+#Smear=NONE,@SmearUncluster(),@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearPu,@SmearSF("TOPRW"!"topreweight"),JES
+#Smear=NONE,@SmearUncluster(),@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearPu,@SmearSF("TOPRW"!"topreweight"),JES,@SmearSF("muID"!"muIDtight"),@SmearSF("muTRG"!"muTRG"),@SmearSF("muISO"!"muISO"),@SmearSF("muIDloose"!"muIDloose"),@SmearSF("muISOloose"!"muISOloose"),@SmearSF("eleTight"!"eletight"),@SmearSF("eleLoose"!"eleloose")
+#Smear=NONE,JER # this is problematic
+
+################################# ANALYSIS CONFIGURATION ############################
+
+
+Correct=NONE
+#Correct=MetPhiCorrector
+Final=no
+#Final=yes
+
+
+#________________________________________________________________
+#____________________ CONFIGURATION _____________________________
+#
+##########  ANALYSIS  ################
+Analysis=JsonAnalysis,ChargedHiggsTopBottom
+
+#addConfig=ChargedHiggsTopBottom|do1lAnalysis=1,do2lAnalysis=0,doTaulAnalysis=0,doSynch=0
+#Output=ChHiggs_1l.root
+
+addConfig=ChargedHiggsTopBottom|do1lAnalysis=0,do2lAnalysis=1,doTaulAnalysis=0,doSynch=0
+Output=ChHiggs_2l.root
+
+#addConfig=ChargedHiggsTopBottom|do1lAnalysis=0,do2lAnalysis=0,doTaulAnalysis=1,doSynch=0
+#Output=ChHiggs_taul.root
+
+

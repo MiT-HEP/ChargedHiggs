@@ -20,6 +20,7 @@ class Object
         // --- Correctors should use this functions
         void Scale ( float value) { p4 *= value; isCorrect=true;}
         void Add (TLorentzVector&v, float c=1) { p4 += (c*v) ; isCorrect=true;}
+        virtual inline void ResetUncorr() { p4 = p4NoCorr;  isCorrect=false;}
 
     public:
         //---
@@ -40,6 +41,9 @@ class Object
         virtual inline float DeltaPhi(Object &o) const {return fabs( ChargedHiggs::deltaPhi( Phi(), o.Phi()) ); }
         virtual inline TLorentzVector & GetP4(){ return p4;}
         virtual void SetP4(TLorentzVector &x);
+
+        // this is not overwrite with syst
+        inline TLorentzVector & GetP4Dirty(){ return p4;}
 
         double InvMass(Object &o) const  ;
 

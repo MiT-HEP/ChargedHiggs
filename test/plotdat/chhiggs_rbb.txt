@@ -45,7 +45,7 @@ type = add
 file = QCDPurity.root
 obj = ChargedHiggsQCDPurity/NOne/RbbMinIsoInv_Data,ChargedHiggsQCDPurity/NOne/RbbMinIsoInv_TT,ChargedHiggsQCDPurity/NOne/RbbMinIsoInv_DY,ChargedHiggsQCDPurity/NOne/RbbMinIsoInv_WJets,ChargedHiggsQCDPurity/NOne/RbbMinIsoInv_WW,ChargedHiggsQCDPurity/NOne/RbbMinIsoInv_WZ,ChargedHiggsQCDPurity/NOne/RbbMinIsoInv_ZZ,ChargedHiggsQCDPurity/NOne/RbbMinIsoInv_ST
 ### FIXME
-scale = 1.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308.
+scale = 1.,-35867.,-35867.,-35867.,-35867.,-35867.,-35867.,-35867.
 style = line
 fillcolor = ROOT.kOrange
 fillstyle=1000

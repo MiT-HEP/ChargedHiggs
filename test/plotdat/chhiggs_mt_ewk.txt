@@ -59,7 +59,7 @@ type = add
 file = QCDPurity.root
 obj = ChargedHiggsQCDPurity/Vars/MtIsoInv_Data,ChargedHiggsQCDPurity/Vars/MtIsoInv_TT,ChargedHiggsQCDPurity/Vars/MtIsoInv_DY,ChargedHiggsQCDPurity/Vars/MtIsoInv_WJets,ChargedHiggsQCDPurity/Vars/MtIsoInv_WW,ChargedHiggsQCDPurity/Vars/MtIsoInv_WZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ZZ,ChargedHiggsQCDPurity/Vars/MtIsoInv_ST
 #### FIXME
-scale = 1.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308.,-2308
+scale = 1.,-35867.,-35867.,-35867.,-35867.,-35867.,-35867.,-35867
 style = line
 fillcolor = ROOT.kOrange
 fillstyle=1000
@@ -93,7 +93,7 @@ style = line
 styleopt = 2
 color=ROOT.kMagenta
 label= H^{+}~(m=1500GeV)~x10^{2}
-scale=2308e2
+scale=35867e2
 width=2
 
 [embed]

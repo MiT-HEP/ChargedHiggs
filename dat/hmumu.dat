@@ -1,0 +1,24 @@
+
+config=HmumuAnalysis|AddLabel('DY')
+## need to add 125, in order to have different masses
+addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M120')
+addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M130')
+
+addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M120')
+addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M130')
+
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_M120')
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_M130')
+
+addConfig=HmumuAnalysis|AddLabel('WMinusH_HToMuMu_M120')
+addConfig=HmumuAnalysis|AddLabel('WMinusH_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('WMinusH_HToMuMu_M130')
+
+addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M120')
+addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M130')
+
+addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125')

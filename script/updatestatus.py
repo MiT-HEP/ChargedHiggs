@@ -67,7 +67,15 @@ while True:
 		if tot==0 : continue
 		index.write('<tr>\n')
 		index.write('<td>\n')
-		index.write( re.sub(".*/","",dir) + ": \n")
+		name=""
+		idx =  len(dir.split('/')) -1
+		while ('PU' in name or name == "") and idx>=0:
+			name=dir.split('/')[idx]
+			idx-=1
+		if name == "":
+			name = dir.split('/')[-1]
+
+		index.write( name + ": \n")
 		index.write('</td>\n') ## close left
 		## success
 		index.write('<td>\n')

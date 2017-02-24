@@ -1,0 +1,11 @@
+sub=ceballosHigData|/store/group/phys_higgs/ceballos/Data/Nero/v2.2/
+
+addfiles=%(ceballosHigData)s/SingleElectron
+
+#addfiles=%(ceballosHigData)s/SingleElectron/SingleElectron-Run2016B-23Sep2016-v3
+#addfiles=%(ceballosHigData)s/SingleElectron/SingleElectron-Run2016C-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleElectron/SingleElectron-Run2016D-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleElectron/SingleElectron-Run2016E-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleElectron/SingleElectron-Run2016F-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleElectron/SingleElectron-Run2016G-23Sep2016
+#addfiles=%(ceballosHigData)s/SingleElectron/SingleElectron-Run2016H-PromptReco-v2

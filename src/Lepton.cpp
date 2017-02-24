@@ -5,6 +5,7 @@ Lepton::Lepton() : Object() {
     iso =-1;
     miniIso =-1;
     charge = 0 ;
+    mva = -999;
     isocut_ = 0; // this value will ignored
     ptcut_ = 0;
     type=0;

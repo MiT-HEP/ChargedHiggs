@@ -247,12 +247,12 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     // not in the LOOSE --- BTAG SF, only MC
     //#warning no-btag-sf
-    if (not e->IsRealData()) e->ApplyBTagSF(0);// 0=loos wp
+    if (not e->IsRealData()) e->ApplyBTagSF(1);// 0=loos wp
     // -------------------------- FULL SELECTION -----------------------------------------------
     //
     if (t!=NULL and passMatchDirect and not e->IsRealData()) 
     {
-        e->ApplyTauSF(t); 
+        e->ApplyTauSF(t,false,""); 
     }
     
     // N minus one direct

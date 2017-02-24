@@ -15,6 +15,7 @@ jetQglPtDrLog
 lepP4
 lepIso
 lepMiniIso
+lepMva
 lepPdgId
 lepSelBits
 lepPfPt
@@ -29,7 +30,6 @@ tau*
 ### MET
 metP4
 metSyst*
-metPt*
 metPuppi
 ### EVENT
 isRealData
