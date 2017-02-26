@@ -1815,7 +1815,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     for(int i=0;i!=e->Nleps();++i) {
         Lepton *it = e->GetLepton(i);
 
-        bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and leadLep==NULL );
+        bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and (it->Isolation() < 0.15*it->GetP4().Pt()) and leadLep==NULL );
         bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsTight() and leadLep==NULL );
 
         if(muon or ele) {
