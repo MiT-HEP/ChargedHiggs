@@ -5,7 +5,7 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
     l->SetPtCut(10);
     l->SetIsoCut(-1.); // absolute isolation
     //https://indico.cern.ch/event/594396/contributions/2402538/attachments/1389409/2116003/20161215_MuonPOG_GeneralPPD.pdf
-    if(!doSynch) l->SetIsoRelCut(0.15); // relative isolation // for muon 0.25 is loose, 0.15 is tight
+    if(!doSynch) l->SetIsoRelCut(0.25); // relative isolation // for muon 0.25 is loose, 0.15 is tight
     if(!doSynch) l->SetMiniIsoRelCut(-1); // relative mini-isolation
     if(doSynch) l->SetIsoRelCut(-1); // relative isolation
     if(doSynch) l->SetMiniIsoRelCut(0.10); // relative mini-isolation
@@ -1975,7 +1975,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             if(onemu) {
                 category="_1Mu";
                 // RECO
-                if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muIDtight"); }
+                if (not e->IsRealData()) { e->SetPtEtaSF("muID",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muID"); }
                 // ISO
                 if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
                 // TRG
@@ -2015,11 +2015,11 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(OneLep) ) {
             if(twomu) {
                 category="_2Mu";
-                // leading RECO-tight ISO-tight; subleading RECO-loose ISO-tight
+                // leading RECO-medium ISO-tight; subleading RECO-loose ISO-tight
                 // TRG
                 if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
                 // RECO-leading
-                if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muIDtight"); }
+                if (not e->IsRealData()) { e->SetPtEtaSF("muID",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muID"); }
                 // ISO-leading
                 if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
                 // RECO-trailing
@@ -2029,20 +2029,22 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
             if(twoele) {
                 category="_2Ele";
-                // RECO/ISO missing and ele TRG
+                // RECO/ISO applied and ele TRG missing
                 if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
-                if (not e->IsRealData()) { e->SetPtEtaSF("eleloose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleloose"); }
+                if (not e->IsRealData()) { e->SetPtEtaSF("eleveto",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleveto"); }
             }
-            // this 1Mu1Ele muon above the trigger threshould otherwise bias in the turnon
+            // this 1Mu1Ele muon above the muon trigger threshould otherwise bias in the turnon
             if(onemuoneele) {
                 category="_1Mu1Ele";
                 if(leadLep->IsElectron() and trailLep->IsMuon()) {
                     if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
-                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
+                    if (not e->IsRealData() && trailLep->Pt()>30) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
+                    if (not e->IsRealData() && trailLep->Pt()>30) { e->SetPtEtaSF("muISOloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISOloose"); }
                 }
                 if(leadLep->IsMuon() and trailLep->IsElectron()) {
-                    if (not e->IsRealData()) { e->SetPtEtaSF("eleloose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleloose"); }
-                    if (not e->IsRealData()) { e->SetPtEtaSF("muIDtight",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muIDtight"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("eleveto",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleveto"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("muID",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muID"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
                 }
             }
         }
