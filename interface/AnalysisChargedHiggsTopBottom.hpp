@@ -97,6 +97,8 @@ private:
     double evt_minDRbb_invMass=-1;
     double evt_minDRlb_invMass=-1;
 
+    double evt_DEtaMaxBB=-1;
+
     double evt_MT=-1;
     double evt_MT2bb=-1;
     double evt_MT2bb1l=-1;

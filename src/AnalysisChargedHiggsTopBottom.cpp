@@ -102,6 +102,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("DRbbmin",evt_minDRbb);
     SetTreeVar("MassDRbbmin",evt_minDRbb_invMass);
     SetTreeVar("MassDRlbmin",evt_minDRlb_invMass);
+    SetTreeVar("DEtaMaxBB",evt_DEtaMaxBB);
 
     SetTreeVar("mt",evt_MT);
     SetTreeVar("mt2ll",evt_MT2ll);
@@ -470,6 +471,7 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","DRbbmin",'F');
     Branch("tree_tb","MassDRbbmin",'F');
     Branch("tree_tb","MassDRlbmin",'F');
+    Branch("tree_tb","DEtaMaxBB",'F');
 
     // various masses
     Branch("tree_tb","bdt1lh",'F');
@@ -664,6 +666,7 @@ void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasesp
 
     if(!(SR.find("SR")!=string::npos)) {
 
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+SR+flavor+l,"DEtaMaxBB "+l+";dEta_{b^{i},b^{j}}^{max}",100,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/NBjets_"+SR+flavor+l,"NBjets "+l + ";Number of b jets P_{T}>40 ",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/thirdBDiscr_"+SR+flavor+l,"thirdBDiscr "+l + "; discr (3rd b-ranked) ",50,0.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+SR+flavor+l,"minDRbb"+l+";dR_{bb}^{min}",50,0,2*TMath::Pi());
@@ -877,8 +880,8 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/NextOverLeadingBPt_"+l,"NextOverLeadingBPt "+l+";P_{T}^{B2}/P_{T}^{B1} [GeV]",50,0,1);
         //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeadingBPt_OverHT_"+l,"LeadingBPt_OverHT "+l+";P_{T}^{B1}/HT [GeV]",50,0,1);
 
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+l,"DEtaMaxBB "+l+";dEta_{b^{i},b^{1}}^{max}",100,0,10);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMax_"+l,"DEtaMax "+l+";dEta_{j^{i},j^{1}}^{max}",100,0,10);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+l,"DEtaMaxBB "+l+";dEta_{b^{i},b^{j}}^{max}",100,0,10);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMax_"+l,"DEtaMax "+l+";dEta_{j^{i},j^{j}}^{max}",100,0,10);
 
         // min DRbb
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+l,"minDRbb"+l+";dR_{bb}^{min}",50,0,2*TMath::Pi()); // <-- this has signal discrimination
@@ -1550,7 +1553,8 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
             }
         }
 
-        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+label, systname, DEtaMaxBB , e->weight() );
+        evt_DEtaMaxBB=DEtaMaxBB;
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+label, systname, evt_DEtaMaxBB , e->weight() );
 
     }
 
@@ -1653,6 +1657,7 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
 
             if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+Sregion+LabelHF+label, systname, evt_minDRbb ,e->weight());
             if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+Sregion+LabelHF+label, systname, evt_minDRbb_invMass ,e->weight());
+            if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+Sregion+LabelHF+label,systname, evt_DEtaMaxBB ,e->weight());
         }
 
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+Sregion+LabelHF+label,systname, evt_ST ,e->weight());
