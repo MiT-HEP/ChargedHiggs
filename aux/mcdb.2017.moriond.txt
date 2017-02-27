@@ -4,11 +4,21 @@ ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/
 ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8 487968.51263 1
 ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8 181420.090862 1
 ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8 69754.1062671 1
-####ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8 XXXX 1
+ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8 32669.3858868 1
 ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 16800.6841735 1
 ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8 5460.38693736 1
 ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8 50586.6482911 1
 ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 12.7144972018 1
+
+### TauNu
+ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 155642.666561 1
+ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 12578.2643581 1
+ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-220_13TeV_amcatnlo_pythia8 3782.83613538 1
+ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-250_13TeV_amcatnlo_pythia8 746.799518455 1
+ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8 182.024924435 1
+ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8 23.4092668729 1
+ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8 8.65346421634 1
+
 
 ##### V+jets
 DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 49029673.0 18610
