@@ -164,7 +164,7 @@ void Looper::Loop()
 #ifdef VERBOSE
 						if (VERBOSE > 1) Log(__FUNCTION__,"DEBUG", string("Doing Analysis") + a->name());
 #endif
-						event_->validate(); // validate the objects
+						//event_->validate(); // validate the objects -- after setting cuts now in doAnalyze
 						// each analysis step will apply the SF accordingly to the object it is using
 						event_ -> GetWeight() -> clearSF() ;
 						event_ -> GetWeight() -> clearPU() ; // for target

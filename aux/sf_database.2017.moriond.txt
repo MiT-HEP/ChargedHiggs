@@ -47,8 +47,7 @@ tauid2 tf1 1.0 0.0002*x
 ########################################
 ## tau invisolation: transfer factors ##
 ########################################
-#include aux/RMet80.txt
-include aux/RMet110_Prescale_v5.txt
+include aux/RMet110_v9.txt
 
 #######################
 ### top reweighting ###

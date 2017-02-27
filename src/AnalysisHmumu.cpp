@@ -6,8 +6,10 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
     l->SetPtCut(25); 
     l->SetIsoRelCut(0.20);
     l->SetEtaCut(2.5);
-    l->SetTightCut(true);
-    l->SetMediumCut(false);
+    //l->SetTightCut(true);
+    //l->SetMediumCut(false);
+    l->SetTightCut(false);
+    l->SetMediumCut(true);
 }
 void HmumuAnalysis::SetJetCuts(Jet *j) { 
     j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535 

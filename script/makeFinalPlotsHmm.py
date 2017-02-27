@@ -63,6 +63,41 @@ def MpvAndSigmaEff(h, q=0.68):
                 #break ## j -loop can end here
     return (h.GetBinCenter(imax), low, high )
 
+def SoB(h,hdata,low,high,type=""):
+	## xsec at 125
+	## these numbers are in pb
+	br = 2.176E-04
+	if type=="VBF" or type == "qqH" : xsec= 3.782E+00 
+	elif type == "WH": xsec=1.373E+00
+	elif type == "ZH": xsec =8.839E-01
+	elif type == "ggH" or type=="GluGlu": xsec =4.858E+01
+	elif type == "ttH": xsec =5.071E-01
+	elif type == "bbH" : xsec=4.880E-01
+	elif type == "WMinusH": xsec = 5.328E-01
+	elif type == "WPlusH": xsec =8.400E-01
+	else: xsec=1.
+	lumi = 35867
+
+	hdata_ = hdata.Clone(hdata.GetName()+"_fit")
+	s= h.Integral(h.FindBin(low),h.FindBin(high))
+	#f=ROOT.TF1("myfunc","[0]*TMath::Exp(-x*[1])",115,122)
+	f=ROOT.TF1("myfunc","[0]*TMath::Exp(-x*[1])",115,122)
+	f.SetParameter(0,hdata.Integral( hdata.FindBin(115),hdata.FindBin(122)))
+	hdata.Fit("myfunc","QRN")
+	hdata.Fit("myfunc","QRMN")
+	## fill an histogram to be sure that border conditions are well met
+	for ibin in range(0,hdata_.GetNbinsX()):
+		if hdata_.GetBinContent(ibin+1)<=0:
+			hdata_.SetBinContent( ibin+1,f.Eval(hdata_.GetBinCenter(ibin+1)) ) 
+	b= hdata_.Integral(h.FindBin(low),h.FindBin(high))
+	if opts.outdir=="":
+		c2=ROOT.TCanvas("c2","c2",800,800)
+		hdata.Draw("PE")
+		f.Draw("L SAME")
+		raw_input("fit to data")
+	#b= f.Integral(mean-low,mean+high)
+	return (s*br*lumi*xsec,b)
+
 
 ## get files
 fIn = ROOT.TFile.Open(opts.input,"READ")
@@ -82,6 +117,8 @@ for cat in categories:
         mpv=0
         seff=0.0
         ea=0.0
+	sob=0.0
+        hdata=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_Data" )
         for idx,m in enumerate(masses):
             h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) )
 	    if h==None:
@@ -91,6 +128,7 @@ for cat in categories:
             h.SetLineColor(ROOT.kBlack)
             h.SetLineWidth(2)
             if idx==0:
+		c.cd()
                 h.Draw("AXIS")
                 h.Draw("AXIS X+ Y+ SAME")
                 h.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
@@ -107,6 +145,18 @@ for cat in categories:
                 ea = h.Integral()
                 mpv, low ,high =  MpvAndSigmaEff(h, 0.682689)
                 seff = (high - low)/2.0
+
+		if hdata !=None:
+			s,b=SoB(h,hdata,low,high,re.sub("_HToMuMu.*","",mc))
+			c.cd()
+		else : 
+			s,b = (0,0)
+
+		try:
+			sob=s/b
+		except ZeroDivisionError:
+			sob=-1
+
                 l1 = ROOT.TLine(low,0,low,h.GetMaximum()*0.8)
                 l2 = ROOT.TLine(high,0,high,h.GetMaximum()*0.8)
                 l1.SetLineWidth(2)
@@ -134,6 +184,7 @@ for cat in categories:
         txt.DrawLatex(.73,.90 - 2*d,"mpv=%.1f GeV"%mpv)
         txt.DrawLatex(.73,.90 - 3*d,"seff=%.1f GeV"%seff)
         txt.DrawLatex(.73,.90 - 4*d,"#varepsilon A=%.1f %%"%(ea*100))
+        txt.DrawLatex(.73,.90 - 5*d,"S/B = %.1f %%"%(sob*100))
 	c.Modify()
 	c.Update()
 	if opts.outdir=="":

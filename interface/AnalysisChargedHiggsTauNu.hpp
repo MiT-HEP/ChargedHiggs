@@ -32,7 +32,7 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
             t->SetMuRej(true); 
             t->SetEleRej(true);
             t->SetTrackPtCut(30.);
-            t->SetProngsCut(1); 
+            t->SetProngsCut(nprongs); 
             t->SetDecayMode(1);
         }
         inline void SetJetCuts(Jet *j) override { 
@@ -56,6 +56,7 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
 
         bool is80X{false};
         bool isLightMass{false};
+        int nprongs{1};
 
 };
 

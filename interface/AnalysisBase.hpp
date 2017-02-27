@@ -32,7 +32,7 @@ class AnalysisBase : public Named
     //--
     void doInit() {Init();}
     void doEnd() { End();} 
-    int doAnalyze(Event*e,string systname){ SetCuts(e); return analyze(e,systname);}
+    int doAnalyze(Event*e,string systname){ SetCuts(e); e->validate(); return analyze(e,systname);}
     //
     virtual void inline SetOutput( Output *o ) { output_ = o ;}
     virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}

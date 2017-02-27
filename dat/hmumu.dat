@@ -22,3 +22,4 @@ addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M125')
 addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M130')
 
 addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('ttHToNonbb_M125')

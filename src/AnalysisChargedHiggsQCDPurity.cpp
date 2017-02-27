@@ -3,6 +3,7 @@
 #include "interface/CutSelector.hpp"
 #include "interface/AnalysisChargedHiggsTauNu.hpp"
 #include <string>
+#include <algorithm>
 
 
 //#define VERBOSE 1
@@ -55,6 +56,9 @@ void ChargedHiggsQCDPurity::Init()
             Book( dir + hist+"_"+ l  , ("EtMissTauIsoInv "+ l).c_str(),250,0,500);
             hist= "EtMiss_Control";
             Book( dir + hist+"_"+ l  , ("EtMiss "+ l).c_str(),250,0,500);
+
+            hist= "DrTauJet_Control";
+            Book( dir + hist+"_"+ l  , ("EtMiss "+ l).c_str(),1000,0,5.0);
     }
     // -- full selection
     for ( string& l : AllLabel()  ) 
@@ -95,6 +99,8 @@ void ChargedHiggsQCDPurity::Init()
         Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),8000,0.,8000.);
         Book( none + "EtMissIsoInv"+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),1000,0.,1000.);
         Book( none + "EtMiss"+"_"+ l  , ("EtMiss "+ l).c_str(),1000,0.,1000.); // copy of the Tau Nu ? 
+        Book( dir +"DrTauJet_"+ l  , ("#DeltaR(#tau,j) "+ l).c_str(),1000,0,5.0);
+        Book( dir +"DrTauJetIsoInv_"+ l  , ("#DeltaR(#tau,j) "+ l).c_str(),1000,0,5.0);
 
         Book(    none+"RbbMin_"+l,"RbbMin "+l+";R_{bb}^{min}",100,0,2*TMath::Pi());
         Book(    none+"RCollMin_"+l,"RCollMin "+l+";R_{coll}^{min}",100,0,2*TMath::Pi());
@@ -214,6 +220,10 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill( dir+hist +"_"+label,systname, t->Pt(), e->weight() );
             hist= "EtMiss_Control";
             Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+
+            float dr=100.; for(int i=0;i<e->Njets(); ++i) { dr = std::min(dr, e->GetJet(i)->DeltaR(t)) ;}
+            hist= "DrTauJet_Control";
+            Fill( dir+hist +"_"+label,systname, dr, e->weight() );
         }
 
     }
@@ -306,6 +316,11 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             if( e->Bjets()> 1)hist = "Mt_cat0";
             else hist = "Mt_cat1";
             Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight(false));
+
+            float dr=100.; for(int i=0;i<e->Njets(); ++i) { dr = std::min(dr, e->GetJet(i)->DeltaR(t)) ;}
+            hist= "DrTauJet";
+            cout <<"DEBUG MAIN: DrTauJet is "<< dr<<endl;
+            Fill( dir+hist +"_"+label,systname, dr, e->weight() );
     }
 
     // ---------------------- INF TAU SF 
@@ -402,6 +417,11 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             if (tInv->GetNProng() ==1 ) hist+="_1p";
             else hist+="_3p";
             Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
+
+            float dr=100.; for(int i=0;i<e->NjetsInvIso(); ++i) { dr = std::min(dr, e->GetJetInvIso(i)->DeltaR(tInv)) ;}
+            hist= "DrTauJetIsoInv";
+            cout <<"DEBUG MAIN: DrTauJetIsoInv is "<< dr<<endl;
+            Fill( dir+hist +"_"+label,systname, dr, e->weight() );
         } // inverse.passAll
     } // tInv
 
