@@ -23,6 +23,7 @@ void ChargedHiggsTopBottom::SetJetCuts(Jet *j){
     j->SetEtaCut(4.7);
     j->SetEtaCutCentral(2.4);
     j->SetPtCut(40);
+    //    j->SetPtCut(30); // for MIAO
     j->SetPuIdCut(-100);
 }
 
@@ -103,6 +104,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("MassDRbbmin",evt_minDRbb_invMass);
     SetTreeVar("MassDRlbmin",evt_minDRlb_invMass);
     SetTreeVar("DEtaMaxBB",evt_DEtaMaxBB);
+    SetTreeVar("DRlbmaxPT",evt_DRlbmaxPt);
 
     SetTreeVar("mt",evt_MT);
     SetTreeVar("mt2ll",evt_MT2ll);
@@ -472,6 +474,7 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","MassDRbbmin",'F');
     Branch("tree_tb","MassDRlbmin",'F');
     Branch("tree_tb","DEtaMaxBB",'F');
+    Branch("tree_tb","DRlbmaxPT",'F');
 
     // various masses
     Branch("tree_tb","bdt1lh",'F');
@@ -908,6 +911,9 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
         /////
         // lb
+
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/DRlbmaxPT_"+l,"DRlbmaxPT"+l+";dR_{lb}^{maxP_{T}}",50,0,2*TMath::Pi());
+
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_"+l,"minDRlb"+l+";dR_{lb}^{min}",50,0,2*TMath::Pi());  // <-- this has signal discrimination
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_mass_"+l,"minDRlb_mass "+l+";m(lb)^{dR^{min}})",50,0,500);
         //        Book("ChargedHiggsTopBottom/Baseline/Rlb_"+l,"Rlb "+l+";R_{lb}",100,0,2*TMath::Pi());
@@ -1135,7 +1141,6 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
     bFromTopH=NULL;
     WFromTopH=NULL;
 
-
     bool rightComb=false;
 
     for(Int_t i = 0; i < e->NGenPar(); i++){
@@ -1178,13 +1183,15 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
         //FIXME: logic ?!?
         GenParticle *genpar = e->GetGenParticle(i);
 
+        //        if(abs(genpar->GetPdgId()) == 1 or abs(genpar->GetPdgId()) == 2 or abs(genpar->GetPdgId()) == 3 or abs(genpar->GetPdgId()) == 4 or abs(genpar->GetPdgId()) == 11 or abs(genpar->GetPdgId()) == 13) {
         if(abs(genpar->GetPdgId()) == 24 and abs(genpar->GetParentPdgId()) == 6) {
-        /// W
+            /// W
             if(topFromH!=NULL) {
                 if ( topFromH->GetPdgId()*genpar->GetPdgId() ) WFromTopH=genpar;
                 if ( !(topFromH->GetPdgId()*genpar->GetPdgId()) )  WFromTopAss=genpar;
             }
         }
+        //        }
 
         if(abs(genpar->GetPdgId()) == 11 or abs(genpar->GetPdgId()) == 13) {
             // lepton in acceptance
@@ -1599,11 +1606,16 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
     double minDRlb_invMass=-1;
     double maxDRlb_invMass=-1;
 
+    double Ptlbmax=0;
+    double DRlbmaxPt=-1;
+
     for(int i=0;i!=e->Bjets();++i) {
         Jet* bjet = e->GetBjet(i);
         double dr = bjet->DeltaR(leadLep);
         double mass = (bjet->GetP4() + leadLep->GetP4()).M();
+        double pt = (bjet->GetP4() + leadLep->GetP4()).Pt();
         if(dr<minDRlb) { minDRlb=dr; minDRlb_invMass=mass; }
+        if(pt>Ptlbmax) { DRlbmaxPt=dr; Ptlbmax=pt; }
     }
 
     if(trailLep) {
@@ -1611,15 +1623,21 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
             Jet* bjet = e->GetBjet(i);
             double dr = bjet->DeltaR(trailLep);
             double mass = (bjet->GetP4() + trailLep->GetP4()).M();
+            double pt = (bjet->GetP4() + trailLep->GetP4()).Pt();
             if(dr<minDRlb) { minDRlb=dr; minDRlb_invMass=mass; }
+            if(pt>Ptlbmax) { DRlbmaxPt=dr; Ptlbmax=pt; }
         }
     }
 
     evt_minDRlb_invMass=minDRlb_invMass;
+    evt_DRlbmaxPt=DRlbmaxPt;
 
     if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_mass_"+label, systname, evt_minDRlb_invMass , e->weight() );
     if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_"+label, systname, minDRlb , e->weight() );
 
+    if(e->Bjets()>0) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DRlbmaxPT_"+label, systname, evt_DRlbmaxPt , e->weight() );
+
+    ///////$$$$$$
 }
 
 
