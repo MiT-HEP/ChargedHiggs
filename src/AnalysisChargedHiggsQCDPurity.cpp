@@ -319,8 +319,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
             float dr=100.; for(int i=0;i<e->Njets(); ++i) { dr = std::min(dr, e->GetJet(i)->DeltaR(t)) ;}
             hist= "DrTauJet";
-            cout <<"DEBUG MAIN: DrTauJet is "<< dr<<endl;
-            Fill( dir+hist +"_"+label,systname, dr, e->weight() );
+            Fill( dir+hist +"_"+label,systname, dr, e->weight(false) );
     }
 
     // ---------------------- INF TAU SF 
@@ -420,8 +419,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
             float dr=100.; for(int i=0;i<e->NjetsInvIso(); ++i) { dr = std::min(dr, e->GetJetInvIso(i)->DeltaR(tInv)) ;}
             hist= "DrTauJetIsoInv";
-            cout <<"DEBUG MAIN: DrTauJetIsoInv is "<< dr<<endl;
-            Fill( dir+hist +"_"+label,systname, dr, e->weight() );
+            Fill( dir+hist +"_"+label,systname, dr, e->weight(false) );
         } // inverse.passAll
     } // tInv
 

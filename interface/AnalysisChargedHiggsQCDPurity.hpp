@@ -24,7 +24,7 @@ class ChargedHiggsQCDPurity:  virtual public ChargedHiggsTauNu
         float Upar(Event*e,Tau *t ){ return e->GetMet().Pt() * TMath::Cos( e->GetMet().DeltaPhi( *t ) ) ; };
         float Uperp(Event*e, Tau*t){ return e->GetMet().Pt() * TMath::Sin( e->GetMet().DeltaPhi( *t) );}; // this is positive, deltaPhi>0
 
-        /*
+        /* TODO
         int analyzeCR(Event*,string systname);
         int analyzeCR_InvIso(Event*,string systname);
         int analyzeSR(Event*,string systname);

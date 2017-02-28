@@ -7,6 +7,7 @@
 
 void ChargedHiggsTauNu::Init()
 {
+    Log(__FUNCTION__,"INFO",Form("nProngs selected=%d",nprongs) );
 
     for ( string& l : AllLabel()  ) {
 

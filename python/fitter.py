@@ -82,14 +82,38 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
 if opts.classname== "Fitter":
 	fitter.outname= opts.outfile
 	fitter.inname =opts.file
-	fitter.mIn.push_back(200)
-    	fitter.mIn.push_back(250)
-    	fitter.mIn.push_back(300)
-    	fitter.mIn.push_back(350)
-    	fitter.mIn.push_back(400)
-    	fitter.mIn.push_back(500)
+	## Hmumu
+	fitter.mIn.push_back(120)
+    	fitter.mIn.push_back(125)
+    	fitter.mIn.push_back(130)
+	## category definition
+	fitter.processes.clear()
+	for procStr in [ "GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]:
+	#for procStr in [ "GluGlu"]:
+		fitter.processes.push_back(procStr)
+	fitter.inputMasks.clear()
+	for muStr in ["BB","BO","BE","OO","OE","EE"]:
+	#for muStr in ["BB"]:
+	  for catStr in [ "VBF0","OneB","GF","VBF1","Untag"]:
+		fitter.inputMasks.push_back("HmumuAnalysis/Vars/Mmm_"+catStr+"_"+muStr+"_%s_HToMuMu_M%.0f")
+		for procStr in [ "GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]:
+			if procStr == "ttH":
+				fitter.SetGaussians(fitter.inputMasks.size()-1,procStr, 2)
+			else:
+				fitter.SetGaussians(fitter.inputMasks.size()-1,procStr, 3)
+	## overwrite some category
+	for cat in [0,4,22,25,26,27]:
+		fitter.SetGaussians(cat,"GluGlu", 2)
+	for cat in [17,25,26,27,28]:
+		fitter.SetGaussians(cat,"VBF", 2)
+	for cat in [17,20,22,25,26,27,28]:
+		fitter.SetGaussians(cat,"WMinusH", 2)
+	for cat in [12,20,26,27,29,4]:
+		fitter.SetGaussians(cat,"WPlusH", 2)
+	for cat in [22]:
+		fitter.SetGaussians(cat,"ZH", 2)
 
-doSyst=True
+doSyst=False
 if opts.classname== "Fitter" and doSyst:
 	## only in normalization, no shape morphing
 	fitter.systIn.push_back("JES");

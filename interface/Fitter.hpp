@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <memory>
 using namespace std;
 // --- ROOT ---
 #include "TFile.h"
@@ -50,7 +51,7 @@ class Fitter : virtual public BaseFitter{
     // save fit parameters vs mass category 
     map<string, float> fitParameters_;
     // interpolates fit parameters and norm vs mass
-    map<string, RooSpline1D*> splines_;
+    map<string, RooAbsReal*> splines_;
     // save RooRealVars used for fit
     map<string, RooRealVar*> vars_;
 
@@ -79,9 +80,14 @@ class Fitter : virtual public BaseFitter{
     string plotDir;
     bool plot; // make plot fit
     bool verbose;
+    bool doXsec {false}; // do xsec 
+    bool saveFit{true};
 
     float xmin;
     float xmax;
+
+    float mhmin{120};
+    float mhmax{130};
 
     // --- objects that can be called
     Fitter();
@@ -93,6 +99,11 @@ class Fitter : virtual public BaseFitter{
 
     map<string,float> initPars_;
 
+    //vector<int> nGaussians;
+    map< pair<int,string>, int > nGaussians;
+    vector<string> processes;
+
+    void SetGaussians(int cat, const string& proc, int nG ) { nGaussians[pair<int,string>(cat,proc) ] = nG;}
 };
 
 

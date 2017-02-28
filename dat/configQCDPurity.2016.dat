@@ -11,7 +11,8 @@ include=dat/catalog/2017.moriond/st.dat
 ## Drell-Yan
 include=dat/catalog/2017.moriond/dy.dat
 ## Wjets
-include=dat/catalog/2017.moriond/wjets.dat
+#include=dat/catalog/2017.moriond/wjets.dat
+include=dat/catalog/2017.moriond/wjets_ht.dat
 ## DIBOSON
 include=dat/catalog/2017.moriond/vv.dat
 
@@ -51,3 +52,6 @@ addConfig=ChargedHiggsQCDPurity|PtBins.push_back(250),PtBins.push_back(500),PtBi
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(8000)
 addConfig=ChargedHiggsQCDPurity|unblind=1
 addConfig=ChargedHiggsQCDPurity|is80X=1
+addConfig=ChargedHiggsQCDPurity|nprongs=3
+
+
