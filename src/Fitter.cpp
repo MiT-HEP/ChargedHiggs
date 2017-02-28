@@ -130,7 +130,7 @@ void Fitter::init(){
             if (nGaussians[pair<int,string>(cat,proc)] ==2)
             {
                 initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .9;
-                initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .1;
+                //initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .1;
             }
 
 
@@ -310,13 +310,15 @@ void Fitter::fit(){
         if (nGaussians[pair<int,string>(cat,proc)]==1)
             fitModel.reset( new RooGaussian("g1","g1",*x_,pars[0],pars[1]) ) ; 
         else if (nGaussians[pair<int,string>(cat,proc)]==2)
-            fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2),RooArgList(pars[5]), kTRUE ) ) ; 
+            fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2),RooArgList(pars[4]), kTRUE ) ) ; 
         else if (nGaussians[pair<int,string>(cat,proc)]==3)
             fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
 
 
         for(int i=0;i<pars.size() ;++i) pars[i].setConstant(kFALSE);
 
+        // reset last mass for ttH
+        lastMass=-1;
         for( auto & m: mIn )
         {
             // set par ranges mass dependent
@@ -324,8 +326,8 @@ void Fitter::fit(){
             for(int ig =0 ;ig< nGaussians[pair<int,string>(cat,proc)] ;ig++)
             {
                 //mean and sigma
-                pars[pos+0].setRange(m-5,m+5);
-                pars[pos+1].setRange(0.5,10);
+                pars[pos+0].setRange(m-5*(ig+1),m+5*(ig+1));
+                pars[pos+1].setRange(0.5*(ig+1),10*(ig+1));
                 pos+=2;
             }
             // fractions (last is the closing)
@@ -344,7 +346,7 @@ void Fitter::fit(){
                 pars[i].setVal(initPars_[Form("c%d_%s_cat%d_%.0f",i,proc.c_str(),cat,m)] );
                 //cout <<"INIT "<<i<<": "<<initPars_[Form("c%d_%.0f",i,m)] <<endl;
                 // follow
-                if (lastMass >0 and m!= 120)
+                if (lastMass >0 )
                 {
                     if (i%2==0 and i < nGaussians[pair<int,string>(cat,proc)]*2) // mean
                         pars[i].setVal(initPars_[Form("c%d_%s_cat%d_%.0f",i,proc.c_str(),cat,lastMass)] + (m-lastMass) ); 

@@ -112,6 +112,8 @@ if opts.classname== "Fitter":
 		fitter.SetGaussians(cat,"WPlusH", 2)
 	for cat in [22]:
 		fitter.SetGaussians(cat,"ZH", 2)
+	for cat in [14,19,29]:
+		fitter.SetGaussians(cat,"ttH", 1)
 
 doSyst=False
 if opts.classname== "Fitter" and doSyst:
