@@ -171,7 +171,12 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
         } else if (label.find("HplusToTauNu") !=string::npos) //sig TauNu
         {
             //            mc = 50;
+            if (label.find("M-180") !=string::npos) mc = 51;
+            if (label.find("M-200") !=string::npos) mc = 52;
+            if (label.find("M-220") !=string::npos) mc = 53;
+            if (label.find("M-250") !=string::npos) mc = 54;
             if (label.find("M-300") !=string::npos) mc = 55;
+            if (label.find("M-400") !=string::npos) mc = 57;
             if (label.find("M-500") !=string::npos) mc = 59;
             if (label.find("M-800") !=string::npos) mc = 61;
             if (label.find("M-1000")!=string::npos) mc = 62;
@@ -190,6 +195,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             } else {
                 if(label.find("TTTo2L2Nu") !=string::npos) mc =101 ;
                 if(label.find("TTToSemilepton") !=string::npos) mc =102 ;
+                if(label.find("TT_TuneCUETP8M2T4") !=string::npos) mc =103 ;
             }
 
             if(label.find("ST") !=string::npos) mc =111 ;
@@ -248,6 +254,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
 
     SetTreeVar("nGenB",nGenB);
     SetTreeVar("genTTid",e->GetGenTtbarId());
+    SetTreeVar("genLepSig",genLepSig);
 
     if ( not e->IsRealData() and (label.find("HplusToTB")  !=string::npos ) ){
 
@@ -513,6 +520,8 @@ void ChargedHiggsTopBottom::Init()
 
     Branch("tree_tb","genTTid",'I');
     Branch("tree_tb","nGenB",'I');
+
+    Branch("tree_tb","genLepSig",'I'); // to distinguish between the different leptonCategory
 
     Branch("tree_tb","bFromH_pt",'F');
     Branch("tree_tb","bFromH_phi",'F');
@@ -812,9 +821,10 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
          **********************************************/
 
 
-        if((l.find("TTTo2L2Nu")!=string::npos) || (l.find("TTToSemilepton")!=string::npos)) {
+        if((l.find("TTTo2L2Nu")!=string::npos) || (l.find("TTToSemilepton")!=string::npos) || (l.find("TT_TuneCUETP8M2T4")!=string::npos)  ) {
 
             BookFlavor(l, category, phasespace, "other_", "");
+            BookFlavor(l, category, phasespace, "tt2bMerged_", "");
             BookFlavor(l, category, phasespace, "tt2b_", "");
             BookFlavor(l, category, phasespace, "tt1b_", "");
             BookFlavor(l, category, phasespace, "ttc_", "");
@@ -825,6 +835,11 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
                 BookFlavor(l, category, phasespace, "other_", "SR2_");
                 BookFlavor(l, category, phasespace, "other_", "SR3_");
                 BookFlavor(l, category, phasespace, "other_", "SR4_");
+
+                BookFlavor(l, category, phasespace, "tt2bMerged_", "SR1_");
+                BookFlavor(l, category, phasespace, "tt2bMerged_", "SR2_");
+                BookFlavor(l, category, phasespace, "tt2bMerged_", "SR3_");
+                BookFlavor(l, category, phasespace, "tt2bMerged_", "SR4_");
 
                 BookFlavor(l, category, phasespace, "tt2b_", "SR1_");
                 BookFlavor(l, category, phasespace, "tt2b_", "SR2_");
@@ -1140,6 +1155,7 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
     topFromH = NULL;
     bFromTopH=NULL;
     WFromTopH=NULL;
+    genLepSig=0;
 
     bool rightComb=false;
 
@@ -1187,19 +1203,22 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
         if(abs(genpar->GetPdgId()) == 24 and abs(genpar->GetParentPdgId()) == 6) {
             /// W
             if(topFromH!=NULL) {
-                if ( topFromH->GetPdgId()*genpar->GetPdgId() ) WFromTopH=genpar;
-                if ( !(topFromH->GetPdgId()*genpar->GetPdgId()) )  WFromTopAss=genpar;
+                if ( topFromH->GetPdgId()*genpar->GetPdgId()>0 ) WFromTopH=genpar;
+                if ( topFromH->GetPdgId()*genpar->GetPdgId()<0 )  WFromTopAss=genpar;
             }
         }
         //        }
 
         if(abs(genpar->GetPdgId()) == 11 or abs(genpar->GetPdgId()) == 13) {
+
+            if ( abs(genpar->GetParentPdgId()) == 24 and abs(genpar->GetGrandParentPdgId()) == 6) genLepSig++;
+
             // lepton in acceptance
             if(genpar->Pt()<20) continue;
             if(abs(genpar->Eta())>2.4) continue;
 
             if(topFromH!=NULL) {
-                if ( abs(genpar->GetParentPdgId()) == 24 and abs(genpar->GetGrandParentPdgId()) == 6 and topFromH->GetPdgId()*genpar->GetPdgId()) {
+                if ( abs(genpar->GetParentPdgId()) == 24 and abs(genpar->GetGrandParentPdgId()) == 6 and topFromH->GetPdgId()*genpar->GetPdgId()>0) {
                     if(verbose) cout << "H->top->W->l candidate (there is a second one in the acceptance)" << endl;
                     rightComb=true;
                     leptonFromTopH=genpar;
@@ -1644,11 +1663,13 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
 void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, string systname, string phasespace, string Sregion) {
 
 
-    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos))  {
+    //    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos))  {
+    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4")!=string::npos)  ) {
 
         //https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/TopQuarkAnalysis/TopTools/plugins/GenTtbarCategorizer.cc#L35
         string LabelHF="other_";
-        if((e->GetGenTtbarId()%100)==55 || (e->GetGenTtbarId()%100)==54 || (e->GetGenTtbarId()%100)==53) LabelHF="tt2b_";
+        if((e->GetGenTtbarId()%100)==55 || (e->GetGenTtbarId()%100)==54) LabelHF="tt2bMerged_";
+        if((e->GetGenTtbarId()%100)==53) LabelHF="tt2b_";
         if((e->GetGenTtbarId()%100)==52 || (e->GetGenTtbarId()%100)==51) LabelHF="tt1b_";
         if((e->GetGenTtbarId()%100)==45 || (e->GetGenTtbarId()%100)==44 || (e->GetGenTtbarId()%100)==43 || (e->GetGenTtbarId()%100)==42 || (e->GetGenTtbarId()%100)==41) LabelHF="ttc_";
         if((e->GetGenTtbarId()%100)==00) LabelHF="ttlight_";
@@ -2104,7 +2125,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         }
     } else {
         if (not e->IsRealData() and
-            ((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos))) {
+            ((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4")!=string::npos)  )) {
             e->ApplyTopReweight();
         }
     }

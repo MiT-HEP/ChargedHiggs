@@ -118,6 +118,7 @@ private:
     vector<float> bdt;
 
     int nGenB = 0 ;
+    int genLepSig = 0 ;
 
     /////
     /////
