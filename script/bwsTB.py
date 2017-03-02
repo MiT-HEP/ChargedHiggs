@@ -9,14 +9,12 @@ parser= OptionParser()
 
 #parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="feb7_1l.root")
 #parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="feb7_1l.root")
-
 #parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/feb12final_1l.root")
 #parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/feb12final_2l.root")
-
-#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB15_final/2l/2l.root")
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB17_final/1l/1l.root")
-#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB15_final/2l/2l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB17_final/2l/2l.root")
+#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final2/1l/1l.root")
+#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final2/2l/2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final_2l.root")
 
 #parser.add_option("","--input1Lsig",type='string',help="Input ROOT file. [%default]", default="1l_signal.root")
 #parser.add_option("","--input2Lsig",type='string',help="Input ROOT file. [%default]", default="2l_signal.root")
@@ -75,12 +73,9 @@ def RebinBDT(h):
 	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
 	return h1
 
-def Rebin5(h):
+def RebinN(h,nBin):
 	''' Rebin with un-even bins '''
-##	mybins=array('d',[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,500,600,700,800,900,1000,1500,2000,8000])
-##	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-#	h1=h.Rebin(5)
-	h1=h.Rebin(1)
+	h1=h.Rebin(nBin)
 	return h1
 
 def Rebin(h):
@@ -175,6 +170,7 @@ for x in basecat:
 					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"bdt"+sr+""+reg}
 				else:
 					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"HT"+reg}
+#					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"ST"+reg}
 
 				print 'name=',name,'sr=',sr,'reg=',reg,"VarTest=",VarTest
 
@@ -211,16 +207,23 @@ for x in basecat:
 
 			mcStore={
 				"HPlus":{"name":"HPlus", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-###				"TT":{ "name":"TT","hist":["TTToSemilepton","TTTo2L2Nu"],"num":1},
 				"TTlight":{ "name":"TTlight","hist":["ttlight_TTToSemilepton","ttlight_TTTo2L2Nu"],"num":1},
 				"TT1b":{ "name":"TT1b","hist":["tt1b_TTToSemilepton","tt1b_TTTo2L2Nu"],"num":2},
 				"TT2b":{ "name":"TT2b","hist":["tt2b_TTToSemilepton","tt2b_TTTo2L2Nu"],"num":3},
 				"TTc":{ "name":"TTc","hist":["ttc_TTToSemilepton","ttc_TTTo2L2Nu"],"num":4},
-				"ST":{ "name":"ST","hist":["ST","tZq"],"num":5},
-				"EWK":{ "name":"EWK","hist":["WJetsToLNu","DYJetsToLL_M","WWTo","WZTo","ZZTo"],"num":6},
-###				"TTX":{ "name":"TTX","hist":["TTTT","TTZ","TTW","TTG","ttH"],"num":5}
-				"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG"],"num":7}
-###				"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH"],"num":7}
+#				"TT":{ "name":"TT","hist":["TTToSemilepton","TTTo2L2Nu"],"num":1},
+#				"ST":{ "name":"ST","hist":["ST","tZq"],"num":2},
+				"ST":{ "name":"ST","hist":["ST"],"num":2},
+#				"EWK":{ "name":"EWK","hist":["WJetsToLNu","DYJetsToLL_M","WWTo","WZTo","ZZTo"],"num":3},
+				"EWK":{ "name":"EWK","hist":["WJetsToLNu","DYJetsToLL_M","WWTo","WZTo","ZZTo"],"num":3},
+				"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH"],"num":4}
+
+##				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
+#				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d"], "num":0 },
+####				"VJets":{"name":"VJets", "hist":["WJetsToLNu","DYJetsToLL_M"],"num":1 },
+####				"VV":{ "name":"VV","hist":["WWTo2L2Nu","WWToLNuQQ","WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu","ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":2},
+####				"VV":{ "name":"VV","hist":["WWTo","WZTo","ZZTo"],"num":2},
+
 				}
 			systStore={
 				"None":None,
@@ -244,11 +247,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="FEB17/"+label+VarTest+opts.output
+fileTmp="FEB26/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "FEB17/"+ label + VarTest + datNameTmp
+datName = "FEB26/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -401,7 +404,7 @@ def importStat():
  	      c= h.GetBinContent(iBin)
  	      if c<=0: continue;
  	      e=h.GetBinError(iBin)
-	      if e>0 and (e<minError or minError<0):
+ 	      if e>0 and (e<minError or minError<0):
 		      minError=e
  	   for iBin in range(1,h.GetNbinsX()+1):
  	      c= h.GetBinContent(iBin)
@@ -420,13 +423,16 @@ def importStat():
 	      target = stat["target"]
 	      cat = catStore[stat["cat"] ]
 
+#	      al=arglist_obs
+#	      if cat["var"] == "bdt": al = arglist_obs_bdt
 	      al=arglist_obs_bdt
 	      if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4": al = arglist_obs
+#	      if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4": al = arglist_obs
 
-	      roo_mc_binup = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Up",target + "STAT",al,hupbin)
-	      pdf_mc_binup = roo_mc_binup
-	      roo_mc_bindn = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Down",target + "STAT",al,hdnbin)
-	      pdf_mc_bindn = roo_mc_bindn
+ 	      roo_mc_binup = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Up",target + "STAT",al,hupbin)
+ 	      pdf_mc_binup = roo_mc_binup
+ 	      roo_mc_bindn = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Down",target + "STAT",al,hdnbin)
+ 	      pdf_mc_bindn = roo_mc_bindn
  	      getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
  	      getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
  	      g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
@@ -448,6 +454,16 @@ for syst in systStore:
 if doSyst: writeNormSyst("CMS_scale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.977/1.028"],["TTlight","TTc","TT1b","TT2b","ST"])
 if doSyst: writeNormSyst("CMS_pdf_ttbar",["1.042","1.042","1.042","1.042","1.026"],["TTlight","TTc","TT1b","TT2b","ST"])
 if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.022"],["TTlight","TTc","TT1b","TT2b","ST"])
+
+if doSyst: writeNormSyst("CMS_pdf_ttlight",["1.20"],["TTlight"])
+if doSyst: writeNormSyst("CMS_pdf_ttc",["1.20"],["TTc"])
+if doSyst: writeNormSyst("CMS_pdf_tt1b",["1.20"],["TT1b"])
+if doSyst: writeNormSyst("CMS_pdf_tt2b",["1.20"],["TT2b"])
+
+##https://twiki.cern.ch/twiki/bin/view/LHCPhysics/LHCHXSWGTTH
+if doSyst: writeNormSyst("CMS_scale_ttV",["0.887/1.096"],["TTZ"])
+if doSyst: writeNormSyst("CMS_pdf_ttV",["1.028"],["TTZ"])
+if doSyst: writeNormSyst("CMS_mass_ttV",["1.028"],["TTZ"])
 
 #writeNormSyst("CMS_scale_VV",["1.025","1.032","1.031"],["WWTo","WZTo","ZZTo"])
 #writeNormSyst("CMS_pdf_VV",["1.022","1.044","1.037"],["WWTo","WZTo","ZZTo"])
@@ -531,9 +547,12 @@ def importPdfFromTH1(cat,mc,syst=None):
 		if h==None:h = hTmp
 		else: h.Add(hTmp)
 	  #clean h
-	  if opts.kTest==0 or opts.kTest==7: h=Rebin(h)
-#	  else: h=RebinBDT(h)
-	  else: h=Rebin5(h)
+#	  if opts.kTest==0 or opts.kTest==7: h=Rebin(h)
+#	  if opts.kTest==0 or opts.kTest==7: h=RebinN(h,1)
+#	  else: h=RebinN(h,1)
+	  if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=Rebin(h)
+	  else: h=RebinN(h,1)
+
 	  for b in range(1,h.GetNbinsX()+1):
 		  if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
 	  if h.Integral() <= 0 :
@@ -542,8 +561,11 @@ def importPdfFromTH1(cat,mc,syst=None):
 	  #save RooDataHist
 	  h.Scale(opts.lumi)
 	  print "* Importing ",target
+#	  al=arglist_obs
+#	  if cat["var"] == "bdt": al = arglist_obs_bdt
 	  al=arglist_obs_bdt
 	  if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4": al = arglist_obs
+#	  if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4": al = arglist_obs
 	  print "-> with var", al[0]
 
 	  roo_mc = ROOT.RooDataHist(target,target,al,h)
@@ -581,7 +603,7 @@ for cat in catStore:
 		 	importPdfFromTH1(catStore[cat],mcStore[proc],systStore[syst])
 
 ## import and write statistical uncertainties
-#if doSyst: importStat()
+if doSyst: importStat()
 
 #import data
 for c in catStore:
@@ -598,11 +620,17 @@ for c in catStore:
 		print "<*> File not exists"
 		raise IOError
 #	h=Rebin(h)
-	if opts.kTest==0 or opts.kTest==7: h=Rebin(h)
-	else: h=Rebin5(h)
+#	if opts.kTest==0 or opts.kTest==7: h=Rebin(h)
+#	if opts.kTest==0 or opts.kTest==7: h=RebinN(h,1)
+#	else: h=RebinN(h,1)
+	if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=Rebin(h)
+	else: h=RebinN(h,1)
 
+#	al=arglist_obs
+#	if cat["var"] == "bdt": al = arglist_obs_bdt
 	al=arglist_obs_bdt
 	if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": al = arglist_obs
+#	if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3" or cat["var"] == "ST_SR4": al = arglist_obs
 
 	roo_data= ROOT.RooDataHist("data_obs_%s"%c,"H_{T}",al,h)
 	getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
