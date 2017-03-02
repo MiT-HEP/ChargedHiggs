@@ -206,7 +206,7 @@ def PrintDat(config):
 	for key in config:
 		if key == 'config':
 			for type in config[key]:
-				print key,'=',type,'|'," ".join(config[key][type])
+				print key,'=',type,'|',",".join(config[key][type])
 		######### STRING ###########
 		elif key == 'MCDB' or key =='SFDB' or key == 'Output' or key == 'pileup':
 			print key ,'=',config[key]

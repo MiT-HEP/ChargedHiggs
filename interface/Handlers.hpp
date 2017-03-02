@@ -2,6 +2,7 @@
 #define HANDLERS_H
 
 #include <exception>
+#include <string>
 
 using namespace std;
 

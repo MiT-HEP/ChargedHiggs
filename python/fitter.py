@@ -79,6 +79,10 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
 	fitter.PtBins.push_back(1000)
 	fitter.PtBins.push_back(8000)
 
+if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
+	fitter.xmin=105
+	fitter.xmax=150
+
 if opts.classname== "Fitter":
 	fitter.outname= opts.outfile
 	fitter.inname =opts.file
@@ -125,6 +129,16 @@ if opts.classname== "Fitter" and doSyst:
 	fitter.systIn.push_back("BTAG");
 	fitter.systIn.push_back("TRIG");
 	fitter.systIn.push_back("TRIGMET");
+
+if opts.classname== "BackgroundFitter":
+	fitter.outname= opts.outfile
+	fitter.inname =opts.file
+	## Hmumu
+	fitter.inputMasks.clear()
+	for muStr in ["BB","BO","BE","OO","OE","EE"]:
+	#for muStr in ["BB"]:
+	  for catStr in [ "VBF0","OneB","GF","VBF1","Untag"]:
+		fitter.inputMasks.push_back("HmumuAnalysis/Vars/Mmm_"+catStr+"_"+muStr+"_Data")
 
 ## else:
 ## 	call( "mkdir -p plot/sigfit", shell=True)
@@ -183,7 +197,7 @@ fitter.end()
 #	      fitter.fit()
 #	      fitter.end()
 
-if opts.classname== "Fitter":
+if opts.classname== "Fitter" or opts.classname== "BackgroundFitter":
 	if opts.verbose: print "-> Write"
 	fitter.write()
 
