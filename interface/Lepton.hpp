@@ -20,6 +20,7 @@ class Lepton : virtual public Object,
         int type {11};// abspdgid 11 o 13 
         int tightId {0};
         int mediumId {0};
+        int looseId{0};
         float mva{-1}; // mva
 
         // ele specific
@@ -35,6 +36,7 @@ class Lepton : virtual public Object,
         float miniisorelcut_ {-1};
         bool  tightcut_ {0};  // ask for tight cut
         bool  mediumcut_ {0};
+        bool  loosecut_ {0};
 
     public:
         inline void SetR9(float x) { r9_=x;}
@@ -45,7 +47,8 @@ class Lepton : virtual public Object,
         inline void SetIsoRelCut( float x){isorelcut_=x;}
         inline void SetMiniIsoRelCut( float x){miniisorelcut_=x;}
         inline void SetEtaCut( float x){etacut_=x;}
-        inline void SetLooseCut(){tightcut_=false;mediumcut_=false;}
+        inline void SetVetoCut(){tightcut_=false;mediumcut_=false; loosecut_=false;}
+        inline void SetLooseCut(bool x){loosecut_=x;}
         inline void SetTightCut( bool x=true){tightcut_=x;}
         inline void SetMediumCut( bool x=true){mediumcut_=x;}
         inline void SetIso(float x=0.0){iso=x;}
@@ -54,6 +57,7 @@ class Lepton : virtual public Object,
         inline void SetCharge(int x){charge=x;}
         inline void SetTightId( bool x=true){tightId=x;}
         inline void SetMediumId( bool x=true){mediumId=x;}
+        inline void SetLooseId( bool x=true){looseId=x;}
         inline void SetMva(float x){mva=x;}
 
 
@@ -92,11 +96,13 @@ class Lepton : virtual public Object,
             if ( Pt() < ptcut_ ) return 0;
             if ( tightcut_ and not tightId) return 0;
             if ( mediumcut_ and not mediumId) return 0;
+            if ( loosecut_ and not looseId) return 0;
             return 1;
         }
 
         virtual inline bool IsElectron() const { return IsLep() and (type == 11); }
         virtual inline bool IsMuon() const { return IsLep() and (type == 13); }
+        virtual inline bool IsLoose() const { return IsLep() and looseId; }
         virtual inline bool IsMedium() const { return IsLep() and mediumId; }
         virtual inline bool IsTight() const { return IsLep() and tightId; }
         inline int   IsObject() const override {return IsLep();} // TODO, const, check that nothing broke

@@ -23,7 +23,15 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
         CutSelector cut;
         
         /*Object definition*/
-        inline void SetLeptonCuts(Lepton *l) override { l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.15);l->SetEtaCut(2.4); l->SetTightCut(false);}
+        inline void SetLeptonCuts(Lepton *l) override { 
+            l->SetIsoCut(-1); 
+            l->SetPtCut(10);
+            l->SetIsoRelCut(0.15);
+            l->SetEtaCut(2.4); 
+            l->SetTightCut(false);
+            l->SetMediumCut(false);
+            l->SetLooseCut(true); //loose muon and electrons for veto
+        }
         inline void SetPhotonCuts(Photon *p) override {p->SetIsoCut(-1); p->SetPtCut(30);}
         inline void SetTauCuts(Tau *t) override { 
             t->SetIsoCut(2.5); 
