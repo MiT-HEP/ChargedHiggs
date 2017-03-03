@@ -3,9 +3,9 @@
 //#warning Hmumu ANALYSIS NON ISO
 void HmumuAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
-    l->SetPtCut(25); 
-    l->SetIsoRelCut(0.20);
-    l->SetEtaCut(2.5);
+    l->SetPtCut(10); 
+    l->SetIsoRelCut(0.25);
+    l->SetEtaCut(2.4);
     //l->SetTightCut(true);
     //l->SetMediumCut(false);
     l->SetTightCut(false);
@@ -36,12 +36,12 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     if ( fabs(eta1) < 0.8 and fabs(eta0) <0.8) muStr = "BB";
     else if (fabs(eta1) < 1.6 and fabs(eta0) <0.8) muStr =  "BO";
     else if (fabs(eta1) < 0.8 and fabs(eta0) <1.6) muStr =  "BO";
-    else if (fabs(eta1) < 2.1 and fabs(eta0) <0.8) muStr =  "BE";
-    else if (fabs(eta1) < 0.8 and fabs(eta0) <2.1) muStr =  "BE";
+    else if (fabs(eta1) < 2.4 and fabs(eta0) <0.8) muStr =  "BE";
+    else if (fabs(eta1) < 0.8 and fabs(eta0) <2.4) muStr =  "BE";
     else if (fabs(eta1) < 1.6 and fabs(eta0) <1.6) muStr =  "OO";
-    else if (fabs(eta1) < 1.6 and fabs(eta0) <2.1) muStr =  "OE";
-    else if (fabs(eta1) < 2.1 and fabs(eta0) <1.6) muStr =  "OE";
-    else if (fabs(eta1) < 2.1 and fabs(eta0) <2.1) muStr =  "EE";
+    else if (fabs(eta1) < 1.6 and fabs(eta0) <2.4) muStr =  "OE";
+    else if (fabs(eta1) < 2.4 and fabs(eta0) <1.6) muStr =  "OE";
+    else if (fabs(eta1) < 2.4 and fabs(eta0) <2.4) muStr =  "EE";
     else return "";
 
     // vbf -- fully combinatorics
@@ -70,11 +70,12 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     }
 
     string vbfStr="";
-    if (isTightVbf ) vbfStr = "VBF0";
-    else if (nbjets >0 ) vbfStr="OneB";
+    if (nbjets >0 ) vbfStr="OneB";
+    else if (isTightVbf ) vbfStr = "VBF0";
     else if (isTightGF) vbfStr = "GF";
     else if (isVbf) vbfStr = "VBF1";
-    else vbfStr = "Untag";
+    else if (Hmm.Pt() >25) vbfStr = "Untag0";
+    else vbfStr = "Untag1";
 
     return vbfStr +"_" + muStr;
 }
@@ -82,7 +83,7 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
 void HmumuAnalysis::Init(){
     // define categories -- for booking histos
     vector< string> mu_cats{"BB","BO","BE","OO","OE","EE"};
-    vector<string> vbf_cats{"VBF0","GF","VBF1","OneB","Untag"};
+    vector<string> vbf_cats{"VBF0","GF","VBF1","OneB","Untag0","Untag1"};
 
     for( const auto & m : mu_cats)
     for( const auto & v : vbf_cats)
@@ -112,6 +113,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     cut.SetMask(MaxCut-1) ;
     cut.SetCutBit( Total ) ;
 
+    /*
+     */
+
     Lepton*mu0 = e->GetMuon(0);
     Lepton*mu1 = e->GetMuon(1);
     Jet *j0 = e->GetJet(0);
@@ -126,36 +130,49 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     string category = Category(mu0, mu1, selectedJets);
     e->ApplyBTagSF(1); //0 loose, 1 medium, 2 tight
 
-    // Truth
-    GenParticle *genmu0=NULL; GenParticle *genmu1=NULL;
+    //// Truth
+    //GenParticle *genmu0=NULL; GenParticle *genmu1=NULL;
 
-    for( int iGen=0 ; /*empty*/ ; ++iGen)
-    {
-        GenParticle *g = e->GetGenParticle(iGen); 
-        if (g==NULL ) break;  // end loop statement
-        if (not g->IsDressed()) continue;
-        if (not abs(g->GetPdgId())==13) continue;
-        
-        if (genmu0== NULL) genmu0=g;
-        else if (genmu1==NULL) {genmu1=g; break;}
-    }
+    //for( int iGen=0 ; /*empty*/ ; ++iGen)
+    //{
+    //    GenParticle *g = e->GetGenParticle(iGen); 
+    //    if (g==NULL ) break;  // end loop statement
+    //    if (not g->IsDressed()) continue;
+    //    if (not abs(g->GetPdgId())==13) continue;
+    //    
+    //    if (genmu0== NULL) genmu0=g;
+    //    else if (genmu1==NULL) {genmu1=g; break;}
+    //}
 
-    bool genMuons = genmu0!=NULL and genmu1 !=NULL;
+    //bool genMuons = genmu0!=NULL and genmu1 !=NULL;
 
-    bool isGen=false;
-    bool isReco=false;
+    //bool isGen=false;
+    //bool isReco=false;
 
-    if (genMuons) // no requirement on pT
-    {
-        Object Ztruth(*genmu0); 
-        Ztruth += *genmu1;
-        if (Ztruth.M() > 60 and Ztruth.M()<120) isGen=true;
-    }
+    //if (genMuons) // no requirement on pT
+    //{
+    //    Object Ztruth(*genmu0); 
+    //    Ztruth += *genmu1;
+    //    if (Ztruth.M() > 60 and Ztruth.M()<120) isGen=true;
+    //}
 
     bool recoMuons= mu0 != NULL and mu1 !=NULL; 
 
+    bool passAsymmPtCuts = (mu0->Pt() >25);
+
+    // Trigger
+    bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); //
+
+    bool passLeptonVeto= true;
+    if (e->GetMuon(2) != NULL) passLeptonVeto=false;
+    for(int i=0; ; ++i) { 
+            Lepton *el= e->GetElectron(i);
+            if (el == NULL) break;
+            if (el->Pt() >15) passLeptonVeto=false; // FIXME 10 ?!?
+    }
+
     // ---------------------- 25 -------------------
-    if ( recoMuons)
+    if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto)
     {
         cut.SetCutBit(Leptons);
         if (e->IsTriggered("HLT_IsoMu24_v") ) cut.SetCutBit(Trigger);
