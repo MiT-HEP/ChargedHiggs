@@ -493,16 +493,16 @@ void Fitter::end(){
 
         cout <<"->Trying to access vars:"<<Form("sigmodel_%s_cat%d_c0%s",proc.c_str(),cat,systLabel_.c_str())<<endl;
         w_->Print();
-        RooGaussian *g1 = new RooGaussian("g1","g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c1%s",proc.c_str(),cat,systLabel_.c_str()))));
+        RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c1%s",proc.c_str(),cat,systLabel_.c_str()))));
 
         RooGaussian *g2{NULL},*g3{NULL};
-        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian("g2","g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c3%s",proc.c_str(),cat,systLabel_.c_str()))));
-        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian("g3","g3",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c4%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c5%s",proc.c_str(),cat,systLabel_.c_str()))));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c3%s",proc.c_str(),cat,systLabel_.c_str()))));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c4%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c5%s",proc.c_str(),cat,systLabel_.c_str()))));
 
         std::unique_ptr<RooAbsPdf> sigModel;
        
         if (nGaussians[pair<int,string>(cat,proc)] ==1) 
-            sigModel.reset(new RooGaussian("g1","g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c1%s",proc.c_str(),cat,systLabel_.c_str())))) ) ;
+            sigModel.reset(new RooGaussian(name.c_str(),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c1%s",proc.c_str(),cat,systLabel_.c_str())))) ) ;
         else if (nGaussians[pair<int,string>(cat,proc)] ==2) 
         {
            sigModel.reset(new RooAddPdf(name.c_str(),"model",RooArgList(*g1,*g2),
