@@ -96,6 +96,7 @@ if opts.dat != "":
 		if label in mcdb:
 			print "* label", label, "already parsed. Cmd was:"
 			print "  ",cmd
+			continue
 		print "going to execute",cmd
 		call(cmd,shell=True)
 	exit(0)

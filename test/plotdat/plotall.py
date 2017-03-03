@@ -30,6 +30,7 @@ dat={
 	"plotdat/qcdpurity_control_etmiss.txt":"plot/EtMiss_Control.pdf",
 	"plotdat/qcdpurity_control_taupt.txt":"plot/TauPt_Control.pdf",
 	#"plotdat/qcdpurity_mt.txt":"plot/MtQCDOnly.pdf",
+	"plotdat/qcdpurity_drtaujet.txt":"plot/DrTauJet.pdf",
 	"plotdat/chhiggs_yields.txt": "plot/Yields.pdf",
 	"plotdat/ewk_full.txt":"plot/EWK_EtMiss_Full.pdf",
 	"plotdat/ewk_ht_full.txt":"plot/EWK_HT_Full.pdf",

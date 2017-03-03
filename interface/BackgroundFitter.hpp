@@ -1,5 +1,5 @@
-#ifndef FITTER_H
-#define FITTER_H
+#ifndef BACKGRONUD_FITTER_H
+#define BACKGRONUD_FITTER_H
 
 
 // --- STD ---
@@ -28,6 +28,7 @@ using namespace std;
 #include "RooDataHist.h"
 #include "RooRealVar.h"
 #include "RooAddPdf.h"
+#include "RooAbsPdf.h"
 // do not use namespace for dictionaries
 //using namespace RooFit;
 class RooSpline1D;
@@ -36,15 +37,14 @@ class RooSpline1D;
 #include "interface/BaseFitter.hpp"
 
 //#ifdef HAVE_COMBINE
-class Fitter : virtual public BaseFitter{
+class BackgroundFitter : virtual public BaseFitter{
     /* Original Author: Andrea C. Marini 
-     * Date: 8th June 2015
+     * Date: 28th Feb 2017
      * This class provide an interface to create 
      * smooth workspace for combine
      */
     //
     RooWorkspace *w_{0};
-    RooRealVar *mh_{0}; // truth
     RooRealVar *x_{0}; // observable (mt)
 
     map< string, RooDataHist*> hist_;
@@ -56,66 +56,51 @@ class Fitter : virtual public BaseFitter{
     // save RooRealVars used for fit
     map<string, RooRealVar*> vars_;
 
-    float lastMass{-10}; //last Mass point fitted
 
     public:
+
     string datasetMask_ ;
-    string xsecMask_;
-    string eaMask_;
-    string massMask_;
     string normMask_;
     string modelMask_;
-    string systLabel_{""}; //_JesUp, _JesDown .., mainly internal, but should be uniq
-    vector<string> systIn; 
 
     void info();
 
     bool writeDatasets_ ; // write the RooDatasets into the ws
 
-
     // --- objects that can be set	
-    vector<float> mIn; // input masses
-    vector<string> inputMasks; // input FileName Mask. Must contain a replacement for float. One for each cat
+    vector<string> inputMasks; // input FileName Mask. Must contain a replacement for each cat
     string outname; // 
     string inname;
     string plotDir;
     bool plot; // make plot fit
+    bool blind{true};
     bool verbose;
-    bool doXsec {false}; // do xsec 
-    bool saveFit{true};
 
     float xmin;
     float xmax;
 
-    float mhmin{120};
-    float mhmax{130};
 
     // --- objects that can be called
-    Fitter();
+    BackgroundFitter();
     void init();	
     void fit() ;
     void write();
-    void end();
-    const string name() const override { return "Fitter";}
+    void end() {}; // not needed here,
+    const string name() const override { return "BackgroundFitter";}
 
     map<string,float> initPars_;
 
-    //vector<int> nGaussians;
-    map< pair<int,string>, int > nGaussians;
-    vector<string> processes;
-
-    void SetGaussians(int cat, const string& proc, int nG ) { nGaussians[pair<int,string>(cat,proc) ] = nG;}
 };
 
 //#else
 //#include "interface/Handlers.hpp"
-//class Fitter: public BaseFitter
+//class BackgroundFitter: public BaseFitter
 //{
 //    public:
 //        void init(){ throw abortException(); };
-//        void fit(){ throw abortException(); };
+//        void fit(){ throw abortException() ;};
 //        void end(){ throw abortException(); };
-//        const name() const override { return "Fitter_NotImplemeted";};
+//        const name() const override { return "BackgroundFitter_NotImplemeted";};
 //};
 //#endif
 

@@ -22,6 +22,7 @@
 #include "interface/EnergyScaleCorrection_class.hpp"
 #include "interface/Event.hpp"
 #include "interface/Fitter.hpp"
+#include "interface/BackgroundFitter.hpp"
 #include "interface/GeneralFunctions.hpp"
 #include "interface/GenParticle.hpp"
 #include "interface/Handlers.hpp"

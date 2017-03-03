@@ -203,14 +203,22 @@ double Event::weight(bool safe){
 
 void Event::validate(){
     //reject all the jets that are identified as : lepton or tau
+    //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","---------- VALIDATE EVENT ----------" );
     for ( auto j : jets_ )
     {
+        //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Compute Validity of jet pt=%f, eta=%f vs Tau",j->Pt(),j->Eta()) );
+
         j-> resetValidity();
         for(auto l : leps_)
             if(l->IsLep() )j-> computeValidity(l);
+
         for(auto t: taus_)
         {
-            if(t->IsTau() )j-> computeValidity(t);
+            if(t->IsTau() ) { 
+                //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("--- aganinst Tau of pt=%f, eta=%f DR=",t->Pt(),t->Eta(), t->DeltaR(*j)) );
+                j-> computeValidity(t);
+                //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("--- Jet for the moment is=%d ",j->isValid) );
+            }
             if(t->IsTauInvIso() )j-> computeValidity(t,0.4,true);
         }
     }

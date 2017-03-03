@@ -1,2 +1,1 @@
-sub=klute|/eos/user/k/klute/Nero/v2.1
-addfiles=%(klute)s/Tau
+addfiles=/store/group/phys_higgs/ceballos/Data/Nero/v2.2/Tau

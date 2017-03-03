@@ -24,6 +24,7 @@ job_opts.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="M
 job_opts.add_option("","--hadoop" ,dest='hadoop',action='store_true',help="Use Hadhoop and MIT-T3",default=False)
 job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. ",default=False)
 job_opts.add_option("","--nosyst" ,dest='nosyst',action='store_true',help="Do not Run Systematics",default=False)
+job_opts.add_option("","--config" ,dest='config',action='append',type="string",help="add line in configuration",default=[])
 
 hadd_opts=OptionGroup(parser,"Hadd options","these options modify the behaviour of hadd")
 hadd_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
@@ -391,6 +392,8 @@ if opts.hadoop:
 	dat.write('Output=%s/%s\n'%(subdir,outname) )
 	if opts.nosyst:
 		dat.write("SMEAR=NONE\n")
+	for l in opts.config:
+		dat.write(l+"\n")
 	dat.close()
    # create condor.jdl
    outname = re.sub('.root','_$(Process).root',config['Output'])
@@ -514,6 +517,10 @@ if not opts.hadoop:
 	dat.write("include=%s\n"%opts.input)
 	dat.write(re.sub('%%MOUNTPOINT%%',"./", 'Files=%s\n'%( ','.join(splittedInput[iJob]) ) ))
 	dat.write('Output=%s/%s\n'%(opts.dir,outname) )
+	if opts.nosyst:
+		dat.write("SMEAR=NONE\n")
+	for l in opts.config:
+		dat.write(l+"\n")
 
 	## make the sh file executable	
 	call(["chmod","u+x","%s/sub%d.sh"%(opts.dir,iJob)])

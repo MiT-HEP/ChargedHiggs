@@ -39,6 +39,7 @@
 	<!-- Fitter -->
 	<class name="BaseFitter"/>
 	<class name="Fitter"/>
+	<class name="BackgroundFitter"/>
 	<class name="PurityFit"/>
 	<class name="PurityFitAnalytic"/>
 	
