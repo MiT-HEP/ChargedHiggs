@@ -7,6 +7,8 @@ void KaMuCa::Init(){
     correctorMC_.reset(new KalmanMuonCalibrator("MC_80X_13TeV") ) ;
     correctorDATA_.reset(new KalmanMuonCalibrator("DATA_80X_13TeV") ) ;
     if (doResolution) resolution_.reset(new KalmanMuonResolution("aux/KaMuCa/"));
+    rnd_ . reset(new TRandom3());
+    //rnd_ . SetSeed(123456);
 }
 
 int KaMuCa::correct(Event *e){
@@ -70,11 +72,20 @@ int KaMuCa::correct(Event *e){
                 if (gp==NULL) break;
                 if ((lep->DeltaR(gp)<.3) and genPt<gp->Pt() ) genPt=gp->Pt();
             }
+
+            float sf = resolution_->getSF() ;
             if (genPt>0)
             {
-                float sf = resolution_->getSF() ;
                 double corr = (( lep->GetP4Dirty().Pt()  - genPt ) *sf  + genPt) / lep->GetP4Dirty().Pt();
                 Scale( *lep, corr );
+            }
+            else
+            {
+                float res = resolution_->getResData();  
+                float sigma=std::sqrt( sf*sf -1) * res;
+                float s = rnd_->Gaus(0,1);
+                float newpt = s * sigma + lep->GetP4Dirty().Pt();
+                Scale(*lep,newpt/lep->GetP4Dirty().Pt());
             }
         }
 
@@ -198,10 +209,14 @@ void KalmanMuonResolution::init(const string& dir)
 
 	TH3 *e_data_old=(TH3*) files_["data_e_old"]->Get("e_0");
 	hists_["e_data1D_old"] .reset ( e_data_old->ProjectionY("data_e_old",1,1,1,1) );
+
 }
 
 void KalmanMuonResolution::setPtEta( float pt, float eta )  
 {
+    #warning fix_for_bad_endcap
+    if (eta<-2) eta=fabs(eta);
+
     float t = std::exp(-eta); 
     float sin_theta = 2*t / (1+ t*t);
     float p2 = std::pow( t/sin_theta,2);

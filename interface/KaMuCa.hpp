@@ -8,6 +8,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include "TRandom3.h"
 
 class KalmanMuonResolution{
     private:
@@ -49,6 +50,7 @@ class KaMuCa : public CorrectorBase,
 		std::unique_ptr<KalmanMuonCalibrator> correctorMC_;
 		std::unique_ptr<KalmanMuonCalibrator> correctorDATA_;
         std::unique_ptr<KalmanMuonResolution> resolution_;
+        std::unique_ptr<TRandom3> rnd_;
 };
 
 #include "interface/Smearer.hpp"
