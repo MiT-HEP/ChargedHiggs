@@ -9,6 +9,7 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
     //l->SetTightCut(true);
     //l->SetMediumCut(false);
     l->SetTightCut(false);
+    l->SetLooseCut(false);
     l->SetMediumCut(true);
 }
 void HmumuAnalysis::SetJetCuts(Jet *j) { 

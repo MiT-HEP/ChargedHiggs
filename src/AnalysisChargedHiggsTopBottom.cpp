@@ -10,6 +10,7 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
     if(doSynch) l->SetIsoRelCut(-1); // relative isolation
     if(doSynch) l->SetMiniIsoRelCut(0.10); // relative mini-isolation
     l->SetEtaCut(2.4);
+    l->SetVetoCut(); // loosest selection of them all
     l->SetTightCut(false); // use the loose selection for now
 }
 
