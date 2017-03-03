@@ -82,7 +82,7 @@ int KaMuCa::correct(Event *e){
             else
             {
                 float res = resolution_->getResData();  
-                float sigma=std::sqrt( sf*sf -1) * res;
+                float sigma=std::sqrt( sf*sf -1) * res * lep->GetP4Dirty().Pt(); // res is for dp/p
                 float s = rnd_->Gaus(0,1);
                 float newpt = s * sigma + lep->GetP4Dirty().Pt();
                 Scale(*lep,newpt/lep->GetP4Dirty().Pt());
