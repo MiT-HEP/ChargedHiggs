@@ -94,8 +94,11 @@ private:
     double evt_HT=-1;
     double evt_ST=-1;
     double evt_minDRbb=-1;
+    double evt_DRlbmaxPt=-1;
     double evt_minDRbb_invMass=-1;
     double evt_minDRlb_invMass=-1;
+
+    double evt_DEtaMaxBB=-1;
 
     double evt_MT=-1;
     double evt_MT2bb=-1;
@@ -115,6 +118,7 @@ private:
     vector<float> bdt;
 
     int nGenB = 0 ;
+    int genLepSig = 0 ;
 
     /////
     /////
@@ -122,8 +126,11 @@ private:
     GenParticle * bAss=NULL;
     GenParticle * bFromTopH=NULL;
     GenParticle * bFromTopAss=NULL;
+    GenParticle * topFromH=NULL;
     GenParticle * bFromH=NULL;
     GenParticle * leptonFromTopH=NULL;
+    GenParticle * WFromTopH=NULL;
+    GenParticle * WFromTopAss=NULL;
     GenParticle * leptonTopAssH=NULL;
 
     /////

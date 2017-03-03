@@ -206,6 +206,9 @@ void LoadNero::FillLeptons(){
     for (int iL = 0;iL<bl->p4->GetEntries() ;++iL)
     {
         bool id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepLoose;
+        if (abs((*bl->pdgId)[iL]) == 11) {
+            id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepVeto;
+        }
         if (not id) continue;
         Lepton *l = new Lepton();
         l-> SetType( abs((*bl->pdgId)[iL]) );

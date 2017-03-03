@@ -54,7 +54,7 @@ class Lepton : virtual public Object,
         inline void SetCharge(int x){charge=x;}
         inline void SetTightId( bool x=true){tightId=x;}
         inline void SetMediumId( bool x=true){mediumId=x;}
-        inline void SetMva(int x){mva=x;}
+        inline void SetMva(float x){mva=x;}
 
 
         inline float GetIsoCut()const {return isocut_;}
