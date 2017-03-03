@@ -158,7 +158,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     bool recoMuons= mu0 != NULL and mu1 !=NULL; 
 
-    bool passAsymmPtCuts = (mu0->Pt() >25);
+    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >25 );
 
     // Trigger
     bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); //
