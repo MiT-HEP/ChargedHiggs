@@ -98,7 +98,7 @@ if opts.classname== "Fitter":
 	fitter.inputMasks.clear()
 	for muStr in ["BB","BO","BE","OO","OE","EE"]:
 	#for muStr in ["BB"]:
-	  for catStr in [ "VBF0","OneB","GF","VBF1","Untag"]:
+	  for catStr in [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
 		fitter.inputMasks.push_back("HmumuAnalysis/Vars/Mmm_"+catStr+"_"+muStr+"_%s_HToMuMu_M%.0f")
 		for procStr in [ "GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]:
 			if procStr == "ttH":
@@ -137,7 +137,7 @@ if opts.classname== "BackgroundFitter":
 	fitter.inputMasks.clear()
 	for muStr in ["BB","BO","BE","OO","OE","EE"]:
 	#for muStr in ["BB"]:
-	  for catStr in [ "VBF0","OneB","GF","VBF1","Untag"]:
+	  for catStr in [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
 		fitter.inputMasks.push_back("HmumuAnalysis/Vars/Mmm_"+catStr+"_"+muStr+"_Data")
 
 ## else:

@@ -43,13 +43,13 @@ int KaMuCa::correct(Event *e){
         }
         else if ( syst >0 )
         {
-            if ( e->IsRealData() ) correctorDATA_->vary(syst,+1); 
-            else correctorMC_ -> vary ( syst , + 1);
+            if ( e->IsRealData() ) correctorDATA_->vary(syst -1 ,+1); 
+            else correctorMC_ -> vary ( syst -1 , + 1);
         }
         else //(syst <0)
         {
-            if ( e->IsRealData() ) correctorDATA_->vary(syst,-1); 
-            else correctorMC_ -> vary ( syst , -1);
+            if ( e->IsRealData() ) correctorDATA_->vary(syst -1,-1); 
+            else correctorMC_ -> vary ( syst -1 , -1);
         }
 
     }

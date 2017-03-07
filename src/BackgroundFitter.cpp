@@ -140,6 +140,11 @@ void PdfModelBuilder::runFit(RooAbsPdf *pdf, RooDataHist *data, double *NLL, int
 	//params_test->Print("v");
 	int stat=1;
 	double minnll=10e8;
+
+    pdf->fitTo(*data,
+                RooFit::Minimizer("Minuit2","minimize"),
+                RooFit::SumW2Error(kTRUE) // for linear fit should be easier to estimate the parameters
+                );
 	while (stat!=0){
         if (ntries>=MaxTries) break;
         RooFitResult *fitTest = pdf->fitTo(*data,
@@ -521,9 +526,9 @@ void BackgroundFitter::fit(){
         RooAbsPdf* exppol = modelBuilder.fTest(Form("exppol_cat%d",cat) ,hist_[name],&exppolOrd,plotDir + "/exppol");
         storedPdfs.add(*exppol);
 
-        int logpolOrd;
-        RooAbsPdf* logpol = modelBuilder.fTest(Form("logpol_cat%d",cat) ,hist_[name],&logpolOrd,plotDir + "/logpol");
-        storedPdfs.add(*logpol);
+        //int logpolOrd;
+        //RooAbsPdf* logpol = modelBuilder.fTest(Form("logpol_cat%d",cat) ,hist_[name],&logpolOrd,plotDir + "/logpol");
+        //storedPdfs.add(*logpol);
 
         //int modbernOrd;
         //RooAbsPdf* modbern = modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
@@ -581,9 +586,9 @@ void BackgroundFitter::fit(){
             TObject *exppolLeg = p->getObject(int(p->numItems()-1));
             leg->AddEntry(exppolLeg,Form("exppol ord=%d",exppolOrd),"L");
 
-            logpol->plotOn(p,RooFit::Format("NEA",AutoPrecision(1)),LineStyle(kDashed));
-            TObject *logpolLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(logpolLeg,Form("logpol ord=%d",logpolOrd),"L");
+            //logpol->plotOn(p,RooFit::Format("NEA",AutoPrecision(1)),LineStyle(kDashed));
+            //TObject *logpolLeg = p->getObject(int(p->numItems()-1));
+            //leg->AddEntry(logpolLeg,Form("logpol ord=%d",logpolOrd),"L");
 
             //modbern->plotOn(p,RooFit::Layout(0.34,0.96,0.89),RooFit::Format("NEA",AutoPrecision(1)));
             //TObject *modbernLeg = p->getObject(int(p->numItems()-1));

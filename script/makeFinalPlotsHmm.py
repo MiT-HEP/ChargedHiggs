@@ -32,7 +32,7 @@ sys.path.insert(0,os.getcwd()+'/python')
 ############# definitions
 categories=[]
 for m in [ "BB","BO","BE","OO","OE","EE" ]:
-   for v in ["VBF0","OneB","GF","VBF1","Untag"]:
+   for v in ["VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
       categories.append(v + "_" + m )
 
 montecarlos= ["VBF_HToMuMu_M%d","GluGlu_HToMuMu_M%d","ZH_HToMuMu_M%d","WMinusH_HToMuMu_M%d","WPlusH_HToMuMu_M%d","ttH_HToMuMu_M%d"]
