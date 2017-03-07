@@ -1,5 +1,7 @@
 #include "interface/AnalysisHmumu.hpp"
 
+#define VERBOSE 0
+
 //#warning Hmumu ANALYSIS NON ISO
 void HmumuAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
@@ -21,11 +23,15 @@ void HmumuAnalysis::SetJetCuts(Jet *j) {
 }
 
 string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets){
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start Category");
     // return the right category
     if (mu0== NULL or mu1==NULL) return "";
 
     float eta0 = mu0->Eta();
     float eta1 = mu1->Eta();
+
+    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon0 eta0=%f | Pt=%f Pz=%f",mu0->Eta(),mu0->Pt(),mu0->GetP4().Pz()));
+    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon1 eta1=%f | Pt=%f Pz=%f",mu1->Eta(),mu1->Pt(),mu1->GetP4().Pz()));
    
    // construct a Higgs-like object  
     Object Hmm;
@@ -58,6 +64,7 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
 
         double mjj= jets[i]->InvMass( jets[j] ) ;
         double detajj= fabs( jets[i]->Eta() - jets[j]->Eta() );
+        if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Jet Eta (i=%d,j=%d) etai=%f etaj=%f | Pt_i=%f Pt_j=%f Pz_i=%f Pz_j=%f",i,j,jets[i]->Eta(),jets[j]->Eta(),jets[i]->Pt(),jets[j]->Pt(),jets[i]->GetP4().Pz(),jets[j]->GetP4().Pz()));
 
         if (mjj > 650 and detajj > 3.5)  isTightVbf = true;
         if (mjj > 250 and Hmm.Pt() >50 )  isTightGF = true;
@@ -77,10 +84,13 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     else if (Hmm.Pt() >25) vbfStr = "Untag0";
     else vbfStr = "Untag1";
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + vbfStr + "_" + muStr);
+
     return vbfStr +"_" + muStr;
 }
 
 void HmumuAnalysis::Init(){
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
     // define categories -- for booking histos
     vector< string> mu_cats{"BB","BO","BE","OO","OE","EE"};
     vector<string> vbf_cats{"VBF0","GF","VBF1","OneB","Untag0","Untag1"};
@@ -92,8 +102,8 @@ void HmumuAnalysis::Init(){
     }
     //
 
+	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
-	    Log(__FUNCTION__,"INFO","Booking Histo Mass");
 	    Book ("HmumuAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
 	    // 
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
@@ -103,11 +113,13 @@ void HmumuAnalysis::Init(){
         }
     }
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
 
 }
 
 int HmumuAnalysis::analyze(Event *e, string systname)
 {
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
     cut.reset();
     cut.SetMask(MaxCut-1) ;
@@ -116,8 +128,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     /*
      */
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon0: ");
     Lepton*mu0 = e->GetMuon(0);
+    if (VERBOSE and mu0)Log(__FUNCTION__,"DEBUG",Form("GetMuon0: pt=%f",mu0->Pt()));
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon1: ");
     Lepton*mu1 = e->GetMuon(1);
+    if (VERBOSE and mu1)Log(__FUNCTION__,"DEBUG",Form("GetMuon1: pt=%f",mu1->Pt()));
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetJets: ");
     Jet *j0 = e->GetJet(0);
     Jet *j1 = e->GetJet(1);
 
@@ -182,12 +199,14 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         mass_=Z.M();
 
        	if (cut.passAllUpTo(Trigger) ){
+            if (VERBOSE)Log(__FUNCTION__,"DEBUG","event pass selection");
             if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
             if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
         }
     }
 
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
     return 0;
 }
 

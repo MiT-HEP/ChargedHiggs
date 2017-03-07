@@ -2,6 +2,8 @@
 #include "interface/Handlers.hpp"
 #include <cmath>
 
+//#define VERBOSE 2
+
 void KaMuCa::Init(){
     Log(__FUNCTION__,"INFO","Init KaMuCa Corrections with MC_80X_13TeV and DATA_80X_13TeV");
     correctorMC_.reset(new KalmanMuonCalibrator("MC_80X_13TeV") ) ;
@@ -12,12 +14,18 @@ void KaMuCa::Init(){
 }
 
 int KaMuCa::correct(Event *e){
+    #ifdef VERBOSE
+    if(VERBOSE)Log(__FUNCTION__,"DEBUG","Start Correct");
+    #endif
 
     correctorDATA_ -> reset();
     correctorMC_ -> reset();
 
     if (syst!=0)
     {
+        #ifdef VERBOSE
+        if(VERBOSE>0)Log(__FUNCTION__,"DEBUG",Form("with syst=%d",syst));
+        #endif
         // check
         if (syst >= correctorDATA_->getN()+1 or syst < -correctorDATA_->getN())
         {
@@ -57,7 +65,12 @@ int KaMuCa::correct(Event *e){
 
     for (auto & lep : GetLepVector(e))
     {
+        if (std::isnan(lep->GetP4Dirty().Pt())) continue;
+        if (lep->GetP4Dirty().Pt() < 0.05) continue; // check minimum lepton pt to avoid annoying  stuff
         if (not lep->IsMuonDirty() ) continue; // check only it's muon w/o any Id
+        #ifdef VERBOSE
+        if (VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("Considering dirty lepton pt=%f eta=%f",lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta()));
+        #endif
         // reset uncorrected value
         ResetUncorr(*lep);
 
@@ -78,16 +91,28 @@ int KaMuCa::correct(Event *e){
             {
                 double corr = (( lep->GetP4Dirty().Pt()  - genPt ) *sf  + genPt) / lep->GetP4Dirty().Pt();
                 Scale( *lep, corr );
+                #ifdef VERBOSE
+                if (VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("matched: sf=%f corr =%f ",sf,corr));
+                #endif
             }
-            else
+            else if (sf >1)
             {
                 float res = resolution_->getResData();  
                 float sigma=std::sqrt( sf*sf -1) * res * lep->GetP4Dirty().Pt(); // res is for dp/p
                 float s = rnd_->Gaus(0,1);
                 float newpt = s * sigma + lep->GetP4Dirty().Pt();
-                Scale(*lep,newpt/lep->GetP4Dirty().Pt());
+                float corr= newpt/lep->GetP4Dirty().Pt();
+                Scale(*lep,corr);
+                #ifdef VERBOSE
+                if (VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("unmatched: res=%f sf=%f sigma=%f corr =%f ",res,sf,sigma,corr));
+                #endif
             }
+            // else do nothing: unmatched, and sf<1
         }
+
+        #ifdef VERBOSE
+        if (VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("Considering lepton after resolution pt=%f eta=%f",lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta()));
+        #endif
 
         //
         if ( e->IsRealData()){
@@ -127,8 +152,14 @@ int KaMuCa::correct(Event *e){
         //
         //c.varyClosure(+1)
         //print 'After closure shift pt=', c.getCorrectedPt(40,0.0,0.0,1)
+        #ifdef VERBOSE
+        if (VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("End -- Considering lepton pt=%f eta=%f",lep->Pt(),lep->Eta()));
+        #endif
 
     }
+    #ifdef VERBOSE
+    if(VERBOSE)Log(__FUNCTION__,"DEBUG","End Correct");
+    #endif
 }
 
 // ------------ SMEAR ------------
