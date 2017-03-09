@@ -1,0 +1,184 @@
+#### MAKE 2L -STAT
+
+hadd test/combine/MARCH5/2l_low_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/2l_low_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/2l_medium_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/2l_medium_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/2l_high_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/2l_high_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/2l_1d_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/2l_1d_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+
+python script/makeCombinePlots.py -f test/combine/MARCH5/2l_low_STAT/TopBottom/TopBottom.root -o plot/brazilian_2l_low_STAT
+python script/makeCombinePlots.py -f test/combine/MARCH5/2l_medium_STAT/TopBottom/TopBottom.root -o plot/brazilian_2l_medium_STAT
+python script/makeCombinePlots.py -f test/combine/MARCH5/2l_high_STAT/TopBottom/TopBottom.root -o plot/brazilian_2l_high_STAT
+python script/makeCombinePlots.py -f test/combine/MARCH5/2l_1d_STAT/TopBottom/TopBottom.root -o plot/brazilian_2l_1d_STAT
+
+python script/MariaCombinePlots.py -f test/combine/MARCH5/2l_low_STAT/TopBottom/TopBottom.root,test/combine/MARCH5/2l_medium_STAT/TopBottom/TopBottom.root,test/combine/MARCH5/2l_high_STAT/TopBottom/TopBottom.root  -m 301,501 -o plot/mergedBDT_2l_STAT
+
+
+#### MAKE 1L -STAT
+
+hadd test/combine/MARCH5/1l_1d_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/1l_1d_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/1l_low_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/1l_low_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/1l_medium_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/1l_medium_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/1l_high_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/1l_high_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+
+python script/makeCombinePlots.py -f test/combine/MARCH5/1l_1d_STAT/TopBottom/TopBottom.root -o plot/brazilian_1l_1d_STAT
+python script/makeCombinePlots.py -f test/combine/MARCH5/1l_low_STAT/TopBottom/TopBottom.root -o plot/brazilian_1l_low_STAT
+python script/makeCombinePlots.py -f test/combine/MARCH5/1l_medium_STAT/TopBottom/TopBottom.root -o plot/brazilian_1l_medium_STAT
+python script/makeCombinePlots.py -f test/combine/MARCH5/1l_high_STAT/TopBottom/TopBottom.root -o plot/brazilian_1l_high_STAT
+
+python script/MariaCombinePlots.py -f test/combine/MARCH5/1l_low_STAT/TopBottom/TopBottom.root,test/combine/MARCH5/1l_medium_STAT/TopBottom/TopBottom.root,test/combine/MARCH5/1l_high_STAT/TopBottom/TopBottom.root  -m 301,501 -o plot/mergedBDT_1l_STAT
+
+### MAKE COMBINED -STAT
+
+hadd test/combine/MARCH5/combined_1d_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/combined_1d_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root
+hadd test/combine/MARCH5/combined_high_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/combined_high_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root
+hadd test/combine/MARCH5/combined_medium_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/combined_medium_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root
+hadd test/combine/MARCH5/combined_low_STAT/TopBottom/TopBottom.root -f test/combine/MARCH5/combined_low_STAT/TopBottom/higgsCombineTest.Asymptotic.mH*root
+
+python script/makeCombinePlots.py -f test/combine/MARCH5/combined_1d_STAT//TopBottom/TopBottom.root -o plot/brazilian_combined_1d_STAT
+python script/MariaCombinePlots.py -f test/combine/MARCH5/combined_low_STAT/TopBottom/TopBottom.root,test/combine/MARCH5/combined_medium_STAT/TopBottom/TopBottom.root,test/combine/MARCH5/combined_high_STAT/TopBottom/TopBottom.root  -m 301,501 -o plot/mergedBDT_combined_STAT
+
+exit
+
+#### MAKE 2L -SYST
+
+hadd test/combine/MARCH5/2l_low_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/2l_low_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/2l_medium_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/2l_medium_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/2l_high_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/2l_high_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/2l_1d_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/2l_1d_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+
+python script/makeCombinePlots.py -f test/combine/MARCH5/2l_low_SYST/TopBottom/TopBottom.root -o plot/brazilian_2l_low_SYST
+python script/makeCombinePlots.py -f test/combine/MARCH5/2l_medium_SYST/TopBottom/TopBottom.root -o plot/brazilian_2l_medium_SYST
+python script/makeCombinePlots.py -f test/combine/MARCH5/2l_high_SYST/TopBottom/TopBottom.root -o plot/brazilian_2l_high_SYST
+python script/makeCombinePlots.py -f test/combine/MARCH5/2l_1d_SYST/TopBottom/TopBottom.root -o plot/brazilian_2l_1d_SYST
+
+python script/MariaCombinePlots.py -f test/combine/MARCH5/2l_low_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/2l_medium_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/2l_high_SYST/TopBottom/TopBottom.root  -m 301,501 -o plot/mergedBDT_2l
+
+
+#### MAKE 1L -SYST
+
+hadd test/combine/MARCH5/1l_1d_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/1l_1d_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/1l_low_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/1l_low_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/1l_medium_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/1l_medium_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+hadd test/combine/MARCH5/1l_high_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/1l_high_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root 
+
+python script/makeCombinePlots.py -f test/combine/MARCH5/1l_1d_SYST/TopBottom/TopBottom.root -o plot/brazilian_1l_1d_SYST
+python script/makeCombinePlots.py -f test/combine/MARCH5/1l_low_SYST/TopBottom/TopBottom.root -o plot/brazilian_1l_low_SYST
+python script/makeCombinePlots.py -f test/combine/MARCH5/1l_medium_SYST/TopBottom/TopBottom.root -o plot/brazilian_1l_medium_SYST
+python script/makeCombinePlots.py -f test/combine/MARCH5/1l_high_SYST/TopBottom/TopBottom.root -o plot/brazilian_1l_high_SYST
+
+python script/MariaCombinePlots.py -f test/combine/MARCH5/1l_low_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/1l_medium_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/1l_high_SYST/TopBottom/TopBottom.root  -m 301,501 -o plot/mergedBDT_1l
+
+### MAKE COMBINED -SYST
+
+hadd test/combine/MARCH5/combined_1d_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/combined_1d_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root
+hadd test/combine/MARCH5/combined_high_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/combined_high_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root
+hadd test/combine/MARCH5/combined_medium_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/combined_medium_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root
+hadd test/combine/MARCH5/combined_low_SYST/TopBottom/TopBottom.root -f test/combine/MARCH5/combined_low_SYST/TopBottom/higgsCombineTest.Asymptotic.mH*root
+
+python script/makeCombinePlots.py -f test/combine/MARCH5/combined_1d_SYST//TopBottom/TopBottom.root -o plot/brazilian_combined_1d_SYST
+python script/MariaCombinePlots.py -f test/combine/MARCH5/combined_low_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/combined_medium_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/combined_high_SYST/TopBottom/TopBottom.root  -m 301,501 -o plot/mergedBDT_combined_SYST
+
+
+exit
+
+## 1l -STAT
+
+python script/combine.py -i MARCH5/1l_1d_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/1l_1d_STAT/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/1l_1d_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/1l_1d_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+
+python script/combine.py -i MARCH5/1l_high_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/1l_high_STAT/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/1l_medium_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/1l_medium_STAT/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/1l_low_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/1l_low_STAT/TopBottom --rmax=1 --begin=800,3000
+
+python script/combine.py -i MARCH5/1l_high_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/1l_high_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/1l_medium_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/1l_medium_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/1l_low_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/1l_low_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+
+## 2l 
+
+python script/combine.py -i MARCH5/2l_1d_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/2l_1d_STAT/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/2l_1d_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/2l_1d_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+
+python script/combine.py -i MARCH5/2l_high_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/2l_high_STAT/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/2l_medium_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/2l_medium_STAT/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/2l_low_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/2l_low_STAT/TopBottom --rmax=1 --begin=800,3000
+
+python script/combine.py -i MARCH5/2l_high_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/2l_high_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/2l_medium_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/2l_medium_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/2l_low_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/2l_low_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+
+
+## combined 
+
+python script/combine.py -i MARCH5/combined_1d_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/combined_1d_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/combined_1d_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/combined_1d_STAT/TopBottom --rmax=1 --begin=800,3000
+
+python script/combine.py -i MARCH5/combined_high_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/combined_high_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/combined_high_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/combined_high_STAT/TopBottom --rmax=1 --begin=800,3000
+
+python script/combine.py -i MARCH5/combined_medium_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/combined_medium_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/combined_medium_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/combined_medium_STAT/TopBottom --rmax=1 --begin=800,3000
+
+python script/combine.py -i MARCH5/combined_low_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/combined_low_STAT/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/combined_low_cms_datacard_topbottom_STAT.txt -e -q 1nh -d test/combine/MARCH5/combined_low_STAT/TopBottom --rmax=1 --begin=800,3000
+
+
+## 1l -SYST
+
+python script/combine.py -i MARCH5/1l_1d_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/1l_1d_SYST/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/1l_high_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/1l_high_SYST/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/1l_medium_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/1l_medium_SYST/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/1l_low_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/1l_low_SYST/TopBottom --rmax=1 --begin=800,3000
+
+python script/combine.py -i MARCH5/1l_1d_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/1l_1d_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/1l_high_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/1l_high_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/1l_medium_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/1l_medium_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/1l_low_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/1l_low_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+
+## 2l 
+
+python script/combine.py -i MARCH5/2l_1d_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_1d_SYST/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/2l_high_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_high_SYST/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/2l_medium_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_medium_SYST/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/2l_low_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_low_SYST/TopBottom --rmax=1 --begin=800,3000
+
+python script/combine.py -i MARCH5/2l_1d_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_1d_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/2l_high_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_high_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/2l_medium_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_medium_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/2l_low_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_low_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+
+
+
+## combined 
+
+python script/combine.py -i MARCH5/combined_1d_cms_datacard_topbottom_SYST.txt -e -q 8nh -d test/combine/MARCH5/combined_1d_SYST/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/combined_low_cms_datacard_topbottom_SYST.txt -e -q 8nd -d test/combine/MARCH5/combined_low_SYST/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/combined_medium_cms_datacard_topbottom_SYST.txt -e -q 8nh -d test/combine/MARCH5/combined_medium_SYST/TopBottom --rmax=1 --begin=800,3000
+python script/combine.py -i MARCH5/combined_high_cms_datacard_topbottom_SYST.txt -e -q 8nh -d test/combine/MARCH5/combined_high_SYST/TopBottom --rmax=1 --begin=800,3000
+
+python script/combine.py -i MARCH5/combined_1d_cms_datacard_topbottom_SYST.txt -e -q 8nh -d test/combine/MARCH5/combined_1d_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/combined_low_cms_datacard_topbottom_SYST.txt -e -q 8nd -d test/combine/MARCH5/combined_low_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/combined_medium_cms_datacard_topbottom_SYST.txt -e -q 8nh -d test/combine/MARCH5/combined_medium_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+python script/combine.py -i MARCH5/combined_high_cms_datacard_topbottom_SYST.txt -e -q 8nh -d test/combine/MARCH5/combined_high_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+
+
+exit
+
+
+
+###############
+############### CRAP BELOW
+################
+
+
+#python script/combine.py -i MARCH5/2l_high_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_high_SYST/TopBottom --rmax=1 --begin=800,3000
+#python script/combine.py -i MARCH5/2l_high_cms_datacard_topbottom_SYST.txt -e -q 1nh -d test/combine/MARCH5/2l_high_SYST/TopBottom --rmax=10 --begin=180,200,220,250,300,350,400,500
+
+
+python script/MariaCombinePlots.py -f test/combine/MARCH5/2l_low_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/2l_medium_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/2l_high_SYST/TopBottom/TopBottom.root  -m 301,501 -o plot/combineMaria_2l
+
+#python script/MariaCombinePlots.py -f test/combine/MARCH5/1l_low_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/1l_medium_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/1l_high_SYST/TopBottom/TopBottom.root  -m 300,500,800 -o plot/combineMaria_1l
+#python script/MariaCombinePlots.py -f test/combine/MARCH5/2l_low_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/2l_medium_SYST/TopBottom/TopBottom.root,test/combine/MARCH5/2l_high_SYST/TopBottom/TopBottom.root  -m 300,500,800 -o plot/combineMaria_2l
+
+
+
