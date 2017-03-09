@@ -106,18 +106,18 @@ if opts.classname== "Fitter":
 			else:
 				fitter.SetGaussians(fitter.inputMasks.size()-1,procStr, 3)
 	## overwrite some category
-	for cat in [0,4,22,25,26,27]:
-		fitter.SetGaussians(cat,"GluGlu", 2)
-	for cat in [17,25,26,27,28]:
-		fitter.SetGaussians(cat,"VBF", 2)
-	for cat in [17,20,22,25,26,27,28]:
-		fitter.SetGaussians(cat,"WMinusH", 2)
-	for cat in [12,20,26,27,29,4]:
-		fitter.SetGaussians(cat,"WPlusH", 2)
-	for cat in [22]:
-		fitter.SetGaussians(cat,"ZH", 2)
-	for cat in [14,19,29]:
-		fitter.SetGaussians(cat,"ttH", 1)
+	## for cat in [0,4,22,25,26,27]:
+	## 	fitter.SetGaussians(cat,"GluGlu", 2)
+	## for cat in [17,25,26,27,28]:
+	## 	fitter.SetGaussians(cat,"VBF", 2)
+	## for cat in [17,20,22,25,26,27,28]:
+	## 	fitter.SetGaussians(cat,"WMinusH", 2)
+	## for cat in [12,20,26,27,29,4]:
+	## 	fitter.SetGaussians(cat,"WPlusH", 2)
+	## for cat in [22]:
+	## 	fitter.SetGaussians(cat,"ZH", 2)
+	## for cat in [14,19,29]:
+	## 	fitter.SetGaussians(cat,"ttH", 1)
 
 doSyst=False
 if opts.classname== "Fitter" and doSyst:
@@ -133,6 +133,7 @@ if opts.classname== "Fitter" and doSyst:
 if opts.classname== "BackgroundFitter":
 	fitter.outname= opts.outfile
 	fitter.inname =opts.file
+	fitter.rebin=1
 	## Hmumu
 	fitter.inputMasks.clear()
 	for muStr in ["BB","BO","BE","OO","OE","EE"]:

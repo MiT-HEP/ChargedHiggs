@@ -8,6 +8,7 @@ namespace Smearer{
         JER,
         TAUESCALE,
         UNCLUSTER,
+        SOURCES,
         NONE
     };
 

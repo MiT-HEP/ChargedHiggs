@@ -99,6 +99,7 @@ for hTmp in hL:
 h.Draw("HIST")
 for hTmp in hL:
 	hTmp.Draw("HIST SAME")
+	print "Yields variation for ",hTmp.GetName(),":", "%.1f %%"%( (hTmp.Integral()/h.Integral()-1) *100.)
 
 c2=ROOT.TCanvas("c2")
 r=h.Clone("r")

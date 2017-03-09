@@ -28,6 +28,8 @@ include=dat/catalog/2017.moriond/tau.dat
 addConfig=ChargedHiggsTauNu|is80X=1
 
 #Smear=NONE,JES,JER,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("TAU"!"tauid"),@SmearSF("TAUHIGHPT"!"tauid2"),@SmearSF("TRIG"!"tauLeg"),@SmearSF("TRIGMET"!"metLegLoose"),@SmearTauScale(),@SmearUncluster(),@SmearSF("ELEVETO"!"eleveto"),@SmearSF("MUVETO"!"muveto"),@SmearPu,@SmearSF("TOPRW"!"topreweight")
+Smear=NONE,JES,JER,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("TAU"!"tauid"),@SmearSF("TAUHIGHPT"!"tauid2"),@SmearSF("TRIG"!"tauLeg"),@SmearSF("TRIGMET"!"metLeg"),@SmearTauScale(),@SmearUncluster(),@SmearPu,@SmearSF("TOPRW"!"topreweight")
+
 Smear=NONE
 
 MCDB=aux/mcdb.TauNu.2017.dat
