@@ -30,7 +30,10 @@ addConfig=ChargedHiggsTauNu|is80X=1
 #Smear=NONE,JES,JER,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("TAU"!"tauid"),@SmearSF("TAUHIGHPT"!"tauid2"),@SmearSF("TRIG"!"tauLeg"),@SmearSF("TRIGMET"!"metLegLoose"),@SmearTauScale(),@SmearUncluster(),@SmearSF("ELEVETO"!"eleveto"),@SmearSF("MUVETO"!"muveto"),@SmearPu,@SmearSF("TOPRW"!"topreweight")
 Smear=NONE,JES,JER,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("TAU"!"tauid"),@SmearSF("TAUHIGHPT"!"tauid2"),@SmearSF("TRIG"!"tauLeg"),@SmearSF("TRIGMET"!"metLeg"),@SmearTauScale(),@SmearUncluster(),@SmearPu,@SmearSF("TOPRW"!"topreweight")
 
-Smear=NONE
+#Smear=NONE
+
+# JES SOURCES
+#Smear=NONE,@SmearJesSource("AbsoluteStat"),@SmearJesSource("AbsoluteScale"),@SmearJesSource("AbsoluteMPFBias"),@SmearJesSource("Fragmentation"),@SmearJesSource("SinglePionECAL"),@SmearJesSource("FlavorQCD"),@SmearJesSource("TimePtEta"),@SmearJesSource("RelativeJEREC1"),@SmearJesSource("RelativeJEREC2"),@SmearJesSource("RelativeJERHF"),@SmearJesSource("RelativePtBB"),@SmearJesSource("RelativePtEC1"),@SmearJesSource("RelativePtEC2"),@SmearJesSource("RelativePtHF"),@SmearJesSource("RelativeBal"),@SmearJesSource("RelativeFSR"),@SmearJesSource("PileUpDataMC"),@SmearJesSource("PileUpPtRef"),@SmearJesSource("PileUpPtBB"),@SmearJesSource("PileUpPtEC1"),@SmearJesSource("PileUpPtEC2"),@SmearJesSource("PileUpPtHF")
 
 MCDB=aux/mcdb.TauNu.2017.dat
 pileup=aux/pileup.TauNu.moriond.root

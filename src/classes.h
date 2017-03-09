@@ -58,6 +58,7 @@
 #include "interface/SF.hpp"
 #include "interface/Smearable.hpp"
 #include "interface/Smearer.hpp"
+#include "interface/SmearJesSources.hpp"
 #include "interface/SplitMC.hpp"
 #include "interface/Tau.hpp"
 #include "interface/TmvaTrainer.hpp"

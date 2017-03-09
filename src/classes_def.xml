@@ -29,6 +29,7 @@
 	<class name="SmearPdfs"/>
 	<class name="SmearBjets"/>
 	<class name="SmearKaMuCa"/>
+	<class name="SmearJesSource"/>
 	
 	<!-- Looper -->
 	<class name="Weight"/>
