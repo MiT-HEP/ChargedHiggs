@@ -15,6 +15,8 @@ class HmumuAnalysis: virtual public AnalysisBase
         const string name() const override {return "HmumuAnalysis";}
         void SetLeptonCuts(Lepton *l) override ; 
         void SetJetCuts(Jet *j) override ;
+        void SetTauCuts(Tau *t) override;
+        void SetPhotonCuts(Photon*p) override;
 
         float mass_;
         bool Unblind(Event *e) override {if (e->IsRealData() and mass_ > 125-3 and mass_<125+3 ) return unblind; return true;} // if is not data, no need to return something else

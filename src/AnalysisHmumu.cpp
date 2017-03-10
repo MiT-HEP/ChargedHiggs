@@ -22,6 +22,22 @@ void HmumuAnalysis::SetJetCuts(Jet *j) {
     j->SetPuIdCut(-999);
 }
 
+void HmumuAnalysis::SetTauCuts(Tau *t){ 
+    t->SetIsoCut(2.5); 
+    t->SetEtaCut(2.1); 
+    t->SetPtCut(8000);  // remove taus!!! 
+    t->SetMuRej(true); 
+    t->SetEleRej(true);
+    t->SetTrackPtCut(30.);
+    t->SetProngsCut(1); 
+    t->SetDecayMode(1);
+}
+
+void HmumuAnalysis::SetPhotonCuts(Photon *p){
+    p->SetIsoCut(-1); 
+    p->SetPtCut(8000);
+}
+
 string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start Category");
     // return the right category
@@ -73,7 +89,7 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     int nbjets=0;
     for(unsigned i=0;i<jets.size() ;++i)
     {
-        if (jets[i]->IsBJet() and jets[i]->Pt() >30 and abs(jets[i]->Eta())<2.5)  nbjets +=1;
+        if (jets[i]->IsBJet() and jets[i]->Pt() >30 and abs(jets[i]->Eta())<2.4)  nbjets +=1;
     }
 
     string vbfStr="";
@@ -109,7 +125,10 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
         for(const auto & c : categories_)
         {
-	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 1440,60,150);
+	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
+            // for systematics, only counts the total
+	        Book ("HmumuAnalysis/Vars/Mmm_Count_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 1,105,150); // every 4 (old16) per GeV
+            AddFinalHisto("HmumuAnalysis/Vars/Mmm_Count_"+c+"_"+l);
         }
     }
 
@@ -131,12 +150,14 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon0: ");
     Lepton*mu0 = e->GetMuon(0);
     if (VERBOSE and mu0)Log(__FUNCTION__,"DEBUG",Form("GetMuon0: pt=%f",mu0->Pt()));
+
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon1: ");
     Lepton*mu1 = e->GetMuon(1);
+    int il2=1;
+    while (mu0 != NULL and mu1!= NULL and mu1->Charge() * mu0->Charge() != -1) { mu1= e->GetMuon(++il2);} // fully combinatorics on the second muon
     if (VERBOSE and mu1)Log(__FUNCTION__,"DEBUG",Form("GetMuon1: pt=%f",mu1->Pt()));
+
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetJets: ");
-    Jet *j0 = e->GetJet(0);
-    Jet *j1 = e->GetJet(1);
 
     vector<Jet*> selectedJets;
     for(unsigned i=0;i<e->Njets() ; ++i)
@@ -173,9 +194,12 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     //    if (Ztruth.M() > 60 and Ztruth.M()<120) isGen=true;
     //}
 
+    // preselection
     bool recoMuons= mu0 != NULL and mu1 !=NULL; 
+    if (mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
 
-    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >25 );
+
+    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 );
 
     // Trigger
     bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); //
@@ -185,8 +209,12 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     for(int i=0; ; ++i) { 
             Lepton *el= e->GetElectron(i);
             if (el == NULL) break;
-            if (el->Pt() >15) passLeptonVeto=false; // FIXME 10 ?!?
+            //if (el->Pt() >15) passLeptonVeto=false; // FIXME 10 ?!?
+            #warning ABSURD_ELE_VETO
+            //|eta| < 1.4442 || 1.566 <|eta| <2.5 
+            if (el->Pt() >10 and (fabs(el->Eta()) <1.4442 or fabs(el->Eta())>1.566) and fabs(el->Eta())<2.5 ) passLeptonVeto=false; // FIXME 10 ?!?
     }
+
 
     // ---------------------- 25 -------------------
     if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto)

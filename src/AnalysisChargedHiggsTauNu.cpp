@@ -186,12 +186,12 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
 
     //------------- TRIGGER -----------
     {
-        if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110"))  cut.SetCutBit(Trigger);
+        //if ( not muon and e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110"))  cut.SetCutBit(Trigger);
         /*HLT_VLooseIsoPFTau120_Trk50_eta2p1_v
          * HLT_VLooseIsoPFTau140_Trk50_eta2p1_v
          */
-        //#warning SingleTauTrigger
-        //if ( not muon and (e->IsTriggered("HLT_VLooseIsoPFTau120_Trk50_eta2p1_v") or e->IsTriggered("HLT_VLooseIsoPFTau140_Trk50_eta2p1_v")))  cut.SetCutBit(Trigger);
+        #warning SingleTauTrigger
+        if ( not muon and (e->IsTriggered("HLT_VLooseIsoPFTau120_Trk50_eta2p1_v") or e->IsTriggered("HLT_VLooseIsoPFTau140_Trk50_eta2p1_v")))  cut.SetCutBit(Trigger);
         else if (muon and e->IsTriggered("HLT_IsoMu20")) cut.SetCutBit(Trigger);
     }
     

@@ -16,12 +16,12 @@ include=dat/catalog/2017.moriond/hmm.dat
 addfiles=/store/group/phys_higgs/ceballos/Data//Nero/v2.2/SingleMuon
 #include=catalog/2017.moriond/singleMuon.dat
 
-#Smear=NONE
+Smear=NONE
 #Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag")
-Smear=NONE,*[-133!0]SmearKaMuCa(%%d),*[1!135]SmearKaMuCa(%%d)
+#Smear=NONE,*[-133!0]SmearKaMuCa(%%d),*[1!135]SmearKaMuCa(%%d)
 #Smear=NONE,@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1),*[0!50]SmearPdfs(%%d)
 ## be less peaky, given the n. of systs
-EntryPerSecond=10
+#EntryPerSecond=10
 
 include=dat/hmumu.dat
 

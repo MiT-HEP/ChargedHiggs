@@ -1,4 +1,3 @@
-
 from optparse import OptionParser
 import ROOT
 from array import array
@@ -38,6 +37,7 @@ if opts.syst!='Pdf' and opts.syst != 'Scale':
 		print "[ERROR] Hist", opts.base+"_"+opts.syst+"Up/Down", "doesn't exist"
 		raise IOError
 	hL = [hUp,hDown]
+
 elif opts.syst=='Scale':
 	for w in [ 'R','F','RF']:
 		for s in ['Up','Down']:
