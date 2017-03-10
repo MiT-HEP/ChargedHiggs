@@ -51,6 +51,7 @@ class LoadNero : public Loader{
         void Clear() override { for (auto c : bare_) c->clear() ;}
 
         void FillJets();
+        void FillFatJets();
         void FillLeptons();
         void FillPhotons();
         void FillTaus();

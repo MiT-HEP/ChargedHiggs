@@ -9,6 +9,7 @@ using namespace std;
 // -----
 #include "interface/Object.hpp"
 #include "interface/Jet.hpp"
+#include "interface/FatJet.hpp"
 #include "interface/Lepton.hpp"
 #include "interface/Tau.hpp"
 #include "interface/Met.hpp"
@@ -37,6 +38,7 @@ class Event{
     protected:
     vector<Lepton*> leps_;
     vector<Jet*>    jets_;
+    vector<FatJet*>    fat_;
     vector<Tau*>    taus_;
     vector<Photon*> phos_;
     vector<GenParticle*>    genparticles_; // gen particles
@@ -71,6 +73,7 @@ class Event{
 
     // Bare version  -- don't use these functions, unless for debug or sync
     inline Jet * GetBareJet(unsigned iJet) const { if (jets_.size() <= iJet) return (Jet*) NULL; return jets_[iJet]; }
+    inline FatJet * GetBareFatJet(unsigned iJet) const { if (fat_.size() <= iJet) return (FatJet*) NULL; return fat_[iJet]; }
     inline Tau * GetBareTau(unsigned iTau) const { if (taus_.size() <= iTau) return (Tau*) NULL; return taus_[iTau]; }
     inline Lepton * GetBareLepton(unsigned iLepton) const { if (leps_.size() <= iLepton) return (Lepton*) NULL; return leps_[iLepton]; }
     inline Photon * GetBarePhoton(unsigned iPhoton) const { if (phos_.size() <= iPhoton) return (Photon*) NULL; return phos_[iPhoton]; }
@@ -90,6 +93,7 @@ class Event{
     Jet * GetBjet( int iJet );
     Jet * GetBjetInvIso( int iJet );
     Jet * GetLjet( int iJet );
+    FatJet * GetFatJet( int iJet );
     Tau * GetTau( int iTau );
     Tau * GetTauInvIso( int iTau );
     Lepton * GetLepton( int iLep );
@@ -119,6 +123,7 @@ class Event{
     inline int Bjets()const {int n=0; for(auto j : jets_) if(j->IsBJet()) n++; return n;}
     inline int Ljets()const {int n=0; for(auto j : jets_) if(not j->IsBJet()) n++; return n;}
     inline int BjetsInvIso()const {int n=0; for(auto j : jets_) if(j->IsBJetInvIso()) n++; return n;}
+    inline int NFatJets()const {int n=0; for(auto j : fat_) if(j->IsJet()) n++; return n;}
     inline int Ntaus(){int n=0; for(auto t : taus_) if(t->IsTau()) n++; return n;}
     inline int Nleps(){int n=0; for(auto t : leps_) if(t->IsLep()) n++; return n;}
     inline int NGenPar(){return genparticles_.size();}

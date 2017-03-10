@@ -19,11 +19,13 @@ Event::~Event(){
 void Event::ClearEvent(){
 
     for (auto o :  jets_ ) ChargedHiggs::Delete(o);
+    for (auto o :  fat_ ) ChargedHiggs::Delete(o);
     for (auto o :  leps_ ) ChargedHiggs::Delete(o);
     for (auto o :  taus_ ) ChargedHiggs::Delete(o);
     for (auto o :  genparticles_ ) ChargedHiggs::Delete(o);
 
     jets_ . clear();
+    fat_ . clear();
     leps_ . clear();
     taus_ . clear();
     phos_ . clear();
@@ -35,6 +37,7 @@ void Event::ClearEvent(){
 
 void Event::clearSyst(){
     for ( auto o: jets_) o->clearSyst();
+    for ( auto o: fat_) o->clearSyst();
     for ( auto o: taus_) o->clearSyst();
     for ( auto o: leps_) o->clearSyst();
     for ( auto o: genparticles_) o->clearSyst();
@@ -226,12 +229,12 @@ void Event::validate(){
 }
 
 // Get Object functions
-Jet * Event::GetJet( int iJet ) 
-{ 
+Jet * Event::GetJet( int iJet )
+{
     vector<pair<float,int> > valid; // pt, idx
     for(int i = 0 ; i<jets_.size() ;++i)
     {
-        if ( jets_[i]->IsJet()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i)); 
+        if ( jets_[i]->IsJet()) valid.push_back(pair<float,int>(jets_[i]->Pt(),i));
     }
 
     if (valid.size() == 0 ) return NULL;
@@ -322,6 +325,23 @@ Jet * Event::GetLjet( int iJet )
 
     return jets_[ valid[iJet].second];
 }
+
+FatJet * Event::GetFatJet( int iJet )
+{
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<fat_.size() ;++i)
+    {
+        if ( fat_[i]->IsJet()) valid.push_back(pair<float,int>(fat_[i]->Pt(),i));
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iJet  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return fat_[ valid[iJet].second];
+}
+
 
 Tau * Event::GetTau( int iTau ) 
 { // { return taus_.at(iTau);} // old

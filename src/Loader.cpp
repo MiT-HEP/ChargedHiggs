@@ -36,6 +36,7 @@ int LoadNero::InitTree(){
         "BareVertex",
         "BareMonteCarlo",
         "BareJets",
+        "BareFatJets",
         "BareTaus",
         "BareLeptons",
         "BareMet",
@@ -68,6 +69,7 @@ int LoadNero::FillEvent(){
     //FillEventInfo(); // new file uses isRealData, but not the weights, called directly
 
     FillJets();
+    FillFatJets();
     FillLeptons();
     FillPhotons();
     FillTaus();
@@ -184,6 +186,63 @@ void LoadNero::FillJets(){
 
         // add it
         event_ -> jets_ . push_back(j);
+    }
+    return;
+
+}// end fill jets
+
+
+void LoadNero::FillFatJets(){
+    //fill Jets
+#ifdef VERBOSE
+    if(VERBOSE>1) Log(__FUNCTION__,"DEBUG","Filling Fat Jets");
+#endif
+
+    BareFatJets *bj = dynamic_cast<BareFatJets*> ( bare_ [ names_[ "BareFatJets" ] ] ); assert (bj !=NULL);
+
+    if ( tree_ ->GetBranchStatus("fatjetAK8CHSP4") == 0 ){
+        LogN(__FUNCTION__,"WARNING","Jets Not FILLED",10);
+        return;
+    }
+
+    for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
+    {
+
+#ifdef VERBOSE
+        if (VERBOSE >1 )
+        {
+            cout <<"[LoadNero]::[FillJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
+            cout <<"\t\t * selBits size: "<< bj->selBits ->size()<<endl;
+            cout <<"\t\t * unc size:" << bj -> unc ->size() <<endl;
+            cout <<"\t\t * bdiscr size :"<< bj -> bDiscr ->size() <<endl;
+
+            cout <<"\t\t * pdgId :" <<bj -> matchedPartonPdgId -> size()<<endl;
+            cout <<"\t\t * mother :"<<bj->motherPdgId ->size()<<endl;
+            cout <<"\t\t * gr mother:"<<  bj-> grMotherPdgId -> size()<<endl;
+            cout <<"\t\t * puId :"<<  bj -> puId -> size() <<endl;
+
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Pt() <<endl;
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Phi() <<endl;
+        }
+#endif
+//
+//        bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
+//        if (not id) continue;
+
+        FatJet *j =new FatJet();
+        j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
+        // JES
+        //Log(__FUNCTION__,"DEBUG",Form("Going to Fill Jes for jet: %d",iJet));
+
+        //Log(__FUNCTION__,"DEBUG",Form(" JesUp=%f", (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
+        //Log(__FUNCTION__,"DEBUG",Form(" JesDown=%f", (1. - bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
+
+        //Log(__FUNCTION__,"DEBUG","-> Done");
+        // ---
+
+        // add it
+        event_ -> fat_ . push_back(j);
     }
     return;
 
