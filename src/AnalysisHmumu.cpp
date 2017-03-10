@@ -196,7 +196,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     // preselection
     bool recoMuons= mu0 != NULL and mu1 !=NULL; 
-    if (mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
+    if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
 
 
     bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 );
