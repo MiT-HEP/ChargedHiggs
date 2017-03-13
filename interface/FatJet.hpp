@@ -11,7 +11,7 @@
 //using namespace std;
 
 // ---
-class FatJet : virtual public Object, virtual public SmearableComplex
+class FatJet : virtual public Object, virtual public SmearableBase
 {
     // This class take care of the jet definition in the analysis
     //
@@ -56,43 +56,8 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     //Gen-level info
 
     // ---
-    inline float Pt() const override { 
-            // --- cout<<"[Jet]::[Pt]::[DEBUG]"<<"Requested Pt for jet"<<endl;
-            // --- cout<<"[Jet]::[Pt]::[DEBUG]"<<Form(" syst=%d",syst)<<endl;
-            // --- cout<<"[Jet]::[Pt]::[DEBUG]"<<Form(" type=%d",type)<<endl;
-            // --- cout<<"[Jet]::[Pt]::[DEBUG]"<<Form(" UncorrPt=%f",p4.Pt())<<endl;
-            // --- if (syst>0) cout<<"[Jet]::[Pt]::[DEBUG]"<<Form(" NewPt=%f", ptUpSyst[type])<<endl;
-            // --- if (syst<0) cout<<"[Jet]::[Pt]::[DEBUG]"<<Form(" NewPt=%f", ptDownSyst[type])<<endl;
 
-            if (syst ==0) return p4.Pt(); 
-            //return p4.Pt() *(1.0  + uncSyst[type]*syst );
-            if (syst>0 ) return ptUpSyst[type];
-            else return ptDownSyst[type];
-    }
-    inline float E() const override { 
-        if (syst == 0) return p4.E(); 
-        else return Pt()/p4.Pt() *p4.E();
-    }
-
-    inline TLorentzVector & GetP4() override {
-        if (syst == 0) return p4;
-        if (syst!=0 ) {
-            pp4=p4;
-            if (p4.Pt()>0) {
-                return pp4 *= (Pt()/p4.Pt());
-            } else {
-                return pp4;
-            }
-        }
-    }
-
-    inline float GetUnc() const { return Pt()/p4.Pt(); }
-
-    inline int IsJet() const {
-        return 1;
-        //        if (not isValid) return 0;
-        //        return IsJetExceptValidity();
-    }
+    inline int IsJet() const { return 1;}
 
 
 };

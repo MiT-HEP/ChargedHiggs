@@ -54,9 +54,15 @@ int LoadNero::InitTree(){
     bare_[ names_ ["BareTaus"] ] -> SetExtend();
     bare_[ names_ ["BarePhotons"] ] -> SetExtend();
     dynamic_cast<BareTaus*> (bare_[ names_ ["BareTaus"] ])  -> SetMatch();
+    //dynamic_cast<BareFatJets*> (bare_[ names_ ["BareFatJets"] ])  -> cachedPrefix="AK8CHS";
 
     for (auto b : bare_ )
-        b->setBranchAddresses(tree_);
+    {
+        if (dynamic_cast<BareFatJets*>(b) !=NULL)  
+            dynamic_cast<BareFatJets*>(b)->setBranchAddresses(tree_,"AK8CHS");
+        else
+            b->setBranchAddresses(tree_);
+    }
 
     // branches are activate from configuration file
     tree_ -> SetBranchStatus("*",0);
@@ -201,9 +207,13 @@ void LoadNero::FillFatJets(){
     BareFatJets *bj = dynamic_cast<BareFatJets*> ( bare_ [ names_[ "BareFatJets" ] ] ); assert (bj !=NULL);
 
     if ( tree_ ->GetBranchStatus("fatjetAK8CHSP4") == 0 ){
-        LogN(__FUNCTION__,"WARNING","Jets Not FILLED",10);
+        LogN(__FUNCTION__,"WARNING","FatJets Not FILLED",10);
         return;
     }
+
+#ifdef VERBOSE
+    if(VERBOSE>1) Log(__FUNCTION__,"DEBUG",Form("FatJets Branch has %u entries",bj -> p4 ->GetEntries()));
+#endif
 
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
@@ -211,15 +221,7 @@ void LoadNero::FillFatJets(){
 #ifdef VERBOSE
         if (VERBOSE >1 )
         {
-            cout <<"[LoadNero]::[FillJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
-            cout <<"\t\t * selBits size: "<< bj->selBits ->size()<<endl;
-            cout <<"\t\t * unc size:" << bj -> unc ->size() <<endl;
-            cout <<"\t\t * bdiscr size :"<< bj -> bDiscr ->size() <<endl;
-
-            cout <<"\t\t * pdgId :" <<bj -> matchedPartonPdgId -> size()<<endl;
-            cout <<"\t\t * mother :"<<bj->motherPdgId ->size()<<endl;
-            cout <<"\t\t * gr mother:"<<  bj-> grMotherPdgId -> size()<<endl;
-            cout <<"\t\t * puId :"<<  bj -> puId -> size() <<endl;
+            cout <<"[LoadNero]::[FillFatJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
 
             cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Pt() <<endl;
             cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
@@ -232,17 +234,13 @@ void LoadNero::FillFatJets(){
 
         FatJet *j =new FatJet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
-        // JES
-        //Log(__FUNCTION__,"DEBUG",Form("Going to Fill Jes for jet: %d",iJet));
-
-        //Log(__FUNCTION__,"DEBUG",Form(" JesUp=%f", (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
-        //Log(__FUNCTION__,"DEBUG",Form(" JesDown=%f", (1. - bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
-
-        //Log(__FUNCTION__,"DEBUG","-> Done");
-        // ---
 
         // add it
         event_ -> fat_ . push_back(j);
+
+#ifdef VERBOSE
+    if(VERBOSE>1) Log(__FUNCTION__,"DEBUG","Done");
+#endif
     }
     return;
 
