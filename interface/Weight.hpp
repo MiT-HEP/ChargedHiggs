@@ -77,6 +77,7 @@ class Weight : virtual public SmearableBase {
     void AddTh2fSF(string label, string filename);
     void AddSplineSF(string label, double pt, double sf, double err);
     void AddCSVSF(string label, string filename);
+    void AddCSVReweightSF(string label);
 
     void AddTF1SF(string label, string formula,string errFormula);
     void AddTF2SF(string label, string formula,string errFormula);

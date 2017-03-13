@@ -32,6 +32,7 @@ muISOloose th2f aux/mu_ISO_EfficienciesAndSF_GH.root:LooseISO_LooseID_pt_eta/abs
 ## https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80XReReco
 ###################
 btag csv aux/CSVv2_Moriond17_B_H.csv
+btag-reweight csv-reweight
 
 
 #############
