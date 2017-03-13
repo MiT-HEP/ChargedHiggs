@@ -8,21 +8,20 @@ void SF_CSVReweight::init(){
 }
 
 void SF_CSVReweight::set(){
-    throw 2; // UPDATE to use the helper and set the right things to call it
-    sf = 1.0;
-    errUp= 1.0;
-    errDown= 1.0;
+    //throw 2; // UPDATE to use the helper and set the right things to call it
+    //
+    sf = helper_->getCSVWeight(pt_,eta_,csv_,flavor_,0,csvWgtHF,csvWgtLF,csvWgtCF);
+    errUp= 0.0; // TODO
+    errDown= 0.0;
 }
-//  double getCSVWeight(const std::vector<double>& jetPts,
-//		      const std::vector<double>& jetEtas,
-//		      const std::vector<double>& jetCSVs,
-//		      const std::vector<int>& jetFlavors,
-//		      const int iSys,
-//		      double &csvWgtHF,
-//		      double &csvWgtLF,
-//		      double &csvWgtCF) const;
 
-
+void SF_CSVReweight::add_to_sf(float pt, float eta, float csv, int flavor)
+{
+    pt_.push_back( pt );
+    eta_.push_back( eta );
+    csv_.push_back( csv );
+    flavor_.push_back( flavor );
+}
 
 
 

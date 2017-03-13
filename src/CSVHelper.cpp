@@ -50,8 +50,8 @@ void CSVHelper::init(const std::string& hf, const std::string& lf, const int nHF
   const std::string inputFileHF = hf.size() > 0 ? hf : "data/csv_rwt_hf_IT_FlatSF.root";
   const std::string inputFileLF = lf.size() > 0 ? lf : "data/csv_rwt_lf_IT_FlatSF.root";
 
-  TFile *f_CSVwgt_HF = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/" + inputFileHF).c_str());
-  TFile *f_CSVwgt_LF = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/" + inputFileLF).c_str());
+  TFile *f_CSVwgt_HF = new TFile( (inputFileHF).c_str());
+  TFile *f_CSVwgt_LF = new TFile( (inputFileLF).c_str());
   fillCSVHistos(f_CSVwgt_HF, f_CSVwgt_LF);
   f_CSVwgt_HF->Close();
   f_CSVwgt_LF->Close();

@@ -16,15 +16,16 @@ class SF_CSVReweight : public SF_Asymm
         std::vector<double> csv_;
         std::vector<int>    flavor_;
 
-        double csvWgtHF,csvWgtLF,csvWghCF;
+        double csvWgtHF,csvWgtLF,csvWgtCF;
 
     public:
         SF_CSVReweight(){}
         void print(){};
         void init();
         void set();
+        void add_to_sf( float pt, float eta, float csv, int flavor);
         const string name() const override {return "SF_CSVReweight";}
-        void reset() override { SF::reset(); pt_.clear(); eta_.clear(); csv_.clear(); flavor_.clear(); }
+        void clearEvent() override { pt_.clear(); eta_.clear(); csv_.clear(); flavor_.clear(); }
 
 };
 

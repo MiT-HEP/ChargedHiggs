@@ -32,7 +32,8 @@ class  SF : public Named{
         const string name() const {return "SF";}
         virtual void SetVeto(int x=1){veto_=x;}
         virtual void print() const ;
-        virtual void reset(){ syst=0;}
+        virtual void clearSyst(){ syst=0;} // reset systs. called in clearSyst
+        virtual void clearEvent(){} //clear event specific. called in clearSF
 };
 
 class SF_Asymm : public SF
@@ -217,7 +218,7 @@ class SF_CSV : public SF_Asymm
         int systL{0},systB{0};
 
         virtual double get();
-        virtual void reset(){ SF_Asymm::reset(); systL=0; systB=0;}
+        virtual void clearSyst(){ SF_Asymm::clearSyst(); systL=0; systB=0;}
 };
 
 

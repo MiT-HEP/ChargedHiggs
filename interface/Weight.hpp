@@ -81,7 +81,7 @@ class Weight : virtual public SmearableBase {
     void AddTF1SF(string label, string formula,string errFormula);
     void AddTF2SF(string label, string formula,string errFormula);
 
-    void clearSF( ){ sf_ =1.0;}
+    void clearSF( ){ sf_ =1.0; for(auto& s :sf_db) s.second->clearEvent(); }
     void clearPU( ){ pu_ . clearTarget() ;};
     void SetPUTarget(const string& name) { pu_ . SetTarget( name ) ; } 
     void SetSystSF(const string& label, int s );// { sf_db[label] -> syst = s;}

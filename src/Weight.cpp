@@ -195,7 +195,7 @@ void Weight::AddTF2SF(string label, string formula,string errFormula)
 
 void Weight::resetSystSF(){
     for (auto o : sf_db)
-        o.second->reset();
+        o.second->clearSyst();
     //o.second->syst = 0;
 }
 
