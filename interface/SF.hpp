@@ -40,8 +40,8 @@ class SF_Asymm : public SF
     public:
         double errUp,errDown;
         SF_Asymm() :SF() { errUp=0.0; errDown=0.0;}
-        virtual double get() { if (syst==0 ) return sf; else if (syst>0) return sf + errUp *syst ; else if (syst<0) return sf + errDown * syst ; else return 0.; }
-        const string name() const { return "SF_Asymm";}
+        virtual double get() override { if (syst==0 ) return sf; else if (syst>0) return sf + errUp *syst ; else if (syst<0) return sf + errDown * syst ; else return 0.; }
+        const string name() const override { return "SF_Asymm";}
 };
 
 class SF_PtEta : virtual public SF
