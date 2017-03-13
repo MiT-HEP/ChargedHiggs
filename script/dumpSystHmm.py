@@ -11,6 +11,18 @@ opts, args = parser.parse_args()
 
 #python script/drawSyst.py -i test/Hmumu/Hmumu_2017_03_07_JES_BTAG/Hmumu_2017_03_07_JES_BTAG.root --base=HmumuAnalysis/Vars/Mmm_OneB_BB_GluGlu_HToMuMu_M125 --syst=BTAGL
 
+print "-> Looking for basepath"
+basepath = ""
+mypath = os.path.abspath(os.getcwd())
+while mypath != "" and mypath != "/":
+	if "ChargedHiggs" in os.path.basename(mypath):
+		basepath = os.path.abspath(mypath)
+	mypath = os.path.dirname(mypath)
+print "-> Base Path is " + basepath
+sys.path.insert(0,basepath)
+sys.path.insert(0,basepath +"/python")
+from hmm import hmm
+
 fIn=ROOT.TFile.Open(opts.input)
 if fIn==None:
     print "[ERROR] File", opts.input, "doesn't exist"
@@ -20,11 +32,12 @@ if fIn==None:
 base="HmumuAnalysis/Vars/Mmm"
 
 
-categories=[]
-for muStr in ["BB","BO","BE","OO","OE","EE"]:
-    for catStr in [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
-        categories . append(catStr +"_" + muStr) 
-processes=['BKG','GluGlu','VBF','WPlusH','WMinusH','ttH','ZH']
+categories=hmm.categories
+#for muStr in ["BB","BO","BE","OO","OE","EE"]:
+#    for catStr in [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
+#        categories . append(catStr +"_" + muStr) 
+#processes=['BKG','GluGlu','VBF','WPlusH','WMinusH','ttH','ZH']
+processes= hmm.datacard_procs
 
 binline = ["bin"]
 procline = ["process"]

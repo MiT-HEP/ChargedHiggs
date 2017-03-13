@@ -287,6 +287,7 @@ RooAbsPdf* PdfModelBuilder::fTest(const string& prefix,RooDataHist*dh,int *ord,c
 }
 
 RooAbsPdf* PdfModelBuilder::getModBernstein(string prefix, int order){
+    /*Return a Bernstein + exp*/
 
   RooRealVar *tau=new RooRealVar(Form("%s_t",prefix.c_str()),Form("%s_t",prefix.c_str()),-1.,-10,-.1);
   RooRealVar *f =new RooRealVar(Form("%s_f",prefix.c_str()),Form("%s_f",prefix.c_str()),.9,0.00001,.99999);
@@ -484,6 +485,8 @@ void BackgroundFitter::info(){
     cout<<"Dataset M="<<datasetMask_ <<endl;
     cout<<"NORM M="<<normMask_ <<endl;
     cout<<"MODEL M="<<modelMask_ <<endl;
+    cout<<"OutName="<<outname<<endl;
+    cout<<"InName="<<inname<<endl;
     for(auto &s : inputMasks) cout <<"mask = "<<s<<endl;
     cout<<"-----------------------------------"<<endl;
 }
@@ -499,9 +502,9 @@ void BackgroundFitter::init(){
 
     if(x_==NULL) x_ = new RooRealVar("mmm","mmm",xmin,xmax);
 
-    x_->setRange("unblindReg_1",100,120);
-    x_->setRange("unblindReg_2",130,150);
-    x_->setRange("tot",110,150);
+    x_->setRange("unblindReg_1",xmin,120);
+    x_->setRange("unblindReg_2",130,xmax);
+    x_->setRange("tot",xmin,xmax);
 }
 
 
@@ -561,13 +564,13 @@ void BackgroundFitter::fit(){
         RooAbsPdf* dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
         storedPdfs.add(*dybern);
 
-        int exppolOrd;
-        RooAbsPdf* exppol = modelBuilder.fTest(Form("exppol_cat%d",cat) ,hist_[name],&exppolOrd,plotDir + "/exppol");
-        storedPdfs.add(*exppol);
+        //int exppolOrd;
+        //RooAbsPdf* exppol = modelBuilder.fTest(Form("exppol_cat%d",cat) ,hist_[name],&exppolOrd,plotDir + "/exppol");
+        //storedPdfs.add(*exppol);
 
-        int logpolOrd;
-        RooAbsPdf* logpol = modelBuilder.fTest(Form("logpol_cat%d",cat) ,hist_[name],&logpolOrd,plotDir + "/logpol");
-        storedPdfs.add(*logpol);
+        //int logpolOrd;
+        //RooAbsPdf* logpol = modelBuilder.fTest(Form("logpol_cat%d",cat) ,hist_[name],&logpolOrd,plotDir + "/logpol");
+        //storedPdfs.add(*logpol);
 
         int modbernOrd;
         RooAbsPdf* modbern = modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
@@ -625,13 +628,13 @@ void BackgroundFitter::fit(){
             TObject *dybernLeg = p->getObject(int(p->numItems()-1));
             leg->AddEntry(dybernLeg,Form("dybern ord=%d",dybernOrd),"L");
 
-            exppol->plotOn(p,LineColor(kOrange));
-            TObject *exppolLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(exppolLeg,Form("exppol ord=%d",exppolOrd),"L");
+            //exppol->plotOn(p,LineColor(kOrange));
+            //TObject *exppolLeg = p->getObject(int(p->numItems()-1));
+            //leg->AddEntry(exppolLeg,Form("exppol ord=%d",exppolOrd),"L");
 
-            logpol->plotOn(p,LineStyle(kDashed));
-            TObject *logpolLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(logpolLeg,Form("logpol ord=%d",logpolOrd),"L");
+            //logpol->plotOn(p,LineStyle(kDashed));
+            //TObject *logpolLeg = p->getObject(int(p->numItems()-1));
+            //leg->AddEntry(logpolLeg,Form("logpol ord=%d",logpolOrd),"L");
 
             modbern->plotOn(p,LineColor(kGreen),LineStyle(kDashed));
             TObject *modbernLeg = p->getObject(int(p->numItems()-1));
