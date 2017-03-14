@@ -111,6 +111,7 @@ class Looper{
         {event_ -> GetWeight()  -> AddPtEtaRunSF(label,pt1,pt2,eta1,eta2,run1,run2,sf,err); }
         inline void AddSplineSF(string label, double pt, double sf, double err){ event_->GetWeight() -> AddSplineSF(label,pt,sf,err);}
         inline void AddCSVSF(string label, string filename){event_->GetWeight() ->AddCSVSF(label,filename);}
+        inline void AddCSVReweightSF(string label){event_->GetWeight() ->AddCSVReweightSF(label);}
         inline void AddTh2fSF(string label, string filename){event_->GetWeight() ->AddTh2fSF(label,filename);}
 
         inline void AddTF2SF(string label, string formula,string err=""){event_->GetWeight() ->AddTF2SF(label,formula,err);}

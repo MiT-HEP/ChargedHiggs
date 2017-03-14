@@ -1,4 +1,5 @@
 #include "interface/Weight.hpp"
+#include "interface/SF_CSVReweight.hpp"
 //#define VERBOSE 1
 
 #include "interface/Logger.hpp"
@@ -140,6 +141,20 @@ void Weight::AddCSVSF(string label, string filename)
     sf_db[label] = p;
 }
 
+void Weight::AddCSVReweightSF(string label)
+{
+    if (sf_db.find(label) != sf_db.end() )
+    {
+        Log(__FUNCTION__,"ERROR","SF "+ label +" already exists in the database. Not supported for CSV. Ignoring.");
+        return;
+    }
+
+    SF_CSVReweight *p = new SF_CSVReweight();
+    p -> init();
+    p -> label = label;
+    sf_db[label] = p;
+}
+
 void Weight::AddTh2fSF(string label, string filename)
 {
     if (sf_db.find(label) != sf_db.end() )
@@ -195,7 +210,7 @@ void Weight::AddTF2SF(string label, string formula,string errFormula)
 
 void Weight::resetSystSF(){
     for (auto o : sf_db)
-        o.second->reset();
+        o.second->clearSyst();
     //o.second->syst = 0;
 }
 

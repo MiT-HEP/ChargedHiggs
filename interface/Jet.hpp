@@ -29,6 +29,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
     std::map<std::string,float> qglVars_;
 
     inline int IsJetExceptValidity() const { 
+        if( std::isnan(Pt()) ) return 0; 
         if( Pt() < ptcut_ ) return 0; 
         if( fabs(Eta()) >= etacut_) return 0;
         if( puidcut_ > -100 and puId < puidcut_ ) return 0;
