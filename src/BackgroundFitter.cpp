@@ -63,6 +63,7 @@ RooAbsPdf* PdfModelBuilder::getDYBernstein(string prefix, int order,TH1D*dy){
     RooDataHist *dh=new RooDataHist((prefix + "_dy_dh").c_str(),(prefix + "_dy_dh").c_str(),*obs_var,Import(*dy));
     hists[dh->GetName()] = dh;
     RooHistPdf *dypdf = new RooHistPdf((prefix +"_dy_pdf").c_str(),(prefix +"_dy_pdf").c_str(),*obs_var,*dh,2); // last number= interpolation
+    if (order ==0 ) return dypdf;
     dypdf->Print("V");
     pdfs[dypdf->GetName() ] = dypdf;
     RooAbsPdf *bern= getBernstein(prefix+"_bern_",order);
@@ -164,14 +165,12 @@ void PdfModelBuilder::runFit(RooAbsPdf *pdf, RooDataHist *data, double *NLL, int
 
     pdf->fitTo(*data,
                 RooFit::Minimizer("Minuit2","minimize"),
-                CutRange("tot"),
                 RooFit::SumW2Error(kTRUE) // for linear fit should be easier to estimate the parameters
                 );
 	while (stat!=0){
         if (ntries>=MaxTries) break;
         RooFitResult *fitTest = pdf->fitTo(*data,
                 RooFit::Save(1),
-                CutRange("tot"),
                 RooFit::Minimizer("Minuit2","minimize")
                 );
         stat = fitTest->status();
@@ -261,7 +260,7 @@ RooAbsPdf* PdfModelBuilder::fTest(const string& prefix,RooDataHist*dh,int *ord,c
                 dh->plotOn(p,CutRange("unblindReg_1"));
                 dh->plotOn(p,CutRange("unblindReg_2"));
                 dh->plotOn(p,Invisible()); // normalization
-                p->SetMinimum(0.01);
+                p->SetMinimum(0.1);
             }
             else dh->plotOn(p);
             int i=0, col,style;
@@ -502,9 +501,6 @@ void BackgroundFitter::init(){
 
     if(x_==NULL) x_ = new RooRealVar("mmm","mmm",xmin,xmax);
 
-    x_->setRange("unblindReg_1",xmin,120);
-    x_->setRange("unblindReg_2",130,xmax);
-    x_->setRange("tot",xmin,xmax);
 }
 
 
@@ -559,8 +555,8 @@ void BackgroundFitter::fit(){
         TH1D *dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
         if (dy==NULL) cout<<"  and hist doesn't exist"<<endl;
         dy->Scale(35867); // lumi
-        dy->Rebin(20); // lumi
-        dy->Smooth(15); // lumi
+        dy->Rebin(10); // lumi
+        //dy->Smooth(1); // lumi
         RooAbsPdf* dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
         storedPdfs.add(*dybern);
 
@@ -603,6 +599,9 @@ void BackgroundFitter::fit(){
 
         // -- Plot
         if (plot ) {
+            x_->setRange("unblindReg_1",xmin,120);
+            x_->setRange("unblindReg_2",130,xmax);
+            x_->setRange("tot",xmin,xmax);
             TCanvas *c = new TCanvas();
             TLegend *leg = new TLegend(0.6,0.65,0.89,0.89);
             leg->SetFillColor(0);
@@ -636,9 +635,9 @@ void BackgroundFitter::fit(){
             //TObject *logpolLeg = p->getObject(int(p->numItems()-1));
             //leg->AddEntry(logpolLeg,Form("logpol ord=%d",logpolOrd),"L");
 
-            modbern->plotOn(p,LineColor(kGreen),LineStyle(kDashed));
-            TObject *modbernLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(modbernLeg,Form("modbern ord=%d",modbernOrd),"L");
+            //modbern->plotOn(p,LineColor(kGreen),LineStyle(kDashed));
+            //TObject *modbernLeg = p->getObject(int(p->numItems()-1));
+            //leg->AddEntry(modbernLeg,Form("modbern ord=%d",modbernOrd),"L");
 
             powlaw->plotOn(p,LineColor(kRed));
             TObject *powlawLeg = p->getObject(int(p->numItems()-1));

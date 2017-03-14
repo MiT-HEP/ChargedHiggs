@@ -39,9 +39,9 @@ categories=hmm.categories
 #processes=['BKG','GluGlu','VBF','WPlusH','WMinusH','ttH','ZH']
 processes= hmm.datacard_procs
 
-binline = ["bin"]
+binline  = ["bin"]
 procline = ["process"]
-procline2=["processes"]
+procline2= ["process"]
 
 systsline=[opts.outname,"lnN"]
 
@@ -58,8 +58,8 @@ for idx,cat in enumerate(categories):
       binline . append( "cat%d"%idx)
       procline. append( proc )
       if proc == "BKG":
-	  systsline .append( "-" )
-	  continue
+          systsline .append( "-" )
+          continue
       elif h == None:
           print >> sys.stderr, "[ERROR] Hist", name, "doesn't exist"
           raise IOError
@@ -69,7 +69,7 @@ for idx,cat in enumerate(categories):
           if hUp==None or hDown==None:
             if hUp==None:print>>sys.stderr, "[ERROR] Hist", name+"_"+opts.syst+"Up", "doesn't exist"
             if hDown==None:print>>sys.stderr, "[ERROR] Hist", name+"_"+opts.syst+"Down", "doesn't exist"
-	    systsline .append( "-")
+            systsline .append( "-")
             continue
             #raise IOError
           appendToLine(systsline , hDown.Integral()/h.Integral(), hUp.Integral()/h.Integral())
@@ -82,9 +82,11 @@ for idx,cat in enumerate(categories):
                   hTmp=fIn.Get(name+"_Scale"+w+s)
                   if hTmp==None:
                       print "[ERROR] Hist", name+"_Scale"+w+s, "doesn't exist"
-                      raise IOError
+                      #systsline .append( "-")
+                      continue
+                      #raise IOError
                   sTmp= hTmp.Integral()/h.Integral()
-                  if low< sTmp: low=sTmp
+                  if low> sTmp: low=sTmp
                   if high< sTmp: high=sTmp
           appendToLine(systsline,low,high)
 
@@ -96,9 +98,11 @@ for idx,cat in enumerate(categories):
               hTmp=fIn.Get(name+"_Pdf%d"%i)
               if hTmp==None:
                    print "[ERROR] Hist",name+"_Pdf%d"%i, "doesn't exist"
-                   raise IOError
+                   #systsline .append( "-")
+                   continue
+                   #raise IOError
               sTmp= hTmp.Integral()/h.Integral()
-              if low< sTmp: low=sTmp
+              if low> sTmp: low=sTmp
               if high< sTmp: high=sTmp
           appendToLine(systsline,low,high)
 
