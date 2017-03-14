@@ -66,7 +66,7 @@ RooAbsPdf* PdfModelBuilder::getZPhotonRun1(string prefix, int order){
     string pname;
 
         pname = prefix + "_a";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-1.,-15, -0.01 );
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-1, -0.001 );
         plist->add(*params[pname]); // @1
 
         pname = prefix + "_mZ";
@@ -86,7 +86,7 @@ RooAbsPdf* PdfModelBuilder::getZPhotonRun1(string prefix, int order){
     plist->add(*obs_var); //@0
 
         pname = prefix + "_b";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-1.,-15,-0.01 );
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-1,-0.001 );
         plist->add(*params[pname]); //@1
 
     RooGenericPdf *part2 = new RooGenericPdf((prefix+"_pdf2").c_str(),(prefix+"_pdf2").c_str(),"TMath::Exp(@1*@0)/(@0*@0)",*plist);
