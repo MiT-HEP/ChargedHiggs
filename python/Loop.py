@@ -216,6 +216,8 @@ for key in sfdb:
 		loop.AddSplineSF(label,key['pt'],key['sf'],key['err'])
 	if key['type'] == 'csv':
 		loop.AddCSVSF(label, key['filename'])
+	if key['type'] == 'csv-reweight':
+		loop.AddCSVReweightSF(label)
 	if key['type'] == 'tf1':
 		loop.AddTF1SF(label, key['formula'],key['errFormula'])
 	if key['type'] == 'tf2':

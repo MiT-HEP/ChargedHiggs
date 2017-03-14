@@ -64,6 +64,7 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
 
         bool is80X{false};
         bool isLightMass{false};
+        bool singleTauTrigger{false};
         int nprongs{1};
 
 };

@@ -391,7 +391,7 @@ if opts.hadoop:
 	dat.write('Files=%s\n'%( ','.join(splittedInput[iJob]) ) )
 	dat.write('Output=%s/%s\n'%(subdir,outname) )
 	if opts.nosyst:
-		dat.write("SMEAR=NONE\n")
+		dat.write("Smear=NONE\n")
 	for l in opts.config:
 		dat.write(l+"\n")
 	dat.close()
@@ -518,7 +518,7 @@ if not opts.hadoop:
 	dat.write(re.sub('%%MOUNTPOINT%%',"./", 'Files=%s\n'%( ','.join(splittedInput[iJob]) ) ))
 	dat.write('Output=%s/%s\n'%(opts.dir,outname) )
 	if opts.nosyst:
-		dat.write("SMEAR=NONE\n")
+		dat.write("Smear=NONE\n")
 	for l in opts.config:
 		dat.write(l+"\n")
 

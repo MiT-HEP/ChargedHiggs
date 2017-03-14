@@ -32,6 +32,7 @@ muISOloose th2f aux/mu_ISO_EfficienciesAndSF_GH.root:LooseISO_LooseID_pt_eta/abs
 ## https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80XReReco
 ###################
 btag csv aux/CSVv2_Moriond17_B_H.csv
+btag-reweight csv-reweight
 
 
 #############
@@ -43,7 +44,7 @@ tauid2 tf1 1.0 0.0002*x
 ########################################
 ## tau invisolation: transfer factors ##
 ########################################
-include aux/RMet110_v9.txt
+include aux/RMet110_v10.txt
 
 #######################
 ### top reweighting ###
