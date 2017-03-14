@@ -2,6 +2,7 @@
 	<!-- Base Objects -->
 	<class name="Object"/>
 	<class name="Jet"/>
+	<class name="FatJet"/>
 	<class name="GenParticle"/>
 	<class name="Lepton"/>
 	<class name="Met"/>

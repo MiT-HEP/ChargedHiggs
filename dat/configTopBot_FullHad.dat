@@ -1,0 +1,47 @@
+##configure Looper
+##### This file store the configuratino to run all the analysis
+##### if you want to make a config file that overwrite some changes just create a new one with the line
+##### Loader=LoadNero
+##### include=dat/config.txt
+##### Files=....,....,...
+
+include=dat/config.2017.moriond.dat
+
+Files=
+include=dat/catalog/2017.moriond/tt.dat
+## signal
+include=dat/catalog/2017.moriond/topbottom.dat
+
+
+include=dat/topBot_FullHad.2017.dat
+pileup=aux/pileup.2017.BCDEFGH.root
+
+#____________________ SPECIAL SETTINGS _____________________________
+
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+# Smearer
+
+Smear=NONE
+
+################################# ANALYSIS CONFIGURATION ############################
+
+Correct=NONE
+#Correct=MetPhiCorrector
+Final=no
+#Final=yes
+# final remember: no tree, no data, w/ syst
+
+#________________________________________________________________
+#____________________ CONFIGURATION _____________________________
+#
+##########  ANALYSIS  ################
+Analysis=JsonAnalysis,MetFiltersAnalysis,ChargedHiggsTopBottomFullHad
+
+Output=ChHiggs_FullHad.root
+
+
+
+

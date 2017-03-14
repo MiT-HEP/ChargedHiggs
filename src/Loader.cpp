@@ -36,6 +36,7 @@ int LoadNero::InitTree(){
         "BareVertex",
         "BareMonteCarlo",
         "BareJets",
+        "BareFatJets",
         "BareTaus",
         "BareLeptons",
         "BareMet",
@@ -53,9 +54,15 @@ int LoadNero::InitTree(){
     bare_[ names_ ["BareTaus"] ] -> SetExtend();
     bare_[ names_ ["BarePhotons"] ] -> SetExtend();
     dynamic_cast<BareTaus*> (bare_[ names_ ["BareTaus"] ])  -> SetMatch();
+    //dynamic_cast<BareFatJets*> (bare_[ names_ ["BareFatJets"] ])  -> cachedPrefix="AK8CHS";
 
     for (auto b : bare_ )
-        b->setBranchAddresses(tree_);
+    {
+        if (dynamic_cast<BareFatJets*>(b) !=NULL)  
+            dynamic_cast<BareFatJets*>(b)->setBranchAddresses(tree_,"AK8CHS");
+        else
+            b->setBranchAddresses(tree_);
+    }
 
     // branches are activate from configuration file
     tree_ -> SetBranchStatus("*",0);
@@ -68,6 +75,7 @@ int LoadNero::FillEvent(){
     //FillEventInfo(); // new file uses isRealData, but not the weights, called directly
 
     FillJets();
+    FillFatJets();
     FillLeptons();
     FillPhotons();
     FillTaus();
@@ -184,6 +192,55 @@ void LoadNero::FillJets(){
 
         // add it
         event_ -> jets_ . push_back(j);
+    }
+    return;
+
+}// end fill jets
+
+
+void LoadNero::FillFatJets(){
+    //fill Jets
+#ifdef VERBOSE
+    if(VERBOSE>1) Log(__FUNCTION__,"DEBUG","Filling Fat Jets");
+#endif
+
+    BareFatJets *bj = dynamic_cast<BareFatJets*> ( bare_ [ names_[ "BareFatJets" ] ] ); assert (bj !=NULL);
+
+    if ( tree_ ->GetBranchStatus("fatjetAK8CHSP4") == 0 ){
+        LogN(__FUNCTION__,"WARNING","FatJets Not FILLED",10);
+        return;
+    }
+
+#ifdef VERBOSE
+    if(VERBOSE>1) Log(__FUNCTION__,"DEBUG",Form("FatJets Branch has %u entries",bj -> p4 ->GetEntries()));
+#endif
+
+    for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
+    {
+
+#ifdef VERBOSE
+        if (VERBOSE >1 )
+        {
+            cout <<"[LoadNero]::[FillFatJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
+
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Pt() <<endl;
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Phi() <<endl;
+        }
+#endif
+//
+//        bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
+//        if (not id) continue;
+
+        FatJet *j =new FatJet();
+        j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
+
+        // add it
+        event_ -> fat_ . push_back(j);
+
+#ifdef VERBOSE
+    if(VERBOSE>1) Log(__FUNCTION__,"DEBUG","Done");
+#endif
     }
     return;
 
