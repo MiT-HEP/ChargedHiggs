@@ -21,6 +21,8 @@ class HmumuAnalysis: virtual public AnalysisBase
         float mass_;
         bool Unblind(Event *e) override {if (e->IsRealData() and mass_ > 125-3 and mass_<125+3 ) return unblind; return true;} // if is not data, no need to return something else
 
+        bool doSync{false};
+
     private:
         // select cuts
         CutSelector cut;

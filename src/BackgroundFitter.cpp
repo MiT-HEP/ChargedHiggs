@@ -43,6 +43,7 @@ class PdfModelBuilder
         RooAbsPdf* getLogPol(string prefix, int order);
         RooAbsPdf* getExpPol(string prefix, int order); // e^pol
         RooAbsPdf* getDYBernstein(string prefix, int order,TH1D*dy);
+        RooAbsPdf* getZPhotonRun1(string prefix, int order);
 
         // get the order for the ftest
         // prefix are bern, powlaw, exp, lau
@@ -56,6 +57,49 @@ class PdfModelBuilder
         double getProbabilityFtest(double chi2, int ndof);
 
 };
+
+RooAbsPdf* PdfModelBuilder::getZPhotonRun1(string prefix, int order){
+    if (order != 1) return NULL;
+
+    RooArgList *plist = new RooArgList();
+    plist->add(*obs_var); //@0
+    string pname;
+
+        pname = prefix + "_a";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-1.,-15, -0.01 );
+        plist->add(*params[pname]); // @1
+
+        pname = prefix + "_mZ";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
+        params[pname] -> setConstant();
+        plist->add(*params[pname]); //@2
+
+        pname = prefix + "_Zwidth";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
+        params[pname] -> setConstant();
+        plist->add(*params[pname]); //@3
+
+    RooGenericPdf *part1 = new RooGenericPdf((prefix+"_pdf1").c_str(),(prefix+"_pdf1").c_str(),"TMath::Exp(@1*@0)/((@0-@2)*(@0-@2)+@3*@3/4.)",*plist);
+    pdfs[part1->GetName() ] = part1;
+
+    plist = new RooArgList();
+    plist->add(*obs_var); //@0
+
+        pname = prefix + "_b";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-1.,-15,-0.01 );
+        plist->add(*params[pname]); //@1
+
+    RooGenericPdf *part2 = new RooGenericPdf((prefix+"_pdf2").c_str(),(prefix+"_pdf2").c_str(),"TMath::Exp(@1*@0)/(@0*@0)",*plist);
+    pdfs[part2->GetName() ] = part2;
+
+        pname = prefix + "_f";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),1.,0,1 );
+
+    RooAddPdf *zpho = new RooAddPdf(prefix.c_str(),prefix.c_str(),RooArgList(*part1,*part2),RooArgList(*params[pname]),0 ) ;
+
+    return zpho;
+}
+
 
 RooAbsPdf* PdfModelBuilder::getDYBernstein(string prefix, int order,TH1D*dy){
     //DY roohistpdf modified with a bernstein poly
@@ -191,6 +235,8 @@ RooAbsPdf* PdfModelBuilder::getPdf(const string& prefix,int order )
         return getLogPol(prefix+ Form("_ord%d",order),order);
     if (prefix.find("bern") != string::npos)
         return getBernstein(prefix+ Form("_ord%d",order),order);
+    if (prefix.find("zpho") != string::npos)
+        return getZPhotonRun1(prefix+ Form("_ord%d",order),order);
     if (prefix.find("powlaw") != string::npos )
         return getPowerLawGeneric(prefix+ Form("_ord%d",order),order);
     if (prefix.find("exppol")!=string::npos)
@@ -560,6 +606,10 @@ void BackgroundFitter::fit(){
         RooAbsPdf* dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
         storedPdfs.add(*dybern);
 
+        int zphoOrd;
+        RooAbsPdf* zpho = modelBuilder.fTest(Form("zpho_cat%d",cat) ,hist_[name],&zphoOrd,plotDir + "/zpho");
+        storedPdfs.add(*zpho);
+
         //int exppolOrd;
         //RooAbsPdf* exppol = modelBuilder.fTest(Form("exppol_cat%d",cat) ,hist_[name],&exppolOrd,plotDir + "/exppol");
         //storedPdfs.add(*exppol);
@@ -626,6 +676,10 @@ void BackgroundFitter::fit(){
             dybern->plotOn(p,LineColor(kGray),LineStyle(kDashed));
             TObject *dybernLeg = p->getObject(int(p->numItems()-1));
             leg->AddEntry(dybernLeg,Form("dybern ord=%d",dybernOrd),"L");
+
+            zpho->plotOn(p,LineColor(kOrange));
+            TObject *zphoLeg = p->getObject(int(p->numItems()-1));
+            leg->AddEntry(zphoLeg,Form("zpho ord=%d",zphoOrd),"L");
 
             //exppol->plotOn(p,LineColor(kOrange));
             //TObject *exppolLeg = p->getObject(int(p->numItems()-1));
