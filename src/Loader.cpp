@@ -174,9 +174,13 @@ void LoadNero::FillJets(){
         else j->SetQGL(  -10 ); // Add a warning ? 
 
         if (tree_->GetBranchStatus("jetQglMult") ) j->SetQGLVar( "mult", bj -> qglMult -> at(iJet) );
+        if (tree_->GetBranchStatus("jetQglNMult") ) j->SetQGLVar( "nmult", bj -> qglNMult -> at(iJet) );
+        if (tree_->GetBranchStatus("jetQglCMult") ) j->SetQGLVar( "cmult", bj -> qglCMult -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglPtD") ) j->SetQGLVar( "ptD", bj -> qglPtD -> at(iJet) );
+        if (tree_->GetBranchStatus("jetQglPtDrLog") ) j->SetQGLVar( "PtDrLog", bj -> qglPtDrLog -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglAxis2") ) j->SetQGLVar( "axis2", bj -> qglAxis2 -> at(iJet) );
-
+        if (tree_->GetBranchStatus("jetQglAxis1") ) j->SetQGLVar( "axis1", bj -> qglAxis1 -> at(iJet) );
+        
         j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
         j->motherPdgId = bj->motherPdgId -> at(iJet);
         j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);

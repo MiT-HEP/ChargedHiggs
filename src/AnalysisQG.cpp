@@ -1,4 +1,30 @@
+
 #include "interface/AnalysisQG.hpp"
+
+int QGAnalysis::Rematch(Event *e, Jet *j, float dR){
+    GenParticle * gp =NULL;
+    int ig=0;
+    int jet_pdg=0;
+    float hardestPt=-1.;
+    //bool isHardestQ = false;
+    for (gp = e->GetGenParticle(ig) ; gp != NULL ; gp=e->GetGenParticle(++ig))
+    {
+        if  (gp->DeltaR(j) >dR) continue;
+        if  ( abs(gp->GetPdgId()) > 6 and abs(gp->GetPdgId()) !=21 ) continue; // only quark and gluons
+        if  ( abs(gp->GetPdgId()) ==0  ) continue; 
+
+        //if ( not (gp->GetFlag() & ( BareMonteCarlo::HardProcess | BareMonteCarlo::HardProcessBeforeFSR | BareMonteCarlo::HardProcessDecayed) ) ) continue;
+
+        if ( hardestPt <0 or gp->Pt() > hardestPt)
+        {
+            jet_pdg = gp->GetPdgId();
+            hardestPt = gp->Pt();
+        }
+
+    }
+    return jet_pdg;
+
+}
 
 
 void QGAnalysis::SetLeptonCuts(Lepton *l){ 
@@ -9,7 +35,7 @@ void QGAnalysis::SetLeptonCuts(Lepton *l){
 }
 
 void QGAnalysis::SetJetCuts(Jet *j){
-    j->SetBCut(0.800);
+    j->SetBCut(0.8484);
     j->SetEtaCut(4.7); 
     j->SetEtaCutCentral(2.4);
     j->SetPtCut(30);
@@ -31,6 +57,7 @@ void QGAnalysis::InitMM(){
         Book ("QGAnalysis/Zmm/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 100,50,200);
         // 
         Book ("QGAnalysis/Zmm/Ptmm_"+ l ,"Ptmm;p_{T}^{#mu#mu} [GeV];Events", 1000,0,1000);
+        //Book ("QGAnalysis/Zmm/Met_"+ l ,"Met;MET [GeV];Events", 1000,0,1000);
         Book ("QGAnalysis/Zmm/Npv_"+ l ,"Npvmm", 50,0,50);
         //
         for (const string& t : jetTypes ) {
@@ -38,11 +65,13 @@ void QGAnalysis::InitMM(){
 
                 if ( l == "Data" and t != "U") continue; // Data have no MC info
 
-                float xmin=-1, xmax=1.0;
+                float xmin=0., xmax=1.0;
                 int nbins=200;
 
-                if ( v == "axis2") { xmin=0; xmax=10;}
+                if ( v == "axis2" || v == "axis1") { xmin=0; xmax=10;}
                 if ( v == "mult") { xmin=0; xmax=100;nbins=100;}
+                if ( v == "cmult" || v == "nmult") { xmin=0; xmax=50;nbins=50;}
+                if ( v == "PtDrLog" ) {xmin=0; xmax=1.5;}
 
                 Book ("QGAnalysis/Zmm/"+v +"_"+ t+"_"+ l ,v+"_" + t, 200,-1,1.0);
                 for(int ptb=0;ptb < ptBins.size()-1; ++ptb)         
@@ -73,8 +102,10 @@ void QGAnalysis::InitJJ(){
                 float xmin=-1, xmax=1.0;
                 int nbins=200;
 
-                if ( v == "axis2") { xmin=0; xmax=10;}
-                if ( v == "mult") { xmin=0; xmax=100;nbins=100;}
+                if ( v == "axis2" || v == "axis1") { xmin=0; xmax=10;}
+                if ( v == "mult" ) { xmin=0; xmax=100;nbins=100;}
+                if ( v == "cmult" || v == "nmult") { xmin=0; xmax=50;nbins=50;}
+                if ( v == "PtDrLog" ) {xmin=0; xmax=1.5;}
 
                 Book ("QGAnalysis/DiJet/"+v +"_"+ t+"_"+ l ,v+"_" + t, 200,-1,1.0);
                 for(int ptb=0;ptb < ptBins.size()-1; ++ptb)         
@@ -91,7 +122,9 @@ void QGAnalysis::InitJJ(){
 int QGAnalysis::analyzeMM(Event *e, string systname)
 {
 
-    if ( e->IsRealData() and e->GetName().find("SingleMuon") == string::npos )  return 0; // avoid data double counting
+    if ( e->IsRealData() and e->GetName().find("DoubleMuon") == string::npos )  return 0; // avoid data double counting
+    if ( e->IsRealData() and e->runNum() <= 278801) return 0; //split B2F and FGH runs
+    //Log(__FUNCTION__,"DEBUG","Analyzing");
 
     string label = GetLabel(e);
     cut.reset();
@@ -107,7 +140,7 @@ int QGAnalysis::analyzeMM(Event *e, string systname)
     if (mu0 == NULL or mu1 == NULL) return 0;
 
     cut.SetCutBit(Leptons);
-    if (e->IsTriggered("HLT_IsoMu24_v") ) cut.SetCutBit(Trigger);
+    if (e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") ) cut.SetCutBit(Trigger);
     Fill("QGAnalysis/CutFlow/CutFlowZmm_"+label,systname,Trigger,e->weight());
 
     Object Z(*mu0);
@@ -133,27 +166,41 @@ int QGAnalysis::analyzeMM(Event *e, string systname)
     if (cut.passAll() ){
         Fill("QGAnalysis/CutFlow/CutFlowZmm_"+label,systname,MaxCut,e->weight());
         Fill("QGAnalysis/Zmm/Ptmm_"+ label,systname, Z.Pt(),e->weight()) ;
+        //Fill("QGAnalysis/Zmm/Metmm_"+ label,systname, Z.Pt(),e->weight()) ;
         Fill("QGAnalysis/Zmm/Npv_"+ label,systname, e->Npv(),e->weight()) ;
         string etaStr=Binning::findBinStr( aetaBins, fabs(j0->Eta()), "eta%.1f_%.1f");
-        string ptStr=Binning::findBinStr( ptBins, j0->Pt(), "pt%.0f_%.0f");
-        int flavor = abs(j0->Flavor());
+        //string ptStr=Binning::findBinStr( ptBins, j0->Pt(), "pt%.0f_%.0f"); // binned with Jet PT
+        string ptStr=Binning::findBinStr( ptBins, Z.Pt(), "pt%.0f_%.0f"); // binned with Z PT
+        //int flavor = abs(j0->Flavor()); // parton flavor
+        int flavor = Rematch(e,j0,0.4); // rematching with gen particles. See above.
         string type="U";
         if (flavor == 21) type="G";
-        else if (flavor < 6 and flavor != 0) type="Q"; 
+        else if (flavor <= 6 and flavor != 0) type="Q"; 
            
         // global 
-        Fill("QGAnalysis/Zmm/QGL_" +type +"_"+ label, systname, j0->QGL(),e->weight()) ;
-         
+        Fill("QGAnalysis/Zmm/QGL_" +type +"_"+ label, systname, j0->QGL(),e->weight()) ;        
         Fill("QGAnalysis/Zmm/mult_" +type +"_"+ label, systname, j0->QGLVar("mult"),e->weight()) ;
+        Fill("QGAnalysis/Zmm/cmult_" +type +"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
+        Fill("QGAnalysis/Zmm/nmult_" +type +"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
         Fill("QGAnalysis/Zmm/ptD_" +type +"_"+ label, systname, j0->QGLVar("ptD"),e->weight()) ;
+        Fill("QGAnalysis/Zmm/PtDrLog_" +type +"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
         Fill("QGAnalysis/Zmm/axis2_" +type +"_"+ label, systname, j0->QGLVar("axis2"),e->weight()) ;
+        Fill("QGAnalysis/Zmm/axis1_" +type +"_"+ label, systname, j0->QGLVar("axis1"),e->weight()) ;
         // binned
         if (etaStr != "NotFound" and ptStr != "NotFound")
         {
+            /*COMMENT ME*/
+            //Log(__FUNCTION__,"DEBUG",Form("Filling eta=%s, pt=%s, cmult=%.1f",etaStr.c_str(),ptStr.c_str(), j0->QGLVar("cmult")) );
+            /**/
+            
             Fill("QGAnalysis/Zmm/QGL_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGL(),e->weight()) ;
             Fill("QGAnalysis/Zmm/mult_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("mult"),e->weight()) ;
+            Fill("QGAnalysis/Zmm/cmult_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
+            Fill("QGAnalysis/Zmm/nmult_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
             Fill("QGAnalysis/Zmm/ptD_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("ptD"),e->weight()) ;
+            Fill("QGAnalysis/Zmm/PtDrLog_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
             Fill("QGAnalysis/Zmm/axis2_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis2")),e->weight()) ;
+            Fill("QGAnalysis/Zmm/axis1_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
         }
 
     }
@@ -212,29 +259,46 @@ int QGAnalysis::analyzeJJ(Event *e, string systname)
         Fill("QGAnalysis/DiJet/QGL_" +typeJ1 +"_"+ label, systname, j1->QGL(),e->weight()) ;
          
         Fill("QGAnalysis/DiJet/mult_" +typeJ0 +"_"+ label, systname, j0->QGLVar("mult"),e->weight()) ;
+        Fill("QGAnalysis/DiJet/cmult_" +typeJ0 +"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
+        Fill("QGAnalysis/DiJet/nmult_" +typeJ0 +"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
         Fill("QGAnalysis/DiJet/ptD_" +typeJ0 +"_"+ label, systname, j0->QGLVar("ptD"),e->weight()) ;
+        Fill("QGAnalysis/DiJet/PtDrLog_" +typeJ0 +"_"+ label, systname, j0->QGLVar("PtDrLog"),e->weight()) ;
         Fill("QGAnalysis/DiJet/axis2_" +typeJ0 +"_"+ label, systname, j0->QGLVar("axis2"),e->weight()) ;
+        Fill("QGAnalysis/DiJet/axis1_" +typeJ0 +"_"+ label, systname, j0->QGLVar("axis1"),e->weight()) ;
 
         Fill("QGAnalysis/DiJet/mult_" +typeJ1 +"_"+ label, systname, j1->QGLVar("mult"),e->weight()) ;
+        Fill("QGAnalysis/DiJet/nmult_" +typeJ1 +"_"+ label, systname, j1->QGLVar("nmult"),e->weight()) ;
+        Fill("QGAnalysis/DiJet/cmult_" +typeJ1 +"_"+ label, systname, j1->QGLVar("cmult"),e->weight()) ;
         Fill("QGAnalysis/DiJet/ptD_" +typeJ1 +"_"+ label, systname, j1->QGLVar("ptD"),e->weight()) ;
+        Fill("QGAnalysis/DiJet/PtDrLog_" +typeJ1 +"_"+ label, systname, j1->QGLVar("PtDrLog"),e->weight()) ;
         Fill("QGAnalysis/DiJet/axis2_" +typeJ1 +"_"+ label, systname, j1->QGLVar("axis2"),e->weight()) ;
+        Fill("QGAnalysis/DiJet/axis1_" +typeJ1 +"_"+ label, systname, j1->QGLVar("axis1"),e->weight()) ;
         // binned
         
         // pt1 <-> pt0: TP
         if (etaStrJ0 != "NotFound" and ptStrJ1 != "NotFound")
         {
             Fill("QGAnalysis/DiJet/QGL_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGL(),e->weight()) ;
+            Fill("QGAnalysis/DiJet/nmult_" +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
+            Fill("QGAnalysis/DiJet/cmult_" +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
             Fill("QGAnalysis/DiJet/mult_" +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("mult"),e->weight()) ;
             Fill("QGAnalysis/DiJet/ptD_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("ptD"),e->weight()) ;
+            Fill("QGAnalysis/DiJet/PtDrLog_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("PtDrLog"),e->weight()) ;
             Fill("QGAnalysis/DiJet/axis2_"+typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis2")),e->weight()) ;
+            Fill("QGAnalysis/DiJet/axis1_"+typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
+
         }
 
         if (etaStrJ1 != "NotFound" and ptStrJ0 != "NotFound")
         {
             Fill("QGAnalysis/DiJet/QGL_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGL(),e->weight()) ;
             Fill("QGAnalysis/DiJet/mult_" +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("mult"),e->weight()) ;
+            Fill("QGAnalysis/DiJet/nmult_" +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("nmult"),e->weight()) ;
+            Fill("QGAnalysis/DiJet/cmult_" +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("cmult"),e->weight()) ;
             Fill("QGAnalysis/DiJet/ptD_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("ptD"),e->weight()) ;
+            Fill("QGAnalysis/DiJet/PtDrLog_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("PtDrLog"),e->weight()) ;
             Fill("QGAnalysis/DiJet/axis2_"+typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, -TMath::Log(j1->QGLVar("axis2")),e->weight()) ;
+            Fill("QGAnalysis/DiJet/axis1_"+typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, -TMath::Log(j1->QGLVar("axis1")),e->weight()) ;
         }
 
     }

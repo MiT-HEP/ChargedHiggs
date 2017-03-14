@@ -4,6 +4,13 @@ jetUnc
 jetBdiscr
 jetSelBits
 jetQGL
+jetQglCMult
+jetQglNMult
+jetQglMult
+jetQglPtD
+jetQglAxis1
+jetQglAxis2
+jetQglPtDrLog
 ### Leptons
 lepP4
 lepIso
