@@ -40,6 +40,17 @@ public:
     int analyze(Event*,string systname) override;
     const string name() const override {return "ChargedHiggsTopBottomFullHad";}
 
+    // Tree
+    bool writeTree = false;
+    void setTree(Event*e, string label, string  category);
+
+    // Variables for MVA
+
+    template<class T>
+    void SetVariable( string name, T value){ varValues_.Set(name, value); }
+    void AddVariable( string name, char type, int r);
+    void AddSpectator( string name, char type, int r);
+
     vector<string> weights;
 
 
@@ -54,6 +65,12 @@ private:
     };
 
     double evt_HT=-1;
+    double evt_minDRbb=-1;
+    double evt_minDRbb_invMass=-1;
+    double evt_DEtaMaxBB=-1;
+
+    double evt_C=0;
+
 
     /////
     /////
