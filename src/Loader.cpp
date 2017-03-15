@@ -215,6 +215,20 @@ void LoadNero::FillFatJets(){
     if(VERBOSE>1) Log(__FUNCTION__,"DEBUG",Form("FatJets Branch has %u entries",bj -> p4 ->GetEntries()));
 #endif
 
+    // EXTRA DEBUG INFO
+#ifdef VERBOSE
+    if(VERBOSE>1)
+        cout <<"[LoadNero]::[FillJets]::[DEBUG] Jets length:"<<endl;
+    cout <<"\t * tau1: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau1") << " : "<< bj->fatjetAK8CHSTau1->size()<<endl;
+    cout <<"\t * tau2: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau2") << " : "<< bj->fatjetAK8CHSTau2->size()<<endl;
+    cout <<"\t * tau3: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau3") << " : "<< bj->fatjetAK8CHSTau3->size()<<endl;
+    cout <<"\t * nSubjets: "	<< tree_->GetBranchStatus("fatjetAK8CHSnSubjets") << " : "<< bj->fatjetAK8CHSnSubjets->size()<<endl;
+    cout <<"\t * softdropMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSSoftdropMass") << " : "<< bj->fatjetAK8CHSSoftdropMass->size()<<endl;
+    cout <<"\t * CorrectedPrunedMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSCorrectedPrunedMass") << " : "<< bj->fatjetAK8CHSCorrectedPrunedMass->size()<<endl;
+#endif
+
+
+
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
 
@@ -234,6 +248,12 @@ void LoadNero::FillFatJets(){
 
         FatJet *j =new FatJet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
+
+        j->tau1 = bj -> fatjetAK8CHSTau1 -> at(iJet);
+        j->tau2 = bj -> fatjetAK8CHSTau2 -> at(iJet);
+        j->nSubjets = bj -> fatjetAK8CHSnSubjets -> at(iJet);
+        j->softdropMass = bj -> fatjetAK8CHSSoftdropMass -> at(iJet);
+        j->CorrectedPrunedMass = bj -> fatjetAK8CHSCorrectedPrunedMass -> at(iJet);
 
         // add it
         event_ -> fat_ . push_back(j);

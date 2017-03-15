@@ -6,6 +6,12 @@ jetSelBits
 jetQGL
 ### FatJet
 fatjetAK8CHSP4
+fatjetAK8CHSTau1
+fatjetAK8CHSTau2
+fatjetAK8CHSTau3
+fatjetAK8CHSnSubjets
+fatjetAK8CHSSoftdropMass
+fatjetAK8CHSCorrectedPrunedMass
 ### Leptons
 lepP4
 lepIso

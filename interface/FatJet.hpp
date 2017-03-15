@@ -20,12 +20,14 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float tau1cut_ ; // To Set
     float tau2cut_ ; // To Set
     float tau3cut_ ; // To Set
+    float tau21cut_ ; // To Set
 
     float corrprunedMasscut_ ;
     float prunedMasscut_ ;
     float softdropMasscut_ ;
     float nSubjetscut_ ;
     float hbbcut_;
+
 
     // FIXME: add puppi
 
@@ -40,6 +42,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
     void SetTau2Cut(float x){tau2cut_ = x;}
     void SetTau3Cut(float x){tau3cut_ = x;}
 
+    void SetTau21Cut(float x){tau21cut_ = x;}
+
     void SetCorrPrunedMassCut(float x){corrprunedMasscut_ = x;}
     void SetPrunedMassCut(float x){prunedMasscut_ = x;}
     void SetSDMassCut(float x){softdropMasscut_ = x;}
@@ -49,16 +53,26 @@ class FatJet : virtual public Object, virtual public SmearableBase
 
 
     FatJet() ; 
-
-
-    float bdiscr; // 
+    float tau1; //
+    float tau2; //
+    float tau3; //
+    float softdropMass;
+    float CorrectedPrunedMass;
 
     //Gen-level info
 
     // ---
 
+    inline float Tau1() const { return tau1 ; }
+    inline float Tau2() const { return tau2 ; }
+    inline float Tau3() const { return tau3 ; }
+
+    inline float SDMass() const { return softdropMass ; }
+    inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
+
     inline int IsJet() const { return 1;}
 
+    inline int IsWJet() const { if( tau2 < tau1*tau21cut_  and IsJet() )   return 1; return 0;}
 
 };
 
