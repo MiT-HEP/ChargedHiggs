@@ -31,6 +31,7 @@ void ChargedHiggsTopBottom::SetJetCuts(Jet *j){
 void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
     // these are used for the Veto
     t->SetPtCut(20);
+    /// MARIA FIXME 2.4 --> 2.3
     t->SetEtaCut(2.4);
     t->SetMuRej(false);
     t->SetEleRej(false);
@@ -729,12 +730,12 @@ void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasesp
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+SR+flavor+l,"ST "+l+"; ST ( HT+met+lepsPt )",50,0,2500);
 
     // need to book SR only for Baseline
-    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+SR+flavor+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
-    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+SR+flavor+l,"bdt1lm "+l+";bdt (1l medium)",50,-1.,1.);
-    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+SR+flavor+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
-    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+SR+flavor+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
-    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+SR+flavor+l,"bdt2lm "+l+";bdt (2l medium)",50,-1.,1.);
-    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+SR+flavor+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+SR+flavor+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+SR+flavor+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+SR+flavor+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+SR+flavor+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+SR+flavor+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+SR+flavor+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
     if(!(SR.find("SR")!=string::npos)) {
 
@@ -827,12 +828,12 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+l,"ST "+l+"; ST ( HT+MET+lepsPt )",800,0,8000);
 
         //BDT plot
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+l,"bdt1lm "+l+";bdt (1l medium)",50,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+l,"bdt2lm "+l+";bdt (2l medium)",50,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
         if(phasespace.find("Baseline")!=string::npos) {
 
@@ -846,33 +847,33 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
             Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR3_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
             Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR4_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
 
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR1_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR1_"+l,"bdt1lm "+l+";bdt (1l medium)",50,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR1_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR1_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR1_"+l,"bdt2lm "+l+";bdt (2l medium)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR1_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR1_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR1_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR1_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR1_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR1_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR1_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR2_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR2_"+l,"bdt1lm "+l+";bdt (1l medium)",50,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR2_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR2_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR2_"+l,"bdt2lm "+l+";bdt (2l medium)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR2_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR2_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR2_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR2_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR2_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR2_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR2_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR3_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR3_"+l,"bdt1lm "+l+";bdt (1l medium)",50,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR3_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR3_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR3_"+l,"bdt2lm "+l+";bdt (2l medium)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR3_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR3_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR3_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR3_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR3_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR3_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR3_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR4_"+l,"bdt1lh "+l+";bdt (1l high)",50,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR4_"+l,"bdt1lm "+l+";bdt (1l medium)",50,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR4_"+l,"bdt1ll "+l+";bdt (1l low)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR4_"+l,"bdt2lh "+l+";bdt (2l high)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR4_"+l,"bdt2lm "+l+";bdt (2l medium)",50,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR4_"+l,"bdt2ll "+l+";bdt (2l low)",50,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR4_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR4_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR4_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR4_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR4_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR4_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
         }
 
@@ -931,10 +932,10 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+l,"LeptonPt "+l + ";p_{T}^{lepton} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+l,"LeptonIso "+l + ";iso (lepton) [GeV]",50,0.,50.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+l,"LeptonMva "+l + ";mva (lepton)",50,0.,1.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+l,"LeptonTrailEta "+l + ";#eta (lepton)",20,-5.,5.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+l,"LeptonTrailPt "+l + ";p_{T}^{lepton} [GeV]",50,0.,200.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+l,"LeptonTrailIso "+l + ";iso (lepton) [GeV]",50,0.,50.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+l,"LeptonTrailMva "+l + ";mva (lepton)",50,0.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+l,"LeptonTrailEta "+l + ";#eta (trailing lepton)",20,-5.,5.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+l,"LeptonTrailPt "+l + ";p_{T}^{trailing lepton} [GeV]",50,0.,200.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+l,"LeptonTrailIso "+l + ";iso (trailing lepton) [GeV]",50,0.,50.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+l,"LeptonTrailMva "+l + ";mva (trailing lepton)",50,0.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+l,"Mt "+l+";M_{T} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Met_"+l,"Met "+l+";MET [GeV]",50,0.,1000.);
 

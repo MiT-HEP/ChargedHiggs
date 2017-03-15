@@ -1,0 +1,28 @@
+python script/bwsTB.py --kTest 0 
+python script/bwsTB.py --kTest 7
+
+python script/bwsTB.py --kTest 1
+python script/bwsTB.py --kTest 2
+python script/bwsTB.py --kTest 3
+
+python script/bwsTB.py --kTest 4
+python script/bwsTB.py --kTest 5
+python script/bwsTB.py --kTest 6
+
+####combined
+
+exit
+
+cd MARCH5
+combineCards.py Twol=2l_1d_cms_datacard_topbottom_STAT.txt Onel=1l_1d_cms_datacard_topbottom_STAT.txt > combined_1d_cms_datacard_topbottom_STAT.txt
+combineCards.py Twol=2l_high_cms_datacard_topbottom_STAT.txt Onel=1l_high_cms_datacard_topbottom_STAT.txt > combined_high_cms_datacard_topbottom_STAT.txt
+combineCards.py Twol=2l_medium_cms_datacard_topbottom_STAT.txt Onel=1l_medium_cms_datacard_topbottom_STAT.txt > combined_medium_cms_datacard_topbottom_STAT.txt
+combineCards.py Twol=2l_low_cms_datacard_topbottom_STAT.txt Onel=1l_low_cms_datacard_topbottom_STAT.txt > combined_low_cms_datacard_topbottom_STAT.txt
+
+exit
+
+cd MARCH5
+combineCards.py Twol=2l_1d_cms_datacard_topbottom_SYST.txt Onel=1l_1d_cms_datacard_topbottom_SYST.txt > combined_1d_cms_datacard_topbottom_SYST.txt
+combineCards.py Twol=2l_high_cms_datacard_topbottom_SYST.txt Onel=1l_high_cms_datacard_topbottom_SYST.txt > combined_high_cms_datacard_topbottom_SYST.txt
+combineCards.py Twol=2l_medium_cms_datacard_topbottom_SYST.txt Onel=1l_medium_cms_datacard_topbottom_SYST.txt > combined_medium_cms_datacard_topbottom_SYST.txt
+combineCards.py Twol=2l_low_cms_datacard_topbottom_SYST.txt Onel=1l_low_cms_datacard_topbottom_SYST.txt > combined_low_cms_datacard_topbottom_SYST.txt

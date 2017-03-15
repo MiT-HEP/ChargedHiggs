@@ -13,8 +13,8 @@ parser= OptionParser()
 #parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/feb12final_2l.root")
 #parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final2/1l/1l.root")
 #parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final2/2l/2l.root")
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/March5_final_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/March5_final_2l.root")
 
 #parser.add_option("","--input1Lsig",type='string',help="Input ROOT file. [%default]", default="1l_signal.root")
 #parser.add_option("","--input2Lsig",type='string',help="Input ROOT file. [%default]", default="2l_signal.root")
@@ -84,6 +84,18 @@ def Rebin(h):
 	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
 	return h1
 
+def Rebin1L(h):
+	''' Rebin with un-even bins '''
+	mybins=array('d',[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740, 750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 870, 880, 890, 900, 910, 920, 930, 940, 950, 960, 970, 980, 990, 1000, 1020, 1040, 1060, 1080, 1100, 1120, 1140, 1160, 1180, 1200, 1220, 1240, 1260, 1280, 1300, 1320, 1340, 1360, 1380, 1400, 1420, 1440, 1460, 1480, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500, 4600, 4700, 4800, 4900, 5000, 8000])
+	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+	return h1
+
+def Rebin2L(h):
+	''' Rebin with un-even bins '''
+	mybins=array('d',[0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420, 440, 460, 480, 500, 520, 540, 560, 580, 600, 620, 640, 660, 680, 700, 720, 740, 760, 780, 800, 820, 840, 860, 880, 900, 920, 940, 960, 980, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1750, 1800, 1850, 1900, 1950, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500, 4600, 4700, 4800, 4900, 5000, 8000])
+	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+	return h1
+
 fIn1L = ROOT.TFile.Open(opts.input1L,"READ")
 fIn2L = ROOT.TFile.Open(opts.input2L,"READ")
 
@@ -93,7 +105,6 @@ if fIn1L == None:
 if fIn2L == None: 
 	print "ERROR: file",opts.input2L,"doesn't exist"
 	exit(1)
-
 
 basecat = []
 channel = []
@@ -105,6 +116,10 @@ if opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7:
 	channel = ["1Mu1Ele","2Mu","2Ele"]
 	basecat = ["Baseline","extraRadCR","topCR"]
 
+if opts.kTest==8 or opts.kTest==9:
+	channel = ["1Mu","1Ele","1Mu1Ele","2Mu","2Ele"]
+	basecat = ["Baseline","extraRadCR","topCR","charmCR"]
+
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 statStore = {} ## used to store th1d for stat uncertainties
 
@@ -113,17 +128,19 @@ VarTest=""
 
 doSyst = True
 
-for x in basecat:
-	for y in channel:
-
+for y in channel:
+	if y == "2Ele" or y == "2Mu" or y == "1Mu1Ele": basecat = ["Baseline","extraRadCR","topCR"]
+	for x in basecat:
 		label="2l_"
 		if y == "1Ele" or y == "1Mu": label="1l_"
+		if opts.kTest==8: label="combined_"
 
 #	name= x+ "_" + y
 #       catStore [ name ] = { "name": name,"file": None, "hasMC":["all"],"var":"HT"}
 		srList = [""]
 		region = [""]
 		if x=="Baseline" or x=="extraRadCR" or x=="topCR" or x=="charmCR":
+#			if x=="charmCR" and (y == "2Ele" or y == "2Mu" or y =="1Mu1Ele"): continue
 
 			if x=="Baseline": region = ["_SR1","_SR2","_SR3","_SR4"]
 ###			if x=="Baseline" and (opts.kTest==0 or opts.kTest==7): region = [""]## not sure why this
@@ -138,6 +155,7 @@ for x in basecat:
 			## BDT5 is 2l medium mass
 			## BDT6 is 2l low mass
 ##			if y == "1Ele" or y == "1Mu": srList = ["1","2"]
+			if opts.kTest==8 and (y == "1Ele" or y == "1Mu") and x=="Baseline": srList = [""] #this is the 1d combined
 			if opts.kTest==0 and (y == "1Ele" or y == "1Mu") and x=="Baseline": srList = [""] #this is the 1d
 			if opts.kTest==1 and (y == "1Ele" or y == "1Mu") and x=="Baseline": srList = ["1"]
 			if opts.kTest==2 and (y == "1Ele" or y == "1Mu") and x=="Baseline": srList = ["2"]
@@ -151,6 +169,7 @@ for x in basecat:
 				if x=="Baseline" and opts.kTest==5: srList = ["5"]
 				if x=="Baseline" and opts.kTest==6: srList = ["6"]
 				if x=="Baseline" and opts.kTest==7: srList = [""]#this is the 1d
+				if x=="Baseline" and opts.kTest==8: srList = [""]#this is the 1d combined
 ##			else : srList = ["4"]
 
 		for sr in srList:
@@ -162,6 +181,7 @@ for x in basecat:
 			if opts.kTest==6: VarTest="low_"
 			if opts.kTest==7: VarTest="1d_"
 			if opts.kTest==0: VarTest="1d_"
+			if opts.kTest==8: VarTest="1d_"
 
 			for reg in region:
 				name = x+ "_" + y + "" + sr + "" + reg
@@ -181,19 +201,19 @@ for x in basecat:
        #these have null norm so far
 				if x=="charmCR":
 #					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
-					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","TTX","ST","HPlus"]
+					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TTX","EWK","ST","HPlus"]
 				if x=="extraRadCR":
 #					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
-					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","TTX","ST","HPlus"]
+					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TTX","EWK","ST","HPlus"]
 				if x=="topCR":
 #					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
-					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","TTX","ST","HPlus"]
+					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TTX","EWK","ST","HPlus"]
 				if x=="Baseline":
 #					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
-					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","TTX","ST","HPlus"]
+					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TTX","EWK","ST","HPlus"]
 
-#			if x=="charmCR"  and (y=="2Mu" or y=="2Ele" or "1Mu1Ele"):
-#				catStore[name]["hasMC"]=["xxx"]
+#				if x=="charmCR"  and (y=="2Mu" or y=="2Ele" or "1Mu1Ele"):
+#					catStore[name]["hasMC"]=[""]
 #			if x=="Baseline" and y=="2Mu":
 #				catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
 #			if x=="Baseline" and y=="2Ele":
@@ -205,26 +225,39 @@ for x in basecat:
 #			if x=="Baseline" and y=="2Ele" and opts.kTest==6 and reg=="_SR4":
 #				catStore[name]["hasMC"]=[""]
 
-			mcStore={
-				"HPlus":{"name":"HPlus", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-				"TTlight":{ "name":"TTlight","hist":["ttlight_TTToSemilepton","ttlight_TTTo2L2Nu"],"num":1},
-				"TT1b":{ "name":"TT1b","hist":["tt1b_TTToSemilepton","tt1b_TTTo2L2Nu"],"num":2},
-				"TT2b":{ "name":"TT2b","hist":["tt2b_TTToSemilepton","tt2b_TTTo2L2Nu"],"num":3},
-				"TTc":{ "name":"TTc","hist":["ttc_TTToSemilepton","ttc_TTTo2L2Nu"],"num":4},
-#				"TT":{ "name":"TT","hist":["TTToSemilepton","TTTo2L2Nu"],"num":1},
-#				"ST":{ "name":"ST","hist":["ST","tZq"],"num":2},
-				"ST":{ "name":"ST","hist":["ST"],"num":2},
-#				"EWK":{ "name":"EWK","hist":["WJetsToLNu","DYJetsToLL_M","WWTo","WZTo","ZZTo"],"num":3},
-				"EWK":{ "name":"EWK","hist":["WJetsToLNu","DYJetsToLL_M","WWTo","WZTo","ZZTo"],"num":3},
-				"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH"],"num":4}
 
-##				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-#				"HPlus":{"name":"HPlus", "hist":["HplusToTB_M-%d"], "num":0 },
-####				"VJets":{"name":"VJets", "hist":["WJetsToLNu","DYJetsToLL_M"],"num":1 },
-####				"VV":{ "name":"VV","hist":["WWTo2L2Nu","WWToLNuQQ","WZTo1L1Nu2Q","WZTo1L3Nu","WZTo2L2Q","WZTo3LNu","ZZTo2L2Nu","ZZTo2L2Q","ZZTo4L"],"num":2},
-####				"VV":{ "name":"VV","hist":["WWTo","WZTo","ZZTo"],"num":2},
+#			if opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==0:
+			if y == "1Ele" or y == "1Mu":
+				mcStore={
+					"HPlus":{"name":"HPlus", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
+					"TTlight":{ "name":"TTlight","hist":["ttlight_TTToSemilepton","ttlight_TTTo2L2Nu"],"num":1},
+					"TT1b":{ "name":"TT1b","hist":["tt1b_TTToSemilepton","tt1b_TTTo2L2Nu"],"num":2},
+					"TT2b":{ "name":"TT2b","hist":["tt2b_TTToSemilepton","tt2b_TTTo2L2Nu"],"num":3},
+					"TT2B":{ "name":"TT2B","hist":["tt2bMerged_TTToSemilepton","tt2bMerged_TTTo2L2Nu"],"num":4},
+					"TTc":{ "name":"TTc","hist":["ttc_TTToSemilepton","ttc_TTTo2L2Nu"],"num":5},
+					#				"TT":{ "name":"TT","hist":["TTToSemilepton","TTTo2L2Nu"],"num":1},
+					#				"ST":{ "name":"ST","hist":["ST","tZq"],"num":2},
+					"ST":{ "name":"ST","hist":["ST"],"num":6},
+					"EWK":{ "name":"EWK","hist":["WJetsToLNu","WZTo","ZZTo"],"num":7},
+					"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH"],"num":8}
+					}
+			else:
+				mcStore={
+					"HPlus":{"name":"HPlus", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
+					"TTlight":{ "name":"TTlight","hist":["ttlight_TTToSemilepton","ttlight_TTTo2L2Nu"],"num":1},
+					"TT1b":{ "name":"TT1b","hist":["tt1b_TTToSemilepton","tt1b_TTTo2L2Nu"],"num":2},
+					"TT2b":{ "name":"TT2b","hist":["tt2b_TTToSemilepton","tt2b_TTTo2L2Nu"],"num":3},
+					"TT2B":{ "name":"TT2B","hist":["tt2bMerged_TTTo2L2Nu"],"num":4},
+					"TTc":{ "name":"TTc","hist":["ttc_TTToSemilepton","ttc_TTTo2L2Nu"],"num":5},
+					#				"TT":{ "name":"TT","hist":["TTToSemilepton","TTTo2L2Nu"],"num":1},
+					#				"ST":{ "name":"ST","hist":["ST","tZq"],"num":2},
+					"ST":{ "name":"ST","hist":["ST"],"num":6},
+					"EWK":{ "name":"EWK","hist":["WJetsToLNu","ZZTo"],"num":7},
+					"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH"],"num":8}
+					}
 
-				}
+
+
 			systStore={
 				"None":None,
 				"CMS_pileup":{"type":"shape", "wsname":"PU","name":"PU","proc":[".*"]}, ## name used for shape
@@ -234,10 +267,10 @@ for x in basecat:
 				"CMS_eff_b":{"type":"shape", "wsname":"BTAGB","name":"BTAGB","proc":[".*"]}, ## name used for shape
 				"CMS_fake_b":{"type":"shape", "wsname":"BTAGL","name":"BTAGL","proc":[".*"]}, ## name used for shape
 				"CMS_topreweight":{"type":"shape", "wsname":"TOPRW","name":"TOPRW","proc":[".*"]}, ## name used for shape
-#				"CMS_eff_m_trigger":{"type":"shape", "wsname":"muTRG","name":"muTRG","proc":[".*"]}, ## name used for shae
-#				"CMS_eff_m_reco":{"type":"shape", "wsname":"muID","name":"muID","proc":[".*"]}, ## name used for shape
-#				"CMS_eff_m_iso":{"type":"shape", "wsname":"muISO","name":"muISO","proc":[".*"]}, ## name used for shape
-#				"lumi13TeV":{"type":"lnN", "value":["1.06"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
+###				"CMS_eff_m_trigger":{"type":"shape", "wsname":"muTRG","name":"muTRG","proc":[".*"]}, ## name used for shae
+###				"CMS_eff_m_reco":{"type":"shape", "wsname":"muID","name":"muID","proc":[".*"]}, ## name used for shape
+###				"CMS_eff_m_iso":{"type":"shape", "wsname":"muISO","name":"muISO","proc":[".*"]}, ## name used for shape
+###				"lumi13TeV":{"type":"lnN", "value":["1.06"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
 				"lumi13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
 ###
 				}
@@ -247,11 +280,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="FEB26/"+label+VarTest+opts.output
+fileTmp="MARCH5/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "FEB26/"+ label + VarTest + datNameTmp
+datName = "MARCH5/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -422,6 +455,7 @@ def importStat():
 	      hdnbin.SetBinContent(i+1,cont-err)
 	      target = stat["target"]
 	      cat = catStore[stat["cat"] ]
+	      print "++++++++++++++++++++target",target,' cate',cat
 
 #	      al=arglist_obs
 #	      if cat["var"] == "bdt": al = arglist_obs_bdt
@@ -451,19 +485,24 @@ for syst in systStore:
 	if systStore[syst]["type"] == "shape":
 		writeSystShape(systStore[syst],systStore[syst]["proc"])
 
-if doSyst: writeNormSyst("CMS_scale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.977/1.028"],["TTlight","TTc","TT1b","TT2b","ST"])
-if doSyst: writeNormSyst("CMS_pdf_ttbar",["1.042","1.042","1.042","1.042","1.026"],["TTlight","TTc","TT1b","TT2b","ST"])
-if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.022"],["TTlight","TTc","TT1b","TT2b","ST"])
+if doSyst: writeNormSyst("CMS_scale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.977/1.028"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
+if doSyst: writeNormSyst("CMS_pdf_ttbar",["1.042","1.042","1.042","1.042","1.042","1.026"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
+if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027","1.022"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
 
-if doSyst: writeNormSyst("CMS_pdf_ttlight",["1.20"],["TTlight"])
-if doSyst: writeNormSyst("CMS_pdf_ttc",["1.20"],["TTc"])
-if doSyst: writeNormSyst("CMS_pdf_tt1b",["1.20"],["TT1b"])
-if doSyst: writeNormSyst("CMS_pdf_tt2b",["1.20"],["TT2b"])
+if doSyst: writeNormSyst("CMS_pdf_ttlight",["1.50"],["TTlight"])
+if doSyst: writeNormSyst("CMS_pdf_ttc",["1.50"],["TTc"])
+if doSyst: writeNormSyst("CMS_pdf_tt1b",["1.50"],["TT1b"])
+if doSyst: writeNormSyst("CMS_pdf_tt2b",["1.50"],["TT2b"])
+if doSyst: writeNormSyst("CMS_pdf_tt2B",["1.50"],["TT2B"])
 
 ##https://twiki.cern.ch/twiki/bin/view/LHCPhysics/LHCHXSWGTTH
-if doSyst: writeNormSyst("CMS_scale_ttV",["0.887/1.096"],["TTZ"])
-if doSyst: writeNormSyst("CMS_pdf_ttV",["1.028"],["TTZ"])
-if doSyst: writeNormSyst("CMS_mass_ttV",["1.028"],["TTZ"])
+if doSyst: writeNormSyst("CMS_scale_ttZ",["0.887/1.096"],["TTZ"])
+if doSyst: writeNormSyst("CMS_pdf_ttZ",["1.028"],["TTZ"])
+if doSyst: writeNormSyst("CMS_mass_ttZ",["1.028"],["TTZ"])
+
+if doSyst: writeNormSyst("CMS_scale_ttH",["0.908/1.058"],["ttH"])
+if doSyst: writeNormSyst("CMS_pdf_ttH",["1.036"],["ttH"])
+if doSyst: writeNormSyst("CMS_mass_ttH",["1.036"],["ttH"])
 
 #writeNormSyst("CMS_scale_VV",["1.025","1.032","1.031"],["WWTo","WZTo","ZZTo"])
 #writeNormSyst("CMS_pdf_VV",["1.022","1.044","1.037"],["WWTo","WZTo","ZZTo"])
@@ -511,7 +550,7 @@ def importPdfFromTH1(cat,mc,syst=None):
 		raise IOError
 	base="ChargedHiggsTopBottom"
 ##	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,3000,180,200,220,250,350,450,750]
-	if mc["name"]=="HPlus":masses=[180,200,220,250,300,400,500,800,3000]
+	if mc["name"]=="HPlus":masses=[180,200,220,250,300,350,400,500,800,3000]
 ##	if mc["name"]=="HPlus":masses=[180,200,220,250,300,400,500,800]
 ##	if mc["name"]=="HPlus":masses=[300,400,500,800,1000,2000,180,200,220,250,350,450,750]
 ##	if mc["name"]=="HPlus":masses=[180,200,220,250,350,450,750]
@@ -550,8 +589,23 @@ def importPdfFromTH1(cat,mc,syst=None):
 #	  if opts.kTest==0 or opts.kTest==7: h=Rebin(h)
 #	  if opts.kTest==0 or opts.kTest==7: h=RebinN(h,1)
 #	  else: h=RebinN(h,1)
-	  if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=Rebin(h)
-	  else: h=RebinN(h,1)
+
+#1L
+	  for y in channel:
+		  if y == "1Ele" or y == "1Mu":
+			  if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=Rebin1L(h)
+			  else: h=RebinN(h,1)
+
+#2L
+	  for y in channel:
+		  if y == "2Ele" or y == "2Mu" or y == "1Mu1Ele":
+			  if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=Rebin2L(h)
+			  else: h=RebinN(h,1)
+#			  else: h=RebinN(h,2)
+
+# Jan test
+#	  if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=RebinN(h,1)
+#	  else: h=RebinN(h,1)
 
 	  for b in range(1,h.GetNbinsX()+1):
 		  if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
@@ -584,7 +638,8 @@ def importPdfFromTH1(cat,mc,syst=None):
 					}
 		else:
 			statStore[histName]["hist"] . Add (h )
-			if mc["name"] == 'TT':  ## put TT and reference
+##			if mc["name"] == 'TT':  ## put TT and reference
+			if mc["name"] == 'TTlight':  ## put TTlight and reference
 				statStore[histName]["mc"]= mc["name"]
 				statStore[histName]["target"]= target
 				statStore[histName]["hist0"] . Delete()
@@ -623,8 +678,19 @@ for c in catStore:
 #	if opts.kTest==0 or opts.kTest==7: h=Rebin(h)
 #	if opts.kTest==0 or opts.kTest==7: h=RebinN(h,1)
 #	else: h=RebinN(h,1)
-	if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=Rebin(h)
-	else: h=RebinN(h,1)
+
+#	if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=Rebin(h)
+#	else: h=RebinN(h,1)
+
+	for y in channel:
+		if y == "1Ele" or y == "1Mu":
+			if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=Rebin1L(h)
+			else: h=RebinN(h,1)
+	for y in channel:
+		if y == "2Ele" or y == "2Mu" or y == "1Mu1Ele":
+			if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4": h=Rebin2L(h)
+			else: h=RebinN(h,1)
+#			else: h=RebinN(h,2)
 
 #	al=arglist_obs
 #	if cat["var"] == "bdt": al = arglist_obs_bdt
