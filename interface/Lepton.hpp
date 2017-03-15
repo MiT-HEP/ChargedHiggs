@@ -20,6 +20,7 @@ class Lepton : virtual public Object,
         int type {11};// abspdgid 11 o 13 
         int tightId {0};
         int mediumId {0};
+        int mediumIdOrig {0}; // original definition of medium id, w/o 2016 modifications
         int looseId{0};
         float mva{-1}; // mva
 
@@ -36,6 +37,7 @@ class Lepton : virtual public Object,
         float miniisorelcut_ {-1};
         bool  tightcut_ {0};  // ask for tight cut
         bool  mediumcut_ {0};
+        bool  mediumorigcut_ {0};
         bool  loosecut_ {0};
 
     public:
@@ -47,16 +49,18 @@ class Lepton : virtual public Object,
         inline void SetIsoRelCut( float x){isorelcut_=x;}
         inline void SetMiniIsoRelCut( float x){miniisorelcut_=x;}
         inline void SetEtaCut( float x){etacut_=x;}
-        inline void SetVetoCut(){tightcut_=false;mediumcut_=false; loosecut_=false;}
+        inline void SetVetoCut(){tightcut_=false;mediumcut_=false; loosecut_=false;mediumorigcut_=false;}
         inline void SetLooseCut(bool x){loosecut_=x;}
         inline void SetTightCut( bool x=true){tightcut_=x;}
         inline void SetMediumCut( bool x=true){mediumcut_=x;}
+        inline void SetMediumOrigCut( bool x=true){mediumorigcut_=x;}
         inline void SetIso(float x=0.0){iso=x;}
         inline void SetType(int x){type=x;}
         inline void SetMiniIso(float x=0.0){miniIso=x;}
         inline void SetCharge(int x){charge=x;}
         inline void SetTightId( bool x=true){tightId=x;}
         inline void SetMediumId( bool x=true){mediumId=x;}
+        inline void SetMediumIdOrig( bool x=true){mediumIdOrig=x;}
         inline void SetLooseId( bool x=true){looseId=x;}
         inline void SetMva(float x){mva=x;}
 
@@ -97,6 +101,7 @@ class Lepton : virtual public Object,
             if ( miniisorelcut_ >=0 and miniIso/Pt() > miniisorelcut_) return 0;
             if ( tightcut_ and not tightId) return 0;
             if ( mediumcut_ and not mediumId) return 0;
+            if ( mediumorigcut_ and not mediumIdOrig) return 0;
             if ( loosecut_ and not looseId) return 0;
             return 1;
         }
