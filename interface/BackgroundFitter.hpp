@@ -90,6 +90,8 @@ class BackgroundFitter : virtual public BaseFitter{
 
     map<string,float> initPars_;
 
+    int rebin{1};
+
 };
 
 //#else

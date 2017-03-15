@@ -182,9 +182,13 @@ void LoadNero::FillJets(){
         else j->SetQGL(  -10 ); // Add a warning ? 
 
         if (tree_->GetBranchStatus("jetQglMult") ) j->SetQGLVar( "mult", bj -> qglMult -> at(iJet) );
+        if (tree_->GetBranchStatus("jetQglNMult") ) j->SetQGLVar( "nmult", bj -> qglNMult -> at(iJet) );
+        if (tree_->GetBranchStatus("jetQglCMult") ) j->SetQGLVar( "cmult", bj -> qglCMult -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglPtD") ) j->SetQGLVar( "ptD", bj -> qglPtD -> at(iJet) );
+        if (tree_->GetBranchStatus("jetQglPtDrLog") ) j->SetQGLVar( "PtDrLog", bj -> qglPtDrLog -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglAxis2") ) j->SetQGLVar( "axis2", bj -> qglAxis2 -> at(iJet) );
-
+        if (tree_->GetBranchStatus("jetQglAxis1") ) j->SetQGLVar( "axis1", bj -> qglAxis1 -> at(iJet) );
+        
         j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
         j->motherPdgId = bj->motherPdgId -> at(iJet);
         j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
@@ -215,6 +219,20 @@ void LoadNero::FillFatJets(){
     if(VERBOSE>1) Log(__FUNCTION__,"DEBUG",Form("FatJets Branch has %u entries",bj -> p4 ->GetEntries()));
 #endif
 
+    // EXTRA DEBUG INFO
+#ifdef VERBOSE
+    if(VERBOSE>1)
+        cout <<"[LoadNero]::[FillJets]::[DEBUG] Jets length:"<<endl;
+    cout <<"\t * tau1: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau1") << " : "<< bj->tau1->size()<<endl;
+    cout <<"\t * tau2: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau2") << " : "<< bj->tau2->size()<<endl;
+    cout <<"\t * tau3: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau3") << " : "<< bj->tau3->size()<<endl;
+    cout <<"\t * nSubjets: "	<< tree_->GetBranchStatus("fatjetAK8CHSnSubjets") << " : "<< bj->nSubjets->size()<<endl;
+    cout <<"\t * softdropMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSSoftdropMass") << " : "<< bj->softdropMass->size()<<endl;
+    cout <<"\t * CorrectedPrunedMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSCorrectedPrunedMass") << " : "<< bj->corrprunedMass->size()<<endl;
+#endif
+
+
+
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
     {
 
@@ -234,6 +252,13 @@ void LoadNero::FillFatJets(){
 
         FatJet *j =new FatJet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
+
+        j->tau1 = bj -> tau1 -> at(iJet);
+        j->tau2 = bj -> tau2 -> at(iJet);
+        j->tau3 = bj -> tau3 -> at(iJet);
+        j->nSubjets = bj -> nSubjets -> at(iJet);
+        j->softdropMass = bj -> softdropMass -> at(iJet);
+        j->CorrectedPrunedMass = bj -> corrprunedMass -> at(iJet);
 
         // add it
         event_ -> fat_ . push_back(j);

@@ -9,6 +9,18 @@ parser.add_option("-d","--dir",dest='dir',type="string",help="directory [%defaul
 parser.add_option("-v","--var",dest='var',type="string",help="variable [%default]",default="Mmm")
 parser.add_option("-o","--outdir",dest='outdir',type="string",help="output directory [%default]",default="Hmumu")
 
+print "-> Looking for basepath"
+basepath = ""
+mypath = os.path.abspath(os.getcwd())
+while mypath != "" and mypath != "/":
+	if "ChargedHiggs" in os.path.basename(mypath):
+		basepath = os.path.abspath(mypath)
+	mypath = os.path.dirname(mypath)
+print "-> Base Path is " + basepath
+sys.path.insert(0,basepath)
+sys.path.insert(0,basepath +"/python")
+from hmm import hmm
+
 #extra = OptionGroup(parser,"Extra options:","")
 #extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=1)
 opts,args= parser.parse_args()
@@ -22,21 +34,19 @@ ROOT.gStyle.SetOptTitle(0)
 if opts.outdir != "":
 	ROOT.gROOT.SetBatch()
 
-print "inserting in path cwd/script"
-sys.path.insert(0,os.getcwd()+'/script')
-print "inserting in path cwd"
-sys.path.insert(0,os.getcwd())
-print "inserting in path cwd/python"
-sys.path.insert(0,os.getcwd()+'/python')
 
 ############# definitions
-categories=[]
-for m in [ "BB","BO","BE","OO","OE","EE" ]:
-   for v in ["VBF0","OneB","GF","VBF1","Untag"]:
-      categories.append(v + "_" + m )
+categories=hmm.categories
+##for m in [ "BB","BO","BE","OO","OE","EE" ]:
+##   for v in ["VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
+##      categories.append(v + "_" + m )
 
-montecarlos= ["VBF_HToMuMu_M%d","GluGlu_HToMuMu_M%d","ZH_HToMuMu_M%d","WMinusH_HToMuMu_M%d","WPlusH_HToMuMu_M%d","ttH_HToMuMu_M%d"]
+#montecarlos= ["VBF_HToMuMu_M%d","GluGlu_HToMuMu_M%d","ZH_HToMuMu_M%d","WMinusH_HToMuMu_M%d","WPlusH_HToMuMu_M%d","ttH_HToMuMu_M%d"]
+montecarlos = []
+for proc in hmm.processes:
+	montecarlos .append( proc+"_HToMuMu_M%d" )
 
+## 125 first
 masses = [125,120,130]
 
 ###############################

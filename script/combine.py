@@ -144,8 +144,8 @@ for mass in massList:
 	if opts.nosyst: combine += " -S 0 "
 	combine += "  --cminDefaultMinimizerType=Minuit2 "
 	#combine += " -H ProfileLikelihood " ## hint, it's not working
-	if opts.exp and  opts.method=="MultiDimFit": combine += " -t -1 --expectSignal=1 --expectSignalMass="+str(mass) + " "
-	elif opts.exp : combine += " -t -1 --run=expected --expectSignal=1 --expectSignalMass="+str(mass) + " "
+	if opts.exp and  opts.method=="MultiDimFit": combine += " -t -1 --expectSignal=0 --expectSignalMass="+str(mass) + " "
+	elif opts.exp : combine += " -t -1 --run=expected --expectSignal=0 --expectSignalMass="+str(mass) + " "
 
 	if opts.method=="MultiDimFit": combine += " --algo=grid  --points=100 --firstPoint=0 --lastPoint=49 --squareDistPoi --rMin=-1 --rMax=10. "
 

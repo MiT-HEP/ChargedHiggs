@@ -1,0 +1,16 @@
+include=dat/configHmumu.dat
+
+#only signal!!!
+Files=
+## Signal
+#include=dat/catalog/2017.moriond/hmm.dat
+sub=amariniUser|/store/user/amarini/Nero/v2.2
+addfiles=%(amariniUser)s/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8
+
+Smear=NONE
+#Final=true
+#EntryPerSecond=10
+#
+Output=HmmSync.root
+
+addConfig=HmumuAnalysis|doSync=1
