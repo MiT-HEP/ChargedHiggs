@@ -58,6 +58,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float tau3; //
     float softdropMass;
     float CorrectedPrunedMass;
+    int nSubjets;
 
     //Gen-level info
 
