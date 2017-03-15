@@ -4,6 +4,14 @@ jetUnc
 jetBdiscr
 jetSelBits
 jetQGL
+## QG
+jetQglCMult
+jetQglNMult
+jetQglMult
+jetQglPtD
+jetQglAxis1
+jetQglAxis2
+jetQglPtDrLog
 ### FatJet
 fatjetAK8CHSP4
 fatjetAK8CHSTau1

@@ -1,4 +1,3 @@
-
 from optparse import OptionParser
 import ROOT
 from array import array
@@ -38,6 +37,7 @@ if opts.syst!='Pdf' and opts.syst != 'Scale':
 		print "[ERROR] Hist", opts.base+"_"+opts.syst+"Up/Down", "doesn't exist"
 		raise IOError
 	hL = [hUp,hDown]
+
 elif opts.syst=='Scale':
 	for w in [ 'R','F','RF']:
 		for s in ['Up','Down']:
@@ -99,6 +99,7 @@ for hTmp in hL:
 h.Draw("HIST")
 for hTmp in hL:
 	hTmp.Draw("HIST SAME")
+	print "Yields variation for ",hTmp.GetName(),":", "%.1f %%"%( (hTmp.Integral()/h.Integral()-1) *100.)
 
 c2=ROOT.TCanvas("c2")
 r=h.Clone("r")

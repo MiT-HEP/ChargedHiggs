@@ -5,6 +5,7 @@
 #include "RooGenericPdf.h"
 #include "RooExponential.h"
 #include "RooFitResult.h"
+#include "RooHistPdf.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooSpline1D.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooBernsteinFast.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooMultiPdf.h"
@@ -24,6 +25,7 @@ class PdfModelBuilder
     map<string,RooRealVar*> params;
     map<string,RooFormulaVar*> prods;
     map<string,RooAbsPdf*> pdfs;
+    map<string,RooDataHist*> hists;
     public:
         PdfModelBuilder(){};
         ~PdfModelBuilder(){};
@@ -40,17 +42,81 @@ class PdfModelBuilder
         RooAbsPdf* getLaurentSeries(string prefix, int order);
         RooAbsPdf* getLogPol(string prefix, int order);
         RooAbsPdf* getExpPol(string prefix, int order); // e^pol
-
+        RooAbsPdf* getDYBernstein(string prefix, int order,TH1D*dy);
+        RooAbsPdf* getZPhotonRun1(string prefix, int order);
 
         // get the order for the ftest
         // prefix are bern, powlaw, exp, lau
         // return the relevalt to be included in the multipdf
         RooAbsPdf* getPdf(const string& prefix,int order );
-        RooAbsPdf* fTest(const string& prefix,RooDataHist*,int *ord=NULL,const string&plotDir="");
+        RooAbsPdf* getPdf(const string& prefix,int order, TH1D*h ) { 
+            if (prefix.find( "dybern")!=string::npos) return getDYBernstein(prefix+ Form("_ord%d",order),order,h); else return getPdf(prefix,order);
+        }
+        RooAbsPdf* fTest(const string& prefix,RooDataHist*,int *ord=NULL,const string&plotDir="",TH1D*h=NULL);
         void runFit(RooAbsPdf *pdf, RooDataHist *data, double *NLL, int *stat_t, int MaxTries);
         double getProbabilityFtest(double chi2, int ndof);
 
 };
+
+RooAbsPdf* PdfModelBuilder::getZPhotonRun1(string prefix, int order){
+    if (order != 1) return NULL;
+
+    RooArgList *plist = new RooArgList();
+    plist->add(*obs_var); //@0
+    string pname;
+
+        pname = prefix + "_a";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-1.,-15, -0.01 );
+        plist->add(*params[pname]); // @1
+
+        pname = prefix + "_mZ";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
+        params[pname] -> setConstant();
+        plist->add(*params[pname]); //@2
+
+        pname = prefix + "_Zwidth";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
+        params[pname] -> setConstant();
+        plist->add(*params[pname]); //@3
+
+    RooGenericPdf *part1 = new RooGenericPdf((prefix+"_pdf1").c_str(),(prefix+"_pdf1").c_str(),"TMath::Exp(@1*@0)/((@0-@2)*(@0-@2)+@3*@3/4.)",*plist);
+    pdfs[part1->GetName() ] = part1;
+
+    plist = new RooArgList();
+    plist->add(*obs_var); //@0
+
+        pname = prefix + "_b";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-1.,-15,-0.01 );
+        plist->add(*params[pname]); //@1
+
+    RooGenericPdf *part2 = new RooGenericPdf((prefix+"_pdf2").c_str(),(prefix+"_pdf2").c_str(),"TMath::Exp(@1*@0)/(@0*@0)",*plist);
+    pdfs[part2->GetName() ] = part2;
+
+        pname = prefix + "_f";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),1.,0,1 );
+
+    RooAddPdf *zpho = new RooAddPdf(prefix.c_str(),prefix.c_str(),RooArgList(*part1,*part2),RooArgList(*params[pname]),0 ) ;
+
+    return zpho;
+}
+
+
+RooAbsPdf* PdfModelBuilder::getDYBernstein(string prefix, int order,TH1D*dy){
+    //DY roohistpdf modified with a bernstein poly
+    if (dy==NULL) cout<<"[PdfModelBuilder]::[getDYBernstein]::[ERROR] dy histogram is NULL"<<endl;
+    RooDataHist *dh=new RooDataHist((prefix + "_dy_dh").c_str(),(prefix + "_dy_dh").c_str(),*obs_var,Import(*dy));
+    hists[dh->GetName()] = dh;
+    RooHistPdf *dypdf = new RooHistPdf((prefix +"_dy_pdf").c_str(),(prefix +"_dy_pdf").c_str(),*obs_var,*dh,2); // last number= interpolation
+    if (order ==0 ) return dypdf;
+    dypdf->Print("V");
+    pdfs[dypdf->GetName() ] = dypdf;
+    RooAbsPdf *bern= getBernstein(prefix+"_bern_",order);
+    if (bern == NULL) return NULL;
+    pdfs[bern->GetName() ] = bern;
+    RooRealVar *f= new RooRealVar((prefix + "_f").c_str(),(prefix + "_f").c_str(),.5,0.8,1.0);// fraction
+    RooAddPdf *dybern = new RooAddPdf(prefix.c_str(),prefix.c_str(),RooArgList(*dypdf,*bern),RooArgList(*f),0 ) ;
+    return dybern;
+} 
 
 RooAbsPdf* PdfModelBuilder::getLogPol(string prefix, int order){
     // poly in log-log scale
@@ -84,7 +150,7 @@ RooAbsPdf* PdfModelBuilder::getLaurentSeries(string prefix, int order){
   RooArgList *pows = new RooArgList();
   RooArgList *plist = new RooArgList();
   string pname =  Form("%s_pow0",prefix.c_str());
-  float central= -1 ; // central point
+  float central= -4 ; // central point
   pdfs.insert(pair<string,RooAbsPdf*>(pname, new RooPower(pname.c_str(),pname.c_str(),*obs_var,RooConst(central))));
   pows->add(*pdfs[pname]);
 
@@ -140,6 +206,11 @@ void PdfModelBuilder::runFit(RooAbsPdf *pdf, RooDataHist *data, double *NLL, int
 	//params_test->Print("v");
 	int stat=1;
 	double minnll=10e8;
+
+    pdf->fitTo(*data,
+                RooFit::Minimizer("Minuit2","minimize"),
+                RooFit::SumW2Error(kTRUE) // for linear fit should be easier to estimate the parameters
+                );
 	while (stat!=0){
         if (ntries>=MaxTries) break;
         RooFitResult *fitTest = pdf->fitTo(*data,
@@ -164,6 +235,8 @@ RooAbsPdf* PdfModelBuilder::getPdf(const string& prefix,int order )
         return getLogPol(prefix+ Form("_ord%d",order),order);
     if (prefix.find("bern") != string::npos)
         return getBernstein(prefix+ Form("_ord%d",order),order);
+    if (prefix.find("zpho") != string::npos)
+        return getZPhotonRun1(prefix+ Form("_ord%d",order),order);
     if (prefix.find("powlaw") != string::npos )
         return getPowerLawGeneric(prefix+ Form("_ord%d",order),order);
     if (prefix.find("exppol")!=string::npos)
@@ -183,9 +256,9 @@ double PdfModelBuilder::getProbabilityFtest(double chi2, int ndof){
 }
 
 
-RooAbsPdf* PdfModelBuilder::fTest(const string& prefix,RooDataHist*dh,int *ord,const string& plotDir)
+RooAbsPdf* PdfModelBuilder::fTest(const string& prefix,RooDataHist*dh,int *ord,const string& plotDir,TH1D*h)
 { // fTest Based on 
-    Logger::getInstance().Log("PdfModelBuilder",__FUNCTION__,"INFO","Starting fTest");
+    Logger::getInstance().Log("PdfModelBuilder",__FUNCTION__,"INFO","Starting fTest: " + prefix);
     const int maxOrder=15;
     const float alpha=0.05;
     double prevNll = -1;
@@ -198,7 +271,7 @@ RooAbsPdf* PdfModelBuilder::fTest(const string& prefix,RooDataHist*dh,int *ord,c
         double thisNll;
         int fitStatus;
 
-        RooAbsPdf* model = getPdf(prefix,order); 
+        RooAbsPdf* model = getPdf(prefix,order,h); 
         if (model==NULL) Logger::getInstance().Log("PdfModelBuilder",__FUNCTION__,"WARNING",Form("Unable to construct model for order %d and prefix '%s'",order, prefix.c_str()));
         if (model == NULL ) continue;
         runFit( model ,dh,&thisNll,&fitStatus,3);
@@ -233,7 +306,7 @@ RooAbsPdf* PdfModelBuilder::fTest(const string& prefix,RooDataHist*dh,int *ord,c
                 dh->plotOn(p,CutRange("unblindReg_1"));
                 dh->plotOn(p,CutRange("unblindReg_2"));
                 dh->plotOn(p,Invisible()); // normalization
-                p->SetMinimum(0.01);
+                p->SetMinimum(0.1);
             }
             else dh->plotOn(p);
             int i=0, col,style;
@@ -259,6 +332,7 @@ RooAbsPdf* PdfModelBuilder::fTest(const string& prefix,RooDataHist*dh,int *ord,c
 }
 
 RooAbsPdf* PdfModelBuilder::getModBernstein(string prefix, int order){
+    /*Return a Bernstein + exp*/
 
   RooRealVar *tau=new RooRealVar(Form("%s_t",prefix.c_str()),Form("%s_t",prefix.c_str()),-1.,-10,-.1);
   RooRealVar *f =new RooRealVar(Form("%s_f",prefix.c_str()),Form("%s_f",prefix.c_str()),.9,0.00001,.99999);
@@ -309,6 +383,7 @@ RooAbsPdf* PdfModelBuilder::getBernstein(string prefix, int order){
     string name = Form("%s_p%d",prefix.c_str(),i);
     RooRealVar *param = new RooRealVar(name.c_str(),name.c_str(),0.1*(i+1),-5.,5.);
     RooFormulaVar *form = new RooFormulaVar(Form("%s_sq",name.c_str()),Form("%s_sq",name.c_str()),"@0*@0",RooArgList(*param));
+    //RooFormulaVar *form = new RooFormulaVar(Form("%s_fv",name.c_str()),Form("%s_fv",name.c_str()),"@0",RooArgList(*param));
     params.insert(pair<string,RooRealVar*>(name,param));
     prods.insert(pair<string,RooFormulaVar*>(name,form));
     coeffList->add(*prods[name]);
@@ -455,6 +530,8 @@ void BackgroundFitter::info(){
     cout<<"Dataset M="<<datasetMask_ <<endl;
     cout<<"NORM M="<<normMask_ <<endl;
     cout<<"MODEL M="<<modelMask_ <<endl;
+    cout<<"OutName="<<outname<<endl;
+    cout<<"InName="<<inname<<endl;
     for(auto &s : inputMasks) cout <<"mask = "<<s<<endl;
     cout<<"-----------------------------------"<<endl;
 }
@@ -470,8 +547,6 @@ void BackgroundFitter::init(){
 
     if(x_==NULL) x_ = new RooRealVar("mmm","mmm",xmin,xmax);
 
-    x_->setRange("unblindReg_1",100,115);
-    x_->setRange("unblindReg_2",135,150);
 }
 
 
@@ -493,6 +568,7 @@ void BackgroundFitter::fit(){
     {
         cout<<"* Getting"<<inputMasks[cat]<<endl;
         TH1D *h = (TH1D*)fInput ->Get( inputMasks[cat].c_str() ) ;
+        h->Rebin(rebin);
 
         if (h == NULL) 
             Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]);
@@ -517,17 +593,34 @@ void BackgroundFitter::fit(){
         RooAbsPdf* bern = modelBuilder.fTest(Form("bern_cat%d",cat) ,hist_[name],&bernOrd,plotDir + "/bern");
         storedPdfs.add(*bern);
 
-        int exppolOrd;
-        RooAbsPdf* exppol = modelBuilder.fTest(Form("exppol_cat%d",cat) ,hist_[name],&exppolOrd,plotDir + "/exppol");
-        storedPdfs.add(*exppol);
+        int dybernOrd;
+        string mask= inputMasks[cat];
+        string toReplace="Data";
+        mask.replace(mask.find(toReplace), toReplace.length(),"DY");
+        cout<<"-> Getting DY from "<<mask<<endl;
+        TH1D *dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
+        if (dy==NULL) cout<<"  and hist doesn't exist"<<endl;
+        dy->Scale(35867); // lumi
+        dy->Rebin(10); // lumi
+        //dy->Smooth(1); // lumi
+        RooAbsPdf* dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
+        storedPdfs.add(*dybern);
 
-        int logpolOrd;
-        RooAbsPdf* logpol = modelBuilder.fTest(Form("logpol_cat%d",cat) ,hist_[name],&logpolOrd,plotDir + "/logpol");
-        storedPdfs.add(*logpol);
+        int zphoOrd;
+        RooAbsPdf* zpho = modelBuilder.fTest(Form("zpho_cat%d",cat) ,hist_[name],&zphoOrd,plotDir + "/zpho");
+        storedPdfs.add(*zpho);
 
-        //int modbernOrd;
-        //RooAbsPdf* modbern = modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
-        //storedPdfs.add(*modbern);
+        //int exppolOrd;
+        //RooAbsPdf* exppol = modelBuilder.fTest(Form("exppol_cat%d",cat) ,hist_[name],&exppolOrd,plotDir + "/exppol");
+        //storedPdfs.add(*exppol);
+
+        //int logpolOrd;
+        //RooAbsPdf* logpol = modelBuilder.fTest(Form("logpol_cat%d",cat) ,hist_[name],&logpolOrd,plotDir + "/logpol");
+        //storedPdfs.add(*logpol);
+
+        int modbernOrd;
+        RooAbsPdf* modbern = modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
+        storedPdfs.add(*modbern);
 
         int powlawOrd;
         RooAbsPdf* powlaw = modelBuilder.fTest(Form("powlaw_cat%d",cat) ,hist_[name],&powlawOrd, plotDir+"/powlaw");
@@ -556,6 +649,9 @@ void BackgroundFitter::fit(){
 
         // -- Plot
         if (plot ) {
+            x_->setRange("unblindReg_1",xmin,120);
+            x_->setRange("unblindReg_2",130,xmax);
+            x_->setRange("tot",xmin,xmax);
             TCanvas *c = new TCanvas();
             TLegend *leg = new TLegend(0.6,0.65,0.89,0.89);
             leg->SetFillColor(0);
@@ -573,31 +669,39 @@ void BackgroundFitter::fit(){
             TObject *datLeg = p->getObject(int(p->numItems()-1));
             leg->AddEntry(datLeg,Form("Data - cat%d",cat),"LEP");
 
-            bern->plotOn(p,RooFit::Format("NEA",AutoPrecision(1)));
+            bern->plotOn(p);
             TObject *bernLeg = p->getObject(int(p->numItems()-1));
             leg->AddEntry(bernLeg,Form("bern ord=%d",bernOrd),"L");
 
-            exppol->plotOn(p,RooFit::Format("NEA",AutoPrecision(1)),LineColor(kOrange));
-            TObject *exppolLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(exppolLeg,Form("exppol ord=%d",exppolOrd),"L");
+            dybern->plotOn(p,LineColor(kGray),LineStyle(kDashed));
+            TObject *dybernLeg = p->getObject(int(p->numItems()-1));
+            leg->AddEntry(dybernLeg,Form("dybern ord=%d",dybernOrd),"L");
 
-            logpol->plotOn(p,RooFit::Format("NEA",AutoPrecision(1)),LineStyle(kDashed));
-            TObject *logpolLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(logpolLeg,Form("logpol ord=%d",logpolOrd),"L");
+            zpho->plotOn(p,LineColor(kOrange));
+            TObject *zphoLeg = p->getObject(int(p->numItems()-1));
+            leg->AddEntry(zphoLeg,Form("zpho ord=%d",zphoOrd),"L");
 
-            //modbern->plotOn(p,RooFit::Layout(0.34,0.96,0.89),RooFit::Format("NEA",AutoPrecision(1)));
+            //exppol->plotOn(p,LineColor(kOrange));
+            //TObject *exppolLeg = p->getObject(int(p->numItems()-1));
+            //leg->AddEntry(exppolLeg,Form("exppol ord=%d",exppolOrd),"L");
+
+            //logpol->plotOn(p,LineStyle(kDashed));
+            //TObject *logpolLeg = p->getObject(int(p->numItems()-1));
+            //leg->AddEntry(logpolLeg,Form("logpol ord=%d",logpolOrd),"L");
+
+            //modbern->plotOn(p,LineColor(kGreen),LineStyle(kDashed));
             //TObject *modbernLeg = p->getObject(int(p->numItems()-1));
             //leg->AddEntry(modbernLeg,Form("modbern ord=%d",modbernOrd),"L");
 
-            powlaw->plotOn(p,RooFit::Format("NEA",AutoPrecision(1)),LineColor(kRed));
+            powlaw->plotOn(p,LineColor(kRed));
             TObject *powlawLeg = p->getObject(int(p->numItems()-1));
             leg->AddEntry(powlawLeg,Form("powlaw ord=%d",powlawOrd),"L");
 
-            exp->plotOn(p,RooFit::Format("NEA",AutoPrecision(1)),LineColor(kGreen));
+            exp->plotOn(p,LineColor(kGreen));
             TObject *expLeg = p->getObject(int(p->numItems()-1));
             leg->AddEntry(expLeg,Form("exp ord=%d",expOrd),"L");
 
-            lau->plotOn(p,RooFit::Format("NEA",AutoPrecision(1)),LineColor(kMagenta));
+            lau->plotOn(p,LineColor(kMagenta));
             TObject *lauLeg = p->getObject(int(p->numItems()-1));
             leg->AddEntry(lauLeg,Form("lau ord=%d",lauOrd),"L");
     

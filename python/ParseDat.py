@@ -357,6 +357,11 @@ def ReadSFDB(file,verbose=False):
 			sf=0.0 ## ignored
 			err=0.0 ## ignored
 
+		elif type == 'csv-reweight':
+			#R['csv-reweight'] 
+			sf=0.0 ## ignored
+			err=0.0 ## ignored
+
 		elif type == 'tf1' or type=='tf2':
 			R['formula'] = l.split(' ' )[2]
 			try: R['errFormula'] = l.split(' ')[3]

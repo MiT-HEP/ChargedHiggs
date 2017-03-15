@@ -173,7 +173,6 @@ else:
 	#Bin=600,800    f=0.000271553
 	#Bin=800,1200   f=0.000118071
 	#Bin=1200,13000 f=2.52766e-05
-	if 'DYJetsToLL_M-50_HT-0to100'      in opts.label: xsec=5534.126744
 	#elif 'DYJetsToLL_M-50_HT-100to200'  in opts.label: xsec=174.266133
 	#elif 'DYJetsToLL_M-50_HT-200to400'  in opts.label: xsec=48.065275
 	#elif 'DYJetsToLL_M-50_HT-400to600'  in opts.label: xsec=6.552435
@@ -181,6 +180,8 @@ else:
 	#elif 'DYJetsToLL_M-50_HT-800to1200' in opts.label: xsec=0.680727
 	#elif 'DYJetsToLL_M-50_HT-1200toInf' in opts.label: xsec=0.14573
 	## GenXsecAnalyzer
+	if 'DYJetsToLL_M-50_HT-0to70'       in opts.label: xsec=5317.864951
+	elif 'DYJetsToLL_M-50_HT-70to100'   in opts.label: xsec=206.184
 	elif 'DYJetsToLL_M-50_HT-100to200'  in opts.label: xsec=181.302
 	elif 'DYJetsToLL_M-50_HT-200to400'  in opts.label: xsec=50.4177
 	elif 'DYJetsToLL_M-50_HT-400to600'  in opts.label: xsec=6.98394
@@ -188,6 +189,7 @@ else:
 	elif 'DYJetsToLL_M-50_HT-800to1200' in opts.label: xsec=0.775392
 	elif 'DYJetsToLL_M-50_HT-1200to2500' in opts.label: xsec=0.186222
 	elif 'DYJetsToLL_M-50_HT-2500toInf' in opts.label: xsec=0.004385
+	elif 'DYJetsToLL_M-10to50' in opts.label:xsec=18610
 	elif 'DYJetsToLL' in opts.label or 'DY' in opts.label: xsec=5765.4 # nnpdf 3.0
 	#elif 'DYJets' in opts.label or 'DY' in opts.label: xsec=6025.
 	## SIG

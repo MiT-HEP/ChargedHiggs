@@ -89,11 +89,12 @@ class Lepton : virtual public Object,
 
 
         virtual inline int IsLep() const { 
+            if ( std::isnan(Pt()) ) return 0; // put pt before eta
+            if ( Pt() < ptcut_ ) return 0; // put pt before eta
             if ( etacut_ >=0 and abs(Eta()) > etacut_) return 0;
             if ( isocut_ >=0 and iso > isocut_) return 0;
             if ( isorelcut_ >=0 and iso/Pt() > isorelcut_) return 0;
             if ( miniisorelcut_ >=0 and miniIso/Pt() > miniisorelcut_) return 0;
-            if ( Pt() < ptcut_ ) return 0;
             if ( tightcut_ and not tightId) return 0;
             if ( mediumcut_ and not mediumId) return 0;
             if ( loosecut_ and not looseId) return 0;

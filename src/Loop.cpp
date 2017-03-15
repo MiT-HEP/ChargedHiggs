@@ -145,6 +145,9 @@ void Looper::Loop()
 				{
 					if ( s->name().find("NONE") != string::npos and i!=0) continue;
 					if ( s->name().find("NONE") == string::npos and i==0) continue; // for the 
+#ifdef VERBOSE
+					if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing syst "<< s -> name() <<" : (Up,Down)"<<i <<endl;
+#endif
 					//reset 	
 					event_->clearSyst();
 					// 
@@ -154,6 +157,9 @@ void Looper::Loop()
 					//do the corrections on top
 					for(auto& c : correctors_)
 					{
+#ifdef VERBOSE
+						if (VERBOSE > 1) Log(__FUNCTION__,"DEBUG", string("Doing Corrector: ") + c->name());
+#endif
 						s->smear(c);
 						c->correct(event_);
 					}
@@ -162,7 +168,7 @@ void Looper::Loop()
 					for(auto a : analysis_)
 					{
 #ifdef VERBOSE
-						if (VERBOSE > 1) Log(__FUNCTION__,"DEBUG", string("Doing Analysis") + a->name());
+						if (VERBOSE > 1) Log(__FUNCTION__,"DEBUG", string("Doing Analysis: ") + a->name());
 #endif
 						//event_->validate(); // validate the objects -- after setting cuts now in doAnalyze
 						// each analysis step will apply the SF accordingly to the object it is using
