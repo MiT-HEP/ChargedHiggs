@@ -15,6 +15,7 @@ using namespace std;
 #include "TH1F.h"
 #include "TCanvas.h"
 #include "TROOT.h" 
+#include "TLegend.h"
 // --- ROOFIT ---
 #include "RooGlobalFunc.h"
 #include "RooPlot.h"
@@ -29,6 +30,8 @@ using namespace std;
 #include "RooRealVar.h"
 #include "RooAddPdf.h"
 #include "RooAbsPdf.h"
+#include "RooDataSet.h"
+#include "RooExtendPdf.h"
 // do not use namespace for dictionaries
 //using namespace RooFit;
 class RooSpline1D;
@@ -91,6 +94,8 @@ class BackgroundFitter : virtual public BaseFitter{
     map<string,float> initPars_;
 
     int rebin{1};
+
+    void plotOnFrame(RooPlot *p, RooAbsPdf*pdf, int color, int style=kSolid,const string& legend="", TLegend* leg =NULL);
 
 };
 

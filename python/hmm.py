@@ -18,7 +18,7 @@ class HmmConfig():
 
 		### FIT ###
 		self.xmin = 105
-		self.xmax=300
+		self.xmax=150
 		self.sig_mass_points=[120,125,130]
 		self.processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
 		self.sigfit_gaussians={}
