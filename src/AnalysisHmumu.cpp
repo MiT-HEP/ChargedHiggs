@@ -13,6 +13,8 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
     l->SetTightCut(false);
     l->SetLooseCut(false);
     l->SetMediumCut(true);
+    l->SetTrackerMuonCut(true);
+    l->SetGlobalMuonCut(true);
 }
 void HmumuAnalysis::SetJetCuts(Jet *j) { 
     j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535 
@@ -114,11 +116,18 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     }
 
     string vbfStr="";
+    /*
     if (nbjets >0 ) vbfStr="OneB";
     else if (isTightVbf ) vbfStr = "VBF0";
     else if (isTightGF) vbfStr = "GF";
     else if (isVbf) vbfStr = "VBF1";
     else if (Hmm.Pt() >25) vbfStr = "Untag0";
+    else vbfStr = "Untag1";
+    */
+    if (isTightVbf and nbjets==0) vbfStr = "VBF0";
+    else if (isTightGF and nbjets==0) vbfStr = "GF";
+    else if (isVbf and nbjets==0) vbfStr = "VBF1";
+    else if (Hmm.Pt() >25 and nbjets==0) vbfStr = "Untag0";
     else vbfStr = "Untag1";
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + vbfStr + "_" + muStr);
@@ -275,13 +284,22 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     bool passLeptonVeto= true;
     if (e->GetMuon(2) != NULL) passLeptonVeto=false;
-    for(int i=0; ; ++i) { 
+
+    if (recoMuons)
+    {
+        for(int i=0; ; ++i) { 
             Lepton *el= e->GetElectron(i);
             if (el == NULL) break;
             //if (el->Pt() >15) passLeptonVeto=false; // FIXME 10 ?!?
             #warning ABSURD_ELE_VETO
             //|eta| < 1.4442 || 1.566 <|eta| <2.5 
-            if (el->Pt() >10 and (fabs(el->Eta()) <1.4442 or fabs(el->Eta())>1.566) and fabs(el->Eta())<2.5 ) passLeptonVeto=false; // FIXME 10 ?!?
+            // DR with muon 
+            if (el->Pt() >10 and 
+                    (fabs(el->Eta()) <1.4442 or fabs(el->Eta())>1.566) and 
+                    fabs(el->Eta())<2.5 and
+                    mu0->DeltaR(el) >0.4 and mu1->DeltaR(el) >0.4
+               ) passLeptonVeto=false; // FIXME 10 ?!?
+        }
     }
 
 

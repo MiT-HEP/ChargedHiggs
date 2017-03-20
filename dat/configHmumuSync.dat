@@ -7,10 +7,14 @@ Files=
 sub=amariniUser|/store/user/amarini/Nero/v2.2
 addfiles=%(amariniUser)s/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8
 
+Correct=ScaleAndSmear
+#Correct=ScaleAndSmear,RochesterCorrections
 Smear=NONE
 #Final=true
 #EntryPerSecond=10
 #
 Output=HmmSync.root
+#Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis
+Analysis=HmumuAnalysis
 
 addConfig=HmumuAnalysis|doSync=1
