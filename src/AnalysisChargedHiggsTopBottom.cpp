@@ -31,13 +31,12 @@ void ChargedHiggsTopBottom::SetJetCuts(Jet *j){
 void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
     // these are used for the Veto
     t->SetPtCut(20);
-    /// MARIA FIXME 2.4 --> 2.3
-    t->SetEtaCut(2.4);
-    t->SetMuRej(false);
-    t->SetEleRej(false);
+    t->SetEtaCut(2.3);
+    t->SetMuRej(true);
+    t->SetEleRej(true);
     t->SetTrackPtCut(-1.); // no requirement on the leading Track
-    t->SetIsoRelCut(-1); // LooseCombinedIsolationDeltaBetaCorr3Hits
-    t->SetIsoCut(2.5);
+    t->SetIsoRelCut(-1); // NOW byVLooseIsolationMVArun2v1DBoldDMwLT, BEFORE LooseCombinedIsolationDeltaBetaCorr3Hits
+    t->SetIsoCut(-1);
     t->SetProngsCut(-1); // all Prong
     t->SetDecayMode(1);  // 0=TauDecayModeFindingNewDMs 1=TauDecayModeFinding
 }
@@ -197,7 +196,13 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             } else {
                 if(label.find("TTTo2L2Nu") !=string::npos) mc =101 ;
                 if(label.find("TTToSemilepton") !=string::npos) mc =102 ;
-                if(label.find("TT_TuneCUETP8M2T4") !=string::npos) mc =103 ;
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) mc =103 ;
+
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown") !=string::npos) mc =104 ;
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup") !=string::npos) mc =105 ;
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown") !=string::npos) mc =106 ;
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup") !=string::npos) mc =107 ;
+
             }
 
             if(label.find("ST") !=string::npos) mc =111 ;
@@ -882,7 +887,13 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
          **********************************************/
 
 
-        if((l.find("TTTo2L2Nu")!=string::npos) || (l.find("TTToSemilepton")!=string::npos) || (l.find("TT_TuneCUETP8M2T4")!=string::npos)  ) {
+        if((l.find("TTTo2L2Nu")!=string::npos) || (l.find("TTToSemilepton")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
+           ) {
 
             BookFlavor(l, category, phasespace, "other_", "");
             BookFlavor(l, category, phasespace, "tt2bMerged_", "");
@@ -931,10 +942,12 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonEta_"+l,"LeptonEta "+l + ";#eta (lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+l,"LeptonPt "+l + ";p_{T}^{lepton} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+l,"LeptonIso "+l + ";iso (lepton) [GeV]",50,0.,50.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMiniIso_"+l,"LeptonMiniIso "+l + ";mini iso (lepton) [GeV]",50,0.,50.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+l,"LeptonMva "+l + ";mva (lepton)",50,0.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+l,"LeptonTrailEta "+l + ";#eta (trailing lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+l,"LeptonTrailPt "+l + ";p_{T}^{trailing lepton} [GeV]",50,0.,200.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+l,"LeptonTrailIso "+l + ";iso (trailing lepton) [GeV]",50,0.,50.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMiniIso_"+l,"LeptonTrailMiniIso "+l + ";mini iso (trailing lepton) [GeV]",50,0.,50.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+l,"LeptonTrailMva "+l + ";mva (trailing lepton)",50,0.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+l,"Mt "+l+";M_{T} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Met_"+l,"Met "+l+";MET [GeV]",50,0.,1000.);
@@ -1472,6 +1485,7 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+label,systname,leadLep->Pt(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonEta_"+label,systname,leadLep->Eta(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+label,systname,leadLep->Isolation(),e->weight());
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMiniIso_"+label,systname,leadLep->MiniIsolation(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+label,systname,leadLep->Mva(),e->weight());
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/ptW_"+label,systname, (e->GetMet().GetP4()+leadLep->GetP4()).Pt(), e->weight() );
@@ -1503,6 +1517,7 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+label,systname,trailLep->Pt(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+label,systname,trailLep->Eta(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+label,systname,trailLep->Isolation(),e->weight());
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMiniIso_"+label,systname,trailLep->MiniIsolation(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+label,systname,trailLep->Mva(),e->weight());
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MT2ll_"+label, systname, evt_MT2ll , e->weight() );
@@ -1725,7 +1740,13 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
 
 
     //    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos))  {
-    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4")!=string::npos)  ) {
+    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
+       ) {
 
         //https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/TopQuarkAnalysis/TopTools/plugins/GenTtbarCategorizer.cc#L35
         string LabelHF="other_";
@@ -1797,16 +1818,25 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
 
 void ChargedHiggsTopBottom::printSynch(Event*e) {
 
+    // note the METfilters
     // NB to change miniISO,ptCutEle + tausID + Bjets medium
     std::cout << "=======================================" << std::endl;
 
+    std::cout << "event=" << e->eventNum() << " ntaus=" << e->Ntaus() << std::endl;
+
+    //    if( e->eventNum()==1741933 || e->eventNum()==1741934 || e->eventNum()==1741940 || e->eventNum()==1741946 || e->eventNum()==1741948) {
+    //    if( e->eventNum()==1741948) {
+    //        if(e->Ntaus()>0) std::cout << " tauPt=" << e->GetTau(0)->Pt() << " tauEta=" << e->GetTau(0)->Eta() << " tauPhi=" << e->GetTau(0)->Phi();
+    //        if(e->Ntaus()>1) std::cout << " tauPt=" << e->GetTau(1)->Pt() << " tauEta=" << e->GetTau(1)->Eta() << " tauPhi=" << e->GetTau(1)->Phi();
+
+
     std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum()<< std::endl;
-    if(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger(HLT_Ele32_eta2p1_WPTight_Gsf)" << std::endl;
-    if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger(HLT_IsoMu24 and HLT_IsoTkMu24)" << std::endl;
+
+    if(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")) std::cout << "passEleTrigger(Ele27_eta2p1_WPTight_Gsf or Ele105_CaloIdVT_GsfTrkIdT or Photon165_HE10 or Ele35_WPLoose_Gsf)" << std::endl;
+    if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"))) std::cout << "passTrigger(IsoMu24 and IsoTkMu24 and Mu50)" << std::endl;
     //        if(e->GetName().find("SingleElectron")!=string::npos and e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger" << std::endl;
     //        if(e->GetName().find("SingleMuon")!=string::npos and (e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger" << std::endl;
-    std::cout << " Nleps(pt>10, eta<2.4, miniRelIso<0.1)=" << e->Nleps() << std::endl;
-    std::cout << " leadLep " << leadLep << std::endl;
+    std::cout << " Nleps(pt>10, eta<2.4)=" << e->Nleps() << std::endl;
     if(leadLep != NULL) {
         std::cout << " leadLep->Pt()=" << leadLep->Pt();
         std::cout << " leadLep->Eta()=" << leadLep->Eta();
@@ -1819,12 +1849,12 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
         std::cout << " " << std::endl;
     }
     if(trailLep != NULL) {
-        std::cout << " leadLep->Pt()=" << trailLep->Pt();
-        std::cout << " leadLep->Eta()=" << trailLep->Eta();
-        std::cout << " leadLep->Phi()=" << trailLep->Phi();
-        std::cout << " leadLep->Isolation()=" << trailLep->Isolation();
-        std::cout << " leadLep->MiniIsolation()=" << trailLep->MiniIsolation();
-        std::cout << " leadLep->IsMuon()=" << trailLep->IsMuon() << " leadLep->IsElectron()=" << trailLep->IsElectron();
+        std::cout << " trailLep->Pt()=" << trailLep->Pt();
+        std::cout << " trailLep->Eta()=" << trailLep->Eta();
+        std::cout << " trailLep->Phi()=" << trailLep->Phi();
+        std::cout << " trailLep->Isolation()=" << trailLep->Isolation();
+        std::cout << " trailLep->MiniIsolation()=" << trailLep->MiniIsolation();
+        std::cout << " trailLep->IsMuon()=" << trailLep->IsMuon() << " trailLep->IsElectron()=" << trailLep->IsElectron();
         std::cout << " " << std::endl;
     }
     std::cout << " nCentralJets(pt>40,absEta<2.4,looseId)=" << e->NcentralJets();
@@ -1850,6 +1880,8 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
     }
 
     //    std::cout << "=======================================" << std::endl;
+
+    //    }
 
 }
 
@@ -2186,7 +2218,14 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         }
     } else {
         if (not e->IsRealData() and
-            ((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4")!=string::npos)  )) {
+            ((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
+             )) {
+
             e->ApplyTopReweight();
         }
     }
@@ -2340,8 +2379,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
 
     bool Baseline=(e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 )));
+    bool BaselineTau=(e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets()==3 ) || ( do2lAnalysis && e->NcentralJets()==1 )));
 
-    if( Baseline or (doTaulAnalysis && e->Bjets() > 0 )) {
+    if( Baseline or (doTaulAnalysis && BaselineTau )) {
 
         ////////
         ////
@@ -2442,9 +2482,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         //        std::cout << "doTaulAnalysis" << doTaulAnalysis << std::endl;
         // this target the 1l final state
         // >=3 jets for 1l and >=1 jets for the 2l
-        bool taul1L=(trailLep==NULL and e->NcentralJets() >2);
-        bool taul2L=(trailLep!=NULL and e->NcentralJets() >0);
-        if( doTaulAnalysis &&  e->Bjets() > 0 &&  (taul1L or taul2L) && evt_MT>=120) {
+        bool taul1L=(trailLep==NULL);
+        bool taul2L=(trailLep!=NULL);
+        if( doTaulAnalysis &&  BaselineTau > 0 &&  (taul1L or taul2L) && evt_MT>=120) {
             //            cout << "filling tree "<< endl;
             if(writeTree) setTree(e,label,category);
             if(writeTree) FillTree("tree_tb");
