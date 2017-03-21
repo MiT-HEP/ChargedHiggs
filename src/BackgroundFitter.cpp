@@ -774,7 +774,7 @@ void BackgroundFitter::fit(){
         cout<<" -> Constructing Final model for cat"<<cat<<endl;
 
         RooCategory pdf_cat(Form("pdfindex_cat%d",cat),Form("pdfindex_cat%d",cat));
-        pdf_cat.setIndex(1);
+        //pdf_cat.setIndex(1);
 
         //RooMultiPdf multipdf;
         RooMultiPdf pdf_bkg(Form("pdf_cat%d_bkg",cat),"multipdf",pdf_cat,storedPdfs);

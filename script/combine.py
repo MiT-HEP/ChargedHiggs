@@ -57,8 +57,21 @@ EOS='/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
 
 print "inserting in path cwd"
 sys.path.insert(0,os.getcwd())
-print "inserting in path cwd/python"
-sys.path.insert(0,os.getcwd()+'/python')
+print "inserting in path cwd/python",
+status=sys.path.insert(0,os.getcwd()+'/python')
+print status
+if status == None:
+    print "-> Looking for basepath"
+    basepath = ""
+    mypath = os.path.abspath(os.getcwd())
+    while mypath != "" and mypath != "/":
+    	if "ChargedHiggs" in os.path.basename(mypath):
+    		basepath = os.path.abspath(mypath)
+    	mypath = os.path.dirname(mypath)
+    print "-> Base Path is " + basepath
+    status=sys.path.insert(0,basepath)
+    status=sys.path.insert(0,basepath+'/python')
+    
 
 from ParseDat import chunkIt
 

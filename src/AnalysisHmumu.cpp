@@ -3,6 +3,7 @@
 #define VERBOSE 0
 
 //#warning Hmumu ANALYSIS NON ISO
+
 void HmumuAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
     l->SetPtCut(10); 
@@ -10,12 +11,26 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
     l->SetEtaCut(2.4);
     //l->SetTightCut(true);
     //l->SetMediumCut(false);
+    l->SetVetoCut();
     l->SetTightCut(false);
     l->SetLooseCut(false);
     l->SetMediumCut(true);
     l->SetTrackerMuonCut(true);
     l->SetGlobalMuonCut(true);
 }
+
+/*
+void HmumuAnalysis::SetLeptonCuts(Lepton *l){ 
+    #warning LOOSE_MUONS
+    l->SetIsoCut(-1); 
+    l->SetPtCut(10); 
+    l->SetIsoRelCut(0.25);
+    l->SetEtaCut(2.4);
+    l->SetVetoCut();
+    l->SetLooseCut(true);
+}
+*/
+
 void HmumuAnalysis::SetJetCuts(Jet *j) { 
     j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535 
     j->SetEtaCut(4.7); 
@@ -105,8 +120,12 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
         double detajj= fabs( jets[i]->Eta() - jets[j]->Eta() );
         if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Jet Eta (i=%d,j=%d) etai=%f etaj=%f | Pt_i=%f Pt_j=%f Pz_i=%f Pz_j=%f",i,j,jets[i]->Eta(),jets[j]->Eta(),jets[i]->Pt(),jets[j]->Pt(),jets[i]->GetP4().Pz(),jets[j]->GetP4().Pz()));
 
+        // orig
         if (mjj > 650 and detajj > 3.5)  isTightVbf = true;
         if (mjj > 250 and Hmm.Pt() >50 )  isTightGF = true;
+        //#warning LOOSE_VBF
+        //if (mjj > 400 and detajj > 3.5)  isTightVbf = true;
+        //if (mjj > 100 and Hmm.Pt() >50 )  isTightGF = true;
     }
 
     int nbjets=0;
@@ -116,7 +135,7 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     }
 
     string vbfStr="";
-    /*
+    /* OneB
     if (nbjets >0 ) vbfStr="OneB";
     else if (isTightVbf ) vbfStr = "VBF0";
     else if (isTightGF) vbfStr = "GF";
@@ -277,10 +296,17 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
 
 
-    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 );
 
     // Trigger
+    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 );
     bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); //
+
+    //#warning MODIFIED_TRIGGER
+    //bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_IsoMu22_v") or e->IsTriggered("HLT_IsoTkMu22_v")
+    //    or e->IsTriggered("HLT_Mu45_eta2p1_v") or e->IsTriggered("HLT_Mu50_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v");
+    //    ; //
+    //bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >19 );
+
 
     bool passLeptonVeto= true;
     if (e->GetMuon(2) != NULL) passLeptonVeto=false;
