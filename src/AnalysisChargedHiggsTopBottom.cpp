@@ -5,13 +5,14 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
     l->SetPtCut(10);
     l->SetIsoCut(-1.); // absolute isolation
     //https://indico.cern.ch/event/594396/contributions/2402538/attachments/1389409/2116003/20161215_MuonPOG_GeneralPPD.pdf
-    if(!doSynch) l->SetIsoRelCut(0.25); // relative isolation // for muon 0.25 is loose, 0.15 is tight
-    if(!doSynch) l->SetMiniIsoRelCut(-1); // relative mini-isolation
-    if(doSynch) l->SetIsoRelCut(-1); // relative isolation
-    if(doSynch) l->SetMiniIsoRelCut(0.10); // relative mini-isolation
+    //l->SetIsoRelCut(0.25); // relative isolation // for muon 0.25 is loose, 0.15 is tight
+    //l->SetMiniIsoRelCut(-1); // relative mini-isolation
+    l->SetIsoRelCut(-1); // relative isolation
+    l->SetMiniIsoRelCut(0.40); // relative mini-isolation  // 0.1 is tight and 0.4 is for loose
     l->SetEtaCut(2.4);
     l->SetVetoCut(); // loosest selection of them all
     l->SetTightCut(false); // use the loose selection for now
+    l->SetMvaLooseCut(true);
 }
 
 void ChargedHiggsTopBottom::SetJetCuts(Jet *j){
@@ -32,8 +33,8 @@ void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
     // these are used for the Veto
     t->SetPtCut(20);
     t->SetEtaCut(2.3);
-    t->SetMuRej(true);
-    t->SetEleRej(true);
+    t->SetMuRej(false);
+    t->SetEleRej(false);
     t->SetTrackPtCut(-1.); // no requirement on the leading Track
     t->SetIsoRelCut(-1); // NOW byVLooseIsolationMVArun2v1DBoldDMwLT, BEFORE LooseCombinedIsolationDeltaBetaCorr3Hits
     t->SetIsoCut(-1);
@@ -202,6 +203,8 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
                 if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup") !=string::npos) mc =105 ;
                 if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown") !=string::npos) mc =106 ;
                 if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup") !=string::npos) mc =107 ;
+
+                if(label.find("TTJets") !=string::npos) mc =108 ;
 
             }
 
@@ -893,6 +896,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
            || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup")!=string::npos)
            || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown")!=string::npos)
            || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
+           || (l.find("TTJets")!=string::npos)
            ) {
 
             BookFlavor(l, category, phasespace, "other_", "");
@@ -942,12 +946,12 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonEta_"+l,"LeptonEta "+l + ";#eta (lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+l,"LeptonPt "+l + ";p_{T}^{lepton} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+l,"LeptonIso "+l + ";iso (lepton) [GeV]",50,0.,50.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMiniIso_"+l,"LeptonMiniIso "+l + ";mini iso (lepton) [GeV]",50,0.,50.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMiniIso_"+l,"LeptonMiniIso "+l + ";mini iso (lepton) [GeV]",50,0.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+l,"LeptonMva "+l + ";mva (lepton)",50,0.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+l,"LeptonTrailEta "+l + ";#eta (trailing lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+l,"LeptonTrailPt "+l + ";p_{T}^{trailing lepton} [GeV]",50,0.,200.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+l,"LeptonTrailIso "+l + ";iso (trailing lepton) [GeV]",50,0.,50.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMiniIso_"+l,"LeptonTrailMiniIso "+l + ";mini iso (trailing lepton) [GeV]",50,0.,50.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMiniIso_"+l,"LeptonTrailMiniIso "+l + ";mini iso (trailing lepton) [GeV]",50,0.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+l,"LeptonTrailMva "+l + ";mva (trailing lepton)",50,0.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+l,"Mt "+l+";M_{T} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Met_"+l,"Met "+l+";MET [GeV]",50,0.,1000.);
@@ -1746,6 +1750,7 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
        || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup")!=string::npos)
        || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown")!=string::npos)
        || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
+       || (label.find("TTJets")!=string::npos)
        ) {
 
         //https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/TopQuarkAnalysis/TopTools/plugins/GenTtbarCategorizer.cc#L35
@@ -1822,7 +1827,7 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
     // NB to change miniISO,ptCutEle + tausID + Bjets medium
     std::cout << "=======================================" << std::endl;
 
-    std::cout << "event=" << e->eventNum() << " ntaus=" << e->Ntaus() << std::endl;
+    //    std::cout << "event=" << e->eventNum() << " ntaus=" << e->Ntaus() << std::endl;
 
     //    if( e->eventNum()==1741933 || e->eventNum()==1741934 || e->eventNum()==1741940 || e->eventNum()==1741946 || e->eventNum()==1741948) {
     //    if( e->eventNum()==1741948) {
@@ -1947,8 +1952,11 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     for(int i=0;i!=e->Nleps();++i) {
         Lepton *it = e->GetLepton(i);
 
-        bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and (it->Isolation() < 0.15*it->GetP4().Pt()) and leadLep==NULL );
-        bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsTight() and leadLep==NULL );
+        //        bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and (it->Isolation() < 0.15*it->GetP4().Pt()) and leadLep==NULL );
+        //        bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsTight() and leadLep==NULL );
+
+        bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and it->MiniIsolation() < 0.1 and leadLep==NULL );
+        bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsEleMvaTight() and it->MiniIsolation() < 0.1 and leadLep==NULL );
 
         if(muon or ele) {
 
@@ -2224,6 +2232,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
              || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup")!=string::npos)
              || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown")!=string::npos)
              || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
+             || (label.find("TTJets")!=string::npos)
              )) {
 
             e->ApplyTopReweight();
