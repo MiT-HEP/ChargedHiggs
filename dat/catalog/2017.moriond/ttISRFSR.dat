@@ -4,3 +4,8 @@ addfiles=%(ceballosHig)s/TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown-pythia8
 addfiles=%(ceballosHig)s/TT_TuneCUETP8M2T4_13TeV-powheg-isrdown-pythia8
 addfiles=%(ceballosHig)s/TT_TuneCUETP8M2T4_13TeV-powheg-fsrup-pythia8
 addfiles=%(ceballosHig)s/TT_TuneCUETP8M2T4_13TeV-powheg-isrup-pythia8
+
+addfiles=%(ceballosHig)s/TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8
+
+addfiles=%(ceballosHig)s/TTTo2L2Nu_ttbbFilter_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8
+addfiles=%(ceballosHig)s/TTToSemilepton_ttbbFilter_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8

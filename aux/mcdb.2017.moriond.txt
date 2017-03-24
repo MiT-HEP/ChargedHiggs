@@ -76,13 +76,18 @@ ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/ZZZ_TuneC
 
 #####
 TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8 96178140602 831
+
 TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 76734323 831
 TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 78278900 87.31483776
 TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 151140544 364.35
+
 TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown-pythia8 29716580 831
 TT_TuneCUETP8M2T4_13TeV-powheg-isrdown-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TT_TuneCUETP8M2T4_13TeV-powheg-isrdown-pythia8 54252012 831
 TT_TuneCUETP8M2T4_13TeV-powheg-fsrup-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TT_TuneCUETP8M2T4_13TeV-powheg-fsrup-pythia8 59230899 831
 TT_TuneCUETP8M2T4_13TeV-powheg-isrup-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TT_TuneCUETP8M2T4_13TeV-powheg-isrup-pythia8 59033604 831
+
+TTTo2L2Nu_ttbbFilter_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTTo2L2Nu_ttbbFilter_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 1136627 87.31483776
+TTToSemilepton_ttbbFilter_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTToSemilepton_ttbbFilter_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 19072787 364.35
 
 ##### SingleTop
 # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopRefXsec#Predictions_at_7_8_13_and_14_TeV
