@@ -4,7 +4,7 @@ include=dat/configHmumu.dat
 Files=
 ## Signal
 #include=dat/catalog/2017.moriond/hmm.dat
-sub=amariniUser|/store/user/amarini/Nero/v2.2
+sub=amariniUser|/store/user/amarini/Nero/v2.2.1
 addfiles=%(amariniUser)s/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8
 
 Correct=ScaleAndSmear

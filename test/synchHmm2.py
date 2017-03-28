@@ -2,9 +2,17 @@ import ROOT
 import os,sys
 ## runs over the sync files
 
+from optparse import OptionParser,OptionGroup
+parser= OptionParser()
+parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="HmmSync.root")
+parser.add_option("-o","--outdir",type='string',help="OutputDir. [%default]", default="sync")
+opts, args = parser.parse_args()
+from subprocess import call
 
-dir="sync/"
-fIn=ROOT.TFile.Open("HmmSync.root")
+
+dir=opts.outdir+"/"
+call(["mkdir","-p", dir])
+fIn=ROOT.TFile.Open(opts.input)
 t=fIn.Get("hmm")
 
 vbf0 = open(dir+"vbf0.txt","w")

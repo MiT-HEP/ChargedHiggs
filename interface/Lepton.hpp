@@ -72,6 +72,10 @@ class Lepton : virtual public Object,
         inline void SetTrackerMuonCut(bool x=true){trackermuoncut_=x;}
         inline void SetGlobalMuonCut(bool x=true){globalmuoncut_=x;}
 
+        inline float GetIso()const {return iso;}
+        inline bool GetMediumId() const {return mediumId;}
+        inline bool GetTightId() const {return mediumId;}
+        inline bool GetLooseId() const {return mediumId;}
 
         inline float GetIsoCut()const {return isocut_;}
         inline float GetPtCut() const { return ptcut_;}

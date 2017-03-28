@@ -43,6 +43,9 @@ hmm rateParam 	    * ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hx
 ttH_13TeV rateParam * ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
 ------------
 
+# fake nuisance to trigger pdfindex
+fake lnN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 1.001
+
 pdfindex_cat0  discrete
 pdfindex_cat1  discrete
 pdfindex_cat2  discrete

@@ -1,4 +1,5 @@
 #include "interface/AnalysisHmumu.hpp"
+#include "TRandom3.h"
 
 #define VERBOSE 0
 
@@ -147,7 +148,7 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     else if (isTightGF and nbjets==0) vbfStr = "GF";
     else if (isVbf and nbjets==0) vbfStr = "VBF1";
     else if (Hmm.Pt() >25 and nbjets==0) vbfStr = "Untag0";
-    else vbfStr = "Untag1";
+    else if (nbjets == 0 ) vbfStr = "Untag1";
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + vbfStr + "_" + muStr);
 
@@ -172,11 +173,14 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
         SetTreeVar("nbjets",nbjets);
     }
 
+    if (vbfStr == "" ) return "";
     return vbfStr +"_" + muStr;
 }
 
 void HmumuAnalysis::Init(){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
+    rnd_ . reset( new TRandom3() ) ;
+
     // define categories -- for booking histos
     vector< string> mu_cats{"BB","BO","BE","OO","OE","EE"};
     vector<string> vbf_cats{"VBF0","GF","VBF1","OneB","Untag0","Untag1"};
@@ -224,6 +228,8 @@ void HmumuAnalysis::Init(){
         Branch("hmm","pass_recomuons",'I');
         Branch("hmm","pass_asymmcuts",'I');
         Branch("hmm","pass_trigger",'I');
+        Branch("hmm","pass_trigger1",'I');
+        Branch("hmm","pass_trigger2",'I');
         Branch("hmm","pass_leptonveto",'I');
         Branch("hmm","pass_all",'I');
     }
@@ -265,31 +271,88 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     string category = Category(mu0, mu1, selectedJets);
     e->ApplyBTagSF(1); //0 loose, 1 medium, 2 tight
 
-    //// Truth
-    //GenParticle *genmu0=NULL; GenParticle *genmu1=NULL;
+    // Trigger SF
+    if (true){
+        SF* sf0 =e->GetWeight()->GetSF("muTRG_v2");
+        if (sf0== NULL) cout<<"Unable to get SF"<<endl;
+        SF_PtEta_And_Eff*sf = dynamic_cast<SF_PtEta_And_Eff*>(sf0);
+        if (sf== NULL) {cout<<"Unable to convert SF:" <<endl; sf0->print(); }
 
-    //for( int iGen=0 ; /*empty*/ ; ++iGen)
-    //{
-    //    GenParticle *g = e->GetGenParticle(iGen); 
-    //    if (g==NULL ) break;  // end loop statement
-    //    if (not g->IsDressed()) continue;
-    //    if (not abs(g->GetPdgId())==13) continue;
-    //    
-    //    if (genmu0== NULL) genmu0=g;
-    //    else if (genmu1==NULL) {genmu1=g; break;}
-    //}
+        double effdata=1.0,effmc =1.0;
+        if (mu0)
+        {
+            sf->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
+            effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
+            effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+        }
+        if (mu1 and mu1->Pt() > 26)
+        {
+            sf->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
+            effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
+            effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+        }
 
-    //bool genMuons = genmu0!=NULL and genmu1 !=NULL;
+        effdata = 1.-effdata;
+        effmc = 1.-effmc;
 
-    //bool isGen=false;
-    //bool isReco=false;
+        SF* sftrig= e->GetWeight()->GetSF("dummy"); // base, I modify this one
+        sftrig->syst=0;
+        sftrig->sf=effdata/effmc;
+        sftrig->err = 0.0;
+        e->ApplySF("dummy");
+    }
+    //
+    //long seed = e->runNum() * 1000000 + e->lumiNum()*10000 + e->eventNum();
+    //rnd_->SetSeed(seed);
+    
+    // ID
+    double w_BCDEF = 0.5498;
+    double sfId=1.0;
 
-    //if (genMuons) // no requirement on pT
-    //{
-    //    Object Ztruth(*genmu0); 
-    //    Ztruth += *genmu1;
-    //    if (Ztruth.M() > 60 and Ztruth.M()<120) isGen=true;
-    //}
+    if (mu0)
+    {
+        e->SetPtEtaSF("muID_runBCDEF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        sfId *= w_BCDEF *e->GetWeight()->GetSF("muID_runBCDEF")->get();
+        e->SetPtEtaSF("muID_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        sfId *= (1.-w_BCDEF) *e->GetWeight()->GetSF("muID_runGH")->get();
+    }
+    if (mu1)
+    {
+        e->SetPtEtaSF("muID_runBCDEF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        //e->ApplySF("muID_runBCDEF");
+        sfId *= w_BCDEF *e->GetWeight()->GetSF("muID_runBCDEF")->get();
+        e->SetPtEtaSF("muID_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        sfId *= (1.-w_BCDEF) *e->GetWeight()->GetSF("muID_runGH")->get();
+    }
+
+    double sfIso=1.0;
+    // ISO Loose
+    if (mu0)
+    {
+        e->SetPtEtaSF("muISOloose_runBCDEF",std::max( mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        sfIso *= w_BCDEF *e->GetWeight()->GetSF("muISOloose_runBCDEF")->get();
+        e->SetPtEtaSF("muISOloose_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        sfIso *= (1.-w_BCDEF) *e->GetWeight()->GetSF("muISOloose_runGH")->get();
+    }
+    if (mu1)
+    {
+        e->SetPtEtaSF("muISOloose_runBCDEF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        //e->ApplySF("muISOloose_runBCDEF");
+        sfIso *= w_BCDEF *e->GetWeight()->GetSF("muISOloose_runBCDEF")->get();
+        e->SetPtEtaSF("muISOloose_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        sfIso *= (1.-w_BCDEF) *e->GetWeight()->GetSF("muISOloose_runGH")->get();
+    }
+    
+    // apply id and iso sf
+    {
+        SF* sf= e->GetWeight()->GetSF("dummy"); // base, I modify this one
+        sf->syst=0;
+        sf->sf= sfId*sfIso; //syst already included
+        sf->err = 0.0;
+        e->ApplySF("dummy");
+    }
+
+
     //
     // preselection
     bool recoMuons= mu0 != NULL and mu1 !=NULL; 
@@ -299,14 +362,21 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     // Trigger
     bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 );
-    bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); //
+    bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); 
 
-    //#warning MODIFIED_TRIGGER
-    //bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_IsoMu22_v") or e->IsTriggered("HLT_IsoTkMu22_v")
-    //    or e->IsTriggered("HLT_Mu45_eta2p1_v") or e->IsTriggered("HLT_Mu50_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v");
-    //    ; //
-    //bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >19 );
+    bool passTrigger1{false}, passTrigger2{false};
 
+    if (doSync and label.find("GluGlu") !=string::npos and recoMuons) // FIXME
+    {
+        bool passTriggerEvent = passTrigger;
+        passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
+        //if (mu1->Pt() > 26 ) 
+        passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
+        passTrigger=passTrigger1 or passTrigger2;
+
+        if (passTriggerEvent and not passTrigger) Log(__FUNCTION__,"INFO","Fail to trigger event due to trigger matching");
+        if (not passTriggerEvent and passTrigger) Log(__FUNCTION__,"ERROR","Event triggered by object but not globally");
+    }
 
     bool passLeptonVeto= true;
     if (e->GetMuon(2) != NULL) passLeptonVeto=false;
@@ -320,6 +390,10 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             #warning ABSURD_ELE_VETO
             //|eta| < 1.4442 || 1.566 <|eta| <2.5 
             // DR with muon 
+            if (e->eventNum()==51570 and doSync)
+            {
+                cout <<"RUN 51570: considering ele:"  <<el->Pt() <<endl;
+            }
             if (el->Pt() >10 and 
                     (fabs(el->Eta()) <1.4442 or fabs(el->Eta())>1.566) and 
                     fabs(el->Eta())<2.5 and
@@ -327,6 +401,25 @@ int HmumuAnalysis::analyze(Event *e, string systname)
                ) passLeptonVeto=false; // FIXME 10 ?!?
         }
     }
+
+    if (e->eventNum()==51570 and doSync)
+    {
+        cout <<"---------- BARE ----------" <<endl;
+        cout <<"--Pt:Eta:Phi:medium:" <<endl;
+        for(int i=0;;++i)
+        {
+            Lepton*el = e->GetBareLepton(i);
+            if (el==NULL) break;
+            if (not el->IsElectronDirty() ) continue;
+            cout <<" * "<<el->Pt()
+                  << ":"<<el->Eta()
+                  << ":"<<el->Phi()
+                  << ":"<<el->GetMediumId()
+                  <<endl;
+        }
+        cout <<"--------------------------" <<endl;
+    }
+
 
 
     if (doSync) {
@@ -336,6 +429,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         SetTreeVar("pass_recomuons",recoMuons);
         SetTreeVar("pass_asymmcuts",passAsymmPtCuts);
         SetTreeVar("pass_trigger",passTrigger);
+        SetTreeVar("pass_trigger1",passTrigger1);
+        SetTreeVar("pass_trigger2",passTrigger2);
         SetTreeVar("pass_leptonveto",passLeptonVeto);
         if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto and category != "" ) SetTreeVar("pass_all",1);
         else SetTreeVar("pass_all",0); 

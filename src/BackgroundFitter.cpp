@@ -173,17 +173,18 @@ RooAbsPdf* PdfModelBuilder::getZModExp(string prefix, int order){
         params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-2, 2.0 );
         plist->add(*params[pname]); // @3
 
-        pname = prefix + "_mZ";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
-        params[pname] -> setConstant();
-        plist->add(*params[pname]); //@4
+        //pname = prefix + "_mZ";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
+        //params[pname] -> setConstant();
+        //plist->add(*params[pname]); //@4
 
-        pname = prefix + "_Zwidth";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
-        params[pname] -> setConstant();
-        plist->add(*params[pname]); //@5
-
-    RooGenericPdf *zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/TMath::Power((@0-@4)*(@0-@4)+@5*@5/4.,@1)",*plist);
+        //pname = prefix + "_Zwidth";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
+        //params[pname] -> setConstant();
+        //plist->add(*params[pname]); //@5
+    // the envelope does getVariables->size to compute the penalization term
+    //RooGenericPdf *zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/TMath::Power((@0-@4)*(@0-@4)+@5*@5/4.,@1)",*plist);
+    RooGenericPdf *zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/TMath::Power((@0-91.2)*(@0-91.2)+2.5*2.5/4.,@1)",*plist);
 
 
     return zmod;
@@ -200,17 +201,18 @@ RooAbsPdf* PdfModelBuilder::getZPhotonRun1(string prefix, int order){
         params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-1, -0.001 );
         plist->add(*params[pname]); // @1
 
-        pname = prefix + "_mZ";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
-        params[pname] -> setConstant();
-        plist->add(*params[pname]); //@2
+        //pname = prefix + "_mZ";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
+        //params[pname] -> setConstant();
+        //plist->add(*params[pname]); //@2
 
-        pname = prefix + "_Zwidth";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
-        params[pname] -> setConstant();
-        plist->add(*params[pname]); //@3
+        //pname = prefix + "_Zwidth";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
+        //params[pname] -> setConstant();
+        //plist->add(*params[pname]); //@3
 
-    RooGenericPdf *part1 = new RooGenericPdf((prefix+"_pdf1").c_str(),(prefix+"_pdf1").c_str(),"TMath::Exp(@1*@0)/((@0-@2)*(@0-@2)+@3*@3/4.)",*plist);
+    //RooGenericPdf *part1 = new RooGenericPdf((prefix+"_pdf1").c_str(),(prefix+"_pdf1").c_str(),"TMath::Exp(@1*@0)/((@0-@2)*(@0-@2)+@3*@3/4.)",*plist);
+    RooGenericPdf *part1 = new RooGenericPdf((prefix+"_pdf1").c_str(),(prefix+"_pdf1").c_str(),"TMath::Exp(@1*@0)/((@0-91.2)*(@0-91.2)+2.5*2.5/4.)",*plist);
     pdfs[part1->GetName() ] = part1;
 
     plist = new RooArgList();

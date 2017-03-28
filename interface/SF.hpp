@@ -25,7 +25,9 @@ class  SF : public Named{
         //
         virtual double get(){ 
             //                1.0 - DELTA
-            if (veto_) return 1.0 + 1.0 - (sf + err*syst); else return sf + err*syst ; 
+            if (veto_) Log(__FUNCTION__,"ERROR","Probably unsupported");
+            return sf + err*syst;
+            //if (veto_) return 1.0 + 1.0 - (sf + err*syst); else return sf + err*syst ; 
         }
 
 
@@ -67,29 +69,31 @@ class SF_PtEta : virtual public SF
 
 const bool operator<( const SF_PtEta::range&r1 , const SF_PtEta::range &r2);
 
-class SF_PtEtaRun : virtual public SF_PtEta
+class SF_PtEta_And_Eff : virtual public SF_PtEta
 {
-    // this class implements a SF that it is pt and eta dependent (2D dependent) on something
-    public:
-        struct range3D{
-            double pt1; double pt2; 
-            double eta1 ; double eta2; 
-            unsigned long run1; unsigned long run2;
-        };
-
+    // this implements the reading of the efficiency files for pass and veto sf
+    // sf err syst
+    // use range for PtEta
     private:
-        map < range3D, pair<double,double> >  store;
-    public:
-        SF_PtEtaRun() : SF_PtEta() {}
-        // add to the db a sf, and error in this range [pt1,pt2) [eta1,eta2)
-        virtual void add(double pt1, double pt2 , double eta1, double eta2, unsigned long run1,unsigned long run2,double sf, double err);
-        // will copy the right SF and err in the mother members sf,err
-        virtual void set(double pt,double eta,unsigned long run);
-        void print();
-        const string name() const {return "SF_PtEtaRun";}
-};
-const bool operator<( const SF_PtEtaRun::range3D&r1 , const SF_PtEtaRun::range3D &r2);
+        map < range, pair<double,double> >  storeData_;
+        map < range, pair<double,double> >  storeMC_;
+        double effData_{1.},effMC_{1.},errData_{0},errMC_{0};
 
+        bool sqrErr_ {true};
+
+    public:
+        using SF_PtEta::range;
+        double get() override; //{  return sf + err*syst;}
+        const string name() const override { return "SF_PtEta_And_Eff";}
+        virtual void add(double pt1, double pt2 , double eta1, double eta2, double dataEff,double mcEff, double dataErr,double mcErr);
+        void set(double pt , double eta) override;
+
+        double getDataEff() const { return effData_;}
+        double getDataErr() const { return errData_;}
+        double getMCEff() const { return effMC_;}
+        double getMCErr() const { return errMC_;}
+        
+};
 
 class SF_TH2F : virtual public SF_PtEta
 {
@@ -98,6 +102,22 @@ class SF_TH2F : virtual public SF_PtEta
         SF_TH2F(string filename) : SF_PtEta(),SF(){ init(filename); }
         void init(string filename,string histname="EGamma_SF2D",string errorhist=""); // ""== binerror
         const string name() const {return "SF_TH2F";}
+};
+
+class TH2;
+class TFile;
+
+class SF_TH2F_And_Eff : virtual public SF_PtEta_And_Eff
+{
+    public:
+        SF_TH2F_And_Eff() : SF_PtEta_And_Eff(),SF(){}
+        SF_TH2F_And_Eff( string filename, string effdata,string effmc, string errordata="",string errormc="") : SF_PtEta_And_Eff(),SF(){ init(filename,effdata,effmc,errordata,errormc); }
+        void init(string filename,string effdata,string effmc, string errordata="",string errormc=""); // ""== no error
+        const string name() const {return "SF_TH2F_And_Eff";}
+
+    private:
+        TFile *f;
+        TH2* getHisto( const string & name);
 };
 
 #include "TSpline.h"

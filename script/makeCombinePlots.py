@@ -118,7 +118,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 	
 		## TODO OBS
 			
-		if q==0.5 : 
+		if abs(q-0.5)<1.e-5 : 
 			#exp.SetPoint(g.GetN(), mh,l ) 
 			median.append(  (mh,l) ) 
 		

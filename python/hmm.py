@@ -94,3 +94,39 @@ class HmmConfig():
 
 
 hmm=HmmConfig()
+
+class Stack:
+    ''' This is a soft version of thstack that usually crash'''
+    def __init__(self):
+        self.hists_=[]
+        self.name_="myStack"
+    def SetName(self,name):
+        self.name_ = name
+    def Add(self,h):
+        if len(self.hists_) == 0:
+            self.hists_.append( h.Clone(self.name_ +"_"+h.GetName()) )
+        else:
+            self.hists_.append( h.Clone(self.name_ +"_"+h.GetName()) )
+            self.hists_[-1].Add(self.hists_[-2])
+    def Draw(self,opts=""):
+        for idx in reversed(range(0,len(self.hists_))):
+            h= self.hists_[idx]
+            if idx ==len(self.hists_)-1 or 'SAME' in opts: h.Draw(opts)
+            else       : h.Draw(opts +" SAME")
+    def GetHist(self):
+        return self.hists_[-1]
+
+    def GetFirstHist(self):
+        return self.hists_[0]
+
+    def Delete(self):
+        for h in self.hists_: h.Delete()
+        self.hists_=[]
+
+    def Print(self):
+        print "------",self.name_,"-----------"
+        for h in self.hists_:
+            print "*",h.GetName()
+        print "-------------------------------"
+
+

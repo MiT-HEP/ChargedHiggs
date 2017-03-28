@@ -252,6 +252,8 @@ else:
 	elif 'ZZTo2L2Q' in opts.label: xsec=0.564
 	elif 'ZZTo4L' in opts.label: xsec=1.256
 	elif 'WWToLNuQQ' in opts.label: xsec=52
+    ### EWK EWK_LLJJ_MLL-50_MJJ-120
+	elif 'EWK_LLJJ' in opts.label: xsec=1.630
 	##
 	#elif '' in opts.label: xsec=
 	## INTERNAL

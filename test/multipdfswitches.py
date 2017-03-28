@@ -5,7 +5,7 @@ from optparse import OptionParser
 #combine -M GenerateOnly -t 10 --expectSignal=1 --expectSignalMass=125 -m 125  test/cms_datacard_hmumu_syst.txt  --freezeNuisances=pdfindex_cat0,pdfindex_cat1,pdfindex_cat2,pdfindex_cat3,pdfindex_cat4,pdfindex_cat5,pdfindex_cat6,pdfindex_cat7,pdfindex_cat8,pdfindex_cat9,pdfindex_cat10,pdfindex_cat11,pdfindex_cat12,pdfindex_cat13,pdfindex_cat14,pdfindex_cat15,pdfindex_cat16,pdfindex_cat17,pdfindex_cat18,pdfindex_cat19,pdfindex_cat20,pdfindex_cat21,pdfindex_cat22,pdfindex_cat23,pdfindex_cat24,pdfindex_cat25,pdfindex_cat26,pdfindex_cat27,pdfindex_cat28,pdfindex_cat29  --toysFrequentist --saveToys
 #for r in -2 -1 0 1 2 3 4 5 8 10 20 ;
 #do
-#	combine -M MultiDimFit -t 1 --toysFile higgsCombineTest.GenerateOnly.mH125.123456.root -m 125 --cminDefaultMinimizerType=Minuit2 --algo=fixed --redefineSignalPOI MH --freezeNuisances=r --setPhysicsModelParameters r=$r -n "_r${r}" --saveWorkspace cms_datacard_hmumu.txt
+#	combine -M MultiDimFit -t 1 --toysFile higgsCombineTest.GenerateOnly.mH125.123456.root -m 125 --cminDefaultMinimizerType=Minuit2 --algo=fixed --redefineSignalPOI MH --fixedPointPOIs MH=125 --setPhysicsModelParameterRanges r=-2,20:MH=124.99,125.01 --freezeNuisances=r --setPhysicsModelParameters r=$r -n "_r${r}" --saveWorkspace cms_datacard_hmumu.txt
 #done
 
 usage = "usage: %prog [options] files"

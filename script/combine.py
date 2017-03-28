@@ -303,6 +303,9 @@ for mass in massList:
 	if opts.method=="MultiDimFit" and opts.floatmh:
 		if not opts.rvrf: combine += " -P MH "
 
+	if opts.method == "ProfileLikelihood":
+		combine += " --signif --pval "
+
 	### ADD DATACARD #############
 	combine += datacard
 
