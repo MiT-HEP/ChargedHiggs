@@ -98,7 +98,7 @@ class Lepton : virtual public Object,
             if ( etacut_ >=0 and abs(Eta()) > etacut_) return 0;
             if ( isocut_ >=0 and iso > isocut_) return 0;
             if ( isorelcut_ >=0 and iso/Pt() > isorelcut_) return 0;
-            if ( miniisorelcut_ >=0 and miniIso/Pt() > miniisorelcut_) return 0;
+            if ( miniisorelcut_ >=0 and miniIso > miniisorelcut_) return 0;
             if ( type == 11 and mvaLoosecutEta_ and (
                                                      (Mva()<-0.041 and abs(Eta())<0.8) or
                                                      (Mva()<0.383 and abs(Eta())<=1.479 and abs(Eta())>=0.8) or
@@ -110,9 +110,9 @@ class Lepton : virtual public Object,
         }
 
     virtual inline bool IsEleMvaTight() const { return IsElectron() and  (
-                                                                          (Mva()<0.674 and abs(Eta())<0.8) or
-                                                                          (Mva()<0.744 and abs(Eta())<=1.479 and abs(Eta())>=0.8) or
-                                                                          (Mva()<0.170 and abs(Eta())>1.479) ) ; }
+                                                                          (Mva()>=0.674 and abs(Eta())<0.8) or
+                                                                          (Mva()>=0.744 and abs(Eta())<=1.479 and abs(Eta())>=0.8) or
+                                                                          (Mva()>=0.170 and abs(Eta())>1.479) ) ; }
 
         virtual inline bool IsElectron() const { return IsLep() and (type == 11); }
         virtual inline bool IsMuon() const { return IsLep() and (type == 13); }

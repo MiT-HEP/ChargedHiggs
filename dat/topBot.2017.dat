@@ -26,7 +26,7 @@ addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTauNu_M-40
 addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8')
 
 addConfig=ChargedHiggsTopBottom|AddLabel('TTTo2L2Nu_TuneCUETP8M2')
-addConfig=ChargedHiggsTopBottom|AddLabel('TTToSemilepton_TuneCUETP8M2_')
+addConfig=ChargedHiggsTopBottom|AddLabel('TTToSemilepton_TuneCUETP8M2')
 #standard
 addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-pythia8')
 #MC@NLO
