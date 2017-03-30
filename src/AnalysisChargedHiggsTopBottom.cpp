@@ -61,18 +61,18 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("lep1_pt",leadLep->Pt());
     SetTreeVar("lep1_phi",leadLep->Phi());
     SetTreeVar("lep1_eta",leadLep->Eta());
-    SetTreeVar("lep1_charge",leadLep->Charge());
-    SetTreeVar("lep1_isolation",leadLep->Isolation());
-    if(leadLep->IsMuon()) SetTreeVar("lep1_id",13);
-    if(leadLep->IsElectron()) SetTreeVar("lep1_id",11);
+    //    SetTreeVar("lep1_charge",leadLep->Charge());
+    //    SetTreeVar("lep1_isolation",leadLep->Isolation());
+    if(leadLep->IsMuon()) SetTreeVar("lep1_id",13*leadLep->Charge());
+    if(leadLep->IsElectron()) SetTreeVar("lep1_id",11*leadLep->Charge());
 
     if(trailLep!=NULL) SetTreeVar("lep2_pt",trailLep->Pt());
     if(trailLep!=NULL) SetTreeVar("lep2_phi",trailLep->Phi());
     if(trailLep!=NULL) SetTreeVar("lep2_eta",trailLep->Eta());
-    if(trailLep!=NULL) SetTreeVar("lep2_charge",trailLep->Charge());
-    if(trailLep!=NULL) SetTreeVar("lep2_isolation",trailLep->Isolation());
-    if(trailLep!=NULL && trailLep->IsMuon()) SetTreeVar("lep2_id",13);
-    if(trailLep!=NULL && trailLep->IsElectron()) SetTreeVar("lep2_id",11);
+    //    if(trailLep!=NULL) SetTreeVar("lep2_charge",trailLep->Charge());
+    //    if(trailLep!=NULL) SetTreeVar("lep2_isolation",trailLep->Isolation());
+    if(trailLep!=NULL && trailLep->IsMuon()) SetTreeVar("lep2_id",13*trailLep->Charge());
+    if(trailLep!=NULL && trailLep->IsElectron()) SetTreeVar("lep2_id",11*trailLep->Charge());
 
     SetTreeVar("NJets",e->Njets());
     SetTreeVar("NcentralJets",e->NcentralJets());
@@ -109,6 +109,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("DRlbmaxPT",evt_DRlbmaxPt);
     SetTreeVar("MJJJmaxPt",evt_MJJJmaxPt);
     SetTreeVar("AvDRJJJmaxPt",evt_AvDRJJJmaxPt);
+    SetTreeVar("AvCSVPt",evt_AvCSVPt);
 
     SetTreeVar("mt",evt_MT);
     SetTreeVar("mt2ll",evt_MT2ll);
@@ -528,15 +529,15 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","lep1_pt",'F');
     Branch("tree_tb","lep1_phi",'F');
     Branch("tree_tb","lep1_eta",'F');
-    Branch("tree_tb","lep1_charge",'F');
-    Branch("tree_tb","lep1_isolation",'F');
+    //    Branch("tree_tb","lep1_charge",'F');
+    //    Branch("tree_tb","lep1_isolation",'F');
     Branch("tree_tb","lep1_id",'F');
 
     Branch("tree_tb","lep2_pt",'F');
     Branch("tree_tb","lep2_phi",'F');
     Branch("tree_tb","lep2_eta",'F');
-    Branch("tree_tb","lep2_charge",'F');
-    Branch("tree_tb","lep2_isolation",'F');
+    //    Branch("tree_tb","lep2_charge",'F');
+    //    Branch("tree_tb","lep2_isolation",'F');
     Branch("tree_tb","lep2_id",'F');
 
     // fill counter and scalar
@@ -558,6 +559,7 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","DRlbmaxPT",'F');
     Branch("tree_tb","MJJJmaxPt",'F');
     Branch("tree_tb","AvDRJJJmaxPt",'F');
+    Branch("tree_tb","AvCSVPt",'F');
 
     // various masses
     Branch("tree_tb","bdt1lh",'F');
@@ -726,7 +728,6 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
 
 void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasespace, string flavor, string SR)
 {
-    
     AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+SR+flavor+l);
     AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+SR+flavor+l);
     AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+SR+flavor+l);
@@ -1015,6 +1016,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         // JJJ
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/MJJJmaxPT_"+l,"MJJJmaxPT"+l+";M_{JJJ}^{maxP_{T}}",100,0,1000);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/AvDRJJJmaxPT_"+l,"AvDRJJJmaxPT"+l+";AvDR_{JJJ}^{maxP_{T}}",50,0,2*TMath::Pi());
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/AvCSVPt_"+l,"AvCSVPt"+l+";AvCSV",50,0.,1.);
 
         /////
         // lb
@@ -1467,17 +1469,24 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
     }
 
     double DEtaMaxJJ=0.;
+    double AvCSVPt=0;
+    double SumPt=0;
 
-    for(int i=0;i!=e->Njets();++i) {
-        Jet* lj = e->GetJet(i);
-        for(int j=0;j!=e->Njets();++j) {
+    for(int i=0;i!=e->NcentralJets();++i) {
+        Jet* lj = e->GetCentralJet(i);
+        for(int j=0;j!=e->NcentralJets();++j) {
             if (j==i) continue;
-            Jet* jet = e->GetJet(j);
+            Jet* jet = e->GetCentralJet(j);
             if(lj->DeltaEta(*jet)>DEtaMaxJJ) DEtaMaxJJ=lj->DeltaEta(*jet);
 
-         }
+            // block to check the ptweighted average CSV of failing jets
+            if(jet->bdiscr<0.8484) AvCSVPt += (jet->bdiscr * jet->GetP4().Pt());
+            if(jet->bdiscr<0.8484) SumPt += jet->GetP4().Pt();
+
+        }
     }
 
+    if(SumPt!=0) evt_AvCSVPt=AvCSVPt/SumPt;
     evt_DEtaMaxJJ=DEtaMaxJJ;
 
     ////$$$$$$
@@ -1790,6 +1799,8 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
 
     if(e->NcentralJets()>2) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MJJJmaxPT_"+label, systname, evt_MJJJmaxPt , e->weight() );
     if(e->NcentralJets()>2) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/AvDRJJJmaxPT_"+label, systname, evt_AvDRJJJmaxPt , e->weight() );
+
+    if(e->NcentralJets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/AvCSVPt_"+label, systname, evt_AvDRJJJmaxPt , e->weight() );
 
 }
 
