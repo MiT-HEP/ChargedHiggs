@@ -1072,6 +1072,9 @@ void ChargedHiggsTopBottom::Preselection()
         if(doTaulAnalysis) BookHisto(l, "_1Mu1Ele","Baseline");
         if(doTaulAnalysis) BookHisto(l, "_2Ele","Baseline");
 
+        ///////
+        ///////
+
         BookHisto(l, "","topCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","topCR");
         if(do1lAnalysis) BookHisto(l, "_1Ele","topCR");
@@ -1079,12 +1082,46 @@ void ChargedHiggsTopBottom::Preselection()
         if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCR");
         if(do2lAnalysis) BookHisto(l, "_2Ele","topCR");
 
+        BookHisto(l, "","topCRR4"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "_1Mu","topCRR4");
+        if(do1lAnalysis) BookHisto(l, "_1Ele","topCRR4");
+        if(do2lAnalysis) BookHisto(l, "_2Mu","topCRR4");
+        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCRR4");
+        if(do2lAnalysis) BookHisto(l, "_2Ele","topCRR4");
+
+        BookHisto(l, "","topCRR5"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "_1Mu","topCRR5");
+        if(do1lAnalysis) BookHisto(l, "_1Ele","topCRR5");
+        if(do2lAnalysis) BookHisto(l, "_2Mu","topCRR5");
+        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCRR5");
+        if(do2lAnalysis) BookHisto(l, "_2Ele","topCRR5");
+
+        ///////
+        ///////
+
         BookHisto(l, "","extraRadCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCR");
         if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCR");
         if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCR");
         if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCR");
         if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCR");
+
+        BookHisto(l, "","extraRadCRR7"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCRR7");
+        if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCRR7");
+        if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCRR7");
+        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCRR7");
+        if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCRR7");
+
+        BookHisto(l, "","extraRadCRR10"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCRR10");
+        if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCRR10");
+        if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCRR10");
+        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCRR10");
+        if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCRR10");
+
+        ///////
+        ///////
 
         if(do1lAnalysis) BookHisto(l, "","charmCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","charmCR");
@@ -2251,10 +2288,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                 category="_2Ele";
                 // RECO/ISO applied and ele TRG missing
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
-                if (not e->IsRealData()) { e->SetPtEtaSF("eleLoose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLoose"); }
+                if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLoose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLoose"); }
 
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleTightIso",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightIso"); }
-                if (not e->IsRealData()) { e->SetPtEtaSF("eleLooseIso",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLooseIso"); }
+                if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLooseIso",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLooseIso"); }
 
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleTightTRG",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightTRG"); }
             }
@@ -2266,15 +2303,15 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                     if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("eleTightIso",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightIso"); }
                     // mu
-                    if (not e->IsRealData() && trailLep->Pt()>30) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
-                    if (not e->IsRealData() && trailLep->Pt()>30) { e->SetPtEtaSF("muISOloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISOloose"); }
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muISOloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISOloose"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
-                    if (not e->IsRealData()) { e->SetPtEtaSF("muLooseTRG",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muLooseTRG"); }
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muLooseTRG",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muLooseTRG"); }
                 }
                 if(leadLep->IsMuon() and trailLep->IsElectron()) {
                     // ele
-                    if (not e->IsRealData()) { e->SetPtEtaSF("eleLoose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLoose"); }
-                    if (not e->IsRealData()) { e->SetPtEtaSF("eleLooseIso",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLooseIso"); }
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLoose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLoose"); }
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLooseIso",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLooseIso"); }
                     // mu
                     if (not e->IsRealData()) { e->SetPtEtaSF("muID",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muID"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
@@ -2599,6 +2636,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     bool charmCR=false;
     bool extraRadCR=false;
     bool topCR=false;
+    bool topCRR4=false;
+    bool topCRR5=false;
+    bool extraRadCRR7=false;
+    bool extraRadCRR10=false;
     //    bool highMTCR=false;
     //    bool lowMTCR=false;
 
@@ -2607,8 +2648,19 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if( do1lAnalysis and e->NcentralJets() >= 5 and e->Bjets() == 1 ) extraRadCR=true;
     if( do2lAnalysis and e->NcentralJets() >= 3 and e->Bjets() == 1 ) extraRadCR=true;
 
+    if( do1lAnalysis and e->NcentralJets() == 5 and e->Bjets() == 1 ) extraRadCRR7=true;
+    if( do2lAnalysis and e->NcentralJets() == 3 and e->Bjets() == 1 ) extraRadCRR7=true;
+    if( do1lAnalysis and e->NcentralJets() >5 and e->Bjets() == 1 ) extraRadCRR10=true;
+    if( do2lAnalysis and e->NcentralJets() >3 and e->Bjets() == 1 ) extraRadCRR10=true;
+
     if( do1lAnalysis and e->NcentralJets() == 4 and e->Bjets() > 0 and e->Bjets() < 3 ) topCR=true;
     if( do2lAnalysis and e->NcentralJets() == 2 and e->Bjets() > 0 ) topCR=true;
+
+    if( do1lAnalysis and e->NcentralJets() == 4 and e->Bjets() ==1 and e->Bjets() < 3 ) topCRR4=true;
+    if( do2lAnalysis and e->NcentralJets() == 2 and e->Bjets() ==1 ) topCRR4=true;
+
+    if( do1lAnalysis and e->NcentralJets() == 4 and e->Bjets() > 1 and e->Bjets() < 3 ) topCRR5=true;
+    if( do2lAnalysis and e->NcentralJets() == 2 and e->Bjets() > 1 ) topCRR5=true;
 
     //    if( do1lAnalysis && evt_MT>=120 ) highMTCR=true;
     //    if( do1lAnalysis && evt_MT<120 ) lowMTCR=true;
@@ -2618,20 +2670,39 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if(topCR) eventShapePlot(e, label, category, systname,"topCR");
     if(topCR) classifyHF(e, label, category, systname,"topCR","");
 
+    if(topCRR4) jetPlot(e, label, category, systname,"topCRR4");
+    if(topCRR4) leptonPlot(e,label, category, systname,"topCRR4");
+    if(topCRR4) eventShapePlot(e, label, category, systname,"topCRR4");
+    if(topCRR4) classifyHF(e, label, category, systname,"topCRR4","");
+
+    if(topCRR5) jetPlot(e, label, category, systname,"topCRR5");
+    if(topCRR5) leptonPlot(e,label, category, systname,"topCRR5");
+    if(topCRR5) eventShapePlot(e, label, category, systname,"topCRR5");
+    if(topCRR5) classifyHF(e, label, category, systname,"topCRR5","");
+
+    /////
+
     if(extraRadCR) jetPlot(e, label, category, systname,"extraRadCR");
     if(extraRadCR) leptonPlot(e, label, category, systname,"extraRadCR");
     if(extraRadCR) eventShapePlot(e, label, category, systname,"extraRadCR");
     if(extraRadCR) classifyHF(e, label, category, systname,"extraRadCR","");
 
+    if(extraRadCRR10) jetPlot(e, label, category, systname,"extraRadCRR10");
+    if(extraRadCRR10) leptonPlot(e, label, category, systname,"extraRadCRR10");
+    if(extraRadCRR10) eventShapePlot(e, label, category, systname,"extraRadCRR10");
+    if(extraRadCRR10) classifyHF(e, label, category, systname,"extraRadCRR10","");
+
+    if(extraRadCRR7) jetPlot(e, label, category, systname,"extraRadCRR7");
+    if(extraRadCRR7) leptonPlot(e, label, category, systname,"extraRadCRR7");
+    if(extraRadCRR7) eventShapePlot(e, label, category, systname,"extraRadCRR7");
+    if(extraRadCRR7) classifyHF(e, label, category, systname,"extraRadCRR7","");
+
+    /////
+
     if(do1lAnalysis && charmCR) jetPlot(e, label, category, systname,"charmCR");
     if(do1lAnalysis && charmCR) leptonPlot(e, label, category, systname,"charmCR");
     if(do1lAnalysis && charmCR) eventShapePlot(e, label, category, systname,"charmCR");
     if(do1lAnalysis && charmCR) classifyHF(e, label, category, systname,"charmCR","");
-
-    //    if(do1lAnalysis && topCR && highMTCR) jetPlot(e, label, category, systname,"highMTCR");
-    //    if(do1lAnalysis && topCR && highMTCR) leptonPlot(e, label, category, systname,"highMTCR");
-    //    if(do1lAnalysis && topCR && lowMTCR) jetPlot(e, label, category, systname,"lowMTCR");
-    //    if(do1lAnalysis && topCR && lowMTCR) leptonPlot(e, label, category, systname,"lowMTCR");
 
     ////////
     ////
