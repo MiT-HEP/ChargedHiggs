@@ -3,8 +3,8 @@
 #############
 
 config=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8')
-###addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-2000')
-###addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-1000')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8')
 ###addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-750')
 addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8')
@@ -25,9 +25,21 @@ addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTauNu_M-30
 addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTauNu_M-400_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTauNu_M-500_13TeV_amcatnlo_pythia8')
 
-addConfig=ChargedHiggsTopBottom|AddLabel('TTTo2L2Nu')
-addConfig=ChargedHiggsTopBottom|AddLabel('TTToSemilepton')
-addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4')
+addConfig=ChargedHiggsTopBottom|AddLabel('TTTo2L2Nu_TuneCUETP8M2')
+addConfig=ChargedHiggsTopBottom|AddLabel('TTToSemilepton_TuneCUETP8M2')
+#standard
+addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-pythia8')
+#MC@NLO
+addConfig=ChargedHiggsTopBottom|AddLabel('TTJets')
+#ISR-FSR
+addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown')
+addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-fsrup')
+addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-isrdown')
+addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-isrup')
+#hF filter
+addConfig=ChargedHiggsTopBottom|AddLabel('TTTo2L2Nu_ttbbFilter')
+addConfig=ChargedHiggsTopBottom|AddLabel('TTToSemilepton_ttbbFilter')
+
 addConfig=ChargedHiggsTopBottom|AddLabel('ST')
 ##WWTo2L2Nu,WWToLNuQQ
 addConfig=ChargedHiggsTopBottom|AddLabel('WWTo')

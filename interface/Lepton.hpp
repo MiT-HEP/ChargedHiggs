@@ -33,6 +33,7 @@ class Lepton : virtual public Object,
         float isocut_;
         float ptcut_;
         float etacut_;
+        bool mvaLoosecutEta_{false};
         float isorelcut_ {-1};
         float miniisorelcut_ {-1};
         bool  tightcut_ {0};  // ask for tight cut
@@ -49,7 +50,8 @@ class Lepton : virtual public Object,
         inline void SetIsoRelCut( float x){isorelcut_=x;}
         inline void SetMiniIsoRelCut( float x){miniisorelcut_=x;}
         inline void SetEtaCut( float x){etacut_=x;}
-        inline void SetVetoCut(){tightcut_=false;mediumcut_=false; loosecut_=false;mediumorigcut_=false;}
+        inline void SetMvaLooseCut(bool x){mvaLoosecutEta_=x;}
+        inline void SetVetoCut(){tightcut_=false;mediumcut_=false; loosecut_=false;mediumorigcut_=false;mvaLoosecutEta_=false;}
         inline void SetLooseCut(bool x){loosecut_=x;}
         inline void SetTightCut( bool x=true){tightcut_=x;}
         inline void SetMediumCut( bool x=true){mediumcut_=x;}
@@ -63,7 +65,6 @@ class Lepton : virtual public Object,
         inline void SetMediumIdOrig( bool x=true){mediumIdOrig=x;}
         inline void SetLooseId( bool x=true){looseId=x;}
         inline void SetMva(float x){mva=x;}
-
 
         inline float GetIsoCut()const {return isocut_;}
         inline float GetPtCut() const { return ptcut_;}
@@ -91,6 +92,9 @@ class Lepton : virtual public Object,
 
         Lepton() ;
 
+    //    Eta boundary0 -- 0.8, 0.8 -- 1.479, > 1.479
+    //        Tight(0.674, 0.744, 0.170)
+    //        Loose(-0.041, 0.383, -0.515)
 
         virtual inline int IsLep() const { 
             if ( std::isnan(Pt()) ) return 0; // put pt before eta
@@ -98,13 +102,22 @@ class Lepton : virtual public Object,
             if ( etacut_ >=0 and abs(Eta()) > etacut_) return 0;
             if ( isocut_ >=0 and iso > isocut_) return 0;
             if ( isorelcut_ >=0 and iso/Pt() > isorelcut_) return 0;
-            if ( miniisorelcut_ >=0 and miniIso/Pt() > miniisorelcut_) return 0;
+            if ( miniisorelcut_ >=0 and miniIso > miniisorelcut_) return 0;
+            if ( type == 11 and mvaLoosecutEta_ and (
+                                                     (Mva()<-0.041 and abs(Eta())<0.8) or
+                                                     (Mva()<0.383 and abs(Eta())<=1.479 and abs(Eta())>=0.8) or
+                                                     (Mva()<-0.515 and abs(Eta())>1.479) )) return 0;
             if ( tightcut_ and not tightId) return 0;
             if ( mediumcut_ and not mediumId) return 0;
             if ( mediumorigcut_ and not mediumIdOrig) return 0;
             if ( loosecut_ and not looseId) return 0;
             return 1;
         }
+
+    virtual inline bool IsEleMvaTight() const { return IsElectron() and  (
+                                                                          (Mva()>=0.674 and abs(Eta())<0.8) or
+                                                                          (Mva()>=0.744 and abs(Eta())<=1.479 and abs(Eta())>=0.8) or
+                                                                          (Mva()>=0.170 and abs(Eta())>1.479) ) ; }
 
         virtual inline bool IsElectron() const { return IsLep() and (type == 11); }
         virtual inline bool IsMuon() const { return IsLep() and (type == 13); }
