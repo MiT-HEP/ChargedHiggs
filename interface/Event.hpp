@@ -56,6 +56,7 @@ class Event{
     vector<string> triggerNames_;
 
     string fName_;
+    string tag_{""};
     Weight *weight_;
 
     public:

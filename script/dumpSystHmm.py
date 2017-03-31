@@ -46,7 +46,7 @@ procline2= ["process"]
 systsline=[opts.outname,"lnN"]
 
 def appendToLine(l,valDown,valUp):
-    if abs(valDown-1) <0.001 and abs(valUp-1) <0.001:
+    if abs(valDown-1) <0.01 and abs(valUp-1) <0.01:
 	    l.append("-")
     else:
 	    l.append("%.3f/%.3f"%(valDown,valUp))

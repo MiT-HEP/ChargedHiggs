@@ -118,7 +118,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 	
 		## TODO OBS
 			
-		if q==0.5 : 
+		if abs(q-0.5)<1.e-5 : 
 			#exp.SetPoint(g.GetN(), mh,l ) 
 			median.append(  (mh,l) ) 
 		
@@ -345,12 +345,20 @@ c=ROOT.TCanvas()
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 
-dummy = ROOT.TH1D("dummy","dummy",1000, 0, 3000)
-dummy.GetXaxis().SetRangeUser(200,3000)
+if opts.xaxis != "":
+	dummy = ROOT.TH1D("dummy","dummy",100, float(opts.xaxis.split(',')[0]), float(opts.xaxis.split(',')[1]))
+	dummy.GetXaxis().SetRangeUser(200,3000)
+else:
+	dummy = ROOT.TH1D("dummy","dummy",1000, 0, 3000)
+
 dummy.GetYaxis().SetRangeUser(1e2,1e8)
 
-dummy.GetXaxis().SetTitle("m_{H^{+}}")
+dummy.GetXaxis().SetTitle("m_{H^{+}} [GeV]")
 dummy.GetYaxis().SetTitle("#sigma/#sigma_{MSSM}")
+
+if opts.xaxis != "" and float(opts.xaxis.split(',')[1]) <135: ## SM?
+	dummy.GetXaxis().SetTitle("m_{H} [GeV]")
+	dummy.GetYaxis().SetTitle("#sigma/#sigma_{SM}")
 
 if opts.xsec:
 	dummy.GetYaxis().SetTitle("#sigma [pb]")
@@ -411,7 +419,7 @@ l.SetTextAlign(13)
 l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
 l.SetTextSize(0.03)
 l.SetTextAlign(31)
-l.DrawLatex(0.89,.91,"2.3 fb^{-1} (13 TeV)")
+l.DrawLatex(0.89,.91,"35.9 fb^{-1} (13 TeV)")
 
 #draw legend
 leg = ROOT.TLegend(0.65,.55,.88,.88)

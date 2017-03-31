@@ -4,6 +4,8 @@
 #include "interface/AnalysisBase.hpp"
 #include "interface/CutSelector.hpp"
 
+class TRandom;
+
 class HmumuAnalysis: virtual public AnalysisBase
 {
     public:
@@ -37,6 +39,8 @@ class HmumuAnalysis: virtual public AnalysisBase
             Mass,
             MaxCut // do not remove
         };
+
+        std::unique_ptr<TRandom> rnd_;
 
 };
 

@@ -46,6 +46,8 @@ class QGAnalysis: virtual public AnalysisBase
     
     vector<float> ptBins{30,40,50,80,100,120,250,500,8000};
     vector<float> aetaBins{0,2,2.5,3.,4.7};
+
+    int Rematch(Event *e, Jet *j, float dR=0.4);
     
 };
 

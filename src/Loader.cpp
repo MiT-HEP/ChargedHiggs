@@ -320,7 +320,10 @@ void LoadNero::FillLeptons(){
         l-> SetCharge (((*bl->pdgId)[iL] >0) ?  -1: 1 ); 
         l-> SetTightId (( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight)); 
         l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepMedium));
+        l-> SetMediumIdOrig ((bl->selBits ->at(iL) & BareLeptons::Selection::LepMedium));
         l-> SetLooseId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepLoose));
+        l-> SetTrackerMuon ((bl->selBits ->at(iL) & BareLeptons::Selection::MuTracker));
+        l-> SetGlobalMuon ((bl->selBits ->at(iL) & BareLeptons::Selection::MuGlobal));
         if (event_->IsRealData() and event_->runNum() <= 278801 and l->GetType() == 13) // B->F(HIP)
         {
             l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::MuMediumB2F) );
@@ -662,7 +665,8 @@ void LoadNero::FillMC(){
         // keep all regardless to the flag
         if (  (apdg == 11 or apdg ==13) ) keep=true; // keep status 1 electrons and muons
         // keep Q/G/Tau
-        if ( (apdg == 15 or apdg==21 or apdg <6 ) and (mc->flags->at(iGP) & ( BareMonteCarlo::HardProcess | BareMonteCarlo::HardProcessBeforeFSR | BareMonteCarlo::HardProcessDecayed) )) keep=true;
+        if ( (apdg == 15  ) and (mc->flags->at(iGP) & ( BareMonteCarlo::HardProcess | BareMonteCarlo::HardProcessBeforeFSR | BareMonteCarlo::HardProcessDecayed) )) keep=true;
+        if ( (apdg==21 or apdg <6 ) ) keep=true;
         if (  (apdg == 24 or apdg ==23 or apdg ==37) )  keep=true; // keep W/Z/chHiggs
         if (  (apdg == 5 or apdg ==6 ) ) keep=true; // keep top bottom
 
@@ -715,6 +719,17 @@ void LoadNero::NewFile(){
     {
         string fname = tree_->GetFile()->GetName();
         Log(__FUNCTION__,"ERROR","No Trigger Information in file" + fname );
+    }
+
+    TNamed * vn=  (TNamed*)tree_->GetFile()->Get("nero/tag");
+    if (vn == NULL ) 
+    {
+        string fname = tree_->GetFile()->GetName();
+        Log(__FUNCTION__,"ERROR","No Versioning  Information in file" + fname );
+        event_ -> tag_ = "";
+    }
+    else{
+        event_ -> tag_ = vn->GetTitle();
     }
 
     // split by comma and save in the  triggerNames_

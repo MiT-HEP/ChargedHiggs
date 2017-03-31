@@ -61,7 +61,11 @@ class SmearKaMuCa : public SmearBase
     public:
         SmearKaMuCa(): SmearBase() { name_ = "KAMUCA"; num_=0;}
         SmearKaMuCa(int num): SmearBase() { name_ = "KAMUCA"; num_=num;}
-        const inline string name() const override { return  name_ + Form("%d",num_);}
+        const inline string name() const override { 
+            if (syst_>0)return  name_ + Form("%dUp",num_);
+            else if (syst_<0)return  name_ + Form("%dDown",num_);
+            else return  name_ + Form("%d",num_);
+        }
         int smear(CorrectorBase*c) override; 	
     
 };

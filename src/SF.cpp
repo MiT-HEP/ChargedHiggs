@@ -75,85 +75,84 @@ void SF_PtEta::print(){
     cout <<"label='"<<label<<"'"<<endl;
     for(auto& p : store ) 
     {
-    cout << p.first.pt1<<":"<<p.first.pt2<<"|"<<p.first.eta1<<":"<<p.first.eta2<<"||"<< p.second.first<<":"<<p.second.second<<endl;
+        cout << p.first.pt1<<":"<<p.first.pt2<<"|"<<p.first.eta1<<":"<<p.first.eta2<<"||"<< p.second.first<<":"<<p.second.second<<endl;
     }
     cout <<" ----------------------"<<endl;
 }
-// -------------- PT ETA RUN -----------------------
-void SF_PtEtaRun::add(double pt1, double pt2,double eta1, double eta2,unsigned long run1, unsigned long run2, double sf, double err)
+
+void SF_PtEta_And_Eff::add(double pt1,double pt2 ,double eta1, double eta2, double dataEff, double mcEff, double dataErr, double mcErr )
 {
-    range3D r;
+    //SF_PtEta::add(pt1,pt2,eta1,eta2, dataEff/mcEff, (dataErr/dataEff + mcErr/mcEff) * dataEff/mcEff); 
+    Log(__FUNCTION__,"INFO",Form("* Adding sf in range pt [%f,%f), eta[%f,%f) deff=%f mceff=%f",pt1,pt2,eta1,eta2,dataEff,mcEff ) );
+    range r;
     r.pt1 = pt1;
     r.pt2 = pt2;
     r.eta1 = eta1;
     r.eta2 = eta2;
-    r.run1 = run1;
-    r.run2 = run2;
 
-    store[r].first = sf;
-    store[r].second = err;
-
-#ifdef VERBOSE
-    if(VERBOSE>0)cout <<"[SF_PtEtaRun]::[add]::[DEBUG] Adding SF Pt Eta Run:"<<pt1<<":"<<pt2<<"|"<<eta1<<":"<<eta2<<":"<<run1<<":"<<run2<<"|"<<sf<<":"<<err<<endl;
-#endif
+    storeData_[r].first = dataEff;
+    storeData_[r].second = dataErr;
+    storeMC_[r].first = mcEff;
+    storeMC_[r].second = mcErr;
 }
-
-void SF_PtEtaRun::set( double pt, double eta,unsigned long run)
+void SF_PtEta_And_Eff::set(double pt, double eta)
 {
+    //SF_PtEta::set(pt,eta); // set sf and err
+    //if (not veto_) { return;}
     int change = 0;
-    for(auto s : store)
+    range r;
+    effData_=1,errData_=0;
+
+    for(auto s : storeData_)
     {
+        // DEBUG
+        //cout <<"Considering element: ["<<s.first.pt1<<","<<s.first.pt2<<") ["<<s.first.eta1<<","<<s.first.eta2<<") against "<<pt<<","<<eta<<endl;
         if ( pt < s.first.pt1 ) continue;
         if ( s.first.pt2  <= pt ) continue;
         if ( eta < s.first.eta1 ) continue;
         if ( s.first.eta2  <= eta ) continue;
-        if ( run < s.first.run1 ) continue;
-        if ( s.first.run2  <= run ) continue;
-        sf = s.second.first;	
-        err = s.second.second;
+        //cout <<" * OK"<<endl;
+        effData_ = s.second.first;
+        errData_ = s.second.second;
+        r = s.first;
         change = 1;
         break;
     }
+
     if (not change)
     {
-        cout<<"[SF_PtEtaRun]::[set]::[ERROR] no PT ETA RUN RANGE for SF '"<<label<<"' in pt="<<pt<<" eta="<<eta<<" run="<<run<<endl;
+        Log(__FUNCTION__,"ERROR","no Pt eta range for SF " + label + Form( " in pt %f eta %f ",pt,eta));
         sf = 1.0;
         err = 0.0;
+        effMC_ = 1.0; errMC_=0.0;
+        return;
     }
+
+    effMC_ = storeMC_[r].first;
+    errMC_ = storeMC_[r].second;
+
+
 }
 
-const bool operator<( const SF_PtEtaRun::range3D&r1 , const SF_PtEtaRun::range3D &r2)
+double SF_PtEta_And_Eff::get()
 {
-    // on pt1
-    if (r1.pt1 < r2.pt1) return true;
-    if (r1.pt1 > r2.pt1) return false;
-    // -- pt2
-    if (r1.pt2 < r2.pt2) return true;
-    if (r1.pt2 > r2.pt2) return false;
-    // -- eta1
-    if (r1.eta1 < r2.eta1) return true;
-    if (r1.eta1 > r2.eta1) return false;
-    // -- eta2
-    if (r1.eta2 < r2.eta2) return true;
-    if (r1.eta2 > r2.eta2) return false;
-    // -- run1
-    if (r1.run1 < r2.run1) return true;
-    if (r1.run1 > r2.run1) return false;
-    // -- run2
-    if (r1.run2 < r2.run2) return true;
-    if (r1.run2 > r2.run2) return false;
-    // they are equal
-    return false;
-}
-
-void SF_PtEtaRun::print(){
-    cout <<" ----- SF Pt Eta Run ------"<<endl;
-    cout <<"label='"<<label<<"'"<<endl;
-    for(auto& p : store ) 
+    if (veto_)
     {
-    cout << p.first.pt1<<":"<<p.first.pt2<<"|"<<p.first.eta1<<":"<<p.first.eta2<<"|"<<p.first.run1<<":"<<p.first.run2<<"||"<< p.second.first<<":"<<p.second.second<<endl;
+        sf = (1.-effData_) / (1.-effMC_);
+        if (sqrErr_)
+            err = std::sqrt( std::pow(errData_ / (1.-effData_),2) + std::pow(errMC_ / (1.-effMC_),2)) *sf;
+        else
+            err = (fabs(errData_ / (1.-effData_)) + fabs(errMC_ / (1.-effMC_)) ) * sf;
     }
-    cout <<" ----------------------"<<endl;
+    else{
+        sf = effData_ / effMC_;
+        if (sqrErr_)
+            err = std::sqrt((errData_/effData_)*(errData_/effData_)+ (errMC_/effMC_)*(errMC_/effMC_)  ) * sf ;
+        else
+            err = fabs(errData_/effData_) * sf  + fabs(errMC_/effMC_) * sf ;
+    }
+
+    return sf + err*syst;
 }
 
 // --- TH1F 
@@ -198,6 +197,59 @@ void SF_TH2F::init(string filename,string histname,string errorname)
         if (ptbin == h->GetNbinsY() ) ptmax = 8000.; // highest is open, current recommendation
         add(ptmin,ptmax,aetamin,aetamax,sf,err);
     }
+}
+
+TH2* SF_TH2F_And_Eff::getHisto(const string & name)
+{
+    TH2* r = (TH2*)f->Get(name.c_str());
+    if (r == NULL)
+    {
+        Log(__FUNCTION__,"ERROR","hist '"+name+"' does not exist");
+        throw abortException() ;
+    }
+    return r;
+}
+
+void SF_TH2F_And_Eff::init(string filename,string effdata,string effmc,string errordata,string errormc)
+{
+    f = TFile::Open(filename.c_str() ) ;
+
+    if (f == NULL){
+        Log(__FUNCTION__,"ERROR","file '" + filename + "' does not exist");
+        throw abortException() ;
+    }
+
+    TH2 * hDataEff = getHisto(effdata);
+    TH2 * hDataErr = NULL;
+    if (errordata != "" ) hDataErr = getHisto(errordata);
+    TH2 * hMcEff = getHisto(effmc);
+    TH2 * hMcErr = NULL;
+    if (errormc != "" ) hMcErr = getHisto(errormc);
+
+
+    for( int aetabin =1; aetabin <= hDataEff->GetNbinsX() ; ++aetabin)
+    for( int ptbin =1; ptbin <= hDataEff->GetNbinsY() ; ++ptbin)
+    {
+        float ptmin = hDataEff->GetYaxis()->GetBinLowEdge(ptbin); 
+        float ptmax = hDataEff->GetYaxis()->GetBinLowEdge(ptbin+1); 
+        float aetamin = hDataEff->GetXaxis()->GetBinLowEdge(aetabin); 
+        float aetamax = hDataEff->GetXaxis()->GetBinLowEdge(aetabin+1); 
+        float effData = hDataEff->GetBinContent(aetabin,ptbin);
+        float errData = 0.0 ;
+        if (hDataErr) err=hDataErr->GetBinContent(aetabin,ptbin);
+        else errData = hDataEff->GetBinError(aetabin,ptbin);
+
+        float effMc = hMcEff->GetBinContent(aetabin,ptbin);
+        float errMc = 0.0; 
+        if (hMcEff) errMc = hMcEff->GetBinContent(aetabin,ptbin);
+        else errMc = hMcEff->GetBinError(aetabin,ptbin);
+
+        if (ptbin == hDataEff->GetNbinsY() ) ptmax = 8000.; // highest is open, current recommendation
+        add(ptmin,ptmax,aetamin,aetamax,effData,effMc,errData,errMc);
+    }
+    f->Close(); // delete?
+    delete f;
+    f = NULL;
 }
 
 // ------------- SPLINE -------------
