@@ -1,5 +1,11 @@
 
 config=HmumuAnalysis|AddLabel('DY')
+addConfig=HmumuAnalysis|AddLabel('TT')
+addConfig=HmumuAnalysis|AddLabel('ST')
+addConfig=HmumuAnalysis|AddLabel('WW')
+addConfig=HmumuAnalysis|AddLabel('WZ')
+addConfig=HmumuAnalysis|AddLabel('ZZ')
+
 ## need to add 125, in order to have different masses
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125')

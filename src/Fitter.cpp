@@ -153,7 +153,7 @@ void Fitter::init(){
                 case 250: {xsec = 0.005344; break; }
             }
             xSec_y . push_back( xsec );
-            ea_y . push_back( h->Integral()/xsec );
+            ea_y . push_back( h->Integral(bin0,bin1)/xsec );
 
             for(auto& syst: systIn) // compute norm difference for syst
             {

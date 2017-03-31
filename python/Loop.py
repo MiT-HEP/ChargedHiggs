@@ -206,8 +206,11 @@ for key in sfdb:
 		if opts.verbose: print label,key['type'],  key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['run1'],key['run2'],key['sf'],key['err'] 
 		loop.AddPtEtaRunSF(label, key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['run1'],key['run2'],key['sf'],key['err'])
 	if key['type'] == 'th2f':
-		if opts.verbose: print label,key['type'],  key['filename'], key['veto']
+		if opts.verbose: print label,key['type'],  key['filename']
 		loop.AddTh2fSF(label, key['filename'])
+	if key['type'] == 'th2eff':
+		if opts.verbose: print label,key['type'],  key['filename'],key['effdata'],key['effmc'],key['errdata'],key['errmc']
+		loop.AddTh2fSF(label, key['filename'],key['effdata'],key['effmc'],key['errdata'],key['errmc'])
 	if key['type'] == 'base':
 		if opts.verbose: print label,key['type'], key['sf'],key['err'] 
 		loop.AddSF(label, key['sf'], key['err'])

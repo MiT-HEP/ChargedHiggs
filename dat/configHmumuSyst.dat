@@ -7,9 +7,9 @@ include=dat/catalog/2017.moriond/hmm.dat
 
 
 #Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag")
-Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),JER,@SmearPu
+#Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),JER,@SmearPu
 
-#Smear=NONE,*[-133!0]SmearKaMuCa(%%d),*[1!135]SmearKaMuCa(%%d)
+Smear=NONE,*[-133!0]SmearKaMuCa(%%d),*[1!135]SmearKaMuCa(%%d)
 
 #Smear=NONE,@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1),*[0!50]SmearPdfs(%%d)
 

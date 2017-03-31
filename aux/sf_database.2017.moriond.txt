@@ -69,6 +69,15 @@ muRECO pteta 42.5 44.5  -9999 +9999 0.967633 0.00608222
 muRECO pteta 44.5 100   -9999 +9999 0.946567 0.00965301
 
 
+## Read eff data and mc separately for veto
+muTRG_v2 th2f aux/mu_trigger_EfficienciesAndSF_Period4.root IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
+# medium NOT 2016
+muID_runGH th2f aux/mu_ID_EfficienciesAndSF_GH.root MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/abseta_pt_DATA MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesMC/abseta_pt_MC
+muID_runBCDEF th2f aux/mu_ID_EfficienciesAndSF_BCDEF.root MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/abseta_pt_DATA MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesMC/abseta_pt_MC
+muISOloose_runGH th2f aux/mu_ISO_EfficienciesAndSF_GH.root LooseISO_LooseID_pt_eta/efficienciesDATA/abseta_pt_DATA LooseISO_LooseID_pt_eta/efficienciesMC/abseta_pt_MC
+muISOloose_runBCDEF th2f aux/mu_ISO_EfficienciesAndSF_BCDEF.root LooseISO_LooseID_pt_eta/efficienciesDATA/abseta_pt_DATA LooseISO_LooseID_pt_eta/efficienciesMC/abseta_pt_MC
+dummy base 1.0 0.00
+
 
 ###################
 ## BTag from POG ##

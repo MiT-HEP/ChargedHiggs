@@ -10,6 +10,7 @@ parser.add_option("-f","--file",dest="file",type="string",help="InputFile [%defa
 parser.add_option("-o","--outfile",dest="outfile",type="string",help="OutputFile [%default]",default="QCDFit.root")
 parser.add_option("-t","--outtxt",dest="outtxt",type="string",help="OutputTxt [%default]",default="R.txt")
 parser.add_option("-l","--qcdlumi",dest="qcdlumi",type="float",help="Prescaled luminosity to use [%default]",default=209.)
+parser.add_option("-p","--plotdir",dest="plotdir",type="string",help="PlotDir for Fitter and Background Fitter [%default]",default="")
 
 (opts,args) = parser.parse_args()
 
@@ -80,9 +81,11 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
 	fitter.PtBins.push_back(8000)
 
 if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
-	from hmm import hmm
-	fitter.xmin = hmm.xmin
-	fitter.xmax = hmm.xmax
+    from hmm import hmm
+    fitter.xmin = hmm.xmin
+    fitter.xmax = hmm.xmax
+    if opts.plotdir != "":
+        fitter.plotDir=opts.plotdir+"/"
 
 if opts.classname== "Fitter":
 	fitter.outname= opts.outfile

@@ -22,6 +22,8 @@ class Lepton : virtual public Object,
         int mediumId {0};
         int mediumIdOrig {0}; // original definition of medium id, w/o 2016 modifications
         int looseId{0};
+        int trackerMuon {0};
+        int globalMuon {0};
         float mva{-1}; // mva
 
         // ele specific
@@ -40,6 +42,8 @@ class Lepton : virtual public Object,
         bool  mediumcut_ {0};
         bool  mediumorigcut_ {0};
         bool  loosecut_ {0};
+        bool  trackermuoncut_ {0};
+        bool  globalmuoncut_ {0};
 
     public:
         inline void SetR9(float x) { r9_=x;}
@@ -51,7 +55,7 @@ class Lepton : virtual public Object,
         inline void SetMiniIsoRelCut( float x){miniisorelcut_=x;}
         inline void SetEtaCut( float x){etacut_=x;}
         inline void SetMvaLooseCut(bool x){mvaLoosecutEta_=x;}
-        inline void SetVetoCut(){tightcut_=false;mediumcut_=false; loosecut_=false;mediumorigcut_=false;mvaLoosecutEta_=false;}
+        inline void SetVetoCut(){tightcut_=false;mediumcut_=false; loosecut_=false;mediumorigcut_=false;mvaLoosecutEta_=false;trackermuoncut_=false;globalmuoncut_=false;}
         inline void SetLooseCut(bool x){loosecut_=x;}
         inline void SetTightCut( bool x=true){tightcut_=x;}
         inline void SetMediumCut( bool x=true){mediumcut_=x;}
@@ -65,7 +69,15 @@ class Lepton : virtual public Object,
         inline void SetMediumIdOrig( bool x=true){mediumIdOrig=x;}
         inline void SetLooseId( bool x=true){looseId=x;}
         inline void SetMva(float x){mva=x;}
+        inline void SetTrackerMuon(bool x=true){trackerMuon=x;}
+        inline void SetGlobalMuon(bool x=true){globalMuon=x;}
+        inline void SetTrackerMuonCut(bool x=true){trackermuoncut_=x;}
+        inline void SetGlobalMuonCut(bool x=true){globalmuoncut_=x;}
 
+        inline float GetIso()const {return iso;}
+        inline bool GetMediumId() const {return mediumId;}
+        inline bool GetTightId() const {return tightId;}
+        inline bool GetLooseId() const {return looseId;}
         inline float GetIsoCut()const {return isocut_;}
         inline float GetPtCut() const { return ptcut_;}
         inline float GetEtaCut() const { return etacut_;}
@@ -111,6 +123,8 @@ class Lepton : virtual public Object,
             if ( mediumcut_ and not mediumId) return 0;
             if ( mediumorigcut_ and not mediumIdOrig) return 0;
             if ( loosecut_ and not looseId) return 0;
+            if ( trackermuoncut_ and  IsMuonDirty() and not trackerMuon) return 0;
+            if ( globalmuoncut_ and  IsMuonDirty() and not globalMuon) return 0;
             return 1;
         }
 

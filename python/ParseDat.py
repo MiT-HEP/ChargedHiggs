@@ -342,9 +342,16 @@ def ReadSFDB(file,verbose=False):
 
 		elif type == 'th2f':
 			R['filename'] = l.split(' ' )[2]
-			if len(l.split(' ')) >= 4:
-				R['veto'] = l.split(' ' )[3].lower()
-			else: R['veto'] = ''
+			if len(l.split(' ')) >= 5:
+				R['type'] ='th2eff'
+				type = 'th2eff'
+				R['effdata'] = l.split(' ')[3]
+				R['effmc'] = l.split(' ')[4]
+				R['errdata'] = ""
+				R['errmc'] = ""
+				if len(l.split(' ')) >= 7:
+					R['errdata'] = l.split(' ')[5]
+					R['errmc'] = l.split(' ')[6]
 			sf=0.0 ## ignored
 			err=0.0 ## ignored
 

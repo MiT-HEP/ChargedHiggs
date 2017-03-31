@@ -173,17 +173,18 @@ RooAbsPdf* PdfModelBuilder::getZModExp(string prefix, int order){
         params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-2, 2.0 );
         plist->add(*params[pname]); // @3
 
-        pname = prefix + "_mZ";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
-        params[pname] -> setConstant();
-        plist->add(*params[pname]); //@4
+        //pname = prefix + "_mZ";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
+        //params[pname] -> setConstant();
+        //plist->add(*params[pname]); //@4
 
-        pname = prefix + "_Zwidth";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
-        params[pname] -> setConstant();
-        plist->add(*params[pname]); //@5
-
-    RooGenericPdf *zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/TMath::Power((@0-@4)*(@0-@4)+@5*@5/4.,@1)",*plist);
+        //pname = prefix + "_Zwidth";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
+        //params[pname] -> setConstant();
+        //plist->add(*params[pname]); //@5
+    // the envelope does getVariables->size to compute the penalization term
+    //RooGenericPdf *zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/TMath::Power((@0-@4)*(@0-@4)+@5*@5/4.,@1)",*plist);
+    RooGenericPdf *zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/TMath::Power((@0-91.2)*(@0-91.2)+2.5*2.5/4.,@1)",*plist);
 
 
     return zmod;
@@ -200,17 +201,18 @@ RooAbsPdf* PdfModelBuilder::getZPhotonRun1(string prefix, int order){
         params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-1, -0.001 );
         plist->add(*params[pname]); // @1
 
-        pname = prefix + "_mZ";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
-        params[pname] -> setConstant();
-        plist->add(*params[pname]); //@2
+        //pname = prefix + "_mZ";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
+        //params[pname] -> setConstant();
+        //plist->add(*params[pname]); //@2
 
-        pname = prefix + "_Zwidth";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
-        params[pname] -> setConstant();
-        plist->add(*params[pname]); //@3
+        //pname = prefix + "_Zwidth";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
+        //params[pname] -> setConstant();
+        //plist->add(*params[pname]); //@3
 
-    RooGenericPdf *part1 = new RooGenericPdf((prefix+"_pdf1").c_str(),(prefix+"_pdf1").c_str(),"TMath::Exp(@1*@0)/((@0-@2)*(@0-@2)+@3*@3/4.)",*plist);
+    //RooGenericPdf *part1 = new RooGenericPdf((prefix+"_pdf1").c_str(),(prefix+"_pdf1").c_str(),"TMath::Exp(@1*@0)/((@0-@2)*(@0-@2)+@3*@3/4.)",*plist);
+    RooGenericPdf *part1 = new RooGenericPdf((prefix+"_pdf1").c_str(),(prefix+"_pdf1").c_str(),"TMath::Exp(@1*@0)/((@0-91.2)*(@0-91.2)+2.5*2.5/4.)",*plist);
     pdfs[part1->GetName() ] = part1;
 
     plist = new RooArgList();
@@ -744,7 +746,7 @@ void BackgroundFitter::fit(){
         dy->Rebin(10); // lumi
         //dy->Smooth(1); // lumi
         RooAbsPdf* dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
-        storedPdfs.add(*dybern);
+        //storedPdfs.add(*dybern);
 
         int zphoOrd;
         RooAbsPdf* zpho = modelBuilder.fTest(Form("zpho_cat%d",cat) ,hist_[name],&zphoOrd,plotDir + "/zpho");
@@ -756,11 +758,11 @@ void BackgroundFitter::fit(){
 
         int modbernOrd;
         RooAbsPdf* modbern = modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
-        storedPdfs.add(*modbern);
+        //storedPdfs.add(*modbern);
 
         int powlawOrd;
         RooAbsPdf* powlaw = modelBuilder.fTest(Form("powlaw_cat%d",cat) ,hist_[name],&powlawOrd, plotDir+"/powlaw");
-        storedPdfs.add(*powlaw);
+        //storedPdfs.add(*powlaw);
 
         int expOrd;
         RooAbsPdf* exp = modelBuilder.fTest(Form("exp_cat%d",cat) ,hist_[name],&expOrd,plotDir+"/exp");
@@ -768,16 +770,18 @@ void BackgroundFitter::fit(){
 
         int lauOrd;
         RooAbsPdf* lau = modelBuilder.fTest(Form("lau_cat%d",cat) ,hist_[name],&lauOrd,plotDir+"/lau");
-        storedPdfs.add(*lau);
+        //storedPdfs.add(*lau);
 
         // construct final model
         cout<<" -> Constructing Final model for cat"<<cat<<endl;
 
         RooCategory pdf_cat(Form("pdfindex_cat%d",cat),Form("pdfindex_cat%d",cat));
+        //pdf_cat.setIndex(1);
+
         //RooMultiPdf multipdf;
         RooMultiPdf pdf_bkg(Form("pdf_cat%d_bkg",cat),"multipdf",pdf_cat,storedPdfs);
         RooRealVar pdf_norm(Form("pdf_cat%d_bkg_norm",cat),"norm", hist_[name]->sumEntries()) ;
-        pdf_norm.setConstant();
+        //pdf_norm.setConstant();
 
         w_ -> import (pdf_bkg,RecycleConflictNodes());  
         w_ -> import (pdf_norm,RecycleConflictNodes()); 
