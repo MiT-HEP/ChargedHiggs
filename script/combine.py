@@ -32,10 +32,16 @@ parser.add_option("-e","--expected" ,dest='exp',action='store_true',help="Run Ex
 parser.add_option("-u","--unblind" ,dest='exp',action='store_false',help="Unblind Results")
 parser.add_option("","--ncore",type='int',help="num. of core. [%default]",default=4)
 parser.add_option("","--rmax",type='float',help="rmax. [%default]",default=1000000)
+parser.add_option("","--rmin",type='float',help="rmin. [%default]",default=-1)
 parser.add_option("","--onews",action='store_true',help="Only one ws. names do not depend on the higgs mass. [%default]",default=False)
 parser.add_option("","--nosyst",action='store_true',help="No Syst.. [%default]",default=False)
 parser.add_option("-M","--method" ,dest='method',type='string',help="Method [%default]",default="Asymptotic")
 
+asym_grid = OptionGroup(parser,"Asymptotic Grid options","")
+asym_grid.add_option("","--npoints" ,dest='npoints',type='int',help="Number of points between rMin and rMax [%default]",default=100)
+asym_grid.add_option("","--njobs" ,dest='njobs',type='int',help="Number of job per mass point [%default]",default=10)
+
+parser.add_option_group(asym_grid)
 (opts,args)=parser.parse_args()
 
 onews=0 ## for onews
@@ -46,6 +52,8 @@ print "inserting in path cwd"
 sys.path.insert(0,os.getcwd())
 print "inserting in path cwd/python"
 sys.path.insert(0,os.getcwd()+'/python')
+
+from ParseDat import chunkIt
 
 print "inserting combine in path"
 if not os.path.exists(os.path.expandvars('$CMSSW_BASE/bin/$SCRAM_ARCH/combine')):
@@ -83,7 +91,14 @@ if ',' not in opts.begin:
 else:
 	massList=[ float(m) for m in opts.begin.split(',')]
 
+nJobsPerMassPoint=1
+if opts.method=='AsymptoticGrid':
+	nJobsPerMassPoint = opts.njobs
+	muList = [ x for x in drange(opts.rmin,opts.rmax+0.001, (opts.rmax-opts.rmin)/opts.npoints) ] ## no generators
+	listOfMus = chunkIt( muList, opts.njobs)  
+
 for mass in massList:
+   for j_chunk in range(0,nJobsPerMassPoint):
 	iJob += 1
 	basedir=opts.dir
 	if basedir[0] != '/': basedir=os.environ['PWD'] + "/" + opts.dir
@@ -140,25 +155,51 @@ for mass in massList:
 	sh.write('cp -v '+ basedir + "/"+  datacard + " ./ \n" )
 	##Write combine line
 	#combine -M Asymptotic -m 200 -S 0 --run=expected --expectSignal=1 --expectSignalMass=200  cms_datacard_chhiggs_taunu.txt
+
 	combine = "combine -M "+ opts.method +" -m "+ str(mass)
+	if opts.method=="AsymptoticGrid": 
+		combine = "combine -M Asymptotic" +" -m "+ str(mass)
+
+
 	if opts.nosyst: combine += " -S 0 "
 	combine += "  --cminDefaultMinimizerType=Minuit2 "
 	#combine += " -H ProfileLikelihood " ## hint, it's not working
-	if opts.exp and  opts.method=="MultiDimFit": combine += " -t -1 --expectSignal=0 --expectSignalMass="+str(mass) + " "
-	elif opts.exp : combine += " -t -1 --run=expected --expectSignal=0 --expectSignalMass="+str(mass) + " "
 
-	if opts.method=="MultiDimFit": combine += " --algo=grid  --points=100 --firstPoint=0 --lastPoint=49 --squareDistPoi --rMin=-1 --rMax=10. "
+	########## EXPECTED ? #############
+	if opts.exp:
+		if opts.method=="AsymptoticGrid":  combine += " -t -1 --expectSignal=0 --expectSignalMass="+str(mass) + " "
+		elif opts.method == "Asymptotic":  combine += " -t -1 --run=expected --expectSignal=0 --expectSignalMass="+str(mass) + " "
+		else : combine += " -t -1 --expectSignal=1 --expectSignalMass="+str(mass) + " "
 
-	if not opts.method=="MultiDimFit": combine += " --rMax=%f "%opts.rmax ## already taken into account
+	########## METHOD DEPENDENT #############
+	if opts.method=="MultiDimFit": 
+		combine += " --algo=grid  --points=100 --firstPoint=0 --lastPoint=49 --squareDistPoi"
+
+	if not opts.method=="MultiDimFit" and not opts.method=="AsymptoticGrid": 
+		combine += " --rMax=%f "%opts.rmax ## already taken into account
+		combine += " --rMin=%f "%opts.rmin ## already taken into account
+
+	### ADD DATACARD #############
 	combine += datacard
-	sh.write( combine + "\n" )
-	sh.write('EXITCODE=$?\n')
+
+	### WRITE COMMANDS ###
+	if opts.method == "AsymptoticGrid":
+		for mu in listOfMus[j_chunk]:
+			sh.write( combine + " --singlePoint %f  -n limitgrid_mass%s_chunk%d_mu%f\n"%(mu,str(mass),j_chunk,mu) )
+		sh.write( "hadd -f higgs_limitgrid_mass%(mass)s_chunk%(chunk)d.root  higgs*limitgrid_mass%(mass)s_chunk%(chunk)d_mu*.root\n"%{"mass":str(mass),"chunk":j_chunk} )
+		sh.write('EXITCODE=$?\n')
+		sh.write( "rm -v  higgs*limitgrid_mass%(mass)s_chunk%(chunk)d_mu*.root\n"%{"mass":str(mass),"chunk":j_chunk} )
+	else:
+		sh.write( combine + "\n" )
+		sh.write('EXITCODE=$?\n')
+
 	sh.write('[ $EXITCODE == 0 ] && touch %s/sub%d.done\n'%(basedir,iJob))
 	sh.write('[ $EXITCODE != 0 ] && echo $EXITCODE > %s/sub%d.fail\n'%(basedir,iJob))
 	
 	sh.write('cp -v higgs*root %s/\n'%basedir)
 	sh.write('rm %s/sub%d.run\n'%(basedir,iJob))
 
+	### SUBMIT COMMANDS ###
 	cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
 	cmdFile.write(cmdline+"\n")
 

@@ -15,7 +15,8 @@
 
 #include "HiggsAnalysis/CombinedLimit/interface/HGGRooPdfs.h"
 
-#include "TLegend.h"
+#include "TRandom3.h"
+#include "TArrow.h"
 
 using namespace RooFit;
 
@@ -26,6 +27,7 @@ class PdfModelBuilder
     map<string,RooFormulaVar*> prods;
     map<string,RooAbsPdf*> pdfs;
     map<string,RooDataHist*> hists;
+    TRandom3 *RandomGen{NULL} ;
     public:
         PdfModelBuilder(){};
         ~PdfModelBuilder(){};
@@ -44,6 +46,7 @@ class PdfModelBuilder
         RooAbsPdf* getExpPol(string prefix, int order); // e^pol
         RooAbsPdf* getDYBernstein(string prefix, int order,TH1D*dy);
         RooAbsPdf* getZPhotonRun1(string prefix, int order);
+        RooAbsPdf* getZModExp(string prefix, int order);
 
         // get the order for the ftest
         // prefix are bern, powlaw, exp, lau
@@ -55,8 +58,136 @@ class PdfModelBuilder
         RooAbsPdf* fTest(const string& prefix,RooDataHist*,int *ord=NULL,const string&plotDir="",TH1D*h=NULL);
         void runFit(RooAbsPdf *pdf, RooDataHist *data, double *NLL, int *stat_t, int MaxTries);
         double getProbabilityFtest(double chi2, int ndof);
+        double getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooDataHist *data, std::string name, bool blind=true);
+
 
 };
+
+double PdfModelBuilder::getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooDataHist *data, std::string name,bool blind){
+
+    double prob;
+    int ntoys = 500;
+
+    // Routine to calculate the goodness of fit. 
+    name+="_gofTest.pdf";
+    RooRealVar norm("norm","norm",data->sumEntries(),0,10E6);
+    //norm.removeRange();
+
+    RooExtendPdf *pdf = new RooExtendPdf("ext","ext",*mpdf,norm);
+
+    // get The Chi2 value from the data
+    RooPlot *plot_chi2 = mass->frame();
+    //if (blind)
+    //{
+    //    data->plotOn(plot_chi2,Name("data"), CutRange("unblindReg_1"));
+    //    data->plotOn(plot_chi2,Name("data"), CutRange("unblindReg_2"));
+    //    data->plotOn(plot_chi2,Name("data"),Invisible());
+    //}
+    //else
+    data->plotOn(plot_chi2,Name("data"),RooFit::Binning(10));
+
+    pdf->plotOn(plot_chi2,Name("pdf"));
+    int np = pdf->getParameters(*data)->getSize();
+
+    double chi2 = plot_chi2->chiSquare("pdf","data",np);
+    std::cout << "Calculating GOF for pdf " << pdf->GetName() << ", using " <<np << " fitted parameters" <<std::endl;
+
+    // The first thing is to check if the number of entries in any bin is < 5 
+    // if so, we don't rely on asymptotic approximations
+    int nBinsForMass = data->numEntries()/10;
+
+    if ((double)data->sumEntries()/nBinsForMass < 5 ){
+
+        std::cout << "Running toys for GOF test " << std::endl;
+        // store pre-fit params 
+        RooArgSet *params = pdf->getParameters(*data);
+        RooArgSet preParams;
+        params->snapshot(preParams);
+        int ndata = data->sumEntries();
+
+        if (RandomGen == NULL ) RandomGen = new TRandom3();
+
+        int npass =0;
+        std::vector<double> toy_chi2;
+        for (int itoy = 0 ; itoy < ntoys ; itoy++){
+            std::cout << Form("\t.. %.1f %% complete\r",100*float(itoy)/ntoys) << std::flush;
+            params->assignValueOnly(preParams);
+            int nToyEvents = RandomGen->Poisson(ndata);
+            RooDataHist *binnedtoy = pdf->generateBinned(RooArgSet(*mass),nToyEvents,0,1);
+            pdf->fitTo(*binnedtoy,RooFit::Minimizer("Minuit2","minimize"),RooFit::Minos(0),RooFit::Hesse(0),RooFit::PrintLevel(-1),RooFit::Strategy(0));
+
+            RooPlot *plot_t = mass->frame();
+            binnedtoy->plotOn(plot_t);
+            pdf->plotOn(plot_t);//,RooFit::NormRange("fitdata_1,fitdata_2"));
+
+            double chi2_t = plot_t->chiSquare(np);
+            if( chi2_t>=chi2) npass++;
+            toy_chi2.push_back(chi2_t*(nBinsForMass-np));
+            delete plot_t;
+        }
+        std::cout << "complete" << std::endl;
+        prob = (double)npass / ntoys;
+
+        TCanvas *can = new TCanvas();
+        double medianChi2 = toy_chi2[(int)(((float)ntoys)/2)];
+        double rms = TMath::Sqrt(medianChi2);
+
+        TH1F toyhist(Form("gofTest_%s.pdf",pdf->GetName()),";Chi2;",50,medianChi2-5*rms,medianChi2+5*rms);
+        for (std::vector<double>::iterator itx = toy_chi2.begin();itx!=toy_chi2.end();itx++){
+            toyhist.Fill((*itx));
+        }
+        toyhist.Draw();
+
+        TArrow lData(chi2*(nBinsForMass-np),toyhist.GetMaximum(),chi2*(nBinsForMass-np),0);
+        lData.SetLineWidth(2);
+        lData.Draw();
+        can->SaveAs(name.c_str());
+
+        // back to best fit     
+        params->assignValueOnly(preParams);
+    } else {
+        prob = TMath::Prob(chi2*(nBinsForMass-np),nBinsForMass-np);
+    }
+    std::cout << "Chi2 in Observed =  " << chi2*(nBinsForMass-np) << std::endl;
+    std::cout << "p-value  =  " << prob << std::endl;
+    delete pdf;
+    return prob;
+}
+
+RooAbsPdf* PdfModelBuilder::getZModExp(string prefix, int order){
+    if (order != 1) return NULL;
+
+    RooArgList *plist = new RooArgList();
+    plist->add(*obs_var); //@0
+    string pname;
+
+        pname = prefix + "_a";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),1.,-5.0, 5.0 );
+        plist->add(*params[pname]); // @1
+
+        pname = prefix + "_b";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),.1,-2, 2 );
+        plist->add(*params[pname]); // @2
+
+        pname = prefix + "_c";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-2, 2.0 );
+        plist->add(*params[pname]); // @3
+
+        pname = prefix + "_mZ";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2);
+        params[pname] -> setConstant();
+        plist->add(*params[pname]); //@4
+
+        pname = prefix + "_Zwidth";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5);
+        params[pname] -> setConstant();
+        plist->add(*params[pname]); //@5
+
+    RooGenericPdf *zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/TMath::Power((@0-@4)*(@0-@4)+@5*@5/4.,@1)",*plist);
+
+
+    return zmod;
+}
 
 RooAbsPdf* PdfModelBuilder::getZPhotonRun1(string prefix, int order){
     if (order != 1) return NULL;
@@ -66,7 +197,7 @@ RooAbsPdf* PdfModelBuilder::getZPhotonRun1(string prefix, int order){
     string pname;
 
         pname = prefix + "_a";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-1.,-15, -0.01 );
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-1, -0.001 );
         plist->add(*params[pname]); // @1
 
         pname = prefix + "_mZ";
@@ -85,8 +216,8 @@ RooAbsPdf* PdfModelBuilder::getZPhotonRun1(string prefix, int order){
     plist = new RooArgList();
     plist->add(*obs_var); //@0
 
-        pname = prefix + "_b";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-1.,-15,-0.01 );
+        pname = prefix + "_a";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-1,-0.001 );
         plist->add(*params[pname]); //@1
 
     RooGenericPdf *part2 = new RooGenericPdf((prefix+"_pdf2").c_str(),(prefix+"_pdf2").c_str(),"TMath::Exp(@1*@0)/(@0*@0)",*plist);
@@ -237,6 +368,8 @@ RooAbsPdf* PdfModelBuilder::getPdf(const string& prefix,int order )
         return getBernstein(prefix+ Form("_ord%d",order),order);
     if (prefix.find("zpho") != string::npos)
         return getZPhotonRun1(prefix+ Form("_ord%d",order),order);
+    if (prefix.find("zmod") != string::npos)
+        return getZModExp(prefix+ Form("_ord%d",order),order);
     if (prefix.find("powlaw") != string::npos )
         return getPowerLawGeneric(prefix+ Form("_ord%d",order),order);
     if (prefix.find("exppol")!=string::npos)
@@ -549,6 +682,13 @@ void BackgroundFitter::init(){
 
 }
 
+void BackgroundFitter::plotOnFrame(RooPlot *p,RooAbsPdf*pdf, int color, int style, const string & legend,TLegend*leg)
+{
+    pdf -> plotOn(p, LineColor(color),LineStyle(style) );
+    TObject *pdfLeg = p->getObject(int(p->numItems()-1));
+    leg->AddEntry(pdfLeg,legend.c_str(),"L"); 
+}
+
 
 void BackgroundFitter::fit(){
     Log(__FUNCTION__,"INFO","fit");
@@ -610,13 +750,9 @@ void BackgroundFitter::fit(){
         RooAbsPdf* zpho = modelBuilder.fTest(Form("zpho_cat%d",cat) ,hist_[name],&zphoOrd,plotDir + "/zpho");
         storedPdfs.add(*zpho);
 
-        //int exppolOrd;
-        //RooAbsPdf* exppol = modelBuilder.fTest(Form("exppol_cat%d",cat) ,hist_[name],&exppolOrd,plotDir + "/exppol");
-        //storedPdfs.add(*exppol);
-
-        //int logpolOrd;
-        //RooAbsPdf* logpol = modelBuilder.fTest(Form("logpol_cat%d",cat) ,hist_[name],&logpolOrd,plotDir + "/logpol");
-        //storedPdfs.add(*logpol);
+        int zmodOrd;
+        RooAbsPdf* zmod = modelBuilder.fTest(Form("zmod_cat%d",cat) ,hist_[name],&zmodOrd,plotDir + "/zmod");
+        storedPdfs.add(*zmod);
 
         int modbernOrd;
         RooAbsPdf* modbern = modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
@@ -669,41 +805,15 @@ void BackgroundFitter::fit(){
             TObject *datLeg = p->getObject(int(p->numItems()-1));
             leg->AddEntry(datLeg,Form("Data - cat%d",cat),"LEP");
 
-            bern->plotOn(p);
-            TObject *bernLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(bernLeg,Form("bern ord=%d",bernOrd),"L");
+            //chi2=modelBuilder.getGoodnessOfFit(x_, bern, hist_[name], plotDir +"/bern/chosen",blind);
+            plotOnFrame( p, bern, kBlue, kSolid,Form("bern ord=%d prob=%.2f",bernOrd, modelBuilder.getGoodnessOfFit(x_, bern, hist_[name], plotDir +"/bern/chosen",blind) ),leg);
+            plotOnFrame( p, dybern, kGray+2, kDashed,Form("dybern ord=%d prob=%.2f",dybernOrd,modelBuilder.getGoodnessOfFit(x_, dybern, hist_[name], plotDir +"/dybern/chosen",blind) ),leg);
+            plotOnFrame( p, zpho, kOrange, kSolid,Form("zpho ord=%d prob=%.2f",zphoOrd,modelBuilder.getGoodnessOfFit(x_, zpho, hist_[name], plotDir +"/zpho/chosen",blind) ),leg);
+            plotOnFrame( p, zmod, kRed+2, kDashed,Form("zmod ord=%d prob=%.2f",zmodOrd,modelBuilder.getGoodnessOfFit(x_, zmod, hist_[name], plotDir +"/zmod/chosen",blind) ),leg);
+            plotOnFrame( p, powlaw, kRed, kSolid,Form("powlaw ord=%d prob=%.2f",powlawOrd,modelBuilder.getGoodnessOfFit(x_, powlaw, hist_[name], plotDir +"/powlaw/chosen",blind) ),leg);
+            plotOnFrame( p, exp, kGreen, kSolid,Form("exp ord=%d prob=%.2f",expOrd,modelBuilder.getGoodnessOfFit(x_, exp, hist_[name], plotDir +"/exp/chosen",blind) ),leg);
+            plotOnFrame( p, lau, kMagenta, kSolid,Form("lau ord=%d prob=%.2f",lauOrd,modelBuilder.getGoodnessOfFit(x_, lau, hist_[name], plotDir +"/lau/chosen",blind) ),leg);
 
-            dybern->plotOn(p,LineColor(kGray),LineStyle(kDashed));
-            TObject *dybernLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(dybernLeg,Form("dybern ord=%d",dybernOrd),"L");
-
-            zpho->plotOn(p,LineColor(kOrange));
-            TObject *zphoLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(zphoLeg,Form("zpho ord=%d",zphoOrd),"L");
-
-            //exppol->plotOn(p,LineColor(kOrange));
-            //TObject *exppolLeg = p->getObject(int(p->numItems()-1));
-            //leg->AddEntry(exppolLeg,Form("exppol ord=%d",exppolOrd),"L");
-
-            //logpol->plotOn(p,LineStyle(kDashed));
-            //TObject *logpolLeg = p->getObject(int(p->numItems()-1));
-            //leg->AddEntry(logpolLeg,Form("logpol ord=%d",logpolOrd),"L");
-
-            //modbern->plotOn(p,LineColor(kGreen),LineStyle(kDashed));
-            //TObject *modbernLeg = p->getObject(int(p->numItems()-1));
-            //leg->AddEntry(modbernLeg,Form("modbern ord=%d",modbernOrd),"L");
-
-            powlaw->plotOn(p,LineColor(kRed));
-            TObject *powlawLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(powlawLeg,Form("powlaw ord=%d",powlawOrd),"L");
-
-            exp->plotOn(p,LineColor(kGreen));
-            TObject *expLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(expLeg,Form("exp ord=%d",expOrd),"L");
-
-            lau->plotOn(p,LineColor(kMagenta));
-            TObject *lauLeg = p->getObject(int(p->numItems()-1));
-            leg->AddEntry(lauLeg,Form("lau ord=%d",lauOrd),"L");
     
             p -> Draw();
             leg->Draw("same");

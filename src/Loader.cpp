@@ -320,6 +320,7 @@ void LoadNero::FillLeptons(){
         l-> SetCharge (((*bl->pdgId)[iL] >0) ?  -1: 1 ); 
         l-> SetTightId (( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight)); 
         l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepMedium));
+        l-> SetMediumIdOrig ((bl->selBits ->at(iL) & BareLeptons::Selection::LepMedium));
         l-> SetLooseId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepLoose));
         if (event_->IsRealData() and event_->runNum() <= 278801 and l->GetType() == 13) // B->F(HIP)
         {
