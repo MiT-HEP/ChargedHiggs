@@ -5,13 +5,14 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
     l->SetPtCut(10);
     l->SetIsoCut(-1.); // absolute isolation
     //https://indico.cern.ch/event/594396/contributions/2402538/attachments/1389409/2116003/20161215_MuonPOG_GeneralPPD.pdf
-    if(!doSynch) l->SetIsoRelCut(0.25); // relative isolation // for muon 0.25 is loose, 0.15 is tight
-    if(!doSynch) l->SetMiniIsoRelCut(-1); // relative mini-isolation
-    if(doSynch) l->SetIsoRelCut(-1); // relative isolation
-    if(doSynch) l->SetMiniIsoRelCut(0.10); // relative mini-isolation
+    //l->SetIsoRelCut(0.25); // relative isolation // for muon 0.25 is loose, 0.15 is tight
+    //l->SetMiniIsoRelCut(-1); // relative mini-isolation
+    l->SetIsoRelCut(-1); // relative isolation
+    l->SetMiniIsoRelCut(0.40); // relative mini-isolation  // 0.1 is tight and 0.4 is for loose
     l->SetEtaCut(2.4);
     l->SetVetoCut(); // loosest selection of them all
     l->SetTightCut(false); // use the loose selection for now
+    l->SetMvaLooseCut(true);
 }
 
 void ChargedHiggsTopBottom::SetJetCuts(Jet *j){
@@ -31,13 +32,12 @@ void ChargedHiggsTopBottom::SetJetCuts(Jet *j){
 void ChargedHiggsTopBottom::SetTauCuts(Tau *t){
     // these are used for the Veto
     t->SetPtCut(20);
-    /// MARIA FIXME 2.4 --> 2.3
-    t->SetEtaCut(2.4);
+    t->SetEtaCut(2.3);
     t->SetMuRej(false);
     t->SetEleRej(false);
     t->SetTrackPtCut(-1.); // no requirement on the leading Track
-    t->SetIsoRelCut(-1); // LooseCombinedIsolationDeltaBetaCorr3Hits
-    t->SetIsoCut(2.5);
+    t->SetIsoRelCut(-1); // NOW byVLooseIsolationMVArun2v1DBoldDMwLT, BEFORE LooseCombinedIsolationDeltaBetaCorr3Hits
+    t->SetIsoCut(-1);
     t->SetProngsCut(-1); // all Prong
     t->SetDecayMode(1);  // 0=TauDecayModeFindingNewDMs 1=TauDecayModeFinding
 }
@@ -61,18 +61,18 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("lep1_pt",leadLep->Pt());
     SetTreeVar("lep1_phi",leadLep->Phi());
     SetTreeVar("lep1_eta",leadLep->Eta());
-    SetTreeVar("lep1_charge",leadLep->Charge());
-    SetTreeVar("lep1_isolation",leadLep->Isolation());
-    if(leadLep->IsMuon()) SetTreeVar("lep1_id",13);
-    if(leadLep->IsElectron()) SetTreeVar("lep1_id",11);
+    //    SetTreeVar("lep1_charge",leadLep->Charge());
+    //    SetTreeVar("lep1_isolation",leadLep->Isolation());
+    if(leadLep->IsMuon()) SetTreeVar("lep1_id",13*leadLep->Charge());
+    if(leadLep->IsElectron()) SetTreeVar("lep1_id",11*leadLep->Charge());
 
     if(trailLep!=NULL) SetTreeVar("lep2_pt",trailLep->Pt());
     if(trailLep!=NULL) SetTreeVar("lep2_phi",trailLep->Phi());
     if(trailLep!=NULL) SetTreeVar("lep2_eta",trailLep->Eta());
-    if(trailLep!=NULL) SetTreeVar("lep2_charge",trailLep->Charge());
-    if(trailLep!=NULL) SetTreeVar("lep2_isolation",trailLep->Isolation());
-    if(trailLep!=NULL && trailLep->IsMuon()) SetTreeVar("lep2_id",13);
-    if(trailLep!=NULL && trailLep->IsElectron()) SetTreeVar("lep2_id",11);
+    //    if(trailLep!=NULL) SetTreeVar("lep2_charge",trailLep->Charge());
+    //    if(trailLep!=NULL) SetTreeVar("lep2_isolation",trailLep->Isolation());
+    if(trailLep!=NULL && trailLep->IsMuon()) SetTreeVar("lep2_id",13*trailLep->Charge());
+    if(trailLep!=NULL && trailLep->IsElectron()) SetTreeVar("lep2_id",11*trailLep->Charge());
 
     SetTreeVar("NJets",e->Njets());
     SetTreeVar("NcentralJets",e->NcentralJets());
@@ -107,10 +107,13 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("MassDRlbmin",evt_minDRlb_invMass);
     SetTreeVar("DEtaMaxBB",evt_DEtaMaxBB);
     SetTreeVar("DRlbmaxPT",evt_DRlbmaxPt);
+    SetTreeVar("MJJJmaxPt",evt_MJJJmaxPt);
+    SetTreeVar("AvDRJJJmaxPt",evt_AvDRJJJmaxPt);
+    SetTreeVar("AvCSVPt",evt_AvCSVPt);
 
     SetTreeVar("mt",evt_MT);
     SetTreeVar("mt2ll",evt_MT2ll);
-    SetTreeVar("mt2bb",evt_MT2bb);
+    //    SetTreeVar("mt2bb",evt_MT2bb);
     SetTreeVar("mt2bb1l",evt_MT2bb1l);
     if(bdt.size()>0) { SetTreeVar("bdt1lh",bdt[0]); } else {SetTreeVar("bdt1lh",-1);}
     if(bdt.size()>1) { SetTreeVar("bdt1lm",bdt[1]); } else {SetTreeVar("bdt1lm",-1);}
@@ -195,9 +198,20 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             //            if(label.find("TTJets_SingleLeptFromT") !=string::npos) mc =102 ;
             //            if(label.find("TTJets_SingleLeptFromTbar") !=string::npos) mc =103 ;
             } else {
-                if(label.find("TTTo2L2Nu") !=string::npos) mc =101 ;
-                if(label.find("TTToSemilepton") !=string::npos) mc =102 ;
-                if(label.find("TT_TuneCUETP8M2T4") !=string::npos) mc =103 ;
+                if(label.find("TTTo2L2Nu_TuneCUETP8M2") !=string::npos) mc =101 ;
+                if(label.find("TTToSemilepton_TuneCUETP8M2") !=string::npos) mc =102 ;
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) mc =103 ;
+
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown") !=string::npos) mc =104 ;
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup") !=string::npos) mc =105 ;
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown") !=string::npos) mc =106 ;
+                if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup") !=string::npos) mc =107 ;
+
+                if(label.find("TTJets") !=string::npos) mc =108 ;
+
+                if(label.find("TTTo2L2Nu_ttbbFilter") !=string::npos) mc =109 ;
+                if(label.find("TTToSemilepton_ttbbFilter") !=string::npos) mc =110 ;
+
             }
 
             if(label.find("ST") !=string::npos) mc =111 ;
@@ -515,15 +529,15 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","lep1_pt",'F');
     Branch("tree_tb","lep1_phi",'F');
     Branch("tree_tb","lep1_eta",'F');
-    Branch("tree_tb","lep1_charge",'F');
-    Branch("tree_tb","lep1_isolation",'F');
+    //    Branch("tree_tb","lep1_charge",'F');
+    //    Branch("tree_tb","lep1_isolation",'F');
     Branch("tree_tb","lep1_id",'F');
 
     Branch("tree_tb","lep2_pt",'F');
     Branch("tree_tb","lep2_phi",'F');
     Branch("tree_tb","lep2_eta",'F');
-    Branch("tree_tb","lep2_charge",'F');
-    Branch("tree_tb","lep2_isolation",'F');
+    //    Branch("tree_tb","lep2_charge",'F');
+    //    Branch("tree_tb","lep2_isolation",'F');
     Branch("tree_tb","lep2_id",'F');
 
     // fill counter and scalar
@@ -543,6 +557,9 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","MassDRlbmin",'F');
     Branch("tree_tb","DEtaMaxBB",'F');
     Branch("tree_tb","DRlbmaxPT",'F');
+    Branch("tree_tb","MJJJmaxPt",'F');
+    Branch("tree_tb","AvDRJJJmaxPt",'F');
+    Branch("tree_tb","AvCSVPt",'F');
 
     // various masses
     Branch("tree_tb","bdt1lh",'F');
@@ -553,7 +570,7 @@ void ChargedHiggsTopBottom::Init()
     Branch("tree_tb","bdt2ll",'F');
     Branch("tree_tb","mt",'F');
     Branch("tree_tb","mt2ll",'F');
-    Branch("tree_tb","mt2bb",'F');
+    //    Branch("tree_tb","mt2bb",'F');
     Branch("tree_tb","mt2bb1l",'F');
     Branch("tree_tb","mtMin",'F');
     Branch("tree_tb","mtMax",'F');
@@ -711,7 +728,6 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
 
 void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasespace, string flavor, string SR)
 {
-    
     AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+SR+flavor+l);
     AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+SR+flavor+l);
     AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+SR+flavor+l);
@@ -882,7 +898,15 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
          **********************************************/
 
 
-        if((l.find("TTTo2L2Nu")!=string::npos) || (l.find("TTToSemilepton")!=string::npos) || (l.find("TT_TuneCUETP8M2T4")!=string::npos)  ) {
+        if((l.find("TTTo2L2Nu_TuneCUETP8M2")!=string::npos) || (l.find("TTToSemilepton_TuneCUETP8M2")!=string::npos)
+           || (l.find("TTTo2L2Nu_ttbbFilter")!=string::npos) || (l.find("TTToSemilepton_ttbbFilter")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown")!=string::npos)
+           || (l.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
+           || (l.find("TTJets")!=string::npos)
+           ) {
 
             BookFlavor(l, category, phasespace, "other_", "");
             BookFlavor(l, category, phasespace, "tt2bMerged_", "");
@@ -931,11 +955,13 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonEta_"+l,"LeptonEta "+l + ";#eta (lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+l,"LeptonPt "+l + ";p_{T}^{lepton} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+l,"LeptonIso "+l + ";iso (lepton) [GeV]",50,0.,50.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+l,"LeptonMva "+l + ";mva (lepton)",50,0.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMiniIso_"+l,"LeptonMiniIso "+l + ";mini iso (lepton) [GeV]",50,0.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+l,"LeptonMva "+l + ";mva (lepton)",50,-1,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+l,"LeptonTrailEta "+l + ";#eta (trailing lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+l,"LeptonTrailPt "+l + ";p_{T}^{trailing lepton} [GeV]",50,0.,200.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+l,"LeptonTrailIso "+l + ";iso (trailing lepton) [GeV]",50,0.,50.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+l,"LeptonTrailMva "+l + ";mva (trailing lepton)",50,0.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMiniIso_"+l,"LeptonTrailMiniIso "+l + ";mini iso (trailing lepton) [GeV]",50,0.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+l,"LeptonTrailMva "+l + ";mva (trailing lepton)",50,-1.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+l,"Mt "+l+";M_{T} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Met_"+l,"Met "+l+";MET [GeV]",50,0.,1000.);
 
@@ -978,19 +1004,25 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/DiLeptonDeltaR_"+l,"DiLeptonDeltaR "+l + ";dR_(l^{1},l^{2})",50,0,2*TMath::Pi());
 
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/MT2ll_"+l,"MT2ll "+l + ";mT2(l^{1},l^{2},met) [GeV]",60,0.,300.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb_"+l,"MT2bb "+l + ";mT2(b^{1},b^{2},met) [GeV]",50,0.,250.);
+        //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb_"+l,"MT2bb "+l + ";mT2(b^{1},b^{2},met) [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb1l_"+l,"MT2bb1l "+l + ";mT2((b^{1}b^{2}), met+l^{1} ) [GeV]",50,0.,250.);
 
         /// Event Shapes
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Centrality_"+l,"Centrality "+l + "; Sum Pt_{i} / Sum E_{i}",25, 0., 1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HemiOut_"+l,"HemiOut "+l + "; (Jet+Lepton) opposite to MET",50, 0., 500.);
 
+
+        /////
+        // JJJ
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/MJJJmaxPT_"+l,"MJJJmaxPT"+l+";M_{JJJ}^{maxP_{T}}",100,0,1000);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/AvDRJJJmaxPT_"+l,"AvDRJJJmaxPT"+l+";AvDR_{JJJ}^{maxP_{T}}",50,0,2*TMath::Pi());
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/AvCSVPt_"+l,"AvCSVPt"+l+";AvCSV",50,0.,1.);
+
         /////
         // lb
-
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/DRlbmaxPT_"+l,"DRlbmaxPT"+l+";dR_{lb}^{maxP_{T}}",50,0,2*TMath::Pi());
 
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_"+l,"minDRlb"+l+";dR_{lb}^{min}",50,0,2*TMath::Pi());  // <-- this has signal discrimination
+        //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_"+l,"minDRlb"+l+";dR_{lb}^{min}",50,0,2*TMath::Pi());  // <-- this has signal discrimination
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_mass_"+l,"minDRlb_mass "+l+";m(lb)^{dR^{min}})",50,0,500);
         //        Book("ChargedHiggsTopBottom/Baseline/Rlb_"+l,"Rlb "+l+";R_{lb}",100,0,2*TMath::Pi());
 
@@ -1040,6 +1072,9 @@ void ChargedHiggsTopBottom::Preselection()
         if(doTaulAnalysis) BookHisto(l, "_1Mu1Ele","Baseline");
         if(doTaulAnalysis) BookHisto(l, "_2Ele","Baseline");
 
+        ///////
+        ///////
+
         BookHisto(l, "","topCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","topCR");
         if(do1lAnalysis) BookHisto(l, "_1Ele","topCR");
@@ -1047,12 +1082,46 @@ void ChargedHiggsTopBottom::Preselection()
         if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCR");
         if(do2lAnalysis) BookHisto(l, "_2Ele","topCR");
 
+        BookHisto(l, "","topCRR4"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "_1Mu","topCRR4");
+        if(do1lAnalysis) BookHisto(l, "_1Ele","topCRR4");
+        if(do2lAnalysis) BookHisto(l, "_2Mu","topCRR4");
+        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCRR4");
+        if(do2lAnalysis) BookHisto(l, "_2Ele","topCRR4");
+
+        BookHisto(l, "","topCRR5"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "_1Mu","topCRR5");
+        if(do1lAnalysis) BookHisto(l, "_1Ele","topCRR5");
+        if(do2lAnalysis) BookHisto(l, "_2Mu","topCRR5");
+        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCRR5");
+        if(do2lAnalysis) BookHisto(l, "_2Ele","topCRR5");
+
+        ///////
+        ///////
+
         BookHisto(l, "","extraRadCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCR");
         if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCR");
         if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCR");
         if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCR");
         if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCR");
+
+        BookHisto(l, "","extraRadCRR7"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCRR7");
+        if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCRR7");
+        if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCRR7");
+        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCRR7");
+        if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCRR7");
+
+        BookHisto(l, "","extraRadCRR10"); // this is when there is nothing
+        if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCRR10");
+        if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCRR10");
+        if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCRR10");
+        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCRR10");
+        if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCRR10");
+
+        ///////
+        ///////
 
         if(do1lAnalysis) BookHisto(l, "","charmCR"); // this is when there is nothing
         if(do1lAnalysis) BookHisto(l, "_1Mu","charmCR");
@@ -1279,7 +1348,8 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
             if(abs(genpar->Eta())>2.4) continue;
 
             if(topFromH!=NULL) {
-                if ( abs(genpar->GetParentPdgId()) == 24 and abs(genpar->GetGrandParentPdgId()) == 6 and topFromH->GetPdgId()*genpar->GetPdgId()>0) {
+                // electron -11; W+ is 24; top is 6
+                if ( abs(genpar->GetParentPdgId()) == 24 and abs(genpar->GetGrandParentPdgId()) == 6 and topFromH->GetPdgId()*genpar->GetPdgId()<0) {
                     if(verbose) cout << "H->top->W->l candidate (there is a second one in the acceptance)" << endl;
                     rightComb=true;
                     leptonFromTopH=genpar;
@@ -1334,38 +1404,9 @@ void ChargedHiggsTopBottom::eventShapePlot(Event*e, string label, string categor
 void ChargedHiggsTopBottom::computeVar(Event*e) {
 
 
-    double minDRbb=99999;
-    double maxDRbb=0;
-    double minDRbb_invMass=-1;
-    double maxDRbb_invMass=-1;
-    double indexI=-1;
-    double indexJ=-1;
-
-    double indexMaxJ=-1;
-
-    for(int i=0;i!=e->Bjets();++i) {
-        Jet* bjet = e->GetBjet(i);
-        for(int j=0;j!=e->Bjets();++j) {
-            if (j==i) continue;
-            double dr = bjet->DeltaR(e->GetBjet(j));
-            double mass = (bjet->GetP4() + e->GetBjet(j)->GetP4()).M();
-            if(dr<minDRbb) { minDRbb=dr; minDRbb_invMass=mass; indexI=i; indexJ=j;}
-            if(dr>maxDRbb and i==0) { maxDRbb=dr; maxDRbb_invMass=mass; indexMaxJ=j;}
-        }
-    }
-
-    evt_minDRbb=minDRbb;
-    evt_minDRbb_invMass=minDRbb_invMass;
-
-    if(e->Bjets()>1) {
-        evt_MT2bb=ChargedHiggs::mt2(e->GetBjet(0)->GetP4(),e->GetBjet(1)->GetP4(),e->GetMet().GetP4());
-        if(leadLep!=NULL) evt_MT2bb1l=ChargedHiggs::mt2(e->GetBjet(0)->GetP4(),e->GetBjet(1)->GetP4(),e->GetMet().GetP4()+leadLep->GetP4());
-    }
-
-
     ////$$$$$$
     ////$$$$$$
-    ////$$$$$$
+    ////$$$$$$  HT, ST
     ////$$$$$$
 
     evt_HT=0;
@@ -1382,7 +1423,7 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
 
     ////$$$$$$
     ////$$$$$$
-    ////$$$$$$
+    ////$$$$$$ Event shapes (centrality, hemi)
     ////$$$$$$
 
     double hemiMetIn = 0.; // all objects inside MET hemisphere
@@ -1414,7 +1455,114 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
     if(sumE!=0) evt_C=sumPt/sumE;
 
 
+    ////$$$$$$
+    ////$$$$$$
+    ////$$$$$$ Loops over B-jets
+    ////$$$$$$
+
     if(e->Bjets()>1) {
+        // to remove later
+        evt_MT2bb=ChargedHiggs::mt2(e->GetBjet(0)->GetP4(),e->GetBjet(1)->GetP4(),e->GetMet().GetP4());
+        if(leadLep!=NULL) evt_MT2bb1l=ChargedHiggs::mt2(e->GetBjet(0)->GetP4(),e->GetBjet(1)->GetP4(),e->GetMet().GetP4()+leadLep->GetP4());
+
+        double minDRbb=99999;
+        double maxDRbb=0;
+        double minDRbb_invMass=-1;
+        double maxDRbb_invMass=-1;
+        double indexI=-1;
+        double indexJ=-1;
+        double indexMaxJ=-1;
+
+
+        double DEtaMaxBB=0.;
+        double sumDRBB=0.;
+
+        for(int i=0;i!=e->Bjets();++i) {
+            Jet* bjet_i = e->GetBjet(i);
+            for(int j=0;j!=e->Bjets();++j) {
+                if (j==i) continue;
+                Jet* bjet_j = e->GetBjet(j);
+
+                // block to check the DRbb
+                double dr = bjet_i->DeltaR(bjet_j);
+                double mass = (bjet_i->GetP4() + bjet_j->GetP4()).M();
+                if(dr<minDRbb) { minDRbb=dr; minDRbb_invMass=mass; indexI=i; indexJ=j;}
+                if(dr>maxDRbb and i==0) { maxDRbb=dr; maxDRbb_invMass=mass; indexMaxJ=j;}
+
+                // block to check the DEtaMaxBB
+                if(bjet_i->DeltaEta(*bjet_j)>DEtaMaxBB) DEtaMaxBB=bjet_i->DeltaEta(bjet_j);
+
+                // block to check the AverageDRBB
+                sumDRBB +=dr;
+
+            }
+        }
+
+        evt_minDRbb=minDRbb;
+        evt_minDRbb_invMass=minDRbb_invMass;
+        evt_DEtaMaxBB=DEtaMaxBB;
+        evt_avDRBB=sumDRBB/e->Bjets();
+
+    }
+
+    double DEtaMaxJJ=0.;
+    double AvCSVPt=0;
+    double SumPt=0;
+
+    for(int i=0;i!=e->NcentralJets();++i) {
+        Jet* lj = e->GetCentralJet(i);
+        for(int j=0;j!=e->NcentralJets();++j) {
+            if (j==i) continue;
+            Jet* jet = e->GetCentralJet(j);
+            if(lj->DeltaEta(*jet)>DEtaMaxJJ) DEtaMaxJJ=lj->DeltaEta(*jet);
+
+            // block to check the ptweighted average CSV of failing jets
+            if(jet->bdiscr<0.8484) AvCSVPt += (jet->bdiscr * jet->GetP4().Pt());
+            if(jet->bdiscr<0.8484) SumPt += jet->GetP4().Pt();
+
+        }
+    }
+
+    if(SumPt!=0) evt_AvCSVPt=AvCSVPt/SumPt;
+    evt_DEtaMaxJJ=DEtaMaxJJ;
+
+    ////$$$$$$
+    ////$$$$$$
+    ////$$$$$$ Lepton and B-jets
+    ////$$$$$$
+
+    double minDRlb=99999;
+    double maxDRlb=0;
+    double minDRlb_invMass=-1;
+    double maxDRlb_invMass=-1;
+
+    double Ptlbmax=0;
+    double DRlbmaxPt=-1;
+
+    for(int i=0;i!=e->Bjets();++i) {
+        Jet* bjet = e->GetBjet(i);
+        double dr = bjet->DeltaR(leadLep);
+        double mass = (bjet->GetP4() + leadLep->GetP4()).M();
+        double pt = (bjet->GetP4() + leadLep->GetP4()).Pt();
+        if(dr<minDRlb) { minDRlb=dr; minDRlb_invMass=mass; }
+        if(pt>Ptlbmax) { DRlbmaxPt=dr; Ptlbmax=pt; }
+    }
+
+    if(trailLep) {
+        for(int i=0;i!=e->Bjets();++i) {
+            Jet* bjet = e->GetBjet(i);
+            double dr = bjet->DeltaR(trailLep);
+            double mass = (bjet->GetP4() + trailLep->GetP4()).M();
+            double pt = (bjet->GetP4() + trailLep->GetP4()).Pt();
+            if(dr<minDRlb) { minDRlb=dr; minDRlb_invMass=mass; }
+            if(pt>Ptlbmax) { DRlbmaxPt=dr; Ptlbmax=pt; }
+        }
+    }
+
+    evt_minDRlb_invMass=minDRlb_invMass;
+    evt_DRlbmaxPt=DRlbmaxPt;
+
+    if(e->Bjets()>0) {
         Jet * bj1 = e->GetBjet(0);
         if (bj1 != NULL) {
             float deltaEtalb= bj1->DeltaEta(*leadLep);
@@ -1431,9 +1579,44 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
         }
     }
 
+
     ////$$$$$$
     ////$$$$$$
+    ////$$$$$$ Loop over central jets
     ////$$$$$$
+
+    double PtJJJmax=0;
+    double MJJJmaxPt=-1;
+    double AvDRJJJmaxPT=-1;
+
+    for(int i=0;i!=e->NcentralJets();++i) {
+        Jet* jet_i = e->GetJet(i);
+        for(int j=0;j!=e->NcentralJets();++j) {
+            if(i==j) continue;
+            Jet* jet_j = e->GetJet(j);
+            double dr_ij = jet_i->DeltaR(jet_j);
+            AvDRJJJmaxPT += dr_ij;
+            for(int k=0;k!=e->NcentralJets();++k) {
+
+                if(i==k) continue;
+                if(j==k) continue;
+                Jet* jet_k = e->GetJet(k);
+                double dr_kj = jet_k->DeltaR(jet_j);
+                double dr_ki = jet_k->DeltaR(jet_i);
+                double mass = (jet_i->GetP4() + jet_j->GetP4() + jet_k->GetP4()).M();
+                double pt = (jet_i->GetP4() + jet_j->GetP4() + jet_k->GetP4()).Pt();
+                if(pt>Ptlbmax) { MJJJmaxPt=mass; PtJJJmax=pt; }
+                AvDRJJJmaxPT += dr_kj+dr_ki;
+
+            }
+        }
+    }
+
+    evt_AvDRJJJmaxPt = AvDRJJJmaxPT;
+
+    ////$$$$$$
+    ////$$$$$$
+    ////$$$$$$ Below for dileptons only
     ////$$$$$$
 
     if(leadLep==NULL) return;
@@ -1472,6 +1655,7 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+label,systname,leadLep->Pt(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonEta_"+label,systname,leadLep->Eta(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+label,systname,leadLep->Isolation(),e->weight());
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMiniIso_"+label,systname,leadLep->MiniIsolation(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+label,systname,leadLep->Mva(),e->weight());
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/ptW_"+label,systname, (e->GetMet().GetP4()+leadLep->GetP4()).Pt(), e->weight() );
@@ -1503,6 +1687,7 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+label,systname,trailLep->Pt(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+label,systname,trailLep->Eta(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+label,systname,trailLep->Isolation(),e->weight());
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMiniIso_"+label,systname,trailLep->MiniIsolation(),e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+label,systname,trailLep->Mva(),e->weight());
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MT2ll_"+label, systname, evt_MT2ll , e->weight() );
@@ -1596,7 +1781,7 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
     if(e->Bjets()>1) {
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+label, systname, evt_minDRbb , e->weight() );
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+label, systname, evt_minDRbb_invMass , e->weight() );
-        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb_"+label, systname, evt_MT2bb , e->weight() );
+        //        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb_"+label, systname, evt_MT2bb , e->weight() );
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MT2bb1l_"+label, systname, evt_MT2bb1l , e->weight() );
 
         Jet* bjet1 = e->GetBjet(0);
@@ -1622,47 +1807,9 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
     //    if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/NextOverLeadingBPt_"+label,systname, e->GetBjet(1)->Pt()/e->GetBjet(0)->Pt() ,e->weight());
     //    if(e->Bjets()>0) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/LeadingBPt_OverHT_"+label,systname, e->GetBjet(0)->Pt()/evt_HT ,e->weight());
 
-    if(e->Bjets()>1) {
+    if(e->Bjets()>1)         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+label, systname, evt_DEtaMaxBB , e->weight() );
 
-        double DEtaMaxBB=0.;
-
-        for(int i=0;i!=e->Bjets();++i) {
-            Jet* bj = e->GetBjet(i);
-            for(int j=0;j!=e->Bjets();++j) {
-                if (j==i) continue;
-                Jet* bjet = e->GetBjet(j);
-                if(bj->DeltaEta(*bjet)>DEtaMaxBB) DEtaMaxBB=bj->DeltaEta(*bjet);
-
-                //                double dr = bjet->DeltaR(e->GetBjet(j));
-                //                double mass = (bjet->GetP4() + e->GetBjet(j)->GetP4()).M();
-                //                if(dr<minDRbb) { minDRbb=dr; minDRbb_invMass=mass; indexI=i; indexJ=j;}
-                //                if(dr>maxDRbb and i==0) { maxDRbb=dr; maxDRbb_invMass=mass; indexMaxJ=j;}
-            }
-        }
-
-        evt_DEtaMaxBB=DEtaMaxBB;
-        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+label, systname, evt_DEtaMaxBB , e->weight() );
-
-    }
-
-    double DEtaMaxJJ=0.;
-
-    for(int i=0;i!=e->Njets();++i) {
-        Jet* lj = e->GetJet(i);
-        for(int j=0;j!=e->Njets();++j) {
-            if (j==i) continue;
-            Jet* jet = e->GetJet(j);
-            if(lj->DeltaEta(*jet)>DEtaMaxJJ) DEtaMaxJJ=lj->DeltaEta(*jet);
-
-            //                double dr = bjet->DeltaR(e->GetBjet(j));
-            //                double mass = (bjet->GetP4() + e->GetBjet(j)->GetP4()).M();
-            //                if(dr<minDRbb) { minDRbb=dr; minDRbb_invMass=mass; indexI=i; indexJ=j;}
-            //                if(dr>maxDRbb and i==0) { maxDRbb=dr; maxDRbb_invMass=mass; indexMaxJ=j;}
-         }
-    }
-
-    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMax_"+label, systname, DEtaMaxJJ , e->weight() );
-
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMax_"+label, systname, evt_DEtaMaxJJ , e->weight() );
 
     ///////$$$$$$
     ///////$$$$$$
@@ -1681,51 +1828,32 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
     ///////$$$$$$
     ///////$$$$$$
 
-    double minDRlb=99999;
-    double maxDRlb=0;
-    double minDRlb_invMass=-1;
-    double maxDRlb_invMass=-1;
-
-    double Ptlbmax=0;
-    double DRlbmaxPt=-1;
-
-    for(int i=0;i!=e->Bjets();++i) {
-        Jet* bjet = e->GetBjet(i);
-        double dr = bjet->DeltaR(leadLep);
-        double mass = (bjet->GetP4() + leadLep->GetP4()).M();
-        double pt = (bjet->GetP4() + leadLep->GetP4()).Pt();
-        if(dr<minDRlb) { minDRlb=dr; minDRlb_invMass=mass; }
-        if(pt>Ptlbmax) { DRlbmaxPt=dr; Ptlbmax=pt; }
-    }
-
-    if(trailLep) {
-        for(int i=0;i!=e->Bjets();++i) {
-            Jet* bjet = e->GetBjet(i);
-            double dr = bjet->DeltaR(trailLep);
-            double mass = (bjet->GetP4() + trailLep->GetP4()).M();
-            double pt = (bjet->GetP4() + trailLep->GetP4()).Pt();
-            if(dr<minDRlb) { minDRlb=dr; minDRlb_invMass=mass; }
-            if(pt>Ptlbmax) { DRlbmaxPt=dr; Ptlbmax=pt; }
-        }
-    }
-
-    evt_minDRlb_invMass=minDRlb_invMass;
-    evt_DRlbmaxPt=DRlbmaxPt;
 
     if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_mass_"+label, systname, evt_minDRlb_invMass , e->weight() );
-    if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_"+label, systname, minDRlb , e->weight() );
+    //    if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_"+label, systname, evt_minDRlb , e->weight() );
 
     if(e->Bjets()>0) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DRlbmaxPT_"+label, systname, evt_DRlbmaxPt , e->weight() );
 
-    ///////$$$$$$
+    if(e->NcentralJets()>2) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MJJJmaxPT_"+label, systname, evt_MJJJmaxPt , e->weight() );
+    if(e->NcentralJets()>2) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/AvDRJJJmaxPT_"+label, systname, evt_AvDRJJJmaxPt , e->weight() );
+
+    if(e->NcentralJets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/AvCSVPt_"+label, systname, evt_AvDRJJJmaxPt , e->weight() );
+
 }
 
 
 void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, string systname, string phasespace, string Sregion) {
 
 
-    //    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos))  {
-    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4")!=string::npos)  ) {
+    if((label.find("TTTo2L2Nu_TuneCUETP8M2")!=string::npos) || (label.find("TTToSemilepton_TuneCUETP8M2")!=string::npos)
+       || (label.find("TTTo2L2Nu_ttbbFilter")!=string::npos) || (label.find("TTToSemilepton_ttbbFilter")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown")!=string::npos)
+       || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
+       || (label.find("TTJets")!=string::npos)
+       ) {
 
         //https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/TopQuarkAnalysis/TopTools/plugins/GenTtbarCategorizer.cc#L35
         string LabelHF="other_";
@@ -1797,16 +1925,25 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
 
 void ChargedHiggsTopBottom::printSynch(Event*e) {
 
+    // note the METfilters
     // NB to change miniISO,ptCutEle + tausID + Bjets medium
     std::cout << "=======================================" << std::endl;
 
+    //    std::cout << "event=" << e->eventNum() << " ntaus=" << e->Ntaus() << std::endl;
+
+    //    if( e->eventNum()==1741933 || e->eventNum()==1741934 || e->eventNum()==1741940 || e->eventNum()==1741946 || e->eventNum()==1741948) {
+    //    if( e->eventNum()==1741948) {
+    //        if(e->Ntaus()>0) std::cout << " tauPt=" << e->GetTau(0)->Pt() << " tauEta=" << e->GetTau(0)->Eta() << " tauPhi=" << e->GetTau(0)->Phi();
+    //        if(e->Ntaus()>1) std::cout << " tauPt=" << e->GetTau(1)->Pt() << " tauEta=" << e->GetTau(1)->Eta() << " tauPhi=" << e->GetTau(1)->Phi();
+
+
     std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum()<< std::endl;
-    if(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger(HLT_Ele32_eta2p1_WPTight_Gsf)" << std::endl;
-    if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger(HLT_IsoMu24 and HLT_IsoTkMu24)" << std::endl;
+
+    if(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")) std::cout << "passEleTrigger(Ele27_eta2p1_WPTight_Gsf or Ele105_CaloIdVT_GsfTrkIdT or Photon165_HE10 or Ele35_WPLoose_Gsf)" << std::endl;
+    if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"))) std::cout << "passTrigger(IsoMu24 and IsoTkMu24 and Mu50)" << std::endl;
     //        if(e->GetName().find("SingleElectron")!=string::npos and e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger" << std::endl;
     //        if(e->GetName().find("SingleMuon")!=string::npos and (e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger" << std::endl;
-    std::cout << " Nleps(pt>10, eta<2.4, miniRelIso<0.1)=" << e->Nleps() << std::endl;
-    std::cout << " leadLep " << leadLep << std::endl;
+    std::cout << " Nleps(pt>10, eta<2.4)=" << e->Nleps() << std::endl;
     if(leadLep != NULL) {
         std::cout << " leadLep->Pt()=" << leadLep->Pt();
         std::cout << " leadLep->Eta()=" << leadLep->Eta();
@@ -1819,12 +1956,12 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
         std::cout << " " << std::endl;
     }
     if(trailLep != NULL) {
-        std::cout << " leadLep->Pt()=" << trailLep->Pt();
-        std::cout << " leadLep->Eta()=" << trailLep->Eta();
-        std::cout << " leadLep->Phi()=" << trailLep->Phi();
-        std::cout << " leadLep->Isolation()=" << trailLep->Isolation();
-        std::cout << " leadLep->MiniIsolation()=" << trailLep->MiniIsolation();
-        std::cout << " leadLep->IsMuon()=" << trailLep->IsMuon() << " leadLep->IsElectron()=" << trailLep->IsElectron();
+        std::cout << " trailLep->Pt()=" << trailLep->Pt();
+        std::cout << " trailLep->Eta()=" << trailLep->Eta();
+        std::cout << " trailLep->Phi()=" << trailLep->Phi();
+        std::cout << " trailLep->Isolation()=" << trailLep->Isolation();
+        std::cout << " trailLep->MiniIsolation()=" << trailLep->MiniIsolation();
+        std::cout << " trailLep->IsMuon()=" << trailLep->IsMuon() << " trailLep->IsElectron()=" << trailLep->IsElectron();
         std::cout << " " << std::endl;
     }
     std::cout << " nCentralJets(pt>40,absEta<2.4,looseId)=" << e->NcentralJets();
@@ -1850,6 +1987,8 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
     }
 
     //    std::cout << "=======================================" << std::endl;
+
+    //    }
 
 }
 
@@ -1915,8 +2054,11 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     for(int i=0;i!=e->Nleps();++i) {
         Lepton *it = e->GetLepton(i);
 
-        bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and (it->Isolation() < 0.15*it->GetP4().Pt()) and leadLep==NULL );
-        bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsTight() and leadLep==NULL );
+        //        bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and (it->Isolation() < 0.15*it->GetP4().Pt()) and leadLep==NULL );
+        //        bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsTight() and leadLep==NULL );
+
+        bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and it->MiniIsolation() < 0.1 and leadLep==NULL );
+        bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsEleMvaTight() and it->MiniIsolation() < 0.1 and leadLep==NULL );
 
         if(muon or ele) {
 
@@ -2080,6 +2222,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             if(onemu) {
                 category="_1Mu";
                 // RECO
+                if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
+                // ID
                 if (not e->IsRealData()) { e->SetPtEtaSF("muID",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muID"); }
                 // ISO
                 if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
@@ -2088,8 +2232,12 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
             if(oneele) {
                 category="_1Ele";
-                // RECO/ISO and missing TRG
-                if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
+                // ID-MVA
+                if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
+                // miniIso
+                if (not e->IsRealData()) { e->SetPtEtaSF("eleTightIso",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightIso"); }
+                // TRG
+                if (not e->IsRealData()) { e->SetPtEtaSF("eleTightTRG",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightTRG"); }
             }
         }
 
@@ -2123,11 +2271,15 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                 // leading RECO-medium ISO-tight; subleading RECO-loose ISO-tight
                 // TRG
                 if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
-                // RECO-leading
+                // RECO
+                if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
+                // ID-leading
                 if (not e->IsRealData()) { e->SetPtEtaSF("muID",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muID"); }
                 // ISO-leading
                 if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
-                // RECO-trailing
+                // RECO trailing
+                if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
+                // ID-trailing
                 if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
                 // ISO-trailing
                 if (not e->IsRealData()  && trailLep->Pt()>20) { e->SetPtEtaSF("muISOloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISOloose"); }
@@ -2135,21 +2287,36 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             if(twoele) {
                 category="_2Ele";
                 // RECO/ISO applied and ele TRG missing
-                if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
-                if (not e->IsRealData()) { e->SetPtEtaSF("eleveto",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleveto"); }
+                if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
+                if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLoose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLoose"); }
+
+                if (not e->IsRealData()) { e->SetPtEtaSF("eleTightIso",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightIso"); }
+                if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLooseIso",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLooseIso"); }
+
+                if (not e->IsRealData()) { e->SetPtEtaSF("eleTightTRG",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightTRG"); }
             }
             // this 1Mu1Ele muon above the muon trigger threshould otherwise bias in the turnon
             if(onemuoneele) {
                 category="_1Mu1Ele";
                 if(leadLep->IsElectron() and trailLep->IsMuon()) {
-                    if (not e->IsRealData()) { e->SetPtEtaSF("eletight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eletight"); }
-                    if (not e->IsRealData() && trailLep->Pt()>30) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
-                    if (not e->IsRealData() && trailLep->Pt()>30) { e->SetPtEtaSF("muISOloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISOloose"); }
+                    // ele
+                    if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("eleTightIso",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightIso"); }
+                    // mu
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muISOloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISOloose"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muLooseTRG",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muLooseTRG"); }
                 }
                 if(leadLep->IsMuon() and trailLep->IsElectron()) {
-                    if (not e->IsRealData()) { e->SetPtEtaSF("eleveto",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleveto"); }
+                    // ele
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLoose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLoose"); }
+                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLooseIso",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLooseIso"); }
+                    // mu
                     if (not e->IsRealData()) { e->SetPtEtaSF("muID",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muID"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
                 }
             }
         }
@@ -2186,7 +2353,16 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         }
     } else {
         if (not e->IsRealData() and
-            ((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4")!=string::npos)  )) {
+            ((label.find("TTTo2L2Nu_TuneCUETP8M2")!=string::npos) || (label.find("TTToSemilepton_TuneCUETP8M2")!=string::npos)
+             || (label.find("TTTo2L2Nu_ttbbFilter")!=string::npos) || (label.find("TTToSemilepton_ttbbFilter")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown")!=string::npos)
+             || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
+             || (label.find("TTJets")!=string::npos)
+             )) {
+
             e->ApplyTopReweight();
         }
     }
@@ -2340,8 +2516,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
 
     bool Baseline=(e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 )));
+    bool BaselineTau=(e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets()==3 ) || ( do2lAnalysis && e->NcentralJets()==1 )));
 
-    if( Baseline or (doTaulAnalysis && e->Bjets() > 0 )) {
+    if( Baseline or (doTaulAnalysis && BaselineTau )) {
 
         ////////
         ////
@@ -2442,9 +2619,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         //        std::cout << "doTaulAnalysis" << doTaulAnalysis << std::endl;
         // this target the 1l final state
         // >=3 jets for 1l and >=1 jets for the 2l
-        bool taul1L=(trailLep==NULL and e->NcentralJets() >2);
-        bool taul2L=(trailLep!=NULL and e->NcentralJets() >0);
-        if( doTaulAnalysis &&  e->Bjets() > 0 &&  (taul1L or taul2L) && evt_MT>=120) {
+        bool taul1L=(trailLep==NULL);
+        bool taul2L=(trailLep!=NULL);
+        if( doTaulAnalysis &&  BaselineTau > 0 &&  (taul1L or taul2L) && evt_MT>=120) {
             //            cout << "filling tree "<< endl;
             if(writeTree) setTree(e,label,category);
             if(writeTree) FillTree("tree_tb");
@@ -2459,6 +2636,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     bool charmCR=false;
     bool extraRadCR=false;
     bool topCR=false;
+    bool topCRR4=false;
+    bool topCRR5=false;
+    bool extraRadCRR7=false;
+    bool extraRadCRR10=false;
     //    bool highMTCR=false;
     //    bool lowMTCR=false;
 
@@ -2467,8 +2648,19 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if( do1lAnalysis and e->NcentralJets() >= 5 and e->Bjets() == 1 ) extraRadCR=true;
     if( do2lAnalysis and e->NcentralJets() >= 3 and e->Bjets() == 1 ) extraRadCR=true;
 
+    if( do1lAnalysis and e->NcentralJets() == 5 and e->Bjets() == 1 ) extraRadCRR7=true;
+    if( do2lAnalysis and e->NcentralJets() == 3 and e->Bjets() == 1 ) extraRadCRR7=true;
+    if( do1lAnalysis and e->NcentralJets() >5 and e->Bjets() == 1 ) extraRadCRR10=true;
+    if( do2lAnalysis and e->NcentralJets() >3 and e->Bjets() == 1 ) extraRadCRR10=true;
+
     if( do1lAnalysis and e->NcentralJets() == 4 and e->Bjets() > 0 and e->Bjets() < 3 ) topCR=true;
     if( do2lAnalysis and e->NcentralJets() == 2 and e->Bjets() > 0 ) topCR=true;
+
+    if( do1lAnalysis and e->NcentralJets() == 4 and e->Bjets() ==1 and e->Bjets() < 3 ) topCRR4=true;
+    if( do2lAnalysis and e->NcentralJets() == 2 and e->Bjets() ==1 ) topCRR4=true;
+
+    if( do1lAnalysis and e->NcentralJets() == 4 and e->Bjets() > 1 and e->Bjets() < 3 ) topCRR5=true;
+    if( do2lAnalysis and e->NcentralJets() == 2 and e->Bjets() > 1 ) topCRR5=true;
 
     //    if( do1lAnalysis && evt_MT>=120 ) highMTCR=true;
     //    if( do1lAnalysis && evt_MT<120 ) lowMTCR=true;
@@ -2478,20 +2670,39 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if(topCR) eventShapePlot(e, label, category, systname,"topCR");
     if(topCR) classifyHF(e, label, category, systname,"topCR","");
 
+    if(topCRR4) jetPlot(e, label, category, systname,"topCRR4");
+    if(topCRR4) leptonPlot(e,label, category, systname,"topCRR4");
+    if(topCRR4) eventShapePlot(e, label, category, systname,"topCRR4");
+    if(topCRR4) classifyHF(e, label, category, systname,"topCRR4","");
+
+    if(topCRR5) jetPlot(e, label, category, systname,"topCRR5");
+    if(topCRR5) leptonPlot(e,label, category, systname,"topCRR5");
+    if(topCRR5) eventShapePlot(e, label, category, systname,"topCRR5");
+    if(topCRR5) classifyHF(e, label, category, systname,"topCRR5","");
+
+    /////
+
     if(extraRadCR) jetPlot(e, label, category, systname,"extraRadCR");
     if(extraRadCR) leptonPlot(e, label, category, systname,"extraRadCR");
     if(extraRadCR) eventShapePlot(e, label, category, systname,"extraRadCR");
     if(extraRadCR) classifyHF(e, label, category, systname,"extraRadCR","");
 
+    if(extraRadCRR10) jetPlot(e, label, category, systname,"extraRadCRR10");
+    if(extraRadCRR10) leptonPlot(e, label, category, systname,"extraRadCRR10");
+    if(extraRadCRR10) eventShapePlot(e, label, category, systname,"extraRadCRR10");
+    if(extraRadCRR10) classifyHF(e, label, category, systname,"extraRadCRR10","");
+
+    if(extraRadCRR7) jetPlot(e, label, category, systname,"extraRadCRR7");
+    if(extraRadCRR7) leptonPlot(e, label, category, systname,"extraRadCRR7");
+    if(extraRadCRR7) eventShapePlot(e, label, category, systname,"extraRadCRR7");
+    if(extraRadCRR7) classifyHF(e, label, category, systname,"extraRadCRR7","");
+
+    /////
+
     if(do1lAnalysis && charmCR) jetPlot(e, label, category, systname,"charmCR");
     if(do1lAnalysis && charmCR) leptonPlot(e, label, category, systname,"charmCR");
     if(do1lAnalysis && charmCR) eventShapePlot(e, label, category, systname,"charmCR");
     if(do1lAnalysis && charmCR) classifyHF(e, label, category, systname,"charmCR","");
-
-    //    if(do1lAnalysis && topCR && highMTCR) jetPlot(e, label, category, systname,"highMTCR");
-    //    if(do1lAnalysis && topCR && highMTCR) leptonPlot(e, label, category, systname,"highMTCR");
-    //    if(do1lAnalysis && topCR && lowMTCR) jetPlot(e, label, category, systname,"lowMTCR");
-    //    if(do1lAnalysis && topCR && lowMTCR) leptonPlot(e, label, category, systname,"lowMTCR");
 
     ////////
     ////
