@@ -2,6 +2,7 @@
 #define WEIGHT_H
 
 #include "interface/SF.hpp"
+#include "interface/SF_CSVReweight.hpp"
 #include "interface/MC.hpp"
 #include "interface/PU.hpp"
 #include "interface/Smearable.hpp"
