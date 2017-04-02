@@ -957,12 +957,12 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonEta_"+l,"LeptonEta "+l + ";#eta (lepton)",20,-5.,5.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonPt_"+l,"LeptonPt "+l + ";p_{T}^{lepton} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonIso_"+l,"LeptonIso "+l + ";iso (lepton) [GeV]",50,0.,50.);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMiniIso_"+l,"LeptonMiniIso "+l + ";mini iso (lepton) [GeV]",50,0.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMiniIso_"+l,"LeptonMiniIso "+l + ";mini iso (lepton) [GeV]",50,0.,0.5);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonMva_"+l,"LeptonMva "+l + ";mva (lepton)",50,-1,1.);
         if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailEta_"+l,"LeptonTrailEta "+l + ";#eta (trailing lepton)",20,-5.,5.);
         if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailPt_"+l,"LeptonTrailPt "+l + ";p_{T}^{trailing lepton} [GeV]",50,0.,200.);
         if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailIso_"+l,"LeptonTrailIso "+l + ";iso (trailing lepton) [GeV]",50,0.,50.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMiniIso_"+l,"LeptonTrailMiniIso "+l + ";mini iso (trailing lepton) [GeV]",50,0.,1.);
+        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMiniIso_"+l,"LeptonTrailMiniIso "+l + ";mini iso (trailing lepton) [GeV]",50,0.,0.5);
         if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/LeptonTrailMva_"+l,"LeptonTrailMva "+l + ";mva (trailing lepton)",50,-1.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Mt_"+l,"Mt "+l+";M_{T} [GeV]",50,0.,250.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/Met_"+l,"Met "+l+";MET [GeV]",50,0.,1000.);
@@ -1016,7 +1016,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
         /////
         // JJJ
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/MJJJmaxPT_"+l,"MJJJmaxPT"+l+";M_{JJJ}^{maxP_{T}}",100,0,1000);
+        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/MJJJmaxPT_"+l,"MJJJmaxPT"+l+";M_{JJJ}^{maxP_{T}}",50,0,1000);
         if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/AvDRJJJmaxPT_"+l,"AvDRJJJmaxPT"+l+";AvDR_{JJJ}^{maxP_{T}}",50,0,2*TMath::Pi());
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/AvCSVPt_"+l,"AvCSVPt"+l+";AvCSV",50,0.,1.);
 
@@ -1587,30 +1587,32 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
     ////$$$$$$ Loop over central jets
     ////$$$$$$
 
-    if(do1lAnalysis) {
+    if(do1lAnalysis and e->NcentralJets() >= 3 ) {
 
         double PtJJJmax=0;
         double MJJJmaxPt=-1;
         double AvDRJJJmaxPT=-1;
 
+        int indexi=-1;
+        int indexj=-1;
+        int indexk=-1;
+
         for(int i=0;i!=e->NcentralJets();++i) {
-            Jet* jet_i = e->GetJet(i);
+            Jet* jet_i = e->GetCentralJet(i);
             for(int j=0;j!=e->NcentralJets();++j) {
                 if(i==j) continue;
-                Jet* jet_j = e->GetJet(j);
+                Jet* jet_j = e->GetCentralJet(j);
                 double dr_ij = jet_i->DeltaR(jet_j);
-                AvDRJJJmaxPT += dr_ij;
                 for(int k=0;k!=e->NcentralJets();++k) {
 
                     if(i==k) continue;
                     if(j==k) continue;
-                    Jet* jet_k = e->GetJet(k);
+                    Jet* jet_k = e->GetCentralJet(k);
                     double dr_kj = jet_k->DeltaR(jet_j);
                     double dr_ki = jet_k->DeltaR(jet_i);
                     double mass = (jet_i->GetP4() + jet_j->GetP4() + jet_k->GetP4()).M();
                     double pt = (jet_i->GetP4() + jet_j->GetP4() + jet_k->GetP4()).Pt();
-                    if(pt>Ptlbmax) { MJJJmaxPt=mass; PtJJJmax=pt; }
-                    AvDRJJJmaxPT += dr_kj+dr_ki;
+                    if(pt>Ptlbmax) { MJJJmaxPt=mass; PtJJJmax=pt; AvDRJJJmaxPT = (dr_kj+dr_ki + dr_ij)/3;}
 
                 }
             }
@@ -2001,7 +2003,7 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
     //        std::cout << " systname=" << systname << std::endl;
 
     for(int i=0;i!=min(e->NcentralJets(),10);++i) {
-        std::cout << "    pt[" <<i<<"]="<< e->GetJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetJet(i)->GetP4().Eta() << " phi[" <<i<<"]="<< e->GetJet(i)->GetP4().Phi() << std::endl;
+        std::cout << "    pt[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Eta() << " phi[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Phi() << std::endl;
     }
 
     //    std::cout << "=======================================" << std::endl;
@@ -2537,7 +2539,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     bool rightCombination =true; // for all the bkg
 
     bool Baseline=(e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 )));
-    bool BaselineTau=(e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets()==3 ) || ( do2lAnalysis && e->NcentralJets()==1 )));
+    bool BaselineTau=(e->Bjets() > 0 && ( ( trailLep==NULL && e->NcentralJets()==3 ) || ( trailLep!=NULL && e->NcentralJets()==1 )));
 
     auto sf=dynamic_cast<SF_CSVReweight*>(e->GetWeight()->GetSF("btag-reweight"));
     if (sf == NULL)  Log(__FUNCTION__,"ERROR","Unable to find btag reweight sf");
