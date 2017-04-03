@@ -49,9 +49,6 @@ KalmanMuonCalibrator::KalmanMuonCalibrator(const std::string& filename) {
   scale_B4 = (TH3F*)file_->Get("B4") ; 
 
 
-
-
-
   //Shifted versions for systematic errors
   shifted_A =(TH3F*)scale_A->Clone();
   shifted_A->SetName("shifted_A");
@@ -67,8 +64,6 @@ KalmanMuonCalibrator::KalmanMuonCalibrator(const std::string& filename) {
   shifted_A3->SetName("shifted_A3");
   shifted_A4 =(TH3F*)scale_A4->Clone();
   shifted_A4->SetName("shifted_A4");
-
-
 
   shifted_e = (TH3F*)scale_e->Clone();
   shifted_e->SetName("shifted_e");

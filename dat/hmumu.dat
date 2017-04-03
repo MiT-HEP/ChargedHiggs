@@ -30,5 +30,5 @@ addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M130')
 addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125')
 addConfig=HmumuAnalysis|AddLabel('ttHToNonbb_M125')
 addConfig=HmumuAnalysis|unblind=1
-addConfig=HmumuAnalysis|weights.push_back('bdt_2016_03_30.xml')
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_2016_03_30.xml')
 addConfig=HmumuAnalysis|catType=0

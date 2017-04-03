@@ -327,7 +327,7 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     SetVariable("dimu_eta",Hmm.Eta());    
     SetVariable("dimu_abs_dEta",fabs(mu0->Eta()-mu1->Eta()));    
     SetVariable("dimu_abs_dPhi",fabs(mu0->DeltaPhi(*mu1)));
-    SetVariable("dimu_abs_dPhiStar",dimu_dPhiStar(mu0,mu1));
+    SetVariable("dimu_dPhiStar",dimu_dPhiStar(mu0,mu1));
     if (jets.size() >=1)
     {
         SetVariable("jet1_pt",jets[0]->Pt());    
@@ -451,7 +451,7 @@ void HmumuAnalysis::InitTmva(){
     AddVariable("dimu_eta",'F');    
     AddVariable("dimu_abs_dEta",'F');    
     AddVariable("dimu_abs_dPhi",'F');
-    AddVariable("dimu_abs_dPhiStar",'F');
+    AddVariable("dimu_dPhiStar",'F');
     AddVariable("jet1_pt",'F');    
     AddVariable("jet2_pt",'F');    
     AddVariable("jet1_eta",'F');    
@@ -490,8 +490,10 @@ void HmumuAnalysis::Init(){
     rnd_ . reset( new TRandom3() ) ;
 
     // define categories -- for booking histos
+    Log(__FUNCTION__,"INFO",Form("Loading Configuration with catType=%d",catType) );
     if (catType>=1)
     {
+        categories_.clear();
         for (int i=0;i<16;++i)
             categories_.push_back(Form("cat%d",i));
         InitTmva();
@@ -501,6 +503,7 @@ void HmumuAnalysis::Init(){
         vector< string> mu_cats{"BB","BO","BE","OO","OE","EE"};
         vector<string> vbf_cats{"VBF0","GF","VBF1","OneB","Untag0","Untag1"};
 
+        categories_.clear();
         for( const auto & m : mu_cats)
         for( const auto & v : vbf_cats)
         {
@@ -519,7 +522,7 @@ void HmumuAnalysis::Init(){
         {
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
             // for systematics, only counts the total
-	        Book ("HmumuAnalysis/Vars/Mmm_Count_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 1,105,150); // every 4 (old16) per GeV
+	        Book ("HmumuAnalysis/Vars/Mmm_Count_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 1,110,150); // 
             AddFinalHisto("HmumuAnalysis/Vars/Mmm_Count_"+c+"_"+l);
         }
     }

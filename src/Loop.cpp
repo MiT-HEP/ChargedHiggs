@@ -175,6 +175,9 @@ void Looper::Loop()
 						event_ -> GetWeight() -> clearSF() ;
 						event_ -> GetWeight() -> clearPU() ; // for target
 						if ( a->doAnalyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
+#ifdef VERBOSE
+						if (VERBOSE > 1) Log(__FUNCTION__,"DEBUG", string("Done: ") + a->name());
+#endif
 					}
 				}
 				// necessary for corrector smearer!

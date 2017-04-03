@@ -9,7 +9,7 @@ class HmmConfig():
     ''' Hmm configuration for scripts. 
         All the scripts except the Analyzer can should take the configuration from here.
     '''
-    def __init__(self):
+    def __init__(self, doPrint=True):
         ## CATEGORIES and MAP ##
         self.muCategories=["BB","BO","BE","OO","OE","EE"]
         #self.procCategories= [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]
@@ -49,9 +49,10 @@ class HmmConfig():
         ## DATACARD specific ##
 
         self.datacard_procs=['BKG','GluGlu','VBF','WPlusH','WMinusH','ttH','ZH']
-
+    
         self.computeVersioning()
-        self.Print()
+        if doPrint:
+            self.Print()
 
     def catToStr(self,num):
         return self.categories[num]
@@ -71,6 +72,7 @@ class HmmConfig():
 
     def Print(self):
         print "--- Hmm Configurator ---"
+        print "Name:",self.__class__.__name__
         for x in ["xmin","xmax","muCategories","procCategories","categories","sig_mass_points","processes","datacard_procs","catVersion","fitVersion"]:
             print x+"=",eval("self."+x)
         print "------------------------"
@@ -110,13 +112,20 @@ class HmmConfig():
             self.scale[ (cat, proc) ] = (mean, sigma)
 
 hmm=HmmConfig()
+
 class HmmConfigAutoCat(HmmConfig):
-    def __init__(self):
+    def __init__(self,doPrint=True):
+        HmmConfig.__init__(self,False)
         self.categories=[ "cat%d"%x for x in range(0,16)]
         self.procCategories=[]
         self.muCategories=[]
         self.sigfit_gaussians=[]
-        print "TODO"
+        self.readScaleUnc()        
+
+        self.computeVersioning()
+        if doPrint:
+            self.Print()
+
 hmmAutoCat =HmmConfigAutoCat()
 
 class Stack:
