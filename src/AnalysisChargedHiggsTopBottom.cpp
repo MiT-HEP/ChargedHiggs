@@ -378,13 +378,16 @@ void ChargedHiggsTopBottom::Init()
     AddVariable("MassDRbbmin",'F',0);
     AddVariable("MassDRlbmin",'F',0);
     AddVariable("mt",'F',0);
-    AddVariable("mt2bb",'F',0);
+    //    AddVariable("mt2bb",'F',0);
     AddVariable("mt2bb1l",'F',0);
     AddVariable("Cen",'F',0);
     AddVariable("HemiOut",'F',0);
     AddVariable("DEtaMaxBB",'F',0);
     AddVariable("DRlbmaxPT",'F',0);
+    AddVariable("AvCSVPt",'F',0);
     AddVariable("st",'F',0);
+    AddVariable("MJJJmaxPt",'F',0);
+
 
     AddSpectator("mc",'F',0); AddSpectator("run",'F',0); AddSpectator("lumi",'F',0); AddSpectator("evt",'F',0);
 
@@ -398,13 +401,15 @@ void ChargedHiggsTopBottom::Init()
     AddVariable("MassDRbbmin",'F',1);
     AddVariable("MassDRlbmin",'F',1);
     AddVariable("mt",'F',1);
-    AddVariable("mt2bb",'F',1);
+    //    AddVariable("mt2bb",'F',1);
     AddVariable("mt2bb1l",'F',1);
     AddVariable("Cen",'F',1);
     AddVariable("HemiOut",'F',1);
     AddVariable("DEtaMaxBB",'F',1);
     AddVariable("DRlbmaxPT",'F',1);
+    AddVariable("AvCSVPt",'F',1);
     AddVariable("st",'F',1);
+    AddVariable("MJJJmaxPt",'F',1);
 
     AddSpectator("mc",'F',1); AddSpectator("run",'F',1); AddSpectator("lumi",'F',1); AddSpectator("evt",'F',1);
 
@@ -418,13 +423,15 @@ void ChargedHiggsTopBottom::Init()
     AddVariable("MassDRbbmin",'F',2);
     AddVariable("MassDRlbmin",'F',2);
     AddVariable("mt",'F',2);
-    AddVariable("mt2bb",'F',2);
+    //    AddVariable("mt2bb",'F',2);
     AddVariable("mt2bb1l",'F',2);
     AddVariable("Cen",'F',2);
     AddVariable("HemiOut",'F',2);
     AddVariable("DEtaMaxBB",'F',2);
     AddVariable("DRlbmaxPT",'F',2);
+    AddVariable("AvCSVPt",'F',2);
     AddVariable("st",'F',2);
+    AddVariable("MJJJmaxPt",'F',2);
 
     AddSpectator("mc",'F',2); AddSpectator("run",'F',2); AddSpectator("lumi",'F',2); AddSpectator("evt",'F',2);
 
@@ -438,12 +445,13 @@ void ChargedHiggsTopBottom::Init()
     AddVariable("MassDRbbmin",'F',3);
     AddVariable("MassDRlbmin",'F',3);
     AddVariable("mt",'F',3);
-    AddVariable("mt2bb",'F',3);
+    //    AddVariable("mt2bb",'F',3);
     AddVariable("mt2bb1l",'F',3);
     AddVariable("Cen",'F',3);
     AddVariable("HemiOut",'F',3);
     AddVariable("DEtaMaxBB",'F',3);
     AddVariable("DRlbmaxPT",'F',3);
+    AddVariable("AvCSVPt",'F',3);
     AddVariable("st",'F',3);
     AddVariable("mtMin",'F',3);
 
@@ -459,12 +467,13 @@ void ChargedHiggsTopBottom::Init()
     AddVariable("MassDRbbmin",'F',4);
     AddVariable("MassDRlbmin",'F',4);
     AddVariable("mt",'F',4);
-    AddVariable("mt2bb",'F',4);
+    //    AddVariable("mt2bb",'F',4);
     AddVariable("mt2bb1l",'F',4);
     AddVariable("Cen",'F',4);
     AddVariable("HemiOut",'F',4);
     AddVariable("DEtaMaxBB",'F',4);
     AddVariable("DRlbmaxPT",'F',4);
+    AddVariable("AvCSVPt",'F',4);
     AddVariable("st",'F',4);
     AddVariable("mtMin",'F',4);
 
@@ -480,12 +489,13 @@ void ChargedHiggsTopBottom::Init()
     AddVariable("MassDRbbmin",'F',5);
     AddVariable("MassDRlbmin",'F',5);
     AddVariable("mt",'F',5);
-    AddVariable("mt2bb",'F',5);
+    //    AddVariable("mt2bb",'F',5);
     AddVariable("mt2bb1l",'F',5);
     AddVariable("Cen",'F',5);
     AddVariable("HemiOut",'F',5);
     AddVariable("DEtaMaxBB",'F',5);
     AddVariable("DRlbmaxPT",'F',5);
+    AddVariable("AvCSVPt",'F',5);
     AddVariable("st",'F',5);
     AddVariable("mtMin",'F',5);
 
@@ -1593,9 +1603,9 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
         double MJJJmaxPt=-1;
         double AvDRJJJmaxPT=-1;
 
-        int indexi=-1;
-        int indexj=-1;
-        int indexk=-1;
+        //        int indexi=-1;
+        //        int indexj=-1;
+        //        int indexk=-1;
 
         for(int i=0;i!=e->NcentralJets();++i) {
             Jet* jet_i = e->GetCentralJet(i);
@@ -2611,20 +2621,20 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         SetVariable("Cen",evt_C);
         SetVariable("HemiOut",evt_HemiMetOut);
         SetVariable("DRlbmaxPT",evt_DRlbmaxPt);
-        SetVariable("st",evt_ST); // remove ??
+        SetVariable("st",evt_ST);
+        SetVariable("AvCSVPt",evt_AvCSVPt);
+        SetVariable("MJJJmaxPt",evt_MJJJmaxPt);
 
         if( e->Bjets()>1 ) {
             SetVariable("DEtaMaxBB",evt_DEtaMaxBB);
             SetVariable("DRbbmin",evt_minDRbb);
             SetVariable("MassDRbbmin",evt_minDRbb_invMass);
-            SetVariable("mt2bb",evt_MT2bb);  // remove ??
-            SetVariable("mt2bb1l",evt_MT2bb1l);
+            SetVariable("mt2bb1l",evt_MT2bb1l);  // remove ??
         } else {
             SetVariable("DRbbmin",3.);
             SetVariable("DEtaMaxBB",1.5);
             SetVariable("MassDRbbmin",150.);
-            SetVariable("mt2bb",50); // remove ??
-            SetVariable("mt2bb1l",50);
+            SetVariable("mt2bb1l",50); // remove ??
         }
 
 
