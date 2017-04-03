@@ -90,7 +90,7 @@ int KaMuCa::correct(Event *e){
             if (genPt>0)
             {
                 double corr = (( lep->GetP4Dirty().Pt()  - genPt ) *sf  + genPt) / lep->GetP4Dirty().Pt();
-                if (corr <= 1.e-5) Log(__FUNCTION__,"WARNING",Form("Scaling Leptons momentum (res matched) by small amount: %f",corr));
+                if (corr <= 1.e-5) Log(__FUNCTION__,"WARNING",Form("Scaling Leptons momentum (res matched) by small amount: %f: sf=%f genPt=%f lepPt=%f",corr,sf,genPt, lep->GetP4Dirty().Pt()));
                 Scale( *lep, corr );
                 #ifdef VERBOSE
                 if (VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("matched: sf=%f corr =%f ",sf,corr));
