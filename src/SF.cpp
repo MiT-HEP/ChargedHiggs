@@ -245,6 +245,7 @@ void SF_TH2F_And_Eff::init(string filename,string effdata,string effmc,string er
         else errMc = hMcEff->GetBinError(aetabin,ptbin);
 
         if (ptbin == hDataEff->GetNbinsY() ) ptmax = 8000.; // highest is open, current recommendation
+        if (aetabin == hDataEff->GetNbinsX()  ) aetamax = aetamax+0.0001; // put it slightly larger  to get 2.4 as well
         add(ptmin,ptmax,aetamin,aetamax,effData,effMc,errData,errMc);
     }
     f->Close(); // delete?

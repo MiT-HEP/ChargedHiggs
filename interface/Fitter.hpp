@@ -65,8 +65,6 @@ class Fitter : virtual public BaseFitter{
     string massMask_;
     string normMask_;
     string modelMask_;
-    string systLabel_{""}; //_JesUp, _JesDown .., mainly internal, but should be uniq
-    vector<string> systIn; 
 
     void info();
 
@@ -104,20 +102,14 @@ class Fitter : virtual public BaseFitter{
     map< pair<int,string>, int > nGaussians;
     vector<string> processes;
 
-    void SetGaussians(int cat, const string& proc, int nG ) { nGaussians[pair<int,string>(cat,proc) ] = nG;}
-};
+    map< pair<int,string>, float>  scaleUnc;
+    map< pair<int,string>, pair<int,string> >  scaleCorr;
+    map< pair<int,string>, float>  smearUnc;
+    map< pair<int,string>, pair<int,string> >  smearCorr;
 
-//#else
-//#include "interface/Handlers.hpp"
-//class Fitter: public BaseFitter
-//{
-//    public:
-//        void init(){ throw abortException(); };
-//        void fit(){ throw abortException(); };
-//        void end(){ throw abortException(); };
-//        const name() const override { return "Fitter_NotImplemeted";};
-//};
-//#endif
+    void SetGaussians(int cat, const string& proc, int nG ) { nGaussians[pair<int,string>(cat,proc) ] = nG;}
+    RooAbsReal* getMeanWithSyst(int cat, string proc,int gaus);
+};
 
 
 #endif

@@ -4,6 +4,10 @@ jetUnc
 jetBdiscr
 jetSelBits
 jetQGL
+jetcemf
+jetnemf
+jetnhef
+jetchef
 ## QG
 jetQglCMult
 jetQglNMult

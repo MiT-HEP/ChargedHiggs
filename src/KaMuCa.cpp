@@ -56,8 +56,8 @@ int KaMuCa::correct(Event *e){
         }
         else //(syst <0)
         {
-            if ( e->IsRealData() ) correctorDATA_->vary(syst -1,-1); 
-            else correctorMC_ -> vary ( syst -1 , -1);
+            if ( e->IsRealData() ) correctorDATA_->vary( -syst -1,-1); 
+            else correctorMC_ -> vary ( -syst -1 , -1);
         }
 
     }
@@ -99,6 +99,7 @@ int KaMuCa::correct(Event *e){
             {
                 float res = resolution_->getResData();  
                 float sigma=std::sqrt( sf*sf -1) * res * lep->GetP4Dirty().Pt(); // res is for dp/p
+                rnd_ -> SetSeed ( e->eventNum() + int( lep->GetP4Dirty().Phi() *10000) ) ;
                 float s = rnd_->Gaus(0,1);
                 float newpt = s * sigma + lep->GetP4Dirty().Pt();
                 float corr= newpt/lep->GetP4Dirty().Pt();

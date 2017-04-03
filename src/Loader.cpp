@@ -148,6 +148,11 @@ void LoadNero::FillJets(){
 #endif
 //
         bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
+        float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
+        if ( aeta >2.7 and aeta <=3.0 ) 
+        {
+            id = id and (bj->nhef->at(iJet) < .98)  and (bj->nemf -> at(iJet) >0.01);
+        }
         if (not id) continue;
 
         Jet *j =new Jet();

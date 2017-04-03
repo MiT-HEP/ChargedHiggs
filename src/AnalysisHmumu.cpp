@@ -56,6 +56,17 @@ void HmumuAnalysis::SetPhotonCuts(Photon *p){
     p->SetPtCut(8000);
 }
 
+double HmumuAnalysis::dimu_dPhiStar(Lepton* mu0, Lepton*mu1) {  // Phi separation in the parent's rest frame
+      double phi_star = 0;
+      //double mu_dPhi = std::abs(mu0->Phi() - mu1->Phi());
+      //if(mu_dPhi > TMath::Pi()) mu_dPhi = 2*TMath::Pi() - mu_dPhi;
+      double mu_dPhi = fabs(mu0->DeltaPhi(*mu1)); 
+      double phiACOP = TMath::Pi() - mu_dPhi;
+      double thetaStarEta = std::acos(std::tanh((mu0->Eta() - mu1->Eta())/float(2.)));
+      phi_star = std::tan(phiACOP/float(2.))*std::sin(thetaStarEta);
+      return phi_star;
+}
+
 string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start Category");
     // return the right category
@@ -177,19 +188,326 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     return vbfStr +"_" + muStr;
 }
 
+
+string HmumuAnalysis::CategoryAutoCat(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets,float met){
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryAutoCat");
+    // return the right category
+    if (mu0== NULL or mu1==NULL) return "";
+
+    float eta0 = mu0->Eta();
+    float eta1 = mu1->Eta();
+
+    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon0 eta0=%f | Pt=%f Pz=%f",mu0->Eta(),mu0->Pt(),mu0->GetP4().Pz()));
+    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon1 eta1=%f | Pt=%f Pz=%f",mu1->Eta(),mu1->Pt(),mu1->GetP4().Pz()));
+   
+   // construct a Higgs-like object  
+    Object Hmm;
+    Hmm += *mu0;
+    Hmm += *mu1;
+
+    if (doSync){
+        int cat=-100;
+        // set, in case exit before
+        SetTreeVar("cat",cat);
+        SetTreeVar("pt1",mu0->Pt());
+        SetTreeVar("pt2",mu1->Pt());
+        SetTreeVar("eta1",mu0->Eta());
+        SetTreeVar("eta2",mu1->Eta());
+        SetTreeVar("phi1",mu0->Phi());
+        SetTreeVar("phi2",mu1->Phi());
+        SetTreeVar("njets",jets.size());
+        SetTreeVar("mass",Hmm.M());
+        SetTreeVar("Hpt" ,Hmm.Pt());
+        for(int ijet=0;ijet<jets.size();++ijet)
+        {
+            SetTreeVar("jet_pt" ,ijet,jets[ijet]->Pt());
+            SetTreeVar("jet_eta",ijet,jets[ijet]->Eta());
+            SetTreeVar("jet_phi",ijet,jets[ijet]->Phi());
+        }
+    }
+
+
+    // fully combinatorics
+    vector<bool> pass; // name of category and order. if they pass.
+    for (int i=0;i<categories_.size();++i)
+    {
+        pass.push_back(false);
+    }
+
+    // FIXME: is this the deifinition?
+    float mu_res_eta = std::max( fabs(mu0->Eta()),fabs(mu1->Eta())) ;
+
+    int nbjets=0;
+    for(unsigned i=0;i<jets.size() ;++i)
+    {
+        if (jets[i]->IsBJet() and jets[i]->Pt() >30 and abs(jets[i]->Eta())<2.4)  nbjets +=1;
+    }
+
+    if (Hmm.Pt() <7.) pass[5]=true; // no jets
+    if (Hmm.Pt() >=7. and Hmm.Pt() <18.) pass[10]=true; // no jets
+    if (Hmm.Pt() >=18. and nbjets >=1 ) pass[4] = true; // no jets mjj/detajj
+
+    for(unsigned i=0;i<jets.size() ;++i)
+    for (unsigned j=i+1;j<jets.size();++j)
+    {
+        // vbf preselection. jets are pt-sorted
+        if (not (jets[i]->Pt() >40 and jets[j]->Pt() >30)) continue;
+
+        double mjj= jets[i]->InvMass( jets[j] ) ;
+        double detajj= fabs( jets[i]->Eta() - jets[j]->Eta() );
+
+        // orig
+        // https://indico.cern.ch/event/605422/contributions/2461226/attachments/1436814/2209863/dt_plus_bdt_limits.pdf slide8
+        if (Hmm.Pt() >=18.0 and nbjets==0)
+        {
+            if ( detajj >=4.0 )
+            {
+                if (mjj>=1000.){
+                    if ( met < 60 and Hmm.Pt() < 30) pass[0]=true;
+                    if ( met < 60 and Hmm.Pt() > 30.)  pass[15] = true;
+                    if ( met >=60) pass[2] = true;
+                }
+                else{
+                    if ( Hmm.Pt() <  100 and met >=65.) pass[1] = true;
+                    if ( Hmm.Pt() <  100 and met < 65.) pass[7] = true;
+                    if ( Hmm.Pt() >= 100) pass[8] = true;
+                }
+            }
+            else{
+                if ( mu_res_eta <0.797 and Hmm.Pt() >= 60. and met >= 70.) pass[3]=true; 
+                if ( mu_res_eta <0.797 and Hmm.Pt() >= 60. and met < 70.) pass[13]=true; 
+                if ( mu_res_eta <0.797 and Hmm.Pt() <  60. ) pass[14]=true; 
+                if ( mu_res_eta >= 0.797 and mu_res_eta <1.4 and Hmm.Pt() >=40. and met >= 50.) pass[6]=true;
+                if ( mu_res_eta >= 0.797 and mu_res_eta <1.4 and Hmm.Pt() >=40. and met <  50.) pass[12]=true;
+                if ( mu_res_eta >= 0.797 and mu_res_eta <1.4 and Hmm.Pt() < 40.) pass[11]=true;
+                if ( mu_res_eta >= 1.4) pass[9]=true;  //EE
+            }
+        }
+
+    }
+
+
+    string catStr="";
+    int icat=-100;
+    for(size_t i=0;i<pass.size();++i)
+    {
+        if (pass[i] ) { icat= i;catStr = categories_[i];} // cat0 is the less significant
+    }
+
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + catStr);
+
+    if (doSync){
+        SetTreeVar("cat",icat);
+        SetTreeVar("nbjets",nbjets);
+    }
+
+    return catStr;
+}
+
+string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets,float met){
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryBdt");
+    // return the right category
+    if (mu0== NULL or mu1==NULL) return "";
+
+    float eta0 = mu0->Eta();
+    float eta1 = mu1->Eta();
+
+    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon0 eta0=%f | Pt=%f Pz=%f",mu0->Eta(),mu0->Pt(),mu0->GetP4().Pz()));
+    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon1 eta1=%f | Pt=%f Pz=%f",mu1->Eta(),mu1->Pt(),mu1->GetP4().Pz()));
+   
+   // construct a Higgs-like object  
+    Object Hmm;
+    Hmm += *mu0;
+    Hmm += *mu1;
+
+
+    SetVariable("mu1_abs_eta",fabs(mu0->Eta()));    
+    SetVariable("mu2_abs_eta",fabs(mu1->Eta()));    
+    SetVariable("dimu_pt",Hmm.Pt());    
+    SetVariable("dimu_eta",Hmm.Eta());    
+    SetVariable("dimu_abs_dEta",fabs(mu0->Eta()-mu1->Eta()));    
+    SetVariable("dimu_abs_dPhi",fabs(mu0->DeltaPhi(*mu1)));
+    SetVariable("dimu_abs_dPhiStar",dimu_dPhiStar(mu0,mu1));
+    if (jets.size() >=1)
+    {
+        SetVariable("jet1_pt",jets[0]->Pt());    
+        SetVariable("jet1_eta",jets[0]->Eta());    
+    }
+    else{
+        SetVariable("jet1_pt",0.);    
+        SetVariable("jet1_eta",-5.);    
+    }
+    if (jets.size() >=2)
+    {
+        SetVariable("jet2_pt",jets[1]->Pt());    
+        SetVariable("jet2_eta",jets[1]->Eta());    
+    }   
+    else
+    {
+        SetVariable("jet2_pt",0.);    
+        SetVariable("jet2_eta",-5.);    
+    }   
+
+    vector<pair<float,float> > mjj_detajj;
+
+    for(unsigned i=0;i<jets.size() ;++i)
+    for (unsigned j=i+1;j<jets.size();++j)
+    {
+        mjj_detajj.push_back( pair<float,float>(jets[i]->InvMass( jets[j] ), fabs( jets[i]->Eta() - jets[j]->Eta() )) );
+    }
+    for(size_t i=mjj_detajj.size(); i<4;++i)
+    {
+        mjj_detajj.push_back(pair<float,float>(0.,-1));
+    }
+
+    sort ( mjj_detajj.begin(),mjj_detajj.end(), [](const pair<float,float>&x,const pair<float,float>&y){if (x.first > y.first) return true;if (x.first<y.first) return false; return x.second > y.second; } );
+    SetVariable("dijet1_mass",mjj_detajj[0].first);    
+    SetVariable("dijet2_mass",mjj_detajj[1].first);    
+    SetVariable("dijet3_mass",mjj_detajj[2].first);    
+    SetVariable("dijet4_mass",mjj_detajj[3].first);    
+    SetVariable("dijet1_abs_dEta",mjj_detajj[0].second);    
+    SetVariable("dijet2_abs_dEta",mjj_detajj[1].second);    
+    SetVariable("dijet3_abs_dEta",mjj_detajj[2].second);    
+    SetVariable("dijet4_abs_dEta",mjj_detajj[3].second);    
+
+    int nbjets=0;
+    int ncentjets=0;
+    int nfwdjets=0;
+    for(unsigned i=0;i<jets.size() ;++i)
+    {
+        if (jets[i]->IsBJet() and jets[i]->Pt() >30 and abs(jets[i]->Eta())<2.4)  nbjets +=1;
+        if (abs(jets[i]->Eta())<2.4)  ncentjets +=1;
+        else nfwdjets +=1;
+    }
+    SetVariable("nJetsCent",ncentjets);    
+    SetVariable("nJetsFwd",nfwdjets);    
+    SetVariable("nBMed",nbjets);    
+    SetVariable("MET",met);    
+    for(unsigned i =0 ;i< readers_.size() ; ++i)
+    {
+         bdt.push_back(readers_[i]->EvaluateMVA("BDTG_default") );
+    }
+
+
+    int icat=-100; string catStr="";
+
+    float mu_max_eta = std::max(fabs(mu0->Eta()),fabs(mu1->Eta()));
+    float mu_ave_eta = (fabs(mu0->Eta())+fabs(mu1->Eta()))/2.;
+    if (bdt[0]< -0.379) icat=0;
+    if (bdt[0]>= 0.344 and bdt[0]<0.584 and mu_max_eta >= 1.873) icat=1;
+    if (bdt[0]<  0.242 and bdt[0]>=-0.034 and mu_max_eta >= 1.955) icat=2;
+    if (bdt[0]<  0.344 and bdt[0]>= 0.242 and mu_ave_eta >= 1.150) icat=3;
+    if (bdt[0]< -0.034 and bdt[0]>=-0.379 and mu_ave_eta >= 1.039) icat=4;
+    if (bdt[0]< -0.034 and bdt[0]>=-0.379 and mu_ave_eta <  1.039) icat=5;
+    if (bdt[0]<  0.195 and bdt[0]>=-0.034 and mu_max_eta <  0.890) icat=6;
+    if (bdt[0]<  0.344 and bdt[0]>= 0.242 and mu_max_eta >= 0.890 and mu_ave_eta < 1.150) icat=7;
+    if (bdt[0]<  0.44  and bdt[0] >= 0.344 and mu_max_eta >=0.887 and mu_max_eta < 1.873) icat=8;
+    if (bdt[0]<  0.671 and bdt[0] >= 0.584 and mu_max_eta >=0.887) icat=9;
+    if (bdt[0]<  0.584 and bdt[0] >= 0.44 and mu_max_eta >=0.887 and mu_max_eta <1.873) icat=10;
+    if (bdt[0]<  0.344 and bdt[0] >  0.195 and mu_max_eta >= 0.890 ) icat=11;
+    if (bdt[0]>= 0.671 and mu_max_eta > 1.101 ) icat=12; // HIGH ETA HIGH BDT
+    if (bdt[0]>= -0.034 and bdt[0] < 0.242 and mu_max_eta >= 0.890 and mu_max_eta <1.955 ) icat=13;
+    if (bdt[0]>= 0.344 and bdt[0] < 0.671 and mu_max_eta <0.887) icat=14; 
+    if (bdt[0]>=0.671 and mu_max_eta <1.101) icat=15;
+
+    if (icat>=0)catStr=Form("cat%d",icat);
+    if (doSync){
+        SetTreeVar("cat",icat);
+        SetTreeVar("nbjets",nbjets);
+    }
+
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + catStr);
+    return catStr;
+}
+
+void HmumuAnalysis::AddVariable( string name, char type){ 
+    Log(__FUNCTION__,"INFO","Adding variable '"+name+"'");
+    varValues_.Add(name,type); 
+    if ( type == 'I') for(auto& r : readers_ ) r -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
+    else if ( type == 'F') for(auto&r : readers_) r -> AddVariable(name.c_str(),  (float*)varValues_.GetPointer(name));
+    else { 
+        Log(__FUNCTION__,"ERROR",string("type '") + type + "' not supported");
+    }
+}//end add variable
+
+void HmumuAnalysis::AddSpectator( string name, char type){ 
+    Log(__FUNCTION__,"INFO","Adding spectator '"+name+"'");
+    varValues_.Add(name,type); 
+    if ( type == 'I') for(auto& r : readers_ ) r -> AddSpectator(name.c_str(),  (int*)varValues_.GetPointer(name));
+    else if ( type == 'F') for(auto&r : readers_) r -> AddSpectator(name.c_str(),  (float*)varValues_.GetPointer(name));
+    else { 
+        Log(__FUNCTION__,"ERROR",string("type '") + type + "' not supported");
+    }
+}//end add variable
+
+void HmumuAnalysis::InitTmva(){
+    Log(__FUNCTION__,"INFO","Init Reader");
+    TMVA::Tools::Instance();
+    for( size_t i=0;i<weights.size() ;++i)
+        readers_ . push_back( new TMVA::Reader() );
+    AddVariable("mu1_abs_eta",'F');    
+    AddVariable("mu2_abs_eta",'F');    
+    AddVariable("dimu_pt",'F');    
+    AddVariable("dimu_eta",'F');    
+    AddVariable("dimu_abs_dEta",'F');    
+    AddVariable("dimu_abs_dPhi",'F');
+    AddVariable("dimu_abs_dPhiStar",'F');
+    AddVariable("jet1_pt",'F');    
+    AddVariable("jet2_pt",'F');    
+    AddVariable("jet1_eta",'F');    
+    AddVariable("jet2_eta",'F');    
+    AddVariable("dijet1_mass",'F');    
+    AddVariable("dijet2_mass",'F');    
+    AddVariable("dijet3_mass",'F');    
+    AddVariable("dijet4_mass",'F');    
+    AddVariable("dijet1_abs_dEta",'F');    
+    AddVariable("dijet2_abs_dEta",'F');    
+    AddVariable("dijet3_abs_dEta",'F');    
+    AddVariable("dijet4_abs_dEta",'F');    
+    AddVariable("nJetsCent",'F');    
+    AddVariable("nJetsFwd",'F');    
+    AddVariable("nBMed",'F');    
+    AddVariable("MET",'F');    
+
+    AddSpectator("samp_ID",'F');SetVariable("samp_ID",0);
+    AddSpectator("samp_wgt",'F');SetVariable("samp_wgt",1.);
+    AddSpectator("res_wgt",'F');SetVariable("res_wgt",1.);
+    AddSpectator("LHE_HT",'F');SetVariable("LHE_HT",1.);
+    AddSpectator("dimu_mass_Roch",'F');SetVariable("dimu_mass_Roch",125.);
+    AddSpectator("BASE_cat",'F');SetVariable("BASE_cat",1);
+
+    // load weights
+    for( size_t i=0;i<weights.size() ;++i)
+        {
+            Log(__FUNCTION__,"INFO",Form("Loading weights idx=%d:",i)+weights[i]);
+            readers_[i]->BookMVA("BDTG_default",weights[i].c_str());
+        }
+
+}
+
 void HmumuAnalysis::Init(){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
     rnd_ . reset( new TRandom3() ) ;
 
     // define categories -- for booking histos
-    vector< string> mu_cats{"BB","BO","BE","OO","OE","EE"};
-    vector<string> vbf_cats{"VBF0","GF","VBF1","OneB","Untag0","Untag1"};
-
-    for( const auto & m : mu_cats)
-    for( const auto & v : vbf_cats)
+    if (catType>=1)
     {
-        categories_.push_back(v + "_" + m);
+        for (int i=0;i<16;++i)
+            categories_.push_back(Form("cat%d",i));
+        InitTmva();
     }
+    else
+    {
+        vector< string> mu_cats{"BB","BO","BE","OO","OE","EE"};
+        vector<string> vbf_cats{"VBF0","GF","VBF1","OneB","Untag0","Untag1"};
+
+        for( const auto & m : mu_cats)
+        for( const auto & v : vbf_cats)
+        {
+            categories_.push_back(v + "_" + m);
+        }
+    }
+
     //
 
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
@@ -268,8 +586,28 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         selectedJets.push_back(e->GetJet(i));
     }
 
-    string category = Category(mu0, mu1, selectedJets);
-    e->ApplyBTagSF(1); //0 loose, 1 medium, 2 tight
+    string category;
+    if (catType==1) category = CategoryAutoCat(mu0,mu1,selectedJets,e->GetMet().Pt() ) ;
+    else if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt());
+    else category = Category(mu0, mu1, selectedJets);
+
+    if (true) // CSV-SF for passing loose,medium or tigth cuts
+    {
+        e->ApplyBTagSF(1); //0 loose, 1 medium, 2 tight
+    }
+    else // CSV-Reweight
+    {
+        auto sf=dynamic_cast<SF_CSVReweight*>(e->GetWeight()->GetSF("btag-reweight"));
+        if (sf == NULL)  Log(__FUNCTION__,"ERROR","Unable to find btag reweight sf");
+
+        for (auto& j: selectedJets)
+        {
+            sf->add_to_sf(j->Pt() , j->Eta(), j->Btag() , j->Flavor());
+        }
+
+        sf->set();
+        e->ApplySF("btag-reweight"); 
+    }
 
     // Trigger SF
     if (true){
@@ -366,7 +704,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     bool passTrigger1{false}, passTrigger2{false};
 
-    if (doSync and label.find("GluGlu") !=string::npos and recoMuons) // FIXME
+    if (recoMuons and (label.find("HToMuMu") != string::npos or e->IsRealData()) ) // FIXME
     {
         bool passTriggerEvent = passTrigger;
         passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
@@ -401,25 +739,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
                ) passLeptonVeto=false; // FIXME 10 ?!?
         }
     }
-
-    if (e->eventNum()==51570 and doSync)
-    {
-        cout <<"---------- BARE ----------" <<endl;
-        cout <<"--Pt:Eta:Phi:medium:" <<endl;
-        for(int i=0;;++i)
-        {
-            Lepton*el = e->GetBareLepton(i);
-            if (el==NULL) break;
-            if (not el->IsElectronDirty() ) continue;
-            cout <<" * "<<el->Pt()
-                  << ":"<<el->Eta()
-                  << ":"<<el->Phi()
-                  << ":"<<el->GetMediumId()
-                  <<endl;
-        }
-        cout <<"--------------------------" <<endl;
-    }
-
 
 
     if (doSync) {
