@@ -90,10 +90,10 @@ class Fitter : virtual public BaseFitter{
 
     // --- objects that can be called
     Fitter();
-    void init();	
-    void fit() ;
-    void write();
-    void end();
+    void init() override;	
+    void fit() override ;
+    void write() ;
+    void end() override ;
     const string name() const override { return "Fitter";}
 
     map<string,float> initPars_;

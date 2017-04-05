@@ -9,7 +9,7 @@ class HmmConfig():
     ''' Hmm configuration for scripts. 
         All the scripts except the Analyzer can should take the configuration from here.
     '''
-    def __init__(self, doPrint=True):
+    def __init__(self):
         ## CATEGORIES and MAP ##
         self.muCategories=["BB","BO","BE","OO","OE","EE"]
         #self.procCategories= [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]
@@ -44,15 +44,13 @@ class HmmConfig():
         self.sigfit_gaussians[("Untag0_EE","ttH")] = 1  ## 28
         self.sigfit_gaussians[("Untag1_EE","ttH")] = 1  ## 29
         
-        self.readScaleUnc()        
+        #self.readScaleUnc()        
 
         ## DATACARD specific ##
 
         self.datacard_procs=['BKG','GluGlu','VBF','WPlusH','WMinusH','ttH','ZH']
     
         self.computeVersioning()
-        if doPrint:
-            self.Print()
 
     def catToStr(self,num):
         return self.categories[num]
@@ -114,19 +112,21 @@ class HmmConfig():
 hmm=HmmConfig()
 
 class HmmConfigAutoCat(HmmConfig):
-    def __init__(self,doPrint=True):
-        HmmConfig.__init__(self,False)
+    def __init__(self):
+        HmmConfig.__init__(self)
         self.categories=[ "cat%d"%x for x in range(0,16)]
         self.procCategories=[]
         self.muCategories=[]
         self.sigfit_gaussians=[]
-        self.readScaleUnc()        
+        #self.readScaleUnc()        
 
         self.computeVersioning()
-        if doPrint:
-            self.Print()
 
 hmmAutoCat =HmmConfigAutoCat()
+
+if __name__=="__main__":
+    hmm.Print()
+    hmmAutoCat.Print()
 
 class Stack:
     ''' This is a soft version of thstack that usually crash'''

@@ -20,18 +20,6 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
     l->SetGlobalMuonCut(true);
 }
 
-/*
-void HmumuAnalysis::SetLeptonCuts(Lepton *l){ 
-    #warning LOOSE_MUONS
-    l->SetIsoCut(-1); 
-    l->SetPtCut(10); 
-    l->SetIsoRelCut(0.25);
-    l->SetEtaCut(2.4);
-    l->SetVetoCut();
-    l->SetLooseCut(true);
-}
-*/
-
 void HmumuAnalysis::SetJetCuts(Jet *j) { 
     j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535 
     j->SetEtaCut(4.7); 
@@ -518,6 +506,10 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
 	    // 
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
+	    Book ("HmumuAnalysis/Vars/MetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/MetOnH_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/PtOnZ_"+ l ,"Pt On Z (70-110);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/PtOnH_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
         for(const auto & c : categories_)
         {
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
@@ -564,6 +556,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
+    if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
     cut.reset();
     cut.SetMask(MaxCut-1) ;
     cut.SetCutBit( Total ) ;
@@ -612,6 +605,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->ApplySF("btag-reweight"); 
     }
 
+    /* 
     // Trigger SF
     if (true){
         SF* sf0 =e->GetWeight()->GetSF("muTRG_v2");
@@ -620,28 +614,46 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         if (sf== NULL) {cout<<"Unable to convert SF:" <<endl; sf0->print(); }
 
         double effdata=1.0,effmc =1.0;
+        bool changed=false;
         if (mu0)
         {
+            changed=true;
             sf->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
             effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
             effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            //cout <<" -> Trigger SF (mu0):pt = "<< std::max(mu0->Pt(),float(26.1))
+            //            <<" eta="<< fabs(mu0->Eta())
+            //            <<" effdata="<<sf->getDataEff()
+            //            <<" effmc="<<sf->getMCEff()<<endl; //DEBUG
+
         }
         if (mu1 and mu1->Pt() > 26)
         {
+            changed=true;
             sf->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
             effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
             effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            //cout <<" -> Trigger SF (mu1):pt = "<< std::max(mu1->Pt(),float(26.1))
+            //            <<" eta="<< fabs(mu1->Eta())
+            //            <<" effdata="<<sf->getDataEff()
+            //            <<" effmc="<<sf->getMCEff()<<endl; //DEBUG
         }
 
-        effdata = 1.-effdata;
-        effmc = 1.-effmc;
+        if(changed)
+        {
+            effdata = 1.-effdata;
+            effmc = 1.-effmc;
+        }
 
         SF* sftrig= e->GetWeight()->GetSF("dummy"); // base, I modify this one
         sftrig->syst=0;
         sftrig->sf=effdata/effmc;
         sftrig->err = 0.0;
+        //cout <<" -> Trigger SF effdata="<<effdata<<" effmc="<<effmc<<endl; //DEBUG
+        //cout <<" *  Applying SF (trigger)"<<sftrig->sf<<endl; //DEBUG
         e->ApplySF("dummy");
     }
+    
     //
     //long seed = e->runNum() * 1000000 + e->lumiNum()*10000 + e->eventNum();
     //rnd_->SetSeed(seed);
@@ -692,14 +704,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sf->err = 0.0;
         e->ApplySF("dummy");
     }
-
+    
+    */
 
     //
     // preselection
     bool recoMuons= mu0 != NULL and mu1 !=NULL; 
     if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
-
-
 
     // Trigger
     bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 );
@@ -707,8 +718,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     bool passTrigger1{false}, passTrigger2{false};
 
-    if (recoMuons and (label.find("HToMuMu") != string::npos or e->IsRealData()) ) // FIXME
+    if ( doSync and recoMuons and ( (label.find("HToMuMu") != string::npos or e->IsRealData()) ) ) // 
     {
+        //cout <<" DOING TRIGGER MATCHING "<<endl;
         bool passTriggerEvent = passTrigger;
         passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
         //if (mu1->Pt() > 26 ) 
@@ -731,10 +743,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             #warning ABSURD_ELE_VETO
             //|eta| < 1.4442 || 1.566 <|eta| <2.5 
             // DR with muon 
-            if (e->eventNum()==51570 and doSync)
-            {
-                cout <<"RUN 51570: considering ele:"  <<el->Pt() <<endl;
-            }
             if (el->Pt() >10 and 
                     (fabs(el->Eta()) <1.4442 or fabs(el->Eta())>1.566) and 
                     fabs(el->Eta())<2.5 and
@@ -759,8 +767,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         FillTree("hmm");
     }
 
-
-    // ---------------------- 25 -------------------
+    // -- FINAL SELECTION --
     if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto)
     {
         cut.SetCutBit(Leptons);
@@ -773,6 +780,16 @@ int HmumuAnalysis::analyze(Event *e, string systname)
        	//if (cut.passAllUpTo(Trigger) ){
         //}
         if (VERBOSE)Log(__FUNCTION__,"DEBUG","event pass selection");
+        
+        if (mass_ >= 70 and mass_<110){
+            Fill("HmumuAnalysis/Vars/MetOnZ_"+ label,systname, e->GetMet().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, Z.Pt() ,e->weight());
+        }
+        if (mass_ >= 110 and mass_<150){
+            Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, Z.Pt(),e->weight());
+        }
+
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
     }

@@ -84,6 +84,7 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
 if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
     from hmm import hmm,hmmAutoCat
     config = eval(opts.hmm)
+    config.Print()
     fitter.xmin = config.xmin
     fitter.xmax = config.xmax
     if opts.plotdir != "":

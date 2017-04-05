@@ -12,6 +12,7 @@ parser.add_option("-c","--cat",dest='cat',type="string",help="do cat xxx for bkg
 parser.add_option("","--noSig",dest='noSig',action="store_true",help="don't do sig plots [%default]",default=False)
 parser.add_option("","--noBkg",dest='noBkg',action="store_true",help="don't do bkg plots [%default]",default=False)
 parser.add_option("-o","--outdir",dest='outdir',type="string",help="output directory [%default]",default="Hmumu")
+parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
 
 print "-> Looking for basepath"
 basepath = ""
@@ -23,7 +24,7 @@ while mypath != "" and mypath != "/":
 print "-> Base Path is " + basepath
 sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
-from hmm import hmm, Stack
+from hmm import hmm,hmmAutoCat, Stack
 systs=['JES','PU']
 
 #extra = OptionGroup(parser,"Extra options:","")
@@ -44,14 +45,16 @@ if opts.outdir != "":
 
 
 ############# definitions
-categories=hmm.categories
+config= eval(opts.hmm)
+config.Print()
+categories=config.categories
 ##for m in [ "BB","BO","BE","OO","OE","EE" ]:
 ##   for v in ["VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
 ##      categories.append(v + "_" + m )
 
 #sigMonteCarlos= ["VBF_HToMuMu_M%d","GluGlu_HToMuMu_M%d","ZH_HToMuMu_M%d","WMinusH_HToMuMu_M%d","WPlusH_HToMuMu_M%d","ttH_HToMuMu_M%d"]
 sigMonteCarlos = []
-for proc in hmm.processes:
+for proc in config.processes:
 	sigMonteCarlos .append( proc+"_HToMuMu_M%d" )
 
 ## 125 first
@@ -84,10 +87,10 @@ def MpvAndSigmaEff(h, q=0.68):
 def SoB(h,hdata,low,high,type=""):
 	## xsec at 125
 	## these numbers are in pb
-	br=hmm.br();
+	br=config.br();
 	#br = 2.176E-04
-	xsec=hmm.xsec(type)
-	lumi = hmm.lumi()
+	xsec=config.xsec(type)
+	lumi = config.lumi()
 
 	hdata_ = hdata.Clone(hdata.GetName()+"_fit")
 	s= h.Integral(h.FindBin(low),h.FindBin(high))
@@ -113,8 +116,8 @@ def SoB(h,hdata,low,high,type=""):
 ## get files
 fIn = ROOT.TFile.Open(opts.input,"READ")
 if fIn == None: 
-	   print "<*> NO File '%s'"%opts.input
-	   raise IOError
+    print "<*> NO File '%s'"%opts.input
+    raise IOError
 
 canvases=[]
 garbage=[]
@@ -131,21 +134,21 @@ if doSig:
         mpv=0
         seff=0.0
         ea=0.0
-	sob=0.0
+        sob=0.0
         hdata=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_Data" )
-	if hdata==None:
-		print "<!> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_Data"
-		continue
+        if hdata==None:
+        	print "<!> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_Data"
+        	continue
         for idx,m in enumerate(masses):
             h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) )
-	    if h==None:
-		    print "<*> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) 
-		    continue
+            if h==None:
+                print "<*> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) 
+                continue
             garbage.append(h)
             h.SetLineColor(ROOT.kBlack)
             h.SetLineWidth(2)
             if idx==0:
-		c.cd()
+                c.cd()
                 h.Draw("AXIS")
                 h.Draw("AXIS X+ Y+ SAME")
                 h.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
@@ -153,8 +156,8 @@ if doSig:
                 h.GetYaxis().SetTitle("#varepsilon A")
                 h.GetYaxis().SetTitleOffset(1.2)
                 h.GetXaxis().SetRangeUser(100,150)
-		#color=38
-		color=46
+                #color=38
+                color=46
                 h.SetLineColor(color)
                 h.SetLineWidth(2)
                 h.SetFillColor(color)
@@ -163,16 +166,16 @@ if doSig:
                 mpv, low ,high =  MpvAndSigmaEff(h, 0.682689)
                 seff = (high - low)/2.0
 
-		if hdata !=None:
-			s,b=SoB(h,hdata,low,high,re.sub("_HToMuMu.*","",mc))
-			c.cd()
-		else : 
-			s,b = (0,0)
-
-		try:
-			sob=s/b
-		except ZeroDivisionError:
-			sob=-1
+                if hdata !=None:
+                	s,b=SoB(h,hdata,low,high,re.sub("_HToMuMu.*","",mc))
+                	c.cd()
+                else : 
+                	s,b = (0,0)
+        
+                try:
+                	sob=s/b
+                except ZeroDivisionError:
+                	sob=-1
 
                 l1 = ROOT.TLine(low,0,low,h.GetMaximum()*0.8)
                 l2 = ROOT.TLine(high,0,high,h.GetMaximum()*0.8)
@@ -189,7 +192,7 @@ if doSig:
         txt.SetTextFont(43)
         txt.SetTextSize(20)
         txt.SetTextAlign(31)
-        txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(hmm.lumi()/1000.)))
+        txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
         txt.SetTextSize(30)
         txt.SetTextAlign(13)
         txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
@@ -202,17 +205,13 @@ if doSig:
         txt.DrawLatex(.73,.90 - 3*d,"seff=%.1f GeV"%seff)
         txt.DrawLatex(.73,.90 - 4*d,"#varepsilon A=%.1f %%"%(ea*100))
         txt.DrawLatex(.73,.90 - 5*d,"S/B = %.1f %%"%(sob*100))
-	c.Modify()
-	c.Update()
-	if opts.outdir=="":
-		raw_input("ok?")
-	else:
-		c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".pdf")
-		c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".png")
-
-## DATA / MC PLOTS
-#tmp=ROOT.TFile("/tmp/"+os.environ['USER']+"/tmp.root","RECREATE")
-#tmp.cd()
+        c.Modify()
+        c.Update()
+        if opts.outdir=="":
+        	raw_input("ok?")
+        else:
+        	c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".pdf")
+        	c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".png")
 
 rebin=10
 doBkg=not opts.noBkg
@@ -293,7 +292,9 @@ if doBkg:
             continue
         garbage.append(h)
         h.Rebin(rebin)
-        h.Scale(hmm.lumi())
+        print "<*> DEBUG: H", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc, "integral=",h.Integral()
+        h.Scale(config.lumi())
+        print "<*> DEBUG: Scaling", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc, "by lumi",config.lumi()
         for idx,s in enumerate(systs):
             hup=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc + "_" + s +"Up" )
             hdown=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc + "_" + s +"Down" )
@@ -301,9 +302,9 @@ if doBkg:
                 print "<*> Unable to find syst",s,"trying to ignore"
                 continue
             hup.Rebin(rebin)
-            hup.Scale(hmm.lumi())
+            hup.Scale(config.lumi())
             hdown.Rebin(rebin)
-            hdown.Scale(hmm.lumi())
+            hdown.Scale(config.lumi())
             b_systs_up[idx].Add(hup)
             b_systs_down[idx].Add(hdown)
 
@@ -330,6 +331,7 @@ if doBkg:
             #leg.AddEntry(h,"VV","F")
             leg1.append((h,"VV","F"))
 
+        print "<*> DEBUG: Hist final ", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc, "integral=",h.Integral()
         bkg.Add(h)
 
         if mcAll==None:
@@ -349,13 +351,13 @@ if doBkg:
             continue
         garbage.append(h)
         h.Rebin(rebin)
-        br = hmm.br()
+        br = config.br()
         h.SetLineColor(ROOT.kBlack)
         h.SetLineWidth(3)
         h.SetFillStyle(0)
         if 'GluGlu' in mc:
             h.SetLineColor(38)
-            xsec=hmm.xsec("ggH")
+            xsec=config.xsec("ggH")
             #leg.AddEntry(h,"ggH","L")
             leg2.append((h,"ggH","L"))
         elif 'VBF' in mc:
@@ -363,17 +365,17 @@ if doBkg:
             h.SetLineStyle(2)
             #leg.AddEntry(h,"qqH","L")
             leg2.append((h,"qqH","L"))
-            xsec=hmm.xsec("VBF")
+            xsec=config.xsec("VBF")
         elif 'WMinusH' in mc: 
             h.SetLineColor(ROOT.kGreen+2)
             h.SetLineStyle(2)
-            xsec=hmm.xsec("WPlusH")
+            xsec=config.xsec("WPlusH")
             #leg.AddEntry(h,"W^{+}H","L")
             leg2.append((h,"W^{+}H","L"))
         elif 'WPlusH' in mc:
             h.SetLineColor(ROOT.kGreen+2)
             h.SetLineStyle(7)
-            xsec=hmm.xsec("WMinusH")
+            xsec=config.xsec("WMinusH")
             #leg.AddEntry(h,"W^{-}H","L")
             leg2.append((h,"W^{-}H","L"))
         elif 'ZH' in mc:
@@ -381,15 +383,15 @@ if doBkg:
             h.SetLineStyle(3)
             #leg.AddEntry(h,"ZH","L")
             leg2.append((h,"ZH","L"))
-            xsec=hmm.xsec("ZH")
+            xsec=config.xsec("ZH")
         elif 'ttH' in mc:
             h.SetLineColor(ROOT.kOrange)
             h.SetLineStyle(3)
             #leg.AddEntry(h,"ttH","L")
             leg2.append((h,"ttH","L"))
-            xsec=hmm.xsec("ttH")
+            xsec=config.xsec("ttH")
 
-        h.Scale(hmm.lumi())
+        h.Scale(config.lumi())
         h.Scale(xsec*br)
         sig.Add(h)
     ## end mc loop
@@ -428,7 +430,7 @@ if doBkg:
     txt.SetTextFont(43)
     txt.SetTextSize(20)
     txt.SetTextAlign(31)
-    txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(hmm.lumi()/1000.)))
+    txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
     txt.SetTextSize(30)
     txt.SetTextAlign(13)
     txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
@@ -474,8 +476,14 @@ if doBkg:
     r.Draw("AXIS X+ Y+ SAME")
 
     for idx,s in enumerate(systs):
-        hSystUp = b_systs_up[idx].GetHist()
-        hSystDown=  b_systs_down[idx].GetHist()
+        try:
+            hSystUp = b_systs_up[idx].GetHist()
+        except:
+            hSystUp=mcAll.Clone("nosystup")
+        try:
+            hSystDown=  b_systs_down[idx].GetHist()
+        except:
+            hSystDown=  mcAll.Clone("nosystdn")
 
         hSystUp.Divide(mcAll)
         hSystDown.Divide(mcAll)
