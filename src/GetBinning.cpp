@@ -1,28 +1,18 @@
 #include <iostream>
-#include "TH2.h"
+//#include "TH2.h"
 #include "TROOT.h"
-#include "TFile.h"
-
+//#include "TFile.h"
+#include "interface/GetBinning.hpp"
 using namespace std;
 
 // Expected input
 // vsHF-->X
 // vsLF-->Y
 
-class GetBinning
-{
-public:
-  GetBinning();
-  Int_t GetCluster(Double_t, Double_t);
-protected:
-  TFile* file;
-  TH2F* hBinning;
-};
-
 
 GetBinning::GetBinning()
 {
-  TString fileName = "binning_1l_highmass.root";
+  TString fileName = "aux/binning_1l_highmass.root";
   file = (TFile*) gROOT->GetListOfFiles()->FindObject(fileName);
   if (!file || !file->IsOpen()) file = TFile::Open(fileName);
   hBinning = (TH2F*) file->Get("hTargetBinning");

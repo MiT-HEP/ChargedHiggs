@@ -360,6 +360,7 @@ void ChargedHiggsTopBottom::Init()
     Log(__FUNCTION__,"INFO",Form("doSynch=%d",doSynch));
 
     Preselection();
+    bin_.reset(new GetBinning());
 
     if(doSynch) return;
 
@@ -368,138 +369,129 @@ void ChargedHiggsTopBottom::Init()
     for( size_t i=0;i<weights.size() ;++i)
         readers_ . push_back( new TMVA::Reader() );
 
-    // 1l - high mass
-    AddVariable("ht",'F',0);
-    AddVariable("met_pt",'F',0);
-    AddVariable("lep1_pt",'F',0);
-    AddVariable("bjet_pt[0]",'F',0);
-    AddVariable("DRl1b1",'F',0);
-    AddVariable("DRbbmin",'F',0);
-    AddVariable("MassDRbbmin",'F',0);
-    AddVariable("MassDRlbmin",'F',0);
-    AddVariable("mt",'F',0);
-    //    AddVariable("mt2bb",'F',0);
-    AddVariable("mt2bb1l",'F',0);
-    AddVariable("Cen",'F',0);
-    AddVariable("HemiOut",'F',0);
-    AddVariable("DEtaMaxBB",'F',0);
-    AddVariable("DRlbmaxPT",'F',0);
-    AddVariable("AvCSVPt",'F',0);
-    AddVariable("st",'F',0);
-    AddVariable("MJJJmaxPt",'F',0);
+    for (int i=0; i<3; i++) {
+        // 0,1,2
+
+        // 1l - high mass
+        // 1l - medium mass
+        // 1l - low mass
+
+        AddVariable("ht",'F',i);
+        AddVariable("met_pt",'F',i);
+        AddVariable("lep1_pt",'F',i);
+        AddVariable("bjet_pt[0]",'F',i);
+        AddVariable("DRl1b1",'F',i);
+        AddVariable("DRbbmin",'F',i);
+        AddVariable("MassDRbbmin",'F',i);
+        AddVariable("MassDRlbmin",'F',i);
+        AddVariable("mt",'F',i);
+        //    AddVariable("mt2bb",'F',i);
+        AddVariable("mt2bb1l",'F',i);
+        AddVariable("Cen",'F',i);
+        AddVariable("HemiOut",'F',i);
+        AddVariable("DEtaMaxBB",'F',i);
+        AddVariable("DRlbmaxPT",'F',i);
+        AddVariable("AvCSVPt",'F',i);
+        AddVariable("st",'F',i);
+        AddVariable("MJJJmaxPt",'F',i);
+
+        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+
+    }
+
+    for (int i=3; i<3+3; i++) {
+        // 0,1,2
+
+        // 2l - high mass
+        // 2l - medium mass
+        // 2l - low mass
+        AddVariable("ht",'F',i);
+        AddVariable("met_pt",'F',i);
+        AddVariable("lep1_pt",'F',i);
+        AddVariable("bjet_pt[0]",'F',i);
+        AddVariable("DRl1b1",'F',i);
+        AddVariable("DRbbmin",'F',i);
+        AddVariable("MassDRbbmin",'F',i);
+        AddVariable("MassDRlbmin",'F',i);
+        AddVariable("mt",'F',i);
+        //    AddVariable("mt2bb",'F',3);
+        AddVariable("mt2bb1l",'F',i);
+        AddVariable("Cen",'F',i);
+        AddVariable("HemiOut",'F',i);
+        AddVariable("DEtaMaxBB",'F',i);
+        AddVariable("DRlbmaxPT",'F',i);
+        AddVariable("AvCSVPt",'F',i);
+        AddVariable("st",'F',i);
+        AddVariable("mtMin",'F',i);
+
+        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+
+    }
+
+    //////////////
+    ////  ------
+    ////
+
+    for (int i=6; i<6+6; i++) {
+        // 0,1,2
+
+        // 1l - high mass
+        // 1l - medium mass
+        // 1l - low mass
+
+        AddVariable("ht",'F',i);
+        AddVariable("met_pt",'F',i);
+        AddVariable("lep1_pt",'F',i);
+        AddVariable("bjet_pt[0]",'F',i);
+        AddVariable("DRl1b1",'F',i);
+        AddVariable("DRbbmin",'F',i);
+        AddVariable("MassDRbbmin",'F',i);
+        AddVariable("MassDRlbmin",'F',i);
+        AddVariable("mt",'F',i);
+        //    AddVariable("mt2bb",'F',i);
+        AddVariable("mt2bb1l",'F',i);
+        AddVariable("Cen",'F',i);
+        AddVariable("HemiOut",'F',i);
+        AddVariable("DEtaMaxBB",'F',i);
+        AddVariable("DRlbmaxPT",'F',i);
+        AddVariable("AvCSVPt",'F',i);
+        AddVariable("st",'F',i);
+        AddVariable("MJJJmaxPt",'F',i);
+
+        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+
+    }
+
+    for (int i=12; i<12+6; i++) {
+        // 0,1,2
+
+        // 2l - high mass
+        // 2l - medium mass
+        // 2l - low mass
+        AddVariable("ht",'F',i);
+        AddVariable("met_pt",'F',i);
+        AddVariable("lep1_pt",'F',i);
+        AddVariable("bjet_pt[0]",'F',i);
+        AddVariable("DRl1b1",'F',i);
+        AddVariable("DRbbmin",'F',i);
+        AddVariable("MassDRbbmin",'F',i);
+        AddVariable("MassDRlbmin",'F',i);
+        AddVariable("mt",'F',i);
+        //    AddVariable("mt2bb",'F',3);
+        AddVariable("mt2bb1l",'F',i);
+        AddVariable("Cen",'F',i);
+        AddVariable("HemiOut",'F',i);
+        AddVariable("DEtaMaxBB",'F',i);
+        AddVariable("DRlbmaxPT",'F',i);
+        AddVariable("AvCSVPt",'F',i);
+        AddVariable("st",'F',i);
+        AddVariable("mtMin",'F',i);
+
+        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+
+    }
 
 
-    AddSpectator("mc",'F',0); AddSpectator("run",'F',0); AddSpectator("lumi",'F',0); AddSpectator("evt",'F',0);
-
-    // 1l - medium mass
-    AddVariable("ht",'F',1);
-    AddVariable("met_pt",'F',1);
-    AddVariable("lep1_pt",'F',1);
-    AddVariable("bjet_pt[0]",'F',1);
-    AddVariable("DRl1b1",'F',1);
-    AddVariable("DRbbmin",'F',1);
-    AddVariable("MassDRbbmin",'F',1);
-    AddVariable("MassDRlbmin",'F',1);
-    AddVariable("mt",'F',1);
-    //    AddVariable("mt2bb",'F',1);
-    AddVariable("mt2bb1l",'F',1);
-    AddVariable("Cen",'F',1);
-    AddVariable("HemiOut",'F',1);
-    AddVariable("DEtaMaxBB",'F',1);
-    AddVariable("DRlbmaxPT",'F',1);
-    AddVariable("AvCSVPt",'F',1);
-    AddVariable("st",'F',1);
-    AddVariable("MJJJmaxPt",'F',1);
-
-    AddSpectator("mc",'F',1); AddSpectator("run",'F',1); AddSpectator("lumi",'F',1); AddSpectator("evt",'F',1);
-
-    // 1l - low mass
-    AddVariable("ht",'F',2);
-    AddVariable("met_pt",'F',2);
-    AddVariable("lep1_pt",'F',2);
-    AddVariable("bjet_pt[0]",'F',2);
-    AddVariable("DRl1b1",'F',2);
-    AddVariable("DRbbmin",'F',2);
-    AddVariable("MassDRbbmin",'F',2);
-    AddVariable("MassDRlbmin",'F',2);
-    AddVariable("mt",'F',2);
-    //    AddVariable("mt2bb",'F',2);
-    AddVariable("mt2bb1l",'F',2);
-    AddVariable("Cen",'F',2);
-    AddVariable("HemiOut",'F',2);
-    AddVariable("DEtaMaxBB",'F',2);
-    AddVariable("DRlbmaxPT",'F',2);
-    AddVariable("AvCSVPt",'F',2);
-    AddVariable("st",'F',2);
-    AddVariable("MJJJmaxPt",'F',2);
-
-    AddSpectator("mc",'F',2); AddSpectator("run",'F',2); AddSpectator("lumi",'F',2); AddSpectator("evt",'F',2);
-
-    // 2l - high mass
-    AddVariable("ht",'F',3);
-    AddVariable("met_pt",'F',3);
-    AddVariable("lep1_pt",'F',3);
-    AddVariable("bjet_pt[0]",'F',3);
-    AddVariable("DRl1b1",'F',3);
-    AddVariable("DRbbmin",'F',3);
-    AddVariable("MassDRbbmin",'F',3);
-    AddVariable("MassDRlbmin",'F',3);
-    AddVariable("mt",'F',3);
-    //    AddVariable("mt2bb",'F',3);
-    AddVariable("mt2bb1l",'F',3);
-    AddVariable("Cen",'F',3);
-    AddVariable("HemiOut",'F',3);
-    AddVariable("DEtaMaxBB",'F',3);
-    AddVariable("DRlbmaxPT",'F',3);
-    AddVariable("AvCSVPt",'F',3);
-    AddVariable("st",'F',3);
-    AddVariable("mtMin",'F',3);
-
-    AddSpectator("mc",'F',3); AddSpectator("run",'F',3); AddSpectator("lumi",'F',3); AddSpectator("evt",'F',3);
-
-    // 2l - medium mass
-    AddVariable("ht",'F',4);
-    AddVariable("met_pt",'F',4);
-    AddVariable("lep1_pt",'F',4);
-    AddVariable("bjet_pt[0]",'F',4);
-    AddVariable("DRl1b1",'F',4);
-    AddVariable("DRbbmin",'F',4);
-    AddVariable("MassDRbbmin",'F',4);
-    AddVariable("MassDRlbmin",'F',4);
-    AddVariable("mt",'F',4);
-    //    AddVariable("mt2bb",'F',4);
-    AddVariable("mt2bb1l",'F',4);
-    AddVariable("Cen",'F',4);
-    AddVariable("HemiOut",'F',4);
-    AddVariable("DEtaMaxBB",'F',4);
-    AddVariable("DRlbmaxPT",'F',4);
-    AddVariable("AvCSVPt",'F',4);
-    AddVariable("st",'F',4);
-    AddVariable("mtMin",'F',4);
-
-    AddSpectator("mc",'F',4); AddSpectator("run",'F',4); AddSpectator("lumi",'F',4); AddSpectator("evt",'F',4);
-
-    // 2l - low mass mass
-    AddVariable("ht",'F',5);
-    AddVariable("met_pt",'F',5);
-    AddVariable("lep1_pt",'F',5);
-    AddVariable("bjet_pt[0]",'F',5);
-    AddVariable("DRl1b1",'F',5);
-    AddVariable("DRbbmin",'F',5);
-    AddVariable("MassDRbbmin",'F',5);
-    AddVariable("MassDRlbmin",'F',5);
-    AddVariable("mt",'F',5);
-    //    AddVariable("mt2bb",'F',5);
-    AddVariable("mt2bb1l",'F',5);
-    AddVariable("Cen",'F',5);
-    AddVariable("HemiOut",'F',5);
-    AddVariable("DEtaMaxBB",'F',5);
-    AddVariable("DRlbmaxPT",'F',5);
-    AddVariable("AvCSVPt",'F',5);
-    AddVariable("st",'F',5);
-    AddVariable("mtMin",'F',5);
-
-    AddSpectator("mc",'F',5); AddSpectator("run",'F',5); AddSpectator("lumi",'F',5); AddSpectator("evt",'F',5);
 
     // load weights
     for( size_t i=0;i<weights.size() ;++i)
@@ -752,12 +744,27 @@ void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasesp
     if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+SR+flavor+l);
     if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+SR+flavor+l);
 
+    if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1ll_"+SR+flavor+l);
+    if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lm_"+SR+flavor+l);
+    if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lh_"+SR+flavor+l);
+    if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2ll_"+SR+flavor+l);
+    if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2lm_"+SR+flavor+l);
+    if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2lh_"+SR+flavor+l);
+
+    //////
+
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+SR+flavor+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+SR+flavor+l,"ST "+l+"; ST ( HT+met+lepsPt )",800,0,8000);
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+SR+flavor+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",40,0,2000);
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+SR+flavor+l,"ST "+l+"; ST ( HT+met+lepsPt )",50,0,2500);
 
-    // need to book SR only for Baseline
+    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1ll_"+SR+flavor+l,"bdt2D_1ll_ "+l+";bdt (2D low) 1l",   4,-0.5,3.5);
+    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lm_"+SR+flavor+l,"bdt2D_1lm_ "+l+";bdt (2D medium) 1l",4,-0.5,3.5);
+    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lh_"+SR+flavor+l,"bdt2D_1lh_ "+l+";bdt (2D high) 1l",  4,-0.5,3.5);
+    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2ll_"+SR+flavor+l,"bdt2D_2ll_ "+l+";bdt (2D low) 2l",   4,-0.5,3.5);
+    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2lm_"+SR+flavor+l,"bdt2D_2lm_ "+l+";bdt (2D medium) 2l",4,-0.5,3.5);
+    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2lh_"+SR+flavor+l,"bdt2D_2lh_ "+l+";bdt (2D high) 2l",  4,-0.5,3.5);
+
     if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+SR+flavor+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
     if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+SR+flavor+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
     if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+SR+flavor+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
@@ -1948,6 +1955,14 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
             if(do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+Sregion+LabelHF+label,systname,-1,e->weight());
         }
 
+        if(do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lh_"+Sregion+LabelHF+label,systname,bin_->GetCluster(bdt[6],bdt[7]),e->weight());
+        if(do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lm_"+Sregion+LabelHF+label,systname,bin_->GetCluster(bdt[8],bdt[9]),e->weight());
+        if(do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1ll_"+Sregion+LabelHF+label,systname,bin_->GetCluster(bdt[10],bdt[11]),e->weight());
+        if(do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2lh_"+Sregion+LabelHF+label,systname,bin_->GetCluster(bdt[12],bdt[13]),e->weight());
+        if(do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2lm_"+Sregion+LabelHF+label,systname,bin_->GetCluster(bdt[14],bdt[15]),e->weight());
+        if(do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2ll_"+Sregion+LabelHF+label,systname,bin_->GetCluster(bdt[16],bdt[17]),e->weight());
+
+
     }
 
 }
@@ -2609,7 +2624,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         
         bdt.clear();
 
-        if(do2lAnalysis)  SetVariable("mtMin",evt_MTmin);
+        if(do2lAnalysis) SetVariable("mtMin",evt_MTmin);
+        if(do1lAnalysis) SetVariable("MJJJmaxPt",evt_MJJJmaxPt);
 
         SetVariable("ht",evt_HT);
         SetVariable("met_pt",e->GetMet().GetP4().Pt());
@@ -2623,7 +2639,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         SetVariable("DRlbmaxPT",evt_DRlbmaxPt);
         SetVariable("st",evt_ST);
         SetVariable("AvCSVPt",evt_AvCSVPt);
-        SetVariable("MJJJmaxPt",evt_MJJJmaxPt);
+
 
         if( e->Bjets()>1 ) {
             SetVariable("DEtaMaxBB",evt_DEtaMaxBB);
@@ -2644,6 +2660,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                     bdt.push_back(readers_[i]->EvaluateMVA("BDTG") );
             }
         
+
+        //        cout << "bla6,7 = " << bin_->GetCluster(bdt[6],bdt[7]) << endl;
+
     }
 
     ////////
