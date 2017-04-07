@@ -115,11 +115,11 @@ ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_exo
 ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/user/ceballos/Nero/v2.2/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 2149540.26632 0.2150955
 
 ##### QCD
-#QCD_HT100to200 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-#QCD_HT200to300 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-#QCD_HT300to500 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-#QCD_HT500to700 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-#QCD_HT700to1000 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-#QCD_HT1000to1500 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-#QCD_HT1500to2000 /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-#QCD_HT2000toInf /store/group/phys_exotica/monojet/zdemirag/moriond80x/v2.1/QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 80684349 27990000 
+QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 38857977 1712000
+QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 37205735 347700 
+QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 43218819 32100
+QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 29697504 6831 
+QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 10360193 1207  
+QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 7855883 119.9
+QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 4047360 25.24 

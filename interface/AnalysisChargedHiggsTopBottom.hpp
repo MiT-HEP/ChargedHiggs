@@ -19,6 +19,7 @@ public:
     bool doSynch = false;
     bool doICHEP = false;
     bool writeTree = false;
+    bool doSplit = false;
 
     // Analysis type
     bool do1lAnalysis=false;
