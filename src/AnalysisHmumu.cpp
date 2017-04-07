@@ -309,30 +309,30 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     Hmm += *mu1;
 
 
-    SetVariable("mu1_abs_eta",fabs(mu0->Eta()));    
-    SetVariable("mu2_abs_eta",fabs(mu1->Eta()));    
+    //SetVariable("mu1_abs_eta",fabs(mu0->Eta()));    
+    //SetVariable("mu2_abs_eta",fabs(mu1->Eta()));    
     SetVariable("dimu_pt",Hmm.Pt());    
     SetVariable("dimu_eta",Hmm.Eta());    
     SetVariable("dimu_abs_dEta",fabs(mu0->Eta()-mu1->Eta()));    
     SetVariable("dimu_abs_dPhi",fabs(mu0->DeltaPhi(*mu1)));
-    SetVariable("dimu_dPhiStar",dimu_dPhiStar(mu0,mu1));
+    //SetVariable("dimu_dPhiStar",dimu_dPhiStar(mu0,mu1));
     if (jets.size() >=1)
     {
-        SetVariable("jet1_pt",jets[0]->Pt());    
+        //SetVariable("jet1_pt",jets[0]->Pt());    
         SetVariable("jet1_eta",jets[0]->Eta());    
     }
     else{
-        SetVariable("jet1_pt",0.);    
+        //SetVariable("jet1_pt",0.);    
         SetVariable("jet1_eta",-5.);    
     }
     if (jets.size() >=2)
     {
-        SetVariable("jet2_pt",jets[1]->Pt());    
+        //SetVariable("jet2_pt",jets[1]->Pt());    
         SetVariable("jet2_eta",jets[1]->Eta());    
     }   
     else
     {
-        SetVariable("jet2_pt",0.);    
+        //SetVariable("jet2_pt",0.);    
         SetVariable("jet2_eta",-5.);    
     }   
 
@@ -351,12 +351,12 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     sort ( mjj_detajj.begin(),mjj_detajj.end(), [](const pair<float,float>&x,const pair<float,float>&y){if (x.first > y.first) return true;if (x.first<y.first) return false; return x.second > y.second; } );
     SetVariable("dijet1_mass",mjj_detajj[0].first);    
     SetVariable("dijet2_mass",mjj_detajj[1].first);    
-    SetVariable("dijet3_mass",mjj_detajj[2].first);    
-    SetVariable("dijet4_mass",mjj_detajj[3].first);    
+    //SetVariable("dijet3_mass",mjj_detajj[2].first);    
+    //SetVariable("dijet4_mass",mjj_detajj[3].first);    
     SetVariable("dijet1_abs_dEta",mjj_detajj[0].second);    
     SetVariable("dijet2_abs_dEta",mjj_detajj[1].second);    
-    SetVariable("dijet3_abs_dEta",mjj_detajj[2].second);    
-    SetVariable("dijet4_abs_dEta",mjj_detajj[3].second);    
+    //SetVariable("dijet3_abs_dEta",mjj_detajj[2].second);    
+    //SetVariable("dijet4_abs_dEta",mjj_detajj[3].second);    
 
     int nbjets=0;
     int ncentjets=0;
@@ -381,22 +381,23 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
 
     float mu_max_eta = std::max(fabs(mu0->Eta()),fabs(mu1->Eta()));
     float mu_ave_eta = (fabs(mu0->Eta())+fabs(mu1->Eta()))/2.;
-    if (bdt[0]< -0.379) icat=0;
-    if (bdt[0]>= 0.344 and bdt[0]<0.584 and mu_max_eta >= 1.873) icat=1;
-    if (bdt[0]<  0.242 and bdt[0]>=-0.034 and mu_max_eta >= 1.955) icat=2;
-    if (bdt[0]<  0.344 and bdt[0]>= 0.242 and mu_ave_eta >= 1.150) icat=3;
-    if (bdt[0]< -0.034 and bdt[0]>=-0.379 and mu_ave_eta >= 1.039) icat=4;
-    if (bdt[0]< -0.034 and bdt[0]>=-0.379 and mu_ave_eta <  1.039) icat=5;
-    if (bdt[0]<  0.195 and bdt[0]>=-0.034 and mu_max_eta <  0.890) icat=6;
-    if (bdt[0]<  0.344 and bdt[0]>= 0.242 and mu_max_eta >= 0.890 and mu_ave_eta < 1.150) icat=7;
-    if (bdt[0]<  0.44  and bdt[0] >= 0.344 and mu_max_eta >=0.887 and mu_max_eta < 1.873) icat=8;
-    if (bdt[0]<  0.671 and bdt[0] >= 0.584 and mu_max_eta >=0.887) icat=9;
-    if (bdt[0]<  0.584 and bdt[0] >= 0.44 and mu_max_eta >=0.887 and mu_max_eta <1.873) icat=10;
-    if (bdt[0]<  0.344 and bdt[0] >  0.195 and mu_max_eta >= 0.890 ) icat=11;
-    if (bdt[0]>= 0.671 and mu_max_eta > 1.101 ) icat=12; // HIGH ETA HIGH BDT
-    if (bdt[0]>= -0.034 and bdt[0] < 0.242 and mu_max_eta >= 0.890 and mu_max_eta <1.955 ) icat=13;
-    if (bdt[0]>= 0.344 and bdt[0] < 0.671 and mu_max_eta <0.887) icat=14; 
-    if (bdt[0]>=0.671 and mu_max_eta <1.101) icat=15;
+
+    if ( mu_ave_eta >= 1.954 and bdt[0] >= 0.727 ) icat = 0;
+    if ( mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 ) icat = 1;
+    if ( mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.902 ) icat = 2;
+    if ( mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 3;
+    if ( mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 4;
+    if ( mu_max_eta < 1.965 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 5;
+    if ( mu_max_eta < 1.965 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 6;
+    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 7;
+    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 8;
+    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 9;
+    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 10;
+    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 11;
+    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 12;
+    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 13;
+    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 14;
+    if ( mu_max_eta >= 1.965 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and mu_ave_eta < 1.954 and bdt[0] >= 0.727 and mu_max_eta < 0.915 ) icat = 15;
 
     if (icat>=0)catStr=Form("cat%d",icat);
     if (doSync){
@@ -433,25 +434,26 @@ void HmumuAnalysis::InitTmva(){
     TMVA::Tools::Instance();
     for( size_t i=0;i<weights.size() ;++i)
         readers_ . push_back( new TMVA::Reader() );
-    AddVariable("mu1_abs_eta",'F');    
-    AddVariable("mu2_abs_eta",'F');    
+
+    //AddVariable("mu1_abs_eta",'F');    
+    //AddVariable("mu2_abs_eta",'F');    
     AddVariable("dimu_pt",'F');    
     AddVariable("dimu_eta",'F');    
     AddVariable("dimu_abs_dEta",'F');    
     AddVariable("dimu_abs_dPhi",'F');
-    AddVariable("dimu_dPhiStar",'F');
-    AddVariable("jet1_pt",'F');    
-    AddVariable("jet2_pt",'F');    
+    //AddVariable("dimu_dPhiStar",'F');
+    //AddVariable("jet1_pt",'F');    
+    //AddVariable("jet2_pt",'F');    
     AddVariable("jet1_eta",'F');    
     AddVariable("jet2_eta",'F');    
     AddVariable("dijet1_mass",'F');    
     AddVariable("dijet2_mass",'F');    
-    AddVariable("dijet3_mass",'F');    
-    AddVariable("dijet4_mass",'F');    
+    //AddVariable("dijet3_mass",'F');    
+    //AddVariable("dijet4_mass",'F');    
     AddVariable("dijet1_abs_dEta",'F');    
     AddVariable("dijet2_abs_dEta",'F');    
-    AddVariable("dijet3_abs_dEta",'F');    
-    AddVariable("dijet4_abs_dEta",'F');    
+    //AddVariable("dijet3_abs_dEta",'F');    
+    //AddVariable("dijet4_abs_dEta",'F');    
     AddVariable("nJetsCent",'F');    
     AddVariable("nJetsFwd",'F');    
     AddVariable("nBMed",'F');    
@@ -508,6 +510,8 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
 	    Book ("HmumuAnalysis/Vars/MetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnH_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/MetOnZ_rw_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/MetOnH_rw_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnZ_"+ l ,"Pt On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnH_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
         for(const auto & c : categories_)
@@ -557,6 +561,16 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
+
+
+    if (doEvenOnly){
+        if ( label.find("HToMuMu") != string::npos )
+        {
+            if (e->eventNum()&1 == 0 ) e->ApplySF("double");
+            else return 0;
+        }
+    }
+
     cut.reset();
     cut.SetMask(MaxCut-1) ;
     cut.SetCutBit( Total ) ;
@@ -770,13 +784,19 @@ int HmumuAnalysis::analyze(Event *e, string systname)
        	//if (cut.passAllUpTo(Trigger) ){
         //}
         if (VERBOSE)Log(__FUNCTION__,"DEBUG","event pass selection");
+
+        float zptrw = 1.;
+        if (label == "DY") zptrw = getZPtReweight(Z.Pt() );
+        //cout<<"ZPtRWgh is "<<zptrw<<endl;
         
         if (mass_ >= 70 and mass_<110){
             Fill("HmumuAnalysis/Vars/MetOnZ_"+ label,systname, e->GetMet().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/MetOnZ_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, Z.Pt() ,e->weight());
         }
         if (mass_ >= 110 and mass_<150){
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, Z.Pt(),e->weight());
         }
 
@@ -787,6 +807,54 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
     return 0;
+}
+
+float HmumuAnalysis::getZPtReweight(float Zpt)
+{
+    if (rzpt_.get() == NULL) {
+        rzpt_.reset( new TH1D("r__1","Pt On Z (70-110)",100,0,1000) ) ;
+        rzpt_->SetBinContent(1,1.030536);
+        rzpt_->SetBinContent(2,0.9691712);
+        rzpt_->SetBinContent(3,0.9776648);
+        rzpt_->SetBinContent(4,0.9961141);
+        rzpt_->SetBinContent(5,1.019372);
+        rzpt_->SetBinContent(6,1.034224);
+        rzpt_->SetBinContent(7,1.045814);
+        rzpt_->SetBinContent(8,1.050968);
+        rzpt_->SetBinContent(9,1.054974);
+        rzpt_->SetBinContent(10,1.068111);
+        rzpt_->SetBinContent(11,1.08331);
+        rzpt_->SetBinContent(12,1.096292);
+        rzpt_->SetBinContent(13,1.116588);
+        rzpt_->SetBinContent(14,1.123308);
+        rzpt_->SetBinContent(15,1.121119);
+        rzpt_->SetBinContent(16,1.12358);
+        rzpt_->SetBinContent(17,1.125133);
+        rzpt_->SetBinContent(18,1.119461);
+        rzpt_->SetBinContent(19,1.099604);
+        rzpt_->SetBinContent(20,1.090148);
+        rzpt_->SetBinContent(21,1.10452);
+        rzpt_->SetBinContent(22,1.106105);
+        rzpt_->SetBinContent(23,1.030325);
+        rzpt_->SetBinContent(24,1.061008);
+        rzpt_->SetBinContent(25,1.03754);
+        rzpt_->SetBinContent(26,1.051334);
+        rzpt_->SetBinContent(27,1.025027);
+        rzpt_->SetBinContent(28,1.006342);
+        rzpt_->SetBinContent(29,1.028017);
+        rzpt_->SetBinContent(30,1.032076);
+        rzpt_->SetBinContent(31,0.9873907);
+        rzpt_->SetBinContent(32,0.9989432);
+        rzpt_->SetBinContent(33,1.013082);
+        rzpt_->SetBinContent(34,0.9704208);
+        rzpt_->SetBinContent(35,0.9751695);
+        rzpt_->SetBinContent(36,0.9554832);
+        rzpt_->SetBinContent(37,1.03948);
+        rzpt_->SetBinContent(38,1.032827);
+        rzpt2_.reset( new TF1("myf","1.36959e+00-1.39690e-03*x +x*x*7.11835e-07") );
+    }
+    if (Zpt < 350) return rzpt_->GetBinContent(rzpt_->FindBin(Zpt));
+    else return rzpt2_->Eval (std::min(Zpt,float(1000.))) ;
 }
 
 

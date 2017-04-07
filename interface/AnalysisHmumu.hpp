@@ -30,6 +30,7 @@ class HmumuAnalysis: virtual public AnalysisBase
 
         bool doSync{false};
         int catType{0}; //0 = RunISync, 1=AutoCat, 2=Bdt
+        bool doEvenOnly{false}; //signal only even events
 
     private:
         // select cuts
@@ -50,6 +51,10 @@ class HmumuAnalysis: virtual public AnalysisBase
         };
 
         std::unique_ptr<TRandom> rnd_;
+
+        float getZPtReweight(float Zpt);
+        std::unique_ptr<TH1D> rzpt_;
+        std::unique_ptr<TF1> rzpt2_;
 
         /************
          *   TMVA   *

@@ -163,3 +163,74 @@ class Stack:
         print "-------------------------------"
 
 
+
+import re
+class StringToCpp():
+    def __init__(self):
+        ## string cut to c-cut
+        self.map={'bdt_score':'bdt[0]',
+                'dimu_avg_abs_eta':'mu_ave_eta',
+                'dimu_max_abs_eta':'mu_max_eta',
+                }
+        self.operator={'gt':'>=','lt':'<'}
+    def parse_(self,string,result={}):
+        if string =="" : return result
+        op= string.split('_')[0]
+        if op not in self.operator:
+            opStr= '?'
+        else:
+            opStr=self.operator[op]
+        
+        newstring = '_'.join(string.split('_')[1:])
+        var="???"
+        value=0.00
+
+        for key in self.map:
+            if re.match(key,newstring): ## beginning of the line
+                var = self.map[key]
+                newstring = re.sub('^'+key+'_','',newstring)
+                valueStr =newstring.split('_')[0]
+                newstring = '_'.join(newstring.split('_')[1:] )
+                newValueStr=re.sub('n','-',re.sub('p','.',valueStr))
+                #print "DEBUG: converting for",var,opStr,"->",newValueStr
+                value = float (newValueStr) 
+        if var=='???': raise ValueError 
+        if (var,opStr) in result:
+            if opStr == '>=' or opStr=='>':
+                if value >= result[(var,opStr)]: result[(var,opStr)]=value
+            if opStr == '<' or opStr== "<=":
+                if value <= result[(var,opStr)]: result[(var,opStr)]=value
+        else:
+            result[(var,opStr)] = value
+        return self.parse_(newstring,result)
+
+    def Parse(self,string):  
+        result= self.parse_(string) 
+        l = []
+        for  var,opStr in result:
+            l.append( var +" "+opStr+ " " +"%.3f"%result[(var,opStr)] )
+        return "if ( " + ' and '.join(l) + " )"
+
+    def ParseAll(self):
+        cat="icat"
+        print self.Parse("gt_bdt_score_0p395_gt_bdt_score_0p727_gt_dimu_avg_abs_eta_1p954"),cat,"=",0,";"
+        print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_lt_bdt_score_n0p399"),cat,"=",1,";"
+        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_gt_bdt_score_0p246_gt_dimu_max_abs_eta_1p902"),cat,"=",2,";"
+        print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_gt_dimu_max_abs_eta_1p965"),cat,"=",3,";"
+        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_gt_dimu_max_abs_eta_1p787"),cat,"=",4,";"
+        print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_lt_dimu_max_abs_eta_1p965_lt_bdt_score_n0p115"),cat,"=",5,";"
+        print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_lt_dimu_max_abs_eta_1p965_gt_bdt_score_n0p115"),cat,"=",6,";"
+        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_lt_dimu_max_abs_eta_0p915_lt_bdt_score_0p261"),cat,"=",7,";"
+        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_lt_dimu_max_abs_eta_1p787_lt_bdt_score_0p527"),cat,"=",8,";"
+        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_lt_dimu_max_abs_eta_1p787_gt_bdt_score_0p527"),cat,"=",9,";"
+        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_lt_dimu_max_abs_eta_0p915_gt_bdt_score_0p261"),cat,"=",10,";"
+        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_gt_bdt_score_0p246_lt_dimu_max_abs_eta_1p902"),cat,"=",11,";"
+        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_lt_bdt_score_0p246"),cat,"=",12,";"
+        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_gt_bdt_score_0p645"),cat,"=",13,";"
+        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_lt_dimu_max_abs_eta_0p917"),cat,"=",14,";"
+        print self.Parse("gt_bdt_score_0p395_gt_bdt_score_0p727_lt_dimu_avg_abs_eta_1p954"),cat,"=",15,";"
+        return 
+
+
+
+

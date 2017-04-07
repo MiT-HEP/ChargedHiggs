@@ -12,6 +12,7 @@ parser.add_option("-c","--cat",dest='cat',type="string",help="do cat xxx for bkg
 parser.add_option("","--noSig",dest='noSig',action="store_true",help="don't do sig plots [%default]",default=False)
 parser.add_option("","--noBkg",dest='noBkg',action="store_true",help="don't do bkg plots [%default]",default=False)
 parser.add_option("-o","--outdir",dest='outdir',type="string",help="output directory [%default]",default="Hmumu")
+parser.add_option("-x","--xrange",dest='xrange',type="string",help="xrange [%default]",default="60,150")
 parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
 
 print "-> Looking for basepath"
@@ -26,6 +27,7 @@ sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
 from hmm import hmm,hmmAutoCat, Stack
 systs=['JES','PU']
+#systs=['JES']
 
 #extra = OptionGroup(parser,"Extra options:","")
 #extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=1)
@@ -221,11 +223,12 @@ if doBkg:
         print "-> calling","python %s -i %s -d %s -v %s -c %s --noSig -o %s"% (sys.argv[0],opts.input,opts.dir,opts.var,cat,opts.outdir)
         call("python %s -i %s -d %s -v %s -c %s --noSig -o %s"% (sys.argv[0],opts.input,opts.dir,opts.var,cat,opts.outdir),shell=True)
   else:
-    cat =opts.cat
+    cat ='_'+opts.cat
+    if opts.cat == "": cat = ""
     #tmp.cd()
-    c=ROOT.TCanvas("c_"+cat+"_bkg","canvas",800,1000)
-    pup=ROOT.TPad("up_"+cat,"up",0,.2,1,1)
-    pdown=ROOT.TPad("down_"+cat,"up",0,0,1,.2)
+    c=ROOT.TCanvas("c"+cat+"_bkg","canvas",800,1000)
+    pup=ROOT.TPad("up"+cat,"up",0,.2,1,1)
+    pdown=ROOT.TPad("down"+cat,"up",0,0,1,.2)
 
     pup.SetTopMargin(0.05)
     pup.SetRightMargin(0.05)
@@ -248,8 +251,8 @@ if doBkg:
     leg1=[]
     leg2=[]
 
-    print "-> Getting data hist","HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_Data"
-    hdata=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_Data" )
+    print "-> Getting data hist","HmumuAnalysis/"+opts.dir+"/" + opts.var +  cat +"_Data"
+    hdata=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_Data" )
     hdata.Rebin(rebin)
     hdata.SetMarkerStyle(20)
     hdata.SetMarkerColor(ROOT.kBlack)
@@ -261,22 +264,23 @@ if doBkg:
 
     #bkg=ROOT.THStack()
     bkg=Stack()
-    bkg.SetName("bkgmc_"+cat)
+    bkg.SetName("bkgmc"+cat)
 
     b_systs_up=[ Stack() for x in systs]
     b_systs_down=[ Stack() for x in systs]
     for idx,s in enumerate(systs):
-        b_systs_up[idx].SetName("bkgmc_"+s+"Up_"+cat)
-        b_systs_down[idx].SetName("bkgmc_"+s+"Down_"+cat)
+        b_systs_up[idx].SetName("bkgmc_"+s+"Up"+cat)
+        b_systs_down[idx].SetName("bkgmc_"+s+"Down"+cat)
 
     #sig=ROOT.THStack()
     sig=Stack()
-    sig.SetName("sigmc_"+cat)
+    sig.SetName("sigmc"+cat)
 
     garbage.extend([sig,bkg,leg])
 
     ## BLIND 120-130
     blind=True
+    if opts.var != "Mmm":blind=False
     if blind:
         ibin0= hdata.FindBin(120)
         ibin1= hdata.FindBin(130)
@@ -285,19 +289,17 @@ if doBkg:
             hdata.SetBinError(ibin,0)
 
     for mc in BkgMonteCarlos:
-        print "* Getting bkg","HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc
-        h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc )
+        print "* Getting bkg","HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc
+        h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc )
         if h==None:
-            print "<*> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc
+            print "<*> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc
             continue
         garbage.append(h)
         h.Rebin(rebin)
-        print "<*> DEBUG: H", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc, "integral=",h.Integral()
         h.Scale(config.lumi())
-        print "<*> DEBUG: Scaling", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc, "by lumi",config.lumi()
         for idx,s in enumerate(systs):
-            hup=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc + "_" + s +"Up" )
-            hdown=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc + "_" + s +"Down" )
+            hup=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc + "_" + s +"Up" )
+            hdown=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc + "_" + s +"Down" )
             if hup==None or hdown == None:
                 print "<*> Unable to find syst",s,"trying to ignore"
                 continue
@@ -331,23 +333,22 @@ if doBkg:
             #leg.AddEntry(h,"VV","F")
             leg1.append((h,"VV","F"))
 
-        print "<*> DEBUG: Hist final ", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc, "integral=",h.Integral()
         bkg.Add(h)
 
         if mcAll==None:
-            mcAll=h.Clone("mcAll_"+cat)
+            mcAll=h.Clone("mcAll"+cat)
         else:
             mcAll.Add(h)
     ##end bkg loop
     for mc in reversed(sigMonteCarlos):
         m=125
-        print "* Getting sig","HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) 
+        print "* Getting sig","HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc%(m) 
         try:
-               h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) )
+               h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc%(m) )
         except:
             h=None
         if h==None: 
-            print "<*> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m)
+            print "<*> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc%(m)
             continue
         garbage.append(h)
         h.Rebin(rebin)
@@ -404,7 +405,7 @@ if doBkg:
     dummy.GetXaxis().SetTitleOffset(2.0)
     dummy.GetYaxis().SetTitle("Events")
     dummy.GetYaxis().SetTitleOffset(2.0)
-    dummy.GetXaxis().SetRangeUser(60,150)
+    dummy.GetXaxis().SetRangeUser( float(opts.xrange.split(',')[0]),float(opts.xrange.split(',')[1]))
     dummy.GetYaxis().SetRangeUser(1.e-1,dummy.GetMaximum()*10)
 
     dummy.GetYaxis().SetLabelFont(43)
@@ -436,7 +437,7 @@ if doBkg:
     txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
     txt.SetTextSize(20)
     txt.SetTextAlign(11)
-    txt.DrawLatex(.73,.90,"#bf{Cat="+cat+"}")
+    txt.DrawLatex(.73,.90,"#bf{Cat="+re.sub('_','',cat)+"}")
 
     # prepare err
     errAll = mcAll.Clone("errAll") ## with stat uncertainties
@@ -538,7 +539,8 @@ if doBkg:
     r.GetYaxis().SetTitle("Events")
     r.GetYaxis().SetTitleOffset(2.0)
     r.GetXaxis().SetTitleOffset(5.0)
-    r.GetXaxis().SetRangeUser(60,150)
+    #r.GetXaxis().SetRangeUser(60,150)
+    r.GetXaxis().SetRangeUser( float(opts.xrange.split(',')[0]),float(opts.xrange.split(',')[1]))
     r.GetYaxis().SetRangeUser(0.5,1.50)
     r.GetYaxis().SetLabelFont(43)
     r.GetXaxis().SetLabelFont(43)
@@ -551,7 +553,7 @@ if doBkg:
     r.GetYaxis().SetNdivisions(502)
 
     g=ROOT.TGraph()
-    g.SetName("1_"+cat)
+    g.SetName("1"+cat)
     g.SetPoint(0,60,1)
     g.SetPoint(1,150,1)
     g.SetLineColor(ROOT.kGray+2)
@@ -566,8 +568,12 @@ if doBkg:
     if opts.outdir=="":
         raw_input("ok?")
     else:
-        c.SaveAs(opts.outdir + "/" + cat + "_bkg" + ".pdf")
-        c.SaveAs(opts.outdir + "/" + cat + "_bkg" + ".png")
+        if cat != "":
+            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + "_bkg" + ".pdf")
+            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + "_bkg" + ".png")
+        else:
+            c.SaveAs(opts.outdir + "/" + opts.var + "_bkg" + ".pdf")
+            c.SaveAs(opts.outdir + "/" + opts.var + "_bkg" + ".png")
     #try to clean
     for g in garbage:
         g.Delete()
