@@ -7,30 +7,9 @@ from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
 
-#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_7_6_5_testNEROforCOMBINE/src/ChargedHiggs/APR8_1l.root")
-#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_7_6_5_testNEROforCOMBINE/src/ChargedHiggs/APR8_2l.root")
-
 parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_7_6_5_testNEROforCOMBINE/src/ChargedHiggs/splitted_APR8_1l.root") 
 parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_7_6_5_testNEROforCOMBINE/src/ChargedHiggs/splitted_APR8_2l.root") 
 
-#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="feb7_1l.root")
-#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="feb7_1l.root")
-#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/feb12final_1l.root")
-#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/feb12final_2l.root")
-#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final2/1l/1l.root")
-#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/FEB26_final2/2l/2l.root")
-#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR1_finalSYST/1l/1l.root")
-#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR4_finalNew/2l/2l.root")
-#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR1_finalSYST/2l/2l.root")
-#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/MARCH19_dataMC/1l/1l.root")
-#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/MARCH19_dataMC/2l/2l.root")
-
-#parser.add_option("","--input1Lsig",type='string',help="Input ROOT file. [%default]", default="1l_signal.root")
-#parser.add_option("","--input2Lsig",type='string',help="Input ROOT file. [%default]", default="2l_signal.root")
-#parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
-#parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
-#parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST_1Mu_BaselineExtraRad.root")
-#parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST_1Mu_BaselineExtraRad.txt")
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
 parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
 parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", default=35867)
@@ -359,14 +338,14 @@ for y in channel:
 #					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","HPlus"]
 #					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","HPlus"]
 #					catStore[name]["hasMC"]=["TTlight","HPlus"]
-				if x=="extraRadCR":
+				if "extraRadCR" in x:
 #					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
 #					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TTX","EWK","ST","HPlus"]
 					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TOP","HPlus"]
 #					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","HPlus"]
 #					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TTc","HPlus"]
 #					catStore[name]["hasMC"]=["TTlight","HPlus"]
-				if x=="topCR":
+				if "topCR" in x:
 #					catStore[name]["hasMC"]=["TT","TTX","ST","HPlus"]
 #					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TTX","EWK","ST","HPlus"]
 					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TOP","HPlus"]
@@ -409,7 +388,7 @@ for y in channel:
 #					"ST":{ "name":"ST","hist":["ST"],"num":6},
 #					"EWK":{ "name":"EWK","hist":["WJetsToLNu","WZTo","ZZTo"],"num":7},
 #					"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":8}
-					"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":8}
+					"TOP":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":8}
 					}
 			else:
 				mcStore={
@@ -424,7 +403,7 @@ for y in channel:
 #					"ST":{ "name":"ST","hist":["ST"],"num":6},
 #					"EWK":{ "name":"EWK","hist":["WJetsToLNu","ZZTo"],"num":7},
 #					"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":8}
-					"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":8}
+					"TOP":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":8}
 					}
 
 			systStore={
@@ -453,11 +432,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="APR8/"+label+VarTest+opts.output
+fileTmp="APR9/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "APR8/"+ label + VarTest + datNameTmp
+datName = "APR9/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -772,36 +751,27 @@ def importPdfFromTH1(cat,mc,syst=None):
 #	  if opts.kTest==0 or opts.kTest==7: h=RebinN(h,1)
 #	  else: h=RebinN(h,1)
 
-####1L
-#		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 
+#		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
+####1L
 		if  "1Ele" in cat["dir"] or "1Mu" in cat["dir"]:
 
 			if "Baseline" in cat["dir"]:   
 				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LCharm(h)
 				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": h=Rebin1LCharm(h) 
-#				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LExtraRad(h)
-#				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": h=Rebin1LExtraRad(h) 
 				else: 
-#					if opts.kTest==3: h.Rebin(10)
-#					if opts.kTest==2: h.Rebin(10)
-#					if opts.kTest==1: h.Rebin(10)
 					if opts.kTest==3: h=RebinBDT3(h)
 					if opts.kTest==2: h=RebinBDT2(h)
 					if opts.kTest==1: h=RebinBDT1(h)
 					if opts.kTest<10:
-						if "TT1b" in catStore[name] or "TT2b" in catStore[name] or "TT2B" in catStore[name]: 
-							if h: h.Rebin(10)
+#						if "TT1b" in catStore[name] or "TT2b" in catStore[name] or "TT2B" in catStore[name]:
+#							if h: h.Rebin(10)
 						if "SR2" in cat["var"] or "SR4" in cat["var"]: 
 							if h: h.Rebin(4)
 					
 			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
 			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
 			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-#			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LTop(h) 
-#			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-#			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LExtraRad(h) 
-
 #### 2L 			
 
 		if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
@@ -810,26 +780,19 @@ def importPdfFromTH1(cat,mc,syst=None):
 					if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LCharm(h)
 					elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": Rebin1LCharm(h) 
 					if cat["var"] == "HT" and h: h.Rebin(2)				
-					#				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LExtraRad(h)
-					#				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": h=Rebin1LExtraRad(h) 
 					else: 
 						if opts.kTest==6: h=RebinBDT3(h) 
 						if opts.kTest==5: h=RebinBDT2(h)
 						if opts.kTest==4: h=RebinBDT1(h)
 						if opts.kTest<10:
-							if "TT1b" in catStore[name] or "TT2b" in catStore[name] or "TT2B" in catStore[name]: 
-								if h: h.Rebin(10)
+#							if "TT1b" in catStore[name] or "TT2b" in catStore[name] or "TT2B" in catStore[name]:
+#								if h: h.Rebin(10)
 							if "SR2" in cat["var"] or "SR4" in cat["var"]: 
 								if h: h.Rebin(4)					
 								
 				if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
 				if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
 				if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-
-#			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LTop(h) 
-#			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-#			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LExtraRad(h) 
-
 			## extra Rebin(2) for dilepton
 #			if h: h.Rebin(2)
 
@@ -937,7 +900,11 @@ for c in catStore:
 				if opts.kTest==3: h=RebinBDT3(h)
 				if opts.kTest==2: h=RebinBDT2(h)
 				if opts.kTest==1: h=RebinBDT1(h)
-#				if "SR2" in cat["var"] or "SR4" in cat["var"]: h.Rebin(2)
+				if opts.kTest<10:
+#					if "TT1b" in catStore[name] or "TT2b" in catStore[name] or "TT2B" in catStore[name]: 
+#						if h: h.Rebin(10)
+                                        if "SR2" in cat["var"] or "SR4" in cat["var"]: 
+						if h: h.Rebin(4)
 
 		if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LTop(h) 
 		if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
@@ -954,6 +921,11 @@ for c in catStore:
 				if opts.kTest==3: h=RebinBDT3(h) 
 				if opts.kTest==2: h=RebinBDT2(h)
 				if opts.kTest==1: h=RebinBDT1(h)
+				if opts.kTest<10:
+#					if "TT1b" in catStore[name] or "TT2b" in catStore[name] or "TT2B" in catStore[name]: 
+#						if h: h.Rebin(10)
+                                        if "SR2" in cat["var"] or "SR4" in cat["var"]: 
+						if h: h.Rebin(4)
 					
 		if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LTop(h) 
 		if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
