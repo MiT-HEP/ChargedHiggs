@@ -515,21 +515,21 @@ void ChargedHiggsTopBottom::Init()
         Branch("tree_tb","mc",'I'); // to distinguish between the different mc
         Branch("tree_tb","lep_category",'I'); // to distinguish between the different leptonCategory
         Branch("tree_tb","passTrigger",'I'); // to distinguish between the various trigger bits
-        
+
         Branch("tree_tb","run",'I');
         Branch("tree_tb","lumi",'I');
         Branch("tree_tb","evt",'I');
         Branch("tree_tb","npv",'I');
         Branch("tree_tb","weight",'D');
         Branch("tree_tb","isRealData",'I');
-        
+
         Branch("tree_tb","weight_pu",'D');
         Branch("tree_tb","weight_bTag",'D');
         Branch("tree_tb","weight_bTagCSV",'D');
         Branch("tree_tb","weight_nEv",'D');
         Branch("tree_tb","weight_topPt",'D');
         Branch("tree_tb","xsec",'F');
-        
+
         // fill lepton quantities
         Branch("tree_tb","lep1_pt",'F');
         Branch("tree_tb","lep1_phi",'F');
@@ -537,19 +537,19 @@ void ChargedHiggsTopBottom::Init()
         //    Branch("tree_tb","lep1_charge",'F');
         //    Branch("tree_tb","lep1_isolation",'F');
         Branch("tree_tb","lep1_id",'F');
-        
+
         Branch("tree_tb","lep2_pt",'F');
         Branch("tree_tb","lep2_phi",'F');
         Branch("tree_tb","lep2_eta",'F');
         //    Branch("tree_tb","lep2_charge",'F');
         //    Branch("tree_tb","lep2_isolation",'F');
         Branch("tree_tb","lep2_id",'F');
-        
+
         // fill counter and scalar
         Branch("tree_tb","NcentralJets",'I');
         Branch("tree_tb","NJets",'I');
         Branch("tree_tb","NBJets",'I');
-        
+
         // fill event variables
         Branch("tree_tb","met_pt",'F');
         Branch("tree_tb","met_phi",'F');
@@ -565,7 +565,7 @@ void ChargedHiggsTopBottom::Init()
         Branch("tree_tb","MJJJmaxPt",'F');
         Branch("tree_tb","AvDRJJJmaxPt",'F');
         Branch("tree_tb","AvCSVPt",'F');
-        
+
         // various masses
         Branch("tree_tb","bdt1lh",'F');
         Branch("tree_tb","bdt1lm",'F');
@@ -580,25 +580,25 @@ void ChargedHiggsTopBottom::Init()
         Branch("tree_tb","mtMin",'F');
         Branch("tree_tb","mtMax",'F');
         Branch("tree_tb","mtTot",'F');
-        
+
         // Shape variables
         Branch("tree_tb","Cen",'F');
         Branch("tree_tb","HemiOut",'F');
-        
+
         // fill all the object vector
         Branch("tree_tb","jet_pt",'d',10,"NJets");
         Branch("tree_tb","jet_eta",'d',10,"NJets");
         Branch("tree_tb","jet_phi",'d',10,"NJets");
         Branch("tree_tb","jet_e",'d',10,"NJets");
         Branch("tree_tb","jet_discr",'d',10,"NJets");
-        
+
         // fill all the object vector
         Branch("tree_tb","bjet_pt",'d',10,"NBJets");
         Branch("tree_tb","bjet_eta",'d',10,"NBJets");
         Branch("tree_tb","bjet_e",'d',10,"NBJets");
         Branch("tree_tb","bjet_phi",'d',10,"NBJets");
         Branch("tree_tb","bjet_discr",'d',10,"NBJets");
-        
+
         //// VARIOUS gen  INFO
         
         Branch("tree_tb","genTTid",'I');
@@ -1781,6 +1781,13 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
         if(do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+label,systname,-1,e->weight());
     }
 
+    if(do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lh_"+label,systname,bin_->GetCluster(bdt[6],bdt[7]),e->weight());
+    if(do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lm_"+label,systname,bin_->GetCluster(bdt[8],bdt[9]),e->weight());
+    if(do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1ll_"+label,systname,bin_->GetCluster(bdt[10],bdt[11]),e->weight());
+    if(do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2lh_"+label,systname,bin_->GetCluster(bdt[12],bdt[13]),e->weight());
+    if(do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2lm_"+label,systname,bin_->GetCluster(bdt[14],bdt[15]),e->weight());
+    if(do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_2ll_"+label,systname,bin_->GetCluster(bdt[16],bdt[17]),e->weight());
+
     if(do1lAnalysis) return;
     if(trailLep==NULL) return;
 
@@ -2089,7 +2096,21 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
     std::cout << " met=" << e->GetMet().Pt();
     std::cout << " " << std::endl;
 
+    int el=0;
+    int mu=0;
+
+    for(int i=0;i!=e->Nleps();++i) {
+        Lepton *it = e->GetLepton(i);
+        if(it->IsMuon()) mu++;
+        if(it->IsElectron()) el++;
+    }
+    std::cout << " nMu=" << mu ;
+    std::cout << " nEle=" << el << endl;;
+
     std::cout << " genTTbar flag " << e->GetGenTtbarId() << std::endl;
+    bool Baseline=(e->Bjets() > 1 && e->NcentralJets() >4 && e->GetMet().Pt()>30);
+    if(Baseline) std::cout << " Baseline (Nb>1 and Njets>4) "<< std::endl;
+
 
     if((e->GetGenTtbarId()%100)==55 || (e->GetGenTtbarId()%100)==54 || (e->GetGenTtbarId()%100)==53) cout << "  this is ttbar + "<< endl;
     if((e->GetGenTtbarId()%100)==52 || (e->GetGenTtbarId()%100)==51) cout << "  this is ttbar + b"<< endl;
@@ -2585,6 +2606,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////$$$$$$$
     ////$$$$$$$
 
+
     if(doSynch) { printSynch(e); return EVENT_NOT_USED;}
 
     ////////
@@ -2631,14 +2653,15 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     /////
     /////
 
-
     if(doSynch) { printSynch(e); return EVENT_NOT_USED;}
+
     if (e->Bjets() == 0) return EVENT_NOT_USED;
 
     bool rightCombination =true; // for all the bkg
 
     bool Baseline=(e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 )));
     bool BaselineTau=(e->Bjets() > 0 && ( ( trailLep==NULL && e->NcentralJets()==3 ) || ( trailLep!=NULL && e->NcentralJets()==1 )));
+
 
     auto sf=dynamic_cast<SF_CSVReweight*>(e->GetWeight()->GetSF("btag-reweight"));
     if (sf == NULL)  Log(__FUNCTION__,"ERROR","Unable to find btag reweight sf");
