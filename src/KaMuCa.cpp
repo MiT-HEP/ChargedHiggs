@@ -56,8 +56,8 @@ int KaMuCa::correct(Event *e){
         }
         else //(syst <0)
         {
-            if ( e->IsRealData() ) correctorDATA_->vary(syst -1,-1); 
-            else correctorMC_ -> vary ( syst -1 , -1);
+            if ( e->IsRealData() ) correctorDATA_->vary( -syst -1,-1); 
+            else correctorMC_ -> vary ( -syst -1 , -1);
         }
 
     }
@@ -90,6 +90,7 @@ int KaMuCa::correct(Event *e){
             if (genPt>0)
             {
                 double corr = (( lep->GetP4Dirty().Pt()  - genPt ) *sf  + genPt) / lep->GetP4Dirty().Pt();
+                if (corr <= 1.e-5) Log(__FUNCTION__,"WARNING",Form("Scaling Leptons momentum (res matched) by small amount: %f: sf=%f genPt=%f lepPt=%f",corr,sf,genPt, lep->GetP4Dirty().Pt()));
                 Scale( *lep, corr );
                 #ifdef VERBOSE
                 if (VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("matched: sf=%f corr =%f ",sf,corr));
@@ -99,9 +100,11 @@ int KaMuCa::correct(Event *e){
             {
                 float res = resolution_->getResData();  
                 float sigma=std::sqrt( sf*sf -1) * res * lep->GetP4Dirty().Pt(); // res is for dp/p
+                rnd_ -> SetSeed ( e->eventNum() + int( lep->GetP4Dirty().Phi() *10000) ) ;
                 float s = rnd_->Gaus(0,1);
                 float newpt = s * sigma + lep->GetP4Dirty().Pt();
                 float corr= newpt/lep->GetP4Dirty().Pt();
+                if (corr <= 1.e-5) Log(__FUNCTION__,"WARNING",Form("Scaling Leptons momentum (res, unmatched) by small amount: %f",corr));
                 Scale(*lep,corr);
                 #ifdef VERBOSE
                 if (VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("unmatched: res=%f sf=%f sigma=%f corr =%f ",res,sf,sigma,corr));
@@ -121,6 +124,7 @@ int KaMuCa::correct(Event *e){
                     lep->GetP4Dirty().Eta(),
                     lep->GetP4Dirty().Phi(),
                     lep->Charge()) / lep->GetP4Dirty().Pt();
+            if (dataSF< 1.e-5) Log(__FUNCTION__,"WARNING",Form("Scaling DATA Leptons by small amount: %f",dataSF) );
             Scale( *lep, dataSF);
         }
         else {
@@ -131,6 +135,7 @@ int KaMuCa::correct(Event *e){
                     lep->GetP4Dirty().Phi(),
                     lep->Charge()) / lep->GetP4Dirty().Pt();
             mcSF *= correctorMC_ -> smear ( lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta()) /lep->GetP4Dirty().Pt(); 
+            if (mcSF <= 1.e-5) Log(__FUNCTION__,"WARNING",Form("Scaling Leptons momentum (scale) by small amount: %f",mcSF));
             Scale( *lep, mcSF);
         }
 

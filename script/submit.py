@@ -171,13 +171,25 @@ if opts.status:
 		termcpu=re.compile("TERM_CPULIMIT")
 		for iJob in fail + run:
 		    try:
-		    	log = open(opts.dir + "/log"+iJob+".txt")
+		        log = open(opts.dir + "/log"+iJob+".txt")
 		    except IOError: 
-			continue
+		        continue
 		    if re.search("TERM_CPULIMIT",log.read() ) != None : cpu.append(iJob)
 		    log.close()
 		if len(cpu) >0 :
 		    print " CPU LIMIT",PrintLine(cpu)
+		    print " -------------------------------------"
+		#if opts.fullstatus:
+		notRunning=[]
+		bjobs = check_output("bjobs -w",shell=True)
+		for iJob in run+pend:
+		    #test/Hmumu/Hmumu_2017_04_05_Bdt/Job_76
+		    if not re.search('%s/Job_%d\s'%(opts.dir,int(iJob)),bjobs):notRunning.append( iJob)
+		    #cmd = "bjobs -w | grep '%s/Job_%d\>'"%(opts.dir,int(iJob))
+		    #status = call(cmd,shell=True)
+		    #if status != 0: notRunning.append( iJob)
+		if len(notRunning) >0 :
+		    print " NOT RUNNING! ",PrintLine(notRunning)
 		    print " -------------------------------------"
 	exit(0)
 

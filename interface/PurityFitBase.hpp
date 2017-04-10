@@ -54,8 +54,8 @@ class PurityFitBase : public BaseFitter{
 
         int verbose_;
 
-        virtual void init();
-        virtual void fit();
+        void init() override;
+        void fit() override;
         const string name() const override { return "PurityFitBase";}
 };
 

@@ -64,7 +64,7 @@ class Tau: virtual public Object,
 
     inline TLorentzVector & GetP4() override {
         if (syst == 0) return p4;
-        if (syst!=0 ) {
+        else if (syst!=0 ) {
             pp4=p4;
             if (p4.Pt()>0) {
                 return pp4 *= (Pt()/p4.Pt());
@@ -92,7 +92,7 @@ class Tau: virtual public Object,
     // decommission ? 
     virtual bool IsMatch( ) { if (match >= 0) return true; else return false;}
 
-    virtual void clearSyst(){
+    void clearSyst() override {
         Lepton::clearSyst(); 
         Object::clearSyst();
         syst=0;

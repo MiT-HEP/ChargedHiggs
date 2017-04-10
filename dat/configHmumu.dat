@@ -18,7 +18,8 @@ include=dat/catalog/2017.moriond/hmm.dat
 
 ### DATA
 #not complete yet but for the moment is fine
-addfiles=/store/group/phys_higgs/ceballos/Data//Nero/v2.2/SingleMuon
+#addfiles=/store/group/phys_higgs/ceballos/Data//Nero/v2.2/SingleMuon
+addfiles=/store/group/phys_higgs/ceballos/Data//Nero/v2.2.1/SingleMuon
 #include=catalog/2017.moriond/singleMuon.dat
 
 #Smear=NONE

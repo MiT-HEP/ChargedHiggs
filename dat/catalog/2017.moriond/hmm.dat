@@ -1,4 +1,4 @@
-sub=amariniUser|/store/user/amarini/Nero/v2.2
+sub=amariniUser|/store/user/amarini/Nero/v2.2.1
 
 ###########
 ### 120 ###
@@ -19,8 +19,9 @@ addfiles=%(amariniUser)s/VBF_HToMuMu_M125_13TeV_powheg_pythia8
 addfiles=%(amariniUser)s/WMinusH_HToMuMu_M125_13TeV_powheg_pythia8
 addfiles=%(amariniUser)s/WPlusH_HToMuMu_M125_13TeV_powheg_pythia8
 addfiles=%(amariniUser)s/ZH_HToMuMu_M125_13TeV_powheg_pythia8
-addfiles=%(amariniUser)s/ttH_HToMuMu_M125
-addfiles=%(amariniUser)s/ttHToNonbb_M125
+#addfiles=/eos/user/a/amarini/Nero/v2.2.1/ttH_HToMuMu_M125
+addfiles=/eos/user/a/amarini/Nero/v2.2.1/ttH_HToMuMu_M125_13TeV_powheg_pythia8_v2
+#addfiles=%(amariniUser)s/ttHToNonbb_M125
 
 ###########
 ### 130 ###

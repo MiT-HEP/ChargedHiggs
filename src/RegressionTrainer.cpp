@@ -1,3 +1,4 @@
+/*
 #include "interface/RegressionTrainer.hpp"
 
 #define VERBOSE 0
@@ -151,6 +152,7 @@ void RegressionTrainer::End(){
     factory_ -> EvaluateAllMethods();
     if(VERBOSE>0) cout<<"[RegressionTrainer]::[End]::[DEBUG]::[1]  >-> DONE <-<"<<endl;
 }
+*/
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

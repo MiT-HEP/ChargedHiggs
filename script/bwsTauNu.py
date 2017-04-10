@@ -280,7 +280,7 @@ def importStat(h,target,syst="STAT"):
 			minError=e
 	for iBin in range(1,h.GetNbinsX()+1):
 		c= h.GetBinContent(iBin)
-		if c<=0: continue;
+		if c>0: continue;
 		h.SetBinError(iBin,minError)
 
 	hup=h.Clone(h.GetName() +"_STATUp")
