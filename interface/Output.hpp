@@ -60,11 +60,13 @@ class Output{
 
         inline TH1D* Get(string name){ 
             if (not PassFinal(name) ) return dummy.get();
-            return histos_[name];
+            if ( histos_.find(name) != histos_.end() )  return histos_[name];
+            else return prototypes_[name];
         }
         inline TH2D* Get2D(string name){ 
             if (not PassFinal(name) ) return dummy2D.get();
-            return histos2D_[name];
+            if ( histos2D_.find(name) != histos2D_.end() ) return histos2D_[name];
+            else return prototypes2D_[name];
         }
 
         void CreateDir(string dir); // called by Write
