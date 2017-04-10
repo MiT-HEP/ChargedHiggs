@@ -18,4 +18,8 @@ addfiles=%(ceballosUser)s/ZZTo4L_13TeV_powheg_pythia8
 #addfiles=%(zdemiragExoMonov2)s/ZZ_TuneCUETP8M1
 #addfiles=%(zdemiragExoMonov2)s/ZZ_TuneCUETP8M1_ext
 
+addfiles=%(ceballosUser)s/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 

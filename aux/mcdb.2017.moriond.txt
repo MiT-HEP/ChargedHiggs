@@ -28,7 +28,7 @@ DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_higgs/c
 WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/user/ceballos/Nero/v2.2/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 86533498 61526.7
 
 ##### DY+jets (1.23 kfactor)
-#DYJetsToLL_HT-0To70 /store/user/amarini/Nero/v2.2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/DYJetsToLL_HT-0To70 89066508.0 5317.864951
+DYJetsToLL_HT-0To70 /store/user/amarini/Nero/v2.2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/DYJetsToLL_HT-0To70 89066508.0 5317.864951
 DYJetsToLL_M-50_HT-70to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/DYJetsToLL_M-50_HT-70to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 9616188.0 209.592
 DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 7856020.0 181.302
 DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 8623931.0 50.4177
@@ -39,7 +39,7 @@ DYJetsToLL_M-50_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/grou
 DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 399492.0 0.004384
 
 ##### W+jets (1.21 kfactor)
-#WJetsToLNu_HT-0To70 /store/user/amarini/Nero/v2.2/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-0To70 51702147.0 57641.658055
+WJetsToLNu_HT-0To70 /store/user/amarini/Nero/v2.2/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-0To70 51702147.0 57641.658055
 WJetsToLNu_HT-70To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2//WJetsToLNu_HT-70To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 10094300.0 1695.589715
 WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2//WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 29232963.0 1627.45
 WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 /store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2//WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8 14617434.0 435.237
