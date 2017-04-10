@@ -50,6 +50,9 @@ class Output{
     protected:
         // 
         TFile *file_;
+        map<string,TH1D*> prototypes_;
+        map<string,TH2D*> prototypes2D_;
+
         map<string,TH1D*> histos_;
         map<string,TH2D*> histos2D_;
         
