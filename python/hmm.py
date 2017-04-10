@@ -205,7 +205,7 @@ class StringToCpp():
         return self.parse_(newstring,result)
 
     def Parse(self,string):  
-        result= self.parse_(string) 
+        result= self.parse_(string,{}) 
         l = []
         for  var,opStr in result:
             l.append( var +" "+opStr+ " " +"%.3f"%result[(var,opStr)] )

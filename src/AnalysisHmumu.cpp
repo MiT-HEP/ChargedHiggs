@@ -382,22 +382,22 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     float mu_max_eta = std::max(fabs(mu0->Eta()),fabs(mu1->Eta()));
     float mu_ave_eta = (fabs(mu0->Eta())+fabs(mu1->Eta()))/2.;
 
-    if ( mu_ave_eta >= 1.954 and bdt[0] >= 0.727 ) icat = 0;
-    if ( mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 ) icat = 1;
-    if ( mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.902 ) icat = 2;
-    if ( mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 3;
-    if ( mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 4;
-    if ( mu_max_eta < 1.965 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 5;
-    if ( mu_max_eta < 1.965 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 6;
-    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 7;
-    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 8;
-    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 9;
-    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 10;
-    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 11;
-    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 12;
-    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 13;
-    if ( mu_max_eta < 0.915 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and bdt[0] >= 0.727 and mu_max_eta >= 1.965 ) icat = 14;
-    if ( mu_max_eta >= 1.965 and mu_ave_eta >= 1.954 and bdt[0] < -0.399 and mu_ave_eta < 1.954 and bdt[0] >= 0.727 and mu_max_eta < 0.915 ) icat = 15;
+    if ( mu_ave_eta >= 1.954 and bdt[0] >= 0.727 ) icat = 0 ;
+    if ( bdt[0] < -0.399 ) icat = 1 ;
+    if ( bdt[0] >= 0.246 and bdt[0] < 0.395 and mu_max_eta >= 1.902 ) icat = 2 ;
+    if ( bdt[0] >= -0.399 and bdt[0] < 0.051 and mu_max_eta >= 1.965 ) icat = 3 ;
+    if ( bdt[0] < 0.645 and bdt[0] >= 0.395 and mu_max_eta >= 1.787 ) icat = 4 ;
+    if ( bdt[0] >= -0.399 and bdt[0] < -0.115 and mu_max_eta < 1.965 ) icat = 5 ;
+    if ( bdt[0] >= -0.115 and bdt[0] < 0.051 and mu_max_eta < 1.965 ) icat = 6 ;
+    if ( bdt[0] >= 0.051 and bdt[0] < 0.261 and mu_max_eta < 0.915 ) icat = 7 ;
+    if ( mu_max_eta < 1.787 and bdt[0] < 0.527 and bdt[0] >= 0.395 and mu_max_eta >= 0.917 ) icat = 8 ;
+    if ( mu_max_eta < 1.787 and bdt[0] < 0.645 and bdt[0] >= 0.527 and mu_max_eta >= 0.917 ) icat = 9 ;
+    if ( bdt[0] >= 0.261 and bdt[0] < 0.395 and mu_max_eta < 0.915 ) icat = 10 ;
+    if ( mu_max_eta < 1.902 and bdt[0] >= 0.246 and bdt[0] < 0.395 and mu_max_eta >= 0.915 ) icat = 11 ;
+    if ( bdt[0] >= 0.051 and bdt[0] < 0.246 and mu_max_eta >= 0.915 ) icat = 12 ;
+    if ( bdt[0] < 0.727 and bdt[0] >= 0.645 ) icat = 13 ;
+    if ( bdt[0] < 0.645 and bdt[0] >= 0.395 and mu_max_eta < 0.917 ) icat = 14 ;
+    if ( mu_ave_eta < 1.954 and bdt[0] >= 0.727 ) icat = 15 ;
 
     if (icat>=0)catStr=Form("cat%d",icat);
     if (doSync){
@@ -514,6 +514,8 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/MetOnH_rw_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnZ_"+ l ,"Pt On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnH_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/BdtOnZ_"+ l ,"Bdt On Z (70-110);Bdt;Events", 1000,-1,1);
+	    Book ("HmumuAnalysis/Vars/BdtOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
         for(const auto & c : categories_)
         {
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
@@ -566,8 +568,10 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if (doEvenOnly){
         if ( label.find("HToMuMu") != string::npos )
         {
-            if (e->eventNum()&1 == 0 ) e->ApplySF("double");
-            else return 0;
+            if (  (e->eventNum()&1 ) == 0 ) e->ApplySF("double");
+            else {
+                return 0;
+            }
         }
     }
 
@@ -793,11 +797,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Fill("HmumuAnalysis/Vars/MetOnZ_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnZ_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, Z.Pt() ,e->weight());
+            if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
         }
         if (mass_ >= 110 and mass_<150){
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, Z.Pt(),e->weight());
+            if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
         }
 
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
