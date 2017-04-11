@@ -148,9 +148,19 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
         {
             // ttbar + single top + ttV
             //            mc = 100;
-            if(label.find("TTTo2L2Nu") !=string::npos) mc =101 ;
-            if(label.find("TTToSemilepton") !=string::npos) mc =102 ;
-            if(label.find("TT_TuneCUETP8M2T4") !=string::npos) mc =103 ;
+            if(label.find("TTTo2L2Nu_TuneCUETP8M2") !=string::npos) mc =101 ;
+            if(label.find("TTToSemilepton_TuneCUETP8M2") !=string::npos) mc =102 ;
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) mc =103 ;
+
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown") !=string::npos) mc =104 ;
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup") !=string::npos) mc =105 ;
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown") !=string::npos) mc =106 ;
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup") !=string::npos) mc =107 ;
+
+            if(label.find("TTJets") !=string::npos) mc =108 ;
+
+            if(label.find("TTTo2L2Nu_ttbbFilter") !=string::npos) mc =109 ;
+            if(label.find("TTToSemilepton_ttbbFilter") !=string::npos) mc =110 ;
 
             if(label.find("ST") !=string::npos) mc =111 ;
             //            if(label.find("ST_tW_top") !=string::npos) mc =111 ;
@@ -197,6 +207,9 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
             //            if(label.find("ZZTo4L") !=string::npos) mc =339 ;
             if(label.find("VHToNonbb_M125") !=string::npos) mc =340 ;
             if(label.find("WH_HToBB_WToLNu_M125") !=string::npos) mc =341 ;
+
+            // QCD
+            if(label.find("QCD_HT") !=string::npos) mc =500 ;
 
         }
 
