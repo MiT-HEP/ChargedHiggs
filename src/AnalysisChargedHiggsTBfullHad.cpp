@@ -55,6 +55,20 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
     SetTreeVar("NJets",e->Njets());
     SetTreeVar("NcentralJets",e->NcentralJets());
     SetTreeVar("NBJets",e->Bjets());
+    SetTreeVar("NFatJets",e->NFatJets());
+
+    for(int i=0; i!=min(e->NFatJets(),10);i++){
+        SetTreeVar("fatjet_pt",i,e->GetFatJet(i)->Pt());
+        SetTreeVar("fatjet_eta",i,e->GetFatJet(i)->Eta());
+        SetTreeVar("fatjet_phi",i,e->GetFatJet(i)->Phi());
+        SetTreeVar("fatjet_e",i,e->GetFatJet(i)->E());
+        SetTreeVar("fatjet_tau1",i,e->GetFatJet(i)->Tau1());
+        SetTreeVar("fatjet_tau2",i,e->GetFatJet(i)->Tau2());
+        SetTreeVar("fatjet_tau3",i,e->GetFatJet(i)->Tau3());
+        SetTreeVar("fatjet_SDMass",i,e->GetFatJet(i)->SDMass());
+        SetTreeVar("fatjet_CorrPrunedMass",i,e->GetFatJet(i)->CorrPrunedMass());
+    }
+
 
     for(int i=0;i!=min(e->Njets(),10);++i) {
         //    for(int i=0;i!=10;++i) { // fill only the first 10 jets
@@ -190,6 +204,86 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
 
     SetTreeVar("genTTid",e->GetGenTtbarId());
 
+    if ( not e->IsRealData() and (label.find("HplusToTB")  !=string::npos ) ){
+        if(WFromTopH!= NULL) {
+            SetTreeVar("WFromTopH_pt",WFromTopH->Pt());
+            SetTreeVar("WFromTopH_eta",WFromTopH->Eta());
+            SetTreeVar("WFromTopH_phi",WFromTopH->Phi());
+            SetTreeVar("WFromTopH_lep",WFromTopH_lep);
+        }
+
+        if(WFromTopAss!= NULL) {
+            SetTreeVar("WFromTopAss_pt",WFromTopAss->Pt());
+            SetTreeVar("WFromTopAss_eta",WFromTopAss->Eta());
+            SetTreeVar("WFromTopAss_phi",WFromTopAss->Phi());
+            SetTreeVar("WFromTopAss_lep",WFromTopAss_lep);
+        }
+        if(bFromH!= NULL) {
+            SetTreeVar("bFromH_pt",bFromH->Pt());
+            SetTreeVar("bFromH_eta",bFromH->Eta());
+            SetTreeVar("bFromH_phi",bFromH->Phi());
+        }
+        if(bFromTopAss!= NULL) {
+            SetTreeVar("bFromTopAss_pt",bFromTopAss->Pt());
+            SetTreeVar("bFromTopAss_eta",bFromTopAss->Eta());
+            SetTreeVar("bFromTopAss_phi",bFromTopAss->Phi());
+        }
+        if(bFromTopH!= NULL) {
+            SetTreeVar("bFromTopH_pt",bFromTopH->Pt());
+            SetTreeVar("bFromTopH_eta",bFromTopH->Eta());
+            SetTreeVar("bFromTopH_phi",bFromTopH->Phi());
+        }
+        if(topFromH!= NULL) {
+            SetTreeVar("topFromH_pt",topFromH->Pt());
+            SetTreeVar("topFromH_eta",topFromH->Eta());
+            SetTreeVar("topFromH_phi",topFromH->Phi());
+            SetTreeVar("topFromH_lep",topFromH_lep);
+        }
+        if(topAss!= NULL) {
+            SetTreeVar("topAss_pt",topAss->Pt());
+            SetTreeVar("topAss_eta",topAss->Eta());
+            SetTreeVar("topAss_phi",topAss->Phi());
+            SetTreeVar("topAss_lep",topAss_lep);
+        }
+    }
+
+    if( not e->IsRealData() and (label.find("TT_TuneCUETP8M2T4") !=string::npos) ){
+        if(WBKGplus!=NULL) {
+            SetTreeVar("WBKGplus_pt",WBKGplus->Pt());
+            SetTreeVar("WBKGplus_eta",WBKGplus->Eta());
+            SetTreeVar("WBKGplus_phi",WBKGplus->Phi());
+            SetTreeVar("WBKGplus_lep",WBKGplus_lep);
+        }
+        if(WBKGminus!=NULL) {
+            SetTreeVar("WBKGminus_pt",WBKGminus->Pt());
+            SetTreeVar("WBKGminus_eta",WBKGminus->Eta());
+            SetTreeVar("WBKGminus_phi",WBKGminus->Phi());
+            SetTreeVar("WBKGminus_lep", WBKGminus_lep);
+        }
+        if(bBKGplus!=NULL) {
+            SetTreeVar("bBKGplus_pt",bBKGplus->Pt());
+            SetTreeVar("bBKGplus_eta",bBKGplus->Eta());
+            SetTreeVar("bBKGplus_phi",bBKGplus->Phi());
+        }
+        if(bBKGminus!=NULL) {
+            SetTreeVar("bBKGminus_pt",bBKGminus->Pt());
+            SetTreeVar("bBKGminus_eta",bBKGminus->Eta());
+            SetTreeVar("bBKGminus_phi",bBKGminus->Phi());
+        }
+        if(topBKGplus!=NULL) {
+            SetTreeVar("topBKGplus_pt",topBKGplus->Pt());
+            SetTreeVar("topBKGplus_eta",topBKGplus->Eta());
+            SetTreeVar("topBKGplus_phi",topBKGplus->Phi());
+            SetTreeVar("topBKGplus_lep",topBKGplus_lep);
+        }
+        if(topBKGminus!=NULL) {
+            SetTreeVar("topBKGminus_pt",topBKGminus->Pt());
+            SetTreeVar("topBKGminus_eta",topBKGminus->Eta());
+            SetTreeVar("topBKGminus_phi",topBKGminus->Phi());
+            SetTreeVar("topBKGminus_lep",topBKGminus_lep);
+        }
+    }
+
 }
 
 
@@ -252,6 +346,7 @@ void ChargedHiggsTopBottomFullHad::Init()
     Branch("tree_tb","NcentralJets",'I');
     Branch("tree_tb","NJets",'I');
     Branch("tree_tb","NBJets",'I');
+    Branch("tree_tb","NFatJets",'I');
 
     // fill event variables
     Branch("tree_tb","met_pt",'F');
@@ -261,6 +356,16 @@ void ChargedHiggsTopBottomFullHad::Init()
     Branch("tree_tb","MassDRbbmin",'F');
     Branch("tree_tb","DEtaMaxBB",'F');
     Branch("tree_tb","Cen",'F');
+
+    Branch("tree_tb","fatjet_pt",'d',10,"NFatJets");
+    Branch("tree_tb","fatjet_eta",'d',10,"NFatJets");
+    Branch("tree_tb","fatjet_phi",'d',10,"NFatJets");
+    Branch("tree_tb","fatjet_e",'d',10,"NFatJets");
+    Branch("tree_tb","fatjet_tau1",'d',10,"NFatJets");
+    Branch("tree_tb","fatjet_tau2",'d',10,"NFatJets");
+    Branch("tree_tb","fatjet_tau3",'d',10,"NFatJets");
+    Branch("tree_tb","fatjet_SDMass",'d',10,"NFatJets");
+    Branch("tree_tb","fatjet_CorrPrunedMass",'d',10,"NFatJets");
 
     // fill all the object vector
     Branch("tree_tb","jet_pt",'d',10,"NJets");
@@ -280,6 +385,65 @@ void ChargedHiggsTopBottomFullHad::Init()
 
     Branch("tree_tb","genTTid",'I');
 
+    Branch("tree_tb","WFromTopH_pt",'F');
+    Branch("tree_tb","WFromTopH_phi",'F');
+    Branch("tree_tb","WFromTopH_eta",'F');
+    Branch("tree_tb","WFromTopH_lep",'I');
+
+    Branch("tree_tb","WFromTopAss_pt",'F');
+    Branch("tree_tb","WFromTopAss_phi",'F');
+    Branch("tree_tb","WFromTopAss_eta",'F');
+    Branch("tree_tb","WFromTopAss_lep",'I');
+
+    Branch("tree_tb","bFromH_pt",'F');
+    Branch("tree_tb","bFromH_phi",'F');
+    Branch("tree_tb","bFromH_eta",'F');
+
+    Branch("tree_tb","bFromTopH_pt",'F');
+    Branch("tree_tb","bFromTopH_phi",'F');
+    Branch("tree_tb","bFromTopH_eta",'F');
+
+    Branch("tree_tb","bFromTopAss_pt",'F');
+    Branch("tree_tb","bFromTopAss_phi",'F');
+    Branch("tree_tb","bFromTopAss_eta",'F');
+
+    Branch("tree_tb","topFromH_pt",'F');
+    Branch("tree_tb","topFromH_phi",'F');
+    Branch("tree_tb","topFromH_eta",'F');
+    Branch("tree_tb","topFromH_lep",'I');
+
+    Branch("tree_tb","topAss_pt",'F');
+    Branch("tree_tb","topAss_phi",'F');
+    Branch("tree_tb","topAss_eta",'F');
+    Branch("tree_tb","topAss_lep",'I');
+
+    Branch("tree_tb","WBKGplus_pt",'F');
+    Branch("tree_tb","WBKGplus_phi",'F');
+    Branch("tree_tb","WBKGplus_eta",'F');
+    Branch("tree_tb","WBKGplus_lep",'I');
+
+    Branch("tree_tb","WBKGminus_pt",'F');
+    Branch("tree_tb","WBKGminus_phi",'F');
+    Branch("tree_tb","WBKGminus_eta",'F');
+    Branch("tree_tb","WBKGminus_lep",'I');
+
+    Branch("tree_tb","bBKGplus_pt",'F');
+    Branch("tree_tb","bBKGplus_phi",'F');
+    Branch("tree_tb","bBKGplus_eta",'F');
+    
+    Branch("tree_tb","bBKGminus_pt",'F');
+    Branch("tree_tb","bBKGminus_phi",'F');
+    Branch("tree_tb","bBKGminus_eta",'F');
+
+    Branch("tree_tb","topBKGplus_pt",'F');
+    Branch("tree_tb","topBKGplus_phi",'F');
+    Branch("tree_tb","topBKGplus_eta",'F');
+    Branch("tree_tb","topBKGplus_lep",'I');
+
+    Branch("tree_tb","topBKGminus_pt",'F');
+    Branch("tree_tb","topBKGminus_phi",'F');
+    Branch("tree_tb","topBKGminus_eta",'F');
+    Branch("tree_tb","topBKGminus_lep",'I');
 
     return;
 
@@ -369,6 +533,96 @@ void ChargedHiggsTopBottomFullHad::Preselection()
     }
 
 }
+
+bool ChargedHiggsTopBottomFullHad::genInfoForSignal(Event*e) {
+
+    GenParticle *genCH = NULL;
+
+    WFromTopAss=NULL;
+    WFromTopH=NULL;
+    WBKGplus=NULL;
+    WBKGminus=NULL;
+
+    topFromH = NULL;
+    topAss = NULL;
+    topBKGplus = NULL;
+    topBKGminus = NULL;
+
+    bFromH=NULL;
+    bFromTopH=NULL;
+    bFromTopAss=NULL;
+    bBKGplus=NULL;
+    bBKGminus=NULL;
+
+    topFromH_lep = 0;
+    topAss_lep = 0;
+    topBKGplus_lep = 0;
+    topBKGminus_lep = 0;
+
+    WFromTopH_lep = 0;
+    WFromTopAss_lep = 0;
+    WBKGplus_lep = 0;
+    WBKGminus_lep = 0;
+
+    bool rightComb=false;
+
+    for(Int_t i = 0; i < e->NGenPar(); i++){
+        GenParticle *genpar = e->GetGenParticle(i);
+        //ch-higgs
+        if(abs(genpar->GetPdgId()) == 37) if(genCH==NULL) genCH = genpar;
+        if(genCH!=NULL){
+            //top
+            if( abs(genpar->GetPdgId()) == 6 && abs(genpar->GetParentPdgId()) == 37 ) topFromH = genpar;
+            //bottom
+            else if( abs(genpar->GetPdgId()) == 5 && abs(genpar->GetParentPdgId()) == 37) bFromH = genpar;
+        }
+    }
+
+    for(Int_t i = 0; i < e->NGenPar(); i++){
+        GenParticle *genpar = e->GetGenParticle(i);
+
+        //W
+        if(abs(genpar->GetPdgId()) == 24 && abs(genpar->GetParentPdgId()) == 6){
+            if(topFromH!=NULL){
+                if ( topFromH->GetPdgId()*genpar->GetPdgId()>0 ) WFromTopH=genpar;
+                else if ( topFromH->GetPdgId()*genpar->GetPdgId()<0 )  WFromTopAss=genpar;
+                rightComb=true;
+            }else if(topFromH==NULL){
+                if ( genpar->GetPdgId() == 24 && genpar->GetParentPdgId() == 6 )  WBKGplus = genpar;
+                else if( genpar->GetPdgId() == -24 && genpar->GetParentPdgId() == -6 ) WBKGminus = genpar;
+            }
+        //bottom
+        }else if(abs(genpar->GetPdgId()) == 5 && abs(genpar->GetParentPdgId()) == 6){
+            if(topFromH!=NULL){
+                if ( topFromH->GetPdgId()*genpar->GetPdgId()>0 ) bFromTopH = genpar;
+                else if ( topFromH->GetPdgId()*genpar->GetPdgId()<0 ) bFromTopAss = genpar;
+            }else if(topFromH==NULL) {
+                if ( genpar->GetPdgId() == 5 && genpar->GetParentPdgId() == 6 )bBKGplus = genpar;
+                else if( genpar->GetPdgId() == -5 && genpar->GetParentPdgId() == -6 ) bBKGminus = genpar;
+            }
+        //top
+        }else if(abs(genpar->GetPdgId()) == 6){
+            if(genCH != NULL && abs(genpar->GetParentPdgId()) != 37) topAss = genpar;
+            if(genCH == NULL){
+                if(genpar->GetPdgId() == 6)topBKGplus = genpar;
+                if(genpar->GetPdgId() == -6)topBKGminus = genpar;
+            }
+        //lepton
+        }else if( (abs(genpar->GetPdgId()) == 11 || abs(genpar->GetPdgId()) == 13) && abs(genpar->GetParentPdgId()) == 24 && abs(genpar->GetGrandParentPdgId()) == 6) {
+            if(topFromH!=NULL){
+                if ( topFromH->GetPdgId()*genpar->GetPdgId()<0 ) {topFromH_lep = 1; WFromTopH_lep = 1;}
+                else if ( topFromH->GetPdgId()*genpar->GetPdgId()>0 ) {topAss_lep = 1; WFromTopAss_lep = 1;}                    
+            }else if(topFromH==NULL){
+                if ( (genpar->GetPdgId() == -11 || genpar->GetPdgId() == -13) && genpar->GetParentPdgId() == 24 && genpar->GetGrandParentPdgId() == 6 ) {topBKGplus_lep = 1;WBKGplus_lep = 1;}
+                else if( (genpar->GetPdgId() == 11 || genpar->GetPdgId() == 13) && genpar->GetParentPdgId() == -24 && genpar->GetGrandParentPdgId() == -6 ) {topBKGminus_lep = 1;WBKGminus_lep = 1;}
+            }
+        }
+    }
+    return rightComb;
+}
+
+
+
 
 void ChargedHiggsTopBottomFullHad::eventShapePlot(Event*e, string label, string category, string systname, string phasespace) {
 
@@ -551,6 +805,16 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
     ////
 
     bool Baseline=(e->Bjets() > 0);
+    bool rightCombination =true;
+
+    if ( not e->IsRealData() ){
+
+//and (label.find("HplusToTB")  !=string::npos ) ){
+
+        rightCombination=false; // reset for Higgs
+        rightCombination=genInfoForSignal(e); // compute the right combination in the higgs case
+
+    }
 
     computeVar(e);
     
