@@ -59,6 +59,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float softdropMass;
     float CorrectedPrunedMass;
     int nSubjets;
+    float subjet_btag;
 
     //Gen-level info
 
@@ -71,9 +72,14 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float SDMass() const { return softdropMass ; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
 
+    inline float SubjetBTag() const { return subjet_btag ; }
+
     inline int IsJet() const { return 1;}
 
-    inline int IsWJet() const { if( tau2 < tau1*tau21cut_  and IsJet() )   return 1; return 0;}
+    // tipically 250 GeV
+    inline int IsWJet() const { if( softdropMass > 65. and softdropMass < 105.  and tau2 < tau1*0.6  and IsJet() )   return 1; return 0;}
+    // tipically 400 GeV
+    inline int IsTopJet() const { if( softdropMass > 105. and softdropMass < 220. and tau3 < tau2*tau21cut_  and IsJet() )   return 1; return 0;}
 
 };
 

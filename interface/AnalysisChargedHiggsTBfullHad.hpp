@@ -1,5 +1,7 @@
 #ifndef CHARGEDHIGGSTOPBOTTOMFULLHAD_H
 #define CHARGEDHIGGSTOPBOTTOMFULLHAD_H
+//#ifndef CHARGEDHIGGSTBFULLHAD_H
+//#define CHARGEDHIGGSTBFULLHAD_H
 #include "interface/AnalysisBase.hpp"
 #include "interface/CutSelector.hpp"
 
@@ -40,6 +42,7 @@ public:
     bool genInfoForSignal(Event*e);
 
     int analyze(Event*,string systname) override;
+    //    const string name() const override {return "ChargedHiggsTBfullHad";}
     const string name() const override {return "ChargedHiggsTopBottomFullHad";}
 
     // Tree
