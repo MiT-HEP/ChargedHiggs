@@ -37,11 +37,13 @@ public:
 
     void printSynch(Event*e);
 
+    bool genInfoForSignal(Event*e);
+
     int analyze(Event*,string systname) override;
     const string name() const override {return "ChargedHiggsTopBottomFullHad";}
 
     // Tree
-    bool writeTree = false;
+    bool writeTree = true;
     void setTree(Event*e, string label, string  category);
 
     // Variables for MVA
@@ -74,6 +76,32 @@ private:
 
     /////
     /////
+    GenParticle * topFromH=NULL;
+    GenParticle * topAss =NULL;
+    GenParticle * topBKGplus = NULL;
+    GenParticle * topBKGminus = NULL;
+    int topFromH_lep = 0;
+    int topAss_lep = 0;
+    int topBKGplus_lep = 0;
+    int topBKGminus_lep = 0;
+
+    GenParticle * WFromTopH=NULL;
+    GenParticle * WFromTopAss=NULL;
+    GenParticle * WBKGplus=NULL;
+    GenParticle * WBKGminus=NULL;
+    int WFromTopH_lep = 0;
+    int WFromTopAss_lep = 0;
+    int WBKGplus_lep = 0;
+    int WBKGminus_lep = 0;
+
+
+    GenParticle * bFromH=NULL;
+    GenParticle * bFromTopH=NULL;
+    GenParticle * bFromTopAss=NULL;
+    GenParticle * bBKGplus=NULL;
+    GenParticle * bBKGminus=NULL;
+
+
 
     DataStore varValues_;
 
