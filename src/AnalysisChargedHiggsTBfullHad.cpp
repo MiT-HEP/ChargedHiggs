@@ -834,7 +834,7 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
     bool Baseline=(e->Bjets() > 0);
     bool rightCombination =true;
 
-    if ( not e->IsRealData() and (label.find("HplusToTB") !=string::npos ) and (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos )){
+    if ( not e->IsRealData() and ((label.find("HplusToTB") !=string::npos ) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos ))){
 
         rightCombination=genInfoForSignal(e); // compute the right combination in the higgs case
 
