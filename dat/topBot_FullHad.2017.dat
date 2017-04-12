@@ -17,6 +17,6 @@ addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8')
 
-addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TT_TuneCUETP8M2T4')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-pythia8')
 
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT')

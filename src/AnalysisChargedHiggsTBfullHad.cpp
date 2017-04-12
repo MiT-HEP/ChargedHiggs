@@ -187,8 +187,8 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
 
             // V+jets
             //            mc = 200;
-            if(label.find("DYJetsToLL_M") !=string::npos) mc =221 ;
-            if(label.find("WJetsToLNu")!=string::npos) mc =222;
+            if(label.find("DYJetsToLL_M-50_HT") !=string::npos) mc =221 ;
+            if(label.find("WJetsToLNu_HT")!=string::npos) mc =222;
 
             // EWK
             // missing tribosons
@@ -260,7 +260,7 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
         }
     }
 
-    if( not e->IsRealData() and (label.find("TT_TuneCUETP8M2T4") !=string::npos) ){
+    if( not e->IsRealData() and (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) ){
         if(WBKGplus!=NULL) {
             SetTreeVar("WBKGplus_pt",WBKGplus->Pt());
             SetTreeVar("WBKGplus_eta",WBKGplus->Eta());
@@ -553,6 +553,7 @@ void ChargedHiggsTopBottomFullHad::Preselection()
 
 bool ChargedHiggsTopBottomFullHad::genInfoForSignal(Event*e) {
 
+
     GenParticle *genCH = NULL;
 
     WFromTopAss=NULL;
@@ -587,6 +588,10 @@ bool ChargedHiggsTopBottomFullHad::genInfoForSignal(Event*e) {
         GenParticle *genpar = e->GetGenParticle(i);
         //ch-higgs
         if(abs(genpar->GetPdgId()) == 37) if(genCH==NULL) genCH = genpar;
+    }
+
+    for(Int_t i = 0; i < e->NGenPar(); i++){
+        GenParticle *genpar = e->GetGenParticle(i);
         if(genCH!=NULL){
             //top
             if( abs(genpar->GetPdgId()) == 6 && abs(genpar->GetParentPdgId()) == 37 ) topFromH = genpar;
@@ -637,6 +642,7 @@ bool ChargedHiggsTopBottomFullHad::genInfoForSignal(Event*e) {
             }
         }
     }
+
     return rightComb;
 }
 
@@ -762,7 +768,7 @@ void ChargedHiggsTopBottomFullHad::classifyHF(Event*e, string label, string cate
 
 
     //    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos))  {
-    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4")!=string::npos)  ) {
+    if((label.find("TTTo2L2Nu_TuneCUETP8M2")!=string::npos) || (label.find("TTToSemilepton_TuneCUETP8M2")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")!=string::npos)  ) {
 
         //https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/TopQuarkAnalysis/TopTools/plugins/GenTtbarCategorizer.cc#L35
         string LabelHF="other_";
@@ -828,9 +834,8 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
     bool Baseline=(e->Bjets() > 0);
     bool rightCombination =true;
 
-    if ( not e->IsRealData() ){
+    if ( not e->IsRealData() and (label.find("HplusToTB") !=string::npos ) and (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos )){
 
-        rightCombination=false; // reset for Higgs
         rightCombination=genInfoForSignal(e); // compute the right combination in the higgs case
 
     }

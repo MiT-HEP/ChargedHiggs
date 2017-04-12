@@ -244,8 +244,8 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
                 if(label.find("DYJets-madgraph") !=string::npos) mc =221 ;
                 if(label.find("WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8")!=string::npos) mc =222;
             } else {
-                if(label.find("DYJetsToLL_M") !=string::npos) mc =221 ;
-                if(label.find("WJetsToLNu")!=string::npos) mc =222;
+                if(label.find("DYJetsToLL_M-50_HT") !=string::npos) mc =221 ;
+                if(label.find("WJetsToLNu_HT")!=string::npos) mc =222;
             }
             // EWK
             // missing tribosons
@@ -1143,6 +1143,9 @@ void ChargedHiggsTopBottom::Preselection()
 {
 
     for ( string l : AllLabel()  ) {
+
+        cout << "inside BookCutFlow" << "l = " << l << endl;
+        //        if(e->IsRealData() && (!systname.find("NONE")    !=string::npos)) cout << "possible to return " << endl;
 
         BookCutFlow(l, "");
         if(do1lAnalysis) BookCutFlow(l, "_1Mu");
