@@ -3,6 +3,7 @@ CXXFLAGS=`root-config --libs --cflags` -O2 -fPIC -I../  -I./
 ## to use BareObjects
 RPATH= -Wl,-rpath=$(PWD)/../NeroProducer/Core/bin
 CXXFLAGS += -L$(PWD)/../NeroProducer/Core/bin -lBare  -ggdb -lTMVA -l RooFit -l RooFitCore
+CXXFLAGS += -I"/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/python/2.7.11-mlhled/include/python2.7"
 SOFLAGS=-shared
 
 SRCDIR=src

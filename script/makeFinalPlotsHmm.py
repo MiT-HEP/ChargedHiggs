@@ -259,7 +259,7 @@ if doBkg:
     hdata.SetLineColor(ROOT.kBlack)
     leg.AddEntry(hdata,"Data","PE")
     #mcs=["DY","TT","ST","WZ","WW","ZZ"]
-    BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY"]
+    BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     mcAll=None
 
     #bkg=ROOT.THStack()
@@ -330,8 +330,10 @@ if doBkg:
             h.SetFillColor(ROOT.kGreen-10)
         elif mc == 'WZ' :
             h.SetFillColor(ROOT.kGreen-10)
-            #leg.AddEntry(h,"VV","F")
             leg1.append((h,"VV","F"))
+        elif mc == 'EWK_LLJJ' :
+            h.SetFillColor(ROOT.kOrange-4)
+            leg1.append((h,"EWK_LLJJ","F"))
 
         bkg.Add(h)
 

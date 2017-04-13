@@ -114,7 +114,7 @@ hmm=HmmConfig()
 class HmmConfigAutoCat(HmmConfig):
     def __init__(self):
         HmmConfig.__init__(self)
-        self.categories=[ "cat%d"%x for x in range(0,16)]
+        self.categories=[ "cat%d"%x for x in range(0,13)]
         self.procCategories=[]
         self.muCategories=[]
         self.sigfit_gaussians=[]
@@ -213,22 +213,36 @@ class StringToCpp():
 
     def ParseAll(self):
         cat="icat"
-        print self.Parse("gt_bdt_score_0p395_gt_bdt_score_0p727_gt_dimu_avg_abs_eta_1p954"),cat,"=",0,";"
-        print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_lt_bdt_score_n0p399"),cat,"=",1,";"
-        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_gt_bdt_score_0p246_gt_dimu_max_abs_eta_1p902"),cat,"=",2,";"
-        print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_gt_dimu_max_abs_eta_1p965"),cat,"=",3,";"
-        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_gt_dimu_max_abs_eta_1p787"),cat,"=",4,";"
-        print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_lt_dimu_max_abs_eta_1p965_lt_bdt_score_n0p115"),cat,"=",5,";"
-        print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_lt_dimu_max_abs_eta_1p965_gt_bdt_score_n0p115"),cat,"=",6,";"
-        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_lt_dimu_max_abs_eta_0p915_lt_bdt_score_0p261"),cat,"=",7,";"
-        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_lt_dimu_max_abs_eta_1p787_lt_bdt_score_0p527"),cat,"=",8,";"
-        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_lt_dimu_max_abs_eta_1p787_gt_bdt_score_0p527"),cat,"=",9,";"
-        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_lt_dimu_max_abs_eta_0p915_gt_bdt_score_0p261"),cat,"=",10,";"
-        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_gt_bdt_score_0p246_lt_dimu_max_abs_eta_1p902"),cat,"=",11,";"
-        print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_lt_bdt_score_0p246"),cat,"=",12,";"
-        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_gt_bdt_score_0p645"),cat,"=",13,";"
-        print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_lt_dimu_max_abs_eta_0p917"),cat,"=",14,";"
-        print self.Parse("gt_bdt_score_0p395_gt_bdt_score_0p727_lt_dimu_avg_abs_eta_1p954"),cat,"=",15,";"
+        print self.Parse("lt_bdt_score_0p400_lt_bdt_score_0p050_lt_bdt_score_n0p400"),cat,"=",0,";"
+        print self.Parse("lt_bdt_score_0p400_gt_bdt_score_0p050_gt_dimu_max_abs_eta_0p900_gt_bdt_score_0p250_gt_dimu_max_abs_eta_1p900"),cat,"=",1,";"
+        print self.Parse("lt_bdt_score_0p400_lt_bdt_score_0p050_gt_bdt_score_n0p400_gt_dimu_max_abs_eta_1p900"),cat,"=",2,";"
+        print self.Parse("gt_bdt_score_0p400_lt_bdt_score_0p730_lt_bdt_score_0p650_gt_dimu_max_abs_eta_0p900_gt_dimu_max_abs_eta_1p900"),cat,"=",3,";"
+        print self.Parse("lt_bdt_score_0p400_gt_bdt_score_0p050_lt_dimu_max_abs_eta_0p900_lt_bdt_score_0p250"),cat,"=",4,";"
+        print self.Parse("lt_bdt_score_0p400_gt_bdt_score_0p050_lt_dimu_max_abs_eta_0p900_gt_bdt_score_0p250"),cat,"=",5,";"
+        print self.Parse("lt_bdt_score_0p400_gt_bdt_score_0p050_gt_dimu_max_abs_eta_0p900_gt_bdt_score_0p250_lt_dimu_max_abs_eta_1p900"),cat,"=",6,";"
+        print self.Parse("lt_bdt_score_0p400_gt_bdt_score_0p050_gt_dimu_max_abs_eta_0p900_lt_bdt_score_0p250"),cat,"=",7,";"
+        print self.Parse("lt_bdt_score_0p400_lt_bdt_score_0p050_gt_bdt_score_n0p400_lt_dimu_max_abs_eta_1p900"),cat,"=",8,";"
+        print self.Parse("gt_bdt_score_0p400_lt_bdt_score_0p730_gt_bdt_score_0p650"),cat,"=",9,";"
+        print self.Parse("gt_bdt_score_0p400_lt_bdt_score_0p730_lt_bdt_score_0p650_gt_dimu_max_abs_eta_0p900_lt_dimu_max_abs_eta_1p900"),cat,"=",10,";"
+        print self.Parse("gt_bdt_score_0p400_lt_bdt_score_0p730_lt_bdt_score_0p650_lt_dimu_max_abs_eta_0p900"),cat,"=",11,";"
+        print self.Parse("gt_bdt_score_0p400_gt_bdt_score_0p730"),cat,"=",12,";"
+
+        #print self.Parse("gt_bdt_score_0p395_gt_bdt_score_0p727_gt_dimu_avg_abs_eta_1p954"),cat,"=",0,";"
+        #print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_lt_bdt_score_n0p399"),cat,"=",1,";"
+        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_gt_bdt_score_0p246_gt_dimu_max_abs_eta_1p902"),cat,"=",2,";"
+        #print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_gt_dimu_max_abs_eta_1p965"),cat,"=",3,";"
+        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_gt_dimu_max_abs_eta_1p787"),cat,"=",4,";"
+        #print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_lt_dimu_max_abs_eta_1p965_lt_bdt_score_n0p115"),cat,"=",5,";"
+        #print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_lt_dimu_max_abs_eta_1p965_gt_bdt_score_n0p115"),cat,"=",6,";"
+        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_lt_dimu_max_abs_eta_0p915_lt_bdt_score_0p261"),cat,"=",7,";"
+        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_lt_dimu_max_abs_eta_1p787_lt_bdt_score_0p527"),cat,"=",8,";"
+        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_lt_dimu_max_abs_eta_1p787_gt_bdt_score_0p527"),cat,"=",9,";"
+        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_lt_dimu_max_abs_eta_0p915_gt_bdt_score_0p261"),cat,"=",10,";"
+        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_gt_bdt_score_0p246_lt_dimu_max_abs_eta_1p902"),cat,"=",11,";"
+        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_lt_bdt_score_0p246"),cat,"=",12,";"
+        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_gt_bdt_score_0p645"),cat,"=",13,";"
+        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_lt_dimu_max_abs_eta_0p917"),cat,"=",14,";"
+        #print self.Parse("gt_bdt_score_0p395_gt_bdt_score_0p727_lt_dimu_avg_abs_eta_1p954"),cat,"=",15,";"
         return 
 
 
