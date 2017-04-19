@@ -443,12 +443,15 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     // SciKit
     if (doScikit)
     {
-        /*
-        static double time_rfc=0;
-        static double time_mlp=0;
-        static double time_svc=0;
-        TStopwatch sw;
-        */
+        
+        //static double time_par=0;
+        //static double time_sgd=0;
+        //static double time_mlp=0;
+        //static double time_svr=0;
+        //static double time_ridge=0;
+        //static double time_en=0;
+        //TStopwatch sw;
+        
 
         scikit.clear();
         x.clear();
@@ -462,22 +465,37 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         x.push_back( mjj_detajj[1].second );
         x.push_back( fabs(mu0->DeltaPhi(*mu1)) );
         x.push_back( fabs(mu0->Eta()-mu1->Eta()));
+        x.push_back( nbjets );
 
 
-        //sw.Reset();sw.Start();
-        float rfc= -999; //py->Eval("rfc.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8]]])[0]"); // THIS IS VERY SLOW
-        //sw.Stop(); time_rfc += sw.CpuTime(); sw.Reset(); sw.Start();
-        float mlp= py->Eval("mlp.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8]]])[0]");
-        //sw.Stop(); time_mlp += sw.CpuTime(); sw.Reset(); sw.Start();
-        float svc= py->Eval("svc.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8]]])[0]");
-        //sw.Stop(); time_svc += sw.CpuTime(); sw.Reset(); sw.Start();
-        scikit.push_back(rfc);
+            //sw.Reset();sw.Start();
+        float par= py->Eval("par.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]"); // THIS IS VERY SLOW
+            //sw.Stop(); time_par += sw.CpuTime(); sw.Reset(); sw.Start();
+        float sgd= py->Eval("sgd.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+            //sw.Stop(); time_sgd += sw.CpuTime(); sw.Reset(); sw.Start();
+        float mlp= py->Eval("mlp.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+            //sw.Stop(); time_mlp += sw.CpuTime(); sw.Reset(); sw.Start();
+        float svr= py->Eval("svr.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+            //sw.Stop(); time_svr += sw.CpuTime(); sw.Reset(); sw.Start();
+        float ridge= py->Eval("ridge.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+            //sw.Stop(); time_ridge += sw.CpuTime(); sw.Reset(); sw.Start();
+        float en= py->Eval("en.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+            //sw.Stop(); time_en += sw.CpuTime(); sw.Reset(); sw.Start();
+
+        scikit.push_back(par);
+        scikit.push_back(sgd);
         scikit.push_back(mlp);
-        scikit.push_back(svc);
+        scikit.push_back(svr);
+        scikit.push_back(ridge);
+        scikit.push_back(en);
 
-        //Log(__FUNCTION__,"TIME",Form("RFC Time: %.3lf",time_rfc) );
+        //Log(__FUNCTION__,"SCIKIT",Form("Scikit values are: par=%f sgd=%f mlp=%f svr=%f ridge=%f en=%f",par,sgd,mlp,svr,ridge,en) );
+        //Log(__FUNCTION__,"TIME",Form("PAR Time: %.3lf",time_par) );
+        //Log(__FUNCTION__,"TIME",Form("SGD Time: %.3lf",time_sgd) );
         //Log(__FUNCTION__,"TIME",Form("MLP Time: %.3lf",time_mlp) );
-        //Log(__FUNCTION__,"TIME",Form("SVC Time: %.3lf",time_svc) );
+        //Log(__FUNCTION__,"TIME",Form("SVR Time: %.3lf",time_svr) );
+        //Log(__FUNCTION__,"TIME",Form("Ridge Time: %.3lf",time_ridge) );
+        //Log(__FUNCTION__,"TIME",Form("EN Time: %.3lf",time_en) );
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + catStr);
@@ -508,12 +526,26 @@ void HmumuAnalysis::InitScikit(){
     py . reset(new TPython);
     py -> Exec("from sklearn.ensemble import RandomForestClassifier");
     py -> Exec("from sklearn.svm import SVC");
+    py -> Exec("from sklearn.svm import SVR");
     py -> Exec("from sklearn.neural_network import MLPClassifier");
+    py -> Exec("from sklearn.neural_network import MLPRegressor");
+    py -> Exec("from sklearn.linear_model import SGDClassifier");
+    py -> Exec("from sklearn.linear_model import SGDRegressor");
+    py -> Exec("from sklearn.linear_model import PassiveAggressiveClassifier");
+    py -> Exec("from sklearn.linear_model import PassiveAggressiveRegressor");
+    py -> Exec("from sklearn.linear_model import Perceptron");
+    py -> Exec("from sklearn.linear_model import Ridge");
+    py -> Exec("from sklearn.linear_model import ElasticNet");
+
     py -> Exec("from sklearn.externals import joblib ");
 
-    py ->Exec("rfc=joblib.load('aux/hmm/RFC.pkl')");
+    //py ->Exec("rfc=joblib.load('aux/hmm/RFC.pkl')");
     py ->Exec("mlp=joblib.load('aux/hmm/MLP.pkl')");
-    py ->Exec("svc=joblib.load('aux/hmm/SVC.pkl')");
+    py ->Exec("svr=joblib.load('aux/hmm/SVR.pkl')");
+    py ->Exec("par=joblib.load('aux/hmm/PAR.pkl')");
+    py ->Exec("sgd=joblib.load('aux/hmm/SGD.pkl')");
+    py ->Exec("ridge=joblib.load('aux/hmm/Ridge.pkl')");
+    py ->Exec("en=joblib.load('aux/hmm/EN.en')");
 
     // Make sure we can use x[...] inside
     PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
@@ -610,21 +642,25 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/PtOnZ_"+ l ,"Pt On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnH_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/BdtOnZ_"+ l ,"Bdt On Z (70-110);Bdt;Events", 1000,-1,1);
+
 	    Book ("HmumuAnalysis/Vars/BdtOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+	    Book ("HmumuAnalysis/Vars/BdtOnH_BB_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 
         //Scikit
         if(doScikit){
-	        Book ("HmumuAnalysis/Vars/MLPOnZ_"+ l ,"MLP On Z (70-110);MLP;Events", 1000,-1,1);
-	        Book ("HmumuAnalysis/Vars/MLPOnH_"+ l ,"MLP On Hmm (110-150);MLP;Events", 1000,-1,1);
-	        Book ("HmumuAnalysis/Vars/SVCOnZ_"+ l ,"SVC On Z (70-110);SVC;Events", 1000,-1,1);
-	        Book ("HmumuAnalysis/Vars/SVCOnH_"+ l ,"SVC On Hmm (110-150);SVC;Events", 1000,-1,1);
-	        Book ("HmumuAnalysis/Vars/RFCOnZ_"+ l ,"RFC On Z (70-110);RFC;Events", 1000,-1,1);
-	        Book ("HmumuAnalysis/Vars/RFCOnH_"+ l ,"RFC On Hmm (110-150);RFC;Events", 1000,-1,1);
+            vector<string> discr{"PAR","SGD","MLP","SVR","Ridge","EN"};
+            for(const auto& s : discr)
+            {
+                Book ("HmumuAnalysis/Vars/"+s+"OnZ_"+ l ,s+" On Z (70-110);"+s+";Events", 1000,-1,1.0001);
+                Book ("HmumuAnalysis/Vars/"+s+"OnH_"+ l ,s+" On Hmm (110-150);"+s+";Events", 1000,-1,1.0001);
+                Book ("HmumuAnalysis/Vars/"+s+"OnH_BB_"+ l ,s+" On Hmm (110-150);"+s+";Events", 1000,-1,1.0001);
+            }
         }
-        //
+        // --- histograms for limits extraction
         for(const auto & c : categories_)
         {
-	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
+	        //Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
+	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
             // for systematics, only counts the total
 	        Book ("HmumuAnalysis/Vars/Mmm_Count_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 1,110,150); // 
             AddFinalHisto("HmumuAnalysis/Vars/Mmm_Count_"+c+"_"+l);
@@ -634,6 +670,8 @@ void HmumuAnalysis::Init(){
     if (doSync){
         InitTree("hmm");
         Branch("hmm","cat",'I');
+        Branch("hmm","mcWeight",'I');
+        Branch("hmm","puWeight",'I');
         Branch("hmm","eventNum",'I');
         Branch("hmm","runNum",'I');
         Branch("hmm","lumiNum",'I');
@@ -888,8 +926,14 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         SetTreeVar("eventNum",e->eventNum());
         SetTreeVar("runNum",e->runNum());
         SetTreeVar("lumiNum",e->lumiNum());
-        if (e->IsRealData()) SetTreeVar("mc",0);
+        if (e->IsRealData()){
+            SetTreeVar("mc",0);
+            SetTreeVar("mcWeight",1.);
+            SetTreeVar("puWeight",1.);
+        }
         else {
+            SetTreeVar("mcWeight",e->GetWeight()->GetBareMCWeight());
+            SetTreeVar("puWeight",e->GetWeight()->GetBarePUWeight());
             int mc=0;
             if (label.find( "GluGlu_HToMuMu") != string::npos) mc -=10;
             if (label.find( "VBF_HToMuMu") != string::npos) mc -=20;
@@ -946,9 +990,12 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
             if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
             if (doScikit and catType==2){
-                Fill("HmumuAnalysis/Vars/RFCOnZ_"+ label,systname, scikit[0] ,e->weight());
-                Fill("HmumuAnalysis/Vars/MLPOnZ_"+ label,systname, scikit[1] ,e->weight());
-                Fill("HmumuAnalysis/Vars/SVCOnZ_"+ label,systname, scikit[2] ,e->weight());
+                vector<string> discr{"PAR","SGD","MLP","SVR","Ridge","EN"};
+                for(size_t i=0;i<discr.size();++i)
+                {
+                    const auto& s = discr[i];
+                    Fill("HmumuAnalysis/Vars/"+s+"OnZ_"+ label,systname, scikit[i] ,e->weight());
+                }
             }
         }
         if (mass_ >= 110 and mass_<150){
@@ -956,10 +1003,17 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, Z.Pt(),e->weight());
             if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
+            if(catType==2 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
+                Fill("HmumuAnalysis/Vars/BdtOnH_BB_"+ label,systname, bdt[0] ,e->weight());
             if (doScikit and catType==2){
-                Fill("HmumuAnalysis/Vars/RFCOnH_"+ label,systname, scikit[0] ,e->weight());
-                Fill("HmumuAnalysis/Vars/MLPOnH_"+ label,systname, scikit[1] ,e->weight());
-                Fill("HmumuAnalysis/Vars/SVCOnH_"+ label,systname, scikit[2] ,e->weight());
+                vector<string> discr{"PAR","SGD","MLP","SVR","Ridge","EN"};
+                for(size_t i=0;i<discr.size();++i)
+                {
+                    const auto& s = discr[i];
+                    Fill("HmumuAnalysis/Vars/"+s+"OnH_"+ label,systname, scikit[i] ,e->weight());
+                    if (fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
+                        Fill("HmumuAnalysis/Vars/"+s+"OnH_BB_"+ label,systname, scikit[i] ,e->weight());
+                }
             }
         }
 

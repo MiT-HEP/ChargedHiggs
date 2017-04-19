@@ -420,10 +420,12 @@ RooAbsPdf* PdfModelBuilder::fTest(const string& prefix,RooDataHist*dh,int *ord,c
             prob = 0;
         }
 	    double gofProb=0;
-        prevNll=thisNll;
-        prevOrder = order;
-        //delete prevPdf; // destroed here
-        prevPdf = model;
+        if (prob< alpha){
+            prevNll=thisNll;
+            prevOrder = order;
+            //delete prevPdf; // destroed here
+            prevPdf = model;
+        }
         store[model->GetName()]=model;
     }
     if (plotDir != "")
@@ -709,20 +711,38 @@ void BackgroundFitter::fit(){
     for(int cat=0;cat < int(inputMasks.size()); ++cat)
     {
         cout<<"* Getting"<<inputMasks[cat]<<endl;
-        TH1D *h = (TH1D*)fInput ->Get( inputMasks[cat].c_str() ) ;
-        h->Rebin(rebin);
-
-        if (h == NULL) 
-            Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]);
-
-        // -- Construct RooDataHist
         string name =  Form("dataHist_cat_%d",cat);
-        hist_ [ name ] = new RooDataHist(
-                Form(datasetMask_.c_str(),cat),
-                Form(datasetMask_.c_str(),cat),
-                *x_,
-                Import( *h ) 
-                );
+
+        if ( inputMasks[cat].find(":") == string::npos )
+        {
+            TH1D *h = (TH1D*)fInput ->Get( inputMasks[cat].c_str() ) ;
+            h->Rebin(rebin);
+
+            if (h == NULL) 
+                Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]);
+
+            // -- Construct RooDataHist
+            hist_ [ name ] = new RooDataHist(
+                    Form(datasetMask_.c_str(),cat),
+                    Form(datasetMask_.c_str(),cat),
+                    *x_,
+                    Import( *h ) 
+                    );
+        }
+        else { // it's already a RooDataHist
+            size_t sep= inputMasks[cat].find(":") ;
+            RooWorkspace * w_local = (RooWorkspace*) fInput -> Get(  inputMasks[cat].substr(0, sep).c_str() );
+            if (w_local==NULL)
+                Log(__FUNCTION__,"ERROR","Unable to find workspaces from: "+inputMasks[cat]);
+            RooDataHist *dh_local=(RooDataHist*) w_local->data( inputMasks[cat].substr(sep+1, inputMasks[cat].size() ).c_str() )->Clone(name.c_str());
+
+            if (dh_local==NULL)
+                Log(__FUNCTION__,"ERROR","Unable to find data hist from: "+inputMasks[cat]);
+            string old= RooArgList(*dh_local->get(1))[0].GetName();
+            dh_local->changeObservableName(old.c_str() , x_->GetName());
+            // -- Construct RooDataHist
+            hist_ [ name ] = dh_local; 
+        }
 
 
         if (writeDatasets_)w_ -> import( *hist_[ name ] ); // write datasets in the workspace
@@ -731,43 +751,54 @@ void BackgroundFitter::fit(){
 
         // F-Test
         //
+        cout<<"*** Fitting Bernstein ***"<<endl;
         int bernOrd;
         RooAbsPdf* bern = modelBuilder.fTest(Form("bern_cat%d",cat) ,hist_[name],&bernOrd,plotDir + "/bern");
         storedPdfs.add(*bern);
 
+        cout<<"*** Fitting DY Bernstein ***"<<endl;
         int dybernOrd;
         string mask= inputMasks[cat];
         string toReplace="Data";
-        mask.replace(mask.find(toReplace), toReplace.length(),"DY");
+        if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DY");
         cout<<"-> Getting DY from "<<mask<<endl;
         TH1D *dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
         if (dy==NULL) cout<<"  and hist doesn't exist"<<endl;
-        dy->Scale(35867); // lumi
-        dy->Rebin(10); // lumi
-        //dy->Smooth(1); // lumi
-        RooAbsPdf* dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
-        //storedPdfs.add(*dybern);
+        RooAbsPdf* dybern = NULL;
+        if (dy != NULL){
+            dy->Scale(35867); // lumi
+            dy->Rebin(10); // lumi
+            //dy->Smooth(1); // lumi
+            dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
+            //storedPdfs.add(*dybern);
+        }
 
+        cout<<"*** Fitting ZPHO ***"<<endl;
         int zphoOrd;
         RooAbsPdf* zpho = modelBuilder.fTest(Form("zpho_cat%d",cat) ,hist_[name],&zphoOrd,plotDir + "/zpho");
         storedPdfs.add(*zpho);
 
+        cout<<"*** Fitting ZMOD ***"<<endl;
         int zmodOrd;
         RooAbsPdf* zmod = modelBuilder.fTest(Form("zmod_cat%d",cat) ,hist_[name],&zmodOrd,plotDir + "/zmod");
         storedPdfs.add(*zmod);
 
+        cout<<"*** Fitting MOD BERN ***"<<endl;
         int modbernOrd;
         RooAbsPdf* modbern = modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
         //storedPdfs.add(*modbern);
 
+        cout<<"*** Fitting POWLAW ***"<<endl;
         int powlawOrd;
         RooAbsPdf* powlaw = modelBuilder.fTest(Form("powlaw_cat%d",cat) ,hist_[name],&powlawOrd, plotDir+"/powlaw");
         //storedPdfs.add(*powlaw);
 
+        cout<<"*** Fitting EXP ***"<<endl;
         int expOrd;
         RooAbsPdf* exp = modelBuilder.fTest(Form("exp_cat%d",cat) ,hist_[name],&expOrd,plotDir+"/exp");
         storedPdfs.add(*exp);
 
+        cout<<"*** Fitting LAU ***"<<endl;
         int lauOrd;
         RooAbsPdf* lau = modelBuilder.fTest(Form("lau_cat%d",cat) ,hist_[name],&lauOrd,plotDir+"/lau");
         //storedPdfs.add(*lau);
@@ -811,7 +842,8 @@ void BackgroundFitter::fit(){
 
             //chi2=modelBuilder.getGoodnessOfFit(x_, bern, hist_[name], plotDir +"/bern/chosen",blind);
             plotOnFrame( p, bern, kBlue, kSolid,Form("bern ord=%d prob=%.2f",bernOrd, modelBuilder.getGoodnessOfFit(x_, bern, hist_[name], plotDir +"/bern/chosen",blind) ),leg);
-            plotOnFrame( p, dybern, kGray+2, kDashed,Form("dybern ord=%d prob=%.2f",dybernOrd,modelBuilder.getGoodnessOfFit(x_, dybern, hist_[name], plotDir +"/dybern/chosen",blind) ),leg);
+            if (dybern != NULL)
+                plotOnFrame( p, dybern, kGray+2, kDashed,Form("dybern ord=%d prob=%.2f",dybernOrd,modelBuilder.getGoodnessOfFit(x_, dybern, hist_[name], plotDir +"/dybern/chosen",blind) ),leg);
             plotOnFrame( p, zpho, kOrange, kSolid,Form("zpho ord=%d prob=%.2f",zphoOrd,modelBuilder.getGoodnessOfFit(x_, zpho, hist_[name], plotDir +"/zpho/chosen",blind) ),leg);
             plotOnFrame( p, zmod, kRed+2, kDashed,Form("zmod ord=%d prob=%.2f",zmodOrd,modelBuilder.getGoodnessOfFit(x_, zmod, hist_[name], plotDir +"/zmod/chosen",blind) ),leg);
             plotOnFrame( p, powlaw, kRed, kSolid,Form("powlaw ord=%d prob=%.2f",powlawOrd,modelBuilder.getGoodnessOfFit(x_, powlaw, hist_[name], plotDir +"/powlaw/chosen",blind) ),leg);
