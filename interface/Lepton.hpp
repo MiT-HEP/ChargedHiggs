@@ -24,6 +24,7 @@ class Lepton : virtual public Object,
         int looseId{0};
         int trackerMuon {0};
         int globalMuon {0};
+        int nlayers{0};
         float mva{-1}; // mva
 
         // ele specific
@@ -69,6 +70,7 @@ class Lepton : virtual public Object,
         inline void SetMediumIdOrig( bool x=true){mediumIdOrig=x;}
         inline void SetLooseId( bool x=true){looseId=x;}
         inline void SetMva(float x){mva=x;}
+        inline void SetNLayers(int x){nlayers=x;}
         inline void SetTrackerMuon(bool x=true){trackerMuon=x;}
         inline void SetGlobalMuon(bool x=true){globalMuon=x;}
         inline void SetTrackerMuonCut(bool x=true){trackermuoncut_=x;}
@@ -89,6 +91,7 @@ class Lepton : virtual public Object,
         inline float GetEtaSC() const {return etaSC_;}
         inline int Charge() const { return charge; }
         inline int GetType() const { return type; } // bypass id
+        inline int GetNLayers() const { return nlayers; } // bypass id
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;

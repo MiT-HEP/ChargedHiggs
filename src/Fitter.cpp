@@ -51,7 +51,7 @@ void Fitter::info(){
     for(auto &s : inputMasks) cout <<"mask = "<<s<<endl;
     cout<<"mIn = ";for(auto &m : mIn ) cout <<m<<","; cout<<endl;
     cout <<"procs = ";for(auto &p : processes) cout <<p<<",";cout<<endl;
-    cout<<"** ttH125 ONLY **"<<endl;
+    //cout<<"** ttH125 ONLY **"<<endl;
     cout<<"-----------------------------------"<<endl;
 }
 
@@ -88,7 +88,7 @@ void Fitter::init(){
 
         for( float& m : mIn)
         {
-            if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 FIXME
+            //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 
 
             string mass = Form(massMask_.c_str() ,m);
             TH1D *h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
@@ -179,7 +179,8 @@ void Fitter::init(){
 
         RooAbsReal* eaSpline;
 
-        if (proc == "ttH")//ttH125 FIXME
+        //if (proc == "ttH")//ttH125 
+        if (false)//ttH as all
         {
             eaSpline = new RooRealVar(eaName.c_str(),eaName.c_str(),ea_y[0]);
             ((RooRealVar*)eaSpline)->setConstant();
@@ -291,7 +292,7 @@ void Fitter::fit(){
                 pos+=1;
             }
             // return if ttH !=125
-            if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 FIXME
+            //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 
             //mean and sigma
            // pars[pos+0].setRange(0,125);
 
@@ -385,7 +386,7 @@ void Fitter::fit(){
 
             for( auto & m: mIn )
             {
-                if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 FIXME
+                //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125
 
                 string mass=Form(massMask_.c_str(),m);
                 mpoints.push_back(m);
@@ -395,7 +396,8 @@ void Fitter::fit(){
 
             //interpolate model pars
             string splname=Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,i);
-            if (proc == "ttH")//ttH125 FIXME
+            //if (proc == "ttH")//ttH125
+            if (false)//ttH all
             {
                 RooRealVar par( Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i),
                                 Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i),

@@ -9,6 +9,7 @@ addfiles=%(amariniUser)s/VBF_HToMuMu_M120_13TeV_powheg_pythia8
 addfiles=%(amariniUser)s/WMinusH_HToMuMu_M120_13TeV_powheg_pythia8
 addfiles=%(amariniUser)s/WPlusH_HToMuMu_M120_13TeV_powheg_pythia8
 addfiles=%(amariniUser)s/ZH_HToMuMu_M120_13TeV_powheg_pythia8
+addfiles=/eos/user/a/amarini/Nero/v2.2.1/ttH_HToMuMu_M120_13TeV_powheg_pythia8_v2
 
 ###########
 ### 125 ###
@@ -32,3 +33,4 @@ addfiles=%(amariniUser)s/VBF_HToMuMu_M130_13TeV_powheg_pythia8
 addfiles=%(amariniUser)s/WMinusH_HToMuMu_M130_13TeV_powheg_pythia8
 addfiles=%(amariniUser)s/WPlusH_HToMuMu_M130_13TeV_powheg_pythia8
 addfiles=%(amariniUser)s/ZH_HToMuMu_M130_13TeV_powheg_pythia8
+addfiles=/eos/user/a/amarini/Nero/v2.2.1/ttH_HToMuMu_M130_13TeV_powheg_pythia8_v2

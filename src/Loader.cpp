@@ -339,6 +339,9 @@ void LoadNero::FillLeptons(){
         l-> SetR9    ( (*bl->r9) [iL]);
         l-> SetEtaSC ( (*bl->etaSC) [iL]);
 
+        if (tree_ -> GetBranchStatus("lepNLayers") !=0  ) l-> SetNLayers( bl-> nLayers -> at(iL) );
+        else l->SetNLayers(-999);
+
 #ifdef VERBOSE
         if(VERBOSE>1) cout<<"[LoadNero]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;
 #endif

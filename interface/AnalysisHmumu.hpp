@@ -76,11 +76,11 @@ class HmumuAnalysis: virtual public AnalysisBase
     public:
         vector<string> weights;
 
+        bool doScikit{true};
     protected:
     /**********************************
      *          SCIKIT                *
      **********************************/
-        bool doScikit{true};
         std::unique_ptr<TPython> py;
         vector<float> x;
         void InitScikit();

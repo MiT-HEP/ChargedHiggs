@@ -5,6 +5,11 @@
 
 #define VERBOSE 0
 
+//#define SCIKIT_TIMING
+#ifdef SCIKIT_TIMING
+    #warning SCIKIT_TIMING don't use for submission
+#endif
+
 //#warning Hmumu ANALYSIS NON ISO
 
 void HmumuAnalysis::SetLeptonCuts(Lepton *l){ 
@@ -443,14 +448,16 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     // SciKit
     if (doScikit)
     {
-        
-        //static double time_par=0;
-        //static double time_sgd=0;
-        //static double time_mlp=0;
-        //static double time_svr=0;
-        //static double time_ridge=0;
-        //static double time_en=0;
-        //TStopwatch sw;
+       
+        #ifdef SCIKIT_TIMING
+        static double time_par=0;
+        static double time_sgd=0;
+        static double time_mlp=0;
+        static double time_svr=0;
+        static double time_ridge=0;
+        static double time_en=0;
+        TStopwatch sw;
+        #endif
         
 
         scikit.clear();
@@ -468,19 +475,33 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         x.push_back( nbjets );
 
 
-            //sw.Reset();sw.Start();
+        #ifdef SCIKIT_TIMING
+            sw.Reset();sw.Start();
+        #endif
         float par= py->Eval("par.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]"); // THIS IS VERY SLOW
-            //sw.Stop(); time_par += sw.CpuTime(); sw.Reset(); sw.Start();
+        #ifdef SCIKIT_TIMING
+            sw.Stop(); time_par += sw.CpuTime(); sw.Reset(); sw.Start();
+        #endif
         float sgd= py->Eval("sgd.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-            //sw.Stop(); time_sgd += sw.CpuTime(); sw.Reset(); sw.Start();
+        #ifdef SCIKIT_TIMING
+            sw.Stop(); time_sgd += sw.CpuTime(); sw.Reset(); sw.Start();
+        #endif
         float mlp= py->Eval("mlp.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-            //sw.Stop(); time_mlp += sw.CpuTime(); sw.Reset(); sw.Start();
+        #ifdef SCIKIT_TIMING
+            sw.Stop(); time_mlp += sw.CpuTime(); sw.Reset(); sw.Start();
+        #endif
         float svr= py->Eval("svr.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-            //sw.Stop(); time_svr += sw.CpuTime(); sw.Reset(); sw.Start();
+        #ifdef SCIKIT_TIMING
+            sw.Stop(); time_svr += sw.CpuTime(); sw.Reset(); sw.Start();
+        #endif
         float ridge= py->Eval("ridge.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-            //sw.Stop(); time_ridge += sw.CpuTime(); sw.Reset(); sw.Start();
+        #ifdef SCIKIT_TIMING
+            sw.Stop(); time_ridge += sw.CpuTime(); sw.Reset(); sw.Start();
+        #endif
         float en= py->Eval("en.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-            //sw.Stop(); time_en += sw.CpuTime(); sw.Reset(); sw.Start();
+        #ifdef SCIKIT_TIMING
+            sw.Stop(); time_en += sw.CpuTime(); sw.Reset(); sw.Start();
+        #endif
 
         scikit.push_back(par);
         scikit.push_back(sgd);
@@ -489,13 +510,15 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         scikit.push_back(ridge);
         scikit.push_back(en);
 
-        //Log(__FUNCTION__,"SCIKIT",Form("Scikit values are: par=%f sgd=%f mlp=%f svr=%f ridge=%f en=%f",par,sgd,mlp,svr,ridge,en) );
-        //Log(__FUNCTION__,"TIME",Form("PAR Time: %.3lf",time_par) );
-        //Log(__FUNCTION__,"TIME",Form("SGD Time: %.3lf",time_sgd) );
-        //Log(__FUNCTION__,"TIME",Form("MLP Time: %.3lf",time_mlp) );
-        //Log(__FUNCTION__,"TIME",Form("SVR Time: %.3lf",time_svr) );
-        //Log(__FUNCTION__,"TIME",Form("Ridge Time: %.3lf",time_ridge) );
-        //Log(__FUNCTION__,"TIME",Form("EN Time: %.3lf",time_en) );
+        #ifdef SCIKIT_TIMING
+           Log(__FUNCTION__,"SCIKIT",Form("Scikit values are: par=%f sgd=%f mlp=%f svr=%f ridge=%f en=%f",par,sgd,mlp,svr,ridge,en) );
+           Log(__FUNCTION__,"TIME",Form("PAR Time: %.3lf",time_par) );
+           Log(__FUNCTION__,"TIME",Form("SGD Time: %.3lf",time_sgd) );
+           Log(__FUNCTION__,"TIME",Form("MLP Time: %.3lf",time_mlp) );
+           Log(__FUNCTION__,"TIME",Form("SVR Time: %.3lf",time_svr) );
+           Log(__FUNCTION__,"TIME",Form("Ridge Time: %.3lf",time_ridge) );
+           Log(__FUNCTION__,"TIME",Form("EN Time: %.3lf",time_en) );
+        #endif
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + catStr);
@@ -545,7 +568,7 @@ void HmumuAnalysis::InitScikit(){
     py ->Exec("par=joblib.load('aux/hmm/PAR.pkl')");
     py ->Exec("sgd=joblib.load('aux/hmm/SGD.pkl')");
     py ->Exec("ridge=joblib.load('aux/hmm/Ridge.pkl')");
-    py ->Exec("en=joblib.load('aux/hmm/EN.en')");
+    py ->Exec("en=joblib.load('aux/hmm/EN.pkl')");
 
     // Make sure we can use x[...] inside
     PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
