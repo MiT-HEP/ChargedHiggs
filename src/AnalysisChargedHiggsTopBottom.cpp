@@ -102,10 +102,12 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("ht",evt_HT);
     SetTreeVar("st",evt_ST);
     SetTreeVar("DRl1b1",evt_DRl1b1);
+    SetTreeVar("Ml1b1",evt_Ml1b1);
     SetTreeVar("DRl2b1",evt_DRl2b1);
     SetTreeVar("DRbbmin",evt_minDRbb);
     SetTreeVar("MassDRbbmin",evt_minDRbb_invMass);
     SetTreeVar("MassDRlbmin",evt_minDRlb_invMass);
+    SetTreeVar("DRlbmin",evt_minDRlb);
     SetTreeVar("DEtaMaxBB",evt_DEtaMaxBB);
     SetTreeVar("DRlbmaxPT",evt_DRlbmaxPt);
     SetTreeVar("MJJJmaxPt",evt_MJJJmaxPt);
@@ -556,10 +558,12 @@ void ChargedHiggsTopBottom::Init()
         Branch("tree_tb","ht",'F');
         Branch("tree_tb","st",'F');
         Branch("tree_tb","DRl1b1",'F');
+        Branch("tree_tb","Ml1b1",'F');
         Branch("tree_tb","DRl2b1",'F');
         Branch("tree_tb","DRbbmin",'F');
         Branch("tree_tb","MassDRbbmin",'F');
         Branch("tree_tb","MassDRlbmin",'F');
+        Branch("tree_tb","DRlbmin",'F');
         Branch("tree_tb","DEtaMaxBB",'F');
         Branch("tree_tb","DRlbmaxPT",'F');
         Branch("tree_tb","MJJJmaxPt",'F');
@@ -1108,6 +1112,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/MJJJmaxPT_"+l,"MJJJmaxPT"+l+";M_{JJJ}^{maxP_{T}}",50,0,1000);
         if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/AvDRJJJmaxPT_"+l,"AvDRJJJmaxPT"+l+";AvDR_{JJJ}^{maxP_{T}}",50,0,2*TMath::Pi());
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/AvCSVPt_"+l,"AvCSVPt"+l+";AvCSV",50,0.,1.);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/MaxCSV_"+l,"MaxCSVPt"+l+";MaxCSV",50,0.,1.);
 
         /////
         // lb
@@ -1655,6 +1660,7 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
         }
     }
 
+    evt_minDRlb = minDRlb;
     evt_minDRlb_invMass=minDRlb_invMass;
     evt_DRlbmaxPt=DRlbmaxPt;
 
@@ -1666,6 +1672,8 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
             float deltaRlb = bj1->DeltaR(*leadLep);
 
             evt_DRl1b1=deltaRlb;
+            evt_Ml1b1=(bj1->GetP4() + leadLep->GetP4()).M();
+
             if(trailLep) {
                 float deltaEtal2b= bj1->DeltaEta(*trailLep);
                 float deltaPhil2b= bj1->DeltaPhi(*trailLep);
@@ -1693,20 +1701,24 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
 
         for(int i=0;i!=e->NcentralJets();++i) {
             Jet* jet_i = e->GetCentralJet(i);
-            for(int j=0;j!=e->NcentralJets();++j) {
-                if(i==j) continue;
+                    //                    if(i==j) continue;
+
+            for(int j=i+1;j!=e->NcentralJets();++j) {
                 Jet* jet_j = e->GetCentralJet(j);
                 double dr_ij = jet_i->DeltaR(jet_j);
-                for(int k=0;k!=e->NcentralJets();++k) {
 
-                    if(i==k) continue;
-                    if(j==k) continue;
+                for(int k=j+1;k!=e->NcentralJets();++k) {
+
+                    //                    if(i==k) continue;
+                    //                    if(j==k) continue;
+                    //                    cout << "i=" << i << " j=" << j << " k=" << k << endl;
+
                     Jet* jet_k = e->GetCentralJet(k);
                     double dr_kj = jet_k->DeltaR(jet_j);
                     double dr_ki = jet_k->DeltaR(jet_i);
                     double mass = (jet_i->GetP4() + jet_j->GetP4() + jet_k->GetP4()).M();
                     double pt = (jet_i->GetP4() + jet_j->GetP4() + jet_k->GetP4()).Pt();
-                    if(pt>Ptlbmax) { MJJJmaxPt=mass; PtJJJmax=pt; AvDRJJJmaxPT = (dr_kj+dr_ki + dr_ij)/3;}
+                    if(pt>PtJJJmax) { MJJJmaxPt=mass; PtJJJmax=pt; AvDRJJJmaxPT = (dr_kj+dr_ki + dr_ij)/3;}
 
                 }
             }
@@ -1859,6 +1871,7 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
     */
 
     if(e->NcentralJets()>=3) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/thirdBDiscr_"+label,systname,  valid[2].first,e->weight());
+    if(e->NcentralJets()>=3) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/MaxCSV_"+label,systname,  valid[0].first,e->weight());
 
     ///////////
     //// STUDY various jets properties
