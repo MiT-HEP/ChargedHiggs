@@ -114,7 +114,7 @@ if opts.classname== "Fitter":
 if opts.classname== "BackgroundFitter":
     fitter.outname= opts.outfile
     fitter.inname =opts.file
-    fitter.rebin=1
+    fitter.rebin=5
     ## Hmumu
     fitter.inputMasks.clear()
     for catStr in config.categories:

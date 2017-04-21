@@ -32,6 +32,7 @@ lepMva
 lepPdgId
 lepSelBits
 lepPfPt
+lepNLayers
 lep*
 ### TAU
 tauP4

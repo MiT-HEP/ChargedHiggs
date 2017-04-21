@@ -339,7 +339,9 @@ void LoadNero::FillLeptons(){
         l-> SetR9    ( (*bl->r9) [iL]);
         l-> SetEtaSC ( (*bl->etaSC) [iL]);
 
-        if (tree_ -> GetBranchStatus("lepNLayers") !=0  ) l-> SetNLayers( bl-> nLayers -> at(iL) );
+        if (tree_ -> GetBranchStatus("lepNLayers") !=0 and bl-> nLayers  and bl-> nLayers ->size() >iL  ) {
+                l-> SetNLayers( bl-> nLayers -> at(iL) );
+        }
         else l->SetNLayers(-999);
 
 #ifdef VERBOSE
@@ -756,6 +758,10 @@ void LoadNero::NewFile(){
         }
         event_ -> IsTriggered(""); // reset trigger caching
     }
+    
+    // Bad fix for partially reprocessed trees  -- I loose one entry// FIXME
+    bare_[ names_["BareLeptons"] ]->setBranchAddresses(tree_);
+
 }; // should take care of loading the trigger names
 // ---------------------------END NERO ---------------------
 

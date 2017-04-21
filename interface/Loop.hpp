@@ -30,6 +30,7 @@ class Looper{
     private:
         TChain *tree_; 
         int fNumber;
+        long fEntry;
 
         //
         int minEntries_{-1};
