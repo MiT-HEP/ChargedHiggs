@@ -7,8 +7,8 @@ from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_7_6_5_testNEROforCOMBINE/src/ChargedHiggs/splitted_APR8_1l.root") 
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_7_6_5_testNEROforCOMBINE/src/ChargedHiggs/splitted_APR8_2l.root") 
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR21_Final_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR21_Final_2l.root")
 
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
 parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
@@ -223,8 +223,8 @@ if opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==0 or opts.kTes
 #	basecat = ["Baseline"]
 
 if opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16:
-	channel = ["2Mu","2Ele"]
-#	channel = ["1Mu1Ele","2Mu","2Ele"]
+#	channel = ["2Mu","2Ele"]
+	channel = ["1Mu1Ele","2Mu","2Ele"]
 #	channel = ["2Mu"]
 #	basecat = ["Baseline","extraRadCR","topCR"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
@@ -264,7 +264,6 @@ for y in channel:
 ###			if x=="Baseline" and (opts.kTest==0 or opts.kTest==7): region = [""]## not sure why this
 #			if x=="Baseline": region = ["_SR1"]
 
-##			if y == "1Ele" or y == "1Mu": srList = ["_SR1","_SR2","_SR3","_SR4"]
 ##			if y == "1Ele" or y == "1Mu": srList = [""]
 			## BDT1 is 1l high mass
 			## BDT2 is 1l medium mass
@@ -386,9 +385,9 @@ for y in channel:
 					#				"TT":{ "name":"TT","hist":["TTToSemilepton","TTTo2L2Nu"],"num":1},
 					#				"ST":{ "name":"ST","hist":["ST","tZq"],"num":2},
 #					"ST":{ "name":"ST","hist":["ST"],"num":6},
-#					"EWK":{ "name":"EWK","hist":["WJetsToLNu","WZTo","ZZTo"],"num":7},
+					"EWK":{ "name":"EWK","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","WWTo","WZTo","ZZTo"],"num":6},
 #					"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":8}
-					"TOP":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":8}
+					"TOP":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
 					}
 			else:
 				mcStore={
@@ -401,9 +400,9 @@ for y in channel:
 					#				"TT":{ "name":"TT","hist":["TTToSemilepton","TTTo2L2Nu"],"num":1},
 					#				"ST":{ "name":"ST","hist":["ST","tZq"],"num":2},
 #					"ST":{ "name":"ST","hist":["ST"],"num":6},
-#					"EWK":{ "name":"EWK","hist":["WJetsToLNu","ZZTo"],"num":7},
+					"EWK":{ "name":"EWK","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","WWTo","WZTo","ZZTo"],"num":6},
 #					"TTX":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":8}
-					"TOP":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":8}
+					"TOP":{ "name":"TTX","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
 					}
 
 			systStore={
@@ -411,18 +410,18 @@ for y in channel:
 				"CMS_pileup":{"type":"shape", "wsname":"PU","name":"PU","proc":[".*"]}, ## name used for shape
 				"CMS_scale_uncluster":{"type":"shape", "wsname":"UNCLUSTER","name":"UNCLUSTER","proc":[".*"]}, ## name used for shape
 				"CMS_scale_j":{"type":"shape", "wsname":"JES","name":"JES","proc":[".*"]}, ## name used for shape
-###				"CMS_res_j":{"type":"shape", "wsname":"JER","name":"JER","proc":[".*"]}, ## name used for shape
-#				"CMS_eff_b":{"type":"shape", "wsname":"BTAGB","name":"BTAGB","proc":[".*"]}, ## name used for shape
-#				"CMS_fake_b":{"type":"shape", "wsname":"BTAGL","name":"BTAGL","proc":[".*"]}, ## name used for shape
+##				"CMS_res_j":{"type":"shape", "wsname":"JER","name":"JER","proc":[".*"]}, ## name used for shape
+##				"CMS_eff_b":{"type":"shape", "wsname":"BTAGB","name":"BTAGB","proc":[".*"]}, ## name used for shape
+##				"CMS_fake_b":{"type":"shape", "wsname":"BTAGL","name":"BTAGL","proc":[".*"]}, ## name used for shape
 				"CMS_topreweight":{"type":"shape", "wsname":"TOPRW","name":"TOPRW","proc":[".*"]}, ## name used for shape
 				"CMS_eff_m_trigger":{"type":"shape", "wsname":"muTRG","name":"muTRG","proc":[".*"]}, ## name used for shae
-				"CMS_eff_m_reco":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"muRECO","name":"XXX"}, ## name used for shape
-				"CMS_eff_m_id":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"muID","name":"XXX"}, ## name used for shape
-				"CMS_eff_m_iso":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"muISO","name":"XXX"}, ## name used for shape
-#				"CMS_eff_m_reco":{"type":"shape", "wsname":"muRECO","name":"muRECO","proc":[".*"]}, ## name used for shape
-#				"CMS_eff_m_id":{"type":"shape", "wsname":"muID","name":"muID","proc":[".*"]}, ## name used for shape
-#				"CMS_eff_m_iso":{"type":"shape", "wsname":"muISO","name":"muISO","proc":[".*"]}, ## name used for shape
-###				"lumi13TeV":{"type":"lnN", "value":["1.06"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
+##				"CMS_eff_m_reco":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"muRECO","name":"XXX"}, ## name used for shape
+##				"CMS_eff_m_id":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"muID","name":"XXX"}, ## name used for shape
+##				"CMS_eff_m_iso":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"muISO","name":"XXX"}, ## name used for shape
+##				"CMS_eff_m_reco":{"type":"shape", "wsname":"muRECO","name":"muRECO","proc":[".*"]}, ## name used for shape
+##				"CMS_eff_m_id":{"type":"shape", "wsname":"muID","name":"muID","proc":[".*"]}, ## name used for shape
+##				"CMS_eff_m_iso":{"type":"shape", "wsname":"muISO","name":"muISO","proc":[".*"]}, ## name used for shape
+##				"lumi13TeV":{"type":"lnN", "value":["1.06"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
 				"lumi13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
 ###
 				}
@@ -432,11 +431,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="APR9/"+label+VarTest+opts.output
+fileTmp="APR21/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "APR9/"+ label + VarTest + datNameTmp
+datName = "APR21/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -752,13 +751,14 @@ def importPdfFromTH1(cat,mc,syst=None):
 #	  else: h=RebinN(h,1)
 
 
+## -- MC --
 #		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 ####1L
-		if  "1Ele" in cat["dir"] or "1Mu" in cat["dir"]:
+		if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
 
 			if "Baseline" in cat["dir"]:   
 				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LCharm(h)
-				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": h=Rebin1LCharm(h) 
+				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": h=Rebin1LCharm(h)
 				else: 
 					if opts.kTest==3: h=RebinBDT3(h)
 					if opts.kTest==2: h=RebinBDT2(h)
@@ -769,19 +769,18 @@ def importPdfFromTH1(cat,mc,syst=None):
 						if "SR2" in cat["var"] or "SR4" in cat["var"]: 
 							if h: h.Rebin(4)
 					
-			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
+			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
+			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
+			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
 #### 2L 			
 
 		if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
 			if h:
 				if "Baseline" in cat["dir"]:   
 					if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LCharm(h)
-					elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": Rebin1LCharm(h) 
-					if cat["var"] == "HT" and h: h.Rebin(2)				
+					elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": Rebin1LCharm(h)
 					else: 
-						if opts.kTest==6: h=RebinBDT3(h) 
+						if opts.kTest==6: h=RebinBDT3(h)
 						if opts.kTest==5: h=RebinBDT2(h)
 						if opts.kTest==4: h=RebinBDT1(h)
 						if opts.kTest<10:
@@ -790,9 +789,13 @@ def importPdfFromTH1(cat,mc,syst=None):
 							if "SR2" in cat["var"] or "SR4" in cat["var"]: 
 								if h: h.Rebin(4)					
 								
-				if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-				if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-				if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
+				if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
+				if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
+				if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
+
+				if "HT" in cat["var"] and h: h.Rebin(2)
+
+
 			## extra Rebin(2) for dilepton
 #			if h: h.Rebin(2)
 
@@ -867,10 +870,14 @@ for c in catStore:
 		raise IOError
 	base="ChargedHiggsTopBottom"
 	target = "data_obs_"+ cat["name"] 
-	toget=base + "/" +cat["dir"] + "/" +  cat["var"]  +"_Data"
+#	toget=base + "/" +cat["dir"] + "/" +  cat["var"]  +"_Data"
+	toget=base + "/" +cat["dir"] + "/" +  cat["var"]
+	if  ("1Ele" in cat["dir"] or "2Ele" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]): toget+="_SingleElectron"
+	if  "1Mu" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]: toget+="_SingleMuon"
+
 	h=tfile.Get(toget)
 	if h == None:
-		print "<*> File not exists"
+		print "<*> Hist do not exists ",toget
 		raise IOError
 
 	if h: h.SetBinContent(0,0) ##underflow
@@ -888,14 +895,16 @@ for c in catStore:
 #	else: h=RebinN(h,1)
 
 
+####This is the data
 ####1L
 #		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 
-	if  "1Ele" in cat["dir"] or "1Mu" in cat["dir"]:
+#	if  "1Ele" in cat["dir"] or "1Mu" in cat["dir"]:
+	if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
 		
 		if "Baseline" in cat["dir"]:   
-			if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LExtraRad(h)
-			elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": h=Rebin1LExtraRad(h) 
+			if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LCharm(h)
+			elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": h=Rebin1LCharm(h)
 			else: 
 				if opts.kTest==3: h=RebinBDT3(h)
 				if opts.kTest==2: h=RebinBDT2(h)
@@ -906,31 +915,32 @@ for c in catStore:
                                         if "SR2" in cat["var"] or "SR4" in cat["var"]: 
 						if h: h.Rebin(4)
 
-		if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LTop(h) 
-		if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-		if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LExtraRad(h) 
+		if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
+		if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
+		if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
 
 #### 2L 			
 
 	if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
 		
 		if "Baseline" in cat["dir"]:   
-			if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LExtraRad(h)
-			elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": h=Rebin1LExtraRad(h) 
+			if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3": h=Rebin1LCharm(h)
+			elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4": h=Rebin1LCharm(h)
 			else: 
-				if opts.kTest==3: h=RebinBDT3(h) 
-				if opts.kTest==2: h=RebinBDT2(h)
-				if opts.kTest==1: h=RebinBDT1(h)
+				if opts.kTest==6: h=RebinBDT3(h)
+				if opts.kTest==5: h=RebinBDT2(h)
+				if opts.kTest==4: h=RebinBDT1(h)
 				if opts.kTest<10:
 #					if "TT1b" in catStore[name] or "TT2b" in catStore[name] or "TT2B" in catStore[name]: 
 #						if h: h.Rebin(10)
                                         if "SR2" in cat["var"] or "SR4" in cat["var"]: 
 						if h: h.Rebin(4)
 					
-		if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LTop(h) 
+		if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
 		if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h) 
-		if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LExtraRad(h) 
+		if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LCharm(h)
 
+		if "HT" in cat["var"] and h: h.Rebin(2)
 
 #	for y in channel:
 #		if y == "1Ele" or y == "1Mu":
