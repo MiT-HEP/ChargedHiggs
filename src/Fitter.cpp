@@ -43,7 +43,6 @@ void Fitter::info(){
     //cout<<"Gaus*poln"<<endl;
     cout<<"xMin="<<xmin <<endl;
     cout<<"xMax="<<xmax <<endl;
-    cout<<"SYST="<<systLabel_<<endl;
     cout<<"Dataset M="<<datasetMask_ <<endl;
     if (doXsec) cout<<"XSEC M="<<xsecMask_ <<endl;
     cout<<"EA M="<<eaMask_ <<endl;
@@ -101,7 +100,7 @@ void Fitter::init(){
 
 
             // -- Construct RooDataHist
-            string name =  Form("%s_cat_%d_mass_%s%s",proc.c_str(),cat,mass.c_str(),systLabel_.c_str());
+            string name =  Form("%s_cat_%d_mass_%s",proc.c_str(),cat,mass.c_str());
             hist_ [ name ] = new RooDataHist(
                     Form(datasetMask_.c_str(),proc.c_str(),cat,m),
                     Form(datasetMask_.c_str(),proc.c_str(),cat,m),
@@ -154,21 +153,6 @@ void Fitter::init(){
             }
             xSec_y . push_back( xsec );
             ea_y . push_back( h->Integral(bin0,bin1)/xsec );
-
-            for(auto& syst: systIn) // compute norm difference for syst
-            {
-                cout <<"->Getting Histo:"<<Form( (inputMasks[cat] +"_"+ syst+ "Up").c_str(),proc.c_str(), m)<<endl;
-                TH1D *hSUp = (TH1D*)fInput ->Get( Form( (inputMasks[cat] +"_"+ syst+ "Up").c_str(),proc.c_str(), m) ) ;
-                TH1D *hSDown = (TH1D*)fInput ->Get( Form( (inputMasks[cat] +"_"+ syst+ "Down").c_str(),proc.c_str(), m) ) ;
-           
-                float ea= h->Integral()/xsec ; 
-                float eaUp= hSUp->Integral()/xsec;
-                float eaDown= hSDown->Integral()/xsec;
-                eaSystMu_y[syst].push_back( (eaUp/ea + ea/eaDown)/2 -1.);
-
-                cout<<"SYST="<<syst<<" Mass="<<m<<" EA="<<ea<<" eaUp"<<eaUp<<" eaDown="<<eaDown<<" mu="<<(eaUp/ea + ea/eaDown)/2 -1.<<endl;
-            }
-
 
         }
         //xSec_x . clear();
@@ -224,39 +208,9 @@ void Fitter::init(){
             count+=1;
         }
 
-        normFormula+="* (1.";
+        //normFormula+="* (1.";
+        //normFormula+=")";
 
-        for(auto& syst: systIn) // compute norm difference for syst
-        {
-            string eaName =  Form((eaMask_+"_Mu_"+syst).c_str() , proc.c_str(),cat) ;
-            RooAbsReal *eaSpline;
-            if (proc == "ttH")//ttH125 FIXME
-            {
-                eaSpline = new RooRealVar(eaName.c_str(),eaName.c_str(),eaSystMu_y[syst][0]);
-                ((RooRealVar*)eaSpline)->setConstant();
-            }
-            else{
-                eaSpline=new RooSpline1D(
-                    eaName.c_str(),
-                    eaName.c_str(),
-                    *mh_,
-                    xSec_x.size(),
-                    &(xSec_x[0]),
-                    &(eaSystMu_y[syst][0])
-                    );
-            }
-            splines_[ eaName ] = eaSpline;
-            w_ -> import ( *eaSpline ,RecycleConflictNodes() );
-            normList.add( *eaSpline);
-            normFormula += Form( "+@%d*@%d",count ,count+1) ;
-            count +=2;
-
-            RooRealVar *vSyst = new RooRealVar(syst.c_str(),syst.c_str(),0); // var for syst shift
-            normList.add(*vSyst);
-
-            w_ -> import(*vSyst);
-        }
-        normFormula+=")";
         RooFormulaVar norm( Form(normMask_.c_str(),proc.c_str(),cat) ,
                 "norm",
                 normFormula.c_str(), normList
@@ -357,7 +311,7 @@ void Fitter::fit(){
             lastMass=m; // set last Mass
             // ------------------------- FIT ----------------
             string mass = Form( massMask_.c_str(), m );
-            string name =  Form("%s_cat_%d_mass_%s%s",proc.c_str(), cat,mass.c_str(),systLabel_.c_str());  
+            string name =  Form("%s_cat_%d_mass_%s",proc.c_str(), cat,mass.c_str());  
 
             cout <<" *-> name is "<<name<<endl; // DEBUG
             if (hist_.find(name) == hist_.end() ) cout <<"Unable to find this hist: check names"<<endl;
@@ -387,7 +341,7 @@ void Fitter::fit(){
 
             // -- Plot
             if (plot ) {
-                TCanvas *c = new TCanvas(Form("c_%s_%s_cat%d%s",mass.c_str(),proc.c_str(),cat,systLabel_.c_str()),"c");
+                TCanvas *c = new TCanvas(Form("c_%s_%s_cat%d",mass.c_str(),proc.c_str(),cat),"c");
                 RooPlot *p = x_ -> frame();
                 hist_[ name ] -> plotOn(p,DataError(RooAbsData::SumW2));
                 fitModel -> plotOn(p);
@@ -408,8 +362,8 @@ void Fitter::fit(){
                
                 string dirName= plotDir + "/" + proc + "/" + mass; 
                 system(Form("mkdir -p %s",dirName.c_str()));
-                c -> SaveAs( Form("%s/fit_mh_%s_%s_cat%d%s.pdf",dirName.c_str(),mass.c_str(),proc.c_str(),cat,systLabel_.c_str()) );
-                c -> SaveAs( Form("%s/fit_mh_%s_%s_cat%d%s.png",dirName.c_str(),mass.c_str(),proc.c_str(),cat,systLabel_.c_str()) );
+                c -> SaveAs( Form("%s/fit_mh_%s_%s_cat%d.pdf",dirName.c_str(),mass.c_str(),proc.c_str(),cat) );
+                c -> SaveAs( Form("%s/fit_mh_%s_%s_cat%d.png",dirName.c_str(),mass.c_str(),proc.c_str(),cat) );
 
                 //
                 delete p;
@@ -419,7 +373,7 @@ void Fitter::fit(){
             //
             //for(int i=0;i<pars.size();++i)
             for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1;++i)
-             fitParameters_[ Form("fit_%s_cat%d_mass_%s_c%d%s",proc.c_str(),cat,mass.c_str(),i,systLabel_.c_str()) ] =  pars[i].getVal();
+             fitParameters_[ Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,mass.c_str(),i) ] =  pars[i].getVal();
         } // end mass
 
         // -- Interpolate coefficients
@@ -435,17 +389,17 @@ void Fitter::fit(){
 
                 string mass=Form(massMask_.c_str(),m);
                 mpoints.push_back(m);
-                c.push_back( fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d%s",proc.c_str(),cat,mass.c_str(),i,systLabel_.c_str())] ) ;
-                cout <<" adding points to splin: "<<(m)<<" "<<fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d%s",proc.c_str(),cat,mass.c_str(),i,systLabel_.c_str())]<<endl;
+                c.push_back( fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,mass.c_str(),i)] ) ;
+                cout <<" adding points to splin: "<<(m)<<" "<<fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,mass.c_str(),i)]<<endl;
             }
 
             //interpolate model pars
-            string splname=Form("sigmodel_%s_cat%d_c%d%s",proc.c_str(),cat,i,systLabel_.c_str());
+            string splname=Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,i);
             if (proc == "ttH")//ttH125 FIXME
             {
-                RooRealVar par( Form("fit_%s_cat%d_mass_%s_c%d%s",proc.c_str(),cat,"125",i,systLabel_.c_str()),
-                                Form("fit_%s_cat%d_mass_%s_c%d%s",proc.c_str(),cat,"125",i,systLabel_.c_str()),
-                                fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d%s",proc.c_str(),cat,"125",i,systLabel_.c_str())]
+                RooRealVar par( Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i),
+                                Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i),
+                                fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i)]
                         );
                 par.setConstant();
                 RooFormulaVar *c =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0", par);
@@ -470,15 +424,6 @@ void Fitter::fit(){
     return;
 }
 
-// -- RooAbsReal* getMeanWithSyst(string name,RooAbsReal * mean){
-// --     // Foreseen to add systematics
-// --     RooArgList *depends = new RooArgList();
-// --     string formula = "@0 ";
-// --     depends -> add(*mean);
-// -- 
-// --     RooFormulaVar *formVar= new RooFormulaVar(name.c_str(), name.c_str(), formula.c_str(), depends);
-// --     return formVar;
-// -- }
 
 void Fitter::end(){
     // -- Save final model 
@@ -491,30 +436,39 @@ void Fitter::end(){
 
         string name = Form(modelMask_.c_str(),proc.c_str(),cat);
 
-        cout <<"->Trying to access vars:"<<Form("sigmodel_%s_cat%d_c0%s",proc.c_str(),cat,systLabel_.c_str())<<endl;
+        cout <<"->Trying to access vars:"<<Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat)<<endl;
+
         w_->Print();
-        RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c1%s",proc.c_str(),cat,systLabel_.c_str()))));
+
+       /// PUT SYST HERE 
+
+        // construct gaussians
+
+        //RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat))));
+        RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat))));
 
         RooGaussian *g2{NULL},*g3{NULL};
-        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c3%s",proc.c_str(),cat,systLabel_.c_str()))));
-        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c4%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c5%s",proc.c_str(),cat,systLabel_.c_str()))));
+        //if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
+        //if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c4",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c5",proc.c_str(),cat))));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_, *getMeanWithSyst(cat,proc,1), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  *getMeanWithSyst(cat,proc,2), *(w_->function(Form("sigmodel_%s_cat%d_c5",proc.c_str(),cat))));
 
         std::unique_ptr<RooAbsPdf> sigModel;
        
         if (nGaussians[pair<int,string>(cat,proc)] ==1) 
-            sigModel.reset(new RooGaussian(name.c_str(),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0%s",proc.c_str(),cat,systLabel_.c_str()))), *(w_->function(Form("sigmodel_%s_cat%d_c1%s",proc.c_str(),cat,systLabel_.c_str())))) ) ;
+            sigModel.reset(new RooGaussian(name.c_str(),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat)))) ) ;
         else if (nGaussians[pair<int,string>(cat,proc)] ==2) 
         {
            sigModel.reset(new RooAddPdf(name.c_str(),"model",RooArgList(*g1,*g2),
-                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c4%s",proc.c_str(),cat,systLabel_.c_str())))
+                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c4",proc.c_str(),cat)))
                     ),
                 kTRUE
                 ));
         }
         else if (nGaussians[pair<int,string>(cat,proc)] ==3) 
            sigModel.reset(new RooAddPdf(name.c_str(),"model",RooArgList(*g1,*g2,*g3),
-                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c6%s",proc.c_str(),cat,systLabel_.c_str()))),
-                    *(w_->function(Form("sigmodel_%s_cat%d_c7%s",proc.c_str(),cat,systLabel_.c_str())))
+                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c6",proc.c_str(),cat))),
+                    *(w_->function(Form("sigmodel_%s_cat%d_c7",proc.c_str(),cat)))
                     ),
                 kTRUE
                 ));
@@ -532,8 +486,8 @@ void Fitter::end(){
                 sigModel->plotOn(p);
             }
             p -> Draw();
-            c -> SaveAs( Form("%s/interpolation_%s_cat%d%s.pdf",plotDir.c_str(),proc.c_str(),cat,systLabel_.c_str()) );
-            c -> SaveAs( Form("%s/interpolation_%s_cat%d%s.png",plotDir.c_str(),proc.c_str(),cat,systLabel_.c_str()) );
+            c -> SaveAs( Form("%s/interpolation_%s_cat%d.pdf",plotDir.c_str(),proc.c_str(),cat) );
+            c -> SaveAs( Form("%s/interpolation_%s_cat%d.png",plotDir.c_str(),proc.c_str(),cat) );
             delete p;
             delete c;
         } // end plot
@@ -544,12 +498,55 @@ void Fitter::end(){
             RooPlot *p = w_->var("MH") -> frame();
             w_ -> function( (name+"_norm").c_str()) ->plotOn(p);
             p -> Draw();
-            c -> SaveAs( Form("%s/norm_%s_cat%d%s.pdf",plotDir.c_str(),proc.c_str(),cat,systLabel_.c_str()) );
-            c -> SaveAs( Form("%s/norm_%s_cat%d%s.png",plotDir.c_str(),proc.c_str(),cat,systLabel_.c_str()) );
+            c -> SaveAs( Form("%s/norm_%s_cat%d.pdf",plotDir.c_str(),proc.c_str(),cat) );
+            c -> SaveAs( Form("%s/norm_%s_cat%d.png",plotDir.c_str(),proc.c_str(),cat) );
             delete p;
             delete c;
         }
     } //end cat
+}
+
+
+// -- RooAbsReal* getMeanWithSyst(string name,RooAbsReal * mean){
+// --     // Foreseen to add systematics
+// --     RooArgList *depends = new RooArgList();
+// --     string formula = "@0 ";
+// --     depends -> add(*mean);
+// -- 
+// --     RooFormulaVar *formVar= new RooFormulaVar(name.c_str(), name.c_str(), formula.c_str(), depends);
+// --     return formVar;
+// -- }
+RooAbsReal* Fitter::getMeanWithSyst(int cat, string proc,int gaus=0){
+        // Add Systematics here, because the parameter is a RooSpline, and I need to have a RooFormulaVar -> m = m0 + scale_catX_procX*scaleUnc = [0,-1,1][0.0011]
+        // s = s0 + smear_catX_procX * smearUnc
+        // or w->var() if correlated
+        int mycat = cat ;//  for correlation 
+        string myproc = proc;
+        if (scaleCorr.find(pair<int,string>(cat,proc))!= scaleCorr.end() )
+        {
+            mycat = scaleCorr[ pair<int,string>(cat,proc) ] .first; 
+            myproc = scaleCorr[ pair<int,string>(cat,proc) ] .second;
+        }
+        RooRealVar *scaleNuisance =  new RooRealVar(Form("scale_cat%d_proc%s",mycat,myproc.c_str()),Form("scale_cat%d_proc%s",mycat,myproc.c_str()),0,-1,1);
+        RooRealVar *scaleValue =  new RooRealVar(Form("scale_value_cat%d_proc%s",cat,proc.c_str()),Form("scale_value_cat%d_proc%s",cat,proc.c_str()),0.);
+        string scaleFormula = "@0";
+        RooArgList scaleList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,0+gaus*2))) );
+        RooArgList scaleG2List( );
+
+        if (scaleUnc.find( pair<int,string>(cat,proc) )   != scaleUnc.end() ) 
+        {
+            scaleValue->setVal( scaleUnc[pair<int,string>(cat,proc)]) ;
+            string scaleFormula = "+ (@1*@2)";
+            scaleList.add( *scaleNuisance);
+            scaleList.add( *scaleValue);
+        }
+        scaleValue->setConstant();
+        scaleNuisance->setConstant();
+
+        string name=Form("sigmodel_%s_cat%d_g%d_mean",proc.c_str(),cat,gaus);
+        RooFormulaVar *mean = new RooFormulaVar(name.c_str(),name.c_str(),scaleFormula.c_str(),scaleList);
+        w_->import(*mean);
+        return mean;
 }
 
 void Fitter::write(){

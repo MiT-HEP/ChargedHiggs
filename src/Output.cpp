@@ -14,9 +14,9 @@ void Output::Fill(string name, string syst , double value, double weight)
 
     if ( histos_.find(fullname) == histos_.end() )
     {
-        if (histos_.find(name) == histos_.end() )
+        if (prototypes_.find(name) == prototypes_.end() )
             cout<<"[Output]::[Fill]::[ERROR] Histo "<<name<<" not booked !"<<endl;
-        histos_[ fullname ]  = (TH1D*) histos_ [name] -> Clone(fullname.c_str());
+        histos_[ fullname ]  = (TH1D*) prototypes_ [name] -> Clone(fullname.c_str());
         histos_[ fullname ] -> Reset("ICESM");
     }
     histos_[fullname] ->Fill(value,weight);
@@ -34,9 +34,9 @@ void Output::Fill2D(string name, string syst , double valueX,double valueY, doub
 
     if ( histos2D_.find(fullname) == histos2D_.end() )
     {
-        if (histos2D_.find(name) == histos2D_.end() )
+        if (prototypes2D_.find(name) == prototypes2D_.end() )
             cout<<"[Output]::[Fill]::[ERROR] Histo 2D "<<name<<" not booked !"<<endl;
-        histos2D_[ fullname ]  = (TH2D*) histos2D_ [name] -> Clone(fullname.c_str());
+        histos2D_[ fullname ]  = (TH2D*) prototypes2D_ [name] -> Clone(fullname.c_str());
         histos2D_[ fullname ] -> Reset("ICESM");
     }
     histos2D_[fullname] ->Fill(valueX,valueY,weight);
@@ -140,10 +140,10 @@ void Output::Book(string name, string title,int nBins, double xmin, double xmax)
 
     if ( Exists(name) )
         cout <<"[Output]::[Book]::[ERROR] a TH1D/TH2D histo with the same name '"<<name<<"' already exist"<<endl;
-    histos_ [name] = new TH1D(name.c_str(),
+    prototypes_ [name] = new TH1D( (name+"_proto").c_str(),
             title.c_str(), 
             nBins,xmin,xmax); 
-    histos_ [name] -> Sumw2();
+    prototypes_ [name] -> Sumw2();
 }
 
 void Output::Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2, double ymin,double ymax)
@@ -153,12 +153,12 @@ void Output::Book2D(string name, string title,int nBins, double xmin, double xma
     if ( Exists(name) )
         cout <<"[Output]::[Book2D]::[ERROR] a TH1D/TH2D histo with the same name '"<<name<<"' already exist"<<endl;
 
-    histos2D_ [name] = new TH2D(name.c_str(),
+    prototypes2D_ [name] = new TH2D( (name+"_proto").c_str(),
             title.c_str(), 
             nBins,xmin,xmax,
             nBins2,ymin,ymax
             ); 
-    histos2D_ [name] -> Sumw2();
+    prototypes2D_ [name] -> Sumw2();
 }
 
 void Output::Book(string name, string title,int nBins, double *xbound)
@@ -168,11 +168,11 @@ void Output::Book(string name, string title,int nBins, double *xbound)
     if ( Exists(name) )
         cout <<"[Output]::[Book]::[ERROR] a TH1/TH2 histo with the same name '"<<name<<"' already exist"<<endl;
 
-    histos_ [name] = new TH1D(
-            name.c_str(),
+    prototypes_ [name] = new TH1D(
+            (name+"_proto").c_str(),
             title.c_str(), 
             nBins,xbound); 
-    histos_ [name ] -> Sumw2();
+    prototypes_ [name ] -> Sumw2();
 }
 
 TH1D* Output::Get(string name,string systname)

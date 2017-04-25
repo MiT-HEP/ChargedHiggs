@@ -3,6 +3,11 @@
 
 #include "interface/AnalysisBase.hpp"
 #include "interface/CutSelector.hpp"
+#include "interface/SF_CSVReweight.hpp" // REMOVEME AFTER MERGE OF MR PR
+#include "interface/Output.hpp" // DataStore
+
+#include "TMVA/Reader.h"
+#include "TMVA/Tools.h"
 
 class TRandom;
 
@@ -24,6 +29,8 @@ class HmumuAnalysis: virtual public AnalysisBase
         bool Unblind(Event *e) override {if (e->IsRealData() and mass_ > 125-3 and mass_<125+3 ) return unblind; return true;} // if is not data, no need to return something else
 
         bool doSync{false};
+        int catType{0}; //0 = RunISync, 1=AutoCat, 2=Bdt
+        bool doEvenOnly{false}; //signal only even events
 
     private:
         // select cuts
@@ -32,6 +39,9 @@ class HmumuAnalysis: virtual public AnalysisBase
         vector<string> categories_;
 
         string Category(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets);
+        string CategoryAutoCat(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets,float met);
+        string CategoryBdt(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets,float met);
+        double dimu_dPhiStar(Lepton* mu0, Lepton*mu1);  // from UF
 
         enum CutFlow{ Total=0, 
             Leptons,
@@ -41,6 +51,27 @@ class HmumuAnalysis: virtual public AnalysisBase
         };
 
         std::unique_ptr<TRandom> rnd_;
+
+        float getZPtReweight(float Zpt);
+        std::unique_ptr<TH1D> rzpt_;
+        std::unique_ptr<TF1> rzpt2_;
+
+        /************
+         *   TMVA   *
+         ************/
+        DataStore varValues_;
+        vector<TMVA::Reader*> readers_;
+
+        void InitTmva();
+        vector<float> bdt;
+
+        // Variables
+        template<class T>
+        void SetVariable( string name, T value){ varValues_.Set(name, value); }
+        void AddVariable( string name, char type);
+        void AddSpectator( string name, char type);
+    public:
+        vector<string> weights;
 
 };
 

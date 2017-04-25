@@ -3,8 +3,8 @@
 #############
 
 config=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8')
-###addConfig=ChargedHiggsTopBottomFullHad|AddLabel('HplusToTB_M-2000')
-###addConfig=ChargedHiggsTopBottomFullHad|AddLabel('HplusToTB_M-1000')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8')
 ###addConfig=ChargedHiggsTopBottomFullHad|AddLabel('HplusToTB_M-750')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8')
@@ -17,5 +17,6 @@ addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8')
 
-addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TT_TuneCUETP8M2T4')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-pythia8')
 
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT')

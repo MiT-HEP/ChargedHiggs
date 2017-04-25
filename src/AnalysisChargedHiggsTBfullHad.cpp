@@ -148,9 +148,19 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
         {
             // ttbar + single top + ttV
             //            mc = 100;
-            if(label.find("TTTo2L2Nu") !=string::npos) mc =101 ;
-            if(label.find("TTToSemilepton") !=string::npos) mc =102 ;
-            if(label.find("TT_TuneCUETP8M2T4") !=string::npos) mc =103 ;
+            if(label.find("TTTo2L2Nu_TuneCUETP8M2") !=string::npos) mc =101 ;
+            if(label.find("TTToSemilepton_TuneCUETP8M2") !=string::npos) mc =102 ;
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) mc =103 ;
+
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown") !=string::npos) mc =104 ;
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup") !=string::npos) mc =105 ;
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown") !=string::npos) mc =106 ;
+            if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup") !=string::npos) mc =107 ;
+
+            if(label.find("TTJets") !=string::npos) mc =108 ;
+
+            if(label.find("TTTo2L2Nu_ttbbFilter") !=string::npos) mc =109 ;
+            if(label.find("TTToSemilepton_ttbbFilter") !=string::npos) mc =110 ;
 
             if(label.find("ST") !=string::npos) mc =111 ;
             //            if(label.find("ST_tW_top") !=string::npos) mc =111 ;
@@ -177,8 +187,8 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
 
             // V+jets
             //            mc = 200;
-            if(label.find("DYJetsToLL_M") !=string::npos) mc =221 ;
-            if(label.find("WJetsToLNu")!=string::npos) mc =222;
+            if(label.find("DYJetsToLL_M-50_HT") !=string::npos) mc =221 ;
+            if(label.find("WJetsToLNu_HT")!=string::npos) mc =222;
 
             // EWK
             // missing tribosons
@@ -197,6 +207,9 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
             //            if(label.find("ZZTo4L") !=string::npos) mc =339 ;
             if(label.find("VHToNonbb_M125") !=string::npos) mc =340 ;
             if(label.find("WH_HToBB_WToLNu_M125") !=string::npos) mc =341 ;
+
+            // QCD
+            if(label.find("QCD_HT") !=string::npos) mc =500 ;
 
         }
 
@@ -247,7 +260,7 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
         }
     }
 
-    if( not e->IsRealData() and (label.find("TT_TuneCUETP8M2T4") !=string::npos) ){
+    if( not e->IsRealData() and (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) ){
         if(WBKGplus!=NULL) {
             SetTreeVar("WBKGplus_pt",WBKGplus->Pt());
             SetTreeVar("WBKGplus_eta",WBKGplus->Eta());
@@ -510,16 +523,20 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+l,"ST "+l+"; ST ( HT+met+lepsPt )",50,0,2500);
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+l,"ST "+l+"; ST ( HT+MET+lepsPt )",800,0,8000);
     
-     /// Vertices
+    ///// Vertices
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/Met_"+l,"Met "+l+";MET [GeV]",50,0.,1000.);
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/Vertices_"+l,"Vertices "+l + ";Number of vertices",50,0.,50.);
     
-    /////
+    ///// AK4 jets
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/NBjets_"+l,"NBjets "+l + ";Number of b jets P_{T}>40 ",10,0,10);
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/Njets_"+l,"Njets "+l + ";Number of jets P_{T}>40 |#eta|>2.4",10,0,10);
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/Ncentraljets_"+l,"Ncentraljets "+l + ";Number of jets P_{T}>40 |#eta|<=2.4",10,0,10);
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/Nforwardjets_"+l,"Nforwardjets "+l + ";Number of jets P_{T}>40 |#eta|>2.4",10,0,10);
-    
+
+    ///// AK8 jets
+    Book("ChargedHiggsTopBottom/"+phasespace+category+"/NWjets_"+l,"NWjets "+l + ";Number of W jets ",10,0,10);
+    Book("ChargedHiggsTopBottom/"+phasespace+category+"/PTWjets_"+l,"PTWjets "+l + ";pt of W jets ",100,0,500);
+
 }
 
 void ChargedHiggsTopBottomFullHad::Preselection()
@@ -535,6 +552,7 @@ void ChargedHiggsTopBottomFullHad::Preselection()
 }
 
 bool ChargedHiggsTopBottomFullHad::genInfoForSignal(Event*e) {
+
 
     GenParticle *genCH = NULL;
 
@@ -570,6 +588,10 @@ bool ChargedHiggsTopBottomFullHad::genInfoForSignal(Event*e) {
         GenParticle *genpar = e->GetGenParticle(i);
         //ch-higgs
         if(abs(genpar->GetPdgId()) == 37) if(genCH==NULL) genCH = genpar;
+    }
+
+    for(Int_t i = 0; i < e->NGenPar(); i++){
+        GenParticle *genpar = e->GetGenParticle(i);
         if(genCH!=NULL){
             //top
             if( abs(genpar->GetPdgId()) == 6 && abs(genpar->GetParentPdgId()) == 37 ) topFromH = genpar;
@@ -608,16 +630,19 @@ bool ChargedHiggsTopBottomFullHad::genInfoForSignal(Event*e) {
                 if(genpar->GetPdgId() == -6)topBKGminus = genpar;
             }
         //lepton
-        }else if( (abs(genpar->GetPdgId()) == 11 || abs(genpar->GetPdgId()) == 13) && abs(genpar->GetParentPdgId()) == 24 && abs(genpar->GetGrandParentPdgId()) == 6) {
+        }else if( (abs(genpar->GetPdgId()) == 11 || abs(genpar->GetPdgId()) == 13 || abs(genpar->GetPdgId()) == 15) && abs(genpar->GetParentPdgId()) == 24 && abs(genpar->GetGrandParentPdgId()) == 6) {
             if(topFromH!=NULL){
+                // covers the signal
                 if ( topFromH->GetPdgId()*genpar->GetPdgId()<0 ) {topFromH_lep = 1; WFromTopH_lep = 1;}
                 else if ( topFromH->GetPdgId()*genpar->GetPdgId()>0 ) {topAss_lep = 1; WFromTopAss_lep = 1;}                    
             }else if(topFromH==NULL){
-                if ( (genpar->GetPdgId() == -11 || genpar->GetPdgId() == -13) && genpar->GetParentPdgId() == 24 && genpar->GetGrandParentPdgId() == 6 ) {topBKGplus_lep = 1;WBKGplus_lep = 1;}
-                else if( (genpar->GetPdgId() == 11 || genpar->GetPdgId() == 13) && genpar->GetParentPdgId() == -24 && genpar->GetGrandParentPdgId() == -6 ) {topBKGminus_lep = 1;WBKGminus_lep = 1;}
+                // top BKG
+                if ( (genpar->GetPdgId() == -11 || genpar->GetPdgId() == -13 || genpar->GetPdgId() == -15) && genpar->GetParentPdgId() == 24 && genpar->GetGrandParentPdgId() == 6 ) {topBKGplus_lep = 1;WBKGplus_lep = 1;}
+                else if( (genpar->GetPdgId() == 11 || genpar->GetPdgId() == 13 || genpar->GetPdgId() == 15) && genpar->GetParentPdgId() == -24 && genpar->GetGrandParentPdgId() == -6 ) {topBKGminus_lep = 1;WBKGminus_lep = 1;}
             }
         }
     }
+
     return rightComb;
 }
 
@@ -743,7 +768,7 @@ void ChargedHiggsTopBottomFullHad::classifyHF(Event*e, string label, string cate
 
 
     //    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos))  {
-    if((label.find("TTTo2L2Nu")!=string::npos) || (label.find("TTToSemilepton")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4")!=string::npos)  ) {
+    if((label.find("TTTo2L2Nu_TuneCUETP8M2")!=string::npos) || (label.find("TTToSemilepton_TuneCUETP8M2")!=string::npos) ||  (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")!=string::npos)  ) {
 
         //https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/TopQuarkAnalysis/TopTools/plugins/GenTtbarCategorizer.cc#L35
         string LabelHF="other_";
@@ -795,8 +820,10 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
 
     if ( e->Nleps() == 0 ) cut.SetCutBit(NoLep); // kill Top/W/Z
     if ( cut.passAllUpTo(NoLep) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());
+    if ( e->Ntaus() == 0 ) cut.SetCutBit(NoTau); // tau Veto <--- dilepton killer
+    if ( cut.passAllUpTo(NoTau) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,NoTau,e->weight());
 
-    if(!cut.passAllUpTo(NoLep) )   return EVENT_NOT_USED;
+    if(!cut.passAllUpTo(NoTau) )   return EVENT_NOT_USED;
 
     //    std::cout << " e->NFatJets() = " << e->NFatJets()  << std::endl;
 
@@ -807,11 +834,8 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
     bool Baseline=(e->Bjets() > 0);
     bool rightCombination =true;
 
-    if ( not e->IsRealData() ){
+    if ( not e->IsRealData() and ((label.find("HplusToTB") !=string::npos ) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos ))){
 
-//and (label.find("HplusToTB")  !=string::npos ) ){
-
-        rightCombination=false; // reset for Higgs
         rightCombination=genInfoForSignal(e); // compute the right combination in the higgs case
 
     }
@@ -821,6 +845,21 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
     string category="";
     jetPlot(e, label, category, systname,"Baseline");
 
+
+    /*
+    for(int i=0;i!=e->NFatJets();++i) {
+        FatJet* j = e->GetFatJet(i);
+        std::cout << " Pt()= " << j->Pt();
+        std::cout << " Tau1()= " << j->Tau1();
+        std::cout << " Tau2()= " << j->Tau2();
+        std::cout << " Tau3()= " << j->Tau3();
+        std::cout << " SDMass()= " << j->SDMass();
+        std::cout << " CorrPrunedMass()= " << j->CorrPrunedMass() << endl;
+        std::cout << " subjet_btag= " << j->SubjetBTag()  << endl;
+    }
+
+    cout << "NW jets = " << e->Wjets() << endl;
+    */
 
     // ////////
     // ////

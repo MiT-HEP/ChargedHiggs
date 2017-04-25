@@ -58,7 +58,7 @@ class LoadNero : public Loader{
         void FillMet();
         void FillMC();
         void FillTrigger();
-        void NewFile(); // should take care of loading the trigger names
+        void NewFile() override; // should take care of loading the trigger names
 
 };
 

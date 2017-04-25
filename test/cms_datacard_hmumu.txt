@@ -4,11 +4,11 @@ imax *
 jmax *
 kmax *
 -------------------------------------
-shapes data_obs * Hmumu/BackgroundModel.root w:dataObs_$CHANNEL
-shapes BKG * Hmumu/BackgroundModel.root w:pdf_$CHANNEL_bkg
-shapes ggH * Hmumu/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
-shapes qqH * Hmumu/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
-shapes * * Hmumu/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
+shapes data_obs * Hmumu/SyncCategories/BackgroundModel.root w:dataObs_$CHANNEL
+shapes BKG * Hmumu/SyncCategories/BackgroundModel.root w:pdf_$CHANNEL_bkg
+shapes ggH * Hmumu/SyncCategories/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
+shapes qqH * Hmumu/SyncCategories/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
+shapes * * Hmumu/SyncCategories/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
 -------------------------------------
 bin         cat0 cat1 cat2 cat3 cat4 cat5 cat6 cat7 cat8 cat9 cat10 cat11 cat12 cat13 cat14 cat15 cat16 cat17 cat18 cat19 cat20 cat21 cat22 cat23 cat24 cat25 cat26 cat27 cat28 cat29
 observation  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1 

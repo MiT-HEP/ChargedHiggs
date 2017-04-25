@@ -63,8 +63,8 @@ class PurityFit : public BaseFitter{
         string labelbin="tauinviso";
         string labelspline="tauinvisospline";
 
-        virtual void init();
-        virtual void fit();
+        virtual void init() override;
+        virtual void fit() override;
         const string name() const override { return "PurityFit";}
 };
 

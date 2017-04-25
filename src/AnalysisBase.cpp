@@ -97,13 +97,32 @@ string AnalysisBase::GetLabel(Event *e){
 //#include "interface/Logger.hpp"
 //void AnalysisBase::Log(const string& function, const string& level, const string& message){ Logger::getInstance().Log(this,function,level,message ); }
 
+//#define VERBOSE 2
 void AnalysisBase::SetCuts(Event *e)
 {
+    #ifdef VERBOSE
+    if (VERBOSE>1) Log(__FUNCTION__,"DEBUG","->Setting cuts for Leptons");
+    #endif
     for (auto& l : e->leps_) SetLeptonCuts(l);
+    #ifdef VERBOSE
+    if (VERBOSE>1) Log(__FUNCTION__,"DEBUG","->Setting cuts for Photons");
+    #endif
     for (auto& p : e->phos_) SetPhotonCuts(p);
+    #ifdef VERBOSE
+    if (VERBOSE>1) Log(__FUNCTION__,"DEBUG","->Setting cuts for Taus");
+    #endif
     for (auto& t : e->taus_) SetTauCuts(t);
+    #ifdef VERBOSE
+    if (VERBOSE>1) Log(__FUNCTION__,"DEBUG","->Setting cuts for Jets");
+    #endif
     for (auto& j : e->jets_) SetJetCuts(j);
+    #ifdef VERBOSE
+    if (VERBOSE>1) Log(__FUNCTION__,"DEBUG","->Setting cuts for GP");
+    #endif
     for (auto& g : e->genparticles_) SetGenCuts(g);
+    #ifdef VERBOSE
+    if (VERBOSE>1) Log(__FUNCTION__,"DEBUG","->Setting cuts DONE");
+    #endif
     return;
 }
 

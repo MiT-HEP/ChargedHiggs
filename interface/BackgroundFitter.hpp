@@ -85,10 +85,10 @@ class BackgroundFitter : virtual public BaseFitter{
 
     // --- objects that can be called
     BackgroundFitter();
-    void init();	
-    void fit() ;
+    void init() override;	
+    void fit() override;
     void write();
-    void end() {}; // not needed here,
+    //void end() {}; // not needed here,
     const string name() const override { return "BackgroundFitter";}
 
     map<string,float> initPars_;

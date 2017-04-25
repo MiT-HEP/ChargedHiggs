@@ -2,7 +2,8 @@
 #define CHARGEDHIGGSTOPBOTTOM_H
 #include "interface/AnalysisBase.hpp"
 #include "interface/CutSelector.hpp"
-
+#include "interface/GetBinning.hpp"
+#include <memory>
 
 #include "interface/Output.hpp" // DataStore
 #include "TMVA/Reader.h"
@@ -17,7 +18,8 @@ public:
 
     bool doSynch = false;
     bool doICHEP = false;
-    bool writeTree = true;
+    bool writeTree = false;
+    bool doSplit = false;
 
     // Analysis type
     bool do1lAnalysis=false;
@@ -74,6 +76,9 @@ public:
 
 
 private:
+
+
+    std::unique_ptr<GetBinning> bin_;
 
     CutSelector cut;
 

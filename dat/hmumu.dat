@@ -6,6 +6,8 @@ addConfig=HmumuAnalysis|AddLabel('WW')
 addConfig=HmumuAnalysis|AddLabel('WZ')
 addConfig=HmumuAnalysis|AddLabel('ZZ')
 
+addConfig=HmumuAnalysis|AddLabel('EWK_LLJJ')
+
 ## need to add 125, in order to have different masses
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125')
@@ -30,3 +32,6 @@ addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M130')
 addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125')
 addConfig=HmumuAnalysis|AddLabel('ttHToNonbb_M125')
 addConfig=HmumuAnalysis|unblind=1
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
+addConfig=HmumuAnalysis|catType=0
+addConfig=HmumuAnalysis|doEvenOnly=1

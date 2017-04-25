@@ -95,6 +95,8 @@ class Event{
     Jet * GetBjetInvIso( int iJet );
     Jet * GetLjet( int iJet );
     FatJet * GetFatJet( int iJet );
+    FatJet * GetWJet( int iJet );
+    FatJet * GetTopJet( int iJet );
     Tau * GetTau( int iTau );
     Tau * GetTauInvIso( int iTau );
     Lepton * GetLepton( int iLep );
@@ -122,6 +124,8 @@ class Event{
     inline int NcentralJetsInvIso() const {int n=0; for(auto j : jets_) if(j->IsCentralJetInvIso()) n++; return n;}
     inline int NforwardJets()const {int n=0; for(auto j : jets_) if(j->IsForwardJet()) n++; return n;}
     inline int Bjets()const {int n=0; for(auto j : jets_) if(j->IsBJet()) n++; return n;}
+    inline int Wjets()const {int n=0; for(auto j : fat_) if(j->IsWJet()) n++; return n;}
+    inline int Topjets()const {int n=0; for(auto j : fat_) if(j->IsTopJet()) n++; return n;}
     inline int Ljets()const {int n=0; for(auto j : jets_) if(not j->IsBJet()) n++; return n;}
     inline int BjetsInvIso()const {int n=0; for(auto j : jets_) if(j->IsBJetInvIso()) n++; return n;}
     inline int NFatJets()const {int n=0; for(auto j : fat_) if(j->IsJet()) n++; return n;}
