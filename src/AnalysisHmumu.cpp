@@ -7,7 +7,7 @@
 
 //#define SCIKIT_TIMING
 #ifdef SCIKIT_TIMING
-    #warning SCIKIT_TIMING don't use for submission
+    #warning SCIKIT_TIMING dont use for submission
 #endif
 
 //#warning Hmumu ANALYSIS NON ISO
@@ -450,12 +450,11 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     {
        
         #ifdef SCIKIT_TIMING
-        static double time_par=0;
-        static double time_sgd=0;
+        //static double time_bdtg=0;
+        //static double time_sgd=0;
+        //static double time_svr=0;
         static double time_mlp=0;
-        static double time_svr=0;
-        static double time_ridge=0;
-        static double time_en=0;
+        //static double time_keras=0;
         TStopwatch sw;
         #endif
         
@@ -478,46 +477,46 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         #ifdef SCIKIT_TIMING
             sw.Reset();sw.Start();
         #endif
-        float par= py->Eval("par.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]"); // THIS IS VERY SLOW
-        #ifdef SCIKIT_TIMING
-            sw.Stop(); time_par += sw.CpuTime(); sw.Reset(); sw.Start();
-        #endif
-        float sgd= py->Eval("sgd.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-        #ifdef SCIKIT_TIMING
-            sw.Stop(); time_sgd += sw.CpuTime(); sw.Reset(); sw.Start();
-        #endif
+
+        //float bdtg= py->Eval("bdtg.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]"); // THIS IS VERY SLOW
+        //float bdtg=-999;
+        //#ifdef SCIKIT_TIMING
+        //    sw.Stop(); time_bdtg += sw.CpuTime(); sw.Reset(); sw.Start();
+        //#endif
+
+        //float sgd= py->Eval("sgd.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+        //#ifdef SCIKIT_TIMING
+        //    sw.Stop(); time_sgd += sw.CpuTime(); sw.Reset(); sw.Start();
+        //#endif
+
+        //float svr= py->Eval("svr.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+        //#ifdef SCIKIT_TIMING
+        //    sw.Stop(); time_svr += sw.CpuTime(); sw.Reset(); sw.Start();
+        //#endif
+
         float mlp= py->Eval("mlp.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
         #ifdef SCIKIT_TIMING
             sw.Stop(); time_mlp += sw.CpuTime(); sw.Reset(); sw.Start();
         #endif
-        float svr= py->Eval("svr.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-        #ifdef SCIKIT_TIMING
-            sw.Stop(); time_svr += sw.CpuTime(); sw.Reset(); sw.Start();
-        #endif
-        float ridge= py->Eval("ridge.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-        #ifdef SCIKIT_TIMING
-            sw.Stop(); time_ridge += sw.CpuTime(); sw.Reset(); sw.Start();
-        #endif
-        float en= py->Eval("en.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-        #ifdef SCIKIT_TIMING
-            sw.Stop(); time_en += sw.CpuTime(); sw.Reset(); sw.Start();
-        #endif
+        //float keras= py->Eval("keras.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+        ////float keras=-999;
+        //#ifdef SCIKIT_TIMING
+        //    sw.Stop(); time_keras += sw.CpuTime(); sw.Reset(); sw.Start();
+        //#endif
 
-        scikit.push_back(par);
-        scikit.push_back(sgd);
+        //scikit.push_back(bdtg);
+        //scikit.push_back(sgd);
+        //scikit.push_back(svr);
         scikit.push_back(mlp);
-        scikit.push_back(svr);
-        scikit.push_back(ridge);
-        scikit.push_back(en);
+        //scikit.push_back(keras);
 
         #ifdef SCIKIT_TIMING
-           Log(__FUNCTION__,"SCIKIT",Form("Scikit values are: par=%f sgd=%f mlp=%f svr=%f ridge=%f en=%f",par,sgd,mlp,svr,ridge,en) );
-           Log(__FUNCTION__,"TIME",Form("PAR Time: %.3lf",time_par) );
-           Log(__FUNCTION__,"TIME",Form("SGD Time: %.3lf",time_sgd) );
+           //Log(__FUNCTION__,"SCIKIT",Form("Scikit values are: bdtg=%f sgd=%f svr=%f mlp=%f  ",bdtg,svr,sgd,mlp) );
+           //Log(__FUNCTION__,"TIME",Form("BDTG Time: %.3lf",time_bdtg) );
+           //Log(__FUNCTION__,"TIME",Form("SGD Time: %.3lf",time_sgd) );
+           //Log(__FUNCTION__,"TIME",Form("SVR Time: %.3lf",time_svr) );
            Log(__FUNCTION__,"TIME",Form("MLP Time: %.3lf",time_mlp) );
-           Log(__FUNCTION__,"TIME",Form("SVR Time: %.3lf",time_svr) );
-           Log(__FUNCTION__,"TIME",Form("Ridge Time: %.3lf",time_ridge) );
-           Log(__FUNCTION__,"TIME",Form("EN Time: %.3lf",time_en) );
+           //Log(__FUNCTION__,"TIME",Form("KERAS Time: %.3lf",time_keras) );
         #endif
     }
 
@@ -546,6 +545,13 @@ void HmumuAnalysis::AddSpectator( string name, char type){
 }//end add variable
 
 void HmumuAnalysis::InitScikit(){
+
+    //discr.push_back("BTDG");
+    //discr.push_back("SGD");
+    //discr.push_back("SVR");
+    discr.push_back("MLP");
+    //discr.push_back("KERAS");
+
     py . reset(new TPython);
     py -> Exec("from sklearn.ensemble import RandomForestClassifier");
     py -> Exec("from sklearn.svm import SVC");
@@ -560,15 +566,24 @@ void HmumuAnalysis::InitScikit(){
     py -> Exec("from sklearn.linear_model import Ridge");
     py -> Exec("from sklearn.linear_model import ElasticNet");
 
+    // KERAS
+    //py -> Exec("from keras.models import Sequential");
+    //py -> Exec("from keras.layers import Dense, Activation");
+    //py -> Exec("from keras.wrappers.scikit_learn import KerasRegressor");
+    //py -> Exec("from sklearn.preprocessing import StandardScaler");
+    //py -> Exec("from sklearn.pipeline import Pipeline");
+
     py -> Exec("from sklearn.externals import joblib ");
 
     //py ->Exec("rfc=joblib.load('aux/hmm/RFC.pkl')");
     py ->Exec("mlp=joblib.load('aux/hmm/MLP.pkl')");
-    py ->Exec("svr=joblib.load('aux/hmm/SVR.pkl')");
-    py ->Exec("par=joblib.load('aux/hmm/PAR.pkl')");
-    py ->Exec("sgd=joblib.load('aux/hmm/SGD.pkl')");
-    py ->Exec("ridge=joblib.load('aux/hmm/Ridge.pkl')");
-    py ->Exec("en=joblib.load('aux/hmm/EN.pkl')");
+    //py ->Exec("svr=joblib.load('aux/hmm/SVR.pkl')");
+    //py ->Exec("par=joblib.load('aux/hmm/PAR.pkl')");
+    //py ->Exec("sgd=joblib.load('aux/hmm/SGD.pkl')");
+    //py ->Exec("bdtg=joblib.load('aux/hmm/BDTG.pkl')");
+    //py ->Exec("keras=joblib.load('aux/hmm/KERAS.pkl')");
+    //py ->Exec("ridge=joblib.load('aux/hmm/Ridge.pkl')");
+    //py ->Exec("en=joblib.load('aux/hmm/EN.pkl')");
 
     // Make sure we can use x[...] inside
     PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
@@ -671,7 +686,6 @@ void HmumuAnalysis::Init(){
 
         //Scikit
         if(doScikit){
-            vector<string> discr{"PAR","SGD","MLP","SVR","Ridge","EN"};
             for(const auto& s : discr)
             {
                 Book ("HmumuAnalysis/Vars/"+s+"OnZ_"+ l ,s+" On Z (70-110);"+s+";Events", 1000,-1,1.0001);
@@ -765,7 +779,10 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     cut.SetCutBit( Total ) ;
 
     /*
+     * TOP PT REWEIGHT
      */
+    e->ApplyTopReweight();
+
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon0: ");
     Lepton*mu0 = e->GetMuon(0);
@@ -823,7 +840,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             changed=true;
             sf->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
             effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
-            effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            //effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            effmc *= 1.- (sf->getMCEff()) ;
+            //Log(__FUNCTION__,"DEBUG",Form("Trigger (mu0, pt=%f) dataEff=%f syst=%d err=%f -> effdata=%f",mu0->Pt(),sf->getDataEff(),sf->syst,sf->getDataErr(),effdata));
 
         }
         if (mu1 and mu1->Pt() > 26)
@@ -831,7 +850,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             changed=true;
             sf->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
             effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
-            effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            //effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            effmc *= 1.- (sf->getMCEff()) ;
+            //Log(__FUNCTION__,"DEBUG",Form("Trigger (mu1, pt=%f) dataEff=%f syst=%d err=%f -> effdata=%f",mu1->Pt(),sf->getDataEff(),sf->syst,sf->getDataErr(),effdata));
         }
 
         if(changed)
@@ -845,6 +866,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sftrig->sf=effdata/effmc;
         sftrig->err = 0.0;
         e->ApplySF("dummy");
+        //Log(__FUNCTION__,"DEBUG",Form("---> Apply TOT TRIG SF = %f",e->GetWeight()->GetSF("dummy")->get()) );
     }
     
     // ID
@@ -858,15 +880,20 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->SetPtEtaSF("muID_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
         sfId *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f eta=%f ID runB): syst=%d sf=%f",mu0->Pt(),mu0->Eta(),e->GetWeight()->GetSF("muID_runBCDEF")->syst,sf1) );
+        //SF_PtEta_And_Eff *tmpsf = dynamic_cast<SF_PtEta_And_Eff*>(e->GetWeight()->GetSF("muID_runBCDEF"));
+        //Log(__FUNCTION__,"DEBUG",Form("             dataeff=%f (+/-%f) mceff=%f sf=%f (as above!)",tmpsf->getDataEff(),tmpsf->getDataErr(),tmpsf->getMCEff(),tmpsf->get() ) );
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f eta=%f ID runH): syst=%d sf=%f",mu0->Pt(),mu0->Eta(),e->GetWeight()->GetSF("muID_runGH")->syst,sf2) );
     }
     if (mu1)
     {
         e->SetPtEtaSF("muID_runBCDEF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        //e->ApplySF("muID_runBCDEF");
         float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->get();
         e->SetPtEtaSF("muID_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
         sfId *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f eta=%f ID runB): syst=%d sf=%f",mu1->Pt(),mu1->Eta(),e->GetWeight()->GetSF("muID_runBCDEF")->syst,sf1) );
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f eta=%f ID runH): syst=%d sf=%f",mu1->Pt(),mu1->Eta(),e->GetWeight()->GetSF("muID_runGH")->syst,sf2) );
     }
 
     double sfIso=1.0;
@@ -878,6 +905,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->SetPtEtaSF("muISOloose_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
         sfIso *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f ISOloose runB): syst=%d sf=%f",mu0->Pt(),e->GetWeight()->GetSF("muISOloose_runBCDEF")->syst,sf1) );
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f ISOloose runH): syst=%d sf=%f",mu0->Pt(),e->GetWeight()->GetSF("muISOloose_runGH")->syst,sf2) );
     }
     if (mu1)
     {
@@ -887,6 +916,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->SetPtEtaSF("muISOloose_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
         sfIso *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f ISOloose runB): syst=%d sf=%f",mu1->Pt(),e->GetWeight()->GetSF("muISOloose_runBCDEF")->syst,sf1) );
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f ISOloose runH): syst=%d sf=%f",mu1->Pt(),e->GetWeight()->GetSF("muISOloose_runGH")->syst,sf2) );
     }
     
     // apply id and iso sf
@@ -896,6 +927,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sf->sf= sfId*sfIso; //syst already included
         sf->err = 0.0;
         e->ApplySF("dummy");
+        //Log(__FUNCTION__,"DEBUG",Form("---> Apply TOT SF = %f (ID=%f,ISO=%f)",e->GetWeight()->GetSF("dummy")->get(), sfId,sfIso) );
     }
     
     
@@ -955,7 +987,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             SetTreeVar("puWeight",1.);
         }
         else {
-            SetTreeVar("mcWeight",e->GetWeight()->GetBareMCWeight());
+            SetTreeVar("mcWeight",e->GetWeight()->GetBareMCWeight() * e->GetWeight()->GetBareMCXsec() / e->GetWeight()->GetBareNevents());
             SetTreeVar("puWeight",e->GetWeight()->GetBarePUWeight());
             int mc=0;
             if (label.find( "GluGlu_HToMuMu") != string::npos) mc -=10;
@@ -1013,7 +1045,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
             if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
             if (doScikit and catType==2){
-                vector<string> discr{"PAR","SGD","MLP","SVR","Ridge","EN"};
                 for(size_t i=0;i<discr.size();++i)
                 {
                     const auto& s = discr[i];
@@ -1029,7 +1060,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             if(catType==2 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
                 Fill("HmumuAnalysis/Vars/BdtOnH_BB_"+ label,systname, bdt[0] ,e->weight());
             if (doScikit and catType==2){
-                vector<string> discr{"PAR","SGD","MLP","SVR","Ridge","EN"};
                 for(size_t i=0;i<discr.size();++i)
                 {
                     const auto& s = discr[i];

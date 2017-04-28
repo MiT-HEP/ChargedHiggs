@@ -17,8 +17,11 @@ class QGAnalysis: virtual public AnalysisBase
         int analyzeMM(Event*,string systname);
         int analyzeJJ(Event*,string systname);
         const string name() const override {return "QGAnalysis";}
+
         void SetLeptonCuts(Lepton *l) override ; 
         void SetJetCuts(Jet*j) override;
+        void SetTauCuts(Tau*) override;
+        void SetPhotonCuts(Photon*) override;
 
         bool doMM{true};
         bool doJJ{true};

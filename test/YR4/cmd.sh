@@ -10,8 +10,8 @@ for Ecm in 7TeV 8TeV; do
 for proc in $procs ; do
         SCALE=$(python $READ $Ecm $proc $MH | sed 's/.*== //g')
         for i in *_${Ecm}_*txt ; do
-            echo "yr4_$proc rateParam * ${proc}_hmm_${Ecm} $SCALE" >> $i
-            echo "yr4_BRHmm rateParam * ${proc}_hmm_${Ecm} $BR"   >> $i 
+            echo "yr4_$proc rateParam * ${proc}_hmm${Ecm} $SCALE" >> $i
+            echo "yr4_BRHmm rateParam * ${proc}_hmm${Ecm} $BR"   >> $i 
         done
 done
 done

@@ -10,17 +10,22 @@ class Photon : virtual public Object,
     protected:
         float isocut_;
         float ptcut_;
+        float isorelcut_{-1};
     public:
         inline void SetPtCut(float x) {ptcut_ = x;}
         inline void SetIsoCut(float x) {isocut_ = x;}
+        inline void SetIsoRelCut( float x){isorelcut_=x;}
+        inline float GetIsoRelCut() const { return isorelcut_;}
         Photon() ; // in the cpp
 
         float iso; // isolation 
         int id; // 
 
         virtual inline int IsPho() const { 
+            if (not id ) return 0; // medium
             if ( isocut_ > 0 and iso > isocut_) return 0;
             if ( ptcut_ > 0 and Pt() < ptcut_ ) return 0;
+            if ( isorelcut_ >=0 and iso/Pt() > isorelcut_) return 0;
 
             return 1;
         }

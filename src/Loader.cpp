@@ -369,13 +369,14 @@ void LoadNero::FillPhotons(){
     {
         //bool id = (b->selBits->at(i)) & BarePhotons::Selection::PhoMedium;
         //if (not id) continue;
-        bool eleVeto= b->selBits->at(i) & (1UL<<7); // v1.2.1
+        bool eleVeto= (b->selBits->at(i) & BarePhotons::Selection::PhoElectronVeto); 
         if (not eleVeto) continue;
 
         Photon *p = new Photon();
         p->SetP4( *(TLorentzVector*) ((*b->p4)[i]) );
-        p->iso = b->chIso->at(i);
-        p->id = (b->selBits->at(i));
+        //p->iso = b->chIso->at(i);
+        p->iso = b->iso->at(i);
+        p->id = (b->selBits->at(i) & BarePhotons::Selection::PhoMedium);
         event_ -> phos_ . push_back(p);
     }
     return;

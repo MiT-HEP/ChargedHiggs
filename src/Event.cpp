@@ -224,6 +224,11 @@ void Event::validate(){
             }
             if(t->IsTauInvIso() )j-> computeValidity(t,0.4,true);
         }
+
+        for(auto p: phos_)
+        {
+            if(p->IsPho() )j-> computeValidity(p);
+        }
     }
     return ;
 }

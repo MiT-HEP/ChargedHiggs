@@ -83,6 +83,7 @@ class HmumuAnalysis: virtual public AnalysisBase
      **********************************/
         std::unique_ptr<TPython> py;
         vector<float> x;
+        vector<string> discr;
         void InitScikit();
         vector<float> scikit; // like bdt
 

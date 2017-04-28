@@ -16,6 +16,10 @@ jetQglPtD
 jetQglAxis1
 jetQglAxis2
 jetQglPtDrLog
+### PHOTON
+photonP4
+photonSelBits
+photonIso
 ### FatJet
 fatjetAK8CHSP4
 fatjetAK8CHSTau1

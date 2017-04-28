@@ -851,7 +851,7 @@ void BackgroundFitter::fit(){
         cout<<"*** Fitting ZRED ***"<<endl;
         int bwzOrd;
         RooAbsPdf* bwz = modelBuilder.fTest(Form("bwz_cat%d",cat) ,hist_[name],&bwzOrd,plotDir + "/bwz");
-        storedPdfs.add(*bwz);
+        //storedPdfs.add(*bwz);
 
         cout<<"*** Fitting MOD BERN ***"<<endl;
         int modbernOrd;
