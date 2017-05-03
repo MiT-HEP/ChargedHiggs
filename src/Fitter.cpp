@@ -447,13 +447,13 @@ void Fitter::end(){
         // construct gaussians
 
         //RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat))));
-        RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat))));
+        RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
 
         RooGaussian *g2{NULL},*g3{NULL};
         //if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
         //if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c4",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c5",proc.c_str(),cat))));
-        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_, *getMeanWithSyst(cat,proc,1), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
-        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  *getMeanWithSyst(cat,proc,2), *(w_->function(Form("sigmodel_%s_cat%d_c5",proc.c_str(),cat))));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_, *getMeanWithSyst(cat,proc,1), *getSigmaWithSyst(cat,proc,1));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  *getMeanWithSyst(cat,proc,2), *getSigmaWithSyst(cat,proc,2));
 
         std::unique_ptr<RooAbsPdf> sigModel;
        
@@ -549,6 +549,39 @@ RooAbsReal* Fitter::getMeanWithSyst(int cat, string proc,int gaus=0){
         RooFormulaVar *mean = new RooFormulaVar(name.c_str(),name.c_str(),scaleFormula.c_str(),scaleList);
         w_->import(*mean);
         return mean;
+}
+
+RooAbsReal* Fitter::getSigmaWithSyst(int cat, string proc,int gaus=0){
+        // Add Systematics here, because the parameter is a RooSpline, and I need to have a RooFormulaVar -> m = m0 + smear_catX_procX*smearUnc = [0,-1,1][0.0011]
+        // s = s0 + smear_catX_procX * smearUnc
+        // or w->var() if correlated
+        int mycat = cat ;//  for correlation 
+        string myproc = proc;
+        if (smearCorr.find(pair<int,string>(cat,proc))!= smearCorr.end() )
+        {
+            mycat = smearCorr[ pair<int,string>(cat,proc) ] .first; 
+            myproc = smearCorr[ pair<int,string>(cat,proc) ] .second;
+        }
+        RooRealVar *smearNuisance =  new RooRealVar(Form("smear_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_cat%d_proc%s",mycat,myproc.c_str()),0,-1,1);
+        RooRealVar *smearValue =  new RooRealVar(Form("smear_value_cat%d_proc%s",cat,proc.c_str()),Form("smear_value_cat%d_proc%s",cat,proc.c_str()),0.);
+        string smearFormula = "@0";
+        RooArgList smearList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,1+gaus*2))) );
+        RooArgList smearG2List( );
+
+        if (smearUnc.find( pair<int,string>(cat,proc) )   != smearUnc.end() ) 
+        {
+            smearValue->setVal( smearUnc[pair<int,string>(cat,proc)]) ;
+            string smearFormula = "+ (@1*@2)";
+            smearList.add( *smearNuisance);
+            smearList.add( *smearValue);
+        }
+        smearValue->setConstant();
+        smearNuisance->setConstant();
+
+        string name=Form("sigmodel_%s_cat%d_g%d_sigma",proc.c_str(),cat,gaus);
+        RooFormulaVar *sigma = new RooFormulaVar(name.c_str(),name.c_str(),smearFormula.c_str(),smearList);
+        w_->import(*sigma);
+        return sigma;
 }
 
 void Fitter::write(){

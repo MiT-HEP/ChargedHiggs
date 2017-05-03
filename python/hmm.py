@@ -26,7 +26,7 @@ class HmmConfig():
         self.processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
         self.sigfit_gaussians={}
         #self.sigfit_gaussians[("Untag0_BB","GluGlu")] = 3
-        self.scale ={} #("cat","proc") = mean, sigma
+        #self.scale ={} #("cat","proc") = mean, sigma
 
         for p in ["GluGlu","ZH","WPlusH","WMinusH"]: # all except vbf
             self.sigfit_gaussians[("VBF0_EE",p)] = 2  ## 25
@@ -43,6 +43,9 @@ class HmmConfig():
         self.sigfit_gaussians[("VBF1_EE","ttH")] = 1  ## 27
         self.sigfit_gaussians[("Untag0_EE","ttH")] = 1  ## 28
         self.sigfit_gaussians[("Untag1_EE","ttH")] = 1  ## 29
+
+        self.sigfit_scale_unc = {} ## cat, proc -> value or (cat,proc)
+        self.sigfit_smear_unc = {}
         
         #self.readScaleUnc()        
 
@@ -51,6 +54,18 @@ class HmmConfig():
         self.datacard_procs=['BKG','GluGlu','VBF','WPlusH','WMinusH','ttH','ZH']
     
         self.computeVersioning()
+
+    def SimpleScaleAndSmear(self):
+        cat0=0
+        proc0='GluGlu'
+        for cat in range(0,len(self.categories)):
+            for proc in self.processes:
+                if cat==cat0 and proc==proc0:
+                    self.sigfit_scale_unc[cat,proc]=0.1
+                    self.sigfit_smear_unc[cat,proc]=0.1
+                else:
+                    self.sigfit_scale_unc[cat,proc]=(cat0,proc0)
+                    self.sigfit_smear_unc[cat,proc]=(cat0,proc0)
 
     def catToStr(self,num):
         return self.categories[num]
@@ -65,13 +80,15 @@ class HmmConfig():
         fitInputs+=";"+",".join(["%d"%x for x in self.sig_mass_points])
         fitInputs+=";"+",".join(self.processes);
         fitInputs+=";"+",".join([cat+"_"+proc+"=%d"%self.sigfit_gaussians[(cat,proc)] for cat,proc in self.sigfit_gaussians ])
-        fitInputs += ';' + ",".join(["m%.5f-s%.5f"%self.scale[(cat,proc)] for cat,proc in self.scale])
+        #fitInputs += ';' + ",".join(["m%.5f-s%.5f"%self.scale[(cat,proc)] for cat,proc in self.scale])
+        fitInputs += ';' + ",".join([str(self.sigfit_scale_unc[(cat,proc)]) for cat,proc in self.sigfit_scale_unc])
+        fitInputs += ';' + ",".join([str(self.sigfit_smear_unc[(cat,proc)]) for cat,proc in self.sigfit_smear_unc])
         self.fitVersion=hashlib.md5(fitInputs).hexdigest()
 
     def Print(self):
         print "--- Hmm Configurator ---"
         print "Name:",self.__class__.__name__
-        for x in ["xmin","xmax","muCategories","procCategories","categories","sig_mass_points","processes","datacard_procs","catVersion","fitVersion"]:
+        for x in ["xmin","xmax","muCategories","procCategories","categories","sig_mass_points","processes","datacard_procs","sigfit_scale_unc","sigfit_smear_unc","catVersion","fitVersion"]:
             print x+"=",eval("self."+x)
         print "------------------------"
         print "125: BR",self.br(125)
@@ -192,18 +209,18 @@ class HmmConfig():
     def lumi(self):
         return 35867
 
-    def readScaleUnc(self,f="Hmumu/syst/scale/scales.txt"):
-        self.scale ={} #("cat","proc") = mean, sigma
-        txt = open(f)
-        for line in txt:
-            info = line.split()[0]
-            mean = float(line.split()[1])
-            sigma = float(line.split()[2])
-            procCat = info.split('_')[0]
-            muCat   = info.split('_')[1]
-            proc    = info.split('_')[2]
-            cat = procCat +"_" + muCat
-            self.scale[ (cat, proc) ] = (mean, sigma)
+    #def readScaleUnc(self,f="Hmumu/syst/scale/scales.txt"):
+    #    self.scale ={} #("cat","proc") = mean, sigma
+    #    txt = open(f)
+    #    for line in txt:
+    #        info = line.split()[0]
+    #        mean = float(line.split()[1])
+    #        sigma = float(line.split()[2])
+    #        procCat = info.split('_')[0]
+    #        muCat   = info.split('_')[1]
+    #        proc    = info.split('_')[2]
+    #        cat = procCat +"_" + muCat
+    #        self.scale[ (cat, proc) ] = (mean, sigma)
 
 hmm=HmmConfig()
 
@@ -215,7 +232,7 @@ class HmmConfigAutoCat(HmmConfig):
         self.muCategories=[]
         self.sigfit_gaussians=[]
         #self.readScaleUnc()        
-
+        self.SimpleScaleAndSmear()
         self.computeVersioning()
 
 hmmAutoCat =HmmConfigAutoCat()
