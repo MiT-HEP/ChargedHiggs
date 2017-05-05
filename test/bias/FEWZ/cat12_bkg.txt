@@ -17,7 +17,7 @@ observation  -1
 bin      cat12    cat12    cat12    cat12    cat12    cat12    cat12
 process DY      ggH     qqH     WPlusH  WMinusH ttH     ZH 
 process 1       0       -1      -2      -3      -4      -5 
-rate    -1      35867   35867   35867   35867   35867   35867 
+rate    1      35867   35867   35867   35867   35867   35867 
 
 ------------
 # rate parameters
