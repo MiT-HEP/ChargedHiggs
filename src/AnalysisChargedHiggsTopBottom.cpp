@@ -1590,9 +1590,9 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
         }
         //        }
 
-        if(abs(genpar->GetPdgId()) == 11 or abs(genpar->GetPdgId()) == 13) {
+        if(( abs(genpar->GetPdgId()) == 11 or abs(genpar->GetPdgId()) == 13 ) and genpar->IsPromptFinalState()) {
 
-            if ( abs(genpar->GetParentPdgId()) == 24 and abs(genpar->GetGrandParentPdgId()) == 6) genLepSig++;
+            genLepSig++;
 
             // lepton in acceptance
             if(genpar->Pt()<20) continue;
@@ -1600,7 +1600,7 @@ bool ChargedHiggsTopBottom::genInfoForSignal(Event*e) {
 
             if(topFromH!=NULL) {
                 // electron -11; W+ is 24; top is 6
-                if ( abs(genpar->GetParentPdgId()) == 24 and abs(genpar->GetGrandParentPdgId()) == 6 and topFromH->GetPdgId()*genpar->GetPdgId()<0) {
+                if ( topFromH->GetPdgId()*genpar->GetPdgId()<0 ) {
                     if(verbose) cout << "H->top->W->l candidate (there is a second one in the acceptance)" << endl;
                     rightComb=true;
                     leptonFromTopH=genpar;
