@@ -32,7 +32,7 @@ eleTightTRG th2f aux/LEPTONS/trigT_egammaEffi.txt_EGM2D.root:EGamma_SF2D
 
 # cutbased ID from POG
 muID th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_GH.root:MC_NUM_MediumID2016_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio
-muIDloose th2f aux/LEPTONS/EfficienciesAndSF_LooseIso_NUM_LooseMiniIso_DEN_LooseID_PAR_pt_eta.root:IsoL_IdL_PtEtaBins/abseta_pt_ratio
+muIDloose th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_GH.root:MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio
 ###muTRG th2f aux/LEPTONS/mu_trigger_EfficienciesAndSF_Period4.root:IsoMu24_OR_IsoTkMu24_PtEtaBins/abseta_pt_ratio
 ###muISO th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_GH.root:TightISO_MediumID_pt_eta/abseta_pt_ratio
 ###muISOloose th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_GH.root:LooseISO_LooseID_pt_eta/abseta_pt_ratio
