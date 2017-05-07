@@ -2355,9 +2355,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     Tau *t = e->GetTau(0);
 
     double LeadingLeptonPt_= 30; // singleLepton
-    //    doSynch
     double LeadingLeptonElePt_= 35; // singleLepton
-    if(doICHEP) LeadingLeptonElePt_= 30; // singleLepton
+
     double NextLeadingLeptonPt_= 10; //
 
     for(int i=0;i!=e->Nleps();++i) {
@@ -2567,9 +2566,15 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
         bool twomu=(leadLep->IsMuon() and trailLep->IsMuon() and passTriggerMu);
         bool twoele=(leadLep->IsElectron() and trailLep->IsElectron() and fabs(leadLep->Eta())<2.1 and passTriggerEle);
-        bool onemuoneele=(((leadLep->IsElectron() and trailLep->IsMuon() and trailLep->Pt()>LeadingLeptonPt_) ||
-                           (trailLep->IsElectron() and leadLep->IsMuon())) and passTriggerMu);
+        bool onemuoneele_onMU=(((leadLep->IsElectron() and trailLep->IsMuon() and trailLep->Pt()>LeadingLeptonPt_) ||
+                                (trailLep->IsElectron() and leadLep->IsMuon()))
+                               and passTriggerMu);
+        bool onemuoneele_onELE=(((leadLep->IsElectron() and trailLep->IsMuon()) ||
+                                 (trailLep->IsElectron() and leadLep->IsMuon() and trailLep->Pt()>LeadingLeptonElePt_))
+                                and passTriggerEle and not passTriggerMu);
 
+
+        bool onemuoneele=onemuoneele_onMU or onemuoneele_onELE;
 
         if ( nOSLepPair == 1 and leadLep->Pt()>LeadingLeptonPt_ and (twomu or twoele or onemuoneele) ) {
             cut.SetCutBit(OneLep); // one OS lepton Pair + leading above trigger threshould
@@ -2615,7 +2620,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                     if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
                     if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muISOloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISOloose"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
-                    if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muLooseTRG",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muLooseTRG"); }
+                    // trigger
+                    if (passTriggerMu and not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muLooseTRG",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muLooseTRG"); }
+                    if (passTriggerEle and not passTriggerMu and not e->IsRealData()) { e->SetPtEtaSF("eleLooseTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("eleLooseTRG"); }
                 }
                 if(leadLep->IsMuon() and trailLep->IsElectron()) {
                     // ele
@@ -2625,7 +2632,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                     if (not e->IsRealData()) { e->SetPtEtaSF("muID",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muID"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
-                    if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
+                    // trigger
+                    if (passTriggerMu and not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
+                    if (passTriggerEle and not passTriggerMu and not e->IsRealData() and trailLep->Pt()>20) { e->SetPtEtaSF("eleTightTRG",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("eleTightTRG"); }
                 }
             }
         }
