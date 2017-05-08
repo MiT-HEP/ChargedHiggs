@@ -1,3 +1,4 @@
+import sys
 import ROOT
 from array import array
 
@@ -9,12 +10,17 @@ getattr(w,'import')(x)
 fIn=ROOT.TFile.Open("test/Hmumu//Hmumu_2017_04_21_Bdt_ttH2/Hmumu_2017_04_21_Bdt_ttH2.root")
 #fIn=ROOT.TFile.Open("test/Hmumu/Hmumu_2017_04_28_Bdt_amcatnlo/Hmumu_2017_04_28_Bdt_amcatnlo.root")
 cat='cat0'
+
+if len(sys.argv)> 1:
+    cat=sys.argv[1]
+    print "->Doing cat",cat
 g=[]
 g.extend([x,w])
 
 h=fIn.Get("HmumuAnalysis/Vars/Mmm_"+cat+"_Data")
 nevents=h.Integral(h.FindBin(110),h.FindBin(150))
 
+#fewz=open("test/bias/FEWZ/h2mu-dsdm-13tev-xs-lux-1jet-nnlo-hp.dat")
 fewz=open("test/bias/FEWZ/h2mu-dsdm-13tev-xs-lux-1jet-nnlo-hp.dat")
 mass=[]
 xsec=[]
@@ -53,7 +59,7 @@ getattr(w,'import')(pdf_norm)
 #getattr(w,'import')(dh)
 #g.extend([h,dh])
 
-w.writeToFile(cat+"_fewz.root")
+w.writeToFile(cat+"_fewz_2j.root")
 
 print "DONE"
 
