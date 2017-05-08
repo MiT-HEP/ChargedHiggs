@@ -7,6 +7,7 @@
 ## Electron from POG ##
 ###################
 # http://fcouderc.web.cern.ch/fcouderc/EGamma/scaleFactors/Moriond17/approval/EleID/
+# http://fcouderc.web.cern.ch/fcouderc/EGamma/scaleFactors/Moriond17/approval/RECO/passingRECO/
 # https://indico.cern.ch/event/607607/contributions/2455679/attachments/1402350/2141061/EGMReportat_PPD_26012017.pdf
 # from Julie for MVA/miniISO https://brux5.hep.brown.edu/~jhogan/EGammaResults/
 
@@ -14,6 +15,7 @@
 #eleveto th2f aux/LEPTONS/PassingVeto_EGM2D.root:EGamma_SF2D
 #eleloose th2f aux/LEPTONS/PassingLoose_EGM2D.root:EGamma_SF2D
 #eletight th2f aux/LEPTONS/PassingTight_EGM2D.root:EGamma_SF2D
+eleRECO  th2f aux/LEPTONS/egammaEffi.txt_EGM2D.root.update.root.update.root:EGamma_SF2D
 
 # cutbased ID from Brown
 eleLoose th2f aux/LEPTONS/MVAloose_egammaEffi.txt_EGM2D.root:EGamma_SF2D

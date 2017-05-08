@@ -2540,6 +2540,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
             if(oneele) {
                 category="_1Ele";
+                //RECO
+                if (not e->IsRealData()) { e->SetPtEtaSF("eleRECO",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleRECO"); }
                 // ID-MVA
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
                 // miniIso
@@ -2600,13 +2602,16 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
             if(twoele) {
                 category="_2Ele";
-                // RECO/ISO applied and ele TRG missing
+                //RECO
+                if (not e->IsRealData()) { e->SetPtEtaSF("eleRECO",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleRECO"); }
+                if (not e->IsRealData() && trailLep->Pt()>25) { e->SetPtEtaSF("eleRECO",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleRECO"); }
+                //ID
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
                 if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLoose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLoose"); }
-
+                //ISO
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleTightIso",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightIso"); }
                 if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLooseIso",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLooseIso"); }
-
+                //TRG
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleTightTRG",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightTRG"); }
             }
             // this 1Mu1Ele muon above the muon trigger threshould otherwise bias in the turnon
@@ -2616,6 +2621,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                     // ele
                     if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("eleTightIso",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTightIso"); }
+                    if (not e->IsRealData()) { e->SetPtEtaSF("eleRECO",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleRECO"); }
                     // mu
                     if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muIDloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muIDloose"); }
                     if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("muISOloose",trailLep->Pt(),fabs(trailLep->Eta())); e->ApplySF("muISOloose"); }
@@ -2628,6 +2634,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                     // ele
                     if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLoose",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLoose"); }
                     if (not e->IsRealData() && trailLep->Pt()>20) { e->SetPtEtaSF("eleLooseIso",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleLooseIso"); }
+                    if (not e->IsRealData() && trailLep->Pt()>25) { e->SetPtEtaSF("eleRECO",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleRECO"); }
                     // mu
                     if (not e->IsRealData()) { e->SetPtEtaSF("muID",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muID"); }
                     if (not e->IsRealData()) { e->SetPtEtaSF("muISO",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muISO"); }
@@ -2938,8 +2945,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
                 if(i!=18) bdt.push_back(readers_[i]->EvaluateMVA("BDTG") );
                 if(i==18) bdt.push_back(readers_[i]->EvaluateMVA("DNN::DNN") );
             }
-        
-
         //        cout << "bla6,7 = " << bin_->GetCluster(bdt[6],bdt[7]) << endl;
 
     }
