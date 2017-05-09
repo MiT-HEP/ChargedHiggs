@@ -4,11 +4,11 @@
     <Info name="TMVA Release" value="4.2.1 [262657]"/>
     <Info name="ROOT Release" value="6.06/08 [394760]"/>
     <Info name="Creator" value="vischia"/>
-    <Info name="Date" value="Mon May  8 12:52:14 2017"/>
+    <Info name="Date" value="Mon May  8 21:32:26 2017"/>
     <Info name="Host" value="Linux fanae127.geol.uniovi.es 2.6.32-642.4.2.el6.x86_64 #1 SMP Wed Aug 24 09:19:54 CEST 2016 x86_64 x86_64 x86_64 GNU/Linux"/>
     <Info name="Dir" value="/mnt_pool/fanae105/user/vischia/workarea/chargedHiggs/chargedHiggs13TeV"/>
     <Info name="Training events" value="283710"/>
-    <Info name="TrainingTime" value="3.13860717e+02"/>
+    <Info name="TrainingTime" value="3.07566823e+02"/>
     <Info name="AnalysisType" value="Classification"/>
   </GeneralInfo>
   <Options>
