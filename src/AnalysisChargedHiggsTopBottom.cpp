@@ -509,6 +509,7 @@ void ChargedHiggsTopBottom::Init()
 
     }
 
+    // this is for the DNN
     for (int i=18; i<19; i++) {
         // 0,1,2
 
@@ -3086,7 +3087,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if( do2lAnalysis and evt_MTmin>=200 and e->Bjets()>2 and e->NcentralJets()>2) Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR4_"+label,systname, evt_HT ,e->weight());
     */
 
-    if( do1lAnalysis and e->Bjets()==2) {
+    if( do1lAnalysis and e->Bjets()==2 and e->NcentralJets()>=5) {
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR13_"+label,systname, evt_HT ,e->weight());
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR13_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
@@ -3149,7 +3150,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     }
 
     /// bdt1, bdt2 is the 1l
-    if( do1lAnalysis and e->Bjets()>2) {
+    if( do1lAnalysis and e->Bjets()>2 and e->NcentralJets()>=5) {
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR24_"+label,systname, evt_HT ,e->weight());
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR24_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
@@ -3217,7 +3218,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     /////////
 
     /// bdt1, bdt2 is the 1l
-    if( do2lAnalysis and e->Bjets()==2) {
+    if( do2lAnalysis and e->Bjets()==2 and e->NcentralJets()>=3) {
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR13_"+label,systname, evt_HT ,e->weight());
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR13_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
@@ -3228,7 +3229,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lh_SR13_"+label,systname,binHigh_->GetCluster(bdt[12],bdt[13]),e->weight());
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lm_SR13_"+label,systname,binMedium_->GetCluster(bdt[14],bdt[15]),e->weight());
-            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR13_"+label,systname,binLow_->GetCluster(bdt[15],bdt[16]),e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR13_"+label,systname,binLow_->GetCluster(bdt[16],bdt[17]),e->weight());
 
         } else {
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR13_"+label,systname,-1,e->weight());
@@ -3251,7 +3252,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lh_SR1_"+label,systname,binHigh_->GetCluster(bdt[12],bdt[13]),e->weight());
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lm_SR1_"+label,systname,binMedium_->GetCluster(bdt[14],bdt[15]),e->weight());
-            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR1_"+label,systname,binLow_->GetCluster(bdt[15],bdt[16]),e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR1_"+label,systname,binLow_->GetCluster(bdt[16],bdt[17]),e->weight());
 
         } else {
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR1_"+label,systname,-1,e->weight());
@@ -3274,7 +3275,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lh_SR3_"+label,systname,binHigh_->GetCluster(bdt[12],bdt[13]),e->weight());
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lm_SR3_"+label,systname,binMedium_->GetCluster(bdt[14],bdt[15]),e->weight());
-            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR3_"+label,systname,binLow_->GetCluster(bdt[15],bdt[16]),e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR3_"+label,systname,binLow_->GetCluster(bdt[16],bdt[17]),e->weight());
 
         } else {
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR3_"+label,systname,-1,e->weight());
@@ -3286,7 +3287,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     }
 
     /// bdt1, bdt2 is the 1l
-    if( do2lAnalysis and e->Bjets()>2 ) {
+    if( do2lAnalysis and e->Bjets()>2 and e->NcentralJets()>=3) {
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_SR24_"+label,systname, evt_HT ,e->weight());
         Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_SR24_"+label,systname, evt_ST ,e->weight());
         if(bdt.size()>0) {
@@ -3297,7 +3298,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lh_SR24_"+label,systname,binHigh_->GetCluster(bdt[12],bdt[13]),e->weight());
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lm_SR24_"+label,systname,binMedium_->GetCluster(bdt[14],bdt[15]),e->weight());
-            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR24_"+label,systname,binLow_->GetCluster(bdt[15],bdt[16]),e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR24_"+label,systname,binLow_->GetCluster(bdt[16],bdt[17]),e->weight());
 
         } else {
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR24_"+label,systname,-1,e->weight());
@@ -3320,7 +3321,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lh_SR2_"+label,systname,binHigh_->GetCluster(bdt[12],bdt[13]),e->weight());
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lm_SR2_"+label,systname,binMedium_->GetCluster(bdt[14],bdt[15]),e->weight());
-            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR2_"+label,systname,binLow_->GetCluster(bdt[15],bdt[16]),e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR2_"+label,systname,binLow_->GetCluster(bdt[16],bdt[17]),e->weight());
 
         } else {
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR2_"+label,systname,-1,e->weight());
@@ -3343,7 +3344,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lh_SR4_"+label,systname,binHigh_->GetCluster(bdt[12],bdt[13]),e->weight());
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2lm_SR4_"+label,systname,binMedium_->GetCluster(bdt[14],bdt[15]),e->weight());
-            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR4_"+label,systname,binLow_->GetCluster(bdt[15],bdt[16]),e->weight());
+            Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2D_2ll_SR4_"+label,systname,binLow_->GetCluster(bdt[16],bdt[17]),e->weight());
 
         } else {
             Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4_SR4_"+label,systname,-1,e->weight());
