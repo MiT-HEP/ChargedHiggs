@@ -7,11 +7,11 @@ from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR29_Final_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR29_Final_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/1l_MAY9_Final_2D.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/2l_MAY10_Final_2D.root")
 
-parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
-parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
+parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
+parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
 parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", default=35867)
 
 extra = OptionGroup(parser,"Extra options:","")
@@ -112,7 +112,7 @@ def RebinBDT3(h):
         ''' Rebin with un-even bins '''
         print 'using binning BDT3'
         mybins=array('d',[-1,
-                           -0.95,-0.90,-0.85,-0.80,
+                          -0.95,-0.90,-0.85,-0.80,
                            -0.75,-0.70,-0.65,-0.60,-0.55,-0.50,-0.45,-0.40,-0.35,-0.30,
                            -0.28,-0.26,-0.24,-0.22,-0.20,
                            -0.18,-0.16,-0.14,-0.12,-0.10,
@@ -193,7 +193,7 @@ statStore = {} ## used to store th1d for stat uncertainties
 label=""
 VarTest=""
 
-doSyst = True
+doSyst = False
 
 for y in channel:
 	for x in basecat:
@@ -269,35 +269,35 @@ for y in channel:
 
        ## set the MC sample
 				if x=="charmCR":
-					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TOP","EWK","HPlus"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 				if "extraRadCR" in x:
-					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TOP","EWK","HPlus"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 				if "topCR" in x:
-					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TOP","EWK","HPlus"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 				if x=="Baseline":
-					catStore[name]["hasMC"]=["TTlight","TT1b","TT2b","TT2B","TTc","TOP","EWK","HPlus"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 
 			if y == "1Ele" or y == "1Mu":
 				mcStore={
-					"HPlus":{"name":"HPlus", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-					"TTlight":{ "name":"TTlight","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
-					"TT1b":{ "name":"TT1b","hist":["tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
-					"TT2b":{ "name":"TT2b","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
-					"TT2B":{ "name":"TT2B","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
-					"TTc":{ "name":"TTc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
-					"EWK":{ "name":"EWK","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
-					"TOP":{ "name":"TOP","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+					"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
+					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
+					"ttb":{ "name":"ttb","hist":["tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
+					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
+					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
+					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
+					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
 					}
 			else:
 				mcStore={
-					"HPlus":{"name":"HPlus", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-					"TTlight":{ "name":"TTlight","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
-					"TT1b":{ "name":"TT1b","hist":["tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
-					"TT2b":{ "name":"TT2b","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
-					"TT2B":{ "name":"TT2B","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
-					"TTc":{ "name":"TTc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
-					"EWK":{ "name":"EWK","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
-					"TOP":{ "name":"TOP","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+					"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
+					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
+					"ttb":{ "name":"ttb","hist":["tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
+					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
+					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
+					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
+					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
 					}
 				## NOTE: missing diboson + triboson in the EWK, QCD
 
@@ -307,8 +307,8 @@ for y in channel:
 					"CMS_pileup":{"type":"shape", "wsname":"PU","name":"PU","proc":[".*"]}, ## name used for shape
 					"CMS_scale_uncluster":{"type":"shape", "wsname":"UNCLUSTER","name":"UNCLUSTER","proc":[".*"]}, ## name used for shape
 					"CMS_scale_j":{"type":"shape", "wsname":"JES","name":"JES","proc":[".*"]}, ## name used for shape
-					##				"CMS_res_j":{"type":"shape", "wsname":"JER","name":"JER","proc":[".*"]}, ## name used for shape
-					##				"CMS_eff_b":{"type":"shape", "wsname":"BTAGB","name":"BTAGB","proc":[".*"]}, ## name used for shape
+					##					"CMS_res_j":{"type":"shape", "wsname":"JER","name":"JER","proc":[".*"]}, ## name used for shape
+					##					"CMS_eff_b":{"type":"shape", "wsname":"BTAGB","name":"BTAGB","proc":[".*"]}, ## name used for shape
 					##				"CMS_fake_b":{"type":"shape", "wsname":"BTAGL","name":"BTAGL","proc":[".*"]}, ## name used for shape
 					"CMS_topreweight":{"type":"shape", "wsname":"TOPRW","name":"TOPRW","proc":[".*"]}, ## name used for shape
 					"CMS_eff_m_trigger":{"type":"shape", "wsname":"muTRG","name":"muTRG","proc":[".*"]}, ## name used for shae
@@ -331,11 +331,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="APR29/"+label+VarTest+opts.output
+fileTmp="MAY10/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "APR29/"+ label + VarTest + datNameTmp
+datName = "MAY10/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -375,7 +375,7 @@ if True: # data
 	datacard.write("w:data_obs_$CHANNEL")
 	datacard.write("\n")
 if True: # Sig
-	datacard.write("shapes HPlus *\t" + fileTmp +"\t")
+	datacard.write("shapes Hptb *\t" + fileTmp +"\t")
 	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL\t")
 	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
 	datacard.write("\n")
@@ -430,7 +430,7 @@ datacard.write("-------------------------------------\n")
 # write systematics
 
 ## 
-def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST","TOP"]):
+def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
 ##def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT"]):
 	datacard.write(name+"\tlnN")
 	invert=False
@@ -540,30 +540,30 @@ for syst in systStore:
 	if systStore[syst]["type"] == "shape":
 		writeSystShape(systStore[syst],systStore[syst]["proc"])
 
-if doSyst: writeNormSyst("CMS_scale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.977/1.028"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
-if doSyst: writeNormSyst("CMS_pdf_ttbar",["1.042","1.042","1.042","1.042","1.042","1.026"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
-if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027","1.022"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
+#if doSyst: writeNormSyst("CMS_scale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.977/1.028"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
+#if doSyst: writeNormSyst("CMS_pdf_ttbar",["1.042","1.042","1.042","1.042","1.042","1.026"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
+#if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027","1.022"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
 
-if doSyst: writeNormSyst("CMS_pdf_ttlight",["1.50"],["TTlight"])
-if doSyst: writeNormSyst("CMS_pdf_ttc",["1.50"],["TTc"])
-if doSyst: writeNormSyst("CMS_pdf_tt1b",["1.50"],["TT1b"])
-if doSyst: writeNormSyst("CMS_pdf_tt2b",["1.50"],["TT2b"])
-if doSyst: writeNormSyst("CMS_pdf_tt2B",["1.50"],["TT2B"])
+#if doSyst: writeNormSyst("CMS_pdf_ttlight",["1.50"],["TTlight"])
+#if doSyst: writeNormSyst("CMS_pdf_ttc",["1.50"],["TTc"])
+#if doSyst: writeNormSyst("CMS_pdf_tt1b",["1.50"],["TT1b"])
+#if doSyst: writeNormSyst("CMS_pdf_tt2b",["1.50"],["TT2b"])
+#if doSyst: writeNormSyst("CMS_pdf_tt2B",["1.50"],["TT2B"])
 
 ##https://twiki.cern.ch/twiki/bin/view/LHCPhysics/LHCHXSWGTTH
-if doSyst: writeNormSyst("CMS_scale_ttZ",["0.887/1.096"],["TTZ"])
-if doSyst: writeNormSyst("CMS_pdf_ttZ",["1.028"],["TTZ"])
-if doSyst: writeNormSyst("CMS_mass_ttZ",["1.028"],["TTZ"])
+#if doSyst: writeNormSyst("CMS_scale_ttZ",["0.887/1.096"],["TTZ"])
+#if doSyst: writeNormSyst("CMS_pdf_ttZ",["1.028"],["TTZ"])
+#if doSyst: writeNormSyst("CMS_mass_ttZ",["1.028"],["TTZ"])
 
-if doSyst: writeNormSyst("CMS_scale_ttH",["0.908/1.058"],["ttH"])
-if doSyst: writeNormSyst("CMS_pdf_ttH",["1.036"],["ttH"])
-if doSyst: writeNormSyst("CMS_mass_ttH",["1.036"],["ttH"])
+#if doSyst: writeNormSyst("CMS_scale_ttH",["0.908/1.058"],["ttH"])
+#if doSyst: writeNormSyst("CMS_pdf_ttH",["1.036"],["ttH"])
+#if doSyst: writeNormSyst("CMS_mass_ttH",["1.036"],["ttH"])
 
-#writeNormSyst("CMS_scale_VV",["1.025","1.032","1.031"],["WWTo","WZTo","ZZTo"])
-#writeNormSyst("CMS_pdf_VV",["1.022","1.044","1.037"],["WWTo","WZTo","ZZTo"])
+##writeNormSyst("CMS_scale_VV",["1.025","1.032","1.031"],["WWTo","WZTo","ZZTo"])
+##writeNormSyst("CMS_pdf_VV",["1.022","1.044","1.037"],["WWTo","WZTo","ZZTo"])
 
-#writeNormSyst("CMS_scale_V",["0.9963/1.0065","0.996/1.008"],["DYJetsToLL_M","WJetsToLNu"])
-#writeNormSyst("CMS_pdf_V",["1.037","1.0375"],["DYJetsToLL_M","WJetsToLNu"])
+##writeNormSyst("CMS_scale_V",["0.9963/1.0065","0.996/1.008"],["DYJetsToLL_M","WJetsToLNu"])
+##writeNormSyst("CMS_pdf_V",["1.037","1.0375"],["DYJetsToLL_M","WJetsToLNu"])
 
 ################### IMPORT ################
 ## def importStat(h,target,syst="STAT"):
@@ -604,7 +604,7 @@ def importPdfFromTH1(cat,mc,syst=None):
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
-	if mc["name"]=="HPlus":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
+	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
 	else: masses=[0]
 
 	if syst == None: shifts=["x"]
@@ -624,7 +624,7 @@ def importPdfFromTH1(cat,mc,syst=None):
 	  for hname in mc["hist"]:
 	        toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
 
-		if mc["name"]=="HPlus":
+		if mc["name"]=="Hptb":
 		   toget=toget%m
 		if syst != None:
 			toget += "_" + syst["name"] + s
@@ -708,7 +708,7 @@ def importPdfFromTH1(cat,mc,syst=None):
 		else:
 			statStore[histName]["hist"] . Add (h )
 ##			if mc["name"] == 'TT':  ## put TT and reference
-			if mc["name"] == 'TTlight':  ## put TTlight and reference
+			if mc["name"] == 'ttlf':  ## put TTlight and reference
 				statStore[histName]["mc"]= mc["name"]
 				statStore[histName]["target"]= target
 				statStore[histName]["hist0"] . Delete()

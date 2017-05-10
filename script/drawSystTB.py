@@ -7,8 +7,8 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.IsBatch()
 
 parser= OptionParser()
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR29_Final_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR29_Final_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/MAY9_MCfinal_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/MAY9_MCfinal_2l.root")
 parser.add_option("","--base",type='string',help="Base [Default=%default]", default="Baseline")
 #parser.add_option("","--histo",type='string',help="Base [Default=%default]", default="HT_SR4_tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")
 parser.add_option("","--histo",type='string',help="Base [Default=%default]", default="HT_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")
@@ -79,8 +79,8 @@ def RebinBDT3(h):
         ''' Rebin with un-even bins '''
         print 'using binning BDT3'
         mybins=array('d',[-1,
-                           -0.95,-0.90,-0.85,-0.80,
-			   -0.75,-0.70,-0.65,-0.60,-0.55,
+                           -0.90,-0.80,
+			   -0.70,-0.60,
 			   -0.50,-0.45,-0.40,-0.35,-0.30,
 			   -0.28,-0.26,-0.24,-0.22,-0.20,
 			   -0.18,-0.16,-0.14,-0.12,-0.10,
@@ -118,12 +118,12 @@ def RebinBDT6(h):
         ''' Rebin with un-even bins '''
 	print 'using BDT6 low-2l'
         mybins=array('d',[-1,
-			   -0.8,-0.6,-0.5,-0.4,
+			   -0.7,-0.6,-0.5,-0.4,
 			   -0.35,-0.3,-0.25,-0.20,-0.15,-0.10,
 			   -0.05, 0.0, 0.05, 0.10, 0.15, 0.20,
 			   0.25,0.30,
-			   0.35,0.40,0.45,
-			   0.55,0.80,
+			   0.35,0.40,
+			   0.50,0.60,0.70,0.80,0.90,
                            1.])
 	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
@@ -370,5 +370,5 @@ leg.Draw("sames")
 raw_input("ok?")
 
 
-c2.SaveAs("plot/APR29/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".pdf")
-c2.SaveAs("plot/APR29/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".png")
+c2.SaveAs("plot/MAY9/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".pdf")
+c2.SaveAs("plot/MAY9/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".png")
