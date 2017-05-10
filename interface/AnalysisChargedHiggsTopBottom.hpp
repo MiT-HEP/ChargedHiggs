@@ -79,7 +79,9 @@ public:
 private:
 
 
-    std::unique_ptr<GetBinning> bin_;
+    std::unique_ptr<GetBinning> binLow_;
+    std::unique_ptr<GetBinning> binMedium_;
+    std::unique_ptr<GetBinning> binHigh_;
 
     CutSelector cut;
 
