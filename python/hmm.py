@@ -232,7 +232,7 @@ class HmmConfigAutoCat(HmmConfig):
         self.muCategories=[]
         self.sigfit_gaussians=[]
         #self.readScaleUnc()        
-        self.SimpleScaleAndSmear()
+        #self.SimpleScaleAndSmear()
         self.computeVersioning()
 
 hmmAutoCat =HmmConfigAutoCat()

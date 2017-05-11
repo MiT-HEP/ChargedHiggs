@@ -13,9 +13,9 @@ muList=1
 #gen="_2j"
 #name=fewz_2j
 seed=6543210
-name="_grid"
-gen=""
-gen2="grid"
+name="_fewz_tt_grid"
+gen="_fewz_tt"
+gen2="_fewz_tt_grid"
 
 for cat in ${catList};
 do
@@ -39,7 +39,7 @@ do
     for i in $catList; 
     do 
         combine cat${i}.root -M MultiDimFit  --setPhysicsModelParameters MH=125 -m 125 --freezeNuisances=MH --toysFile higgsCombine_cat${i}_${name}_mu${mu}.GenerateOnly.mH125.${seed}.root -t 1000 -n  _cat${i}_mu${mu}  --robustFit=1 --forceRecreateNLL --cminRunAllDiscreteCombinations --cminDiscreteMinTol=0.0001 --rMin=-20 --rMax=50 --saveSpecifiedIndex=pdfindex_cat${i} --stepSize=0.01 --algo=grid --points=100
-    done | tee multidim${mu}_cat${i}.log
+    done 2>&1 | grep -vi Hesse |  tee multidim${mu}_cat${i}.log
     } &
 
 done
