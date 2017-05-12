@@ -9,13 +9,17 @@ using namespace std;
 // vsHF-->X
 // vsLF-->Y
 
-
 GetBinning::GetBinning()
 {
-  TString fileName = "aux/binning_1l_highmass.root";
+}
+
+void GetBinning::SetBinning(TString fileName)
+{
+  //  TString fileName = "aux/binning_1l_highmass.root";
   file = (TFile*) gROOT->GetListOfFiles()->FindObject(fileName);
   if (!file || !file->IsOpen()) file = TFile::Open(fileName);
   hBinning = (TH2F*) file->Get("hTargetBinning");
+  return;
 }
 
 
