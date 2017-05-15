@@ -3,6 +3,7 @@
 
 #include "interface/Event.hpp"
 #include "interface/Named.hpp"
+#include <memory>
 
 #define SMEAR_OK 0
 #define SMEAR_NA 1
@@ -45,6 +46,39 @@ class SmearJes : virtual public SmearBase
 {
     public:
         SmearJes() : SmearBase(){ name_ = "JES";}
+        int smear(Event*e) override;	
+};
+
+class SmearJesAndCSV : virtual public SmearBase
+{
+    // constructor: num -> 1,2,3,4,5 for simplicity
+    //num_ 7->16
+    //syst= 7 -> JES UP, 8 JES Down, 
+    //      9 LF UP 10,
+    //      11/12/HF UP/Down,
+    //      13/14 Stat1, 
+    //      15,16 Stat2
+    //
+    std::unique_ptr<SmearJes> jes;
+    int num_; // this follow the  CSV Reweight skim, while  the constructor is 1->5
+
+    public:
+        SmearJesAndCSV() : SmearBase(){ 
+            num_=13;
+            name_ = Form("CSVR_%d",num_);
+        }
+        SmearJesAndCSV(int num) : SmearBase(){ 
+            // num -> 1,5 (1 is JES
+            num_ = -1;
+            if (num == 1) {num_=7;name_="JESANDCSV";}
+            if (num == 2) {num_=9;name_="CSVRLF";}
+            if (num == 3){num_=11;name_="CSVRHF";}
+            if (num == 4){num_=13; name_="CSVRSTAT1";}
+            if (num == 5){num_=15; name_="CSVRSTAT2";}
+
+            if(num_<0) num_=13;
+            name_ = Form("CSVR_%d",num_);
+        }
         int smear(Event*e) override;	
 };
 

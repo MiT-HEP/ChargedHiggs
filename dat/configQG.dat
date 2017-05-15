@@ -74,6 +74,8 @@ pileupLumi=
 # Smearer
 #Smear=JER,JES,@SmearBase
 #Smear=NONE,JER,JES
+MCDB=aux/mcdb.TauNu.2017.dat
+pileup=aux/pileup.TauNu.moriond.root
 Smear=NONE
 Correct=NONE
 #Correct=MetPhiCorrector

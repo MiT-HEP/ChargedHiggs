@@ -23,6 +23,27 @@ int SmearJes::smear(Event *e)
     return SMEAR_OK;
 }
 
+int SmearJesAndCSV::smear(Event *e)
+{
+    if (num_==7 and syst_>0)
+        jes->SetSyst(1);
+    else if (num_==7 and syst_<0)
+        jes->SetSyst(-1);
+    else jes->SetSyst(0);
+    
+    jes->smear(e);
+
+    if (syst_==0)
+        e->GetWeight()->SetSystSF("btag-reweight",0);
+    else if (syst_>0)
+        e->GetWeight()->SetSystSF("btag-reweight",num_);
+    else if (syst_<0)
+        e->GetWeight()->SetSystSF("btag-reweight",num_+1);
+
+    return SMEAR_OK;
+}
+
+
 int SmearJer::smear(Event *e)
 {
     // only on mc

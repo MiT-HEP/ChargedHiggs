@@ -149,6 +149,9 @@ if opts.method=='AsymptoticGrid' and opts.hadd:
 		if opts.onews:
 			datacard= re.sub( ".txt",".root",opts.input.split("/")[-1])
 
+		if not os.path.isfile(datacard): ## try to remove .0
+		    datacard=re.sub('\.0','',datacard)
+
 		if onews >0 : cmd="/bin/true"
 		onews+=1
 		replace= {"dir":opts.dir,"name":"higgs_limitgrid_mass%s_merged.root"%mass,"proto":proto,"datacard":datacard}
@@ -255,6 +258,8 @@ for mass in massList:
 		print "-> Float MH and RVRF are available only in the onews mode"
 		raise ValueError
 
+	if j_chunk != 0 :
+		cmd = "/bin/true"
 
 	if opts.ncore <2:
 		if cmd != "/bin/true":

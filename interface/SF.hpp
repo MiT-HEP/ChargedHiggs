@@ -43,7 +43,7 @@ class SF_Asymm : public SF
     public:
         double errUp,errDown;
         SF_Asymm() :SF() { errUp=0.0; errDown=0.0;}
-        virtual double get() override { if (syst==0 ) return sf; else if (syst>0) return sf + errUp *syst ; else if (syst<0) return sf + errDown * syst ; else return 0.; }
+        double get() override { if (syst==0 ) return sf; else if (syst>0) return sf + errUp *syst ; else if (syst<0) return sf + errDown * syst ; else return 0.; }
         const string name() const override { return "SF_Asymm";}
 };
 
@@ -80,6 +80,7 @@ class SF_PtEta_And_Eff : virtual public SF_PtEta
         double effData_{1.},effMC_{1.},errData_{0},errMC_{0};
 
         bool sqrErr_ {true};
+        bool dataErr_ {true};
 
     public:
         using SF_PtEta::range;
@@ -88,9 +89,9 @@ class SF_PtEta_And_Eff : virtual public SF_PtEta
         virtual void add(double pt1, double pt2 , double eta1, double eta2, double dataEff,double mcEff, double dataErr,double mcErr);
         void set(double pt , double eta) override;
 
-        double getDataEff() const { return effData_;}
+        double getDataEff() const { return effData_ ;}
         double getDataErr() const { return errData_;}
-        double getMCEff() const { return effMC_;}
+        double getMCEff() const { return effMC_ ;}
         double getMCErr() const { return errMC_;}
         
 };

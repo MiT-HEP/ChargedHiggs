@@ -1,0 +1,47 @@
+
+-------------------------------------
+imax *
+jmax *
+kmax *
+-------------------------------------
+shapes data_obs * Hmumu/Bdt/BackgroundModel.root w:dataObs_$CHANNEL
+shapes BKG * Hmumu/Bdt/BackgroundModel.root w:pdf_$CHANNEL_bkg
+shapes ggH * Hmumu/Bdt/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
+shapes qqH * Hmumu/Bdt/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
+shapes * * Hmumu/Bdt/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
+-------------------------------------
+bin         cat4 
+observation  -1  
+------------
+
+bin cat4 cat4 cat4 cat4 cat4 cat4 cat4 
+process BKG ggH qqH WPlusH WMinusH ttH ZH 
+process 1 0 -1 -2 -3 -4 -5 
+rate 1 35867 35867 35867 35867 35867 35867 
+
+------------
+# rate parameters
+hmm rateParam 	    * ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+ggH_13TeV rateParam * ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+vbfH_13TeV rateParam * qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+WminusH_13TeV rateParam * WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+WplusH_13TeV rateParam * WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+ZH_13TeV rateParam * ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+ttH_13TeV rateParam * ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+------------
+
+# fake nuisance to trigger pdfindex
+fake lnN - - - - - - 1.00001
+
+
+pdfindex_cat4  discrete

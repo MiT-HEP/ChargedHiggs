@@ -9,19 +9,37 @@ int QGAnalysis::Rematch(Event *e, Jet *j, float dR){
     //bool isHardestQ = false;
     for (gp = e->GetGenParticle(ig) ; gp != NULL ; gp=e->GetGenParticle(++ig))
     {
-        if  (gp->DeltaR(j) >dR) continue;
         if  ( abs(gp->GetPdgId()) > 6 and abs(gp->GetPdgId()) !=21 ) continue; // only quark and gluons
         if  ( abs(gp->GetPdgId()) ==0  ) continue; 
+
+        Log(__FUNCTION__,"DEBUG",Form("%ld: Considering GP pdg=%d pt=%f eta=%f phi=%f",e->eventNum(), gp->GetPdgId(),gp->Pt(), gp->Eta(),gp->Phi() ) ) ;
+
+        if  (gp->DeltaR(j) >dR) continue;
+        Log(__FUNCTION__,"DEBUG",Form("       -> Passing dR=%f",dR) ) ;
+
 
         //if ( not (gp->GetFlag() & ( BareMonteCarlo::HardProcess | BareMonteCarlo::HardProcessBeforeFSR | BareMonteCarlo::HardProcessDecayed) ) ) continue;
 
         if ( hardestPt <0 or gp->Pt() > hardestPt)
         {
+            Log(__FUNCTION__,"DEBUG",Form("       -> is also hardest than previous %f",hardestPt) ) ;
             jet_pdg = gp->GetPdgId();
             hardestPt = gp->Pt();
         }
 
     }
+    Log(__FUNCTION__,"DEBUG",Form("%ld: Matched jet (%f,%f,%f)->%d",e->eventNum(), j->Pt(),j->Eta(),j->Phi(),jet_pdg) ) ;
+    if (jet_pdg==0)
+    {
+        Log(__FUNCTION__,"DEBUG",Form("%ld: UNMATCHED: Photons=",e->eventNum()) ) ;
+        for(int i=0;i<10;++i)
+        {
+            Photon *p=e->GetPhoton(i);
+            if (p==NULL) break;
+            Log(__FUNCTION__,"DEBUG",Form("            %d) pt=%f eta=%f phi=%f",i,p->Pt(),p->Eta(),p->Phi()) ) ;
+        }
+    }
+
     return jet_pdg;
 
 }
@@ -32,6 +50,8 @@ void QGAnalysis::SetLeptonCuts(Lepton *l){
     l->SetPtCut(25); 
     l->SetIsoRelCut(0.15);
     l->SetEtaCut(2.4);
+    l->SetVetoCut();
+    l->SetMediumCut(true);
 }
 
 void QGAnalysis::SetJetCuts(Jet *j){
@@ -39,7 +59,22 @@ void QGAnalysis::SetJetCuts(Jet *j){
     j->SetEtaCut(4.7); 
     j->SetEtaCutCentral(2.4);
     j->SetPtCut(30);
+    j->SetPuIdCut(-999);
     //j->SetPuIdCut(0.5);
+}
+
+void QGAnalysis::SetTauCuts(Tau *t){ 
+    t->SetPtCut(8000);  // remove taus!!! 
+    t->SetIsoCut(2.5); 
+    t->SetEtaCut(2.1); 
+    t->SetMuRej(true); 
+    t->SetEleRej(true);
+}
+
+void QGAnalysis::SetPhotonCuts(Photon *p){
+    p->SetIsoCut(-1); 
+    p->SetIsoRelCut(.1);  // quite tight 10%
+    p->SetPtCut(20);
 }
 
 void QGAnalysis::Init(){
