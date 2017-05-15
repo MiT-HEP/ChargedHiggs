@@ -21,7 +21,7 @@ h=fIn.Get("HmumuAnalysis/Vars/Mmm_"+cat+"_Data")
 nevents=h.Integral(h.FindBin(110),h.FindBin(150))
 
 #fewz=open("test/bias/FEWZ/h2mu-dsdm-13tev-xs-lux-1jet-nnlo-hp.dat")
-fewz=open("test/bias/FEWZ/h2mu-dsdm-13tev-xs-lux-1jet-nnlo-hp.dat")
+fewz=open("test/bias/FEWZ/h2mu-dsdm-13tev-xs-lux-2jet-nnlo-hp.dat")
 mass=[]
 xsec=[]
 tot=0.
@@ -34,14 +34,12 @@ for l in fewz:
     xsec.append(y)
     tot += y
 
-if mass[-1] <150:
-    mass .append( 150 )
-    xsec .append( (xsec[-2] - xsec[-1]) / (mass[-2]-mass[-1])*(150 - mass[-1]) + xsec[-1] ) 
-if mass[0] > 110:
+m0=109
+if mass[0] > m0:
     massOld=mass[:]
     xsecOld=xsec[:]
-    mass = [ 110 ] + massOld
-    xsec = [ (xsecOld[1] - xsecOld[0]) / (massOld[1]-massOld[0])*(110 - massOld[0]) + xsecOld[0] ] + xsecOld
+    mass = [ m0 ] + massOld
+    xsec = [ (xsecOld[1] - xsecOld[0]) / (massOld[1]-massOld[0])*(m0 - massOld[0]) + xsecOld[0] ] + xsecOld
 
 a_mass=array('f',mass)
 a_xsec=array('f',xsec)

@@ -237,9 +237,18 @@ class HmmConfigAutoCat(HmmConfig):
 
 hmmAutoCat =HmmConfigAutoCat()
 
+class HmmConfigTTH(HmmConfigAutoCat):
+    def __init__(self):
+        HmmConfigAutoCat.__init__(self)
+        self.categories=[ "ttHHadr","ttHLep","ttHHadr2","ttHLep2" ]
+        self.computeVersioning()
+
+hmmTTH =HmmConfigTTH()
+
 if __name__=="__main__":
     hmm.Print()
     hmmAutoCat.Print()
+    hmmTTH.Print()
 
 class Stack:
     ''' This is a soft version of thstack that usually crash'''

@@ -25,7 +25,7 @@ while mypath != "" and mypath != "/":
 print "-> Base Path is " + basepath
 sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
-from hmm import hmm,hmmAutoCat, Stack
+from hmm import *
 systs=['JES','PU']
 #systs=['JES']
 
@@ -50,11 +50,10 @@ if opts.outdir != "":
 config= eval(opts.hmm)
 config.Print()
 categories=config.categories
-##for m in [ "BB","BO","BE","OO","OE","EE" ]:
-##   for v in ["VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
-##      categories.append(v + "_" + m )
 
-#sigMonteCarlos= ["VBF_HToMuMu_M%d","GluGlu_HToMuMu_M%d","ZH_HToMuMu_M%d","WMinusH_HToMuMu_M%d","WPlusH_HToMuMu_M%d","ttH_HToMuMu_M%d"]
+if opts.cat != "all" and opts.cat != "":
+    categories= [opts.cat]
+
 sigMonteCarlos = []
 for proc in config.processes:
 	sigMonteCarlos .append( proc+"_HToMuMu_M%d" )
@@ -223,7 +222,10 @@ if doSig:
         txt.DrawLatex(.73,.90 - 1*d,"Proc="+re.sub("_HToMuMu.*","",mc))
         txt.DrawLatex(.73,.90 - 2*d,"mpv=%.1f GeV"%mpv)
         txt.DrawLatex(.73,.90 - 3*d,"seff=%.1f GeV"%seff)
-        txt.DrawLatex(.73,.90 - 4*d,"FWHM=%.1f GeV"%fwhm)
+        try:
+            txt.DrawLatex(.73,.90 - 4*d,"FWHM=%.1f GeV"%fwhm)
+        except:
+            pass
         txt.DrawLatex(.73,.90 - 5*d,"#varepsilon A=%.1f %%"%(ea*100))
         txt.DrawLatex(.73,.90 - 6*d,"S/B = %.1f %%"%(sob*100))
         c.Modify()
@@ -288,7 +290,11 @@ if doSig:## signal composition plot
     for ic,cat in enumerate(categories):
         S=0.0
         for proc in config.processes:
-            S+=sigYields[(cat,proc)]
+            try:
+                S+=sigYields[(cat,proc)]
+            except KeyError:
+                sigYields[(cat,proc)] =0
+                print "* Ignoring",(cat,proc)
         print " ** Cat=",cat,":",
         for proc in config.processes:
             sigFrac[(cat,proc)] = sigYields[(cat,proc)]/S*100.; #sigYields becomes fractions here!
@@ -347,10 +353,12 @@ if doSig:## signal composition plot
     c.Modify()
     c.Update()
     if opts.outdir=="":
-    	raw_input("ok?")
+        raw_input("ok?")
     else:
-    	c.SaveAs(opts.outdir + "/signal_composition.pdf")
-    	c.SaveAs(opts.outdir + "/signal_composition.png")
+        extra=""
+        if opts.cat !="all" and opts.cat != "": extra ="_"+cat
+        c.SaveAs(opts.outdir + "/signal_composition"+extra+".pdf")
+        c.SaveAs(opts.outdir + "/signal_composition"+extra+".png")
 
 if doSig:## EA plot
     c=ROOT.TCanvas("c_"+cat+"_ea","canvas",800,800)
@@ -375,7 +383,10 @@ if doSig:## EA plot
             E=0.0
             Ntot += (config.xsec(proc,m)*config.br(m) )
             for cat in categories:
-                ea,dea=eaStore[(cat,proc,m)]
+                try:
+                    ea,dea=eaStore[(cat,proc,m)]
+                except KeyError:
+                    ea,dea = 0.,0.
                 #print "m",m,"ea",ea,"dea",dea,"xsec",config.xsec(proc,m),"br",config.br(m)
                 S += ea
                 E += (dea**2)

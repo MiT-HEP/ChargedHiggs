@@ -705,7 +705,7 @@ void HmumuAnalysis::Init(){
             AddFinalHisto("HmumuAnalysis/Vars/Mmm_Count_"+c+"_"+l);
         }
 
-        for(const auto & c : {string("ttHHadr"),string("ttHLep"),string("superPure")})
+        for(const auto & c : {string("ttHHadr"),string("ttHLep"),string("superPure"),string("ttHHadr2"),string("ttHLep2")})
         {
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
         }
@@ -817,18 +817,29 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     // ------------------- DIRTY CATEGORIES for studies
     string categoryDirty=""; // this may double count
-    if (e->Bjets()>0 and e->Njets() >4  )
+    string categoryDirty2=""; // this may double count
+    if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2  )
     {
-        categoryDirty ="ttHHadr"; 
+        categoryDirty ="ttHLep"; 
     }
-    else if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2  )
+    else if (e->Bjets()>0 and e->Njets() >4  )
     {
-        categoryDirty="ttHLep"; 
+        categoryDirty="ttHHadr"; 
     }
-    else if (catType==2 and bdt.size() >1 and bdt[0]>.92)
+    else if (catType==2 and bdt.size() >1 and bdt[0]>.84)
     {
         categoryDirty="superPure";
     }
+
+    if (e->Bjets()>0  and e->Nleps()>2  )
+    {
+        categoryDirty2="ttHLep2"; 
+    }
+    if (e->Bjets()>0 and e->Njets() >5  )
+    {
+        categoryDirty2="ttHHadr2"; 
+    }
+
 
     // ------------------------------------
 
@@ -1098,11 +1109,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
         if (Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
+        if (Unblind(e) and (categoryDirty2=="ttHHadr2") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty2+"_"+ label,systname, mass_,e->weight()) ;
     }
 
     if ( recoMuons and passTrigger and passAsymmPtCuts ) // no Lep Veto for ttH Lep
     {
         if(Unblind(e) and categoryDirty == "ttHLep")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
+        if(Unblind(e) and categoryDirty2 == "ttHLep2")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty2+"_"+ label,systname, mass_,e->weight()) ;
     }
 
 

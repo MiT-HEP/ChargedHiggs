@@ -94,10 +94,16 @@ void Fitter::init(){
             TH1D *h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
 
             if (h == NULL) 
+            {
                 Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]+ Form("mass=%.1f proc=%s",m,proc.c_str()));
-
-            //h->Rebin(5); //FIXME REMOVEME
-
+                nGaussians[pair<int,string>(cat,proc)] = 1;
+                initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] = m;
+                initPars_[Form("c1_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 2.5;
+                ea_y . push_back( 1.e-9 );
+                xSec_x . push_back( m );
+                xSec_y . push_back( 1 );
+                continue;
+            }
 
             // -- Construct RooDataHist
             string name =  Form("%s_cat_%d_mass_%s",proc.c_str(),cat,mass.c_str());
@@ -154,7 +160,8 @@ void Fitter::init(){
             xSec_y . push_back( xsec );
             ea_y . push_back( h->Integral(bin0,bin1)/xsec );
 
-        }
+        } // end mass loop
+
         //xSec_x . clear();
         //xSec_y . clear();
         // -- Construct Normalization Spline 2
@@ -315,7 +322,8 @@ void Fitter::fit(){
             string name =  Form("%s_cat_%d_mass_%s",proc.c_str(), cat,mass.c_str());  
 
             cout <<" *-> name is "<<name<<endl; // DEBUG
-            if (hist_.find(name) == hist_.end() ) cout <<"Unable to find this hist: check names"<<endl;
+            bool foundHist=true;
+            if (hist_.find(name) == hist_.end() ) { foundHist=false;cout <<"Unable to find this hist: check names"<<endl;}
 
             // switch on and off verbosity of roofit/minuit
             int errlevel = -1;
@@ -328,8 +336,10 @@ void Fitter::fit(){
                 warnlevel = 1;
             }
             // -- fit
-            fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
-            fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
+            if (foundHist){
+                fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
+                fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
+            }
 
             // -- print or follow
             if (saveFit) cout <<"Cat="<<cat<<" Proc="<<proc<<" nG="<<nGaussians[pair<int,string>(cat,proc)]<<endl;
@@ -344,7 +354,7 @@ void Fitter::fit(){
             if (plot ) {
                 TCanvas *c = new TCanvas(Form("c_%s_%s_cat%d",mass.c_str(),proc.c_str(),cat),"c");
                 RooPlot *p = x_ -> frame();
-                hist_[ name ] -> plotOn(p,DataError(RooAbsData::SumW2));
+                if (foundHist) hist_[ name ] -> plotOn(p,DataError(RooAbsData::SumW2));
                 fitModel -> plotOn(p);
 
                 if (nGaussians[pair<int,string>(cat,proc)] >=2)

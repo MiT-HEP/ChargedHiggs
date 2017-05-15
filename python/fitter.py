@@ -82,7 +82,7 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
     fitter.PtBins.push_back(8000)
 
 if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
-    from hmm import hmm,hmmAutoCat
+    from hmm import *
     config = eval(opts.hmm)
     config.Print()
     fitter.xmin = config.xmin
