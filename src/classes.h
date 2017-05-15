@@ -13,6 +13,7 @@
 #include "interface/AnalysisGG.hpp"
 #include "interface/AnalysisHmumu.hpp"
 #include "interface/AnalysisQG.hpp"
+#include "interface/AnalysisScikit.hpp"
 #include "interface/BaseFitter.hpp"
 #include "interface/BTagCalibrationStandalone.hpp"
 #include "interface/CatSelector.hpp"

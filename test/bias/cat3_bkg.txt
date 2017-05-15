@@ -1,0 +1,46 @@
+
+-------------------------------------
+imax *
+jmax *
+kmax *
+-------------------------------------
+shapes data_obs * Hmumu/Bdt/BackgroundModel.root w:dataObs_$CHANNEL
+shapes DY * cat3_mc.root w:DY_cat3
+shapes TT * cat3_mc.root w:TT_cat3
+shapes ggH * Hmumu/Bdt/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
+shapes qqH * Hmumu/Bdt/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
+shapes * * Hmumu/Bdt/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
+-------------------------------------
+bin         cat3 
+observation  -1  
+------------
+
+bin     cat3    cat3    cat3    cat3    cat3    cat3    cat3    cat3
+process TT      DY      ggH     qqH     WPlusH  WMinusH ttH     ZH 
+process 2       1       0       -1      -2      -3      -4      -5 
+rate    -1      -1      35867   35867   35867   35867   35867   35867 
+
+------------
+# rate parameters
+hmm rateParam 	    * ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+ggH_13TeV rateParam * ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+vbfH_13TeV rateParam * qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+WminusH_13TeV rateParam * WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+WplusH_13TeV rateParam * WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+ZH_13TeV rateParam * ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+hmm rateParam 	    * ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+ttH_13TeV rateParam * ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+------------
+
+lumi_13TeV lnN  1.02    1.02    1.02    1.02    1.02    1.02    1.02    1.02
+

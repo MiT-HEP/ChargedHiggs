@@ -10,6 +10,8 @@
 #include "TMVA/Tools.h"
 
 class TRandom;
+#include "TPython.h"
+#include <memory>
 
 class HmumuAnalysis: virtual public AnalysisBase
 {
@@ -31,6 +33,7 @@ class HmumuAnalysis: virtual public AnalysisBase
         bool doSync{false};
         int catType{0}; //0 = RunISync, 1=AutoCat, 2=Bdt
         bool doEvenOnly{false}; //signal only even events
+        bool doOddOnly{false}; //signal only even events
 
     private:
         // select cuts
@@ -72,6 +75,17 @@ class HmumuAnalysis: virtual public AnalysisBase
         void AddSpectator( string name, char type);
     public:
         vector<string> weights;
+
+        bool doScikit{true};
+    protected:
+    /**********************************
+     *          SCIKIT                *
+     **********************************/
+        std::unique_ptr<TPython> py;
+        vector<float> x;
+        vector<string> discr;
+        void InitScikit();
+        vector<float> scikit; // like bdt
 
 };
 

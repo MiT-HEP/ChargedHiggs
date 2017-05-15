@@ -5,6 +5,7 @@
 #include "interface/AnalysisBase.hpp"
 #include "interface/GeneralFunctions.hpp"
 #include "interface/AnalysisChargedHiggsTauNu.hpp"
+#include <memory>
 
 // FWD Declaration
 namespace Pythia8{
@@ -33,8 +34,8 @@ class ChargedHiggsEWKPurity:  virtual public ChargedHiggsTauNu
         void SetLeptonCuts(Lepton *l) override { l->SetIsoCut(10); l->SetPtCut(10);l->SetIsoRelCut(-1);l->SetEtaCut(2.4); l->SetTightCut(false);}
 
     private:
-        std::auto_ptr<Pythia8::Pythia> fMasterGen;
-        std::auto_ptr<TRandom> random;
+        std::unique_ptr<Pythia8::Pythia> fMasterGen;
+        std::unique_ptr<TRandom> random;
 };
 
 #endif

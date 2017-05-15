@@ -10,7 +10,8 @@ void SF_CSVReweight::init(){
 void SF_CSVReweight::set(){
     //throw 2; // UPDATE to use the helper and set the right things to call it
     //
-    sf = helper_->getCSVWeight(pt_,eta_,csv_,flavor_,0,csvWgtHF,csvWgtLF,csvWgtCF);
+    //syst= 7 -> JES UP, 8 JES Down, 9 LF UP 10,11/12/HF UP/Down, LF Down, 13/14 Stat1, 15,16 Stat2
+    sf = helper_->getCSVWeight(pt_,eta_,csv_,flavor_,syst,csvWgtHF,csvWgtLF,csvWgtCF);
     errUp= 0.0; // TODO
     errDown= 0.0;
 }

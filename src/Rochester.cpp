@@ -52,12 +52,20 @@ int RochesterCorrections::correct(Event *e){
         }
         double mcSF = 1;
         double u1=gRandom->Rndm(),u2=gRandom->Rndm();
-#warning FIX NL
-        int nl=4; //???
+
+        int nl=15; 
+        if (lep->GetNLayers() >0 ) nl=lep->GetNLayers();
+
         if (mcIdx>=0)
+        {
+            //Log(__FUNCTION__,"DEBUG",Form("-> Correcting MC with: ch=%d pt=%f eta=%f nl=%d u1=%f s=%f m=%f idx=%d",lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),nl,u1,s,m,mcIdx));
+            //Log(__FUNCTION__,"DEBUG",Form("->  -----      and gen: idx=%d pt=%f eta=%f",mcIdx,gen[mcIdx]->Pt(),gen[mcIdx]->Eta()));
             mcSF=corrector_->kScaleFromGenMC(lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, gen[mcIdx]->Pt(), u1, s, m);
+        }
         else
+        {
             mcSF = corrector_->kScaleAndSmearMC(lep->Charge(),lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, u1, u2, s, m);
+        }
         }
 
     }
