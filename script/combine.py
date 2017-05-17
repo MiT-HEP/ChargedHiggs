@@ -36,6 +36,7 @@ parser.add_option("","--rmin",type='float',help="rmin. [%default]",default=-1)
 parser.add_option("","--onews",action='store_true',help="Only one ws. names do not depend on the higgs mass. [%default]",default=False)
 parser.add_option("","--nosyst",action='store_true',help="No Syst.. [%default]",default=False)
 parser.add_option("-M","--method" ,dest='method',type='string',help="Method [%default]",default="Asymptotic")
+parser.add_option("","--options",type='string',help="Extra options to combine [%default]",default='')
 
 
 asym_grid = OptionGroup(parser,"Asymptotic Grid/MultiDimFit options","")
@@ -170,6 +171,7 @@ if opts.method=='AsymptoticGrid' and opts.hadd:
 			combine += " -t -1 --run=expected --expectSignal=0 --expectSignalMass="+str(mass) + " "
 		combine += "--getLimitFromGrid=%(dir)s/%(name)s" %replace
 		#combine += datacard
+		combine += " " + opts.options + " "
 		combine += " -n AsymptoticGrid %(dir)s/%(datacard)s"% replace
 		mv = "mv higgs*AsymptoticGrid* %(dir)s/" % replace
 		print "-> calling",combine
@@ -311,6 +313,7 @@ for mass in massList:
 	if opts.method == "ProfileLikelihood":
 		combine += " --signif --pval "
 
+	combine += " " + opts.options + " "
 	### ADD DATACARD #############
 	combine += datacard
 

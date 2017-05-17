@@ -61,7 +61,7 @@ class HmmConfig():
         for cat in range(0,len(self.categories)):
             for proc in self.processes:
                 if cat==cat0 and proc==proc0:
-                    self.sigfit_scale_unc[cat,proc]=0.1
+                    self.sigfit_scale_unc[cat,proc]=0.001
                     self.sigfit_smear_unc[cat,proc]=0.1
                 else:
                     self.sigfit_scale_unc[cat,proc]=(cat0,proc0)
@@ -240,7 +240,7 @@ hmmAutoCat =HmmConfigAutoCat()
 class HmmConfigTTH(HmmConfigAutoCat):
     def __init__(self):
         HmmConfigAutoCat.__init__(self)
-        self.categories=[ "ttHHadr","ttHLep","ttHHadr2","ttHLep2" ]
+        self.categories=[ "ttHHadr","ttHLep" ]
         self.computeVersioning()
 
 hmmTTH =HmmConfigTTH()
@@ -249,6 +249,84 @@ if __name__=="__main__":
     hmm.Print()
     hmmAutoCat.Print()
     hmmTTH.Print()
+
+import ROOT
+from array import array
+class QuantileMapping:
+    ''' Compute quantile mapping of h-> cumulative fractions'''
+    def __init__(self):
+        self.base_=None
+        self.nbins=20
+        self.xmin=0
+        self.xmax=1
+        self.boundaries=[]
+        self.verbose_=0
+
+    def SetBase(self,base):
+        self.base_=base.Clone(base.GetName() + "_CumulativeDistribution")
+        nbins_orig=self.base_.GetNbinsX()
+        norm= base.Integral(1,nbins_orig)
+        for i in range(0,nbins_orig):
+            self.base_.SetBinContent(i+1, base.Integral(1,i+1) / norm)
+
+        ## compute bin for quantiles
+        self.boundaries=[0] ## bondaries are meant as (i,i+1]
+        n=1
+        for i in range(0,nbins_orig):
+            ibin=i+1
+            if self.base_.GetBinContent(ibin) >= float(n)/self.nbins or ibin==nbins_orig:
+                self.boundaries.append(ibin)
+                n+=1
+        ##
+        if self.verbose_:
+            print " --------- QUANTILE MAPPING DEBUG ----------"
+            print "nbins=",self.nbins
+            print "nbins_orig=",nbins_orig
+            print "xmin=",self.xmin
+            print "xmax=",self.xmax
+            print "Boundaries: 0 ",
+            for i in range(0,self.nbins):
+                print self.boundaries[i+1],
+            print
+            print "NOMINAL   : X ",
+            for i in range(0,self.nbins):
+                print "%.2f"% ( 1./self.nbins),
+            print
+            print "CD        : X ",
+            for i in range(0,self.nbins):
+                print self.base_.GetBinContent(self.boundaries[i+1]),
+            print
+            print "INTEGRAL  : X ",
+            for i in range(0,self.nbins):
+                print base.Integral(self.boundaries[i] +1, self.boundaries[i+1]),
+            print
+            for i in range(0,self.nbins):
+                if self.boundaries[i] +1 > self.boundaries[i+1]: print "ERROR in boundaries:",self.boundaries[i], self.boundaries[i+1]
+            print " -------------------------------------------"
+        ## exit
+        return self
+
+    def ConvertHist(self,h ):
+        r = ROOT.TH1D( h.GetName() +"_QM",h.GetTitle(),self.nbins,self.xmin,self.xmax)
+        for i in range(0,self.nbins):
+            ibin=i+1
+            #r.SetBinContent(ibin ,h.Integral( self.boundaries[i] +1 , self.boundaries[i+1] ))
+            err=array('d',[0.])
+            value=h.IntegralAndError(self.boundaries[i] +1 , self.boundaries[i+1],err)
+            r.SetBinContent(ibin ,value)
+            r.SetBinError(ibin ,err[0])
+        for att in ['MarkerColor','LineColor','MarkerStyle','LineStyle','LineWidth','FillColor','FillStyle' ]:
+            exec( "r.Set" + att +"( h.Get" + att+ "() )" )
+        # axis attributes
+        for att in ['Title','TitleOffset','TitleFont','TitleSize','LabelFont','LabelSize' ]:
+            exec( "r.GetXaxis().Set" + att +"( h.GetXaxis().Get" + att+ "() )" )
+            exec( "r.GetYaxis().Set" + att +"( h.GetYaxis().Get" + att+ "() )" )
+        r.GetXaxis().SetRangeUser(0.0001,1-0.0001)
+        return r
+
+    def Apply( self,h):
+        return self.ConvertHist(h)
+
 
 class Stack:
     ''' This is a soft version of thstack that usually crash'''
@@ -277,6 +355,12 @@ class Stack:
     def Delete(self):
         for h in self.hists_: h.Delete()
         self.hists_=[]
+
+    def Remap(self,qm):
+        hists2=[]
+        for h in self.hists_:
+            hists2.append(qm.Apply(h) )
+        self.hists_ = hists2[:]
 
     def Print(self):
         print "------",self.name_,"-----------"

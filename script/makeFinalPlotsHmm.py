@@ -11,6 +11,7 @@ parser.add_option("-v","--var",dest='var',type="string",help="variable [%default
 parser.add_option("-c","--cat",dest='cat',type="string",help="do cat xxx for bkg [%default]",default="all")
 parser.add_option("","--noSig",dest='noSig',action="store_true",help="don't do sig plots [%default]",default=False)
 parser.add_option("","--noBkg",dest='noBkg',action="store_true",help="don't do bkg plots [%default]",default=False)
+parser.add_option("","--doRemap",dest='doRemap',action="store_true",help="remap bkg plots in cumulative sig [%default]",default=False)
 parser.add_option("-o","--outdir",dest='outdir',type="string",help="output directory [%default]",default="Hmumu")
 parser.add_option("-x","--xrange",dest='xrange',type="string",help="xrange [%default]",default="60,150")
 parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
@@ -29,8 +30,8 @@ from hmm import *
 systs=['JES','PU']
 #systs=['JES']
 
-#extra = OptionGroup(parser,"Extra options:","")
-#extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=1)
+extra = OptionGroup(parser,"Extra options:","")
+extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=10)
 opts,args= parser.parse_args()
 
 ########### IMPORT ROOT #############
@@ -470,7 +471,7 @@ if doSig:## EA plot
     	c.SaveAs(opts.outdir + "/effAcc.pdf")
     	c.SaveAs(opts.outdir + "/effAcc.png")
 
-rebin=10
+rebin=opts.rebin
 doBkg=not opts.noBkg
 if doBkg:
   if opts.cat == "all":
@@ -500,6 +501,8 @@ if doBkg:
     garbage.extend([c,pup,pdown])
 
     leg = ROOT.TLegend(.68,.65,.92,.85)
+    if opts.cat =="":
+        leg = ROOT.TLegend(.68,.70,.92,.93)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     ## column in the right order
@@ -652,13 +655,32 @@ if doBkg:
         h.Scale(config.lumi())
         h.Scale(xsec*br)
         sig.Add(h)
+
     ## end mc loop
+    if opts.doRemap:
+        qm = QuantileMapping()
+        qm.nbins=25
+        qm.SetBase(sig.GetHist() )
+        sig.Remap(qm)
+        bkg.Remap(qm)
+        for x in b_systs_up: x.Remap(qm)
+        for x in b_systs_down: x.Remap(qm)
+        hdata = qm.Apply(hdata)
+        mcAll = qm.Apply(mcAll)
+    ##
     c.cd()
     pup.cd()
     #bkg.Draw("HIST") THSTack
     dummy = bkg.GetHist()
     dummy.Draw("AXIS")
     dummy.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
+
+    if 'BdtOnH' in opts.var:
+        dummy.GetXaxis().SetTitle("BDT Output")
+
+    if 'BdtOnH' in opts.var and opts.doRemap:
+        dummy.GetXaxis().SetTitle("BDT Quantile")
+
     dummy.GetXaxis().SetTitleOffset(2.0)
     dummy.GetYaxis().SetTitle("Events")
     dummy.GetYaxis().SetTitleOffset(2.0)
@@ -694,7 +716,8 @@ if doBkg:
     txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
     txt.SetTextSize(20)
     txt.SetTextAlign(11)
-    txt.DrawLatex(.73,.90,"#bf{Cat="+re.sub('_','',cat)+"}")
+    if cat != "":
+        txt.DrawLatex(.73,.90,"#bf{Cat="+re.sub('_','',cat)+"}")
 
     # prepare err
     errAll = mcAll.Clone("errAll") ## with stat uncertainties
@@ -791,7 +814,8 @@ if doBkg:
             errAll.SetBinError(ibin+1,0.5+up)
             
     errAll.Draw("E2 SAME")
-    r.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
+    #r.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
+    r.GetXaxis().SetTitle(dummy.GetXaxis().GetTitle())
     r.GetXaxis().SetTitleOffset(1.2)
     r.GetYaxis().SetTitle("Events")
     r.GetYaxis().SetTitleOffset(2.0)
@@ -825,12 +849,14 @@ if doBkg:
     if opts.outdir=="":
         raw_input("ok?")
     else:
+        extra = ""
+        if opts.doRemap: extra += "_QM"
         if cat != "":
-            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + "_bkg" + ".pdf")
-            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + "_bkg" + ".png")
+            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + extra+ "_bkg" + ".pdf")
+            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + extra+ "_bkg" + ".png")
         else:
-            c.SaveAs(opts.outdir + "/" + opts.var + "_bkg" + ".pdf")
-            c.SaveAs(opts.outdir + "/" + opts.var + "_bkg" + ".png")
+            c.SaveAs(opts.outdir + "/" + opts.var +extra+ "_bkg" + ".pdf")
+            c.SaveAs(opts.outdir + "/" + opts.var +extra+ "_bkg" + ".png")
     #try to clean
     for g in garbage:
         g.Delete()
