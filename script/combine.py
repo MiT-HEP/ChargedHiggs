@@ -92,7 +92,10 @@ call("mkdir -p %s"%opts.dir,shell=True)
 cmdFile = open("%s/cmdFile.sh"%opts.dir,"w")
 #write args in cmdFile
 cmdFile.write("### Automatically created by: combine.py\n")
-cmdFile.write("### Args: " + ' '.join(sys.argv) + "\n")
+argList= sys.argv[:]
+for idx,x in enumerate(argList):
+    if ' ' in x: argList[idx]='"' + x + '"'
+cmdFile.write("### Args: " + ' '.join(argList) + "\n")
 
 iJob = -1
 

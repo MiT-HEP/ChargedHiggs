@@ -658,6 +658,7 @@ if doBkg:
 
     ## end mc loop
     lines=[]
+    values=[]
     if 'BdtOnH' in opts.var:
         for x in [-.4,0.05,.25,.40,.65,.73]:
             l = ROOT.TLine(x,1.e-2,x,1e5)
@@ -665,6 +666,7 @@ if doBkg:
             l.SetLineColor(ROOT.kGray+2)
             l.SetLineStyle(7)
             lines.append(l)
+            #values.append(x)
 
     if opts.doRemap:
         qm = QuantileMapping()
@@ -677,6 +679,7 @@ if doBkg:
         hdata = qm.Apply(hdata)
         mcAll = qm.Apply(mcAll)
         lines=[]
+        values=[]
         if 'BdtOnH' in opts.var:
             for x0 in [-.4,0.05,.25,.40,.65,.73]:
                 x=qm.ConvertPoint(x0)
@@ -686,6 +689,7 @@ if doBkg:
                 l.SetLineColor(ROOT.kGray+2)
                 #l.SetLineStyle(7)
                 lines.append(l)
+                values.append(x)
 
     ##
     c.cd()
@@ -705,7 +709,7 @@ if doBkg:
     dummy.GetYaxis().SetTitle("Events")
     dummy.GetYaxis().SetTitleOffset(2.0)
     dummy.GetXaxis().SetRangeUser( float(opts.xrange.split(',')[0]),float(opts.xrange.split(',')[1]))
-    dummy.GetYaxis().SetRangeUser(1.e-1,dummy.GetMaximum()*10)
+    dummy.GetYaxis().SetRangeUser(1.05e-1,dummy.GetMaximum()*10)
 
     dummy.GetYaxis().SetLabelFont(43)
     dummy.GetXaxis().SetLabelFont(43)
@@ -743,6 +747,7 @@ if doBkg:
     if cat != "":
         txt.DrawLatex(.73,.90,"#bf{Cat="+re.sub('_','',cat)+"}")
 
+
     # prepare err
     errAll = mcAll.Clone("errAll") ## with stat uncertainties
     for ibin in range(0,mcAll.GetNbinsX()):
@@ -779,6 +784,16 @@ if doBkg:
     r.Divide(mcAll)
     r.Draw("AXIS")
     r.Draw("AXIS X+ Y+ SAME")
+
+    txt.SetTextSize(16)
+    txt.SetTextAlign(23)
+    txt.SetTextColor(ROOT.kGray+2)
+    txt.SetNDC(False)
+    for x in values:
+        x0=x
+        if x0> .9 and x0 <.92: x0 =.9
+        if x0> .93 : x0 =.97
+        txt.DrawLatex(x0,1.45,"%.0f%%"%(x*100))
 
     for idx,s in enumerate(systs):
         try:
@@ -856,6 +871,19 @@ if doBkg:
     r.GetYaxis().SetTitleSize(24)
     r.GetXaxis().SetTitleSize(24)
     r.GetYaxis().SetNdivisions(502)
+
+    txt.SetTextColor(ROOT.kBlack)
+    txt.SetTextFont(43)
+    txt.SetTextSize(20)
+    txt.SetNDC(True)
+    r.GetYaxis().SetLabelSize(0)
+    txt.SetTextAlign(31)
+    #pdown.SetBottomMargin(0.50)
+    txt.DrawLatex(.145,.50,"0.5")
+    txt.SetTextAlign(32)
+    txt.DrawLatex(.145,.75,"1.0")
+    txt.SetTextAlign(33)
+    txt.DrawLatex(.145,.99,"1.5")
 
     g=ROOT.TGraph()
     g.SetName("1"+cat)

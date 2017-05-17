@@ -1005,7 +1005,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Lepton *el= e->GetElectron(i);
             if (el == NULL) break;
             //if (el->Pt() >15) passLeptonVeto=false; // FIXME 10 ?!?
-            #warning ABSURD_ELE_VETO
+            //#warning ABSURD_ELE_VETO
             //|eta| < 1.4442 || 1.566 <|eta| <2.5 
             // DR with muon 
             if (el->Pt() >10 and 
