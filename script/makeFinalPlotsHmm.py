@@ -657,6 +657,15 @@ if doBkg:
         sig.Add(h)
 
     ## end mc loop
+    lines=[]
+    if 'BdtOnH' in opts.var:
+        for x in [-.4,0.05,.25,.40,.65,.73]:
+            l = ROOT.TLine(x,1.e-2,x,1e5)
+            l.SetLineWidth(2)
+            l.SetLineColor(ROOT.kGray+2)
+            l.SetLineStyle(7)
+            lines.append(l)
+
     if opts.doRemap:
         qm = QuantileMapping()
         qm.nbins=25
@@ -667,6 +676,17 @@ if doBkg:
         for x in b_systs_down: x.Remap(qm)
         hdata = qm.Apply(hdata)
         mcAll = qm.Apply(mcAll)
+        lines=[]
+        if 'BdtOnH' in opts.var:
+            for x0 in [-.4,0.05,.25,.40,.65,.73]:
+                x=qm.ConvertPoint(x0)
+                print "x=",x,"<- x0=",x0
+                l = ROOT.TLine(x,1e-2,x,1e4)
+                l.SetLineWidth(2)
+                l.SetLineColor(ROOT.kGray+2)
+                #l.SetLineStyle(7)
+                lines.append(l)
+
     ##
     c.cd()
     pup.cd()
@@ -700,6 +720,10 @@ if doBkg:
     #color=38
     sig.Draw("HIST SAME")
     sig.Print()
+
+    for l in lines:
+        l.Draw("L SAME")
+
     hdata.Draw("P E X0 SAME")
 
     dummy.Draw("AXIS X+ Y+ SAME")

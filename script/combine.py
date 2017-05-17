@@ -210,7 +210,8 @@ for mass in massList:
 	sh.write('#!/bin/bash\n')
 	sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/" \n'%(os.environ['USER']))
 	sh.write('rm -v $WORKDIR/higgs*root\n')  ## make sure there is no residual in the WORKDIR
-	sh.write('cd %s\n'%(os.getcwd() ) )
+	#sh.write('cd %s\n'%(os.getcwd() ) )
+	sh.write('cd %s\n'%(os.environ['PWD'] ) ) ## difference is with symlink
 	sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
 
 	#print " WORK-AROUND COMBINE: FIXME!!! "

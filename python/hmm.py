@@ -324,6 +324,10 @@ class QuantileMapping:
         r.GetXaxis().SetRangeUser(0.0001,1-0.0001)
         return r
 
+    def ConvertPoint(self,val):
+        b= self.base_.FindBin(val)
+        return self.base_.GetBinContent(b)
+
     def Apply( self,h):
         return self.ConvertHist(h)
 
