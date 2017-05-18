@@ -825,7 +825,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     {
         categoryDirty="ttHHadr"; 
     }
-    else if ( nbloose >0  and e->Njets() >1  and e->Nleps()>2  )
+    
+    //if ( nbloose >0  and e->Njets() >1  and e->Nleps()>2  )
+    if ( e->Bjets() >0  and e->Njets() >1  and e->Nleps()>2  )
     {
         categoryDirty ="ttHLep"; 
     }
@@ -842,7 +844,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     else if (catType==3) { 
         category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt()); 
         if (e->Bjets()>0 and e->Njets() >4) category = "cat13";  // ttHHadr
-        else if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat14";  // veto Njets> 4
+        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat14";  // veto Njets> 4
     } 
     else category = Category(mu0, mu1, selectedJets);
 
@@ -1113,14 +1115,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
-        if (Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
-    }
-
-    if ( recoMuons and passTrigger and passAsymmPtCuts ) // no Lep Veto for ttH Lep
-    {
+        if(Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and categoryDirty == "ttHLep")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
     }
-
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
     return 0;

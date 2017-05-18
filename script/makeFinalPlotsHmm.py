@@ -78,13 +78,13 @@ def MpvAndSigmaEff(h, q=0.68):
     high=h.GetBinCenter(h.GetNbinsX())
 
     ## FIXME FAST
-    for ibin in range(0,h.GetNbinsX()):
-        for jbin in range(ibin+1,h.GetNbinsX()):
-            if h.Integral(ibin+1,jbin+1)> q *s:
-                if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
-                    low = h.GetBinCenter(ibin+1)
-                    high=h.GetBinCenter(jbin+1)
-                #break ## j -loop can end here
+    ## for ibin in range(0,h.GetNbinsX()):
+    ##     for jbin in range(ibin+1,h.GetNbinsX()):
+    ##         if h.Integral(ibin+1,jbin+1)> q *s:
+    ##             if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
+    ##                 low = h.GetBinCenter(ibin+1)
+    ##                 high=h.GetBinCenter(jbin+1)
+    ##             #break ## j -loop can end here
 
     ## FWHM
     hm = h.GetMaximum()*0.5;
