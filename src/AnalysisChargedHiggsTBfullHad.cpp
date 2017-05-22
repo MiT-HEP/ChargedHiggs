@@ -851,20 +851,25 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
     jetPlot(e, label, category, systname,"Baseline");
 
 
-    /*
-    for(int i=0;i!=e->NFatJets();++i) {
-        FatJet* j = e->GetFatJet(i);
-        std::cout << " Pt()= " << j->Pt();
-        std::cout << " Tau1()= " << j->Tau1();
-        std::cout << " Tau2()= " << j->Tau2();
-        std::cout << " Tau3()= " << j->Tau3();
-        std::cout << " SDMass()= " << j->SDMass();
-        std::cout << " CorrPrunedMass()= " << j->CorrPrunedMass() << endl;
-        std::cout << " subjet_btag= " << j->SubjetBTag()  << endl;
-    }
+    if(e->Wjets()>0 || e->Topjets()>0) {
 
-    cout << "NW jets = " << e->Wjets() << endl;
-    */
+        cout << "=======================================" << endl;
+        cout << "N(W) jets = " << e->Wjets() << endl;
+        cout << "N(TOP) jets = " << e->Topjets() << endl;
+
+        for(int i=0;i!=e->NFatJets();++i) {
+            FatJet* j = e->GetFatJet(i);
+            std::cout << " Pt()= " << j->Pt();
+            std::cout << " Tau1()= " << j->Tau1();
+            std::cout << " Tau2()= " << j->Tau2();
+            std::cout << " Tau3()= " << j->Tau3();
+            std::cout << " SDMass()= " << j->SDMass();
+            std::cout << " CorrPrunedMass()= " << j->CorrPrunedMass() << endl;
+            std::cout << " subjet_btag= " << j->IsSubjetBTag()   << endl;
+            std::cout << " is TOP jet = " << j->IsTopJet()   << endl;
+            std::cout << " is W jet = " << j->IsWJet()   << endl;
+        }
+    }
 
     // ////////
     // ////

@@ -29,6 +29,7 @@ fatjetAK8CHSnSubjets
 fatjetAK8CHSSoftdropMass
 fatjetAK8CHSCorrectedPrunedMass
 fatjetAK8CHSsubjet_btag
+fatjetAK8CHSfirstSubjet
 ### Leptons
 lepP4
 lepIso
