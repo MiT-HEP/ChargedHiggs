@@ -89,7 +89,9 @@ double PdfModelBuilder::getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooD
     //    data->plotOn(plot_chi2,Name("data"),Invisible());
     //}
     //else
-    data->plotOn(plot_chi2,Name("data"),RooFit::Binning(10));
+    float xmin=obs_var->getMin();
+    float xmax=obs_var->getMax();
+    data->plotOn(plot_chi2,Name("data"),RooFit::Binning(160,xmin,xmax));
 
     pdf->plotOn(plot_chi2,Name("pdf"));
     int np = pdf->getParameters(*data)->getSize();
@@ -99,7 +101,7 @@ double PdfModelBuilder::getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooD
 
     // The first thing is to check if the number of entries in any bin is < 5 
     // if so, we don't rely on asymptotic approximations
-    int nBinsForMass = data->numEntries()/10;
+    int nBinsForMass = data->numEntries(); // nentries = nbins
 
     if ((double)data->sumEntries()/nBinsForMass < 5 ){
 
@@ -156,7 +158,8 @@ double PdfModelBuilder::getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooD
     std::cout << "Chi2 in Observed =  " << chi2*(nBinsForMass-np) << std::endl;
     std::cout << "p-value  =  " << prob << std::endl;
     delete pdf;
-    return prob;
+    //return prob;
+    return chi2;
 }
 
 RooAbsPdf* PdfModelBuilder::getZModExp(string prefix, int order){
@@ -1028,18 +1031,18 @@ void BackgroundFitter::fit(){
             leg->AddEntry(datLeg,Form("Data - cat%d",cat),"LEP");
 
             //chi2=modelBuilder.getGoodnessOfFit(x_, bern, hist_[name], plotDir +"/bern/chosen",blind);
-            plotOnFrame( p, bern, kBlue, kSolid,Form("bern ord=%d prob=%.2f",bernOrd, modelBuilder.getGoodnessOfFit(x_, bern, hist_[name], plotDir +"/bern/chosen",blind) ),leg);
+            plotOnFrame( p, bern, kBlue, kSolid,Form("bern ord=%d chi2=%.2f",bernOrd, modelBuilder.getGoodnessOfFit(x_, bern, hist_[name], plotDir +"/bern/chosen",blind) ),leg);
             //if (dybern != NULL)
-            //    plotOnFrame( p, dybern, kGray+2, kDashed,Form("dybern ord=%d prob=%.2f",dybernOrd,modelBuilder.getGoodnessOfFit(x_, dybern, hist_[name], plotDir +"/dybern/chosen",blind) ),leg);
-            plotOnFrame( p, zpho, kOrange, kSolid,Form("zpho ord=%d prob=%.2f",zphoOrd,modelBuilder.getGoodnessOfFit(x_, zpho, hist_[name], plotDir +"/zpho/chosen",blind) ),leg);
-            plotOnFrame( p, zmod, kRed+2, kDashed,Form("zmod ord=%d prob=%.2f",zmodOrd,modelBuilder.getGoodnessOfFit(x_, zmod, hist_[name], plotDir +"/zmod/chosen",blind) ),leg);
-            plotOnFrame( p, bwz, kCyan, kSolid,Form("bwz ord=%d prob=%.2f",bwzOrd,modelBuilder.getGoodnessOfFit(x_, bwz, hist_[name], plotDir +"/bwz/chosen",blind) ),leg);
-            plotOnFrame( p, powlaw, kRed, kSolid,Form("powlaw ord=%d prob=%.2f",powlawOrd,modelBuilder.getGoodnessOfFit(x_, powlaw, hist_[name], plotDir +"/powlaw/chosen",blind) ),leg);
-            plotOnFrame( p, exp, kGreen, kSolid,Form("exp ord=%d prob=%.2f",expOrd,modelBuilder.getGoodnessOfFit(x_, exp, hist_[name], plotDir +"/exp/chosen",blind) ),leg);
-            plotOnFrame( p, lau, kMagenta, kSolid,Form("lau ord=%d prob=%.2f",lauOrd,modelBuilder.getGoodnessOfFit(x_, lau, hist_[name], plotDir +"/lau/chosen",blind) ),leg);
-            plotOnFrame( p, fewz_1j, kGreen+2, kSolid,Form("fewz_1j ord=%d prob=%.2f",fewz_1jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_1j, hist_[name], plotDir +"/fewz_1j/chosen",blind) ),leg);
-            plotOnFrame( p, fewz_2j, kMagenta+2, kDashed,Form("fewz_2j ord=%d prob=%.2f",fewz_2jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_2j, hist_[name], plotDir +"/fewz_2j/chosen",blind) ),leg);
-            plotOnFrame( p, fewz_full, kCyan+2, kSolid,Form("fewz_full ord=%d prob=%.2f",fewz_fullOrd, modelBuilder.getGoodnessOfFit(x_, fewz_full, hist_[name], plotDir +"/fewz_full/chosen",blind) ),leg);
+            //    plotOnFrame( p, dybern, kGray+2, kDashed,Form("dybern ord=%d chi2=%.2f",dybernOrd,modelBuilder.getGoodnessOfFit(x_, dybern, hist_[name], plotDir +"/dybern/chosen",blind) ),leg);
+            plotOnFrame( p, zpho, kOrange, kSolid,Form("zpho ord=%d chi2=%.2f",zphoOrd,modelBuilder.getGoodnessOfFit(x_, zpho, hist_[name], plotDir +"/zpho/chosen",blind) ),leg);
+            plotOnFrame( p, zmod, kRed+2, kDashed,Form("zmod ord=%d chi2=%.2f",zmodOrd,modelBuilder.getGoodnessOfFit(x_, zmod, hist_[name], plotDir +"/zmod/chosen",blind) ),leg);
+            plotOnFrame( p, bwz, kCyan, kSolid,Form("bwz ord=%d chi2=%.2f",bwzOrd,modelBuilder.getGoodnessOfFit(x_, bwz, hist_[name], plotDir +"/bwz/chosen",blind) ),leg);
+            plotOnFrame( p, powlaw, kRed, kSolid,Form("powlaw ord=%d chi2=%.2f",powlawOrd,modelBuilder.getGoodnessOfFit(x_, powlaw, hist_[name], plotDir +"/powlaw/chosen",blind) ),leg);
+            plotOnFrame( p, exp, kGreen, kSolid,Form("exp ord=%d chi2=%.2f",expOrd,modelBuilder.getGoodnessOfFit(x_, exp, hist_[name], plotDir +"/exp/chosen",blind) ),leg);
+            plotOnFrame( p, lau, kMagenta, kSolid,Form("lau ord=%d chi2=%.2f",lauOrd,modelBuilder.getGoodnessOfFit(x_, lau, hist_[name], plotDir +"/lau/chosen",blind) ),leg);
+            plotOnFrame( p, fewz_1j, kGreen+2, kSolid,Form("fewz_1j ord=%d chi2=%.2f",fewz_1jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_1j, hist_[name], plotDir +"/fewz_1j/chosen",blind) ),leg);
+            plotOnFrame( p, fewz_2j, kMagenta+2, kDashed,Form("fewz_2j ord=%d chi2=%.2f",fewz_2jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_2j, hist_[name], plotDir +"/fewz_2j/chosen",blind) ),leg);
+            plotOnFrame( p, fewz_full, kCyan+2, kSolid,Form("fewz_full ord=%d chi2=%.2f",fewz_fullOrd, modelBuilder.getGoodnessOfFit(x_, fewz_full, hist_[name], plotDir +"/fewz_full/chosen",blind) ),leg);
 
     
             p -> Draw();
