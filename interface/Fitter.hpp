@@ -100,6 +100,7 @@ class Fitter : virtual public BaseFitter{
 
     //vector<int> nGaussians;
     map< pair<int,string>, int > nGaussians;
+    void SetGaussians(int cat, const string& proc, int nG ) { nGaussians[pair<int,string>(cat,proc) ] = nG;} // easy access with pyroot
     vector<string> processes;
 
     map< pair<int,string>, float>  scaleUnc;
@@ -107,8 +108,13 @@ class Fitter : virtual public BaseFitter{
     map< pair<int,string>, float>  smearUnc;
     map< pair<int,string>, pair<int,string> >  smearCorr;
 
-    void SetGaussians(int cat, const string& proc, int nG ) { nGaussians[pair<int,string>(cat,proc) ] = nG;}
+    void SetScaleUnc(int cat, const string& proc, float value ) { scaleUnc[pair<int,string>(cat,proc) ] = value;} // easy access with pyroot
+    void SetScaleUncCorr(int cat, const string& proc, int cat2, const string&proc2 ) { scaleCorr[pair<int,string>(cat,proc) ] = pair<int,string>(cat2,proc2);} // easy access with pyroot
+    void SetSmearUnc(int cat, const string& proc, float value ) { smearUnc[pair<int,string>(cat,proc) ] = value;} // easy access with pyroot
+    void SetSmearUncCorr(int cat, const string& proc, int cat2, const string&proc2 ) { smearCorr[pair<int,string>(cat,proc) ] = pair<int,string>(cat2,proc2);} // easy access with pyroot
+
     RooAbsReal* getMeanWithSyst(int cat, string proc,int gaus);
+    RooAbsReal* getSigmaWithSyst(int cat, string proc,int gaus);
 };
 
 

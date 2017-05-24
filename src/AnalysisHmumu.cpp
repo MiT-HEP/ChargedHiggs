@@ -1,7 +1,14 @@
 #include "interface/AnalysisHmumu.hpp"
 #include "TRandom3.h"
+#include "TStopwatch.h"
+#include "Python.h"
 
 #define VERBOSE 0
+
+//#define SCIKIT_TIMING
+#ifdef SCIKIT_TIMING
+    #warning SCIKIT_TIMING dont use for submission
+#endif
 
 //#warning Hmumu ANALYSIS NON ISO
 
@@ -84,6 +91,8 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
         SetTreeVar("njets",jets.size());
         SetTreeVar("mass",Hmm.M());
         SetTreeVar("Hpt" ,Hmm.Pt());
+        SetTreeVar("Heta" ,Hmm.Eta());
+        SetTreeVar("Hphi" ,Hmm.Phi());
         for(int ijet=0;ijet<jets.size();++ijet)
         {
             SetTreeVar("jet_pt" ,ijet,jets[ijet]->Pt());
@@ -206,6 +215,7 @@ string HmumuAnalysis::CategoryAutoCat(Lepton*mu0, Lepton*mu1, const vector<Jet*>
         SetTreeVar("njets",jets.size());
         SetTreeVar("mass",Hmm.M());
         SetTreeVar("Hpt" ,Hmm.Pt());
+        SetTreeVar("met" ,met);
         for(int ijet=0;ijet<jets.size();++ijet)
         {
             SetTreeVar("jet_pt" ,ijet,jets[ijet]->Pt());
@@ -293,6 +303,7 @@ string HmumuAnalysis::CategoryAutoCat(Lepton*mu0, Lepton*mu1, const vector<Jet*>
 }
 
 string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets,float met){
+    bdt.clear();
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryBdt");
     // return the right category
     if (mu0== NULL or mu1==NULL) return "";
@@ -357,6 +368,33 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     SetVariable("dijet2_abs_dEta",mjj_detajj[1].second);    
     //SetVariable("dijet3_abs_dEta",mjj_detajj[2].second);    
     //SetVariable("dijet4_abs_dEta",mjj_detajj[3].second);    
+    //
+    if (doSync){
+        SetTreeVar("pt1",mu0->Pt());
+        SetTreeVar("pt2",mu1->Pt());
+        SetTreeVar("eta1",mu0->Eta());
+        SetTreeVar("eta2",mu1->Eta());
+        SetTreeVar("phi1",mu0->Phi());
+        SetTreeVar("phi2",mu1->Phi());
+        SetTreeVar("njets",jets.size());
+        SetTreeVar("mass",Hmm.M());
+        SetTreeVar("Hpt" ,Hmm.Pt());
+        SetTreeVar("Heta" ,Hmm.Eta());
+        SetTreeVar("Hphi" ,Hmm.Phi());
+        SetTreeVar("deltaeta",fabs(mu0->Eta()-mu1->Eta()));    
+        SetTreeVar("deltaphi",fabs(mu0->DeltaPhi(*mu1)));
+        SetTreeVar("met" ,met);
+        for(int ijet=0;ijet<jets.size();++ijet)
+        {
+            SetTreeVar("jet_pt" ,ijet,jets[ijet]->Pt());
+            SetTreeVar("jet_eta",ijet,jets[ijet]->Eta());
+            SetTreeVar("jet_phi",ijet,jets[ijet]->Phi());
+        }
+        SetTreeVar("mjj_1",mjj_detajj[0].first);
+        SetTreeVar("mjj_2",mjj_detajj[1].first);
+        SetTreeVar("detajj_1",mjj_detajj[0].second);
+        SetTreeVar("detajj_2",mjj_detajj[1].second);
+    }
 
     int nbjets=0;
     int ncentjets=0;
@@ -375,6 +413,11 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     {
          bdt.push_back(readers_[i]->EvaluateMVA("BDTG_default") );
     }
+    if (doSync)
+    {
+        SetTreeVar("bdt",bdt[0]);
+        SetTreeVar("nbjets",nbjets);
+    }
 
 
     int icat=-100; string catStr="";
@@ -382,27 +425,101 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     float mu_max_eta = std::max(fabs(mu0->Eta()),fabs(mu1->Eta()));
     float mu_ave_eta = (fabs(mu0->Eta())+fabs(mu1->Eta()))/2.;
 
-    if ( mu_ave_eta >= 1.954 and bdt[0] >= 0.727 ) icat = 0 ;
-    if ( bdt[0] < -0.399 ) icat = 1 ;
-    if ( bdt[0] >= 0.246 and bdt[0] < 0.395 and mu_max_eta >= 1.902 ) icat = 2 ;
-    if ( bdt[0] >= -0.399 and bdt[0] < 0.051 and mu_max_eta >= 1.965 ) icat = 3 ;
-    if ( bdt[0] < 0.645 and bdt[0] >= 0.395 and mu_max_eta >= 1.787 ) icat = 4 ;
-    if ( bdt[0] >= -0.399 and bdt[0] < -0.115 and mu_max_eta < 1.965 ) icat = 5 ;
-    if ( bdt[0] >= -0.115 and bdt[0] < 0.051 and mu_max_eta < 1.965 ) icat = 6 ;
-    if ( bdt[0] >= 0.051 and bdt[0] < 0.261 and mu_max_eta < 0.915 ) icat = 7 ;
-    if ( mu_max_eta < 1.787 and bdt[0] < 0.527 and bdt[0] >= 0.395 and mu_max_eta >= 0.917 ) icat = 8 ;
-    if ( mu_max_eta < 1.787 and bdt[0] < 0.645 and bdt[0] >= 0.527 and mu_max_eta >= 0.917 ) icat = 9 ;
-    if ( bdt[0] >= 0.261 and bdt[0] < 0.395 and mu_max_eta < 0.915 ) icat = 10 ;
-    if ( mu_max_eta < 1.902 and bdt[0] >= 0.246 and bdt[0] < 0.395 and mu_max_eta >= 0.915 ) icat = 11 ;
-    if ( bdt[0] >= 0.051 and bdt[0] < 0.246 and mu_max_eta >= 0.915 ) icat = 12 ;
-    if ( bdt[0] < 0.727 and bdt[0] >= 0.645 ) icat = 13 ;
-    if ( bdt[0] < 0.645 and bdt[0] >= 0.395 and mu_max_eta < 0.917 ) icat = 14 ;
-    if ( mu_ave_eta < 1.954 and bdt[0] >= 0.727 ) icat = 15 ;
+    //*
+    if ( bdt[0] < -0.400 ) icat = 0 ;
+    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 1.900 ) icat = 1 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta >= 1.900 ) icat = 2 ;
+    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 1.900 ) icat = 3 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta < 0.900 ) icat = 4 ;
+    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta < 0.900 ) icat = 5 ;
+    if ( mu_max_eta < 1.900 and bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 0.900 ) icat = 6 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 ) icat = 7 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900 ) icat = 8 ;
+    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 9 ;
+    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 10 ;
+    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 11 ;
+    if ( bdt[0] >= 0.730 ) icat = 12 ;
+    //
 
     if (icat>=0)catStr=Form("cat%d",icat);
     if (doSync){
         SetTreeVar("cat",icat);
         SetTreeVar("nbjets",nbjets);
+    }
+
+    // SciKit
+    if (doScikit)
+    {
+       
+        #ifdef SCIKIT_TIMING
+        //static double time_bdtg=0;
+        //static double time_sgd=0;
+        //static double time_svr=0;
+        static double time_mlp=0;
+        //static double time_keras=0;
+        TStopwatch sw;
+        #endif
+        
+
+        scikit.clear();
+        x.clear();
+        //x.push_back( *(float*)varValues_.GetPointer("Hpt") );
+        x.push_back( Hmm.Pt());
+        x.push_back( Hmm.Eta());
+        x.push_back( Hmm.Phi());
+        x.push_back( mjj_detajj[0].first );
+        x.push_back( mjj_detajj[1].first );
+        x.push_back( mjj_detajj[0].second );
+        x.push_back( mjj_detajj[1].second );
+        x.push_back( fabs(mu0->DeltaPhi(*mu1)) );
+        x.push_back( fabs(mu0->Eta()-mu1->Eta()));
+        x.push_back( nbjets );
+
+
+        #ifdef SCIKIT_TIMING
+            sw.Reset();sw.Start();
+        #endif
+
+        //float bdtg= py->Eval("bdtg.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]"); // THIS IS VERY SLOW
+        //float bdtg=-999;
+        //#ifdef SCIKIT_TIMING
+        //    sw.Stop(); time_bdtg += sw.CpuTime(); sw.Reset(); sw.Start();
+        //#endif
+
+        //float sgd= py->Eval("sgd.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+        //#ifdef SCIKIT_TIMING
+        //    sw.Stop(); time_sgd += sw.CpuTime(); sw.Reset(); sw.Start();
+        //#endif
+
+        //float svr= py->Eval("svr.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+        //#ifdef SCIKIT_TIMING
+        //    sw.Stop(); time_svr += sw.CpuTime(); sw.Reset(); sw.Start();
+        //#endif
+
+        float mlp= py->Eval("mlp.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+        #ifdef SCIKIT_TIMING
+            sw.Stop(); time_mlp += sw.CpuTime(); sw.Reset(); sw.Start();
+        #endif
+        //float keras= py->Eval("keras.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+        ////float keras=-999;
+        //#ifdef SCIKIT_TIMING
+        //    sw.Stop(); time_keras += sw.CpuTime(); sw.Reset(); sw.Start();
+        //#endif
+
+        //scikit.push_back(bdtg);
+        //scikit.push_back(sgd);
+        //scikit.push_back(svr);
+        scikit.push_back(mlp);
+        //scikit.push_back(keras);
+
+        #ifdef SCIKIT_TIMING
+           //Log(__FUNCTION__,"SCIKIT",Form("Scikit values are: bdtg=%f sgd=%f svr=%f mlp=%f  ",bdtg,svr,sgd,mlp) );
+           //Log(__FUNCTION__,"TIME",Form("BDTG Time: %.3lf",time_bdtg) );
+           //Log(__FUNCTION__,"TIME",Form("SGD Time: %.3lf",time_sgd) );
+           //Log(__FUNCTION__,"TIME",Form("SVR Time: %.3lf",time_svr) );
+           Log(__FUNCTION__,"TIME",Form("MLP Time: %.3lf",time_mlp) );
+           //Log(__FUNCTION__,"TIME",Form("KERAS Time: %.3lf",time_keras) );
+        #endif
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + catStr);
@@ -428,6 +545,56 @@ void HmumuAnalysis::AddSpectator( string name, char type){
         Log(__FUNCTION__,"ERROR",string("type '") + type + "' not supported");
     }
 }//end add variable
+
+void HmumuAnalysis::InitScikit(){
+
+    //discr.push_back("BTDG");
+    //discr.push_back("SGD");
+    //discr.push_back("SVR");
+    discr.push_back("MLP");
+    //discr.push_back("KERAS");
+
+    py . reset(new TPython);
+    py -> Exec("from sklearn.ensemble import RandomForestClassifier");
+    py -> Exec("from sklearn.svm import SVC");
+    py -> Exec("from sklearn.svm import SVR");
+    py -> Exec("from sklearn.neural_network import MLPClassifier");
+    py -> Exec("from sklearn.neural_network import MLPRegressor");
+    py -> Exec("from sklearn.linear_model import SGDClassifier");
+    py -> Exec("from sklearn.linear_model import SGDRegressor");
+    py -> Exec("from sklearn.linear_model import PassiveAggressiveClassifier");
+    py -> Exec("from sklearn.linear_model import PassiveAggressiveRegressor");
+    py -> Exec("from sklearn.linear_model import Perceptron");
+    py -> Exec("from sklearn.linear_model import Ridge");
+    py -> Exec("from sklearn.linear_model import ElasticNet");
+
+    // KERAS
+    //py -> Exec("from keras.models import Sequential");
+    //py -> Exec("from keras.layers import Dense, Activation");
+    //py -> Exec("from keras.wrappers.scikit_learn import KerasRegressor");
+    //py -> Exec("from sklearn.preprocessing import StandardScaler");
+    //py -> Exec("from sklearn.pipeline import Pipeline");
+
+    py -> Exec("from sklearn.externals import joblib ");
+
+    //py ->Exec("rfc=joblib.load('aux/hmm/RFC.pkl')");
+    py ->Exec("mlp=joblib.load('aux/hmm/MLP.pkl')");
+    //py ->Exec("svr=joblib.load('aux/hmm/SVR.pkl')");
+    //py ->Exec("par=joblib.load('aux/hmm/PAR.pkl')");
+    //py ->Exec("sgd=joblib.load('aux/hmm/SGD.pkl')");
+    //py ->Exec("bdtg=joblib.load('aux/hmm/BDTG.pkl')");
+    //py ->Exec("keras=joblib.load('aux/hmm/KERAS.pkl')");
+    //py ->Exec("ridge=joblib.load('aux/hmm/Ridge.pkl')");
+    //py ->Exec("en=joblib.load('aux/hmm/EN.pkl')");
+
+    // Make sure we can use x[...] inside
+    PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
+    PyObject* pymain = PyImport_ImportModule("__main__");
+
+    PyModule_AddObject(pymain, "x", pyx);
+
+    Py_DECREF(pymain);
+}
 
 void HmumuAnalysis::InitTmva(){
     Log(__FUNCTION__,"INFO","Init Reader");
@@ -487,6 +654,7 @@ void HmumuAnalysis::Init(){
         for (int i=0;i<16;++i)
             categories_.push_back(Form("cat%d",i));
         InitTmva();
+        if (doScikit)InitScikit();
     }
     else
     {
@@ -500,7 +668,6 @@ void HmumuAnalysis::Init(){
             categories_.push_back(v + "_" + m);
         }
     }
-
     //
 
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
@@ -515,19 +682,40 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/PtOnZ_"+ l ,"Pt On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnH_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/BdtOnZ_"+ l ,"Bdt On Z (70-110);Bdt;Events", 1000,-1,1);
+
 	    Book ("HmumuAnalysis/Vars/BdtOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+	    Book ("HmumuAnalysis/Vars/BdtOnH_BB_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+
+        //Scikit
+        if(doScikit){
+            for(const auto& s : discr)
+            {
+                Book ("HmumuAnalysis/Vars/"+s+"OnZ_"+ l ,s+" On Z (70-110);"+s+";Events", 1000,-1,1.0001);
+                Book ("HmumuAnalysis/Vars/"+s+"OnH_"+ l ,s+" On Hmm (110-150);"+s+";Events", 1000,-1,1.0001);
+                Book ("HmumuAnalysis/Vars/"+s+"OnH_BB_"+ l ,s+" On Hmm (110-150);"+s+";Events", 1000,-1,1.0001);
+            }
+        }
+        // --- histograms for limits extraction
         for(const auto & c : categories_)
         {
-	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
+	        //Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
+	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
             // for systematics, only counts the total
 	        Book ("HmumuAnalysis/Vars/Mmm_Count_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 1,110,150); // 
             AddFinalHisto("HmumuAnalysis/Vars/Mmm_Count_"+c+"_"+l);
+        }
+
+        for(const auto & c : {string("ttHHadr"),string("ttHLep"),string("superPure")})
+        {
+	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
         }
     }
 
     if (doSync){
         InitTree("hmm");
         Branch("hmm","cat",'I');
+        Branch("hmm","mcWeight",'I');
+        Branch("hmm","puWeight",'I');
         Branch("hmm","eventNum",'I');
         Branch("hmm","runNum",'I');
         Branch("hmm","lumiNum",'I');
@@ -538,6 +726,7 @@ void HmumuAnalysis::Init(){
         Branch("hmm","phi1",'F');
         Branch("hmm","phi2",'F');
         Branch("hmm","mass",'F');
+        Branch("hmm","met",'F');
         Branch("hmm","Hpt",'F');
         Branch("hmm","njets",'I');
         Branch("hmm","nbjets",'I');
@@ -551,6 +740,17 @@ void HmumuAnalysis::Init(){
         Branch("hmm","pass_trigger2",'I');
         Branch("hmm","pass_leptonveto",'I');
         Branch("hmm","pass_all",'I');
+        // for training
+        Branch("hmm","mc",'I');
+        Branch("hmm","Heta",'F');
+        Branch("hmm","Hphi",'F');
+        Branch("hmm","mjj_1",'F');
+        Branch("hmm","mjj_2",'F');
+        Branch("hmm","detajj_1",'F');
+        Branch("hmm","detajj_2",'F');
+        Branch("hmm","deltaphi",'F');
+        Branch("hmm","deltaeta",'F');
+        Branch("hmm","bdt",'F');
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
@@ -575,12 +775,22 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         }
     }
 
+    if (doOddOnly and not doEvenOnly){
+        if (  (e->eventNum()&1 ) == 1 ) e->ApplySF("double");
+        else {
+            return 0;
+        }
+    }
+
     cut.reset();
     cut.SetMask(MaxCut-1) ;
     cut.SetCutBit( Total ) ;
 
     /*
+     * TOP PT REWEIGHT
      */
+    e->ApplyTopReweight();
+
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon0: ");
     Lepton*mu0 = e->GetMuon(0);
@@ -600,10 +810,44 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         selectedJets.push_back(e->GetJet(i));
     }
 
+    // ------------------- DIRTY CATEGORIES for studies
+    int nbloose=0;
+    for(int i=0;i < e->Njets() ;++i){
+        Jet *j= e->GetJet(i);
+        if ( not j->IsJet() ) continue;
+        if (fabs(j->Eta() ) >2.4) continue;
+        if (j->Btag() > 0.5426 ) continue;
+        nbloose += 1;
+    }
+
+    string categoryDirty=""; // this may double count
+    if (e->Bjets()>0 and e->Njets() >4  )
+    {
+        categoryDirty="ttHHadr"; 
+    }
+    
+    //if ( nbloose >0  and e->Njets() >1  and e->Nleps()>2  )
+    if ( e->Bjets() >0  and e->Njets() >1  and e->Nleps()>2  )
+    {
+        categoryDirty ="ttHLep"; 
+    }
+    else if (catType==2 and bdt.size() >1 and bdt[0]>.84)
+    {
+        categoryDirty="superPure";
+    }
+
+    // ------------------------------------
+
     string category;
     if (catType==1) category = CategoryAutoCat(mu0,mu1,selectedJets,e->GetMet().Pt() ) ;
     else if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt());
+    else if (catType==3) { 
+        category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt()); 
+        if (e->Bjets()>0 and e->Njets() >4) category = "cat13";  // ttHHadr
+        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat14";  // veto Njets> 4
+    } 
     else category = Category(mu0, mu1, selectedJets);
+
 
     if (true) // CSV-SF for passing loose,medium or tigth cuts
     {
@@ -638,7 +882,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             changed=true;
             sf->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
             effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
-            effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            //effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            effmc *= 1.- (sf->getMCEff()) ;
+            //Log(__FUNCTION__,"DEBUG",Form("Trigger (mu0, pt=%f) dataEff=%f syst=%d err=%f -> effdata=%f",mu0->Pt(),sf->getDataEff(),sf->syst,sf->getDataErr(),effdata));
 
         }
         if (mu1 and mu1->Pt() > 26)
@@ -646,7 +892,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             changed=true;
             sf->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
             effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
-            effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            //effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
+            effmc *= 1.- (sf->getMCEff()) ;
+            //Log(__FUNCTION__,"DEBUG",Form("Trigger (mu1, pt=%f) dataEff=%f syst=%d err=%f -> effdata=%f",mu1->Pt(),sf->getDataEff(),sf->syst,sf->getDataErr(),effdata));
         }
 
         if(changed)
@@ -660,6 +908,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sftrig->sf=effdata/effmc;
         sftrig->err = 0.0;
         e->ApplySF("dummy");
+        //Log(__FUNCTION__,"DEBUG",Form("---> Apply TOT TRIG SF = %f",e->GetWeight()->GetSF("dummy")->get()) );
     }
     
     // ID
@@ -673,15 +922,20 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->SetPtEtaSF("muID_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
         sfId *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f eta=%f ID runB): syst=%d sf=%f",mu0->Pt(),mu0->Eta(),e->GetWeight()->GetSF("muID_runBCDEF")->syst,sf1) );
+        //SF_PtEta_And_Eff *tmpsf = dynamic_cast<SF_PtEta_And_Eff*>(e->GetWeight()->GetSF("muID_runBCDEF"));
+        //Log(__FUNCTION__,"DEBUG",Form("             dataeff=%f (+/-%f) mceff=%f sf=%f (as above!)",tmpsf->getDataEff(),tmpsf->getDataErr(),tmpsf->getMCEff(),tmpsf->get() ) );
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f eta=%f ID runH): syst=%d sf=%f",mu0->Pt(),mu0->Eta(),e->GetWeight()->GetSF("muID_runGH")->syst,sf2) );
     }
     if (mu1)
     {
         e->SetPtEtaSF("muID_runBCDEF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        //e->ApplySF("muID_runBCDEF");
         float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->get();
         e->SetPtEtaSF("muID_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
         sfId *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f eta=%f ID runB): syst=%d sf=%f",mu1->Pt(),mu1->Eta(),e->GetWeight()->GetSF("muID_runBCDEF")->syst,sf1) );
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f eta=%f ID runH): syst=%d sf=%f",mu1->Pt(),mu1->Eta(),e->GetWeight()->GetSF("muID_runGH")->syst,sf2) );
     }
 
     double sfIso=1.0;
@@ -693,6 +947,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->SetPtEtaSF("muISOloose_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
         sfIso *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f ISOloose runB): syst=%d sf=%f",mu0->Pt(),e->GetWeight()->GetSF("muISOloose_runBCDEF")->syst,sf1) );
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f ISOloose runH): syst=%d sf=%f",mu0->Pt(),e->GetWeight()->GetSF("muISOloose_runGH")->syst,sf2) );
     }
     if (mu1)
     {
@@ -702,6 +958,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->SetPtEtaSF("muISOloose_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
         sfIso *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f ISOloose runB): syst=%d sf=%f",mu1->Pt(),e->GetWeight()->GetSF("muISOloose_runBCDEF")->syst,sf1) );
+        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f ISOloose runH): syst=%d sf=%f",mu1->Pt(),e->GetWeight()->GetSF("muISOloose_runGH")->syst,sf2) );
     }
     
     // apply id and iso sf
@@ -711,6 +969,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sf->sf= sfId*sfIso; //syst already included
         sf->err = 0.0;
         e->ApplySF("dummy");
+        //Log(__FUNCTION__,"DEBUG",Form("---> Apply TOT SF = %f (ID=%f,ISO=%f)",e->GetWeight()->GetSF("dummy")->get(), sfId,sfIso) );
     }
     
     
@@ -748,7 +1007,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Lepton *el= e->GetElectron(i);
             if (el == NULL) break;
             //if (el->Pt() >15) passLeptonVeto=false; // FIXME 10 ?!?
-            #warning ABSURD_ELE_VETO
+            //#warning ABSURD_ELE_VETO
             //|eta| < 1.4442 || 1.566 <|eta| <2.5 
             // DR with muon 
             if (el->Pt() >10 and 
@@ -764,6 +1023,34 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         SetTreeVar("eventNum",e->eventNum());
         SetTreeVar("runNum",e->runNum());
         SetTreeVar("lumiNum",e->lumiNum());
+        if (e->IsRealData()){
+            SetTreeVar("mc",0);
+            SetTreeVar("mcWeight",1.);
+            SetTreeVar("puWeight",1.);
+        }
+        else {
+            SetTreeVar("mcWeight",e->GetWeight()->GetBareMCWeight() * e->GetWeight()->GetBareMCXsec() / e->GetWeight()->GetBareNevents());
+            SetTreeVar("puWeight",e->GetWeight()->GetBarePUWeight());
+            int mc=0;
+            if (label.find( "GluGlu_HToMuMu") != string::npos) mc -=10;
+            if (label.find( "VBF_HToMuMu") != string::npos) mc -=20;
+            if (label.find( "ZH_HToMuMu") != string::npos) mc -=30;
+            if (label.find( "WMinusH_HToMuMu") != string::npos) mc -=40;
+            if (label.find( "WPlusH_HToMuMu") != string::npos) mc -=50;
+            if (label.find( "ttH_HToMuMu") != string::npos) mc -=60;
+            if (label.find( "M120") != string::npos) mc -=1;
+            if (label.find( "M125") != string::npos) mc -=2;
+            if (label.find( "M130") != string::npos) mc -=3;
+            if (label == "DY") mc =10;
+            if (label == "TT") mc =20;
+            if (label == "ST") mc =21;
+            if (label == "WW") mc =30;
+            if (label == "WZ") mc =31;
+            if (label == "ZZ") mc =32;
+            if (label == "EWK_LLJJ") mc =40;
+            if (mc == 0) mc =1;
+            SetTreeVar("mc",mc);
+        }
         SetTreeVar("pass_recomuons",recoMuons);
         SetTreeVar("pass_asymmcuts",passAsymmPtCuts);
         SetTreeVar("pass_trigger",passTrigger);
@@ -776,7 +1063,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     }
 
     // -- FINAL SELECTION --
-    if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto)
+    //if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto)
+    if ( recoMuons and passTrigger and passAsymmPtCuts)
     {
         cut.SetCutBit(Leptons);
         if (passTrigger) cut.SetCutBit(Trigger);
@@ -797,19 +1085,39 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Fill("HmumuAnalysis/Vars/MetOnZ_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnZ_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, Z.Pt() ,e->weight());
+
             if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
+            if (doScikit and catType==2){
+                for(size_t i=0;i<discr.size();++i)
+                {
+                    const auto& s = discr[i];
+                    Fill("HmumuAnalysis/Vars/"+s+"OnZ_"+ label,systname, scikit[i] ,e->weight());
+                }
+            }
         }
         if (mass_ >= 110 and mass_<150){
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, Z.Pt(),e->weight());
-            if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
+            if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
+            if(catType==2 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
+                Fill("HmumuAnalysis/Vars/BdtOnH_BB_"+ label,systname, bdt[0] ,e->weight());
+            if (doScikit and catType==2){
+                for(size_t i=0;i<discr.size();++i)
+                {
+                    const auto& s = discr[i];
+                    Fill("HmumuAnalysis/Vars/"+s+"OnH_"+ label,systname, scikit[i] ,e->weight());
+                    if (fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
+                        Fill("HmumuAnalysis/Vars/"+s+"OnH_BB_"+ label,systname, scikit[i] ,e->weight());
+                }
+            }
         }
 
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
+        if(Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
+        if(Unblind(e) and categoryDirty == "ttHLep")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
     }
-
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
     return 0;

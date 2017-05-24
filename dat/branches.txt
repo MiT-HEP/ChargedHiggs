@@ -16,6 +16,10 @@ jetQglPtD
 jetQglAxis1
 jetQglAxis2
 jetQglPtDrLog
+### PHOTON
+photonP4
+photonSelBits
+photonIso
 ### FatJet
 fatjetAK8CHSP4
 fatjetAK8CHSTau1
@@ -24,6 +28,8 @@ fatjetAK8CHSTau3
 fatjetAK8CHSnSubjets
 fatjetAK8CHSSoftdropMass
 fatjetAK8CHSCorrectedPrunedMass
+fatjetAK8CHSsubjet_btag
+fatjetAK8CHSfirstSubjet
 ### Leptons
 lepP4
 lepIso
@@ -32,6 +38,7 @@ lepMva
 lepPdgId
 lepSelBits
 lepPfPt
+lepNLayers
 lep*
 ### TAU
 tauP4

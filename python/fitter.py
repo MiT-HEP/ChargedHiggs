@@ -82,7 +82,7 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
     fitter.PtBins.push_back(8000)
 
 if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
-    from hmm import hmm,hmmAutoCat
+    from hmm import *
     config = eval(opts.hmm)
     config.Print()
     fitter.xmin = config.xmin
@@ -110,11 +110,48 @@ if opts.classname== "Fitter":
                 fitter.SetGaussians(fitter.inputMasks.size()-1,procStr, 3)
             if (catStr,procStr) in  config.sigfit_gaussians:
                 fitter.SetGaussians(fitter.inputMasks.size()-1,procStr,config.sigfit_gaussians[(catStr,procStr)])
+    #fitter.inputMasks.clear()
+    # nuisances and correlations
+    for cat,proc in config.sigfit_scale_unc:
+        scale=config.sigfit_scale_unc[(cat,proc)]
+        try: 
+            value=float(scale)
+            fitter.SetScaleUnc(cat,proc,value)
+        except TypeError as a:
+            try:
+                cat,proc = scale
+                fitter.SetScaleUncCorr(cat,proc,cat,proc)
+            except TypeError as e:
+                print "-> Unable to understand scale error type. Two exceptions follows"
+                print "---------"
+                print a
+                print "---------"
+                print e
+                print "---------"
+                raise e
+    for cat,proc in config.sigfit_smear_unc:
+        smear=config.sigfit_smear_unc[(cat,proc)]
+        try: 
+            value=float(smear)
+            fitter.SetSmearUnc(cat,proc,value)
+        except TypeError as a:
+            try:
+                cat,proc = smear
+                fitter.SetSmearUncCorr(cat,proc,cat,proc)
+            except TypeError as e:
+                print "-> Unable to understand smear error type. Two exceptions follows"
+                print "---------"
+                print a
+                print "---------"
+                print e
+                print "---------"
+                raise e
+
 
 if opts.classname== "BackgroundFitter":
     fitter.outname= opts.outfile
     fitter.inname =opts.file
-    fitter.rebin=1
+    fitter.rebin=5
     ## Hmumu
     fitter.inputMasks.clear()
     for catStr in config.categories:

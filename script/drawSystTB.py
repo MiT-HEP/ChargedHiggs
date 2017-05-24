@@ -3,14 +3,15 @@ import ROOT
 from array import array
 import math
 
-ROOT.gROOT.SetBatch(True) 
+ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.IsBatch()
 
 parser= OptionParser()
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR1_finalSYST/1l/1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/APR1_finalSYST/2l/2l.root")
-parser.add_option("","--base",type='string',help="Base [Default=%default]", default="topCR")
-parser.add_option("","--histo",type='string',help="Base [Default=%default]", default="bdt1_SR4_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/MAY9_MCfinal_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/MAY9_MCfinal_2l.root")
+parser.add_option("","--base",type='string',help="Base [Default=%default]", default="Baseline")
+#parser.add_option("","--histo",type='string',help="Base [Default=%default]", default="HT_SR4_tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")
+parser.add_option("","--histo",type='string',help="Base [Default=%default]", default="HT_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")
 parser.add_option("","--syst",type='string',help="Syst [Default=%default]", default="PU")
 parser.add_option("","--rebin",type='int',help="Rebin [Default=%default]", default=20)
 
@@ -19,40 +20,17 @@ extra.add_option("-k","--lepCat",type='string',help = "Which test runs. [%defaul
 
 opts, args = parser.parse_args()
 
-## original
-def Rebin1LTop(h):
+def Rebin1LHT(h):
         ''' Rebin with un-even bins '''
-	## up to 2000
-	mybins=array('d',[0, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740, 750, 760, 770, 780, 790, 800, 820, 840, 860, 880, 900, 920, 940, 960, 1000, 1050, 1100, 1150, 1200, 1250, 1350, 1500, 1600, 1750, 2000, 2500, 3000, 4000, 5000, 8000])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
-
-def Rebin1LCharm(h):
-        ''' Rebin with un-even bins '''
-	## up to 1000
 	mybins=array('d',[0, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 420, 440, 460, 480, 500, 550, 600, 700, 800, 1000, 1250, 1500, 2000, 3000, 4000, 5000, 8000])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
-
-def Rebin1LExtraRad(h):
-        ''' Rebin with un-even bins '''
-	## up to 2500
-        mybins=array('d',[0, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740, 750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 880, 900, 920, 940, 960, 980, 1000, 1020, 1040, 1060, 1080, 1100, 1120, 1150, 1200, 1250, 1300, 1350, 1400, 1500, 1600, 1800, 2000, 2300, 2600, 3000, 4000, 6000, 8000])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
 	return h1
 
-def Rebin1L(h):
-	#original
-	mybins=array('d',[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740, 750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 870, 880, 890, 900, 910, 920, 930, 940, 950, 960, 970, 980, 990, 1000, 1020, 1040, 1060, 1080, 1100, 1120, 1140, 1160, 1180, 1200, 1220, 1240, 1260, 1280, 1300, 1320, 1340, 1360, 1380, 1400, 1420, 1440, 1460, 1480, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500, 4600, 4700, 4800, 4900, 5000, 8000])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
-
-def Rebin2L(h):
+def Rebin2LHT(h):
         ''' Rebin with un-even bins '''
-	#original
-        mybins=array('d',[0, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420, 440, 460, 480, 500, 520, 540, 560, 580, 600, 620, 640, 660, 680, 700, 720, 740, 760, 780, 800, 820, 840, 860, 880, 900, 920, 940, 960, 980, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1750, 1800, 1850, 1900, 1950, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3500, 4000, 4500, 5000, 8000])
+        mybins=array('d',[0, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 420, 440, 460, 480, 500, 550, 600, 700, 800, 1000, 2000, 4000, 8000])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
+	return h1
 
 def RebinN(h,nBin):
         ''' Rebin with un-even bins '''
@@ -62,29 +40,20 @@ def RebinN(h,nBin):
 
 def RebinBDT1(h):
         ''' Rebin with un-even bins '''
+	print 'using BDT1 high-1l'
         mybins=array('d',[-1,
-                           -0.99,-0.98,-0.97,-0.96,-0.95,-0.94,-0.93,-0.92,-0.91,-0.9,
-                           -0.89,-0.88,-0.87,-0.86,-0.85,-0.84,-0.83,-0.82,-0.81,-0.8,
-                           -0.79,-0.78,-0.77,-0.76,-0.75,-0.74,-0.73,-0.72,-0.71,-0.7,
-			   -0.68,-0.66,-0.64,-0.62,-0.60,
-			   -0.58,-0.56,-0.54,-0.52,-0.50,
-			   -0.48,-0.46,-0.44,-0.42,-0.40,
-                           -0.36,-0.32,
-                           -0.28,-0.24,-0.2,
-                           -0.16,-0.12,
-			   -0.08,-0.04,
-                           0.0,0.04,0.08,
-                           0.12,0.16,0.2,
-                           0.24,0.28,
-                           0.32,0.36,
-			   0.40,0.42,0.44,0.46,0.48,0.5,
-			   0.50,0.52,0.54,0.56,0.58,0.6,
-			   0.60,0.62,0.64,0.66,0.68,0.7,
+			   -0.98,-0.95,-0.92,
+			   -0.89,-0.86,-0.83,-0.8,
+			   -0.75,-0.7,
+			   -0.65, -0.60, -0.55, -0.50, -0.45, -0.40,
+			   -0.35, -0.30, -0.25, -0.20, -0.15, -0.10,
+			   -0.05, 0.0, 0.05, 0.10, 0.15, 0.20,
+			   0.25,0.30,0.35,0.40,
+			   0.45,0.50,0.55,0.60,0.65,0.68,0.70,
                            0.71,0.72,0.73,0.74,0.75,0.76,0.77,0.78,0.79,0.8,
                            0.81,0.82,0.83,0.84,0.85,0.86,0.87,0.88,0.89,0.9,
                            0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,
                            1.])
-##      mybins=array('d',[-1.,-0.8,-0.6,-0.4,-0.3,-0.2,-0.1,0.,0.1,0.2,0.3,0.4,0.6,0.8,1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
 
@@ -93,77 +62,73 @@ def RebinBDT2(h):
         ''' Rebin with un-even bins '''
 	print 'using BDT2'
         mybins=array('d',[-1,
-                           -0.9,
-			   -0.85,-0.8,
-                           -0.78,-0.76,-0.74,-0.72,-0.7,
-                           -0.69,-0.68,-0.67,-0.66,-0.65,-0.64,-0.63,-0.62,-0.61,-0.6,
-                           -0.59,-0.58,-0.57,-0.56,-0.55,-0.54,-0.53,-0.52,-0.51,-0.5,
-                           -0.49,-0.48,-0.47,-0.46,-0.45,-0.44,-0.43,-0.42,-0.41,-0.4,
-                           -0.39,-0.38,-0.37,-0.36,-0.35,-0.34,-0.33,-0.32,-0.31,-0.3,
-                           -0.29,-0.28,-0.27,-0.26,-0.25,-0.24,-0.23,-0.22,-0.21,-0.2,
-                           -0.19,-0.18,-0.17,-0.16,-0.15,-0.14,-0.13,-0.12,-0.11,-0.1,
-                           -0.09,-0.08,-0.07,-0.06,-0.05,-0.04,-0.03,-0.02,-0.01,-0.,
-                           0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,
-                           0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2,
-                           0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.3,
-                           0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.4,
-                           0.41,0.42,0.43,0.44,0.45,0.46,0.47,0.48,0.49,0.5,
-                           0.51,0.52,0.53,0.54,0.55,0.56,0.57,0.58,0.59,0.6,
-                           0.61,0.62,0.63,0.64,0.65,0.66,0.67,0.68,0.69,0.7,
-			   0.72,0.74,0.76,0.78,0.8,
-			   0.85,0.9,
+			   -0.90,-0.8,-0.75,-0.7,
+			   -0.65,-0.6,-0.55,-0.50,-0.45,-0.40,
+			   -0.36,-0.32,-0.29,-0.26,-0.23,-0.20,-0.17,-0.14,
+			   -0.11,-0.08,-0.05,-0.02,0.01,0.04,0.07,0.10,
+			   0.13,0.16,0.19,0.22,0.25,0.28,0.31,0.34,0.37,0.40,
+			   0.43,0.46,0.49,0.52,0.55,0.58,0.61,0.64,0.67,0.70,
+			   0.8,0.9,
                            1.])
 
-##      mybins=array('d',[-1.,-0.8,-0.6,-0.4,-0.3,-0.2,-0.1,0.,0.1,0.2,0.3,0.4,0.6,0.8,1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
 
 
 def RebinBDT3(h):
         ''' Rebin with un-even bins '''
-## this is equivalent to rebin5
-
         print 'using binning BDT3'
         mybins=array('d',[-1,
-                           -0.95,-0.9,
-                           -0.85,-0.8,
-                           -0.75,-0.7,
-                           -0.65,-0.6,
-                           -0.55,-0.5,
-                           -0.45,-0.42,-0.4,
-                           -0.38,-0.37,-0.36,-0.35,-0.34,-0.33,-0.32,-0.31,-0.3,
-                           -0.29,-0.28,-0.27,-0.26,-0.25,-0.24,-0.23,-0.22,-0.21,-0.2,
-                           -0.19,-0.18,-0.17,-0.16,-0.15,-0.14,-0.13,-0.12,-0.11,-0.1,
-                           -0.09,-0.08,-0.07,-0.06,-0.05,-0.04,-0.03,-0.02,-0.01,-0.,
-                           0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,
-                           0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2,
-                           0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.3,
-                           0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.4,
-                           0.41,0.42,0.43,0.44,0.45,0.46,0.47,0.48,0.49,0.5,
+                           -0.90,-0.80,
+			   -0.70,-0.60,
+			   -0.50,-0.45,-0.40,-0.35,-0.30,
+			   -0.28,-0.26,-0.24,-0.22,-0.20,
+			   -0.18,-0.16,-0.14,-0.12,-0.10,
+			   -0.08,-0.06,-0.04,-0.02,0.,
+                           0.02,0.04,0.06,0.08,0.1,
+                           0.12,0.14,0.16,0.18,0.2,
+                           0.22,0.24,0.26,0.28,0.3,
+                           0.32,0.34,0.36,0.38,0.4,
+                           0.42,0.44,0.46,0.48,0.5,
                            0.52,0.54,0.56,0.58,0.6,
-                           0.65,0.7,
-                           0.75,0.8,
-                           0.85,0.9,
-                           0.95,
+                           0.65,0.70,0.75,0.80,0.85,
+                           0.9,0.95,
                            1.])
-##      mybins=array('d',[-1.,-0.8,-0.6,-0.4,-0.3,-0.2,-0.1,0.,0.1,0.2,0.3,0.4,0.6,0.8,1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
 
-#def RebinBDT(h):
-#	''' Rebin with un-even bins '''
-#	mybins=array('d',[-1,-0.8,-0.6,-0.4,-0.2,0.,0.2,0.4,0.6,0.8,1.])
-# 200 bins between -1,1steps od 0.01
-#	mybins=array('d',[-1,-0.9,-0.8,-0.6,-0.4,-0.2,0.,0.2,0.4,0.6,0.8,1.])
-#        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-#        return h1
+def RebinBDT4(h):
+        ''' Rebin with un-even bins '''
+	print 'using BDT4 high-2l'
+        mybins=array('d',[-1,
+			   -0.98,-0.95,-0.92,
+			   -0.89,-0.86,-0.83,-0.8,
+			   -0.75,-0.7,
+			   -0.65, -0.60, -0.55, -0.50, -0.45, -0.40,
+			   -0.35, -0.30, -0.25, -0.20, -0.15, -0.10,
+			   -0.05, 0.0, 0.05, 0.10, 0.15, 0.20,
+			   0.25,0.30,
+			   0.32,0.34,0.36,0.38,0.40,0.45,
+			   0.60,0.80,
+                           1.])
+        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+        return h1
 
+def RebinBDT6(h):
+        ''' Rebin with un-even bins '''
+	print 'using BDT6 low-2l'
+        mybins=array('d',[-1,
+			   -0.7,-0.6,-0.5,-0.4,
+			   -0.35,-0.3,-0.25,-0.20,-0.15,-0.10,
+			   -0.05, 0.0, 0.05, 0.10, 0.15, 0.20,
+			   0.25,0.30,
+			   0.35,0.40,
+			   0.50,0.60,0.70,0.80,0.90,
+                           1.])
+	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+        return h1
 
-#fIn=ROOT.TFile.Open(opts.input)
-#if fIn==None:
-#	print "[ERROR] File", opts.input, "doesn't exist"
-#	raise IOError
-#h=fIn.Get(opts.base)
+##### read files and histos
 
 fIn1L = ROOT.TFile.Open(opts.input1L,"READ")
 fIn2L = ROOT.TFile.Open(opts.input2L,"READ")
@@ -234,51 +199,30 @@ if opts.rebin> 10:
 	if "HT" in opts.histo:
 	#HT
 		print ' ... HT bins'
-#		h.Smooth(2);
-		if opts.lepCat == "1Mu" or opts.lepCat == "1Ele":
-			if opts.base == "topCR": h=Rebin1LTop(h)
-			if opts.base == "extraRadCR" or opts.base == "Baseline" or  opts.base == "Baseline_SR1" or opts.base == "Baseline_SR2" or opts.base == "Baseline_SR3" or opts.base == "Baseline_SR4": h=Rebin1LExtraRad(h)
-			if opts.base == "charmCR": h=Rebin1LCharm(h)
-#			h=Rebin1L(h)
-		else:
-			h=Rebin2L(h)
+		if opts.lepCat == "1Mu" or opts.lepCat == "1Ele": h=Rebin1LHT(h)
+		if opts.lepCat == "2Mu" or opts.lepCat == "2Ele" or opts.lepCat == "1Mu1Ele": h=Rebin2LHT(h)
 		for idx,hTmp in enumerate(hL):
-#			hL[idx].Smooth(2);
-			if opts.lepCat == "1Mu" or opts.lepCat == "1Ele":
-				if opts.base == "topCR": hL[idx]=Rebin1LTop(hTmp)
-				if opts.base == "extraRadCR" or opts.base == "Baseline": hL[idx]=Rebin1LExtraRad(hTmp)
-				if opts.base == "charmCR": hL[idx]=Rebin1LCharm(hTmp)
-			else:
-				hL[idx]=Rebin2L(hTmp)
+			if opts.lepCat == "1Mu" or opts.lepCat == "1Ele": hL[idx]=Rebin1LHT(hTmp)
+			if opts.lepCat == "2Mu" or opts.lepCat == "2Ele" or opts.lepCat == "1Mu1Ele": hL[idx]=Rebin2LHT(hL[idx])
 
 	#BDT
 	if "bdt" in opts.histo:
 		print ' ... using BDT bins'
-#		h.Smooth(2);
 		if "bdt3" in opts.histo: h=RebinBDT3(h)
-		if "bdt2" in opts.histo: h=RebinBDT2(h)
+		if "bdt2" in opts.histo or "bdt5" in opts.histo: h=RebinBDT2(h)
 		if "bdt1" in opts.histo: h=RebinBDT1(h)
-
-		if "SR2" in opts.histo or "SR4" in opts.histo: h.Rebin(2)
+		if "bdt4" in opts.histo: h=RebinBDT4(h)
+		if "bdt6" in opts.histo: h=RebinBDT6(h)
 
 		for idx,hTmp in enumerate(hL):
-#			hL[idx].Smooth(2);
 			if "bdt3" in opts.histo: hL[idx]=RebinBDT3(hTmp)
-			if "bdt2" in opts.histo: hL[idx]=RebinBDT2(hTmp)
+			if "bdt2" in opts.histo or "bdt5" in opts.histo: hL[idx]=RebinBDT2(hTmp)
 			if "bdt1" in opts.histo: hL[idx]=RebinBDT1(hTmp)
-			if "SR2" in opts.histo or "SR4" in opts.histo: hL[idx].Rebin(2)
+			if "bdt4" in opts.histo: hL[idx]=RebinBDT4(hTmp)
+			if "bdt6" in opts.histo: hL[idx]=RebinBDT6(hTmp)
 
 else:
 	h.Rebin(opts.rebin)
-
-#for idx,hTmp in enumerate(hL):
-#	if opts.rebin> 999:
-#		hL[idx]=Rebin(hTmp)
-#	else:
-#		hTmp.Rebin(opts.rebin)
-#	#hUp.Rebin(opts.rebin)
-#	#hDown.Rebin(opts.rebin)
-
 
 #########################################################
 ################### IMPORT STAT #########################
@@ -302,12 +246,9 @@ for i in range(0,h.GetNbinsX()):
 	cont=h.GetBinContent(i+1)
 	err = h. GetBinError(i+1) ## err is referred to the sum
 	c = h.GetBinContent(i+1) ## this is to check the magnitude, not to apply it
-
 	if c > 0 and err/c <.01: continue ## don't write less than 1%
-
 	hupbin.SetBinContent(i+1,cont+err)
 	hdnbin.SetBinContent(i+1,cont-err)
-
 
 hLStat = [hupbin,hdnbin]
 
@@ -350,7 +291,7 @@ for hTmp in hLStat:
 
 ROOT.gStyle.SetOptStat(0)
 h.SetTitle(opts.base + "_" + opts.lepCat + "_" + opts.histo)
-h.GetYaxis().SetTitle(opts.syst)
+h.GetYaxis().SetTitle("("+opts.syst+"-default)/default")
 h.Draw("HIST")
 for hTmp in hL:
 	hTmp.Draw("HIST SAME")
@@ -401,7 +342,33 @@ for rTmp in rLStat:
 
 r.GetYaxis().SetRangeUser(0.5,1.5)
 #r.GetYaxis().SetRangeUser(0.,2.)
-#raw_input("ok?")
 
-c2.SaveAs("plot/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".pdf")
-c2.SaveAs("plot/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".png")
+#draw legend
+leg = ROOT.TLegend(0.45,0.65,0.65,0.9)
+leg.SetFillStyle(0)
+leg.SetBorderSize(0)
+
+leg.AddEntry(rLStat[0], "stat")
+
+#for rTmp in rL[0]:
+leg.AddEntry(rL[0], opts.syst+"Up")
+leg.AddEntry(rL[1], opts.syst+"Down")
+
+leg.Draw("sames")
+
+#l = ROOT.TLatex()
+#l.SetNDC()
+#l.SetTextSize(0.05)
+#l.SetTextFont(42)
+#l.SetTextAlign(13)
+#l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
+#l.SetTextSize(0.05)
+#l.SetTextAlign(31)
+##l.DrawLatex(0.89,.91,"2.3 fb^{-1} (13 TeV)")                                                                                                                                                   #l.DrawLatex(0.9,.91,"35.87 fb^{-1} (13 TeV)")
+
+
+raw_input("ok?")
+
+
+c2.SaveAs("plot/MAY9/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".pdf")
+c2.SaveAs("plot/MAY9/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".png")

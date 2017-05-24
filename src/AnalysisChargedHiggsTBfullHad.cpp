@@ -630,15 +630,18 @@ bool ChargedHiggsTopBottomFullHad::genInfoForSignal(Event*e) {
                 if(genpar->GetPdgId() == -6)topBKGminus = genpar;
             }
         //lepton
-        }else if( (abs(genpar->GetPdgId()) == 11 || abs(genpar->GetPdgId()) == 13 || abs(genpar->GetPdgId()) == 15) && abs(genpar->GetParentPdgId()) == 24 && abs(genpar->GetGrandParentPdgId()) == 6) {
+        }else if( ((abs(genpar->GetPdgId()) == 11 or abs(genpar->GetPdgId()) == 13) and (genpar->IsPromptFinalState() or genpar->IsDirectPromptTauDecayProductFinalState()))
+                  or (abs(genpar->GetPdgId()) == 15 and genpar->IsPromptDecayed()) ) {
             if(topFromH!=NULL){
                 // covers the signal
                 if ( topFromH->GetPdgId()*genpar->GetPdgId()<0 ) {topFromH_lep = 1; WFromTopH_lep = 1;}
                 else if ( topFromH->GetPdgId()*genpar->GetPdgId()>0 ) {topAss_lep = 1; WFromTopAss_lep = 1;}                    
             }else if(topFromH==NULL){
                 // top BKG
-                if ( (genpar->GetPdgId() == -11 || genpar->GetPdgId() == -13 || genpar->GetPdgId() == -15) && genpar->GetParentPdgId() == 24 && genpar->GetGrandParentPdgId() == 6 ) {topBKGplus_lep = 1;WBKGplus_lep = 1;}
-                else if( (genpar->GetPdgId() == 11 || genpar->GetPdgId() == 13 || genpar->GetPdgId() == 15) && genpar->GetParentPdgId() == -24 && genpar->GetGrandParentPdgId() == -6 ) {topBKGminus_lep = 1;WBKGminus_lep = 1;}
+                if ( ((genpar->GetPdgId() == -11 or genpar->GetPdgId() == -13) and (genpar->IsPromptFinalState() or genpar->IsDirectPromptTauDecayProductFinalState())) or
+                     (genpar->GetPdgId() == -15 and genpar->IsPromptDecayed() ) ) {topBKGplus_lep = 1;WBKGplus_lep = 1;}
+                else if ( ((genpar->GetPdgId() == 11 or genpar->GetPdgId() == 13) and genpar->IsPromptFinalState()) or
+                          (genpar->GetPdgId() == 15 and genpar->IsPromptDecayed() ) ) {topBKGminus_lep = 1;WBKGminus_lep = 1;}
             }
         }
     }
@@ -827,6 +830,10 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
 
     //    std::cout << " e->NFatJets() = " << e->NFatJets()  << std::endl;
 
+    // HT cut to simulate the trigger
+    computeVar(e);
+    if(evt_HT<800) return EVENT_NOT_USED;
+
     ////////
     //// UP TO NOW: LEPTONS selection only
     ////
@@ -839,27 +846,30 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
         rightCombination=genInfoForSignal(e); // compute the right combination in the higgs case
 
     }
-
-    computeVar(e);
     
     string category="";
     jetPlot(e, label, category, systname,"Baseline");
 
 
-    /*
-    for(int i=0;i!=e->NFatJets();++i) {
-        FatJet* j = e->GetFatJet(i);
-        std::cout << " Pt()= " << j->Pt();
-        std::cout << " Tau1()= " << j->Tau1();
-        std::cout << " Tau2()= " << j->Tau2();
-        std::cout << " Tau3()= " << j->Tau3();
-        std::cout << " SDMass()= " << j->SDMass();
-        std::cout << " CorrPrunedMass()= " << j->CorrPrunedMass() << endl;
-        std::cout << " subjet_btag= " << j->SubjetBTag()  << endl;
-    }
+    if(e->Wjets()>0 || e->Topjets()>0) {
 
-    cout << "NW jets = " << e->Wjets() << endl;
-    */
+        cout << "=======================================" << endl;
+        cout << "N(W) jets = " << e->Wjets() << endl;
+        cout << "N(TOP) jets = " << e->Topjets() << endl;
+
+        for(int i=0;i!=e->NFatJets();++i) {
+            FatJet* j = e->GetFatJet(i);
+            std::cout << " Pt()= " << j->Pt();
+            std::cout << " Tau1()= " << j->Tau1();
+            std::cout << " Tau2()= " << j->Tau2();
+            std::cout << " Tau3()= " << j->Tau3();
+            std::cout << " SDMass()= " << j->SDMass();
+            std::cout << " CorrPrunedMass()= " << j->CorrPrunedMass() << endl;
+            std::cout << " subjet_btag= " << j->IsSubjetBTag()   << endl;
+            std::cout << " is TOP jet = " << j->IsTopJet()   << endl;
+            std::cout << " is W jet = " << j->IsWJet()   << endl;
+        }
+    }
 
     // ////////
     // ////

@@ -11,6 +11,7 @@ parser.add_option("-v","--var",dest='var',type="string",help="variable [%default
 parser.add_option("-c","--cat",dest='cat',type="string",help="do cat xxx for bkg [%default]",default="all")
 parser.add_option("","--noSig",dest='noSig',action="store_true",help="don't do sig plots [%default]",default=False)
 parser.add_option("","--noBkg",dest='noBkg',action="store_true",help="don't do bkg plots [%default]",default=False)
+parser.add_option("","--doRemap",dest='doRemap',action="store_true",help="remap bkg plots in cumulative sig [%default]",default=False)
 parser.add_option("-o","--outdir",dest='outdir',type="string",help="output directory [%default]",default="Hmumu")
 parser.add_option("-x","--xrange",dest='xrange',type="string",help="xrange [%default]",default="60,150")
 parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
@@ -25,12 +26,12 @@ while mypath != "" and mypath != "/":
 print "-> Base Path is " + basepath
 sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
-from hmm import hmm,hmmAutoCat, Stack
+from hmm import *
 systs=['JES','PU']
 #systs=['JES']
 
-#extra = OptionGroup(parser,"Extra options:","")
-#extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=1)
+extra = OptionGroup(parser,"Extra options:","")
+extra.add_option("-r","--rebin",type='int',help = "Rebin Histograms. if >1000 variable bin [%default]", default=10)
 opts,args= parser.parse_args()
 
 ########### IMPORT ROOT #############
@@ -50,11 +51,10 @@ if opts.outdir != "":
 config= eval(opts.hmm)
 config.Print()
 categories=config.categories
-##for m in [ "BB","BO","BE","OO","OE","EE" ]:
-##   for v in ["VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
-##      categories.append(v + "_" + m )
 
-#sigMonteCarlos= ["VBF_HToMuMu_M%d","GluGlu_HToMuMu_M%d","ZH_HToMuMu_M%d","WMinusH_HToMuMu_M%d","WPlusH_HToMuMu_M%d","ttH_HToMuMu_M%d"]
+if opts.cat != "all" and opts.cat != "":
+    categories= [opts.cat]
+
 sigMonteCarlos = []
 for proc in config.processes:
 	sigMonteCarlos .append( proc+"_HToMuMu_M%d" )
@@ -65,7 +65,7 @@ masses = [125,120,130]
 ###############################
 
 def MpvAndSigmaEff(h, q=0.68):
-    ''' Return mpv and sigma eff'''
+    ''' Return mpv and sigma eff and FWHM'''
     imax=-1
     valmax=0.0
     for ibin in range(0,h.GetNbinsX()):
@@ -77,14 +77,21 @@ def MpvAndSigmaEff(h, q=0.68):
     low=h.GetBinCenter(1)
     high=h.GetBinCenter(h.GetNbinsX())
 
-    for ibin in range(0,h.GetNbinsX()):
-        for jbin in range(ibin+1,h.GetNbinsX()):
-            if h.Integral(ibin+1,jbin+1)> q *s:
-                if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
-                    low = h.GetBinCenter(ibin+1)
-                    high=h.GetBinCenter(jbin+1)
-                #break ## j -loop can end here
-    return (h.GetBinCenter(imax), low, high )
+    ## FIXME FAST
+    ## for ibin in range(0,h.GetNbinsX()):
+    ##     for jbin in range(ibin+1,h.GetNbinsX()):
+    ##         if h.Integral(ibin+1,jbin+1)> q *s:
+    ##             if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
+    ##                 low = h.GetBinCenter(ibin+1)
+    ##                 high=h.GetBinCenter(jbin+1)
+    ##             #break ## j -loop can end here
+
+    ## FWHM
+    hm = h.GetMaximum()*0.5;
+    hm_low = h.GetBinCenter(h.FindFirstBinAbove(hm));
+    hm_high = h.GetBinCenter(h.FindLastBinAbove(hm));
+
+    return (h.GetBinCenter(imax), low, high, hm_high-hm_low )
 
 def SoB(h,hdata,low,high,type=""):
 	## xsec at 125
@@ -125,6 +132,8 @@ canvases=[]
 garbage=[]
 
 doSig=not opts.noSig
+sigYields={} ##(cat,proc) -> Nevents, for next sig composition plot
+eaStore={} ##(cat,proc,MH) -> ea
 if doSig:
   for cat in categories:
     for mc in sigMonteCarlos:
@@ -149,6 +158,13 @@ if doSig:
             garbage.append(h)
             h.SetLineColor(ROOT.kBlack)
             h.SetLineWidth(2)
+
+            proc =re.sub("_HToMuMu.*","",mc) 
+            ea = h.Integral()
+            dea=array('d',[0.])
+            h.IntegralAndError(1,h.GetNbinsX(),dea)
+            eaStore[(cat,proc,int(m))]= (ea,dea[0])
+
             if idx==0:
                 c.cd()
                 h.Draw("AXIS")
@@ -164,9 +180,11 @@ if doSig:
                 h.SetLineWidth(2)
                 h.SetFillColor(color)
                 h.SetFillStyle(3004)
-                ea = h.Integral()
-                mpv, low ,high =  MpvAndSigmaEff(h, 0.682689)
+                mpv, low ,high,fwhm =  MpvAndSigmaEff(h, 0.682689)
                 seff = (high - low)/2.0
+
+                ## save for sig composition plot
+                sigYields[(cat,proc)] = ea * config.lumi() * config.xsec(proc) *config.br() # proc+"_HToMuMu_M%d" 
 
                 if hdata !=None:
                 	s,b=SoB(h,hdata,low,high,re.sub("_HToMuMu.*","",mc))
@@ -205,17 +223,255 @@ if doSig:
         txt.DrawLatex(.73,.90 - 1*d,"Proc="+re.sub("_HToMuMu.*","",mc))
         txt.DrawLatex(.73,.90 - 2*d,"mpv=%.1f GeV"%mpv)
         txt.DrawLatex(.73,.90 - 3*d,"seff=%.1f GeV"%seff)
-        txt.DrawLatex(.73,.90 - 4*d,"#varepsilon A=%.1f %%"%(ea*100))
-        txt.DrawLatex(.73,.90 - 5*d,"S/B = %.1f %%"%(sob*100))
+        try:
+            txt.DrawLatex(.73,.90 - 4*d,"FWHM=%.1f GeV"%fwhm)
+        except:
+            pass
+        txt.DrawLatex(.73,.90 - 5*d,"#varepsilon A=%.1f %%"%(ea*100))
+        txt.DrawLatex(.73,.90 - 6*d,"S/B = %.1f %%"%(sob*100))
         c.Modify()
         c.Update()
         if opts.outdir=="":
         	raw_input("ok?")
         else:
+            ## FIXME FAST
+            ##pass
         	c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".pdf")
         	c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".png")
 
-rebin=10
+if doSig:## signal composition plot
+    colors = [ ROOT.kGreen+3, ROOT.kRed+2, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kBlue-4];
+    c=ROOT.TCanvas("c_"+cat+"_sig_composition","canvas",800,800)
+
+    c.Range(-14.67532,-1.75,11.2987,15.75);
+    c.SetFillColor(0);
+    c.SetBorderMode(0);
+    c.SetBorderSize(2);
+    c.SetTopMargin(0.16);
+    c.SetLeftMargin(0.25);
+    c.SetRightMargin(0.05);
+    c.SetFrameBorderMode(0);
+    c.SetFrameBorderMode(0);
+
+    nCats=len(categories)
+    dummy = ROOT.TH2F("dummy","",10,0.,100.,nCats,1-0.5,nCats+0.5);
+    dummy.SetStats(0);
+    ci = ROOT.TColor.GetColor("#00ff00");
+    dummy.SetFillColor(ci);
+
+    for ic,cat in enumerate(categories):
+        dummy.GetYaxis().SetBinLabel(nCats-ic,cat);
+    dummy.GetXaxis().SetTickLength(0.01);
+    dummy.GetYaxis().SetTickLength(0);
+    dummy.GetXaxis().SetTitle("Signal Fraction (%)");
+    dummy.GetXaxis().SetNdivisions(510);
+    dummy.GetXaxis().SetLabelFont(42);
+    dummy.GetXaxis().SetLabelSize(0.045);
+    dummy.GetXaxis().SetTitleSize(0.045);
+    dummy.GetXaxis().SetTitleOffset(0.95);
+    dummy.GetXaxis().SetTitleFont(42);
+    dummy.GetYaxis().SetNdivisions(510);
+    dummy.GetYaxis().SetLabelSize(0.035);
+    dummy.GetYaxis().SetTitleSize(0.045);
+    dummy.GetYaxis().SetTitleOffset(1.1);
+    dummy.GetYaxis().SetTitleFont(42);
+    dummy.GetZaxis().SetLabelFont(42);
+    dummy.GetZaxis().SetLabelSize(0.035);
+    dummy.GetZaxis().SetTitleSize(0.035);
+    dummy.GetZaxis().SetTitleFont(42);
+    dummy.Draw("");
+    #sigYields[(cat,proc)] = ea * config.lumi() * config.xsec(proc) *config.br() # proc+"_HToMuMu_M%d" 
+
+    ## normalized stacked fractions
+    ymin = 0.0
+    width = 0.34
+
+    sigFrac = {}
+
+    for ic,cat in enumerate(categories):
+        S=0.0
+        for proc in config.processes:
+            try:
+                S+=sigYields[(cat,proc)]
+            except KeyError:
+                sigYields[(cat,proc)] =0
+                print "* Ignoring",(cat,proc)
+        print " ** Cat=",cat,":",
+        for proc in config.processes:
+            sigFrac[(cat,proc)] = sigYields[(cat,proc)]/S*100.; #sigYields becomes fractions here!
+            print proc,"(",sigFrac[(cat,proc)],"%)",
+        print
+        sys.stdout.flush()
+        ybin = nCats-ic;
+        print "ybin for cat",cat,"is",ybin
+        ybinmin = ybin-width;
+        ybinmax = ybin+width;
+        xbinmin = ymin;
+        xbinmax = ymin;
+        pavetext = ROOT.TPaveText(xbinmin+0.5,ybinmin,xbinmin+30.5,ybinmax);
+        pavetext.AddText("%.1f total expected signal"%S)
+        pavetext.SetTextColor(0);
+        pavetext.SetFillStyle(0);
+        pavetext.SetFillColor(0);
+        pavetext.SetLineColor(0);
+        pavetext.SetBorderSize(0);
+
+        for iproc,proc in enumerate(config.processes):
+            xbinmax += sigFrac[(cat,proc)]
+            pave = ROOT.TPave(xbinmin,ybinmin,xbinmax,ybinmax);
+            pave.SetFillColor(colors[iproc]);
+            pave.Draw();
+            pave.SetBorderSize(0);
+            xbinmin +=sigFrac[(cat,proc)]
+            garbage.append(pave)
+        pavetext.Draw()
+        garbage.append(pavetext)
+    ## legend
+    tex_m=ROOT.TLatex();
+    tex_m.SetNDC();
+    tex_m.SetTextAlign(12);
+    tex_m.SetTextSize(0.025);
+    tex_m.SetLineWidth(2);
+
+    ## Legend
+    processName=[]
+    for iproc, proc in enumerate(config.processes):
+       if proc == 'GluGlu': processName.append("ggH") 
+       elif proc=='VBF' : processName.append("qqH")
+       elif proc=='WMinusH' : processName.append("W^{-}H")
+       elif proc=='WPlusH' : processName.append("W^{+}H")
+       else: processName.append(proc)
+
+    starts=[0.28,0.4,0.52,.64,.76,.88]
+    
+    for i in range(0,len(starts)):
+        pave=ROOT.TPave(starts[i],0.85,starts[i]+.03,0.85+0.03,0,"NDC");
+        pave.SetFillColor(colors[i]);
+        pave.Draw();
+        tex_m.DrawLatex(starts[i]+0.04,0.84+0.025,processName[i]);
+        garbage.append(pave)
+
+    c.Modify()
+    c.Update()
+    if opts.outdir=="":
+        raw_input("ok?")
+    else:
+        extra=""
+        if opts.cat !="all" and opts.cat != "": extra ="_"+cat
+        c.SaveAs(opts.outdir + "/signal_composition"+extra+".pdf")
+        c.SaveAs(opts.outdir + "/signal_composition"+extra+".png")
+
+if doSig:## EA plot
+    c=ROOT.TCanvas("c_"+cat+"_ea","canvas",800,800)
+    ### TODO
+    dummy = ROOT.TH2F("dummy","",10,120,130,100,0,1);
+    dummy.SetStats(0);
+    g={}
+    g["tot"]=ROOT.TGraphErrors()
+    g["tot"].SetName("ea tot")
+
+    for proc in config.processes:
+        g[proc] = ROOT.TGraphErrors()
+        g[proc] . SetName("ea "+proc)
+
+    for m in sorted(masses):
+        Ntot=0.0
+        Stot=0.0
+        Etot=0.0
+        for proc in config.processes:
+            #print "--- proc",proc
+            S=0.0
+            E=0.0
+            Ntot += (config.xsec(proc,m)*config.br(m) )
+            for cat in categories:
+                try:
+                    ea,dea=eaStore[(cat,proc,m)]
+                except KeyError:
+                    ea,dea = 0.,0.
+                #print "m",m,"ea",ea,"dea",dea,"xsec",config.xsec(proc,m),"br",config.br(m)
+                S += ea
+                E += (dea**2)
+                Stot += (ea*config.xsec(proc,m)*config.br(m) )
+                Etot += (dea*config.xsec(proc,m)*config.br(m))**2
+            n=g[proc].GetN()
+            g[proc].SetPoint(n,m,S)
+            g[proc].SetPointError(n,m,math.sqrt(E))
+        n=g['tot'].GetN() 
+        #print "----------"
+        #print "m=",m,"Stot=",Stot,"Ntot=",Ntot,"Etot",math.sqrt(Etot)
+        #print "=========="
+        g['tot'].SetPoint(n,m,Stot/Ntot)
+        g['tot'].SetPointError(n,0.,math.sqrt(Etot)/Ntot)
+
+    ## Set Style and draw
+    c.SetTopMargin(0.05)
+    c.SetRightMargin(0.05)
+    c.SetBottomMargin(0.15)
+    c.SetLeftMargin(0.15)
+
+    dummy.Draw("AXIS")
+    dummy.GetXaxis().SetTitle("m_{H} [GeV]")
+    dummy.GetXaxis().SetTitleOffset(1.2)
+    dummy.GetYaxis().SetTitle("#varepsilon A")
+    dummy.GetYaxis().SetTitleOffset(1.2)
+    dummy.GetYaxis().SetRangeUser(.25,.75)
+
+    g["tot"].SetLineColor(ROOT.kBlack)
+    g["tot"].SetLineWidth(2)
+    g["tot"].SetFillColor(ROOT.kOrange)
+
+    g["stat"]=g["tot"].Clone("stat")
+    g["stat"].SetLineWidth(0)
+    g["stat"].SetLineColor(ROOT.kOrange)
+
+    x0=.5
+    y0=.20
+    leg = ROOT.TLegend(x0,y0,x0+.4,y0+.15)
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetNColumns(2)
+    leg.AddEntry(g['tot'],"SM H","L")
+    leg.AddEntry(g['stat'],"stat. err","F")
+    for proc in config.processes:
+        g[proc].SetLineStyle(7)
+        g[proc].SetLineWidth(2)
+        g[proc].SetFillColor(ROOT.kGray)
+        if 'GluGlu' in proc:
+            g[proc].SetLineColor(38)
+            leg.AddEntry(g[proc],"ggH","L")
+        elif 'VBF' in proc:
+            g[proc].SetLineColor(46)
+            leg.AddEntry(g[proc],"qqH","L")
+        elif 'WMinusH' in proc: 
+            g[proc].SetLineColor(ROOT.kGreen+2)
+            leg.AddEntry(g[proc],"W^{+}H","L")
+        elif 'WPlusH' in proc:
+            g[proc].SetLineColor(ROOT.kGreen+2)
+            leg.AddEntry(g[proc],"W^{-}H","L")
+        elif 'ZH' in proc:
+            g[proc].SetLineColor(ROOT.kCyan)
+            leg.AddEntry(g[proc],"ZH","L")
+        elif 'ttH' in proc:
+            g[proc].SetLineColor(ROOT.kOrange)
+            leg.AddEntry(g[proc],"ttH","L")
+        g[proc] . Draw("3 SAME")
+        g[proc] . Draw("LX SAME")
+
+    g['tot'] . Draw("3 SAME")
+    g['tot'] . Draw("LX SAME")
+    leg.Draw()
+
+    dummy.Draw("AXIS SAME")
+    dummy.Draw("AXIS X+ Y+ SAME")
+    c.Modify()
+    c.Update()
+    if opts.outdir=="":
+    	raw_input("ok?")
+    else:
+    	c.SaveAs(opts.outdir + "/effAcc.pdf")
+    	c.SaveAs(opts.outdir + "/effAcc.png")
+
+rebin=opts.rebin
 doBkg=not opts.noBkg
 if doBkg:
   if opts.cat == "all":
@@ -245,6 +501,8 @@ if doBkg:
     garbage.extend([c,pup,pdown])
 
     leg = ROOT.TLegend(.68,.65,.92,.85)
+    if opts.cat =="":
+        leg = ROOT.TLegend(.68,.70,.92,.93)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     ## column in the right order
@@ -259,7 +517,7 @@ if doBkg:
     hdata.SetLineColor(ROOT.kBlack)
     leg.AddEntry(hdata,"Data","PE")
     #mcs=["DY","TT","ST","WZ","WW","ZZ"]
-    BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY"]
+    BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     mcAll=None
 
     #bkg=ROOT.THStack()
@@ -330,8 +588,10 @@ if doBkg:
             h.SetFillColor(ROOT.kGreen-10)
         elif mc == 'WZ' :
             h.SetFillColor(ROOT.kGreen-10)
-            #leg.AddEntry(h,"VV","F")
             leg1.append((h,"VV","F"))
+        elif mc == 'EWK_LLJJ' :
+            h.SetFillColor(ROOT.kOrange-4)
+            leg1.append((h,"EWK_LLJJ","F"))
 
         bkg.Add(h)
 
@@ -395,18 +655,61 @@ if doBkg:
         h.Scale(config.lumi())
         h.Scale(xsec*br)
         sig.Add(h)
+
     ## end mc loop
+    lines=[]
+    values=[]
+    if 'BdtOnH' in opts.var:
+        for x in [-.4,0.05,.25,.40,.65,.73]:
+            l = ROOT.TLine(x,1.e-2,x,1e5)
+            l.SetLineWidth(2)
+            l.SetLineColor(ROOT.kGray+2)
+            l.SetLineStyle(7)
+            lines.append(l)
+            #values.append(x)
+
+    if opts.doRemap:
+        qm = QuantileMapping()
+        qm.nbins=25
+        qm.SetBase(sig.GetHist() )
+        sig.Remap(qm)
+        bkg.Remap(qm)
+        for x in b_systs_up: x.Remap(qm)
+        for x in b_systs_down: x.Remap(qm)
+        hdata = qm.Apply(hdata)
+        mcAll = qm.Apply(mcAll)
+        lines=[]
+        values=[]
+        if 'BdtOnH' in opts.var:
+            for x0 in [-.4,0.05,.25,.40,.65,.73]:
+                x=qm.ConvertPoint(x0)
+                print "x=",x,"<- x0=",x0
+                l = ROOT.TLine(x,1e-2,x,1e4)
+                l.SetLineWidth(2)
+                l.SetLineColor(ROOT.kGray+2)
+                #l.SetLineStyle(7)
+                lines.append(l)
+                values.append(x)
+
+    ##
     c.cd()
     pup.cd()
     #bkg.Draw("HIST") THSTack
     dummy = bkg.GetHist()
     dummy.Draw("AXIS")
     dummy.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
+
+    if 'BdtOnH' in opts.var:
+        dummy.GetXaxis().SetTitle("BDT Output")
+
+    if 'BdtOnH' in opts.var and opts.doRemap:
+        dummy.GetXaxis().SetTitle("BDT Quantile")
+
     dummy.GetXaxis().SetTitleOffset(2.0)
     dummy.GetYaxis().SetTitle("Events")
     dummy.GetYaxis().SetTitleOffset(2.0)
     dummy.GetXaxis().SetRangeUser( float(opts.xrange.split(',')[0]),float(opts.xrange.split(',')[1]))
-    dummy.GetYaxis().SetRangeUser(1.e-1,dummy.GetMaximum()*10)
+    dummy.GetYaxis().SetRangeUser(1.05e-1,dummy.GetMaximum()*10)
 
     dummy.GetYaxis().SetLabelFont(43)
     dummy.GetXaxis().SetLabelFont(43)
@@ -421,6 +724,10 @@ if doBkg:
     #color=38
     sig.Draw("HIST SAME")
     sig.Print()
+
+    for l in lines:
+        l.Draw("L SAME")
+
     hdata.Draw("P E X0 SAME")
 
     dummy.Draw("AXIS X+ Y+ SAME")
@@ -437,7 +744,9 @@ if doBkg:
     txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
     txt.SetTextSize(20)
     txt.SetTextAlign(11)
-    txt.DrawLatex(.73,.90,"#bf{Cat="+re.sub('_','',cat)+"}")
+    if cat != "":
+        txt.DrawLatex(.73,.90,"#bf{Cat="+re.sub('_','',cat)+"}")
+
 
     # prepare err
     errAll = mcAll.Clone("errAll") ## with stat uncertainties
@@ -475,6 +784,16 @@ if doBkg:
     r.Divide(mcAll)
     r.Draw("AXIS")
     r.Draw("AXIS X+ Y+ SAME")
+
+    txt.SetTextSize(16)
+    txt.SetTextAlign(23)
+    txt.SetTextColor(ROOT.kGray+2)
+    txt.SetNDC(False)
+    for x in values:
+        x0=x
+        if x0> .9 and x0 <.92: x0 =.9
+        if x0> .93 : x0 =.97
+        txt.DrawLatex(x0,1.45,"%.0f%%"%(x*100))
 
     for idx,s in enumerate(systs):
         try:
@@ -534,7 +853,8 @@ if doBkg:
             errAll.SetBinError(ibin+1,0.5+up)
             
     errAll.Draw("E2 SAME")
-    r.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
+    #r.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
+    r.GetXaxis().SetTitle(dummy.GetXaxis().GetTitle())
     r.GetXaxis().SetTitleOffset(1.2)
     r.GetYaxis().SetTitle("Events")
     r.GetYaxis().SetTitleOffset(2.0)
@@ -552,6 +872,19 @@ if doBkg:
     r.GetXaxis().SetTitleSize(24)
     r.GetYaxis().SetNdivisions(502)
 
+    txt.SetTextColor(ROOT.kBlack)
+    txt.SetTextFont(43)
+    txt.SetTextSize(20)
+    txt.SetNDC(True)
+    r.GetYaxis().SetLabelSize(0)
+    txt.SetTextAlign(31)
+    #pdown.SetBottomMargin(0.50)
+    txt.DrawLatex(.145,.50,"0.5")
+    txt.SetTextAlign(32)
+    txt.DrawLatex(.145,.75,"1.0")
+    txt.SetTextAlign(33)
+    txt.DrawLatex(.145,.99,"1.5")
+
     g=ROOT.TGraph()
     g.SetName("1"+cat)
     g.SetPoint(0,60,1)
@@ -568,12 +901,14 @@ if doBkg:
     if opts.outdir=="":
         raw_input("ok?")
     else:
+        extra = ""
+        if opts.doRemap: extra += "_QM"
         if cat != "":
-            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + "_bkg" + ".pdf")
-            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + "_bkg" + ".png")
+            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + extra+ "_bkg" + ".pdf")
+            c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + extra+ "_bkg" + ".png")
         else:
-            c.SaveAs(opts.outdir + "/" + opts.var + "_bkg" + ".pdf")
-            c.SaveAs(opts.outdir + "/" + opts.var + "_bkg" + ".png")
+            c.SaveAs(opts.outdir + "/" + opts.var +extra+ "_bkg" + ".pdf")
+            c.SaveAs(opts.outdir + "/" + opts.var +extra+ "_bkg" + ".png")
     #try to clean
     for g in garbage:
         g.Delete()

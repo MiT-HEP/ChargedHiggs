@@ -231,7 +231,9 @@ void LoadNero::FillFatJets(){
     cout <<"\t * tau1: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau1") << " : "<< bj->tau1->size()<<endl;
     cout <<"\t * tau2: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau2") << " : "<< bj->tau2->size()<<endl;
     cout <<"\t * tau3: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau3") << " : "<< bj->tau3->size()<<endl;
+    cout <<"\t * nFirst: "	<< tree_->GetBranchStatus("fatjetAK8CHSfirstSubjet") << " : "<< bj->firstSubjet->size()<<endl;
     cout <<"\t * nSubjets: "	<< tree_->GetBranchStatus("fatjetAK8CHSnSubjets") << " : "<< bj->nSubjets->size()<<endl;
+    cout <<"\t * subjet_btag: "	<< tree_->GetBranchStatus("fatjetAK8CHSsubjet_btag") << " : "<< bj->subjet_btag->size()<<endl;
     cout <<"\t * softdropMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSSoftdropMass") << " : "<< bj->softdropMass->size()<<endl;
     cout <<"\t * CorrectedPrunedMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSCorrectedPrunedMass") << " : "<< bj->corrprunedMass->size()<<endl;
 #endif
@@ -264,6 +266,18 @@ void LoadNero::FillFatJets(){
         j->nSubjets = bj -> nSubjets -> at(iJet);
         j->softdropMass = bj -> softdropMass -> at(iJet);
         j->CorrectedPrunedMass = bj -> corrprunedMass -> at(iJet);
+
+        int first = bj -> firstSubjet -> at(iJet);
+        int Nsub = bj -> nSubjets -> at(iJet);
+
+        j->hasSubJetBTag = false;
+
+        for (int iSubJet=first+0; iSubJet<first+(Nsub-1)  ; ++iSubJet) {
+
+            if( bj->subjet_btag->at(iSubJet) > 0.8484) j->hasSubJetBTag = true;
+
+        }
+
 
         // add it
         event_ -> fat_ . push_back(j);
@@ -339,6 +353,11 @@ void LoadNero::FillLeptons(){
         l-> SetR9    ( (*bl->r9) [iL]);
         l-> SetEtaSC ( (*bl->etaSC) [iL]);
 
+        if (tree_ -> GetBranchStatus("lepNLayers") !=0 and bl-> nLayers  and bl-> nLayers ->size() >iL  ) {
+                l-> SetNLayers( bl-> nLayers -> at(iL) );
+        }
+        else l->SetNLayers(-999);
+
 #ifdef VERBOSE
         if(VERBOSE>1) cout<<"[LoadNero]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;
 #endif
@@ -364,13 +383,14 @@ void LoadNero::FillPhotons(){
     {
         //bool id = (b->selBits->at(i)) & BarePhotons::Selection::PhoMedium;
         //if (not id) continue;
-        bool eleVeto= b->selBits->at(i) & (1UL<<7); // v1.2.1
+        bool eleVeto= (b->selBits->at(i) & BarePhotons::Selection::PhoElectronVeto); 
         if (not eleVeto) continue;
 
         Photon *p = new Photon();
         p->SetP4( *(TLorentzVector*) ((*b->p4)[i]) );
-        p->iso = b->chIso->at(i);
-        p->id = (b->selBits->at(i));
+        //p->iso = b->chIso->at(i);
+        p->iso = b->iso->at(i);
+        p->id = (b->selBits->at(i) & BarePhotons::Selection::PhoMedium);
         event_ -> phos_ . push_back(p);
     }
     return;
@@ -753,6 +773,10 @@ void LoadNero::NewFile(){
         }
         event_ -> IsTriggered(""); // reset trigger caching
     }
+    
+    // Bad fix for partially reprocessed trees  -- I loose one entry// FIXME
+    bare_[ names_["BareLeptons"] ]->setBranchAddresses(tree_);
+
 }; // should take care of loading the trigger names
 // ---------------------------END NERO ---------------------
 

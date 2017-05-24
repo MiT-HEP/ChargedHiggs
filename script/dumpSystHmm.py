@@ -21,7 +21,9 @@ while mypath != "" and mypath != "/":
 print "-> Base Path is " + basepath
 sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
-from hmm import hmm
+from hmm import hmm, hmmAutoCat
+
+config=hmmAutoCat
 
 fIn=ROOT.TFile.Open(opts.input)
 if fIn==None:
@@ -32,12 +34,12 @@ if fIn==None:
 base="HmumuAnalysis/Vars/Mmm"
 
 
-categories=hmm.categories
+categories=config.categories
 #for muStr in ["BB","BO","BE","OO","OE","EE"]:
 #    for catStr in [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]:
 #        categories . append(catStr +"_" + muStr) 
 #processes=['BKG','GluGlu','VBF','WPlusH','WMinusH','ttH','ZH']
-processes= hmm.datacard_procs
+processes= config.datacard_procs
 
 binline  = ["bin"]
 procline = ["process"]

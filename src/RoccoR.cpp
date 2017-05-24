@@ -1,6 +1,3 @@
-#ifndef ElectroWeakAnalysis_RoccoR
-#define ElectroWeakAnalysis_RoccoR
-
 #include <fstream>
 #include <sstream>
 #include "TSystem.h"
@@ -391,7 +388,6 @@ double RoccoR::kScaleFromGenMC(int Q, double pt, double eta, double phi, int n, 
 }
 
 
-#endif
 
 
 

@@ -57,6 +57,7 @@ public:
 
     void printSynch(Event*e);
 
+    double genInfoForWZ(Event*e);
     int genInfoForBKG(Event*e);
     bool genInfoForSignal(Event*e);
 
@@ -78,7 +79,9 @@ public:
 private:
 
 
-    std::unique_ptr<GetBinning> bin_;
+    std::unique_ptr<GetBinning> binLow_;
+    std::unique_ptr<GetBinning> binMedium_;
+    std::unique_ptr<GetBinning> binHigh_;
 
     CutSelector cut;
 
@@ -98,10 +101,13 @@ private:
 
     double evt_HT=-1;
     double evt_ST=-1;
-    double evt_minDRbb=-1;
     double evt_DRlbmaxPt=-1;
+
+    double evt_minDRbb=-1;
     double evt_minDRbb_invMass=-1;
+
     double evt_minDRlb_invMass=-1;
+    double evt_minDRlb=-1;
 
     double evt_avDRBB=-1;
 
@@ -115,6 +121,7 @@ private:
     double evt_MT2bb=-1;
     double evt_MT2bb1l=-1;
     double evt_DRl1b1=-1;
+    double evt_Ml1b1=-1;
 
     // these are defined only for 2l
     double evt_DRl2b1=-1;

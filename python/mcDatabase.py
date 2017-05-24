@@ -190,6 +190,10 @@ else:
 	elif 'DYJetsToLL_M-50_HT-1200to2500' in opts.label: xsec=0.186222
 	elif 'DYJetsToLL_M-50_HT-2500toInf' in opts.label: xsec=0.004385
 	elif 'DYJetsToLL_M-10to50' in opts.label:xsec=18610
+	## amc@nlo sum=5991.7
+	elif 'DYToLL_0J_13TeV' in opts.label: xsec=4754
+	elif 'DYToLL_1J_13TeV' in opts.label: xsec=888.9 
+	elif 'DYToLL_2J_13TeV' in opts.label: xsec=348.8 
 	elif 'DYJetsToLL' in opts.label or 'DY' in opts.label: xsec=5765.4 # nnpdf 3.0
 	#elif 'DYJets' in opts.label or 'DY' in opts.label: xsec=6025.
 	## SIG
