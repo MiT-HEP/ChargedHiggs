@@ -231,7 +231,9 @@ void LoadNero::FillFatJets(){
     cout <<"\t * tau1: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau1") << " : "<< bj->tau1->size()<<endl;
     cout <<"\t * tau2: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau2") << " : "<< bj->tau2->size()<<endl;
     cout <<"\t * tau3: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau3") << " : "<< bj->tau3->size()<<endl;
+    cout <<"\t * nFirst: "	<< tree_->GetBranchStatus("fatjetAK8CHSfirstSubjet") << " : "<< bj->firstSubjet->size()<<endl;
     cout <<"\t * nSubjets: "	<< tree_->GetBranchStatus("fatjetAK8CHSnSubjets") << " : "<< bj->nSubjets->size()<<endl;
+    cout <<"\t * subjet_btag: "	<< tree_->GetBranchStatus("fatjetAK8CHSsubjet_btag") << " : "<< bj->subjet_btag->size()<<endl;
     cout <<"\t * softdropMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSSoftdropMass") << " : "<< bj->softdropMass->size()<<endl;
     cout <<"\t * CorrectedPrunedMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSCorrectedPrunedMass") << " : "<< bj->corrprunedMass->size()<<endl;
 #endif
@@ -264,6 +266,18 @@ void LoadNero::FillFatJets(){
         j->nSubjets = bj -> nSubjets -> at(iJet);
         j->softdropMass = bj -> softdropMass -> at(iJet);
         j->CorrectedPrunedMass = bj -> corrprunedMass -> at(iJet);
+
+        int first = bj -> firstSubjet -> at(iJet);
+        int Nsub = bj -> nSubjets -> at(iJet);
+
+        j->hasSubJetBTag = false;
+
+        for (int iSubJet=first+0; iSubJet<first+(Nsub-1)  ; ++iSubJet) {
+
+            if( bj->subjet_btag->at(iSubJet) > 0.8484) j->hasSubJetBTag = true;
+
+        }
+
 
         // add it
         event_ -> fat_ . push_back(j);

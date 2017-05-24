@@ -2249,6 +2249,18 @@ void ChargedHiggsTopBottom::printSynch(Event*e) {
     if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"))) std::cout << "passTrigger(IsoMu24 and IsoTkMu24 and Mu50)" << std::endl;
     //        if(e->GetName().find("SingleElectron")!=string::npos and e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger" << std::endl;
     //        if(e->GetName().find("SingleMuon")!=string::npos and (e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger" << std::endl;
+
+    if(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")) std::cout << "   passTrigger(HLT_Ele27_eta2p1_WPTight_Gsf_v)" << std::endl;
+    if(e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v")) std::cout << "   passTrigger(HLT_Ele105_CaloIdVT_GsfTrkIdT_v)" << std::endl;
+    if(e->IsTriggered("HLT_Photon165_HE10")) std::cout << "   passTrigger(HLT_Photon165_HE10)" << std::endl;
+    if(e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")) std::cout << "   passTrigger(HLT_Ele35_WPLoose_Gsf_v)" << std::endl;
+    if(e->IsTriggered("HLT_IsoMu24_v")) std::cout << "   passTrigger(HLT_IsoMu24_v)" << std::endl;
+    if(e->IsTriggered("HLT_IsoTkMu24_v")) std::cout << "   passTrigger(HLT_IsoTkMu24_v)" << std::endl;
+    if(e->IsTriggered("HLT_Mu50_v")) std::cout << "   passTrigger(HLT_Mu50_v)" << std::endl;
+
+
+
+
     std::cout << " Nleps(pt>10, eta<2.4)=" << e->Nleps() << std::endl;
     if(leadLep != NULL) {
         std::cout << " leadLep->Pt()=" << leadLep->Pt();
@@ -2450,17 +2462,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     } else {
         // DATA
-        /*
-        if(e->GetName().find("SingleMuon")!=string::npos) passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"));
-        //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")); // added later, Julie
-        //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele30_WPTight_Gsf_v")); //Ele27_WPTight exist in runC
-        //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // asked Dominick , used in stop
-        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v")); // asked Dominick , used in stop
-        //        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_WPTight_Gsf_v")); // for the moment in the v2.0 tag
-        */
 
-        if(e->GetName().find("SingleMuon")!=string::npos) passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"));
-        if(e->GetName().find("SingleElectron")!=string::npos) passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v"));
+        passTriggerMu=(e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"));
+        passTriggerEle=(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v"));
 
     }
 
