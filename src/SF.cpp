@@ -83,7 +83,7 @@ void SF_PtEta::print(){
 void SF_PtEta_And_Eff::add(double pt1,double pt2 ,double eta1, double eta2, double dataEff, double mcEff, double dataErr, double mcErr )
 {
     //SF_PtEta::add(pt1,pt2,eta1,eta2, dataEff/mcEff, (dataErr/dataEff + mcErr/mcEff) * dataEff/mcEff); 
-    Log(__FUNCTION__,"INFO",Form("* Adding sf in range pt [%f,%f), eta[%f,%f) deff=%f mceff=%f",pt1,pt2,eta1,eta2,dataEff,mcEff ) );
+    Log(__FUNCTION__,"INFO",Form("* Adding sf in range pt [%f,%f), eta[%f,%f) deff=%f (+/-%f) mceff=%f (+/-%f)",pt1,pt2,eta1,eta2,dataEff,dataErr,mcEff ,mcErr) );
     range r;
     r.pt1 = pt1;
     r.pt2 = pt2;
@@ -139,14 +139,19 @@ double SF_PtEta_And_Eff::get()
     if (veto_)
     {
         sf = (1.-effData_) / (1.-effMC_);
-        if (sqrErr_)
+
+        if (dataErr_)
+            err = fabs(errData_ / (1.-effData_) ) * sf;
+        else if (sqrErr_)
             err = std::sqrt( std::pow(errData_ / (1.-effData_),2) + std::pow(errMC_ / (1.-effMC_),2)) *sf;
         else
             err = (fabs(errData_ / (1.-effData_)) + fabs(errMC_ / (1.-effMC_)) ) * sf;
     }
     else{
         sf = effData_ / effMC_;
-        if (sqrErr_)
+        if (dataErr_)
+            err = fabs(errData_ / effData_ ) * sf;
+        else if (sqrErr_)
             err = std::sqrt((errData_/effData_)*(errData_/effData_)+ (errMC_/effMC_)*(errMC_/effMC_)  ) * sf ;
         else
             err = fabs(errData_/effData_) * sf  + fabs(errMC_/effMC_) * sf ;

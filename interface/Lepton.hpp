@@ -24,6 +24,7 @@ class Lepton : virtual public Object,
         int looseId{0};
         int trackerMuon {0};
         int globalMuon {0};
+        int nlayers{0};
         float mva{-1}; // mva
 
         // ele specific
@@ -69,6 +70,7 @@ class Lepton : virtual public Object,
         inline void SetMediumIdOrig( bool x=true){mediumIdOrig=x;}
         inline void SetLooseId( bool x=true){looseId=x;}
         inline void SetMva(float x){mva=x;}
+        inline void SetNLayers(int x){nlayers=x;}
         inline void SetTrackerMuon(bool x=true){trackerMuon=x;}
         inline void SetGlobalMuon(bool x=true){globalMuon=x;}
         inline void SetTrackerMuonCut(bool x=true){trackermuoncut_=x;}
@@ -89,6 +91,7 @@ class Lepton : virtual public Object,
         inline float GetEtaSC() const {return etaSC_;}
         inline int Charge() const { return charge; }
         inline int GetType() const { return type; } // bypass id
+        inline int GetNLayers() const { return nlayers; } // bypass id
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;
@@ -117,8 +120,9 @@ class Lepton : virtual public Object,
             if ( miniisorelcut_ >=0 and miniIso > miniisorelcut_) return 0;
             if ( type == 11 and mvaLoosecutEta_ and (
                                                      (Mva()<-0.041 and abs(Eta())<0.8) or
-                                                     (Mva()<0.383 and abs(Eta())<=1.479 and abs(Eta())>=0.8) or
-                                                     (Mva()<-0.515 and abs(Eta())>1.479) )) return 0;
+                                                     (Mva()<0.383 and abs(Eta())<=1.4442 and abs(Eta())>=0.8) or
+                                                     (Mva()<-0.515 and abs(Eta())>1.566) )) return 0;
+
             if ( tightcut_ and not tightId) return 0;
             if ( mediumcut_ and not mediumId) return 0;
             if ( mediumorigcut_ and not mediumIdOrig) return 0;
@@ -130,8 +134,8 @@ class Lepton : virtual public Object,
 
     virtual inline bool IsEleMvaTight() const { return IsElectron() and  (
                                                                           (Mva()>=0.674 and abs(Eta())<0.8) or
-                                                                          (Mva()>=0.744 and abs(Eta())<=1.479 and abs(Eta())>=0.8) or
-                                                                          (Mva()>=0.170 and abs(Eta())>1.479) ) ; }
+                                                                          (Mva()>=0.744 and abs(Eta())<=1.4442 and abs(Eta())>=0.8) or
+                                                                          (Mva()>=0.170 and abs(Eta())>1.566) ) ; }
 
         virtual inline bool IsElectron() const { return IsLep() and (type == 11); }
         virtual inline bool IsMuon() const { return IsLep() and (type == 13); }

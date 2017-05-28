@@ -51,7 +51,7 @@ void Fitter::info(){
     for(auto &s : inputMasks) cout <<"mask = "<<s<<endl;
     cout<<"mIn = ";for(auto &m : mIn ) cout <<m<<","; cout<<endl;
     cout <<"procs = ";for(auto &p : processes) cout <<p<<",";cout<<endl;
-    cout<<"** ttH125 ONLY **"<<endl;
+    //cout<<"** ttH125 ONLY **"<<endl;
     cout<<"-----------------------------------"<<endl;
 }
 
@@ -88,16 +88,22 @@ void Fitter::init(){
 
         for( float& m : mIn)
         {
-            if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 FIXME
+            //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 
 
             string mass = Form(massMask_.c_str() ,m);
             TH1D *h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
 
             if (h == NULL) 
+            {
                 Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]+ Form("mass=%.1f proc=%s",m,proc.c_str()));
-
-            //h->Rebin(5); //FIXME REMOVEME
-
+                nGaussians[pair<int,string>(cat,proc)] = 1;
+                initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] = m;
+                initPars_[Form("c1_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 2.5;
+                ea_y . push_back( 1.e-9 );
+                xSec_x . push_back( m );
+                xSec_y . push_back( 1 );
+                continue;
+            }
 
             // -- Construct RooDataHist
             string name =  Form("%s_cat_%d_mass_%s",proc.c_str(),cat,mass.c_str());
@@ -154,7 +160,8 @@ void Fitter::init(){
             xSec_y . push_back( xsec );
             ea_y . push_back( h->Integral(bin0,bin1)/xsec );
 
-        }
+        } // end mass loop
+
         //xSec_x . clear();
         //xSec_y . clear();
         // -- Construct Normalization Spline 2
@@ -179,7 +186,8 @@ void Fitter::init(){
 
         RooAbsReal* eaSpline;
 
-        if (proc == "ttH")//ttH125 FIXME
+        //if (proc == "ttH")//ttH125 
+        if (false)//ttH as all
         {
             eaSpline = new RooRealVar(eaName.c_str(),eaName.c_str(),ea_y[0]);
             ((RooRealVar*)eaSpline)->setConstant();
@@ -291,7 +299,7 @@ void Fitter::fit(){
                 pos+=1;
             }
             // return if ttH !=125
-            if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 FIXME
+            //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 
             //mean and sigma
            // pars[pos+0].setRange(0,125);
 
@@ -314,7 +322,8 @@ void Fitter::fit(){
             string name =  Form("%s_cat_%d_mass_%s",proc.c_str(), cat,mass.c_str());  
 
             cout <<" *-> name is "<<name<<endl; // DEBUG
-            if (hist_.find(name) == hist_.end() ) cout <<"Unable to find this hist: check names"<<endl;
+            bool foundHist=true;
+            if (hist_.find(name) == hist_.end() ) { foundHist=false;cout <<"Unable to find this hist: check names"<<endl;}
 
             // switch on and off verbosity of roofit/minuit
             int errlevel = -1;
@@ -327,8 +336,10 @@ void Fitter::fit(){
                 warnlevel = 1;
             }
             // -- fit
-            fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
-            fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
+            if (foundHist){
+                fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
+                fitModel->fitTo( *hist_[ name ] ,SumW2Error(kTRUE), PrintEvalErrors(errlevel),PrintLevel(printlevel),Warnings(warnlevel) );
+            }
 
             // -- print or follow
             if (saveFit) cout <<"Cat="<<cat<<" Proc="<<proc<<" nG="<<nGaussians[pair<int,string>(cat,proc)]<<endl;
@@ -343,7 +354,7 @@ void Fitter::fit(){
             if (plot ) {
                 TCanvas *c = new TCanvas(Form("c_%s_%s_cat%d",mass.c_str(),proc.c_str(),cat),"c");
                 RooPlot *p = x_ -> frame();
-                hist_[ name ] -> plotOn(p,DataError(RooAbsData::SumW2));
+                if (foundHist) hist_[ name ] -> plotOn(p,DataError(RooAbsData::SumW2));
                 fitModel -> plotOn(p);
 
                 if (nGaussians[pair<int,string>(cat,proc)] >=2)
@@ -385,7 +396,7 @@ void Fitter::fit(){
 
             for( auto & m: mIn )
             {
-                if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 FIXME
+                //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125
 
                 string mass=Form(massMask_.c_str(),m);
                 mpoints.push_back(m);
@@ -395,7 +406,8 @@ void Fitter::fit(){
 
             //interpolate model pars
             string splname=Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,i);
-            if (proc == "ttH")//ttH125 FIXME
+            //if (proc == "ttH")//ttH125
+            if (false)//ttH all
             {
                 RooRealVar par( Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i),
                                 Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i),
@@ -445,13 +457,13 @@ void Fitter::end(){
         // construct gaussians
 
         //RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat))));
-        RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat))));
+        RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
 
         RooGaussian *g2{NULL},*g3{NULL};
         //if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
         //if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c4",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c5",proc.c_str(),cat))));
-        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_, *getMeanWithSyst(cat,proc,1), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
-        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  *getMeanWithSyst(cat,proc,2), *(w_->function(Form("sigmodel_%s_cat%d_c5",proc.c_str(),cat))));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_, *getMeanWithSyst(cat,proc,1), *getSigmaWithSyst(cat,proc,1));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  *getMeanWithSyst(cat,proc,2), *getSigmaWithSyst(cat,proc,2));
 
         std::unique_ptr<RooAbsPdf> sigModel;
        
@@ -547,6 +559,39 @@ RooAbsReal* Fitter::getMeanWithSyst(int cat, string proc,int gaus=0){
         RooFormulaVar *mean = new RooFormulaVar(name.c_str(),name.c_str(),scaleFormula.c_str(),scaleList);
         w_->import(*mean);
         return mean;
+}
+
+RooAbsReal* Fitter::getSigmaWithSyst(int cat, string proc,int gaus=0){
+        // Add Systematics here, because the parameter is a RooSpline, and I need to have a RooFormulaVar -> m = m0 + smear_catX_procX*smearUnc = [0,-1,1][0.0011]
+        // s = s0 + smear_catX_procX * smearUnc
+        // or w->var() if correlated
+        int mycat = cat ;//  for correlation 
+        string myproc = proc;
+        if (smearCorr.find(pair<int,string>(cat,proc))!= smearCorr.end() )
+        {
+            mycat = smearCorr[ pair<int,string>(cat,proc) ] .first; 
+            myproc = smearCorr[ pair<int,string>(cat,proc) ] .second;
+        }
+        RooRealVar *smearNuisance =  new RooRealVar(Form("smear_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_cat%d_proc%s",mycat,myproc.c_str()),0,-1,1);
+        RooRealVar *smearValue =  new RooRealVar(Form("smear_value_cat%d_proc%s",cat,proc.c_str()),Form("smear_value_cat%d_proc%s",cat,proc.c_str()),0.);
+        string smearFormula = "@0";
+        RooArgList smearList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,1+gaus*2))) );
+        RooArgList smearG2List( );
+
+        if (smearUnc.find( pair<int,string>(cat,proc) )   != smearUnc.end() ) 
+        {
+            smearValue->setVal( smearUnc[pair<int,string>(cat,proc)]) ;
+            string smearFormula = "+ (@1*@2)";
+            smearList.add( *smearNuisance);
+            smearList.add( *smearValue);
+        }
+        smearValue->setConstant();
+        smearNuisance->setConstant();
+
+        string name=Form("sigmodel_%s_cat%d_g%d_sigma",proc.c_str(),cat,gaus);
+        RooFormulaVar *sigma = new RooFormulaVar(name.c_str(),name.c_str(),smearFormula.c_str(),smearList);
+        w_->import(*sigma);
+        return sigma;
 }
 
 void Fitter::write(){

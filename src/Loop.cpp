@@ -133,6 +133,8 @@ void Looper::Loop()
 			ClearEvent();
 			// load tree
 			tree_ -> GetEntry(iEntry);
+            fEntry=iEntry;
+
 			//move content into the event
 			FillEvent();	
 			// for each smearing
@@ -312,6 +314,8 @@ void Looper::FillEvent(){
 	if ( tree_ -> GetTreeNumber() != fNumber)
 	{
 		NewFile();
+        // Bad fix for partially reprocessed trees  -- I loose one entry// FIXME
+        tree_->GetEntry(fEntry);
 	}
 
 	loader_->FillEvent();
