@@ -61,6 +61,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     int nSubjets;
     float subjet_btag;
     bool hasSubJetBTag{false};
+    bool hasSubJetBTagLoose{false};
 
     //Gen-level info
 
@@ -74,6 +75,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
 
     inline bool IsSubjetBTag() const { return hasSubJetBTag ; }
+    inline bool IsSubjetBTagLoose() const { return hasSubJetBTagLoose ; }
 
     inline int IsJet() const { return 1;}
 
