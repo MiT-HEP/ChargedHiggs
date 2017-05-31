@@ -23,6 +23,7 @@ void Event::ClearEvent(){
     for (auto o :  leps_ ) ChargedHiggs::Delete(o);
     for (auto o :  taus_ ) ChargedHiggs::Delete(o);
     for (auto o :  genparticles_ ) ChargedHiggs::Delete(o);
+    for (auto o :  genjets_ ) ChargedHiggs::Delete(o);
 
     jets_ . clear();
     fat_ . clear();
@@ -30,6 +31,7 @@ void Event::ClearEvent(){
     taus_ . clear();
     phos_ . clear();
     genparticles_ . clear();
+    genjets_ . clear();
 
     weight_ -> clearSF( );
 
@@ -41,6 +43,7 @@ void Event::clearSyst(){
     for ( auto o: taus_) o->clearSyst();
     for ( auto o: leps_) o->clearSyst();
     for ( auto o: genparticles_) o->clearSyst();
+    for ( auto o: genjets_) o->clearSyst();
     met_ . clearSyst();
     // clear SF syst
     weight_ -> clearSF();
@@ -631,6 +634,18 @@ void Event::ApplyTauSF(Tau*t,bool prongs,const string& extra)
     ApplySF(sfname);
 
 }
+
+bool Event::GenParticleDecayedFrom( int iGenPar, int apdgid ,int& idx){
+    //if( apdgid==25) Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("* Called GenParticleDecaydFrom %d",iGenPar) );//DEBUG
+    GenParticle *g = GetGenParticle(iGenPar);
+    if (g ==NULL)return false;
+    //if( apdgid==25) Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("*  ---> Current pdgId is %d",g->GetPdgId()) );//DEBUG
+    if (abs(g->GetPdgId()) == apdgid) { idx=iGenPar; return true;}
+    int moidx = g->GetParentIdx();
+    if (moidx == iGenPar) return false;
+    return GenParticleDecayedFrom( moidx, apdgid,idx);
+}
+
 
 
 // Local Variables:

@@ -7,7 +7,7 @@ from optparse import OptionParser, OptionGroup
 parser=OptionParser()
 parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="Hmumu.root")
 parser.add_option("-c","--cat",dest='cat',type="string",help="do cat xxx for bkg [%default]",default="all")
-parser.add_option("-o","--outdir",dest='outdir',type="string",help="output directory [%default]",default="Hmumu")
+parser.add_option("-o","--outdir",dest='outdir',type="string",help="output directory [%default]",default="")
 parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
 
 print "-> Looking for basepath"

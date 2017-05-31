@@ -70,7 +70,7 @@ const bool operator<( const SF_PtEta::range&r1 , const SF_PtEta::range &r2)
     return false;
 }
 
-void SF_PtEta::print(){
+void SF_PtEta::print() const {
     cout <<" ----- SF Pt Eta ------"<<endl;
     cout <<"label='"<<label<<"'"<<endl;
     for(auto& p : store ) 
@@ -325,7 +325,7 @@ void SF_PtSpline::add(double pt, double sf, double err)
 
 }
 
-void SF_PtSpline::print(){
+void SF_PtSpline::print() const{
     cout <<" ------ SF Pt Spline --------"<<endl;
     cout <<"label="<<label<<endl;
     if(spline_)spline_->Print("V");
@@ -481,7 +481,7 @@ void SF_TF1::set(double pt)
     //    Log(__FUNCTION__,"DEBUG",Form("Very little scale factor: pt=%.5f sf=%g",pt,get()));
 }
 
-void SF_TF1::print(){
+void SF_TF1::print() const{
     SF::print();
     if (f_sf_)Log(__FUNCTION__,"INFO",f_sf_->GetTitle());
     else Log(__FUNCTION__,"INFO","TF1 not set");
@@ -496,11 +496,32 @@ void SF_TF2::set(double x,double y)
     else err=0;
 }
 
-void SF_TF2::print(){
+void SF_TF2::print() const{
     SF::print();
     if (f_sf_)Log(__FUNCTION__,"INFO",f_sf_->GetTitle());
     else Log(__FUNCTION__,"INFO","TF2 not set");
     Log(__FUNCTION__,"INFO","------------------------------");
+}
+
+#include "interface/ggF_qcd_uncertainty_2017.hpp"
+
+void SF_WG1::print() const{
+    SF::print();
+    Log(__FUNCTION__,"INFO",Form("nuisance=%d",nuisance));
+    Log(__FUNCTION__,"INFO",Form("pTH=%.3lf",pTH));
+    Log(__FUNCTION__,"INFO",Form("STXS_Stage1=%d",STXS_Stage1));
+    Log(__FUNCTION__,"INFO","------------------------------");
+}
+
+double SF_WG1::get() {
+    if (nuisance == 0) {
+        return 1.0;
+    }
+    if (syst == 0 ) {
+        return 1.0;
+    }
+    if (syst >0) return LHCHXSWG::qcd_ggF_uncertSF_wg1(Njets30,pTH,STXS_Stage1,1.0)[nuisance-1];
+    else return LHCHXSWG::qcd_ggF_uncertSF_wg1(Njets30,pTH,STXS_Stage1,-1.0)[nuisance-1];
 }
 
 // Local Variables:

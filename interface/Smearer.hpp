@@ -165,6 +165,35 @@ class SmearBjets : virtual public SmearBase
 
 };
 
+class SmearWG1 : virtual public SmearBase
+{
+    /* for simple smearing, correlated use SmearSF*/
+    int num_{0};
+    string sfname_{"wg1"};
+
+    public:
+    // mu, res, mig01, mig12, vbf2j, vbf3j
+    // The last numbers are pT dependent uncertainies
+        SmearWG1(){}
+        SmearWG1(int n){num_=n; 
+            switch (num_){
+                case 0: name_="NONE"; break;
+                case 1: name_="WG1Mu"; break;
+                case 2: name_="WG1Res"; break;
+                case 3: name_="WG1Mig01"; break;
+                case 4: name_="WG1Mig12"; break;
+                case 5: name_="WG1VBF2j"; break;
+                case 6: name_="WG1VBF3j"; break;
+                case 7: name_="WG1Pt"; break;
+                default: name_="WG1NoSyst"; break; // only  7 uncertainties
+            };
+        }
+        ~SmearWG1(){}
+        int smear(Event*e) override;	
+        const string sfname(){ return sfname_ ;}
+
+};
+
 #endif
 // Local Variables:
 // mode:c++

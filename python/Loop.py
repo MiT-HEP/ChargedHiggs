@@ -208,6 +208,11 @@ for key in sfdb:
 	if key['type'] == 'th2f':
 		if opts.verbose: print label,key['type'],  key['filename']
 		loop.AddTh2fSF(label, key['filename'])
+
+	if key['type'] == 'wg1':
+		if opts.verbose: print label,key['type']
+		loop.AddWG1SF(label)
+
 	if key['type'] == 'th2eff':
 		if opts.verbose: print label,key['type'],  key['filename'],key['effdata'],key['effmc'],key['errdata'],key['errmc']
 		loop.AddTh2fSF(label, key['filename'],key['effdata'],key['effmc'],key['errdata'],key['errmc'])

@@ -63,8 +63,8 @@ class SF_PtEta : virtual public SF
         virtual void add(double pt1, double pt2 , double eta1, double eta2, double sf, double err);
         // will copy the right SF and err in the mother members sf,err
         virtual void set(double pt,double eta);
-        void print();
-        const string name() const {return "SF_PtEta";}
+        void print() const override;
+        const string name() const override {return "SF_PtEta";}
 };
 
 const bool operator<( const SF_PtEta::range&r1 , const SF_PtEta::range &r2);
@@ -102,7 +102,7 @@ class SF_TH2F : virtual public SF_PtEta
         SF_TH2F() : SF_PtEta(),SF(){}
         SF_TH2F(string filename) : SF_PtEta(),SF(){ init(filename); }
         void init(string filename,string histname="EGamma_SF2D",string errorhist=""); // ""== binerror
-        const string name() const {return "SF_TH2F";}
+        const string name() const override {return "SF_TH2F";}
 };
 
 class TH2;
@@ -114,7 +114,7 @@ class SF_TH2F_And_Eff : virtual public SF_PtEta_And_Eff
         SF_TH2F_And_Eff() : SF_PtEta_And_Eff(),SF(){}
         SF_TH2F_And_Eff( string filename, string effdata,string effmc, string errordata="",string errormc="") : SF_PtEta_And_Eff(),SF(){ init(filename,effdata,effmc,errordata,errormc); }
         void init(string filename,string effdata,string effmc, string errordata="",string errormc=""); // ""== no error
-        const string name() const {return "SF_TH2F_And_Eff";}
+        const string name() const override {return "SF_TH2F_And_Eff";}
 
     private:
         TFile *f;
@@ -144,8 +144,8 @@ class SF_TF1 : virtual public SF
         inline void clear(){delete f_sf_; delete f_err_; }
 
         void set (double pt);
-        void print();
-        const string name() const {return "SF_TF1";}
+        void print() const override;
+        const string name() const override {return "SF_TF1";}
 };
 
 class SF_TF2 : virtual public SF
@@ -166,8 +166,8 @@ class SF_TF2 : virtual public SF
         inline void clear(){delete f_sf_; delete f_err_; }
 
         void set (double x,double y);
-        void print();
-        const string name() const {return "SF_TF2";}
+        void print() const override;
+        const string name() const override {return "SF_TF2";}
 };
 
 class SF_PtSpline : virtual public SF
@@ -188,8 +188,8 @@ class SF_PtSpline : virtual public SF
         void init (string filename, string obj,string obj2);
         void init();
         void set (double pt);
-        void print();
-        const string name() const {return "SF_PtSpline";}
+        void print() const override;
+        const string name() const override {return "SF_PtSpline";}
 
 };
 
@@ -228,8 +228,8 @@ class SF_CSV : public SF_Asymm
         void set (float pt, float eta); // use cached for the others
         void setWP(int wp);
         void setJetFlavor(int flavor);
-        void print(){};
-        const string name() const {return "SF_CSV";}
+        void print() const override{};
+        const string name() const override {return "SF_CSV";}
         
 
         /* Correlations between the SF measurements: SFlight is mostly uncorrelated to SFc and SFb, while SFc is conservatively taken as correlated to SFb. When varying SFb by +/- 1 sigma, one has to vary SFc by +/- 1 sigma simultaneously. SFlight can be independently varied by +/-1 sigma and the resulting uncertainty added in quadrature to that of SFc and SFb. The SF +/- 1 sigma are obtained by retrieving the "up" and "down" values as usual. Additional breakdown of the systematics is also available for combination of 2015 and 2016 data (see below) . 
@@ -238,8 +238,31 @@ class SF_CSV : public SF_Asymm
         bool simpleError{true};
         int systL{0},systB{0};
 
-        virtual double get();
-        virtual void clearSyst(){ SF_Asymm::clearSyst(); systL=0; systB=0;}
+        double get() override;
+        void clearSyst() override { SF_Asymm::clearSyst(); systL=0; systB=0;}
+};
+
+class SF_WG1: virtual public SF
+{
+        int Njets30{0};
+        double pTH{0.};
+        int STXS_Stage1{0};
+
+    public:
+        int nuisance{0};
+        //
+        //
+        inline void SetNjets30(int n){Njets30=n;}
+        inline void SetPTH(double pt){pTH=pt;}
+        inline void SetSTXS(int i){STXS_Stage1=i;}
+
+        SF_WG1() : SF(){}
+        const string name() const override {return "SF_WG1";}
+        //void init();
+
+        void print() const override;
+        double get() override ;
+
 };
 
 

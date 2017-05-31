@@ -79,6 +79,7 @@ genPdgId
 genParent
 genFlags
 genTtbarId
+genjetP4
 ## JET
 jetFlavour
 jetMatchedParton*

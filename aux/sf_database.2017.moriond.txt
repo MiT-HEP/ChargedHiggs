@@ -79,6 +79,11 @@ muISOloose_runBCDEF th2f aux/mu_ISO_EfficienciesAndSF_BCDEF.root LooseISO_LooseI
 dummy base 1.0 0.00
 
 ################
+##   WG1 Unc  ##
+################
+wg1 wg1
+
+################
 ##  Double    ##
 ################
 double base 2.0 0.00
