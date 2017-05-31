@@ -351,6 +351,23 @@ FatJet * Event::GetFatJet( int iJet )
 }
 
 
+FatJet * Event::GetWJet( int iJet )
+{
+    vector<pair<float,int> > valid; // pt, idx
+    for(int i = 0 ; i<fat_.size() ;++i)
+    {
+        if ( fat_[i]->IsWJet()) valid.push_back(pair<float,int>(fat_[i]->Pt(),i));
+    }
+
+    if (valid.size() == 0 ) return NULL;
+    if (valid.size() <= iJet  ) return NULL;
+
+    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+
+    return fat_[ valid[iJet].second];
+}
+
+
 Tau * Event::GetTau( int iTau ) 
 { // { return taus_.at(iTau);} // old
     vector<pair<float,int> > valid; // pt, idx
