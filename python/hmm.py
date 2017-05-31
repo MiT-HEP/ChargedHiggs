@@ -92,7 +92,7 @@ class HmmConfig():
             print x+"=",eval("self."+x)
         print "------------------------"
         print "125: BR",self.br(125)
-        print "   : ggH",self.xsec('ggH',125),"qqH",self.xsec('qqH',125.),'WPlusH',self.xsec('WPlusH',125),"WMinusH",self.xsec("WMinusH",125.),"ttH",self.xsec('ttH',125)
+        print "   : ggH",self.xsec('ggH',125),"qqH",self.xsec('qqH',125.),'WPlusH',self.xsec('WPlusH',125),"WMinusH",self.xsec("WMinusH",125.),"ZH",self.xsec('ZH',125),"ttH",self.xsec('ttH',125)
         print "------------------------"
 
     def br(self,mass=125):
