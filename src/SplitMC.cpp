@@ -26,10 +26,12 @@ void SplitMCAnalysis::Init(){
 	addBadEvent(mc,run,lumi,event);
     }
 
+
     // 0 should not be there
    	Book(Form("SplitMC/CutFlow/CutFlow_%u",0),"split mc cut flow",2,0,2); 
     for( const unsigned &mc :mc_)
     {
+        AddFinalHisto(Form("SplitMC/CutFlow/CutFlow_%u",mc));
    	    Book(Form("SplitMC/CutFlow/CutFlow_%u",mc),"split mc cut flow",2,0,2); 
     }
 
@@ -64,28 +66,47 @@ unsigned SplitMCAnalysis::findMC(Event*e)
 
 	} else if (label.find("HplusToTauNu") !=string::npos) //sig TauNu
 	{
-		if (label.find("M-300") !=string::npos) mc = 55;
-		if (label.find("M-500") !=string::npos) mc = 59;
-		if (label.find("M-800") !=string::npos) mc = 61;
-		if (label.find("M-1000")!=string::npos) mc = 62;
-		if (label.find("M-2000")!=string::npos) mc = 63;
-		if (label.find("M-3000")!=string::npos) mc = 64;
+        if (label.find("M-180") !=string::npos) mc = 51;
+        if (label.find("M-200") !=string::npos) mc = 52;
+        if (label.find("M-220") !=string::npos) mc = 53;
+        if (label.find("M-250") !=string::npos) mc = 54;
+        if (label.find("M-300") !=string::npos) mc = 55;
+        if (label.find("M-400") !=string::npos) mc = 57;
+        if (label.find("M-500") !=string::npos) mc = 59;
+        if (label.find("M-800") !=string::npos) mc = 61;
+        if (label.find("M-1000")!=string::npos) mc = 62;
+        if (label.find("M-2000")!=string::npos) mc = 63;
+        if (label.find("M-3000")!=string::npos) mc = 64;
 
 	} else  // bkg
 	{
-		if(label.find("TTJets_DiLept") !=string::npos) mc =101 ;
-		if(label.find("TTJets_SingleLeptFrom") !=string::npos) mc =102 ;
-		if(label.find("ST") !=string::npos) mc =111 ;
-		if(label.find("tZq") !=string::npos) mc =116 ;
-		if(label.find("TTZ") !=string::npos) mc = 121;
-		if(label.find("TTW") !=string::npos) mc =123 ;
-		if(label.find("ttH") !=string::npos) mc =125 ;
-		if(label.find("TTTT") !=string::npos) mc =127 ;
+        if(label.find("TTTo2L2Nu_TuneCUETP8M2") !=string::npos) mc =101 ;
+        if(label.find("TTToSemilepton_TuneCUETP8M2") !=string::npos) mc =102 ;
+        if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) mc =103 ;
+
+        if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown") !=string::npos) mc =104 ;
+        if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-fsrup") !=string::npos) mc =105 ;
+        if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrdown") !=string::npos) mc =106 ;
+        if(label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup") !=string::npos) mc =107 ;
+
+        if(label.find("TTJets") !=string::npos) mc =108 ;
+
+        if(label.find("TTTo2L2Nu_ttbbFilter") !=string::npos) mc =109 ;
+        if(label.find("TTToSemilepton_ttbbFilter") !=string::npos) mc =110 ;
+
+        if(label.find("ST") !=string::npos) mc =111 ;
+        if(label.find("tZq") !=string::npos) mc =116 ;
+        if(label.find("TTZ") !=string::npos) mc = 121;
+        if(label.find("TTW") !=string::npos) mc =123 ;
+        if(label.find("ttH") !=string::npos) mc =125 ;
+        if(label.find("TTTT") !=string::npos) mc =127 ;
+        if(label.find("TTG") !=string::npos) mc =128 ;
 
 		// V+jets
 		//            mc = 200;
-		if(label.find("DYJets-madgraph") !=string::npos) mc =221 ;
-		if(label.find("WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8")!=string::npos) mc =222;
+        if(label.find("DYJetsToLL_M-50_HT") !=string::npos) mc =221 ;
+        if(label.find("WJetsToLNu_HT")!=string::npos) mc =222;
+
 
 		// EWK
 		// missing tribosons
@@ -109,12 +130,15 @@ int SplitMCAnalysis::analyze(Event* e,string systname)
     //end
 
     if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlow_%u",mc),systname,0,1);
+    //    std::cout << " SplitMC = " << mc << std::endl;
 
     if ( isBadEvent( mc, e->runNum(),e->lumiNum(),e->eventNum() ) ) {
+        //        std::cout << " ===> Fail " << " run" << e->runNum() << " lumi" << e->lumiNum() << " num=" << e->eventNum() << std::endl;
         return SPLITMC_EVENT_FAIL;
     }
     else {
         if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlow_%u",mc),systname,1,1); // pass
+        //        std::cout << " Pass = " << std::endl;
         return SPLITMC_EVENT_PASS;
     }
 }
