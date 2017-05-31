@@ -28,6 +28,7 @@ class HmumuAnalysis: virtual public AnalysisBase
         void SetPhotonCuts(Photon*p) override;
 
         float mass_;
+        float pt_;
         bool Unblind(Event *e) override {if (e->IsRealData() and mass_ > 125-3 and mass_<125+3 ) return unblind; return true;} // if is not data, no need to return something else
 
         bool doSync{false};

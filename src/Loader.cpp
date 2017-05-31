@@ -683,6 +683,19 @@ void LoadNero::FillMC(){
             << mc->parent->size()<<":"
             <<endl;
 #endif
+    if(tree_->GetBranchStatus("genjetP4")) { 
+        for (int iGJ = 0 ; iGJ <mc->jetP4->GetEntries() ;++iGJ)
+        {
+            GenJet *g =new GenJet();
+            g->SetP4( *(TLorentzVector*) ((*mc->jetP4)[iGJ]) );
+            event_ -> genjets_ . push_back(g);
+        }
+    }
+
+
+    // this vectors are indexd with the new gen particles and navigates the ntuples gen particels
+    vector<int> parentOldIndex;
+    vector<int> oldIndex;
 
     for (int iGP=0;iGP< mc -> p4 ->GetEntries() ; ++iGP)
     {
@@ -696,30 +709,53 @@ void LoadNero::FillMC(){
         if ( (apdg==21 or apdg <6 ) ) keep=true;
         if (  (apdg == 24 or apdg ==23 or apdg ==37) )  keep=true; // keep W/Z/chHiggs
         if (  (apdg == 5 or apdg ==6 ) ) keep=true; // keep top bottom
+        if (  (apdg == 25) )  keep=true; // keep W/Z/chHiggs
 
         //if ( ((TLorentzVector*) ((*mc->p4)[iGP]) )->Pt() < 0.01) keep = false;
 
         if (not keep) continue;
 
         int motherPdgId = -1;
-        int motherPdgIdx = -1;
+        int motherOldIdx = -1;
         int grandMotherPdgId = -1;
 
         // 76X has no gen parent inforamtion, 
         if (mc->parent->size()>0){
-            if( mc -> parent -> at(iGP) != -1) { motherPdgIdx = mc ->parent -> at(iGP); motherPdgId = mc -> pdgId -> at(motherPdgIdx); }
-            if(motherPdgIdx != -1 and mc -> parent -> at(motherPdgIdx) != -1) { grandMotherPdgId = mc -> pdgId -> at( mc ->parent -> at(motherPdgIdx)); }
+            if( mc -> parent -> at(iGP) != -1) { 
+                motherOldIdx = mc ->parent -> at(iGP); 
+                motherPdgId = mc -> pdgId -> at(motherOldIdx); 
+            }
+            if(motherOldIdx != -1 and mc -> parent -> at(motherOldIdx) != -1) { grandMotherPdgId = mc -> pdgId -> at( mc ->parent -> at(motherOldIdx)); }
         }
 
         GenParticle *g =new GenParticle();
         g->SetP4( *(TLorentzVector*) ((*mc->p4)[iGP]) );
         g->SetPdgId( mc -> pdgId -> at(iGP));
-        if (mc->parent->size()>0) g->SetParentIdx( mc ->parent -> at(iGP));
+        //if (mc->parent->size()>0) g->SetParentIdx( mc ->parent -> at(iGP));
         g->SetParentPdgId(motherPdgId);
         g->SetGrandParentPdgId(grandMotherPdgId);
         g->SetFlags( mc ->flags ->at(iGP) );
+
+        // fill all of them
         event_ -> genparticles_ . push_back(g);
+        oldIndex . push_back(iGP);
+        parentOldIndex . push_back(motherOldIdx);
     }
+
+    // re-index parent indexes
+    for(int ig=0;ig<event_->genparticles_ .size();++ig)
+    {
+        int parentOld = parentOldIndex[ig];
+        int parentNew = -1;
+        //search if parent is in the new collection, thourgh the index number of the old collection
+        for(int ig2=0;ig2<event_->genparticles_ .size();++ig2)
+        {
+            if (oldIndex[ig2]  == parentOld) parentNew= ig2;
+        }
+        event_->genparticles_[ig]->SetParentIdx( parentNew) ;
+    }
+
+
 #ifdef VERBOSE
     if(VERBOSE>1)cout <<"[LoadNero]::[FillMC]::[DEBUG] Reading END" <<endl;
 #endif

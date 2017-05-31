@@ -188,6 +188,24 @@ int SmearBjets::smear(Event *e)
 
 }
 
+// Smear WG1
+int SmearWG1::smear(Event *e){
+    SF_WG1* sf = dynamic_cast<SF_WG1*>(e -> GetWeight()-> GetSF (sfname_) );
+    if (sf==NULL)
+    {
+        Log(__FUNCTION__,"ERROR","Unable to locate SF with name "+sfname_);
+        throw abort;
+    }
+
+    if (num_ >=0 and num_ <=7)
+    {
+        sf->nuisance = num_;
+        sf->syst = syst_;
+    }
+    return SMEAR_OK;
+
+}
+
 
 // Local Variables:
 // mode:c++

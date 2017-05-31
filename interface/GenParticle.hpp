@@ -33,6 +33,12 @@ public:
 
 };
 
+class GenJet : public Object
+{
+    public:
+        GenJet():Object(){}
+};
+
 #endif
 
 // Local Variables:

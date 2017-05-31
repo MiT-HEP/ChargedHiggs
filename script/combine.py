@@ -211,7 +211,8 @@ for mass in massList:
 
 	## Open File and write Preamble
 	sh.write('#!/bin/bash\n')
-	sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/" \n'%(os.environ['USER']))
+	sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/combine_$RANDOM" \n'%(os.environ['USER']))
+	sh.write('mkdir -p $WORKDIR \n')
 	sh.write('rm -v $WORKDIR/higgs*root\n')  ## make sure there is no residual in the WORKDIR
 	#sh.write('cd %s\n'%(os.getcwd() ) )
 	sh.write('cd %s\n'%(os.environ['PWD'] ) ) ## difference is with symlink
