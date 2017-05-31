@@ -57,7 +57,7 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
     SetTreeVar("NBJets",e->Bjets());
     SetTreeVar("NFatJets",e->NFatJets());
 
-    for(int i=0; i!=min(e->NFatJets(),10);i++){
+    for(int i=0; i!=min(e->NFatJets(),5);i++){
         SetTreeVar("fatjet_pt",i,e->GetFatJet(i)->Pt());
         SetTreeVar("fatjet_eta",i,e->GetFatJet(i)->Eta());
         SetTreeVar("fatjet_phi",i,e->GetFatJet(i)->Phi());
@@ -66,6 +66,8 @@ void ChargedHiggsTopBottomFullHad::setTree(Event*e, string label, string categor
         SetTreeVar("fatjet_tau2",i,e->GetFatJet(i)->Tau2());
         SetTreeVar("fatjet_tau3",i,e->GetFatJet(i)->Tau3());
         SetTreeVar("fatjet_SDMass",i,e->GetFatJet(i)->SDMass());
+        SetTreeVar("fatjet_bSubJet",i,e->GetFatJet(i)->IsSubjetBTag());
+        SetTreeVar("fatjet_bSubJetLoose",i,e->GetFatJet(i)->IsSubjetBTagLoose());
         SetTreeVar("fatjet_CorrPrunedMass",i,e->GetFatJet(i)->CorrPrunedMass());
     }
 
@@ -370,29 +372,31 @@ void ChargedHiggsTopBottomFullHad::Init()
     Branch("tree_tb","DEtaMaxBB",'F');
     Branch("tree_tb","Cen",'F');
 
-    Branch("tree_tb","fatjet_pt",'d',10,"NFatJets");
-    Branch("tree_tb","fatjet_eta",'d',10,"NFatJets");
-    Branch("tree_tb","fatjet_phi",'d',10,"NFatJets");
-    Branch("tree_tb","fatjet_e",'d',10,"NFatJets");
-    Branch("tree_tb","fatjet_tau1",'d',10,"NFatJets");
-    Branch("tree_tb","fatjet_tau2",'d',10,"NFatJets");
-    Branch("tree_tb","fatjet_tau3",'d',10,"NFatJets");
-    Branch("tree_tb","fatjet_SDMass",'d',10,"NFatJets");
-    Branch("tree_tb","fatjet_CorrPrunedMass",'d',10,"NFatJets");
+    Branch("tree_tb","fatjet_pt",'f',5,"NFatJets");
+    Branch("tree_tb","fatjet_eta",'f',5,"NFatJets");
+    Branch("tree_tb","fatjet_phi",'f',5,"NFatJets");
+    Branch("tree_tb","fatjet_e",'f',5,"NFatJets");
+    Branch("tree_tb","fatjet_tau1",'f',5,"NFatJets");
+    Branch("tree_tb","fatjet_tau2",'f',5,"NFatJets");
+    Branch("tree_tb","fatjet_tau3",'f',5,"NFatJets");
+    Branch("tree_tb","fatjet_SDMass",'f',5,"NFatJets");
+    Branch("tree_tb","fatjet_CorrPrunedMass",'f',5,"NFatJets");
+    Branch("tree_tb","fatjet_bSubJet",'i',5,"NFatJets");
+    Branch("tree_tb","fatjet_bSubJetLoose",'i',5,"NFatJets");
 
     // fill all the object vector
-    Branch("tree_tb","jet_pt",'d',10,"NJets");
-    Branch("tree_tb","jet_eta",'d',10,"NJets");
-    Branch("tree_tb","jet_phi",'d',10,"NJets");
-    Branch("tree_tb","jet_e",'d',10,"NJets");
-    Branch("tree_tb","jet_discr",'d',10,"NJets");
+    Branch("tree_tb","jet_pt",'f',10,"NJets");
+    Branch("tree_tb","jet_eta",'f',10,"NJets");
+    Branch("tree_tb","jet_phi",'f',10,"NJets");
+    Branch("tree_tb","jet_e",'f',10,"NJets");
+    Branch("tree_tb","jet_discr",'f',10,"NJets");
 
     // fill all the object vector
-    Branch("tree_tb","bjet_pt",'d',10,"NBJets");
-    Branch("tree_tb","bjet_eta",'d',10,"NBJets");
-    Branch("tree_tb","bjet_e",'d',10,"NBJets");
-    Branch("tree_tb","bjet_phi",'d',10,"NBJets");
-    Branch("tree_tb","bjet_discr",'d',10,"NBJets");
+    Branch("tree_tb","bjet_pt",'f',10,"NBJets");
+    Branch("tree_tb","bjet_eta",'f',10,"NBJets");
+    Branch("tree_tb","bjet_e",'f',10,"NBJets");
+    Branch("tree_tb","bjet_phi",'f',10,"NBJets");
+    Branch("tree_tb","bjet_discr",'f',10,"NBJets");
 
     //// VARIOUS gen  INFO
 
