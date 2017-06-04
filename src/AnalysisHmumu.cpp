@@ -3,6 +3,8 @@
 #include "TStopwatch.h"
 #include "Python.h"
 
+#include "interface/HiggsTemplateCrossSections.hpp"
+
 #define VERBOSE 0
 
 //#define SCIKIT_TIMING
@@ -673,6 +675,7 @@ void HmumuAnalysis::Init(){
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
 	    Book ("HmumuAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
+	    Book ("HmumuAnalysis/Vars/Mmm_NoTrigger_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
 	    // 
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
 	    Book ("HmumuAnalysis/Vars/MetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
@@ -701,11 +704,9 @@ void HmumuAnalysis::Init(){
 	        //Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
             // for systematics, only counts the total
-	        Book ("HmumuAnalysis/Vars/Mmm_Count_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 1,110,150); // 
-            AddFinalHisto("HmumuAnalysis/Vars/Mmm_Count_"+c+"_"+l);
         }
 
-        for(const auto & c : {string("ttHHadr"),string("ttHLep"),string("superPure"),string("ttHHadr2"),string("ttHLep2")})
+        for(const auto & c : {string("ttHHadr"),string("ttHLep"),string("superPure")})
         {
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
         }
@@ -789,7 +790,96 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     /*
      * TOP PT REWEIGHT
      */
+
     e->ApplyTopReweight();
+
+    /*
+     * HIGGS REWEIGHT -- UNCERTAINTIES
+     */
+    if (not e->IsRealData()){
+
+        HTXS::HiggsClassification  hc;
+        if (label.find( "GluGlu_HToMuMu") != string::npos) hc.prodMode = HTXS::GGF;
+        else if (label.find( "VBF_HToMuMu") != string::npos) hc.prodMode = HTXS::VBF;
+        else if (label.find( "ZH_HToMuMu") != string::npos) hc.prodMode = HTXS::GG2ZH; // I should look into the PDF productions GG2ZH vs QQ2ZH
+        else if (label.find( "WMinusH_HToMuMu") != string::npos) hc.prodMode = HTXS::WH;
+        else if (label.find( "WPlusH_HToMuMu") != string::npos) hc.prodMode = HTXS::WH;
+        else if (label.find( "ttH_HToMuMu") != string::npos) hc.prodMode = HTXS::TTH;
+        else hc.prodMode = HTXS::UNKNOWN;
+
+        
+        if (hc.prodMode != HTXS::UNKNOWN)
+        {
+            GenParticle* Higgs = NULL;
+            GenParticle* mu0T=NULL;
+            GenParticle* mu1T=NULL;
+            GenParticle* V = NULL;
+            int idxV=-1;
+            bool quarkDecayed=false;
+            int Njets30=0;
+            for( int ig=0;;++ig){
+                GenParticle *g =  e->GetGenParticle(ig);
+                if (g==NULL) break;
+                if (abs(g->GetPdgId())==25 and abs(g->GetParentPdgId() ) != 25) Higgs=g;
+                if (g->GetPdgId() == 13 and g->IsPromptFinalState() and e->GenParticleDecayedFrom(ig,25)) mu0T = g;
+                if (g->GetPdgId() == -13 and g->IsPromptFinalState() and e->GenParticleDecayedFrom(ig,25)) mu1T = g;
+                if (abs(g->GetPdgId())==23 and abs(g->GetParentPdgId() ) != 23 and not e->GenParticleDecayedFrom(ig,6)) {V=g;idxV=ig;}
+                if (abs(g->GetPdgId())==24 and abs(g->GetParentPdgId() ) != 24 and not e->GenParticleDecayedFrom(ig,6)) { V=g;idxV=ig;}
+
+            }
+            for( int ig=0;;++ig){
+                GenParticle *g =  e->GetGenParticle(ig);
+                if (g==NULL) break;
+                int idx;
+                if (g->GetPdgId() <=5 and  e->GenParticleDecayedFrom(ig,23,idx) and idx==idxV) quarkDecayed=true;
+                if (g->GetPdgId() <=5 and  e->GenParticleDecayedFrom(ig,24,idx) and idx==idxV) quarkDecayed=true;
+            }
+            
+            if (Higgs != NULL) hc.higgs =  Higgs->GetP4();
+            if (mu0T != NULL) hc. p4decay_higgs = mu0T -> GetP4();
+            if (V != NULL) hc. V = V -> GetP4();
+
+            // Get Njets 30
+            vector<TLorentzVector> jets;
+            for(int ij =0; ;++ij)
+            {
+                GenJet *j = e->GetGenJet(ij); 
+                if (j==NULL) break;
+                if ( mu0T and j->DeltaR(mu0T) < 0.3) continue;
+                if ( mu1T and j->DeltaR(mu1T) < 0.3) continue;
+                if (j->Pt() < 30 ) continue;
+                if (abs(j->Eta()) > 5 ) continue;
+                jets.push_back( j->GetP4() ) ;
+            }
+
+            // classify, only stage1  30 GeV
+            hc.stage1_cat_pTjet30GeV = HTXS::Stage1::UNKNOWN;
+            hc.stage1_cat_pTjet30GeV = HTXS::getStage1Category( hc.prodMode,hc.higgs, jets,hc.V,quarkDecayed);
+
+            SF_WG1* sf_wg1 = dynamic_cast<SF_WG1*> (e->GetWeight()->GetSF("wg1") ); 
+            sf_wg1->SetNjets30(jets.size());
+            sf_wg1->SetPTH(hc.higgs.Pt());
+            sf_wg1->SetSTXS(hc.stage1_cat_pTjet30GeV);
+
+            //Log(__FUNCTION__,"DEBUG","------------ HTXS -------------"  );
+            //Log(__FUNCTION__,"DEBUG","label="+label );
+            //Log(__FUNCTION__,"DEBUG","systematics="+systname );
+            //Log(__FUNCTION__,"DEBUG",Form("HiggsProd Mode=%d",int(hc.prodMode)) );
+            //Log(__FUNCTION__,"DEBUG",Form("NGenJets=%u",jets.size())    );
+            //Log(__FUNCTION__,"DEBUG",Form("mu0 = %f",(mu0T==NULL)?-999.:mu0T->Pt())    );
+            //Log(__FUNCTION__,"DEBUG",Form("mu1 = %f",(mu1T==NULL)?-999.:mu1T->Pt())    );
+            //Log(__FUNCTION__,"DEBUG",Form("V = %f",(V==NULL)?-999.:V->Pt())    );
+            //Log(__FUNCTION__,"DEBUG",Form("V->Q = %d",int(quarkDecayed))    );
+            //Log(__FUNCTION__,"DEBUG",Form("HiggsPt=%f",hc.higgs.Pt())   );
+            //Log(__FUNCTION__,"DEBUG",Form("STXS Cat=%d",int(hc.stage1_cat_pTjet30GeV)) ) ;
+            //Log(__FUNCTION__,"DEBUG",Form("sf wg1=%lf",sf_wg1->get()));
+            //sf_wg1->print();
+            //Log(__FUNCTION__,"DEBUG","-------------------------------"  );
+            
+            e->ApplySF("wg1");
+        }
+    }
+    /*****************/
 
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon0: ");
@@ -810,38 +900,44 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         selectedJets.push_back(e->GetJet(i));
     }
 
-    string category;
-    if (catType==1) category = CategoryAutoCat(mu0,mu1,selectedJets,e->GetMet().Pt() ) ;
-    else if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt());
-    else category = Category(mu0, mu1, selectedJets);
-
     // ------------------- DIRTY CATEGORIES for studies
-    string categoryDirty=""; // this may double count
-    string categoryDirty2=""; // this may double count
-    if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2  )
-    {
-        categoryDirty ="ttHLep"; 
+    int nbloose=0;
+    for(int i=0;i < e->Njets() ;++i){
+        Jet *j= e->GetJet(i);
+        if ( not j->IsJet() ) continue;
+        if (fabs(j->Eta() ) >2.4) continue;
+        if (j->Btag() > 0.5426 ) continue;
+        nbloose += 1;
     }
-    else if (e->Bjets()>0 and e->Njets() >4  )
+
+    string categoryDirty=""; // this may double count
+    if (e->Bjets()>0 and e->Njets() >4  )
     {
         categoryDirty="ttHHadr"; 
+    }
+    
+    //if ( nbloose >0  and e->Njets() >1  and e->Nleps()>2  )
+    if ( e->Bjets() >0  and e->Njets() >1  and e->Nleps()>2  )
+    {
+        categoryDirty ="ttHLep"; 
     }
     else if (catType==2 and bdt.size() >1 and bdt[0]>.84)
     {
         categoryDirty="superPure";
     }
 
-    if (e->Bjets()>0  and e->Nleps()>2  )
-    {
-        categoryDirty2="ttHLep2"; 
-    }
-    if (e->Bjets()>0 and e->Njets() >5  )
-    {
-        categoryDirty2="ttHHadr2"; 
-    }
-
-
     // ------------------------------------
+
+    string category;
+    if (catType==1) category = CategoryAutoCat(mu0,mu1,selectedJets,e->GetMet().Pt() ) ;
+    else if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt());
+    else if (catType==3) { 
+        category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt()); 
+        if (e->Bjets()>0 and e->Njets() >4) category = "cat13";  // ttHHadr
+        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat14";  // veto Njets> 4
+    } 
+    else category = Category(mu0, mu1, selectedJets);
+
 
     if (true) // CSV-SF for passing loose,medium or tigth cuts
     {
@@ -1001,7 +1097,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Lepton *el= e->GetElectron(i);
             if (el == NULL) break;
             //if (el->Pt() >15) passLeptonVeto=false; // FIXME 10 ?!?
-            #warning ABSURD_ELE_VETO
+            //#warning ABSURD_ELE_VETO
             //|eta| < 1.4442 || 1.566 <|eta| <2.5 
             // DR with muon 
             if (el->Pt() >10 and 
@@ -1056,28 +1152,42 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         FillTree("hmm");
     }
 
+    if ( recoMuons)
+    {
+        Object Z(*mu0);
+        Z += *mu1;
+        mass_=Z.M();
+        pt_ = Z.Pt();
+    }
+
+    if ( recoMuons and passAsymmPtCuts)
+    {
+        if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_NoTrigger_"+ label,systname, mass_,e->weight()) ;
+    }
+
     // -- FINAL SELECTION --
-    if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto)
+    //if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto)
+    if ( recoMuons and passTrigger and passAsymmPtCuts)
     {
         cut.SetCutBit(Leptons);
         if (passTrigger) cut.SetCutBit(Trigger);
 
-        Object Z(*mu0);
-        Z += *mu1;
-        mass_=Z.M();
+        //Object Z(*mu0);
+        //Z += *mu1;
+        //mass_=Z.M();
 
        	//if (cut.passAllUpTo(Trigger) ){
         //}
         if (VERBOSE)Log(__FUNCTION__,"DEBUG","event pass selection");
 
         float zptrw = 1.;
-        if (label == "DY") zptrw = getZPtReweight(Z.Pt() );
+        if (label == "DY") zptrw = getZPtReweight(pt_ );
         //cout<<"ZPtRWgh is "<<zptrw<<endl;
         
         if (mass_ >= 70 and mass_<110){
             Fill("HmumuAnalysis/Vars/MetOnZ_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnZ_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
-            Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, Z.Pt() ,e->weight());
+            Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, pt_ ,e->weight());
 
             if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
             if (doScikit and catType==2){
@@ -1091,7 +1201,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         if (mass_ >= 110 and mass_<150){
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
-            Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, Z.Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, pt_,e->weight());
             if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
             if(catType==2 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
                 Fill("HmumuAnalysis/Vars/BdtOnH_BB_"+ label,systname, bdt[0] ,e->weight());
@@ -1108,14 +1218,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
-        if (Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
-        if (Unblind(e) and (categoryDirty2=="ttHHadr2") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty2+"_"+ label,systname, mass_,e->weight()) ;
-    }
-
-    if ( recoMuons and passTrigger and passAsymmPtCuts ) // no Lep Veto for ttH Lep
-    {
+        if(Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and categoryDirty == "ttHLep")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
-        if(Unblind(e) and categoryDirty2 == "ttHLep2")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty2+"_"+ label,systname, mass_,e->weight()) ;
     }
 
 

@@ -36,6 +36,7 @@ parser.add_option("","--rmin",type='float',help="rmin. [%default]",default=-1)
 parser.add_option("","--onews",action='store_true',help="Only one ws. names do not depend on the higgs mass. [%default]",default=False)
 parser.add_option("","--nosyst",action='store_true',help="No Syst.. [%default]",default=False)
 parser.add_option("-M","--method" ,dest='method',type='string',help="Method [%default]",default="Asymptotic")
+parser.add_option("","--options",type='string',help="Extra options to combine [%default]",default='')
 
 
 asym_grid = OptionGroup(parser,"Asymptotic Grid/MultiDimFit options","")
@@ -91,7 +92,10 @@ call("mkdir -p %s"%opts.dir,shell=True)
 cmdFile = open("%s/cmdFile.sh"%opts.dir,"w")
 #write args in cmdFile
 cmdFile.write("### Automatically created by: combine.py\n")
-cmdFile.write("### Args: " + ' '.join(sys.argv) + "\n")
+argList= sys.argv[:]
+for idx,x in enumerate(argList):
+    if ' ' in x: argList[idx]='"' + x + '"'
+cmdFile.write("### Args: " + ' '.join(argList) + "\n")
 
 iJob = -1
 
@@ -170,6 +174,7 @@ if opts.method=='AsymptoticGrid' and opts.hadd:
 			combine += " -t -1 --run=expected --expectSignal=0 --expectSignalMass="+str(mass) + " "
 		combine += "--getLimitFromGrid=%(dir)s/%(name)s" %replace
 		#combine += datacard
+		combine += " " + opts.options + " "
 		combine += " -n AsymptoticGrid %(dir)s/%(datacard)s"% replace
 		mv = "mv higgs*AsymptoticGrid* %(dir)s/" % replace
 		print "-> calling",combine
@@ -206,9 +211,11 @@ for mass in massList:
 
 	## Open File and write Preamble
 	sh.write('#!/bin/bash\n')
-	sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/" \n'%(os.environ['USER']))
+	sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/combine_$RANDOM" \n'%(os.environ['USER']))
+	sh.write('mkdir -p $WORKDIR \n')
 	sh.write('rm -v $WORKDIR/higgs*root\n')  ## make sure there is no residual in the WORKDIR
-	sh.write('cd %s\n'%(os.getcwd() ) )
+	#sh.write('cd %s\n'%(os.getcwd() ) )
+	sh.write('cd %s\n'%(os.environ['PWD'] ) ) ## difference is with symlink
 	sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
 
 	#print " WORK-AROUND COMBINE: FIXME!!! "
@@ -311,6 +318,7 @@ for mass in massList:
 	if opts.method == "ProfileLikelihood":
 		combine += " --signif --pval "
 
+	combine += " " + opts.options + " "
 	### ADD DATACARD #############
 	combine += datacard
 
