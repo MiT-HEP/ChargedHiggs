@@ -93,6 +93,8 @@ private:
 
     // for the topb category
     int numtop=0;
+    FatJet* topJet=NULL;
+    FatJet* wJet=NULL;
 
     // for the wbb category
     TLorentzVector topFromHOpenCand;
