@@ -904,9 +904,10 @@ void ChargedHiggsTopBottomFullHad::classifyLabelGenEv(Event*e, string label, str
                 else LabelGenTB="_tb_tb";
             } else if (leadingb!=NULL && bFromH!=NULL) {
                 // top matching here fail
-                if(topsnum1>0 && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3) && (leadingb->DeltaR(*bFromH) < 0.2)) LabelGenTB="_tb_thbh";
-                else if(leadingb->DeltaR(*bFromH) < 0.2) LabelGenTB="_tb_tbh";
-                else LabelGenTB="_tb_tb";
+                if (leadingb->DeltaR(*bFromH) < 0.2) {
+                    if(topsnum1>0 && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3)) LabelGenTB="_tb_thbh";
+                    else LabelGenTB="_tb_tbh";
+                } else { LabelGenTB="_tb_tb"; }
             }
         }
 
@@ -916,16 +917,12 @@ void ChargedHiggsTopBottomFullHad::classifyLabelGenEv(Event*e, string label, str
             if(leadingb!=NULL && topFromHOpenCand.Pt()>0) {
 
                 if (leadingb==NULL || bFromH==NULL) {
-                    //  if(t1.DeltaR(topfromhiggs) < 0.3){
                     if(topsnum1>0 && topFromHOpenCand.DeltaR(topFromH->GetP4()) < 0.3) LabelGenWBB="_wbb_th_nb";
-                    //            }else if(orderW == Wsnum1 && minWth < 0.3){
                     else if(Wsnum1>0 && e->GetFatJet(Wsnum1)->DeltaR(*WFromTopH) < 0.3) LabelGenWBB="_wbb_wh_nb";
                     else LabelGenWBB="_wbb_ntnw_nb";
                 } else {
                     if(Wsnum1>0 && e->GetFatJet(Wsnum1)->DeltaR(*WFromTopH) < 0.3) LabelGenWBB="_wbb_wh_bh";
-                    //  if(t1.DeltaR(topfromhiggs) < 0.3){
                     else if(topsnum1>0 && topFromHOpenCand.DeltaR(topFromH->GetP4()) < 0.3) LabelGenWBB="_wbb_th_bh";
-                    //            }else if(orderW == Wsnum1 && minWth < 0.3){
                     else LabelGenWBB="_wbb_ntnw_bh";
                 }
             }
