@@ -900,12 +900,12 @@ void ChargedHiggsTopBottomFullHad::classifyLabelGenEv(Event*e, string label, str
         /// TOP+B category
         if(evt_MH_tb>0) {
             if (leadingb==NULL || bFromH==NULL) {
-                if ( topsnum1>0 && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3) ) LabelGenTB="_tb_thb";
+                if ( topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3) ) LabelGenTB="_tb_thb";
                 else LabelGenTB="_tb_tb";
             } else if (leadingb!=NULL && bFromH!=NULL) {
                 // top matching here fail
                 if (leadingb->DeltaR(*bFromH) < 0.2) {
-                    if(topsnum1>0 && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3)) LabelGenTB="_tb_thbh";
+                    if(topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3)) LabelGenTB="_tb_thbh";
                     else LabelGenTB="_tb_tbh";
                 } else { LabelGenTB="_tb_tb"; }
             }
@@ -917,11 +917,11 @@ void ChargedHiggsTopBottomFullHad::classifyLabelGenEv(Event*e, string label, str
             if(leadingb!=NULL && topFromHOpenCand.Pt()>0) {
 
                 if (leadingb==NULL || bFromH==NULL) {
-                    if(topsnum1>0 && topFromHOpenCand.DeltaR(topFromH->GetP4()) < 0.3) LabelGenWBB="_wbb_th_nb";
-                    else if(Wsnum1>0 && e->GetFatJet(Wsnum1)->DeltaR(*WFromTopH) < 0.3) LabelGenWBB="_wbb_wh_nb";
+                    if(topsnum1>0 && wJet==e->GetFatJet(Wsnum1) && topFromHOpenCand.DeltaR(topFromH->GetP4()) < 0.3) LabelGenWBB="_wbb_th_nb";
+                    else if(Wsnum1>0 && wJet==e->GetFatJet(Wsnum1) && e->GetFatJet(Wsnum1)->DeltaR(*WFromTopH) < 0.3) LabelGenWBB="_wbb_wh_nb";
                     else LabelGenWBB="_wbb_ntnw_nb";
                 } else {
-                    if(Wsnum1>0 && e->GetFatJet(Wsnum1)->DeltaR(*WFromTopH) < 0.3) LabelGenWBB="_wbb_wh_bh";
+                    if(Wsnum1>0 && wJet==e->GetFatJet(Wsnum1) && e->GetFatJet(Wsnum1)->DeltaR(*WFromTopH) < 0.3) LabelGenWBB="_wbb_wh_bh";
                     else if(topsnum1>0 && topFromHOpenCand.DeltaR(topFromH->GetP4()) < 0.3) LabelGenWBB="_wbb_th_bh";
                     else LabelGenWBB="_wbb_ntnw_bh";
                 }
@@ -975,6 +975,8 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
             numtop++;
 
             evt_MH_tb=(temp->GetP4() + leadingb->GetP4()).M();
+            // need to choose the one, in case we have multiple
+            topJet=temp;
 
         }
     }
@@ -1010,9 +1012,9 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
                 topFromHOpenCand = mayt;
                 //                w1 = temp; orderW = j;
                 //                b1 = e->GetBjet(ib); orderb = ib;
+                wJet=temp;
                 mintopmass = deltopmass;
                 evt_MH_Wbb=(topFromHOpenCand+leadingb->GetP4()).M();
-
             }
         }
     }
