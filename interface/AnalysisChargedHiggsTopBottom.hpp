@@ -55,7 +55,7 @@ public:
 
     void computeVar(Event*e);
 
-    void printSynch(Event*e);
+    void printSynch(Event*e, string category);
 
     double genInfoForWZ(Event*e);
     int genInfoForBKG(Event*e);
@@ -109,6 +109,8 @@ private:
     double evt_minDRlb_invMass=-1;
     double evt_minDRlb=-1;
 
+    double evt_minMasslb=99999;
+
     double evt_avDRBB=-1;
 
     double evt_DEtaMaxBB=-1;
@@ -132,6 +134,7 @@ private:
 
     double evt_HemiMetOut=0;
     double evt_C=0;
+    double evt_FW2=0;
 
     vector<float> bdt;
 
