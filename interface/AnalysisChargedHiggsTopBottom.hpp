@@ -125,6 +125,10 @@ private:
     double evt_DRl1b1=-1;
     double evt_Ml1b1=-1;
 
+    double evt_DRl1j1=-1;
+    double evt_DRl1j2=-1;
+    double evt_DRl1j3=-1;
+
     // these are defined only for 2l
     double evt_DRl2b1=-1;
     double evt_MT2ll=-1;
