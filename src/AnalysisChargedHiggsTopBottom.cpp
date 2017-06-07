@@ -117,6 +117,10 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("MassMinlb",evt_minMasslb);
     SetTreeVar("FW2",evt_FW2);
 
+    SetTreeVar("DRl1j1",evt_DRl1j1);
+    SetTreeVar("DRl1j2",evt_DRl1j2);
+    SetTreeVar("DRl1j3",evt_DRl1j3);
+
     SetTreeVar("mt",evt_MT);
     SetTreeVar("mt2ll",evt_MT2ll);
     SetTreeVar("mt2bb",evt_MT2bb);
@@ -600,6 +604,10 @@ void ChargedHiggsTopBottom::Init()
         //    Branch("tree_tb","lep2_charge",'F');
         //    Branch("tree_tb","lep2_isolation",'F');
         Branch("tree_tb","lep2_id",'F');
+
+        Branch("tree_tb","DRl1j1",'F');
+        Branch("tree_tb","DRl1j2",'F');
+        Branch("tree_tb","DRl1j3",'F');
 
         // fill counter and scalar
         Branch("tree_tb","NcentralJets",'I');
@@ -1843,6 +1851,7 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
             double pt = (bjet->GetP4() + trailLep->GetP4()).Pt();
             if(dr<minDRlb) { minDRlb=dr; minDRlb_invMass=mass; }
             if(pt>Ptlbmax) { DRlbmaxPt=dr; Ptlbmax=pt; }
+            if(mass<minMasslb) { minMasslb=mass; }
         }
     }
 
@@ -1870,6 +1879,20 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
         }
     }
 
+
+    if(e->NcentralJets()>0) {
+        Jet * j1 = e->GetCentralJet(0);
+        evt_DRl1j1=j1->DeltaR(*leadLep);
+        if(e->NcentralJets()>1) {
+            Jet * j2 = e->GetCentralJet(1);
+            evt_DRl1j2=j2->DeltaR(*leadLep);
+            if(e->NcentralJets()>2) {
+                Jet * j3 = e->GetCentralJet(2);
+                evt_DRl1j3=j3->DeltaR(*leadLep);
+            }
+        }
+
+    }
 
     ////$$$$$$
     ////$$$$$$
