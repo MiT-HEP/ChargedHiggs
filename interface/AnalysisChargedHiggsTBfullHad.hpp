@@ -26,14 +26,19 @@ public:
     void BookCutFlow(string l, string category);
     void BookHisto(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
+    void BookGenMatch(string l, string category, string phasespace, string cut321, string state);
     void Preselection();
 
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
+    void higgsPlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
     void classifyHF(Event*e, string label, string category, string systname, string jetname, string SR);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
+
+    void classifyLabelGenEv(Event*e, string label, string systname, string phasespace);
+    void getCandidate(Event*e, string label, string systname, string phasespace);
 
     void computeVar(Event*e);
 
@@ -66,6 +71,8 @@ private:
     enum CutFlow{ Total=0,
                   NoLep,
                   NoTau,
+                  HTcut,
+                  OneBOneFat,
                   MaxCut
     };
 
@@ -76,6 +83,21 @@ private:
 
     double evt_C=0;
 
+    /////
+    ///// higgs candidates
+
+    double evt_MH_tb=-1;
+    double evt_MH_Wbb=-1;
+
+    Jet* leadingb=NULL;
+
+    // for the topb category
+    int numtop=0;
+    FatJet* topJet=NULL;
+    FatJet* wJet=NULL;
+
+    // for the wbb category
+    TLorentzVector topFromHOpenCand;
 
     /////
     /////
