@@ -27,8 +27,7 @@ namespace ChargedHiggs{
     float mt(const float pt1, const float pt2, const float phi1, const float phi2);
     // compute mt2
     float mt2( const TLorentzVector visa,  const TLorentzVector visb,  const TLorentzVector metVec);
-    // compute general functions Fox-Wolfram momenta
-    float FW_momentum( const std::vector<TLorentzVector> jet, int index);
+
 
     // use this for massive objects
     template <typename T>
