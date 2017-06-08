@@ -61,7 +61,7 @@ class HmmConfig():
         for cat in range(0,len(self.categories)):
             for proc in self.processes:
                 if cat==cat0 and proc==proc0:
-                    self.sigfit_scale_unc[cat,proc]=0.001
+                    self.sigfit_scale_unc[cat,proc]=0.0005
                     self.sigfit_smear_unc[cat,proc]=0.1
                 else:
                     self.sigfit_scale_unc[cat,proc]=(cat0,proc0)
@@ -232,7 +232,7 @@ class HmmConfigAutoCat(HmmConfig):
         self.muCategories=[]
         self.sigfit_gaussians=[]
         #self.readScaleUnc()        
-        #self.SimpleScaleAndSmear()
+        self.SimpleScaleAndSmear()
         self.computeVersioning()
 
 hmmAutoCat =HmmConfigAutoCat()

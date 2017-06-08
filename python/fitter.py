@@ -116,11 +116,13 @@ if opts.classname== "Fitter":
         scale=config.sigfit_scale_unc[(cat,proc)]
         try: 
             value=float(scale)
+            print "-> Setting Scale Uncertainty for ",cat,proc,"to value",value
             fitter.SetScaleUnc(cat,proc,value)
         except TypeError as a:
             try:
-                cat,proc = scale
-                fitter.SetScaleUncCorr(cat,proc,cat,proc)
+                cat2,proc2 = scale
+                fitter.SetScaleUncCorr(cat,proc,cat2,proc2)
+                print "-> Setting Scale Uncertainty for ",cat,proc,"correlated to",cat2,proc2
             except TypeError as e:
                 print "-> Unable to understand scale error type. Two exceptions follows"
                 print "---------"
@@ -136,8 +138,8 @@ if opts.classname== "Fitter":
             fitter.SetSmearUnc(cat,proc,value)
         except TypeError as a:
             try:
-                cat,proc = smear
-                fitter.SetSmearUncCorr(cat,proc,cat,proc)
+                cat2,proc2 = smear
+                fitter.SetSmearUncCorr(cat,proc,cat2,proc2)
             except TypeError as e:
                 print "-> Unable to understand smear error type. Two exceptions follows"
                 print "---------"

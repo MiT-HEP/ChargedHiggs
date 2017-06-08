@@ -48,6 +48,9 @@ multidim = OptionGroup(parser,"MultiDimFit options","")
 multidim.add_option("","--floatmh",action='store_true',help="Float MH. [%default]",default=False)
 multidim.add_option("","--rvrf",action='store_true',help="rVrF scan. [%default]",default=False)
 
+prof = OptionGroup(parser,"ProfileLihkelihood options","")
+parser.add_option("","--expectSignal" ,dest='expectSignal',type='float',help="ExpectSignal mass [Default=%default]",default=-1)
+
 parser.add_option_group(asym_grid)
 parser.add_option_group(multidim)
 (opts,args)=parser.parse_args()
@@ -290,10 +293,15 @@ for mass in massList:
 	#combine += " -H ProfileLikelihood " ## hint, it's not working
 
 	########## EXPECTED ? #############
+
+	## not for Asymptotic
+	expectSignal = str(mass)
+	if opts.expectSignal>0: expectSignal = str(opts.expectSignal)
+
 	if opts.exp:
 		if opts.method=="AsymptoticGrid":  combine += " -t -1 --expectSignal=0 --expectSignalMass="+str(mass) + " "
 		elif opts.method == "Asymptotic":  combine += " -t -1 --run=expected --expectSignal=0 --expectSignalMass="+str(mass) + " "
-		else : combine += " -t -1 --expectSignal=1 --expectSignalMass="+str(mass) + " "
+		else : combine += " -t -1 --expectSignal=1 --expectSignalMass="+expectSignal + " "
 
 	########## METHOD DEPENDENT #############
 	if opts.method=="MultiDimFit": 

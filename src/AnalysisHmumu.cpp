@@ -676,6 +676,7 @@ void HmumuAnalysis::Init(){
     for ( string l : AllLabel()  ) {
 	    Book ("HmumuAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
 	    Book ("HmumuAnalysis/Vars/Mmm_NoTrigger_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
+	    Book ("HmumuAnalysis/Vars/Mmm_DoubleMuonTrigger_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
 	    // 
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
 	    Book ("HmumuAnalysis/Vars/MetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
@@ -703,6 +704,7 @@ void HmumuAnalysis::Init(){
         {
 	        //Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
+	        Book2D ("HmumuAnalysis/Vars/JetEtaPhi_"+ c + "_"+ l ,"Jet EtaPhi; eta; phi;Events", 100,-5,5,100,-3.1415,3.1415); // CHECK2D
             // for systematics, only counts the total
         }
 
@@ -957,75 +959,95 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->ApplySF("btag-reweight"); 
     }
 
+    double w_BCDEF = 0.5498;
+    double sfTrigger=1.0;
      
     // Trigger SF
     if (true){
-        SF* sf0 =e->GetWeight()->GetSF("muTRG_v2");
-        if (sf0== NULL) cout<<"Unable to get SF"<<endl;
-        SF_PtEta_And_Eff*sf = dynamic_cast<SF_PtEta_And_Eff*>(sf0);
-        if (sf== NULL) {cout<<"Unable to convert SF:" <<endl; sf0->print(); }
+        SF* sf0_runGH =e->GetWeight()->GetSF("muTRG_runGH");
+        SF* sf0_runBCDEF =e->GetWeight()->GetSF("muTRG_runBCDEF");
 
-        double effdata=1.0,effmc =1.0;
+        if (sf0_runGH== NULL) cout<<"Unable to get SF TRG GH"<<endl;
+        if (sf0_runBCDEF== NULL) cout<<"Unable to get SF TRG BCDEF"<<endl;
+
+        SF_PtEta_And_Eff* sf_runGH = dynamic_cast<SF_PtEta_And_Eff*>(sf0_runGH);
+        SF_PtEta_And_Eff* sf_runBCDEF = dynamic_cast<SF_PtEta_And_Eff*>(sf0_runBCDEF);
+        if (sf_runGH== NULL) {cout<<"Unable to convert SF TRG GH:" <<endl; sf0_runGH->print(); }
+        if (sf_runBCDEF== NULL) {cout<<"Unable to convert SF TRG BCDEF:" <<endl; sf0_runBCDEF->print(); }
+
+        double effdata_runGH=1.0,effmc_runGH =1.0;
+        double effdata_runBCDEF=1.0,effmc_runBCDEF =1.0;
+
         bool changed=false;
         if (mu0)
         {
             changed=true;
-            sf->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
-            effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
-            //effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
-            effmc *= 1.- (sf->getMCEff()) ;
-            //Log(__FUNCTION__,"DEBUG",Form("Trigger (mu0, pt=%f) dataEff=%f syst=%d err=%f -> effdata=%f",mu0->Pt(),sf->getDataEff(),sf->syst,sf->getDataErr(),effdata));
+            sf_runGH->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
+            //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*sf_runGH->getDataErr() ) ;
+            effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.5%
+            effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
 
+            sf_runBCDEF->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
+            //effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*sf_runBCDEF->getDataErr() ) ;
+            effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.5% correlated with runGH
+            effmc_runBCDEF *= 1.- (sf_runBCDEF->getMCEff()) ;
         }
+
         if (mu1 and mu1->Pt() > 26)
         {
             changed=true;
-            sf->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
-            effdata *= 1.-(sf->getDataEff()+sf->syst*sf->getDataErr() ) ;
-            //effmc *= 1.- (sf->getMCEff()+sf->syst * sf->getMCErr()) ;
-            effmc *= 1.- (sf->getMCEff()) ;
-            //Log(__FUNCTION__,"DEBUG",Form("Trigger (mu1, pt=%f) dataEff=%f syst=%d err=%f -> effdata=%f",mu1->Pt(),sf->getDataEff(),sf->syst,sf->getDataErr(),effdata));
+
+            sf_runGH->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
+            //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*sf_runGH->getDataErr() ) ;
+            effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.05%
+            effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
+
+            sf_runBCDEF->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
+            //effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*sf_runBCDEF->getDataErr() ) ;
+            effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runGH->syst*0.005) ; // 0.5% correlated runGH runBCDEF
+            effmc_runBCDEF *= 1.- (sf_runBCDEF->getMCEff()) ;
         }
 
         if(changed)
         {
-            effdata = 1.-effdata;
-            effmc = 1.-effmc;
+            effdata_runGH = 1.-effdata_runGH;
+            effmc_runGH = 1.-effmc_runGH;
+
+            effdata_runBCDEF = 1.-effdata_runBCDEF;
+            effmc_runBCDEF = 1.-effmc_runBCDEF;
         }
 
-        SF* sftrig= e->GetWeight()->GetSF("dummy"); // base, I modify this one
-        sftrig->syst=0;
-        sftrig->sf=effdata/effmc;
-        sftrig->err = 0.0;
-        e->ApplySF("dummy");
-        //Log(__FUNCTION__,"DEBUG",Form("---> Apply TOT TRIG SF = %f",e->GetWeight()->GetSF("dummy")->get()) );
+        //SF* sftrig= e->GetWeight()->GetSF("dummy"); // base, I modify this one
+        //sftrig->syst=0;
+        //sftrig->sf=effdata/effmc;
+        //sftrig->err = 0.0;
+        //e->ApplySF("dummy");
+        //
+        sfTrigger = (1.-w_BCDEF)* effdata_runGH / effmc_runGH + w_BCDEF*effdata_runBCDEF/effmc_runBCDEF;
     }
     
     // ID
-    double w_BCDEF = 0.5498;
     double sfId=1.0;
 
     if (mu0)
     {
         e->SetPtEtaSF("muID_runBCDEF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
-        float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->get();
+        //float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->get(); // include syst
+        float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->sf + e->GetWeight()->GetSF("muID_runGH")->syst*0.01; // 1% correlated runGH
         e->SetPtEtaSF("muID_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
-        float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
+        //float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
+        float sf2 = e->GetWeight()->GetSF("muID_runGH")->sf + e->GetWeight()->GetSF("muID_runGH")->syst*0.01; // 1%
         sfId *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
-        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f eta=%f ID runB): syst=%d sf=%f",mu0->Pt(),mu0->Eta(),e->GetWeight()->GetSF("muID_runBCDEF")->syst,sf1) );
-        //SF_PtEta_And_Eff *tmpsf = dynamic_cast<SF_PtEta_And_Eff*>(e->GetWeight()->GetSF("muID_runBCDEF"));
-        //Log(__FUNCTION__,"DEBUG",Form("             dataeff=%f (+/-%f) mceff=%f sf=%f (as above!)",tmpsf->getDataEff(),tmpsf->getDataErr(),tmpsf->getMCEff(),tmpsf->get() ) );
-        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f eta=%f ID runH): syst=%d sf=%f",mu0->Pt(),mu0->Eta(),e->GetWeight()->GetSF("muID_runGH")->syst,sf2) );
     }
     if (mu1)
     {
         e->SetPtEtaSF("muID_runBCDEF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->get();
+        //float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->get();
+        float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->sf + e->GetWeight()->GetSF("muID_runGH")->syst *0.01; // 1% correlated runGH
         e->SetPtEtaSF("muID_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
+        //float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
+        float sf2 = e->GetWeight()->GetSF("muID_runGH")->sf + e->GetWeight()->GetSF("muID_runGH")->syst *0.01;
         sfId *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
-        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f eta=%f ID runB): syst=%d sf=%f",mu1->Pt(),mu1->Eta(),e->GetWeight()->GetSF("muID_runBCDEF")->syst,sf1) );
-        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f eta=%f ID runH): syst=%d sf=%f",mu1->Pt(),mu1->Eta(),e->GetWeight()->GetSF("muID_runGH")->syst,sf2) );
     }
 
     double sfIso=1.0;
@@ -1033,33 +1055,31 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if (mu0)
     {
         e->SetPtEtaSF("muISOloose_runBCDEF",std::max( mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
-        float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->get();
+        //float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->get();
+        float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->sf + e->GetWeight()->GetSF("muISOloose_runGH")->syst*0.005; // .5% correlated runGH
         e->SetPtEtaSF("muISOloose_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
-        float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
+        //float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
+        float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->sf + e->GetWeight()->GetSF("muISOloose_runGH")->syst*0.005; // .5%
         sfIso *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
-        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f ISOloose runB): syst=%d sf=%f",mu0->Pt(),e->GetWeight()->GetSF("muISOloose_runBCDEF")->syst,sf1) );
-        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu0, pt=%f ISOloose runH): syst=%d sf=%f",mu0->Pt(),e->GetWeight()->GetSF("muISOloose_runGH")->syst,sf2) );
     }
     if (mu1)
     {
         e->SetPtEtaSF("muISOloose_runBCDEF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        //e->ApplySF("muISOloose_runBCDEF");
-        float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->get();
+        //float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->get();
+        float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->sf + e->GetWeight()->GetSF("muISOloose_runGH")->syst*0.005; // .5% correlated runGH
         e->SetPtEtaSF("muISOloose_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
+        //float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
+        float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->sf + e->GetWeight()->GetSF("muISOloose_runGH")->syst*0.005 ; // .5%
         sfIso *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
-        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f ISOloose runB): syst=%d sf=%f",mu1->Pt(),e->GetWeight()->GetSF("muISOloose_runBCDEF")->syst,sf1) );
-        //Log(__FUNCTION__,"DEBUG",Form("SF are (mu1, pt=%f ISOloose runH): syst=%d sf=%f",mu1->Pt(),e->GetWeight()->GetSF("muISOloose_runGH")->syst,sf2) );
     }
     
-    // apply id and iso sf
+    // apply trigger, id and iso sf
     {
         SF* sf= e->GetWeight()->GetSF("dummy"); // base, I modify this one
         sf->syst=0;
-        sf->sf= sfId*sfIso; //syst already included
+        sf->sf= sfId*sfIso*sfTrigger; //syst already included
         sf->err = 0.0;
         e->ApplySF("dummy");
-        //Log(__FUNCTION__,"DEBUG",Form("---> Apply TOT SF = %f (ID=%f,ISO=%f)",e->GetWeight()->GetSF("dummy")->get(), sfId,sfIso) );
     }
     
     
@@ -1163,6 +1183,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if ( recoMuons and passAsymmPtCuts)
     {
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_NoTrigger_"+ label,systname, mass_,e->weight()) ;
+        if(Unblind(e) and (passTrigger or e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu45_eta2p1_v") or e->IsTriggered("HLT_Mu50_v") ))Fill("HmumuAnalysis/Vars/Mmm_DoubleMuonTrigger_"+ label,systname, mass_,e->weight()) ;
     }
 
     // -- FINAL SELECTION --
@@ -1214,6 +1235,31 @@ int HmumuAnalysis::analyze(Event *e, string systname)
                         Fill("HmumuAnalysis/Vars/"+s+"OnH_BB_"+ label,systname, scikit[i] ,e->weight());
                 }
             }
+        }
+
+        if (category != "" and mass_ > 110 and mass_<150 and (systname=="" or systname=="NONE")){ //CHECK2D
+                // first key is mjj-> sorting
+                map<float, pair<float,float>, std::greater<float> > eta_j;
+                map<float, pair<float,float>, std::greater<float> > phi_j;
+                map<float, float, std::greater<float> > detajj;
+
+                for(unsigned i=0;i<selectedJets.size() ;++i)
+                for (unsigned j=i+1;j<selectedJets.size();++j)
+                {
+                    eta_j[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  pair<float,float>( selectedJets[j]->Eta(), selectedJets[i]->Eta());
+                    phi_j[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  pair<float,float>( selectedJets[j]->Phi(), selectedJets[i]->Phi());
+                    detajj[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  fabs(selectedJets[j]->Eta() - selectedJets[i]->Eta()) ;
+                }
+                if (eta_j.size() >0)
+                {
+                    Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(eta_j.begin())->second.first,(phi_j.begin())->second.first,e->weight());
+                    Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(eta_j.begin())->second.second,(phi_j.begin())->second.second,e->weight());
+                }
+                if (eta_j.size() >1)
+                {
+                    Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(++eta_j.begin())->second.first ,(++phi_j.begin())->second.first,e->weight());
+                    Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(++eta_j.begin())->second.second,(++phi_j.begin())->second.second,e->weight());
+                }
         }
 
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
