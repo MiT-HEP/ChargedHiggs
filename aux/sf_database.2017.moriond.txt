@@ -7,6 +7,7 @@
 ## Electron from POG ##
 ###################
 # http://fcouderc.web.cern.ch/fcouderc/EGamma/scaleFactors/Moriond17/approval/EleID/
+# http://fcouderc.web.cern.ch/fcouderc/EGamma/scaleFactors/Moriond17/approval/RECO/passingRECO/
 # https://indico.cern.ch/event/607607/contributions/2455679/attachments/1402350/2141061/EGMReportat_PPD_26012017.pdf
 # from Julie for MVA/miniISO https://brux5.hep.brown.edu/~jhogan/EGammaResults/
 
@@ -14,6 +15,7 @@
 #eleveto th2f aux/LEPTONS/PassingVeto_EGM2D.root:EGamma_SF2D
 #eleloose th2f aux/LEPTONS/PassingLoose_EGM2D.root:EGamma_SF2D
 #eletight th2f aux/LEPTONS/PassingTight_EGM2D.root:EGamma_SF2D
+eleRECO  th2f aux/LEPTONS/egammaEffi.txt_EGM2D.root.update.root.update.root:EGamma_SF2D
 
 # cutbased ID from Brown
 eleLoose th2f aux/LEPTONS/MVAloose_egammaEffi.txt_EGM2D.root:EGamma_SF2D
@@ -32,7 +34,7 @@ eleTightTRG th2f aux/LEPTONS/trigT_egammaEffi.txt_EGM2D.root:EGamma_SF2D
 
 # cutbased ID from POG
 muID th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_GH.root:MC_NUM_MediumID2016_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio
-muIDloose th2f aux/LEPTONS/EfficienciesAndSF_LooseIso_NUM_LooseMiniIso_DEN_LooseID_PAR_pt_eta.root:IsoL_IdL_PtEtaBins/abseta_pt_ratio
+muIDloose th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_GH.root:MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio
 ###muTRG th2f aux/LEPTONS/mu_trigger_EfficienciesAndSF_Period4.root:IsoMu24_OR_IsoTkMu24_PtEtaBins/abseta_pt_ratio
 ###muISO th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_GH.root:TightISO_MediumID_pt_eta/abseta_pt_ratio
 ###muISOloose th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_GH.root:LooseISO_LooseID_pt_eta/abseta_pt_ratio
@@ -70,13 +72,12 @@ muRECO pteta 44.5 100   -9999 +9999 0.946567 0.00965301
 
 
 ## Read eff data and mc separately for veto
-muTRG_runBCDEF th2f aux/mu_trigger_EfficienciesAndSF_RunBtoF.root IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
-muTRG_runGH th2f aux/mu_trigger_EfficienciesAndSF_Period4.root IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
-# medium NOT 2016
-muID_runGH th2f aux/mu_ID_EfficienciesAndSF_GH.root MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/abseta_pt_DATA MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesMC/abseta_pt_MC
-muID_runBCDEF th2f aux/mu_ID_EfficienciesAndSF_BCDEF.root MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/abseta_pt_DATA MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesMC/abseta_pt_MC
-muISOloose_runGH th2f aux/mu_ISO_EfficienciesAndSF_GH.root LooseISO_LooseID_pt_eta/efficienciesDATA/abseta_pt_DATA LooseISO_LooseID_pt_eta/efficienciesMC/abseta_pt_MC
-muISOloose_runBCDEF th2f aux/mu_ISO_EfficienciesAndSF_BCDEF.root LooseISO_LooseID_pt_eta/efficienciesDATA/abseta_pt_DATA LooseISO_LooseID_pt_eta/efficienciesMC/abseta_pt_MC
+muTRG_runBCDEF th2f aux/LEPTONS/mu_trigger_EfficienciesAndSF_RunBtoF.root IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
+muTRG_runGH th2f aux/LEPTONS/mu_trigger_EfficienciesAndSF_Period4.root IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
+muID_runGH th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_GH.root MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/abseta_pt_DATA MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesMC/abseta_pt_MC
+muID_runBCDEF th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_BCDEF.root MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/abseta_pt_DATA MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesMC/abseta_pt_MC
+muISOloose_runGH th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_GH.root LooseISO_LooseID_pt_eta/efficienciesDATA/abseta_pt_DATA LooseISO_LooseID_pt_eta/efficienciesMC/abseta_pt_MC
+muISOloose_runBCDEF th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_BCDEF.root LooseISO_LooseID_pt_eta/efficienciesDATA/abseta_pt_DATA LooseISO_LooseID_pt_eta/efficienciesMC/abseta_pt_MC
 dummy base 1.0 0.00
 
 ################

@@ -5,10 +5,10 @@ sub=zdemiragExoMonov2|/store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v
 
 #### ---> missing  WH_HToBB_ , tZq_nunu_4f
 
-addfiles=%(ceballosUser)s/tZq_ll_4f_13TeV-amcatnlo-pythia8
+#addfiles=%(ceballosUser)s/tZq_ll_4f_13TeV-amcatnlo-pythia8
 ##addfiles=%(ceballosHig)s/tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1
 
-addfiles=%(ceballosUser)s/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8
+#addfiles=%(ceballosUser)s/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8
 ##addfiles=%(ceballosHig)s/WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8
 
 addfiles=%(zdemiragExoMonov2)s/TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
@@ -22,11 +22,5 @@ addfiles=%(ceballosUser)s/TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia
 
 addfiles=%(zdemiragExoMonov2)s/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8
 addfiles=%(ceballosUser)s/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8
-
-addfiles=%(ceballosUser)s/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8
-addfiles=%(ceballosUser)s/WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
-addfiles=%(ceballosUser)s/WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
-addfiles=%(ceballosUser)s/ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
-
 
 
