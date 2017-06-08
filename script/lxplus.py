@@ -41,9 +41,10 @@ raw_input("Is ok?")
 
 def call_exe(exe,server):
 	if opts.regexp != "" :exe = re.sub(opts.regexp.split(',')[0], opts.regexp.split(',')[1],exe)
-	cmd = "ssh " + server + ' "' + exe + '"'
-	print " -> Calling "+ exe
-	call(exe,shell=True)
+	cmd = "ssh " + server + ' "bash -l ' + exe + '"'
+	print " -> Calling "+ exe + " on [" +server+"]"
+	#call(exe,shell=True)
+	call(cmd,shell=True)
 	print " -> Done "+exe
 	servers[server] -= 1  ## not completely thread safe if multicore
 

@@ -359,6 +359,10 @@ def ReadSFDB(file,verbose=False):
 			sf  = float ( l.split(' ') [2] )
 			err = float ( l.split(' ') [3] )
 
+		elif type == 'wg1':
+			sf  = 1.0
+			err = 0.0
+
 		elif type == 'csv':
 			R['filename'] = l.split(' ' )[2]
 			sf=0.0 ## ignored

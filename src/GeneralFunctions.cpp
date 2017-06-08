@@ -25,6 +25,44 @@ float ChargedHiggs::mtMassive( const TLorentzVector p1,  const TLorentzVector p2
 }
 
 
+///https://github.com/cms-sw/cmssw/blob/09c3fce6626f70fd04223e7dacebf0b485f73f54/TopQuarkAnalysis/TopEventSelection/src/TtSemiLRSignalSelObservables.cc#L356
+float ChargedHiggs::FW_momentum( const std::vector<TLorentzVector> jets, int index)
+{
+
+    float FW_momentum_0=0, FW_momentum_1=0, FW_momentum_2=0, FW_momentum_3=0, FW_momentum_4=0, FW_momentum_5=0, FW_momentum_6=0;
+
+    double HT_alljets=0;
+    for(unsigned int i=0;i<jets.size();i++)
+        {
+            HT_alljets += jets[i].Et();
+        }
+
+    for(unsigned int i=0;i<jets.size();i++)
+        {
+            for(unsigned int j=0;j<jets.size();j++)
+                {
+                    double ET_ij_over_ETSum2= jets[i].Et()*jets[j].Et()/(std::pow(HT_alljets,2));
+                    double cosTheta_ij = (jets[i].Px()*jets[j].Px()+
+                                          jets[i].Py()*jets[j].Py()+
+                                          jets[i].Pz()*jets[j].Pz())/(jets[i].P()*jets[j].P());
+                    FW_momentum_0 += ET_ij_over_ETSum2;
+                    FW_momentum_1 += ET_ij_over_ETSum2 * cosTheta_ij;
+                    FW_momentum_2 += ET_ij_over_ETSum2 * 0.5   * (  3*std::pow(cosTheta_ij,2)- 1);
+                    FW_momentum_3 += ET_ij_over_ETSum2 * 0.5   * (  5*std::pow(cosTheta_ij,3)-  3*cosTheta_ij);
+                    FW_momentum_4 += ET_ij_over_ETSum2 * 0.125 * ( 35*std::pow(cosTheta_ij,4)- 30*std::pow(cosTheta_ij,2)+3);
+                    FW_momentum_5 += ET_ij_over_ETSum2 * 0.125 * ( 63*std::pow(cosTheta_ij,5)- 70*std::pow(cosTheta_ij,3)+15*cosTheta_ij);
+                    FW_momentum_6 += ET_ij_over_ETSum2 * 0.0625* (231*std::pow(cosTheta_ij,6)-315*std::pow(cosTheta_ij,4)+105*std::pow(cosTheta_ij,2)-5);
+                }
+        }
+
+    float FW_momentum[7] = {FW_momentum_0, FW_momentum_1, FW_momentum_2, FW_momentum_3, FW_momentum_4, FW_momentum_5, FW_momentum_6};
+
+    if(index>6) return 0;
+    return FW_momentum[index];
+
+}
+
+
 float ChargedHiggs::mt2( const TLorentzVector visa,  const TLorentzVector visb,  const TLorentzVector metVec)
 {
 
