@@ -549,9 +549,6 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
     Book("ChargedHiggsTopBottom/"+phasespace+category+"/PTWjets_"+l,"PTWjets "+l + ";pt of W jets ",100,0,500);
 
 
-    Book("ChargedHiggsTopBottom/"+phasespace+"_tb"+"/invariantExt_"+l,"invariant "+l + ";Mass (tb) [GeV] ",320,400,3600);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/invariantExt_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",320,400,3600);
-
     ///// Higgs candidates
     Book("ChargedHiggsTopBottom/"+phasespace+"_tb"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",80,400,1200);
     Book("ChargedHiggsTopBottom/"+phasespace+"_tb_thbh"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",80,400,1200);
@@ -569,9 +566,28 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
     Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_ntnw_bh"+"/invariant_"+l,"invariant "+l + ";Mass (wbb)  [GeV] ",80,400,1200);
     Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_other"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",80,400,1200);
 
+    /// this is the histogram for the limits
+    Book("ChargedHiggsTopBottom/"+phasespace+"_tb"+"/invariantExt_"+l,"invariant "+l + ";Mass (tb) [GeV] ",320,400,3600);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/invariantExt_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",320,400,3600);
+
+    ///// Properties of the Higgs candidates
+    Book("ChargedHiggsTopBottom/"+phasespace+"_tb"+"/dPhitb_"+l,"dPhitb "+l + ";dPhi (t,b) [GeV] ",100,0,TMath::Pi()); ///ranges
+    Book("ChargedHiggsTopBottom/"+phasespace+"_tb"+"/dEtatb_"+l,"dEtatb "+l + ";dEta (t,b) [GeV] ",100,0,10); ///ranges
+    Book("ChargedHiggsTopBottom/"+phasespace+"_tb"+"/PtAsytb_"+l,"PtAsytb "+l + ";(top - b)/(top +b) ",50,0.,1); ///ranges
+    Book("ChargedHiggsTopBottom/"+phasespace+"_tb"+"/PtB1_"+l,"PtB1 "+l + "; B leading ",200,0,1000); ///ranges
+
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/dPhitb_"+l,"dPhitb "+l + ";dPhi ((wb),b) [GeV] ",100,0,TMath::Pi()); ///ranges
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/dEtatb_"+l,"dEtatb "+l + ";dEta ((wb) ,b) [GeV] ",100,0,10); ///ranges
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/PtAsytb_"+l,"PtAsytb "+l + ";((wb) - b)/((wb) +b) ",50,0.,1); ///ranges
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/PtB1_"+l,"PtB1 "+l + "; B leading ",200,0,1000); ///ranges
+
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/Masst_"+l,"Masst "+l + "; top Mass ",30,100,300); ///ranges
+
     cout <<"Book : ChargedHiggsTopBottom/"+phasespace+"_tb"+"/invariant_"+l <<endl;
 
 }
+
+
 
 void ChargedHiggsTopBottomFullHad::Preselection()
 {
@@ -1069,7 +1085,9 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
     ///// to implement W + b + j , higgs candidate
     ///// j can be the leading jet from the higgs or the b from the top
 
-
+    /////
+    ///// to add in a separate category the top w/ no subjet btag (in the current selection top has the subjet btag)
+    /////
 
     higgsPlot(e, label, "_tb",systname,phasespace);
     higgsPlot(e, label, "_wbb",systname,phasespace);
@@ -1190,6 +1208,35 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
     // this is for all label
     if((category.find("_wbb")!=string::npos)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_Wbb,e->weight());
     if((category.find("_wbb")!=string::npos) and not (category.find("_wbb_")!=string::npos)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantExt_"+label,systname,evt_MH_Wbb,e->weight());
+
+
+    if(evt_MH_tb>0 and (category.find("_tb")!=string::npos) and not (category.find("_tb_")!=string::npos)) {
+        // two tb jets are in the opposite hemisphere
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/dPhitb_"+label,systname, ChargedHiggs::deltaPhi(leadingb->Phi(), topJet->Phi()) ,e->weight());
+        // difference in rapidity
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/dEtatb_"+label,systname,  topJet->DeltaEta(*leadingb),e->weight());
+        // pt asymmetry
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtAsytb_"+label,systname,  (topJet->Pt() - leadingb->Pt())/(topJet->Pt() + leadingb->Pt()),e->weight());
+        // pt of the leading b
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,  leadingb->Pt() ,e->weight());
+
+    }
+
+    if(evt_MH_Wbb>0 and (category.find("_wbb")!=string::npos) and not (category.find("_wbb_")!=string::npos)) {
+        // two tb jets are in the opposite hemisphere
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/dPhitb_"+label,systname, ChargedHiggs::deltaPhi(leadingb->Phi(), topFromHOpenCand.Phi()) ,e->weight());
+        // difference in rapidity
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/dEtatb_"+label,systname,  fabs(topFromHOpenCand.Eta()-leadingb->GetP4().Eta())  ,e->weight());
+        // pt asymmetry
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtAsytb_"+label,systname,  (topFromHOpenCand.Pt() - leadingb->Pt())/(topFromHOpenCand.Pt() + leadingb->Pt()),e->weight());
+
+        // mass of the top candidate
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Masst_"+label,systname,  topFromHOpenCand.M() ,e->weight());
+
+        // pt of the leading b
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,  leadingb->Pt() ,e->weight());
+
+    }
 
 
 }
