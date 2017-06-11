@@ -375,12 +375,23 @@ void ChargedHiggsTopBottom::Init()
     binLow_.reset(new GetBinning());
     binMedium_.reset(new GetBinning());
     binHigh_.reset(new GetBinning());
+    // GREEN
     if(do1lAnalysis) binHigh_->SetBinning("aux/binning_1l_highmass_2l.root");
     if(do2lAnalysis) binHigh_->SetBinning("aux/binning_2l_highmass_2l.root");
     if(do1lAnalysis) binMedium_->SetBinning("aux/binning_1l_mediummass_2l.root");
     if(do2lAnalysis) binMedium_->SetBinning("aux/binning_2l_mediummass_2l.root");
     if(do1lAnalysis) binLow_->SetBinning("aux/binning_1l_lowmass_2l.root");
     if(do2lAnalysis) binLow_->SetBinning("aux/binning_2l_lowmass_2l.root");
+
+    /*
+    // GREEN + BLUE
+    if(do1lAnalysis) binHigh_->SetBinning("aux/tb_train_GB/binning_1l_highmass_2l.root");
+    if(do2lAnalysis) binHigh_->SetBinning("aux/tb_train_GB/binning_2l_highmass_2l.root");
+    if(do1lAnalysis) binMedium_->SetBinning("aux/tb_train_GB/binning_1l_mediummass_2l.root");
+    if(do2lAnalysis) binMedium_->SetBinning("aux/tb_train_GB/binning_2l_mediummass_2l.root");
+    if(do1lAnalysis) binLow_->SetBinning("aux/tb_train_GB/binning_1l_lowmass_2l.root");
+    if(do2lAnalysis) binLow_->SetBinning("aux/tb_train_GB/binning_2l_lowmass_2l.root");
+    */
 
     if(doSynch) return;
 
@@ -395,6 +406,7 @@ void ChargedHiggsTopBottom::Init()
         // 1l - high mass
         // 1l - medium mass
         // 1l - low mass
+        // GREEN
         AddVariable("bjet_pt[0]",'F',i); //0
         AddVariable("ht",'F',i);//1
         AddVariable("AvDRBB",'F',i);//2
@@ -408,16 +420,21 @@ void ChargedHiggsTopBottom::Init()
         AddVariable("FW2",'F',i); //10
         AddVariable("Cen",'F',i); //1
         AddVariable("MJJJmaxPt",'F',i); //12
-
         /*
-        AddVariable("met_pt",'F',i);
+        // GREEN + BLU
+        AddVariable("met_pt",'F',i); //13
+        AddVariable("mt",'F',i); //14
+        AddVariable("HemiOut",'F',i); //15
+        AddVariable("DRl1j1",'F',i); //16
+        AddVariable("DRl1j2",'F',i); //17
+        AddVariable("DRl1j3",'F',i); //18
+        */
+        /*
         AddVariable("lep1_pt",'F',i);
         AddVariable("MassDRbbmin",'F',i);
         AddVariable("MassDRlbmin",'F',i);
-        AddVariable("mt",'F',i);
         AddVariable("mt2bb",'F',i);
         AddVariable("mt2bb1l",'F',i);
-        AddVariable("HemiOut",'F',i);
         AddVariable("Ml1b1",'F',i);
         AddVariable("st",'F',i);
         AddVariable("AvDRJJJmaxPt",'F',i);
@@ -433,7 +450,7 @@ void ChargedHiggsTopBottom::Init()
         // 2l - high mass
         // 2l - medium mass
         // 2l - low mass
-
+        // GREEN
         AddVariable("bjet_pt[0]",'F',i); //0
         AddVariable("ht",'F',i); //1
         AddVariable("AvDRBB",'F',i);//2
@@ -447,7 +464,15 @@ void ChargedHiggsTopBottom::Init()
         AddVariable("FW2",'F',i); //10
         AddVariable("Cen",'F',i); //11
         AddVariable("mtMin",'F',i); //12
-
+        /*
+        // GREEN + BLU
+        AddVariable("met_pt",'F',i); //13
+        AddVariable("mt",'F',i); //14
+        AddVariable("HemiOut",'F',i); //15
+        AddVariable("DRl1j1",'F',i); //16
+        AddVariable("DRl1j2",'F',i); //17
+        AddVariable("DRl1j3",'F',i); //18
+        */
         /*
         AddVariable("met_pt",'F',i);
         AddVariable("lep1_pt",'F',i);
@@ -456,10 +481,8 @@ void ChargedHiggsTopBottom::Init()
         AddVariable("mt",'F',i);
         AddVariable("mt2bb",'F',3);
         AddVariable("mt2bb1l",'F',i);
-        AddVariable("HemiOut",'F',i);
         AddVariable("Ml1b1",'F',i);
         AddVariable("st",'F',i);
-        AddVariable("mtMin",'F',i);
         */
 
         AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
@@ -473,9 +496,10 @@ void ChargedHiggsTopBottom::Init()
     for (int i=6; i<6+6; i++) {
         // 0,1,2
 
-        // 1l - high mass
-        // 1l - medium mass
-        // 1l - low mass
+        // 2d - 1l - high mass
+        // 2d - 1l - medium mass
+        // 2d - 1l - low mass
+        // GREEN
         AddVariable("bjet_pt[0]",'F',i); //0
         AddVariable("ht",'F',i);//1
         AddVariable("AvDRBB",'F',i);//2
@@ -489,7 +513,15 @@ void ChargedHiggsTopBottom::Init()
         AddVariable("FW2",'F',i); //10
         AddVariable("Cen",'F',i); //1
         AddVariable("MJJJmaxPt",'F',i); //12
-
+        /*
+        // GREEN + BLU
+        AddVariable("met_pt",'F',i); //13
+        AddVariable("mt",'F',i); //14
+        AddVariable("HemiOut",'F',i); //15
+        AddVariable("DRl1j1",'F',i); //16
+        AddVariable("DRl1j2",'F',i); //17
+        AddVariable("DRl1j3",'F',i); //18
+        */
         AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
     }
@@ -497,9 +529,10 @@ void ChargedHiggsTopBottom::Init()
     for (int i=12; i<12+6; i++) {
         // 0,1,2
 
-        // 2l - high mass
-        // 2l - medium mass
-        // 2l - low mass
+        // 2d - 2l - high mass
+        // 2d - 2l - medium mass
+        // 2d - 2l - low mass
+        // GREEN
         AddVariable("bjet_pt[0]",'F',i); //0
         AddVariable("ht",'F',i); //1
         AddVariable("AvDRBB",'F',i);//2
@@ -513,7 +546,15 @@ void ChargedHiggsTopBottom::Init()
         AddVariable("FW2",'F',i); //10
         AddVariable("Cen",'F',i); //11
         AddVariable("mtMin",'F',i); //12
-
+        /*
+        // GREEN + BLU
+        AddVariable("met_pt",'F',i); //13
+        AddVariable("mt",'F',i); //14
+        AddVariable("HemiOut",'F',i); //15
+        AddVariable("DRl1j1",'F',i); //16
+        AddVariable("DRl1j2",'F',i); //17
+        AddVariable("DRl1j3",'F',i); //18
+        */
         AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
     }
@@ -2971,38 +3012,48 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         ////
         //// Read MVA
         ////
-        
+
         bdt.clear();
 
-        if(do2lAnalysis) SetVariable("mtMin",evt_MTmin);
-        if(do1lAnalysis) SetVariable("MJJJmaxPt",evt_MJJJmaxPt);
-        if(do1lAnalysis) SetVariable("AvDRJJJmaxPt",evt_AvDRJJJmaxPt);
+        // GREEN
+        SetVariable("bjet_pt[0]",e->GetBjet(0)->GetP4().Pt()); //0
+        SetVariable("ht",evt_HT); //1
+        SetVariable("AvDRBB",evt_avDRBB); //2
+        SetVariable("DRl1b1",evt_DRl1b1); //3
+        SetVariable("DRlbmin",evt_minDRlb); //4
+        SetVariable("DRlbmaxPT",evt_DRlbmaxPt); //5
+        SetVariable("MassMinlb",evt_minMasslb); //8
+        SetVariable("AvCSVPt",evt_AvCSVPt); //9
+        SetVariable("FW2",evt_FW2); //10
+        SetVariable("Cen",evt_C); //11
 
-        SetVariable("ht",evt_HT);
-        SetVariable("met_pt",e->GetMet().GetP4().Pt());
-        SetVariable("lep1_pt",leadLep->GetP4().Pt());
-        SetVariable("bjet_pt[0]",e->GetBjet(0)->GetP4().Pt());
-        SetVariable("DRl1b1",evt_DRl1b1);
-        SetVariable("MassDRlbmin",evt_minDRlb_invMass);
-        SetVariable("mt",evt_MT);
-        SetVariable("Cen",evt_C);
-        SetVariable("HemiOut",evt_HemiMetOut);
-        SetVariable("DRlbmaxPT",evt_DRlbmaxPt);
-        SetVariable("st",evt_ST);
-        SetVariable("AvCSVPt",evt_AvCSVPt);
-        SetVariable("Ml1b1",evt_Ml1b1);
-        SetVariable("DRlbmin",evt_minDRlb);
+        if(do2lAnalysis) SetVariable("mtMin",evt_MTmin); //12
+        if(do1lAnalysis) SetVariable("MJJJmaxPt",evt_MJJJmaxPt); //12
+        /*
+        // GREEN + BLU
+        SetVariable("met_pt",e->GetMet().GetP4().Pt()); //13
+        SetVariable("mt",evt_MT); //14
+        SetVariable("HemiOut",evt_HemiMetOut); //15
+        SetVariable("DRl1j1",evt_DRl1j1); //16
+        SetVariable("DRl1j2",evt_DRl1j2); //17
+        SetVariable("DRl1j3",evt_DRl1j3); //18
+        */
+        //        SetVariable("lep1_pt",leadLep->GetP4().Pt());
+        //        if(do1lAnalysis) SetVariable("AvDRJJJmaxPt",evt_AvDRJJJmaxPt);
+        //        SetVariable("MassDRlbmin",evt_minDRlb_invMass);
+        //        SetVariable("st",evt_ST);
+        //        SetVariable("Ml1b1",evt_Ml1b1);
 
         if( e->Bjets()>1 ) {
-            SetVariable("DEtaMaxBB",evt_DEtaMaxBB);
-            SetVariable("DRbbmin",evt_minDRbb);
-            SetVariable("MassDRbbmin",evt_minDRbb_invMass);
-            SetVariable("mt2bb1l",evt_MT2bb1l);  // remove ??
+            SetVariable("DEtaMaxBB",evt_DEtaMaxBB); //6
+            SetVariable("DRbbmin",evt_minDRbb); //7
+            //            SetVariable("MassDRbbmin",evt_minDRbb_invMass);
+            //            SetVariable("mt2bb1l",evt_MT2bb1l);
         } else {
             SetVariable("DRbbmin",3.);
             SetVariable("DEtaMaxBB",1.5);
-            SetVariable("MassDRbbmin",150.);
-            SetVariable("mt2bb1l",50); // remove ??
+            //            SetVariable("MassDRbbmin",150.);
+            //            SetVariable("mt2bb1l",50);
         }
 
 
