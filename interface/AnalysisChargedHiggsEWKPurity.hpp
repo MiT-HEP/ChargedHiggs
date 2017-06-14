@@ -8,9 +8,11 @@
 #include <memory>
 
 // FWD Declaration
+#ifdef HAVE_PYTHIA
 namespace Pythia8{
     class Pythia;
 };
+#endif
 
 namespace CLHEP {
   class HepRandomEngine;
@@ -34,7 +36,9 @@ class ChargedHiggsEWKPurity:  virtual public ChargedHiggsTauNu
         void SetLeptonCuts(Lepton *l) override { l->SetIsoCut(10); l->SetPtCut(10);l->SetIsoRelCut(-1);l->SetEtaCut(2.4); l->SetTightCut(false);}
 
     private:
+        #ifdef HAVE_PYTHIA
         std::unique_ptr<Pythia8::Pythia> fMasterGen;
+        #endif
         std::unique_ptr<TRandom> random;
 };
 
