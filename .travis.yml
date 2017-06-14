@@ -28,3 +28,6 @@ after_success:
   - cd ntuples/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8 && wget --no-check-certificate https://amarini.web.cern.ch/amarini/travis/NeroNtuples_1.root && cd -
   - python python/Loop.py -v -d dat/travis/input.dat
   - ls -ltr
+
+notifications:
+    email: false
