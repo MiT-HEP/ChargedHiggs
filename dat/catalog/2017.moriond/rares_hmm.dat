@@ -1,0 +1,22 @@
+
+## this is a copy of rares.dat for Hmm, ie excluding ttHTobb non bb etc...
+sub=ceballosHig|/store/group/phys_higgs/ceballos/Nero/v2.2/
+sub=ceballosUser|/store/user/ceballos/Nero/v2.2/
+sub=amarini|/store/user/amarini/Nero/v2.1
+sub=zdemiragExoMonov2|/store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/
+
+### TTTT
+addfiles=%(zdemiragExoMonov2)s/TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+### TTX
+addfiles=%(ceballosUser)s/TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8
+addfiles=%(ceballosUser)s/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8
+addfiles=%(ceballosUser)s/TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8
+
+### VVV
+addfiles=%(ceballosUser)s/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(ceballosUser)s/ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+

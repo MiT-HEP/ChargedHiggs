@@ -51,7 +51,11 @@ void Fitter::info(){
     for(auto &s : inputMasks) cout <<"mask = "<<s<<endl;
     cout<<"mIn = ";for(auto &m : mIn ) cout <<m<<","; cout<<endl;
     cout <<"procs = ";for(auto &p : processes) cout <<p<<",";cout<<endl;
-    //cout<<"** ttH125 ONLY **"<<endl;
+    cout << " ---- SYST ---"<<endl;
+    cout <<"scale: " ; for(const auto &p : scaleUnc ) cout << "("<<p.first.first <<","<<p.first.second <<") -> "<< p.second<< ", "; cout <<endl;
+    cout <<"corr: "; for( const auto &p : scaleCorr) cout <<"("<<p.first.first <<","<<p.first.second <<") -> "<< "("<< p.second.first <<","<<p.second.second <<"), ";  cout<<endl;
+    cout <<"smear: " ; for(const auto &p : smearUnc ) cout << "("<<p.first.first <<","<<p.first.second <<") -> "<< p.second<< ", "; cout <<endl;
+    cout <<"corr: "; for( const auto &p : smearCorr) cout <<"("<<p.first.first <<","<<p.first.second <<") -> "<< "("<< p.second.first <<","<<p.second.second <<"), ";  cout<<endl;
     cout<<"-----------------------------------"<<endl;
 }
 
@@ -279,9 +283,12 @@ void Fitter::fit(){
 
         for(int i=0;i<pars.size() ;++i) pars[i].setConstant(kFALSE);
 
+        vector<float> mInPlusOne{mIn};
+        mInPlusOne. push_back(mIn[0]);
+
         // reset last mass for ttH
         lastMass=-1;
-        for( auto & m: mIn )
+        for( auto & m: mInPlusOne )
         {
             // set par ranges mass dependent
             int pos=0;
@@ -519,19 +526,12 @@ void Fitter::end(){
 }
 
 
-// -- RooAbsReal* getMeanWithSyst(string name,RooAbsReal * mean){
-// --     // Foreseen to add systematics
-// --     RooArgList *depends = new RooArgList();
-// --     string formula = "@0 ";
-// --     depends -> add(*mean);
-// -- 
-// --     RooFormulaVar *formVar= new RooFormulaVar(name.c_str(), name.c_str(), formula.c_str(), depends);
-// --     return formVar;
-// -- }
 RooAbsReal* Fitter::getMeanWithSyst(int cat, string proc,int gaus=0){
         // Add Systematics here, because the parameter is a RooSpline, and I need to have a RooFormulaVar -> m = m0 + scale_catX_procX*scaleUnc = [0,-1,1][0.0011]
         // s = s0 + smear_catX_procX * smearUnc
         // or w->var() if correlated
+
+        // look up for correlations
         int mycat = cat ;//  for correlation 
         string myproc = proc;
         if (scaleCorr.find(pair<int,string>(cat,proc))!= scaleCorr.end() )
@@ -539,25 +539,41 @@ RooAbsReal* Fitter::getMeanWithSyst(int cat, string proc,int gaus=0){
             mycat = scaleCorr[ pair<int,string>(cat,proc) ] .first; 
             myproc = scaleCorr[ pair<int,string>(cat,proc) ] .second;
         }
+
         RooRealVar *scaleNuisance =  new RooRealVar(Form("scale_cat%d_proc%s",mycat,myproc.c_str()),Form("scale_cat%d_proc%s",mycat,myproc.c_str()),0,-1,1);
-        RooRealVar *scaleValue =  new RooRealVar(Form("scale_value_cat%d_proc%s",cat,proc.c_str()),Form("scale_value_cat%d_proc%s",cat,proc.c_str()),0.);
+        RooRealVar *scaleValue =  new RooRealVar(Form("scale_value_cat%d_proc%s",mycat,myproc.c_str()),Form("scale_value_cat%d_proc%s",mycat,myproc.c_str()),0.);
+
+        RooRealVar *smearNuisance =  new RooRealVar(Form("smear_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_cat%d_proc%s",mycat,myproc.c_str()),0,-1,1);
+        RooRealVar *smearValue =  new RooRealVar(Form("smear_value_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_value_cat%d_proc%s",mycat,myproc.c_str()),0.);
+
         string scaleFormula = "@0";
         RooArgList scaleList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,0+gaus*2))) );
-        RooArgList scaleG2List( );
 
-        if (scaleUnc.find( pair<int,string>(cat,proc) )   != scaleUnc.end() ) 
+        RooFormulaVar *deltaM=NULL;
+        if (gaus >0 )
+            deltaM=new RooFormulaVar(Form("deltaM_%s_cat%d_g%d",proc.c_str(),cat,gaus),"deltaM","@1-@0",RooArgList( *w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,0) ), * w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,0+gaus*2)) ));
+
+        if (scaleUnc.find( pair<int,string>(mycat,myproc) )   != scaleUnc.end() ) 
         {
-            scaleValue->setVal( scaleUnc[pair<int,string>(cat,proc)]) ;
-            string scaleFormula = "+ (@1*@2)";
+            scaleValue->setVal( scaleUnc[pair<int,string>(mycat,myproc)]) ;
+            scaleFormula += "*(1.+ (@1*@2)) ";
             scaleList.add( *scaleNuisance);
             scaleList.add( *scaleValue);
+            if (deltaM != NULL) // the scaling of sigma on deltaM not on the mean
+            {
+                scaleFormula += "+ (@3*@4*@5) ";
+                scaleList.add( *smearNuisance);
+                scaleList.add( *smearValue);
+                scaleList.add( *deltaM);
+            }
         }
+
         scaleValue->setConstant();
         scaleNuisance->setConstant();
 
         string name=Form("sigmodel_%s_cat%d_g%d_mean",proc.c_str(),cat,gaus);
         RooFormulaVar *mean = new RooFormulaVar(name.c_str(),name.c_str(),scaleFormula.c_str(),scaleList);
-        w_->import(*mean);
+        w_->import(*mean,RecycleConflictNodes());
         return mean;
 }
 
@@ -572,16 +588,17 @@ RooAbsReal* Fitter::getSigmaWithSyst(int cat, string proc,int gaus=0){
             mycat = smearCorr[ pair<int,string>(cat,proc) ] .first; 
             myproc = smearCorr[ pair<int,string>(cat,proc) ] .second;
         }
+
         RooRealVar *smearNuisance =  new RooRealVar(Form("smear_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_cat%d_proc%s",mycat,myproc.c_str()),0,-1,1);
-        RooRealVar *smearValue =  new RooRealVar(Form("smear_value_cat%d_proc%s",cat,proc.c_str()),Form("smear_value_cat%d_proc%s",cat,proc.c_str()),0.);
+        RooRealVar *smearValue =  new RooRealVar(Form("smear_value_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_value_cat%d_proc%s",mycat,myproc.c_str()),0.);
+
         string smearFormula = "@0";
         RooArgList smearList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,1+gaus*2))) );
-        RooArgList smearG2List( );
 
-        if (smearUnc.find( pair<int,string>(cat,proc) )   != smearUnc.end() ) 
+        if (smearUnc.find( pair<int,string>(mycat,myproc) )   != smearUnc.end() ) 
         {
-            smearValue->setVal( smearUnc[pair<int,string>(cat,proc)]) ;
-            string smearFormula = "+ (@1*@2)";
+            smearValue->setVal( smearUnc[pair<int,string>(mycat,myproc)]) ;
+            smearFormula += "* (1. + (@1*@2) )";
             smearList.add( *smearNuisance);
             smearList.add( *smearValue);
         }
@@ -590,7 +607,7 @@ RooAbsReal* Fitter::getSigmaWithSyst(int cat, string proc,int gaus=0){
 
         string name=Form("sigmodel_%s_cat%d_g%d_sigma",proc.c_str(),cat,gaus);
         RooFormulaVar *sigma = new RooFormulaVar(name.c_str(),name.c_str(),smearFormula.c_str(),smearList);
-        w_->import(*sigma);
+        w_->import(*sigma,RecycleConflictNodes());
         return sigma;
 }
 
