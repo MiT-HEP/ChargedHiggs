@@ -9,6 +9,6 @@ install:
   - touch ~/.bashrc
   - . ~/.bashrc
 script:
-  - cd $HOME/.. && ./ChargedHiggs/install.sh && cd $HOME
+  - cd .. && ./ChargedHiggs/install.sh && cd -
 
 compiler: g++
