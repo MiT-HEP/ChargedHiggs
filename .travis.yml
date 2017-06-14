@@ -12,8 +12,8 @@ env:
    - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
 install:
-  - wget https://root.cern.ch/download/root_v6.06.06.Linux-ubuntu14-x86_64-gcc4.8.tar.gz
-  - tar -xzf root_v6.06.06.Linux-ubuntu14-x86_64-gcc4.8.tar.gz
+  - wget https://root.cern.ch/download/root_v6.08.06.Linux-ubuntu14-x86_64-gcc4.8.tar.gz
+  - tar -xzf root_v6.08.06.Linux-ubuntu14-x86_64-gcc4.8.tar.gz
   - . root/bin/thisroot.sh
   - HOME=`pwd`
   - touch ~/.bashrc
