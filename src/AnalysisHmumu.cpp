@@ -676,7 +676,7 @@ void HmumuAnalysis::Init(){
     for ( string l : AllLabel()  ) {
 	    Book ("HmumuAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
 	    Book ("HmumuAnalysis/Vars/Mmm_NoTrigger_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
-	    Book ("HmumuAnalysis/Vars/Mmm_DoubleMuonTrigger_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
+	    //Book ("HmumuAnalysis/Vars/Mmm_DoubleMuonTrigger_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
 	    // 
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
 	    Book ("HmumuAnalysis/Vars/MetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
@@ -704,7 +704,7 @@ void HmumuAnalysis::Init(){
         {
 	        //Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 960,60,300); // every 4 (old16) per GeV
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
-	        Book2D ("HmumuAnalysis/Vars/JetEtaPhi_"+ c + "_"+ l ,"Jet EtaPhi; eta; phi;Events", 100,-5,5,100,-3.1415,3.1415); // CHECK2D
+	        //Book2D ("HmumuAnalysis/Vars/JetEtaPhi_"+ c + "_"+ l ,"Jet EtaPhi; eta; phi;Events", 100,-5,5,100,-3.1415,3.1415); // CHECK2D
             // for systematics, only counts the total
         }
 
@@ -1183,7 +1183,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if ( recoMuons and passAsymmPtCuts)
     {
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_NoTrigger_"+ label,systname, mass_,e->weight()) ;
-        if(Unblind(e) and (passTrigger or e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu45_eta2p1_v") or e->IsTriggered("HLT_Mu50_v") ))Fill("HmumuAnalysis/Vars/Mmm_DoubleMuonTrigger_"+ label,systname, mass_,e->weight()) ;
+        //if(Unblind(e) and (passTrigger or e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu45_eta2p1_v") or e->IsTriggered("HLT_Mu50_v") ))Fill("HmumuAnalysis/Vars/Mmm_DoubleMuonTrigger_"+ label,systname, mass_,e->weight()) ;
     }
 
     // -- FINAL SELECTION --
@@ -1237,30 +1237,30 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             }
         }
 
-        if (category != "" and mass_ > 110 and mass_<150 and (systname=="" or systname=="NONE")){ //CHECK2D
-                // first key is mjj-> sorting
-                map<float, pair<float,float>, std::greater<float> > eta_j;
-                map<float, pair<float,float>, std::greater<float> > phi_j;
-                map<float, float, std::greater<float> > detajj;
+        //if (category != "" and mass_ > 110 and mass_<150 and (systname=="" or systname=="NONE")){ //CHECK2D
+        //        // first key is mjj-> sorting
+        //        map<float, pair<float,float>, std::greater<float> > eta_j;
+        //        map<float, pair<float,float>, std::greater<float> > phi_j;
+        //        map<float, float, std::greater<float> > detajj;
 
-                for(unsigned i=0;i<selectedJets.size() ;++i)
-                for (unsigned j=i+1;j<selectedJets.size();++j)
-                {
-                    eta_j[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  pair<float,float>( selectedJets[j]->Eta(), selectedJets[i]->Eta());
-                    phi_j[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  pair<float,float>( selectedJets[j]->Phi(), selectedJets[i]->Phi());
-                    detajj[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  fabs(selectedJets[j]->Eta() - selectedJets[i]->Eta()) ;
-                }
-                if (eta_j.size() >0)
-                {
-                    Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(eta_j.begin())->second.first,(phi_j.begin())->second.first,e->weight());
-                    Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(eta_j.begin())->second.second,(phi_j.begin())->second.second,e->weight());
-                }
-                if (eta_j.size() >1)
-                {
-                    Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(++eta_j.begin())->second.first ,(++phi_j.begin())->second.first,e->weight());
-                    Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(++eta_j.begin())->second.second,(++phi_j.begin())->second.second,e->weight());
-                }
-        }
+        //        for(unsigned i=0;i<selectedJets.size() ;++i)
+        //        for (unsigned j=i+1;j<selectedJets.size();++j)
+        //        {
+        //            eta_j[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  pair<float,float>( selectedJets[j]->Eta(), selectedJets[i]->Eta());
+        //            phi_j[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  pair<float,float>( selectedJets[j]->Phi(), selectedJets[i]->Phi());
+        //            detajj[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  fabs(selectedJets[j]->Eta() - selectedJets[i]->Eta()) ;
+        //        }
+        //        if (eta_j.size() >0)
+        //        {
+        //            Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(eta_j.begin())->second.first,(phi_j.begin())->second.first,e->weight());
+        //            Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(eta_j.begin())->second.second,(phi_j.begin())->second.second,e->weight());
+        //        }
+        //        if (eta_j.size() >1)
+        //        {
+        //            Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(++eta_j.begin())->second.first ,(++phi_j.begin())->second.first,e->weight());
+        //            Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(++eta_j.begin())->second.second,(++phi_j.begin())->second.second,e->weight());
+        //        }
+        //}
 
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
