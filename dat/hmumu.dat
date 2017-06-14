@@ -1,7 +1,19 @@
 
 config=HmumuAnalysis|AddLabel('DY')
+addConfig=HmumuAnalysis|AddLabel('TTTT')
+
+addConfig=HmumuAnalysis|AddLabel('TTW')
+addConfig=HmumuAnalysis|AddLabel('TTZ')
+addConfig=HmumuAnalysis|AddLabel('TTG')
+
 addConfig=HmumuAnalysis|AddLabel('TT')
 addConfig=HmumuAnalysis|AddLabel('ST')
+
+addConfig=HmumuAnalysis|AddLabel('WWW')
+addConfig=HmumuAnalysis|AddLabel('WWZ')
+addConfig=HmumuAnalysis|AddLabel('WZZ')
+addConfig=HmumuAnalysis|AddLabel('ZZZ')
+
 addConfig=HmumuAnalysis|AddLabel('WW')
 addConfig=HmumuAnalysis|AddLabel('WZ')
 addConfig=HmumuAnalysis|AddLabel('ZZ')

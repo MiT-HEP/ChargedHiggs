@@ -8,4 +8,8 @@ addfiles=%(zdemiragExoMonov2)s/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV
 addfiles=%(ceballosUser)s/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1
 addfiles=%(ceballosUser)s/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1
 
-%addfiles=%(amarini)s/ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1
+addfiles=/eos/user/k/klute/Nero/v2.2.qg/ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1
+
+
+#addfiles=/store/user/amarini/Nero/v2.1/ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1
+#addfiles=%(amarini)s/ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1
