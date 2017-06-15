@@ -3,7 +3,6 @@ CXXFLAGS=`root-config --libs --cflags` -O2 -fPIC -I../  -I./
 ## to use BareObjects
 RPATH= -Wl,-rpath=$(PWD)/../NeroProducer/Core/bin
 CXXFLAGS += -L$(PWD)/../NeroProducer/Core/bin -lBare  -ggdb -lTMVA -l RooFit -l RooFitCore
-CXXFLAGS += -I"/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/python/2.7.11-mlhled/include/python2.7"
 SOFLAGS=-shared
 
 SRCDIR=src
@@ -38,11 +37,13 @@ ifndef CMSSW_BASE
 $(info No CMSSSW !!!!)
 $(info I ll sleep 3s to let you acknowledge it)
 $(shell sleep 3s)
+CXXFLAGS += -I/usr/include/python2.7 -lpython2.7
 else
 $(info CMSSW found: $(CMSSW_BASE) )
 COMBINELIBFILE = $(wildcard $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/libHiggsAnalysisCombinedLimit.so)
 COMBINELIB = HiggsAnalysisCombinedLimit
 COMBINELIBDIR = $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/
+CXXFLAGS += -I"/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/python/2.7.11-mlhled/include/python2.7"
 CXXFLAGS += -D HAVE_PYTHIA -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/219/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/219/lib  -lpythia8
 #-I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/clhep/2.2.0.4-kpegke/include
 #"-lpythia8 -lclhep "
