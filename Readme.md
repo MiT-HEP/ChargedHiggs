@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/MiT-HEP/ChargedHiggs.svg?branch=master)](https://travis-ci.org/MiT-HEP/ChargedHiggs)
+
 # Charged Higgs Analysis Code
 
 ### Table of Contents

@@ -1,0 +1,7 @@
+include=dat/configHmumu.dat
+Files=ntuples/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8/NeroNtuples_1.root
+Output=XXX.root
+Smear=NONE
+addConfig=HmumuAnalysis|catType=2
+addConfig=HmumuAnalysis|doSync=0
+addConfig=HmumuAnalysis|doScikit=0
