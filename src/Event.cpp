@@ -248,7 +248,7 @@ Jet * Event::GetJet( int iJet )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iJet  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return jets_[ valid[iJet].second];
 }
@@ -264,7 +264,7 @@ Jet * Event::GetJetInvIso( int iJet )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iJet  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return jets_[ valid[iJet].second];
 }
@@ -281,7 +281,7 @@ Jet * Event::GetCentralJet( int iJet )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iJet  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return jets_[ valid[iJet].second];
 }
@@ -297,7 +297,7 @@ Jet * Event::GetBjetInvIso( int iJet )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iJet  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return jets_[ valid[iJet].second];
 }
@@ -313,7 +313,7 @@ Jet * Event::GetBjet( int iJet )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iJet  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return jets_[ valid[iJet].second];
 }
@@ -329,7 +329,7 @@ Jet * Event::GetLjet( int iJet )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iJet  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return jets_[ valid[iJet].second];
 }
@@ -345,7 +345,7 @@ FatJet * Event::GetFatJet( int iJet )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iJet  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return fat_[ valid[iJet].second];
 }
@@ -362,7 +362,7 @@ FatJet * Event::GetWJet( int iJet )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iJet  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return fat_[ valid[iJet].second];
 }
@@ -379,7 +379,7 @@ Tau * Event::GetTau( int iTau )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iTau  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return taus_[ valid[iTau].second];
 }
@@ -395,7 +395,7 @@ Lepton * Event::GetLepton( int iLepton )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iLepton  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return leps_[ valid[iLepton].second];
 }
@@ -412,7 +412,7 @@ Lepton * Event::GetElectron( int iEle )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iEle  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return leps_[ valid[iEle].second];
 }
@@ -430,7 +430,7 @@ Lepton * Event::GetMuon( int iMu )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iMu  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return leps_[ valid[iMu].second];
 }
@@ -446,7 +446,7 @@ Tau * Event::GetTauInvIso( int iTau )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iTau  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return taus_[ valid[iTau].second];
 }
@@ -528,7 +528,7 @@ GenParticle * Event::GetGenStable( int iGenPar ,int pdgid,float aeta)
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iGenPar  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return genparticles_[ valid[iGenPar].second];
 }
@@ -545,7 +545,7 @@ Photon * Event::GetPhoton( int iPho )
     if (valid.size() == 0 ) return NULL;
     if (valid.size() <= iPho  ) return NULL;
 
-    sort(valid.begin(),valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    sort(valid.begin(),valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
     return phos_[ valid[iPho].second];
 }

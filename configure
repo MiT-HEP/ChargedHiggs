@@ -6,4 +6,7 @@ whereis -B $PWD/../NeroProducer/Core/bin -b libBare
 echo "-> Checking combine libraries"
 whereis -B $PWD/../HiggsAnalysis/CombinedLimit/lib/ -b libHiggsAnalysisCombinedLimit
 
+echo "-> Checknig Python.h"
+locate Python.h
+
 echo "-> going to make"
