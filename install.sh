@@ -20,6 +20,11 @@ git remote add amarini https://github.com/amarini/HiggsAnalysis-CombinedLimit.gi
 git fetch amarini
 git merge amarini/cmssw80x
 source env_standalone.sh 
+cd $BASE
+cd HiggsAnalysis/CombinedLimit
 make -j $PARALLEL ; make  ## second will fix errors in the first
 
+cd $BASE
 echo "->DONE"
+
+ls -ltr
