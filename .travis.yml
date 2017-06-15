@@ -6,9 +6,9 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - python-dev
     packages:
       - g++-4.9
+      - python-dev
 env:
    - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
