@@ -484,7 +484,6 @@ void ChargedHiggsTopBottom::Init()
         AddVariable("Ml1b1",'F',i);
         AddVariable("st",'F',i);
         */
-
         AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
     }
@@ -522,6 +521,7 @@ void ChargedHiggsTopBottom::Init()
         AddVariable("DRl1j2",'F',i); //17
         AddVariable("DRl1j3",'F',i); //18
         */
+
         AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
     }
@@ -2684,6 +2684,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         bool onemuoneele_onELE=(((leadLep->IsElectron() and trailLep->IsMuon()) ||
                                  (trailLep->IsElectron() and leadLep->IsMuon() and trailLep->Pt()>LeadingLeptonElePt_ and fabs(trailLep->Eta())<2.1 ))
                                 and passTriggerEle and not passTriggerMu);
+
+        if(e->GetName().find("SingleElectron")!=string::npos) onemuoneele_onMU=false;
+        if(e->GetName().find("SingleMuon")!=string::npos) onemuoneele_onELE=false;
+
         bool onemuoneele=onemuoneele_onMU or onemuoneele_onELE;
 
         if ( nOSLepPair == 1 and leadLep->Pt()>LeadingLeptonPt_ and (twomu or twoele or onemuoneele) ) {
