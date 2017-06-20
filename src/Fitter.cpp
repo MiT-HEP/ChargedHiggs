@@ -96,6 +96,12 @@ void Fitter::init(){
 
             string mass = Form(massMask_.c_str() ,m);
             TH1D *h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
+            if (h==NULL and proc=="WH")
+            {
+                h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),"WPlusH", m) ) ;
+                TH1D * hTmp=(TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),"WMinusH", m) ) ;
+                h->Add(hTmp);
+            }
 
             if (h == NULL) 
             {
