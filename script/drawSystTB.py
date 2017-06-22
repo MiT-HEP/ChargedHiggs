@@ -7,8 +7,11 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.IsBatch()
 
 parser= OptionParser()
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/MAY9_MCfinal_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/MAY9_MCfinal_2l.root")
+
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE11_Green_Final_ScaleCSVSigTT_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE11_Green_Final_ScaleCSVSigTT_2l.root")
+
+#parser.add_option("","--base",type='string',help="Base [Default=%default]", default="topCR")
 parser.add_option("","--base",type='string',help="Base [Default=%default]", default="Baseline")
 #parser.add_option("","--histo",type='string',help="Base [Default=%default]", default="HT_SR4_tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")
 parser.add_option("","--histo",type='string',help="Base [Default=%default]", default="HT_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8")
@@ -79,20 +82,12 @@ def RebinBDT3(h):
         ''' Rebin with un-even bins '''
         print 'using binning BDT3'
         mybins=array('d',[-1,
-                           -0.90,-0.80,
-			   -0.70,-0.60,
-			   -0.50,-0.45,-0.40,-0.35,-0.30,
-			   -0.28,-0.26,-0.24,-0.22,-0.20,
-			   -0.18,-0.16,-0.14,-0.12,-0.10,
-			   -0.08,-0.06,-0.04,-0.02,0.,
-                           0.02,0.04,0.06,0.08,0.1,
-                           0.12,0.14,0.16,0.18,0.2,
-                           0.22,0.24,0.26,0.28,0.3,
-                           0.32,0.34,0.36,0.38,0.4,
-                           0.42,0.44,0.46,0.48,0.5,
-                           0.52,0.54,0.56,0.58,0.6,
-                           0.65,0.70,0.75,0.80,0.85,
-                           0.9,0.95,
+			   -0.90,-0.80, -0.70,-0.60,-0.50,-0.40,-0.30,
+			   -0.25,-0.20,-0.15,-0.10,-0.05,
+			   0.,0.05,0.1,0.15,0.2,
+			   0.25,0.3,0.30,0.35,0.4,
+			   0.45,0.5,0.55,0.6,
+			   0.65,0.70,0.80, 0.9,
                            1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
@@ -104,14 +99,14 @@ def RebinBDT4(h):
 			   -0.98,-0.95,-0.92,
 			   -0.89,-0.86,-0.83,-0.8,
 			   -0.75,-0.7,
-			   -0.65, -0.60, -0.55, -0.50, -0.45, -0.40,
-			   -0.35, -0.30, -0.25, -0.20, -0.15, -0.10,
-			   -0.05, 0.0, 0.05, 0.10, 0.15, 0.20,
+			   -0.60, -0.50, -0.40,
+			   -0.30, -0.20, -0.10,
+			   0.0, 0.05, 0.10, 0.15,0.20,
 			   0.25,0.30,
-			   0.32,0.34,0.36,0.38,0.40,0.45,
+			   0.35,0.45,
 			   0.60,0.80,
                            1.])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
 
 def RebinBDT6(h):
@@ -152,27 +147,48 @@ if h==None:
 hL=[]
 
 
-if opts.syst!='Pdf' and opts.syst != 'Scale':
-	if opts.lepCat == "1Mu" or opts.lepCat  == "1Ele": 
+if opts.syst!='Pdf' and opts.syst != 'Scale' and opts.syst != 'CSV':
+	if opts.lepCat == "1Mu" or opts.lepCat  == "1Ele":
 		print "->","ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+"Up"
 		hUp=fIn1L.Get("ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+"Up")
 		hDown=fIn1L.Get("ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+"Down")
-	else : 
+	else :
 		print "->","ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+"Up"
 		hUp=fIn2L.Get("ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+"Up")
 		hDown=fIn2L.Get("ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+"Down")
 	if hUp==None or hDown==None:
+##	if h:
 		print "[ERROR] Hist", opts.base+"_"+opts.syst+"Up/Down", "doesn't exist"
 		raise IOError
 	hL = [hUp,hDown]
 elif opts.syst=='Scale':
 	for w in [ 'R','F','RF']:
+#	for w in [ 'R']:
 		for s in ['Up','Down']:
-			hTmp=fIn.Get("ChargedHiggsTopBottom/" + opts.base+"_" + opts.lepCat + "/" + opts.histo+"_Scale"+w+s)
-			if hTmp==None:
+			if opts.lepCat == "1Mu" or opts.lepCat  == "1Ele":
+				print "->","ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+w+s
+				hblaScale=fIn1L.Get("ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+w+s)
+			else :
+				print "->","ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+w+s
+				hblaScale=fIn2L.Get("ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+w+s)
+			if hblaScale==None:
 				print "[ERROR] Hist", opts.base+"_Scale"+w+s, "doesn't exist"
 				raise IOError
-			hL.append(hTmp)
+			hL.append(hblaScale)
+elif opts.syst=='CSV':
+	for w in [ 'RHF','RLF','RSTAT1','RSTAT2']:
+		for s in ['Up','Down']:
+			if opts.lepCat == "1Mu" or opts.lepCat  == "1Ele":
+				print "->","ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+w+s
+				hbla=fIn1L.Get("ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+w+s)
+			else :
+				print "->","ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+w+s
+				hbla=fIn2L.Get("ChargedHiggsTopBottom/" + opts.base + "_" + opts.lepCat + "/" + opts.histo+ "_" + opts.syst+w+s)
+			if hbla==None:
+				print "[ERROR] Hist", opts.base+"_Scale"+w+s, "doesn't exist"
+				raise IOError
+			hL.append(hbla)
+
 elif opts.syst=='Pdf':
 	for i in range(0,100):
 		hTmp=fIn.Get("ChargedHiggsTopBottom/" + opts.base+"_" + opts.lepCat + "/" + opts.histo+"_Pdf%d"%i)
@@ -181,6 +197,12 @@ elif opts.syst=='Pdf':
 			raise IOError
 		hL.append(hTmp)
 
+
+#########################################################
+################### done reading histos #################
+#########################################################
+
+print ' ... size',len(hL)
 
 for j in range(h.GetNbinsX()):
 	if h.GetBinContent(j) < 0:
@@ -261,7 +283,9 @@ h.SetLineColor(ROOT.kBlack)
 if len(hL)==2:
 	colors=[ROOT.kBlue,ROOT.kRed]
 elif len(hL)==6:
-	colors=[ROOT.kBlue,ROOT.kBlue-4,ROOT.kRed,ROOT.kRed-4,ROOT.kGreen+2,ROOT.kGreen]
+	colors=[ROOT.kBlue,ROOT.kBlue-4,ROOT.kRed,ROOT.kRed-4,ROOT.kMagenta+2,ROOT.kMagenta]
+elif len(hL)==8:
+	colors=[ROOT.kBlue,ROOT.kBlue-4,ROOT.kRed,ROOT.kRed-4,ROOT.kMagenta+2,ROOT.kMagenta,ROOT.kBlack+2,ROOT.kBlack]
 else:
 	colors=[ 
 		 ROOT.kOrange-7,ROOT.kOrange-4,ROOT.kOrange,ROOT.kOrange+2,
@@ -344,15 +368,34 @@ r.GetYaxis().SetRangeUser(0.5,1.5)
 #r.GetYaxis().SetRangeUser(0.,2.)
 
 #draw legend
-leg = ROOT.TLegend(0.45,0.65,0.65,0.9)
+##leg = ROOT.TLegend(0.45,0.65,0.65,0.9)
+leg = ROOT.TLegend(0.55,0.65,0.75,0.9)
 leg.SetFillStyle(0)
 leg.SetBorderSize(0)
 
 leg.AddEntry(rLStat[0], "stat")
 
 #for rTmp in rL[0]:
-leg.AddEntry(rL[0], opts.syst+"Up")
-leg.AddEntry(rL[1], opts.syst+"Down")
+if len(rL)==2:
+	leg.AddEntry(rL[0], opts.syst+"Up")
+	leg.AddEntry(rL[1], opts.syst+"Down")
+if len(rL)==6:
+	leg.AddEntry(rL[0], opts.syst+"R Up")
+	leg.AddEntry(rL[1], opts.syst+"R Down")
+	leg.AddEntry(rL[2], opts.syst+"F Up")
+	leg.AddEntry(rL[3], opts.syst+"F Down")
+	leg.AddEntry(rL[4], opts.syst+"RF Up")
+	leg.AddEntry(rL[5], opts.syst+"RF Down")
+if len(rL)==8:
+	leg.AddEntry(rL[0], opts.syst+"RHF Up")
+	leg.AddEntry(rL[1], opts.syst+"RHF Down")
+	leg.AddEntry(rL[2], opts.syst+"RLF Up")
+	leg.AddEntry(rL[3], opts.syst+"RLF Down")
+	leg.AddEntry(rL[4], opts.syst+"RSTAT1 Up")
+	leg.AddEntry(rL[5], opts.syst+"RSTAT1 Down")
+	leg.AddEntry(rL[6], opts.syst+"RSTAT2 Up")
+	leg.AddEntry(rL[7], opts.syst+"RSTAT2 Down")
+
 
 leg.Draw("sames")
 
@@ -366,9 +409,8 @@ leg.Draw("sames")
 #l.SetTextAlign(31)
 ##l.DrawLatex(0.89,.91,"2.3 fb^{-1} (13 TeV)")                                                                                                                                                   #l.DrawLatex(0.9,.91,"35.87 fb^{-1} (13 TeV)")
 
+#raw_input("ok?")
 
-raw_input("ok?")
 
-
-c2.SaveAs("plot/MAY9/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".pdf")
-c2.SaveAs("plot/MAY9/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".png")
+c2.SaveAs("plot/JUNE11_green/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".pdf")
+c2.SaveAs("plot/JUNE11_green/syst" + opts.syst + "_" + opts.base + opts.lepCat + opts.histo + ".png")
