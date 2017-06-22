@@ -2,6 +2,7 @@
 #include "interface/GeneralFunctions.hpp"
 #include "interface/CutSelector.hpp"
 #include "interface/AnalysisChargedHiggsTauNu.hpp"
+#include "interface/Handlers.hpp"
 #include <string>
 
 #ifdef HAVE_PYTHIA

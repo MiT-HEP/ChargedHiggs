@@ -87,6 +87,8 @@ private:
     ///// higgs candidates
 
     double evt_MH_tb=-1;
+    double evt_MH_t1b=-1;
+    double evt_MH_t0b=-1;
     double evt_MH_Wbb=-1;
 
     Jet* leadingb=NULL;

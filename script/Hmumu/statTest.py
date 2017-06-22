@@ -50,7 +50,7 @@ if pdf == None:
 # Double_t val = gauss.getVal(&obs) 
 norm = data.sumEntries()
 x0=w.var("mmm")
-cdf=pdf.createCdf(ROOT.RooArgSet(x0))
+#cdf=pdf.createCdf(ROOT.RooArgSet(x0))
 Np=0
 Nm=0
 Nr=0
@@ -66,8 +66,8 @@ for i in range(0,data.numEntries()):
     x0.setVal(x)
     y0 = pdf.getVal(ROOT.RooArgSet(x0)) *norm *w
     x0.setVal(x+w/2.)
-    I0 = cdf.getVal(ROOT.RooArgSet(x0))
-    Y0=(I0-last)*norm
+    #I0 = cdf.getVal(ROOT.RooArgSet(x0))
+    #Y0=(I0-last)*norm
     #print "x=",x,"y=",y,"y0=",y0,"w=",w,"integral=",Y0
     # the correct thing is to use Y0. y0=median*width is a good approximation
     #
@@ -81,7 +81,7 @@ for i in range(0,data.numEntries()):
         if lastP>0: Nr+=1
         lastP=-1
     chi2 += (y-y0)**2/y0 ## pearson
-    last=I0
+    #last=I0
 
 
 N=Np+Nm
@@ -95,6 +95,8 @@ if z>0:
 else:
     pOne=1./2.*(1+ROOT.TMath.Erf(z/math.sqrt(2)))
     pTwo=2*pOne
-prob=ROOT.TMath.Prob(chi2,N-1)
-print "Np=",Np,"Nm=",Nm,"Nr=",Nr,"mu=",mu,"sigma=",sigma,"z=",z,"p-value (one sided)=",pOne, "p-value (two)",pTwo,"chi2=",chi2,"prob=",prob
+
+npar=pdf.getVariables().getSize() ## x=1 -1; +1 = norm
+prob=ROOT.TMath.Prob(chi2,N-npar)
+print "Np=",Np,"Nm=",Nm,"Nr=",Nr,"mu=",mu,"sigma=",sigma,"z=",z,"p-value (one sided)=",pOne, "p-value (two)",pTwo,"chi2=",chi2,"npar=",npar,"prob=",prob
 

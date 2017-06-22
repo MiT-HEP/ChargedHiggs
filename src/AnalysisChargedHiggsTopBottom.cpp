@@ -2116,7 +2116,7 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
             valid.push_back(pair<float,int>(e->GetCentralJet(i)->bdiscr,i));
         }
 
-    std::sort(valid.begin(), valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+    std::sort(valid.begin(), valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
     /*
     if (valid.size() != 0 ) {
         for(int i=0;i!=e->NcentralJets();++i) {
@@ -2263,7 +2263,7 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
                 valid.push_back(pair<float,int>(e->GetCentralJet(i)->bdiscr,i));
             }
 
-        std::sort(valid.begin(), valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+        std::sort(valid.begin(), valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
         /*
         if (valid.size() != 0 ) {
