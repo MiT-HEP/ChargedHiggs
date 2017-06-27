@@ -11,6 +11,7 @@ void ChargedHiggsTopBottom::SetLeptonCuts(Lepton *l){
     l->SetMiniIsoRelCut(0.40); // relative mini-isolation  // 0.1 is tight and 0.4 is for loose
     l->SetEtaCut(2.4);
     l->SetVetoCut(); // loosest selection of them all
+    if(abs(l->GetType())==13) l->SetLooseCut(true); // loosest selection of them all
     l->SetTightCut(false); // use the loose selection for now
     l->SetMvaLooseCut(true);
 }
@@ -2341,16 +2342,18 @@ void ChargedHiggsTopBottom::printSynch(Event*e, string category) {
     //        if(e->Ntaus()>1) std::cout << " tauPt=" << e->GetTau(1)->Pt() << " tauEta=" << e->GetTau(1)->Eta() << " tauPhi=" << e->GetTau(1)->Phi();
 
     if ((do1lAnalysis) && e->Nleps() == 1 && (category.find("_1Mu")    !=string::npos) and not (category.find("_1Mu1Ele")    !=string::npos) ) std::cout << "THIS IS lep CATEGORY : 1Mu" << std::endl;
-    if ((do1lAnalysis) && e->Nleps() == 1 && (category.find("_1Ele")   !=string::npos)) std::cout << "THIS IS lep CATEGORY : 1Ele" << std::endl;
+    if ((do1lAnalysis) && e->Nleps() == 1 && (category.find("_1Ele")   !=string::npos) and not (category.find("_1Mu1Ele")    !=string::npos) ) std::cout << "THIS IS lep CATEGORY : 1Ele" << std::endl;
     if ((do2lAnalysis) && e->Nleps() == 2 && (category.find("_2Mu")    !=string::npos)) std::cout << "THIS IS lep CATEGORY : 2Mu" << std::endl;
     if ((do2lAnalysis) && e->Nleps() == 2 && (category.find("_2Ele")   !=string::npos)) std::cout << "THIS IS lep CATEGORY : 2Ele" << std::endl;
     if ((do2lAnalysis) && e->Nleps() == 2 && (category.find("_1Mu1Ele")!=string::npos)) std::cout << "THIS IS lep CATEGORY : 1Mu1Ele" << std::endl;
 
-
     std::cout << "run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum()<< std::endl;
 
-    if(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")) std::cout << "passEleTrigger(Ele27_eta2p1_WPTight_Gsf or Ele105_CaloIdVT_GsfTrkIdT or Photon165_HE10 or Ele35_WPLoose_Gsf)" << std::endl;
-    if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"))) std::cout << "passTrigger(IsoMu24 and IsoTkMu24 and Mu50)" << std::endl;
+
+    if(passTriggerEle) std::cout << "passEleTrigger(Ele27_eta2p1_WPTight_Gsf or Ele105_CaloIdVT_GsfTrkIdT or Photon165_HE10 or Ele35_WPLoose_Gsf)" << std::endl;
+    if(passTriggerMu) std::cout << "passTrigger(IsoMu24 and IsoTkMu24 and Mu50)" << std::endl;
+    //    if(e->IsTriggered("HLT_Ele27_eta2p1_WPTight_Gsf_v") or e->IsTriggered("HLT_Ele105_CaloIdVT_GsfTrkIdT_v") or e->IsTriggered("HLT_Photon165_HE10") or e->IsTriggered("HLT_Ele35_WPLoose_Gsf_v")) std::cout << "passEleTrigger(Ele27_eta2p1_WPTight_Gsf or Ele105_CaloIdVT_GsfTrkIdT or Photon165_HE10 or Ele35_WPLoose_Gsf)" << std::endl;
+    //    if((e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v") or e->IsTriggered("HLT_Mu50_v"))) std::cout << "passTrigger(IsoMu24 and IsoTkMu24 and Mu50)" << std::endl;
     //        if(e->GetName().find("SingleElectron")!=string::npos and e->IsTriggered("HLT_Ele32_eta2p1_WPTight_Gsf_v")) std::cout << "passEleTrigger" << std::endl;
     //        if(e->GetName().find("SingleMuon")!=string::npos and (e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"))) std::cout << "passMuonTrigger" << std::endl;
 
@@ -2383,12 +2386,21 @@ void ChargedHiggsTopBottom::printSynch(Event*e, string category) {
         std::cout << " trailLep->MiniIsolation()=" << trailLep->MiniIsolation();
         std::cout << " trailLep->Mva()=" << trailLep->Mva();
         std::cout << " trailLep->IsMuon()=" << trailLep->IsMuon() << " trailLep->IsElectron()=" << trailLep->IsElectron();
+        std::cout << " (l1*l2).Mass" << (trailLep->GetP4() + leadLep->GetP4()).M() ;
         std::cout << " " << std::endl;
     }
+
+    double HTtoprint=0;
+
+    for(int i=0;i!=e->NcentralJets();++i) {
+       HTtoprint += e->GetCentralJet(i)->Pt();
+    }
+
     std::cout << " nCentralJets(pt>40,absEta<2.4,looseId)=" << e->NcentralJets();
     std::cout << " nTaus=" << e->Ntaus();
     std::cout << " nBs=" << e->Bjets();
     std::cout << " met=" << e->GetMet().Pt();
+    std::cout << " HT=" << HTtoprint;
     std::cout << " " << std::endl;
 
     int el=0;
@@ -2416,6 +2428,8 @@ void ChargedHiggsTopBottom::printSynch(Event*e, string category) {
     //    if(e->Ntaus()>1) std::cout << " tauPt=" << e->GetTau(1)->Pt() << " tauEta=" << e->GetTau(1)->Eta() << " tauPhi=" << e->GetTau(1)->Phi();
     //        std::cout << " totalweight=" << e->weight() ;
     //        std::cout << " systname=" << systname << std::endl;
+
+
 
     for(int i=0;i!=min(e->NcentralJets(),10);++i) {
         std::cout << "    pt[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Pt() << " eta[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Eta() << " phi[" <<i<<"]="<< e->GetCentralJet(i)->GetP4().Phi() << std::endl;
@@ -2492,7 +2506,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         //        bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsTight() and leadLep==NULL );
 
         bool muon=(it->IsMuon() and it->Pt()>LeadingLeptonPt_ and it->IsMedium() and it->MiniIsolation() < 0.1 and leadLep==NULL );
-        bool ele=(it->IsElectron() and it->Pt()>LeadingLeptonElePt_ and it->IsEleMvaTight() and it->MiniIsolation() < 0.1 and leadLep==NULL );
+        bool ele=(it->IsElectron() and fabs(it->Eta())<2.1 and it->Pt()>LeadingLeptonElePt_ and it->IsEleMvaTight() and it->MiniIsolation() < 0.1 and leadLep==NULL );
 
         if(muon or ele) {
 
@@ -2639,9 +2653,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         //        bool oneele=(leadLep->IsElectron() and fabs(leadLep->Eta())<2.1);
 
         bool onemu=(leadLep->IsMuon() and passTriggerMu);
-        bool oneele=(leadLep->IsElectron() and fabs(leadLep->Eta())<2.1 and passTriggerEle);
+        bool oneele=(leadLep->IsElectron() and passTriggerEle);
 
-        if ( leadLep->Pt()>LeadingLeptonPt_ && (onemu or oneele)) {
+        if ( onemu or oneele) {
             cut.SetCutBit(OneLep); // one lep
         }
         if( cut.passAllUpTo(OneLep) ) {
@@ -2685,7 +2699,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
 
         bool twomu=(leadLep->IsMuon() and trailLep->IsMuon() and passTriggerMu);
-        bool twoele=(leadLep->IsElectron() and trailLep->IsElectron() and fabs(leadLep->Eta())<2.1 and passTriggerEle);
+        bool twoele=(leadLep->IsElectron() and trailLep->IsElectron() and passTriggerEle);
         bool onemuoneele_onMU=(((leadLep->IsElectron() and trailLep->IsMuon() and trailLep->Pt()>LeadingLeptonPt_) ||
                                 (trailLep->IsElectron() and leadLep->IsMuon()))
                                and passTriggerMu);
@@ -2698,7 +2712,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
         bool onemuoneele=onemuoneele_onMU or onemuoneele_onELE;
 
-        if ( nOSLepPair == 1 and leadLep->Pt()>LeadingLeptonPt_ and (twomu or twoele or onemuoneele) ) {
+        if ( nOSLepPair == 1 and (twomu or twoele or onemuoneele) ) {
             cut.SetCutBit(OneLep); // one OS lepton Pair + leading above trigger threshould
         }
         if( cut.passAllUpTo(OneLep) ) {
@@ -2854,11 +2868,13 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         }
     }
 
+    /*
     // OLD CSV SCALE FACTOR
     if (not e->IsRealData()) {
         e->ApplyBTagSF(1);// 0=loos wp  1=medium wp
         //        e->ApplyBTagSF(0);// 0=loos wp  1=medium wp
     }
+    */
 
     if( cut.passAllUpTo(NB) && do1lAnalysis ) {
         Fill("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+label,systname,NB,e->weight());
@@ -2911,7 +2927,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     //    if(label.find("DYJetsToLL_M-50_HT") !=string::npos or label.find("WJetsToLNu_HT")!=string::npos) double Vpt = genInfoForWZ(e);
 
-    if(doSynch) { printSynch(e,category); return EVENT_NOT_USED;}
+    //    printSynch(e,category); return EVENT_NOT_USED;
+    //    if(doSynch) { printSynch(e,category); return EVENT_NOT_USED;}
 
     ////////
     ////////
@@ -2966,7 +2983,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     bool Baseline=(e->Bjets() > 0 && ( ( do1lAnalysis && e->NcentralJets() >3 ) || ( do2lAnalysis && e->NcentralJets() >1 )));
     bool BaselineTau=(e->Bjets() > 0 && ( ( trailLep==NULL && e->NcentralJets()==3 ) || ( trailLep!=NULL && e->NcentralJets()==1 )));
 
-    /*
     auto sf=dynamic_cast<SF_CSVReweight*>(e->GetWeight()->GetSF("btag-reweight"));
     if (sf == NULL)  Log(__FUNCTION__,"ERROR","Unable to find btag reweight sf");
 
@@ -2978,7 +2994,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     sf->set();
     if ( not e->IsRealData() ) e->ApplySF("btag-reweight");
-    */
 
     if( Baseline or (doTaulAnalysis && BaselineTau )) {
 
