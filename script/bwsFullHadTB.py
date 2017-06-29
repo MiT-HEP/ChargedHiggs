@@ -7,16 +7,19 @@ from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
 
-#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/June12.root")
-#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/hysteriaMeow.root")
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ohho.root")
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/June12.root")
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/hysteriaMeow.root")
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ohho.root")
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ssolstice.root")
+
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/bebetter.root")
 
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
 parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
 parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", default=35867)
 
 extra = OptionGroup(parser,"Extra options:","")
-extra.add_option("-k","--kTest",type='int',help = "Which test runs. [%default]", default=2)
+extra.add_option("-k","--kMass",type='string',help = "Which mass point. [%default]", default=1000)
 #extra.add_option("-r","--rebin",type='int',help = "Rebin Histogram. [%default]", default=-1)
 #
 #parser.add_option_group(extra)
@@ -77,13 +80,14 @@ channel = []
 #channel = ["wbb","tb"]
 channel = ["t0b","t1b","wbb"]
 #channel = ["wbb"]
+#basecat = ["OneBOneFat_three"]
 basecat = ["OneBOneFat_one","OneBOneFat_two","OneBOneFat_three"]
 #basecat = ["OneBOneFat_less","OneBOneFat_more"]
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 statStore = {} ## used to store th1d for stat uncertainties
 
-label=""
+label="fullHad_"
 VarTest=""
 
 doSyst = False
@@ -94,42 +98,51 @@ doRebin = False
 	
 for y in channel:
 	for x in basecat:
-		name = x+ "_" + y
-#		catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"invariantExt"}
 
-                if x=="OneBOneFat_one" and y=="wbb": continue
-                if x=="OneBOneFat_one" and y=="t1b": continue
-		catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"HT"}
+		region = ["_in","_above","_below"]
+		for reg in region:
 
-		print '============='
-		print 'name=',name
+			masses = [ opts.kMass ]
+##			masses = ["_500","_800","_1000","_2000","_3000"]
+		#		region = [""]
+			for mas in masses:
+
+				name = x+ "_" + y + mas + reg
+	#		catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"invariantExt"}
 
 
-		catStore[name]['file'] = fIn
+				if x=="OneBOneFat_one" and y=="wbb": continue
+				if x=="OneBOneFat_one" and y=="t1b": continue
 
-		catStore[name]["hasMC"]=["qcd","top","Hptb"]
+				catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["top"],"var":"HT_"+mas+reg}
 
-		mcStore={
-			"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-			"qcd":{"name":"qcd", "hist":["QCD_HT"], "num":1 },
-			"top":{ "name":"top","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2}
-			}
+				print '================'
+				print 'name=',name
 
-		systStore={
-			"None":None,
-			"lumi_13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi_13TeV","name":"XXX"} ## name used for shape
-			}
+
+				catStore[name]['file'] = fIn
+				catStore[name]["hasMC"]=["qcd","top","Hptb"]
+				mcStore={
+					"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
+					"qcd":{"name":"qcd", "hist":["QCD_HT"], "num":1 },
+					"top":{ "name":"top","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2}
+					}
+				systStore={
+					"None":None,
+					"lumi_13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi_13TeV","name":"XXX"} ## name used for shape
+					}
+
 	
 print "--------- CAT STORE IS --------"
 for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="JUNE12_MIAO/"+label+VarTest+opts.output
+fileTmp="JUNE29_MIAO/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "JUNE12_MIAO/"+ label + VarTest + datNameTmp
+datName = "JUNE29_MIAO/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -413,7 +426,8 @@ def importPdfFromTH1(cat,mc,syst=None):
 		raise IOError
 	base="ChargedHiggsTopBottom"
 #	if mc["name"]=="HPlus":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
-	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
+#	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
+	if mc["name"]=="Hptb":masses=[500,800,1000,2000,3000]
 	else: masses=[0]
 
 	if syst == None: shifts=["x"]
@@ -424,6 +438,13 @@ def importPdfFromTH1(cat,mc,syst=None):
 	for m in masses:
 	 for s in shifts:
 	  h=None
+	  print '==========> '
+	  print '==========> cat["name"] ===> ', cat["name"]
+	  print '==========> '
+
+	  if str(m) not in cat["name"]:
+		  continue
+
 	  target = "pdf_" + mc["name"] +"_"+ cat["name"]
 	  if m >10 :
 		  target = "pdf_" + mc["name"] +"_M-%d"%m+"_"+ cat["name"]
