@@ -2376,9 +2376,9 @@ void ChargedHiggsTopBottom::printSynch(Event*e, string category) {
         std::cout << " leadLep->MiniIsolation()=" << leadLep->MiniIsolation();
         std::cout << " leadLep->Mva()=" << leadLep->Mva();
         std::cout << " leadLep->IsMuon()=" << leadLep->IsMuon() << " leadLep->IsElectron()=" << leadLep->IsElectron();
-        std::cout << " " << std::endl;
     }
     if(trailLep != NULL) {
+        std::cout << " trailLep=" << long(trailLep);
         std::cout << " trailLep->Pt()=" << trailLep->Pt();
         std::cout << " trailLep->Eta()=" << trailLep->Eta();
         std::cout << " trailLep->Phi()=" << trailLep->Phi();
@@ -2490,9 +2490,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     leadLep=NULL;
     trailLep=NULL;
-    Lepton* mu=NULL; // first muon
-    Lepton* ele=NULL; // first electrons
-    Tau *t = e->GetTau(0);
+    //Lepton* mu=NULL; // first muon
+    //Lepton* elec=NULL; // first electrons
+    //Tau *t = e->GetTau(0);
 
     double LeadingLeptonPt_= 30; // singleLepton
     double LeadingLeptonElePt_= 35; // singleLepton
@@ -2511,8 +2511,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if(muon or ele) {
 
             leadLep = it;
-            if(it->IsMuon()) mu = it;
-            if(it->IsElectron()) ele = it;
+            //if(it->IsMuon()) mu = it;
+            //if(it->IsElectron()) elec = it;
 
         }
         // found a second lepton OS and mll>12 GeV and abs(mll-91)<15
@@ -2534,7 +2534,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             if(it->DeltaR(*leadLep)>0.4) nTau++;
         }
     }
-
 
     ////$$$$$$$$$$$$$$$$$$$$$
     ////$$$$$$$$$$$$$$$$$$$$$
