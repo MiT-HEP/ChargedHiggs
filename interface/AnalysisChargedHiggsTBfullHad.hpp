@@ -24,6 +24,7 @@ public:
     void SetTauCuts(Tau*t) override;
 
     void BookCutFlow(string l, string category);
+    void BookFatjetPro(string l, string category, string phasespace, string pile);
     void BookHisto(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void BookGenMatch(string l, string category, string phasespace, string cut321, string state);
@@ -31,6 +32,7 @@ public:
 
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
+    void fatjetPlot(Event*e, string label, string systname, string phasespace);
     void higgsPlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
