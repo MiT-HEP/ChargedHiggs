@@ -517,7 +517,9 @@ if doBkg:
     hdata.SetLineColor(ROOT.kBlack)
     leg.AddEntry(hdata,"Data","PE")
     #mcs=["DY","TT","ST","WZ","WW","ZZ"]
-    BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
+    #BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
+    BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
+    #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     mcAll=None
 
     #bkg=ROOT.THStack()
@@ -570,6 +572,7 @@ if doBkg:
 
         h.SetLineColor(ROOT.kBlack)
         h.SetLineWidth(2)
+        draw=True
         if mc == 'DY':
             h.SetFillColor(ROOT.kBlue-10)
             leg1.append( (h,"DY","F") )
@@ -580,10 +583,12 @@ if doBkg:
             #leg.AddEntry(h,"t#bar{t}+st","F")
         elif mc == 'ST':
             h.SetLineWidth(0)
+            draw=False
             h.SetLineColor(ROOT.kRed-10)
             h.SetFillColor(ROOT.kRed-10)
         elif mc == 'WW' or mc == "ZZ":
             h.SetLineWidth(0)
+            draw=False
             h.SetLineColor(ROOT.kGreen-10)
             h.SetFillColor(ROOT.kGreen-10)
         elif mc == 'WZ' :
@@ -592,8 +597,24 @@ if doBkg:
         elif mc == 'EWK_LLJJ' :
             h.SetFillColor(ROOT.kOrange-4)
             leg1.append((h,"EWK_LLJJ","F"))
+        elif mc == 'TTTT' :
+            h.SetFillColor(ROOT.kGray)
+            leg1.append((h,"TTX","F"))
+        elif mc == 'TTW' or mc == 'TTZ' or mc =='TTG' :
+            h.SetLineWidth(0)
+            draw=False
+            h.SetFillColor(ROOT.kGray)
+            h.SetLineColor(ROOT.kGray)
+        elif mc == 'WWZ' or mc == "ZZZ" or mc == "WZZ":
+            h.SetLineWidth(0)
+            draw=False
+            h.SetLineColor(ROOT.kViolet-9)
+            h.SetFillColor(ROOT.kViolet-9)
+        elif mc == 'WWW' :
+            h.SetFillColor(ROOT.kViolet-9)
+            leg1.append((h,"VVV","F"))
 
-        bkg.Add(h)
+        bkg.Add(h,draw)
 
         if mcAll==None:
             mcAll=h.Clone("mcAll"+cat)
@@ -616,6 +637,7 @@ if doBkg:
         h.SetLineColor(ROOT.kBlack)
         h.SetLineWidth(3)
         h.SetFillStyle(0)
+        draw=True
         if 'GluGlu' in mc:
             h.SetLineColor(38)
             xsec=config.xsec("ggH")
@@ -654,14 +676,14 @@ if doBkg:
 
         h.Scale(config.lumi())
         h.Scale(xsec*br)
-        sig.Add(h)
+        sig.Add(h,draw)
 
     ## end mc loop
     lines=[]
     values=[]
     if 'BdtOnH' in opts.var:
         for x in [-.4,0.05,.25,.40,.65,.73]:
-            l = ROOT.TLine(x,1.e-2,x,1e5)
+            l = ROOT.TLine(x,1.e-2,x,2e3)
             l.SetLineWidth(2)
             l.SetLineColor(ROOT.kGray+2)
             l.SetLineStyle(7)

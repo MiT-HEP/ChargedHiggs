@@ -76,8 +76,8 @@ class SmearJesAndCSV : virtual public SmearBase
             if (num == 4){num_=13; name_="CSVRSTAT1";}
             if (num == 5){num_=15; name_="CSVRSTAT2";}
 
-            if(num_<0) num_=13;
-            name_ = Form("CSVR_%d",num_);
+            if(num_<0) {num_=13; name_ = Form("CSVR_%d",num_);}
+            jes . reset (new SmearJes());
         }
         int smear(Event*e) override;	
 };

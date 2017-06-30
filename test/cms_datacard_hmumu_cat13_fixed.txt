@@ -4,11 +4,15 @@ imax *
 jmax *
 kmax *
 -------------------------------------
-shapes data_obs * Hmumu/2017_06_02/BackgroundModel.root w:dataObs_$CHANNEL
-shapes BKG      * Hmumu/2017_06_02/BackgroundModel.root w:pdf_$CHANNEL_bkg
-shapes ggH      * Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
-shapes qqH      * Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
-shapes *        * Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
+shapes data_obs *       Hmumu/2017_06_02/BackgroundModel.root w:dataObs_$CHANNEL
+shapes BKG      cat1    Hmumu/2017_06_02/BackgroundModel.root w:bern_cat1_ord5
+shapes BKG      cat4    Hmumu/2017_06_02/BackgroundModel.root w:exp_cat4_ord3
+shapes BKG      cat5    Hmumu/2017_06_02/BackgroundModel.root w:exp_cat5_ord3
+shapes BKG      cat6    Hmumu/2017_06_02/BackgroundModel.root w:bern_cat6_ord5
+shapes BKG      *       Hmumu/2017_06_02/BackgroundModel.root w:zmod_$CHANNEL_ord1
+shapes ggH      *       Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
+shapes qqH      *       Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
+shapes *        *       Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
 -------------------------------------
 bin         cat0 cat1 cat2 cat3 cat4 cat5 cat6 cat7 cat8 cat9 cat10 cat11 cat12 
 observation  -1   -1   -1   -1   -1   -1   -1   -1   -1   -1   -1    -1    -1   
@@ -23,6 +27,21 @@ process 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4
 rate 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 
 
 ------------
+## bkg rates
+pdf_cat0_bkg_norm rateParam cat0 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat1_bkg_norm rateParam cat1 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat2_bkg_norm rateParam cat2 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat3_bkg_norm rateParam cat3 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat4_bkg_norm rateParam cat4 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat5_bkg_norm rateParam cat5 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat6_bkg_norm rateParam cat6 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat7_bkg_norm rateParam cat7 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat8_bkg_norm rateParam cat8 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat9_bkg_norm rateParam cat9 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat10_bkg_norm rateParam cat10 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat11_bkg_norm rateParam cat11 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat12_bkg_norm rateParam cat12 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+
 # rate parameters
 hmm rateParam 	    * ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
 ggH_13TeV rateParam * ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
@@ -76,21 +95,6 @@ xsec_ttH lnN - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.0
 xsec_ggH lnN - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - 
 xsec_qqH lnN - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - 
 xsec_WH lnN - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - 
-
-##### ENVELOPE #####
-pdfindex_cat0  discrete
-pdfindex_cat1  discrete
-pdfindex_cat2  discrete
-pdfindex_cat3  discrete
-pdfindex_cat4  discrete
-pdfindex_cat5  discrete
-pdfindex_cat6  discrete
-pdfindex_cat7  discrete
-pdfindex_cat8  discrete
-pdfindex_cat9  discrete
-pdfindex_cat10  discrete
-pdfindex_cat11  discrete
-pdfindex_cat12  discrete
 
 ### WG1
 th_wg1_Mu lnN - 0.945/1.050 0.920/1.068 0.923/1.075 0.918/1.071 0.911/1.089 0.924/1.077 - 0.949/1.052 0.934/1.065 0.947/1.063 0.937/1.060 0.914/1.089 0.937/1.058 - 0.958/1.043 0.933/1.063 0.937/1.064 0.935/1.065 0.914/1.089 0.934/1.068 - 0.940/1.056 0.933/1.068 0.925/1.066 0.934/1.068 0.912/1.091 0.932/1.067 - 0.956/1.043 0.939/1.063 0.938/1.063 0.933/1.057 0.913/1.082 0.933/1.066 - 0.956/1.045 0.936/1.068 0.934/1.066 0.938/1.065 0.910/1.096 0.939/1.061 - 0.954/1.044 0.934/1.062 0.939/1.065 0.936/1.060 0.902/1.078 0.940/1.057 - 0.955/1.047 0.939/1.064 0.934/1.064 0.935/1.066 0.914/1.092 0.936/1.064 - 0.956/1.045 0.931/1.069 0.932/1.070 0.935/1.073 0.912/1.089 0.930/1.071 - 0.950/1.071 0.923/1.071 0.924/1.078 0.921/1.077 0.909/1.080 0.926/1.075 - 0.941/1.053 0.933/1.070 0.931/1.069 0.930/1.067 0.909/1.087 0.935/1.064 - 0.947/1.050 0.934/1.066 0.931/1.064 0.937/1.065 0.914/1.090 0.936/1.064 - 0.941/1.055 0.920/1.081 0.915/1.087 0.920/1.085 0.911/1.092 0.924/1.073

@@ -1963,7 +1963,7 @@ void ChargedHiggsTopBottomFullHad::classifyHF(Event*e, string label, string cate
                 valid.push_back(pair<float,int>(e->GetCentralJet(i)->bdiscr,i));
             }
 
-        std::sort(valid.begin(), valid.end(),[](pair<float,int> &a,pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
+        std::sort(valid.begin(), valid.end(),[](const pair<float,int> &a,const pair<float,int> &b) { if (a.first> b.first) return true; if (a.first<b.first) return false; return a.second<b.second;} ) ;
 
         //////////
 

@@ -1,0 +1,34 @@
+language: c++
+sudo: enabled
+dist: trusty
+compiler: g++
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.9
+      - python-dev
+env:
+   - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+
+install:
+  - wget https://root.cern.ch/download/root_v6.08.06.Linux-ubuntu14-x86_64-gcc4.8.tar.gz
+  - tar -xzf root_v6.08.06.Linux-ubuntu14-x86_64-gcc4.8.tar.gz
+  - . root/bin/thisroot.sh
+  - HOME=`pwd`
+  - touch ~/.bashrc
+  - . ~/.bashrc
+
+script:
+  - cd .. && ./ChargedHiggs/install.sh && cd -
+  - ./configure && make 
+
+after_success:
+  - mkdir -p ntuples/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8
+  - cd ntuples/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8 && wget --no-check-certificate https://amarini.web.cern.ch/amarini/travis/NeroNtuples_1.root && cd -
+  - . root/bin/thisroot.sh && LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../NeroProducer/Core/bin/ python python/Loop.py -v -d dat/travis/input.dat
+  - ls -ltr
+
+notifications:
+    email: false

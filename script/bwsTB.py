@@ -7,11 +7,11 @@ from optparse import OptionParser,OptionGroup
 
 parser= OptionParser()
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/1l_MAY9_Final_2D.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/2l_MAY10_Final_2D.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE11_Green_Final_1l_SUMMARY.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE11_Green_Final_2l_SUMMARY.root")
 
-parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
-parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
+parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
+parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
 parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", default=35867)
 
 extra = OptionGroup(parser,"Extra options:","")
@@ -54,6 +54,9 @@ def WorkspaceSubstitution(string):
 	res = re.sub("muISO","CMS_eff_m_iso",res)
 	res = re.sub("muRECO","CMS_eff_m_reco",res)
 	res = re.sub("TOPRW","CMS_topreweight",res)
+	res = re.sub('ELE','CMS_eff_e',res)
+	res = re.sub('MU','CMS_eff_m',res)
+	res = re.sub('TAU','CMS_eff_t',res)
 	return res
 
 def RebinN(h,nBin):
@@ -112,19 +115,12 @@ def RebinBDT3(h):
         ''' Rebin with un-even bins '''
         print 'using binning BDT3'
         mybins=array('d',[-1,
-                          -0.95,-0.90,-0.85,-0.80,
-                           -0.75,-0.70,-0.65,-0.60,-0.55,-0.50,-0.45,-0.40,-0.35,-0.30,
-                           -0.28,-0.26,-0.24,-0.22,-0.20,
-                           -0.18,-0.16,-0.14,-0.12,-0.10,
-                           -0.08,-0.06,-0.04,-0.02,0.,
-                           0.02,0.04,0.06,0.08,0.1,
-                           0.12,0.14,0.16,0.18,0.2,
-                           0.22,0.24,0.26,0.28,0.3,
-                           0.32,0.34,0.36,0.38,0.4,
-                           0.42,0.44,0.46,0.48,0.5,
-                           0.52,0.54,0.56,0.58,0.6,
-                           0.65,0.70,0.75,0.80,0.85,
-                           0.9,0.95,
+			   -0.90,-0.80, -0.70,-0.60,-0.50,-0.40,-0.30,
+			   -0.25,-0.20,-0.15,-0.10,-0.05,
+			   0.,0.05,0.1,0.15,0.2,
+			   0.25,0.3,0.30,0.35,0.4,
+			   0.45,0.5,0.55,0.6,
+			   0.65,0.70,0.80, 0.9,
 			   1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
@@ -136,13 +132,13 @@ def RebinBDT4(h):
                            -0.98,-0.95,-0.92,
                            -0.89,-0.86,-0.83,-0.8,
                            -0.75,-0.7,
-                           -0.65, -0.60, -0.55, -0.50, -0.45, -0.40,
-                           -0.35, -0.30, -0.25, -0.20, -0.15, -0.10,
-                           -0.05, 0.0, 0.05, 0.10, 0.15, 0.20,
+			   -0.60, -0.50, -0.40,
+			   -0.30, -0.20, -0.10,
+			   0.0, 0.05, 0.10, 0.15,0.20,
                            0.25,0.30,
-                           0.32,0.34,0.36,0.38,0.40,0.45,
+			   0.35,0.45,
                            0.60,0.80,
-                           1.])
+			   1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
 
@@ -181,6 +177,7 @@ if opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==0 or opts.kTes
 
 if opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16:
 	channel = ["1Mu1Ele","2Mu","2Ele"]
+#	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
 	basecat = ["Baseline","extraRadCR","topCR"]
 
 if opts.kTest==8 or opts.kTest==9:
@@ -193,7 +190,8 @@ statStore = {} ## used to store th1d for stat uncertainties
 label=""
 VarTest=""
 
-doSyst = False
+doSyst = True
+doRebin = True
 
 for y in channel:
 	for x in basecat:
@@ -207,6 +205,7 @@ for y in channel:
 
 			if x=="Baseline":
 				if (y == "1Ele" or y == "1Mu"): region = ["_SR1","_SR2","_SR3","_SR4"]
+##				else: region = ["_SR1","_SR2","_SR3","_SR4"]
 				else: region = ["_SR13","_SR24"]
 
 ##			if y == "1Ele" or y == "1Mu": srList = [""]
@@ -286,7 +285,8 @@ for y in channel:
 					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+##					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":7}
 					}
 			else:
 				mcStore={
@@ -297,28 +297,37 @@ for y in channel:
 					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+###					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":7}
 					}
 				## NOTE: missing diboson + triboson in the EWK, QCD
 
 			if doSyst:
 				systStore={
 					"None":None,
-					"CMS_pileup":{"type":"shape", "wsname":"PU","name":"PU","proc":[".*"]}, ## name used for shape
-					"CMS_scale_uncluster":{"type":"shape", "wsname":"UNCLUSTER","name":"UNCLUSTER","proc":[".*"]}, ## name used for shape
-					"CMS_scale_j":{"type":"shape", "wsname":"JES","name":"JES","proc":[".*"]}, ## name used for shape
-					##					"CMS_res_j":{"type":"shape", "wsname":"JER","name":"JER","proc":[".*"]}, ## name used for shape
-					##					"CMS_eff_b":{"type":"shape", "wsname":"BTAGB","name":"BTAGB","proc":[".*"]}, ## name used for shape
-					##				"CMS_fake_b":{"type":"shape", "wsname":"BTAGL","name":"BTAGL","proc":[".*"]}, ## name used for shape
-					"CMS_topreweight":{"type":"shape", "wsname":"TOPRW","name":"TOPRW","proc":[".*"]}, ## name used for shape
-					"CMS_eff_m_trigger":{"type":"shape", "wsname":"muTRG","name":"muTRG","proc":[".*"]}, ## name used for shae
-					##				"CMS_eff_m_reco":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"muRECO","name":"XXX"}, ## name used for shape
-					##				"CMS_eff_m_id":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"muID","name":"XXX"}, ## name used for shape
-					##				"CMS_eff_m_iso":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"muISO","name":"XXX"}, ## name used for shape
-					##				"CMS_eff_m_reco":{"type":"shape", "wsname":"muRECO","name":"muRECO","proc":[".*"]}, ## name used for shape
-					##				"CMS_eff_m_id":{"type":"shape", "wsname":"muID","name":"muID","proc":[".*"]}, ## name used for shape
-					##				"CMS_eff_m_iso":{"type":"shape", "wsname":"muISO","name":"muISO","proc":[".*"]}, ## name used for shape
-					"lumi13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi13TeV","name":"XXX"} ## name used for shape
+					"lumi_13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi_13TeV","name":"XXX"}, ## name used for shape
+					"CMS_eff_m":{"type":"lnN", "value":["1.04"] ,"proc":[".*"],"wsname":"CMS_eff_m","name":"XXX"}, ## name used for shape
+					"CMS_eff_e":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_e","name":"XXX"}, ## name used for shape
+					"CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t","name":"XXX"}, ## name used for shape
+					"CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]}, ## name used for shape
+#					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JES","proc":[".*"]}, ## name used for shape
+					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":[".*"]}, ## name used for shape
+					"CMS_eff_b":{"type":"shape", "wsname":"CMS_eff_b","name":"CSVRHF","proc":[".*"]}, ## name used for shape
+					"CMS_fake_b":{"type":"shape", "wsname":"CMS_fake_b","name":"CSVRLF","proc":[".*"]}, ## name used for shape
+					"CMS_stat1_b":{"type":"shape", "wsname":"CMS_stat1_b","name":"CSVRSTAT1","proc":[".*"]}, ## name used for shape
+					"CMS_stat2_b":{"type":"shape", "wsname":"CMS_stat2_b","name":"CSVRSTAT2","proc":[".*"]}, ## name used for shape
+					"CMS_scale_uncluster":{"type":"lnN", "value":["1.02"],"proc":[".*"],"wsname":"CMS_scale_uncluster","name":"XXX"}, ## name used for shape
+					"CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":[".*"]}, ## name used for shape
+					"QCDscale":{"type":"shape", "wsname":"QCDscale","name":"ScaleRF","proc":["Hptb","ttlf","ttb","ttbb","tt2b","ttcc"]} ## name used for shape
+#					"CMS_res_j":{"type":"shape", "wsname":"JER","name":"CMS_scale_j","proc":[".*"]}, ## name used for shape
+############
+############
+############
+## need to add the shapes of the PDF and the other SCALES (now only for ttbar/signal )
+# add the DYweights reshaping for Z/W+jets
+# Jan ISR up/down, name CMS_HPTB_IFSR_xxx, solo su top as lN
+# check the topMass
+#					"CMS_scale_uncluster":{"type":"shape", "wsname":"UNCLUSTER","name":"CMS_scale_uncluster","proc":[".*"]}, ## name used for shape
 					}
 			else:
 				systStore={
@@ -331,11 +340,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MAY10/"+label+VarTest+opts.output
+fileTmp="JUNE11_GREEN/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MAY10/"+ label + VarTest + datNameTmp
+datName = "JUNE11_GREEN/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -540,30 +549,40 @@ for syst in systStore:
 	if systStore[syst]["type"] == "shape":
 		writeSystShape(systStore[syst],systStore[syst]["proc"])
 
-#if doSyst: writeNormSyst("CMS_scale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.977/1.028"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
-#if doSyst: writeNormSyst("CMS_pdf_ttbar",["1.042","1.042","1.042","1.042","1.042","1.026"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
-#if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027","1.022"],["TTlight","TTc","TT1b","TT2b","TT2B","ST"])
+if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042","1.042","1.042"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+###if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027"],["ttlf","ttcc","ttb","ttbb","tt2b"])
 
-#if doSyst: writeNormSyst("CMS_pdf_ttlight",["1.50"],["TTlight"])
-#if doSyst: writeNormSyst("CMS_pdf_ttc",["1.50"],["TTc"])
-#if doSyst: writeNormSyst("CMS_pdf_tt1b",["1.50"],["TT1b"])
-#if doSyst: writeNormSyst("CMS_pdf_tt2b",["1.50"],["TT2b"])
-#if doSyst: writeNormSyst("CMS_pdf_tt2B",["1.50"],["TT2B"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttlf",["1.50"],["ttlf"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttcc",["1.50"],["ttcc"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttb",["1.50"],["ttb"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttbb",["1.50"],["ttbb"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDscale_tt2b",["1.50"],["tt2b"])
+
+if doSyst: writeNormSyst("QCDscale_top",["0.90/1.10"],["top"])
+if doSyst: writeNormSyst("pdf_top",["1.03"],["top"])
+
+if doSyst: writeNormSyst("QCDscale_ewk",["0.98/1.02"],["ewk"])
+if doSyst: writeNormSyst("pdf_qqbar",["1.04"],["ewk"])
+
+#if doSyst: writeNormSyst("QCDscale_ttbar",["0.977/1.028"],["ST"])
+#if doSyst: writeNormSyst("pdf_ttbar",["1.026"],["ST"])
+#if doSyst: writeNormSyst("CMS_mass_ttbar",["1.022"],["ST"])
 
 ##https://twiki.cern.ch/twiki/bin/view/LHCPhysics/LHCHXSWGTTH
-#if doSyst: writeNormSyst("CMS_scale_ttZ",["0.887/1.096"],["TTZ"])
-#if doSyst: writeNormSyst("CMS_pdf_ttZ",["1.028"],["TTZ"])
+#if doSyst: writeNormSyst("QCDscale_ttZ",["0.887/1.096"],["TTZ"])
+#if doSyst: writeNormSyst("pdf_ttZ",["1.028"],["TTZ"])
 #if doSyst: writeNormSyst("CMS_mass_ttZ",["1.028"],["TTZ"])
 
-#if doSyst: writeNormSyst("CMS_scale_ttH",["0.908/1.058"],["ttH"])
-#if doSyst: writeNormSyst("CMS_pdf_ttH",["1.036"],["ttH"])
+#if doSyst: writeNormSyst("QCDscale_ttH",["0.908/1.058"],["ttH"])
+#if doSyst: writeNormSyst("pdf_ttH",["1.036"],["ttH"])
 #if doSyst: writeNormSyst("CMS_mass_ttH",["1.036"],["ttH"])
 
-##writeNormSyst("CMS_scale_VV",["1.025","1.032","1.031"],["WWTo","WZTo","ZZTo"])
-##writeNormSyst("CMS_pdf_VV",["1.022","1.044","1.037"],["WWTo","WZTo","ZZTo"])
+##writeNormSyst("QCDscale_VV",["1.025","1.032","1.031"],["WWTo","WZTo","ZZTo"])
+##writeNormSyst("pdf_VV",["1.022","1.044","1.037"],["WWTo","WZTo","ZZTo"])
 
-##writeNormSyst("CMS_scale_V",["0.9963/1.0065","0.996/1.008"],["DYJetsToLL_M","WJetsToLNu"])
-##writeNormSyst("CMS_pdf_V",["1.037","1.0375"],["DYJetsToLL_M","WJetsToLNu"])
+##writeNormSyst("QCDscale_V",["0.9963/1.0065","0.996/1.008"],["DYJetsToLL_M","WJetsToLNu"])
+##writeNormSyst("pdf_V",["1.037","1.0375"],["DYJetsToLL_M","WJetsToLNu"])
 
 ################### IMPORT ################
 ## def importStat(h,target,syst="STAT"):
@@ -604,12 +623,37 @@ def importPdfFromTH1(cat,mc,syst=None):
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
+#	if mc["name"]=="HPlus":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
 	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
 	else: masses=[0]
 
 	if syst == None: shifts=["x"]
 	else: shifts=["Up","Down"]
 
+	skip=False
+	if syst != None:
+		  skip=True
+
+		  invert=False
+		  regexpL = syst["proc"]
+		  print '==================='
+		  print '====',syst
+		  print '====',syst["proc"],'  ',mc["name"]
+		  print '==================='
+		  for i,regexp in enumerate(regexpL):
+		  	if regexp != "" and regexp[0] == '!':
+		  		invert=True
+		  		regexp=regexp[1:]
+		  	match=re.search(regexp,mc["name"])
+		  	if (match  and not invert) or (not match and invert):
+		  		idx=i
+		  		skip=False
+		  		break
+
+	print '====skip=',skip
+	if skip: return
+
+	scaleEveRemoval=1
 
 	for m in masses:
 	 for s in shifts:
@@ -618,57 +662,87 @@ def importPdfFromTH1(cat,mc,syst=None):
 	  if m >10 :
 		  target = "pdf_" + mc["name"] +"_M-%d"%m+"_"+ cat["name"]
 
+	  if syst == None and mc["name"]=="Hptb":
+##	  if mc["name"]=="Hptb":
+		  mclabel="0"
+		  #		  print 'ciao m=',m
+		  if m==180: mclabel="1"
+		  if m==200: mclabel="2"
+		  if m==220: mclabel="3"
+		  if m==250: mclabel="4"
+		  if m==300: mclabel="5"
+		  if m==350: mclabel="6"
+		  if m==400: mclabel="7"
+		  ###		  if m==450: mclabel="8"
+		  if m==500: mclabel="9"
+		  ###		  if m==750: mclabel="10"
+		  if m==800: mclabel="11"
+		  if m==1000: mclabel="12"
+		  if m==2000: mclabel="13"
+		  if m==3000: mclabel="14"
+		  #		  print 'mc=',mclabel
+		  hscale="SplitMC/CutFlow/CutFlow_"+mclabel
+		  hScale=tfile.Get(hscale)
+		  scaleEveRemoval=hScale.GetBinContent(1)/hScale.GetBinContent(2)
+
+#		  print '=============================='
+#		  print 'mc=',mclabel,'total=',hScale.GetBinContent(1),' pass=',hScale.GetBinContent(2),'scale=',scale
+#		  print '=============================='
+
 	  if syst != None:
 		  target += "_" + syst["wsname"] + s
 
 	  for hname in mc["hist"]:
 	        toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
 
+#		if mc["name"]=="HPlus":
 		if mc["name"]=="Hptb":
 		   toget=toget%m
 		if syst != None:
 			toget += "_" + syst["name"] + s
 		hTmp=tfile.Get(toget)
-		print "<*> Reading Hist '"+toget+"'",hTmp.Integral()
+		if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
 		if hTmp == None:
 			print "<*> Hist '"+toget+"' doesn't exist" 
 			raise IOError
+
+### -- MC --
+##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
+#####1L
+
+		if doRebin and hTmp:
+			if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
+
+				if "Baseline" in cat["dir"]:
+					if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": hTmp=Rebin1LHT(hTmp)
+					elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": hTmp=Rebin1LHT(hTmp)
+					else:
+						if opts.kTest==3: hTmp=RebinBDT3(hTmp)
+						if opts.kTest==2: hTmp=RebinBDT2(hTmp)
+						if opts.kTest==1: hTmp=RebinBDT1(hTmp)
+
+				if "topCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin1LHT(hTmp)
+				if "charmCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin1LHT(hTmp)
+				if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin1LHT(hTmp)
+##### 2L
+#
+			if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
+				#
+				if "Baseline" in cat["dir"]:
+					if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": hTmp=Rebin2LHT(hTmp)
+					elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": hTmp=Rebin2LHT(hTmp)
+					else:
+						if opts.kTest==6: hTmp=RebinBDT6(hTmp)
+						if opts.kTest==5: hTmp=RebinBDT2(hTmp)
+						if opts.kTest==4: hTmp=RebinBDT4(hTmp)
+
+				if "topCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin2LHT(hTmp)
+				if "charmCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin2LHT(hTmp)
+				if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin2LHT(hTmp)
+
 		if h==None:h = hTmp
 		else: h.Add(hTmp)
-	  #clean h
-
-
-## -- MC --
-#		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
-####1L
-		if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
-
-			if "Baseline" in cat["dir"]:
-				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": h=Rebin1LHT(h)
-				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": h=Rebin1LHT(h)
-				else:
-					if opts.kTest==3: h=RebinBDT3(h)
-					if opts.kTest==2: h=RebinBDT2(h)
-					if opts.kTest==1: h=RebinBDT1(h)
-
-			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-#### 2L 			
-
-		if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
-
-			if "Baseline" in cat["dir"]:
-				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": h=Rebin2LHT(h)
-				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": h=Rebin2LHT(h)
-				else:
-					if opts.kTest==6: h=RebinBDT6(h)
-					if opts.kTest==5: h=RebinBDT2(h)
-					if opts.kTest==4: h=RebinBDT4(h)
-
-			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
-			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
-			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
+		#clean h
 
 	  if h: h.SetBinContent(0,0) ##underflow
 	  if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
@@ -683,6 +757,7 @@ def importPdfFromTH1(cat,mc,syst=None):
 			  raise ValueError
 
 	  #save RooDataHist
+	  h.Scale(scaleEveRemoval)
 	  h.Scale(opts.lumi)
 	  print "* Importing ",target
 
@@ -708,6 +783,7 @@ def importPdfFromTH1(cat,mc,syst=None):
 		else:
 			statStore[histName]["hist"] . Add (h )
 ##			if mc["name"] == 'TT':  ## put TT and reference
+##			if mc["name"] == 'TTlight':  ## put TTlight and reference
 			if mc["name"] == 'ttlf':  ## put TTlight and reference
 				statStore[histName]["mc"]= mc["name"]
 				statStore[histName]["target"]= target
@@ -727,7 +803,7 @@ for cat in catStore:
 		 	importPdfFromTH1(catStore[cat],mcStore[proc],systStore[syst])
 
 ## import and write statistical uncertainties
-if doSyst: importStat()
+importStat()
 
 #import data
 for c in catStore:
@@ -761,37 +837,39 @@ for c in catStore:
 
 ####This is the data
 ####1L
-#		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
+##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 
-	if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
+	if doRebin and h :
+		if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
+
+			print  ' This is the data ===> cat["var"]=',cat["var"],'    ','cat["dir"]=',cat["dir"]
 		
-		if "Baseline" in cat["dir"]:   
-			if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": h=Rebin1LHT(h)
-			elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": h=Rebin1LHT(h)
-			else: 
-				if opts.kTest==3: h=RebinBDT3(h)
-				if opts.kTest==2: h=RebinBDT2(h)
-				if opts.kTest==1: h=RebinBDT1(h)
+			if "Baseline" in cat["dir"]:
+				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": h=Rebin1LHT(h)
+				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": h=Rebin1LHT(h)
+				else:
+					if opts.kTest==3: h=RebinBDT3(h)
+					if opts.kTest==2: h=RebinBDT2(h)
+					if opts.kTest==1: h=RebinBDT1(h)
 
-		if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-		if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-		if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-
+			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
+			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
+			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
 #### 2L 			
 
-	if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
+		if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
 		
-		if "Baseline" in cat["dir"]:   
-			if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": h=Rebin2LHT(h)
-			elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": h=Rebin2LHT(h)
-			else: 
-				if opts.kTest==6: h=RebinBDT6(h)
-				if opts.kTest==5: h=RebinBDT2(h)
-				if opts.kTest==4: h=RebinBDT4(h)
+			if "Baseline" in cat["dir"]:
+				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": h=Rebin2LHT(h)
+				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": h=Rebin2LHT(h)
+				else:
+					if opts.kTest==6: h=RebinBDT6(h)
+					if opts.kTest==5: h=RebinBDT2(h)
+					if opts.kTest==4: h=RebinBDT4(h)
 					
-		if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
-		if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
-		if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
+			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
+			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
+			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
 
 
 	al=arglist_obs_bdt

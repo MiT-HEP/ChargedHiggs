@@ -61,7 +61,7 @@ class HmmConfig():
         for cat in range(0,len(self.categories)):
             for proc in self.processes:
                 if cat==cat0 and proc==proc0:
-                    self.sigfit_scale_unc[cat,proc]=0.001
+                    self.sigfit_scale_unc[cat,proc]=0.0005
                     self.sigfit_smear_unc[cat,proc]=0.1
                 else:
                     self.sigfit_scale_unc[cat,proc]=(cat0,proc0)
@@ -232,7 +232,7 @@ class HmmConfigAutoCat(HmmConfig):
         self.muCategories=[]
         self.sigfit_gaussians=[]
         #self.readScaleUnc()        
-        #self.SimpleScaleAndSmear()
+        self.SimpleScaleAndSmear()
         self.computeVersioning()
 
 hmmAutoCat =HmmConfigAutoCat()
@@ -343,20 +343,31 @@ class Stack:
     ''' This is a soft version of thstack that usually crash'''
     def __init__(self):
         self.hists_=[]
+        self.draw_ =[]
         self.name_="myStack"
+
     def SetName(self,name):
         self.name_ = name
-    def Add(self,h):
+
+    def Add(self,h,draw=True):
         if len(self.hists_) == 0:
             self.hists_.append( h.Clone(self.name_ +"_"+h.GetName()) )
         else:
             self.hists_.append( h.Clone(self.name_ +"_"+h.GetName()) )
             self.hists_[-1].Add(self.hists_[-2])
+        self.draw_.append(draw)
+
     def Draw(self,opts=""):
+        firstDraw=True
         for idx in reversed(range(0,len(self.hists_))):
             h= self.hists_[idx]
-            if idx ==len(self.hists_)-1 or 'SAME' in opts: h.Draw(opts)
-            else       : h.Draw(opts +" SAME")
+            if not self.draw_[idx]: continue
+            if firstDraw or 'SAME' in opts: 
+                h.Draw(opts)
+                firstDraw=False
+            else       : 
+                h.Draw(opts +" SAME")
+                firstDraw=False
     def GetHist(self):
         return self.hists_[-1]
 
