@@ -181,6 +181,8 @@ class Event{
     inline int Bjets()const {int n=0; for(auto j : jets_) if(j->IsBJet()) n++; return n;}
     inline int Wjets()const {int n=0; for(auto j : fat_) if(j->IsWJet()) n++; return n;}
     inline int Topjets()const {int n=0; for(auto j : fat_) if(j->IsTopJet()) n++; return n;}
+    inline int WjetsMirror()const {int n=0; for(auto j : fat_) if(j->IsWJetMirror()) n++; return n;}
+    inline int TopjetsMirror()const {int n=0; for(auto j : fat_) if(j->IsTopJetMirror()) n++; return n;}
     inline int Ljets()const {int n=0; for(auto j : jets_) if(not j->IsBJet()) n++; return n;}
     inline int BjetsInvIso()const {int n=0; for(auto j : jets_) if(j->IsBJetInvIso()) n++; return n;}
     inline int NFatJets()const {int n=0; for(auto j : fat_) if(j->IsJet()) n++; return n;}
