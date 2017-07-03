@@ -4,15 +4,15 @@ imax *
 jmax *
 kmax *
 -------------------------------------
-shapes data_obs *       Hmumu/2017_06_02/BackgroundModel.root w:dataObs_$CHANNEL
-shapes BKG      cat1    Hmumu/2017_06_02/BackgroundModel.root w:bern_cat1_ord5
-shapes BKG      cat4    Hmumu/2017_06_02/BackgroundModel.root w:exp_cat4_ord3
-shapes BKG      cat5    Hmumu/2017_06_02/BackgroundModel.root w:exp_cat5_ord3
-shapes BKG      cat6    Hmumu/2017_06_02/BackgroundModel.root w:bern_cat6_ord5
-shapes BKG      *       Hmumu/2017_06_02/BackgroundModel.root w:zmod_$CHANNEL_ord1
-shapes ggH      *       Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
-shapes qqH      *       Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
-shapes *        *       Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
+shapes data_obs *       Hmumu/2017_06_21_Mu20/BackgroundModel.root w:dataObs_$CHANNEL
+shapes BKG      cat1    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:bern_cat1_ord5
+shapes BKG      cat4    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:exp_cat4_ord3
+shapes BKG      cat5    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:exp_cat5_ord3
+shapes BKG      cat6    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:bern_cat6_ord5
+shapes BKG      *       Hmumu/2017_06_21_Mu20/BackgroundModel.root w:zmod_$CHANNEL_ord1
+shapes ggH      *       Hmumu/2017_06_21_Mu20/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
+shapes qqH      *       Hmumu/2017_06_21_Mu20/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
+shapes *        *       Hmumu/2017_06_21_Mu20/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
 -------------------------------------
 bin         cat0 cat1 cat2 cat3 cat4 cat5 cat6 cat7 cat8 cat9 cat10 cat11 cat12 
 observation  -1   -1   -1   -1   -1   -1   -1   -1   -1   -1   -1    -1    -1   
@@ -28,19 +28,19 @@ rate 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867
 
 ------------
 ## bkg rates 
-pdf_cat0_bkg_norm rateParam cat0 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat1_bkg_norm rateParam cat1 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat2_bkg_norm rateParam cat2 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat3_bkg_norm rateParam cat3 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat4_bkg_norm rateParam cat4 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat5_bkg_norm rateParam cat5 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat6_bkg_norm rateParam cat6 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat7_bkg_norm rateParam cat7 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat8_bkg_norm rateParam cat8 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat9_bkg_norm rateParam cat9 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat10_bkg_norm rateParam cat10 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat11_bkg_norm rateParam cat11 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat12_bkg_norm rateParam cat12 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+pdf_cat0_bkg_norm rateParam cat0 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat1_bkg_norm rateParam cat1 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat2_bkg_norm rateParam cat2 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat3_bkg_norm rateParam cat3 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat4_bkg_norm rateParam cat4 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat5_bkg_norm rateParam cat5 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat6_bkg_norm rateParam cat6 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat7_bkg_norm rateParam cat7 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat8_bkg_norm rateParam cat8 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat9_bkg_norm rateParam cat9 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat10_bkg_norm rateParam cat10 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat11_bkg_norm rateParam cat11 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat12_bkg_norm rateParam cat12 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
 
 # rate parameters
 hmm rateParam 	    * ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br

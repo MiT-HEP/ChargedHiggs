@@ -181,26 +181,30 @@ RooAbsPdf* PdfModelBuilder::getZModExp(string prefix, int order){
         params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-2, 2.0 );
         plist->add(*params[pname]); // @3
 
+        pname = prefix + "_d";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),0.0,-5.0, 5.0 );
+        plist->add(*params[pname]); // @4
+
         if (order >1)
         {
             pname = prefix + "_Zwidth";
             params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),2.5,0,30);
-            plist->add(*params[pname]); //@4
+            plist->add(*params[pname]); //@5
         }
 
         if (order>2)
         {
             pname = prefix + "_mZ";
             params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),91.2,90,92);
-            plist->add(*params[pname]); //@5
+            plist->add(*params[pname]); //@6
         }
 
 
     // the envelope does getVariables->size to compute the penalization term
     RooAbsPdf *zmod=NULL;
-    //if (order ==3 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-@5),@1)+TMath::Power(@4/2.,@1))",*plist);
-    //if (order ==2 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(@4/2.,@1))",*plist);
-    if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1))",*plist);
+    //if (order ==3 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-@6),@1)+TMath::Power(@5/2.,@1))",*plist); //FIXME
+    //if (order ==2 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(@5/2.,@1))",*plist);//FIXME
+    if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1))*(1.+@4*(@0-110))",*plist);
 
     return zmod;
 }
