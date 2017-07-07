@@ -24,6 +24,7 @@ public:
     void SetTauCuts(Tau*t) override;
 
     void BookCutFlow(string l, string category);
+    void BookFatjetPro(string l, string category, string phasespace, string pile);
     void BookHisto(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void BookGenMatch(string l, string category, string phasespace, string cut321, string state);
@@ -31,6 +32,7 @@ public:
 
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
+    void fatjetPlot(Event*e, string label, string systname, string phasespace);
     void higgsPlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
@@ -38,7 +40,7 @@ public:
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
     void classifyLabelGenEv(Event*e, string label, string systname, string phasespace);
-    void getCandidate(Event*e, string label, string systname, string phasespace);
+    void getCandidate(Event*e, string label, string systname, string phasespace, bool mirror);
 
     void computeVar(Event*e);
 
@@ -73,6 +75,7 @@ private:
                   NoTau,
                   HTcut,
                   OneBOneFat,
+                  OneBOneFatMirror,
                   MaxCut
     };
 
@@ -90,8 +93,11 @@ private:
     double evt_MH_t1b=-1;
     double evt_MH_t0b=-1;
     double evt_MH_Wbb=-1;
+    double evt_MH_wbj=-1;
 
     Jet* leadingb=NULL;
+    Jet* leadingbWBJ = NULL;
+    Jet* secondb=NULL;
 
     // for the topb category
     int numtop=0;
@@ -100,7 +106,7 @@ private:
 
     // for the wbb category
     TLorentzVector topFromHOpenCand;
-
+    TLorentzVector topFromHwbj;
     /////
     /////
     GenParticle * topFromH=NULL;
