@@ -564,19 +564,32 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
 
 
     ///// Higgs candidates with gen info
-    Book("ChargedHiggsTopBottom/"+phasespace+"_tb_thbh"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_tb_thb"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_tb_tb"+"/invariant_"+l,"invariant "+l + ";Mass h(tb) [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_tb_tbh"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_tb_other"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",80,400,1200);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_thbh"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_thb"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_tb"+"/invariant_"+l,"invariant "+l + ";Mass h(tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_tbh"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_other"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
 
-    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_th_nb"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_th_bh"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_wh_nb"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_wh_bh"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_ntnw_nb"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_ntnw_bh"+"/invariant_"+l,"invariant "+l + ";Mass (wbb)  [GeV] ",80,400,1200);
-    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_other"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",80,400,1200);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_thbh"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_thb"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_tb"+"/invariant_"+l,"invariant "+l + ";Mass h(tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_tbh"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_other"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
+
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_th_nb"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_th_bh"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_wh_nb"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_wh_bh"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_ntnw_nb"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_ntnw_bh"+"/invariant_"+l,"invariant "+l + ";Mass (wbb)  [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_other"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbj_good"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbj_bad"+"/invariant_"+l,"invariant "+l + ";Mass (wbb)  [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbj_other"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+
+
+
 
 
     //higgs mass short range
@@ -723,7 +736,6 @@ void ChargedHiggsTopBottomFullHad::Preselection()
 
         BookCutFlow(l, "");
         BookHisto(l, "","Baseline"); // this is when there is nothing
-        BookHisto(l, "","NoBOneFat"); 
         BookHisto(l, "","OneBOneFat");
         BookHisto(l, "","OneBOneFat_one");
         BookHisto(l, "","OneBOneFat_two");
@@ -764,8 +776,10 @@ void ChargedHiggsTopBottomFullHad::Preselection()
         BookFatjetPro(l, "_no", "OneBOneFat_two", "nopu_");
         BookFatjetPro(l, "_no", "OneBOneFat_three", "pu_");
         BookFatjetPro(l, "_no", "OneBOneFat_three", "nopu_");
-        BookFatjetPro(l, "_no", "NoBArbFat", "pu_");
-        BookFatjetPro(l, "_no", "NoBArbFat", "nopu_");
+        BookFatjetPro(l, "_no", "NoBOneTop", "pu_");
+        BookFatjetPro(l, "_no", "NoBOneTop", "nopu_");
+        BookFatjetPro(l, "_no", "NoBOneW", "pu_");
+        BookFatjetPro(l, "_no", "NoBOneW", "nopu_");
 
 
         BookGenMatch(l, "", "OneBOneFat", "tcut_", "lept_");
@@ -1093,31 +1107,50 @@ void ChargedHiggsTopBottomFullHad::classifyLabelGenEv(Event*e, string label, str
     ////// Define the label for the tb and wbb categories
     //////
 
-    string LabelGenTB="other_";
+    string LabelGenT0B="other_";
+    string LabelGenT1B="other_";
     string LabelGenWBB="other_";
+    string LabelGenWBJ="other_";
 
     if(label.find("HplusToTB") !=string::npos){
 
         /// TOP+B category
-        if(evt_MH_tb>0 && leadingb!=NULL) {
+        if(evt_MH_t0b>0 && leadingb!=NULL) {
             if(bFromH!=NULL && topFromH!=NULL){
                 if (leadingb->DeltaR(*bFromH) < 0.2) {
-                    if(topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3)) LabelGenTB="_tb_thbh";
-                    else LabelGenTB="_tb_tbh";
+                    if(topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3)) LabelGenT0B="_t0b_thbh";
+                    else LabelGenT0B="_t0b_tbh";
                 } else {
-                    if(topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3)) LabelGenTB="_tb_thb";
-                    else LabelGenTB="_tb_tb";
+                    if(topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3)) LabelGenT0B="_t0b_thb";
+                    else LabelGenT0B="_t0b_tb";
                 }
             }else if(bFromH!=NULL){
-                if (leadingb->DeltaR(*bFromH) < 0.2) LabelGenTB="_tb_tbh";
-                else LabelGenTB="_tb_tb";
+                if (leadingb->DeltaR(*bFromH) < 0.2) LabelGenT0B="_t0b_tbh";
+                else LabelGenT0B="_t0b_tb";
             }else if(topFromH!=NULL){
-                if (topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3) ) LabelGenTB="_tb_thb";
-                else LabelGenTB="_tb_tb";
-            }else LabelGenTB="_tb_tb";
+                if (topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3) ) LabelGenT0B="_t0b_thb";
+                else LabelGenT0B="_t0b_tb";
+            }else LabelGenT0B="_t0b_tb";
         }
 
 
+        if(evt_MH_t1b>0 && leadingb!=NULL) {
+            if(bFromH!=NULL && topFromH!=NULL){
+                if (leadingb->DeltaR(*bFromH) < 0.2) {
+                    if(topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3)) LabelGenT1B="_t1b_thbh";
+                    else LabelGenT1B="_t1b_tbh";
+                } else {
+                    if(topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3)) LabelGenT1B="_t1b_thb";
+                    else LabelGenT1B="_t1b_tb";
+                }
+            }else if(bFromH!=NULL){
+                if (leadingb->DeltaR(*bFromH) < 0.2) LabelGenT1B="_t1b_tbh";
+                else LabelGenT1B="_t1b_tb";
+            }else if(topFromH!=NULL){
+                if (topsnum1>0 && topJet==e->GetFatJet(topsnum1) && (e->GetFatJet(topsnum1)->DeltaR(*topFromH) < 0.3) ) LabelGenT1B="_t1b_thb";
+                else LabelGenT1B="_t1b_tb";
+            }else LabelGenT1B="_t1b_tb";
+        }
 
         /// W+B+B category
         if(evt_MH_Wbb>0 && numtop == 0 && leadingb!=NULL) {
@@ -1164,10 +1197,24 @@ void ChargedHiggsTopBottomFullHad::classifyLabelGenEv(Event*e, string label, str
 
 
         }
-    }
 
-    higgsPlot(e, label, LabelGenTB,systname,phasespace);
+
+        ///W+b+j
+        if(evt_MH_wbj>0 && numtop == 0 && leadingbWBJ!=NULL) {
+            if(bFromH!=NULL && topFromH!=NULL){
+                if(leadingbWBJ->DeltaR(*bFromH) < 0.2){
+                    if(topFromHwbj.DeltaR(topFromH->GetP4()) < 0.3) LabelGenWBJ="_wbj_good";
+                    else LabelGenWBJ="_wbj_bad";
+                }else LabelGenWBJ="_wbj_bad";
+            }else LabelGenWBJ="_wbj_bad";
+        }       
+        
+    } //end singal
+
+    higgsPlot(e, label, LabelGenT0B,systname,phasespace);
+    higgsPlot(e, label, LabelGenT1B,systname,phasespace);
     higgsPlot(e, label, LabelGenWBB,systname,phasespace);
+    higgsPlot(e, label, LabelGenWBJ,systname,phasespace);
 
 }
 
@@ -1502,15 +1549,12 @@ void ChargedHiggsTopBottomFullHad::fatjetPlot(Event*e, string label, string syst
 void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string category,string systname, string phasespace) {
 
     // this is for all label
-    if(evt_MH_tb>0 and (category.find("_tb_")!=string::npos))  Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_tb,e->weight());
-//    if((category.find("_tb")!=string::npos) and not (category.find("_tb_")!=string::npos) )  Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantExt_"+label,systname,evt_MH_tb,e->weight());
+    if(evt_MH_t1b>0 and (category.find("_t1b_")!=string::npos))  Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_t1b,e->weight());
+    if(evt_MH_t0b>0 and (category.find("_t0b_")!=string::npos))  Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_t0b,e->weight());
+    if(evt_MH_Wbb>0 and (category.find("_wbb_")!=string::npos))  Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_Wbb,e->weight());
+    if(evt_MH_wbj>0 and (category.find("_wbj_")!=string::npos))  Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_wbj,e->weight());
 
-    // this is for all label
-    if(evt_MH_Wbb>0 and (category.find("_wbb_")!=string::npos)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_Wbb,e->weight());
-//    if((category.find("_wbb")!=string::npos) and not (category.find("_wbb_")!=string::npos)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantExt_"+label,systname,evt_MH_Wbb,e->weight());
-
-
-    if(evt_MH_t1b>0 and (category.find("_t1b")!=string::npos) and not (category.find("_tb_")!=string::npos)) {
+    if(evt_MH_t1b>0 and (category.find("_t1b")!=string::npos) and not (category.find("_t1b_")!=string::npos)) {
         //invariant mass short range
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_t1b,e->weight());
         //invariant mass
@@ -1566,7 +1610,7 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
 
     } //end t1b
 
-    if(evt_MH_t0b>0 and (category.find("_t0b")!=string::npos) and not (category.find("_tb_")!=string::npos)) {
+    if(evt_MH_t0b>0 and (category.find("_t0b")!=string::npos) and not (category.find("_t0b_")!=string::npos)) {
         //invariant mass short range
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_t0b,e->weight());
         //invariant mass
@@ -1685,7 +1729,7 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
     } //end Wbb
 
     
-    if(evt_MH_wbj>0 and (category.find("_wbj")!=string::npos)) {
+    if(evt_MH_wbj>0 and (category.find("_wbj")!=string::npos) and not (category.find("_wbj_")!=string::npos)) {
         //invariant mass short range
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_wbj,e->weight());
         //invariant mass
@@ -1843,7 +1887,7 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
         if ( cut.passAllUpTo(OneBOneFat) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,OneBOneFat,e->weight());
 
         // make candidate top+b, W+b+b,w+b+j
-//        getCandidate(e,label,systname,"OneBOneFat",false);
+        getCandidate(e,label,systname,"OneBOneFat",false);
         if(e->Bjets() == 1) {getCandidate(e,label,systname,"OneBOneFat_one",false); fatjetPlot(e,label,systname,"OneBOneFat_one");}
         else if(e->Bjets() == 2) {getCandidate(e,label,systname,"OneBOneFat_two",false); fatjetPlot(e,label,systname,"OneBOneFat_two");}
         else if(e->Bjets() >= 3) {getCandidate(e,label,systname,"OneBOneFat_three",false); fatjetPlot(e,label,systname,"OneBOneFat_three");}
@@ -1857,7 +1901,7 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
         cut.SetCutBit(OneBOneFatMirror);
         if ( cut.passAllUpTo(OneBOneFatMirror) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,OneBOneFatMirror,e->weight());
 
-//        getCandidate(e,label,systname,"OneBOneMirrorFat",true);
+        getCandidate(e,label,systname,"OneBOneMirrorFat",true);
         if(e->Bjets() == 1) getCandidate(e,label,systname,"OneBOneMirrorFat_one",true);
         else if(e->Bjets() == 2) getCandidate(e,label,systname,"OneBOneMirrorFat_two",true);
         else if(e->Bjets() >= 3) getCandidate(e,label,systname,"OneBOneMirrorFat_three",true);
@@ -1867,7 +1911,8 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
 
     if(e->Bjets() == 0){ //control region
         if ( not e->IsRealData() and (label.find("QCD_HT") !=string::npos) ){
-            fatjetPlot(e,label,systname,"NoBArbFat");
+            if(e->Topjets() > 0) fatjetPlot(e,label,systname,"NoBOneTop");
+            else if(e->Wjets()>0) fatjetPlot(e,label,systname,"NoBOneW");
         }
     }
 
