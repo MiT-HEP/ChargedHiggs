@@ -5,10 +5,14 @@ from array import array
 import math
 from optparse import OptionParser,OptionGroup
 
+sys.path.insert(0, 'script')
+import FwBinning as FwRebin
+maxStat=0.13
+
 parser= OptionParser()
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE11_Green_Final_1l_SUMMARY.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE11_Green_Final_2l_SUMMARY.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE30_Green_FinalSUMMARY_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE30_Green_FinalSUMMARY_2l.root")
 
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
 parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
@@ -177,8 +181,7 @@ if opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==0 or opts.kTes
 
 if opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16:
 	channel = ["1Mu1Ele","2Mu","2Ele"]
-#	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
-	basecat = ["Baseline","extraRadCR","topCR"]
+	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
 
 if opts.kTest==8 or opts.kTest==9:
 	channel = ["1Mu","1Ele","1Mu1Ele","2Mu","2Ele"]
@@ -191,7 +194,11 @@ label=""
 VarTest=""
 
 doSyst = True
+doRebinStatic = False
 doRebin = True
+
+#if opts.kTest > 10:
+#	doRebin = False
 
 for y in channel:
 	for x in basecat:
@@ -205,8 +212,8 @@ for y in channel:
 
 			if x=="Baseline":
 				if (y == "1Ele" or y == "1Mu"): region = ["_SR1","_SR2","_SR3","_SR4"]
-##				else: region = ["_SR1","_SR2","_SR3","_SR4"]
-				else: region = ["_SR13","_SR24"]
+				else: region = ["_SR1","_SR2","_SR3","_SR4"]
+##				else: region = ["_SR13","_SR24"]
 
 ##			if y == "1Ele" or y == "1Mu": srList = [""]
 			## BDT1 is 1l high mass
@@ -285,8 +292,8 @@ for y in channel:
 					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
-##					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":7}
+					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+##					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":7}
 					}
 			else:
 				mcStore={
@@ -297,8 +304,8 @@ for y in channel:
 					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
-###					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":7}
+					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+##					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT"],"num":7}
 					}
 				## NOTE: missing diboson + triboson in the EWK, QCD
 
@@ -323,8 +330,7 @@ for y in channel:
 ############
 ############
 ############
-## need to add the shapes of the PDF and the other SCALES (now only for ttbar/signal )
-# add the DYweights reshaping for Z/W+jets
+## need to add the shapes of the PDF and scales (for both take the envelop CMS_HPTB_Q2scale_xxx) farlo solo per il ttbar/signal ???
 # Jan ISR up/down, name CMS_HPTB_IFSR_xxx, solo su top as lN
 # check the topMass
 #					"CMS_scale_uncluster":{"type":"shape", "wsname":"UNCLUSTER","name":"CMS_scale_uncluster","proc":[".*"]}, ## name used for shape
@@ -340,11 +346,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="JUNE11_GREEN/"+label+VarTest+opts.output
+fileTmp="JULY8_GREEN/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "JUNE11_GREEN/"+ label + VarTest + datNameTmp
+datName = "JULY8_GREEN/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -516,7 +522,7 @@ def importStat():
 	      err = h . GetBinError(i+1) ## err is referred to the sum
 	      c = h.GetBinContent(i+1) ## this is to check the magnitude, not to apply it
 #	      if c > 0 and err/c <.01: continue ## don't write less than 1%
-	      if c > 0 and err/c <.10: continue ## don't write less than 1% // TEMPORARY
+	      if c > 0 and err/c <.10: continue ## don't write less than 10% // TEMPORARY
 	      hupbin.SetBinContent(i+1,cont+err)
 	      hdnbin.SetBinContent(i+1,cont-err)
 	      target = stat["target"]
@@ -616,14 +622,15 @@ if doSyst: writeNormSyst("pdf_qqbar",["1.04"],["ewk"])
 ## 		g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
 ## 		g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
 
+
 ## improt Everything in ws TODO
-def importPdfFromTH1(cat,mc,syst=None):
+def importPdfFromTH1(cat,mc,myBin,syst=None):
+
 	tfile = cat["file"]
 	if tfile == None:
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
-#	if mc["name"]=="HPlus":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
 	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
 	else: masses=[0]
 
@@ -654,6 +661,9 @@ def importPdfFromTH1(cat,mc,syst=None):
 	if skip: return
 
 	scaleEveRemoval=1
+
+####
+####
 
 	for m in masses:
 	 for s in shifts:
@@ -695,7 +705,6 @@ def importPdfFromTH1(cat,mc,syst=None):
 	  for hname in mc["hist"]:
 	        toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
 
-#		if mc["name"]=="HPlus":
 		if mc["name"]=="Hptb":
 		   toget=toget%m
 		if syst != None:
@@ -703,14 +712,29 @@ def importPdfFromTH1(cat,mc,syst=None):
 		hTmp=tfile.Get(toget)
 		if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
 		if hTmp == None:
-			print "<*> Hist '"+toget+"' doesn't exist" 
+			print "<*> Hist '"+toget+"' doesn't exist"
 			raise IOError
-
 ### -- MC --
 ##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 #####1L
 
 		if doRebin and hTmp:
+			print '========'
+			print '========'
+			print '========'
+			print '========'
+			print myBin
+			print '========'
+			print '========'
+			print '========'
+			print '========'
+
+			mybins=array('d',myBin)
+			print 'before=',hTmp.GetNbinsX()
+			hTmp=hTmp.Rebin(len(mybins)-1,hTmp.GetName()+"_rebin",mybins)
+			print 'after=',hTmp.GetNbinsX()
+
+		if doRebinStatic and hTmp:
 			if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
 
 				if "Baseline" in cat["dir"]:
@@ -791,16 +815,134 @@ def importPdfFromTH1(cat,mc,syst=None):
 				statStore[histName]["hist0"] = h.Clone(histName + "_STAT0")
 	return
 
+#################
+
+## improt Everything in ws TODO
+def importPdfFromTH1SumBKG(cat,mc,syst=None):
+	tfile = cat["file"]
+	if tfile == None:
+		print "<*> File not exists"
+		raise IOError
+	base="ChargedHiggsTopBottom"
+	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,800,1000,2000,3000]
+	else: masses=[0]
+
+	if syst == None: shifts=["x"]
+	else: shifts=["Up","Down"]
+
+	skip=False
+	if syst != None:
+		  skip=True
+
+		  invert=False
+		  regexpL = syst["proc"]
+		  print '==================='
+		  print '====',syst
+		  print '====',syst["proc"],'  ',mc["name"]
+		  print '==================='
+		  for i,regexp in enumerate(regexpL):
+		  	if regexp != "" and regexp[0] == '!':
+		  		invert=True
+		  		regexp=regexp[1:]
+		  	match=re.search(regexp,mc["name"])
+		  	if (match  and not invert) or (not match and invert):
+		  		idx=i
+		  		skip=False
+		  		break
+
+	print '====skip=',skip
+	if skip: return
+
+####
+####
+
+	for m in masses:
+	 for s in shifts:
+	  h=None
+	  hRef=None
+
+	  for hname in mc["hist"]:
+
+                if mc["name"]=="Hptb": continue
+
+	        toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
+
+		hTmp=tfile.Get(toget)
+		if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
+		if hTmp == None:
+			print "<*> Hist '"+toget+"' doesn't exist"
+			raise IOError
+
+		if h==None:h = hTmp
+		else: h.Add(hTmp)
+		#clean h
+
+		if mc["name"]=="ttlf": hRef=h.Clone()
+
+	  if h: h.SetBinContent(0,0) ##underflow
+	  if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
+
+	  if h: ##negative yield
+		  for b in range(1,h.GetNbinsX()+1):
+			  if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
+
+	  if h:
+		  if h.Integral() <= 0 :
+			  print "ERROR histogram", h.GetName(),"has null norm"
+			  raise ValueError
+
+	  if h!=None:
+		  h.Scale(opts.lumi)
+
+	  if hRef!=None:
+		  hRef.Scale(opts.lumi)
+
+	return h,hRef
+
+
+
 #import MC
 for cat in catStore:
-    for proc in mcStore:
-          if skip(catStore[cat],mcStore[proc]): continue
-	  for syst in systStore:
-		 print "->calling import pdf with cat=",cat,"proc=",proc,"syst=",syst
-		 print " * cat:",catStore[cat]
-		 print " * syst:", systStore[syst]
-		 if systStore[syst] == None or systStore[syst]["type"] == "shape" :
-		 	importPdfFromTH1(catStore[cat],mcStore[proc],systStore[syst])
+
+	hSumAll=None
+	hRef=None
+
+	myBin=1
+	for proc in mcStore:
+		if skip(catStore[cat],mcStore[proc]): continue
+		hSumTMP,hRef=importPdfFromTH1SumBKG(catStore[cat],mcStore[proc],None)
+		if hSumAll==None:
+			hSumAll=hSumTMP
+		else:
+			hSumAll.Add(hSumTMP)
+
+	##MARIA
+##	hSumAll=Rebin1LHT(hSumAll)
+##	hSumAll=Rebin2LHT(hSumAll)
+##	for b in range(1,hSumAll.GetNbinsX()+1):
+##                if hSumAll.GetBinContent(b) == 0 :
+##			print '+++++++++++++++++++++++++++++++'
+##			print '+++++++++++++++++++++++++++++++'
+##			print 'HEY: Zero Bin in the prediction bin = ', hSumAll.GetBinCenter(b)
+##			print '+++++++++++++++++++++++++++++++'
+##			print '+++++++++++++++++++++++++++++++'
+##			raise IOError
+
+	print 'before all=',hSumAll.Integral(),' ref=',hRef.Integral()
+	b = FwRebin.Rebin(hSumAll, hSumAll, maxStat)
+	print 'out of Rebin'
+	b.directionalRebin()
+	myBin = b.getBinArray()
+	print 'myBin=',myBin,' yield=',hSumAll.Integral()
+
+	for proc in mcStore:
+		if skip(catStore[cat],mcStore[proc]): continue
+		for syst in systStore:
+			print "->calling import pdf with cat=",cat,"proc=",proc,"syst=",syst
+			print " * cat:",catStore[cat]
+			print " * syst:", systStore[syst]
+			if systStore[syst] == None or systStore[syst]["type"] == "shape" :
+				importPdfFromTH1(catStore[cat],mcStore[proc],myBin,systStore[syst])
 
 ## import and write statistical uncertainties
 importStat()
@@ -839,7 +981,12 @@ for c in catStore:
 ####1L
 ##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 
-	if doRebin and h :
+
+	if doRebin and h:
+		mybins=array('d',myBin)
+		h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+
+	if doRebinStatic and h :
 		if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
 
 			print  ' This is the data ===> cat["var"]=',cat["var"],'    ','cat["dir"]=',cat["dir"]
