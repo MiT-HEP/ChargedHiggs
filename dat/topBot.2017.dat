@@ -52,6 +52,7 @@ addConfig=ChargedHiggsTopBottom|AddLabel('VHToNonbb_M125')
 
 #addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M')
 #addConfig=ChargedHiggsTopBottom|AddLabel('WJetsToLNu')
+addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-10to50')
 addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-50_HT')
 addConfig=ChargedHiggsTopBottom|AddLabel('WJetsToLNu_HT')
 addConfig=ChargedHiggsTopBottom|AddLabel('TTTT')
@@ -70,6 +71,8 @@ addConfig=ChargedHiggsTopBottom|AddLabel('WWW')
 addConfig=ChargedHiggsTopBottom|AddLabel('WWZ')
 addConfig=ChargedHiggsTopBottom|AddLabel('WZZ')
 addConfig=ChargedHiggsTopBottom|AddLabel('ZZZ')
+## QCD
+addConfig=ChargedHiggsTopBottom|AddLabel('QCD_HT')
 
 addConfig=ChargedHiggsTopBottom|SetMultiPrimaryDataset(),AddLabel("SingleElectron"),AddLabel("SingleMuon")
 ## 0-1

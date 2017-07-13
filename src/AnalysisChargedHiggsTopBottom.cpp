@@ -401,26 +401,71 @@ void ChargedHiggsTopBottom::Init()
     for( size_t i=0;i<weights.size() ;++i)
         readers_ . push_back( new TMVA::Reader() );
 
-    for (int i=0; i<3; i++) {
+    for (int i=0; i<1; i++) {
         // 0,1,2
 
         // 1l - high mass
-        // 1l - medium mass
-        // 1l - low mass
         // GREEN
         AddVariable("bjet_pt[0]",'F',i); //0
         AddVariable("ht",'F',i);//1
-        AddVariable("AvDRBB",'F',i);//2
-        AddVariable("DRl1b1",'F',i);//3
-        AddVariable("DRlbmin",'F',i); //4
-        AddVariable("DRlbmaxPT",'F',i); //5
-        AddVariable("DEtaMaxBB",'F',i); //6
-        AddVariable("DRbbmin",'F',i); //7
-        AddVariable("MassMinlb",'F',i); //8
-        AddVariable("AvCSVPt",'F',i); //9
-        AddVariable("FW2",'F',i); //10
-        AddVariable("Cen",'F',i); //1
-        AddVariable("MJJJmaxPt",'F',i); //12
+        AddVariable("DRl1b1",'F',i);//2
+        AddVariable("DRlbmaxPT",'F',i); //3
+        AddVariable("DEtaMaxBB",'F',i); //4
+        AddVariable("MassMinlb",'F',i); //5
+        AddVariable("AvCSVPt",'F',i); //6
+        AddVariable("MJJJmaxPt",'F',i); //7
+        AddVariable("FW2",'F',i); //8
+        AddVariable("Cen",'F',i); //9
+        AddVariable("DRbbmin",'F',i); //10
+        AddVariable("DRlbmin",'F',i); //11
+        AddVariable("AvDRBB",'F',i);//12
+
+        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+
+    }
+
+    for (int i=1; i<2; i++) {
+        // 0,1,2
+
+        // 1l - medium mass
+        // GREEN
+        AddVariable("bjet_pt[0]",'F',i); //0
+        AddVariable("ht",'F',i);//1
+        AddVariable("DRl1b1",'F',i);//2
+        AddVariable("DEtaMaxBB",'F',i); //3
+        AddVariable("DRbbmin",'F',i); //4
+        AddVariable("MassMinlb",'F',i); //5
+        AddVariable("AvCSVPt",'F',i); //6
+        AddVariable("FW2",'F',i); //7
+        AddVariable("MJJJmaxPt",'F',i); //8
+        AddVariable("Cen",'F',i); //9
+        AddVariable("DRlbmin",'F',i); //10
+        AddVariable("AvDRBB",'F',i);//11
+        AddVariable("DRlbmaxPT",'F',i); //12
+
+        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+
+    }
+
+    for (int i=2; i<3; i++) {
+        // 0,1,2
+
+        // 1l - low mass
+        // GREEN
+        AddVariable("ht",'F',i);//0
+        AddVariable("AvDRBB",'F',i);//1
+        AddVariable("DRl1b1",'F',i);//2
+        AddVariable("DRlbmaxPT",'F',i); //3
+        AddVariable("DEtaMaxBB",'F',i); //4
+        AddVariable("DRbbmin",'F',i); //5
+        AddVariable("MassMinlb",'F',i); //6
+        AddVariable("AvCSVPt",'F',i); //7
+        AddVariable("FW2",'F',i); //8
+        AddVariable("Cen",'F',i); //9
+        AddVariable("MJJJmaxPt",'F',i); //10
+        AddVariable("DRlbmin",'F',i); //11
+        AddVariable("bjet_pt[0]",'F',i); //12
+
         /*
         // GREEN + BLU
         AddVariable("met_pt",'F',i); //13
@@ -445,26 +490,75 @@ void ChargedHiggsTopBottom::Init()
 
     }
 
-    for (int i=3; i<3+3; i++) {
+    //////
+    //////
+    //////
+
+    for (int i=3; i<3+1; i++) {
         // 0,1,2
 
         // 2l - high mass
-        // 2l - medium mass
-        // 2l - low mass
         // GREEN
         AddVariable("bjet_pt[0]",'F',i); //0
         AddVariable("ht",'F',i); //1
         AddVariable("AvDRBB",'F',i);//2
         AddVariable("DRl1b1",'F',i); //3
-        AddVariable("DRlbmin",'F',i); //4
+        AddVariable("DRlbmaxPT",'F',i); //4
+        AddVariable("DEtaMaxBB",'F',i); //5
+        AddVariable("MassMinlb",'F',i); //6
+        AddVariable("AvCSVPt",'F',i); //7
+        AddVariable("mtMin",'F',i); //8
+        AddVariable("DRlbmin",'F',i); //9
+        AddVariable("FW2",'F',i); //10
+        AddVariable("DRbbmin",'F',i); //11
+        AddVariable("Cen",'F',i); //12
+
+        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+
+    }
+
+
+    for (int i=4; i<4+1; i++) {
+        // 0,1,2
+
+        // 2l - medium mass
+        // GREEN
+        AddVariable("bjet_pt[0]",'F',i); //0
+        AddVariable("ht",'F',i); //1
+        AddVariable("DRl1b1",'F',i); //2
+        AddVariable("DRlbmaxPT",'F',i); //3
+        AddVariable("DEtaMaxBB",'F',i); //4
+        AddVariable("DRbbmin",'F',i); //5
+        AddVariable("MassMinlb",'F',i); //6
+        AddVariable("AvCSVPt",'F',i); //7
+        AddVariable("FW2",'F',i); //8
+        AddVariable("mtMin",'F',i); //9
+        AddVariable("Cen",'F',i); //10
+        AddVariable("AvDRBB",'F',i); //11
+        AddVariable("DRlbmin",'F',i); //12
+
+        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+
+    }
+
+    for (int i=5; i<5+1; i++) {
+        // 0,1,2
+
+        // 2l - low mass
+        // GREEN
+        AddVariable("ht",'F',i); //1
+        AddVariable("AvDRBB",'F',i);//2
+        AddVariable("DRl1b1",'F',i); //3
         AddVariable("DRlbmaxPT",'F',i); //5
         AddVariable("DEtaMaxBB",'F',i); //6
         AddVariable("DRbbmin",'F',i); //7
         AddVariable("MassMinlb",'F',i); //8
         AddVariable("AvCSVPt",'F',i); //9
         AddVariable("FW2",'F',i); //10
-        AddVariable("Cen",'F',i); //11
+        AddVariable("bjet_pt[0]",'F',i); //0
         AddVariable("mtMin",'F',i); //12
+        AddVariable("DRlbmin",'F',i); //4
+        AddVariable("Cen",'F',i); //11
         /*
         // GREEN + BLU
         AddVariable("met_pt",'F',i); //13

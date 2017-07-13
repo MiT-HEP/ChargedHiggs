@@ -16,12 +16,13 @@ include=dat/catalog/2017.moriond/dy.dat
 include=dat/catalog/2017.moriond/wjets.dat
 include=dat/catalog/2017.moriond/vv.dat
 include=dat/catalog/2017.moriond/rares.dat
-## signal
+include=dat/catalog/2017.moriond/ttISRFSR.dat
+# signal
 include=dat/catalog/2017.moriond/topbottom.dat
-## data
+# data
 include=dat/catalog/2017.moriond/singleElecton.dat
 include=dat/catalog/2017.moriond/singleMuon.dat
-
+#
 
 include=dat/topBot.2017.dat
 pileup=aux/pileup.2017.BCDEFGH.root
@@ -29,33 +30,31 @@ pileup=aux/pileup.2017.BCDEFGH.root
 #__________________________________________________________________
 #____________________ SPECIAL SETTINGS _____________________________
 
-#Files=
+Files=
+#include=dat/catalog/2017.moriond/ttISRFSR.dat
 #include=dat/catalog/2017.moriond/ttlep.dat
-#include=dat/catalog/2017.moriond/topbottom.dat
-#include=dat/topBot.OnlyChTB.dat
+
+#include=dat/catalog/2017.moriond/tt.dat
 #include=dat/topBot.OnlyTTbar.dat
 
-#__________________________________________________________________
-#____________________ ICHEP SETTINGS _____________________________
-#
-#include=dat/config.2016.dat
-#include=dat/topBot.dat
+#include=dat/topBot.labelSplit_2l.dat
+###include=dat/topBot.labelSplit_GB_2l.dat
+#include=dat/catalog/2017.moriond/topbottom.dat
+#include=dat/topBot.OnlyChTB.dat
 
-#Files=
-#include=dat/catalog/2016/vv.dat
-#include=dat/catalog/2016/ttlep.dat
-#include=dat/catalog/2016/st.dat
-#include=dat/catalog/2016/topbottom.dat
-#include=dat/catalog/2016/taunu.dat
-#include=dat/catalog/2016/singleMuon_ICHEP.dat
-#include=dat/catalog/2016/singleElectron_ICHEP.dat
-#include=dat/catalog/2016/dy.dat
-#include=dat/catalog/2016/wjets.dat
-#include=dat/catalog/2016/rares.dat
+#include=dat/catalog/2017.moriond/st.dat
+#include=dat/catalog/2017.moriond/rares.dat
+#include=dat/topBot.OnlyTopMinor.dat
 
-#pileup=aux/pileup.2016.BCD.root
+#include=dat/topBot.EWKOnly.dat
+#include=dat/catalog/2017.moriond/dy_ht.dat
+#addfiles=/store/group/phys_higgs/ceballos/Nero/v2.2/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#include=dat/catalog/2017.moriond/wjets_ht.dat
+#include=dat/catalog/2017.moriond/vv.dat
 
-####
+#include=dat/topBot.DATAOnly.dat
+#include=dat/catalog/2017.moriond/singleElecton.dat
+#include=dat/catalog/2017.moriond/singleMuon.dat
 
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
@@ -63,10 +62,12 @@ pileup=aux/pileup.2017.BCDEFGH.root
 
 ### Smearer
 
-Smear=NONE
-#Smear=NONE,@SmearUncluster(),@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearPu,@SmearSF("TOPRW"!"topreweight"),JES
+#Smear=NONE
 
-#Smear=@SmearSF("muID"!"muID"),@SmearSF("muTRG"!"muTRG"),@SmearSF("muISO"!"muISO"),@SmearSF("eleTight"!"eletight"),@SmearSF("muIDloose"!"muIDloose"),@SmearSF("muISOloose"!"muISOloose"),@SmearSF("eleVeto"!"eleveto")
+Smear=NONE,@SmearUncluster(),@SmearPu,@SmearSF("TOPRW"!"topreweight"),JES,@SmearSF("muTRG"!"muTRG"),*[1!6]SmearJesAndCSV(%%d),@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+
+#old way to do btaggind syst, muon and electron
+#Smear=@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("muID"!"muIDtight"),@SmearSF("muTRG"!"muTRG"),@SmearSF("muISO"!"muISO"),@SmearSF("muRECO"!"muRECO"),@SmearSF("eleTight"!"eletight"),@SmearSF("muIDloose"!"muIDloose"),@SmearSF("muISOloose"!"muISOloose"),@SmearSF("eleVeto"!"eleveto")
 
 #Smear=NONE,JER # this is problematic
 
@@ -74,15 +75,16 @@ Smear=NONE
 
 Correct=NONE
 #Correct=MetPhiCorrector
-Final=no
-#Final=yes
+#Final=no
+Final=yes
 # final remember: no tree, no data, w/ syst
+EntryPerSecond=20
 
 #________________________________________________________________
 #____________________ CONFIGURATION _____________________________
 #
 ##########  ANALYSIS  ################
-Analysis=JsonAnalysis,MetFiltersAnalysis,ChargedHiggsTopBottom
+Analysis=JsonAnalysis,SplitMCAnalysis,MetFiltersAnalysis,ChargedHiggsTopBottom
 
 #addConfig=ChargedHiggsTopBottom|do1lAnalysis=1,do2lAnalysis=0,doTaulAnalysis=0,doSynch=0
 #Output=ChHiggs_1l.root
