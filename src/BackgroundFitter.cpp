@@ -31,11 +31,18 @@ class PdfModelBuilder
     map<string,RooAbsPdf*> pdfs;
     map<string,RooDataHist*> hists;
     TRandom3 *RandomGen{NULL} ;
+    private:
+    bool replace(std::string& str, const std::string& from, const std::string& to) { // from SO
+        size_t start_pos = str.find(from);
+        if(start_pos == std::string::npos) return false;
+        str.replace(start_pos, from.length(), to);
+        return true;
+    }
     public:
         PdfModelBuilder(){};
         ~PdfModelBuilder(){};
         //
-        void setObsVar(RooRealVar *var){obs_var=var;};
+        void setObsVar(RooRealVar *var){obs_var=var; prods["obs_range"] = new RooFormulaVar(Form("%s_range",obs_var->GetName()),"normalized obs var",Form("(@0-%f)/(%f)",obs_var->getMin(),obs_var->getMax()-obs_var->getMin()),*obs_var);};
         RooAbsPdf* getBernstein(string prefix, int order,bool positive=true);
         RooAbsPdf* getModBernstein(string prefix, int order);
         //RooAbsPdf* getChebychev(string prefix, int order);
@@ -49,7 +56,8 @@ class PdfModelBuilder
         RooAbsPdf* getExpPol(string prefix, int order); // e^pol
         RooAbsPdf* getDYBernstein(string prefix, int order,TH1D*dy);
         RooAbsPdf* getZPhotonRun1(string prefix, int order);
-        RooAbsPdf* getZModExp(string prefix, int order);
+        RooAbsPdf* getZModExp(string prefix, int order); // BWZ * (1+x)
+        RooAbsPdf* getZModExp2(string prefix, int order); /// BWZ * (1+x + x(1-x))
         RooAbsPdf* getBWZ(string prefix, int order);
         RooAbsPdf* getPolyTimesFewz(string prefix,int order,string fname);
 
@@ -181,9 +189,35 @@ RooAbsPdf* PdfModelBuilder::getZModExp(string prefix, int order){
         params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-2, 2.0 );
         plist->add(*params[pname]); // @3
 
-        pname = prefix + "_d";
-        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),0.0,-5.0, 5.0 );
-        plist->add(*params[pname]); // @4
+        //plist->add(*prods["obs_range"]); // @4
+
+        //pname = prefix + "_d";
+        //params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),0.0,-.1,.1 );
+        //plist->add(*params[pname]); // @5
+        //
+        bool firstFound=false;
+        for( int cat=12 ; cat>=0 ;--cat)
+        {
+            bool found =false;
+            for( const string&suf : {"_a","_b","_c"} )
+            {
+                string pname = prefix+suf;
+                string old = pname;
+                size_t pos=pname.find("cat");
+                string thisCat="cat";
+                thisCat += Form("%c",pname[pos+3]);
+                if ( pname[pos+4] >='0' and pname[pos+4]<='9') thisCat += Form("%c",pname[pos+4]);
+                replace(old,thisCat ,Form("cat%d",cat));
+                if (params.find(old) != params.end())
+                {
+                    cout<<"TAKING PARAMS FROM "<<old<<" TO "<<pname<<endl;
+                    params[pname] -> setVal( params[old]->getVal());
+                    found=true;
+                }
+            }
+            if (found and not firstFound) { firstFound=true; found=false;}
+            if (found ) break;
+        }
 
         if (order >1)
         {
@@ -204,7 +238,83 @@ RooAbsPdf* PdfModelBuilder::getZModExp(string prefix, int order){
     RooAbsPdf *zmod=NULL;
     //if (order ==3 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-@6),@1)+TMath::Power(@5/2.,@1))",*plist); //FIXME
     //if (order ==2 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(@5/2.,@1))",*plist);//FIXME
-    if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1))*(1.+@4*(@0-110))",*plist);
+    if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) ",*plist);
+
+    return zmod;
+}
+
+
+RooAbsPdf* PdfModelBuilder::getZModExp2(string prefix, int order){
+    if ( order >5) return NULL;
+
+    RooArgList *plist = new RooArgList();
+    plist->add(*obs_var); //@0
+    string pname;
+
+        pname = prefix + "_a";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),1.,-5.0, 5.0 );
+        plist->add(*params[pname]); // @1
+
+        pname = prefix + "_b";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),.1,-2, 2 );
+        plist->add(*params[pname]); // @2
+
+        pname = prefix + "_c";
+        params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-2, 2.0 );
+        plist->add(*params[pname]); // @3
+
+        if (order >=2)
+        {
+            plist->add(*prods["obs_range"]); // @4
+
+            pname = prefix + "_e";
+            params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),0.0,-0.05, 0.05 );
+            plist->add(*params[pname]); // @5
+        }
+
+        if (order >=3)
+        {
+            pname = prefix + "_f";
+            params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),0.0,-0.05, 0.05 );
+            plist->add(*params[pname]); // @6
+        }
+        if (order >=4)
+        {
+            pname = prefix + "_g";
+            params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),0.0,-0.05, 0.05 );
+            plist->add(*params[pname]); // @7
+        }
+
+        if (order >=5)
+        {
+            pname = prefix + "_h";
+            params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),0.0,-0.05, 0.05 );
+            plist->add(*params[pname]); // @8
+        }
+    
+    for( const string&suf : {"_a","_b","_c"} )
+    {
+        string pname = prefix+suf;
+        string old = pname;
+        replace(old,"zmod2","zmod");
+        if (params.find(old) != params.end()) params[pname] -> setVal( params[old]->getVal());
+        else cout <<"WARNING UNABLE TO FIND REPLACEMENT FROM "<<old<<" TO "<<pname<<endl;
+    }
+    //if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1 + @5*TMath::Sin(TMath::Sqrt(@4+.2)*4.5*3.1415 ))",*plist);
+
+
+    // the envelope does getVariables->size to compute the penalization term
+    RooAbsPdf *zmod=NULL;
+    //if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
+    //        "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) ",*plist);
+    //if (order ==2 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
+    //        "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1+ @5@*(@4-.5))",*plist);
+    //if (order ==3 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
+    //        "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * ( 1+ @5*3*@4*@4 + @6*6*@4*(1-@4)+ (-@5-@6)*3*(1-@4)*(1-@4) )",*plist);
+    //if (order ==4 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
+    //        "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * ( 1+ @5*4*@4*@4*@4 + @6*@4*@4*(1-@4) + @7*@4*(1-@4)*(1-@4) + (-@5-@6-@7)*(1-@4)*(1-@4)*(1-@4) )",*plist);
+    if (order ==5 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
+            "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1+ @5*5*pow(@4,4)+20*@6*pow(@4,3)*(1-@4)+@7*30*@4*@4*(1-@4)*(1-@4) + @8 *20*@4*pow(1-@4,3)+(-@5-@6-@7-@8)*5*pow(1-@4,4))",*plist);
 
     return zmod;
 }
@@ -506,7 +616,9 @@ RooAbsPdf* PdfModelBuilder::getPdf(const string& prefix,int order )
         return getBernstein(prefix+ Form("_ord%d",order),order);
     if (prefix.find("zpho") != string::npos)
         return getZPhotonRun1(prefix+ Form("_ord%d",order),order);
-    if (prefix.find("zmod") != string::npos)
+    if (prefix.find("zmod2") != string::npos)
+        return getZModExp2(prefix+ Form("_ord%d",order),order);
+    else if (prefix.find("zmod") != string::npos)
         return getZModExp(prefix+ Form("_ord%d",order),order);
     if (prefix.find("bwz") != string::npos)
         return getBWZ(prefix+ Form("_ord%d",order),order);
@@ -594,7 +706,7 @@ RooAbsPdf* PdfModelBuilder::fTest(const string& prefix,RooDataHist*dh,int *ord,c
             for (auto &s : store){
                 if (i<=6) {col=color[i];i++;}
                 else {col=kBlack; style++; i=0;}
-                s.second->plotOn(p,RooFit::Layout(0.34,0.96,0.89),RooFit::Format("NEA",AutoPrecision(1)),LineColor(col));
+                s.second->plotOn(p,LineColor(col));
                 TObject *pdfLeg = p->getObject(int(p->numItems()-1));
                 leg->AddEntry(pdfLeg,s.first.c_str(),"L");
             }
@@ -784,6 +896,28 @@ RooAbsPdf* PdfModelBuilder::getExponentialSingle(string prefix, int order){
       pdfs.insert(pair<string,RooAbsPdf*>(ename, new RooExponential(ename.c_str(),ename.c_str(),*obs_var,*params[name])));
       exps->add(*pdfs[ename]);
     }
+
+    // reset parameters  to decent values
+    if (order > 3) //5
+    {
+        for(int i=1; i<=nfracs;++i){ //
+            string oldName=Form("%s_f%d",prefix.c_str(),i);
+            string newName=Form("%s_f%d",prefix.c_str(),i);
+            bool success=replace( oldName, Form("ord%d",order), Form("ord%d",order-2) );
+            if (not success) continue;
+            if (i==nfracs) {oldName=Form("%s_f%d",prefix.c_str(),i-1);params[newName] -> setVal( params[oldName]->getVal()*.7);}
+            else params[newName] -> setVal( params[oldName]->getVal()*.9); // slightly smaller fractions !
+            
+        } 
+        for (int i=1; i<=nexps; i++){ // and now parameters,
+          string newName =  Form("%s_p%d",prefix.c_str(),i);
+          string oldName = newName;
+          bool success=replace( oldName, Form("ord%d",order), Form("ord%d",order-2) );
+          if (not success) continue;
+          if (i==nexps) { oldName = Form("%s_p%d",prefix.c_str(),i-1); params[newName] -> setVal( params[oldName]->getVal()*.8); }
+          else params[newName] -> setVal( params[oldName]->getVal()*1.1 ) ;
+        }
+    }
     //fracs->Print("v");
     //exps->Print("v");
     RooAbsPdf *exp = new RooAddPdf(prefix.c_str(),prefix.c_str(),*exps,*fracs,true);
@@ -927,7 +1061,7 @@ void BackgroundFitter::fit(){
         cout<<"*** Fitting Bernstein ***"<<endl;
         int bernOrd;
         RooAbsPdf* bern = modelBuilder.fTest(Form("bern_cat%d",cat) ,hist_[name],&bernOrd,plotDir + "/bern");
-        storedPdfs.add(*bern);
+        storedPdfs.add(*bern); // 0
 
         cout<<"*** Fitting DY Bernstein ***"<<endl;
         int dybernOrd;
@@ -949,12 +1083,12 @@ void BackgroundFitter::fit(){
         cout<<"*** Fitting ZPHO ***"<<endl;
         int zphoOrd;
         RooAbsPdf* zpho = modelBuilder.fTest(Form("zpho_cat%d",cat) ,hist_[name],&zphoOrd,plotDir + "/zpho");
-        storedPdfs.add(*zpho);
+        storedPdfs.add(*zpho); //1
 
         cout<<"*** Fitting ZMOD ***"<<endl;
         int zmodOrd;
         RooAbsPdf* zmod = modelBuilder.fTest(Form("zmod_cat%d",cat) ,hist_[name],&zmodOrd,plotDir + "/zmod");
-        storedPdfs.add(*zmod);
+        storedPdfs.add(*zmod);//2
 
         cout<<"*** Fitting ZRED ***"<<endl;
         int bwzOrd;
@@ -966,36 +1100,42 @@ void BackgroundFitter::fit(){
         RooAbsPdf* modbern = modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
         //storedPdfs.add(*modbern);
 
-        cout<<"*** Fitting POWLAW ***"<<endl;
-        int powlawOrd;
-        RooAbsPdf* powlaw = modelBuilder.fTest(Form("powlaw_cat%d",cat) ,hist_[name],&powlawOrd, plotDir+"/powlaw");
+        //cout<<"*** Fitting POWLAW ***"<<endl;
+        //int powlawOrd;
+        //RooAbsPdf* powlaw = modelBuilder.fTest(Form("powlaw_cat%d",cat) ,hist_[name],&powlawOrd, plotDir+"/powlaw");
         //storedPdfs.add(*powlaw);
 
         cout<<"*** Fitting EXP ***"<<endl;
         int expOrd;
         RooAbsPdf* exp = modelBuilder.fTest(Form("exp_cat%d",cat) ,hist_[name],&expOrd,plotDir+"/exp");
-        storedPdfs.add(*exp);
+        storedPdfs.add(*exp); // 3
 
-        cout<<"*** Fitting LAU ***"<<endl;
-        int lauOrd;
-        RooAbsPdf* lau = modelBuilder.fTest(Form("lau_cat%d",cat) ,hist_[name],&lauOrd,plotDir+"/lau");
+        //cout<<"*** Fitting LAU ***"<<endl;
+        //int lauOrd;
+        //RooAbsPdf* lau = modelBuilder.fTest(Form("lau_cat%d",cat) ,hist_[name],&lauOrd,plotDir+"/lau");
         //storedPdfs.add(*lau);
         //
         //
         cout<<"*** Fitting fewz_1j ***"<<endl;
         int fewz_1jOrd;
         RooAbsPdf* fewz_1j = modelBuilder.fTest(Form("fewz_1j_cat%d",cat) ,hist_[name],&fewz_1jOrd,plotDir + "/fewz_1j");
-        storedPdfs.add(*fewz_1j);
+        storedPdfs.add(*fewz_1j); //4
 
         cout<<"*** Fitting fewz_2j ***"<<endl;
         int fewz_2jOrd;
         RooAbsPdf* fewz_2j = modelBuilder.fTest(Form("fewz_2j_cat%d",cat) ,hist_[name],&fewz_2jOrd,plotDir + "/fewz_2j");
-        storedPdfs.add(*fewz_2j);
+        storedPdfs.add(*fewz_2j); //5
 
         cout<<"*** Fitting fewz_full ***"<<endl;
         int fewz_fullOrd;
         RooAbsPdf* fewz_full = modelBuilder.fTest(Form("fewz_full_cat%d",cat) ,hist_[name],&fewz_fullOrd,plotDir + "/fewz_full");
-        storedPdfs.add(*fewz_full);
+        storedPdfs.add(*fewz_full);//6
+
+        cout<<"*** Fitting ZMOD2 ***"<<endl;
+        int zmod2Ord;
+        RooAbsPdf* zmod2 = modelBuilder.fTest(Form("zmod2_cat%d",cat) ,hist_[name],&zmod2Ord,plotDir + "/zmod2");
+        storedPdfs.add(*zmod2); //7
+
 
         // construct final model
         cout<<" -> Constructing Final model for cat"<<cat<<endl;
@@ -1040,10 +1180,11 @@ void BackgroundFitter::fit(){
             //    plotOnFrame( p, dybern, kGray+2, kDashed,Form("dybern ord=%d chi2=%.2f",dybernOrd,modelBuilder.getGoodnessOfFit(x_, dybern, hist_[name], plotDir +"/dybern/chosen",blind) ),leg);
             plotOnFrame( p, zpho, kOrange, kSolid,Form("zpho ord=%d chi2=%.2f",zphoOrd,modelBuilder.getGoodnessOfFit(x_, zpho, hist_[name], plotDir +"/zpho/chosen",blind) ),leg);
             plotOnFrame( p, zmod, kRed+2, kDashed,Form("zmod ord=%d chi2=%.2f",zmodOrd,modelBuilder.getGoodnessOfFit(x_, zmod, hist_[name], plotDir +"/zmod/chosen",blind) ),leg);
+            plotOnFrame( p, zmod2, kRed, kSolid,Form("zmod2 ord=%d chi2=%.2f",zmod2Ord,modelBuilder.getGoodnessOfFit(x_, zmod2, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
             plotOnFrame( p, bwz, kCyan, kSolid,Form("bwz ord=%d chi2=%.2f",bwzOrd,modelBuilder.getGoodnessOfFit(x_, bwz, hist_[name], plotDir +"/bwz/chosen",blind) ),leg);
-            plotOnFrame( p, powlaw, kRed, kSolid,Form("powlaw ord=%d chi2=%.2f",powlawOrd,modelBuilder.getGoodnessOfFit(x_, powlaw, hist_[name], plotDir +"/powlaw/chosen",blind) ),leg);
+            //plotOnFrame( p, powlaw, kRed, kSolid,Form("powlaw ord=%d chi2=%.2f",powlawOrd,modelBuilder.getGoodnessOfFit(x_, powlaw, hist_[name], plotDir +"/powlaw/chosen",blind) ),leg);
             plotOnFrame( p, exp, kGreen, kSolid,Form("exp ord=%d chi2=%.2f",expOrd,modelBuilder.getGoodnessOfFit(x_, exp, hist_[name], plotDir +"/exp/chosen",blind) ),leg);
-            plotOnFrame( p, lau, kMagenta, kSolid,Form("lau ord=%d chi2=%.2f",lauOrd,modelBuilder.getGoodnessOfFit(x_, lau, hist_[name], plotDir +"/lau/chosen",blind) ),leg);
+            //plotOnFrame( p, lau, kMagenta, kSolid,Form("lau ord=%d chi2=%.2f",lauOrd,modelBuilder.getGoodnessOfFit(x_, lau, hist_[name], plotDir +"/lau/chosen",blind) ),leg);
             plotOnFrame( p, fewz_1j, kGreen+2, kSolid,Form("fewz_1j ord=%d chi2=%.2f",fewz_1jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_1j, hist_[name], plotDir +"/fewz_1j/chosen",blind) ),leg);
             plotOnFrame( p, fewz_2j, kMagenta+2, kDashed,Form("fewz_2j ord=%d chi2=%.2f",fewz_2jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_2j, hist_[name], plotDir +"/fewz_2j/chosen",blind) ),leg);
             plotOnFrame( p, fewz_full, kCyan+2, kSolid,Form("fewz_full ord=%d chi2=%.2f",fewz_fullOrd, modelBuilder.getGoodnessOfFit(x_, fewz_full, hist_[name], plotDir +"/fewz_full/chosen",blind) ),leg);

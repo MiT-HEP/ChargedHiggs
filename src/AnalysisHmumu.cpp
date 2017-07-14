@@ -1090,7 +1090,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
 
     // Trigger
-    #warning Mu20
+    //#warning Mu20
     bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 and mu1->Pt() >20 );
     bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); 
 
