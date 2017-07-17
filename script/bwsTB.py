@@ -11,8 +11,8 @@ maxStat=0.13
 
 parser= OptionParser()
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE30_Green_FinalSUMMARY_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JUNE30_Green_FinalSUMMARY_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JULY12_Green_Final_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JULY12_Green_Final_2l.root")
 
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
 parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
@@ -84,17 +84,22 @@ def RebinBDT1(h):
         ''' Rebin with un-even bins '''
 	print 'using BDT1 - high 1l'
         mybins=array('d',[-1,
-                           -0.98,-0.95,-0.92,
-                           -0.89,-0.86,-0.83,-0.8,
-                           -0.75,-0.7,
-                           -0.65, -0.60, -0.55, -0.50, -0.45, -0.40,
-                           -0.35, -0.30, -0.25, -0.20, -0.15, -0.10,
-                           -0.05, 0.0, 0.05, 0.10, 0.15, 0.20,
-                           0.25,0.30,0.35,0.40,
-                           0.45,0.50,0.55,0.60,0.65,0.68,0.70,
-                           0.71,0.72,0.73,0.74,0.75,0.76,0.77,0.78,0.79,0.8,
-                           0.81,0.82,0.83,0.84,0.85,0.86,0.87,0.88,0.89,0.9,
-                           0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,
+                           -0.95,-0.90,-0.85,-0.80,-0.75,-0.70,-0.65,-0.6,
+                           -0.56,-0.52,-0.48,-0.44,-0.40,
+                           -0.36,-0.32,
+                           -0.28,-0.24,
+                           -0.2,-0.16,-0.12,
+                           -0.08,-0.04,
+                           0.0,0.04,0.08,
+                           0.12,0.16,0.2,
+                           0.24,0.28,
+                           0.32,0.36,0.40,
+                           0.42,0.44,0.46,0.48,0.5,
+                           0.52,0.54,0.56,0.58,0.6,
+                           0.62,0.64,0.66,0.68,0.7,
+                           0.72,0.74,0.76,0.78,0.8,
+                           0.82,0.84,0.86,0.88,0.9,
+                           0.92,0.94,0.96,0.98,
                            1.])
 	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
 	return h1
@@ -105,11 +110,12 @@ def RebinBDT2(h):
         mybins=array('d',[-1,
                            -0.90,-0.8,-0.75,-0.7,
                            -0.65,-0.6,-0.55,-0.50,-0.45,-0.40,
-                           -0.36,-0.32,-0.29,-0.26,-0.23,-0.20,-0.17,-0.14,
-                           -0.11,-0.08,-0.05,-0.02,0.01,0.04,0.07,0.10,
-                           0.13,0.16,0.19,0.22,0.25,0.28,0.31,0.34,0.37,0.40,
-                           0.43,0.46,0.49,0.52,0.55,0.58,0.61,0.64,0.67,0.70,
-                           0.8,0.9,
+                           -0.36,-0.32,-0.28,-0.24,-0.20,
+                           -0.16,-0.12,-0.08,-0.04,0.0,
+                           0.04,0.08,0.12,
+                           0.16,0.20,0.24,0.28,0.32,0.36,0.40,
+                           0.44,0.48,0.52,0.56,0.60,0.64,0.68,
+                           0.72,0.76,0.80,0.9,
                            1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
@@ -119,12 +125,14 @@ def RebinBDT3(h):
         ''' Rebin with un-even bins '''
         print 'using binning BDT3'
         mybins=array('d',[-1,
-			   -0.90,-0.80, -0.70,-0.60,-0.50,-0.40,-0.30,
-			   -0.25,-0.20,-0.15,-0.10,-0.05,
-			   0.,0.05,0.1,0.15,0.2,
-			   0.25,0.3,0.30,0.35,0.4,
-			   0.45,0.5,0.55,0.6,
-			   0.65,0.70,0.80, 0.9,
+                           -0.95,-0.9,-0.85,-0.8,-0.75,-0.7,-0.65,-0.6,-0.55,-0.5,
+                           -0.46,-0.44,-0.4,-0.36,-0.32,-0.28,-0.24,-0.2,-0.16,-0.12,
+                           -0.08,-0.04,-0., 0.04,0.08,0.12,0.16,0.2,0.24,0.28,
+                           0.32,0.36,0.4,0.44,0.48,0.52,0.56,0.6,
+                           0.65,0.7,
+                           0.75,0.8,
+                           0.85,0.9,
+                           0.95,
 			   1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
@@ -133,15 +141,18 @@ def RebinBDT4(h):
         ''' Rebin with un-even bins '''
         print 'using BDT4 high-2l'
         mybins=array('d',[-1,
-                           -0.98,-0.95,-0.92,
-                           -0.89,-0.86,-0.83,-0.8,
-                           -0.75,-0.7,
-			   -0.60, -0.50, -0.40,
-			   -0.30, -0.20, -0.10,
-			   0.0, 0.05, 0.10, 0.15,0.20,
+                           -0.95, -0.90,
+                           -0.85, -0.80,
+                           -0.75, -0.7,
+                           -0.65, -0.60, -0.55, -0.50, -0.45, -0.40,
+                           -0.35, -0.30, -0.25, -0.20, -0.15, -0.10,
+                           -0.05,  0.0,   0.05, 0.10, 0.15,0.20,
                            0.25,0.30,
-			   0.35,0.45,
-                           0.60,0.80,
+                           0.35,0.40,
+                           0.45,0.50,
+                           0.55,0.60,
+                           0.65,0.70,
+                           0.80,
 			   1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
@@ -150,12 +161,13 @@ def RebinBDT6(h):
         ''' Rebin with un-even bins '''
         print 'using BDT6 low-2l'
         mybins=array('d',[-1,
-                           -0.8,-0.6,-0.5,-0.4,
-                           -0.35,-0.3,-0.25,-0.20,-0.15,-0.10,
+                           -0.7,-0.6,-0.5,-0.4,
+                           -0.3,-0.25,-0.20,-0.15,-0.10,
                            -0.05, 0.0, 0.05, 0.10, 0.15, 0.20,
                            0.25,0.30,
-                           0.35,0.40,0.45,
-                           0.55,0.80,
+                           0.35,0.40,
+                           0.45,0.50,0.55,0.60,0.65,
+                           0.70,0.75,0.80,0.85,0.90,
                            1.])
         h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
         return h1
@@ -178,10 +190,12 @@ channel = []
 if opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==0 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13:
 	channel = ["1Mu","1Ele"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7","charmCR"]
+#	basecat = ["Baseline"]
 
 if opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16:
 	channel = ["1Mu1Ele","2Mu","2Ele"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
+#	basecat = ["Baseline"]
 
 if opts.kTest==8 or opts.kTest==9:
 	channel = ["1Mu","1Ele","1Mu1Ele","2Mu","2Ele"]
@@ -194,11 +208,12 @@ label=""
 VarTest=""
 
 doSyst = True
-doRebinStatic = False
-doRebin = True
+doRebinStatic = True
+doRebin = False
 
-#if opts.kTest > 10:
-#	doRebin = False
+if opts.kTest > 10:
+	doRebin = False
+	doRebinStatic = False
 
 for y in channel:
 	for x in basecat:
@@ -346,11 +361,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="JULY8_GREEN/"+label+VarTest+opts.output
+fileTmp="JULY12_GREEN/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "JULY8_GREEN/"+ label + VarTest + datNameTmp
+datName = "JULY12_GREEN/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -525,6 +540,10 @@ def importStat():
 	      if c > 0 and err/c <.10: continue ## don't write less than 10% // TEMPORARY
 	      hupbin.SetBinContent(i+1,cont+err)
 	      hdnbin.SetBinContent(i+1,cont-err)
+
+	      if hupbin.GetBinContent(i+1) <0 : hupbin.SetBinContent(i+1,cont)
+	      if hdnbin.GetBinContent(i+1) <0 : hdnbin.SetBinContent(i+1,cont)
+
 	      target = stat["target"]
 	      cat = catStore[stat["cat"] ]
 	      print "++++++++++++++++++++target",target,' cate',cat
@@ -661,6 +680,7 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 	if skip: return
 
 	scaleEveRemoval=1
+	delta=0
 
 ####
 ####
@@ -672,7 +692,7 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 	  if m >10 :
 		  target = "pdf_" + mc["name"] +"_M-%d"%m+"_"+ cat["name"]
 
-	  if syst == None and mc["name"]=="Hptb":
+	  if mc["name"]=="Hptb" and "Baseline" in cat["dir"] :
 ##	  if mc["name"]=="Hptb":
 		  mclabel="0"
 		  #		  print 'ciao m=',m
@@ -693,11 +713,8 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 		  #		  print 'mc=',mclabel
 		  hscale="SplitMC/CutFlow/CutFlow_"+mclabel
 		  hScale=tfile.Get(hscale)
-		  scaleEveRemoval=hScale.GetBinContent(1)/hScale.GetBinContent(2)
-
-#		  print '=============================='
-#		  print 'mc=',mclabel,'total=',hScale.GetBinContent(1),' pass=',hScale.GetBinContent(2),'scale=',scale
-#		  print '=============================='
+##		  scaleEveRemoval=hScale.GetBinContent(1)/hScale.GetBinContent(2)
+		  delta=hScale.GetBinContent(1)-hScale.GetBinContent(2)
 
 	  if syst != None:
 		  target += "_" + syst["wsname"] + s
@@ -707,6 +724,7 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 
 		if mc["name"]=="Hptb":
 		   toget=toget%m
+
 		if syst != None:
 			toget += "_" + syst["name"] + s
 		hTmp=tfile.Get(toget)
@@ -714,6 +732,18 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 		if hTmp == None:
 			print "<*> Hist '"+toget+"' doesn't exist"
 			raise IOError
+
+		if "Baseline" in cat["dir"]:
+			survived=hTmp.GetEntries()
+			dropFrac=delta/(survived+delta)
+			survivedFrac=survived/(survived+delta)
+			scaleEveRemoval=(survived+delta)/survived
+
+			print '=============================='
+			print 'mc=',m,'total(Baseline)=',survived+delta,' dropFrac=',dropFrac,' survidedFrac=',survivedFrac,'scale=',scaleEveRemoval
+			print '=============================='
+
+
 ### -- MC --
 ##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 #####1L
@@ -735,34 +765,24 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 			print 'after=',hTmp.GetNbinsX()
 
 		if doRebinStatic and hTmp:
-			if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
-
-				if "Baseline" in cat["dir"]:
-					if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": hTmp=Rebin1LHT(hTmp)
-					elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": hTmp=Rebin1LHT(hTmp)
-					else:
-						if opts.kTest==3: hTmp=RebinBDT3(hTmp)
-						if opts.kTest==2: hTmp=RebinBDT2(hTmp)
-						if opts.kTest==1: hTmp=RebinBDT1(hTmp)
-
-				if "topCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin1LHT(hTmp)
-				if "charmCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin1LHT(hTmp)
-				if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin1LHT(hTmp)
-##### 2L
-#
-			if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
-				#
-				if "Baseline" in cat["dir"]:
-					if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": hTmp=Rebin2LHT(hTmp)
-					elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": hTmp=Rebin2LHT(hTmp)
-					else:
-						if opts.kTest==6: hTmp=RebinBDT6(hTmp)
-						if opts.kTest==5: hTmp=RebinBDT2(hTmp)
-						if opts.kTest==4: hTmp=RebinBDT4(hTmp)
-
-				if "topCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin2LHT(hTmp)
-				if "charmCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin2LHT(hTmp)
-				if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin2LHT(hTmp)
+			if "Baseline" in cat["dir"] and opts.kTest>0 and opts.kTest<7:
+				if opts.kTest==3: hTmp=RebinBDT3(hTmp)
+				if opts.kTest==2: hTmp=RebinBDT2(hTmp)
+				if opts.kTest==1: hTmp=RebinBDT1(hTmp)
+				if opts.kTest==6: hTmp=RebinBDT6(hTmp)
+				if opts.kTest==5: hTmp=RebinBDT2(hTmp)
+				if opts.kTest==4: hTmp=RebinBDT4(hTmp)
+				print '------------------------'
+				print '------------------------'
+				print 'BASELINE and doing doRebinStatic now MC'
+				print ' nBin=',hTmp.GetNbinsX()
+				print '------------------------'
+				print '------------------------'
+			else:
+				mybins=array('d',myBin)
+				print 'before=',hTmp.GetNbinsX()
+				hTmp=hTmp.Rebin(len(mybins)-1,hTmp.GetName()+"_rebin",mybins)
+				print 'after=',hTmp.GetNbinsX()
 
 		if h==None:h = hTmp
 		else: h.Add(hTmp)
@@ -902,15 +922,15 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None):
 
 
 #import MC
-for cat in catStore:
+for c in catStore:
 
 	hSumAll=None
 	hRef=None
 
 	myBin=1
 	for proc in mcStore:
-		if skip(catStore[cat],mcStore[proc]): continue
-		hSumTMP,hRef=importPdfFromTH1SumBKG(catStore[cat],mcStore[proc],None)
+		if skip(catStore[c],mcStore[proc]): continue
+		hSumTMP,hRef=importPdfFromTH1SumBKG(catStore[c],mcStore[proc],None)
 		if hSumAll==None:
 			hSumAll=hSumTMP
 		else:
@@ -936,19 +956,16 @@ for cat in catStore:
 	print 'myBin=',myBin,' yield=',hSumAll.Integral()
 
 	for proc in mcStore:
-		if skip(catStore[cat],mcStore[proc]): continue
+		if skip(catStore[c],mcStore[proc]): continue
 		for syst in systStore:
 			print "->calling import pdf with cat=",cat,"proc=",proc,"syst=",syst
-			print " * cat:",catStore[cat]
+			print " * cat:",catStore[c]
 			print " * syst:", systStore[syst]
 			if systStore[syst] == None or systStore[syst]["type"] == "shape" :
-				importPdfFromTH1(catStore[cat],mcStore[proc],myBin,systStore[syst])
+				importPdfFromTH1(catStore[c],mcStore[proc],myBin,systStore[syst])
 
-## import and write statistical uncertainties
-importStat()
-
-#import data
-for c in catStore:
+##import data
+###for c in catStore:
 	cat=catStore[c]
 	tfile = cat["file"]
 	if tfile == None:
@@ -986,38 +1003,25 @@ for c in catStore:
 		mybins=array('d',myBin)
 		h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
 
-	if doRebinStatic and h :
-		if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
+	if doRebinStatic and h:
+		if "Baseline" in cat["dir"] and opts.kTest>0 and opts.kTest<7:
+			print '------------------------'
+			print '------------------------'
+			print 'BASELINE and doing doRebinStatic now DATA'
+			print '------------------------'
+			print '------------------------'
 
-			print  ' This is the data ===> cat["var"]=',cat["var"],'    ','cat["dir"]=',cat["dir"]
-		
-			if "Baseline" in cat["dir"]:
-				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": h=Rebin1LHT(h)
-				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": h=Rebin1LHT(h)
-				else:
-					if opts.kTest==3: h=RebinBDT3(h)
-					if opts.kTest==2: h=RebinBDT2(h)
-					if opts.kTest==1: h=RebinBDT1(h)
-
-			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-#### 2L 			
-
-		if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
-		
-			if "Baseline" in cat["dir"]:
-				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR13": h=Rebin2LHT(h)
-				elif cat["var"] == "HT_SR2" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR24": h=Rebin2LHT(h)
-				else:
-					if opts.kTest==6: h=RebinBDT6(h)
-					if opts.kTest==5: h=RebinBDT2(h)
-					if opts.kTest==4: h=RebinBDT4(h)
-					
-			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
-			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
-			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
-
+			if opts.kTest==3: h=RebinBDT3(h)
+			if opts.kTest==2: h=RebinBDT2(h)
+			if opts.kTest==1: h=RebinBDT1(h)
+			if opts.kTest==6: h=RebinBDT6(h)
+			if opts.kTest==5: h=RebinBDT2(h)
+			if opts.kTest==4: h=RebinBDT4(h)
+		else:
+			mybins=array('d',myBin)
+			print 'before=',h.GetNbinsX()
+			h=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+			print 'after=',h.GetNbinsX()
 
 	al=arglist_obs_bdt
 	if "bdt2D" in cat["var"]: al = arglist_obs_bdt2D
@@ -1026,6 +1030,11 @@ for c in catStore:
 	roo_data= ROOT.RooDataHist("data_obs_%s"%c,"H_{T}",al,h)
 	getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
 	g.extend([h,roo_data])
+
+## import and write statistical uncertainties
+importStat()
+
+
 
 w.writeToFile(fileTmp)
 print "--------------------" 
