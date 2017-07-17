@@ -28,7 +28,7 @@ int SmearJesAndCSV::smear(Event *e)
     // right correlations with jes
     if (num_==Systematics::JESup and syst_>0)
         jes->SetSyst(1);
-    else if (num_==Systematics::JESdown and syst_<0)
+    else if (num_==Systematics::JESup and syst_<0)
         jes->SetSyst(-1);
     else jes->SetSyst(0);
     
