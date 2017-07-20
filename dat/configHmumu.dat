@@ -22,11 +22,9 @@ include=dat/catalog/2017.moriond/hmm.dat
 addfiles=/store/group/phys_higgs/ceballos/Data//Nero/v2.2.1/SingleMuon
 #include=catalog/2017.moriond/singleMuon.dat
 #
-Files=
-include=dat/catalog/2017.moriond/dy_private.dat
 
-Smear=NONE
-#Smear=NONE,JES,PU,@SmearSF("muTRG_runGH"!"muTRG_runGH"),@SmearSF("muID_runGH"!"muID_runGH"),@SmearSF("muISO_runGH"!"muISOloose_runGH")
+#Smear=NONE
+Smear=NONE,JES,PU,@SmearSF("muTRG_runGH"!"muTRG_runGH"),@SmearSF("muID_runGH"!"muID_runGH"),@SmearSF("muISO_runGH"!"muISOloose_runGH")
 #Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag")
 #Smear=NONE,*[-133!0]SmearKaMuCa(%%d),*[1!135]SmearKaMuCa(%%d)
 #Smear=NONE,@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1),*[0!50]SmearPdfs(%%d)

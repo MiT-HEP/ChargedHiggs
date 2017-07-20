@@ -7,6 +7,7 @@ parser.add_option("-i","--input",type='string',help="Input ROOT file. [Default=%
 parser.add_option("","--syst",type='string',help="Syst [Default=%default]", default="PU")
 parser.add_option("","--outname",type='string',help="OutSystName [Default=%default]", default="cms_pu")
 parser.add_option("","--rebin",type='int',help="Rebin [Default=%default]", default=20)
+parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmmWithTTH")
 opts, args = parser.parse_args()
 
 #python script/drawSyst.py -i test/Hmumu/Hmumu_2017_03_07_JES_BTAG/Hmumu_2017_03_07_JES_BTAG.root --base=HmumuAnalysis/Vars/Mmm_OneB_BB_GluGlu_HToMuMu_M125 --syst=BTAGL
@@ -21,9 +22,11 @@ while mypath != "" and mypath != "/":
 print "-> Base Path is " + basepath
 sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
-from hmm import hmm, hmmAutoCat
+from hmm import *
 
-config=hmmAutoCat
+#config=hmmAutoCat
+config= eval(opts.hmm)
+config.Print()
 
 fIn=ROOT.TFile.Open(opts.input)
 if fIn==None:
@@ -72,6 +75,9 @@ for idx,cat in enumerate(categories):
           continue
       elif h == None:
           print >> sys.stderr, "[ERROR] Hist", name, "doesn't exist"
+          if( cat =="cat15" and proc =="VBF") : 
+                systsline .append( "-")
+                continue ## ok for this
           raise IOError
       elif opts.syst!= 'Scale' and opts.syst != 'Pdf':
           hUp=fIn.Get(name+"_"+opts.syst+"Up")

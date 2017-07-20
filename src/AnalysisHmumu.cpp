@@ -435,12 +435,13 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta < 0.900 ) icat = 4 ;
     if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta < 0.900 ) icat = 5 ;
     if ( mu_max_eta < 1.900 and bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 0.900 ) icat = 6 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 ) icat = 7 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900 ) icat = 8 ;
-    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 9 ;
-    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 10 ;
-    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 11 ;
-    if ( bdt[0] >= 0.730 ) icat = 12 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 and mu_max_eta < 1.9) icat = 7 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 0.9 ) icat = 8 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900  and mu_max_eta >=0.9) icat = 9 ;
+    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 10 ;
+    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 11 ;
+    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 12 ;
+    if ( bdt[0] >= 0.730 ) icat = 13 ;
     //
 
     if (icat>=0)catStr=Form("cat%d",icat);
@@ -935,8 +936,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     else if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt());
     else if (catType==3) { 
         category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt()); 
-        if (e->Bjets()>0 and e->Njets() >4) category = "cat13";  // ttHHadr
-        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat14";  // veto Njets> 4
+        if (e->Bjets()>0 and e->Njets() >4) category = "cat14";  // ttHHadr
+        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat15";  // veto Njets> 4
     } 
     else category = Category(mu0, mu1, selectedJets);
 

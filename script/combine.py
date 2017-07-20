@@ -57,8 +57,6 @@ parser.add_option_group(multidim)
 
 onews=0 ## for onews
 
-EOS='/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
-
 print "inserting in path cwd"
 sys.path.insert(0,os.getcwd())
 print "inserting in path cwd/python",
