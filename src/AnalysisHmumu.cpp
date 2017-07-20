@@ -1090,7 +1090,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
 
     // Trigger
-    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 );
+    //#warning Mu20
+    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 and mu1->Pt() >20 );
     bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); 
 
     bool passTrigger1{false}, passTrigger2{false};
@@ -1183,7 +1184,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if ( recoMuons and passAsymmPtCuts)
     {
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_NoTrigger_"+ label,systname, mass_,e->weight()) ;
-        //if(Unblind(e) and (passTrigger or e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu45_eta2p1_v") or e->IsTriggered("HLT_Mu50_v") ))Fill("HmumuAnalysis/Vars/Mmm_DoubleMuonTrigger_"+ label,systname, mass_,e->weight()) ;
     }
 
     // -- FINAL SELECTION --

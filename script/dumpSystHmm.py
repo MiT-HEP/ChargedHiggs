@@ -57,6 +57,14 @@ for idx,cat in enumerate(categories):
    for pi,proc in enumerate(processes):
       name= base +"_"+ cat + "_" + proc +"_" + "HToMuMu_M125"
       h=fIn.Get(name)
+      if h==None and proc == "WH":
+        name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125"
+        h=fIn.Get(name)
+        name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125"
+        hTmp=fIn.Get(name)
+        h.Add(hTmp)
+        name= base +"_"+ cat + "_" + proc +"_" + "HToMuMu_M125"
+
       binline . append( "cat%d"%idx)
       procline. append( proc )
       if proc == "BKG":
@@ -68,6 +76,18 @@ for idx,cat in enumerate(categories):
       elif opts.syst!= 'Scale' and opts.syst != 'Pdf':
           hUp=fIn.Get(name+"_"+opts.syst+"Up")
           hDown=fIn.Get(name+"_"+opts.syst+"Down")
+          if hUp == None and hDown == None and proc == "WH":
+             name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125" + "_" + opts.syst + "Up"
+             hUp=fIn.Get(name)
+             name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125" + "_" + opts.syst + "Down"
+             hDown=fIn.Get(name)
+             ###
+             name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125" + "_" + opts.syst + "Up"
+             hUp.Add(fIn.Get(name))
+             name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125" + "_" + opts.syst + "Down"
+             hDown.Add(fIn.Get(name))
+             name= base +"_"+ cat + "_" + proc +"_" + "HToMuMu_M125"
+
           if hUp==None or hDown==None:
             if hUp==None:print>>sys.stderr, "[ERROR] Hist", name+"_"+opts.syst+"Up", "doesn't exist"
             if hDown==None:print>>sys.stderr, "[ERROR] Hist", name+"_"+opts.syst+"Down", "doesn't exist"
@@ -82,6 +102,11 @@ for idx,cat in enumerate(categories):
           for w in [ 'R','F','RF']:
               for s in ['Up','Down']:
                   hTmp=fIn.Get(name+"_Scale"+w+s)
+                  if hTmp == None and proc == "WH":
+                    name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125" + "_Scale" + w+ s
+                    hTmp = fIn.Get(name)
+                    name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125" + "_Scale" + w + s
+                    hTmp.Add(fIn.Get(name))
                   if hTmp==None:
                       print "[ERROR] Hist", name+"_Scale"+w+s, "doesn't exist"
                       #systsline .append( "-")
@@ -98,6 +123,11 @@ for idx,cat in enumerate(categories):
           high=1.000
           for i in range(0,100):
               hTmp=fIn.Get(name+"_Pdf%d"%i)
+              if hTmp == None and proc == "WH":
+                    name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125" + "_Pdf%d"%i
+                    hTmp = fIn.Get(name)
+                    name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125" + "_Pdf%d"%i
+                    hTmp.Add(fIn.Get(name))
               if hTmp==None:
                    print "[ERROR] Hist",name+"_Pdf%d"%i, "doesn't exist"
                    #systsline .append( "-")
