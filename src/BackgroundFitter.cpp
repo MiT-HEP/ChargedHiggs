@@ -305,14 +305,14 @@ RooAbsPdf* PdfModelBuilder::getZModExp2(string prefix, int order){
 
     // the envelope does getVariables->size to compute the penalization term
     RooAbsPdf *zmod=NULL;
-    //if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
-    //        "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) ",*plist);
-    //if (order ==2 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
-    //        "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1+ @5@*(@4-.5))",*plist);
-    //if (order ==3 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
-    //        "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * ( 1+ @5*3*@4*@4 + @6*6*@4*(1-@4)+ (-@5-@6)*3*(1-@4)*(1-@4) )",*plist);
-    //if (order ==4 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
-    //        "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * ( 1+ @5*4*@4*@4*@4 + @6*@4*@4*(1-@4) + @7*@4*(1-@4)*(1-@4) + (-@5-@6-@7)*(1-@4)*(1-@4)*(1-@4) )",*plist);
+    if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
+            "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) ",*plist);
+    if (order ==2 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
+            "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1+ @5@*(@4-.5))",*plist);
+    if (order ==3 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
+            "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * ( 1+ @5*3*@4*@4 + @6*6*@4*(1-@4)+ (-@5-@6)*3*(1-@4)*(1-@4) )",*plist);
+    if (order ==4 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
+            "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * ( 1+ @5*4*@4*@4*@4 + @6*@4*@4*(1-@4) + @7*@4*(1-@4)*(1-@4) + (-@5-@6-@7)*(1-@4)*(1-@4)*(1-@4) )",*plist);
     if (order ==5 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
             "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1+ @5*5*pow(@4,4)+20*@6*pow(@4,3)*(1-@4)+@7*30*@4*@4*(1-@4)*(1-@4) + @8 *20*@4*pow(1-@4,3)+(-@5-@6-@7-@8)*5*pow(1-@4,4))",*plist);
 
@@ -996,6 +996,11 @@ void BackgroundFitter::fit(){
     if ( fInput == NULL ) 
         Log(__FUNCTION__,"ERROR","No such file or directory: '"+ inname + "'");
 
+    if (plot ) {
+            x_->setRange("unblindReg_1",xmin,120);
+            x_->setRange("unblindReg_2",130,xmax);
+            x_->setRange("tot",xmin,xmax);
+    }
 
 
     // * take TH1F and make RooDataHist
@@ -1132,9 +1137,71 @@ void BackgroundFitter::fit(){
         storedPdfs.add(*fewz_full);//6
 
         cout<<"*** Fitting ZMOD2 ***"<<endl;
-        int zmod2Ord;
-        RooAbsPdf* zmod2 = modelBuilder.fTest(Form("zmod2_cat%d",cat) ,hist_[name],&zmod2Ord,plotDir + "/zmod2");
-        storedPdfs.add(*zmod2); //7
+        //int zmod2Ord;
+        //RooAbsPdf* zmod2 = modelBuilder.fTest(Form("zmod2_cat%d",cat) ,hist_[name],&zmod2Ord,plotDir + "/zmod2");
+        //storedPdfs.add(*zmod2); //7
+
+        {
+            cout<<" --- Fitting ZMOD2 ORDER 5 ---"<<endl;
+            int order=5;
+            RooAbsPdf *zmod2_ord5=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            storedPdfs.add(*zmod2_ord5); //7
+
+            cout<<" --- Fitting ZMOD2 ORDER 4 ---"<<endl;
+            order=4;
+            RooAbsPdf* zmod2_ord4=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            storedPdfs.add(*zmod2_ord4); //8
+
+            cout<<" --- Fitting ZMOD2 ORDER 3 ---"<<endl;
+            order=3;
+            RooAbsPdf* zmod2_ord3=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            storedPdfs.add(*zmod2_ord3); //9
+
+            cout<<" --- Fitting ZMOD2 ORDER 2 ---"<<endl;
+            order=2;
+            RooAbsPdf *zmod2_ord2=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            storedPdfs.add(*zmod2_ord2); //10
+
+            cout<<" --- Fitting ZMOD2 ORDER 1 == ZMOD ---"<<endl;
+            order=1;
+            RooAbsPdf *zmod2_ord1=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            storedPdfs.add(*zmod2_ord1); //11
+
+            if (plot){
+                TCanvas *c = new TCanvas();
+                TLegend *leg = new TLegend(0.6,0.65,0.89,0.89);
+                leg->SetFillColor(0);
+                leg->SetLineColor(0);
+                RooPlot *p = x_ -> frame();
+                if (blind){
+                    hist_[name]->plotOn(p,CutRange("unblindReg_1"));
+                    hist_[name]->plotOn(p,CutRange("unblindReg_2"));
+                    hist_[name]->plotOn(p,Invisible()); // normalization
+                    p->SetMinimum(0.0001);
+                }
+                else
+                    hist_[name]->plotOn(p);
+
+                TObject *datLeg = p->getObject(int(p->numItems()-1));
+                leg->AddEntry(datLeg,Form("Data - cat%d",cat),"LEP");
+
+                plotOnFrame( p, zmod2_ord5, kRed, kSolid,Form("zmod2 ord=%d chi2=%.2f",5,modelBuilder.getGoodnessOfFit(x_, zmod2_ord5, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                plotOnFrame( p, zmod2_ord4, kBlue, kSolid,Form("zmod2 ord=%d chi2=%.2f",4,modelBuilder.getGoodnessOfFit(x_, zmod2_ord4, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                plotOnFrame( p, zmod2_ord3, kGreen, kSolid,Form("zmod2 ord=%d chi2=%.2f",3,modelBuilder.getGoodnessOfFit(x_, zmod2_ord3, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                plotOnFrame( p, zmod2_ord2, kOrange, kSolid,Form("zmod2 ord=%d chi2=%.2f",2,modelBuilder.getGoodnessOfFit(x_, zmod2_ord2, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                plotOnFrame( p, zmod2_ord1, kCyan, kSolid,Form("zmod2 ord=%d chi2=%.2f",1,modelBuilder.getGoodnessOfFit(x_, zmod2_ord1, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+
+    
+                p -> Draw();
+                leg->Draw("same");
+
+                system(Form("mkdir -p %s/zmod2/",plotDir.c_str()));
+                c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.pdf",plotDir.c_str(),cat) );
+                c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.png",plotDir.c_str(),cat) );
+                delete p;
+                delete c;
+            }
+        }
 
 
         // construct final model
@@ -1154,9 +1221,9 @@ void BackgroundFitter::fit(){
 
         // -- Plot
         if (plot ) {
-            x_->setRange("unblindReg_1",xmin,120);
-            x_->setRange("unblindReg_2",130,xmax);
-            x_->setRange("tot",xmin,xmax);
+            //x_->setRange("unblindReg_1",xmin,120);
+            //x_->setRange("unblindReg_2",130,xmax);
+            //x_->setRange("tot",xmin,xmax);
             TCanvas *c = new TCanvas();
             TLegend *leg = new TLegend(0.6,0.65,0.89,0.89);
             leg->SetFillColor(0);
@@ -1180,7 +1247,7 @@ void BackgroundFitter::fit(){
             //    plotOnFrame( p, dybern, kGray+2, kDashed,Form("dybern ord=%d chi2=%.2f",dybernOrd,modelBuilder.getGoodnessOfFit(x_, dybern, hist_[name], plotDir +"/dybern/chosen",blind) ),leg);
             plotOnFrame( p, zpho, kOrange, kSolid,Form("zpho ord=%d chi2=%.2f",zphoOrd,modelBuilder.getGoodnessOfFit(x_, zpho, hist_[name], plotDir +"/zpho/chosen",blind) ),leg);
             plotOnFrame( p, zmod, kRed+2, kDashed,Form("zmod ord=%d chi2=%.2f",zmodOrd,modelBuilder.getGoodnessOfFit(x_, zmod, hist_[name], plotDir +"/zmod/chosen",blind) ),leg);
-            plotOnFrame( p, zmod2, kRed, kSolid,Form("zmod2 ord=%d chi2=%.2f",zmod2Ord,modelBuilder.getGoodnessOfFit(x_, zmod2, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+            //plotOnFrame( p, zmod2, kRed, kSolid,Form("zmod2 ord=%d chi2=%.2f",zmod2Ord,modelBuilder.getGoodnessOfFit(x_, zmod2, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
             plotOnFrame( p, bwz, kCyan, kSolid,Form("bwz ord=%d chi2=%.2f",bwzOrd,modelBuilder.getGoodnessOfFit(x_, bwz, hist_[name], plotDir +"/bwz/chosen",blind) ),leg);
             //plotOnFrame( p, powlaw, kRed, kSolid,Form("powlaw ord=%d chi2=%.2f",powlawOrd,modelBuilder.getGoodnessOfFit(x_, powlaw, hist_[name], plotDir +"/powlaw/chosen",blind) ),leg);
             plotOnFrame( p, exp, kGreen, kSolid,Form("exp ord=%d chi2=%.2f",expOrd,modelBuilder.getGoodnessOfFit(x_, exp, hist_[name], plotDir +"/exp/chosen",blind) ),leg);

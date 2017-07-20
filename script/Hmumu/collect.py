@@ -72,10 +72,12 @@ c.SetBottomMargin(0.15)
 c.SetLeftMargin(0.15)
 ChangePalette(3)
 
-h=ROOT.TH2D("bias","bias " + cat,11,0,11,11,0,11)
+h=ROOT.TH2D("bias","bias " + cat,21,0,21,21,0,21)
 
-labels= ["Bern.","BWZGamma","BWZRed","SExp","fewz_1j","fewz_2j","fewz_full","BWZRedux*pol2","9","Default","11"]
-for b in range(0,10):
+labels= ["Bern.","BWZGamma","BWZRed","SExp","fewz_1j","fewz_2j","fewz_full","BWZR*pol4","BWZR*pol3","BWZ*pol2","BWZ*pol1",
+        "BWZ","13","14","15","16","17","18","19","Default","21"
+        ]
+for b in range(0,21):
     label = labels[b]
     h.GetXaxis().SetBinLabel(b+1,label)
     h.GetYaxis().SetBinLabel(b+1,label)
@@ -85,19 +87,19 @@ h.GetYaxis().SetTitle("gen")
 h.GetXaxis().SetTitleOffset(1.5)
 h.GetYaxis().SetTitleOffset(2.0)
 
-for gen in range(0,8):
+for gen in range(1,12):
 #for gen in range(0,3):
    #for fit in range(10,11):
-   fitmin=0
-   fitmax=8
+   fitmin=1
+   fitmax=12
    if asimov:
-       fitmin=10
-       fitmax=11
+       fitmin=20
+       fitmax=21
    for fit in range(fitmin,fitmax):
       t=ROOT.TChain("tree_fit_sb")
       #print "using scheme '"+"*/"+cat+"/mlfit_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit)+"'"
       #higgsCombine_catAll_mu_1_gen_4_fit_default.MaxLikelihoodFit.mH125.123456.root 
-      if fit !=10 :
+      if fit !=20 :
         files = glob("*/"+cat+"/mlfit_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit))
       else:
         files = glob("*/"+cat+"/mlfit_" + cat + "_mu_1_gen_%d_fit_default.root"%(gen))
@@ -137,10 +139,10 @@ h2.Draw("COLZ")
 h.Draw("TEXT SAME")
 h2.GetZaxis().SetRangeUser(-1,1)
 h.GetZaxis().SetRangeUser(-1,1)
-h2.GetXaxis().SetRangeUser(1,8)
-h2.GetYaxis().SetRangeUser(1,8)
+h2.GetXaxis().SetRangeUser(1,12)
+h2.GetYaxis().SetRangeUser(1,12)
 if asimov:
-    h2.GetXaxis().SetRangeUser(10,11)
+    h2.GetXaxis().SetRangeUser(20,21)
 h2.Draw("AXIS X+ Y+ SAME")
 c.Update()
 

@@ -80,7 +80,8 @@ for i in range(0,data.numEntries()):
         Nm +=1
         if lastP>0: Nr+=1
         lastP=-1
-    chi2 += (y-y0)**2/y0 ## pearson
+    chi2 += (y-y0)**2/max(y0,1) ## pearson
+
     #last=I0
 
 
@@ -88,13 +89,18 @@ N=Np+Nm
 mu=2*Np*Nm/N+1
 sigma=math.sqrt((mu-1)*(mu-2)/(N-1))
 
-z=(Nr-mu)/sigma
-if z>0:
-    pOne=1.-1./2.*(1+ROOT.TMath.Erf(z/math.sqrt(2)))
-    pTwo=2*pOne
-else:
-    pOne=1./2.*(1+ROOT.TMath.Erf(z/math.sqrt(2)))
-    pTwo=2*pOne
+try:
+    z=(Nr-mu)/sigma
+    if z>0:
+        pOne=1.-1./2.*(1+ROOT.TMath.Erf(z/math.sqrt(2)))
+        pTwo=2*pOne
+    else:
+        pOne=1./2.*(1+ROOT.TMath.Erf(z/math.sqrt(2)))
+        pTwo=2*pOne
+except ZeroDivisionError:
+    z=-1
+    pOne = -1
+    pTwo = -1
 
 npar=pdf.getVariables().getSize() ## x=1 -1; +1 = norm
 prob=ROOT.TMath.Prob(chi2,N-npar)
