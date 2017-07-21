@@ -36,7 +36,7 @@ include=dat/hmumu.dat
 MCDB=aux/mcdb.TauNu.2017.dat
 pileup=aux/pileup.TauNu.moriond.root
 #Correct=ScaleAndSmear
-Correct=ScaleAndSmear,KaMuCa
+Correct=ScaleAndSmear,KaMuCa,JetFilter2016
 #Correct=ScaleAndSmear,RochesterCorrections
 
 Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis
