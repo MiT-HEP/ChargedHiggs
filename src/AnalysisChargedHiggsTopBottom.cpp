@@ -1009,7 +1009,8 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
         AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+l);
         AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+l);
-
+        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HTmcweight_"+l);
+ 
         //BDT plot
         if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+l);
         if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+l);
@@ -1143,6 +1144,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         /////
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",40,0,2000);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/HTmcweight_"+l,"HT (mcweight)"+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
 
         /////
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+l,"ST "+l+"; ST ( HT+met+lepsPt )",50,0,2500);
@@ -2192,6 +2194,7 @@ void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, stri
     //// forward vs central
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+label,systname, evt_HT ,e->weight());
+    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HTmcweight_"+label,systname, evt_HT ,e->GetWeight()->GetBareMCWeight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+label,systname, evt_HT ,e->weight());
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Ncentraljets_"+label,systname, e->NcentralJets() ,e->weight());
@@ -2422,7 +2425,7 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
 }
 
 
-void ChargedHiggsTopBottom::printSynch(Event*e, string category) {
+void ChargedHiggsTopBottom::printSynch(Event*e, string category, string systname) {
 
     // note the METfilters
     // NB to change miniISO,ptCutEle + tausID + Bjets medium
@@ -2520,9 +2523,8 @@ void ChargedHiggsTopBottom::printSynch(Event*e, string category) {
 
     //    if(e->Ntaus()>0) std::cout << " tauPt=" << e->GetTau(0)->Pt() << " tauEta=" << e->GetTau(0)->Eta() << " tauPhi=" << e->GetTau(0)->Phi();
     //    if(e->Ntaus()>1) std::cout << " tauPt=" << e->GetTau(1)->Pt() << " tauEta=" << e->GetTau(1)->Eta() << " tauPhi=" << e->GetTau(1)->Phi();
-    //        std::cout << " totalweight=" << e->weight() ;
-    //        std::cout << " systname=" << systname << std::endl;
-
+    std::cout << " totalweight=" << e->weight() << " btag-reweight=" << e->GetWeight()->GetSF("btag-reweight")->get() << " btag=" << e->GetWeight()->GetSF("btag")->get();
+    std::cout << " systname=" << systname << std::endl;
 
 
     for(int i=0;i!=min(e->NcentralJets(),10);++i) {
@@ -3020,8 +3022,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     //    if(label.find("DYJetsToLL_M-50_HT") !=string::npos or label.find("WJetsToLNu_HT")!=string::npos) double Vpt = genInfoForWZ(e);
 
-    //    printSynch(e,category); return EVENT_NOT_USED;
-    //    if(doSynch) { printSynch(e,category); return EVENT_NOT_USED;}
+    //    printSynch(e,category,systname); return EVENT_NOT_USED;
+    //    if(doSynch) { printSynch(e,category,systname); return EVENT_NOT_USED;}
 
     ////////
     ////////
@@ -3051,7 +3053,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     }
     */
 
-
     ////////
     //// UP TO NOW: LEPTONS selection only
     ////
@@ -3067,7 +3068,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     /////
     /////
 
-    if(doSynch) { printSynch(e,category); return EVENT_NOT_USED;}
+    if(doSynch) { printSynch(e,category,systname); return EVENT_NOT_USED;}
 
     if (e->Bjets() == 0) return EVENT_NOT_USED;
 
@@ -3087,6 +3088,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     sf->set();
     if ( not e->IsRealData() ) e->ApplySF("btag-reweight");
+
+    //    printSynch(e,category,systname); return EVENT_NOT_USED;
 
     if( Baseline or (doTaulAnalysis && BaselineTau )) {
 

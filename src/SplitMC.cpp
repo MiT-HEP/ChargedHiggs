@@ -28,11 +28,14 @@ void SplitMCAnalysis::Init(){
 
 
     // 0 should not be there
-   	Book(Form("SplitMC/CutFlow/CutFlow_%u",0),"split mc cut flow",2,0,2); 
+    Book(Form("SplitMC/CutFlow/CutFlow_%u",0),"split mc cut flow",2,0,2);
+    Book(Form("SplitMC/CutFlow/CutFlowWeight_%u",0),"split mc cut flow",2,0,2);
     for( const unsigned &mc :mc_)
     {
         AddFinalHisto(Form("SplitMC/CutFlow/CutFlow_%u",mc));
-   	    Book(Form("SplitMC/CutFlow/CutFlow_%u",mc),"split mc cut flow",2,0,2); 
+        Book(Form("SplitMC/CutFlow/CutFlow_%u",mc),"split mc cut flow",2,0,2);
+        AddFinalHisto(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc));
+        Book(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc),"split mc cut flow weight",2,0,2);
     }
 
 
@@ -130,6 +133,7 @@ int SplitMCAnalysis::analyze(Event* e,string systname)
     //end
 
     if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlow_%u",mc),systname,0,1);
+    if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc),systname,0,e->GetWeight()->GetBareMCWeight());
     //    std::cout << " SplitMC = " << mc << std::endl;
 
     if ( isBadEvent( mc, e->runNum(),e->lumiNum(),e->eventNum() ) ) {
@@ -138,6 +142,7 @@ int SplitMCAnalysis::analyze(Event* e,string systname)
     }
     else {
         if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlow_%u",mc),systname,1,1); // pass
+        if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc),systname,1,e->GetWeight()->GetBareMCWeight()); // pass
         //        std::cout << " Pass = " << std::endl;
         return SPLITMC_EVENT_PASS;
     }
