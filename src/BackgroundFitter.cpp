@@ -297,6 +297,7 @@ RooAbsPdf* PdfModelBuilder::getZModExp2(string prefix, int order){
         string pname = prefix+suf;
         string old = pname;
         replace(old,"zmod2","zmod");
+        replace(old,Form("ord%d",order),"ord1");
         if (params.find(old) != params.end()) params[pname] -> setVal( params[old]->getVal());
         else cout <<"WARNING UNABLE TO FIND REPLACEMENT FROM "<<old<<" TO "<<pname<<endl;
     }
@@ -1198,6 +1199,7 @@ void BackgroundFitter::fit(){
                 system(Form("mkdir -p %s/zmod2/",plotDir.c_str()));
                 c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.pdf",plotDir.c_str(),cat) );
                 c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.png",plotDir.c_str(),cat) );
+
                 delete p;
                 delete c;
             }

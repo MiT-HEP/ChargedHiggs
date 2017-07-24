@@ -246,7 +246,7 @@ class HmmConfigTTH(HmmConfigAutoCat):
 class HmmConfigWithTTH(HmmConfigAutoCat):
     def __init__(self):
         HmmConfigAutoCat.__init__(self)
-        self.categories=[ "cat%d"%x for x in range(0,15)]
+        self.categories=[ "cat%d"%x for x in range(0,16)]
         self.computeVersioning()
 
 hmmTTH =HmmConfigTTH()
