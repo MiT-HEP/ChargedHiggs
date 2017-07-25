@@ -11,11 +11,14 @@ maxStat=0.13
 
 parser= OptionParser()
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JULY12_Green_Final_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JULY12_Green_Final_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JULY12_Green_Final_fixedCSV_Neg_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JULY12_Green_Final_fixedCSV_Neg_2l.root")
 
-parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
-parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
+#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JULY12_Green_Final_1l.root")
+#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/JULY12_Green_Final_2l.root")
+
+parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
+parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
 parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", default=35867)
 
 extra = OptionGroup(parser,"Extra options:","")
@@ -190,12 +193,10 @@ channel = []
 if opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==0 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13:
 	channel = ["1Mu","1Ele"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7","charmCR"]
-#	basecat = ["Baseline"]
 
 if opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16:
 	channel = ["1Mu1Ele","2Mu","2Ele"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
-#	basecat = ["Baseline"]
 
 if opts.kTest==8 or opts.kTest==9:
 	channel = ["1Mu","1Ele","1Mu1Ele","2Mu","2Ele"]
@@ -361,11 +362,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="JULY12_GREEN/"+label+VarTest+opts.output
+fileTmp="JULY25_GREEN/"+label+VarTest+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "JULY12_GREEN/"+ label + VarTest + datNameTmp
+datName = "JULY25_GREEN/"+ label + VarTest + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -681,6 +682,7 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 
 	scaleEveRemoval=1
 	delta=0
+	deltaW=0
 
 ####
 ####
@@ -711,9 +713,12 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 		  if m==2000: mclabel="13"
 		  if m==3000: mclabel="14"
 		  #		  print 'mc=',mclabel
+		  hscaleW="SplitMC/CutFlow/CutFlowWeight_"+mclabel
 		  hscale="SplitMC/CutFlow/CutFlow_"+mclabel
+		  hScaleW=tfile.Get(hscaleW)
 		  hScale=tfile.Get(hscale)
 ##		  scaleEveRemoval=hScale.GetBinContent(1)/hScale.GetBinContent(2)
+		  deltaW=hScaleW.GetBinContent(1)-hScaleW.GetBinContent(2)
 		  delta=hScale.GetBinContent(1)-hScale.GetBinContent(2)
 
 	  if syst != None:
@@ -733,14 +738,32 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 			print "<*> Hist '"+toget+"' doesn't exist"
 			raise IOError
 
-		if "Baseline" in cat["dir"]:
+		if "Baseline" in cat["dir"] and mc["name"]=="Hptb":
+			hscale="SplitMC/CutFlow/CutFlow_"+str(m)
+			hScale=tfile.Get(hscale)
 			survived=hTmp.GetEntries()
+			##----
+			hscaleW="SplitMC/CutFlow/CutFlowWeight_"+str(m)
+			hScaleW=tfile.Get(hscaleW)
+			myBaselineTMP=0
+			if "1Mu" in cat["dir"]: 
+				myBaselineTMP=tfile.Get(("ChargedHiggsTopBottom/Baseline_1Mu/HTmcweight_ChargedHiggs_HplusTB_HplusToTB_M-"+str(m)+"_13TeV_amcatnlo_pythia8"))
+			if "1Ele" in cat["dir"]: 
+				myBaselineTMP=tfile.Get(("ChargedHiggsTopBottom/Baseline_1Ele/HTmcweight_ChargedHiggs_HplusTB_HplusToTB_M-"+str(m)+"_13TeV_amcatnlo_pythia8"))
+			print 'nameHISTO=',myBaselineTMP.GetName()
+			survivedW=myBaselineTMP.Integral()
+			##----
 			dropFrac=delta/(survived+delta)
 			survivedFrac=survived/(survived+delta)
 			scaleEveRemoval=(survived+delta)/survived
+			print 'deltaW',deltaW,' survivedW',survivedW
+			dropFracW=deltaW/(survivedW+deltaW)
+			survivedFracW=survivedW/(survivedW+deltaW)
+			scaleEveRemovalW=(survivedW+deltaW)/survivedW
 
 			print '=============================='
-			print 'mc=',m,'total(Baseline)=',survived+delta,' dropFrac=',dropFrac,' survidedFrac=',survivedFrac,'scale=',scaleEveRemoval
+			print 'non wei mc=',m,'total(Baseline)=',survived+delta,' dropFrac=',dropFrac,' survidedFrac=',survivedFrac,'scale=',scaleEveRemoval
+			print 'w/  wei mc=',m,'total(Baseline)=',survivedW+deltaW,' dropFrac=',dropFracW,' survidedFrac=',survivedFracW,'scale=',scaleEveRemovalW
 			print '=============================='
 
 
@@ -801,7 +824,8 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 			  raise ValueError
 
 	  #save RooDataHist
-	  h.Scale(scaleEveRemoval)
+#	  h.Scale(scaleEveRemoval)
+	  h.Scale(scaleEveRemovalW)
 	  h.Scale(opts.lumi)
 	  print "* Importing ",target
 
