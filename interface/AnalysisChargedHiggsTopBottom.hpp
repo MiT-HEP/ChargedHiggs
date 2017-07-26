@@ -55,7 +55,7 @@ public:
 
     void computeVar(Event*e);
 
-    void printSynch(Event*e, string category);
+    void printSynch(Event*e, string category, string systname);
 
     double genInfoForWZ(Event*e);
     int genInfoForBKG(Event*e);
@@ -113,8 +113,10 @@ private:
 
     double evt_avDRBB=-1;
 
+    double evt_DEtaMaxBB_invMass=-1;
     double evt_DEtaMaxBB=-1;
     double evt_DEtaMaxJJ=-1;
+    double evt_DEtaMaxJJ_invMass=-1;
     double evt_MJJJmaxPt=-1;
     double evt_AvDRJJJmaxPt=-1;
     double evt_AvCSVPt=0;

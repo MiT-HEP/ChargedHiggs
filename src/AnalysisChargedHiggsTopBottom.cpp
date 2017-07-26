@@ -110,6 +110,9 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("MassDRlbmin",evt_minDRlb_invMass);
     SetTreeVar("DRlbmin",evt_minDRlb);
     SetTreeVar("DEtaMaxBB",evt_DEtaMaxBB);
+    SetTreeVar("DEtaMaxJJ",evt_DEtaMaxJJ);
+    SetTreeVar("DEtaMaxBBMass",evt_DEtaMaxBB_invMass);
+    SetTreeVar("DEtaMaxJJMass",evt_DEtaMaxJJ_invMass);
     SetTreeVar("DRlbmaxPT",evt_DRlbmaxPt);
     SetTreeVar("MJJJmaxPt",evt_MJJJmaxPt);
     SetTreeVar("AvDRJJJmaxPt",evt_AvDRJJJmaxPt);
@@ -762,6 +765,9 @@ void ChargedHiggsTopBottom::Init()
         Branch("tree_tb","MassDRlbmin",'F');
         Branch("tree_tb","DRlbmin",'F');
         Branch("tree_tb","DEtaMaxBB",'F');
+        Branch("tree_tb","DEtaMaxBBMass",'F');
+        Branch("tree_tb","DEtaMaxJJ",'F');
+        Branch("tree_tb","DEtaMaxJJMass",'F');
         Branch("tree_tb","DRlbmaxPT",'F');
         Branch("tree_tb","MJJJmaxPt",'F');
         Branch("tree_tb","AvDRJJJmaxPt",'F');
@@ -1907,6 +1913,7 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
 
 
         double DEtaMaxBB=0.;
+        double DEtaMaxBB_mass=0.;
         double sumDRBB=0.;
 
         for(int i=0;i!=e->Bjets();++i) {
@@ -1922,7 +1929,7 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
                 if(dr>maxDRbb and i==0) { maxDRbb=dr; maxDRbb_invMass=mass; indexMaxJ=j;}
 
                 // block to check the DEtaMaxBB
-                if(bjet_i->DeltaEta(*bjet_j)>DEtaMaxBB) DEtaMaxBB=bjet_i->DeltaEta(bjet_j);
+                if(bjet_i->DeltaEta(*bjet_j)>DEtaMaxBB) { DEtaMaxBB=bjet_i->DeltaEta(bjet_j); DEtaMaxBB_mass=(bjet_i->GetP4()+bjet_j->GetP4()).M();}
 
                 // block to check the AverageDRBB
                 sumDRBB +=dr;
@@ -1933,11 +1940,13 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
         evt_minDRbb=minDRbb;
         evt_minDRbb_invMass=minDRbb_invMass;
         evt_DEtaMaxBB=DEtaMaxBB;
+        evt_DEtaMaxBB_invMass=DEtaMaxBB_mass;
         evt_avDRBB=sumDRBB/((e->Bjets()*(e->Bjets()-1))/2);
 
     }
 
     double DEtaMaxJJ=0.;
+    double DEtaMaxJJ_mass=0.;
     double AvCSVPt=0;
     double SumPt=0;
 
@@ -1946,7 +1955,7 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
         for(int j=0;j!=e->NcentralJets();++j) {
             if (j==i) continue;
             Jet* jet = e->GetCentralJet(j);
-            if(lj->DeltaEta(*jet)>DEtaMaxJJ) DEtaMaxJJ=lj->DeltaEta(*jet);
+            if(lj->DeltaEta(*jet)>DEtaMaxJJ) { DEtaMaxJJ=lj->DeltaEta(*jet); DEtaMaxJJ_mass=(lj->GetP4()+jet->GetP4()).M(); }
 
             // block to check the ptweighted average CSV of failing jets
             if(jet->bdiscr<0.8484 && jet->bdiscr>0) AvCSVPt += (jet->bdiscr * jet->GetP4().Pt());
@@ -1957,6 +1966,7 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
 
     if(SumPt!=0) evt_AvCSVPt=AvCSVPt/SumPt;
     evt_DEtaMaxJJ=DEtaMaxJJ;
+    evt_DEtaMaxJJ_invMass=DEtaMaxJJ_mass;
 
     ////$$$$$$
     ////$$$$$$
