@@ -681,6 +681,7 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 	if skip: return
 
 	scaleEveRemoval=1
+	scaleEveRemovalW=1
 	delta=0
 	deltaW=0
 
@@ -746,10 +747,16 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 			hscaleW="SplitMC/CutFlow/CutFlowWeight_"+str(m)
 			hScaleW=tfile.Get(hscaleW)
 			myBaselineTMP=0
-			if "1Mu" in cat["dir"]: 
+			if "1Mu" in cat["dir"] and not ("1Mu1Ele" in cat["dir"]):
 				myBaselineTMP=tfile.Get(("ChargedHiggsTopBottom/Baseline_1Mu/HTmcweight_ChargedHiggs_HplusTB_HplusToTB_M-"+str(m)+"_13TeV_amcatnlo_pythia8"))
-			if "1Ele" in cat["dir"]: 
+			if "1Ele" in cat["dir"] and not ("1Mu1Ele" in cat["dir"]):
 				myBaselineTMP=tfile.Get(("ChargedHiggsTopBottom/Baseline_1Ele/HTmcweight_ChargedHiggs_HplusTB_HplusToTB_M-"+str(m)+"_13TeV_amcatnlo_pythia8"))
+			if "2Mu" in cat["dir"]:
+				myBaselineTMP=tfile.Get(("ChargedHiggsTopBottom/Baseline_2Mu/HTmcweight_ChargedHiggs_HplusTB_HplusToTB_M-"+str(m)+"_13TeV_amcatnlo_pythia8"))
+			if "2Ele" in cat["dir"]:
+				myBaselineTMP=tfile.Get(("ChargedHiggsTopBottom/Baseline_2Ele/HTmcweight_ChargedHiggs_HplusTB_HplusToTB_M-"+str(m)+"_13TeV_amcatnlo_pythia8"))
+			if "1Mu1Ele" in cat["dir"]:
+				myBaselineTMP=tfile.Get(("ChargedHiggsTopBottom/Baseline_1Mu1Ele/HTmcweight_ChargedHiggs_HplusTB_HplusToTB_M-"+str(m)+"_13TeV_amcatnlo_pythia8"))
 			print 'nameHISTO=',myBaselineTMP.GetName()
 			survivedW=myBaselineTMP.Integral()
 			##----
