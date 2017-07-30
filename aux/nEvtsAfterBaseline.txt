@@ -1,0 +1,39 @@
+# Number of events available after baseline for each signal mass point, and for the joint regions
+
+Total available events:
+        1 lepton
+		 signal low: 161451
+		 signal medium: 199462
+		 signal high: 385117
+		 signal 1: 19927
+		 signal 2: 23527
+		 signal 3: 30213
+		 signal 4: 38277
+		 signal 5: 49507
+		 signal 6: 58312
+		 signal 7: 65026
+		 signal 8: 0
+		 signal 9: 76124
+		 signal 10: 0
+		 signal 11: 98156
+		 signal 12: 105059
+		 signal 13: 98558
+                 signal 14: 83344
+	 2 leptons
+		 signal low: 41519
+		 signal medium: 44751
+		 signal high: 61028
+		 signal 1: 5444
+		 signal 2: 6153
+		 signal 3: 7943
+		 signal 4: 9638
+		 signal 5: 12341
+		 signal 6: 13720
+		 signal 7: 14816
+		 signal 8: 0
+		 signal 9: 16215
+		 signal 10: 0
+		 signal 11: 18045
+		 signal 12: 18344
+		 signal 13: 14173
+		 signal 14: 10466
