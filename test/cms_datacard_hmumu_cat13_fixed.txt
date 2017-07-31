@@ -4,15 +4,15 @@ imax *
 jmax *
 kmax *
 -------------------------------------
-shapes data_obs *       Hmumu/2017_06_02/BackgroundModel.root w:dataObs_$CHANNEL
-shapes BKG      cat1    Hmumu/2017_06_02/BackgroundModel.root w:bern_cat1_ord5
-shapes BKG      cat4    Hmumu/2017_06_02/BackgroundModel.root w:exp_cat4_ord3
-shapes BKG      cat5    Hmumu/2017_06_02/BackgroundModel.root w:exp_cat5_ord3
-shapes BKG      cat6    Hmumu/2017_06_02/BackgroundModel.root w:bern_cat6_ord5
-shapes BKG      *       Hmumu/2017_06_02/BackgroundModel.root w:zmod_$CHANNEL_ord1
-shapes ggH      *       Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
-shapes qqH      *       Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
-shapes *        *       Hmumu/2017_06_02/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
+shapes data_obs *       Hmumu/2017_06_21_Mu20/BackgroundModel.root w:dataObs_$CHANNEL
+shapes BKG      cat1    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:bern_cat1_ord5
+shapes BKG      cat4    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:exp_cat4_ord3
+shapes BKG      cat5    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:exp_cat5_ord3
+shapes BKG      cat6    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:bern_cat6_ord5
+shapes BKG      *       Hmumu/2017_06_21_Mu20/BackgroundModel.root w:zmod_$CHANNEL_ord1
+shapes ggH      *       Hmumu/2017_06_21_Mu20/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
+shapes qqH      *       Hmumu/2017_06_21_Mu20/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
+shapes *        *       Hmumu/2017_06_21_Mu20/SignalModel.root w:pdf_sigmodel_$PROCESS_$CHANNEL
 -------------------------------------
 bin         cat0 cat1 cat2 cat3 cat4 cat5 cat6 cat7 cat8 cat9 cat10 cat11 cat12 
 observation  -1   -1   -1   -1   -1   -1   -1   -1   -1   -1   -1    -1    -1   
@@ -27,20 +27,20 @@ process 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4
 rate 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 1 35867 35867 35867 35867 35867 35867 
 
 ------------
-## bkg rates
-pdf_cat0_bkg_norm rateParam cat0 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat1_bkg_norm rateParam cat1 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat2_bkg_norm rateParam cat2 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat3_bkg_norm rateParam cat3 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat4_bkg_norm rateParam cat4 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat5_bkg_norm rateParam cat5 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat6_bkg_norm rateParam cat6 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat7_bkg_norm rateParam cat7 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat8_bkg_norm rateParam cat8 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat9_bkg_norm rateParam cat9 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat10_bkg_norm rateParam cat10 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat11_bkg_norm rateParam cat11 BKG Hmumu/2017_06_02/BackgroundModel.root:w
-pdf_cat12_bkg_norm rateParam cat12 BKG Hmumu/2017_06_02/BackgroundModel.root:w
+## bkg rates 
+pdf_cat0_bkg_norm rateParam cat0 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat1_bkg_norm rateParam cat1 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat2_bkg_norm rateParam cat2 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat3_bkg_norm rateParam cat3 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat4_bkg_norm rateParam cat4 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat5_bkg_norm rateParam cat5 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat6_bkg_norm rateParam cat6 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat7_bkg_norm rateParam cat7 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat8_bkg_norm rateParam cat8 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat9_bkg_norm rateParam cat9 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat10_bkg_norm rateParam cat10 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat11_bkg_norm rateParam cat11 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
+pdf_cat12_bkg_norm rateParam cat12 BKG Hmumu/2017_06_21_Mu20/BackgroundModel.root:w
 
 # rate parameters
 hmm rateParam 	    * ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
@@ -81,7 +81,7 @@ cms_scale lnN - 0.982/1.025 0.980/1.009 0.978/1.000 0.964/1.002 0.963/1.031 - - 
 
 
 ###### THEORY YR4 #####
-#echo -n "br_hmm lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "BKG" ] && echo -n "- " ||  echo -n "1.017 " ; done ; done
+#echo -n "BR_hmm lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "BKG" ] && echo -n "- " ||  echo -n "1.017 " ; done ; done
 #echo -n "lumi_13TeV lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "BKG" ] && echo -n "- " ||  echo -n "1.027 " ; done ; done
 #echo -n "xsec_ZH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ZH" ] && echo -n "0.965/1.041 " ||  echo -n "- " ; done ; done
 #echo -n "xsec_ttH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ttH" ] && echo -n "0.901/1.068 " ||  echo -n "- " ; done ; done
@@ -89,12 +89,36 @@ cms_scale lnN - 0.982/1.025 0.980/1.009 0.978/1.000 0.964/1.002 0.963/1.031 - - 
 #echo -n "xsec_qqH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "VBF" ] && echo -n "1.022 " ||  echo -n "- " ; done ; done
 #echo -n "xsec_WH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "WPlusH" ] && echo -n "1.02 " || { [ "$j" == "WMinusH" ] && echo -n "1.02 " ; } ||  echo -n "- " ; done ; done
 
-br_hmm lnN - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 
-xsec_ZH lnN - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 
-xsec_ttH lnN - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - 
-xsec_ggH lnN - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - 
-xsec_qqH lnN - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - 
-xsec_WH lnN - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - 
+BR_hmm lnN - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 
+
+
+### SPLITTED
+#echo -n "QCDscale_ggH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "GluGlu" ] && echo -n "1.039 " ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_qqH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "VBF" ] && echo -n "0.997/1.004 " ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_WH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "WPlusH" ] && echo -n "0.995/1.007 " || { [ "$j" == "WMinusH" ] && echo -n "1.02 " ; } ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_ZH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ZH" ] && echo -n "0.969/1.038 " ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_ttH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ttH" ] && echo -n "0.908/1.058 " ||  echo -n "- " ; done ; done
+
+QCDscale_ggH lnN - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - 
+QCDscale_qqH lnN - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - 
+QCDscale_WH lnN - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - 
+QCDscale_ZH lnN - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 
+QCDscale_ttH lnN - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - 
+
+#-> ggH, ttH (-1)
+#echo -n "pdf_Higgs_gg lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "GluGlu" ] && echo -n "1.032 " || { [ "$j" == "ttH" ] && echo -n "0.964 " ; } ||  echo -n "- " ; done ; done
+#pdf_Higgs_gg lnN - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - 
+## decorrelate pdf ggH and ttH
+#echo -n "pdf_Higgs_gg lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "GluGlu" ] && echo -n "1.032 " ||  echo -n "- " ; done ; done
+#echo -n "pdf_Higgs_ttH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ttH" ] && echo -n "1.037 " ||  echo -n "- " ; done ; done
+pdf_Higgs_gg lnN - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - 
+pdf_Higgs_ttH lnN - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - 
+# VBF,  W+H, W-H, ZH
+#echo -n "pdf_Higgs_qq lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "VBF" ] && echo -n "1.021 " || { [ "$j" == "WPlusH" ] && echo -n "1.019 " ; } || { [ "$j" == "WMinusH" ] && echo -n "1.019 " ; } || { [ "$j" == "ZH" ] && echo -n "1.016 " ; } ||echo -n "- " ; done ; done
+pdf_Higgs_qq lnN - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 
+
+
+########
 
 ### WG1
 th_wg1_Mu lnN - 0.945/1.050 0.920/1.068 0.923/1.075 0.918/1.071 0.911/1.089 0.924/1.077 - 0.949/1.052 0.934/1.065 0.947/1.063 0.937/1.060 0.914/1.089 0.937/1.058 - 0.958/1.043 0.933/1.063 0.937/1.064 0.935/1.065 0.914/1.089 0.934/1.068 - 0.940/1.056 0.933/1.068 0.925/1.066 0.934/1.068 0.912/1.091 0.932/1.067 - 0.956/1.043 0.939/1.063 0.938/1.063 0.933/1.057 0.913/1.082 0.933/1.066 - 0.956/1.045 0.936/1.068 0.934/1.066 0.938/1.065 0.910/1.096 0.939/1.061 - 0.954/1.044 0.934/1.062 0.939/1.065 0.936/1.060 0.902/1.078 0.940/1.057 - 0.955/1.047 0.939/1.064 0.934/1.064 0.935/1.066 0.914/1.092 0.936/1.064 - 0.956/1.045 0.931/1.069 0.932/1.070 0.935/1.073 0.912/1.089 0.930/1.071 - 0.950/1.071 0.923/1.071 0.924/1.078 0.921/1.077 0.909/1.080 0.926/1.075 - 0.941/1.053 0.933/1.070 0.931/1.069 0.930/1.067 0.909/1.087 0.935/1.064 - 0.947/1.050 0.934/1.066 0.931/1.064 0.937/1.065 0.914/1.090 0.936/1.064 - 0.941/1.055 0.920/1.081 0.915/1.087 0.920/1.085 0.911/1.092 0.924/1.073
@@ -114,3 +138,8 @@ cms_eff_m_trg lnN - - - - - - - - - - 0.988/1.004 1.014/0.996 1.010/0.989 - - - 
 ## scale and smear, values are inside the workspace. all proc and cat are fully correlated
 scale_cat0_procGluGlu param 0 1.
 smear_cat0_procGluGlu param 0 1.
+
+# and give them a nice name
+#nuisance edit rename * * scale_cat0_procGluGlu cms_scale_m
+#nuisance edit rename * * smear_cat0_procGluGlu cms_res_m
+

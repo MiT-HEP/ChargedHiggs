@@ -33,6 +33,7 @@
 #include "interface/JSON.hpp"
 #include "interface/KalmanMuonCalibrator.hpp"
 #include "interface/KaMuCa.hpp"
+#include "interface/JetFilter2016.hpp"
 #include "interface/Lepton.hpp"
 #include "interface/LinkDef.hpp"
 #include "interface/Loader.hpp"

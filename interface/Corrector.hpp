@@ -15,6 +15,7 @@ class CorrectorBase : public Named {
 		vector<Tau *> & GetTauVector(Event *e) { return e->taus_;}
         vector<Lepton *>& GetLepVector(Event *e) { return e->leps_;}
         vector<GenParticle *>& GetGenVector(Event *e) { return e->genparticles_;}
+		vector<Jet *> & GetJetVector(Event *e) { return e->jets_;}
         
         // R/W Access to Objects, private/protected members
         inline void Scale( Object&o, float value) { o.Scale(value);}
