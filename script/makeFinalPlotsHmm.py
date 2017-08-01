@@ -727,6 +727,9 @@ if doBkg:
     if 'BdtOnH' in opts.var and opts.doRemap:
         dummy.GetXaxis().SetTitle("BDT Quantile")
 
+    if 'Met' in opts.var:
+        dummy.GetXaxis().SetTitle("E_{T}^{miss}[GeV]")
+
     dummy.GetXaxis().SetTitleOffset(2.0)
     dummy.GetYaxis().SetTitle("Events")
     dummy.GetYaxis().SetTitleOffset(2.0)
