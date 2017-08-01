@@ -45,6 +45,7 @@ obj=[]
 for icat,cat in enumerate(config.categories):
     print "* Doing cat",cat
     x = w.var("mmm")
+    x.SetTitle("m_{#mu#mu} [GeV]")
     c=ROOT.TCanvas(cat,cat,800,800)
     p=x.frame()
     data=w.data("dataObs_"+cat)
