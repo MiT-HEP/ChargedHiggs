@@ -42,7 +42,7 @@ parser.add_option_group(summary)
 
 (opts,args)=parser.parse_args()
 
-EOS='/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
+EOS='/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select'
 
 if 'CMSSW_BASE' not in os.environ:
 	print "-> Use a CMSSW environment: cmsenv"

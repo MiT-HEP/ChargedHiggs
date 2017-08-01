@@ -7,6 +7,7 @@ parser.add_option("-i","--input",type='string',help="Input ROOT file. [Default=%
 parser.add_option("","--syst",type='string',help="Syst [Default=%default]", default="PU")
 parser.add_option("","--outname",type='string',help="OutSystName [Default=%default]", default="cms_pu")
 parser.add_option("","--rebin",type='int',help="Rebin [Default=%default]", default=20)
+parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmmWithTTH")
 opts, args = parser.parse_args()
 
 #python script/drawSyst.py -i test/Hmumu/Hmumu_2017_03_07_JES_BTAG/Hmumu_2017_03_07_JES_BTAG.root --base=HmumuAnalysis/Vars/Mmm_OneB_BB_GluGlu_HToMuMu_M125 --syst=BTAGL
@@ -21,9 +22,11 @@ while mypath != "" and mypath != "/":
 print "-> Base Path is " + basepath
 sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
-from hmm import hmm, hmmAutoCat
+from hmm import *
 
-config=hmmAutoCat
+#config=hmmAutoCat
+config= eval(opts.hmm)
+config.Print()
 
 fIn=ROOT.TFile.Open(opts.input)
 if fIn==None:
@@ -57,6 +60,14 @@ for idx,cat in enumerate(categories):
    for pi,proc in enumerate(processes):
       name= base +"_"+ cat + "_" + proc +"_" + "HToMuMu_M125"
       h=fIn.Get(name)
+      if h==None and proc == "WH":
+        name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125"
+        h=fIn.Get(name)
+        name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125"
+        hTmp=fIn.Get(name)
+        h.Add(hTmp)
+        name= base +"_"+ cat + "_" + proc +"_" + "HToMuMu_M125"
+
       binline . append( "cat%d"%idx)
       procline. append( proc )
       if proc == "BKG":
@@ -64,10 +75,25 @@ for idx,cat in enumerate(categories):
           continue
       elif h == None:
           print >> sys.stderr, "[ERROR] Hist", name, "doesn't exist"
+          if( cat =="cat15" and proc =="VBF") : 
+                systsline .append( "-")
+                continue ## ok for this
           raise IOError
       elif opts.syst!= 'Scale' and opts.syst != 'Pdf':
           hUp=fIn.Get(name+"_"+opts.syst+"Up")
           hDown=fIn.Get(name+"_"+opts.syst+"Down")
+          if hUp == None and hDown == None and proc == "WH":
+             name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125" + "_" + opts.syst + "Up"
+             hUp=fIn.Get(name)
+             name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125" + "_" + opts.syst + "Down"
+             hDown=fIn.Get(name)
+             ###
+             name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125" + "_" + opts.syst + "Up"
+             hUp.Add(fIn.Get(name))
+             name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125" + "_" + opts.syst + "Down"
+             hDown.Add(fIn.Get(name))
+             name= base +"_"+ cat + "_" + proc +"_" + "HToMuMu_M125"
+
           if hUp==None or hDown==None:
             if hUp==None:print>>sys.stderr, "[ERROR] Hist", name+"_"+opts.syst+"Up", "doesn't exist"
             if hDown==None:print>>sys.stderr, "[ERROR] Hist", name+"_"+opts.syst+"Down", "doesn't exist"
@@ -82,6 +108,11 @@ for idx,cat in enumerate(categories):
           for w in [ 'R','F','RF']:
               for s in ['Up','Down']:
                   hTmp=fIn.Get(name+"_Scale"+w+s)
+                  if hTmp == None and proc == "WH":
+                    name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125" + "_Scale" + w+ s
+                    hTmp = fIn.Get(name)
+                    name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125" + "_Scale" + w + s
+                    hTmp.Add(fIn.Get(name))
                   if hTmp==None:
                       print "[ERROR] Hist", name+"_Scale"+w+s, "doesn't exist"
                       #systsline .append( "-")
@@ -98,6 +129,11 @@ for idx,cat in enumerate(categories):
           high=1.000
           for i in range(0,100):
               hTmp=fIn.Get(name+"_Pdf%d"%i)
+              if hTmp == None and proc == "WH":
+                    name= base +"_"+ cat + "_WPlusH_" + "HToMuMu_M125" + "_Pdf%d"%i
+                    hTmp = fIn.Get(name)
+                    name= base +"_"+ cat + "_WMinusH_" + "HToMuMu_M125" + "_Pdf%d"%i
+                    hTmp.Add(fIn.Get(name))
               if hTmp==None:
                    print "[ERROR] Hist",name+"_Pdf%d"%i, "doesn't exist"
                    #systsline .append( "-")

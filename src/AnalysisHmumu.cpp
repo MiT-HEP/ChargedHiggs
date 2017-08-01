@@ -435,12 +435,13 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta < 0.900 ) icat = 4 ;
     if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta < 0.900 ) icat = 5 ;
     if ( mu_max_eta < 1.900 and bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 0.900 ) icat = 6 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 ) icat = 7 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900 ) icat = 8 ;
-    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 9 ;
-    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 10 ;
-    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 11 ;
-    if ( bdt[0] >= 0.730 ) icat = 12 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 and mu_max_eta < 1.9) icat = 7 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 0.9 ) icat = 8 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900  and mu_max_eta >=0.9) icat = 9 ;
+    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 10 ;
+    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 11 ;
+    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 12 ;
+    if ( bdt[0] >= 0.730 ) icat = 13 ;
     //
 
     if (icat>=0)catStr=Form("cat%d",icat);
@@ -935,8 +936,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     else if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt());
     else if (catType==3) { 
         category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt()); 
-        if (e->Bjets()>0 and e->Njets() >4) category = "cat13";  // ttHHadr
-        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat14";  // veto Njets> 4
+        if (e->Bjets()>0 and e->Njets() >4) category = "cat14";  // ttHHadr
+        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat15";  // veto Njets> 4
     } 
     else category = Category(mu0, mu1, selectedJets);
 
@@ -1090,7 +1091,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
 
     // Trigger
-    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 );
+    //#warning Mu20
+    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 and mu1->Pt() >20 );
     bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); 
 
     bool passTrigger1{false}, passTrigger2{false};
@@ -1183,7 +1185,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if ( recoMuons and passAsymmPtCuts)
     {
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_NoTrigger_"+ label,systname, mass_,e->weight()) ;
-        //if(Unblind(e) and (passTrigger or e->IsTriggered("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") or e->IsTriggered("HLT_Mu45_eta2p1_v") or e->IsTriggered("HLT_Mu50_v") ))Fill("HmumuAnalysis/Vars/Mmm_DoubleMuonTrigger_"+ label,systname, mass_,e->weight()) ;
     }
 
     // -- FINAL SELECTION --
