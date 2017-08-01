@@ -25,7 +25,7 @@ if opts.data != None and len(opts.data.split(':'))>2:
     w= fData.Get(opts.data.split(':')[1])
     data_roo=w.data(opts.data.split(':')[2])
     data=data_roo.createHistogram("mmm")
-    data.Rebin(5)
+    data.Rebin(20)
     for i in range(0,data.GetNbinsX()):
         x=data.GetBinCenter(i)
         ydata=data.GetBinContent(i)

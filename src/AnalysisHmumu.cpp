@@ -1224,8 +1224,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, pt_,e->weight());
-            if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
-            if(catType==2 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
+            if(catType>=2 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
+            if(catType>=2 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
                 Fill("HmumuAnalysis/Vars/BdtOnH_BB_"+ label,systname, bdt[0] ,e->weight());
             if (doScikit and catType==2){
                 for(size_t i=0;i<discr.size();++i)
