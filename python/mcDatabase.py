@@ -17,7 +17,7 @@ parser.add_option("-p","--pileup",dest="pu",type="string",help="TODO FIXME")
 
 (opts,args)=parser.parse_args()
 
-EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
+EOS = "/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select"
 if '/eos/user' in opts.eos: EOS += " root://eosuser"
 
 if opts.rec:

@@ -17,6 +17,7 @@ observation  -1   -1   -1   -1   -1   -1   -1   -1   -1   -1   -1    -1    -1
 #echo -n "process ";for i in {0..12}; do for j in BKG ggH qqH WPlusH WMinusH ttH ZH ; do echo -n "$j " ; done ; done 
 #echo -n "process ";for i in {0..12}; do for j in 1 0 -1 -2  -3 -4 -5 ; do echo -n "$j " ; done ; done 
 #echo -n "rate ";   for i in {0..12}; do for j in BKG ggH qqH WPlusH WMinusH ttH ZH ; do [ "$j" == "BKG" ] && echo -n "1 " ||  echo -n "35867 " ; done ; done 
+
 bin cat0 cat0 cat0 cat0 cat0 cat0 cat0 cat1 cat1 cat1 cat1 cat1 cat1 cat1 cat2 cat2 cat2 cat2 cat2 cat2 cat2 cat3 cat3 cat3 cat3 cat3 cat3 cat3 cat4 cat4 cat4 cat4 cat4 cat4 cat4 cat5 cat5 cat5 cat5 cat5 cat5 cat5 cat6 cat6 cat6 cat6 cat6 cat6 cat6 cat7 cat7 cat7 cat7 cat7 cat7 cat7 cat8 cat8 cat8 cat8 cat8 cat8 cat8 cat9 cat9 cat9 cat9 cat9 cat9 cat9 cat10 cat10 cat10 cat10 cat10 cat10 cat10 cat11 cat11 cat11 cat11 cat11 cat11 cat11 cat12 cat12 cat12 cat12 cat12 cat12 cat12 
 process BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH BKG ggH qqH WPlusH WMinusH ttH ZH 
 process 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 1 0 -1 -2 -3 -4 -5 
@@ -62,20 +63,47 @@ cms_scale lnN - 0.982/1.025 0.980/1.009 0.978/1.000 0.964/1.002 0.963/1.031 - - 
 
 
 ###### THEORY YR4 #####
-#echo -n "br_hmm lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "BKG" ] && echo -n "- " ||  echo -n "1.017 " ; done ; done
-#echo -n "lumi_13TeV lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "BKG" ] && echo -n "- " ||  echo -n "1.027 " ; done ; done
+#echo -n "BR_hmm lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "BKG" ] && echo -n "- " ||  echo -n "1.017 " ; done ; done
+## NOT SPLITTED
 #echo -n "xsec_ZH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ZH" ] && echo -n "0.965/1.041 " ||  echo -n "- " ; done ; done
 #echo -n "xsec_ttH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ttH" ] && echo -n "0.901/1.068 " ||  echo -n "- " ; done ; done
 #echo -n "xsec_ggH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "GluGlu" ] && echo -n "1.05 " ||  echo -n "- " ; done ; done
 #echo -n "xsec_qqH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "VBF" ] && echo -n "1.022 " ||  echo -n "- " ; done ; done
 #echo -n "xsec_WH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "WPlusH" ] && echo -n "1.02 " || { [ "$j" == "WMinusH" ] && echo -n "1.02 " ; } ||  echo -n "- " ; done ; done
 
-br_hmm lnN - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 
-xsec_ZH lnN - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 - - - - - - 0.965/1.041 
-xsec_ttH lnN - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - - - - - - 0.901/1.068 - 
-xsec_ggH lnN - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - - 1.05 - - - - - 
-xsec_qqH lnN - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - - - 1.022 - - - - 
-xsec_WH lnN - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - - - - 1.02 1.02 - - 
+#######################
+### SPLITTED
+#echo -n "QCDscale_ggH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "GluGlu" ] && echo -n "1.039 " ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_qqH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "VBF" ] && echo -n "0.997/1.004 " ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_WH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "WPlusH" ] && echo -n "0.995/1.007 " || { [ "$j" == "WMinusH" ] && echo -n "1.02 " ; } ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_ZH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ZH" ] && echo -n "0.969/1.038 " ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_ttH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ttH" ] && echo -n "0.908/1.058 " ||  echo -n "- " ; done ; done
+
+########
+
+BR_hmm lnN - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 - 1.017 1.017 1.017 1.017 1.017 1.017 
+
+### SPLITTED
+#echo -n "QCDscale_ggH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "GluGlu" ] && echo -n "1.039 " ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_qqH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "VBF" ] && echo -n "0.997/1.004 " ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_WH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "WPlusH" ] && echo -n "0.995/1.007 " || { [ "$j" == "WMinusH" ] && echo -n "1.02 " ; } ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_ZH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ZH" ] && echo -n "0.969/1.038 " ||  echo -n "- " ; done ; done
+#echo -n "QCDscale_ttH lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "ttH" ] && echo -n "0.908/1.058 " ||  echo -n "- " ; done ; done
+
+QCDscale_ggH lnN - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - - 1.039 - - - - - 
+QCDscale_qqH lnN - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - - - 0.997/1.004 - - - - 
+QCDscale_WH lnN - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - - - - 0.995/1.007 1.02 - - 
+QCDscale_ZH lnN - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 - - - - - - 0.969/1.038 
+QCDscale_ttH lnN - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - - - - - - 0.908/1.058 - 
+
+#-> ggH, ttH (-1)
+#echo -n "pdf_Higgs_gg lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "GluGlu" ] && echo -n "1.032 " || { [ "$j" == "ttH" ] && echo -n "0.964 " ; } ||  echo -n "- " ; done ; done
+#echo -n "pdf_Higgs_qq lnN " ;for i in {0..12}; do for j in BKG GluGlu VBF WPlusH WMinusH ttH ZH ; do [ "$j" == "VBF" ] && echo -n "1.021 " || { [ "$j" == "WPlusH" ] && echo -n "1.019 " ; } || { [ "$j" == "WMinusH" ] && echo -n "1.019 " ; } || { [ "$j" == "ZH" ] && echo -n "1.016 " ; } ||echo -n "- " ; done ; done
+#pdf_Higgs_gg lnN - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - - 1.032 - - - 0.964 - 
+pdf_Higgs_gg lnN - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - - 1.032 - - - - - 
+pdf_Higgs_ttH lnN - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - - - - - - 1.037 - 
+pdf_Higgs_qq lnN - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 - - 1.021 1.019 1.019 - 1.016 
+
 
 ##### ENVELOPE #####
 pdfindex_cat0  discrete

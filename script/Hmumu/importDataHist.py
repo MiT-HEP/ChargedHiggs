@@ -6,15 +6,17 @@ x = ROOT.RooRealVar("mmm","mmm",110,150);
 
 getattr(w,'import')(x)
 
-fIn=ROOT.TFile.Open("test/Hmumu//Hmumu_2017_04_21_Bdt_ttH2/Hmumu_2017_04_21_Bdt_ttH2.root")
+#fIn=ROOT.TFile.Open("test/Hmumu//Hmumu_2017_04_21_Bdt_ttH2/Hmumu_2017_04_21_Bdt_ttH2.root")
+fIn=ROOT.TFile.Open("test/Hmumu/Hmumu_2017_07_07_Mu20_DYHighStat/Hmumu_2017_07_07_Mu20_DYHighStat.root")
 #fIn=ROOT.TFile.Open("test/Hmumu/Hmumu_2017_04_28_Bdt_amcatnlo/Hmumu_2017_04_28_Bdt_amcatnlo.root")
-cat='cat12'
+cat='cat8'
 if len(sys.argv) > 1:
     cat =sys.argv[1] 
     print "Processing cat",cat
 g=[]
 g.extend([x,w])
-for n in ['DY','TT']:
+#for n in ['DY','TT']:
+for n in ['DY']:
     h=fIn.Get("HmumuAnalysis/Vars/Mmm_"+cat+"_"+n)
     h.Scale(35867)
     h.Rebin(5)
@@ -24,5 +26,9 @@ for n in ['DY','TT']:
 
 w.writeToFile(cat+"_mc.root")
 
+fIn.Close()
+del w
+del fIn
+for x in g: del x
 print "DONE"
 
