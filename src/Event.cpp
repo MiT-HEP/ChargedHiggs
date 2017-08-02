@@ -570,6 +570,9 @@ void Event::ApplyTopReweight(){
         if (g->GetPdgId() == 6 ) pt1 = g->Pt();
         if (g->GetPdgId() == -6) pt2 = g->Pt();
 
+        if ( pt1 > 400 ) pt1 = 400;
+        if ( pt2 > 400 ) pt2 = 400;
+
         if(pt1 >0 and pt2>0) break;
     }
 
