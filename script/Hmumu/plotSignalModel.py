@@ -214,7 +214,7 @@ if __name__ == "__main__":
     txt.SetTextFont(43)
     txt.SetTextSize(30)
     txt.SetTextAlign(13)
-    txt.DrawLatex(.18,.95,"#bf{CMS}, #scale[0.7]{#it{Preliminary Simulation}}")
+    txt.DrawLatex(.18,.93,"#bf{CMS}, #scale[0.7]{#it{Preliminary Simulation}}")
     txt.SetTextAlign(33)
     txt.SetTextSize(24)
     txt.DrawLatex(.90,.89-0.05,"FWHM=%.1f GeV"%fwhm)

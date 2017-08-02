@@ -50,12 +50,12 @@ for icat,cat in enumerate(config.categories):
     p=x.frame()
     data=w.data("dataObs_"+cat)
     if opts.blind:
-        data.plotOn(p,ROOT.RooFit.Name("data"), ROOT.RooFit.CutRange("unblindReg_1"));
-        data.plotOn(p,ROOT.RooFit.Name("data"), ROOT.RooFit.CutRange("unblindReg_2"));
-        data.plotOn(p,ROOT.RooFit.Name("data"), ROOT.RooFit.Invisible());
+        data.plotOn(p,ROOT.RooFit.Name("data"), ROOT.RooFit.CutRange("unblindReg_1"),ROOT.RooFit.Binning(200));
+        data.plotOn(p,ROOT.RooFit.Name("data"), ROOT.RooFit.CutRange("unblindReg_2"),ROOT.RooFit.Binning(200));
+        data.plotOn(p,ROOT.RooFit.Name("data"), ROOT.RooFit.Invisible(),ROOT.RooFit.Binning(200));
         p.SetMinimum(0.1);
     else:
-        data.plotOn(p,ROOT.RooFit.Name("data"));
+        data.plotOn(p,ROOT.RooFit.Name("data"),ROOT.RooFit.Binning(200));
     pdf=w.pdf( config.bkg_functions[icat])
     pdf.plotOn(p)
 
