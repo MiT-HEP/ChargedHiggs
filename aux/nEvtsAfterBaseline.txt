@@ -1,39 +1,83 @@
 # Number of events available after baseline for each signal mass point, and for the joint regions
 
+Ntuples: JULY26/7a9c289868955f0125f0f646d0307e16ab1be2d3/
+
 Total available events:
+
+
+SIGNAL REGIONS:
         1 lepton
-		 signal low: 161451
-		 signal medium: 199462
-		 signal high: 385117
-		 signal 1: 19927
-		 signal 2: 23527
-		 signal 3: 30213
-		 signal 4: 38277
-		 signal 5: 49507
-		 signal 6: 58312
-		 signal 7: 65026
+        	 signal low: 147652
+		 signal medium: 183228
+		 signal high: 370813
+		 signal 1: 18394
+		 signal 2: 21618
+		 signal 3: 27622
+		 signal 4: 34877
+		 signal 5: 45141
+		 signal 6: 53452
+		 signal 7: 59602
 		 signal 8: 0
-		 signal 9: 76124
+		 signal 9: 70174
 		 signal 10: 0
-		 signal 11: 98156
-		 signal 12: 105059
-		 signal 13: 98558
-                 signal 14: 83344
+		 signal 11: 91963
+		 signal 12: 99359
+		 signal 13: 96317
+		 signal 14: 83174
 	 2 leptons
-		 signal low: 41519
-		 signal medium: 44751
-		 signal high: 61028
-		 signal 1: 5444
-		 signal 2: 6153
-		 signal 3: 7943
-		 signal 4: 9638
-		 signal 5: 12341
-		 signal 6: 13720
-		 signal 7: 14816
+         	 signal low: 44516
+		 signal medium: 48095
+		 signal high: 69330
+		 signal 1: 5781
+		 signal 2: 6608
+		 signal 3: 8552
+		 signal 4: 10337
+		 signal 5: 13238
+		 signal 6: 14691
+		 signal 7: 15913
 		 signal 8: 0
-		 signal 9: 16215
+		 signal 9: 17491
 		 signal 10: 0
-		 signal 11: 18045
-		 signal 12: 18344
-		 signal 13: 14173
-		 signal 14: 10466
+		 signal 11: 19683
+		 signal 12: 20246
+		 signal 13: 16508
+		 signal 14: 12893
+
+CONTROL REGIONS (R7+R10):
+        1 lepton
+		 signal low: 83050
+		 signal medium: 80393
+		 signal high: 236493
+		 signal 1: 15229
+		 signal 2: 14829
+		 signal 3: 15470
+		 signal 4: 17034
+		 signal 5: 20488
+		 signal 6: 23284
+		 signal 7: 25698
+		 signal 8: 0
+		 signal 9: 31411
+		 signal 10: 0
+		 signal 11: 42964
+		 signal 12: 49862
+		 signal 13: 68597
+		 signal 14: 75070
+
+        2 leptons
+	 signal low: 36023
+		 signal medium: 28728
+		 signal high: 58423
+		 signal 1: 6633
+		 signal 2: 6668
+		 signal 3: 6984
+		 signal 4: 7433
+		 signal 5: 8305
+		 signal 6: 8880
+		 signal 7: 9648
+		 signal 8: 0
+		 signal 9: 10200
+		 signal 10: 0
+		 signal 11: 12268
+		 signal 12: 13250
+		 signal 13: 16405
+		 signal 14: 16500
