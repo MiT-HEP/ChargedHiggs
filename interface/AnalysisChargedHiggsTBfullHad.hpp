@@ -25,6 +25,7 @@ public:
 
     void BookCutFlow(string l, string category);
     void BookFatjetPro(string l, string category, string phasespace, string pile);
+    void BookGenTTBar(string l, string category, string phasespace, string labelHF);
     void BookHisto(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void BookGenMatch(string l, string category, string phasespace, string cut321, string state);
@@ -94,6 +95,12 @@ private:
     double evt_MH_t0b=-1;
     double evt_MH_Wbb=-1;
     double evt_MH_wbj=-1;
+
+    double evt_PtH_tb =-1;
+    double evt_PtH_t1b=-1;
+    double evt_PtH_t0b=-1;
+    double evt_PtH_Wbb=-1;
+    double evt_PtH_wbj=-1;
 
     Jet* leadingb=NULL;
     Jet* leadingbWBJ = NULL;
