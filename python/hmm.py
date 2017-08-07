@@ -52,6 +52,9 @@ class HmmConfig():
         ## DATACARD specific ##
 
         self.datacard_procs=['BKG','GluGlu','VBF','WPlusH','WMinusH','ttH','ZH']
+
+        ##BKG functions after bias
+        self.bkg_functions=[]
     
         self.computeVersioning()
 
@@ -88,7 +91,7 @@ class HmmConfig():
     def Print(self):
         print "--- Hmm Configurator ---"
         print "Name:",self.__class__.__name__
-        for x in ["xmin","xmax","muCategories","procCategories","categories","sig_mass_points","processes","datacard_procs","sigfit_scale_unc","sigfit_smear_unc","catVersion","fitVersion"]:
+        for x in ["xmin","xmax","muCategories","procCategories","categories","sig_mass_points","processes","datacard_procs","sigfit_scale_unc","sigfit_smear_unc","catVersion","fitVersion","bkg_functions"]:
             print x+"=",eval("self."+x)
         print "------------------------"
         print "125: BR",self.br(125)
@@ -230,7 +233,7 @@ class HmmConfigAutoCat(HmmConfig):
         self.categories=[ "cat%d"%x for x in range(0,13)]
         self.procCategories=[]
         self.muCategories=[]
-        self.sigfit_gaussians=[]
+        self.sigfit_gaussians={}
         #self.readScaleUnc()        
         self.SimpleScaleAndSmear()
         self.computeVersioning()
@@ -248,6 +251,22 @@ class HmmConfigWithTTH(HmmConfigAutoCat):
         HmmConfigAutoCat.__init__(self)
         self.categories=[ "cat%d"%x for x in range(0,16)]
         self.computeVersioning()
+        self.sigfit_gaussians[("cat1","GluGlu")] = 2  ## 11
+        self.sigfit_gaussians[("cat14","GluGlu")] = 1  ## 11
+        self.sigfit_gaussians[("cat15","GluGlu")] = 1  ## 11
+        self.sigfit_gaussians[("cat14","VBF")] = 1  ## 11
+        self.sigfit_gaussians[("cat15","VBF")] = 1  ## 11
+        self.sigfit_gaussians[("cat14","WPlusH")] = 1  ## 11
+        self.sigfit_gaussians[("cat15","WPlusH")] = 1  ## 11
+        self.sigfit_gaussians[("cat14","WMinusH")] = 1  ## 11
+        self.sigfit_gaussians[("cat15","WMinusH")] = 1  ## 11
+        self.sigfit_gaussians[("cat14","ZH")] = 2  ## 11
+        self.sigfit_gaussians[("cat15","ZH")] = 1  ## 11
+        self.sigfit_gaussians[("cat1","ttH")] = 2  ## 11
+        self.sigfit_gaussians[("cat1","ttH")] = 3  ## 11
+
+        self.bkg_functions=["zmod2_cat0_ord5","exp_cat1_ord3","zmod2_cat2_ord5","exp_cat3_ord3","zmod2_cat4_ord5","zmod_cat5_ord1","zmod2_cat6_ord5","zmod2_cat7_ord5","zmod2_cat8_ord5","zmod2_cat9_ord5","zmod_cat10_ord1","zmod_cat11_ord1","zmod2_cat12_ord5","zmod_cat13_ord1","bern2_cat14_ord4","bern2_cat15_ord5"]
+        
 
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
