@@ -84,7 +84,9 @@ if opts.label !="":
     leg = ROOT.TLegend(0.15,.20,.40,.45)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
-    for idx,g in enumerate(graphs):
+    ## reversed so if there are data, are the 3rd
+    for idx in reversed(range(0,len(graphs))):
+        g=graphs[idx]
         leg.AddEntry(g,opts.label.split(',')[idx],"L")
     leg.Draw("SAME")
     objs.append(leg)

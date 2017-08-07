@@ -471,6 +471,58 @@ if doSig:## EA plot
     	c.SaveAs(opts.outdir + "/effAcc.pdf")
     	c.SaveAs(opts.outdir + "/effAcc.png")
 
+if doSig:## EA plot inclusive only
+
+    c=ROOT.TCanvas("c_"+cat+"_ea","canvas",800,800)
+    ### 
+    dummy = ROOT.TH2F("dummy","",10,120,130,100,0,1);
+    dummy.SetStats(0);
+
+    ## Set Style and draw
+    c.SetTopMargin(0.05)
+    c.SetRightMargin(0.05)
+    c.SetBottomMargin(0.15)
+    c.SetLeftMargin(0.15)
+
+    dummy.Draw("AXIS")
+    dummy.GetXaxis().SetTitle("m_{H} [GeV]")
+    dummy.GetXaxis().SetTitleOffset(1.3)
+    dummy.GetYaxis().SetTitle("#varepsilon A")
+    dummy.GetYaxis().SetTitleOffset(1.4)
+    dummy.GetYaxis().SetRangeUser(.26,.75)
+
+    txt=ROOT.TLatex()
+    txt.SetNDC()
+    txt.SetTextFont(43)
+    #txt.SetTextSize(20)
+    #txt.SetTextAlign(31)
+    #txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
+    txt.SetTextSize(30)
+    txt.SetTextAlign(13)
+    txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Simulation Preliminary}}")
+
+    x0=.5
+    y0=.20
+    leg = ROOT.TLegend(x0,y0,x0+.4,y0+.15)
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetNColumns(2)
+    leg.AddEntry(g['tot'],"SM H","L")
+    leg.AddEntry(g['stat'],"stat. err","F")
+    g['tot'] . Draw("3 SAME")
+    g['tot'] . Draw("LX SAME")
+    leg.Draw()
+
+    dummy.Draw("AXIS SAME")
+    dummy.Draw("AXIS X+ Y+ SAME")
+    c.Modify()
+    c.Update()
+    if opts.outdir=="":
+    	raw_input("ok?")
+    else:
+    	c.SaveAs(opts.outdir + "/effAcc_incl.pdf")
+    	c.SaveAs(opts.outdir + "/effAcc_incl.png")
+
 rebin=opts.rebin
 doBkg=not opts.noBkg
 if doBkg:
@@ -729,6 +781,18 @@ if doBkg:
 
     if 'Met' in opts.var:
         dummy.GetXaxis().SetTitle("E_{T}^{miss}[GeV]")
+    elif 'NJets' in opts.var:
+        dummy.GetXaxis().SetTitle("N_{jets}")
+    elif 'NBJets' in opts.var:
+        dummy.GetXaxis().SetTitle("N_{b jets}")
+    elif 'EtaJet1' in opts.var:
+        dummy.GetXaxis().SetTitle("#eta_{1 jet}")
+    elif 'EtaJet2' in opts.var:
+        dummy.GetXaxis().SetTitle("#eta_{2 jet}")
+    elif 'PtJet1' in opts.var:
+        dummy.GetXaxis().SetTitle("p_{T}^{1 jet} [GeV]")
+    elif 'PtJet2' in opts.var:
+        dummy.GetXaxis().SetTitle("p_{T}^{2 jet} [GeV]")
 
     dummy.GetXaxis().SetTitleOffset(2.0)
     dummy.GetYaxis().SetTitle("Events")

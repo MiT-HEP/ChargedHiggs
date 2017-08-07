@@ -65,7 +65,8 @@ print status
 if status == None:
     print "-> Looking for basepath"
     basepath = ""
-    mypath = os.path.abspath(os.getcwd())
+    #mypath = os.path.abspath(os.getcwd())
+    mypath = os.path.abspath(os.environ['PWD'])
     while mypath != "" and mypath != "/":
     	if "ChargedHiggs" in os.path.basename(mypath):
     		basepath = os.path.abspath(mypath)
@@ -73,7 +74,6 @@ if status == None:
     print "-> Base Path is " + basepath
     status=sys.path.insert(0,basepath)
     status=sys.path.insert(0,basepath+'/python')
-    
 
 from ParseDat import chunkIt
 
@@ -215,12 +215,15 @@ for mass in massList:
 	sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/combine_$RANDOM" \n'%(os.environ['USER']))
 	sh.write('mkdir -p $WORKDIR \n')
 	sh.write('rm -v $WORKDIR/higgs*root\n')  ## make sure there is no residual in the WORKDIR
+
 	#sh.write('cd %s\n'%(os.getcwd() ) )
 	sh.write('cd %s\n'%(os.environ['PWD'] ) ) ## difference is with symlink
 	sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
+	#sh.write('eval `scramv1 runtime -sh`\n') # cmsenv
+	if os.getcwd() != os.environ['PWD'] :
+	    print " WORK-AROUND COMBINE: FIXME!!! "
+	    sh.write("cd ~/work/ChHiggs2016/CMSSW_9_1_0_pre2/src/ChargedHiggs\n")
 
-	#print " WORK-AROUND COMBINE: FIXME!!! "
-	#sh.write('cd ~amarini/work/ProductionJanuary2014/CMSSW_6_1_1_CategoryFull/src\n')
 	sh.write('eval `scramv1 runtime -sh`\n') # cmsenv
 
 	## Touch control files
