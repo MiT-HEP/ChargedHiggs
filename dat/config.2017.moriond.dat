@@ -5,27 +5,30 @@
 #### BKG ###
 ## remove previous
 Files=
+#include=dat/catalog/2017.moriond/qg_dijet.dat
+include=dat/catalog/2017.moriond/qg_zmm.dat
+
 ## ttbar
-include=dat/catalog/2017.moriond/tt.dat
-include=dat/catalog/2017.moriond/ttlep.dat
+#include=dat/catalog/2017.moriond/tt.dat
+#include=dat/catalog/2017.moriond/ttlep.dat
 ## SingleTop
-include=dat/catalog/2017.moriond/st.dat
+#include=dat/catalog/2017.moriond/st.dat
 ## Drell-Yan
-include=dat/catalog/2017.moriond/dy.dat
+#include=dat/catalog/2017.moriond/dy.dat
 ## Wjets
-include=dat/catalog/2017.moriond/wjets.dat
+#include=dat/catalog/2017.moriond/wjets.dat
 ## DIBOSON
-include=dat/catalog/2017.moriond/vv.dat
+#include=dat/catalog/2017.moriond/vv.dat
 ## RARES
-include=dat/catalog/2017.moriond/rares.dat
+#include=dat/catalog/2017.moriond/rares.dat
 ## QCD
 
 ### DATA
-include=dat/catalog/2017.moriond/tau.dat
-include=dat/catalog/2017.moriond/doubleEG.dat
-include=dat/catalog/2017.moriond/doubleMuon.dat
-include=dat/catalog/2017.moriond/singleElecton.dat
-include=dat/catalog/2017.moriond/singleMuon.dat
+#include=dat/catalog/2017.moriond/tau.dat
+#include=dat/catalog/2017.moriond/doubleEG.dat
+#include=dat/catalog/2017.moriond/doubleMuon.dat
+#include=dat/catalog/2017.moriond/singleElecton.dat
+#include=dat/catalog/2017.moriond/singleMuon.dat
 
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
@@ -38,8 +41,10 @@ Branches=dat/branches.txt
 Output=ChHiggs.root
 
 #pileup=aux/pileup.2017.moriond.root
-pileup=aux/pileup.2017.BCDEFGH.root
-MCDB=aux/mcdb.2017.moriond.txt
+######pileup=aux/pileup.2017.BCDEFGH.root
+#####MCDB=aux/mcdb.2017.moriond.txt
+MCDB=aux/mcdb.qg.txt
+pileup=aux/pileup.2017.qg.root
 SFDB=aux/sf_database.2017.moriond.txt
 
 Lumi=1

@@ -162,8 +162,9 @@ def FindHadoop(name,mount="/mnt/hadoop/cms"):
 
 def FindEOS(name,mount=""):
 	''' EOS PATH should be followed. The mount option will assume that eos is mounted in ~/eos '''
-	EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
-	# should match wildcard, that for some reason new root does not
+	#EOS = "/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select"
+	EOS = "/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select"
+        # should match wildcard, that for some reason new root does not
 	if '/store/' not in name and '/eos/user' not in name: return [name]
 	if '/eos/cms/store/' in name: return [name] # likely already parsed
 	if 'root://eoscms//' in name: return [name] # already parsed

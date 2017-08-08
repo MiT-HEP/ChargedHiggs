@@ -9,7 +9,7 @@ from subprocess import call, check_output
 parser = OptionParser(usage = "usage");
 parser.add_option("-e","--eos",dest="eos",type="string",help="eos directory to scout, will not read the files in the pSet",default="");
 parser.add_option("-l","--label",dest="label",type="string",help="MC label",default="DYamcatnlo");
-parser.add_option("-f","--file",dest="file",type="string",help="Pileup file (Output in UPDATE mode)",default="aux/pileup.root");
+parser.add_option("-f","--file",dest="file",type="string",help="Pileup file (Output in UPDATE mode)",default="aux/pileup.TauNu.moriond_test.root");
 parser.add_option("","--run",dest="run",type="string",help="run list",default="");
 parser.add_option("-r","--recursive", dest='rec', action= 'store_true', help="do same for each subdir", default =False);
 parser.add_option("","--mcdb",dest="mcdb",type="string",help="dump from mcdb",default="");
