@@ -3,6 +3,7 @@
 #include "interface/AnalysisBase.hpp"
 #include "interface/CutSelector.hpp"
 #include "interface/GetBinning.hpp"
+#include "interface/SplitMC.hpp"
 #include <memory>
 
 #include "interface/Output.hpp" // DataStore
@@ -19,7 +20,7 @@ public:
     bool doSynch = false;
     bool doICHEP = false;
     bool writeTree = false;
-    bool doSplit = false;
+    bool doSplit = true;
 
     // Analysis type
     bool do1lAnalysis=false;
@@ -44,6 +45,10 @@ public:
     void BookCutFlow(string l, string category);
     void BookHisto(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
+    void BookSplit(string l, string category);
+    unsigned findMC(string label);
+    int FillSplit(Event*e, string l, string category, string systname);
+
     void Preselection();
 
     // function with various plots
@@ -52,6 +57,7 @@ public:
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
     void classifyHF(Event*e, string label, string category, string systname, string jetname, string SR);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
+    void fillMoneyPlot(Event*e, string category, string systname,string SRlabel, string label);
 
     void computeVar(Event*e);
 
@@ -75,6 +81,7 @@ public:
 
     vector<string> weights;
 
+    std::unique_ptr<SplitMCAnalysis> spliMC_ ;//( new SplitMCAnalysis());
 
 private:
 

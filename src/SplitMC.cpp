@@ -20,10 +20,12 @@ void SplitMCAnalysis::Init(){
    	l.clear();
 	l.str(line);
 	unsigned mc; l>>mc;
+    unsigned lep_category; l>>lep_category;
 	unsigned run; l>>run;
 	unsigned lumi; l>>lumi;
 	uint64_t event; l>>event;
-	addBadEvent(mc,run,lumi,event);
+    //	addBadEvent(mc,run,lumi,event);
+    addBadEvent(mc,lep_category,run,lumi,event);
     }
 
 
@@ -37,7 +39,6 @@ void SplitMCAnalysis::Init(){
         AddFinalHisto(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc));
         Book(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc),"split mc cut flow weight",2,0,2);
     }
-
 
 }
 
@@ -125,6 +126,7 @@ unsigned SplitMCAnalysis::findMC(Event*e)
 
 int SplitMCAnalysis::analyze(Event* e,string systname)
 {
+    /*
     // protect real data
     if (e->IsRealData() ) return SPLITMC_EVENT_PASS;
 
@@ -146,6 +148,8 @@ int SplitMCAnalysis::analyze(Event* e,string systname)
         //        std::cout << " Pass = " << std::endl;
         return SPLITMC_EVENT_PASS;
     }
+    */
+
 }
 
 // Local Variables:
