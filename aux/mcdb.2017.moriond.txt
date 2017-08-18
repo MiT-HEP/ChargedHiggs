@@ -12,6 +12,12 @@ ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8 /store/user/jaeyser
 ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8 /store/user/jaeyserm/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8 324.485046751 1
 ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 12.7144972018 1
 
+WprimeToTB_TToHad_M-800 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-800 1 1
+WprimeToTB_TToHad_M-1000 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-1000 1 1
+WprimeToTB_TToHad_M-1500 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-1500 1 1
+WprimeToTB_TToHad_M-2000 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-2000 1 1
+WprimeToTB_TToHad_M-3000 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-3000 1 1
+
 ### TauNu
 ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 155642.666561 1
 ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8 12578.2643581 1
