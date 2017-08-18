@@ -111,7 +111,7 @@ double PdfModelBuilder::getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooD
     // if so, we don't rely on asymptotic approximations
     int nBinsForMass = data->numEntries(); // nentries = nbins
 
-    if ((double)data->sumEntries()/nBinsForMass < 5 ){
+    if ((double)data->sumEntries()/nBinsForMass < 5  ){ // not for wo
 
         std::cout << "Running toys for GOF test " << std::endl;
         // store pre-fit params 
@@ -300,6 +300,7 @@ RooAbsPdf* PdfModelBuilder::getZModExp2(string prefix, int order){
         replace(old,Form("ord%d",order),"ord1");
         if (params.find(old) != params.end()) params[pname] -> setVal( params[old]->getVal());
         else cout <<"WARNING UNABLE TO FIND REPLACEMENT FROM "<<old<<" TO "<<pname<<endl;
+        if (order !=1) params[pname] -> setConstant();
     }
     //if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1 + @5*TMath::Sin(TMath::Sqrt(@4+.2)*4.5*3.1415 ))",*plist);
 
@@ -591,6 +592,7 @@ void PdfModelBuilder::runFit(RooAbsPdf *pdf, RooDataHist *data, double *NLL, int
                 RooFit::Minimizer("Minuit2","minimize"),
                 RooFit::SumW2Error(kTRUE) // for linear fit should be easier to estimate the parameters
                 );
+
 	while (stat!=0){
         if (ntries>=MaxTries) break;
         RooFitResult *fitTest = pdf->fitTo(*data,
@@ -598,12 +600,27 @@ void PdfModelBuilder::runFit(RooAbsPdf *pdf, RooDataHist *data, double *NLL, int
                 RooFit::Minimizer("Minuit2","minimize")
                 );
         stat = fitTest->status();
+        bool nan=false;
+        for(TIterator *it=pdf->getVariables()->createIterator(); ;)
+        {
+            RooRealVar* var = (RooRealVar*) **it;
+            if(var == NULL) break;
+            if (std::isnan(var->getVal())) {
+                nan=true;
+                if (params.find(var->GetName()) != params.end() ) params[var->GetName()]->setVal(0.); //reset
+                cout <<"[PdfModelBuilder]::[runFit]::[WARNING] found NAN value"<<endl;
+            }
+            it->Next();
+        }
+        
+        if (nan) stat=10;
         minnll = fitTest->minNll();
-        if (stat!=0) params_test->assignValueOnly(fitTest->randomizePars());
         ntries++; 
+        if (stat!=0 and ntries < MaxTries) params_test->assignValueOnly(fitTest->randomizePars());
     }
 	*stat_t = stat;
 	*NLL = minnll;
+
 }
 
 
@@ -1144,29 +1161,73 @@ void BackgroundFitter::fit(){
 
         {
             cout<<" --- Fitting ZMOD2 ORDER 5 ---"<<endl;
-            int order=5;
+            int order=5; double nll; int fitStatus;
             RooAbsPdf *zmod2_ord5=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            modelBuilder.runFit( zmod2_ord5 , hist_[name],&nll,&fitStatus,3);
             storedPdfs.add(*zmod2_ord5); //7
 
             cout<<" --- Fitting ZMOD2 ORDER 4 ---"<<endl;
             order=4;
             RooAbsPdf* zmod2_ord4=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            modelBuilder.runFit( zmod2_ord4 , hist_[name],&nll,&fitStatus,3);
             storedPdfs.add(*zmod2_ord4); //8
 
             cout<<" --- Fitting ZMOD2 ORDER 3 ---"<<endl;
             order=3;
             RooAbsPdf* zmod2_ord3=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            modelBuilder.runFit( zmod2_ord3 , hist_[name],&nll,&fitStatus,3);
             storedPdfs.add(*zmod2_ord3); //9
 
             cout<<" --- Fitting ZMOD2 ORDER 2 ---"<<endl;
             order=2;
             RooAbsPdf *zmod2_ord2=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            modelBuilder.runFit( zmod2_ord2 , hist_[name],&nll,&fitStatus,3);
             storedPdfs.add(*zmod2_ord2); //10
 
             cout<<" --- Fitting ZMOD2 ORDER 1 == ZMOD ---"<<endl;
             order=1;
             RooAbsPdf *zmod2_ord1=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
+            modelBuilder.runFit( zmod2_ord1 , hist_[name],&nll,&fitStatus,3);
             storedPdfs.add(*zmod2_ord1); //11
+
+            vector<RooAbsPdf*> bern2;
+            if (cat >=14){ // for 14 and 15 save all the bern 1 2 3 4
+                cout<<" --- Fitting BERN2 ORDER 1 ---"<<endl;
+                int order=1;
+                RooAbsPdf *bern_ord1=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
+                modelBuilder.runFit( bern_ord1 , hist_[name],&nll,&fitStatus,3);
+                storedPdfs.add(*bern_ord1); //12
+                bern2.push_back(bern_ord1);
+
+                cout<<" --- Fitting BERN2 ORDER 2 ---"<<endl;
+                order=2;
+                RooAbsPdf *bern_ord2=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
+                modelBuilder.runFit( bern_ord2 , hist_[name],&nll,&fitStatus,3);
+                storedPdfs.add(*bern_ord2); //13
+                bern2.push_back(bern_ord2);
+
+                cout<<" --- Fitting BERN2 ORDER 3 ---"<<endl;
+                order=3;
+                RooAbsPdf *bern_ord3=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
+                modelBuilder.runFit( bern_ord3 , hist_[name],&nll,&fitStatus,3);
+                storedPdfs.add(*bern_ord3); //14
+                bern2.push_back(bern_ord3);
+
+                cout<<" --- Fitting BERN2 ORDER 4 ---"<<endl;
+                order=4;
+                RooAbsPdf *bern_ord4=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
+                modelBuilder.runFit( bern_ord4 , hist_[name],&nll,&fitStatus,3);
+                storedPdfs.add(*bern_ord4); //15
+                bern2.push_back(bern_ord4);
+
+                cout<<" --- Fitting BERN2 ORDER 5 ---"<<endl;
+                order=5;
+                RooAbsPdf *bern_ord5=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
+                modelBuilder.runFit( bern_ord5 , hist_[name],&nll,&fitStatus,3);
+                storedPdfs.add(*bern_ord5); //16
+                bern2.push_back(bern_ord5);
+
+            }
 
             if (plot){
                 TCanvas *c = new TCanvas();
@@ -1186,19 +1247,35 @@ void BackgroundFitter::fit(){
                 TObject *datLeg = p->getObject(int(p->numItems()-1));
                 leg->AddEntry(datLeg,Form("Data - cat%d",cat),"LEP");
 
-                plotOnFrame( p, zmod2_ord5, kRed, kSolid,Form("zmod2 ord=%d chi2=%.2f",5,modelBuilder.getGoodnessOfFit(x_, zmod2_ord5, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
-                plotOnFrame( p, zmod2_ord4, kBlue, kSolid,Form("zmod2 ord=%d chi2=%.2f",4,modelBuilder.getGoodnessOfFit(x_, zmod2_ord4, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
-                plotOnFrame( p, zmod2_ord3, kGreen, kSolid,Form("zmod2 ord=%d chi2=%.2f",3,modelBuilder.getGoodnessOfFit(x_, zmod2_ord3, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
-                plotOnFrame( p, zmod2_ord2, kOrange, kSolid,Form("zmod2 ord=%d chi2=%.2f",2,modelBuilder.getGoodnessOfFit(x_, zmod2_ord2, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
-                plotOnFrame( p, zmod2_ord1, kCyan, kSolid,Form("zmod2 ord=%d chi2=%.2f",1,modelBuilder.getGoodnessOfFit(x_, zmod2_ord1, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                if(cat <14){
+                    plotOnFrame( p, zmod2_ord5, kRed, kSolid,Form("zmod2 ord=%d chi2=%.2f",5,modelBuilder.getGoodnessOfFit(x_, zmod2_ord5, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                    plotOnFrame( p, zmod2_ord4, kBlue, kSolid,Form("zmod2 ord=%d chi2=%.2f",4,modelBuilder.getGoodnessOfFit(x_, zmod2_ord4, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                    plotOnFrame( p, zmod2_ord3, kGreen, kSolid,Form("zmod2 ord=%d chi2=%.2f",3,modelBuilder.getGoodnessOfFit(x_, zmod2_ord3, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                    plotOnFrame( p, zmod2_ord2, kOrange, kSolid,Form("zmod2 ord=%d chi2=%.2f",2,modelBuilder.getGoodnessOfFit(x_, zmod2_ord2, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                    plotOnFrame( p, zmod2_ord1, kCyan, kSolid,Form("zmod2 ord=%d chi2=%.2f",1,modelBuilder.getGoodnessOfFit(x_, zmod2_ord1, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
+                }
+                else{
+                    plotOnFrame( p, bern2[0], kRed, kSolid,Form("bern2 ord=%d chi2=%.2f",1,modelBuilder.getGoodnessOfFit(x_, bern2[0], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
+                    plotOnFrame( p, bern2[1], kBlue, kSolid,Form("bern2 ord=%d chi2=%.2f",2,modelBuilder.getGoodnessOfFit(x_, bern2[1], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
+                    plotOnFrame( p, bern2[2], kGreen, kSolid,Form("bern2 ord=%d chi2=%.2f",3,modelBuilder.getGoodnessOfFit(x_, bern2[2], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
+                    plotOnFrame( p, bern2[3], kOrange, kSolid,Form("bern2 ord=%d chi2=%.2f",4,modelBuilder.getGoodnessOfFit(x_, bern2[3], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
+                    plotOnFrame( p, bern2[4], kCyan, kSolid,Form("bern2 ord=%d chi2=%.2f",5,modelBuilder.getGoodnessOfFit(x_, bern2[4], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
+                }
 
     
                 p -> Draw();
                 leg->Draw("same");
 
-                system(Form("mkdir -p %s/zmod2/",plotDir.c_str()));
-                c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.pdf",plotDir.c_str(),cat) );
-                c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.png",plotDir.c_str(),cat) );
+                if (cat<14){
+                    system(Form("mkdir -p %s/zmod2/",plotDir.c_str()));
+                    c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.pdf",plotDir.c_str(),cat) );
+                    c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.png",plotDir.c_str(),cat) );
+                }
+                else{
+                    system(Form("mkdir -p %s/bern2/",plotDir.c_str()));
+                    c -> SaveAs( Form("%s/bern2/bern2_all_cat%d.pdf",plotDir.c_str(),cat) );
+                    c -> SaveAs( Form("%s/bern2/bern2_all_cat%d.png",plotDir.c_str(),cat) );
+                }
 
                 delete p;
                 delete c;

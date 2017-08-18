@@ -359,6 +359,8 @@ dummy.GetYaxis().SetTitle("#sigma/#sigma_{MSSM}")
 if opts.xaxis != "" and float(opts.xaxis.split(',')[1]) <135: ## SM?
 	dummy.GetXaxis().SetTitle("m_{H} [GeV]")
 	dummy.GetYaxis().SetTitle("#sigma/#sigma_{SM}")
+else:
+    c.SetLogy()
 
 if opts.xsec:
 	dummy.GetYaxis().SetTitle("#sigma [pb]")
@@ -377,7 +379,6 @@ line.SetLineColor(ROOT.kGray)
 line.SetPoint(0,0,1)
 line.SetPoint(1,1000,1)
 
-c.SetLogy()
 
 #mg = ROOT.TMultiGraph()
 
@@ -416,7 +417,10 @@ l.SetNDC()
 l.SetTextSize(0.05)
 l.SetTextFont(42)
 l.SetTextAlign(13)
-l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
+if opts.unblind:
+    l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Preliminary}}")
+else:
+    l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
 l.SetTextSize(0.03)
 l.SetTextAlign(31)
 l.DrawLatex(0.89,.91,"35.9 fb^{-1} (13 TeV)")
