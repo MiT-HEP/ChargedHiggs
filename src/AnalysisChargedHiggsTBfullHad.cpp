@@ -853,9 +853,13 @@ void ChargedHiggsTopBottomFullHad::Preselection()
 
 
         BookHisto(l, "","OneBOneMirrorFat");
-        BookHisto(l, "","OneBOneMirrorFat_one");
-        BookHisto(l, "","OneBOneMirrorFat_two");
-        BookHisto(l, "","OneBOneMirrorFat_three");
+        BookHisto(l, "","OneBOneMirrorFat_one_lowj");
+        BookHisto(l, "","OneBOneMirrorFat_two_lowj");
+        BookHisto(l, "","OneBOneMirrorFat_three_lowj");
+        BookHisto(l, "","OneBOneMirrorFat_one_highj");
+        BookHisto(l, "","OneBOneMirrorFat_two_highj");
+        BookHisto(l, "","OneBOneMirrorFat_three_highj");
+
 
         BookFatjetPro(l, "_t0b", "OneBOneFat_one", "pu_");
         BookFatjetPro(l, "_t0b", "OneBOneFat_one", "nopu_");
@@ -1797,10 +1801,10 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
         //HT
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+label,systname, evt_HT ,e->weight());
         //HT trigger
-   //     if(e->IsTriggered("HLT_PFHT900_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFHT900_"+label,systname, evt_HT ,e->weight());
-   //     if(e->IsTriggered("HLT_AK8PFJet400_TrimMass30_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFJet400_"+label,systname, evt_HT ,e->weight());
-   //     if(e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_AK8PFHT700_"+label,systname, evt_HT ,e->weight());
-   //     if(e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_BTagCSV_p087_v1")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_DiPFJet300_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_PFHT900_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFHT900_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8PFJet400_TrimMass30_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFJet400_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_AK8PFHT700_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_BTagCSV_p087_v1")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_DiPFJet300_"+label,systname, evt_HT ,e->weight());
         //HT divided
         if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_t1b < 360. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
@@ -1860,10 +1864,10 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
         //HT
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+label,systname, evt_HT ,e->weight());
         //HT trigger
-    //    if(e->IsTriggered("HLT_PFHT900_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFHT900_"+label,systname, evt_HT ,e->weight());
-    //    if(e->IsTriggered("HLT_AK8PFJet400_TrimMass30_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFJet400_"+label,systname, evt_HT ,e->weight());
-    //    if(e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_AK8PFHT700_"+label,systname, evt_HT ,e->weight());
-    //    if(e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_BTagCSV_p087_v1")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_DiPFJet300_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_PFHT900_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFHT900_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8PFJet400_TrimMass30_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFJet400_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_AK8PFHT700_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_BTagCSV_p087_v1")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_DiPFJet300_"+label,systname, evt_HT ,e->weight());
         //HT divided
         if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_t0b < 360. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
@@ -1929,10 +1933,10 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
         //HT
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+label,systname, evt_HT ,e->weight());
         //HT trigger
-  //      if(e->IsTriggered("HLT_PFHT900_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFHT900_"+label,systname, evt_HT ,e->weight());
-  //      if(e->IsTriggered("HLT_AK8PFJet400_TrimMass30_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFJet400_"+label,systname, evt_HT ,e->weight());
-  //      if(e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_AK8PFHT700_"+label,systname, evt_HT ,e->weight());
-  //      if(e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_BTagCSV_p087_v1")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_DiPFJet300_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_PFHT900_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFHT900_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8PFJet400_TrimMass30_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFJet400_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_AK8PFHT700_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_BTagCSV_p087_v1")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_DiPFJet300_"+label,systname, evt_HT ,e->weight());
         //HT divided
         if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_Wbb < 360. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
@@ -1997,10 +2001,10 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
         //HT        
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+label,systname, evt_HT ,e->weight());
         //HT trigger
-   //     if(e->IsTriggered("HLT_PFHT900_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFHT900_"+label,systname, evt_HT ,e->weight());
-   //     if(e->IsTriggered("HLT_AK8PFJet400_TrimMass30_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFJet400_"+label,systname, evt_HT ,e->weight());
-   //     if(e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_AK8PFHT700_"+label,systname, evt_HT ,e->weight());
-   //     if(e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_BTagCSV_p087_v1")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_DiPFJet300_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_PFHT900_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFHT900_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8PFJet400_TrimMass30_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_PFJet400_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_AK8PFHT700_"+label,systname, evt_HT ,e->weight());
+//        if(e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_BTagCSV_p087_v1")) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_DiPFJet300_"+label,systname, evt_HT ,e->weight());
         //HT divided
         if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_wbj < 360. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
@@ -2109,24 +2113,53 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
 
     Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,0,e->weight());
 
-    if ( e->Nleps() == 0 ) cut.SetCutBit(NoLep); // kill Top/W/Z
-    if ( cut.passAllUpTo(NoLep) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());
+    computeVar(e);
+    if(evt_HT<800) return EVENT_NOT_USED;
+
+    if(e->Bjets() == 0) return EVENT_NOT_USED;
+
+
     if ( e->Ntaus() == 0 ) cut.SetCutBit(NoTau); // tau Veto <--- dilepton killer
     if ( cut.passAllUpTo(NoTau) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,NoTau,e->weight());
 
     if(!cut.passAllUpTo(NoTau) )   return EVENT_NOT_USED;
 
-    computeVar(e);
+    if(doLep && e->Bjets()>0 && (e->Wjets()>0 || e->Topjets()>0)){
 
-    if ( evt_HT<800 ) cut.SetCutBit(HTcut); //HT cut to simulate the trigger
-    if ( cut.passAllUpTo(HTcut) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,HTcut,e->weight());
-    if(evt_HT<800) return EVENT_NOT_USED;
+        int nummu = 0;
+        int numel = 0;
+        for(int k=0;k!=e->Nleps();k++) {
+            Lepton *it = e->GetLepton(k);
+            if(it->IsMuon() && it->Pt() < 35) nummu++;
+            if(it->IsElectron() && it->Pt() < 35) numel++;
+        }
 
-    if(e->Bjets() == 0) return EVENT_NOT_USED;    
+        if(e->GetMet().Pt() > 100 && (nummu > 0 || numel > 0)) {
+            getCandidate(e,label,systname,"OneBOneFat",false);
+            PlotAss(e,label,systname,"OneBOneFat");
+            classifyHF(e,label,"",systname,"OneBOneFat","");
+            if(e->Bjets() == 1 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneFat_one_lowj",false);
+            else if(e->Bjets() == 1 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneFat_one_highj",false);
+            else if(e->Bjets() == 2 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneFat_two_lowj",false);
+            else if(e->Bjets() == 2 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneFat_two_highj",false);
+            else if(e->Bjets() >= 3 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneFat_three_lowj",false);
+            else if(e->Bjets() >= 3 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneFat_three_highj",false);
+        }
+    }
+
+    if ( e->Nleps() == 0 ) cut.SetCutBit(NoLep); // kill Top/W/Z
+    if ( cut.passAllUpTo(NoLep) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,NoLep,e->weight());
+
+    if(!cut.passAllUpTo(NoLep) )   return EVENT_NOT_USED;
+
 
     ////////
     //// UP TO NOW: LEPTONS selection only
     ////
+
+    if ( evt_HT<800 ) cut.SetCutBit(HTcut); //HT cut to simulate the trigger
+    if ( cut.passAllUpTo(HTcut) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,HTcut,e->weight());
+
 
     bool Baseline=(e->Bjets() > 0);
     bool rightCombination =true;
@@ -2137,25 +2170,24 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
     }
 
 
-    doMirror = 0;    
     string category="";
     jetPlot(e, label, category, systname,"Baseline");
 
 
-    if(e->Bjets()>0 && (e->Wjets()>0 || e->Topjets()>0)) {
-        cut.SetCutBit(OneBOneFat); //OneBOneFat
-        if ( cut.passAllUpTo(OneBOneFat) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,OneBOneFat,e->weight());
+    if(doSig && e->Bjets()>0 && (e->Wjets()>0 || e->Topjets()>0)) {
+//        cut.SetCutBit(OneBOneFat); //OneBOneFat
+//        if ( cut.passAllUpTo(OneBOneFat) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,OneBOneFat,e->weight());
 
         // make candidate top+b, W+b+b,w+b+j
         getCandidate(e,label,systname,"OneBOneFat",false);
         PlotAss(e,label,systname,"OneBOneFat");
         classifyHF(e,label,"",systname,"OneBOneFat","");
         if(e->Bjets() == 1 && num_otherj <= 2) {getCandidate(e,label,systname,"OneBOneFat_one_lowj",false); /*fatjetPlot(e,label,systname,"OneBOneFat_one");classifyHF(e,label,"",systname,"OneBOneFat_one","");*/}
-        else if(e->Bjets() == 1 && num_otherj > 3) getCandidate(e,label,systname,"OneBOneFat_one_highj",false);
+        else if(e->Bjets() == 1 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneFat_one_highj",false);
         else if(e->Bjets() == 2 && num_otherj <= 2) {getCandidate(e,label,systname,"OneBOneFat_two_lowj",false); /*fatjetPlot(e,label,systname,"OneBOneFat_two");classifyHF(e,label,"",systname,"OneBOneFat_two","");*/}
-        else if(e->Bjets() == 2 && num_otherj > 3) getCandidate(e,label,systname,"OneBOneFat_two_highj",false);
+        else if(e->Bjets() == 2 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneFat_two_highj",false);
         else if(e->Bjets() >= 3 && num_otherj <= 2) {getCandidate(e,label,systname,"OneBOneFat_three_lowj",false); /*fatjetPlot(e,label,systname,"OneBOneFat_three");classifyHF(e,label,"",systname,"OneBOneFat_three","");*/}
-        else if(e->Bjets() >= 3 && num_otherj > 3) getCandidate(e,label,systname,"OneBOneFat_three_highj",false);
+        else if(e->Bjets() >= 3 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneFat_three_highj",false);
 
         if ( not e->IsRealData() and ((label.find("HplusToTB") !=string::npos ) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos ) or (label.find("QCD_HT") !=string::npos))){
             classifyLabelGenEv(e,label,systname,"OneBOneFat");
@@ -2163,14 +2195,17 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
     }
 
     if(doMirror && e->Bjets()>0 && (e->WjetsMirror()>0 || e->TopjetsMirror()>0)) {
-        cut.SetCutBit(OneBOneFatMirror);
-        if ( cut.passAllUpTo(OneBOneFatMirror) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,OneBOneFatMirror,e->weight());
+//        cut.SetCutBit(OneBOneFatMirror);
+//        if ( cut.passAllUpTo(OneBOneFatMirror) ) Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,OneBOneFatMirror,e->weight());
 
         getCandidate(e,label,systname,"OneBOneMirrorFat",true);
-        if(e->Bjets() == 1) getCandidate(e,label,systname,"OneBOneMirrorFat_one",true);
-        else if(e->Bjets() == 2) getCandidate(e,label,systname,"OneBOneMirrorFat_two",true);
-        else if(e->Bjets() >= 3) getCandidate(e,label,systname,"OneBOneMirrorFat_three",true);
-
+        PlotAss(e,label,systname,"OneBOneMirrorFat");
+        if(e->Bjets() == 1 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneMirrorFat_one_lowj",true);
+        else if(e->Bjets() == 1 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneMirrorFat_one_highj",true);
+        else if(e->Bjets() == 2 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneMirrorFat_two_lowj",true);
+        else if(e->Bjets() == 2 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneMirrorFat_two_highj",true);
+        else if(e->Bjets() >= 3 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneMirrorFat_three_lowj",true);
+        else if(e->Bjets() >= 3 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneMirrorFat_three_highj",true);
     }
 
 

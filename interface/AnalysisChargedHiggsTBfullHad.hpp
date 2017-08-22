@@ -74,16 +74,17 @@ private:
     CutSelector cut;
 
     enum CutFlow{ Total=0,
-                  NoLep,
                   NoTau,
+                  NoLep,
                   HTcut,
                   OneBOneFat,
                   OneBOneFatMirror,
                   MaxCut
     };
 
-    
+    bool doSig = 0; 
     bool doMirror = 0;
+    bool doLep = 1;
 
     double evt_HT=-1;
     double evt_minDRbb=-1;
