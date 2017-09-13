@@ -10,7 +10,7 @@ include=dat/catalog/2017.moriond/hmm.dat
 #Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),JER,@SmearPu
 
 #Smear=NONE,*[-133!0]SmearKaMuCa(%%d),*[1!135]SmearKaMuCa(%%d)
-Smear=NONE,*[1!9]SmearWG1(%%d)
+#Smear=NONE,*[1!9]SmearWG1(%%d)
 
 ### 2017
 #Smear=NONE,*[1!10]SmearWG1(%%d)
@@ -19,7 +19,7 @@ Smear=NONE,*[1!9]SmearWG1(%%d)
 #Smear = NONE,*[1!9]SmearWG1(%%d),JER,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag")
 
 #Smear=NONE,@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1),*[0!50]SmearPdfs(%%d)
-#Smear=NONE,@SmearSF("muTRG"!"muTRG_v2"),@SmearSF("muID_runBCDEF"!"muID_runBCDEF"),@SmearSF("muID_runGH"!"muID_runGH"),@SmearSF("muISO_runBCDEF"!"muISOloose_runBCDEF"),@SmearSF("muISO_runGH"!"muISOloose_runGH")
+Smear=NONE,@SmearSF("muTRG_runGH"!"muTRG_runGH"),@SmearSF("muTRG_runBCDEF"!"muTRG_runBCDEF"),@SmearSF("muID_runBCDEF"!"muID_runBCDEF"),@SmearSF("muID_runGH"!"muID_runGH"),@SmearSF("muISO_runBCDEF"!"muISOloose_runBCDEF"),@SmearSF("muISO_runGH"!"muISOloose_runGH")
 
 #Smear=NONE,@SmearJesSource("AbsoluteStat"),@SmearJesSource("AbsoluteScale"),@SmearJesSource("AbsoluteMPFBias"),@SmearJesSource("Fragmentation"),@SmearJesSource("SinglePionECAL"),@SmearJesSource("FlavorQCD"),@SmearJesSource("TimePtEta"),@SmearJesSource("RelativeJEREC1"),@SmearJesSource("RelativeJEREC2"),@SmearJesSource("RelativeJERHF"),@SmearJesSource("RelativePtBB"),@SmearJesSource("RelativePtEC1"),@SmearJesSource("RelativePtEC2"),@SmearJesSource("RelativePtHF"),@SmearJesSource("RelativeBal"),@SmearJesSource("RelativeFSR"),@SmearJesSource("PileUpDataMC"),@SmearJesSource("PileUpPtRef"),@SmearJesSource("PileUpPtBB"),@SmearJesSource("PileUpPtEC1"),@SmearJesSource("PileUpPtEC2"),@SmearJesSource("PileUpPtHF")
 

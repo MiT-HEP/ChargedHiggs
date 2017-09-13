@@ -46,6 +46,8 @@ class HmmConfig():
 
         self.sigfit_scale_unc = {} ## cat, proc -> value or (cat,proc)
         self.sigfit_smear_unc = {}
+
+        self.sigfit_replace = {} ## (cat,proc) -> (cat,proc)
         
         #self.readScaleUnc()        
 
@@ -249,23 +251,38 @@ class HmmConfigTTH(HmmConfigAutoCat):
 class HmmConfigWithTTH(HmmConfigAutoCat):
     def __init__(self):
         HmmConfigAutoCat.__init__(self)
-        self.categories=[ "cat%d"%x for x in range(0,16)]
+        #self.categories=[ "cat%d"%x for x in range(0,17)]
+        self.categories=[ "cat%d"%x for x in range(0,15)]
         self.computeVersioning()
-        self.sigfit_gaussians[("cat1","GluGlu")] = 2  ## 11
-        self.sigfit_gaussians[("cat14","GluGlu")] = 1  ## 11
-        self.sigfit_gaussians[("cat15","GluGlu")] = 1  ## 11
-        self.sigfit_gaussians[("cat14","VBF")] = 1  ## 11
-        self.sigfit_gaussians[("cat15","VBF")] = 1  ## 11
-        self.sigfit_gaussians[("cat14","WPlusH")] = 1  ## 11
-        self.sigfit_gaussians[("cat15","WPlusH")] = 1  ## 11
-        self.sigfit_gaussians[("cat14","WMinusH")] = 1  ## 11
-        self.sigfit_gaussians[("cat15","WMinusH")] = 1  ## 11
-        self.sigfit_gaussians[("cat14","ZH")] = 2  ## 11
-        self.sigfit_gaussians[("cat15","ZH")] = 1  ## 11
-        self.sigfit_gaussians[("cat1","ttH")] = 2  ## 11
-        self.sigfit_gaussians[("cat1","ttH")] = 3  ## 11
+        self.sigfit_gaussians[("cat2","GluGlu")] = 2  ## 11
+        ## self.sigfit_gaussians[("cat15","GluGlu")] = 1  ## 11
+        ## self.sigfit_gaussians[("cat16","GluGlu")] = 1  ## 11
+        ## #self.sigfit_gaussians[("cat4","GluGlu")] = 2  ##  AMC
+        ## self.sigfit_gaussians[("cat15","VBF")] = 1  ## 11
+        ## self.sigfit_gaussians[("cat16","VBF")] = 1  ## 11
+        ## self.sigfit_gaussians[("cat15","WPlusH")] = 1  ## 11
+        ## self.sigfit_gaussians[("cat16","WPlusH")] = 1  ## 11
+        ## self.sigfit_gaussians[("cat15","WMinusH")] = 1  ## 11
+        ## self.sigfit_gaussians[("cat16","WMinusH")] = 1  ## 11
+        ## self.sigfit_gaussians[("cat16","ZH")] = 2  ## 11
+        ## self.sigfit_gaussians[("cat16","ZH")] = 1  ## 11
+        self.sigfit_gaussians[("cat11","ZH")] = 2  ## 11
+        self.sigfit_gaussians[("cat2","ttH")] = 2  ## 11
+        self.sigfit_gaussians[("cat2","ttH")] = 3  ## 11
 
-        self.bkg_functions=["zmod2_cat0_ord5","exp_cat1_ord3","zmod2_cat2_ord5","exp_cat3_ord3","zmod2_cat4_ord5","zmod_cat5_ord1","zmod2_cat6_ord5","zmod2_cat7_ord5","zmod2_cat8_ord5","zmod2_cat9_ord5","zmod_cat10_ord1","zmod_cat11_ord1","zmod2_cat12_ord5","zmod_cat13_ord1","bern2_cat14_ord4","bern2_cat15_ord5"]
+        ## self.sigfit_replace [ ("cat15","GluGlu") ] = ("cat14","GluGlu") ## (cat,proc) -> (cat,proc)
+        ## self.sigfit_replace [ ("cat16","GluGlu") ] = ("cat14","GluGlu") ## (cat,proc) -> (cat,proc)
+        ## self.sigfit_replace [ ("cat15","VBF") ] = ("cat14","VBF") ## (cat,proc) -> (cat,proc)
+        ## self.sigfit_replace [ ("cat16","VBF") ] = ("cat14","VBF") ## (cat,proc) -> (cat,proc)
+        ## self.sigfit_replace [ ("cat15","WPlusH") ] = ("cat14","WPlusH") ## (cat,proc) -> (cat,proc)
+        ## self.sigfit_replace [ ("cat16","WPlusH") ] = ("cat14","WPlusH") ## (cat,proc) -> (cat,proc)
+        ## self.sigfit_replace [ ("cat15","WMinusH") ] = ("cat14","WMinusH") ## (cat,proc) -> (cat,proc)
+        ## self.sigfit_replace [ ("cat16","WMinusH") ] = ("cat14","WMinusH") ## (cat,proc) -> (cat,proc)
+        ## self.sigfit_replace [ ("cat15","ZH") ] = ("cat14","ZH") ## (cat,proc) -> (cat,proc)
+        ## self.sigfit_replace [ ("cat16","ZH") ] = ("cat14","ZH") ## (cat,proc) -> (cat,proc)
+
+        ## self.bkg_functions=["zmod2_cat0_ord5","zmod2_cat1_ord5","exp_cat2_ord3","zmod2_cat3_ord5","exp_cat4_ord3","zmod2_cat5_ord5","zmod_cat6_ord1","zmod2_cat7_ord5","zmod2_cat8_ord5","zmod2_cat9_ord5","zmod2_cat10_ord5","zmod_cat11_ord1","zmod_cat12_ord1","zmod2_cat13_ord5","zmod_cat14_ord1","bern2_cat15_ord4","bern2_cat16_ord5"]
+        self.bkg_functions=["zmod2_cat0_ord5","zmod2_cat1_ord5","exp_cat2_ord3","zmod2_cat3_ord5","exp_cat4_ord3","zmod2_cat5_ord5","zmod_cat6_ord1","zmod2_cat7_ord5","zmod2_cat8_ord5","zmod2_cat9_ord5","zmod2_cat10_ord5","zmod_cat11_ord1","zmod_cat12_ord1","zmod2_cat13_ord5","zmod_cat14_ord1"]
         
 
 hmmTTH =HmmConfigTTH()

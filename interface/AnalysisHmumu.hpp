@@ -72,6 +72,10 @@ class HmumuAnalysis: virtual public AnalysisBase
         // Variables
         template<class T>
         void SetVariable( string name, T value){ varValues_.Set(name, value); }
+        float mjj1;
+        // not working
+        //template<class T>
+        //T GetVariable( string name){ return *(T*)varValues_.GetPointer(name); } ;
         void AddVariable( string name, char type);
         void AddSpectator( string name, char type);
     public:

@@ -10,7 +10,8 @@ MHhat=$3
 PhysModParams=$4
 dir=$2 
 #datacard=cms_datacard_hmumu_cat15_fixed.root 
-postfit=higgsCombinepostFitAsimov.MultiDimFit.mH125.root
+## float mH
+postfit=higgsCombinePostFit.MultiDimFit.mH120.root
 ((startIndex=$1*10000))
 index=$startIndex
 

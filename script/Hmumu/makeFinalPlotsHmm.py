@@ -15,6 +15,8 @@ parser.add_option("","--doRemap",dest='doRemap',action="store_true",help="remap 
 parser.add_option("-o","--outdir",dest='outdir',type="string",help="output directory [%default]",default="Hmumu")
 parser.add_option("-x","--xrange",dest='xrange',type="string",help="xrange [%default]",default="60,150")
 parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
+parser.add_option("","--noRatio",dest='noRatio',action="store_true",help="don't plot ratio in bkg plots [%default]",default=False)
+
 
 print "-> Looking for basepath"
 basepath = ""
@@ -28,6 +30,7 @@ sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
 from hmm import *
 systs=['JES','PU']
+#systs=['JES','PU','BTAGL','BTAGB']
 #systs=['JES']
 
 extra = OptionGroup(parser,"Extra options:","")
@@ -534,22 +537,34 @@ if doBkg:
     cat ='_'+opts.cat
     if opts.cat == "": cat = ""
     #tmp.cd()
-    c=ROOT.TCanvas("c"+cat+"_bkg","canvas",800,1000)
-    pup=ROOT.TPad("up"+cat,"up",0,.2,1,1)
+    c=None
+    pup=None
+    if opts.noRatio:
+        c=ROOT.TCanvas("c"+cat+"_bkg","canvas",800,800)
+        pup=ROOT.TPad("up"+cat,"up",0,.0,1,1)
+    else:
+        c=ROOT.TCanvas("c"+cat+"_bkg","canvas",800,1000)
+        pup=ROOT.TPad("up"+cat,"up",0,.2,1,1)
+
     pdown=ROOT.TPad("down"+cat,"up",0,0,1,.2)
 
     pup.SetTopMargin(0.05)
     pup.SetRightMargin(0.05)
-    pup.SetBottomMargin(0)
     pup.SetLeftMargin(0.15)
-
+    pup.SetBottomMargin(0)
+    
     pdown.SetTopMargin(0.0)
     pdown.SetRightMargin(0.05)
     pdown.SetBottomMargin(0.50)
     pdown.SetLeftMargin(0.15)
 
     pup.Draw()
-    pdown.Draw()
+
+    if opts.noRatio:
+        pup.SetBottomMargin(.15)
+    else:
+        pdown.Draw()
+
     garbage.extend([c,pup,pdown])
 
     leg = ROOT.TLegend(.68,.65,.92,.85)
@@ -570,7 +585,10 @@ if doBkg:
     leg.AddEntry(hdata,"Data","PE")
     #mcs=["DY","TT","ST","WZ","WW","ZZ"]
     #BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
-    BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
+    if opts.noRatio:
+        BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY"]
+    else:
+        BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     mcAll=None
 
@@ -734,8 +752,11 @@ if doBkg:
     lines=[]
     values=[]
     if 'BdtOnH' in opts.var:
+        ymin,ymax=1.e-2,2e3
+        if opts.noRatio:
+            ymin=1e-1
         for x in [-.4,0.05,.25,.40,.65,.73]:
-            l = ROOT.TLine(x,1.e-2,x,2e3)
+            l = ROOT.TLine(x,ymin,x,ymax)
             l.SetLineWidth(2)
             l.SetLineColor(ROOT.kGray+2)
             l.SetLineStyle(7)
@@ -754,16 +775,20 @@ if doBkg:
         mcAll = qm.Apply(mcAll)
         lines=[]
         values=[]
+        ymin,ymax=1e-2, 1e4
+        if opts.noRatio:
+            ymin=1e-1
         if 'BdtOnH' in opts.var:
             for x0 in [-.4,0.05,.25,.40,.65,.73]:
                 x=qm.ConvertPoint(x0)
                 print "x=",x,"<- x0=",x0
-                l = ROOT.TLine(x,1e-2,x,1e4)
+                l = ROOT.TLine(x,ymin,x,ymax)
                 l.SetLineWidth(2)
                 l.SetLineColor(ROOT.kGray+2)
                 #l.SetLineStyle(7)
                 lines.append(l)
-                values.append(x)
+                if not opts.noRatio:
+                    values.append(x)
 
     ##
     c.cd()
@@ -793,12 +818,19 @@ if doBkg:
         dummy.GetXaxis().SetTitle("p_{T}^{1 jet} [GeV]")
     elif 'PtJet2' in opts.var:
         dummy.GetXaxis().SetTitle("p_{T}^{2 jet} [GeV]")
+    elif 'Mjj' in opts.var:
+        dummy.GetXaxis().SetTitle("m_{jj} [GeV]")
+    elif 'PtOnH' in opts.var:
+        dummy.GetXaxis().SetTitle("p_{T}^{#mu#mu} [GeV]")
 
     dummy.GetXaxis().SetTitleOffset(2.0)
     dummy.GetYaxis().SetTitle("Events")
     dummy.GetYaxis().SetTitleOffset(2.0)
     dummy.GetXaxis().SetRangeUser( float(opts.xrange.split(',')[0]),float(opts.xrange.split(',')[1]))
-    dummy.GetYaxis().SetRangeUser(1.05e-1,dummy.GetMaximum()*10)
+    if opts.noRatio:
+        dummy.GetYaxis().SetRangeUser(1.05e-1,dummy.GetMaximum()*100)
+    else:
+        dummy.GetYaxis().SetRangeUser(1.05e-1,dummy.GetMaximum()*10)
 
     dummy.GetYaxis().SetLabelFont(43)
     dummy.GetXaxis().SetLabelFont(43)
@@ -830,7 +862,8 @@ if doBkg:
     txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
     txt.SetTextSize(30)
     txt.SetTextAlign(13)
-    txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
+    #txt.DrawLatex(.16,.92,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
+    txt.DrawLatex(.18,.92,"#bf{CMS}")
     txt.SetTextSize(20)
     txt.SetTextAlign(11)
     if cat != "":
@@ -848,7 +881,8 @@ if doBkg:
 
     leg.SetNColumns(2)
 
-    leg.AddEntry(errAll,"syst.","F")
+    if not opts.noRatio:
+        leg.AddEntry(errAll,"syst.","F")
     while True:
         if len(leg2) !=0:
             h,label,opt = leg2.pop()
@@ -865,133 +899,135 @@ if doBkg:
     c.Update()
 
     #################### DOWN #########
-    pdown.cd()
-    r=hdata.Clone("r")
+    if not opts.noRatio:
+        pdown.cd()
+        r=hdata.Clone("r")
 
-    
-    errAll.Divide(mcAll)
-    r.Divide(mcAll)
-    r.Draw("AXIS")
-    r.Draw("AXIS X+ Y+ SAME")
+        
+        errAll.Divide(mcAll)
+        r.Divide(mcAll)
+        r.Draw("AXIS")
+        r.Draw("AXIS X+ Y+ SAME")
 
-    txt.SetTextSize(16)
-    txt.SetTextAlign(23)
-    txt.SetTextColor(ROOT.kGray+2)
-    txt.SetNDC(False)
-    for x in values:
-        x0=x
-        if x0> .9 and x0 <.92: x0 =.9
-        if x0> .93 : x0 =.97
-        txt.DrawLatex(x0,1.45,"%.0f%%"%(x*100))
+        txt.SetTextSize(16)
+        txt.SetTextAlign(23)
+        txt.SetTextColor(ROOT.kGray+2)
+        txt.SetNDC(False)
+        for x in values:
+            x0=x
+            if x0> .9 and x0 <.92: x0 =.9
+            if x0> .93 : x0 =.97
+            txt.DrawLatex(x0,1.45,"%.0f%%"%(x*100))
 
-    for idx,s in enumerate(systs):
-        try:
-            hSystUp = b_systs_up[idx].GetHist()
-        except:
-            hSystUp=mcAll.Clone("nosystup")
-        try:
-            hSystDown=  b_systs_down[idx].GetHist()
-        except:
-            hSystDown=  mcAll.Clone("nosystdn")
+        for idx,s in enumerate(systs):
+            try:
+                hSystUp = b_systs_up[idx].GetHist()
+            except:
+                hSystUp=mcAll.Clone("nosystup")
+            try:
+                hSystDown=  b_systs_down[idx].GetHist()
+            except:
+                hSystDown=  mcAll.Clone("nosystdn")
 
-        hSystUp.Divide(mcAll)
-        hSystDown.Divide(mcAll)
+            hSystUp.Divide(mcAll)
+            hSystDown.Divide(mcAll)
 
-        #hSystUp.SetLineColor(ROOT.kRed)
-        #hSystUp.SetLineWidth(2)
-        #hSystDown.SetLineColor(ROOT.kRed+2)
-        #hSystDown.SetLineWidth(2)
-        #hSystUp.Draw("HIST SAME")
-        #hSystDown.Draw("HIST SAME")
-        garbage.extend([hSystUp,hSystDown])
+            #hSystUp.SetLineColor(ROOT.kRed)
+            #hSystUp.SetLineWidth(2)
+            #hSystDown.SetLineColor(ROOT.kRed+2)
+            #hSystDown.SetLineWidth(2)
+            #hSystUp.Draw("HIST SAME")
+            #hSystDown.Draw("HIST SAME")
+            garbage.extend([hSystUp,hSystDown])
 
-        for ibin in range(0,errAll.GetNbinsX()):
-            mc = mcAll.GetBinContent(ibin+1)
-            cont = errAll.GetBinContent(ibin+1)
-            e = errAll.GetBinError(ibin+1)
-            eUp = cont + e - 1.
-            eDown = abs(cont - e - 1.)
-            up=hSystUp.GetBinContent(ibin+1) -1.
-            down = hSystDown.GetBinContent(ibin+1) -1.
-            if up<down:
-                x=down
-                down=up
-                up=x
-            if up > 0:
-                eUp = math.sqrt( up**2 + eUp**2)  +1
-            else:
-                eUp +=1.
-            if down<0:
-                eDown = 1-math.sqrt( down**2 + eDown**2) 
-            else:
-                eDown = 1 - eDown
-            errAll.SetBinContent(ibin+1,(eUp+eDown)/2.)
-            errAll.SetBinError(ibin+1,abs(eUp-eDown)/2.)
+            for ibin in range(0,errAll.GetNbinsX()):
+                mc = mcAll.GetBinContent(ibin+1)
+                cont = errAll.GetBinContent(ibin+1)
+                e = errAll.GetBinError(ibin+1)
+                eUp = cont + e - 1.
+                eDown = abs(cont - e - 1.)
+                up=hSystUp.GetBinContent(ibin+1) -1.
+                down = hSystDown.GetBinContent(ibin+1) -1.
+                if up<down:
+                    x=down
+                    down=up
+                    up=x
+                if up > 0:
+                    eUp = math.sqrt( up**2 + eUp**2)  +1
+                else:
+                    eUp +=1.
+                if down<0:
+                    eDown = 1-math.sqrt( down**2 + eDown**2) 
+                else:
+                    eDown = 1 - eDown
+                errAll.SetBinContent(ibin+1,(eUp+eDown)/2.)
+                errAll.SetBinError(ibin+1,abs(eUp-eDown)/2.)
 
 
-    for i in range(0,errAll.GetNbinsX()):
-        cont= errAll.GetBinContent(ibin+1)
-        e = errAll.GetBinContent(ibin+1)
-        if cont> 1.5:
-            down = cont -e
-            errAll.SetBinContent(ibin+1,1.5)
-            errAll.SetBinError(ibin+1,1.5-down)
-        if cont< 0.5:
-            up = cont +e
-            errAll.SetBinContent(ibin+1,0.5)
-            errAll.SetBinError(ibin+1,0.5+up)
-            
-    errAll.Draw("E2 SAME")
-    #r.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
-    r.GetXaxis().SetTitle(dummy.GetXaxis().GetTitle())
-    r.GetXaxis().SetTitleOffset(1.2)
-    r.GetYaxis().SetTitle("Events")
-    r.GetYaxis().SetTitleOffset(2.0)
-    r.GetXaxis().SetTitleOffset(5.0)
-    #r.GetXaxis().SetRangeUser(60,150)
-    r.GetXaxis().SetRangeUser( float(opts.xrange.split(',')[0]),float(opts.xrange.split(',')[1]))
-    r.GetYaxis().SetRangeUser(0.5,1.50)
-    r.GetYaxis().SetLabelFont(43)
-    r.GetXaxis().SetLabelFont(43)
-    r.GetYaxis().SetTitleFont(43)
-    r.GetXaxis().SetTitleFont(43)
-    r.GetYaxis().SetLabelSize(20)
-    r.GetXaxis().SetLabelSize(20)
-    r.GetYaxis().SetTitleSize(24)
-    r.GetXaxis().SetTitleSize(24)
-    r.GetYaxis().SetNdivisions(502)
+        for i in range(0,errAll.GetNbinsX()):
+            cont= errAll.GetBinContent(ibin+1)
+            e = errAll.GetBinContent(ibin+1)
+            if cont> 1.5:
+                down = cont -e
+                errAll.SetBinContent(ibin+1,1.5)
+                errAll.SetBinError(ibin+1,1.5-down)
+            if cont< 0.5:
+                up = cont +e
+                errAll.SetBinContent(ibin+1,0.5)
+                errAll.SetBinError(ibin+1,0.5+up)
+                
+        errAll.Draw("E2 SAME")
+        #r.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
+        r.GetXaxis().SetTitle(dummy.GetXaxis().GetTitle())
+        r.GetXaxis().SetTitleOffset(1.2)
+        r.GetYaxis().SetTitle("Events")
+        r.GetYaxis().SetTitleOffset(2.0)
+        r.GetXaxis().SetTitleOffset(5.0)
+        #r.GetXaxis().SetRangeUser(60,150)
+        r.GetXaxis().SetRangeUser( float(opts.xrange.split(',')[0]),float(opts.xrange.split(',')[1]))
+        r.GetYaxis().SetRangeUser(0.5,1.50)
+        r.GetYaxis().SetLabelFont(43)
+        r.GetXaxis().SetLabelFont(43)
+        r.GetYaxis().SetTitleFont(43)
+        r.GetXaxis().SetTitleFont(43)
+        r.GetYaxis().SetLabelSize(20)
+        r.GetXaxis().SetLabelSize(20)
+        r.GetYaxis().SetTitleSize(24)
+        r.GetXaxis().SetTitleSize(24)
+        r.GetYaxis().SetNdivisions(502)
 
-    txt.SetTextColor(ROOT.kBlack)
-    txt.SetTextFont(43)
-    txt.SetTextSize(20)
-    txt.SetNDC(True)
-    r.GetYaxis().SetLabelSize(0)
-    txt.SetTextAlign(31)
-    #pdown.SetBottomMargin(0.50)
-    txt.DrawLatex(.145,.50,"0.5")
-    txt.SetTextAlign(32)
-    txt.DrawLatex(.145,.75,"1.0")
-    txt.SetTextAlign(33)
-    txt.DrawLatex(.145,.99,"1.5")
+        txt.SetTextColor(ROOT.kBlack)
+        txt.SetTextFont(43)
+        txt.SetTextSize(20)
+        txt.SetNDC(True)
+        r.GetYaxis().SetLabelSize(0)
+        txt.SetTextAlign(31)
+        #pdown.SetBottomMargin(0.50)
+        txt.DrawLatex(.145,.50,"0.5")
+        txt.SetTextAlign(32)
+        txt.DrawLatex(.145,.75,"1.0")
+        txt.SetTextAlign(33)
+        txt.DrawLatex(.145,.99,"1.5")
 
-    g=ROOT.TGraph()
-    g.SetName("1"+cat)
-    g.SetPoint(0,60,1)
-    g.SetPoint(1,150,1)
-    g.SetLineColor(ROOT.kGray+2)
-    g.SetLineStyle(7)
-    g.SetLineWidth(2)
-    g.Draw("L SAME")
+        g=ROOT.TGraph()
+        g.SetName("1"+cat)
+        g.SetPoint(0,60,1)
+        g.SetPoint(1,150,1)
+        g.SetLineColor(ROOT.kGray+2)
+        g.SetLineStyle(7)
+        g.SetLineWidth(2)
+        g.Draw("L SAME")
 
-    r.Draw("P E X0 SAME")
+        r.Draw("P E X0 SAME")
 
-    garbage.extend([g,r])
+        garbage.extend([g,r])
 
     if opts.outdir=="":
         raw_input("ok?")
     else:
         extra = ""
         if opts.doRemap: extra += "_QM"
+        if opts.noRatio: extra += "_noratio"
         if cat != "":
             c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + extra+ "_bkg" + ".pdf")
             c.SaveAs(opts.outdir + "/" + re.sub('_','',cat) + extra+ "_bkg" + ".png")

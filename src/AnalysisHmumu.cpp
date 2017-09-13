@@ -34,7 +34,10 @@ void HmumuAnalysis::SetJetCuts(Jet *j) {
     j->SetEtaCut(4.7); 
     j->SetEtaCutCentral(2.5); 
     j->SetPtCut(30); 
-    j->SetPuIdCut(-999);
+    //#warning NOPUID
+    //j->SetPuIdCut(-999);
+    //#warning PUID
+    j->SetPuIdCut(100);
 }
 
 void HmumuAnalysis::SetTauCuts(Tau *t){ 
@@ -362,7 +365,7 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     }
 
     sort ( mjj_detajj.begin(),mjj_detajj.end(), [](const pair<float,float>&x,const pair<float,float>&y){if (x.first > y.first) return true;if (x.first<y.first) return false; return x.second > y.second; } );
-    SetVariable("dijet1_mass",mjj_detajj[0].first);    
+    SetVariable("dijet1_mass",mjj_detajj[0].first);    mjj1 = mjj_detajj[0].first;
     SetVariable("dijet2_mass",mjj_detajj[1].first);    
     //SetVariable("dijet3_mass",mjj_detajj[2].first);    
     //SetVariable("dijet4_mass",mjj_detajj[3].first);    
@@ -429,19 +432,20 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
 
     //*
     if ( bdt[0] < -0.400 ) icat = 0 ;
-    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 1.900 ) icat = 1 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta >= 1.900 ) icat = 2 ;
-    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 1.900 ) icat = 3 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta < 0.900 ) icat = 4 ;
-    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta < 0.900 ) icat = 5 ;
-    if ( mu_max_eta < 1.900 and bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 0.900 ) icat = 6 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 and mu_max_eta < 1.9) icat = 7 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 0.9 ) icat = 8 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900  and mu_max_eta >=0.9) icat = 9 ;
-    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 10 ;
-    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 11 ;
-    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 12 ;
-    if ( bdt[0] >= 0.730 ) icat = 13 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 1.900 ) icat = 1 ;
+    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 1.900 ) icat = 2 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta >= 1.900 ) icat = 3 ;
+    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 1.900 ) icat = 4 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta < 0.900 ) icat = 5 ;
+    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta < 0.900 ) icat = 6 ;
+    if ( mu_max_eta < 1.900 and bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 0.900 ) icat = 7 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 and mu_max_eta < 1.9) icat = 8 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 0.9 ) icat = 9 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900  and mu_max_eta >=0.9) icat = 10 ;
+    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 11 ;
+    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 12;
+    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 13 ;
+    if ( bdt[0] >= 0.730 ) icat = 14 ;
     //
 
     if (icat>=0)catStr=Form("cat%d",icat);
@@ -654,7 +658,7 @@ void HmumuAnalysis::Init(){
     if (catType>=1)
     {
         categories_.clear();
-        for (int i=0;i<16;++i)
+        for (int i=0;i<17;++i)
             categories_.push_back(Form("cat%d",i));
         InitTmva();
         if (doScikit)InitScikit();
@@ -691,6 +695,10 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/BdtOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 	    Book ("HmumuAnalysis/Vars/BdtOnH_BB_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 
+	    Book ("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+	    Book ("HmumuAnalysis/Vars/PtOnH_zptrwg_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
+
+	    Book ("HmumuAnalysis/Vars/Mjj1OnH_"+ l ,"Mjj1 On Hmm (110-150);Bdt;Events", 200,0,2000);
 	    Book ("HmumuAnalysis/Vars/PtJet1OnH_"+ l ,"PtJet1 On Hmm (110-150);Bdt;Events", 200,0,200);
 	    Book ("HmumuAnalysis/Vars/PtJet2OnH_"+ l ,"PtJet2 On Hmm (110-150);Bdt;Events", 200,0,200);
 	    Book ("HmumuAnalysis/Vars/EtaJet1OnH_"+ l ,"EtaJet1 On Hmm (110-150);Bdt;Events", 200,-5,5);
@@ -770,6 +778,7 @@ void HmumuAnalysis::Init(){
 
 int HmumuAnalysis::analyze(Event *e, string systname)
 {
+    mjj1=0.0;
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
@@ -943,8 +952,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     else if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt());
     else if (catType==3) { 
         category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt()); 
-        if (e->Bjets()>0 and e->Njets() >4) category = "cat14";  // ttHHadr
-        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat15";  // veto Njets> 4
+        if (e->Bjets()>0 and e->Njets() >4) category = "cat15";  // ttHHadr
+        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat16";  // veto Njets> 4
     } 
     else category = Category(mu0, mu1, selectedJets);
 
@@ -1231,6 +1240,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, pt_,e->weight());
+            Fill("HmumuAnalysis/Vars/PtOnH_zptrwg_"+ label,systname, pt_,e->weight() *zptrw);
+            Fill("HmumuAnalysis/Vars/Mjj1OnH_" + label,systname, mjj1,e->weight() ) ;
             if (selectedJets.size() >0)
             {
                 Fill("HmumuAnalysis/Vars/PtJet1OnH_"+ label,systname, selectedJets[0]->Pt(),e->weight());
@@ -1244,6 +1255,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Fill("HmumuAnalysis/Vars/NJetsOnH_"+ label,systname, selectedJets.size(),e->weight());
             Fill("HmumuAnalysis/Vars/NBJetsOnH_"+ label,systname, e->Bjets(),e->weight());
             if(catType>=2 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
+            if(catType>=2 )Fill("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ label,systname, bdt[0] ,e->weight()*zptrw);
             if(catType>=2 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
                 Fill("HmumuAnalysis/Vars/BdtOnH_BB_"+ label,systname, bdt[0] ,e->weight());
             if (doScikit and catType==2){
@@ -1257,30 +1269,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             }
         }
 
-        //if (category != "" and mass_ > 110 and mass_<150 and (systname=="" or systname=="NONE")){ //CHECK2D
-        //        // first key is mjj-> sorting
-        //        map<float, pair<float,float>, std::greater<float> > eta_j;
-        //        map<float, pair<float,float>, std::greater<float> > phi_j;
-        //        map<float, float, std::greater<float> > detajj;
-
-        //        for(unsigned i=0;i<selectedJets.size() ;++i)
-        //        for (unsigned j=i+1;j<selectedJets.size();++j)
-        //        {
-        //            eta_j[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  pair<float,float>( selectedJets[j]->Eta(), selectedJets[i]->Eta());
-        //            phi_j[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  pair<float,float>( selectedJets[j]->Phi(), selectedJets[i]->Phi());
-        //            detajj[ selectedJets[i]->InvMass( selectedJets[j] ) ]  =  fabs(selectedJets[j]->Eta() - selectedJets[i]->Eta()) ;
-        //        }
-        //        if (eta_j.size() >0)
-        //        {
-        //            Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(eta_j.begin())->second.first,(phi_j.begin())->second.first,e->weight());
-        //            Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(eta_j.begin())->second.second,(phi_j.begin())->second.second,e->weight());
-        //        }
-        //        if (eta_j.size() >1)
-        //        {
-        //            Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(++eta_j.begin())->second.first ,(++phi_j.begin())->second.first,e->weight());
-        //            Fill2D("HmumuAnalysis/Vars/JetEtaPhi_"+ category + "_"+ label,systname,(++eta_j.begin())->second.second,(++phi_j.begin())->second.second,e->weight());
-        //        }
-        //}
 
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
@@ -1296,49 +1284,111 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 float HmumuAnalysis::getZPtReweight(float Zpt)
 {
     if (rzpt_.get() == NULL) {
-        rzpt_.reset( new TH1D("r__1","Pt On Z (70-110)",100,0,1000) ) ;
-        rzpt_->SetBinContent(1,1.030536);
-        rzpt_->SetBinContent(2,0.9691712);
-        rzpt_->SetBinContent(3,0.9776648);
-        rzpt_->SetBinContent(4,0.9961141);
-        rzpt_->SetBinContent(5,1.019372);
-        rzpt_->SetBinContent(6,1.034224);
-        rzpt_->SetBinContent(7,1.045814);
-        rzpt_->SetBinContent(8,1.050968);
-        rzpt_->SetBinContent(9,1.054974);
-        rzpt_->SetBinContent(10,1.068111);
-        rzpt_->SetBinContent(11,1.08331);
-        rzpt_->SetBinContent(12,1.096292);
-        rzpt_->SetBinContent(13,1.116588);
-        rzpt_->SetBinContent(14,1.123308);
-        rzpt_->SetBinContent(15,1.121119);
-        rzpt_->SetBinContent(16,1.12358);
-        rzpt_->SetBinContent(17,1.125133);
-        rzpt_->SetBinContent(18,1.119461);
-        rzpt_->SetBinContent(19,1.099604);
-        rzpt_->SetBinContent(20,1.090148);
-        rzpt_->SetBinContent(21,1.10452);
-        rzpt_->SetBinContent(22,1.106105);
-        rzpt_->SetBinContent(23,1.030325);
-        rzpt_->SetBinContent(24,1.061008);
-        rzpt_->SetBinContent(25,1.03754);
-        rzpt_->SetBinContent(26,1.051334);
-        rzpt_->SetBinContent(27,1.025027);
-        rzpt_->SetBinContent(28,1.006342);
-        rzpt_->SetBinContent(29,1.028017);
-        rzpt_->SetBinContent(30,1.032076);
-        rzpt_->SetBinContent(31,0.9873907);
-        rzpt_->SetBinContent(32,0.9989432);
-        rzpt_->SetBinContent(33,1.013082);
-        rzpt_->SetBinContent(34,0.9704208);
-        rzpt_->SetBinContent(35,0.9751695);
-        rzpt_->SetBinContent(36,0.9554832);
-        rzpt_->SetBinContent(37,1.03948);
-        rzpt_->SetBinContent(38,1.032827);
-        rzpt2_.reset( new TF1("myf","1.36959e+00-1.39690e-03*x +x*x*7.11835e-07") );
+        Double_t xAxis1[97] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 160, 170, 180, 190, 200, 250, 300, 400, 500, 600, 8000}; 
+       rzpt_.reset( new TH1D("ratio__1","Pt On Hmm (110-150)",96, xAxis1));
+       rzpt_->SetBinContent(1,1.25442);
+       rzpt_->SetBinContent(2,1.12704);
+       rzpt_->SetBinContent(3,1.12533);
+       rzpt_->SetBinContent(4,1.05604);
+       rzpt_->SetBinContent(5,1.10264);
+       rzpt_->SetBinContent(6,1.08767);
+       rzpt_->SetBinContent(7,1.10362);
+       rzpt_->SetBinContent(8,1.08591);
+       rzpt_->SetBinContent(9,1.06601);
+       rzpt_->SetBinContent(10,1.0916);
+       rzpt_->SetBinContent(11,1.06448);
+       rzpt_->SetBinContent(12,1.01392);
+       rzpt_->SetBinContent(13,1.04377);
+       rzpt_->SetBinContent(14,1.02068);
+       rzpt_->SetBinContent(15,0.994305);
+       rzpt_->SetBinContent(16,1.00707);
+       rzpt_->SetBinContent(17,0.976421);
+       rzpt_->SetBinContent(18,0.975673);
+       rzpt_->SetBinContent(19,0.979493);
+       rzpt_->SetBinContent(20,0.986701);
+       rzpt_->SetBinContent(21,0.921996);
+       rzpt_->SetBinContent(22,0.958257);
+       rzpt_->SetBinContent(23,0.947919);
+       rzpt_->SetBinContent(24,0.915694);
+       rzpt_->SetBinContent(25,0.963098);
+       rzpt_->SetBinContent(26,0.902018);
+       rzpt_->SetBinContent(27,0.921341);
+       rzpt_->SetBinContent(28,0.947538);
+       rzpt_->SetBinContent(29,0.919088);
+       rzpt_->SetBinContent(30,0.89809);
+       rzpt_->SetBinContent(31,0.93795);
+       rzpt_->SetBinContent(32,0.951556);
+       rzpt_->SetBinContent(33,0.920607);
+       rzpt_->SetBinContent(34,0.931718);
+       rzpt_->SetBinContent(35,0.972628);
+       rzpt_->SetBinContent(36,0.991912);
+       rzpt_->SetBinContent(37,0.982581);
+       rzpt_->SetBinContent(38,0.986466);
+       rzpt_->SetBinContent(39,0.948026);
+       rzpt_->SetBinContent(40,0.881102);
+       rzpt_->SetBinContent(41,0.975588);
+       rzpt_->SetBinContent(42,0.967278);
+       rzpt_->SetBinContent(43,0.96418);
+       rzpt_->SetBinContent(44,0.8935);
+       rzpt_->SetBinContent(45,0.984849);
+       rzpt_->SetBinContent(46,0.934862);
+       rzpt_->SetBinContent(47,1.08122);
+       rzpt_->SetBinContent(48,0.90832);
+       rzpt_->SetBinContent(49,0.996306);
+       rzpt_->SetBinContent(50,1.04286);
+       rzpt_->SetBinContent(51,1.01652);
+       rzpt_->SetBinContent(52,0.99927);
+       rzpt_->SetBinContent(53,0.987264);
+       rzpt_->SetBinContent(54,1.00254);
+       rzpt_->SetBinContent(55,0.98932);
+       rzpt_->SetBinContent(56,1.04193);
+       rzpt_->SetBinContent(57,1.02381);
+       rzpt_->SetBinContent(58,1.01032);
+       rzpt_->SetBinContent(59,1.03059);
+       rzpt_->SetBinContent(60,1.01214);
+       rzpt_->SetBinContent(61,1.07218);
+       rzpt_->SetBinContent(62,0.999929);
+       rzpt_->SetBinContent(63,1.06193);
+       rzpt_->SetBinContent(64,0.949346);
+       rzpt_->SetBinContent(65,0.920078);
+       rzpt_->SetBinContent(66,0.973534);
+       rzpt_->SetBinContent(67,1.00212);
+       rzpt_->SetBinContent(68,0.953533);
+       rzpt_->SetBinContent(69,1.01944);
+       rzpt_->SetBinContent(70,1.03041);
+       rzpt_->SetBinContent(71,0.999917);
+       rzpt_->SetBinContent(72,1.07828);
+       rzpt_->SetBinContent(73,1.06935);
+       rzpt_->SetBinContent(74,0.919939);
+       rzpt_->SetBinContent(75,1.06806);
+       rzpt_->SetBinContent(76,1.05322);
+       rzpt_->SetBinContent(77,0.98814);
+       rzpt_->SetBinContent(78,0.982285);
+       rzpt_->SetBinContent(79,1.03646);
+       rzpt_->SetBinContent(80,1.25187);
+       rzpt_->SetBinContent(81,1.02401);
+       rzpt_->SetBinContent(82,1.0413);
+       rzpt_->SetBinContent(83,1.06257);
+       rzpt_->SetBinContent(84,0.982519);
+       rzpt_->SetBinContent(85,1.09106);
+       rzpt_->SetBinContent(86,1.01377);
+       rzpt_->SetBinContent(87,1.03474);
+       rzpt_->SetBinContent(88,0.990248);
+       rzpt_->SetBinContent(89,1.00668);
+       rzpt_->SetBinContent(90,0.975461);
+       rzpt_->SetBinContent(91,1.03657);
+       rzpt_->SetBinContent(92,0.992107);
+       rzpt_->SetBinContent(93,0.861815);
+       rzpt_->SetBinContent(94,0.930741);
+       rzpt_->SetBinContent(95,0.857949);
+       rzpt_->SetBinContent(96,1.0433);
+       rzpt_->SetBinContent(97,2.25209);
+        //rzpt2_.reset( new TF1("myf","1.36959e+00-1.39690e-03*x +x*x*7.11835e-07") );
     }
-    if (Zpt < 350) return rzpt_->GetBinContent(rzpt_->FindBin(Zpt));
-    else return rzpt2_->Eval (std::min(Zpt,float(1000.))) ;
+    if (Zpt < 1000) return rzpt_->GetBinContent(rzpt_->FindBin(Zpt));
+    else return 1.0;
+    //if (Zpt < 350) return rzpt_->GetBinContent(rzpt_->FindBin(Zpt));
+    //else return rzpt2_->Eval (std::min(Zpt,float(1000.))) ;
 }
 
 

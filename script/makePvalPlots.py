@@ -51,7 +51,7 @@ for f in opts.file.split(','):
     #obs= GetPvalFromTree(opts.file)
     obs= GetPvalFromTree(f)
     graphs.append(obs)
-obs=graphs[0]
+obs=graphs[-1]
 
 sigmas=[1,2,3,4,5,6]
 
