@@ -21,6 +21,8 @@ public:
     bool doICHEP = false;
     bool writeTree = false;
     bool doSplit = true;
+    bool doBDTSyst = false;
+    bool doFinal = false;
 
     // Analysis type
     bool do1lAnalysis=false;
