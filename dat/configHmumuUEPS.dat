@@ -1,0 +1,85 @@
+include=dat/configHmumu.dat
+sub=systDir|/eos/user/a/amarini/Nero/v2.2.1/Syst
+sub=amariniUser|/store/user/amarini/Nero/v2.2.1
+
+#only signal!!!
+Files=
+## Signal
+#include=dat/catalog/2017.moriond/hmm.dat
+
+addfiles=%(amariniUser)s/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/VBF_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/WMinusH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/WPlusH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniUser)s/ZH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=/eos/user/a/amarini/Nero/v2.2.1/ttH_HToMuMu_M125_13TeV_powheg_pythia8_v2
+
+addfiles=%(systDir)s/GluGlu_HToMuMu_M125_PSDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/GluGlu_HToMuMu_M125_PSUp_13TeV_powheg_pythia8
+addfiles=%(systDir)s/GluGlu_HToMuMu_M125_TuneDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/GluGlu_HToMuMu_M125_TuneUp_13TeV_powheg_pythia8
+addfiles=%(systDir)s/VBF_HToMuMu_M125_PSDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/VBF_HToMuMu_M125_PSUp_13TeV_powheg_pythia8
+addfiles=%(systDir)s/VBF_HToMuMu_M125_TuneDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/VBF_HToMuMu_M125_TuneUp_13TeV_powheg_pythia8
+addfiles=%(systDir)s/WMinusH_HToMuMu_M125_PSDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/WMinusH_HToMuMu_M125_PSUp_13TeV_powheg_pythia8 
+addfiles=%(systDir)s/WMinusH_HToMuMu_M125_TuneDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/WMinusH_HToMuMu_M125_TuneUp_13TeV_powheg_pythia8
+addfiles=%(systDir)s/WPlusH_HToMuMu_M125_PSDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/WPlusH_HToMuMu_M125_PSUp_13TeV_powheg_pythia8
+addfiles=%(systDir)s/WPlusH_HToMuMu_M125_TuneDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/WPlusH_HToMuMu_M125_TuneUp_13TeV_powheg_pythia8
+addfiles=%(systDir)s/ZH_HToMuMu_M125_PSDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/ZH_HToMuMu_M125_PSUp_13TeV_powheg_pythia8
+addfiles=%(systDir)s/ZH_HToMuMu_M125_TuneDown_13TeV_powheg_pythia8
+addfiles=%(systDir)s/ZH_HToMuMu_M125_TuneUp_13TeV_powheg_pythia8
+
+addConfig=HmumuAnalysis|labels.clear()
+
+### PSUp
+addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125_PSUp')
+addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M125_PSUp')
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_M125_PSUp')
+addConfig=HmumuAnalysis|AddLabel('WMinusH_HToMuMu_M125_PSUp')
+addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M125_PSUp')
+addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125_PSUp')
+
+### PSDown
+addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125_PSDown')
+addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M125_PSDown')
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_M125_PSDown')
+addConfig=HmumuAnalysis|AddLabel('WMinusH_HToMuMu_M125_PSDown')
+addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M125_PSDown')
+addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125_PSDown')
+
+### TuneUp
+addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125_TuneUp')
+addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M125_TuneUp')
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_M125_TuneUp')
+addConfig=HmumuAnalysis|AddLabel('WMinusH_HToMuMu_M125_TuneUp')
+addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M125_TuneUp')
+addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125_TuneUp')
+
+### TuneDown
+addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125_TuneDown')
+addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M125_TuneDown')
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_M125_TuneDown')
+addConfig=HmumuAnalysis|AddLabel('WMinusH_HToMuMu_M125_TuneDown')
+addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M125_TuneDown')
+addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125_TuneDown')
+
+
+################ NOMINAL ############
+addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('WMinusH_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125')
+
+Smear=NONE
+
+## be less peaky, given the n. of systs
+#Final=true
+EntryPerSecond=10

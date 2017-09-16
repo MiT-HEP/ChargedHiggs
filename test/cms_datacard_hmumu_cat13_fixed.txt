@@ -5,10 +5,11 @@ jmax *
 kmax *
 -------------------------------------
 shapes data_obs *       Hmumu/2017_06_21_Mu20/BackgroundModel.root w:dataObs_$CHANNEL
-shapes BKG      cat1    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:bern_cat1_ord5
-shapes BKG      cat4    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:exp_cat4_ord3
-shapes BKG      cat5    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:exp_cat5_ord3
-shapes BKG      cat6    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:bern_cat6_ord5
+shapes BKG      cat1    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:exp_cat1_ord3
+shapes BKG      cat2    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:zmod2_cat2_ord5
+shapes BKG      cat3    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:exp_cat3_ord3
+shapes BKG      cat6    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:zmod2_cat6_ord4
+shapes BKG      cat11    Hmumu/2017_06_21_Mu20/BackgroundModel.root w:exp_cat11_ord3
 shapes BKG      *       Hmumu/2017_06_21_Mu20/BackgroundModel.root w:zmod_$CHANNEL_ord1
 shapes ggH      *       Hmumu/2017_06_21_Mu20/SignalModel.root w:pdf_sigmodel_GluGlu_$CHANNEL
 shapes qqH      *       Hmumu/2017_06_21_Mu20/SignalModel.root w:pdf_sigmodel_VBF_$CHANNEL
