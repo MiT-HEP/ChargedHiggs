@@ -1303,7 +1303,7 @@ void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasesp
 
         // TEMPORARY
         doBDTSyst=false;
-        if(iBDT==6) doBDTSyst=true;
+        if(iBDT==1 || iBDT==2 || iBDT==3 || iBDT==4 || iBDT==6) doBDTSyst=true;
         
         /// FIXME: SR need to be SR1/2/3/4 and CR need to be R7R10
 
@@ -1410,7 +1410,8 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
             // TEMPORARY
             doBDTSyst=false;
-            if(iBDT==6) doBDTSyst=true;
+            //            if(iBDT==6) doBDTSyst=true;
+            if(iBDT==1 || iBDT==2 || iBDT==3 || iBDT==4 || iBDT==6) doBDTSyst=true;
 
             // SR
             if(doBDTSyst and iBDT< 7 && do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+l);
@@ -1459,7 +1460,8 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
                 // TEMPORARY
                 doBDTSyst=false;
-                if(iBDT==6) doBDTSyst=true;
+                //                if(iBDT==6) doBDTSyst=true;
+                if(iBDT==1 || iBDT==2 || iBDT==3 || iBDT==4 || iBDT==6) doBDTSyst=true;
 
                 if(doBDTSyst and iBDT< 7 && do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR1_"+l);
                 if(doBDTSyst and iBDT> 6 and iBDT<13 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR1_"+l);
@@ -2632,7 +2634,8 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
 
         //TEMPORARY
         doBDTSyst=false;
-        if(iBDT==6) doBDTSyst=true;
+        //        if(iBDT==6) doBDTSyst=true;
+        if(iBDT==1 || iBDT==2 || iBDT==3 || iBDT==4 || iBDT==6) doBDTSyst=true;
 
         if(bdt.size()>0) {
 
@@ -2917,7 +2920,8 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
 
             // TEMPORARY
             doBDTSyst=false;
-            if(iBDT==6) doBDTSyst=true;
+            //            if(iBDT==6) doBDTSyst=true;
+            if(iBDT==1 || iBDT==2 || iBDT==3 || iBDT==4 || iBDT==6) doBDTSyst=true;
 
             if(bdt.size()>0) {
 
@@ -2982,7 +2986,8 @@ void ChargedHiggsTopBottom::fillMoneyPlot(Event*e, string category, string systn
 
         // TEMPORARY
         doBDTSyst=false;
-        if(iBDT==6) doBDTSyst=true;
+        //        if(iBDT==6) doBDTSyst=true;
+        if(iBDT==1 || iBDT==2 || iBDT==3 || iBDT==4 || iBDT==6) doBDTSyst=true;
 
         if(bdt.size()>0) {
 
@@ -3525,7 +3530,11 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     int failEv=FillSplit(e, label, category, systname);
 
     //    if(failEv==1) return EVENT_NOT_USED; // just use to bookmark
-    if((e->eventNum()%3)==0) return EVENT_NOT_USED;
+
+    if (
+        ( (label.find("HplusToTB") !=string::npos) or (label.find("ST") !=string::npos) or (label.find("tZq") !=string::npos) or (label.find("TTZ") !=string::npos)  or (label.find("TTW") !=string::npos) or (label.find("ttH") !=string::npos) or (label.find("TTTT") !=string::npos) or (label.find("TTG") !=string::npos) ) and
+        (e->eventNum()%3)==0
+         ) return EVENT_NOT_USED;
 
     //// 1L CutFlow
     if(do1lAnalysis) {
