@@ -163,9 +163,13 @@ if doSig:
             h.SetLineWidth(2)
 
             proc =re.sub("_HToMuMu.*","",mc) 
-            ea = h.Integral()
+            bin0 = h.FindBin(110)
+            bin1 = h.FindBin(150)
+            ea = h.Integral(bin0,bin1)
             dea=array('d',[0.])
-            h.IntegralAndError(1,h.GetNbinsX(),dea)
+            #ea = h.Integral()
+            #h.IntegralAndError(1,h.GetNbinsX(),dea)
+            h.IntegralAndError(bin0,bin1,dea)
             eaStore[(cat,proc,int(m))]= (ea,dea[0])
 
             if idx==0:

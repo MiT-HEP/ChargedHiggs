@@ -38,6 +38,7 @@ class AnalysisBase : public Named
     virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}
     virtual void Init(){}
     virtual void End(){} // before closing files and writing
+    virtual void EndEvent(){} //before changing event, after done all the systematics -- only once
     virtual const string name() const {return "AnalysisBase";}
 
     // call output_->Book, but add something to name

@@ -1,4 +1,6 @@
 import numpy as np
+np.random.seed(1234567)
+#np.random.seed(0)
 import random
 import math
 import sys
@@ -35,12 +37,15 @@ from sklearn.pipeline import Pipeline
 
 def build_model():
     model = Sequential()
-    model.add(Dense(10, input_dim=10,activation='softmax') )
+    model.add(Dense(30, input_dim=16,activation='tanh') )
     model.add(Dense(20,activation='tanh'))
-    model.add(Dense(1,activation='tanh'))
+    model.add(Dense(1,activation='sigmoid'))
     
-    model.compile(loss='mean_squared_error',
-            optimizer='sgd',
+    model.compile(
+            #loss='mean_squared_error',
+            loss='binary_crossentropy',
+            #optimizer='sgd',
+            optimizer='adam',
             metrics=['accuracy'])
     return model
 
@@ -49,7 +54,6 @@ def build_model():
 ROOT.gSystem.Load("MuonResolution/MyRes_cc.so")
 res = ROOT.myRes();
 
-np.random.seed(0)
 
 ###################
 ## Generate data ##

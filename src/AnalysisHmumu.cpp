@@ -2,6 +2,7 @@
 #include "TRandom3.h"
 #include "TStopwatch.h"
 #include "Python.h"
+#include <algorithm>
 
 #include "interface/HiggsTemplateCrossSections.hpp"
 
@@ -78,33 +79,6 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon0 eta0=%f | Pt=%f Pz=%f",mu0->Eta(),mu0->Pt(),mu0->GetP4().Pz()));
     if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon1 eta1=%f | Pt=%f Pz=%f",mu1->Eta(),mu1->Pt(),mu1->GetP4().Pz()));
    
-   // construct a Higgs-like object  
-    Object Hmm;
-    Hmm += *mu0;
-    Hmm += *mu1;
-
-    if (doSync){
-        int cat=-100;
-        // set, in case exit before
-        SetTreeVar("cat",cat);
-        SetTreeVar("pt1",mu0->Pt());
-        SetTreeVar("pt2",mu1->Pt());
-        SetTreeVar("eta1",mu0->Eta());
-        SetTreeVar("eta2",mu1->Eta());
-        SetTreeVar("phi1",mu0->Phi());
-        SetTreeVar("phi2",mu1->Phi());
-        SetTreeVar("njets",jets.size());
-        SetTreeVar("mass",Hmm.M());
-        SetTreeVar("Hpt" ,Hmm.Pt());
-        SetTreeVar("Heta" ,Hmm.Eta());
-        SetTreeVar("Hphi" ,Hmm.Phi());
-        for(int ijet=0;ijet<jets.size();++ijet)
-        {
-            SetTreeVar("jet_pt" ,ijet,jets[ijet]->Pt());
-            SetTreeVar("jet_eta",ijet,jets[ijet]->Eta());
-            SetTreeVar("jet_phi",ijet,jets[ijet]->Phi());
-        }
-    }
 
     string muStr ="";
     if ( fabs(eta1) < 0.8 and fabs(eta0) <0.8) muStr = "BB";
@@ -183,131 +157,13 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
         else if (muStr=="EE") cat += 5*6;
 
         SetTreeVar("cat",cat);
-        SetTreeVar("nbjets",nbjets);
     }
 
     if (vbfStr == "" ) return "";
     return vbfStr +"_" + muStr;
 }
 
-
-string HmumuAnalysis::CategoryAutoCat(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets,float met){
-    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryAutoCat");
-    // return the right category
-    if (mu0== NULL or mu1==NULL) return "";
-
-    float eta0 = mu0->Eta();
-    float eta1 = mu1->Eta();
-
-    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon0 eta0=%f | Pt=%f Pz=%f",mu0->Eta(),mu0->Pt(),mu0->GetP4().Pz()));
-    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon1 eta1=%f | Pt=%f Pz=%f",mu1->Eta(),mu1->Pt(),mu1->GetP4().Pz()));
-   
-   // construct a Higgs-like object  
-    Object Hmm;
-    Hmm += *mu0;
-    Hmm += *mu1;
-
-    if (doSync){
-        int cat=-100;
-        // set, in case exit before
-        SetTreeVar("cat",cat);
-        SetTreeVar("pt1",mu0->Pt());
-        SetTreeVar("pt2",mu1->Pt());
-        SetTreeVar("eta1",mu0->Eta());
-        SetTreeVar("eta2",mu1->Eta());
-        SetTreeVar("phi1",mu0->Phi());
-        SetTreeVar("phi2",mu1->Phi());
-        SetTreeVar("njets",jets.size());
-        SetTreeVar("mass",Hmm.M());
-        SetTreeVar("Hpt" ,Hmm.Pt());
-        SetTreeVar("met" ,met);
-        for(int ijet=0;ijet<jets.size();++ijet)
-        {
-            SetTreeVar("jet_pt" ,ijet,jets[ijet]->Pt());
-            SetTreeVar("jet_eta",ijet,jets[ijet]->Eta());
-            SetTreeVar("jet_phi",ijet,jets[ijet]->Phi());
-        }
-    }
-
-
-    // fully combinatorics
-    vector<bool> pass; // name of category and order. if they pass.
-    for (int i=0;i<categories_.size();++i)
-    {
-        pass.push_back(false);
-    }
-
-    // FIXME: is this the deifinition?
-    float mu_res_eta = std::max( fabs(mu0->Eta()),fabs(mu1->Eta())) ;
-
-    int nbjets=0;
-    for(unsigned i=0;i<jets.size() ;++i)
-    {
-        if (jets[i]->IsBJet() and jets[i]->Pt() >30 and abs(jets[i]->Eta())<2.4)  nbjets +=1;
-    }
-
-    if (Hmm.Pt() <7.) pass[5]=true; // no jets
-    if (Hmm.Pt() >=7. and Hmm.Pt() <18.) pass[10]=true; // no jets
-    if (Hmm.Pt() >=18. and nbjets >=1 ) pass[4] = true; // no jets mjj/detajj
-
-    for(unsigned i=0;i<jets.size() ;++i)
-    for (unsigned j=i+1;j<jets.size();++j)
-    {
-        // vbf preselection. jets are pt-sorted
-        if (not (jets[i]->Pt() >40 and jets[j]->Pt() >30)) continue;
-
-        double mjj= jets[i]->InvMass( jets[j] ) ;
-        double detajj= fabs( jets[i]->Eta() - jets[j]->Eta() );
-
-        // orig
-        // https://indico.cern.ch/event/605422/contributions/2461226/attachments/1436814/2209863/dt_plus_bdt_limits.pdf slide8
-        if (Hmm.Pt() >=18.0 and nbjets==0)
-        {
-            if ( detajj >=4.0 )
-            {
-                if (mjj>=1000.){
-                    if ( met < 60 and Hmm.Pt() < 30) pass[0]=true;
-                    if ( met < 60 and Hmm.Pt() > 30.)  pass[15] = true;
-                    if ( met >=60) pass[2] = true;
-                }
-                else{
-                    if ( Hmm.Pt() <  100 and met >=65.) pass[1] = true;
-                    if ( Hmm.Pt() <  100 and met < 65.) pass[7] = true;
-                    if ( Hmm.Pt() >= 100) pass[8] = true;
-                }
-            }
-            else{
-                if ( mu_res_eta <0.797 and Hmm.Pt() >= 60. and met >= 70.) pass[3]=true; 
-                if ( mu_res_eta <0.797 and Hmm.Pt() >= 60. and met < 70.) pass[13]=true; 
-                if ( mu_res_eta <0.797 and Hmm.Pt() <  60. ) pass[14]=true; 
-                if ( mu_res_eta >= 0.797 and mu_res_eta <1.4 and Hmm.Pt() >=40. and met >= 50.) pass[6]=true;
-                if ( mu_res_eta >= 0.797 and mu_res_eta <1.4 and Hmm.Pt() >=40. and met <  50.) pass[12]=true;
-                if ( mu_res_eta >= 0.797 and mu_res_eta <1.4 and Hmm.Pt() < 40.) pass[11]=true;
-                if ( mu_res_eta >= 1.4) pass[9]=true;  //EE
-            }
-        }
-
-    }
-
-
-    string catStr="";
-    int icat=-100;
-    for(size_t i=0;i<pass.size();++i)
-    {
-        if (pass[i] ) { icat= i;catStr = categories_[i];} // cat0 is the less significant
-    }
-
-    if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + catStr);
-
-    if (doSync){
-        SetTreeVar("cat",icat);
-        SetTreeVar("nbjets",nbjets);
-    }
-
-    return catStr;
-}
-
-string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets,float met){
+string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets,float met,float metphi){
     bdt.clear();
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryBdt");
     // return the right category
@@ -319,19 +175,11 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon0 eta0=%f | Pt=%f Pz=%f",mu0->Eta(),mu0->Pt(),mu0->GetP4().Pz()));
     if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon1 eta1=%f | Pt=%f Pz=%f",mu1->Eta(),mu1->Pt(),mu1->GetP4().Pz()));
    
-   // construct a Higgs-like object  
-    Object Hmm;
-    Hmm += *mu0;
-    Hmm += *mu1;
 
-
-    //SetVariable("mu1_abs_eta",fabs(mu0->Eta()));    
-    //SetVariable("mu2_abs_eta",fabs(mu1->Eta()));    
     SetVariable("dimu_pt",Hmm.Pt());    
     SetVariable("dimu_eta",Hmm.Eta());    
     SetVariable("dimu_abs_dEta",fabs(mu0->Eta()-mu1->Eta()));    
     SetVariable("dimu_abs_dPhi",fabs(mu0->DeltaPhi(*mu1)));
-    //SetVariable("dimu_dPhiStar",dimu_dPhiStar(mu0,mu1));
     if (jets.size() >=1)
     {
         //SetVariable("jet1_pt",jets[0]->Pt());    
@@ -359,6 +207,7 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     {
         mjj_detajj.push_back( pair<float,float>(jets[i]->InvMass( jets[j] ), fabs( jets[i]->Eta() - jets[j]->Eta() )) );
     }
+
     for(size_t i=mjj_detajj.size(); i<4;++i)
     {
         mjj_detajj.push_back(pair<float,float>(0.,-1));
@@ -373,57 +222,31 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     SetVariable("dijet2_abs_dEta",mjj_detajj[1].second);    
     //SetVariable("dijet3_abs_dEta",mjj_detajj[2].second);    
     //SetVariable("dijet4_abs_dEta",mjj_detajj[3].second);    
-    //
-    if (doSync){
-        SetTreeVar("pt1",mu0->Pt());
-        SetTreeVar("pt2",mu1->Pt());
-        SetTreeVar("eta1",mu0->Eta());
-        SetTreeVar("eta2",mu1->Eta());
-        SetTreeVar("phi1",mu0->Phi());
-        SetTreeVar("phi2",mu1->Phi());
-        SetTreeVar("njets",jets.size());
-        SetTreeVar("mass",Hmm.M());
-        SetTreeVar("Hpt" ,Hmm.Pt());
-        SetTreeVar("Heta" ,Hmm.Eta());
-        SetTreeVar("Hphi" ,Hmm.Phi());
-        SetTreeVar("deltaeta",fabs(mu0->Eta()-mu1->Eta()));    
-        SetTreeVar("deltaphi",fabs(mu0->DeltaPhi(*mu1)));
-        SetTreeVar("met" ,met);
-        for(int ijet=0;ijet<jets.size();++ijet)
-        {
-            SetTreeVar("jet_pt" ,ijet,jets[ijet]->Pt());
-            SetTreeVar("jet_eta",ijet,jets[ijet]->Eta());
-            SetTreeVar("jet_phi",ijet,jets[ijet]->Phi());
-        }
-        SetTreeVar("mjj_1",mjj_detajj[0].first);
-        SetTreeVar("mjj_2",mjj_detajj[1].first);
-        SetTreeVar("detajj_1",mjj_detajj[0].second);
-        SetTreeVar("detajj_2",mjj_detajj[1].second);
-    }
+    
 
     int nbjets=0;
     int ncentjets=0;
     int nfwdjets=0;
+
     for(unsigned i=0;i<jets.size() ;++i)
     {
         if (jets[i]->IsBJet() and jets[i]->Pt() >30 and abs(jets[i]->Eta())<2.4)  nbjets +=1;
-        if (abs(jets[i]->Eta())<2.4)  ncentjets +=1;
+        if (abs(jets[i]->Eta())<2.4)
+            { 
+                ncentjets +=1; 
+            }
         else nfwdjets +=1;
     }
+
     SetVariable("nJetsCent",ncentjets);    
     SetVariable("nJetsFwd",nfwdjets);    
     SetVariable("nBMed",nbjets);    
     SetVariable("MET",met);    
+
     for(unsigned i =0 ;i< readers_.size() ; ++i)
     {
          bdt.push_back(readers_[i]->EvaluateMVA("BDTG_default") );
     }
-    if (doSync)
-    {
-        SetTreeVar("bdt",bdt[0]);
-        SetTreeVar("nbjets",nbjets);
-    }
-
 
     int icat=-100; string catStr="";
 
@@ -448,10 +271,12 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     if ( bdt[0] >= 0.730 ) icat = 14 ;
     //
 
-    if (icat>=0)catStr=Form("cat%d",icat);
-    if (doSync){
+    if (icat>=0) catStr=Form("cat%d",icat);
+
+    if (doSync and not processingSyst_)
+    {
+        SetTreeVar("bdt",bdt[0]);
         SetTreeVar("cat",icat);
-        SetTreeVar("nbjets",nbjets);
     }
 
     // SciKit
@@ -462,8 +287,8 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         //static double time_bdtg=0;
         //static double time_sgd=0;
         //static double time_svr=0;
-        static double time_mlp=0;
-        //static double time_keras=0;
+        //static double time_mlp=0;
+        static double time_keras=0;
         TStopwatch sw;
         #endif
         
@@ -471,16 +296,24 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         scikit.clear();
         x.clear();
         //x.push_back( *(float*)varValues_.GetPointer("Hpt") );
+        x.push_back( mu0->Pt()/Hmm.M()); //#0
+        x.push_back( mu1->Pt()/Hmm.M());
+        x.push_back( mu0->Eta());
+        x.push_back( mu1->Eta());
+        x.push_back( mu0->Phi());
+        x.push_back( mu1->Phi()); // #5
         x.push_back( Hmm.Pt());
         x.push_back( Hmm.Eta());
-        x.push_back( Hmm.Phi());
+        x.push_back( Hmm.Phi()); //
         x.push_back( mjj_detajj[0].first );
         x.push_back( mjj_detajj[1].first );
         x.push_back( mjj_detajj[0].second );
         x.push_back( mjj_detajj[1].second );
-        x.push_back( fabs(mu0->DeltaPhi(*mu1)) );
-        x.push_back( fabs(mu0->Eta()-mu1->Eta()));
         x.push_back( nbjets );
+        x.push_back( jets.size() );
+        x.push_back( (jets.size()>0)?jets[0]->Pt():0. );
+        x.push_back( met );
+
 
 
         #ifdef SCIKIT_TIMING
@@ -503,11 +336,14 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         //    sw.Stop(); time_svr += sw.CpuTime(); sw.Reset(); sw.Start();
         //#endif
 
-        float mlp= py->Eval("mlp.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+        //float mlp= py->Eval("mlp.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
         #ifdef SCIKIT_TIMING
             sw.Stop(); time_mlp += sw.CpuTime(); sw.Reset(); sw.Start();
         #endif
-        //float keras= py->Eval("keras.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
+    
+        //py->Exec( "print 'X=',x,x[0],x[1]"); DEBUG
+        //py->Exec( "print 'eval=',kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16] ] ] ))[0][0]");
+        float keras= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16] ] ] ))[0][0]");
         ////float keras=-999;
         //#ifdef SCIKIT_TIMING
         //    sw.Stop(); time_keras += sw.CpuTime(); sw.Reset(); sw.Start();
@@ -516,16 +352,17 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         //scikit.push_back(bdtg);
         //scikit.push_back(sgd);
         //scikit.push_back(svr);
-        scikit.push_back(mlp);
-        //scikit.push_back(keras);
+        //scikit.push_back(mlp);
+        scikit.push_back(keras);
+        if (doSync) SetTreeVar("keras",keras);
 
         #ifdef SCIKIT_TIMING
            //Log(__FUNCTION__,"SCIKIT",Form("Scikit values are: bdtg=%f sgd=%f svr=%f mlp=%f  ",bdtg,svr,sgd,mlp) );
            //Log(__FUNCTION__,"TIME",Form("BDTG Time: %.3lf",time_bdtg) );
            //Log(__FUNCTION__,"TIME",Form("SGD Time: %.3lf",time_sgd) );
            //Log(__FUNCTION__,"TIME",Form("SVR Time: %.3lf",time_svr) );
-           Log(__FUNCTION__,"TIME",Form("MLP Time: %.3lf",time_mlp) );
-           //Log(__FUNCTION__,"TIME",Form("KERAS Time: %.3lf",time_keras) );
+           //Log(__FUNCTION__,"TIME",Form("MLP Time: %.3lf",time_mlp) );
+           Log(__FUNCTION__,"TIME",Form("KERAS Time: %.3lf",time_keras) );
         #endif
     }
 
@@ -562,20 +399,22 @@ void HmumuAnalysis::InitScikit(){
     //discr.push_back("KERAS");
 
     py . reset(new TPython);
-    py -> Exec("from sklearn.ensemble import RandomForestClassifier");
-    py -> Exec("from sklearn.svm import SVC");
-    py -> Exec("from sklearn.svm import SVR");
-    py -> Exec("from sklearn.neural_network import MLPClassifier");
-    py -> Exec("from sklearn.neural_network import MLPRegressor");
-    py -> Exec("from sklearn.linear_model import SGDClassifier");
-    py -> Exec("from sklearn.linear_model import SGDRegressor");
-    py -> Exec("from sklearn.linear_model import PassiveAggressiveClassifier");
-    py -> Exec("from sklearn.linear_model import PassiveAggressiveRegressor");
-    py -> Exec("from sklearn.linear_model import Perceptron");
-    py -> Exec("from sklearn.linear_model import Ridge");
-    py -> Exec("from sklearn.linear_model import ElasticNet");
+    //py -> Exec("from sklearn.ensemble import RandomForestClassifier");
+    //py -> Exec("from sklearn.svm import SVC");
+    //py -> Exec("from sklearn.svm import SVR");
+    //py -> Exec("from sklearn.neural_network import MLPClassifier");
+    //py -> Exec("from sklearn.neural_network import MLPRegressor");
+    //py -> Exec("from sklearn.linear_model import SGDClassifier");
+    //py -> Exec("from sklearn.linear_model import SGDRegressor");
+    //py -> Exec("from sklearn.linear_model import PassiveAggressiveClassifier");
+    //py -> Exec("from sklearn.linear_model import PassiveAggressiveRegressor");
+    //py -> Exec("from sklearn.linear_model import Perceptron");
+    //py -> Exec("from sklearn.linear_model import Ridge");
+    //py -> Exec("from sklearn.linear_model import ElasticNet");
 
     // KERAS
+    py -> Exec("import keras");
+    py -> Exec("import numpy as np");
     //py -> Exec("from keras.models import Sequential");
     //py -> Exec("from keras.layers import Dense, Activation");
     //py -> Exec("from keras.wrappers.scikit_learn import KerasRegressor");
@@ -584,13 +423,14 @@ void HmumuAnalysis::InitScikit(){
 
     py -> Exec("from sklearn.externals import joblib ");
 
+
     //py ->Exec("rfc=joblib.load('aux/hmm/RFC.pkl')");
-    py ->Exec("mlp=joblib.load('aux/hmm/MLP.pkl')");
+    //py ->Exec("mlp=joblib.load('aux/hmm/MLP.pkl')");
     //py ->Exec("svr=joblib.load('aux/hmm/SVR.pkl')");
     //py ->Exec("par=joblib.load('aux/hmm/PAR.pkl')");
     //py ->Exec("sgd=joblib.load('aux/hmm/SGD.pkl')");
     //py ->Exec("bdtg=joblib.load('aux/hmm/BDTG.pkl')");
-    //py ->Exec("keras=joblib.load('aux/hmm/KERAS.pkl')");
+    py ->Exec("kmodel=keras.models.load_model('aux/hmm/KERAS.hd')");
     //py ->Exec("ridge=joblib.load('aux/hmm/Ridge.pkl')");
     //py ->Exec("en=joblib.load('aux/hmm/EN.pkl')");
 
@@ -733,8 +573,9 @@ void HmumuAnalysis::Init(){
     if (doSync){
         InitTree("hmm");
         Branch("hmm","cat",'I');
-        Branch("hmm","mcWeight",'I');
-        Branch("hmm","puWeight",'I');
+        Branch("hmm","weight",'D');
+        Branch("hmm","mcWeight",'D');
+        Branch("hmm","puWeight",'D');
         Branch("hmm","eventNum",'I');
         Branch("hmm","runNum",'I');
         Branch("hmm","lumiNum",'I');
@@ -746,12 +587,28 @@ void HmumuAnalysis::Init(){
         Branch("hmm","phi2",'F');
         Branch("hmm","mass",'F');
         Branch("hmm","met",'F');
+        Branch("hmm","metphi",'F');
+        Branch("hmm","mt1",'F');
+        Branch("hmm","mt2",'F');
         Branch("hmm","Hpt",'F');
         Branch("hmm","njets",'I');
         Branch("hmm","nbjets",'I');
+        Branch("hmm","ncentjets",'I');
+        Branch("hmm","nfwdjets",'I');
         Branch("hmm","jet_pt",'d',20,"njets");
         Branch("hmm","jet_eta",'d',20,"njets");
         Branch("hmm","jet_phi",'d',20,"njets");
+
+        Branch("hmm","aveQGLCent",'F');    
+        Branch("hmm","firstQGL",'F');     // pt sorted
+        Branch("hmm","secondQGL",'F');    
+        Branch("hmm","thirdQGL",'F');    
+        Branch("hmm","maxCSV",'F');     // csv sorted
+        Branch("hmm","aveCSV",'F');    
+        Branch("hmm","htCent",'F');    
+        Branch("hmm","secondCSV",'F');    
+        Branch("hmm","thirdCSV",'F');    
+
         Branch("hmm","pass_recomuons",'I');
         Branch("hmm","pass_asymmcuts",'I');
         Branch("hmm","pass_trigger",'I');
@@ -767,9 +624,19 @@ void HmumuAnalysis::Init(){
         Branch("hmm","mjj_2",'F');
         Branch("hmm","detajj_1",'F');
         Branch("hmm","detajj_2",'F');
+        Branch("hmm","htmjj_1",'F');
+        Branch("hmm","htmjj_2",'F');
         Branch("hmm","deltaphi",'F');
         Branch("hmm","deltaeta",'F');
+
         Branch("hmm","bdt",'F');
+        if (doScikit) Branch("hmm","keras",'F');
+
+        Branch("hmm","mjj_1_JESUp",'F');
+        Branch("hmm","mjj_2_JESUp",'F');
+
+        Branch("hmm","mjj_1_JESDown",'F');
+        Branch("hmm","mjj_2_JESDown",'F');
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
@@ -778,7 +645,13 @@ void HmumuAnalysis::Init(){
 
 int HmumuAnalysis::analyze(Event *e, string systname)
 {
-    mjj1=0.0;
+    if (systname == "" or systname =="NONE") processingSyst_=false;
+    else processingSyst_=true;
+
+    //** reset 
+    mjj1=0.0; //
+    TLorentzVector zero(0,0,0,0);
+    Hmm.SetP4(zero); // make sure it is 0.
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
@@ -879,21 +752,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             sf_wg1->SetNjets30(jets.size());
             sf_wg1->SetPTH(hc.higgs.Pt());
             sf_wg1->SetSTXS(hc.stage1_cat_pTjet30GeV);
-
-            //Log(__FUNCTION__,"DEBUG","------------ HTXS -------------"  );
-            //Log(__FUNCTION__,"DEBUG","label="+label );
-            //Log(__FUNCTION__,"DEBUG","systematics="+systname );
-            //Log(__FUNCTION__,"DEBUG",Form("HiggsProd Mode=%d",int(hc.prodMode)) );
-            //Log(__FUNCTION__,"DEBUG",Form("NGenJets=%u",jets.size())    );
-            //Log(__FUNCTION__,"DEBUG",Form("mu0 = %f",(mu0T==NULL)?-999.:mu0T->Pt())    );
-            //Log(__FUNCTION__,"DEBUG",Form("mu1 = %f",(mu1T==NULL)?-999.:mu1T->Pt())    );
-            //Log(__FUNCTION__,"DEBUG",Form("V = %f",(V==NULL)?-999.:V->Pt())    );
-            //Log(__FUNCTION__,"DEBUG",Form("V->Q = %d",int(quarkDecayed))    );
-            //Log(__FUNCTION__,"DEBUG",Form("HiggsPt=%f",hc.higgs.Pt())   );
-            //Log(__FUNCTION__,"DEBUG",Form("STXS Cat=%d",int(hc.stage1_cat_pTjet30GeV)) ) ;
-            //Log(__FUNCTION__,"DEBUG",Form("sf wg1=%lf",sf_wg1->get()));
-            //sf_wg1->print();
-            //Log(__FUNCTION__,"DEBUG","-------------------------------"  );
             
             e->ApplySF("wg1");
         }
@@ -910,6 +768,20 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     int il2=1;
     while (mu0 != NULL and mu1!= NULL and mu1->Charge() * mu0->Charge() != -1) { mu1= e->GetMuon(++il2);} // fully combinatorics on the second muon
     if (VERBOSE and mu1)Log(__FUNCTION__,"DEBUG",Form("GetMuon1: pt=%f",mu1->Pt()));
+
+    bool recoMuons= mu0 != NULL and mu1 !=NULL; 
+    if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
+
+    if (recoMuons)
+    {
+        //Object Hmm;
+        TLorentzVector zero(0,0,0,0);
+        Hmm.SetP4(zero); // make sure it is 0.
+        Hmm += *mu0;
+        Hmm += *mu1;
+        mass_=Hmm.M();
+        pt_ = Hmm.Pt();
+    }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetJets: ");
 
@@ -929,34 +801,33 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         nbloose += 1;
     }
 
+
+    // ------------------------------------
+    string category;
+
+    if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt(),e->GetMet().Phi());
+    else if (catType==3) { 
+        category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt(),e->GetMet().Phi()); 
+        if (e->Bjets()>0 and e->Njets() >4) category = "cat15";  // ttHHadr
+        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat16";  // veto Njets> 4
+    } 
+    else category = Category(mu0, mu1, selectedJets);
+
+    // --------------- DIRTY CATEGORIES -----------
     string categoryDirty=""; // this may double count
     if (e->Bjets()>0 and e->Njets() >4  )
     {
         categoryDirty="ttHHadr"; 
     }
     
-    //if ( nbloose >0  and e->Njets() >1  and e->Nleps()>2  )
     if ( e->Bjets() >0  and e->Njets() >1  and e->Nleps()>2  )
     {
         categoryDirty ="ttHLep"; 
     }
-    else if (catType==2 and bdt.size() >1 and bdt[0]>.84)
+    else if (catType==2 and bdt.size() >1 and bdt[0]>.84) // BUG
     {
         categoryDirty="superPure";
     }
-
-    // ------------------------------------
-
-    string category;
-    if (catType==1) category = CategoryAutoCat(mu0,mu1,selectedJets,e->GetMet().Pt() ) ;
-    else if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt());
-    else if (catType==3) { 
-        category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt()); 
-        if (e->Bjets()>0 and e->Njets() >4) category = "cat15";  // ttHHadr
-        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat16";  // veto Njets> 4
-    } 
-    else category = Category(mu0, mu1, selectedJets);
-
 
     if (true) // CSV-SF for passing loose,medium or tigth cuts
     {
@@ -976,6 +847,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->ApplySF("btag-reweight"); 
     }
 
+    //  ------------------- APPLY SF --------------
     double w_BCDEF = 0.5498;
     double sfTrigger=1.0;
      
@@ -1099,15 +971,12 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         e->ApplySF("dummy");
     }
     
+    // ***************************
+    // **       preselection    **
+    // ***************************
     
 
-    //
-    // preselection
-    bool recoMuons= mu0 != NULL and mu1 !=NULL; 
-    if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
-
     // Trigger
-    //#warning Mu20
     bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 and mu1->Pt() >20 );
     bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); 
 
@@ -1147,16 +1016,21 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     }
 
 
-    if (doSync) {
+    if (doSync and not processingSyst_) {
+        // global info
         SetTreeVar("eventNum",e->eventNum());
         SetTreeVar("runNum",e->runNum());
         SetTreeVar("lumiNum",e->lumiNum());
+
         if (e->IsRealData()){
             SetTreeVar("mc",0);
             SetTreeVar("mcWeight",1.);
             SetTreeVar("puWeight",1.);
+            SetTreeVar("weight",1.);
         }
+
         else {
+            SetTreeVar("weight",e->weight());
             SetTreeVar("mcWeight",e->GetWeight()->GetBareMCWeight() * e->GetWeight()->GetBareMCXsec() / e->GetWeight()->GetBareNevents());
             SetTreeVar("puWeight",e->GetWeight()->GetBarePUWeight());
             int mc=0;
@@ -1187,15 +1061,153 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         SetTreeVar("pass_leptonveto",passLeptonVeto);
         if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto and category != "" ) SetTreeVar("pass_all",1);
         else SetTreeVar("pass_all",0); 
-        FillTree("hmm");
-    }
+        //
+        if (recoMuons)
+        {
+            SetTreeVar("pt1",mu0->Pt());
+            SetTreeVar("pt2",mu1->Pt());
+            SetTreeVar("eta1",mu0->Eta());
+            SetTreeVar("eta2",mu1->Eta());
+            SetTreeVar("phi1",mu0->Phi());
+            SetTreeVar("phi2",mu1->Phi());
+            SetTreeVar("mass",Hmm.M());
+            SetTreeVar("Hpt" ,Hmm.Pt());
+            SetTreeVar("Heta" ,Hmm.Eta());
+            SetTreeVar("Hphi" ,Hmm.Phi());
+            SetTreeVar("deltaeta",fabs(mu0->Eta()-mu1->Eta()));    
+            SetTreeVar("deltaphi",fabs(mu0->DeltaPhi(*mu1)));
+            SetTreeVar("mt1" ,ChargedHiggs::mt(mu0->Pt(),e->GetMet().Pt(),mu0->Phi(),e->GetMet().Phi()));
+            SetTreeVar("mt2" ,ChargedHiggs::mt(mu1->Pt(),e->GetMet().Pt(),mu1->Phi(),e->GetMet().Phi()));
+        }
+        else
+        {
+            SetTreeVar("pt1",-10);
+            SetTreeVar("pt2",-10);
+            SetTreeVar("eta1",-10);
+            SetTreeVar("eta2",-10);
+            SetTreeVar("phi1",-10);
+            SetTreeVar("phi2",-10);
+            SetTreeVar("mass",-10);
+            SetTreeVar("Hpt" ,-10);
+            SetTreeVar("Heta",-10);
+            SetTreeVar("Hphi",-10);
+            SetTreeVar("deltaeta",-10);    
+            SetTreeVar("deltaphi",-10);
+            SetTreeVar("mt1", -10);
+            SetTreeVar("mt2", -10);
+        } 
+        SetTreeVar("njets",selectedJets.size());
+        SetTreeVar("met" ,e->GetMet().Pt());
+        SetTreeVar("metphi" ,e->GetMet().Phi());
 
-    if ( recoMuons)
+        // basic jet info
+        for(int ijet=0;ijet<selectedJets.size();++ijet)
+        {
+            SetTreeVar("jet_pt" ,ijet,selectedJets[ijet]->Pt());
+            SetTreeVar("jet_eta",ijet,selectedJets[ijet]->Eta());
+            SetTreeVar("jet_phi",ijet,selectedJets[ijet]->Phi());
+        }
+        for(int ijet=selectedJets.size();ijet<20 ;++ijet)
+        {
+            SetTreeVar("jet_pt" ,ijet,0.0);
+            SetTreeVar("jet_eta",ijet,0.0);
+            SetTreeVar("jet_phi",ijet,0.0);
+        }
+
+        // compute secondary jets variables
+        int nbjets=0;
+        int ncentjets=0;
+        int nfwdjets=0;
+        float aveQGLcent=0.0;
+        float maxCSV=0.0;
+        float aveCSV=0.0;
+        float htCent=0.0;
+
+        vector<float> csv_score;
+        vector<pair<float,float>> qgl_score;
+
+        for(unsigned i=0;i<selectedJets.size() ;++i)
+        {
+            if (selectedJets[i]->IsBJet() and selectedJets[i]->Pt() >30 and abs(selectedJets[i]->Eta())<2.4)  nbjets +=1;
+            if (abs(selectedJets[i]->Eta())<2.4)
+            { 
+                ncentjets +=1; 
+                aveQGLcent += selectedJets[i]->QGL(); 
+                csv_score.push_back(selectedJets[i]->bdiscr);
+                qgl_score.push_back(pair<float,float>(selectedJets[i]->Pt(),selectedJets[i]->QGL()));
+                maxCSV = std::max(selectedJets[i]->bdiscr,maxCSV)  ;
+                aveCSV += selectedJets[i]->bdiscr * selectedJets[i]->Pt() ;
+                htCent += selectedJets[i]->Pt();
+            }
+            else nfwdjets +=1;
+        }
+        if (ncentjets >0 ) aveQGLcent /= ncentjets;
+        if (htCent>0) aveCSV /=htCent;
+        sort(csv_score.begin(),csv_score.end());
+        sort(qgl_score.begin(),qgl_score.end(),[](const pair<float,float >&x,const pair<float, float >&y){ if (x.first> y.first) return true; if(x.first<y.first)return false; return x.second> y.second; } );
+
+        // compute mjj ranked variables
+        vector<pair<float,pair<int,int> > > mjj; // mjj -> ijet, jjet
+        for(unsigned i=0;i<selectedJets.size() ;++i)
+        for (unsigned j=i+1;j<selectedJets.size();++j)
+        {
+            mjj.push_back( pair<float,pair<int,int> >(selectedJets[i]->InvMass( selectedJets[j] ), pair<int,int>(i,j) ) );
+        }
+        sort ( mjj.begin(),mjj.end(), [](  const pair<float,pair<int,int> >&x,const pair<float, pair<int,int> >&y){if (x.first > y.first) return true;if (x.first<y.first) return false; if  (x.second.first < y.second.first) return true; if (x.second.first > y.second.first) return false; return x.second.second < y.second.second; } );
+
+        SetTreeVar("aveQGLCent",aveQGLcent);
+        SetTreeVar("aveCSV",aveCSV);
+        SetTreeVar("maxCSV",maxCSV);
+        SetTreeVar("secondCSV", ( csv_score.size() >1) ? csv_score[1] : -1.);
+        SetTreeVar("thirdCSV" , ( csv_score.size() >2) ? csv_score[2] : -1.);
+
+        SetTreeVar("firstQGL",  (qgl_score.size() >0) ? qgl_score[0].second : -1 );
+        SetTreeVar("secondQGL", (qgl_score.size() >1) ? qgl_score[1].second : -1 );
+        SetTreeVar("thirdQGL",  (qgl_score.size() >2) ? qgl_score[2].second : -1 );
+        
+        SetTreeVar("htCent",htCent);
+        SetTreeVar("nbjets",nbjets);
+        SetTreeVar("ncentjets",ncentjets);
+        SetTreeVar("nfwdjets",nfwdjets);
+
+        SetTreeVar("mjj_1",(mjj.size() >0 ) ? mjj[0].first: 0.0);
+        SetTreeVar("mjj_2",(mjj.size() > 1) ? mjj[1].first: 0.0);
+        SetTreeVar("detajj_1",(mjj.size()>0) ? fabs(selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta()): -1.0);
+        SetTreeVar("detajj_2",(mjj.size()>1) ? fabs(selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta()): -1.0);
+
+        vector<float> ht_mjj;
+        for(unsigned imjj =0; imjj<mjj.size() ;++imjj)
+        {
+            float epsilon=1e-4;
+            float ht=0.0;
+            float eta0 = std::min( selectedJets[ mjj[imjj].second.first] -> Eta (), selectedJets[ mjj[imjj].second.second] -> Eta () ) + epsilon;
+            float eta1 = std::max( selectedJets[ mjj[imjj].second.first] -> Eta (), selectedJets[ mjj[imjj].second.second] -> Eta () ) - epsilon;
+            for(unsigned i=0;i<selectedJets.size() ;++i)
+            {
+                if (eta0 < selectedJets[i] -> Eta() and selectedJets[i] -> Eta() < eta1)
+                {
+                    ht += selectedJets[i] -> Pt() ;
+                }
+            }
+            ht_mjj . push_back(ht);
+        }
+        SetTreeVar("htmjj_1", (mjj.size()>0) ? ht_mjj[0]: 0.0 ) ;
+        SetTreeVar("htmjj_2", (mjj.size()>1) ? ht_mjj[1]: 0.0 ) ;
+
+    } // end doSync
+
+    if (doSync and (systname == "JESUp" or systname=="JESDown") ) 
     {
-        Object Z(*mu0);
-        Z += *mu1;
-        mass_=Z.M();
-        pt_ = Z.Pt();
+        vector<pair<float,pair<int,int> > > mjj; // mjj -> ijet, jjet
+        for(unsigned i=0;i<selectedJets.size() ;++i)
+        for (unsigned j=i+1;j<selectedJets.size();++j)
+        {
+            mjj.push_back( pair<float,pair<int,int> >(selectedJets[i]->InvMass( selectedJets[j] ), pair<int,int>(i,j) ) );
+        }
+        sort ( mjj.begin(),mjj.end(), [](  const pair<float,pair<int,int> >&x,const pair<float, pair<int,int> >&y){if (x.first > y.first) return true;if (x.first<y.first) return false; if  (x.second.first < y.second.first) return true; if (x.second.first > y.second.first) return false; return x.second.second < y.second.second; } );
+
+        SetTreeVar("mjj_1_"+systname,(mjj.size() > 0 ) ? mjj[0].first: 0.0);
+        SetTreeVar("mjj_2_"+systname,(mjj.size() > 1 ) ? mjj[1].first: 0.0);
     }
 
     if ( recoMuons and passAsymmPtCuts)
@@ -1210,12 +1222,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         cut.SetCutBit(Leptons);
         if (passTrigger) cut.SetCutBit(Trigger);
 
-        //Object Z(*mu0);
-        //Z += *mu1;
-        //mass_=Z.M();
-
-       	//if (cut.passAllUpTo(Trigger) ){
-        //}
         if (VERBOSE)Log(__FUNCTION__,"DEBUG","event pass selection");
 
         float zptrw = 1.;
@@ -1279,6 +1285,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
     return 0;
+}
+
+void HmumuAnalysis::EndEvent(){
+    if (doSync)
+    {
+        FillTree("hmm");
+    }
 }
 
 float HmumuAnalysis::getZPtReweight(float Zpt)
