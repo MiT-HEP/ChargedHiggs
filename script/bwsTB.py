@@ -247,7 +247,7 @@ for y in channel:
 		if x=="Baseline" or ("extraRadCR" in x) or ("topCR" in x) or x=="charmCR":
 
 			if x=="Baseline":
-#for testing				region = [""]
+				region = [""]
 				if (y == "1Ele" or y == "1Mu"): region = ["_SR1","_SR2","_SR3","_SR4"]
 				else: region = ["_SR1","_SR2","_SR3","_SR4"]
 ##				else: region = ["_SR13","_SR24"]
@@ -432,7 +432,6 @@ datacard.write("jmax *\n")
 datacard.write("kmax *\n")
 datacard.write("-------------------------------------\n")
 
-
 w.factory("ht[0,8000]"); # RooRealVar
 ht=w.var("ht")
 w.factory("bdt[-1,1]")
@@ -441,13 +440,27 @@ w.factory("bdt2D[-0.5,3.5]")
 bdt2D=w.var("bdt2D")
 
 arglist_obs = ROOT.RooArgList(ht)
-argset_obs = ROOT.RooArgSet(ht)
+##argset_obs = ROOT.RooArgSet(ht)
 
 arglist_obs_bdt = ROOT.RooArgList(bdt)
-argset_obs_bdt = ROOT.RooArgSet(bdt)
+##argset_obs_bdt = ROOT.RooArgSet(bdt)
 
 arglist_obs_bdt2D = ROOT.RooArgList(bdt2D)
-argset_obs_bdt2D = ROOT.RooArgSet(bdt2D)
+##argset_obs_bdt2D = ROOT.RooArgSet(bdt2D)
+
+
+for x in catStore:
+	w.factory("ht_"+x+"[0,8000]"); # RooRealVar
+	htx=w.var("ht_"+x)
+	arglist_obs.add(htx)
+
+	w.factory("bdt_"+x+"[-1,1]"); # RooRealVar
+	bdtx=w.var("bdt_"+x)
+	arglist_obs_bdt.add(bdtx)
+
+	w.factory("bdt2D_"+x+"[-0.5,6.5]"); # RooRealVar
+	bdt2Dx=w.var("bdt2D_"+x)
+	arglist_obs_bdt2D.add(bdt2Dx)
 
 
 def skip(cat,mc):
@@ -647,18 +660,27 @@ def importStat():
 
 	      target = stat["target"]
 	      cat = catStore[stat["cat"] ]
-	      print "++++++++++++++++++++target",target,' cate',cat
+	      print "++++++++++++++++++++target",target,' category',cat
 
-	      al=arglist_obs_bdt
-	      if "bdt2D" in cat["var"]: al = arglist_obs_bdt2D
-	      if not doST:
-		      if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR13" or cat["var"] == "HT_SR24": al = arglist_obs		      
-	      if doST:
-		      if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3" or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs
 
- 	      roo_mc_binup = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Up",target + "STAT",al,hupbin)
+# set object for workspace
+	      for i in range(0,len(arglist_obs)):
+		      print '===> name',arglist_obs.at(i).GetName(), 'for ',i
+
+		      if cat["name"] in arglist_obs.at(i).GetName():
+
+			      al=arglist_obs_bdt.at(i)
+			      if "bdt2D" in cat["var"]: al=arglist_obs_bdt2D.at(i)
+
+			      if not doST:
+				      if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR13" or cat["var"] == "HT_SR24": al = arglist_obs.at(i)
+			      if doST:
+				      if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs.at(i)
+			      print "-> with var", al
+
+	      roo_mc_binup = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Up",target + "STAT",ROOT.RooArgList(al),hupbin)
  	      pdf_mc_binup = roo_mc_binup
- 	      roo_mc_bindn = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Down",target + "STAT",al,hdnbin)
+	      roo_mc_bindn = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Down",target + "STAT",ROOT.RooArgList(al),hdnbin)
  	      pdf_mc_bindn = roo_mc_bindn
  	      getattr(w,'import')(pdf_mc_binup,ROOT.RooCmdArg())
  	      getattr(w,'import')(pdf_mc_bindn,ROOT.RooCmdArg())
@@ -693,12 +715,6 @@ if doSyst: writeNormSyst("pdf_top",["1.03"],["top"])
 
 if doSyst: writeNormSyst("QCDscale_ewk",["0.98/1.02"],["ewk"])
 if doSyst: writeNormSyst("pdf_qqbar",["1.04"],["ewk"])
-
-# arg1: ISR/FSR
-# arg2: 1L, 2L
-# arg3: UP/DOWN
-# arg4: # jets
-# arg5: # bjets
 
 if doSyst:
 
@@ -850,7 +866,6 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 		  		skip=False
 		  		break
 
-	print '====skip=',skip
 	if skip: return
 
 	scaleEveRemoval=1
@@ -933,12 +948,13 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 		if syst != None:
 			toget += "_" + syst["name"] + s
 		hTmp=tfile.Get(toget)
-		if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
+		if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1)
 		if hTmp == None:
 			print "<*> Hist '"+toget+"' doesn't exist"
 			raise IOError
 
-		if "Baseline" in cat["dir"] and mc["name"]=="Hptb":
+#		if mc["name"]=="Hptb" or mc["name"]=="top":
+		if mc["name"]=="Hptb":
 			myBaselineTMP=0
 			hScale=0
 			hScaleW=0
@@ -990,6 +1006,7 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 
 			print 'hTmp=',hTmp.GetName(),' yield(before scaling)=',hTmp.Integral(),' delta=',delta, 'scaleEveRemovalW=',scaleEveRemovalW
 
+
 		#	  hTmp.Scale(scaleEveRemoval)
 			## need to scale only the Baseline and the signal
 #			hTmp.Scale(scaleEveRemovalW)
@@ -1015,7 +1032,9 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 			print '========'
 
 			mybins=array('d',myBin)
+#			print 'before=',hTmp.GetNbinsX()
 			hTmp=hTmp.Rebin(len(mybins)-1,hTmp.GetName()+"_rebin",mybins)
+#			print 'after=',hTmp.GetNbinsX()
 
 		if doRebinStaticBDT and hTmp:
 			if "Baseline" in cat["dir"] and opts.kTest>0 and opts.kTest<13:
@@ -1041,7 +1060,11 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 				print '------------------------'
 			else:
 				mybins=array('d',myBin)
+				print myBin
+				print 'before=',hTmp.GetNbinsX()
 				hTmp=hTmp.Rebin(len(mybins)-1,hTmp.GetName()+"_rebin",mybins)
+				print 'after=',hTmp.GetNbinsX()
+				print 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1)
 
 		if doRebinStaticHTCR and hTmp:
 
@@ -1067,14 +1090,26 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 
 
 		if h==None:h = hTmp
-		else: h.Add(hTmp)
+		else:
+			print 'histo to add = ',h.GetName()
+			h.Add(hTmp)
 		#clean h
+
+	  #### histogram massaging
+
+	  if h.GetBinContent(0)<0:
+		  print "ERROR histogram", h.GetName(),"has negative underflow norm"
+		  raise ValueError
+
+	  print ' underflow=',h.SetBinContent(0,0)
+	  print ' overflow=',h.SetBinContent(h.GetNbinsX()+1,0)
 
 	  if h: h.SetBinContent(0,0) ##underflow
 	  if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
 
 	  if h: ##negative yield
 		  for b in range(1,h.GetNbinsX()+1):
+			  if h.GetBinContent(b) <0 : print ' negative weights in bin',b
 			  if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
 
 	  if h:
@@ -1086,15 +1121,29 @@ def importPdfFromTH1(cat,mc,myBin,syst=None):
 	  h.Scale(opts.lumi)
 	  print "* Importing ",target
 
-	  al=arglist_obs_bdt
-          if "bdt2D" in cat["var"]: al=arglist_obs_bdt2D
-	  if not doST:
-		  if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR13" or cat["var"] == "HT_SR24": al = arglist_obs
-	  if doST:
-		  if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs
-	  print "-> with var", al[0]
+# set object for workspace
+	  for i in range(0,len(arglist_obs)):
+		  print '===> name',arglist_obs.at(i).GetName(), 'for ',i
 
-	  roo_mc = ROOT.RooDataHist(target,target,al,h)
+		  if cat["name"] in arglist_obs.at(i).GetName():
+
+			  al=arglist_obs_bdt.at(i)
+			  if "bdt2D" in cat["var"]: al=arglist_obs_bdt2D.at(i)
+
+			  if not doST:
+				  if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR13" or cat["var"] == "HT_SR24": al = arglist_obs.at(i)
+			  if doST:
+				  if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs.at(i)
+
+	  roo_mc = ROOT.RooDataHist(target,target, ROOT.RooArgList(al),h)
+
+#	  print "-> with var", al
+#	  print '     BEFORE rooFit Bin content',h.GetBinContent(0), '   Bin1=',h.GetBinContent(1), '  Integral=',h.Integral(), '  NBins=',h.GetNbinsX(),
+#	  print ' cat[name]' , cat["name"]
+#	  hBIS = roo_mc.createHistogram("test", al)
+#	  print '     AFTER rooFit Bin content',hBIS.GetBinContent(0), '   Bin1=',hBIS.GetBinContent(1), '  Integral=',hBIS.Integral(), '  NBins=',hBIS.GetNbinsX(),
+
+
 	  pdf_mc = roo_mc
 	  getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
 	  g.extend([h,roo_mc,pdf_mc])
@@ -1154,7 +1203,6 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None):
 		  		skip=False
 		  		break
 
-	print '====skip=',skip
 	if skip: return
 
 ####
@@ -1172,7 +1220,8 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None):
 	        toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
 
 		hTmp=tfile.Get(toget)
-		if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
+		if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(),'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1)
+
 		if hTmp == None:
 			print "<*> Hist '"+toget+"' doesn't exist"
 			raise IOError
@@ -1220,7 +1269,6 @@ for c in catStore:
 		else:
 			hSumAll.Add(hSumTMP)
 
-	##MARIA
 ##	hSumAll=Rebin1LHT(hSumAll)
 ##	hSumAll=Rebin2LHT(hSumAll)
 ##	for b in range(1,hSumAll.GetNbinsX()+1):
@@ -1317,6 +1365,10 @@ for c in catStore:
 			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
 			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
 
+	if h.GetBinContent(0)<0:
+		print "ERROR histogram", h.GetName(),"has negative underflow obs"
+		raise ValueError
+
 	if h: h.SetBinContent(0,0) ##underflow
 	if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
 
@@ -1328,14 +1380,24 @@ for c in catStore:
 			print "ERROR histogram", h.GetName(),"has null norm"
 			raise ValueError
 
-	al=arglist_obs_bdt
-	if "bdt2D" in cat["var"]: al = arglist_obs_bdt2D
-	if not doST:
-		if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3" or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR13" or cat["var"] == "HT_SR24": al = arglist_obs
-	if doST:
-		if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3" or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs
+# set object for workspace
+	for i in range(0,len(arglist_obs)):
+		print '===> name',arglist_obs.at(i).GetName(), 'for ',i
 
-	roo_data= ROOT.RooDataHist("data_obs_%s"%c,"H_{T}",al,h)
+		if cat["name"] in arglist_obs.at(i).GetName():
+
+			al=arglist_obs_bdt.at(i)
+			if "bdt2D" in cat["var"]: al=arglist_obs_bdt2D.at(i)
+
+			if not doST:
+				if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR13" or cat["var"] == "HT_SR24": al = arglist_obs.at(i)
+			if doST:
+				if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs.at(i)
+##			  al = arglist_obs.at(i)
+	print "-> with var", al
+
+
+	roo_data= ROOT.RooDataHist("data_obs_%s"%c,"H_{T}",ROOT.RooArgList(al),h)
 	getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
 	g.extend([h,roo_data])
 
