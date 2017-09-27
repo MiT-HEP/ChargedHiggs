@@ -6,6 +6,8 @@
 #include "interface/SplitMC.hpp"
 #include <memory>
 
+#include "TRandom3.h"
+
 #include "interface/Output.hpp" // DataStore
 #include "TMVA/Reader.h"
 #include "TMVA/Tools.h"
@@ -21,7 +23,7 @@ public:
     bool doICHEP = false;
     bool writeTree = false;
     bool doSplit = true;
-    bool doBDTSyst = false;
+    bool doBDTSyst = true;
     bool doFinal = false;
 
     // Analysis type
@@ -155,6 +157,8 @@ private:
 
     int nGenB = 0 ;
     int genLepSig = 0 ;
+
+    int ev_forTrain = 0;
 
     /////
     /////
