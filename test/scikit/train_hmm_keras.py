@@ -21,6 +21,28 @@ from keras.utils import np_utils
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
+
+import keras.backend as K
+def s_over_sqrt_sb(y_true, y_pred, weights=[1],dim=1):
+    ''' return max( s/s+b) ''' 
+    ## -1,0 -> bkg 
+    ## 1  -> sig
+    ## 2  -> sig ..
+    l = zip(y_pred,y_true)
+    sort(l, reverse=True)
+    s=[0.0 for x in range(0,dim) ]
+    sob=[0.0 for x in range(0,dim) ]
+    A=0.0
+    loss=0.0
+    for p,t in l:
+        A += 1.
+        s[t-1] +=1.
+        sob[t-1] = max(sob[t-1],pow(s[t-1],2)/A)
+    # sum them all
+    S=0.0
+    for k in sob: S+= k
+    return S
+
 def build_model():
     model = Sequential()
     #model.add(Convolution2D(32, 3, 3, activation='relu', input_shape=(1,28,28)))

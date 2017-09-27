@@ -17,7 +17,7 @@
 using namespace std;
 using namespace TMVA;
 
-void train( string fileName="/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v4/ChHiggs*.root") 
+void train( string fileName="/eos/user/k/klute/Nero/2017_09_22_HmmTree_v5/ChHiggs*.root") 
 {
     TChain *t=new TChain("hmm");
     int n=t->Add(fileName.c_str());
@@ -26,7 +26,7 @@ void train( string fileName="/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v
     else cout<<"[train]::[INFO] Adding "<<n<<" files to the chain"<<endl;
 
     TMVA::Tools::Instance();
-    bool multiclass = true;
+    bool multiclass = false; // not working
 
     TFile *out=new TFile("output.root","RECREATE");
     TMVA::Factory *factory_ ;
@@ -57,7 +57,7 @@ void train( string fileName="/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v
     dataloader->AddVariable("detajj_2",'F',0,10);
     dataloader->AddVariable("deltaeta",'F',0,10);
     dataloader->AddVariable("met",'F',0,1000.);
-    dataloader->AddVariable("aveQGLCent",'F',0,10.);
+    dataloader->AddVariable("aveQGLCent",'F',-1,1.);
     dataloader->AddVariable("maxCSV",'F',0,10.);
     dataloader->AddVariable("aveCSV",'F',0,10.);
     dataloader->AddVariable("secondCSV",'F',0,10.);
@@ -65,6 +65,11 @@ void train( string fileName="/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v
     dataloader->AddVariable("htCent",'F',0,10.);
     dataloader->AddVariable("mt1",'F',0,4000.);
     dataloader->AddVariable("mt2",'F',0,4000.);
+    dataloader->AddVariable("htmjj_1",'F',0,4000.);
+    dataloader->AddVariable("htmjj_2",'F',0,4000);
+    dataloader->AddVariable("firstQGL",'F',-1,1.);
+    dataloader->AddVariable("secondQGL",'F',-1,1.);
+    dataloader->AddVariable("thirdQGL",'F',-1,1.);
     //
     // old bdt
     dataloader->AddSpectator("bdt",'F',-1,1);
@@ -74,6 +79,7 @@ void train( string fileName="/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v
     Double_t backgroundWeight = 1.0;
 
     string xsec = "(mc < -10 && mc >=-19 )*48.58* 0002176 + (mc< -20 && mc >= -29)*  3.782*0.0002176 + (mc < -30 && mc >= -39) * 0.8839*0.0002176 + (mc <-40 && mc >= -49)*0.5328*0.0002176 + (mc < -50 && mc>-59)*0.84*0.0002176 + (mc < -60 && mc >=-69) * 0.5071*0.0002176";
+    dataloader->AddSpectator("xsec:= weight* ("+xsec +")",'F',-1,1);
     dataloader->SetBackgroundWeightExpression( "weight" );
     dataloader->SetSignalWeightExpression( "weight * (" + xsec + ")" );
 
@@ -134,7 +140,7 @@ void train( string fileName="/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v
     else 
     factory_ ->BookMethod(dataloader, TMVA::Types::kBDT, "BDTG",
             //"!H:!V:NTrees=850:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2:Pray"
-            "!H:!V:NTrees=1000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.99:SeparationType=SDivSqrtSPlusB:Pray"
+            "!H:!V:NTrees=1200:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.99:SeparationType=SDivSqrtSPlusB:Pray"
             );
 
     //MUTUALEXCLUSIVE  
@@ -162,7 +168,7 @@ void train( string fileName="/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v
     TString cpuOptions = dnnOptions + ":Architecture=CPU";
 
     //if(not multiclass) 
-    factory_->BookMethod(dataloader, TMVA::Types::kDNN, "DNN", stdOptions);
+    //factory_->BookMethod(dataloader, TMVA::Types::kDNN, "DNN", stdOptions);
 
     factory_ -> TrainAllMethods();
     factory_ -> TestAllMethods();
