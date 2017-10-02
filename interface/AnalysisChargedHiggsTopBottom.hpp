@@ -24,12 +24,15 @@ public:
     bool writeTree = false;
     bool doSplit = true;
     bool doBDTSyst = true;
-    bool doFinal = false;
+    bool doFinal = true;
 
     // Analysis type
+    // do1lAnalysis, do2lAnalysis, doTaulAnalysis from the config
     bool do1lAnalysis=false;
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
+    // doSplitLepCat HARDcoded
+    bool doSplitLepCat = false;
 
     // trigger bits
     bool passTriggerMu=true;

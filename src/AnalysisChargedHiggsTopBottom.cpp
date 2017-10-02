@@ -193,6 +193,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             if (label.find("M-1000")!=string::npos) mc = 12;
             if (label.find("M-2000")!=string::npos) mc = 13;
             if (label.find("M-3000")!=string::npos) mc = 14;
+            if (label.find("M-1500")!=string::npos) mc = 15;
 
 
         } else if (label.find("HplusToTauNu") !=string::npos) //sig TauNu
@@ -1181,7 +1182,7 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
         cout <<"[ChargedHiggsTopBottom]::[Init]::[INFO] Boking Histo CutFlow/Baseline" <<l<<endl;
 
         // do1lAnalysis
-        if(do1lAnalysis && (category.find("_1Mu") || category.find("_1Ele"))) {
+        if(do1lAnalysis && (category.find("_1Mu") || category.find("_1Ele") || category.find("_1L"))) {
             Book(    "ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+ l  , ("CutFlow "+ l).c_str(),10,-.5,10-.5);
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(Total+1,"Total");
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(OneLep+1,"N_{lep} >= 1");
@@ -1210,7 +1211,7 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
         }
 
         // do2lAnalysis
-        if(do2lAnalysis && (category.find("_2Mu") || category.find("_2Ele") || category.find("_1Mu1Ele")))  {
+        if(do2lAnalysis && (category.find("_2Mu") || category.find("_2Ele") || category.find("_1Mu1Ele") || category.find("_2L")))  {
             Book(    "ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+ l  , ("CutFlow "+ l).c_str(),10,-.5,10-.5);
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(Total+1,"Total");
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(OneLep+1,"N_{lep} >= 2");
@@ -1950,26 +1951,34 @@ void ChargedHiggsTopBottom::Preselection()
         cout << "inside BookCutFlow" << "l = " << l << endl;
         //        if(e->IsRealData() && (!systname.find("NONE")    !=string::npos)) cout << "possible to return " << endl;
 
-        BookSplit(l, "");
-        if(do1lAnalysis) BookSplit(l, "_1Mu");
-        if(do1lAnalysis) BookSplit(l, "_1Ele");
-        if(do2lAnalysis) BookSplit(l, "_2Mu");
-        if(do2lAnalysis) BookSplit(l, "_1Mu1Ele");
-        if(do2lAnalysis) BookSplit(l, "_2Ele");
+        //        BookSplit(l, "");
+        //        if(do1lAnalysis and (!doSplitLepCat)) BookSplit(l, "_1L");
+        //        if(do1lAnalysis and doSplitLepCat) BookSplit(l, "_1Mu");
+        //        if(do1lAnalysis and doSplitLepCat) BookSplit(l, "_1Ele");
+        //        if(do2lAnalysis and (!doSplitLepCat)) BookSplit(l, "_2L");
+        //        if(do2lAnalysis and doSplitLepCat) BookSplit(l, "_2Mu");
+        //        if(do2lAnalysis and doSplitLepCat) BookSplit(l, "_1Mu1Ele");
+        //        if(do2lAnalysis and doSplitLepCat) BookSplit(l, "_2Ele");
 
         BookCutFlow(l, "");
-        if(do1lAnalysis) BookCutFlow(l, "_1Mu");
-        if(do1lAnalysis) BookCutFlow(l, "_1Ele");
-        if(do2lAnalysis) BookCutFlow(l, "_2Mu");
-        if(do2lAnalysis) BookCutFlow(l, "_1Mu1Ele");
-        if(do2lAnalysis) BookCutFlow(l, "_2Ele");
+        if(do1lAnalysis and (!doSplitLepCat)) BookCutFlow(l, "_1L");
+        if(do1lAnalysis and doSplitLepCat) BookCutFlow(l, "_1Mu");
+        if(do1lAnalysis and doSplitLepCat) BookCutFlow(l, "_1Ele");
+        if(do2lAnalysis and (!doSplitLepCat)) BookCutFlow(l, "_2L");
+        if(do2lAnalysis and doSplitLepCat) BookCutFlow(l, "_2Mu");
+        if(do2lAnalysis and doSplitLepCat) BookCutFlow(l, "_1Mu1Ele");
+        if(do2lAnalysis and doSplitLepCat) BookCutFlow(l, "_2Ele");
 
         BookHisto(l, "","Baseline"); // this is when there is nothing
-        if(do1lAnalysis) BookHisto(l, "_1Mu","Baseline");
-        if(do1lAnalysis) BookHisto(l, "_1Ele","Baseline");
-        if(do2lAnalysis) BookHisto(l, "_2Mu","Baseline");
-        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","Baseline");
-        if(do2lAnalysis) BookHisto(l, "_2Ele","Baseline");
+        if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","Baseline");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","Baseline");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","Baseline");
+        //
+        if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","Baseline");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","Baseline");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","Baseline");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","Baseline");
+        //
         if(doTaulAnalysis) BookHisto(l, "_1Mu","Baseline");
         if(doTaulAnalysis) BookHisto(l, "_1Ele","Baseline");
         if(doTaulAnalysis) BookHisto(l, "_2Mu","Baseline");
@@ -1980,59 +1989,72 @@ void ChargedHiggsTopBottom::Preselection()
         ///////
 
         BookHisto(l, "","topCR"); // this is when there is nothing
-        if(do1lAnalysis) BookHisto(l, "_1Mu","topCR");
-        if(do1lAnalysis) BookHisto(l, "_1Ele","topCR");
-        if(do2lAnalysis) BookHisto(l, "_2Mu","topCR");
-        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCR");
-        if(do2lAnalysis) BookHisto(l, "_2Ele","topCR");
+        if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","topCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","topCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","topCR");
+        if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","topCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","topCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","topCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","topCR");
 
         if(doSplit) {
             BookHisto(l, "","topCRR4"); // this is when there is nothing
-            if(do1lAnalysis) BookHisto(l, "_1Mu","topCRR4");
-            if(do1lAnalysis) BookHisto(l, "_1Ele","topCRR4");
-            if(do2lAnalysis) BookHisto(l, "_2Mu","topCRR4");
-            if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCRR4");
-            if(do2lAnalysis) BookHisto(l, "_2Ele","topCRR4");
+            if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","topCRR4");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","topCRR4");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","topCRR4");
+            if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","topCRR4");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","topCRR4");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","topCRR4");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","topCRR4");
 
             BookHisto(l, "","topCRR5"); // this is when there is nothing
-            if(do1lAnalysis) BookHisto(l, "_1Mu","topCRR5");
-            if(do1lAnalysis) BookHisto(l, "_1Ele","topCRR5");
-            if(do2lAnalysis) BookHisto(l, "_2Mu","topCRR5");
-            if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCRR5");
-            if(do2lAnalysis) BookHisto(l, "_2Ele","topCRR5");
+            if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","topCRR5");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","topCRR5");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","topCRR5");
+            if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","topCRR5");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","topCRR5");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","topCRR5");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","topCRR5");
         }
         ///////
         ///////
 
         BookHisto(l, "","extraRadCR"); // this is when there is nothing
-        if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCR");
-        if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCR");
-        if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCR");
-        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCR");
-        if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCR");
+        if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","extraRadCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","extraRadCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","extraRadCR");
+        if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","extraRadCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","extraRadCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","extraRadCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","extraRadCR");
 
         if(doSplit) {
             BookHisto(l, "","extraRadCRR7"); // this is when there is nothing
-            if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCRR7");
-            if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCRR7");
-            if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCRR7");
-            if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCRR7");
-            if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCRR7");
+            if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","extraRadCRR7");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","extraRadCRR7");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","extraRadCRR7");
+            if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","extraRadCRR7");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","extraRadCRR7");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","extraRadCRR7");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","extraRadCRR7");
 
             BookHisto(l, "","extraRadCRR10"); // this is when there is nothing
-            if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCRR10");
-            if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCRR10");
-            if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCRR10");
-            if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCRR10");
-            if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCRR10");
+            if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","extraRadCRR10");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","extraRadCRR10");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","extraRadCRR10");
+            if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","extraRadCRR10");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","extraRadCRR10");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","extraRadCRR10");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","extraRadCRR10");
         }
 
         ///////
         ///////
 
         if(do1lAnalysis) BookHisto(l, "","charmCR"); // this is when there is nothing
-        if(do1lAnalysis) BookHisto(l, "_1Mu","charmCR");
-        if(do1lAnalysis) BookHisto(l, "_1Ele","charmCR");
+        if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","charmCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","charmCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","charmCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Mu","charmCR");
         //        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","charmCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Ele","charmCR");
@@ -2620,8 +2642,8 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
 
 void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, string systname, string phasespace) {
 
-    bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) ));
-    bool filldo2l=(do2lAnalysis && ( (category.find("_2Mu")  !=string::npos ) || ( category.find("_2Ele") !=string::npos ) || ( category.find("_1Mu1Ele")  !=string::npos ) ));
+    bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) || ( category.find("_1L") !=string::npos )));
+    bool filldo2l=(do2lAnalysis && ( (category.find("_2Mu")  !=string::npos ) || ( category.find("_2Ele") !=string::npos ) || ( category.find("_1Mu1Ele")  !=string::npos ) || ( category.find("_2L")  !=string::npos ) ));
 
     if(not (filldo1l || filldo2l)) return;
 
@@ -2702,8 +2724,8 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
 
 void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, string systname, string phasespace) {
 
-    bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) ));
-    bool filldo2l=(do2lAnalysis && ( (category.find("_2Mu")  !=string::npos ) || ( category.find("_2Ele") !=string::npos ) || ( category.find("_1Mu1Ele")  !=string::npos ) ));
+    bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) || ( category.find("_1L") !=string::npos )));
+    bool filldo2l=(do2lAnalysis && ( (category.find("_2Mu")  !=string::npos ) || ( category.find("_2Ele") !=string::npos ) || ( category.find("_1Mu1Ele")  !=string::npos ) || ( category.find("_2L")  !=string::npos )  ));
 
     if(not (filldo1l || filldo2l)) return;
 
@@ -3293,24 +3315,28 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     cut.SetCutBit(Total);
     if(do1lAnalysis) {
         Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,0,e->weight());
+        Fill("ChargedHiggsTopBottom/CutFlow_1L/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_1Mu/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_1Ele/CutFlow_"+label,systname,0,e->weight());
         ///
 
         if(!e->IsRealData() && (systname.find("NONE")    !=string::npos)) {
             Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei_1L/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
         }
     }
     if(do2lAnalysis) {
         Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,0,e->weight());
+        Fill("ChargedHiggsTopBottom/CutFlow_2L/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_2Mu/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_1Mu1Ele/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_2Ele/CutFlow_"+label,systname,0,e->weight());
         ///
         if(!e->IsRealData() && (systname.find("NONE")    !=string::npos)) {
             Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei_2L/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_2Mu/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu1Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_2Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
@@ -3336,6 +3362,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(OneLep) ) {
             if(onemu) {
                 category="_1Mu";
+                if(!doSplitLepCat) category="_1L";
                 // RECO
                 if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
                 // ID
@@ -3347,6 +3374,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
             if(oneele) {
                 category="_1Ele";
+                if(!doSplitLepCat) category="_1L";
                 //RECO
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleRECO",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleRECO"); }
                 // ID-MVA
@@ -3393,6 +3421,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(OneLep) ) {
             if(twomu) {
                 category="_2Mu";
+                if(!doSplitLepCat) category="_2L";
                 // leading RECO-medium ISO-tight; subleading RECO-loose ISO-tight
                 // TRG
                 if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
@@ -3411,6 +3440,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
             if(twoele) {
                 category="_2Ele";
+                if(!doSplitLepCat) category="_2L";
                 //RECO
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleRECO",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleRECO"); }
                 if (not e->IsRealData() && trailLep->Pt()>25) { e->SetPtEtaSF("eleRECO",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleRECO"); }
@@ -3426,6 +3456,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             // this 1Mu1Ele muon above the muon trigger threshould otherwise bias in the turnon
             if(onemuoneele) {
                 category="_1Mu1Ele";
+                if(!doSplitLepCat) category="_2L";
                 if(leadLep->IsElectron() and trailLep->IsMuon()) {
                     // ele
                     if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
@@ -3507,7 +3538,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     //    int SPLITMC_EVENT_FAIL=1;
     //    int SPLITMC_EVENT_PASS=0;
-    int failEv=FillSplit(e, label, category, systname);
+    //    int failEv=FillSplit(e, label, category, systname);
 
     //    if(failEv==1) return EVENT_NOT_USED; // just use to bookmark
 
