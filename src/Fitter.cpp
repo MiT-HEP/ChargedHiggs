@@ -473,6 +473,15 @@ void Fitter::end(){
         RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
 
         RooGaussian *g2{NULL},*g3{NULL};
+
+        string repl_proc = proc;
+        int repl_cat=cat;
+        if ( replace.find ( pair<int,string>(cat,proc))  != replace.end()){
+            repl_proc = replace[ pair<int,string>(cat,proc) ] .second;
+            repl_cat = replace[ pair<int,string>(cat,proc) ] .first;
+            cout<<" [Fitter]::[for coeff] found replacement for cat: "<<cat<<", proc"<<proc<<" with -> "<<repl_cat<<", "<<repl_proc<<endl;
+        }
+
         //if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
         //if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c4",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c5",proc.c_str(),cat))));
         if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_, *getMeanWithSyst(cat,proc,1), *getSigmaWithSyst(cat,proc,1));
@@ -480,20 +489,23 @@ void Fitter::end(){
 
         std::unique_ptr<RooAbsPdf> sigModel;
        
-        if (nGaussians[pair<int,string>(cat,proc)] ==1) 
-            sigModel.reset(new RooGaussian(name.c_str(),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat)))) ) ;
+        if (nGaussians[pair<int,string>(cat,proc)] ==1) {
+            sigModel.reset( new RooGaussian(name.c_str(),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) )
+                    );
+            //sigModel.reset(new RooGaussian(name.c_str(),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat)))) ) ;
+        }
         else if (nGaussians[pair<int,string>(cat,proc)] ==2) 
         {
            sigModel.reset(new RooAddPdf(name.c_str(),"model",RooArgList(*g1,*g2),
-                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c4",proc.c_str(),cat)))
+                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c4",repl_proc.c_str(),repl_cat)))
                     ),
                 kTRUE
                 ));
         }
         else if (nGaussians[pair<int,string>(cat,proc)] ==3) 
            sigModel.reset(new RooAddPdf(name.c_str(),"model",RooArgList(*g1,*g2,*g3),
-                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c6",proc.c_str(),cat))),
-                    *(w_->function(Form("sigmodel_%s_cat%d_c7",proc.c_str(),cat)))
+                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c6",repl_proc.c_str(),repl_cat))),
+                    *(w_->function(Form("sigmodel_%s_cat%d_c7",repl_proc.c_str(),repl_cat)))
                     ),
                 kTRUE
                 ));
@@ -552,8 +564,17 @@ RooAbsReal* Fitter::getMeanWithSyst(int cat, string proc,int gaus=0){
         RooRealVar *smearNuisance =  new RooRealVar(Form("smear_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_cat%d_proc%s",mycat,myproc.c_str()),0,-1,1);
         RooRealVar *smearValue =  new RooRealVar(Form("smear_value_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_value_cat%d_proc%s",mycat,myproc.c_str()),0.);
 
+        string repl_proc = proc;
+        int repl_cat=cat;
+
+        if ( replace.find ( pair<int,string>(cat,proc))  != replace.end()){
+            repl_proc = replace[ pair<int,string>(cat,proc) ] .second;
+            repl_cat = replace[ pair<int,string>(cat,proc) ] .first;
+            cout<<" [Fitter]::[getMeanWithSyst] found replacement for cat: "<<cat<<", proc"<<proc<<" with -> "<<repl_cat<<", "<<repl_proc<<endl;
+        }
+
         string scaleFormula = "@0";
-        RooArgList scaleList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,0+gaus*2))) );
+        RooArgList scaleList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",repl_proc.c_str(),repl_cat,0+gaus*2))) );
 
         RooFormulaVar *deltaM=NULL;
         if (gaus >0 )
@@ -598,8 +619,16 @@ RooAbsReal* Fitter::getSigmaWithSyst(int cat, string proc,int gaus=0){
         RooRealVar *smearNuisance =  new RooRealVar(Form("smear_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_cat%d_proc%s",mycat,myproc.c_str()),0,-1,1);
         RooRealVar *smearValue =  new RooRealVar(Form("smear_value_cat%d_proc%s",mycat,myproc.c_str()),Form("smear_value_cat%d_proc%s",mycat,myproc.c_str()),0.);
 
+        string repl_proc = proc;
+        int repl_cat=cat;
+        if ( replace.find ( pair<int,string>(cat,proc))  != replace.end()){
+            repl_proc = replace[ pair<int,string>(cat,proc) ] .second;
+            repl_cat = replace[ pair<int,string>(cat,proc) ] .first;
+            cout<<" [Fitter]::[getSigmaWithSyst] found replacement for cat: "<<cat<<", proc"<<proc<<" with -> "<<repl_cat<<", "<<repl_proc<<endl;
+        }
+
         string smearFormula = "@0";
-        RooArgList smearList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,1+gaus*2))) );
+        RooArgList smearList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",repl_proc.c_str(),repl_cat,1+gaus*2))) );
 
         if (smearUnc.find( pair<int,string>(mycat,myproc) )   != smearUnc.end() ) 
         {

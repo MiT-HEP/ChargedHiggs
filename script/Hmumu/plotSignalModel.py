@@ -4,6 +4,24 @@ import math
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
 
+## s/s+b *  stot/nsweight
+weights={
+    0:  0.168556,
+    1:  0.617629,
+    2:  0.829896,
+    3:  0.392717,
+    4:  1.259562,
+    5:  0.827407,
+    6:  1.105182,
+    7:  1.014070,
+    8:  0.767930,
+    9:  0.442198,
+    10:  0.474796,
+    11:  2.272860,
+    12:  1.426070,
+    13:  1.580796,
+    14:  4.196775,
+}
 # get effective sigma from culmalative distribution function
 
 def getEffSigma (mass, pdf,  wmin=120., wmax=130., step=0.002, epsilon=1.e-4):
@@ -105,11 +123,14 @@ if __name__ == "__main__":
     x.SetTitle("m_{#mu#mu} [GeV]")
 
     allPdfs=ROOT.RooArgList()
+    allWPdfs=ROOT.RooArgList()
     allFractions=ROOT.RooArgList()
+    allWFractions=ROOT.RooArgList()
+    allWNum=[]
     allMc=None #ROOT.RooDataHist("allMc","allMc",ROOT.RooArgSet(x))
+    allWMc=None #ROOT.RooDataHist("allMc","allMc",ROOT.RooArgSet(x))
 
-
-    for cat in config.categories:
+    for icat,cat in enumerate(config.categories):
         print "* Doing cat",cat
         fractions=ROOT.RooArgList()
         pdfs=ROOT.RooArgList()
@@ -118,6 +139,8 @@ if __name__ == "__main__":
 
         if abs(w.var("MH").getVal() -125.) > 0.0001 :
             print "<*> ERROR, value of MH mismatch. Unable to set."
+
+        SumVar=0.0
 
         for proc in config.processes:
             p = w.pdf("pdf_sigmodel_" + proc+ "_"+cat) 
@@ -129,13 +152,20 @@ if __name__ == "__main__":
             lumi = config.lumi()
             pdfs.add(p)
             allPdfs.add(p)
+            allWPdfs.add(p)
             #var= ROOT.RooRealVar("f_"+cat+"_"+proc,"fraction",xsec*norm*br*lumi)
             var= ROOT.RooRealVar("f_"+cat+"_"+proc,"fraction",xsec*norm)
             var.setConstant()
 
+
             #print "* adding norm to ",cat ,"(",proc,")" ,"with norm",xsec*norm , "(xsec=",xsec,"ea=",norm,")"
             fractions.add(var)
             allFractions.add(var)
+
+            var2= ROOT.RooRealVar("f_"+cat+"_"+proc,"fraction",xsec*norm*weights[icat])
+            var2.setConstant()
+            allWFractions.add(var2)
+            objs.append(var2)
 
             objs.append(p)
             objs.append(var)
@@ -152,6 +182,10 @@ if __name__ == "__main__":
             if allMc==None:
                 allMc = mc.emptyClone("allMc_"+cat)
             allMc.add(mc,None,xsec*norm)
+
+            if allWMc==None:
+                allWMc = mc.emptyClone("allWMc_"+cat)
+            allWMc.add(mc,None,xsec*norm*weights[icat])
 
         pdf = ROOT.RooAddPdf("tot_model_"+cat,"tot model",pdfs,fractions)
         fwhm= getFWHM(x,pdf,None)
@@ -189,6 +223,7 @@ if __name__ == "__main__":
         c.SaveAs(opts.plot + "/signal_model_" + cat +".pdf")
         c.SaveAs(opts.plot + "/signal_model_" + cat +".png")
 
+    ## normal sum
     pdf = ROOT.RooAddPdf("tot model","tot model",allPdfs,allFractions)
     fwhm= getFWHM(x,pdf,None)
     low,high = getEffSigma (x, pdf) #,  wmin=120., wmax=130., step=0.002, epsilon=1.e-4)
@@ -221,5 +256,40 @@ if __name__ == "__main__":
     txt.DrawLatex(.90,.89-0.10,"#sigma_{eff}=%.1f GeV"%(high-low))
     c.SaveAs(opts.plot + "/signal_model_all.pdf")
     c.SaveAs(opts.plot + "/signal_model_all.png")
+    ##WW
+    print "-> Doing weighted model"
+    pdf = ROOT.RooAddPdf("weight model","weight model",allWPdfs,allWFractions)
+    fwhm= getFWHM(x,pdf,None)
+    low,high = getEffSigma (x, pdf) #,  wmin=120., wmax=130., step=0.002, epsilon=1.e-4)
+    print "-> Eff sigma for cat all is",high - low,"FWHM=",fwhm
+    print "-> Plot" 
+    c= ROOT.TCanvas("c_"+cat,"c_"+cat,800,800)
+    c.SetLeftMargin(0.15)
+    c.SetRightMargin(0.05)
+    c.SetBottomMargin(0.15)
+    c.SetTopMargin(0.05)
+    p= x.frame()
+    allWMc.plotOn(p,ROOT.RooFit.Binning(opts.bins),ROOT.RooFit.MarkerStyle(24),ROOT.RooFit.DataError(ROOT.RooAbsData.SumW2))
+    hist = p.getObject(int(p.numItems()-1));
+    p.GetYaxis().SetTitleOffset(1.7)
+    maxH = 0.0
+    for i in range(0,hist.GetN()):
+        if maxH< hist.GetY()[i]: maxH=hist.GetY()[i]
+    p.GetYaxis().SetRangeUser(0,maxH*1.4)
+    pdf.plotOn(p)
+    p.Draw()
+    txt = ROOT.TLatex()
+    txt.SetNDC()
+    txt.SetTextFont(43)
+    txt.SetTextSize(30)
+    txt.SetTextAlign(13)
+    txt.DrawLatex(.18,.93,"#bf{CMS}, #scale[0.7]{#it{Preliminary Simulation}}")
+    txt.SetTextAlign(33)
+    txt.SetTextSize(24)
+    txt.DrawLatex(.90,.89-0.05,"S/(S+B) weighted")
+    txt.DrawLatex(.90,.89-0.10,"FWHM=%.1f GeV"%fwhm)
+    txt.DrawLatex(.90,.89-0.15,"#sigma_{eff}=%.1f GeV"%(high-low))
+    c.SaveAs(opts.plot + "/signal_model_weight.pdf")
+    c.SaveAs(opts.plot + "/signal_model_weight.png")
 
     

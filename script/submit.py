@@ -42,7 +42,8 @@ parser.add_option_group(summary)
 
 (opts,args)=parser.parse_args()
 
-EOS='/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select'
+#EOS='/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select'
+EOS='/usr/bin/eos'
 
 if 'CMSSW_BASE' not in os.environ:
 	print "-> Use a CMSSW environment: cmsenv"
@@ -216,9 +217,10 @@ if opts.resubmit:
 		else: 
 		   iBegin= int(job)
 		   iEnd = int(job)
-	   	for iJob in range(iBegin,iEnd+1):
+		for iJob in range(iBegin,iEnd+1):
 			#iJob= int(job)
-			basedir = os.environ['PWD'] + "/" + opts.dir
+			if opts.dir[0] == '/': basedir = opts.dir
+			else: basedir = os.environ['PWD'] + "/" + opts.dir
 			touch = "touch " + basedir + "/sub%d.pend"%iJob
 			call(touch,shell=True)
 			cmd = "rm " + basedir + "/sub%d.fail"%iJob + " 2>&1 >/dev/null"

@@ -168,11 +168,17 @@ class SmearBjets : virtual public SmearBase
 
 };
 
+#include "interface/SF.hpp"
+
 class SmearWG1 : virtual public SmearBase
 {
     /* for simple smearing, correlated use SmearSF*/
     int num_{0};
     string sfname_{"wg1"};
+
+
+    //const SF_WG1::TYPES type=SF_WG1::THU_2017;
+    const SF_WG1::TYPES type=SF_WG1::THU_WG1;
 
     public:
     // mu, res, mig01, mig12, vbf2j, vbf3j
@@ -187,7 +193,21 @@ class SmearWG1 : virtual public SmearBase
                 case 4: name_="WG1Mig12"; break;
                 case 5: name_="WG1VBF2j"; break;
                 case 6: name_="WG1VBF3j"; break;
-                case 7: name_="WG1Pt"; break;
+                case 7: {
+                        if (type == SF_WG1::THU_WG1) name_="WG1Pt";
+                        if (type == SF_WG1::THU_2017) name_="WG1Pt60";
+                        break;
+                        }
+                case 8: {
+                        if(type==SF_WG1::THU_WG1) name_="WG1TopMass"; 
+                        if(type==SF_WG1::THU_2017) name_="WG1Pt120"; 
+                        break;
+                        }
+                case 9: {
+                        if(type==SF_WG1::THU_WG1) name_="WG1NoSyst"; 
+                        if(type==SF_WG1::THU_2017) name_="WG1TopMass"; 
+                        break;
+                        }
                 default: name_="WG1NoSyst"; break; // only  7 uncertainties
             };
         }

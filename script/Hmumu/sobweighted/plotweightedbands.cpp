@@ -44,11 +44,24 @@
 #include "boost/algorithm/string/classification.hpp"
 #include "boost/algorithm/string/predicate.hpp"
 
+#include <string>
+#include <regex>
+
+
 
 using namespace RooFit;
 using namespace std;
 using namespace boost;
 namespace po = boost::program_options;
+
+    bool replace(std::string& str, const std::string& from, const std::string& to) { // from SO
+        cout<<"** replacing in '"<<str<<"'<< '"<<from<<"' -> '"<<to<<"'"<<endl;
+        size_t start_pos = str.find(from);
+        if(start_pos == std::string::npos) return false;
+        str.replace(start_pos, from.length(), to);
+        cout<<"** --> '"<<str<<"'"<<endl;
+        return true;
+    }
 
 
 string filenameStr_;
@@ -500,11 +513,23 @@ int main(int argc, char *argv[]) {
     delete hsbplotfinetmp;
     delete hbplotfinetmp;
    
-   // std::cout<<"Getting Channel:"<<TString::Format("shapeBkg_bkg_mass_%s__norm",chan->getLabel())<<std::endl; 
-   // RooAbsReal *catnorm = win->var(TString::Format("shapeBkg_bkg_mass_%s__norm",chan->getLabel()));
-    std::cout<<"Getting Channel:"<<TString::Format("pdf_%s_bkg_norm",chan->getLabel())<<std::endl; 
-    RooAbsReal *catnorm = win->var(TString::Format("pdf_%s_bkg_norm",chan->getLabel()));
-    if (catnorm==NULL) std::cout<<"ERROR CAT NORM is NULL"<<std::endl;
+    //std::cout<<"Getting Channel:"<<TString::Format("shapeBkg_bkg_mass_%s__norm",chan->getLabel())<<std::endl; 
+    //RooAbsReal *catnorm = win->var(TString::Format("shapeBkg_bkg_mass_%s__norm",chan->getLabel()));
+    string label = chan->getLabel(); //_hmm_13TeV
+    replace(label,"hmm_13TeV_",""); //pdf_hmm_13TeV_cat0_bkg_norm
+
+    std::cout<<"Getting Channel:"<<TString::Format("pdf_%s_bkg_norm",label.c_str())<<std::endl; 
+    RooAbsReal *catnorm = win->var(TString::Format("pdf_%s_bkg_norm",label.c_str()));
+    if (catnorm==NULL) std::cout<<"ERROR CAT NORM is NULL: trying frm clear"<<std::endl;
+
+    // //xxx
+    // win->loadSnapshot("clean"); 
+    // catnorm = win->var(TString::Format("pdf_%s_bkg_norm",chan->getLabel()));
+    // if (catnorm==NULL) std::cout<<"ERROR CAT NORM is NULL"<<std::endl;
+    // win->loadSnapshot("MultiDimFit"); 
+    // std::cout<<"after loadsnapshot"<<std::endl;
+    // //xxx
+
     RooProduct *wcatnorm = new RooProduct(TString::Format("%s_wcatnorm",chan->getLabel()),"",RooArgSet(RooConst(catweight),*catnorm));
     wcatnorms.add(*wcatnorm);
         
@@ -948,7 +973,7 @@ int main(int argc, char *argv[]) {
     
     hdummy->SetMaximum(hdatasub->GetHistogram()->GetMaximum()+20);
     hdummy->SetMinimum(hdatasub->GetHistogram()->GetMinimum()-2);
-    hdummy->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV)");
+    hdummy->GetXaxis()->SetTitle("m_{#mu#mu} [GeV]");
     hdummy->GetXaxis()->SetTitleSize(0.12);
     
     hdummy->Draw("HIST");
