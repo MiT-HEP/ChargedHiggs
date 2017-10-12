@@ -6,6 +6,7 @@ usage ='''Adjust plots and style of mass postfit plots'''
 parser= OptionParser(usage=usage)
 parser.add_option("-f","--fname",dest="fname",type='string',help="FileName [%default]",default="CMS-HMM_hmm_combcat_weighted.root");
 parser.add_option("-n","--newlegend",dest="newleg",action='store_true',help="NewLegend [%default]",default=False);
+parser.add_option("-s","--save",dest="save",action='store_true',help="Save [%default]",default=False);
 
 opts, args = parser.parse_args()
 
@@ -141,3 +142,7 @@ if opts.newleg:  #new legend version
 canv.Modified()
 canv.Update()
 raw_input("ok?")
+
+if opts.save:
+    canv.SaveAs(re.sub('.root','.pdf',fname))
+    canv.SaveAs(re.sub('.root','.png',fname))

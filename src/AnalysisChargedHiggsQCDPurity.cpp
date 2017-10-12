@@ -23,7 +23,7 @@ void ChargedHiggsQCDPurity::Init()
             float eta = -1;
             float pt = -1;
             if (iBin>=0 ) pt= PtBins[iBin];
-            if (eBin>=0 ) eta= EtaBins[iBin];
+            if (eBin>=0 ) eta= EtaBins[eBin];
             //                       direct, fullSel
             Book( dir + HistName(pt,eta, DIRECT_SEL , THREEJETS_SEL)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
             Book( dir + HistName(pt,eta, INVERSE_SEL, THREEJETS_SEL)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
@@ -76,7 +76,7 @@ void ChargedHiggsQCDPurity::Init()
             float eta = -1;
             float pt = -1;
             if (iBin>=0 ) pt= PtBins[iBin];
-            if (eBin>=0 ) eta= EtaBins[iBin];
+            if (eBin>=0 ) eta= EtaBins[eBin];
 
             //                       direct full
             Book( dir + HistName(pt,eta, DIRECT_SEL , FULL_SEL)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
