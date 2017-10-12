@@ -32,7 +32,10 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
             l->SetMediumCut(false);
             l->SetLooseCut(true); //loose muon and electrons for veto
         }
-        inline void SetPhotonCuts(Photon *p) override {p->SetIsoCut(-1); p->SetPtCut(30);}
+        inline void SetPhotonCuts(Photon *p) override {
+            p->SetIsoCut(-1); 
+            p->SetPtCut(30);
+        }
         inline void SetTauCuts(Tau *t) override { 
             t->SetIsoCut(2.5); 
             t->SetEtaCut(2.1); 
@@ -62,10 +65,8 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
         // define blind region: Data; Mt> 50
         bool Unblind(Event *e) override { if (e->IsRealData() and e->Mt() > 50) return unblind; return true;} // if is not data, no need to return something else
 
-        bool is80X{false};
-        bool isLightMass{false};
         bool singleTauTrigger{false};
-        int nprongs{1};
+        int nprongs{13};
 
 };
 

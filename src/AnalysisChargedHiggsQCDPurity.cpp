@@ -7,43 +7,43 @@
 
 
 //#define VERBOSE 1
+#define DIRECT_SEL true
+#define INVERSE_SEL false
+
+#define FULL_SEL true
+#define THREEJETS_SEL false
 
 void ChargedHiggsQCDPurity::Init()
 {
     // -- simplified selection
     for ( string& l : AllLabel()  ) 
+        for (size_t eBin = -1 ; eBin + 1 < EtaBins.size() ; ++eBin )
         for (size_t iBin = -1 ; iBin + 1 < PtBins.size() ; ++iBin )
         {
+            float eta = -1;
             float pt = -1;
             if (iBin>=0 ) pt= PtBins[iBin];
+            if (eBin>=0 ) eta= EtaBins[iBin];
             //                       direct, fullSel
-            Book( dir + HistName(pt, true , false)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, false)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL , THREEJETS_SEL)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, THREEJETS_SEL)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
             // ---- 
-            Book( dir + HistName(pt, true , false, "Upar")+"_"+ l  , ("EtMissParallel "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, false, "Upar")+"_"+ l  , ("EtMissParallelIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL , THREEJETS_SEL, "Upar")+"_"+ l  , ("EtMissParallel "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, THREEJETS_SEL, "Upar")+"_"+ l  , ("EtMissParallelIsoInv "+ l).c_str(),250,0.,500.);
 
-            Book( dir + HistName(pt, true , false, "Uperp")+"_"+ l  , ("EtMissPerp "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, false, "Uperp")+"_"+ l  , ("EtMissPerpIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL , THREEJETS_SEL, "Uperp")+"_"+ l  , ("EtMissPerp "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, THREEJETS_SEL, "Uperp")+"_"+ l  , ("EtMissPerpIsoInv "+ l).c_str(),250,0.,500.);
             //  Used in case of spline reweighting iterations
-            Book( dir + HistName(pt, true,  false, "TauPt")+"_"+ l  , ("PtTau "+ l).c_str(),1000,0.,1000.);
-            Book( dir + HistName(pt, false, false, "TauPt")+"_"+ l  , ("PtTauIsoInv "+ l).c_str(),1000,0.,1000.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL,  THREEJETS_SEL, "TauPt")+"_"+ l  , ("PtTau "+ l).c_str(),1000,0.,1000.);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, THREEJETS_SEL, "TauPt")+"_"+ l  , ("PtTauIsoInv "+ l).c_str(),1000,0.,1000.);
 
-            // QG ? Tau 
-            Book( dir + HistName(pt, true , false)+"_Q_" + l  , ("EtMiss Q"+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, false)+"_Q_" + l  , ("EtMissIsoInv Q"+ l).c_str(),250,0.,500.);
-            Book( dir + HistName(pt, true , false)+"_G_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, false)+"_G_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
-            Book( dir + HistName(pt, true , false)+"_T_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, false)+"_T_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
-            Book( dir + HistName(pt, true , false)+"_U_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, false)+"_U_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
             // Prong
-            Book( dir + HistName(pt, true , false)+"_1p_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, false)+"_1p_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
-            Book( dir + HistName(pt, true , false)+"_3p_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, false)+"_3p_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL , THREEJETS_SEL)+"_1p_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, THREEJETS_SEL)+"_1p_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL , THREEJETS_SEL)+"_3p_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, THREEJETS_SEL)+"_3p_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
         }
+
     // --- for event NOT BINNED! CONTROL PLOTS
     for (string &l : AllLabel() )
     {
@@ -52,6 +52,12 @@ void ChargedHiggsQCDPurity::Init()
             Book( dir + hist+"_"+ l  , ("PtTauIsoInv "+ l).c_str(),1000,0.,1000.); // this guys has the R factor applied in the loos selection
             hist= "TauPt_Control";
             Book( dir + hist+"_"+ l  , ("PtTau "+ l).c_str(),1000,0.,1000.); // this guys has the R factor applied in the loos selection
+            hist= "TauEta_IsoInv_Control";
+            Book( dir + hist+"_"+ l  , ("EtaTauIsoInv "+ l).c_str(),100,-2.5,2.5); 
+            //
+            hist= "TauEta_Control";
+            Book( dir + hist+"_"+ l  , ("EtaTau "+ l).c_str(),100,-2.5,2.5); 
+            //
             hist= "EtMiss_IsoInv_Control";
             Book( dir + hist+"_"+ l  , ("EtMissTauIsoInv "+ l).c_str(),250,0,500);
             hist= "EtMiss_Control";
@@ -60,40 +66,37 @@ void ChargedHiggsQCDPurity::Init()
             hist= "DrTauJet_Control";
             Book( dir + hist+"_"+ l  , ("EtMiss "+ l).c_str(),1000,0,5.0);
     }
+
     // -- full selection
     for ( string& l : AllLabel()  ) 
     {
+        for (size_t eBin = -1 ; eBin + 1 < EtaBins.size() ; ++eBin )
         for (size_t iBin = -1 ; iBin + 1 < PtBins.size() ; ++iBin )
         {
+            float eta = -1;
             float pt = -1;
             if (iBin>=0 ) pt= PtBins[iBin];
+            if (eBin>=0 ) eta= EtaBins[iBin];
+
             //                       direct full
-            Book( dir + HistName(pt, true , true)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, true)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL , FULL_SEL)+"_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, FULL_SEL)+"_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
 
-            Book( dir + HistName(pt, true , true)+"_1p_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, true)+"_1p_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
-            Book( dir + HistName(pt, true , true)+"_3p_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, true)+"_3p_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL , FULL_SEL)+"_1p_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, FULL_SEL)+"_1p_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL , FULL_SEL)+"_3p_"+ l  , ("EtMiss "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, FULL_SEL)+"_3p_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
             // ---  NoR
-            Book( dir + HistName(pt, false, true)+"_NoR_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, FULL_SEL)+"_NoR_"+ l  , ("EtMissIsoInv "+ l).c_str(),250,0.,500.);
             //
-            Book( dir + HistName(pt, true , true, "Upar")+"_"+ l  , ("EtMissParallel "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, true, true, "Uperp")+"_"+ l  , ("EtMissPerp "+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, DIRECT_SEL , FULL_SEL, "Upar")+"_"+ l  , ("EtMissParallel "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, DIRECT_SEL, FULL_SEL, "Uperp")+"_"+ l  , ("EtMissPerp "+ l).c_str(),250,0.,500.);
 
-            Book( dir + HistName(pt, false , true, "Upar")+"_"+ l  , ("EtMissParallelIsoInv "+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, true, "Uperp")+"_"+ l  , ("EtMissPerpIsoInv "+ l).c_str(),250,0.,500.);
-            // QG ? 
-            Book( dir + HistName(pt, true , true )+"_Q_" + l  , ("EtMiss Q"+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, true )+"_Q_" + l  , ("EtMissIsoInv Q"+ l).c_str(),250,0.,500.);
-            Book( dir + HistName(pt, true , true )+"_G_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, true )+"_G_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
-            Book( dir + HistName(pt, true , true )+"_T_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, true )+"_T_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
-            Book( dir + HistName(pt, true , true )+"_U_" + l  , ("EtMiss G"+ l).c_str(),250,0.,500);
-            Book( dir + HistName(pt, false, true )+"_U_" + l  , ("EtMissIsoInv G"+ l).c_str(),250,0.,500.);
+            Book( dir + HistName(pt,eta, INVERSE_SEL , FULL_SEL, "Upar")+"_"+ l  , ("EtMissParallelIsoInv "+ l).c_str(),250,0.,500);
+            Book( dir + HistName(pt,eta, INVERSE_SEL, FULL_SEL, "Uperp")+"_"+ l  , ("EtMissPerpIsoInv "+ l).c_str(),250,0.,500.);
 
         }
+
         // I don't need to split it by pt
         Book( dir + "Mt"+"_"+ l  , ("Mt "+ l).c_str(),8000,0.,8000); // same binning in TauNu
         Book( dir + "MtIsoInv"+"_"+ l  , ("MtIsoInv "+ l).c_str(),8000,0.,8000.);
@@ -167,8 +170,9 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
     //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection
     bool passPrescale=false;
-    //if (not e->IsRealData()) passPrescale=true;
-    if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
+    if (not e->IsRealData()) passPrescale=true;
+    //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
+
     //#warning MET80 TRigger in QCD
     //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_MET80") ) passPrescale=true;
     //LogN(__FUNCTION__,"WARNING","MET 80 in QCD Loose",10);
@@ -190,27 +194,21 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     if (t != NULL and passMatchDirect and passDirectLoose and passPrescale) // direct
     {
         float pt = t->Pt();
+        float eta = t->Eta();
         int flavor= t->Rematch(e);
 
         if (pt  > 8000 or pt <0 )  Log(__FUNCTION__,"INFO",Form("strange event : tau Pt=%.0f",pt));
 
-        string hist = HistName(pt,true, false);
+        string hist = HistName(pt,eta,DIRECT_SEL, THREEJETS_SEL);
         Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
-        hist = HistName(pt,true, false,"Uperp");
+        hist = HistName(pt,eta,DIRECT_SEL, THREEJETS_SEL,"Uperp");
         Fill( dir+hist +"_"+label,systname, Upar(e,t), e->weight() );
-        hist = HistName(pt,true, false,"Upar");
+        hist = HistName(pt,eta,DIRECT_SEL, THREEJETS_SEL,"Upar");
         Fill( dir+hist +"_"+label,systname, Uperp(e,t), e->weight() );
-        hist = HistName(pt, true, false, "TauPt") ;
+        hist = HistName(pt,eta, DIRECT_SEL, THREEJETS_SEL, "TauPt") ;
         Fill( dir+hist +"_"+label,systname, t->Pt(), e->weight() );
 
-        hist = HistName(pt, true, false) ;
-        if (flavor == 15) hist += "_T";
-        else if (flavor == 21 ) hist+="_G";
-        else if (flavor <5 and flavor != 0 ) hist+="_Q";
-        else hist += "_U";
-        Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
-
-        hist = HistName(pt, true, false) ;
+        hist = HistName(pt,eta, DIRECT_SEL, THREEJETS_SEL) ;
         if (t->GetNProng()==1) hist +="_1p";
         else hist+="_3p";
         Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
@@ -231,25 +229,19 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     if (tInv != NULL and passMatchInverse and passInverseLoose and passPrescale) // inv iso
     {
         float pt = tInv->Pt();
+        float eta = tInv->Eta();
         int flavor= tInv->Rematch(e);
         if (pt  > 8000 or pt <0 )  Log(__FUNCTION__,"INFO",Form("strange event : tau Pt=%.0f",pt));
-        string hist = HistName(pt,false,false);
+        string hist = HistName(pt,eta,INVERSE_SEL,THREEJETS_SEL);
         Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
-        hist = HistName(pt,false, false,"Uperp");
+        hist = HistName(pt,eta,INVERSE_SEL, THREEJETS_SEL,"Uperp");
         Fill( dir+hist +"_"+label,systname, Upar(e,tInv), e->weight() );
-        hist = HistName(pt,false, false,"Upar");
+        hist = HistName(pt,eta,INVERSE_SEL, THREEJETS_SEL,"Upar");
         Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight() );
-        hist = HistName(pt, false, false, "TauPt") ;
+        hist = HistName(pt,eta, INVERSE_SEL, THREEJETS_SEL, "TauPt") ;
         Fill( dir+hist +"_"+label,systname, tInv->Pt(), e->weight() );
 
-        hist = HistName(pt, false, false) ;
-        if (flavor == 15) hist += "_T";
-        else if (flavor == 21 ) hist+="_G";
-        else if (flavor <5 and flavor != 0 ) hist+="_Q";
-        else hist += "_U";
-        Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
-
-        hist = HistName(pt, false, false) ;
+        hist = HistName(pt,eta, INVERSE_SEL, THREEJETS_SEL) ;
         if (tInv->GetNProng()==1) hist+="_1p";
         else hist+="_3p";
         Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
@@ -281,6 +273,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill( none + "RCollMin" +"_"+label,systname, e->RCollMin(), e->weight() );
         }
 
+    // DIRECT 
     if (t!=NULL and passMatchDirect and direct.passAll() ) 
     {
             //if ( not e->IsRealData()) e->ApplySF("btag");
@@ -289,26 +282,20 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             #endif
             //if(e->IsRealData() and (systname=="NONE" or systname=="") ) Log(__FUNCTION__,"SYNC",Form("%d,%d,%ld",e->runNum(),e->lumiNum(),e->eventNum()) );
             float pt = t->Pt();
+            float eta = t->Eta();
             int flavor= t->Rematch(e);
-            string hist = HistName(pt,true,true);  
+            string hist = HistName(pt,eta,DIRECT_SEL,FULL_SEL);  
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight());
 
             hist= "Mt"; //UNBLIND --------
             if ( Unblind(e) ) Fill(dir+hist+"_"+label,systname, e->Mt() ,e->weight());
 
-            hist = HistName(pt,true, true,"Uperp");
+            hist = HistName(pt,eta,DIRECT_SEL, FULL_SEL,"Uperp");
             Fill( dir+hist +"_"+label,systname, Upar(e,t), e->weight() );
-            hist = HistName(pt,true, true,"Upar");
+            hist = HistName(pt,eta, DIRECT_SEL, FULL_SEL,"Upar");
             Fill( dir+hist +"_"+label,systname, Uperp(e,t), e->weight() );
 
-            hist = HistName(pt, true,true) ;
-            if (flavor == 15) hist += "_T";
-            else if (flavor == 21 ) hist+="_G";
-            else if (flavor <5 and flavor != 0 ) hist+="_Q";
-            else hist += "_U";
-            Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
-
-            hist = HistName(pt, true,true) ;
+            hist = HistName(pt,eta, DIRECT_SEL,FULL_SEL) ;
             if (t->GetNProng()==1) hist+="_1p";
             else hist+="_3p";
             Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
@@ -326,6 +313,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     //
     if (tInv != NULL and passMatchInverse and passInverseLoose ){ // USE weight(false) to apply TF on data!
         float pt = tInv->Pt();                                                   
+        float eta = tInv->Eta();                                                   
         //const string sf="tauinviso";
         string sfname="tauinvisospline";
         if (tInv->GetNProng() ==1 ) sfname+="_1p";
@@ -375,7 +363,7 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         if (passPrescale and passInverseLoose and inverse.passMask(mymask) )
         {
             // On data avoid R fact -- n minus one
-            string hist=HistName(pt, false, true)+"_NoR";
+            string hist=HistName(pt,eta, INVERSE_SEL, FULL_SEL)+"_NoR";
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight(true));
         }
 
@@ -389,30 +377,23 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             if (e->weight(false) == 0 )Log(__FUNCTION__,"WARNING","event weight after SF is 0 ");
 
             int flavor= tInv->Rematch(e);
-            string hist = HistName(pt,false,true);                                   
+            string hist = HistName(pt,eta,INVERSE_SEL,FULL_SEL);        
             Fill(dir+hist+"_"+label,systname, e->GetMet().Pt() ,e->weight(false));
 
 
             //hist = HistName(pt,false,true,"Mt");  
             hist = "MtIsoInv";
             Fill(dir+hist+"_"+label,systname, e->Mt(Event::MtTauInv) ,e->weight(false));
-            hist = HistName(pt,false, true,"Uperp");
+            hist = HistName(pt,eta,INVERSE_SEL, FULL_SEL,"Uperp");
             Fill( dir+hist +"_"+label,systname, Upar(e,tInv), e->weight(false) );
-            hist = HistName(pt,false, true,"Upar");
+            hist = HistName(pt,eta,INVERSE_SEL, FULL_SEL,"Upar");
             Fill( dir+hist +"_"+label,systname, Uperp(e,tInv), e->weight(false) );
 
             if( e->Bjets()> 1)hist = "MtIsoInv_cat0";
             else hist = "MtIsoInv_cat1";
             Fill(dir+hist+"_"+label,systname, e->Mt(Event::MtTauInv) ,e->weight(false));
 
-            hist = HistName(pt, false, true) ;
-            if (flavor == 15) hist += "_T";
-            else if (flavor == 21 ) hist+="_G";
-            else if (flavor <5 and flavor != 0 ) hist+="_Q";
-            else hist += "_U";
-            Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
-
-            hist = HistName(pt, false, true) ;
+            hist = HistName(pt, eta, INVERSE_SEL,FULL_SEL) ;
             if (tInv->GetNProng() ==1 ) hist+="_1p";
             else hist+="_3p";
             Fill( dir + hist +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
@@ -427,14 +408,14 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
     return EVENT_NOT_USED;
 }
 
-int ChargedHiggsQCDPurity::FindBin(float pt)
+int ChargedHiggsQCDPurity::FindBin(float pt,const vector<float> &v)
 {
-    for(size_t iBin=0;iBin + 1<PtBins.size() ;++iBin)
-        if ( pt>= PtBins[iBin] and pt< PtBins[iBin+1] ) return iBin;
+    for(size_t iBin=0;iBin + 1<v.size() ;++iBin)
+        if ( pt>= v[iBin] and pt< v[iBin+1] ) return iBin;
     return -1;
 }
 
-string ChargedHiggsQCDPurity::HistName(float pt, bool Direct, bool FullSelection, string var)
+string ChargedHiggsQCDPurity::HistName(float pt,float eta, bool Direct, bool FullSelection, string var)
 {
     #ifdef VERBOSE
     if (VERBOSE>0){cout<<"[ChargedHiggsQCDPurity]::[HistName]::[DEBUG] called HistName with:"<<endl;
@@ -444,11 +425,17 @@ string ChargedHiggsQCDPurity::HistName(float pt, bool Direct, bool FullSelection
                    cout<<"\t * var = "<<var<<endl;
     }
     #endif
-    int iBin=FindBin(pt);
+    int iBin=FindBin(pt,PtBins);
+    int eBin=FindBin(fabs(eta),EtaBins);
     string name;
 
     if (iBin<0 ) name = var +"_BinNotFound"; 
     else name= Form("%s_pt%.0f_%.0f",var.c_str(),PtBins[iBin],PtBins[iBin+1]);
+    
+    if (eBin>=0)
+    {
+        name += Form("_eta%.1f_%.1f", EtaBins[eBin],EtaBins[eBin+1]); 
+    }
 
     if (not Direct) name += "_IsoInv";
 
