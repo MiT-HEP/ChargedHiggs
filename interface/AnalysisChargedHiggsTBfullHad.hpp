@@ -29,6 +29,7 @@ public:
     void BookHisto(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void BookGenMatch(string l, string category, string phasespace, string cut321, string state);
+    void BookEnCorr(string category, string phasespace);
     void Preselection();
 
     // function with various plots
@@ -50,6 +51,8 @@ public:
     void printSynch(Event*e);
 
     bool genInfoForSignal(Event*e);
+    void Encorrection(Event*e, string systname, string phasespace);
+
 
     int analyze(Event*,string systname) override;
     //    const string name() const override {return "ChargedHiggsTBfullHad";}
@@ -82,10 +85,11 @@ private:
                   MaxCut
     };
 
-    bool doSig = 0; 
+    bool doSig = 1; 
     bool doMirror = 0;
-    bool doLep = 1;
+    bool doLep = 0;
 
+    double evt_ST=-1;
     double evt_HT=-1;
     double evt_minDRbb=-1;
     double evt_minDRbb_invMass=-1;
@@ -140,6 +144,7 @@ private:
     int topAss_lep = 0;
     int topBKGplus_lep = 0;
     int topBKGminus_lep = 0;
+    int siglep = 0;
 
     GenParticle * WFromTopH=NULL;
     GenParticle * WFromTopAss=NULL;

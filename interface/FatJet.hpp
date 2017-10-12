@@ -56,6 +56,9 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float tau1; //
     float tau2; //
     float tau3; //
+    float sdtau1;
+    float sdtau2;
+    float sdtau3;
     float softdropMass;
     float CorrectedPrunedMass;
     int nSubjets;
@@ -70,6 +73,10 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float Tau1() const { return tau1 ; }
     inline float Tau2() const { return tau2 ; }
     inline float Tau3() const { return tau3 ; }
+
+    inline float SDTau1() const { return sdtau1 ; }
+    inline float SDTau2() const { return sdtau2 ; }
+    inline float SDTau3() const { return sdtau3 ; }
 
     inline float SDMass() const { return softdropMass ; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
