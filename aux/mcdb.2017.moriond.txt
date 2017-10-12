@@ -5,18 +5,21 @@ ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/
 ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8 181420.090862 1
 ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8 69754.1062671 1
 ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8 32669.3858868 1
-ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 16800.6841735 1
 ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8 5460.38693736 1
-ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8 50586.6482911 1
-ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8 /store/user/jaeyserm/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8 18334.5813055 1
-ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8 /store/user/jaeyserm/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8 324.485046751 1
-ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 12.7144972018 1
 
-WprimeToTB_TToHad_M-800 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-800 199600 1
-WprimeToTB_TToHad_M-1000 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-1000 200000 1
-WprimeToTB_TToHad_M-1500 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-1500 200000 1
-WprimeToTB_TToHad_M-2000 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-2000 200000 1
-WprimeToTB_TToHad_M-3000 /eos/user/d/dalfonso/Nero/vTest/WprimeToTB_TToHad_M-3000 200000 1
+ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 /eos/user/d/dalfonso/Nero/vTest2/ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8 16800.6841735 1
+ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8 /eos/user/d/dalfonso/Nero/vTest2/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8 45952.4265939 1
+ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8 /eos/user/d/dalfonso/Nero/vTest2/ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8 17832.747128 1
+ChargedHiggs_HplusTB_HplusToTB_M-1500_13TeV_amcatnlo_pythia8 /eos/user/d/dalfonso/Nero/vTest2/ChargedHiggs_HplusTB_HplusToTB_M-1500_13TeV_amcatnlo_pythia8 983.898683544 1
+ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8 /eos/user/d/dalfonso/Nero/vTest2/ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8 3.8895978675 1
+ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 /eos/user/d/dalfonso/Nero/vTest2/ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8 12.5854038042 1
+
+
+WprimeToTB_TToHad_M-800 /eos/user/d/dalfonso/Nero/vTest2/WprimeToTB_TToHad_M-800 199600 1
+WprimeToTB_TToHad_M-1000 /eos/user/d/dalfonso/Nero/vTest2/WprimeToTB_TToHad_M-1000 200000 1
+WprimeToTB_TToHad_M-1500 /eos/user/d/dalfonso/Nero/vTest2/WprimeToTB_TToHad_M-1500 200000 1
+WprimeToTB_TToHad_M-2000 /eos/user/d/dalfonso/Nero/vTest2/WprimeToTB_TToHad_M-2000 200000 1
+WprimeToTB_TToHad_M-3000 /eos/user/d/dalfonso/Nero/vTest2/WprimeToTB_TToHad_M-3000 154400 1
 
 ### TauNu
 ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 /eos/user/a/amarini/Nero/v2.2/ChargedHiggs_HplusTB_HplusToTauNu_M-180_13TeV_amcatnlo_pythia8 155642.666561 1
@@ -85,7 +88,7 @@ ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8 /store/user/ceballos/Nero/v2.2/ZZZ_TuneC
 #####
 TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8 96178140602 831
 
-TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 76734323 831
+TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 /eos/user/d/dalfonso/Nero/vTest2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8 27104363.0 831
 TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 78278900 87.31483776
 TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 /store/group/phys_higgs/ceballos/Nero/v2.2/TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8 151140544 364.35
 

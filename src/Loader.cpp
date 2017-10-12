@@ -319,7 +319,9 @@ void LoadNero::FillLeptons(){
         if (abs((*bl->pdgId)[iL]) == 11) {
             id = (bl->selBits->at(iL)) & BareLeptons::Selection::LepVeto;
         }
-        if (not id) continue;
+
+        // MARIA COMMENT THIS
+        //        if (not id) continue;
 
         Lepton *l = new Lepton();
         l-> SetType( abs((*bl->pdgId)[iL]) );
@@ -442,7 +444,10 @@ void LoadNero::FillTaus(){
         t-> SetIdMu (( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose ); 
         t-> SetMatch( bt -> match -> at(iL) );
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
-        t-> SetIdIso (( bt -> selBits -> at(iL) ) & (BareTaus::byLooseCombinedIsolationDeltaBetaCorr3Hits) ); 
+        // chHiggs -> tau 
+        //        t-> SetIdIso (( bt -> selBits -> at(iL) ) & (BareTaus::byLooseCombinedIsolationDeltaBetaCorr3Hits) ); 
+        // chHiggs -> tb
+        t-> SetIdIso (( bt -> selBits -> at(iL) ) & (BareTaus::byVLooseIsolationMVArun2v1DBoldDMwLT) ); 
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumIsolationMVArun2v1DBoldDMwLT); 
         if(bt->leadTrackPt->size() >iL ) t->SetTrackPt( bt->leadTrackPt -> at(iL) ) ;
         else LogN(__FUNCTION__,"WARNING","Lead Track PT not filled",30);

@@ -170,7 +170,7 @@ if opts.method=='AsymptoticGrid' and opts.hadd:
 			print "->",rm
 			if not opts.dryrun:
 				call(rm,shell=True)
-		combine = "combine -M Asymptotic" +" -m "+ mass
+		combine = "combine -M Asymptotic" +" -m "+ mass + " "
 		if opts.exp:
 			combine += " -t -1 --run=expected --expectSignal=0 --expectSignalMass="+str(mass) + " "
 		combine += "--getLimitFromGrid=%(dir)s/%(name)s" %replace

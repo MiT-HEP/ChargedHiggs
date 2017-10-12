@@ -25,20 +25,53 @@ int SmearJes::smear(Event *e)
 
 int SmearJesAndCSV::smear(Event *e)
 {
-    if (num_==7 and syst_>0)
+    // right correlations with jes
+    if (num_==Systematics::JESup and syst_>0)
         jes->SetSyst(1);
-    else if (num_==7 and syst_<0)
+    else if (num_==Systematics::JESup and syst_<0)
         jes->SetSyst(-1);
     else jes->SetSyst(0);
     
     jes->smear(e);
+    SF_CSVReweight * sf= dynamic_cast<SF_CSVReweight*>(e->GetWeight()->GetSF("btag-reweight"));
 
-    if (syst_==0)
-        e->GetWeight()->SetSystSF("btag-reweight",0);
-    else if (syst_>0)
-        e->GetWeight()->SetSystSF("btag-reweight",num_);
-    else if (syst_<0)
-        e->GetWeight()->SetSystSF("btag-reweight",num_+1);
+    switch( num_ )
+    {
+    case Systematics::JESup :
+            if (syst_>0) sf->systType = Systematics::JESup;
+            else         sf->systType = Systematics::JESdown;
+            break;
+    case Systematics::CSVLFup :
+            if (syst_>0) sf->systType = Systematics::CSVLFup;
+            else         sf->systType = Systematics::CSVLFdown;
+            break;
+    case Systematics::CSVHFup :
+            if (syst_>0) sf->systType = Systematics::CSVHFup;
+            else         sf->systType = Systematics::CSVHFdown;
+            break;
+    case Systematics::CSVHFStats1up :
+            if (syst_>0) sf->systType = Systematics::CSVHFStats1up;
+            else         sf->systType = Systematics::CSVHFStats1down;
+            break;
+    case Systematics::CSVHFStats2up :
+            if (syst_>0) sf->systType = Systematics::CSVHFStats2up;
+            else         sf->systType = Systematics::CSVHFStats2down;
+            break;
+    case Systematics::CSVLFStats1up :
+            if (syst_>0) sf->systType = Systematics::CSVLFStats1up;
+            else         sf->systType = Systematics::CSVLFStats1down;
+            break;
+    case Systematics::CSVLFStats2up :
+            if (syst_>0) sf->systType = Systematics::CSVLFStats2up;
+            else         sf->systType = Systematics::CSVLFStats2down;
+            break;
+    case Systematics::NA : 
+                        sf->systType = Systematics::NA;
+            break;
+    default : 
+                        sf->systType = Systematics::NA;
+            break;
+    }
 
     return SMEAR_OK;
 }
@@ -197,8 +230,9 @@ int SmearWG1::smear(Event *e){
         throw abort;
     }
 
-    if (num_ >=0 and num_ <=7)
+    if (num_ >=0 )
     {
+        sf->type = SF_WG1::THU_WG1;
         sf->nuisance = num_;
         sf->syst = syst_;
     }

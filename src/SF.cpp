@@ -510,6 +510,7 @@ void SF_WG1::print() const{
     Log(__FUNCTION__,"INFO",Form("nuisance=%d",nuisance));
     Log(__FUNCTION__,"INFO",Form("pTH=%.3lf",pTH));
     Log(__FUNCTION__,"INFO",Form("STXS_Stage1=%d",STXS_Stage1));
+    Log(__FUNCTION__,"INFO",Form("type=%d",int(type)));
     Log(__FUNCTION__,"INFO","------------------------------");
 }
 
@@ -520,8 +521,14 @@ double SF_WG1::get() {
     if (syst == 0 ) {
         return 1.0;
     }
-    if (syst >0) return LHCHXSWG::qcd_ggF_uncertSF_wg1(Njets30,pTH,STXS_Stage1,1.0)[nuisance-1];
-    else return LHCHXSWG::qcd_ggF_uncertSF_wg1(Njets30,pTH,STXS_Stage1,-1.0)[nuisance-1];
+    if (type == THU_WG1){
+        if (syst >0) return LHCHXSWG::qcd_ggF_uncertSF_wg1(Njets30,pTH,STXS_Stage1,1.0)[nuisance-1];
+        else return LHCHXSWG::qcd_ggF_uncertSF_wg1(Njets30,pTH,STXS_Stage1,-1.0)[nuisance-1];
+    }
+    else if (type == THU_2017){
+        if (syst >0) return LHCHXSWG::qcd_ggF_uncertSF_2017(Njets30,pTH,STXS_Stage1,1.0)[nuisance-1];
+        else return LHCHXSWG::qcd_ggF_uncertSF_2017(Njets30,pTH,STXS_Stage1,-1.0)[nuisance-1];
+    }
 }
 
 // Local Variables:

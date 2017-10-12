@@ -176,6 +176,9 @@ void Looper::Loop()
 						// each analysis step will apply the SF accordingly to the object it is using
 						event_ -> GetWeight() -> clearSF() ;
 						event_ -> GetWeight() -> clearPU() ; // for target
+                        /*********************************
+                         **          ANALYZE            **
+                         *********************************/
 						if ( a->doAnalyze(event_,s->name()) > 0 ) break; // go on analyzing event, if no analysis returns >0
 #ifdef VERBOSE
 						if (VERBOSE > 1) Log(__FUNCTION__,"DEBUG", string("Done: ") + a->name());
@@ -185,9 +188,16 @@ void Looper::Loop()
 				// necessary for corrector smearer!
 				s->SetSyst(0); // not necessary, but cleaner in this way
 
-			}
-		}
-	}
+			} // loop over syst
+            for(auto a : analysis_)
+            {
+                #ifdef VERBOSE
+                if (VERBOSE > 1) Log(__FUNCTION__,"DEBUG", string("Doing EndEvent: ") + a->name());
+                #endif
+                a->EndEvent(); 
+            }
+		}// loop over entries
+	} // try
 	catch( sigint_exception &e)
 	{
 		Log(__FUNCTION__,"SIGNAL"," Caught SIGINT/SIGTERM: exiting! ");

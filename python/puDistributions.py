@@ -16,7 +16,8 @@ parser.add_option("","--mcdb",dest="mcdb",type="string",help="dump from mcdb",de
 
 (opts,args)=parser.parse_args()
 
-EOS = "/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select"
+#EOS = "/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select"
+EOS = "/usr/bin/eos"
 if '/eos/user' in opts.eos: EOS += " root://eosuser"
 
 if opts.eos=="" and opts.mcdb!="":

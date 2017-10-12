@@ -9,47 +9,19 @@ include=dat/config.2017.moriond.dat
 ### DATASETS ###
 ################
 
-#### BKG ###
-#Files=/store/user/amarini/Nero/%(tag)s/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-### WW/WZ/ZZ###
-### SIGNAL ###
-### QCD
-####
-#### DATA
-#addfiles=/store/user/amarini/Nero/%(tag)s/SingleMuon
+#addfiles=/store/group/phys_higgs/ceballos/Data/Nero/v2.2/DoubleMuon
+#addfiles=/eos/user/a/amarini/Nero/v2.2.qg/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/grauco/Nero/v2.2/ZeroBias
+#addfiles=/store/user/grauco/Nero/v2.2/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/grauco/Nero/v2.2/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/grauco/Nero/v2.2/QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia
+#addfiles=/store/user/grauco/Nero/v2.2/QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/grauco/Nero/v2.2/QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/grauco/Nero/v2.2/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/grauco/Nero/v2.2/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/grauco/Nero/v2.2/QCD_HT150to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#addfiles=/store/user/grauco/Nero/v2.2/QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 
-##################### DiJet ################
-
-#addfiles=/store/user/amarini/Nero/%(tag)s/ZeroBias
-#addfiles=/store/user/amarini/Nero/%(tag)s/ZeroBias1
-#addfiles=/store/user/amarini/Nero/%(tag)s/ZeroBias2
-#addfiles=/store/user/amarini/Nero/%(tag)s/ZeroBias3
-#addfiles=/store/user/amarini/Nero/%(tag)s/ZeroBias4
-#
-#
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_10to15_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_5to10_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
-#addfiles=/store/user/amarini/Nero/%(tag)s/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
-#Files=/store/user/amarini/Nero/v2.1/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/TT-powheg/170111_131157/0000/NeroNtuples_90.root
-Files=
-#addfiles=/store/group/phys_higgs/ceballos/Nero/v2.1/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-#addfiles=/store/group/phys_higgs/ceballos/setup80x_ichep/Data/Nero/v2.0/SingleMuon
-addfiles=/store/group/phys_higgs/ceballos/Data/Nero/v2.2/DoubleMuon
-addfiles=/store/group/phys_higgs/ceballos/Nero/v2.2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
 #
@@ -64,6 +36,10 @@ Analysis=JsonAnalysis,QGAnalysis
 Branches=dat/branches.txt
 ###
 #pileup=aux/pileup.root
+######MCDB=aux/mcdb.TauNu.2017.dat
+pileup=aux/pileup.TauNu.moriond.root
+MCDB=aux/mcdb.qg.txt
+#pileup=aux/pileup.2017.qg.root
 pileupRun=
 pileupLumi=
 #Lumi=2110 ## doing nothing

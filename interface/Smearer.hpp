@@ -3,6 +3,7 @@
 
 #include "interface/Event.hpp"
 #include "interface/Named.hpp"
+#include "interface/Systematics.hpp"
 #include <memory>
 
 #define SMEAR_OK 0
@@ -60,23 +61,25 @@ class SmearJesAndCSV : virtual public SmearBase
     //      15,16 Stat2
     //
     std::unique_ptr<SmearJes> jes;
-    int num_; // this follow the  CSV Reweight skim, while  the constructor is 1->5
+    //int num_; // this follow the  CSV Reweight skim, while  the constructor is 1->5
+    Systematics::Type num_;
 
     public:
         SmearJesAndCSV() : SmearBase(){ 
-            num_=13;
-            name_ = Form("CSVR_%d",num_);
+            num_=Systematics::NA; // --> Systematics::Type
+            name_ = Form("CSVR_NA");
         }
         SmearJesAndCSV(int num) : SmearBase(){ 
             // num -> 1,5 (1 is JES
-            num_ = -1;
-            if (num == 1) {num_=7;name_="JESANDCSV";}
-            if (num == 2) {num_=9;name_="CSVRLF";}
-            if (num == 3){num_=11;name_="CSVRHF";}
-            if (num == 4){num_=13; name_="CSVRSTAT1";}
-            if (num == 5){num_=15; name_="CSVRSTAT2";}
+            num_ = Systematics::NA;
+            if (num == 1){num_=Systematics::JESup;name_="JESANDCSV";}
+            if (num == 2){num_=Systematics::CSVHFup;name_="CSVRHF";}
+            if (num == 3){num_=Systematics::CSVLFup;name_="CSVRLF";}
+            if (num == 4){num_=Systematics::CSVHFStats1up; name_="CSVRHFSTAT1";}
+            if (num == 5){num_=Systematics::CSVHFStats2up; name_="CSVRHFSTAT2";}
+            if (num == 6){num_=Systematics::CSVLFStats1up; name_="CSVRLFSTAT1";}
+            if (num == 7){num_=Systematics::CSVLFStats2up; name_="CSVRLFSTAT2";}
 
-            if(num_<0) {num_=13; name_ = Form("CSVR_%d",num_);}
             jes . reset (new SmearJes());
         }
         int smear(Event*e) override;	
@@ -165,11 +168,17 @@ class SmearBjets : virtual public SmearBase
 
 };
 
+#include "interface/SF.hpp"
+
 class SmearWG1 : virtual public SmearBase
 {
     /* for simple smearing, correlated use SmearSF*/
     int num_{0};
     string sfname_{"wg1"};
+
+
+    //const SF_WG1::TYPES type=SF_WG1::THU_2017;
+    const SF_WG1::TYPES type=SF_WG1::THU_WG1;
 
     public:
     // mu, res, mig01, mig12, vbf2j, vbf3j
@@ -184,7 +193,21 @@ class SmearWG1 : virtual public SmearBase
                 case 4: name_="WG1Mig12"; break;
                 case 5: name_="WG1VBF2j"; break;
                 case 6: name_="WG1VBF3j"; break;
-                case 7: name_="WG1Pt"; break;
+                case 7: {
+                        if (type == SF_WG1::THU_WG1) name_="WG1Pt";
+                        if (type == SF_WG1::THU_2017) name_="WG1Pt60";
+                        break;
+                        }
+                case 8: {
+                        if(type==SF_WG1::THU_WG1) name_="WG1TopMass"; 
+                        if(type==SF_WG1::THU_2017) name_="WG1Pt120"; 
+                        break;
+                        }
+                case 9: {
+                        if(type==SF_WG1::THU_WG1) name_="WG1NoSyst"; 
+                        if(type==SF_WG1::THU_2017) name_="WG1TopMass"; 
+                        break;
+                        }
                 default: name_="WG1NoSyst"; break; // only  7 uncertainties
             };
         }
