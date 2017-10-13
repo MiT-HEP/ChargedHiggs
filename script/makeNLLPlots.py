@@ -16,9 +16,10 @@ parser.add_option("-o","--outname",dest="outname",help="Name of output pdf/png/C
 #parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true",help="Draw observation")
 parser.add_option("-p","--poi",dest="poi",default="r",type="string",help="POI [%default]")
 ##
-parser.add_option("","--addSM",dest="addSM",default=False,action="store_true",help="Add SM Diamond to 2D plot")
+#parser.add_option("","--addSM",dest="addSM",default=False,action="store_true",help="Add SM Diamond to 2D plot")
 parser.add_option("","--run12",dest="run12",default=False,action="store_true")
 parser.add_option("","--paper",dest="paper",default=False,action="store_true")
+parser.add_option("","--nosmooth",dest="nosmooth",default=False,action="store_true",help="No Smooth")
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -71,16 +72,37 @@ def findQuantile(pts,cl):
 	return min,max
 
 def smoothNLL(gr,res):
-
+  print "-> Smooth"
   minVal = min([re[0] for re in res])
   maxVal = max([re[0] for re in res])
   sp = ROOT.TSpline3('sp_%s'%gr.GetName(),gr,"",minVal,maxVal)
-  #gr.Reset()
+  gr = ROOT.TGraph()
   for p in range(100):
     x = minVal+p*((maxVal-minVal)/100.)
     y = sp.Eval(x)
     if y<5:
         gr.SetPoint(p,x,y)
+
+def smoothNLL_v2(gr,res,w=0.3):
+
+  print "-> Smooth v2"
+  minVal = min([re[0] for re in res])
+  maxVal = max([re[0] for re in res])
+
+  gr2=ROOT.TGraph()
+
+  myfunc = ROOT.TF1("myfunc","pol2",-100,100)
+  for p in range(100):
+    x = minVal+p*((maxVal-minVal)/100.)
+    fitmin = x-w
+    fitmax = x+w
+    myfunc.SetRange(fitmin,fitmax)
+    gr.Fit("myfunc","RQN")
+    gr.Fit("myfunc","RQNM")
+    y = myfunc.Eval(x)
+    if y<5:
+        gr2.SetPoint(p,x,y)
+  return gr2
 
 def cleanSpikes1D(rfix):
 
@@ -108,8 +130,8 @@ def cleanSpikes1D(rfix):
 
  for i,rr in enumerate(rhs):
    if i==0: 
-   	prev = rr[1]
-	idiff = 1
+    prev = rr[1]
+    idiff = 1
    if abs(rr[1]-prev) > MAXDER : 
    	idiff+=1
    	continue 
@@ -137,6 +159,8 @@ objs=[]
 graphs=[]
 
 c=ROOT.TCanvas()
+c.SetBottomMargin(0.15)
+c.SetLeftMargin(0.15)
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 xmin=-1
@@ -148,6 +172,15 @@ dummy.GetYaxis().SetRangeUser(0,6)
 
 dummy.GetXaxis().SetTitle("#mu")
 dummy.GetYaxis().SetTitle("-2 #Delta Ln L")
+
+dummy.GetXaxis().SetTitleSize(0.05)
+dummy.GetYaxis().SetTitleSize(0.05)
+dummy.GetXaxis().SetTitleOffset(1.2)
+dummy.GetYaxis().SetTitleOffset(1.2)
+dummy.GetXaxis().SetLabelSize(0.04)
+dummy.GetYaxis().SetLabelSize(0.04)
+dummy.GetXaxis().SetLabelOffset(0.01)
+dummy.GetYaxis().SetLabelOffset(0.01)
 
 dummy.Draw("AXIS")
 dummy.Draw("AXIG SAME")
@@ -171,11 +204,11 @@ obs=ROOT.TGraph()
 for re, nll in res: 
     if nll>=0. and nll<5:
         obs.SetPoint(obs.GetN(),re,nll)
-#if True: smoothNLL(obs,res)
 graphs.append(obs)
 m,m1 = findQuantile(res,0);
 l,h  = findQuantile(res,1);
 l2,h2  = findQuantile(res,4);
+
 
 xmin = m
 eplus = h-m
@@ -184,33 +217,48 @@ eplus2 = h2-m
 eminus2 = m-l2
 
 print "BestFit : %4.4f +%4.4g -%4.4g" % ( xmin, eplus , eminus )
-obs.Draw("L")
+#if True: smoothNLL(obs,res)
+
+if opts.nosmooth:
+    obs.Draw("L")
+    #obs2= smoothNLL_v2(obs,res)
+    #obs2.SetLineColor(ROOT.kRed)
+    #obs2.Draw("C SAME")
+
+else:
+    obs2= smoothNLL_v2(obs,res)
+    #obs2.SetLineColor(ROOT.kRed)
+    obs2.Draw("C SAME")
+
 
 # draw fit value
 l = ROOT.TLatex()
 l.SetNDC()
 l.SetTextFont(42)
+
+l.SetTextAlign(23)
 l.SetTextSize(0.045)
-l.SetTextAlign(33)
-l.DrawLatex(0.89,0.88,"#hat{#mu}_{SM} = %4.1f ^{#font[122]{+}%4.1f}_{#font[122]{-}%4.1f}"%(xmin,eplus,eminus))
+l.DrawLatex(0.8,0.88,"H#rightarrow#mu#mu")
+
+l.SetTextSize(0.045)
+l.SetTextAlign(23)
+l.DrawLatex(0.8,0.88-.1,"#hat{#mu}_{SM} = %4.1f ^{#font[122]{+}%4.1f}_{#font[122]{-}%4.1f}"%(xmin,eplus,eminus))
 
 l.SetTextFont(42)
 l.SetTextSize(0.055)
 l.SetTextAlign(13)
 if opts.paper:
-    l.DrawLatex(0.13,.88,"#bf{CMS}")
+    l.DrawLatex(0.18,.88,"#bf{CMS}")
 else:
-    l.DrawLatex(0.13,.88,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
+    l.DrawLatex(0.18,.88,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
 l.SetTextSize(0.035)
 l.SetTextAlign(31)
-if opts.run12:
-    l.DrawLatex(0.90,.91,"35.9 fb^{-1} (13 TeV)")
-else:
-    l.DrawLatex(0.90,.91,"5.0 fb^{-1} (7 TeV) + 19.8 fb^{-1} (8 TeV) + 35.9 fb^{-1} (13 TeV)")
 
-l.SetTextAlign(13)
-l.SetTextSize(0.035)
-l.DrawLatex(0.13+0.5,0.88-.05,"H#rightarrow#mu#mu")
+if opts.run12:
+    l.DrawLatex(0.90,.91,"5.0 fb^{-1} (7 TeV) + 19.8 fb^{-1} (8 TeV) + 35.9 fb^{-1} (13 TeV)")
+else:
+    l.DrawLatex(0.90,.91,"35.9 fb^{-1} (13 TeV)")
+
 
 c.Update()
 

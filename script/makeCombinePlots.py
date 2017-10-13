@@ -338,7 +338,7 @@ if opts.unblind:
         #l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Preliminary}}")
         l.DrawLatex(xcms,ycms,"#bf{CMS}")
     else:
-        l.DrawLatex(xcms,ycms,"#bf{CMS}, #scale[0.75]{#it{Preliminary}}")
+        l.DrawLatex(xcms-0.02,ycms,"#bf{CMS}, #scale[0.75]{#it{Preliminary}}")
 else:
     l.DrawLatex(xcms,ycms,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
 l.SetTextSize(0.035)

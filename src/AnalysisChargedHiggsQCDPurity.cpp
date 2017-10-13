@@ -169,8 +169,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
 
     //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection
-    bool passPrescale=false;
-    if (not e->IsRealData()) passPrescale=true;
+    bool passPrescale=true;
+    //if (not e->IsRealData()) passPrescale=true;
     //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
 
     //#warning MET80 TRigger in QCD
