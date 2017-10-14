@@ -71,7 +71,7 @@ def EigthTeVGraph():
 	return (median,obs) 
 
 
-def GetLimitFromTree(inputFile,xsec=False):
+def GetLimitFromTree(inputFile,unblind=False):
 	''' Get Limit Histo from Combine tree'''
 
 	## Make Limit plot
@@ -140,69 +140,6 @@ def GetLimitFromTree(inputFile,xsec=False):
 	if len(Up2) != len(Down2) :print "[ERROR] Count 2s"
 	if len(Up) != len(Down) :print "[ERROR] Count 1s"
 	
-	if xsec:
-		## if you want the cross section , use the linear interpolation between the mass points
-		if opts.verbose: print "-> Looking for basepath"
-		basepath = ""
-		mypath = os.path.abspath(os.getcwd())
-		while mypath != "" and mypath != "/":
-			if "ChargedHiggs" in os.path.basename(mypath):
-				basepath = os.path.abspath(mypath)
-			mypath = os.path.dirname(mypath)
-		
-		if opts.verbose: print "-> Base Path is " + basepath
-		
-		sys.path.insert(0,basepath)
-		sys.path.insert(0,basepath+"/python/")
-		sys.path.insert(0,os.getcwd())
-		
-		from ParseDat import ReadMCDB
-	
-		if 'FixQCD' in inputFile:
-			print "->Reading from OLD"
-			mcdb=ReadMCDB(basepath+"/dat/mc_database.old") 
-		mcdb=ReadMCDB(basepath+"/"+opts.mcdb) 
-		#R[label] = (dir,sumw,xsec)
-
-
-	xsections_mcdb=[]
-	xsections_interpolated={}
-
-	if xsec:
-		# save all the xSec in the mcdb
-		for i in range(0,len(median)):
-			mh= median[i][0]
-			xSec= -1
-			labelFound=""
-			for label in mcdb:
-				#if "M%.0f"%mh in label:
-				if 'amcatnlo' not in label : continue
-				if opts.xsecname not in label: continue
-				if "M-%.0f"%mh in label: #amcatnlo
-					labelFound=label[:]
-					xSec = mcdb[label][2]
-			if xSec <0 :  continue
-			print "Found xSec for mh=",mh,"xSec=",xSec, "and label", labelFound
-			xsections_mcdb.append(  (mh,xSec) )
-		# run over the mass point and eventually interpolate between the xsec
-		xsections_mcdb.sort()
-		for i in range(0,len(median)):
-			mh= median[i][0]
-			bin=-1
-			for j in range(0,len(xsections_mcdb) -1):
-				if mh >= xsections_mcdb[j][0] and mh<  xsections_mcdb[j+1][0]:
-					bin = j
-				if j ==len(xsections_mcdb)-2 and mh == xsections_mcdb[j+1][0]:
-					bin = j  # last bin is closed on both sides
-			if bin <0 : 
-				print "[ERROR]: unable to find cross section bin for mh=", mh
-				print "-----------------------"
-				for xsec in xsections_mcdb :
-					print "mh=",xsec[0],"xsec=",xsec[1]
-				print "-----------------------"
-	
-	
-			xsections_interpolated[mh] = interpolate(xsections_mcdb[bin][0],float(xsections_mcdb[bin][1]),xsections_mcdb[bin+1][0],float(xsections_mcdb[bin+1][1]),mh )
 	## sort median, Up Up2 Down Down2 data with mh
 	median.sort()
 	Up.sort()
@@ -219,7 +156,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 		if mh != Up2[i][0] : print "[ERROR]: MH mismatch"
 		if mh != Down[i][0] : print "[ERROR]: MH mismatch"
 		if mh != Down2[i][0] : print "[ERROR]: MH mismatch"
-		if opts.unblind and mh != data[i][0]: print "[ERROR]: MH mismatch"
+		if unblind and mh != data[i][0]: print "[ERROR]: MH mismatch"
 
 		isToExclude=False
 		if opts.exclude != "":
@@ -230,17 +167,6 @@ def GetLimitFromTree(inputFile,xsec=False):
 			print "Excluding MH=",mh,"from the plot"
 			continue
 		
-		if xsec:
-			print "mh=",mh,"xSec=",xSec, "median = ",median[i][1]
-			xSec =  xsections_interpolated[mh]
-			median[i]   = (median[i][0], median[i][1]*xSec )
-			Up[i]       = (mh, Up[i][1] * xSec ) 
-			Up2[i]      = (mh, Up2[i][1] * xSec )
-			Down[i]     = (mh, Down[i][1] * xSec )
-			Down2[i]    = (mh, Down2[i][1] * xSec )
-			if opts.unblind:
-				data[i] = (mh, data[i][1] * xSec) 
-	
 		exp.SetPoint( count, median[i][0] ,median[i][1])
 
 		oneSigma.SetPoint(count, mh, median[i][1] ) 
@@ -248,7 +174,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 		twoSigma.SetPoint(count, mh , median[i][1] ) 
 		twoSigma.SetPointError(count, 0, 0 , median[i][1] - Down2[i][1], Up2[i][1]-median[i][1] ) 
 
-		if opts.unblind:obs.SetPoint(count,mh,data[i][1])
+		if unblind:obs.SetPoint(count,mh,data[i][1])
 
 	return obs,exp,oneSigma,twoSigma
 
@@ -258,7 +184,8 @@ list_oneSigma=[]
 list_twoSigma=[]
 
 for idx,f in enumerate(opts.file.split(',')):
-	obs,exp,oneSigma,twoSigma = GetLimitFromTree(f,opts.xsec)
+	obs,exp,oneSigma,twoSigma = GetLimitFromTree(f,opts.unblind)
+
 
 	if idx == 0 :
 		obs.SetMarkerStyle(21)
@@ -481,3 +408,4 @@ raw_input("Looks ok?")
 
 c.SaveAs(opts.outname + ".pdf")
 c.SaveAs(opts.outname + ".png")
+c.SaveAs(opts.outname + ".root")

@@ -7,6 +7,7 @@ from optparse import OptionParser, OptionGroup
 usage="program higss*"
 parser=OptionParser()
 parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
+parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true")
 #parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="Hmumu.root")
 opts,args= parser.parse_args()
 
@@ -95,7 +96,7 @@ def GetLimitFromTree(inputFile,xsec=False):
 	Down2.sort()
 	data.sort()
 
-	return  median[0][1], Up[0][1], Down[0][1], Up2[0][1],Down2[0][1]
+	return  median[0][1], Up[0][1], Down[0][1], Up2[0][1],Down2[0][1],data[0][1]
 
 c=ROOT.TCanvas("c","canvas",800,800)
 
@@ -107,7 +108,7 @@ c.SetRightMargin(0.05);
 
 nCats=len(args)
 
-maxL=20.
+maxL=31.
 dummy = ROOT.TH2F("dummy","Expected Limits per Category",20,0.,maxL,nCats,1-0.5,nCats+0.5);
 dummy.SetStats(0);
 ci = ROOT.TColor.GetColor("#00ff00");
@@ -144,11 +145,28 @@ for ic,cat in enumerate(args):
     ybinmin = ybin-width;
     ybinmax = ybin+width;
 
-    exp,up,down,up2,down2 = GetLimitFromTree(cat)
-    marker = ROOT.TGraph()
+    exp,up,down,up2,down2,obs = GetLimitFromTree(cat)
+    if opts.unblind:
+        marker = ROOT.TGraphAsymmErrors()
+    else:
+        marker = ROOT.TGraph()
+    marker2 = ROOT.TGraph()
+
     marker.SetMarkerStyle(21)
     marker.SetMarkerColor(ROOT.kBlack)
     marker.SetPoint(0,exp,ybin)
+
+    if opts.unblind:
+        marker.SetPointError(0,0,0,width,width)
+        marker.SetLineColor(ROOT.kBlack)
+        marker.SetLineWidth(2)
+        marker.SetLineStyle(2)
+        marker.SetMarkerSize(0.)
+        marker.SetMarkerStyle(0)
+
+        marker2.SetMarkerStyle(21)
+        marker2.SetMarkerColor(ROOT.kBlack)
+        marker2.SetPoint(0,obs,ybin)
     
 
     pave1 = ROOT.TPave(down,ybinmin,min(up,maxL),ybinmax);
@@ -157,7 +175,10 @@ for ic,cat in enumerate(args):
     pave1.SetFillColor(ROOT.kGreen)
 
     pavetext = ROOT.TPaveText(0.001,ybinmin,10,ybinmax);
-    pavetext.AddText("median=%.1f"%exp)
+    if opts.unblind:
+        pavetext.AddText("%.1f (%.1f)"%(obs,exp))
+    else:
+        pavetext.AddText("median=%.1f"%exp)
     pavetext.SetTextColor(ROOT.kBlack);
     pavetext.SetTextFont(43);
     pavetext.SetTextSize(18);
@@ -169,9 +190,13 @@ for ic,cat in enumerate(args):
 
     pave2.Draw("SAME")
     pave1.Draw("SAME")
-    marker.Draw("P SAME")
+    if opts.unblind:
+        marker.Draw("PE SAME")
+        marker2.Draw("P SAME")
+    else:
+        marker.Draw("P SAME")
     pavetext.Draw("SAME")
-    garbage.extend([marker,pave1,pave2,pavetext])
+    garbage.extend([marker,marker2,pave1,pave2,pavetext])
 
 
 c.Modify()

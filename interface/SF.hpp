@@ -249,6 +249,8 @@ class SF_WG1: virtual public SF
         int STXS_Stage1{0};
 
     public:
+        enum TYPES { THU_WG1=0,THU_2017=1};
+        TYPES type{THU_WG1};
         int nuisance{0};
         //
         //

@@ -111,6 +111,19 @@ if opts.classname== "Fitter":
             if (catStr,procStr) in  config.sigfit_gaussians:
                 fitter.SetGaussians(fitter.inputMasks.size()-1,procStr,config.sigfit_gaussians[(catStr,procStr)])
     #fitter.inputMasks.clear()
+
+    for catStr,proc in config.sigfit_replace:
+        cat = config.categories.index(catStr)
+        cat2Str,proc2=config.sigfit_replace[(catStr,proc)]
+        cat2 = config.categories.index(cat2Str)
+        fitter.SetReplace(cat,proc,cat2,proc2)
+        if (cat2Str,proc2) in  config.sigfit_gaussians:
+            fitter.SetGaussians(cat, proc, config.sigfit_gaussians[(cat2Str,proc2)] )
+        elif proc2 =="ttH":
+            fitter.SetGaussians(cat, proc, 2 )
+        else:
+            fitter.SetGaussians(cat, proc, 3 )
+
     # nuisances and correlations
     for cat,proc in config.sigfit_scale_unc:
         scale=config.sigfit_scale_unc[(cat,proc)]

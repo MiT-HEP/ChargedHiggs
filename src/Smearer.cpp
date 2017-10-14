@@ -230,8 +230,9 @@ int SmearWG1::smear(Event *e){
         throw abort;
     }
 
-    if (num_ >=0 and num_ <=7)
+    if (num_ >=0 )
     {
+        sf->type = SF_WG1::THU_WG1;
         sf->nuisance = num_;
         sf->syst = syst_;
     }

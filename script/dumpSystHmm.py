@@ -75,7 +75,7 @@ for idx,cat in enumerate(categories):
           continue
       elif h == None:
           print >> sys.stderr, "[ERROR] Hist", name, "doesn't exist"
-          if( cat =="cat15" and proc =="VBF") : 
+          if( cat =="cat16" and (proc =="VBF" or proc=="GluGlu")) : 
                 systsline .append( "-")
                 continue ## ok for this
           raise IOError
