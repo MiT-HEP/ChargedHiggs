@@ -200,6 +200,9 @@ void LoadNero::FillJets(){
         j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
         j->SetPuId(bj -> puId -> at(iJet));
 
+        if (tree_->GetBranchStatus("jethadFlavour") ) j->SetHadFlavor(bj -> hadFlavour -> at(iJet));
+        else j->SetHadFlavor( -10 );
+
         // add it
         event_ -> jets_ . push_back(j);
     }

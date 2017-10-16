@@ -6,6 +6,8 @@
 #include "interface/SplitMC.hpp"
 #include <memory>
 
+#include "TRandom3.h"
+
 #include "interface/Output.hpp" // DataStore
 #include "TMVA/Reader.h"
 #include "TMVA/Tools.h"
@@ -21,13 +23,16 @@ public:
     bool doICHEP = false;
     bool writeTree = false;
     bool doSplit = true;
-    bool doBDTSyst = false;
-    bool doFinal = false;
+    bool doBDTSyst = true;
+    bool doFinal = true;
 
     // Analysis type
+    // do1lAnalysis, do2lAnalysis, doTaulAnalysis from the config
     bool do1lAnalysis=false;
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
+    // doSplitLepCat HARDcoded
+    bool doSplitLepCat = false;
 
     // trigger bits
     bool passTriggerMu=true;
@@ -155,6 +160,8 @@ private:
 
     int nGenB = 0 ;
     int genLepSig = 0 ;
+
+    int ev_forTrain = 0;
 
     /////
     /////

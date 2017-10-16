@@ -1,0 +1,4 @@
+sub=janHiggs|/store/group/phys_higgs/HiggsExo/jaeyserm/80x_MC_v2/v2.3/
+
+addfiles=%(janHiggs)s/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8
+addfiles=%(janHiggs)s/TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8

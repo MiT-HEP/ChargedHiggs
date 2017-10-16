@@ -50,6 +50,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
     SetTreeVar("lumi",e->lumiNum());
     SetTreeVar("evt",e->eventNum());
     SetTreeVar("isRealData",e->IsRealData());
+    SetTreeVar("isForTrain",ev_forTrain);
 
     SetTreeVar("weight",e->weight());
     SetTreeVar("npv",e->Npv());
@@ -192,6 +193,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             if (label.find("M-1000")!=string::npos) mc = 12;
             if (label.find("M-2000")!=string::npos) mc = 13;
             if (label.find("M-3000")!=string::npos) mc = 14;
+            if (label.find("M-1500")!=string::npos) mc = 15;
 
 
         } else if (label.find("HplusToTauNu") !=string::npos) //sig TauNu
@@ -414,34 +416,34 @@ void ChargedHiggsTopBottom::Init()
     // TO TRASH events used in the training
     ////
     vector<string> fileNameEvFilter;
-    if(do1lAnalysis) { string fileNameEvFilterL="aux/tb_1l_lowMass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilterL); }
-    if(do1lAnalysis) { string fileNameEvFilterM="aux/tb_1l_mediumMass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilterM); }
-    if(do1lAnalysis) { string fileNameEvFilter11="aux/tb_1l_11Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter11); }
-    if(do1lAnalysis) { string fileNameEvFilter12="aux/tb_1l_12Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter12); }
-    if(do1lAnalysis) { string fileNameEvFilter13="aux/tb_1l_13Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter13); }
-    if(do1lAnalysis) { string fileNameEvFilter14="aux/tb_1l_14Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter14); }
+    if(do1lAnalysis) { string fileNameEvFilterL="aux/tb_trainings/tb_1l_lowMass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilterL); }
+    if(do1lAnalysis) { string fileNameEvFilterM="aux/tb_trainings/tb_1l_mediumMass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilterM); }
+    if(do1lAnalysis) { string fileNameEvFilter11="aux/tb_trainings/tb_1l_11Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter11); }
+    if(do1lAnalysis) { string fileNameEvFilter12="aux/tb_trainings/tb_1l_12Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter12); }
+    if(do1lAnalysis) { string fileNameEvFilter13="aux/tb_trainings/tb_1l_13Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter13); }
+    if(do1lAnalysis) { string fileNameEvFilter14="aux/tb_trainings/tb_1l_14Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter14); }
     ////
-    if(do2lAnalysis) { string fileNameEvFilterL="aux/tb_2l_lowMass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilterL); }
-    if(do2lAnalysis) { string fileNameEvFilterM="aux/tb_2l_mediumMass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilterM); }
-    if(do2lAnalysis) { string fileNameEvFilter11="aux/tb_2l_11Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter11); }
-    if(do2lAnalysis) { string fileNameEvFilter12="aux/tb_2l_12Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter12); }
-    if(do2lAnalysis) { string fileNameEvFilter13="aux/tb_2l_13Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter13); }
-    if(do2lAnalysis) { string fileNameEvFilter14="aux/tb_2l_14Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter14); }
+    if(do2lAnalysis) { string fileNameEvFilterL="aux/tb_trainings/tb_2l_lowMass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilterL); }
+    if(do2lAnalysis) { string fileNameEvFilterM="aux/tb_trainings/tb_2l_mediumMass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilterM); }
+    if(do2lAnalysis) { string fileNameEvFilter11="aux/tb_trainings/tb_2l_11Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter11); }
+    if(do2lAnalysis) { string fileNameEvFilter12="aux/tb_trainings/tb_2l_12Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter12); }
+    if(do2lAnalysis) { string fileNameEvFilter13="aux/tb_trainings/tb_2l_13Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter13); }
+    if(do2lAnalysis) { string fileNameEvFilter14="aux/tb_trainings/tb_2l_14Mass_vsall_SR_BDT.dump.txt"; fileNameEvFilter.push_back(fileNameEvFilter14); }
 
     vector<string> fileNameEvFilterCR;
-    if(do1lAnalysis) { string fileNameEvFilterLCR="aux/tb_1l_lowMass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilterLCR); }
-    if(do1lAnalysis) { string fileNameEvFilterMCR="aux/tb_1l_mediumMass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilterMCR); }
-    if(do1lAnalysis) { string fileNameEvFilter11CR="aux/tb_1l_11Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter11CR); }
-    if(do1lAnalysis) { string fileNameEvFilter12CR="aux/tb_1l_12Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter12CR); }
-    if(do1lAnalysis) { string fileNameEvFilter13CR="aux/tb_1l_13Mass_vsall_CS_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter13CR); }
-    if(do1lAnalysis) { string fileNameEvFilter14CR="aux/tb_1l_14Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter14CR); }
+    if(do1lAnalysis) { string fileNameEvFilterLCR="aux/tb_trainings/tb_1l_lowMass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilterLCR); }
+    if(do1lAnalysis) { string fileNameEvFilterMCR="aux/tb_trainings/tb_1l_mediumMass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilterMCR); }
+    if(do1lAnalysis) { string fileNameEvFilter11CR="aux/tb_trainings/tb_1l_11Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter11CR); }
+    if(do1lAnalysis) { string fileNameEvFilter12CR="aux/tb_trainings/tb_1l_12Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter12CR); }
+    if(do1lAnalysis) { string fileNameEvFilter13CR="aux/tb_trainings/tb_1l_13Mass_vsall_CS_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter13CR); }
+    if(do1lAnalysis) { string fileNameEvFilter14CR="aux/tb_trainings/tb_1l_14Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter14CR); }
     ////
-    if(do2lAnalysis) { string fileNameEvFilterLCR="aux/tb_2l_lowMass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilterLCR); }
-    if(do2lAnalysis) { string fileNameEvFilterMCR="aux/tb_2l_mediumMass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilterMCR); }
-    if(do2lAnalysis) { string fileNameEvFilter11CR="aux/tb_2l_11Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter11CR); }
-    if(do2lAnalysis) { string fileNameEvFilter12CR="aux/tb_2l_12Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter12CR); }
-    if(do2lAnalysis) { string fileNameEvFilter13CR="aux/tb_2l_13Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter13CR); }
-    if(do2lAnalysis) { string fileNameEvFilter14CR="aux/tb_2l_14Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter14CR); }
+    if(do2lAnalysis) { string fileNameEvFilterLCR="aux/tb_trainings/tb_2l_lowMass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilterLCR); }
+    if(do2lAnalysis) { string fileNameEvFilterMCR="aux/tb_trainings/tb_2l_mediumMass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilterMCR); }
+    if(do2lAnalysis) { string fileNameEvFilter11CR="aux/tb_trainings/tb_2l_11Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter11CR); }
+    if(do2lAnalysis) { string fileNameEvFilter12CR="aux/tb_trainings/tb_2l_12Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter12CR); }
+    if(do2lAnalysis) { string fileNameEvFilter13CR="aux/tb_trainings/tb_2l_13Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter13CR); }
+    if(do2lAnalysis) { string fileNameEvFilter14CR="aux/tb_trainings/tb_2l_14Mass_vsall_CR_BDT.dump.txt"; fileNameEvFilterCR.push_back(fileNameEvFilter14CR); }
 
     spliMC_.reset(new SplitMCAnalysis());
     //    std::unique_ptr<SplitMC> spliMC_( new SplitMC());
@@ -501,9 +503,12 @@ void ChargedHiggsTopBottom::Init()
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO READ: 1l - 14,13,12,11 - high mass " << endl;
 
-    for (int i=0; i<4; i++) {
+    for (int i=0; i<5; i++) {
 
-        // 1l - 14,13,12,11 - high mass
+        // i = 0,1,2,3,4
+        // 1l - high + 14,13,12,11 - high mass
+        AddVariable("NcentralJets",'F',i); //0
+        AddVariable("NBJets",'F',i); //0
         // GREEN
         AddVariable("bjet_pt[0]",'F',i); //0
         AddVariable("ht",'F',i);//1
@@ -526,9 +531,12 @@ void ChargedHiggsTopBottom::Init()
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO READ: 1l - medium mass " << endl;
 
-    for (int i=4; i<5; i++) {
+    for (int i=5; i<6; i++) {
 
+        // i = 5
         // 1l - medium mass
+        AddVariable("NcentralJets",'F',i); //0
+        AddVariable("NBJets",'F',i); //0
         // GREEN
         AddVariable("bjet_pt[0]",'F',i); //0
         AddVariable("ht",'F',i);//1
@@ -551,10 +559,12 @@ void ChargedHiggsTopBottom::Init()
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO READ: 1l - low mass " << endl;
 
-    for (int i=5; i<6; i++) {
-        // 0,1,2
+    for (int i=6; i<6+7; i++) {
 
-        // 1l - low mass
+        // i = 6,7,8,9,10,11,12
+        // 1l - low + 6,5,4,3,2,1 mass
+        AddVariable("NcentralJets",'F',i); //0
+        AddVariable("NBJets",'F',i); //0
         // GREEN
         AddVariable("ht",'F',i);//0
         AddVariable("AvDRBB",'F',i);//1
@@ -578,26 +588,30 @@ void ChargedHiggsTopBottom::Init()
     //////
     //////
 
+
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO READ: 2l - 14,13,12,11 - high mass " << endl;
 
-    for (int i=6; i<6+4; i++) {
+    for (int i=13; i<13+5; i++) {
 
-        // 2l - 14,13,12,11 high mass
+        // i = 0,1,2,3,4
+        // 2l - high + 14,13,12,11 - high mass
+        AddVariable("NcentralJets",'F',i); //0
+        AddVariable("NBJets",'F',i); //1
         // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i); //1
-        AddVariable("AvDRBB",'F',i);//2
-        AddVariable("DRl1b1",'F',i); //3
-        AddVariable("DRlbmaxPT",'F',i); //4
-        AddVariable("DEtaMaxBB",'F',i); //5
-        AddVariable("MassMinlb",'F',i); //6
-        AddVariable("AvCSVPt",'F',i); //7
-        AddVariable("mtMin",'F',i); //8
-        AddVariable("DRlbmin",'F',i); //9
-        AddVariable("FW2",'F',i); //10
-        AddVariable("DRbbmin",'F',i); //11
-        AddVariable("Cen",'F',i); //12
+        AddVariable("bjet_pt[0]",'F',i); //2
+        AddVariable("ht",'F',i);//3
+        AddVariable("AvDRBB",'F',i);//4
+        AddVariable("DRl1b1",'F',i);//5
+        AddVariable("DRlbmaxPT",'F',i); //6
+        AddVariable("DEtaMaxBB",'F',i); //7
+        AddVariable("MassMinlb",'F',i); //8
+        AddVariable("AvCSVPt",'F',i); //9
+        AddVariable("mtMin",'F',i); //10
+        AddVariable("DRlbmin",'F',i); //11
+        AddVariable("FW2",'F',i); //12
+        AddVariable("DRbbmin",'F',i); //13
+        AddVariable("Cen",'F',i); //14
 
         AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
@@ -606,23 +620,26 @@ void ChargedHiggsTopBottom::Init()
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO READ: 2l - medium mass " << endl;
 
-    for (int i=10; i<10+1; i++) {
+    for (int i=18; i<19; i++) {
 
+        // i = 18
         // 2l - medium mass
+        AddVariable("NcentralJets",'F',i); //0
+        AddVariable("NBJets",'F',i); //1
         // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i); //1
-        AddVariable("DRl1b1",'F',i); //2
-        AddVariable("DRlbmaxPT",'F',i); //3
-        AddVariable("DEtaMaxBB",'F',i); //4
-        AddVariable("DRbbmin",'F',i); //5
-        AddVariable("MassMinlb",'F',i); //6
-        AddVariable("AvCSVPt",'F',i); //7
-        AddVariable("FW2",'F',i); //8
-        AddVariable("mtMin",'F',i); //9
-        AddVariable("Cen",'F',i); //10
-        AddVariable("AvDRBB",'F',i); //11
-        AddVariable("DRlbmin",'F',i); //12
+        AddVariable("bjet_pt[0]",'F',i); //2
+        AddVariable("ht",'F',i);//3
+        AddVariable("DRl1b1",'F',i);//4
+        AddVariable("DRlbmaxPT",'F',i); //5
+        AddVariable("DEtaMaxBB",'F',i); //6
+        AddVariable("DRbbmin",'F',i); //7
+        AddVariable("MassMinlb",'F',i); //8
+        AddVariable("AvCSVPt",'F',i); //9
+        AddVariable("FW2",'F',i); //10
+        AddVariable("mtMin",'F',i); //11
+        AddVariable("Cen",'F',i); //12
+        AddVariable("AvDRBB",'F',i);//13
+        AddVariable("DRlbmin",'F',i); //14
 
         AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
@@ -631,89 +648,37 @@ void ChargedHiggsTopBottom::Init()
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO READ: 2l - low mass " << endl;
 
-    for (int i=11; i<11+1; i++) {
+    //    for (int i=19; i<19+7; i++) {
+    for (int i=19; i<19+1; i++) {
 
-        // 2l - low mass
+        // i = 6,7,8,9,10,11,12
+        // 2l - low + 6,5,4,3,2,1 mass
+        AddVariable("NcentralJets",'F',i); //0
+        AddVariable("NBJets",'F',i); //1
         // GREEN
-        AddVariable("ht",'F',i); //1
-        AddVariable("AvDRBB",'F',i);//2
-        AddVariable("DRl1b1",'F',i); //3
+        AddVariable("ht",'F',i);//2
+        AddVariable("AvDRBB",'F',i);//3
+        AddVariable("DRl1b1",'F',i);//4
         AddVariable("DRlbmaxPT",'F',i); //5
         AddVariable("DEtaMaxBB",'F',i); //6
         AddVariable("DRbbmin",'F',i); //7
         AddVariable("MassMinlb",'F',i); //8
         AddVariable("AvCSVPt",'F',i); //9
         AddVariable("FW2",'F',i); //10
-        AddVariable("bjet_pt[0]",'F',i); //0
+        AddVariable("bjet_pt[0]",'F',i); //11
         AddVariable("mtMin",'F',i); //12
-        AddVariable("DRlbmin",'F',i); //4
-        AddVariable("Cen",'F',i); //11
-        /*
-        // GREEN + BLU
-        AddVariable("met_pt",'F',i); //13
-        AddVariable("mt",'F',i); //14
-        AddVariable("HemiOut",'F',i); //15
-        AddVariable("DRl1j1",'F',i); //16
-        AddVariable("DRl1j2",'F',i); //17
-        AddVariable("DRl1j3",'F',i); //18
-        */
-        /*
-        AddVariable("met_pt",'F',i);
-        AddVariable("lep1_pt",'F',i);
-        AddVariable("MassDRbbmin",'F',i);
-        AddVariable("MassDRlbmin",'F',i);
-        AddVariable("mt",'F',i);
-        AddVariable("mt2bb",'F',3);
-        AddVariable("mt2bb1l",'F',i);
-        AddVariable("Ml1b1",'F',i);
-        AddVariable("st",'F',i);
-        */
+        AddVariable("DRlbmin",'F',i); //13
+        AddVariable("Cen",'F',i); //14
 
         AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
     }
 
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 2D - 1l " << endl;
+    //////
+    //////
+    //////
 
-    //////////////
-    ////  ------
-    ////
-
-    for (int i=12; i<12+6; i++) {
-        // 0,1,2
-
-        // 2d - 1l - high mass
-        // 2d - 1l - medium mass
-        // 2d - 1l - low mass
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i);//1
-        AddVariable("AvDRBB",'F',i);//2
-        AddVariable("DRl1b1",'F',i);//3
-        AddVariable("DRlbmin",'F',i); //4
-        AddVariable("DRlbmaxPT",'F',i); //5
-        AddVariable("DEtaMaxBB",'F',i); //6
-        AddVariable("DRbbmin",'F',i); //7
-        AddVariable("MassMinlb",'F',i); //8
-        AddVariable("AvCSVPt",'F',i); //9
-        AddVariable("FW2",'F',i); //10
-        AddVariable("Cen",'F',i); //1
-        AddVariable("MJJJmaxPt",'F',i); //12
-        /*
-        // GREEN + BLU
-        AddVariable("met_pt",'F',i); //13
-        AddVariable("mt",'F',i); //14
-        AddVariable("HemiOut",'F',i); //15
-        AddVariable("DRl1j1",'F',i); //16
-        AddVariable("DRl1j2",'F',i); //17
-        AddVariable("DRl1j3",'F',i); //18
-        */
-
-        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
+    /*
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO READ: 2D - 2l " << endl;
 
@@ -737,180 +702,11 @@ void ChargedHiggsTopBottom::Init()
         AddVariable("FW2",'F',i); //10
         AddVariable("Cen",'F',i); //11
         AddVariable("mtMin",'F',i); //12
-        /*
-        // GREEN + BLU
-        AddVariable("met_pt",'F',i); //13
-        AddVariable("mt",'F',i); //14
-        AddVariable("HemiOut",'F',i); //15
-        AddVariable("DRl1j1",'F',i); //16
-        AddVariable("DRl1j2",'F',i); //17
-        AddVariable("DRl1j3",'F',i); //18
-        */
         AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
     }
 
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: CR 1l - high mass - 14,13,12,11" << endl;
-
-    for (int i=24; i<24+4; i++) {
-
-        //    cout << " GOING TO READ: CR 1l - high mass - 14,13,12,11" << endl;
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i); //1
-        AddVariable("DRl1b1",'F',i); //2
-        AddVariable("DRlbmaxPT",'F',i); //3
-        AddVariable("MassMinlb",'F',i); //4
-        AddVariable("AvCSVPt",'F',i); //5
-        AddVariable("MJJJmaxPt",'F',i); //6
-        AddVariable("FW2",'F',i); //7
-        AddVariable("Cen",'F',i); //8
-        AddVariable("DRlbmin",'F',i); //9
-        //        not defined
-        //        AddVariable("AvDRBB",'F',i);//2
-        //        AddVariable("DEtaMaxBB",'F',i); //6
-        //        AddVariable("DRbbmin",'F',i); //7
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: CR 1l - medium mass" << endl;
-
-    for (int i=28; i<28+1; i++) {
-
-        //    cout << " GOING TO READ: CR 1l - high mass - 14,13,12,11" << endl;
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i); //1
-        AddVariable("DRl1b1",'F',i); //2
-        AddVariable("MassMinlb",'F',i); //3
-        AddVariable("AvCSVPt",'F',i); //4
-        AddVariable("FW2",'F',i); //5
-        AddVariable("MJJJmaxPt",'F',i); //6
-        AddVariable("Cen",'F',i); //7
-        AddVariable("DRlbmin",'F',i); //8
-        AddVariable("DRlbmaxPT",'F',i); //9
-        //        not defined
-        //        AddVariable("AvDRBB",'F',i);//2
-        //        AddVariable("DEtaMaxBB",'F',i); //6
-        //        AddVariable("DRbbmin",'F',i); //7
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: CR 1l - low mass" << endl;
-
-    for (int i=29; i<29+1; i++) {
-
-        //    cout << " GOING TO READ: CR 1l - high mass - 14,13,12,11" << endl;
-        // GREEN
-        AddVariable("ht",'F',i); //1
-        AddVariable("DRl1b1",'F',i); //2
-        AddVariable("DRlbmaxPT",'F',i); //9
-        AddVariable("MassMinlb",'F',i); //3
-        AddVariable("AvCSVPt",'F',i); //4
-        AddVariable("FW2",'F',i); //5
-        AddVariable("Cen",'F',i); //7
-        AddVariable("MJJJmaxPt",'F',i); //6
-        AddVariable("DRlbmin",'F',i); //8
-        AddVariable("bjet_pt[0]",'F',i); //0
-
-        //        not defined
-        //        AddVariable("AvDRBB",'F',i);//2
-        //        AddVariable("DEtaMaxBB",'F',i); //6
-        //        AddVariable("DRbbmin",'F',i); //7
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: CR 2l - high mass - 14,13,12,11" << endl;
-
-    for (int i=30; i<30+4; i++) {
-
-        //    cout << " GOING TO READ: CR 2l - high mass - 14,13,12,11" << endl;
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i); //1
-        AddVariable("DRl1b1",'F',i); //2
-        AddVariable("DRlbmaxPT",'F',i); //9
-        AddVariable("MassMinlb",'F',i); //3
-        AddVariable("AvCSVPt",'F',i); //4
-        AddVariable("mtMin",'F',i); //6
-        AddVariable("DRlbmin",'F',i); //8
-        AddVariable("FW2",'F',i); //5
-        AddVariable("Cen",'F',i); //7
-        //        not defined
-        //        AddVariable("AvDRBB",'F',i);//2
-        //        AddVariable("DEtaMaxBB",'F',i); //6
-        //        AddVariable("DRbbmin",'F',i); //7
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: CR 2l - medium mass" << endl;
-
-    for (int i=34; i<34+1; i++) {
-
-        //    cout << " GOING TO READ: CR 2l - high mass - 14,13,12,11" << endl;
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i); //1
-        AddVariable("DRl1b1",'F',i); //2
-        AddVariable("DRlbmaxPT",'F',i); //3
-        AddVariable("MassMinlb",'F',i); //4
-        AddVariable("AvCSVPt",'F',i); //5
-        AddVariable("FW2",'F',i); //
-        AddVariable("mtMin",'F',i); //6
-        AddVariable("Cen",'F',i); //7
-        AddVariable("DRlbmin",'F',i); //8
-        //        not defined
-        //        AddVariable("AvDRBB",'F',i);//2
-        //        AddVariable("DEtaMaxBB",'F',i); //6
-        //        AddVariable("DRbbmin",'F',i); //7
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: CR 2l - low mass" << endl;
-
-    for (int i=35; i<35+1; i++) {
-
-        //    cout << " GOING TO READ: CR 2l - high mass - 14,13,12,11" << endl;
-        // GREEN
-        AddVariable("ht",'F',i); //1
-        AddVariable("DRl1b1",'F',i); //2
-        AddVariable("DRlbmaxPT",'F',i); //3
-        AddVariable("MassMinlb",'F',i); //4
-        AddVariable("AvCSVPt",'F',i); //5
-        AddVariable("FW2",'F',i); //8
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("mtMin",'F',i); //6
-        AddVariable("DRlbmin",'F',i); //7
-        AddVariable("Cen",'F',i); //9
-        //        not defined
-        //        AddVariable("AvDRBB",'F',i);//2
-        //        AddVariable("DEtaMaxBB",'F',i); //6
-        //        AddVariable("DRbbmin",'F',i); //7
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
+    */
 
 
     /*
@@ -951,7 +747,7 @@ void ChargedHiggsTopBottom::Init()
         {
             cout <<"[TmvaAnalysis]::[Init]::[INFO] Loading weights idx="<<i<<": '"<< weights[i]<<"'"<<endl;
             if(i!=36) readers_[i]->BookMVA("BDTG",weights[i].c_str());
-            //            if(i==24) readers_[i]->BookMVA("DNN::DNN",weights[i].c_str());
+            //            if(i==38) readers_[i]->BookMVA("DNN::DNN",weights[i].c_str());
         }
     cout <<"[TmvaAnalysis]::[Init]::[INFO] Done"<<endl;
 
@@ -976,6 +772,7 @@ void ChargedHiggsTopBottom::Init()
         Branch("tree_tb","npv",'I');
         Branch("tree_tb","weight",'D');
         Branch("tree_tb","isRealData",'I');
+        Branch("tree_tb","isForTrain",'I');
 
         Branch("tree_tb","weight_pu",'D');
         Branch("tree_tb","weight_bTag",'D');
@@ -1209,7 +1006,7 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
         cout <<"[ChargedHiggsTopBottom]::[Init]::[INFO] Boking Histo CutFlow/Baseline" <<l<<endl;
 
         // do1lAnalysis
-        if(do1lAnalysis && (category.find("_1Mu") || category.find("_1Ele"))) {
+        if(do1lAnalysis && (category.find("_1Mu") || category.find("_1Ele") || category.find("_1L"))) {
             Book(    "ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+ l  , ("CutFlow "+ l).c_str(),10,-.5,10-.5);
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(Total+1,"Total");
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(OneLep+1,"N_{lep} >= 1");
@@ -1238,7 +1035,7 @@ void ChargedHiggsTopBottom::BookCutFlow(string l, string category)
         }
 
         // do2lAnalysis
-        if(do2lAnalysis && (category.find("_2Mu") || category.find("_2Ele") || category.find("_1Mu1Ele")))  {
+        if(do2lAnalysis && (category.find("_2Mu") || category.find("_2Ele") || category.find("_1Mu1Ele") || category.find("_2L")))  {
             Book(    "ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+ l  , ("CutFlow "+ l).c_str(),10,-.5,10-.5);
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(Total+1,"Total");
             GetHisto("ChargedHiggsTopBottom/CutFlow"+category+"/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(OneLep+1,"N_{lep} >= 2");
@@ -1311,52 +1108,49 @@ void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasesp
 
     //////
 
-    for ( unsigned int iBDT=1; iBDT< 37; iBDT++ ) {
+    for ( unsigned int iBDT=1; iBDT< 15; iBDT++ ) {
 
         string BDT=std::to_string(iBDT);
 
-        /// FIXME: SR need to be SR1/2/3/4 and CR need to be R7R10
+        // TEMPORARY
+        //        doBDTSyst=true;
 
-        if(doBDTSyst and iBDT< 7 and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
-        if(doBDTSyst and iBDT> 6 and iBDT<13 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
-
-        if(iBDT==1 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+SR+flavor+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
-        if(iBDT==2 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+SR+flavor+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
-        if(iBDT==3 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+SR+flavor+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
-        if(iBDT==4 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+SR+flavor+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
-        if(iBDT==5 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+SR+flavor+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
-        if(iBDT==6 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+SR+flavor+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
-
-        if(iBDT==7 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_"+SR+flavor+l,"bdt2lh3 "+l+";bdt (2l m3000)",200,-1.,1.);
-        if(iBDT==8 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_"+SR+flavor+l,"bdt2lh3 "+l+";bdt (2l m2000)",200,-1.,1.);
-        if(iBDT==9 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_"+SR+flavor+l,"bdt2lh1 "+l+";bdt (2l m1000)",200,-1.,1.);
-        if(iBDT==10 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_"+SR+flavor+l,"bdt2lh8 "+l+";bdt (2l m800)",200,-1.,1.);
-        if(iBDT==11 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_"+SR+flavor+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
-        if(iBDT==12 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_"+SR+flavor+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
-
-        if(iBDT>12 and iBDT<25) continue; // this is the 2d
-
-        // CR
-        if(doBDTSyst and iBDT> 24 and iBDT<31 and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
-        if(doBDTSyst and iBDT> 30 and iBDT<37 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
-
-        if(iBDT==25 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt25_"+SR+flavor+l,"bdt1lcrh3 "+l+";bdt (CR 1l m3000)",200,-1.,1.);
-        if(iBDT==26 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt26_"+SR+flavor+l,"bdt1lcrh2 "+l+";bdt (CR 1l m2000)",200,-1.,1.);
-        if(iBDT==27 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt27_"+SR+flavor+l,"bdt1lcrh1 "+l+";bdt (CR 1l m1000)",200,-1.,1.);
-        if(iBDT==28 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt28_"+SR+flavor+l,"bdt1lcrh8 "+l+";bdt (CR 1l m800)",200,-1.,1.);
-        if(iBDT==29 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt29_"+SR+flavor+l,"bdt1lcrm "+l+";bdt (CR 1l medium)",200,-1.,1.);
-        if(iBDT==30 && do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt30_"+SR+flavor+l,"bdt1lcrl "+l+";bdt (CR 1l low)",200,-1.,1.);
-
-        if(iBDT==31 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt31_"+SR+flavor+l,"bdt2lcrh3 "+l+";bdt (CR 2l m3000)",200,-1.,1.);
-        if(iBDT==32 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt32_"+SR+flavor+l,"bdt2lcrh2 "+l+";bdt (CR 2l m2000)",200,-1.,1.);
-        if(iBDT==33 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt33_"+SR+flavor+l,"bdt2lcrh1 "+l+";bdt (CR 2l m1000)",200,-1.,1.);
-        if(iBDT==34 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt34_"+SR+flavor+l,"bdt2lcrh8 "+l+";bdt (CR 2l m800)",200,-1.,1.);
-        if(iBDT==35 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt35_"+SR+flavor+l,"bdt2lcrm "+l+";bdt (CR 2l medium)",200,-1.,1.);
-        if(iBDT==36 && do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt36_"+SR+flavor+l,"bdt2lcrl "+l+";bdt (CR 2l low)",200,-1.,1.);
+        if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
+        if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
 
     }
 
-    if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_"+SR+flavor+l); //temporaty only in the 2l
+    if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+SR+flavor+l);
+    if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+SR+flavor+l);
+    if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+SR+flavor+l);
+
+    if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+SR+flavor+l);
+    if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+SR+flavor+l);
+    if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+SR+flavor+l);
+
+    // 1l - high
+    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+SR+flavor+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14_"+SR+flavor+l,"bdt1lh3 "+l+";bdt (m3000)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13_"+SR+flavor+l,"bdt1lh2 "+l+";bdt (m2000)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_"+SR+flavor+l,"bdt1lh1 "+l+";bdt (m1000)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_"+SR+flavor+l,"bdt1lh8 "+l+";bdt (m800)",200,-1.,1.);
+
+    // 1l - medium
+    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+SR+flavor+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+
+    // 1l - low
+    if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+SR+flavor+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+SR+flavor+l,"bdt1l "+l+";bdt (m350)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+SR+flavor+l,"bdt1l "+l+";bdt (m300)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+SR+flavor+l,"bdt1l "+l+";bdt (m250)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+SR+flavor+l,"bdt1l "+l+";bdt (m220)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+SR+flavor+l,"bdt1l "+l+";bdt (m200)",200,-1.,1.);
+    if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+SR+flavor+l,"bdt1l "+l+";bdt (m180)",200,-1.,1.);
+
+    ///
+    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+SR+flavor+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+SR+flavor+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+    if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+SR+flavor+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
     //////
 
@@ -1412,22 +1206,31 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HTmcweight_"+l);
 
         //BDT plot
-        for ( unsigned int iBDT=1; iBDT< 37; iBDT++ ) {
+        for ( unsigned int iBDT=1; iBDT< 15; iBDT++ ) {
 
             string BDT=std::to_string(iBDT);
 
-            // SR
-            if(doBDTSyst and iBDT< 7 && do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+l);
-            if(doBDTSyst and iBDT> 6 and iBDT<13 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+l);
-            // CR
-            if(doBDTSyst and iBDT>24 and iBDT<31 and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+l);
-            if(doBDTSyst and iBDT>30 and iBDT<37 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+l);
+            // TEMPORARY
+            //            doBDTSyst=true;
 
-            if(iBDT>12 and iBDT<25) continue; // this is the 2d
+            // SR
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+l);
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+l);
+
+            // 2D
+            //            if(iBDT>24 and iBDT<37) continue; // this is the 2d // // //  25-36
 
         }
 
-        if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_"+l);
+        if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+l);
+        if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+l);
+        if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+l);
+
+        if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+l);
+        if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+l);
+        if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+l);
+
+        //        if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_"+l);
 
         /*
         if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lh_"+l);
@@ -1454,40 +1257,94 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR3_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR4_"+l);
 
-            for ( unsigned int iBDT=1; iBDT< 13; iBDT++ ) {
+            for ( unsigned int iBDT=1; iBDT< 15; iBDT++ ) {
 
                 // this loop is only for SR
                 string BDT=std::to_string(iBDT);
 
-                if(doBDTSyst and iBDT< 7 && do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR1_"+l);
-                if(doBDTSyst and iBDT> 6 and iBDT<13 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR1_"+l);
+                // TEMPORARY
+                //                doBDTSyst=true;
 
-                if(doBDTSyst and iBDT< 7 && do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR2_"+l);
-                if(doBDTSyst and iBDT> 6 and iBDT<13 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR2_"+l);
-
-                if(doBDTSyst and iBDT< 7 && do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR3_"+l);
-                if(doBDTSyst and iBDT> 6 and iBDT<13 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR3_"+l);
-
-                if(doBDTSyst and iBDT< 7 && do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR4_"+l);
-                if(doBDTSyst and iBDT> 6 and iBDT<13 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR4_"+l);
+                if(doBDTSyst and (do1lAnalysis or do2lAnalysis)) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR1_"+l);
+                if(doBDTSyst and (do1lAnalysis or do2lAnalysis)) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR2_"+l);
+                if(doBDTSyst and (do1lAnalysis or do2lAnalysis)) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR3_"+l);
+                if(doBDTSyst and (do1lAnalysis or do2lAnalysis)) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR4_"+l);
 
                 if(doSplit) {
-
-                    if(doBDTSyst and iBDT< 7 && do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR13_"+l);
-                    if(doBDTSyst and iBDT> 6 and iBDT<13 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR13_"+l);
-
-                    if(doBDTSyst and iBDT< 7 && do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR24_"+l);
-                    if(doBDTSyst and iBDT> 6 and iBDT<13 and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR24_"+l);
-
+                    if(doBDTSyst and (do1lAnalysis or do2lAnalysis)) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR13_"+l);
+                    if(doBDTSyst and (do1lAnalysis or do2lAnalysis)) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR24_"+l);
                 }
+
             }
 
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+"SR1_"+l);
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+"SR1_"+l);
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+"SR1_"+l);
+
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+"SR2_"+l);
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+"SR2_"+l);
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+"SR2_"+l);
+
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+"SR3_"+l);
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+"SR3_"+l);
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+"SR3_"+l);
+
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+"SR4_"+l);
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+"SR4_"+l);
+            if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+"SR4_"+l);
+
+            if(doSplit) {
+
+                if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+"SR13_"+l);
+                if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+"SR13_"+l);
+                if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+"SR13_"+l);
+
+                if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+"SR24_"+l);
+                if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+"SR24_"+l);
+                if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+"SR24_"+l);
+
+            }
+
+
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+"SR1_"+l);
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+"SR1_"+l);
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+"SR1_"+l);
+
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+"SR2_"+l);
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+"SR2_"+l);
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+"SR2_"+l);
+
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+"SR3_"+l);
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+"SR3_"+l);
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+"SR3_"+l);
+
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+"SR4_"+l);
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+"SR4_"+l);
+            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+"SR4_"+l);
+
+            if(doSplit) {
+
+                if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+"SR13_"+l);
+                if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+"SR13_"+l);
+                if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+"SR13_"+l);
+
+                if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+"SR24_"+l);
+                if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+"SR24_"+l);
+                if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+"SR24_"+l);
+
+            }
+
+
+
+
+            /*
            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR1_"+l);
            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR2_"+l);
            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR3_"+l);
            if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR4_"+l);
            if(doBDTSyst and doSplit && do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR13_"+l);
            if(doBDTSyst and doSplit && do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR24_"+l);
+            */
 
            /*
 
@@ -1554,37 +1411,28 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+l,"ST "+l+"; ST ( HT+MET+lepsPt )",800,0,8000);
 
         //BDT plot
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
 
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_"+l,"bdt2lh3 "+l+";bdt (2l m3000)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_"+l,"bdt2lm2 "+l+";bdt (2l m2000)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_"+l,"bdt2ll1 "+l+";bdt (2l m1000)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_"+l,"bdt2l8 "+l+";bdt (2l m800)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
-        // CR
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt25_"+l,"bdt1lcrh3 "+l+";bdt (1l m3000)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt26_"+l,"bdt1lcrh2 "+l+";bdt (1l m2000)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt27_"+l,"bdt1lcrh1 "+l+";bdt (1l m1000)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt28_"+l,"bdt1lcrh8 "+l+";bdt (1l m800)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt29_"+l,"bdt1lcrm "+l+";bdt (1l medium)",200,-1.,1.);
-        if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt30_"+l,"bdt1lcrl "+l+";bdt (1l low)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
 
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt31_"+l,"bdt2lcrh3 "+l+";bdt (2l m3000)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt32_"+l,"bdt2lcrm2 "+l+";bdt (2l m2000)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt33_"+l,"bdt2lcrl1 "+l+";bdt (2l m1000)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt34_"+l,"bdt2lcr8 "+l+";bdt (2l m800)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt35_"+l,"bdt2lcrm "+l+";bdt (2l medium)",200,-1.,1.);
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt36_"+l,"bdt2lcrl "+l+";bdt (2l low)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_"+l,"bdt1l "+l+";bdt (1l m350)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_"+l,"bdt1l "+l+";bdt (1l m300)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_"+l,"bdt1l "+l+";bdt (1l m250)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_"+l,"bdt1l "+l+";bdt (1l m220)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_"+l,"bdt1l "+l+";bdt (1l m200)",200,-1.,1.);
+        if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_"+l,"bdt1l "+l+";bdt (1l m180)",200,-1.,1.);
 
         // DNN
-        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
+        //        if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
 
         // 2D
         /*
@@ -1612,73 +1460,112 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
             Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR3_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
             Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_SR4_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
 
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR1_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR1_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR1_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR1_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR1_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR1_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_SR1_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_SR1_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_SR1_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
 
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR1_"+l,"bdt2lh3 "+l+";bdt (2l m3000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR1_"+l,"bdt2lm2 "+l+";bdt (2l m2000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR1_"+l,"bdt2ll1 "+l+";bdt (2l m1000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR1_"+l,"bdt2l8 "+l+";bdt (2l m800)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR1_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR1_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_SR2_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_SR2_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_SR2_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
 
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR1_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_SR3_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_SR3_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_SR3_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_SR4_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_SR4_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_SR4_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_SR1_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_SR1_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_SR1_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_SR2_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_SR2_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_SR2_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_SR3_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_SR3_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_SR3_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_SR4_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_SR4_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_SR4_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+
+        /////
+
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR1_"+l,"bdt1lh180 "+l+";bdt (1l m180)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR1_"+l,"bdt1lh200 "+l+";bdt (1l m200)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR1_"+l,"bdt1lh220 "+l+";bdt (1l m220)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR1_"+l,"bdt1lh250 "+l+";bdt (1l m250)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR1_"+l,"bdt1lh300 "+l+";bdt (1l m300)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR1_"+l,"bdt1lh350 "+l+";bdt (1l m350)",200,-1.,1.);
+
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR1_"+l,"bdt1lh4 "+l+";bdt (1l m400)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR1_"+l,"bdt1lh4 "+l+";bdt (1l m450)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR1_"+l,"bdt1lh5 "+l+";bdt (1l m500)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR1_"+l,"bdt1lh7 "+l+";bdt (1l m750)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR1_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR1_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13_SR1_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14_SR1_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
+
+            //            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR1_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
             ////
 
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR2_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR2_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR2_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR2_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR2_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR2_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR3_"+l,"bdt1lh180 "+l+";bdt (1l m180)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR3_"+l,"bdt1lh200 "+l+";bdt (1l m200)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR3_"+l,"bdt1lh220 "+l+";bdt (1l m220)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR3_"+l,"bdt1lh250 "+l+";bdt (1l m250)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR3_"+l,"bdt1lh300 "+l+";bdt (1l m300)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR3_"+l,"bdt1lh350 "+l+";bdt (1l m350)",200,-1.,1.);
 
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR2_"+l,"bdt2lh3 "+l+";bdt (2l m3000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR2_"+l,"bdt2lm2 "+l+";bdt (2l m2000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR2_"+l,"bdt2ll1 "+l+";bdt (2l m1000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR2_"+l,"bdt2l8 "+l+";bdt (2l m800)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR2_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR2_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR3_"+l,"bdt1lh4 "+l+";bdt (1l m400)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR3_"+l,"bdt1lh4 "+l+";bdt (1l m450)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR3_"+l,"bdt1lh5 "+l+";bdt (1l m500)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR3_"+l,"bdt1lh7 "+l+";bdt (1l m750)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR3_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR3_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13_SR3_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14_SR3_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
 
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR2_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
             ////
 
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR3_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR3_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR3_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR3_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR3_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR3_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR2_"+l,"bdt1lh180 "+l+";bdt (1l m180)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR2_"+l,"bdt1lh200 "+l+";bdt (1l m200)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR2_"+l,"bdt1lh220 "+l+";bdt (1l m220)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR2_"+l,"bdt1lh250 "+l+";bdt (1l m250)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR2_"+l,"bdt1lh300 "+l+";bdt (1l m300)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR2_"+l,"bdt1lh350 "+l+";bdt (1l m350)",200,-1.,1.);
 
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR3_"+l,"bdt2lh3 "+l+";bdt (2l m3000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR3_"+l,"bdt2lm2 "+l+";bdt (2l m2000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR3_"+l,"bdt2ll1 "+l+";bdt (2l m1000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR3_"+l,"bdt2l8 "+l+";bdt (2l m800)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR3_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR3_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR2_"+l,"bdt1lh4 "+l+";bdt (1l m400)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR2_"+l,"bdt1lh4 "+l+";bdt (1l m450)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR2_"+l,"bdt1lh5 "+l+";bdt (1l m500)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR2_"+l,"bdt1lh7 "+l+";bdt (1l m750)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR2_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR2_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13_SR2_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14_SR2_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
 
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR3_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
+            ///
 
-            /////
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR4_"+l,"bdt1lh180 "+l+";bdt (1l m180)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR4_"+l,"bdt1lh200 "+l+";bdt (1l m200)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR4_"+l,"bdt1lh220 "+l+";bdt (1l m220)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR4_"+l,"bdt1lh250 "+l+";bdt (1l m250)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR4_"+l,"bdt1lh300 "+l+";bdt (1l m300)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR4_"+l,"bdt1lh350 "+l+";bdt (1l m350)",200,-1.,1.);
 
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR4_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR4_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR4_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR4_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR4_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
-            if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR4_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR4_"+l,"bdt1lh4 "+l+";bdt (1l m400)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR4_"+l,"bdt1lh4 "+l+";bdt (1l m450)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR4_"+l,"bdt1lh5 "+l+";bdt (1l m500)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR4_"+l,"bdt1lh7 "+l+";bdt (1l m750)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR4_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR4_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13_SR4_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
+            if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14_SR4_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
 
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR4_"+l,"bdt2lh3 "+l+";bdt (2l m3000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR4_"+l,"bdt2lm2 "+l+";bdt (2l m2000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR4_"+l,"bdt2ll1 "+l+";bdt (2l m1000)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR4_"+l,"bdt2l8 "+l+";bdt (2l m800)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR4_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR4_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
-
-            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR4_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
+            //            if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR4_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
 
             /////
             /*
@@ -1713,37 +1600,60 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
             if(doSplit) {
 
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR13_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR13_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR13_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR13_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR13_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR13_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_SR13_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_SR13_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_SR13_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
 
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR13_"+l,"bdt2lh3 "+l+";bdt (2l m3000)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR13_"+l,"bdt2lm2 "+l+";bdt (2l m2000)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR13_"+l,"bdt2ll1 "+l+";bdt (2l m1000)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR13_"+l,"bdt2l8 "+l+";bdt (2l m800)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR13_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR13_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_SR24_"+l,"bdt1lh "+l+";bdt (1l high)",200,-1.,1.);
+                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_SR24_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
+                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_SR24_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
 
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR13_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
+                ////
 
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR24_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR24_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR24_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR24_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR24_"+l,"bdt1lm "+l+";bdt (1l medium)",200,-1.,1.);
-                if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR24_"+l,"bdt1ll "+l+";bdt (1l low)",200,-1.,1.);
+                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_SR13_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_SR13_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_SR13_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR24_"+l,"bdt2lh3 "+l+";bdt (2l m3000)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR24_"+l,"bdt2lm2 "+l+";bdt (2l m2000)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR24_"+l,"bdt2ll1 "+l+";bdt (2l m1000)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR24_"+l,"bdt2l8 "+l+";bdt (2l m800)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR24_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR24_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
+                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_SR24_"+l,"bdt2lh "+l+";bdt (2l high)",200,-1.,1.);
+                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_SR24_"+l,"bdt2lm "+l+";bdt (2l medium)",200,-1.,1.);
+                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_SR24_"+l,"bdt2ll "+l+";bdt (2l low)",200,-1.,1.);
 
-                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR24_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
+                ////
+
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR13_"+l,"bdt1lh180 "+l+";bdt (1l m180)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR13_"+l,"bdt1lh200 "+l+";bdt (1l m200)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR13_"+l,"bdt1lh220 "+l+";bdt (1l m220)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR13_"+l,"bdt1lh250 "+l+";bdt (1l m250)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR13_"+l,"bdt1lh300 "+l+";bdt (1l m300)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR13_"+l,"bdt1lh350 "+l+";bdt (1l m350)",200,-1.,1.);
+
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR13_"+l,"bdt1lh4 "+l+";bdt (1l m400)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR13_"+l,"bdt1lh4 "+l+";bdt (1l m450)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR13_"+l,"bdt1lh5 "+l+";bdt (1l m500)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR13_"+l,"bdt1lh7 "+l+";bdt (1l m750)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR13_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR13_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13_SR13_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14_SR13_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
+
+
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1_SR24_"+l,"bdt1lh180 "+l+";bdt (1l m180)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2_SR24_"+l,"bdt1lh200 "+l+";bdt (1l m200)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3_SR24_"+l,"bdt1lh220 "+l+";bdt (1l m220)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4_SR24_"+l,"bdt1lh250 "+l+";bdt (1l m250)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5_SR24_"+l,"bdt1lh300 "+l+";bdt (1l m300)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6_SR24_"+l,"bdt1lh350 "+l+";bdt (1l m350)",200,-1.,1.);
+
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7_SR24_"+l,"bdt1lh4 "+l+";bdt (1l m400)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8_SR24_"+l,"bdt1lh4 "+l+";bdt (1l m450)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9_SR24_"+l,"bdt1lh5 "+l+";bdt (1l m500)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10_SR24_"+l,"bdt1lh7 "+l+";bdt (1l m750)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11_SR24_"+l,"bdt1lh8 "+l+";bdt (1l m800)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12_SR24_"+l,"bdt1lh1 "+l+";bdt (1l m1000)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13_SR24_"+l,"bdt1lh2 "+l+";bdt (1l m2000)",200,-1.,1.);
+                if(do1lAnalysis or do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14_SR24_"+l,"bdt1lh3 "+l+";bdt (1l m3000)",200,-1.,1.);
+
+                //                if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_SR24_"+l,"bdt2ll "+l+";bdt (2l DNN)",200,-1.,1.);
 
                 /*
                 if(do1lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1ll_SR13_"+l,"bdt2D_1ll_ "+l+";bdt (2D low) 1l",   6,-0.5,5.5);
@@ -1943,26 +1853,34 @@ void ChargedHiggsTopBottom::Preselection()
         cout << "inside BookCutFlow" << "l = " << l << endl;
         //        if(e->IsRealData() && (!systname.find("NONE")    !=string::npos)) cout << "possible to return " << endl;
 
-        BookSplit(l, "");
-        if(do1lAnalysis) BookSplit(l, "_1Mu");
-        if(do1lAnalysis) BookSplit(l, "_1Ele");
-        if(do2lAnalysis) BookSplit(l, "_2Mu");
-        if(do2lAnalysis) BookSplit(l, "_1Mu1Ele");
-        if(do2lAnalysis) BookSplit(l, "_2Ele");
+        //        BookSplit(l, "");
+        //        if(do1lAnalysis and (!doSplitLepCat)) BookSplit(l, "_1L");
+        //        if(do1lAnalysis and doSplitLepCat) BookSplit(l, "_1Mu");
+        //        if(do1lAnalysis and doSplitLepCat) BookSplit(l, "_1Ele");
+        //        if(do2lAnalysis and (!doSplitLepCat)) BookSplit(l, "_2L");
+        //        if(do2lAnalysis and doSplitLepCat) BookSplit(l, "_2Mu");
+        //        if(do2lAnalysis and doSplitLepCat) BookSplit(l, "_1Mu1Ele");
+        //        if(do2lAnalysis and doSplitLepCat) BookSplit(l, "_2Ele");
 
         BookCutFlow(l, "");
-        if(do1lAnalysis) BookCutFlow(l, "_1Mu");
-        if(do1lAnalysis) BookCutFlow(l, "_1Ele");
-        if(do2lAnalysis) BookCutFlow(l, "_2Mu");
-        if(do2lAnalysis) BookCutFlow(l, "_1Mu1Ele");
-        if(do2lAnalysis) BookCutFlow(l, "_2Ele");
+        if(do1lAnalysis and (!doSplitLepCat)) BookCutFlow(l, "_1L");
+        if(do1lAnalysis and doSplitLepCat) BookCutFlow(l, "_1Mu");
+        if(do1lAnalysis and doSplitLepCat) BookCutFlow(l, "_1Ele");
+        if(do2lAnalysis and (!doSplitLepCat)) BookCutFlow(l, "_2L");
+        if(do2lAnalysis and doSplitLepCat) BookCutFlow(l, "_2Mu");
+        if(do2lAnalysis and doSplitLepCat) BookCutFlow(l, "_1Mu1Ele");
+        if(do2lAnalysis and doSplitLepCat) BookCutFlow(l, "_2Ele");
 
         BookHisto(l, "","Baseline"); // this is when there is nothing
-        if(do1lAnalysis) BookHisto(l, "_1Mu","Baseline");
-        if(do1lAnalysis) BookHisto(l, "_1Ele","Baseline");
-        if(do2lAnalysis) BookHisto(l, "_2Mu","Baseline");
-        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","Baseline");
-        if(do2lAnalysis) BookHisto(l, "_2Ele","Baseline");
+        if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","Baseline");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","Baseline");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","Baseline");
+        //
+        if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","Baseline");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","Baseline");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","Baseline");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","Baseline");
+        //
         if(doTaulAnalysis) BookHisto(l, "_1Mu","Baseline");
         if(doTaulAnalysis) BookHisto(l, "_1Ele","Baseline");
         if(doTaulAnalysis) BookHisto(l, "_2Mu","Baseline");
@@ -1973,59 +1891,72 @@ void ChargedHiggsTopBottom::Preselection()
         ///////
 
         BookHisto(l, "","topCR"); // this is when there is nothing
-        if(do1lAnalysis) BookHisto(l, "_1Mu","topCR");
-        if(do1lAnalysis) BookHisto(l, "_1Ele","topCR");
-        if(do2lAnalysis) BookHisto(l, "_2Mu","topCR");
-        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCR");
-        if(do2lAnalysis) BookHisto(l, "_2Ele","topCR");
+        if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","topCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","topCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","topCR");
+        if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","topCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","topCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","topCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","topCR");
 
         if(doSplit) {
             BookHisto(l, "","topCRR4"); // this is when there is nothing
-            if(do1lAnalysis) BookHisto(l, "_1Mu","topCRR4");
-            if(do1lAnalysis) BookHisto(l, "_1Ele","topCRR4");
-            if(do2lAnalysis) BookHisto(l, "_2Mu","topCRR4");
-            if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCRR4");
-            if(do2lAnalysis) BookHisto(l, "_2Ele","topCRR4");
+            if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","topCRR4");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","topCRR4");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","topCRR4");
+            if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","topCRR4");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","topCRR4");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","topCRR4");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","topCRR4");
 
             BookHisto(l, "","topCRR5"); // this is when there is nothing
-            if(do1lAnalysis) BookHisto(l, "_1Mu","topCRR5");
-            if(do1lAnalysis) BookHisto(l, "_1Ele","topCRR5");
-            if(do2lAnalysis) BookHisto(l, "_2Mu","topCRR5");
-            if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","topCRR5");
-            if(do2lAnalysis) BookHisto(l, "_2Ele","topCRR5");
+            if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","topCRR5");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","topCRR5");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","topCRR5");
+            if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","topCRR5");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","topCRR5");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","topCRR5");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","topCRR5");
         }
         ///////
         ///////
 
         BookHisto(l, "","extraRadCR"); // this is when there is nothing
-        if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCR");
-        if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCR");
-        if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCR");
-        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCR");
-        if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCR");
+        if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","extraRadCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","extraRadCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","extraRadCR");
+        if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","extraRadCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","extraRadCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","extraRadCR");
+        if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","extraRadCR");
 
         if(doSplit) {
             BookHisto(l, "","extraRadCRR7"); // this is when there is nothing
-            if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCRR7");
-            if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCRR7");
-            if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCRR7");
-            if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCRR7");
-            if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCRR7");
+            if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","extraRadCRR7");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","extraRadCRR7");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","extraRadCRR7");
+            if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","extraRadCRR7");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","extraRadCRR7");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","extraRadCRR7");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","extraRadCRR7");
 
             BookHisto(l, "","extraRadCRR10"); // this is when there is nothing
-            if(do1lAnalysis) BookHisto(l, "_1Mu","extraRadCRR10");
-            if(do1lAnalysis) BookHisto(l, "_1Ele","extraRadCRR10");
-            if(do2lAnalysis) BookHisto(l, "_2Mu","extraRadCRR10");
-            if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","extraRadCRR10");
-            if(do2lAnalysis) BookHisto(l, "_2Ele","extraRadCRR10");
+            if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","extraRadCRR10");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","extraRadCRR10");
+            if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","extraRadCRR10");
+            if(do2lAnalysis and (!doSplitLepCat)) BookHisto(l, "_2L","extraRadCRR10");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Mu","extraRadCRR10");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu1Ele","extraRadCRR10");
+            if(do2lAnalysis and doSplitLepCat) BookHisto(l, "_2Ele","extraRadCRR10");
         }
 
         ///////
         ///////
 
         if(do1lAnalysis) BookHisto(l, "","charmCR"); // this is when there is nothing
-        if(do1lAnalysis) BookHisto(l, "_1Mu","charmCR");
-        if(do1lAnalysis) BookHisto(l, "_1Ele","charmCR");
+        if(do1lAnalysis and (!doSplitLepCat)) BookHisto(l, "_1L","charmCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Mu","charmCR");
+        if(do1lAnalysis and doSplitLepCat) BookHisto(l, "_1Ele","charmCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Mu","charmCR");
         //        if(do2lAnalysis) BookHisto(l, "_1Mu1Ele","charmCR");
         //        if(do2lAnalysis) BookHisto(l, "_2Ele","charmCR");
@@ -2613,41 +2544,61 @@ void ChargedHiggsTopBottom::computeVar(Event*e) {
 
 void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, string systname, string phasespace) {
 
-    bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) ));
-    bool filldo2l=(do2lAnalysis && ( (category.find("_2Mu")  !=string::npos ) || ( category.find("_2Ele") !=string::npos ) || ( category.find("_1Mu1Ele")  !=string::npos ) ));
+    bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) || ( category.find("_1L") !=string::npos )));
+    bool filldo2l=(do2lAnalysis && ( (category.find("_2Mu")  !=string::npos ) || ( category.find("_2Ele") !=string::npos ) || ( category.find("_1Mu1Ele")  !=string::npos ) || ( category.find("_2L")  !=string::npos ) ));
 
     if(not (filldo1l || filldo2l)) return;
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+label,systname, evt_ST ,e->weight());
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+label,systname, evt_ST ,e->weight());
 
-    //    0-5 1l  14-13-12-11, medium, low
-    //    6-11 2l
+    ///    for ( unsigned int iXML=1; iXML< 26; iXML++ ) {
+    for ( unsigned int iXML=1; iXML< 21; iXML++ ) {
 
-    for ( unsigned int iBDT=1; iBDT< 37; iBDT++ ) {
-        string BDT=std::to_string(iBDT);
-        if(bdt.size()>0) {
+        //        string BDT=std::to_string(iXML);
 
-            if(iBDT< 7 && do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+label,systname,bdt[iBDT-1],e->weight());
-            if(iBDT> 6 and iBDT<13 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+label,systname,bdt[iBDT-1],e->weight());
+        //TEMPORARY
+        //        doBDTSyst=false;
 
-            if(iBDT< 31 and iBDT> 24 && do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+label,systname,bdt[iBDT-1],e->weight());
-            if(iBDT< 37 and iBDT> 30 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+label,systname,bdt[iBDT-1],e->weight());
+        if(doBDTSyst and iXML==2  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==3  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==4  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==5  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11"+"_"+label,systname,bdt[iXML-1],e->weight());
 
-        } else {
-            if(iBDT< 7 && do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+label,systname,-1,e->weight());
-            if(iBDT> 6 and iBDT<13 && do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+label,systname,-1,e->weight());
+        if(doBDTSyst and iXML==8  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==9  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==10  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==11  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==12  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==13  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1"+"_"+label,systname,bdt[iXML-1],e->weight());
 
-            if(iBDT< 31 and iBDT> 24 && do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+label,systname,-1,e->weight());
-            if(iBDT< 37 and iBDT> 30 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+label,systname,-1,e->weight());
-        }
+        if(doBDTSyst and iXML==1 and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==6 and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==7 and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+label,systname,bdt[iXML-1],e->weight());
 
-        //        if(iBDT>12 and iBDT<25) continue; // this is the 2d
+        ////
+
+        if(doBDTSyst and iXML==15  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==16  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==17  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==18  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11"+"_"+label,systname,bdt[iXML-1],e->weight());
+
+        if(doBDTSyst and iXML==21  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==22  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==23  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==24  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==25  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2"+"_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==26  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1"+"_"+label,systname,bdt[iXML-1],e->weight());
+
+        if(doBDTSyst and iXML==14 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==19 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==20 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+label,systname,bdt[iXML-1],e->weight());
 
     }
 
     // temporary only on the 2l
-    if(do2lAnalysis && bdt.size()>36) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_"+label,systname,bdt[36],e->weight()); //DNN
+    //    if(do2lAnalysis && bdt.size()>36) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt37_"+label,systname,bdt[36],e->weight()); //DNN
+
     /*
     if(do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lh_"+label,systname,binHigh_->GetCluster(bdt[12],bdt[13]),e->weight());
     if(do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2D_1lm_"+label,systname,binMedium_->GetCluster(bdt[14],bdt[15]),e->weight());
@@ -2695,8 +2646,8 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
 
 void ChargedHiggsTopBottom::jetPlot(Event*e, string label, string category, string systname, string phasespace) {
 
-    bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) ));
-    bool filldo2l=(do2lAnalysis && ( (category.find("_2Mu")  !=string::npos ) || ( category.find("_2Ele") !=string::npos ) || ( category.find("_1Mu1Ele")  !=string::npos ) ));
+    bool filldo1l=(do1lAnalysis && ( (category.find("_1Mu")  !=string::npos ) || ( category.find("_1Ele") !=string::npos ) || ( category.find("_1L") !=string::npos )));
+    bool filldo2l=(do2lAnalysis && ( (category.find("_2Mu")  !=string::npos ) || ( category.find("_2Ele") !=string::npos ) || ( category.find("_1Mu1Ele")  !=string::npos ) || ( category.find("_2L")  !=string::npos )  ));
 
     if(not (filldo1l || filldo2l)) return;
 
@@ -2901,25 +2852,44 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
         /////
         /////
 
-        for ( unsigned int iBDT=1; iBDT< 37; iBDT++ ) {
-            string BDT=std::to_string(iBDT);
-            if(bdt.size()>0) {
+        //            doBDTSyst=true;
+        //        for ( unsigned int iXML=1; iXML < 26; iXML++ ) {
+        for ( unsigned int iXML=1; iXML < 21; iXML++ ) {
 
-                if(iBDT< 7 && do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+Sregion+LabelHF+label,systname,bdt[iBDT-1],e->weight());
-                if(iBDT> 6 and iBDT<13 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+Sregion+LabelHF+label,systname,bdt[iBDT-1],e->weight());
+            if(doBDTSyst and iXML==2  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==3  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==4  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==5  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
 
-                if(iBDT< 31 and iBDT> 24 && do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+Sregion+LabelHF+label,systname,bdt[iBDT-1],e->weight());
-                if(iBDT< 37 and iBDT> 30 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+Sregion+LabelHF+label,systname,bdt[iBDT-1],e->weight());
+            if(doBDTSyst and iXML==8  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==9  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==10  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==11  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==12  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==13  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
 
-            } else {
-                if(iBDT< 7 && do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+Sregion+LabelHF+label,systname,-1,e->weight());
-                if(iBDT> 6 and iBDT<13 && do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+Sregion+LabelHF+label,systname,-1,e->weight());
+            if(doBDTSyst and iXML==1 and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==6 and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==7 and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1ll_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
 
-                if(iBDT< 31 and iBDT> 24 && do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+Sregion+LabelHF+label,systname,-1,e->weight());
-                if(iBDT< 37 and iBDT> 30 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+Sregion+LabelHF+label,systname,-1,e->weight());
-            }
- 
-            //        if(iBDT>12 and iBDT<25) continue; // this is the 2d
+            ///
+
+            if(doBDTSyst and iXML==15  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==16  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==17  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==18  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+
+            if(doBDTSyst and iXML==21  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==22  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==23  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==24  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==25  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==26  and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1"+"_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+
+            if(doBDTSyst and iXML==14 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lh_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==19 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2lm_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+            if(doBDTSyst and iXML==20 and do2lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2ll_"+Sregion+LabelHF+label,systname,bdt[iXML-1],e->weight());
+
 
         }
 
@@ -2960,24 +2930,46 @@ void ChargedHiggsTopBottom::fillMoneyPlot(Event*e, string category, string systn
     Fill("ChargedHiggsTopBottom/Baseline"+category+"/HT_"+SRlabel+label,systname, evt_HT ,e->weight());
     Fill("ChargedHiggsTopBottom/Baseline"+category+"/ST_"+SRlabel+label,systname, evt_ST ,e->weight());
 
-    for ( unsigned int iBDT=1; iBDT< 37; iBDT++ ) {
-        string BDT=std::to_string(iBDT);
-        if(bdt.size()>0) {
+    //    for ( unsigned int iXML=1; iXML < 26; iXML++ ) {
+    for ( unsigned int iXML=1; iXML < 21; iXML++ ) {
 
-            if(iBDT< 7 && do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt"+BDT+"_"+SRlabel+label,systname,bdt[iBDT-1],e->weight());
-            if(iBDT< 31 and iBDT> 24 && do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt"+BDT+"_"+SRlabel+label,systname,bdt[iBDT-1],e->weight());
+        string BDT=std::to_string(iXML);
 
-            if(iBDT< 37 and iBDT> 30 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt"+BDT+"_"+SRlabel+label,systname,bdt[iBDT-1],e->weight());
-            if(iBDT> 6 and iBDT<13 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt"+BDT+"_"+SRlabel+label,systname,bdt[iBDT-1],e->weight());
+        if(doBDTSyst and iXML==2  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt14"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==3  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt13"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==4  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt12"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==5  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt11"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
 
-        } else {
-            if(iBDT< 7 && do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt"+BDT+"_"+SRlabel+label,systname,-1,e->weight());
-            if(iBDT< 31 and iBDT> 24 && do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt"+BDT+"_"+SRlabel+label,systname,-1,e->weight());
+        if(doBDTSyst and iXML==8  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt6"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==9  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt5"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==10  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==11  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==12  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==13  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
 
-            if(iBDT< 37 and iBDT> 30 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt"+BDT+"_"+SRlabel+label,systname,-1,e->weight());
-            if(iBDT> 6 and iBDT<13 && do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt"+BDT+"_"+SRlabel+label,systname,-1,e->weight());
-        }
-        //        if(iBDT>12 and iBDT<25) continue; // this is the 2d
+        if(doBDTSyst and iXML==1 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1lh_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==6 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1lm_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==7 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1ll_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+
+        ///
+
+        if(doBDTSyst and iXML==15 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt14"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==16 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt13"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==17 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt12"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==18 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt11"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+
+        if(doBDTSyst and iXML==21 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt6"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==22 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt5"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==23 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==24 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==25 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==26 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+
+        if(doBDTSyst and iXML==14 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2lh_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==19 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2lm_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==20 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2ll_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+
+
     }
 
     /*
@@ -3286,24 +3278,28 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     cut.SetCutBit(Total);
     if(do1lAnalysis) {
         Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,0,e->weight());
+        Fill("ChargedHiggsTopBottom/CutFlow_1L/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_1Mu/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_1Ele/CutFlow_"+label,systname,0,e->weight());
         ///
 
         if(!e->IsRealData() && (systname.find("NONE")    !=string::npos)) {
             Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei_1L/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
         }
     }
     if(do2lAnalysis) {
         Fill("ChargedHiggsTopBottom/CutFlow/CutFlow_"+label,systname,0,e->weight());
+        Fill("ChargedHiggsTopBottom/CutFlow_2L/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_2Mu/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_1Mu1Ele/CutFlow_"+label,systname,0,e->weight());
         Fill("ChargedHiggsTopBottom/CutFlow_2Ele/CutFlow_"+label,systname,0,e->weight());
         ///
         if(!e->IsRealData() && (systname.find("NONE")    !=string::npos)) {
             Fill("ChargedHiggsTopBottom/CutFlowNoWei/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
+            Fill("ChargedHiggsTopBottom/CutFlowNoWei_2L/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_2Mu/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_1Mu1Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
             Fill("ChargedHiggsTopBottom/CutFlowNoWei_2Ele/CutFlowNoWei_"+label,systname,0,e->GetWeight()->GetBareMCXsec()/e->GetWeight()->GetBareNevents());
@@ -3329,6 +3325,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(OneLep) ) {
             if(onemu) {
                 category="_1Mu";
+                if(!doSplitLepCat) category="_1L";
                 // RECO
                 if (not e->IsRealData()) { e->SetPtEtaSF("muRECO",e->Npv(),0); e->ApplySF("muRECO"); }
                 // ID
@@ -3340,6 +3337,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
             if(oneele) {
                 category="_1Ele";
+                if(!doSplitLepCat) category="_1L";
                 //RECO
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleRECO",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleRECO"); }
                 // ID-MVA
@@ -3386,6 +3384,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         if( cut.passAllUpTo(OneLep) ) {
             if(twomu) {
                 category="_2Mu";
+                if(!doSplitLepCat) category="_2L";
                 // leading RECO-medium ISO-tight; subleading RECO-loose ISO-tight
                 // TRG
                 if (not e->IsRealData()) { e->SetPtEtaSF("muTRG",leadLep->Pt(),fabs(leadLep->Eta())); e->ApplySF("muTRG"); }
@@ -3404,6 +3403,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             }
             if(twoele) {
                 category="_2Ele";
+                if(!doSplitLepCat) category="_2L";
                 //RECO
                 if (not e->IsRealData()) { e->SetPtEtaSF("eleRECO",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleRECO"); }
                 if (not e->IsRealData() && trailLep->Pt()>25) { e->SetPtEtaSF("eleRECO",trailLep->Pt(),trailLep->Eta()); e->ApplySF("eleRECO"); }
@@ -3419,6 +3419,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             // this 1Mu1Ele muon above the muon trigger threshould otherwise bias in the turnon
             if(onemuoneele) {
                 category="_1Mu1Ele";
+                if(!doSplitLepCat) category="_2L";
                 if(leadLep->IsElectron() and trailLep->IsMuon()) {
                     // ele
                     if (not e->IsRealData()) { e->SetPtEtaSF("eleTight",leadLep->Pt(),leadLep->Eta()); e->ApplySF("eleTight"); }
@@ -3498,13 +3499,32 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////$$$$$$$ Fill Cut Flow
     ////$$$$$$$
 
-
-    /*
     //    int SPLITMC_EVENT_FAIL=1;
     //    int SPLITMC_EVENT_PASS=0;
-    int failEv=FillSplit(e, label, category, systname);
+    //    int failEv=FillSplit(e, label, category, systname);
 
-    if(failEv==1) return EVENT_NOT_USED;;
+    //    if(failEv==1) return EVENT_NOT_USED; // just use to bookmark
+
+    ///
+    /// MARIA COMMENT FOR NOW
+    /*
+    if (
+        ( (label.find("HplusToTB") !=string::npos) or (label.find("ST") !=string::npos) or (label.find("tZq") !=string::npos) or (label.find("TTZ") !=string::npos)  or (label.find("TTW") !=string::npos) or (label.find("ttH") !=string::npos) or (label.find("TTTT") !=string::npos) or (label.find("TTG") !=string::npos) ) and
+        (e->eventNum()%3)==0
+        ) return EVENT_NOT_USED;
+    */
+    
+    /*
+    TRandom3 *r = new TRandom3();
+    r->SetSeed(0);
+    //    r->SetSeed(100*e->lumiNum() + e->eventNum());
+
+    ev_forTrain = (r->Uniform()<1./3.);
+
+    if (
+        ( (label.find("HplusToTB") !=string::npos) or (label.find("ST") !=string::npos) or (label.find("tZq") !=string::npos) or (label.find("TTZ") !=string::npos)  or (label.find("TTW") !=string::npos) or (label.find("ttH") !=string::npos) or (label.find("TTTT") !=string::npos) or (label.find("TTG") !=string::npos) ) and
+        (ev_forTrain == 1)
+        ) return EVENT_NOT_USED;
     */
 
     //// 1L CutFlow
@@ -3670,7 +3690,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     for(int i=0;i!=e->NcentralJets();++i) {
         Jet* lj = e->GetCentralJet(i);
         //        sf->add_to_sf( pt_j, eta_j, csv_j, flavor_j);
-        sf->add_to_sf(lj->GetP4().Pt(),lj->GetP4().Eta(),lj->bdiscr,lj->Flavor());
+        sf->add_to_sf(lj->GetP4().Pt(),lj->GetP4().Eta(),lj->bdiscr,lj->hadFlavor());
     }
 
     sf->set();
@@ -3820,7 +3840,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     //    bool lowMTCR=false;
 
     // 4jets, ==3b
-    if( do1lAnalysis and e->NcentralJets() == 4 and e->Bjets() == 3 ) charmCR=true;
+    if( do1lAnalysis and e->NcentralJets() == 4 and e->Bjets() >= 3 ) charmCR=true;
     if( do1lAnalysis and e->NcentralJets() >= 5 and e->Bjets() == 1 ) extraRadCR=true;
     if( do2lAnalysis and e->NcentralJets() >= 3 and e->Bjets() == 1 ) extraRadCR=true;
 
@@ -3840,6 +3860,11 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     //    if( do1lAnalysis && evt_MT>=120 ) highMTCR=true;
     //    if( do1lAnalysis && evt_MT<120 ) lowMTCR=true;
+
+    ///// BDT fillling as follow:
+    // leptonPlot add the bdt nominal
+    // classifyHF: add the bdt with "additional label HF" in the top only sample
+    // fillMoneyplot: add the bdt with "additional label SR"
 
     if(topCR) jetPlot(e, label, category, systname,"topCR");
     if(topCR) leptonPlot(e,label, category, systname,"topCR");

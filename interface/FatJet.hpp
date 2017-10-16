@@ -28,6 +28,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float nSubjetscut_ ;
     float hbbcut_;
 
+    float hadFlavor_;
 
     // FIXME: add puppi
 
@@ -50,7 +51,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     void SetSubjetsCut(float x){nSubjetscut_ = x;}
 
     void SetDoubleBBCut(float x){hbbcut_ = x;}
-
+    void SetHadFlavor(float x) {hadFlavor_=x;}
 
     FatJet() ; 
     float tau1; //
@@ -83,6 +84,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
 
     inline int IsSubjetBTag() const { return hasSubJetBTag ; }
     inline int IsSubjetBTagLoose() const { return hasSubJetBTagLoose ; }
+
+    inline int hadFlavor() const { return hadFlavor_;}
 
     inline int IsJet() const { return 1;}
 

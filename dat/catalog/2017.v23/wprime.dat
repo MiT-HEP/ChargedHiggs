@@ -1,0 +1,8 @@
+sub=dalfonsoHiggs|/store/group/phys_higgs/HiggsExo/dalfonso/80x_MC_v2/v2.3/
+
+addfiles=%(dalfonsoHiggs)s/WprimeToTB_TToHad_M-800_RH_TuneCUETP8M1_13TeV-comphep-pythia8
+addfiles=%(dalfonsoHiggs)s/WprimeToTB_TToHad_M-900_RH_TuneCUETP8M1_13TeV-comphep-pythia8
+addfiles=%(dalfonsoHiggs)s/WprimeToTB_TToHad_M-1000_RH_TuneCUETP8M1_13TeV-comphep-pythia8
+addfiles=%(dalfonsoHiggs)s/WprimeToTB_TToHad_M-1500_RH_TuneCUETP8M1_13TeV-comphep-pythia8
+addfiles=%(dalfonsoHiggs)s/WprimeToTB_TToHad_M-2000_RH_TuneCUETP8M1_13TeV-comphep-pythia8
+addfiles=%(dalfonsoHiggs)s/WprimeToTB_TToHad_M-3000_RH_TuneCUETP8M1_13TeV-comphep-pythia8
