@@ -116,6 +116,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
     int isValidInvIso;
 
     float bdiscr; // 
+    float rawPt;
 
     //Gen-level info
     int pdgId;
