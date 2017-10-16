@@ -8,6 +8,7 @@ FatJet::FatJet() :Object(){
   tau2cut_=0;
   tau3cut_=0;
   tau21cut_=0;
+  hadFlavor_=-1;
   corrprunedMasscut_=0;
   prunedMasscut_=0;
   softdropMasscut_=0;
