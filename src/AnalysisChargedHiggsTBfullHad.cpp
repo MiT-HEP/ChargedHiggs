@@ -1750,7 +1750,7 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
 
             if(flag_lb[ib] == 1 || ib == leadingokb) continue;
 
-            TLorentzVector mayt = 0.94*temp->GetP4() + e->GetBjet(ib)->GetP4();
+            TLorentzVector mayt = temp->GetP4() + e->GetBjet(ib)->GetP4();
 
             if(mayt.DeltaR(leadingb->GetP4())<1.2) continue;
 
@@ -1807,7 +1807,7 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
             if(flag_lb[ib] == 1) continue;
             if(e->GetBjet(ib) == leadingbWBJ) continue;
 
-            TLorentzVector wjt = 0.94*temp->GetP4() + e->GetBjet(ib)->GetP4();
+            TLorentzVector wjt = temp->GetP4() + e->GetBjet(ib)->GetP4();
 
             if(wjt.DeltaR(leadingbWBJ->GetP4())<1.2) continue;
             if(fabs(wjt.Eta()-leadingbWBJ->Eta()) > 1.5) continue;
@@ -1830,7 +1830,7 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
             FatJet* temp = e->GetFatJet(j);
             if( ( !mirror || !temp->IsWJetMirror()) && ( mirror || !temp->IsWJet()) ) continue;
 
-            TLorentzVector wjt = 0.94*temp->GetP4() + secondb->GetP4();
+            TLorentzVector wjt = temp->GetP4() + secondb->GetP4();
 
             if(wjt.DeltaR(leadingbWBJ->GetP4())<1.2) continue;
             if(fabs(wjt.Eta()-leadingbWBJ->Eta()) < 1.5) continue;
