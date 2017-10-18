@@ -194,7 +194,7 @@ void LoadNero::FillJets(){
         if (tree_->GetBranchStatus("jetQglAxis2") ) j->SetQGLVar( "axis2", bj -> qglAxis2 -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglAxis1") ) j->SetQGLVar( "axis1", bj -> qglAxis1 -> at(iJet) );
     
-        j->rawPt = bj->rawPt -> at(iJet);    
+        if (tree_->GetBranchStatus("jetrawPt") ) j->rawPt = bj->rawPt -> at(iJet);
         j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
         j->motherPdgId = bj->motherPdgId -> at(iJet);
         j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
@@ -267,9 +267,10 @@ void LoadNero::FillFatJets(){
         j->tau1 = bj -> tau1 -> at(iJet);
         j->tau2 = bj -> tau2 -> at(iJet);
         j->tau3 = bj -> tau3 -> at(iJet);
-        j->sdtau1 = bj -> sdtau1 -> at(iJet);
-        j->sdtau2 = bj -> sdtau2 -> at(iJet);
-        j->sdtau3 = bj -> sdtau3 -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8CHSSDTau1"))  j->sdtau1 = bj -> sdtau1 -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8CHSSDTau2")) j->sdtau2 = bj -> sdtau2 -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8CHSSDTau3")) j->sdtau3 = bj -> sdtau3 -> at(iJet);
+
         j->nSubjets = bj -> nSubjets -> at(iJet);
         j->softdropMass = bj -> softdropMass -> at(iJet);
         j->CorrectedPrunedMass = bj -> corrprunedMass -> at(iJet);
