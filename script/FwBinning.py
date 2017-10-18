@@ -1,10 +1,8 @@
-
 import sys,array
 import ROOT
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
-
 
 class Rebin:
     
@@ -130,16 +128,25 @@ class RebinNeg:
     binMin = 0
     binMax = 0
     
-    def __init__(self, h, h_ref, h_sig, maxStat):
+    def __init__(self, h, h_ref, h_sig, maxStat, binning):
         
-        self.h = h
-        self.h_ref = h_ref
-        self.h_sig = h_sig
+        htmp = h.Clone("h")
+        h_reftmp = h_ref.Clone("href")
+        h_sigtmp = h_sig.Clone("hsig")
+
+        self.h = self.Rebin(htmp, binning)
+        self.h_ref = self.Rebin(h_reftmp, binning)
+        self.h_sig = self.Rebin(h_sigtmp, binning)
         self.maxStat = maxStat
         
         self.binMin = float(self.h.GetBinLowEdge(1)) # min bin
         self.binMax = float(self.h.GetBinLowEdge(h.GetNbinsX()+1)) # max bin
         
+
+    def Rebin(self, h, newbins):
+        mybins = array.array('d', newbins)
+        h1 = h.Rebin(len(mybins)-1, h.GetName(), mybins)
+        return h1
 
     def getHist(self):
         
