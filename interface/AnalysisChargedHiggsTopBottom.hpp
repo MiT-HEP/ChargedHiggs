@@ -163,6 +163,8 @@ private:
 
     int ev_forTrain = 0;
 
+    int nbinsBDT=1000;
+
     /////
     /////
 
