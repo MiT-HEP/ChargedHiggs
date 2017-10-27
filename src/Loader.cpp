@@ -193,11 +193,15 @@ void LoadNero::FillJets(){
         if (tree_->GetBranchStatus("jetQglPtDrLog") ) j->SetQGLVar( "PtDrLog", bj -> qglPtDrLog -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglAxis2") ) j->SetQGLVar( "axis2", bj -> qglAxis2 -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglAxis1") ) j->SetQGLVar( "axis1", bj -> qglAxis1 -> at(iJet) );
-        
+    
+        if (tree_->GetBranchStatus("jetrawPt") ) j->rawPt = bj->rawPt -> at(iJet);
         j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
         j->motherPdgId = bj->motherPdgId -> at(iJet);
         j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
         j->SetPuId(bj -> puId -> at(iJet));
+
+        if (tree_->GetBranchStatus("jethadFlavour") ) j->SetHadFlavor(bj -> hadFlavour -> at(iJet));
+        else j->SetHadFlavor( -10 );
 
         // add it
         event_ -> jets_ . push_back(j);
@@ -216,8 +220,7 @@ void LoadNero::FillFatJets(){
     BareFatJets *bj = dynamic_cast<BareFatJets*> ( bare_ [ names_[ "BareFatJets" ] ] ); assert (bj !=NULL);
 
     if ( tree_ ->GetBranchStatus("fatjetAK8CHSP4") == 0 ){
-        LogN(__FUNCTION__,"WARNING","FatJets Not FILLED",10);
-        return;
+
     }
 
 #ifdef VERBOSE
@@ -231,6 +234,7 @@ void LoadNero::FillFatJets(){
     cout <<"\t * tau1: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau1") << " : "<< bj->tau1->size()<<endl;
     cout <<"\t * tau2: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau2") << " : "<< bj->tau2->size()<<endl;
     cout <<"\t * tau3: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau3") << " : "<< bj->tau3->size()<<endl;
+    cout <<"\t * sdtau1: "    << tree_->GetBranchStatus("fatjetAK8CHSSDTau1") << " : "<< bj -> sdtau1 ->size()<<endl;
     cout <<"\t * nFirst: "	<< tree_->GetBranchStatus("fatjetAK8CHSfirstSubjet") << " : "<< bj->firstSubjet->size()<<endl;
     cout <<"\t * nSubjets: "	<< tree_->GetBranchStatus("fatjetAK8CHSnSubjets") << " : "<< bj->nSubjets->size()<<endl;
     cout <<"\t * subjet_btag: "	<< tree_->GetBranchStatus("fatjetAK8CHSsubjet_btag") << " : "<< bj->subjet_btag->size()<<endl;
@@ -263,6 +267,10 @@ void LoadNero::FillFatJets(){
         j->tau1 = bj -> tau1 -> at(iJet);
         j->tau2 = bj -> tau2 -> at(iJet);
         j->tau3 = bj -> tau3 -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8CHSSDTau1"))  j->sdtau1 = bj -> sdtau1 -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8CHSSDTau2")) j->sdtau2 = bj -> sdtau2 -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8CHSSDTau3")) j->sdtau3 = bj -> sdtau3 -> at(iJet);
+
         j->nSubjets = bj -> nSubjets -> at(iJet);
         j->softdropMass = bj -> softdropMass -> at(iJet);
         j->CorrectedPrunedMass = bj -> corrprunedMass -> at(iJet);

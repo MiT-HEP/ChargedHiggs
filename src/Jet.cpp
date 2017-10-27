@@ -8,6 +8,7 @@ Jet::Jet() : Object(){
     motherPdgId=0;
     grMotherPdgId=0;
     puId=0;
+    hadFlavor_=-1;
     // -- this cut should remain constant
     bcut_=0.814; // define bjets
     ptcut_=20.;

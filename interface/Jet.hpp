@@ -25,6 +25,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float puId;
     TLorentzVector pp4;
 
+    float hadFlavor_;
+
     // qgl vars
     std::map<std::string,float> qglVars_;
 
@@ -109,6 +111,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
             qglVars_[name] = value;
             };
     void SetPuId(float x) {puId=x;}
+    void SetHadFlavor(float x) {hadFlavor_=x;}
 
     Jet() ; 
 
@@ -116,6 +119,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
     int isValidInvIso;
 
     float bdiscr; // 
+    float rawPt;
 
     //Gen-level info
     int pdgId;
@@ -123,6 +127,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
     int grMotherPdgId;
 
     inline int Flavor() const { return pdgId;}
+    inline int hadFlavor() const { return hadFlavor_;}
 
     // ---
     inline float Pt() const override { 

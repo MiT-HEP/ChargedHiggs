@@ -29,6 +29,7 @@ public:
     void BookHisto(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void BookGenMatch(string l, string category, string phasespace, string cut321, string state);
+    void BookEnCorr(string category, string phasespace);
     void Preselection();
 
     // function with various plots
@@ -42,19 +43,23 @@ public:
 
     void classifyLabelGenEv(Event*e, string label, string systname, string phasespace);
     void getCandidate(Event*e, string label, string systname, string phasespace, bool mirror);
+    void PlotAss(Event*e, string label, string systname, string phasespace);
+
 
     void computeVar(Event*e);
 
     void printSynch(Event*e);
 
     bool genInfoForSignal(Event*e);
+    void Encorrection(Event*e, string systname, string phasespace);
+
 
     int analyze(Event*,string systname) override;
     //    const string name() const override {return "ChargedHiggsTBfullHad";}
     const string name() const override {return "ChargedHiggsTopBottomFullHad";}
 
     // Tree
-    bool writeTree = true;
+    bool writeTree = false;
     void setTree(Event*e, string label, string  category);
 
     // Variables for MVA
@@ -72,14 +77,19 @@ private:
     CutSelector cut;
 
     enum CutFlow{ Total=0,
-                  NoLep,
                   NoTau,
+                  NoLep,
                   HTcut,
                   OneBOneFat,
                   OneBOneFatMirror,
                   MaxCut
     };
 
+    bool doSig = 1; 
+    bool doMirror = 0;
+    bool doLep = 0;
+
+    double evt_ST=-1;
     double evt_HT=-1;
     double evt_minDRbb=-1;
     double evt_minDRbb_invMass=-1;
@@ -102,18 +112,28 @@ private:
     double evt_PtH_Wbb=-1;
     double evt_PtH_wbj=-1;
 
-    Jet* leadingb=NULL;
-    Jet* leadingbWBJ = NULL;
-    Jet* secondb=NULL;
+    
+    //bjets
+    Jet* leadingb=NULL;     // tb,wbb
+    Jet* leadingbWBJ = NULL;//wbj
+    Jet* secondb=NULL;      //wbj
+    Jet* secondbwbb=NULL;   //wbb
 
-    // for the topb category
+    //fatjets
     int numtop=0;
-    FatJet* topJet=NULL;
-    FatJet* wJet=NULL;
+    FatJet* topJet=NULL;    //tb
+    FatJet* wJet=NULL;      //wbb
+    FatJet* wJetwbj=NULL;   //wbj
 
-    // for the wbb category
-    TLorentzVector topFromHOpenCand;
-    TLorentzVector topFromHwbj;
+    //make top
+    TLorentzVector topFromHOpenCand;//wbb
+    TLorentzVector topFromHwbj;     //wbj
+
+    //associated
+    int num_otherfj = 0;
+    int num_otherbj = 0;
+    int num_otherj = 0;
+
     /////
     /////
     GenParticle * topFromH=NULL;
@@ -124,6 +144,7 @@ private:
     int topAss_lep = 0;
     int topBKGplus_lep = 0;
     int topBKGminus_lep = 0;
+    int siglep = 0;
 
     GenParticle * WFromTopH=NULL;
     GenParticle * WFromTopAss=NULL;
