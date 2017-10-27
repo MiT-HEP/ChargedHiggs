@@ -16,6 +16,7 @@ parser.add_option("-o","--outdir",dest='outdir',type="string",help="output direc
 parser.add_option("-x","--xrange",dest='xrange',type="string",help="xrange [%default]",default="60,150")
 parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
 parser.add_option("","--noRatio",dest='noRatio',action="store_true",help="don't plot ratio in bkg plots [%default]",default=False)
+parser.add_option("","--paper",dest="paper",default=False,action="store_true")
 
 
 print "-> Looking for basepath"
@@ -222,7 +223,10 @@ if doSig:
         txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
         txt.SetTextSize(30)
         txt.SetTextAlign(13)
-        txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
+        if opts.paper:
+            txt.DrawLatex(.16,.93,"#bf{CMS}")
+        else:
+            txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
         txt.SetTextSize(20)
         txt.SetTextAlign(11)
         d=0.04
@@ -495,7 +499,7 @@ if doSig:## EA plot inclusive only
     dummy.GetXaxis().SetTitle("m_{H} [GeV]")
     dummy.GetXaxis().SetTitleOffset(1.3)
     dummy.GetYaxis().SetTitle("#varepsilon A")
-    dummy.GetYaxis().SetTitleOffset(1.4)
+    dummy.GetYaxis().SetTitleOffset(1.5)
     dummy.GetYaxis().SetRangeUser(.26,.75)
 
     txt=ROOT.TLatex()
@@ -506,7 +510,10 @@ if doSig:## EA plot inclusive only
     #txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
     txt.SetTextSize(30)
     txt.SetTextAlign(13)
-    txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Simulation Preliminary}}")
+    if opts.paper:
+        txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Simulation}}")
+    else:
+        txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Simulation Preliminary}}")
 
     x0=.5
     y0=.20
@@ -866,8 +873,10 @@ if doBkg:
     txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
     txt.SetTextSize(30)
     txt.SetTextAlign(13)
-    #txt.DrawLatex(.16,.92,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
-    txt.DrawLatex(.18,.92,"#bf{CMS}")
+    if opts.paper:
+        txt.DrawLatex(.18,.92,"#bf{CMS}")
+    else:
+        txt.DrawLatex(.16,.92,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
     txt.SetTextSize(20)
     txt.SetTextAlign(11)
     if cat != "":

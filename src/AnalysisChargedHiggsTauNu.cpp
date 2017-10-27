@@ -210,18 +210,10 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
     //if (sub != NULL) return cut.raw(); //multiple taus
 
     //----------------- ONE TAU -------------
-    if (isLightMass){
-        if (  // pt 20, Iso 1.5
-             t->Pt()>= 50 and 
-             fabs(t->Eta() ) <2.1
-                ) cut.SetCutBit(OneTau) ;
-    }
-    else{//high mass
-        if (  // pt 20, Iso 1.5
-             t->Pt()>= 60 and 
-             fabs(t->Eta() ) <2.1
-                ) cut.SetCutBit(OneTau) ;
-    }
+    if (  // pt 20, Iso 1.5
+            t->Pt()>= 50 and 
+            fabs(t->Eta() ) <2.1
+       ) cut.SetCutBit(OneTau) ;
 
 
     bool lepVeto=false;
@@ -245,12 +237,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
 
     
     // MET 
-    if (isLightMass){
-        if ( e->GetMet().Pt() >= 90 ) cut.SetCutBit(Met);
-    }
-    else{
-        if ( e->GetMet().Pt() >= 100 ) cut.SetCutBit(Met); // or PtUncorr
-    }
+    if ( e->GetMet().Pt() >= 90 ) cut.SetCutBit(Met); // or PtUncorr
 
     double RbbMin= e->RbbMin(3,t);
     double RCollMin= e-> RCollMin(3,t);
@@ -260,7 +247,7 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
     if ( RCollMin*TMath::RadToDeg() >= 0 ) cut.SetCutBit( AngColl) ;
 
     //if ( RbbMin*TMath::RadToDeg() >40 ) cut.SetCutBit(AngRbb) ;
-    if ( RbbMin > 0.8 ) cut.SetCutBit(AngRbb) ;
+    if ( RbbMin > 0.7 ) cut.SetCutBit(AngRbb) ;
 
     return cut.raw();
 }
@@ -384,12 +371,6 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     //Log(__FUNCTION__,"DEBUG","Analyze event with syst "+ systname + Form(" Njets=%d NB=%d PassAll=%d cuts=%s", e->Njets(),e->Bjets() ,cut.passAll(), ChargedHiggs::printBinary(cut.raw()).c_str() ));
 
     if ( cut.pass(NoLep) and not e->IsRealData() ){
-        // SF for Veto
-        // {
-        //     GenParticle * gp  = e->GetGenElectron(0,2.4);
-        //     if (not e->ExistSF("eleveto")) Log(__FUNCTION__,"WARNING","No eleveto SF"); //FIXME Remove this line, may be slow
-        //     if (gp != NULL and gp->Pt() > 15) {e->SetPtEtaSF("eleveto",gp->Pt(),fabs(gp->Eta())); e->ApplySF("eleveto");}  // this should be SC-eta, some how propagated
-        // }
         //Muon
         {
             GenParticle * gp  = e->GetGenMuon(0,2.4);
