@@ -1,0 +1,11 @@
+sub=dalfonsoHiggs|/store/group/phys_higgs/HiggsExo/dalfonso/80x_MC_v2/v2.3/
+
+addfiles=%(dalfonsoHiggs)s/WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(dalfonsoHiggs)s/ZJetsToQQ_HT600toInf_13TeV-madgraph
+addfiles=%(dalfonsoHiggs)s/ZJetsToNuNu_HT-100To200_13TeV-madgraph
+addfiles=%(dalfonsoHiggs)s/ZJetsToNuNu_HT-200To400_13TeV-madgraph
+addfiles=%(dalfonsoHiggs)s/ZJetsToNuNu_HT-400To600_13TeV-madgraph
+addfiles=%(dalfonsoHiggs)s/ZJetsToNuNu_HT-600To800_13TeV-madgraph
+addfiles=%(dalfonsoHiggs)s/ZJetsToNuNu_HT-800To1200_13TeV-madgraph
+addfiles=%(dalfonsoHiggs)s/ZJetsToNuNu_HT-1200To2500_13TeV-madgraph
+addfiles=%(dalfonsoHiggs)s/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph
