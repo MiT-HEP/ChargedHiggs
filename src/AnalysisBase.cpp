@@ -117,6 +117,10 @@ void AnalysisBase::SetCuts(Event *e)
     #endif
     for (auto& j : e->jets_) SetJetCuts(j);
     #ifdef VERBOSE
+    if (VERBOSE>1) Log(__FUNCTION__,"DEBUG","->Setting cuts for Fat Jets");
+    #endif
+    for (auto& j : e->fat_) SetFatJetCuts(j);
+    #ifdef VERBOSE
     if (VERBOSE>1) Log(__FUNCTION__,"DEBUG","->Setting cuts for GP");
     #endif
     for (auto& g : e->genparticles_) SetGenCuts(g);
