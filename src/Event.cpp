@@ -232,6 +232,7 @@ void Event::validate(){
         {
             if(p->IsPho() )j-> computeValidity(p);
         }
+
     }
     return ;
 }
@@ -339,7 +340,7 @@ FatJet * Event::GetFatJet( int iJet )
     vector<pair<float,int> > valid; // pt, idx
     for(int i = 0 ; i<fat_.size() ;++i)
     {
-        if ( fat_[i]->IsJet()) valid.push_back(pair<float,int>(fat_[i]->Pt(),i));
+        if ( fat_[i]->IsFatJet()) valid.push_back(pair<float,int>(fat_[i]->Pt(),i));
     }
 
     if (valid.size() == 0 ) return NULL;
@@ -606,7 +607,7 @@ void Event::ApplyBTagSF(int wp)
     for (int i=0;i<NcentralJets() ;++i)
     {
      Jet *j=GetCentralJet(i);
-     SetJetFlavorSF("btag",j->Flavor());  
+     SetJetFlavorSF("btag",j->hadFlavor());
 
      if (j->IsBJet() ) // is btagged
      {
