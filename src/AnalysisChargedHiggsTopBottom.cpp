@@ -191,9 +191,13 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             if (label.find("M-750") !=string::npos) mc = 10;
             if (label.find("M-800") !=string::npos) mc = 11;
             if (label.find("M-1000")!=string::npos) mc = 12;
-            if (label.find("M-2000")!=string::npos) mc = 13;
-            if (label.find("M-3000")!=string::npos) mc = 14;
-            if (label.find("M-1500")!=string::npos) mc = 15;
+            if (label.find("M-1500")!=string::npos) mc = 13;
+            if (label.find("M-2000")!=string::npos) mc = 14;
+            if (label.find("M-2500")!=string::npos) mc = 15;
+            if (label.find("M-3000")!=string::npos) mc = 16;
+            if (label.find("M-5000")!=string::npos) mc = 17;
+            if (label.find("M-7000")!=string::npos) mc = 18;
+            if (label.find("M-10000")!=string::npos) mc = 19;
 
 
         } else if (label.find("HplusToTauNu") !=string::npos) //sig TauNu
@@ -1118,8 +1122,7 @@ void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasesp
         // TEMPORARY
         //        doBDTSyst=true;
 
-        if(do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
-        if(do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
+        if(do1lAnalysis or do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
 
     }
 
@@ -2952,10 +2955,10 @@ void ChargedHiggsTopBottom::fillMoneyPlot(Event*e, string category, string systn
 
         ///
 
-        if(doBDTSyst and iXML==15 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt14"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
-        if(doBDTSyst and iXML==16 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt13"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
-        if(doBDTSyst and iXML==17 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt12"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
-        if(doBDTSyst and iXML==18 and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt11"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==15 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt14"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==16 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt13"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==17 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt12"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
+        if(doBDTSyst and iXML==18 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt11"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
 
         if(doBDTSyst and iXML==21 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt6"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
         if(doBDTSyst and iXML==22 and do2lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt5"+"_"+SRlabel+label,systname,bdt[iXML-1],e->weight());
