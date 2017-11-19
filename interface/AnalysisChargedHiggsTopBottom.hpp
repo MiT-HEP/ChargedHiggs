@@ -7,6 +7,9 @@
 #include <memory>
 
 #include "TRandom3.h"
+#include "TPython.h"
+
+#include "TStopwatch.h"
 
 #include "interface/Output.hpp" // DataStore
 #include "TMVA/Reader.h"
@@ -21,10 +24,10 @@ public:
 
     bool doSynch = false;
     bool doICHEP = false;
-    bool writeTree = false;
-    bool doSplit = true;
     bool doBDTSyst = true;
     bool doFinal = true;
+    bool writeTree = false; // false for final
+    bool doSplit = true; // true for final
 
     // Analysis type
     // do1lAnalysis, do2lAnalysis, doTaulAnalysis from the config
@@ -32,7 +35,7 @@ public:
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
     // doSplitLepCat HARDcoded
-    bool doSplitLepCat = false;
+    bool doSplitLepCat = false; // true for final
 
     // trigger bits
     bool passTriggerMu=true;
@@ -44,6 +47,8 @@ public:
 
 
     void Init() override;
+
+    void InitTmva();
 
     void SetLeptonCuts(Lepton *l) override ;
     void SetJetCuts(Jet*j) override;
@@ -156,14 +161,11 @@ private:
     double evt_C=0;
     double evt_FW2=0;
 
-    vector<float> bdt;
 
     int nGenB = 0 ;
     int genLepSig = 0 ;
 
     int ev_forTrain = 0;
-
-    int nbinsBDT=1000;
 
     /////
     /////
@@ -178,14 +180,36 @@ private:
     GenParticle * WFromTopAss=NULL;
     GenParticle * leptonTopAssH=NULL;
 
-    /////
-    /////
+    bool doTMVA{true};
+    bool doScikit{false};
 
+
+    int nbinsBDT=1000;
+    // TMVA
+    float binMIN=-1.;
+    // Keras
+    //    float binMIN=0.;
+    float binMAX=1.;
+
+
+    /************
+     *   TMVA   *
+     ************/
+
+    vector<float> bdt;  // score
     DataStore varValues_;
-
-    //
-    //TMVA::Reader *reader_ ;
     vector<TMVA::Reader*> readers_;
+
+
+    /**********************************
+     *          SCIKIT                *
+     **********************************/
+
+    std::unique_ptr<TPython> py;
+    vector<float> x;
+    vector<string> discr;
+    void InitScikit();
+    vector<float> scikit; // like bdt
 
 
 };
