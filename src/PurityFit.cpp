@@ -3,6 +3,8 @@
 #include "TF1.h"
 #include <fstream>
 
+//#define VERBOSE 1
+
 
 void PurityFit::init(){
     fIn_ = TFile::Open(inname.c_str() );
@@ -11,12 +13,12 @@ void PurityFit::init(){
 
 void PurityFit::fit(){
     // Uperp, EtMiss
-    string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv"+extra+"_Data";
-    string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f"+extra+"_%s";
-    string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv"+extra+"_%s";
-    string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f"+extra+"_Data";
-    string fullselInv   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_FullSelection"+extra+"_Data";
-    string tauname="ChargedHiggsQCDPurity/Vars/TauPt_pt%.0f_%.0f_Data"; // use to compute the mean
+    string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_IsoInv"+extra+"_Data";
+    string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_"+extra+"_%s";
+    string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_IsoInv"+extra+"_%s";
+    string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_"+extra+"_Data";
+    string fullselInv   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_IsoInv_FullSelection"+extra+"_Data";
+    string tauname="ChargedHiggsQCDPurity/Vars/TauPt_pt%.0f_%.0f_eta0.0_2.1_Data"; // use to compute the mean
     if (extra !="")Log(__FUNCTION__,"FIXME","Implement the Tau Pt for extras");
 
     if (bkglabels.empty() )
@@ -46,6 +48,11 @@ void PurityFit::fit(){
        
         string histname = Form(targetname.c_str(),PtBins[iBin],PtBins[iBin+1]); 
         if (verbose_ > 0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname);
+        if (fIn_ -> Get( histname.c_str()  )  == NULL){
+            Log(__FUNCTION__,"WARNING","Unable to fetch: "+ histname);
+            Log(__FUNCTION__,"WARNING","Trying to continue ");
+            continue;
+        }
         TH1D *h   = (TH1D*) fIn_ -> Get( histname.c_str()  ) -> Clone();  
 
         histname=Form(fullselInv.c_str(),PtBins[iBin],PtBins[iBin+1]);
@@ -69,26 +76,36 @@ void PurityFit::fit(){
             histname=Form(bkgname.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD");
             if (verbose_>0) Log(__FUNCTION__,"INFO","Getting histogram "+histname);
             TH1D * qcd = (TH1D*)  fIn_ ->Get( histname.c_str() );
+            if (qcd == NULL)
+            {
+                Log(__FUNCTION__,"WARNING","Unable to fetch: "+ histname);
+            }
             
             histname=Form(bkgnameInv.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD");
             if (verbose_>0) Log(__FUNCTION__,"INFO","Getting histogram "+histname);
             TH1D * qcdInv = (TH1D*)  fIn_ ->Get(histname.c_str()) ;
+            if (qcdInv == NULL)
+            {
+                Log(__FUNCTION__,"WARNING","Unable to fetch: "+ histname);
+            }
 
             sig->SetMarkerStyle(20);
-            qcd->SetLineColor(kRed+2);
-            qcdInv->SetMarkerColor(kRed);
-            qcdInv->SetLineColor(kRed);
-            qcdInv->SetMarkerStyle(21);
+            if(qcd) qcd->SetLineColor(kRed+2);
+            if (qcdInv){
+                qcdInv->SetMarkerColor(kRed);
+                qcdInv->SetLineColor(kRed);
+                qcdInv->SetMarkerStyle(21);
+            }
             
-            if (qcd->Integral() >0 ) qcd->DrawNormalized("HIST SAME");
-            if (qcdInv->Integral() > 0 ) qcdInv->DrawNormalized("P SAME");
+            if (qcd and qcd->Integral() >0 ) qcd->DrawNormalized("HIST SAME");
+            if (qcdInv and qcdInv->Integral() > 0 ) qcdInv->DrawNormalized("P SAME");
 
             TLegend *l = new TLegend(0.6,.6,.9,.9);
             l->SetFillStyle(0);
             l->SetBorderSize(0);
             l->AddEntry(sig,"Data InvIso");
-            l->AddEntry(qcd,"QCD DirectIso");
-            l->AddEntry(qcdInv,"QCD InvIso");
+            if (qcd) l->AddEntry(qcd,"QCD DirectIso");
+            if (qcdInv) l->AddEntry(qcdInv,"QCD InvIso");
             l->Draw();
             cQCD->Update();
 
@@ -114,11 +131,16 @@ void PurityFit::fit(){
         {
             histname= Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str());
             TH1D *bkg_tmp = (TH1D*)  fIn_ ->Get( histname.c_str() );
-            if (bkg_tmp == NULL) Log(__FUNCTION__,"ERROR", string("histo: ") + histname + " is NULL");
+            if (bkg_tmp == NULL){
+                Log(__FUNCTION__,"ERROR", string("histo: ") + histname + " is NULL");
+                continue;
+            }
 
             histname=Form( bkgnameInv.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str());
             TH1D *bkgInv_tmp = (TH1D*)  fIn_ ->Get( histname.c_str());
-            if (bkgInv_tmp == NULL) Log(__FUNCTION__,"ERROR",string("histo: ") + histname + " is NULL");
+            if (bkgInv_tmp == NULL){
+                Log(__FUNCTION__,"ERROR",string("histo: ") + histname + " is NULL");
+            }
 
             bool first = false;
             if (bkg==NULL) {
@@ -129,10 +151,10 @@ void PurityFit::fit(){
 
             if (bkgInv==NULL) {
                 bkgInv = (TH1D*) bkgInv_tmp->Clone( Form( bkgnameInv.c_str(), PtBins[iBin],PtBins[iBin+1], "EWK") );
-                first = true;
                 }
             else bkgInv->Add(bkgInv_tmp);
-      
+
+            if (bkg_tmp == NULL) continue;  
             // control plots EWK
             if (s == "DY") { bkg_tmp->SetLineColor(kCyan);}// bkg_binned->SetLineColor(kCyan); } 
             else if (s == "TT") bkg_tmp->SetLineColor(kMagenta+2);

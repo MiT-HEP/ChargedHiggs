@@ -17,6 +17,8 @@ parser.add_option("-o","--outname",dest="outname",help="Name of output pdf/png/C
 parser.add_option("-p","--poi",dest="poi",default="r",type="string",help="POI [%default]")
 ##
 parser.add_option("","--addSM",dest="addSM",default=False,action="store_true",help="Add SM Diamond to 2D plot")
+parser.add_option("","--run12",dest="run12",default=False,action="store_true")
+parser.add_option("","--paper",dest="paper",default=False,action="store_true")
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -195,10 +197,16 @@ l.DrawLatex(0.89,0.88,"#hat{#mu}_{SM} = %4.1f ^{#font[122]{+}%4.1f}_{#font[122]{
 l.SetTextFont(42)
 l.SetTextSize(0.055)
 l.SetTextAlign(13)
-l.DrawLatex(0.13,.88,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
+if opts.paper:
+    l.DrawLatex(0.13,.88,"#bf{CMS}")
+else:
+    l.DrawLatex(0.13,.88,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
 l.SetTextSize(0.035)
 l.SetTextAlign(31)
-l.DrawLatex(0.90,.91,"35.9 fb^{-1} (13 TeV)")
+if opts.run12:
+    l.DrawLatex(0.90,.91,"35.9 fb^{-1} (13 TeV)")
+else:
+    l.DrawLatex(0.90,.91,"5.0 fb^{-1} (7 TeV) + 19.8 fb^{-1} (8 TeV) + 35.9 fb^{-1} (13 TeV)")
 
 l.SetTextAlign(13)
 l.SetTextSize(0.035)

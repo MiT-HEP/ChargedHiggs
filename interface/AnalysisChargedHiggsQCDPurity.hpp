@@ -15,21 +15,16 @@ class ChargedHiggsQCDPurity:  virtual public ChargedHiggsTauNu
 
         // Configuration
         vector<float> PtBins;
+        vector<float> EtaBins;
 
         const string dir="ChargedHiggsQCDPurity/Vars/";
         const string none="ChargedHiggsQCDPurity/NOne/";
-        int FindBin(float pt);
-        string HistName(float pt, bool Direct=true, bool FullSelection=false,string var = "EtMiss");
+        int FindBin(float pt, const vector<float> & v);
+        // add enum
+        string HistName(float pt, float eta,bool Direct=true, bool FullSelection=false,string var = "EtMiss");
 
         float Upar(Event*e,Tau *t ){ return e->GetMet().Pt() * TMath::Cos( e->GetMet().DeltaPhi( *t ) ) ; };
         float Uperp(Event*e, Tau*t){ return e->GetMet().Pt() * TMath::Sin( e->GetMet().DeltaPhi( *t) );}; // this is positive, deltaPhi>0
-
-        /* TODO
-        int analyzeCR(Event*,string systname);
-        int analyzeCR_InvIso(Event*,string systname);
-        int analyzeSR(Event*,string systname);
-        int analyzeSR_InvIso(Event*,string systname);
-        */
 
 };
 
