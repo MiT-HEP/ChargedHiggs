@@ -1,12 +1,13 @@
 sub=dalfonsoHiggs|/store/group/phys_higgs/HiggsExo/dalfonso/80x_MC_v2/v2.3/
 
-#### ---> missing  WH_HToBB_ , tZq_nunu_4f
+#### ---> tZq_nunu_4f
 
-#addfiles=%(ceballosUser)s/tZq_ll_4f_13TeV-amcatnlo-pythia8
+##addfiles=%(ceballosUser)s/tZq_ll_4f_13TeV-amcatnlo-pythia8
 ##addfiles=%(ceballosHig)s/tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1
 
-#addfiles=%(ceballosUser)s/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8
-##addfiles=%(ceballosHig)s/WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(dalfonsoHiggs)s/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(dalfonsoHiggs)s/WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(dalfonsoHiggs)s/ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8
 
 addfiles=%(dalfonsoHiggs)s/TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8
 
