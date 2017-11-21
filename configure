@@ -3,6 +3,10 @@
 echo "-> Checking Nero Libraries"
 whereis -B $PWD/../NeroProducer/Core/bin -b libBare
 
+export PATH=${PATH}:${PWD}/../HiggsAnalysis/CombinedLimit/exe:${PWD}../HiggsAnalysis/CombinedLimit/scripts
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}/../HiggsAnalysis/CombinedLimit/lib
+export PYTHONPATH=${PYTHONPATH}:${PWD}/../HiggsAnalysis/CombinedLimit/lib/python
+
 echo "-> Checking combine libraries"
 whereis -B $PWD/../HiggsAnalysis/CombinedLimit/lib/ -b libHiggsAnalysisCombinedLimit
 ls -ltr $PWD/../HiggsAnalysis/CombinedLimit/lib/
