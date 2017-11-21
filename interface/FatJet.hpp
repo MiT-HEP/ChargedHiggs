@@ -93,6 +93,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
         if( Pt() < ptcut_ ) return 0;
         if( fabs(Eta()) >= etacut_) return 0;
         if( fabs(SDMass()) < softdropMasscut_) return 0;
+        return 1;
     }
 
     inline int IsFatJet() const {
