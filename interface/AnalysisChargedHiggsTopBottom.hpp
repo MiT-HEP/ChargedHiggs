@@ -48,8 +48,6 @@ public:
 
     void Init() override;
 
-    void InitTmva();
-
     void SetLeptonCuts(Lepton *l) override ;
     void SetJetCuts(Jet*j) override;
     void SetTauCuts(Tau*t) override;
@@ -199,6 +197,8 @@ private:
     vector<float> bdt;  // score
     DataStore varValues_;
     vector<TMVA::Reader*> readers_;
+    void InitTmva();
+    void ReadTmva(Event*e);
 
 
     /**********************************
@@ -208,9 +208,10 @@ private:
     std::unique_ptr<TPython> py;
     vector<float> x;
     vector<string> discr;
-    void InitScikit();
     vector<float> scikit; // like bdt
 
+    void InitScikit();
+    void ReadScikit(Event*e);
 
 };
 

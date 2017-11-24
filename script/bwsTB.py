@@ -12,17 +12,16 @@ maxStat=0.3
 
 doSyst = True
 
-#likelihoodBinning = FwRebin.RebinLikelihood(100)
-likelihoodBinning = FwRebin.RebinLikelihood(1)
+LikeBins=1
+likelihoodBinning = FwRebin.RebinLikelihood(LikeBins)
 
 parser= OptionParser()
 
-#### FILES WITH SYST
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV6_TTbarSig_2Third_SYST_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV6_TTbarSig_2Third_SYST_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV23_TTbarSig_2Third_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV23_TTbarSig_2Third_2l.root")
 
-parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV6_TTbarSig_1Third_1l.root")
-parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV6_TTbarSig_1Third_2l.root")
+parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV23_TTbarSig_1Third_1l.root")
+parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV23_TTbarSig_1Third_2l.root")
 
 if doSyst:
 	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
@@ -351,7 +350,7 @@ for y in channel:
 #			if opts.kTest==0: VarTest="1d_" #1l
 #			if opts.kTest==13: VarTest="1d_" #2l
 			if opts.kTest==0 and doST: VarTest="1dST_" #1l
-			if opts.kTest==13 and doST: VarTest="1dST_" #2l
+			if opts.kTest==30 and doST: VarTest="1dST_" #2l
 
 			if doJanTEST:
 			##
@@ -436,16 +435,22 @@ for y in channel:
 					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","Hptb"]
 #					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc"]
 #					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","ttcc","Hptb"]
+#					catStore[name]["hasMC"]=["ttlf","ttcc","Hptb"]
+#					catStore[name]["hasMC"]=["ttb","ttbb","tt2b","Hptb"]
 				if "extraRadCR" in x:
 #					catStore[name]["hasMC"]=["ttlf","Hptb"]
 #					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","Hptb"]
 #					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc"]
+#					catStore[name]["hasMC"]=["ttlf","ttcc","Hptb"]
+#					catStore[name]["hasMC"]=["ttb","ttbb","tt2b","Hptb"]
 				if "topCR" in x:
 #					catStore[name]["hasMC"]=["ttlf","Hptb"]
 #					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","Hptb"]
 #					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc"]
+#					catStore[name]["hasMC"]=["ttlf","ttcc","Hptb"]
+#					catStore[name]["hasMC"]=["ttb","ttbb","tt2b","Hptb"]
 				if x=="Baseline":
 #					catStore[name]["hasMC"]=["Hptb"]
 #					catStore[name]["hasMC"]=["ttlf","Hptb"]
@@ -453,6 +458,8 @@ for y in channel:
 #					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc"]
 #					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 #					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","ttcc","Hptb"]
+#					catStore[name]["hasMC"]=["ttlf","ttcc","Hptb"]
+#					catStore[name]["hasMC"]=["ttb","ttbb","tt2b","Hptb"]
 
 			if y == "1Ele" or y == "1Mu" or y == "1L":
 				mcStore={
@@ -492,7 +499,7 @@ for y in channel:
 					"CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]}, ## name used for shape
 					"CMS_scale_uncluster":{"type":"lnN", "value":["1.02"],"proc":[".*"],"wsname":"CMS_scale_uncluster","name":"XXX"}, ## name used for shape
 					"CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":[".*"]}, ## name used for shape
-					"QCDscale":{"type":"shape", "wsname":"QCDscale","name":"ScaleRF","proc":["Hptb","ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
+##					"QCDscale":{"type":"shape", "wsname":"QCDscale","name":"ScaleRF","proc":["Hptb","ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
 					"CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]}, ## name used for shape
 ##					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JES","proc":[".*"]}, ## name used for shape
 					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":[".*"]}, ## name used for shape
@@ -528,12 +535,12 @@ for cat in catStore:
 print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="NOV7_bin1/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="NOV24_bin1/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "NOV7_bin1/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "NOV24_bin1/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -561,14 +568,17 @@ arglist_obs_bdt2D = ROOT.RooArgList(bdt2D)
 for x in catStore:
 	w.factory("ht_"+x+"[0,8000]"); # RooRealVar
 	htx=w.var("ht_"+x)
+	htx.setBins(LikeBins)
 	arglist_obs.add(htx)
 
 	w.factory("bdt_"+x+"[-1,1]"); # RooRealVar
 	bdtx=w.var("bdt_"+x)
+	bdtx.setBins(LikeBins)
 	arglist_obs_bdt.add(bdtx)
 
 	w.factory("bdt2D_"+x+"[-0.5,6.5]"); # RooRealVar
 	bdt2Dx=w.var("bdt2D_"+x)
+	bdt2Dx.setBins(LikeBins)
 	arglist_obs_bdt2D.add(bdt2Dx)
 
 
@@ -642,7 +652,7 @@ datacard.write("-------------------------------------\n")
 # write systematics
 
 ## 
-def writeSystISRFSR(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
+def writeSystISRFSR(name="test",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
 	datacard.write(name+"\tlnN")
 	invert=False
 
@@ -745,10 +755,10 @@ def writeSystISRFSR(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 				break
 
 		if (idx>=0):
+##		   print 'out of the function valueUp=',valueUp,' valueDown=',valueDown
                    valueUp=1+valueUp/100.
 		   valueDown=1+valueDown/100.
-		   mystring='%.2f/%.2f' % (valueUp, valueDown)
-##		   print 'normalized things=',mystring
+		   mystring='%.2f/%.2f' % (valueDown, valueUp)
 		   datacard.write("\t"+mystring)
 		else:
 		   datacard.write("\t-")
@@ -756,6 +766,7 @@ def writeSystISRFSR(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 
 
 def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
+##def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT"]):
 	datacard.write(name+"\tlnN")
 	invert=False
 
@@ -1000,9 +1011,10 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 	for s in shifts:
          for m in masses:
 
-	  target = "pdf_" + mc["name"] +"_"+ cat["name"]
 #	  if m >10 and m ==opts.kMass:
 #		  target = "pdf_" + mc["name"] +"_M-%d"%m+"_"+ cat["name"]
+
+          target = "pdf_" + mc["name"] +"_"+ cat["name"]
 
 	  if syst != None:
 		  target += "_" + syst["wsname"] + s
@@ -1031,114 +1043,26 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 ##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 #####1L
 
-		if doRebin and hTmp:
-			print '========'
-			print '========'
-			print '========'
-			print '========'
-			print myBin
-			print '========'
-			print '========'
-			print '========'
-			print '========'
+		## tranform the HT into the likelihood
+		hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
+#		print LikelihoodMapping
 
-#			mybins=array('d',myBin)
-#			print 'before=',hTmp.GetNbinsX()
-#			hTmp=hTmp.Rebin(len(mybins)-1,hTmp.GetName()+"_rebin",mybins)
-#			print 'after=',hTmp.GetNbinsX()
+		h = hTmp
 
-		if doRebinStaticBDT and hTmp:
-			if "Baseline" in cat["dir"] and opts.kTest>0 and opts.kTest<13:
-				###
-				if opts.kTest==6: hTmp=RebinBDT3(hTmp) #1l low
-				if opts.kTest==5: hTmp=RebinBDT2(hTmp) #1l medium
-				if opts.kTest==4: hTmp=RebinBDT1(hTmp) #1l high
-				if opts.kTest==3: hTmp=RebinBDT1(hTmp) #1l high
-				if opts.kTest==2: hTmp=RebinBDT1(hTmp) #1l high
-				if opts.kTest==1: hTmp=RebinBDT1(hTmp) #1l high
-				###
-				if opts.kTest==12: hTmp=RebinBDT6(hTmp) #2l low
-				if opts.kTest==11: hTmp=RebinBDT2(hTmp) #2l medium
-				if opts.kTest==10: hTmp=RebinBDT4(hTmp) #2l high
-				if opts.kTest==9: hTmp=RebinBDT4(hTmp) #2l high
-				if opts.kTest==8: hTmp=RebinBDT4(hTmp) #2l high
-				if opts.kTest==7: hTmp=RebinBDT4(hTmp) #2l high
-				print '------------------------'
-				print '------------------------'
-				print 'BASELINE and doing doRebinStatic now MC'
-				print ' nBin=',hTmp.GetNbinsX()
-				print '------------------------'
-				print '------------------------'
-				print '========'
-				print '========'
-				print '========'
-				print '========'
-				print myBin
-				print '========'
-				print '========'
-				print '========'
-				print '========'
-			else:
-##				mybins=array('d',myBin)
-##				print myBin
-###				print 'before=',hTmp.GetNbinsX()
-##				hTmp=hTmp.Rebin(len(mybins)-1,hTmp.GetName()+"_rebin",mybins)
-#				print 'after=',hTmp.GetNbinsX()
-#				print 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1)
+#		if mc["name"]=="Hptb" and h==None: h = hTmp
 
-			        ## tranform the HT into the likelihood
-				hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
-#				print LikelihoodMapping
-
-				print '========'
-				print '========'
-				print '========'
-#				print len(mybins)
-				print '========'
-#				print myBin
-				print '========'
-				print '========'
-				print '========'
-				print '========'
-
-
-#		if doRebinStaticHTCR and hTmp:
-
-#			if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
-#				if "topCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin1LHT(hTmp)
-#				if "charmCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin1LHT(hTmp)
-#				if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin1LHT(hTmp)
-#				print '------------------------'
-#				print '------------------------'
-#				print 'CR and doing doRebinStaticHTCR now MC'
-#				print '------------------------'
-#				print '------------------------'
-#
-#			if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
-#				if "topCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin2LHT(hTmp)
-#				if "charmCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin2LHT(hTmp)
-#				if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : hTmp=Rebin2LHT(hTmp)
-#				print '------------------------'
-#				print '------------------------'
-#				print 'CR and doing doRebinStaticHTCR now MC'
-#				print '------------------------'
-#				print '------------------------'
-
-		if mc["name"]=="Hptb" and h==None: h = hTmp
-
-		if mc["name"]!="Hptb":
-			if h==None:h = hTmp
-			else:
-				print 'histo to add = ',h.GetName()
-				h.Add(hTmp)
+#		if mc["name"]!="Hptb":
+#			if h==None:h = hTmp
+#			else:
+#				print 'histo to add = ',h.GetName()
+#				h.Add(hTmp)
 		#clean h
+
+	 if h!= None: print "<*> Reading Hist '"+toget+"'",h.Integral(),' nBin=',h.GetNbinsX(), 'underflow=',h.GetBinContent(0), 'overflow=',h.GetBinContent(h.GetNbinsX()+1),' entries=',h.GetEntries()
 
 	 if h.GetBinContent(0)<0:
 		 print "ERROR histogram", h.GetName(),"has negative underflow norm"
 		 raise ValueError
-
-#	  print ' underflow=',h.SetBinContent(0,0)
-#	  print ' overflow=',h.SetBinContent(h.GetNbinsX()+1,0)
 
 	 if h: h.SetBinContent(0,0) ##underflow
 	 if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
@@ -1153,8 +1077,9 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 			 print "ERROR histogram", h.GetName(),"has null norm"
 			 raise ValueError
 
-	#save RooDataHist
+	 #save RooDataHist
 	 h.Scale(opts.lumi)
+
 	 print "* Importing ",target
 
 	 for i in range(0,len(arglist_obs)):
@@ -1174,11 +1099,11 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 	 roo_mc = ROOT.RooDataHist(target,target, ROOT.RooArgList(al),h)
 
-	 print '     BEFORE rooFit Bin content',h.GetBinContent(0), '   Bin1=',h.GetBinContent(1), '  Integral=',h.Integral(), '  NBins=',h.GetNbinsX(),
+	 print '     BEFORE rooFit Bin content',h.GetBinContent(0), '   Bin1=',h.GetBinContent(1), '  Integral=',h.Integral(), '  NBins=',h.GetNbinsX(),'  NEntries=',h.GetEntries()
 
 	 print ' cat[name]' , cat["name"]
 	 hBIS = roo_mc.createHistogram("test", al)
-	 print '     AFTER rooFit Bin content',hBIS.GetBinContent(0), '   Bin1=',hBIS.GetBinContent(1), '  Integral=',hBIS.Integral(), '  NBins=',hBIS.GetNbinsX(),
+	 print '     AFTER rooFit Bin content',hBIS.GetBinContent(0), '   Bin1=',hBIS.GetBinContent(1), '  Integral=',hBIS.Integral(), '  NBins=',hBIS.GetNbinsX(),'  NEntries=',h.GetEntries()
 
 	 pdf_mc = roo_mc
 	 getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
@@ -1391,9 +1316,7 @@ for c in catStore:
 ###	print '===> before all=',hSumAll.Integral(),' ref=',hRef.Integral()
 	print '++++++++ ',catStore[c]
 	print '===> ++++++++',catStore[c],'hSumAll1Third.Integral()=',hSumAll1Third.Integral(), 'hSumAll1Third.GetEntries()=',hSumAll1Third.GetEntries() ,' ref=',hRef1Third.Integral(), ' sig=',hSig1Third.Integral()
-	print '+++++++++++++++++++++++++++++++'
-	print '+++++++++++++++++++++++++++++++'
-	print '+++++++++++++++++++++++++++++++'
+
 ### standard rebin
 #	b = FwRebin.Rebin(hSumAll1Third, hSumAll1Third, maxStat)
 ### w/ merge to hget 0 negative events
@@ -1448,56 +1371,8 @@ for c in catStore:
 ##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 
 
-	if doRebin and h:
-		print ciao
-#		mybins=array('d',myBin)
-#		h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
+	h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
 
-	if doRebinStaticBDT and h:
-		if "Baseline" in cat["dir"] and opts.kTest>0 and opts.kTest<13:
-			print '------------------------'
-			print '------------------------'
-			print 'BASELINE and doing doRebinStatic now DATA'
-			print '------------------------'
-			print '------------------------'
-
-			###
-			if opts.kTest==6: h=RebinBDT3(h) #1l low
-			if opts.kTest==5: h=RebinBDT2(h) #1l medium
-			if opts.kTest==4: h=RebinBDT1(h) #1l high
-			if opts.kTest==3: h=RebinBDT1(h) #1l high
-			if opts.kTest==2: h=RebinBDT1(h) #1l high
-			if opts.kTest==1: h=RebinBDT1(h) #1l high
-			###
-			if opts.kTest==12: h=RebinBDT6(h) #2l low
-			if opts.kTest==11: h=RebinBDT2(h) #2l medium
-			if opts.kTest==10: h=RebinBDT4(h) #2l high
-			if opts.kTest==9: h=RebinBDT4(h) #2l high
-			if opts.kTest==8: h=RebinBDT4(h) #2l high
-			if opts.kTest==7: h=RebinBDT4(h) #2l high
-
-		else:
-#			mybins=array('d',myBin)
-#			print 'before=',h.GetNbinsX()
-#			h=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-#			print 'after=',h.GetNbinsX()
-
-			h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
-#			print LikelihoodMapping
-
-
-
-#	if doRebinStaticHTCR and h:
-#
-#		if  ("1Ele" in cat["dir"] or "1Mu" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]):
-#			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-#			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-#			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin1LHT(h)
-#
-#		if  "2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]:
-#			if "topCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
-#			if "charmCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
-#			if "extraRadCR" in cat["dir"] and cat["var"] == "HT" : h=Rebin2LHT(h)
 
 	if h.GetBinContent(0)<0:
 		print "ERROR histogram", h.GetName(),"has negative underflow obs"
