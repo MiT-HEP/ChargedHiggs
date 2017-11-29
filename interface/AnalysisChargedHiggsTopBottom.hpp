@@ -119,6 +119,7 @@ private:
     double evt_HT=-1;
     double evt_ST=-1;
     double evt_DRlbmaxPt=-1;
+    double evt_MlbmaxPt=-1;
 
     double evt_minDRbb=-1;
     double evt_minDRbb_invMass=-1;
