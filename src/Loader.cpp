@@ -281,7 +281,7 @@ void LoadNero::FillFatJets(){
         int nSubJetMedium = 0;
         int nSubJetLoose = 0;
 
-        for (int iSubJet=first+0; iSubJet<first+(Nsub-1)  ; ++iSubJet) {
+        for (int iSubJet=first+0; iSubJet<first+Nsub  ; ++iSubJet) {
 
             if( bj->subjet_btag->at(iSubJet) > 0.8484) nSubJetMedium++;
             if( bj->subjet_btag->at(iSubJet) > 0.5426) nSubJetLoose++;
