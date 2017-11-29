@@ -4,6 +4,7 @@
 
 config=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-1500_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8')
 ###addConfig=ChargedHiggsTopBottomFullHad|AddLabel('HplusToTB_M-750')
@@ -18,12 +19,45 @@ addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8')
 
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WprimeToTB_TToHad_M-800')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WprimeToTB_TToHad_M-900')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WprimeToTB_TToHad_M-1000')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WprimeToTB_TToHad_M-1500')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WprimeToTB_TToHad_M-2000')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WprimeToTB_TToHad_M-3000')
 
+#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('DYJetsToLL_M-50_HT')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('DYJets')
+
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WJetsToLNu_HT')
+
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WJetsToQQ_HT')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ZJetsToQQ_HT')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ZJetsToNuNu_HT')
+
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('JetHT')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('SingleMuon')
 
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-pythia8')
 
+#rares
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TTZ')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TTW')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TTG')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ttH')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TTTT')
+
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('VH')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WH')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ZH')
+
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ST')
+
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT')
+#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT100to200')
+#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT200to300')
+#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT300to500')
+#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT500to700')
+#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT700to1000')
+#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT1000to1500')
+#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT1500to2000')
+#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('QCD_HT2000toInf')

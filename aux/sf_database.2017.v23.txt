@@ -1,0 +1,138 @@
+## LABEL type pt eta sf err
+## include file
+############# 
+
+
+###################
+## Electron from POG ##
+###################
+# http://fcouderc.web.cern.ch/fcouderc/EGamma/scaleFactors/Moriond17/approval/EleID/
+# http://fcouderc.web.cern.ch/fcouderc/EGamma/scaleFactors/Moriond17/approval/RECO/passingRECO/
+# https://indico.cern.ch/event/607607/contributions/2455679/attachments/1402350/2141061/EGMReportat_PPD_26012017.pdf
+# from Julie for MVA/miniISO https://brux5.hep.brown.edu/~jhogan/EGammaResults/
+
+# cutbased ID from POG
+#eleveto th2f aux/LEPTONS/PassingVeto_EGM2D.root:EGamma_SF2D
+#eleloose th2f aux/LEPTONS/PassingLoose_EGM2D.root:EGamma_SF2D
+#eletight th2f aux/LEPTONS/PassingTight_EGM2D.root:EGamma_SF2D
+eleRECO  th2f aux/LEPTONS/egammaEffi.txt_EGM2D.root.update.root.update.root:EGamma_SF2D
+
+# cutbased ID from Brown
+eleLoose th2f aux/LEPTONS/MVAloose_egammaEffi.txt_EGM2D.root:EGamma_SF2D
+eleTight th2f aux/LEPTONS/MVApucheck_egammaEffi.txt_EGM2D.root:EGamma_SF2D
+eleLooseIso th2f aux/LEPTONS/MiniIsoLoose_egammaEffi.txt_EGM2D.root:EGamma_SF2D
+eleTightIso th2f aux/LEPTONS/MiniIsoTight_egammaEffi.txt_EGM2D.root:EGamma_SF2D
+eleLooseTRG th2f aux/LEPTONS/trigL_egammaEffi.txt_EGM2D.root:EGamma_SF2D
+eleTightTRG th2f aux/LEPTONS/trigT_egammaEffi.txt_EGM2D.root:EGamma_SF2D
+
+###################
+## Muon from POG ##
+###################
+# https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonWorkInProgressAndPagResults#Results_on_the_full_2016_data
+# https://indico.cern.ch/event/594396/contributions/2402538/attachments/1389409/2116003/20161215_MuonPOG_GeneralPPD.pdf
+# from Julie for miniISO https://brux5.hep.brown.edu/~jhogan/MuonResults/
+
+# cutbased ID from POG
+muID th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_GH.root:MC_NUM_MediumID2016_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio
+muIDloose th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_GH.root:MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio
+###muTRG th2f aux/LEPTONS/mu_trigger_EfficienciesAndSF_Period4.root:IsoMu24_OR_IsoTkMu24_PtEtaBins/abseta_pt_ratio
+###muISO th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_GH.root:TightISO_MediumID_pt_eta/abseta_pt_ratio
+###muISOloose th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_GH.root:LooseISO_LooseID_pt_eta/abseta_pt_ratio
+
+# miniIso ID from Brown
+muISO th2f aux/LEPTONS/EfficienciesAndSF_TightIso_NUM_TightMiniIso_DEN_MediumID_PAR_pt_eta.root:IsoT_IdM_PtEtaBins/abseta_pt_ratio
+muISOloose th2f aux/LEPTONS/EfficienciesAndSF_LooseIso_NUM_LooseMiniIso_DEN_LooseID_PAR_pt_eta.root:IsoL_IdL_PtEtaBins/abseta_pt_ratio
+muTRG th2f aux/LEPTONS/EfficienciesAndSF_MuTrigs_NUM_MuTrigs_DEN_MedID_TightIso_PAR_pt_eta.root:Trig_IdMIsoT_PtEtaBins/abseta_pt_ratio
+muLooseTRG th2f aux/LEPTONS/EfficienciesAndSF_MuTrigs_NUM_MuTrigs_DEN_LooseID_LooseIso_PAR_pt_eta.root:Trig_IdLIsoL_PtEtaBins/abseta_pt_ratio
+
+# dump from Tracking_EfficienciesAndSF_BCDEFGH.root:ratio_eff_vtx_dr030e030_corr vs NVTX
+muRECO pteta 0.5 2.5    -9999 +9999 0.999531 0.00106864
+muRECO pteta 2.5 4.5    -9999 +9999 0.999306 0.000409843
+muRECO pteta 4.5 6.5    -9999 +9999 0.999377 0.000184449
+muRECO pteta 6.5 8.5    -9999 +9999 0.999054 0.000135646
+muRECO pteta 8.5 10.5   -9999 +9999 0.999089 0.000101161
+muRECO pteta 10.5 12.5  -9999 +9999 0.998542 9.12439e-05
+muRECO pteta 12.5 14.5  -9999 +9999 0.997811 8.81131e-05
+muRECO pteta 14.5 16.5  -9999 +9999 0.997228 9.18289e-05
+muRECO pteta 16.5 18.5  -9999 +9999 0.996324 0.000105425
+muRECO pteta 18.5 20.5  -9999 +9999 0.995878 0.000124279
+muRECO pteta 20.5 22.5  -9999 +9999 0.994851 0.000151448
+muRECO pteta 22.5 24.5  -9999 +9999 0.994144 0.000190616
+muRECO pteta 24.5 26.5  -9999 +9999 0.993243 0.000247283
+muRECO pteta 26.5 28.5  -9999 +9999 0.992915 0.000331369
+muRECO pteta 28.5 30.5  -9999 +9999 0.991349 0.000454983
+muRECO pteta 30.5 32.5  -9999 +9999 0.990209 0.000626826
+muRECO pteta 32.5 34.5  -9999 +9999 0.987835 0.000897997
+muRECO pteta 34.5 36.5  -9999 +9999 0.987729 0.00129494
+muRECO pteta 36.5 38.5  -9999 +9999 0.985366 0.0018874
+muRECO pteta 38.5 40.5  -9999 +9999 0.988235 0.00266971
+muRECO pteta 40.5 42.5  -9999 +9999 0.97447  0.0043028
+muRECO pteta 42.5 44.5  -9999 +9999 0.967633 0.00608222
+muRECO pteta 44.5 100   -9999 +9999 0.946567 0.00965301
+
+
+## Read eff data and mc separately for veto
+muTRG_runBCDEF th2f aux/LEPTONS/mu_trigger_EfficienciesAndSF_RunBtoF.root IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
+muTRG_runGH th2f aux/LEPTONS/mu_trigger_EfficienciesAndSF_Period4.root IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
+muID_runGH th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_GH.root MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/abseta_pt_DATA MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesMC/abseta_pt_MC
+muID_runBCDEF th2f aux/LEPTONS/mu_ID_EfficienciesAndSF_BCDEF.root MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/abseta_pt_DATA MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/efficienciesMC/abseta_pt_MC
+muISOloose_runGH th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_GH.root LooseISO_LooseID_pt_eta/efficienciesDATA/abseta_pt_DATA LooseISO_LooseID_pt_eta/efficienciesMC/abseta_pt_MC
+muISOloose_runBCDEF th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_BCDEF.root LooseISO_LooseID_pt_eta/efficienciesDATA/abseta_pt_DATA LooseISO_LooseID_pt_eta/efficienciesMC/abseta_pt_MC
+dummy base 1.0 0.00
+
+################
+##   WG1 Unc  ##
+################
+wg1 wg1
+
+################
+##  Double    ##
+################
+double base 2.0 0.00
+
+###################
+## BTag from POG ##
+## https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80XReReco
+###################
+btag csv aux/CSVv2_Moriond17_B_H.csv
+btag-reweight csv-reweight
+
+#############
+## POG Tau ##
+#############
+tauid base 1.0 0.06
+tauid2 tf1 1.0 0.0002*x
+
+########################################
+## tau invisolation: transfer factors ##
+########################################
+include aux/RMet110_v10.txt
+
+############
+## QCD HT ##
+############
+include aux/QCDHTRw.txt
+
+#######################
+### top reweighting ###
+### https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopSystematics#pt_top_Reweighting
+#######################
+##topreweight tf2 TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137*y)) 1-TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137*y))
+topreweight tf2 TMath::Sqrt(TMath::Exp(0.0615-0.0005*x)*TMath::Exp(0.0615-0.0005*y)) 1-TMath::Sqrt(TMath::Exp(0.0615-0.0005*x)*TMath::Exp(0.0615-0.0005*y))
+
+###################
+## W reweighting ##
+###################
+wreweight tf1 1 0
+
+########################
+## Tau Triggertrigger ##
+########################
+### SAMI MET 90 SF
+metLeg json-sami aux/metLegTriggerEfficiency2016.json run=runs_271036_279588 runMC=2016
+tauLeg json-sami aux/tauLegTriggerEfficiency2016.json run=runs_273150_278800 runMC=2016B
+##################################
+## MET TAU TRIGGER EFFICIENCIES ## (DATA ONLY, MC = 1)
+##################################
+metLegData json-sami aux/metLegTriggerEfficiency2016.json effonly run=runs_271036_279588 runMC=2016  
+tauLegData json-sami aux/tauLegTriggerEfficiency2016.json effonly run=runs_273150_278800 runMC=2016B

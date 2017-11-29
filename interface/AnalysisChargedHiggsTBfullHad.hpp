@@ -88,9 +88,9 @@ private:
     };
 
     bool doSig = 0; 
-    bool doMirror = 0;
+    bool doMirror = 1;
     bool doZeroB = 0;
-    bool doLep = 1;
+    bool doLep = 0;
 
 
     bool doTrigger = 0;
