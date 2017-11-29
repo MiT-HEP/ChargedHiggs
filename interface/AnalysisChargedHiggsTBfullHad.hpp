@@ -21,12 +21,14 @@ public:
 
     void SetLeptonCuts(Lepton *l) override ;
     void SetJetCuts(Jet*j) override;
+    void SetFatJetCuts(FatJet *f) override;
     void SetTauCuts(Tau*t) override;
 
     void BookCutFlow(string l, string category);
     void BookFatjetPro(string l, string category, string phasespace, string pile);
     void BookGenTTBar(string l, string category, string phasespace, string labelHF);
     void BookHisto(string l, string category, string phasespace);
+    void BookHistojet(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void BookGenMatch(string l, string category, string phasespace, string cut321, string state);
     void BookEnCorr(string category, string phasespace);
@@ -34,7 +36,7 @@ public:
 
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
-    void fatjetPlot(Event*e, string label, string systname, string phasespace);
+    void fatjetPlot(Event*e, string label, string systname, string phasespace, bool Mirror);
     void higgsPlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
@@ -85,9 +87,17 @@ private:
                   MaxCut
     };
 
-    bool doSig = 1; 
-    bool doMirror = 0;
+    bool doSig = 0; 
+    bool doMirror = 1;
+    bool doZeroB = 0;
     bool doLep = 0;
+
+
+    bool doTrigger = 0;
+    bool doPileUp = 0;
+    bool doGenSig = 0;
+    bool doGentt = 0;
+
 
     double evt_ST=-1;
     double evt_HT=-1;
