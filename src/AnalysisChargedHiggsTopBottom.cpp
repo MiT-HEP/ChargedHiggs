@@ -477,9 +477,10 @@ void ChargedHiggsTopBottom::ReadScikit(Event*e) {
             x.push_back(evt_C); //8
             x.push_back(evt_minDRlb); //9
             x.push_back(evt_avDRBB); //10
-            x.push_back(evt_DRlbmaxPt); //11
+            x.push_back(evt_DRlbmaxPt); //11  (to be replaced with the Mass)
             if(do1lAnalysis)  x.push_back(evt_MJJJmaxPt); //12
             if(do2lAnalysis)  x.push_back(evt_MTmin); //12
+            if(do2lAnalysis)  x.push_back((leadLep->GetP4().Pt()-trailLep->GetP4().Pt())/(leadLep->GetP4().Pt()+trailLep->GetP4().Pt())); ////// MARIA
             x.push_back(e->NcentralJets()); //13
             x.push_back(e->Bjets()); //14
             if (iMass==1) x.push_back(180);
@@ -510,11 +511,13 @@ void ChargedHiggsTopBottom::ReadScikit(Event*e) {
             sw.Stop(); time_keras += sw.CpuTime(); sw.Reset(); sw.Start();
 #endif
 
-            float keras1l= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15] ] ] ))[0][0]");
+            float kerasDiscr=-1;
+            if(do1lAnalysis) kerasDiscr= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15] ] ] ))[0][0]");
+            if(do2lAnalysis) kerasDiscr= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16] ] ] ))[0][0]");
 
             //            std::cout << "event to SYNCH:: run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum(); //<< std::endl;
             //            std::cout << "  iMass==" << iMass << " KERAS " << keras1l << std::endl;
-            scikit.push_back(keras1l);
+            scikit.push_back(kerasDiscr);
         }
 
 #ifdef SCIKIT_TIMING
@@ -999,7 +1002,9 @@ void ChargedHiggsTopBottom::InitScikit(){
     py -> Exec("import keras");
     py -> Exec("import numpy as np");
     py -> Exec("from sklearn.externals import joblib ");
-    py -> Exec("kmodel=keras.models.load_model('aux/tb_1l_keras_trained_model.h5')");
+    if(do1lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_1l_keras_trained_model.h5')");
+    if(do2lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_2l_keras_trained_model.h5')");
+
     py -> Exec("kmodel.summary()");
 
     PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
@@ -2961,25 +2966,25 @@ void ChargedHiggsTopBottom::leptonPlot(Event*e, string label, string category, s
 
         for ( unsigned int iMass=1; iMass < 17; iMass++ ) {
 
-            if(iMass==16  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt16"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==15  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt15"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==16  and ( do1lAnalysis or do2lAnalysis) ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt16"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==15  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt15"+"_"+label,systname,scikit[iMass],e->weight());
 
-            if(iMass==14  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==13  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==12  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==11  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==14  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==13  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==12  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==11  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11"+"_"+label,systname,scikit[iMass],e->weight());
 
-            if(iMass==10  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==9   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==8   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==7   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==10  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==9   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==8   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==7   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7"+"_"+label,systname,scikit[iMass],e->weight());
 
-            if(iMass==6   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==5   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==4   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==3   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==2   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2"+"_"+label,systname,scikit[iMass],e->weight());
-            if(iMass==1   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==6   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==5   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==4   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==3   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==2   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2"+"_"+label,systname,scikit[iMass],e->weight());
+            if(iMass==1   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1"+"_"+label,systname,scikit[iMass],e->weight());
         }
     }
 
@@ -3297,25 +3302,25 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
 
             for ( unsigned int iMass=1; iMass < 17; iMass++ ) {
 
-                if(iMass==16  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt16"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==15  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt15"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==16  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt16"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==15  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt15"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
 
-                if(iMass==14  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==13  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==12  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==11  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==14  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt14"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==13  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt13"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==12  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt12"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==11  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt11"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
 
-                if(iMass==10  and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==9   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==8   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==7   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==10  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt10"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==9   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt9"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==8   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt8"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==7   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt7"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
 
-                if(iMass==6   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==5   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==4   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==3   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==2   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
-                if(iMass==1   and do1lAnalysis) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==6   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt6"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==5   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt5"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==4   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt4"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==3   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt3"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==2   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt2"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
+                if(iMass==1   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1"+"_"+Sregion+LabelHF+label,systname,scikit[iMass],e->weight());
             }
         }
 
@@ -3413,25 +3418,25 @@ void ChargedHiggsTopBottom::fillMoneyPlot(Event*e, string category, string systn
 
         for ( unsigned int iMass=1; iMass < 17; iMass++ ) {
 
-            if(iMass==16  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt16"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==15  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt15"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==16  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt16"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==15  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt15"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
 
-            if(iMass==14  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt14"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==13  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt13"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==12  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt12"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==11  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt11"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==14  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt14"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==13  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt13"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==12  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt12"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==11  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt11"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
 
-            if(iMass==10  and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt10"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==9   and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt9"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==8   and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt8"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==7   and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt7"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==10  and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt10"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==9   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt9"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==8   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt8"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==7   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt7"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
 
-            if(iMass==6   and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt6"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==5   and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt5"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==4   and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==3   and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==2   and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
-            if(iMass==1   and do1lAnalysis) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==6   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt6"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==5   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt5"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==4   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt4"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==3   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt3"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==2   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt2"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
+            if(iMass==1   and ( do1lAnalysis or do2lAnalysis)) Fill("ChargedHiggsTopBottom/Baseline"+category+"/bdt1"+"_"+SRlabel+label,systname,scikit[iMass],e->weight());
         }
     }
 
