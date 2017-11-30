@@ -279,7 +279,6 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
                 if(label.find("DYJetsToLL_M-50_HT") !=string::npos) mc =221 ;
                 if(label.find("WJetsToLNu_HT")!=string::npos) mc =222;
                 if(label.find("DYJetsToLL_M-10to50") !=string::npos) mc =223 ;
-                if(label.find("DYJetsToLL_HT-0To70") !=string::npos) mc =224 ;
             }
             // EWK
             // missing tribosons
@@ -298,6 +297,12 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             //            if(label.find("ZZTo4L") !=string::npos) mc =339 ;
             if(label.find("VHToNonbb_M125") !=string::npos) mc =340 ;
             if(label.find("WH_HToBB_WToLNu_M125") !=string::npos) mc =341 ;
+            if(label.find("ZH_HToBB_ZToLL") !=string::npos) mc =342 ;
+
+            if(label.find("WWW") !=string::npos) mc = 500 ;
+            if(label.find("WZZ") !=string::npos) mc = 501 ;
+            if(label.find("WZZ") !=string::npos) mc = 502 ;
+            if(label.find("ZZZ") !=string::npos) mc = 503 ;
 
             // QCD
             if(label.find("QCD_HT") !=string::npos) mc =500 ;

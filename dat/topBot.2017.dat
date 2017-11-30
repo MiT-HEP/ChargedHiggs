@@ -51,12 +51,12 @@ addConfig=ChargedHiggsTopBottom|AddLabel('WZTo')
 ##ZZTo2L2Nu,ZZTo2L2Q,ZZTo4L
 addConfig=ChargedHiggsTopBottom|AddLabel('ZZTo')
 addConfig=ChargedHiggsTopBottom|AddLabel('VHToNonbb_M125')
-#addConfig=ChargedHiggsTopBottom|AddLabel('WH_HToBB_WToLNu_M125')
+addConfig=ChargedHiggsTopBottom|AddLabel('WH_HToBB_WToLNu_M125')
+addConfig=ChargedHiggsTopBottom|AddLabel('ZH_HToBB_ZToLL')
 
-#addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M')
-#addConfig=ChargedHiggsTopBottom|AddLabel('WJetsToLNu')
-addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-10to50')
-addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_HT-0To70')
+##addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M')
+##addConfig=ChargedHiggsTopBottom|AddLabel('WJetsToLNu')
+##addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-10to50')
 addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-50_HT')
 addConfig=ChargedHiggsTopBottom|AddLabel('WJetsToLNu_HT')
 

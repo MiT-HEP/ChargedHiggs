@@ -1,0 +1,20 @@
+sub=dalfonsoHiggs|/store/group/phys_higgs/HiggsExo/dalfonso/80x_MC_v2/v2.3/
+
+###/WGToLNuG TuneCUETP8M1 13TeV-madgraphMLM-pythia8 405.271
+###/ZGTo2LG TuneCUETP8M1 13TeV-amcatnloFXFX-pythia8 (ext1)
+
+addfiles=%(dalfonsoHiggs)s/WWTo2L2Nu_13TeV-powheg
+addfiles=%(dalfonsoHiggs)s/WWToLNuQQ_13TeV-powheg
+addfiles=%(dalfonsoHiggs)s/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(dalfonsoHiggs)s/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(dalfonsoHiggs)s/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(dalfonsoHiggs)s/WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+addfiles=%(dalfonsoHiggs)s/ZZTo2L2Nu_13TeV_powheg_pythia8
+addfiles=%(dalfonsoHiggs)s/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(dalfonsoHiggs)s/ZZTo4L_13TeV_powheg_pythia8
+
+addfiles=%(dalfonsoHiggs)s/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(dalfonsoHiggs)s/WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(dalfonsoHiggs)s/WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+addfiles=%(dalfonsoHiggs)s/ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8
+
