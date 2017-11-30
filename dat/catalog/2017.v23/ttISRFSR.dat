@@ -1,11 +1,11 @@
 sub=dalfonsoHiggs|/store/group/phys_higgs/HiggsExo/dalfonso/80x_MC_v2/v2.3/
 
-addfiles=%(dalfonsoHig)s/TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown-pythia8
-addfiles=%(dalfonsoHig)s/TT_TuneCUETP8M2T4_13TeV-powheg-isrdown-pythia8
-addfiles=%(dalfonsoHig)s/TT_TuneCUETP8M2T4_13TeV-powheg-fsrup-pythia8
-addfiles=%(dalfonsoHig)s/TT_TuneCUETP8M2T4_13TeV-powheg-isrup-pythia8
+addfiles=%(dalfonsoHiggs)s/TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown-pythia8
+addfiles=%(dalfonsoHiggs)s/TT_TuneCUETP8M2T4_13TeV-powheg-isrdown-pythia8
+addfiles=%(dalfonsoHiggs)s/TT_TuneCUETP8M2T4_13TeV-powheg-fsrup-pythia8
+addfiles=%(dalfonsoHiggs)s/TT_TuneCUETP8M2T4_13TeV-powheg-isrup-pythia8
 
-addfiles=%(dalfonsoHig)s/TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8
+addfiles=%(dalfonsoHiggs)s/TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8
 
 ##addfiles=%(dalfonsoHig)s/TTTo2L2Nu_ttbbFilter_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8
 ##addfiles=%(dalfonsoHig)s/TTToSemilepton_ttbbFilter_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8
