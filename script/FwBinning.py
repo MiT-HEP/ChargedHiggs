@@ -9,7 +9,7 @@ class Rebin:
     h = None        # sum of bkgs
     h_ref = None    # reference (TTbar)
     maxStat = 0.3
-    
+
     binMin = 0
     binMax = 0
     
@@ -74,7 +74,6 @@ class Rebin:
         # first binning on bkg
         self.directionalRebin()
 
-
     # function which merges bin i with the left adjecent bin
     def mergeBins(self, i):
 
@@ -104,11 +103,10 @@ class Rebin:
     def getBinArray(self):
 
         ret = [self.binMin]
-        for i in range(2, self.h.GetNbinsX()+1): 
+        for i in range(2, self.h.GetNbinsX()+1):
 
             x = float(self.h.GetBinLowEdge(i))
             ret.append(x)
-            
         ret.append(self.binMax)
         return ret
 
@@ -212,14 +210,13 @@ class RebinNeg:
 
 
     def getNegativeContentBin(self):
-    
+
         pos = -1
         for b in range(1, self.h_sig.GetNbinsX()+1):
-            
-            if self.h_sig.GetBinContent(b) < 0: pos = b
-        
-        return pos
 
+            if self.h_sig.GetBinContent(b) < 0: pos = b
+
+        return pos
 
 
     # function which merges bin i with the left adjecent bin
@@ -368,14 +365,13 @@ class RebinSsqrtB:
 
 
     def getNegativeContentBin(self):
-    
+
         pos = -1
         for b in range(1, self.h_sig.GetNbinsX()+1):
-            
-            if self.h_sig.GetBinContent(b) < 0: pos = b
-        
-        return pos
 
+            if self.h_sig.GetBinContent(b) < 0: pos = b
+
+        return pos
 
 
     # function which merges bin i with the left adjecent bin
@@ -421,14 +417,11 @@ class RebinLikelihood:
     h_bkg = None        # sum of bkgs
     h_sig = None
     lbins = 100
-
     binMin = 0
     binMax = 0
 
     def __init__(self, lbins):
-
         self.lbins = lbins
-
 
     # rebin signal such that no negative entries are present
     def preRebin(self):
@@ -456,7 +449,6 @@ class RebinLikelihood:
         a = self.h_sig.GetNbinsX()
         print "Remove negative events of signal by rebinning (from %d bins to %d bins)" % (b, a)
 
-
     def createMapping(self, h_bkg, h_sig):
 
 #        self.h_bkg = h_bkg
@@ -473,15 +465,16 @@ class RebinLikelihood:
         self.binMin = float(self.h_bkg.GetBinLowEdge(1)) # min bin
         self.binMax = float(self.h_bkg.GetBinLowEdge(self.h_bkg.GetNbinsX()+1)) # max bin
 
-
         self.preRebin() # this rebins both signal and background
 
         likelihood = ROOT.TH1D("likelihood", "likelihood", self.lbins, 0, 1) # likelihood histogram
+        likelihood.Sumw2()
         for i in range(1, self.h_sig.GetNbinsX()+1): # map HT distributions to likelihood
 
             if self.h_sig.GetBinContent(i) == 0.0 and self.h_bkg.GetBinContent(i) == 0.0: continue # no interest in empty bins
             x = self.h_sig.GetBinContent(i) / (self.h_sig.GetBinContent(i) + self.h_bkg.GetBinContent(i))
             likelihood.Fill(x)
+
 
         mapping = [] # projection of HT to the bin number
 
@@ -496,20 +489,20 @@ class RebinLikelihood:
                 x = self.h_sig.GetBinContent(b) / (self.h_sig.GetBinContent(b) + self.h_bkg.GetBinContent(b))
                 mapping.append(likelihood.FindBin(x))
 
-
         return mapping
 
 
     def applyMapping(self, mapping, h):
 
-        print mapping
-
         hNew = ROOT.TH1D("", "", self.lbins, 0, 1) # likelihood histogram
+        hNew.Sumw2()
+        for lb in range(1,self.lbins):hNew.SetBinError(lb,0);
         for b in range(1, h.GetNbinsX()+1):
 
             x = int(h.GetBinCenter(b))
 
             lbin = mapping[b-1] # arrays start from zero, bins from 1
+            #print x, lbin
 ##            if lbin == 101: lbin = 100
             hNew.SetBinContent(lbin, hNew.GetBinContent(lbin) + h.GetBinContent(b))
             hNew.SetBinError(lbin, math.sqrt(hNew.GetBinError(lbin)*hNew.GetBinError(lbin) + h.GetBinError(b)*h.GetBinError(b)))
@@ -529,6 +522,7 @@ class RebinLikelihood:
 
         return pos
 
+
     def getZeroContentBin(self):
 
         pos = -1
@@ -537,7 +531,6 @@ class RebinLikelihood:
             if self.h_bkg.GetBinContent(b) <= 0: pos = b
 
         return pos
-
 
 
     # function which merges bin i with the left adjecent bin
