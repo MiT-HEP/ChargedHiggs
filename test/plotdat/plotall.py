@@ -29,6 +29,7 @@ dat={
 	#"plotdat/chhiggs_metband.txt":"plot/EtMissBand.pdf",
 	"plotdat/qcdpurity_control_etmiss.txt":"plot/EtMiss_Control.pdf",
 	"plotdat/qcdpurity_control_taupt.txt":"plot/TauPt_Control.pdf",
+	"plotdat/qcdpurity_control_taueta.txt":"plot/TauEta_Control.pdf",
 	#"plotdat/qcdpurity_mt.txt":"plot/MtQCDOnly.pdf",
 	"plotdat/qcdpurity_drtaujet.txt":"plot/DrTauJet.pdf",
 	"plotdat/chhiggs_yields.txt": "plot/Yields.pdf",

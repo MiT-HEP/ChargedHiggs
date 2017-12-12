@@ -28,6 +28,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     // qgl vars
     std::map<std::string,float> qglVars_;
 
+    public:
+
     inline int IsJetExceptValidity() const { 
         if( std::isnan(Pt()) ) return 0; 
         if( Pt() < ptcut_ ) return 0; 
@@ -96,7 +98,6 @@ class Jet : virtual public Object, virtual public SmearableComplex
         return 1;
     }
 
-    public:
 
     void SetPuIdCut(float x) {puidcut_=x;}
     void SetPtCut(float x){ptcut_= x;}
@@ -109,6 +110,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
             qglVars_[name] = value;
             };
     void SetPuId(float x) {puId=x;}
+    float GetPuId() {return puId;}
 
     Jet() ; 
 

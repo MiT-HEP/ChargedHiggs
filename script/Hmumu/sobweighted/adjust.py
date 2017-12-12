@@ -7,6 +7,7 @@ parser= OptionParser(usage=usage)
 parser.add_option("-f","--fname",dest="fname",type='string',help="FileName [%default]",default="CMS-HMM_hmm_combcat_weighted.root");
 parser.add_option("-n","--newlegend",dest="newleg",action='store_true',help="NewLegend [%default]",default=False);
 parser.add_option("-s","--save",dest="save",action='store_true',help="Save [%default]",default=False);
+parser.add_option("","--pas",dest="pas",action='store_true',help="PAS [%default]",default=False);
 
 opts, args = parser.parse_args()
 
@@ -37,8 +38,12 @@ def removePreliminary(pad):
         if pad . GetListOfPrimitives() . At(i) . InheritsFrom("TPad"): removePreliminary(pad . GetListOfPrimitives() . At(i))
         if pad . GetListOfPrimitives() . At(i) . InheritsFrom("TText"):
             title = pad . GetListOfPrimitives() . At(i) . GetTitle()
-            if "Preliminary" in title: pad . GetListOfPrimitives() . At(i) . SetTitle(re.sub('Preliminary','',title))
+            if "Preliminary" in title and not opts.pas: pad . GetListOfPrimitives() . At(i) . SetTitle(re.sub('Preliminary','',title))
+            title = pad . GetListOfPrimitives() . At(i) . GetTitle()
             if "#hat{m}_{H}" in title: pad . GetListOfPrimitives() . At(i) . SetTitle(re.sub('#hat{m}_{H}','m_{H}',title))
+            title = pad . GetListOfPrimitives() . At(i) . GetTitle()
+            if "0.76" in title: pad . GetListOfPrimitives() . At(i) . SetTitle(re.sub('0.76','0.7',title))
+
 removePreliminary(canv)
 
 ## def legLoop(leg):
@@ -76,6 +81,13 @@ def setStyle(pad):
 
 setStyle(canv)
 
+print "-> Remove X/Y Tick"
+canv.SetTickx(0)
+canv.FindObject("pad1").SetTickx(0)
+canv.SetTicky(0)
+canv.FindObject("pad1").SetTicky(0)
+canv.FindObject("pad2").SetTicky(0)
+
 obj=[]
 if opts.newleg:  #new legend version
     print "-> Adding NEW Legend"
@@ -88,7 +100,7 @@ if opts.newleg:  #new legend version
     ltx . SetTextFont(42)
     ltx . SetTextAlign(12)
     xmin = 0.56
-    ymax = .75
+    ymax = .72
     textSep = 0.05
     delta = 0.045
     entryDelta = 0.07
@@ -141,8 +153,11 @@ if opts.newleg:  #new legend version
 
 canv.Modified()
 canv.Update()
-raw_input("ok?")
 
 if opts.save:
-    canv.SaveAs(re.sub('.root','.pdf',fname))
-    canv.SaveAs(re.sub('.root','.png',fname))
+    base=""
+    if opts.pas: base="Preliminary/"
+    canv.SaveAs(base+re.sub('.root','.pdf',fname))
+    canv.SaveAs(base+re.sub('.root','.png',fname))
+else:
+    raw_input("ok?")

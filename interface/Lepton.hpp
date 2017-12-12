@@ -92,6 +92,8 @@ class Lepton : virtual public Object,
         inline int Charge() const { return charge; }
         inline int GetType() const { return type; } // bypass id
         inline int GetNLayers() const { return nlayers; } // bypass id
+        inline bool GetTrackerMuon()const { return trackerMuon;}
+        inline bool GetGlobalMuon()const { return globalMuon;}
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;
@@ -117,7 +119,7 @@ class Lepton : virtual public Object,
             if ( etacut_ >=0 and abs(Eta()) > etacut_) return 0;
             if ( isocut_ >=0 and iso > isocut_) return 0;
             if ( isorelcut_ >=0 and iso/Pt() > isorelcut_) return 0;
-            if ( miniisorelcut_ >=0 and miniIso > miniisorelcut_) return 0;
+            if ( miniisorelcut_ >=0 and miniIso > miniisorelcut_) return 0; //miniIso is already relative to Pt
             if ( type == 11 and mvaLoosecutEta_ and (
                                                      (Mva()<-0.041 and abs(Eta())<0.8) or
                                                      (Mva()<0.383 and abs(Eta())<=1.4442 and abs(Eta())>=0.8) or

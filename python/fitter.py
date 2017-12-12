@@ -81,6 +81,14 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
     fitter.PtBins.push_back(1000)
     fitter.PtBins.push_back(8000)
 
+    fitter.EtaBins.push_back(0.)
+    fitter.EtaBins.push_back(0.5)
+    fitter.EtaBins.push_back(0.9)
+    fitter.EtaBins.push_back(1.44)
+    fitter.EtaBins.push_back(1.7)
+    fitter.EtaBins.push_back(2.0)
+    fitter.EtaBins.push_back(2.1)
+
 if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
     from hmm import *
     config = eval(opts.hmm)

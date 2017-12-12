@@ -13,12 +13,12 @@ void PurityFit::init(){
 
 void PurityFit::fit(){
     // Uperp, EtMiss
-    string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_IsoInv"+extra+"_Data";
-    string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_"+extra+"_%s";
-    string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_IsoInv"+extra+"_%s";
-    string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1"+extra+"_Data";
-    string fullselInv   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_IsoInv_FullSelection"+extra+"_Data";
-    string tauname="ChargedHiggsQCDPurity/Vars/TauPt_pt%.0f_%.0f_eta0.0_2.1_Data"; // use to compute the mean
+    string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta%.1f_%.1f_IsoInv"+extra+"_Data";
+    string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta%.1f_%.1f"+extra+"_%s";
+    string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta%.1f_%.1f_IsoInv"+extra+"_%s";
+    string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta%.1f_%.1f"+extra+"_Data";
+    string fullselInv   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta%.1f_%.1f_IsoInv_FullSelection"+extra+"_Data";
+    string tauname="ChargedHiggsQCDPurity/Vars/TauPt_pt%.0f_%.0f_eta%.1f_%.1f_Data"; // use to compute the mean
     if (extra !="")Log(__FUNCTION__,"FIXME","Implement the Tau Pt for extras");
 
     if (bkglabels.empty() )
@@ -41,12 +41,13 @@ void PurityFit::fit(){
     fw.open(txtoutname.c_str(),ios::app|ios::out);
     fw <<"# QCD R-factor computed by "<<name()<<endl;
 
+    for (size_t eBin=0;eBin+1<EtaBins.size() ;++eBin)
     for (size_t iBin=0;iBin+1<PtBins.size() ;++iBin)
     {
-        TCanvas *cEWK= new TCanvas(Form("EWK_control_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ));
-        TCanvas *cQCD= new TCanvas(Form("QCD_control_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ));
+        TCanvas *cEWK= new TCanvas(Form("EWK_control_pt%.0f_%.0f_eta%.1f_%.1f",PtBins[iBin],PtBins[iBin+1] ,EtaBins[eBin],EtaBins[eBin+1]));
+        TCanvas *cQCD= new TCanvas(Form("QCD_control_pt%.0f_%.0f_eta%.1f_%.1f",PtBins[iBin],PtBins[iBin+1] ,EtaBins[eBin],EtaBins[eBin+1]));
        
-        string histname = Form(targetname.c_str(),PtBins[iBin],PtBins[iBin+1]); 
+        string histname = Form(targetname.c_str(),PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1]); 
         if (verbose_ > 0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname);
         if (fIn_ -> Get( histname.c_str()  )  == NULL){
             Log(__FUNCTION__,"WARNING","Unable to fetch: "+ histname);
@@ -55,17 +56,33 @@ void PurityFit::fit(){
         }
         TH1D *h   = (TH1D*) fIn_ -> Get( histname.c_str()  ) -> Clone();  
 
-        histname=Form(fullselInv.c_str(),PtBins[iBin],PtBins[iBin+1]);
+        histname=Form(fullselInv.c_str(),PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1]);
         if (verbose_ > 0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname);
-        TH1D *hFullInv   = (TH1D*) fIn_ -> Get( histname.c_str()  ) -> Clone();  
+        TH1D *hFullInv   = (TH1D*) fIn_ -> Get( histname.c_str()  ) ;  
+        if (hFullInv == NULL)
+        {
+            Log(__FUNCTION__,"WARNING","Unable to fetch: "+ histname);
+            continue;
+        }
 
-        histname=Form(tauname.c_str(),PtBins[iBin],PtBins[iBin+1]);
+
+        histname=Form(tauname.c_str(),PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1]);
         if (verbose_ > 0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname);
-        TH1D *hTau   = (TH1D*) fIn_ -> Get( histname.c_str()  ) -> Clone();  
+        TH1D *hTau   = (TH1D*) fIn_ -> Get( histname.c_str()  ) ;  
+        if (hTau==NULL)
+        {
+            Log(__FUNCTION__,"WARNING","Unable to fetch: "+ histname);
+            continue;
+        }
 
-        histname=Form(signame.c_str(),PtBins[iBin],PtBins[iBin+1]);
+        histname=Form(signame.c_str(),PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1]);
         if (verbose_ >0 ) Log(__FUNCTION__,"INFO","Getting histogram "+ histname); 
-        TH1D *sig = (TH1D*) fIn_ -> Get( histname.c_str() ) -> Clone();// QCD
+        TH1D *sig = (TH1D*) fIn_ -> Get( histname.c_str() ) ;// QCD
+        if (sig == NULL)
+        {
+            Log(__FUNCTION__,"WARNING","Unable to fetch: "+ histname);
+            continue;
+        }
        
         if ( h != NULL and sig != NULL and h->Integral() >0 and sig->Integral() >0)  // control plots QCD
         {
@@ -73,7 +90,7 @@ void PurityFit::fit(){
 
             sig->DrawNormalized("P");
 
-            histname=Form(bkgname.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD");
+            histname=Form(bkgname.c_str(),PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1],"QCD");
             if (verbose_>0) Log(__FUNCTION__,"INFO","Getting histogram "+histname);
             TH1D * qcd = (TH1D*)  fIn_ ->Get( histname.c_str() );
             if (qcd == NULL)
@@ -81,7 +98,7 @@ void PurityFit::fit(){
                 Log(__FUNCTION__,"WARNING","Unable to fetch: "+ histname);
             }
             
-            histname=Form(bkgnameInv.c_str(),PtBins[iBin],PtBins[iBin+1],"QCD");
+            histname=Form(bkgnameInv.c_str(),PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1],"QCD");
             if (verbose_>0) Log(__FUNCTION__,"INFO","Getting histogram "+histname);
             TH1D * qcdInv = (TH1D*)  fIn_ ->Get(histname.c_str()) ;
             if (qcdInv == NULL)
@@ -129,14 +146,14 @@ void PurityFit::fit(){
 
         for (string& s : bkglabels)
         {
-            histname= Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str());
+            histname= Form( bkgname.c_str() , PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1],s.c_str());
             TH1D *bkg_tmp = (TH1D*)  fIn_ ->Get( histname.c_str() );
             if (bkg_tmp == NULL){
                 Log(__FUNCTION__,"ERROR", string("histo: ") + histname + " is NULL");
                 continue;
             }
 
-            histname=Form( bkgnameInv.c_str() , PtBins[iBin],PtBins[iBin+1],s.c_str());
+            histname=Form( bkgnameInv.c_str() , PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1],s.c_str());
             TH1D *bkgInv_tmp = (TH1D*)  fIn_ ->Get( histname.c_str());
             if (bkgInv_tmp == NULL){
                 Log(__FUNCTION__,"ERROR",string("histo: ") + histname + " is NULL");
@@ -144,13 +161,13 @@ void PurityFit::fit(){
 
             bool first = false;
             if (bkg==NULL) {
-                bkg = (TH1D*) bkg_tmp->Clone( Form( bkgname.c_str(), PtBins[iBin],PtBins[iBin+1], "EWK") );
+                bkg = (TH1D*) bkg_tmp->Clone( Form( bkgname.c_str(), PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1], "EWK") );
                 first = true;
                 }
             else bkg->Add(bkg_tmp);
 
             if (bkgInv==NULL) {
-                bkgInv = (TH1D*) bkgInv_tmp->Clone( Form( bkgnameInv.c_str(), PtBins[iBin],PtBins[iBin+1], "EWK") );
+                bkgInv = (TH1D*) bkgInv_tmp->Clone( Form( bkgnameInv.c_str(), PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1], "EWK") );
                 }
             else bkgInv->Add(bkgInv_tmp);
 
@@ -189,7 +206,7 @@ void PurityFit::fit(){
         float bI= bkg->Integral();
         float biI= bkgInv->Integral();
 
-        float f = fit_specific( h, sig, bkg, bkgInv, hFullInv, Form("fit_pt%.0f_%.0f",PtBins[iBin],PtBins[iBin+1] ), outname, &pars);
+        float f = fit_specific( h, sig, bkg, bkgInv, hFullInv, Form("fit_pt%.0f_%.0f_eta%.1f_%.1f",PtBins[iBin],PtBins[iBin+1],EtaBins[eBin],EtaBins[eBin+1] ), outname, &pars);
 
         // propagate the fraction to the yields
         float R = f * (hI-bI) / (sI -biI);
@@ -207,8 +224,9 @@ void PurityFit::fit(){
             << " R "<< R <<" +"<<Rhi<<" -"<<Rlo
             <<endl;
         //  for SF DB
-        fw <<labelbin<<" pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
-        fw <<labelspline<<" spline "<<hTau->GetMean()<< " "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
+        //fw <<labelbin<<" pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " -2.1 2.1 "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
+        fw <<labelbin<<" pteta "<<PtBins[iBin]<<" "<<PtBins[iBin+1]<< " "<<EtaBins[eBin]<<" "<<EtaBins[eBin+1] <<" "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
+        fw <<labelspline<<Form("_eta%.1f_%.1f",EtaBins[eBin],EtaBins[eBin+1])<<" spline "<<hTau->GetMean()<< " "<<R<<" "<< (Rhi + Rlo)/2.0<<endl;
 
     } // bin loop
 
