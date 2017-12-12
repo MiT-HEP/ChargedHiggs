@@ -123,7 +123,9 @@ class Lepton : virtual public Object,
             if ( type == 11 and mvaLoosecutEta_ and (
                                                      (Mva()<-0.041 and abs(Eta())<0.8) or
                                                      (Mva()<0.383 and abs(Eta())<=1.4442 and abs(Eta())>=0.8) or
-                                                     (Mva()<-0.515 and abs(Eta())>1.566) )) return 0;
+                                                     (Mva()<-0.515 and abs(Eta())>1.566) or
+                                                     ( abs(Eta())>1.4442 and abs(Eta())<=1.566)
+                                                     )) return 0;
 
             if ( tightcut_ and not tightId) return 0;
             if ( mediumcut_ and not mediumId) return 0;

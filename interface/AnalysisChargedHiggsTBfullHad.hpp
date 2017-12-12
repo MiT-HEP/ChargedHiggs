@@ -21,16 +21,22 @@ public:
 
     void SetLeptonCuts(Lepton *l) override ;
     void SetJetCuts(Jet*j) override;
+    void SetFatJetCuts(FatJet *f) override;
     void SetTauCuts(Tau*t) override;
 
     void BookCutFlow(string l, string category);
+    void BookFatjetPro(string l, string category, string phasespace, string pile);
+    void BookGenTTBar(string l, string category, string phasespace, string labelHF);
     void BookHisto(string l, string category, string phasespace);
+    void BookHistojet(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void BookGenMatch(string l, string category, string phasespace, string cut321, string state);
+    void BookEnCorr(string category, string phasespace);
     void Preselection();
 
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
+    void fatjetPlot(Event*e, string label, string systname, string phasespace, bool Mirror);
     void higgsPlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
@@ -38,20 +44,24 @@ public:
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
     void classifyLabelGenEv(Event*e, string label, string systname, string phasespace);
-    void getCandidate(Event*e, string label, string systname, string phasespace);
+    void getCandidate(Event*e, string label, string systname, string phasespace, bool mirror);
+    void PlotAss(Event*e, string label, string systname, string phasespace);
+
 
     void computeVar(Event*e);
 
     void printSynch(Event*e);
 
     bool genInfoForSignal(Event*e);
+    void Encorrection(Event*e, string systname, string phasespace);
+
 
     int analyze(Event*,string systname) override;
     //    const string name() const override {return "ChargedHiggsTBfullHad";}
     const string name() const override {return "ChargedHiggsTopBottomFullHad";}
 
     // Tree
-    bool writeTree = true;
+    bool writeTree = false;
     void setTree(Event*e, string label, string  category);
 
     // Variables for MVA
@@ -69,13 +79,27 @@ private:
     CutSelector cut;
 
     enum CutFlow{ Total=0,
-                  NoLep,
                   NoTau,
+                  NoLep,
                   HTcut,
                   OneBOneFat,
+                  OneBOneFatMirror,
                   MaxCut
     };
 
+    bool doSig = 0; 
+    bool doMirror = 1;
+    bool doZeroB = 0;
+    bool doLep = 0;
+
+
+    bool doTrigger = 0;
+    bool doPileUp = 0;
+    bool doGenSig = 0;
+    bool doGentt = 0;
+
+
+    double evt_ST=-1;
     double evt_HT=-1;
     double evt_minDRbb=-1;
     double evt_minDRbb_invMass=-1;
@@ -87,17 +111,38 @@ private:
     ///// higgs candidates
 
     double evt_MH_tb=-1;
+    double evt_MH_t1b=-1;
+    double evt_MH_t0b=-1;
     double evt_MH_Wbb=-1;
+    double evt_MH_wbj=-1;
 
-    Jet* leadingb=NULL;
+    double evt_PtH_tb =-1;
+    double evt_PtH_t1b=-1;
+    double evt_PtH_t0b=-1;
+    double evt_PtH_Wbb=-1;
+    double evt_PtH_wbj=-1;
 
-    // for the topb category
+    
+    //bjets
+    Jet* leadingb=NULL;     // tb,wbb
+    Jet* leadingbWBJ = NULL;//wbj
+    Jet* secondb=NULL;      //wbj
+    Jet* secondbwbb=NULL;   //wbb
+
+    //fatjets
     int numtop=0;
-    FatJet* topJet=NULL;
-    FatJet* wJet=NULL;
+    FatJet* topJet=NULL;    //tb
+    FatJet* wJet=NULL;      //wbb
+    FatJet* wJetwbj=NULL;   //wbj
 
-    // for the wbb category
-    TLorentzVector topFromHOpenCand;
+    //make top
+    TLorentzVector topFromHOpenCand;//wbb
+    TLorentzVector topFromHwbj;     //wbj
+
+    //associated
+    int num_otherfj = 0;
+    int num_otherbj = 0;
+    int num_otherj = 0;
 
     /////
     /////
@@ -109,6 +154,7 @@ private:
     int topAss_lep = 0;
     int topBKGplus_lep = 0;
     int topBKGminus_lep = 0;
+    int siglep = 0;
 
     GenParticle * WFromTopH=NULL;
     GenParticle * WFromTopAss=NULL;

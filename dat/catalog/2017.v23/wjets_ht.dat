@@ -1,0 +1,11 @@
+sub=janHiggs|/store/group/phys_higgs/HiggsExo/jaeyserm/80x_MC_v2/v2.3/
+
+addfiles=%(janHiggs)s/WJetsToLNu_HT-0To70_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(janHiggs)s/WJetsToLNu_HT-70To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(janHiggs)s/WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(janHiggs)s/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(janHiggs)s/WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(janHiggs)s/WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(janHiggs)s/WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(janHiggs)s/WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(janHiggs)s/WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8

@@ -3,7 +3,13 @@
 #include "interface/AnalysisBase.hpp"
 #include "interface/CutSelector.hpp"
 #include "interface/GetBinning.hpp"
+#include "interface/SplitMC.hpp"
 #include <memory>
+
+#include "TRandom3.h"
+#include "TPython.h"
+
+#include "TStopwatch.h"
 
 #include "interface/Output.hpp" // DataStore
 #include "TMVA/Reader.h"
@@ -18,13 +24,18 @@ public:
 
     bool doSynch = false;
     bool doICHEP = false;
-    bool writeTree = false;
-    bool doSplit = false;
+    bool doBDTSyst = true;
+    bool doFinal = true;
+    bool writeTree = false; // false for final
+    bool doSplit = true; // true for final
 
     // Analysis type
+    // do1lAnalysis, do2lAnalysis, doTaulAnalysis from the config
     bool do1lAnalysis=false;
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
+    // doSplitLepCat HARDcoded
+    bool doSplitLepCat = false; // true for final
 
     // trigger bits
     bool passTriggerMu=true;
@@ -44,6 +55,10 @@ public:
     void BookCutFlow(string l, string category);
     void BookHisto(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
+    void BookSplit(string l, string category);
+    unsigned findMC(string label);
+    int FillSplit(Event*e, string l, string category, string systname);
+
     void Preselection();
 
     // function with various plots
@@ -52,10 +67,11 @@ public:
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
     void classifyHF(Event*e, string label, string category, string systname, string jetname, string SR);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
+    void fillMoneyPlot(Event*e, string category, string systname,string SRlabel, string label);
 
     void computeVar(Event*e);
 
-    void printSynch(Event*e, string category);
+    void printSynch(Event*e, string category, string systname);
 
     double genInfoForWZ(Event*e);
     int genInfoForBKG(Event*e);
@@ -75,6 +91,7 @@ public:
 
     vector<string> weights;
 
+    std::unique_ptr<SplitMCAnalysis> spliMC_ ;//( new SplitMCAnalysis());
 
 private:
 
@@ -102,6 +119,7 @@ private:
     double evt_HT=-1;
     double evt_ST=-1;
     double evt_DRlbmaxPt=-1;
+    double evt_MlbmaxPt=-1;
 
     double evt_minDRbb=-1;
     double evt_minDRbb_invMass=-1;
@@ -113,8 +131,10 @@ private:
 
     double evt_avDRBB=-1;
 
+    double evt_DEtaMaxBB_invMass=-1;
     double evt_DEtaMaxBB=-1;
     double evt_DEtaMaxJJ=-1;
+    double evt_DEtaMaxJJ_invMass=-1;
     double evt_MJJJmaxPt=-1;
     double evt_AvDRJJJmaxPt=-1;
     double evt_AvCSVPt=0;
@@ -140,10 +160,11 @@ private:
     double evt_C=0;
     double evt_FW2=0;
 
-    vector<float> bdt;
 
     int nGenB = 0 ;
     int genLepSig = 0 ;
+
+    int ev_forTrain = 0;
 
     /////
     /////
@@ -158,15 +179,40 @@ private:
     GenParticle * WFromTopAss=NULL;
     GenParticle * leptonTopAssH=NULL;
 
-    /////
-    /////
+    bool doTMVA{true};
+    bool doScikit{false};
 
+
+    int nbinsBDT=1000;
+    // TMVA
+    float binMIN=-1.;
+    // Keras
+    //    float binMIN=0.;
+    float binMAX=1.;
+
+
+    /************
+     *   TMVA   *
+     ************/
+
+    vector<float> bdt;  // score
     DataStore varValues_;
-
-    //
-    //TMVA::Reader *reader_ ;
     vector<TMVA::Reader*> readers_;
+    void InitTmva();
+    void ReadTmva(Event*e);
 
+
+    /**********************************
+     *          SCIKIT                *
+     **********************************/
+
+    std::unique_ptr<TPython> py;
+    vector<float> x;
+    vector<string> discr;
+    vector<float> scikit; // like bdt
+
+    void InitScikit();
+    void ReadScikit(Event*e);
 
 };
 

@@ -20,21 +20,25 @@ void SplitMCAnalysis::Init(){
    	l.clear();
 	l.str(line);
 	unsigned mc; l>>mc;
+    unsigned lep_category; l>>lep_category;
 	unsigned run; l>>run;
 	unsigned lumi; l>>lumi;
 	uint64_t event; l>>event;
-	addBadEvent(mc,run,lumi,event);
+    //	addBadEvent(mc,run,lumi,event);
+    addBadEvent(mc,lep_category,run,lumi,event);
     }
 
 
     // 0 should not be there
-   	Book(Form("SplitMC/CutFlow/CutFlow_%u",0),"split mc cut flow",2,0,2); 
+    Book(Form("SplitMC/CutFlow/CutFlow_%u",0),"split mc cut flow",2,0,2);
+    Book(Form("SplitMC/CutFlow/CutFlowWeight_%u",0),"split mc cut flow",2,0,2);
     for( const unsigned &mc :mc_)
     {
         AddFinalHisto(Form("SplitMC/CutFlow/CutFlow_%u",mc));
-   	    Book(Form("SplitMC/CutFlow/CutFlow_%u",mc),"split mc cut flow",2,0,2); 
+        Book(Form("SplitMC/CutFlow/CutFlow_%u",mc),"split mc cut flow",2,0,2);
+        AddFinalHisto(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc));
+        Book(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc),"split mc cut flow weight",2,0,2);
     }
-
 
 }
 
@@ -122,6 +126,7 @@ unsigned SplitMCAnalysis::findMC(Event*e)
 
 int SplitMCAnalysis::analyze(Event* e,string systname)
 {
+    /*
     // protect real data
     if (e->IsRealData() ) return SPLITMC_EVENT_PASS;
 
@@ -130,6 +135,7 @@ int SplitMCAnalysis::analyze(Event* e,string systname)
     //end
 
     if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlow_%u",mc),systname,0,1);
+    if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc),systname,0,e->GetWeight()->GetBareMCWeight());
     //    std::cout << " SplitMC = " << mc << std::endl;
 
     if ( isBadEvent( mc, e->runNum(),e->lumiNum(),e->eventNum() ) ) {
@@ -138,9 +144,12 @@ int SplitMCAnalysis::analyze(Event* e,string systname)
     }
     else {
         if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlow_%u",mc),systname,1,1); // pass
+        if (systname=="" or systname=="NONE" )Fill(Form("SplitMC/CutFlow/CutFlowWeight_%u",mc),systname,1,e->GetWeight()->GetBareMCWeight()); // pass
         //        std::cout << " Pass = " << std::endl;
         return SPLITMC_EVENT_PASS;
     }
+    */
+
 }
 
 // Local Variables:

@@ -1,0 +1,140 @@
+#############
+### TopBottom ###
+#############
+
+##config=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-5000_13TeV_amcatnlo_pythia8')
+##addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8')
+config=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-2500_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-1500_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8')
+###addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-750')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8')
+###addConfig=ChargedHiggsTopBottom|AddLabel('HplusToTB_M-450')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-250_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-220_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-200_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-180_13TeV_amcatnlo_pythia8')
+
+## 1l - 13 samples SR
+### dedicated high mass
+### dedicated medium mass
+### dedicated low mass 0,1,2
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_highMass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_mediumMass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_lowMass_vsall_SRCR_BDT.weights.xml")
+### dedicated   3,...,14
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_14Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_13Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_12Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_11Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_9Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_7Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_6Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_5Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_4Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_3Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_2Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_1Mass_vsall_SRCR_BDT.weights.xml")
+
+
+## 2l - 13 samples SR
+### dedicated high mass
+### dedicated medium mass
+### dedicated low mass 15,16,17
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_highMass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_mediumMass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_lowMass_vsall_SRCR_BDT.weights.xml")
+### dedicated  18,...,29
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_14Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_13Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_12Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_11Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_9Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_7Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_6Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_5Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_4Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_3Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_2Mass_vsall_SRCR_BDT.weights.xml")
+addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_1Mass_vsall_SRCR_BDT.weights.xml")
+
+
+## 14+6
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_14Mass_vsall_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_13Mass_vsall_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_12Mass_vsall_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_11Mass_vsall_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_mediumMass_vsall_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_lowMass_vsall_SR_BDT.weights.xml")
+
+######------------------------
+
+## 12-18
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_14Mass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_13Mass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_12Mass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_11Mass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_mediumMass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_lowMass_vsall_CR_BDT.weights.xml")
+
+## 18-24
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_14Mass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_13Mass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_12Mass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_11Mass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_mediumMass_vsall_CR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_lowMass_vsall_CR_BDT.weights.xml")
+
+######------------------------
+
+## 24-31
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_highMass_vshf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_highMass_vslf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_mediumMass_vshf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_mediumMass_vslf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_lowMass_vshf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_lowMass_vslf_SR_BDT.weights.xml")
+
+## 32-11
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_highMass_vshf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_highMass_vslf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_mediumMass_vshf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_mediumMass_vslf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_lowMass_vshf_SR_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_lowMass_vslf_SR_BDT.weights.xml")
+
+## 38 ... is the DNN
+
+## 0-1
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_1l_highMass_vsall_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_1l_mediumMass_vsall_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_1l_lowMass_vsall_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_2l_highMass_vsall_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_2l_mediumMass_vsall_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_2l_lowMass_vsall_BDT.weights.xml")
+
+## 6-7
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_1l_highMass_vshf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_1l_highMass_vslf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_1l_mediumMass_vshf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_1l_mediumMass_vslf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_1l_lowMass_vshf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_1l_lowMass_vslf_BDT.weights.xml")
+
+## 12-13
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_2l_highMass_vshf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_2l_highMass_vslf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_2l_mediumMass_vshf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_2l_mediumMass_vslf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_2l_lowMass_vshf_BDT.weights.xml")
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_train_GB/tb_2l_lowMass_vslf_BDT.weights.xml")
+
+
+## 14
+#addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_allMasses_DNN.weights.xml")
