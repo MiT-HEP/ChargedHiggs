@@ -67,6 +67,13 @@ class FatJet : virtual public Object, virtual public SmearableBase
     int hasSubJetBTag{0};
     int hasSubJetBTagLoose{0};
 
+    //test subjet
+    float subjet_btag1{0};
+    float subjet_btag2{0};
+    float subjet_btag3{0};
+    float subjet_btag_max{0};
+
+
     int isValid;
     //Gen-level info
 
@@ -82,6 +89,14 @@ class FatJet : virtual public Object, virtual public SmearableBase
 
     inline float SDMass() const { return softdropMass ; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
+
+    inline float subjetCSV1() const { return subjet_btag1 ; }
+    inline float subjetCSV2() const { return subjet_btag2 ; }
+    inline float subjetCSV3() const { return subjet_btag3 ; }
+    inline float subjetCSVmax() const { return subjet_btag_max ; }
+    inline int NSubj() const { return nSubjets ; }
+
+
 
     inline int IsSubjetBTag() const { return hasSubJetBTag ; }
     inline int IsSubjetBTagLoose() const { return hasSubJetBTagLoose ; }
@@ -109,8 +124,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline int IsWJetMirror() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 > tau1*0.6  and IsFatJet() and IsSubjetBTagLoose() == 0 )   return 1; return 0;}
     // tipically 400 GeV
 //    inline int IsTopJet() const { if( softdropMass > 105. and softdropMass < 220. and tau3 < tau2*0.81  and IsFatJet() and IsSubjetBTag()>0)   return 1; return 0;}
-    inline int IsTopJet() const { if( Pt() > 400. and softdropMass > 105. and softdropMass < 220. and tau3 > 0 and tau2 > 0 and tau3 < tau2*0.81  and IsFatJet() ) return 1; return 0;}
-    inline int IsTopJetMirror() const { if( Pt() > 400. and softdropMass > 105. and softdropMass < 220. and tau3 > 0 and tau2 > 0 and tau3 > tau2*0.81  and IsFatJet() ) return 1; return 0;}
+    inline int IsTopJet() const { if( Pt() > 400. and softdropMass > 105. and softdropMass < 220. and tau3 > 0 and tau2 > 0 and tau3 < tau2*0.67  and IsFatJet() ) return 1; return 0;}
+    inline int IsTopJetMirror() const { if( Pt() > 400. and softdropMass > 105. and softdropMass < 220. and tau3 > 0 and tau2 > 0 and tau3 > tau2*0.67  and IsFatJet() ) return 1; return 0;}
 };
 
 #endif
