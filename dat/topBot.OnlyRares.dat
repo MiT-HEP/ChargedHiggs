@@ -1,8 +1,32 @@
 #############
-###  ST + TTX with X=G,W,Z,TT
+###  TTX with X=G,W,Z,TT + diboson + triboson
 #############
 
-config=ChargedHiggsTopBottom|AddLabel('ST')
+##TTTT
+config=ChargedHiggsTopBottom|AddLabel('TTTT')
+##TTZToQQ, TTZToLLNuNu
+addConfig=ChargedHiggsTopBottom|AddLabel('TTZ')
+##TTWJetsToQQ,TTWJetsToLNu
+addConfig=ChargedHiggsTopBottom|AddLabel('TTW')
+##ttHJetTobb,ttHJetToNonbb
+addConfig=ChargedHiggsTopBottom|AddLabel('ttH')
+##TTGJets
+addConfig=ChargedHiggsTopBottom|AddLabel('TTG')
+
+addConfig=ChargedHiggsTopBottom|AddLabel('WWTo')
+###WZTo1L1Nu2Q,WZTo1L3Nu,WZTo2L2Q,WZTo3LNu
+addConfig=ChargedHiggsTopBottom|AddLabel('WZTo')
+###ZZTo2L2Nu,ZZTo2L2Q,ZZTo4L
+addConfig=ChargedHiggsTopBottom|AddLabel('ZZTo')
+addConfig=ChargedHiggsTopBottom|AddLabel('VHToNonbb_M125')
+addConfig=ChargedHiggsTopBottom|AddLabel('WH_HToBB_WToLNu_M125')
+addConfig=ChargedHiggsTopBottom|AddLabel('ZH_HToBB_ZToLL')
+### triboson
+addConfig=ChargedHiggsTopBottom|AddLabel('WWW')
+addConfig=ChargedHiggsTopBottom|AddLabel('WWZ')
+addConfig=ChargedHiggsTopBottom|AddLabel('WZZ')
+addConfig=ChargedHiggsTopBottom|AddLabel('ZZZ')
+
 
 ## 1l - 13 samples SR
 ### dedicated high mass

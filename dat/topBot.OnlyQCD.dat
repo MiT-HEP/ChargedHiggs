@@ -1,8 +1,5 @@
-#############
-###  ST + TTX with X=G,W,Z,TT
-#############
+config=ChargedHiggsTopBottom|AddLabel('QCD_HT')
 
-config=ChargedHiggsTopBottom|AddLabel('ST')
 
 ## 1l - 13 samples SR
 ### dedicated high mass
@@ -48,7 +45,8 @@ addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_2Mass_
 addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_1Mass_vsall_SRCR_BDT.weights.xml")
 
 
-## 24-31
+## 24
+##addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_highMass_vsall_BDT.weights.xml")
 #addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_14Mass_vsall_CR_BDT.weights.xml")
 #addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_13Mass_vsall_CR_BDT.weights.xml")
 #addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_12Mass_vsall_CR_BDT.weights.xml")
@@ -56,7 +54,8 @@ addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_1Mass_
 #addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_mediumMass_vsall_CR_BDT.weights.xml")
 #addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_1l_lowMass_vsall_CR_BDT.weights.xml")
 
-## 32-11
+## 32
+###addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_highMass_vsall_SR_BDT.weights.xml")
 #addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_14Mass_vsall_CR_BDT.weights.xml")
 #addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_13Mass_vsall_CR_BDT.weights.xml")
 #addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_12Mass_vsall_CR_BDT.weights.xml")
@@ -107,7 +106,4 @@ addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_1Mass_
 
 ## 14
 #addConfig=ChargedHiggsTopBottom|weights.push_back("aux/tb_trainings/tb_2l_allMasses_DNN.weights.xml")
-
-
-
 
