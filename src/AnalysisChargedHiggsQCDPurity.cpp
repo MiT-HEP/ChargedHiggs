@@ -52,9 +52,9 @@ void ChargedHiggsQCDPurity::Init()
             Book( dir + hist+"_"+ l  , ("PtTauIsoInv "+ l).c_str(),1000,0.,1000.); // this guys has the R factor applied in the loos selection
             hist= "TauPt_Control";
             Book( dir + hist+"_"+ l  , ("PtTau "+ l).c_str(),1000,0.,1000.); // this guys has the R factor applied in the loos selection
+            //
             hist= "TauEta_IsoInv_Control";
             Book( dir + hist+"_"+ l  , ("EtaTauIsoInv "+ l).c_str(),100,-2.5,2.5); 
-            //
             hist= "TauEta_Control";
             Book( dir + hist+"_"+ l  , ("EtaTau "+ l).c_str(),100,-2.5,2.5); 
             //
@@ -169,8 +169,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
 
 
     //  USE PRESCALE PATH ONLY FOR THE "inclusive/Loose" selection
-    bool passPrescale=false;
-    if (not e->IsRealData()) passPrescale=true;
+    bool passPrescale=true;
+    //if (not e->IsRealData()) passPrescale=true;
     //if (  e->IsTriggered("HLT_LooseIsoPFTau50_Trk30_eta2p1_v") ) passPrescale=true;
 
     //#warning MET80 TRigger in QCD
@@ -218,6 +218,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
             Fill( dir+hist +"_"+label,systname, t->Pt(), e->weight() );
             hist= "EtMiss_Control";
             Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight() );
+            hist= "TauEta_Control";
+            Fill( dir+hist +"_"+label,systname, t->Eta(), e->weight() );
 
             float dr=100.; for(int i=0;i<e->Njets(); ++i) { dr = std::min(dr, e->GetJet(i)->DeltaR(t)) ;}
             hist= "DrTauJet_Control";
@@ -318,6 +320,17 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         string sfname="tauinvisospline";
         if (tInv->GetNProng() ==1 ) sfname+="_1p";
         else sfname+="_3p";
+        
+        float aeta = abs(eta);
+        //cearse eta bin
+        //if (abs(tInv->Eta())<1.44) sfname += "_eta0.0_1.4";
+        //else sfname +="_eta1.4_2.1";
+        //based on EtaBins
+        for (unsigned j=0 ; j <EtaBins.size()-1; ++j)
+        {
+            if (aeta >= EtaBins[j] and aeta < EtaBins[j+1]) sfname += Form("_eta%.1f_%.1f",EtaBins[j],EtaBins[j+1]);
+        }
+
         // if the SF don't exist go on, but don't fill inconsistent events
         if( not e->ExistSF(sfname) ){
             LogN(__FUNCTION__,"WARNING","Tau inviso SF does not exist",10);
@@ -330,6 +343,8 @@ int ChargedHiggsQCDPurity::analyze(Event*e,string systname)
         if (tInv != NULL and passInverseLoose and passPrescale){ // CONTROL PLOTS -- LOOSE SELECTION
             string hist= "TauPt_IsoInv_Control";
             Fill( dir+hist +"_"+label,systname, tInv->Pt(), e->weight(false) );
+            hist= "TauEta_IsoInv_Control";
+            Fill( dir+hist +"_"+label,systname, tInv->Eta(), e->weight(false) );
             hist= "EtMiss_IsoInv_Control";
             Fill( dir+hist +"_"+label,systname, e->GetMet().Pt(), e->weight(false) );
         }

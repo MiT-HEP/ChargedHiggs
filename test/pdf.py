@@ -60,6 +60,7 @@ try:
 			print "W=",lhe.product().weights()[i].wgt,lhe.product().weights()[i].id
 except KeyboardInterrupt:
 	pass
+
 fOut=ROOT.TFile.Open("ht.root","RECREATE")
 h.Write()
 h2.Write()

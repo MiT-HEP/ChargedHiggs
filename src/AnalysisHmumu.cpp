@@ -3,6 +3,7 @@
 #include "TStopwatch.h"
 #include "Python.h"
 #include <algorithm>
+#include "interface/GeneralFunctions.hpp"
 
 #include "interface/HiggsTemplateCrossSections.hpp"
 
@@ -57,15 +58,216 @@ void HmumuAnalysis::SetPhotonCuts(Photon *p){
     p->SetPtCut(8000);
 }
 
-double HmumuAnalysis::dimu_dPhiStar(Lepton* mu0, Lepton*mu1) {  // Phi separation in the parent's rest frame
-      double phi_star = 0;
-      //double mu_dPhi = std::abs(mu0->Phi() - mu1->Phi());
-      //if(mu_dPhi > TMath::Pi()) mu_dPhi = 2*TMath::Pi() - mu_dPhi;
-      double mu_dPhi = fabs(mu0->DeltaPhi(*mu1)); 
-      double phiACOP = TMath::Pi() - mu_dPhi;
-      double thetaStarEta = std::acos(std::tanh((mu0->Eta() - mu1->Eta())/float(2.)));
-      phi_star = std::tan(phiACOP/float(2.))*std::sin(thetaStarEta);
-      return phi_star;
+string HmumuAnalysis::CategoryExclusive(Event *e)
+{
+    TLorentzVector zero(0,0,0,0);
+    /* The exclusive categories may use a different muon selection:
+     * they can reset the H definition
+     */
+    string category = "";
+
+    vector<Lepton*> miniIsoLeptons;
+    int nMuons=0;
+    for(unsigned il=0 ; ;++il)
+    {
+        Lepton *l = e->GetBareLepton(il);
+        if (l == NULL) break;  // exit strategy
+        
+        // selection
+        if (l->Pt() <10 ) continue;
+        //l->SetIsoRelCut(0.25);
+        if (abs(l->Eta()) >2.4) continue;
+        //medium id
+        if( not l->GetMediumId() ) continue;
+
+        //MINI-ISO
+        if( l->MiniIsolation() >0.4 ) continue;//loose
+
+        // for muons require tracker and global
+        if (l->IsMuonDirty() and not l->GetTrackerMuon())  continue;
+        if (l->IsMuonDirty() and not l->GetGlobalMuon())  continue;
+
+        // selected leptons
+        miniIsoLeptons.push_back(l);
+        if(l->IsMuonDirty()) nMuons+=1;
+    }
+    // sort miniIsoLeptons by pt
+    std::sort(miniIsoLeptons.begin(),miniIsoLeptons.end(),[](Lepton const *a, Lepton const *b ){return a->Pt() > b->Pt();});
+
+    // chek jets 
+    vector<Jet*> selectedJets_local;
+    int nbjets=0;
+    int nbloose=0;
+    for(unsigned ij=0 ; ;++ij)
+    {
+        Jet *j = e->GetBareJet(ij);
+        if (j == NULL) break;  // exit strategy
+        //apply jet selection except overlap removal
+        if (not j->IsJetExceptValidity()) continue;
+
+        bool isLep=false;
+        for(auto l : miniIsoLeptons)
+        {
+            if (j->DeltaR(l) < 0.4) isLep=true;
+        }
+        if (isLep) continue;
+
+        //OK
+        selectedJets_local.push_back(j);
+        
+        //count bjets
+        if (abs(j->Eta())>2.4 ) continue;
+        if (j->Btag() > 0.5426) nbloose+=1;
+        if (j->Btag() > 0.8484) nbjets+=1;
+    }
+    std::sort(selectedJets_local.begin(),selectedJets_local.end(),[](Jet const *a, Jet const *b ){return a->Pt() > b->Pt();});
+
+    // find reco Muons: Opposite Charge 
+    Lepton * mu0_local=NULL;
+    Lepton * mu1_local=NULL;
+
+    // Standard selection (two leading muons)
+    for( auto& l : miniIsoLeptons)
+    {
+        if (mu0_local == NULL and l->IsMuonDirty() ) { mu0_local = l;}
+        if (mu1_local == NULL and (mu0_local != l ) and l->IsMuonDirty() and mu0_local->Charge()*l->Charge() == -1)  mu1_local = l;
+    }
+    
+    //useless to continue if no OS muons
+    if(mu0_local == NULL or mu1_local==NULL)  return "";
+
+    // CHECK first ttH categories, priority is in the order ttHLep, ttHHadr
+    if (category == "" and nbloose >0 and miniIsoLeptons.size() >2) category = "ttHLep";
+    if (category == "" and nbloose >0 and selectedJets_local.size() > 4) category = "ttHHadr";
+
+    //if ttH fails, check ZH Lept
+    if (category == "" and miniIsoLeptons.size() >=4) //ZH Z->ee
+    {
+        Lepton * e0=NULL;
+        Lepton * e1=NULL;
+
+        for( auto& l : miniIsoLeptons)
+        {
+            if (e0 == NULL and l->IsElectronDirty() ) { e0 = l;}
+            if (e1 == NULL and (e0 != l ) and l->IsElectronDirty() and e0->Charge()*l->Charge() == -1)  e1 = l;
+        }
+
+        if (e0 != NULL and e1 !=NULL){
+            Object Z ;
+            Z.SetP4(zero); // make sure it is 0.
+            Z+= *e0;
+            Z+= *e1;
+            if (Z.M() > 91-20 and Z.M() <91+20) category = "ZHLep";// e ch
+        }
+    }
+        
+    if (category == "" and miniIsoLeptons.size() >=4) //ZH Z->mm
+    {
+        // search the less boosted OSSF muon pair in the Z window
+        Lepton *muZ0{NULL},*muZ1{NULL};
+        float Zpt=-1; //found a Z candidate
+        for( unsigned il0=0;il0<miniIsoLeptons.size();++il0)
+        {
+            Lepton *l0=miniIsoLeptons[il0];
+            if(not l0->IsMuonDirty() ) continue;
+            for( unsigned il1=il0+1;il1<miniIsoLeptons.size();++il1)
+            {
+                Lepton *l1=miniIsoLeptons[il1];
+                if(not l1->IsMuonDirty() ) continue;
+                if(l0->Charge() *l1->Charge() != -1 ) continue;
+                // construct Z candidate
+                Object Z ;
+                Z.SetP4(zero); // make sure it is 0.
+                Z+= *l0;
+                Z+= *l1;
+                if (Z.M() > 91-20 and Z.M() <91+20 and (Zpt <0 or Z.Pt() < Zpt)) 
+                {
+                    muZ0=l0;
+                    muZ1=l1;
+                    Zpt = Z.Pt();
+                }
+            }
+        }
+
+        if (Zpt>0) // Zmm Lept
+        {
+            Lepton * mu0_tmp{NULL};
+            Lepton * mu1_tmp{NULL};
+            //find H -> m leptons
+            for( auto& l : miniIsoLeptons)
+            {
+                if (l== muZ0 ) continue;
+                if (l== muZ1 ) continue;
+                if (mu0_tmp == NULL and l->IsMuonDirty() ) { mu0_tmp = l;}
+                if (mu1_tmp == NULL and (mu0_tmp != l ) and l->IsMuonDirty() and mu0_tmp->Charge()*l->Charge() == -1)  mu1_tmp = l;
+            }
+
+            // if I have both a Z and a H candidate
+            if (mu0_tmp and mu1_tmp)
+            {
+                mu0_local=mu0_tmp;
+                mu1_local=mu1_tmp;
+                category = "ZHLep";
+            }
+    
+        }
+
+    }// end ZH -> mm logic
+
+    // WH W->ln
+    if (category == "" and miniIsoLeptons.size() >=3) //WH Hmm
+    {
+        Lepton *wLepton{NULL};
+        // the two leading leptons  
+        for( auto& l : miniIsoLeptons)
+        {
+            if (l != mu0_local and l!=mu1_local and wLepton == NULL) wLepton=l;
+        }
+        // compute mt
+        if (wLepton != NULL){ // this guard should be always useless
+            float met = e->GetMet().Pt();
+            float phi = e->GetMet().Phi();
+            mt = ChargedHiggs::mt(wLepton->Pt(),met,wLepton->Phi(),phi);
+            category = "WHLep";
+        }
+    }
+
+    // VH Hadronic boosted 
+    // if (category == "")
+    // {
+    // }
+
+    // ggHX: I have a ggH with miniIso but not with std selection
+    if (category=="")
+    {
+        if ( (mu0==NULL or mu1==NULL ) and mu0_local != NULL and mu1_local != NULL)
+        {
+            category = "ggHX";
+        }
+    }
+
+    // RESET Hmm WARNING!
+    if (category != "")
+    {
+        Hmm.SetP4(zero); // make sure it is 0.
+        mu0 = mu0_local;
+        mu1 = mu1_local;
+        Hmm += *mu0;
+        Hmm += *mu1;
+        mass_=Hmm.M();
+        pt_ = Hmm.Pt();
+        selectedJets.clear();
+        for(auto j : selectedJets_local) selectedJets.push_back(j);
+        isMiniIsoLeptons=true;
+    }
+    else 
+    {   // leptons have been selected using miniIsolation
+        isMiniIsoLeptons=false;
+    }
+
+
+    return category;
+
 }
 
 string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets){
@@ -455,7 +657,6 @@ void HmumuAnalysis::InitTmva(){
     AddVariable("dimu_eta",'F');    
     AddVariable("dimu_abs_dEta",'F');    
     AddVariable("dimu_abs_dPhi",'F');
-    //AddVariable("dimu_dPhiStar",'F');
     //AddVariable("jet1_pt",'F');    
     //AddVariable("jet2_pt",'F');    
     AddVariable("jet1_eta",'F');    
@@ -498,7 +699,7 @@ void HmumuAnalysis::Init(){
     if (catType>=1)
     {
         categories_.clear();
-        for (int i=0;i<17;++i)
+        for (int i=0;i<30;++i)
             categories_.push_back(Form("cat%d",i));
         InitTmva();
         if (doScikit)InitScikit();
@@ -546,6 +747,8 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/NJetsOnH_"+ l ,"NJets On Hmm (110-150);Bdt;Events", 10,0,10);
 	    Book ("HmumuAnalysis/Vars/NBJetsOnH_"+ l ,"NBJets On Hmm (110-150);Bdt;Events", 10,0,10);
 
+        // Study cut for tag categories ttH, WH,ZH, 
+
         //Scikit
         if(doScikit){
             for(const auto& s : discr)
@@ -564,11 +767,17 @@ void HmumuAnalysis::Init(){
             // for systematics, only counts the total
         }
 
-        for(const auto & c : {string("ttHHadr"),string("ttHLep"),string("superPure")})
-        {
-	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
-        }
-    }
+	    Book ("HmumuAnalysis/Vars/MtOnH_WLep_"+ l ,"Mt;mt [GeV];Events", 1000,0,1000); 
+	    Book ("HmumuAnalysis/Vars/DeltaR_ggHX_"+ l ,"dR ggHX;dR;Events", 1000,0,10); 
+	    Book ("HmumuAnalysis/Vars/NJets_ggHX_"+ l ,"nJets ggHX;nJets;Events", 10,0,10); 
+        
+        //dirty category
+        //for(const auto & c : {string("ttHHadr"),string("ttHLep"),string("VHHadr"),string("ZHLep"),string("WHLep")})
+        //{
+	    //    Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
+        //}
+
+    } //end label loop
 
     if (doSync){
         InitTree("hmm");
@@ -649,9 +858,12 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     else processingSyst_=true;
 
     //** reset 
-    mjj1=0.0; //
+    mjj1=0.0; // only for plotting
+    mt=0.0;// WHLep only for plotting
     TLorentzVector zero(0,0,0,0);
     Hmm.SetP4(zero); // make sure it is 0.
+    selectedJets.clear();
+    //
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
@@ -688,6 +900,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     /*
      * HIGGS REWEIGHT -- UNCERTAINTIES
      */
+
     if (not e->IsRealData()){
 
         HTXS::HiggsClassification  hc;
@@ -760,11 +973,11 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon0: ");
-    Lepton*mu0 = e->GetMuon(0);
+    mu0 = e->GetMuon(0);
     if (VERBOSE and mu0)Log(__FUNCTION__,"DEBUG",Form("GetMuon0: pt=%f",mu0->Pt()));
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon1: ");
-    Lepton*mu1 = e->GetMuon(1);
+    mu1 = e->GetMuon(1);
     int il2=1;
     while (mu0 != NULL and mu1!= NULL and mu1->Charge() * mu0->Charge() != -1) { mu1= e->GetMuon(++il2);} // fully combinatorics on the second muon
     if (VERBOSE and mu1)Log(__FUNCTION__,"DEBUG",Form("GetMuon1: pt=%f",mu1->Pt()));
@@ -772,9 +985,11 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     bool recoMuons= mu0 != NULL and mu1 !=NULL; 
     if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
 
+
     if (recoMuons)
     {
-        //Object Hmm;
+        /* default definition. Hmm can be redefined by exclusive categories
+         */
         TLorentzVector zero(0,0,0,0);
         Hmm.SetP4(zero); // make sure it is 0.
         Hmm += *mu0;
@@ -785,7 +1000,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetJets: ");
 
-    vector<Jet*> selectedJets;
+    selectedJets.clear();
     for(unsigned i=0;i<e->Njets() ; ++i)
     {
         selectedJets.push_back(e->GetJet(i));
@@ -803,32 +1018,29 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
 
     // ------------------------------------
+    // OFFICIAL CATEGORIZATION
     string category;
 
     if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt(),e->GetMet().Phi());
     else if (catType==3) { 
         category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt(),e->GetMet().Phi()); 
-        if (e->Bjets()>0 and e->Njets() >4) category = "cat15";  // ttHHadr
-        if (e->Bjets()>0 and e->Njets() >1  and e->Nleps()>2 ) category="cat16";  // veto Njets> 4
+        string categoryExc = CategoryExclusive(e); 
+        recoMuons = mu0 != NULL and mu1 !=NULL;  // muons may have been recomputed here
+
+        if (categoryExc == "ttHHadr") category = "cat15";// 
+        if (categoryExc == "ttHLep" ) category="cat16";  // 
+        if (categoryExc == "ZHLep" ) category="cat17";   // 
+        if (categoryExc == "WHLep" ) category="cat18";   // 
+        if (categoryExc == "ggHX" and category == "" ) category="cat19";   // 
     } 
     else category = Category(mu0, mu1, selectedJets);
 
     // --------------- DIRTY CATEGORIES -----------
-    string categoryDirty=""; // this may double count
-    if (e->Bjets()>0 and e->Njets() >4  )
-    {
-        categoryDirty="ttHHadr"; 
-    }
-    
-    if ( e->Bjets() >0  and e->Njets() >1  and e->Nleps()>2  )
-    {
-        categoryDirty ="ttHLep"; 
-    }
-    else if (catType==2 and bdt.size() >1 and bdt[0]>.84) // BUG
-    {
-        categoryDirty="superPure";
-    }
+    //string categoryDirty=""; // this may double count
 
+    // ------------------------
+    // BTAG SF
+    // -----------------------
     if (true) // CSV-SF for passing loose,medium or tigth cuts
     {
         e->ApplyBTagSF(1); //0 loose, 1 medium, 2 tight
@@ -939,7 +1151,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sfId *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
     }
 
-    double sfIso=1.0;
+    double sfIso=1.0; // TODO, apply a different sf for miniIsolation, use flag isMiniIsoLeptons
     // ISO Loose
     if (mu0)
     {
@@ -1059,7 +1271,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         SetTreeVar("pass_trigger1",passTrigger1);
         SetTreeVar("pass_trigger2",passTrigger2);
         SetTreeVar("pass_leptonveto",passLeptonVeto);
-        if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto and category != "" ) SetTreeVar("pass_all",1);
+        if ( recoMuons and passTrigger and passAsymmPtCuts and category != "" ) SetTreeVar("pass_all",1);
         else SetTreeVar("pass_all",0); 
         //
         if (recoMuons)
@@ -1242,6 +1454,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
                 }
             }
         }
+
         if (mass_ >= 110 and mass_<150){
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
@@ -1273,13 +1486,25 @@ int HmumuAnalysis::analyze(Event *e, string systname)
                         Fill("HmumuAnalysis/Vars/"+s+"OnH_BB_"+ label,systname, scikit[i] ,e->weight());
                 }
             }
+
+            if (catType == 3 and category == "cat18") // WHLep
+            {
+                Fill("HmumuAnalysis/Vars/MtOnH_WLep_"+ label,systname, mt,e->weight()) ;
+            }
+
+            if (catType == 3 and category == "cat19") // WHLep
+            {
+                Fill("HmumuAnalysis/Vars/NJets_ggHX_"+ label,systname, selectedJets.size(),e->weight()) ;
+                Fill("HmumuAnalysis/Vars/DeltaR_ggHX_"+ label,systname,mu0->DeltaR(mu1),e->weight()) ;
+            }
         }
 
 
         if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
-        if(Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
-        if(Unblind(e) and categoryDirty == "ttHLep")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
+
+        //if(Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
+        //if(Unblind(e) and categoryDirty == "ttHLep")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
     }
 
 

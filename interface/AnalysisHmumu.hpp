@@ -37,20 +37,33 @@ class HmumuAnalysis: virtual public AnalysisBase
         bool doEvenOnly{false}; //signal only even events
         bool doOddOnly{false}; //signal only even events
 
+
     private:
+
+        // selected Objects
         float mass_;
         float pt_;
+        float mt; // with WHLep, only
         Object Hmm;
+        Lepton *mu0{NULL},*mu1{NULL};
+        vector<Jet*> selectedJets;
+        float mjj1; //for drawing filled in the bdt loop
+        bool isMiniIsoLeptons{false};
+        
+
         bool processingSyst_{false}; // used for tree
+
         // select cuts
         CutSelector cut;
 
         vector<string> categories_;
 
+        // WARNING modify global event selection 
+        string CategoryExclusive(Event *);
+
         string Category(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets);
         //string CategoryAutoCat(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets,float met,float metphi);
         string CategoryBdt(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets,float met,float metphi);
-        double dimu_dPhiStar(Lepton* mu0, Lepton*mu1);  // from UF
 
         enum CutFlow{ Total=0, 
             Leptons,
@@ -77,7 +90,6 @@ class HmumuAnalysis: virtual public AnalysisBase
         // Variables
         template<class T>
         void SetVariable( string name, T value){ varValues_.Set(name, value); }
-        float mjj1; //for drawing filled in the bdt loop
         // not working
         //template<class T>
         //T GetVariable( string name){ return *(T*)varValues_.GetPointer(name); } ;
