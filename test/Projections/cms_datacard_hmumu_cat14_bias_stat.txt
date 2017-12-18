@@ -1,0 +1,373 @@
+Combination of hmm_13TeV=cms_datacard_hmumu_cat16_fixed.txt
+imax * number of bins
+jmax * number of processes minus 1
+kmax * number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes BIAS             hmm_13TeV_cat0   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat0
+shapes BIAS             hmm_13TeV_cat1   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat1
+shapes BIAS             hmm_13TeV_cat2   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat2
+shapes BIAS             hmm_13TeV_cat3   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat3
+shapes BIAS             hmm_13TeV_cat4   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat4
+shapes BIAS             hmm_13TeV_cat5   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat5
+shapes BIAS             hmm_13TeV_cat6   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat6
+shapes BIAS             hmm_13TeV_cat7   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat7
+shapes BIAS             hmm_13TeV_cat8   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat8
+shapes BIAS             hmm_13TeV_cat9   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat9
+shapes BIAS             hmm_13TeV_cat10   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat10
+shapes BIAS             hmm_13TeV_cat11   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat11
+shapes BIAS             hmm_13TeV_cat12   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat12
+shapes BIAS             hmm_13TeV_cat13   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat13
+shapes BIAS             hmm_13TeV_cat14   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat14
+
+shapes *                hmm_13TeV_cat0   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat0
+shapes BKG              hmm_13TeV_cat0   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod2_cat0_ord5
+shapes data_obs         hmm_13TeV_cat0   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat0
+shapes ggH              hmm_13TeV_cat0   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat0
+shapes qqH              hmm_13TeV_cat0   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat0
+shapes *                hmm_13TeV_cat1   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat1
+shapes BKG              hmm_13TeV_cat1   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod2_cat1_ord5
+shapes data_obs         hmm_13TeV_cat1   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat1
+shapes ggH              hmm_13TeV_cat1   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat1
+shapes qqH              hmm_13TeV_cat1   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat1
+shapes *                hmm_13TeV_cat10  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat10
+shapes BKG              hmm_13TeV_cat10  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod2_cat10_ord5
+shapes data_obs         hmm_13TeV_cat10  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat10
+shapes ggH              hmm_13TeV_cat10  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat10
+shapes qqH              hmm_13TeV_cat10  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat10
+shapes *                hmm_13TeV_cat11  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat11
+shapes BKG              hmm_13TeV_cat11  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod_cat11_ord1
+shapes data_obs         hmm_13TeV_cat11  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat11
+shapes ggH              hmm_13TeV_cat11  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat11
+shapes qqH              hmm_13TeV_cat11  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat11
+shapes *                hmm_13TeV_cat12  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat12
+shapes BKG              hmm_13TeV_cat12  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod_cat12_ord1
+shapes data_obs         hmm_13TeV_cat12  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat12
+shapes ggH              hmm_13TeV_cat12  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat12
+shapes qqH              hmm_13TeV_cat12  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat12
+shapes *                hmm_13TeV_cat13  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat13
+shapes BKG              hmm_13TeV_cat13  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod2_cat13_ord5
+shapes data_obs         hmm_13TeV_cat13  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat13
+shapes ggH              hmm_13TeV_cat13  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat13
+shapes qqH              hmm_13TeV_cat13  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat13
+shapes *                hmm_13TeV_cat14  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat14
+shapes BKG              hmm_13TeV_cat14  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod_cat14_ord1
+shapes data_obs         hmm_13TeV_cat14  Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat14
+shapes ggH              hmm_13TeV_cat14  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat14
+shapes qqH              hmm_13TeV_cat14  Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat14
+shapes *                hmm_13TeV_cat2   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat2
+shapes BKG              hmm_13TeV_cat2   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:exp_cat2_ord3
+shapes data_obs         hmm_13TeV_cat2   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat2
+shapes ggH              hmm_13TeV_cat2   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat2
+shapes qqH              hmm_13TeV_cat2   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat2
+shapes *                hmm_13TeV_cat3   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat3
+shapes BKG              hmm_13TeV_cat3   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod2_cat3_ord5
+shapes data_obs         hmm_13TeV_cat3   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat3
+shapes ggH              hmm_13TeV_cat3   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat3
+shapes qqH              hmm_13TeV_cat3   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat3
+shapes *                hmm_13TeV_cat4   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat4
+shapes BKG              hmm_13TeV_cat4   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:exp_cat4_ord3
+shapes data_obs         hmm_13TeV_cat4   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat4
+shapes ggH              hmm_13TeV_cat4   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat4
+shapes qqH              hmm_13TeV_cat4   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat4
+shapes *                hmm_13TeV_cat5   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat5
+shapes BKG              hmm_13TeV_cat5   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod2_cat5_ord5
+shapes data_obs         hmm_13TeV_cat5   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat5
+shapes ggH              hmm_13TeV_cat5   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat5
+shapes qqH              hmm_13TeV_cat5   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat5
+shapes *                hmm_13TeV_cat6   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat6
+shapes BKG              hmm_13TeV_cat6   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod_cat6_ord1
+shapes data_obs         hmm_13TeV_cat6   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat6
+shapes ggH              hmm_13TeV_cat6   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat6
+shapes qqH              hmm_13TeV_cat6   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat6
+shapes *                hmm_13TeV_cat7   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat7
+shapes BKG              hmm_13TeV_cat7   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod2_cat7_ord5
+shapes data_obs         hmm_13TeV_cat7   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat7
+shapes ggH              hmm_13TeV_cat7   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat7
+shapes qqH              hmm_13TeV_cat7   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat7
+shapes *                hmm_13TeV_cat8   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat8
+shapes BKG              hmm_13TeV_cat8   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod2_cat8_ord5
+shapes data_obs         hmm_13TeV_cat8   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat8
+shapes ggH              hmm_13TeV_cat8   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat8
+shapes qqH              hmm_13TeV_cat8   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat8
+shapes *                hmm_13TeV_cat9   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_$PROCESS_cat9
+shapes BKG              hmm_13TeV_cat9   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:zmod2_cat9_ord5
+shapes data_obs         hmm_13TeV_cat9   Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root w:dataObs_cat9
+shapes ggH              hmm_13TeV_cat9   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_GluGlu_cat9
+shapes qqH              hmm_13TeV_cat9   Hmumu/2017_08_21_NewCat5_NoTTH/SignalModel.root w:pdf_sigmodel_VBF_cat9
+
+----------------------------------------------------------------------------------------------------------------------------------
+bin          hmm_13TeV_cat0   hmm_13TeV_cat1   hmm_13TeV_cat2   hmm_13TeV_cat3   hmm_13TeV_cat4   hmm_13TeV_cat5   hmm_13TeV_cat6   hmm_13TeV_cat7   hmm_13TeV_cat8   hmm_13TeV_cat9   hmm_13TeV_cat10  hmm_13TeV_cat11  hmm_13TeV_cat12  hmm_13TeV_cat13  hmm_13TeV_cat14
+observation  -1.0             -1.0             -1.0             -1.0             -1.0             -1.0             -1.0             -1.0             -1.0             -1.0             -1.0             -1.0             -1.0             -1.0             -1.0           
+----------------------------------------------------------------------------------------------------------------------------------
+bin                              hmm_13TeV_cat0   hmm_13TeV_cat0   hmm_13TeV_cat0   hmm_13TeV_cat0   hmm_13TeV_cat0   hmm_13TeV_cat0   hmm_13TeV_cat0   hmm_13TeV_cat1   hmm_13TeV_cat1   hmm_13TeV_cat1   hmm_13TeV_cat1   hmm_13TeV_cat1   hmm_13TeV_cat1   hmm_13TeV_cat1   hmm_13TeV_cat2   hmm_13TeV_cat2   hmm_13TeV_cat2   hmm_13TeV_cat2   hmm_13TeV_cat2   hmm_13TeV_cat2   hmm_13TeV_cat2   hmm_13TeV_cat3   hmm_13TeV_cat3   hmm_13TeV_cat3   hmm_13TeV_cat3   hmm_13TeV_cat3   hmm_13TeV_cat3   hmm_13TeV_cat3   hmm_13TeV_cat4   hmm_13TeV_cat4   hmm_13TeV_cat4   hmm_13TeV_cat4   hmm_13TeV_cat4   hmm_13TeV_cat4   hmm_13TeV_cat4   hmm_13TeV_cat5   hmm_13TeV_cat5   hmm_13TeV_cat5   hmm_13TeV_cat5   hmm_13TeV_cat5   hmm_13TeV_cat5   hmm_13TeV_cat5   hmm_13TeV_cat6   hmm_13TeV_cat6   hmm_13TeV_cat6   hmm_13TeV_cat6   hmm_13TeV_cat6   hmm_13TeV_cat6   hmm_13TeV_cat6   hmm_13TeV_cat7   hmm_13TeV_cat7   hmm_13TeV_cat7   hmm_13TeV_cat7   hmm_13TeV_cat7   hmm_13TeV_cat7   hmm_13TeV_cat7   hmm_13TeV_cat8   hmm_13TeV_cat8   hmm_13TeV_cat8   hmm_13TeV_cat8   hmm_13TeV_cat8   hmm_13TeV_cat8   hmm_13TeV_cat8   hmm_13TeV_cat9   hmm_13TeV_cat9   hmm_13TeV_cat9   hmm_13TeV_cat9   hmm_13TeV_cat9   hmm_13TeV_cat9   hmm_13TeV_cat9   hmm_13TeV_cat10  hmm_13TeV_cat10  hmm_13TeV_cat10  hmm_13TeV_cat10  hmm_13TeV_cat10  hmm_13TeV_cat10  hmm_13TeV_cat10  hmm_13TeV_cat11  hmm_13TeV_cat11  hmm_13TeV_cat11  hmm_13TeV_cat11  hmm_13TeV_cat11  hmm_13TeV_cat11  hmm_13TeV_cat11  hmm_13TeV_cat12  hmm_13TeV_cat12  hmm_13TeV_cat12  hmm_13TeV_cat12  hmm_13TeV_cat12  hmm_13TeV_cat12  hmm_13TeV_cat12  hmm_13TeV_cat13  hmm_13TeV_cat13  hmm_13TeV_cat13  hmm_13TeV_cat13  hmm_13TeV_cat13  hmm_13TeV_cat13  hmm_13TeV_cat13  hmm_13TeV_cat14  hmm_13TeV_cat14  hmm_13TeV_cat14  hmm_13TeV_cat14  hmm_13TeV_cat14  hmm_13TeV_cat14  hmm_13TeV_cat14 hmm_13TeV_cat0 hmm_13TeV_cat1 hmm_13TeV_cat2 hmm_13TeV_cat3 hmm_13TeV_cat4 hmm_13TeV_cat5 hmm_13TeV_cat6 hmm_13TeV_cat7 hmm_13TeV_cat8 hmm_13TeV_cat9 hmm_13TeV_cat10 hmm_13TeV_cat11 hmm_13TeV_cat12 hmm_13TeV_cat13 hmm_13TeV_cat14
+process                          ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG              ZH               WPlusH           qqH              WMinusH          ttH              ggH              BKG                BIAS    BIAS    BIAS    BIAS    BIAS    BIAS    BIAS    BIAS    BIAS    BIAS    BIAS    BIAS    BIAS    BIAS    BIAS
+process                          -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1                -5               -4               -3               -2               -1               0                1              2   2   2   2   2   2   2   2   2   2   2   2   2   2   2   
+rate                             35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000           35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       35867.0000       1.0000         35867   35867   35867   35867   35867   35867   35867   35867   35867   35867   35867   35867   35867   35867   35867   
+----------------------------------------------------------------------------------------------------------------------------------
+hmm           rateParam hmm_13TeV_cat13 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat13 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat13 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat13 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat11 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat11 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat1 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat1 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat12_bkg_norm  rateParam hmm_13TeV_cat12 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat0 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat0 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat14 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat14 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat0 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat0 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat7 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat7 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat5 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat5 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat10 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat10 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat5 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat5 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat5 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat5 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat6 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat6 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat13 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat13 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat4 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat4 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat2 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat2 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat9 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat9 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat6 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat6 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat3 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat3 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat10_bkg_norm  rateParam hmm_13TeV_cat10 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat13 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat13 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat8 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat8 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat0_bkg_norm  rateParam hmm_13TeV_cat0 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat9 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat9 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat12 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat12 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat8 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat8 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat9 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat9 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat9_bkg_norm  rateParam hmm_13TeV_cat9 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat8 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat8 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat14 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat14 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat7 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat7 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat8 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat8 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat12 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat12 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat9 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat9 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat14 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat14 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat1 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat1 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat10 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat10 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat7 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat7 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat11 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat11 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat14 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat14 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat5 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat5 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat4 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat4 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat3_bkg_norm  rateParam hmm_13TeV_cat3 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat3 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat3 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat0 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat0 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat13_bkg_norm  rateParam hmm_13TeV_cat13 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat4 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat4 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat0 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat0 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat6 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat6 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat8 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat8 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat11 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat11 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat1 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat1 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat7_bkg_norm  rateParam hmm_13TeV_cat7 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat2 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat2 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat2 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat2 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat10 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat10 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat3 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat3 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat12 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat12 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat10 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat10 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat0 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat0 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat1 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat1 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat8 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat8 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat12 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat12 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat11 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat11 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat11 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat11 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat14 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat14 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat3 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat3 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat6 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat6 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat7 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat7 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat13 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat13 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat1 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat1 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat6_bkg_norm  rateParam hmm_13TeV_cat6 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat2 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat2 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat2 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat2 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat6 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat6 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat4 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat4 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat7 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat7 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat1_bkg_norm  rateParam hmm_13TeV_cat1 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat9 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat9 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat9 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat9 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat5_bkg_norm  rateParam hmm_13TeV_cat5 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat12 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat12 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat14_bkg_norm  rateParam hmm_13TeV_cat14 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat10 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat10 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat4 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat4 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat7 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat7 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat10 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat10 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat4_bkg_norm  rateParam hmm_13TeV_cat4 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat11 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam hmm_13TeV_cat11 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat5 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat5 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat4 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat4 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat3 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat3 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat14 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam hmm_13TeV_cat14 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat2_bkg_norm  rateParam hmm_13TeV_cat2 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat5 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat5 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat2 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat2 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat8_bkg_norm  rateParam hmm_13TeV_cat8 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+pdf_cat11_bkg_norm  rateParam hmm_13TeV_cat11 BKG Hmumu/2017_08_21_NewCat5_NoTTH/BackgroundModel.root:w  
+hmm           rateParam hmm_13TeV_cat1 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam hmm_13TeV_cat1 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat3 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam hmm_13TeV_cat3 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat13 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat13 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat6 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat6 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat0 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam hmm_13TeV_cat0 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam hmm_13TeV_cat12 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam hmm_13TeV_cat12 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+
+hmm rateParam 	    * BIAS $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+ggH_13TeV rateParam * BIAS $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+
+
+## cat0 & $18\%$ & $9.0$\\
+bias_cat0_nuis     rateParam hmm_13TeV_cat0 BIAS 0.
+bias_cat0_nuis     param 0 1.7
+
+## cat1 & $12\%$ & $9.6$\\
+bias_cat1_nuis     rateParam hmm_13TeV_cat1 BIAS 0.
+bias_cat1_nuis     param 0 1.2
+
+## cat1 & $20\%$ & $9.5$\\
+bias_cat2_nuis     rateParam hmm_13TeV_cat2 BIAS 0.
+bias_cat2_nuis     param 0 2
+
+## cat2 & $17\%$ & $7.1$\\
+bias_cat3_nuis     rateParam hmm_13TeV_cat3 BIAS 0.
+bias_cat3_nuis     param 0 1.27
+
+## cat3 & $12\%$ & $7.6$\\
+bias_cat4_nuis     rateParam hmm_13TeV_cat4 BIAS 0.
+bias_cat4_nuis     param 0 1.27
+
+## cat4 & $6\%$ & $3.5$\\
+bias_cat5_nuis     rateParam hmm_13TeV_cat5 BIAS 0.
+bias_cat5_nuis     param 0 0.22
+
+## cat5 & $9\%$ & $3.1$\\
+bias_cat6_nuis     rateParam hmm_13TeV_cat6 BIAS 0.
+bias_cat6_nuis     param 0 0.29
+
+## cat6 & $7\%$  & $3.5$\\
+bias_cat7_nuis     rateParam hmm_13TeV_cat7 BIAS 0.
+bias_cat7_nuis     param 0 0.25
+
+## cat7 & $20\%$ & $3.4$\\
+bias_cat8_nuis     rateParam hmm_13TeV_cat8 BIAS 0.
+bias_cat8_nuis     param 0 0.7
+
+## cat8 & $10\%$ & $5.7$\\
+bias_cat9_nuis     rateParam hmm_13TeV_cat9 BIAS 0.
+bias_cat9_nuis     param 0 0.37
+
+## cat9 & $21\%$ & $3.6$ \\
+bias_cat10_nuis     rateParam hmm_13TeV_cat10 BIAS 0.
+bias_cat10_nuis     param 0 0.79
+
+## cat10 & $10\%$ & $3.3$\\
+bias_cat11_nuis     rateParam hmm_13TeV_cat11 BIAS 0.
+bias_cat11_nuis     param 0 0.34
+
+## cat11 & $22\%$ & $2.7$\\
+bias_cat12_nuis     rateParam hmm_13TeV_cat12 BIAS 0.
+bias_cat12_nuis     param 0 0.62
+
+## cat12 & $13\%$ & $2.9$\\
+bias_cat13_nuis     rateParam hmm_13TeV_cat13 BIAS 0.
+bias_cat13_nuis     param 0 0.4
+
+## cat13 & $10\%$ & $2.0$ purity=.5\\
+bias_cat14_nuis     rateParam hmm_13TeV_cat14 BIAS 0.
+bias_cat14_nuis     param 0 0.4
+
+lumiscale rateParam * * 1
+nuisance edit freeze lumiscale
+
+smear_cat0_procGluGlu  param  0 1.
+scale_cat0_procGluGlu  param  0 1.
+nuisance edit freeze smear_cat0_procGluGlu
+nuisance edit freeze scale_cat0_procGluGlu

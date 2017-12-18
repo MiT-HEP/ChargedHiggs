@@ -28,6 +28,10 @@ import re
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
 
+if opts.batch: 
+    print "* entering batch mode"
+    ROOT.gROOT.SetBatch()
+
 print "inserting in path cwd/script"
 sys.path.insert(0,os.getcwd()+'/script')
 print "inserting in path cwd"
@@ -145,10 +149,10 @@ def Blind(h,mt=80):
 
 def Normalize(h):
 	if opts.qcd!="" and 'QCD' in h.GetName():
-		#print "Scaling QCD by",opts.lumi/opts.qcdlumi
+		print "Scaling QCD by",opts.lumi/opts.qcdlumi,"(",h.GetName(),")"
 		h.Scale(opts.lumi/opts.qcdlumi)
 	elif opts.ewk!="" and 'ewk' in h.GetName():
-		#print "Scaling EWK by",opts.lumi/opts.ewklumi
+		print "Scaling EWK by",opts.lumi/opts.ewklumi
 		h.Scale(opts.lumi/opts.ewklumi)
 	else:
 		print "Scaling MC",h.GetName(),"by",opts.lumi
@@ -315,144 +319,146 @@ h_bkg_err=None
 print "systAll:",systAll
 
 for syst in systAll:
+  print "----------------- DOING",syst,"----------------"
   h_bkg_syst_up=h_bkg.Clone("Bkg_syst_"+syst+"Up")
   h_bkg_syst_up.Reset("ACE")
   h_bkg_syst_dn=h_bkg.Clone("Bkg_syst_"+syst+"Down")
   h_bkg_syst_dn.Reset("ACE")
 
   for mc in mcList:
-	isNormForMC=False
-	# systsNorm= key : [norm,] [match]
-	if syst in systsNorm:
-	   for match in systsNorm[syst][1]:
-		if match in mc:
-			isNormForMC=True
+    print "*) MC:",mc
+    isNormForMC=False
+    # systsNorm= key : [norm,] [match]
+    if syst in systsNorm:
+       for match in systsNorm[syst][1]:
+    	if match in mc:
+    		isNormForMC=True
+    
+    if syst=="" or (syst not in systsMC and not isNormForMC):
+    	lastget=basedir+opts.var+"_"+ mc
+    	h_mc=GetHistoFromFile(fIn,lastget)
+    	if 'Hplus' not in mc:
+    		Smooth(h_mc)
+    	else:
+    		print "SIGNAL?!? WHY?!?"
+    
+    	Normalize(h_mc)
+    	if syst=="":
+    		print "-> Adding",mc,"to bkg",
+    		h_bkg.Add(h_mc)
+    		print " * integral now is",h_bkg.Integral()
+    		histos[mc] = h_mc ## save the nominal point
+    	else:
+    		h_bkg_syst_up.Add(h_mc)
+    		h_bkg_syst_dn.Add(h_mc)
+    
+    elif isNormForMC:
+    	for idx in range(0,len(systsNorm[syst][0])):
+    		match=systsNorm[syst][1][idx]
+    		scalestr=systsNorm[syst][0][idx]
+    		if match in mc:
+    			#print "INITEGRAL For MC=",mc,"=",histos[mc].Integral()
+    			h_mc_up= histos[mc].Clone(mc+"_"+syst+"Up")
+    			h_mc_dn= histos[mc].Clone(mc+"_"+syst+"Down")
+    			if '/' in scalestr: ## '0.98/1.1'
+    				up=float(scalestr.split('/')[1])
+    				down=float(scalestr.split('/')[0])
+    				print "NORM syst=",syst,"MC=",mc, "scaling up by",up,"and down by",down
+    				h_mc_up.Scale(up)
+    				h_mc_dn.Scale(down)
+    			else:
+    				up=float(scalestr)
+    				print "NORM syst=",syst,"MC=",mc, "scaling up by",up,"and down by",1./up
+    				h_mc_up.Scale(up)
+    				h_mc_dn.Scale(1./up)
+    	h_bkg_syst_up.Add(h_mc_up)
+    	h_bkg_syst_dn.Add(h_mc_dn)
+    else:
+    	lastget=basedir+opts.var+"_"+ mc + "_" + syst +"Up"
+    	h_mc_up=GetHistoFromFile(fIn,lastget)
+    	if 'Hplus' not in lastget:
+    		Smooth(h_mc_up)
+    	Normalize(h_mc_up)
+    	h_bkg_syst_up.Add(h_mc_up)
+    
+    	lastget=basedir+opts.var+"_"+ mc + "_" + syst +"Down"
+    	h_mc_dn=GetHistoFromFile(fIn,lastget)
+    	if 'Hplus' not in lastget:
+    		Smooth(h_mc_dn)
+    	Normalize(h_mc_dn)
+    	h_bkg_syst_dn.Add(h_mc_dn)
 
-	if syst=="" or (syst not in systsMC and not isNormForMC):
-		lastget=basedir+opts.var+"_"+ mc
-		h_mc=GetHistoFromFile(fIn,lastget)
-		if 'Hplus' not in mc:
-			Smooth(h_mc)
-		else:
-			print "SIGNAL?!? WHY?!?"
+    if opts.qcd!="" :
+        if syst=="" or syst not in systsQCD:
+        	lastget="ChargedHiggsQCDPurity/"+opts.dir+"/"+opts.var+"IsoInv_Data"
+        	addlist=[]
+        	for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
+        		addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
+        
+        	h_qcd=GetHistoFromFile(fInQCD,lastget)
+        	for name2,c in addlist:
+        		h_tmp=GetHistoFromFile(fInQCD,name2).Clone(name2)
+        		h_tmp.Scale(c)
+        		h_qcd.Add(h_tmp)
+        
+        	Normalize(h_qcd) ## scale for qcd lumi and lumi
+        
+        	if syst=="":
+        		print "-> Adding QCD to bkg",
+        		h_bkg.Add(h_qcd)
+        		print " * integral now is",h_bkg.Integral()
+        		histos['QCD'] = h_qcd ## save the nominal point
+        	else:
+        		h_bkg_syst_up.Add(h_qcd)
+        		h_bkg_syst_dn.Add(h_qcd)
 
-		Normalize(h_mc)
-		if syst=="":
-			print "-> Adding",mc,"to bkg",
-			h_bkg.Add(h_mc)
-			print " * integral now is",h_bkg.Integral()
-			histos[mc] = h_mc ## save the nominal point
-		else:
-			h_bkg_syst_up.Add(h_mc)
-			h_bkg_syst_dn.Add(h_mc)
+    else:
+    	lastget="ChargedHiggsQCDPurity/"+opts.dir+"/"+opts.var+"IsoInv_Data"
+    	lastget+="_"+syst
+    	lastget+="Up"
+    	addlist=[]
+    	for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
+    		addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
+    
+    	h_qcd_up=GetHistoFromFile(fInQCD,lastget)
+    	for name2,c in addlist:
+    		h_tmp=GetHistoFromFile(fInQCD,name2).Clone(name2)
+    		h_tmp.Scale(c)
+    		h_qcd_up.Add(h_tmp)
+    
+    	Normalize(h_qcd_up)
+    	h_bkg_syst_up.Add(h_qcd_up)
+    
+    	lastget="ChargedHiggsQCDPurity/"+opts.dir+"/"+opts.var+"IsoInv_Data"
+    	lastget+="_"+syst
+    	lastget+="Down"
+    	addlist=[]
+    	for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
+    		addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
+    
+    	h_qcd_dn=GetHistoFromFile(fInQCD,lastget)
+    	for name2,c in addlist:
+    		h_tmp=GetHistoFromFile(fInQCD,name2).Clone(name2)
+    		h_tmp.Scale(c)
+    		h_qcd_dn.Add(h_tmp)
+    
+    	Normalize(h_qcd_dn)
+    	h_bkg_syst_dn.Add(h_qcd_dn)
 
-	elif isNormForMC:
-		for idx in range(0,len(systsNorm[syst][0])):
-			match=systsNorm[syst][1][idx]
-			scalestr=systsNorm[syst][0][idx]
-			if match in mc:
-				#print "INITEGRAL For MC=",mc,"=",histos[mc].Integral()
-				h_mc_up= histos[mc].Clone(mc+"_"+syst+"Up")
-				h_mc_dn= histos[mc].Clone(mc+"_"+syst+"Down")
-				if '/' in scalestr: ## '0.98/1.1'
-					up=float(scalestr.split('/')[1])
-					down=float(scalestr.split('/')[0])
-					print "NORM syst=",syst,"MC=",mc, "scaling up by",up,"and down by",down
-					h_mc_up.Scale(up)
-					h_mc_dn.Scale(down)
-				else:
-					up=float(scalestr)
-					print "NORM syst=",syst,"MC=",mc, "scaling up by",up,"and down by",1./up
-					h_mc_up.Scale(up)
-					h_mc_dn.Scale(1./up)
-		h_bkg_syst_up.Add(h_mc_up)
-		h_bkg_syst_dn.Add(h_mc_dn)
-	else:
-		lastget=basedir+opts.var+"_"+ mc + "_" + syst +"Up"
-		h_mc_up=GetHistoFromFile(fIn,lastget)
-		if 'Hplus' not in lastget:
-			Smooth(h_mc_up)
-		Normalize(h_mc_up)
-		h_bkg_syst_up.Add(h_mc_up)
+    if opts.ewk!="":
+      print "TODO"
+      raise ValueError("TO implement")
+      #env=histos[mc].Clone("env_"+mc+"_"+syst)
+      #Envelope(env,[h_mc_up,h_mc_dn])
 
-		lastget=basedir+opts.var+"_"+ mc + "_" + syst +"Down"
-		h_mc_dn=GetHistoFromFile(fIn,lastget)
-		if 'Hplus' not in lastget:
-			Smooth(h_mc_dn)
-		Normalize(h_mc_dn)
-		h_bkg_syst_dn.Add(h_mc_dn)
-
-  if opts.qcd!="" :
-	if syst=="" or syst not in systsQCD:
-		lastget="ChargedHiggsQCDPurity/"+opts.dir+"/"+opts.var+"IsoInv_Data"
-		addlist=[]
-		for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
-			addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
-
-		h_qcd=GetHistoFromFile(fInQCD,lastget)
-		for name2,c in addlist:
-			h_tmp=GetHistoFromFile(fInQCD,name2).Clone(name2)
-			h_tmp.Scale(c)
-			h_qcd.Add(h_tmp)
-
-		Normalize(h_qcd) ## scale for qcd lumi and lumi
-
-		if syst=="":
-			print "-> Adding QCD to bkg",
-			h_bkg.Add(h_qcd)
-			print " * integral now is",h_bkg.Integral()
-			histos['QCD'] = h_qcd ## save the nominal point
-		else:
-			h_bkg_syst_up.Add(h_qcd)
-			h_bkg_syst_dn.Add(h_qcd)
-
-	else:
-		lastget="ChargedHiggsQCDPurity/"+opts.dir+"/"+opts.var+"IsoInv_Data"
-		lastget+="_"+syst
-		lastget+="Up"
-		addlist=[]
-		for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
-			addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
-
-		h_qcd_up=GetHistoFromFile(fInQCD,lastget)
-		for name2,c in addlist:
-			h_tmp=GetHistoFromFile(fInQCD,name2).Clone(name2)
-			h_tmp.Scale(c)
-			h_qcd_up.Add(h_tmp)
-
-		Normalize(h_qcd_up)
-		h_bkg_syst_up.Add(h_qcd_up)
-
-		lastget="ChargedHiggsQCDPurity/"+opts.dir+"/"+opts.var+"IsoInv_Data"
-		lastget+="_"+syst
-		lastget+="Down"
-		addlist=[]
-		for bkg in ['WJets','TT','WW','WZ','ZZ','DY','ST']:
-			addlist.append( (re.sub('Data',bkg,lastget),-opts.qcdlumi) ) #
-
-		h_qcd_dn=GetHistoFromFile(fInQCD,lastget)
-		for name2,c in addlist:
-			h_tmp=GetHistoFromFile(fInQCD,name2).Clone(name2)
-			h_tmp.Scale(c)
-			h_qcd_dn.Add(h_tmp)
-
-		Normalize(h_qcd_dn)
-		h_bkg_syst_dn.Add(h_qcd_dn)
-
-  if opts.ewk!="":
-	  print "TODO"
-	  raise ValueError("TO implement")
-		#env=histos[mc].Clone("env_"+mc+"_"+syst)
-		#Envelope(env,[h_mc_up,h_mc_dn])
-
-	#if syst !="":lastget+="_"+syst
-	#h_mc=fIn.Get(lastget)
-  if syst=="":
-	  h_bkg_err=h_bkg.Clone("Bkg_err") ## stat error
-  else:
-	  h_bkg_env=h_bkg.Clone("Bkg_env_" + syst)
-	  Envelope(h_bkg_env,[h_bkg_syst_up,h_bkg_syst_dn])
-	  SqrAdd(h_bkg,h_bkg_err,h_bkg_env) ## add to h_bkg_err, the error of h_bkg_env, considering the midpoint is h_bkg
+      #if syst !="":lastget+="_"+syst
+      #h_mc=fIn.Get(lastget)
+    if syst=="":
+        h_bkg_err=h_bkg.Clone("Bkg_err") ## stat error
+    else:
+        h_bkg_env=h_bkg.Clone("Bkg_env_" + syst)
+        Envelope(h_bkg_env,[h_bkg_syst_up,h_bkg_syst_dn])
+        SqrAdd(h_bkg,h_bkg_err,h_bkg_env) ## add to h_bkg_err, the error of h_bkg_env, considering the midpoint is h_bkg
 
 
 h_bkg.SetLineColor(ROOT.kBlack)
@@ -483,54 +489,54 @@ drawList=["WW","WZ","ZZ","ST","DY","TT","WJets","QCD"]
 leg.AddEntry(h_data,"Data","PE")
 
 def IntegrateStack(ts):
-	S=0.
-	l=ts.GetHists()
-	for i in range(0,l.GetSize()):
-		S+=l.At(i).Integral()
-	return S
+    S=0.
+    l=ts.GetHists()
+    for i in range(0,l.GetSize()):
+        S+=l.At(i).Integral()
+    return S
 
 for mc in drawList:
-	#["DY","TT","ST","WW","WZ","ZZ","WJets"]
-	histos[mc].SetLineColor(ROOT.kBlack)
-	histos[mc].SetLineWidth(1)
-	histos[mc].SetLineStyle(1)
-
-	if mc=="DY": 
-		histos[mc].SetFillColor(ROOT.kTeal-9)
-	if mc=="TT":
-		histos[mc].SetFillColor(ROOT.kMagenta+2)
-	if mc=="ST":
-		histos[mc].SetFillColor(ROOT.kGreen+2)
-	if mc=="WW" or mc=="WZ":
-		histos[mc].SetFillColor(ROOT.kBlue)
-		histos[mc].SetLineColor(ROOT.kBlue)
-	if mc== "WJets":
-		histos[mc].SetFillColor(ROOT.kRed+1)
-	if mc=="ZZ":
-		histos[mc].SetFillColor(ROOT.kBlue)
-	if mc=="QCD":
-		histos[mc].SetFillColor(ROOT.kOrange)
-
-	st.Add(histos[mc])
-
-	print "->Adding",mc,"to stack","integral is now",IntegrateStack(st)
+    #["DY","TT","ST","WW","WZ","ZZ","WJets"]
+    histos[mc].SetLineColor(ROOT.kBlack)
+    histos[mc].SetLineWidth(1)
+    histos[mc].SetLineStyle(1)
+    
+    if mc=="DY": 
+        histos[mc].SetFillColor(ROOT.kTeal-9)
+    if mc=="TT":
+        histos[mc].SetFillColor(ROOT.kMagenta+2)
+    if mc=="ST":
+        histos[mc].SetFillColor(ROOT.kGreen+2)
+    if mc=="WW" or mc=="WZ":
+        histos[mc].SetFillColor(ROOT.kBlue)
+        histos[mc].SetLineColor(ROOT.kBlue)
+    if mc== "WJets":
+        histos[mc].SetFillColor(ROOT.kRed+1)
+    if mc=="ZZ":
+        histos[mc].SetFillColor(ROOT.kBlue)
+    if mc=="QCD":
+        histos[mc].SetFillColor(ROOT.kOrange)
+    
+    st.Add(histos[mc])
+    
+    print "->Adding",mc,"to stack","integral is now",IntegrateStack(st)
 
 drawList.reverse()
 for mc in drawList:
-	if mc=="DY": 
-		leg.AddEntry(histos[mc],"Z/#gamma*+jets","F")
-	if mc=="TT":
-		leg.AddEntry(histos[mc],"t#bar{t}","F")
-	if mc=="ST":
-		leg.AddEntry(histos[mc],"Single top quark","F")
-	if mc=="ZZ":
-		leg.AddEntry(histos[mc],"Diboson","F")
-	if mc=="QCD":
-		leg.AddEntry(histos[mc],"mis-ID #tau^{h}","F")
-	if mc== "WJets":
-		leg.AddEntry(histos[mc],"W+jets","F")
+    if mc=="DY": 
+        leg.AddEntry(histos[mc],"Z/#gamma*+jets","F")
+    if mc=="TT":
+        leg.AddEntry(histos[mc],"t#bar{t}","F")
+    if mc=="ST":
+        leg.AddEntry(histos[mc],"Single top quark","F")
+    if mc=="ZZ":
+        leg.AddEntry(histos[mc],"Diboson","F")
+    if mc=="QCD":
+        leg.AddEntry(histos[mc],"mis-ID #tau^{h}","F")
+    if mc== "WJets":
+        leg.AddEntry(histos[mc],"W+jets","F")
 
-
+print "-> start drawing"
 c=ROOT.TCanvas("c","c",800,800)
 c.SetTopMargin(0.05)
 c.SetRightMargin(0.05)
@@ -543,16 +549,16 @@ st.Draw("HIST")
 
 
 for mc in drawList:
-	print mc," BIN1=",histos[mc].GetBinContent(1)
+    print mc," BIN1=",histos[mc].GetBinContent(1)
 print "BKG",h_bkg.GetBinContent(1)
 
 #h_data.Draw("AXIS SAME")
 if opts.var == "Mt":
-	st.GetXaxis().SetTitle("m_{T} [GeV]")
+    st.GetXaxis().SetTitle("m_{T} [GeV]")
 elif opts.var == "EtMiss":
-	st.GetXaxis().SetTitle("E_{T}^{miss} [GeV]")
+    st.GetXaxis().SetTitle("E_{T}^{miss} [GeV]")
 else:
-	st.GetXaxis().SetTitle(opts.var)
+    st.GetXaxis().SetTitle(opts.var)
 
 st.GetXaxis().SetTitleOffset(1.4)
 st.GetXaxis().SetRangeUser(0,500)
@@ -586,7 +592,12 @@ txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
 c.Modify()
 c.Update()
 
-raw_input("ok?")
+if not opts.batch:
+    raw_input("ok?")
 
 c.SaveAs(opts.output)
+
+if '.pdf' in opts.output:
+    c.SaveAs(re.sub('.pdf','.png',opts.output))
+    c.SaveAs(re.sub('.pdf','.root',opts.output))
 

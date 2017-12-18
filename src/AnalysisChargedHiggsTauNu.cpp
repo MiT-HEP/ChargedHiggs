@@ -9,6 +9,8 @@ void ChargedHiggsTauNu::Init()
 {
     Log(__FUNCTION__,"INFO",Form("nProngs selected=%d",nprongs) );
 
+    if ( doGen ) initGen();
+
     for ( string& l : AllLabel()  ) {
 
         Log(__FUNCTION__,"INFO", "Booking Histo CutFlow_" + l);
@@ -151,6 +153,111 @@ void ChargedHiggsTauNu::Init()
 
 }
 
+void ChargedHiggsTauNu::initGen(){
+    for ( string& l : AllLabel()  ) {
+        Book( "ChargedHiggsTauNu/Gen/CutFlow_"+l,"CutFlow",100,0,100);
+
+        GetHisto("ChargedHiggsTauNu/Gen/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(1, "All");
+        GetHisto("ChargedHiggsTauNu/Gen/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(2, "H#pm");
+        GetHisto("ChargedHiggsTauNu/Gen/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(3, "H#pm#rightarrow#tau");
+        GetHisto("ChargedHiggsTauNu/Gen/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(4, "H#pm#rightarrow#tau^{h} (B)");
+        GetHisto("ChargedHiggsTauNu/Gen/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(5, "(B) + Lep Veto Gen Level");
+        GetHisto("ChargedHiggsTauNu/Gen/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(6, "(B) + LooseIso Veto");
+        GetHisto("ChargedHiggsTauNu/Gen/CutFlow_"+l,"")->GetXaxis()->SetBinLabel(7, "(B) + MiniIso Veto");
+    }
+
+}
+
+void ChargedHiggsTauNu::analyzeGen(Event*e, string systname)
+{
+    // no systematics shifts for this
+    if (systname !="" and systname != "NONE") return;
+
+    string label = GetLabel(e);
+
+    Weight* w = e->GetWeight();
+    // make sure we don't book sf or corrections here
+    double mcWeight=w->GetBareMCWeight() * w->GetBarePUWeight()* w->GetBareMCXsec() * w->GetBareLumi() / w->GetBareNevents();
+    Fill("ChargedHiggsTauNu/Gen/CutFlow_"+label,systname,0,mcWeight);
+
+    // find the H+
+    int iHpm=-1;
+    int iTau=-1;
+    int iLFromTau=-1; // find leptonic taus
+    int iIsoL = -1; // is there an isolated lepton ?
+    for(unsigned i = 0 ; ;++i)
+    {
+        GenParticle *g = e->GetGenParticle(i);
+        if (g==NULL) break; //exit condition
+
+        int apdg = abs(g->GetPdgId());
+        if (iHpm <0  and apdg == 37 ) { iHpm = i; }
+        if (iTau <0 and apdg == 15 ) { iTau = i; }
+        if (iLFromTau <0 and (apdg == 11 or apdg == 13) and e->GenParticleDecayedFrom(i,15) ) { iLFromTau = i; }
+        if (iIsoL <0  and (apdg == 11 or apdg == 13) and g->IsPromptFinalState() and g->Pt() >10 and abs(g->Eta())<2.4){
+            float iso = 0.0;
+            for(unsigned j = 0 ; ;++j)
+            {
+                if (i == j ) continue; // no double counting;
+                GenParticle *g2 = e->GetGenParticle(j);
+                if (g2 == NULL) break;
+                if (not g2->IsPromptFinalState()) continue;
+                if (g2->IsDressed() ) continue; // no dressed leptons
+                if (g2->DeltaR(g) >0.1)  continue;
+                iso += g2->Pt();
+            }
+            if (iso<10) iIsoL = i;
+        }
+
+    }
+
+    bool lepVeto=false;
+    if (e->Nleps() ==0 ) lepVeto=true;
+    else if( e->GetMuon(0) == NULL){ // no 10 GeV muon
+        
+        if (e->GetElectron(0) !=NULL and e->GetElectron(0)->Pt() <15) lepVeto=true; // pt ordered
+    }
+
+    vector<Lepton*> miniIsoLeptons;
+    bool lepVetoMiniIso=true;
+    for(unsigned il=0 ; ;++il)
+    {
+        Lepton *l = e->GetBareLepton(il);
+        if (l == NULL) break;  // exit strategy
+        
+        // selection
+        if (l->Pt() <10 ) continue;
+        //l->SetIsoRelCut(0.25);
+        if (abs(l->Eta()) >2.4) continue;
+        //medium id
+        if( not l->GetMediumId() ) continue;
+
+        //MINI-ISO
+        if( l->MiniIsolation() >0.4 ) continue;//loose
+
+        // for muons require tracker and global
+        if (l->IsMuonDirty() and not l->GetTrackerMuon())  continue;
+        if (l->IsMuonDirty() and not l->GetGlobalMuon())  continue;
+
+        // selected leptons
+        miniIsoLeptons.push_back(l);
+        lepVetoMiniIso=false;
+    }
+    // sort miniIsoLeptons by pt
+    std::sort(miniIsoLeptons.begin(),miniIsoLeptons.end(),[](Lepton const *a, Lepton const *b ){return a->Pt() > b->Pt();});
+
+
+    if (iHpm >=0 ) Fill("ChargedHiggsTauNu/Gen/CutFlow_"+label,systname,1,mcWeight);
+    if (iHpm >=0 and iTau>=0 ) Fill("ChargedHiggsTauNu/Gen/CutFlow_"+label,systname,2,mcWeight);
+    if (iHpm >=0 and iTau>=0 and iLFromTau<0){
+
+        Fill("ChargedHiggsTauNu/Gen/CutFlow_"+label,systname,3,mcWeight);
+        if (iIsoL <0) Fill("ChargedHiggsTauNu/Gen/CutFlow_"+label,systname,4,mcWeight);
+        if (lepVeto) Fill("ChargedHiggsTauNu/Gen/CutFlow_"+label,systname,5,mcWeight);
+        if (lepVetoMiniIso ) Fill("ChargedHiggsTauNu/Gen/CutFlow_"+label,systname,6,mcWeight);
+    }
+
+}
 
 unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
     
@@ -179,6 +286,38 @@ unsigned ChargedHiggsTauNu::Selection(Event *e, bool direct, bool muon) {
             garbage.reset(t); // make sure it will be deleted
         }
     }
+
+    // Apply matching to a pileup-ided jet for taus, 
+    // both for direct and inversely isolated
+    /*
+    if (not muon and t != NULL){
+        Jet *j = e->GetMatchedBareJet(t);
+        // match a tau to a well pu-ided jet.
+        if (j==NULL) t=NULL;
+        else {
+            float aeta= abs(j->Eta());
+            float pt = j->GetP4Dirty().Pt(); // no syst
+            float puId = j -> GetPuId();
+            if ( aeta< 2.5){
+                if (pt >=30 and pt< 50 and puId <-0.89)  t=NULL;
+                if (pt >=10 and pt< 30 and puId <-0.97)  t=NULL;
+            }
+            else if (aeta < 2.75){
+                if (pt >=30 and pt< 50 and puId <-0.52)  t=NULL;
+                if (pt >=10 and pt< 30 and puId <-0.68)  t=NULL;
+            }
+            else if (aeta < 3.00){
+                if (pt >=30 and pt< 50 and puId <-0.38)  t=NULL;
+                if (pt >=10 and pt< 30 and puId <-0.53)  t=NULL;
+            }
+            else if (aeta < 5.00){
+                if (pt >=30 and pt< 50 and puId <-0.30)  t=NULL;
+                if (pt >=10 and pt< 30 and puId <-0.47)  t=NULL;
+            }
+        }
+    }
+    */
+    
 
     Object *sub = NULL;
     if (direct and not muon) sub = e->GetTau(1);
@@ -257,6 +396,8 @@ int ChargedHiggsTauNu::analyze(Event*e,string systname)
     #ifdef VERBOSE
         if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","analyze event with syst "+systname);
     #endif
+    if(doGen)analyzeGen(e,systname);
+
     string label = GetLabel(e);
     
     if(e->weight() == 0.) cout <<"[ChargedHiggsTauNu]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;

@@ -225,8 +225,10 @@ class Event{
 
     //-----------------------------
     virtual void ClearEvent();
+    ///@brief return if the current event is from data or from MC
     virtual inline int IsRealData(){ return isRealData_ ;} 
     virtual void clearSyst(); // call clearSyst in all object it posses
+    ///@brief return the weight for the event. the safe guard forces 1 for data.
     double weight(bool safe=true); // safe will return 1 for data, ALWAYS
     // update objects that can be invalid (jets)
     virtual void validate();
@@ -240,9 +242,14 @@ class Event{
     bool ExistSF(string label){ return weight_ -> ExistSF(label); }
 
     // 
+    ///@brief apply top pt reweighting to the event.
     void ApplyTopReweight();
+    ///@brief apply btagging scale factor to the event. Working points (wp) correspond to loose,medium and tight.
     void ApplyBTagSF(int wp=0);
     void ApplyTauSF(Tau*t,bool prongs=true,const string& extra="");
+
+    ///@brief Get Jet Matched to an object (o) without any selection.
+    Jet* GetMatchedBareJet(Object *o,float dR=0.4){ for(unsigned iJet=0;iJet<jets_.size();++iJet) if (o->DeltaR(jets_[iJet])<dR) return jets_[iJet]; return (Jet*)NULL; }
 };
 
 #endif
