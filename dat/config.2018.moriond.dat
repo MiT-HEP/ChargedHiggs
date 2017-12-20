@@ -1,0 +1,31 @@
+################
+### DATASETS ###
+################
+
+#### BKG ###
+## remove previous
+Files=
+
+
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+include=dat/json.2018.moriond.dat
+include=dat/taunu.dat
+include=dat/tmva.dat
+
+Branches=dat/branches.txt
+Output=ChHiggs.root
+MCDB=aux/mcdb.Hmumu.2018.dat
+pileup=aux/pileup.2018.moriond.Prompt.root
+SFDB=aux/sf_database.2018.moriond.txt
+
+Lumi=1
+Smear=NONE
+Correct=NONE
+#Correct=MetPhiCorrector
+Final=no
+
+Analysis=JsonAnalysis,Preselection,ChargedHiggsTauNu,ChargedHiggsHW,ChargedHiggsZW,ChargedHiggsMET,ChargedHiggsTopBottom
+

@@ -53,7 +53,7 @@ int LoadNero::InitTree(){
     // Set Extra: Extend, match ...
     bare_[ names_ ["BareTaus"] ] -> SetExtend();
     bare_[ names_ ["BarePhotons"] ] -> SetExtend();
-    dynamic_cast<BareTaus*> (bare_[ names_ ["BareTaus"] ])  -> SetMatch();
+    //dynamic_cast<BareTaus*> (bare_[ names_ ["BareTaus"] ])  -> SetMatch();
     //dynamic_cast<BareFatJets*> (bare_[ names_ ["BareFatJets"] ])  -> cachedPrefix="AK8CHS";
 
     for (auto b : bare_ )
@@ -332,10 +332,10 @@ void LoadNero::FillLeptons(){
         //l->SetP4( *(TLorentzVector*) ((*bl->p4)[iL]) );
         TLorentzVector lp4= *(TLorentzVector*) ((*bl->p4)[iL]);
 
-        #warning Using Electrons MiniAOD P4 as is w/o corrections
-        if (l->GetType() == 11) {
-            lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
-        }
+        //#warning Using Electrons MiniAOD P4 as is w/o corrections
+        //if (l->GetType() == 11) {
+        //    lp4 *= bl->lepPfPt->at(iL) / lp4.Pt();
+        //}
 
         l-> SetIso ( (*bl->iso) [iL]) ;
         l-> SetMva ( (*bl->mva) [iL]);
@@ -345,12 +345,11 @@ void LoadNero::FillLeptons(){
             l-> SetMiniIso  ( -999 );
         }
 
-        #warning ELE DELTA BETA
-        if (l->GetType() == 11) {
-            l->SetIso ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
-        }
+        //#warning ELE DELTA BETA
+        //if (l->GetType() == 11) {
+        //    l->SetIso ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
+        //}
         l-> SetP4( lp4 );
-        //l-> iso = ((*bl->iso) [iL])/(l->Pt());
         l-> SetCharge (((*bl->pdgId)[iL] >0) ?  -1: 1 ); 
         l-> SetTightId (( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight)); 
         l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepMedium));
@@ -446,7 +445,7 @@ void LoadNero::FillTaus(){
         //t-> id_ele = (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleMedium ; 
         t-> SetIdEle( (bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstEleTight ); 
         t-> SetIdMu (( bt -> selBits -> at(iL) ) & BareTaus::Selection::AgainstMuLoose ); 
-        t-> SetMatch( bt -> match -> at(iL) );
+        //t-> SetMatch( bt -> match -> at(iL) );
         //t-> id_iso = ( bt -> selBits -> at(iL) ) & (BareTaus::byMediumCombinedIsolationDeltaBetaCorr3Hits); 
         // chHiggs -> tau 
         //        t-> SetIdIso (( bt -> selBits -> at(iL) ) & (BareTaus::byLooseCombinedIsolationDeltaBetaCorr3Hits) ); 

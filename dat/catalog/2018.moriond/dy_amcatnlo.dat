@@ -1,0 +1,5 @@
+#DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/
+addfiles=%(amariniHmm)/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8
+
