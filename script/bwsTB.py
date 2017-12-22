@@ -17,11 +17,12 @@ likelihoodBinning = FwRebin.RebinLikelihood(LikeBins)
 
 parser= OptionParser()
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV23_TTbarSig_2Third_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV23_TTbarSig_2Third_2l.root")
+#### FILES w/ KERAS connected (V1) for AN
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_testNERO/src/ChargedHiggs/DEC16_2Third_SYST_KerasV1_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_testNERO/src/ChargedHiggs/DEC16_2Third_SYST_KerasV1_2l.root")
 
-parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV23_TTbarSig_1Third_1l.root")
-parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_11_testNERO/src/ChargedHiggs/NOV23_TTbarSig_1Third_2l.root")
+parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_testNERO/src/ChargedHiggs/DEC16_1Third_KerasV1_1l.root")
+parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_testNERO/src/ChargedHiggs/DEC16_1Third_KerasV1_2l.root")
 
 if doSyst:
 	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
@@ -223,14 +224,19 @@ basecat = []
 channel = []
 
 #1l
-if opts.kTest==0 or opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==8 or opts.kTest==9 or opts.kTest==10 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13 or opts.kTest==14 or opts.kTest==100 or opts.kTest==101  or opts.kTest==102:
-	channel = ["1L"]
-	basecat = ["Baseline","topCRR4","topCRR5","extraRadCR","charmCR"]
+if opts.kTest==0 or opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==8 or opts.kTest==9 or opts.kTest==10 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16 or opts.kTest==100 or opts.kTest==101  or opts.kTest==102:
+	### FINAL CONFIGURATION
+#	channel = ["1L"]
+#	basecat = ["Baseline","topCRR4","topCRR5","extraRadCR","charmCR"]
+	channel = ["1Mu","1Ele"]
+	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7","charmCR"]
 
 #2l
-if opts.kTest==30 or opts.kTest==31 or opts.kTest==32 or opts.kTest==33 or opts.kTest==34 or opts.kTest==35 or opts.kTest==36 or opts.kTest==37 or opts.kTest==38 or opts.kTest==39 or opts.kTest==40 or opts.kTest==41 or opts.kTest==42 or opts.kTest==43 or opts.kTest==44 or opts.kTest==200 or opts.kTest==201  or opts.kTest==202:
-	channel = ["2L"]
-	basecat = ["Baseline","topCRR4","topCRR5","extraRadCR"]
+if opts.kTest==30 or opts.kTest==31 or opts.kTest==32 or opts.kTest==33 or opts.kTest==34 or opts.kTest==35 or opts.kTest==36 or opts.kTest==37 or opts.kTest==38 or opts.kTest==39 or opts.kTest==40 or opts.kTest==41 or opts.kTest==42 or opts.kTest==43 or opts.kTest==44 or opts.kTest==45 or opts.kTest==46 or opts.kTest==200 or opts.kTest==201  or opts.kTest==202:
+#	channel = ["2L"]
+#	basecat = ["Baseline","topCRR4","topCRR5","extraRadCR"]
+	channel = ["1Mu1Ele","2Mu","2Ele"]
+	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
 
 ### combined
 #if opts.kTest==20 or opts.kTest==21:
@@ -267,10 +273,10 @@ for y in channel:
 
 			if x=="Baseline":
 				region = [""]
-				if (y == "1Ele" or y == "1Mu" or y == "1L"): region = ["_SR13","_SR24"]
-				else: region = ["_SR13","_SR24"]
-#				if (y == "1Ele" or y == "1Mu"): region = ["_SR1","_SR2","_SR3","_SR4"]
-#				else: region = ["_SR1","_SR2","_SR3","_SR4"]
+#				if (y == "1Ele" or y == "1Mu" or y == "1L"): region = ["_SR13","_SR24"]
+#				else: region = ["_SR13","_SR24"]
+				if (y == "1Ele" or y == "1Mu"): region = ["_SR1","_SR2","_SR3","_SR4"]
+				else: region = ["_SR1","_SR2","_SR3","_SR4"]
 ##				else: region = ["_SR13","_SR24"]
 
 ##			if y == "1Ele" or y == "1Mu": srList = [""]
@@ -284,25 +290,27 @@ for y in channel:
 			## HT
 			if opts.kTest==0 and (y == "1Ele" or y == "1Mu" or y == "1L") and x=="Baseline": srList = [""] #this is the 1
 			## 1d-1l
-			if opts.kTest==100 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["1ll"]
-			if opts.kTest==101 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["1lm"]
-			if opts.kTest==102 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["1lh"]
+			if opts.kTest==100 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["1ll"]
+			if opts.kTest==101 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["1lm"]
+			if opts.kTest==102 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["1lh"]
 			## 1d-1l
 
-			if opts.kTest==1 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["1"]
-			if opts.kTest==2 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["2"]
-			if opts.kTest==3 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["3"]
-			if opts.kTest==4 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["4"]
-			if opts.kTest==5 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["5"]
-			if opts.kTest==6 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["6"]
-			if opts.kTest==7 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["7"]
-			if opts.kTest==8 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["8"]
-			if opts.kTest==9 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["9"]
-			if opts.kTest==10 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["10"]
-			if opts.kTest==11 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["11"]
-			if opts.kTest==12 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["12"]
-			if opts.kTest==13 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["13"]
-			if opts.kTest==14 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["14"]
+			if opts.kTest==1 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["1"]
+			if opts.kTest==2 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["2"]
+			if opts.kTest==3 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["3"]
+			if opts.kTest==4 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["4"]
+			if opts.kTest==5 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["5"]
+			if opts.kTest==6 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["6"]
+			if opts.kTest==7 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["7"]
+			if opts.kTest==8 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["8"]
+			if opts.kTest==9 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["9"]
+			if opts.kTest==10 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["10"]
+			if opts.kTest==11 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["11"]
+			if opts.kTest==12 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["12"]
+			if opts.kTest==13 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["13"]
+			if opts.kTest==14 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["14"]
+			if opts.kTest==15 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["15"]
+			if opts.kTest==16 and (y == "1Ele" or y == "1Mu" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x): srList = ["16"]
 
 			## 2d-1l
 ##			if opts.kTest==14 and (y == "1Ele" or y == "1Mu" or y == "1L") and x=="Baseline": srList = ["_1ll"]
@@ -319,25 +327,27 @@ for y in channel:
 			## HT-2l
 				if x=="Baseline" and opts.kTest==30: srList = [""]
 			## 1d-2l
-				if opts.kTest==31 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["1"]
-				if opts.kTest==32 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["2"]
-				if opts.kTest==33 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["3"]
-				if opts.kTest==34 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["4"]
-				if opts.kTest==35 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["5"]
-				if opts.kTest==36 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["6"]
-				if opts.kTest==37 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["7"]
-				if opts.kTest==38 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "1L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["8"]
-				if opts.kTest==39 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["9"]
-				if opts.kTest==40 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["10"]
-				if opts.kTest==41 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["11"]
-				if opts.kTest==42 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["12"]
-				if opts.kTest==43 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["13"]
-				if opts.kTest==44 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["14"]
+				if opts.kTest==31 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["1"]
+				if opts.kTest==32 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["2"]
+				if opts.kTest==33 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["3"]
+				if opts.kTest==34 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["4"]
+				if opts.kTest==35 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["5"]
+				if opts.kTest==36 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["6"]
+				if opts.kTest==37 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["7"]
+				if opts.kTest==38 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["8"]
+				if opts.kTest==39 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["9"]
+				if opts.kTest==40 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["10"]
+				if opts.kTest==41 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["11"]
+				if opts.kTest==42 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["12"]
+				if opts.kTest==43 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["13"]
+				if opts.kTest==44 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["14"]
+				if opts.kTest==45 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["15"]
+				if opts.kTest==46 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["16"]
 				##
 			## 1d-2l
-				if opts.kTest==200 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["2ll"]
-				if opts.kTest==201 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["2lm"]
-				if opts.kTest==202 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or x=="extraRadCR"): srList = ["2lh"]
+				if opts.kTest==200 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["2ll"]
+				if opts.kTest==201 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["2lm"]
+				if opts.kTest==202 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["2lh"]
 			## 1d-2l-CR7-10
 #				if x=="Baseline" and opts.kTest==31: srList = ["31"]
 #				if x=="Baseline" and opts.kTest==32: srList = ["32"]
@@ -373,6 +383,7 @@ for y in channel:
 				if opts.kTest==13 or opts.kTest==43: VarTest="Base_Low_"       #VarTest="high2000_"
 				if opts.kTest==14 or opts.kTest==44: VarTest="Base_Medium_"    #VarTest="high3000_"
 				if opts.kTest==15 or opts.kTest==45: VarTest="high1500_"
+				if opts.kTest==16 or opts.kTest==46: VarTest="high1500_"
 			########################
 
 			else:
@@ -381,21 +392,28 @@ for y in channel:
 				if opts.kTest==101 or opts.kTest==201: VarTest="medium_"
 				if opts.kTest==102 or opts.kTest==202: VarTest="high_"
 			##
-				if opts.kTest==1 or opts.kTest==31: VarTest="low180_"
-				if opts.kTest==2 or opts.kTest==32: VarTest="low200_"
-				if opts.kTest==3 or opts.kTest==33: VarTest="low220_"
-				if opts.kTest==4 or opts.kTest==34: VarTest="low250_"
-				if opts.kTest==5 or opts.kTest==35: VarTest="low300_"
-				if opts.kTest==6 or opts.kTest==36: VarTest="low350_"
-				if opts.kTest==7 or opts.kTest==37: VarTest="medium400_"
-				if opts.kTest==8 or opts.kTest==38: VarTest="medium450_"
-				if opts.kTest==9 or opts.kTest==39: VarTest="medium500_"
-				if opts.kTest==10 or opts.kTest==40: VarTest="high750_"
-				if opts.kTest==11 or opts.kTest==41: VarTest="high800_"
-				if opts.kTest==12 or opts.kTest==42: VarTest="high1000_"
-				if opts.kTest==13 or opts.kTest==43: VarTest="high2000_"
-				if opts.kTest==14 or opts.kTest==44: VarTest="high3000_"
-				if opts.kTest==15 or opts.kTest==45: VarTest="high1500_"
+				if (opts.kTest>0 and opts.kTest<17) or (opts.kTest>30 and opts.kTest<47):
+					if True:
+						#temporary for keras
+						VarTest="keras_"
+					else:
+						if opts.kTest==1 or opts.kTest==31: VarTest="low180_"
+						if opts.kTest==2 or opts.kTest==32: VarTest="low200_"
+						if opts.kTest==3 or opts.kTest==33: VarTest="low220_"
+						if opts.kTest==4 or opts.kTest==34: VarTest="low250_"
+						if opts.kTest==5 or opts.kTest==35: VarTest="low300_"
+						if opts.kTest==6 or opts.kTest==36: VarTest="low350_"
+						if opts.kTest==7 or opts.kTest==37: VarTest="medium400_"
+						if opts.kTest==8 or opts.kTest==38: VarTest="medium450_"
+						if opts.kTest==9 or opts.kTest==39: VarTest="medium500_"
+						if opts.kTest==10 or opts.kTest==40: VarTest="high750_"
+						if opts.kTest==11 or opts.kTest==41: VarTest="high800_"
+						if opts.kTest==12 or opts.kTest==42: VarTest="high1000_"
+						if opts.kTest==13 or opts.kTest==43: VarTest="high2000_"
+						if opts.kTest==14 or opts.kTest==44: VarTest="high3000_"
+						if opts.kTest==15 or opts.kTest==45: VarTest="high1500_"
+						if opts.kTest==16 or opts.kTest==46: VarTest="high2500_"
+
 			########################
 
 			##
@@ -411,7 +429,7 @@ for y in channel:
 #				x=macroRegion  y=1L  sr=bdtX reg=SR12 if thee
 
 				## BDT 1-14 for each mass point and for the merged set
-				if (( opts.kTest>0 and opts.kTest<15) or (opts.kTest>30 and opts.kTest<45 ) or opts.kTest>99 ) and ("Baseline" in x or "extraRadCR" in x or "charmCR" in x):
+				if (( opts.kTest>0 and opts.kTest<17) or (opts.kTest>30 and opts.kTest<47 ) or opts.kTest>99 ) and ("Baseline" in x or "extraRadCR" in x or "charmCR" in x):
 					name = x + "_" + sr + "_" + reg + "_" + y
 					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"bdt"+sr+""+reg}
 				## BDT 2d to be updated
@@ -430,36 +448,13 @@ for y in channel:
 
        ## set the MC sample
 				if x=="charmCR":
-#					catStore[name]["hasMC"]=["ttlf","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
-					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttb","ttbb","tt2b","Hptb"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 				if "extraRadCR" in x:
-#					catStore[name]["hasMC"]=["ttlf","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
-					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc"]
-#					catStore[name]["hasMC"]=["ttlf","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttb","ttbb","tt2b","Hptb"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 				if "topCR" in x:
-#					catStore[name]["hasMC"]=["ttlf","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
-					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc"]
-#					catStore[name]["hasMC"]=["ttlf","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttb","ttbb","tt2b","Hptb"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 				if x=="Baseline":
-#					catStore[name]["hasMC"]=["Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","Hptb"]
-					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttlf","ttcc","Hptb"]
-#					catStore[name]["hasMC"]=["ttb","ttbb","tt2b","Hptb"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttbb","tt2b","ttcc","top","ewk","Hptb"]
 
 			if y == "1Ele" or y == "1Mu" or y == "1L":
 				mcStore={
@@ -470,7 +465,9 @@ for y in channel:
 					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+##					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+					"top":{ "name":"top","hist":["ST"],"num":7}
+#					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
 					}
 			else:
 				mcStore={
@@ -480,9 +477,12 @@ for y in channel:
 					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
+#					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT"],"num":6},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":6},
 #					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW"],"num":6},
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+#					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+					"top":{ "name":"top","hist":["ST"],"num":7}
+#					"qcd":{ "name":"top","hist":["ST"],"num":8}
 					}
 				## NOTE: missing diboson + triboson , DYJetsToLL_M-10-50 and the HT<70in the EWK, QCD
 
@@ -498,22 +498,23 @@ for y in channel:
 					"CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t","name":"XXX"}, ## name used for shape
 					"CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]}, ## name used for shape
 					"CMS_scale_uncluster":{"type":"lnN", "value":["1.02"],"proc":[".*"],"wsname":"CMS_scale_uncluster","name":"XXX"}, ## name used for shape
-					"CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":[".*"]}, ## name used for shape
+					"CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
+					"CMS_HTreweight":{"type":"shape", "wsname":"CMS_HTreweight","name":"htRECO","proc":["ewk"]}, ## name used for shape
 ##					"QCDscale":{"type":"shape", "wsname":"QCDscale","name":"ScaleRF","proc":["Hptb","ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
 					"CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]}, ## name used for shape
 ##					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JES","proc":[".*"]}, ## name used for shape
 					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":[".*"]}, ## name used for shape
 					##Light jets Heavy flavor contamination
-					"CMS_eff_b":{"type":"shape", "wsname":"CMS_eff_b","name":"CSVRHF","proc":[".*"]}, ## name used for shape
+					"CMS_eff_b_HF":{"type":"shape", "wsname":"CMS_eff_b_HF","name":"CSVRHF","proc":[".*"]}, ## name used for shape
 					##Heavy jets light flavor contamination
-					"CMS_fake_b":{"type":"shape", "wsname":"CMS_fake_b","name":"CSVRLF","proc":[".*"]}, ## name used for shape
+					"CMS_eff_b_LF":{"type":"shape", "wsname":"CMS_eff_b_LF","name":"CSVRLF","proc":[".*"]}, ## name used for shape
 					##Linear and quadratic uncertainties
-					"CMS_stat1_b":{"type":"shape", "wsname":"CMS_stat1_b","name":"CSVRHFSTAT1","proc":[".*"]}, ## name used for shape
-					"CMS_stat2_b":{"type":"shape", "wsname":"CMS_stat2_b","name":"CSVRHFSTAT2","proc":[".*"]}, ## name used for shape
-					"CMS_stat1_lf":{"type":"shape", "wsname":"CMS_stat1_lf","name":"CSVRLFSTAT1","proc":[".*"]}, ## name used for shape
-					"CMS_stat2_lf":{"type":"shape", "wsname":"CMS_stat2_lf","name":"CSVRLFSTAT2","proc":[".*"]}, ## name used for shape
-					"CMS_stat1_c":{"type":"shape", "wsname":"CMS_stat1_c","name":"CSVRCERR1","proc":[".*"]}, ## name used for shape
-					"CMS_stat2_c":{"type":"shape", "wsname":"CMS_stat2_c","name":"CSVRCERR2","proc":[".*"]} ## name used for shape
+					"CMS_eff_b_HFstat1":{"type":"shape", "wsname":"CMS_eff_b_HFstat1","name":"CSVRHFSTAT1","proc":[".*"]}, ## name used for shape
+					"CMS_eff_b_HFstat2":{"type":"shape", "wsname":"CMS_eff_b_HFstat2","name":"CSVRHFSTAT2","proc":[".*"]}, ## name used for shape
+					"CMS_eff_b_LFstat1":{"type":"shape", "wsname":"CMS_eff_b_LFstat1","name":"CSVRLFSTAT1","proc":[".*"]}, ## name used for shape
+					"CMS_eff_b_LFstat2":{"type":"shape", "wsname":"CMS_eff_b_LFstat2","name":"CSVRLFSTAT2","proc":[".*"]}, ## name used for shape
+					"CMS_eff_b_CFerr1":{"type":"shape", "wsname":"CMS_eff_b_CFerr1","name":"CSVRCERR1","proc":[".*"]}, ## name used for shape
+					"CMS_eff_b_CFerr2":{"type":"shape", "wsname":"CMS_eff_b_CFerr2","name":"CSVRCERR2","proc":[".*"]} ## name used for shape
 					####
 ############
 ############
@@ -529,18 +530,18 @@ for y in channel:
 					}
 
 
-print "--------- CAT STORE IS --------"
-for cat in catStore:
-	print "* ",cat,":",catStore[cat]
-print "---------------------- --------"
+#print "--------- CAT STORE IS --------"
+#for cat in catStore:
+#	print "* ",cat,":",catStore[cat]
+#print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="NOV24_bin1/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="DEC20_v1_bin1/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "NOV24_bin1/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "DEC20_v1_bin1/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -589,22 +590,42 @@ def skip(cat,mc):
 	return True
 
 
-## write shapes
+## write shapes in workspace
+#if True: # data
+#	datacard.write("shapes data_obs *\t" + fileTmp +"\t")
+#	datacard.write("w:data_obs_$CHANNEL")
+#	datacard.write("\n")
+#if True: # Sig
+#	datacard.write("shapes Hptb *\t" + fileTmp +"\t")
+###	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL\t")
+###	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
+#	datacard.write("w:pdf_$PROCESS_$CHANNEL\t")
+#	datacard.write("w:pdf_$PROCESS_$CHANNEL_$SYSTEMATIC")
+#	datacard.write("\n")
+#if True: #bkg
+#	datacard.write("shapes * * %s\t"%fileTmp +"\t")
+#	datacard.write("w:pdf_$PROCESS_$CHANNEL\t")
+#	datacard.write("w:pdf_$PROCESS_$CHANNEL_$SYSTEMATIC\n")
+#datacard.write("-------------------------------------\n")
+#datacard.write("## Observation\n")
+
+
+## write shapes in histograms
 if True: # data
 	datacard.write("shapes data_obs *\t" + fileTmp +"\t")
-	datacard.write("w:data_obs_$CHANNEL")
+	datacard.write("data_obs_$CHANNEL")
 	datacard.write("\n")
 if True: # Sig
 	datacard.write("shapes Hptb *\t" + fileTmp +"\t")
-#	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL\t")
-#	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
-	datacard.write("w:pdf_$PROCESS_$CHANNEL\t")
-	datacard.write("w:pdf_$PROCESS_$CHANNEL_$SYSTEMATIC")
+###	datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL\t")
+###	datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
+	datacard.write("pdf_$PROCESS_$CHANNEL\t")
+	datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC")
 	datacard.write("\n")
 if True: #bkg
 	datacard.write("shapes * * %s\t"%fileTmp +"\t")
-	datacard.write("w:pdf_$PROCESS_$CHANNEL\t")
-	datacard.write("w:pdf_$PROCESS_$CHANNEL_$SYSTEMATIC\n")
+	datacard.write("pdf_$PROCESS_$CHANNEL\t")
+	datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC\n")
 datacard.write("-------------------------------------\n")
 datacard.write("## Observation\n")
 
@@ -663,85 +684,90 @@ def writeSystISRFSR(name="test",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 		valueUp=0
 		valueDown=0
 
+		if "ISR" in name:
+			mySyst="isr"
+		if "FSR" in name:
+			mySyst="fsr"
+
 		if "1L" in cat:
 		###
 			if "topCRR4" in cat:
-				valueUp = isrfsr("isr", "1L", "up", 4, 1)
-				valueDown = isrfsr("isr", "1L", "down", 4, 1)
+				valueUp = isrfsr(mySyst, "1L", "up", 4, 1)
+				valueDown = isrfsr(mySyst, "1L", "down", 4, 1)
 			if "topCRR5" in cat:
-				valueUp = isrfsr("isr", "1L", "up", 4, 2)
-				valueDown = isrfsr("isr", "1L", "down", 4, 2)
+				valueUp = isrfsr(mySyst, "1L", "up", 4, 2)
+				valueDown = isrfsr(mySyst, "1L", "down", 4, 2)
 			if "charmCR6" in cat:
-				valueUp = isrfsr("isr", "1L", "up", 4, 3)
-				valueDown = isrfsr("isr", "1L", "down", 4, 3)
+				valueUp = isrfsr(mySyst, "1L", "up", 4, 3)
+				valueDown = isrfsr(mySyst, "1L", "down", 4, 3)
 			if "extraRadCRR7" in cat:
-				valueUp = isrfsr("isr", "1L", "up", 5, 1)
-				valueDown = isrfsr("isr", "1L", "down", 5, 1)
+				valueUp = isrfsr(mySyst, "1L", "up", 5, 1)
+				valueDown = isrfsr(mySyst, "1L", "down", 5, 1)
 			if "extraRadCRR10" in cat:
-				valueUp = isrfsr("isr", "1L", "up", 6, 1)
-				valueDown = isrfsr("isr", "1L", "down", 6, 1)
+				valueUp = isrfsr(mySyst, "1L", "up", 6, 1)
+				valueDown = isrfsr(mySyst, "1L", "down", 6, 1)
 			###
 			if "SR1" in cat and not ("SR13" in cat):
-				valueUp = isrfsr("isr", "1L", "up", 5, 2)
-				valueDown = isrfsr("isr", "1L", "down", 5, 2)
+				valueUp = isrfsr(mySyst, "1L", "up", 5, 2)
+				valueDown = isrfsr(mySyst, "1L", "down", 5, 2)
 			if "SR2" in cat and not ("SR24" in cat):
-				valueUp = isrfsr("isr", "1L", "up", 5, 3)
-				valueDown = isrfsr("isr", "1L", "down", 5, 3)
+				valueUp = isrfsr(mySyst, "1L", "up", 5, 3)
+				valueDown = isrfsr(mySyst, "1L", "down", 5, 3)
 			if "SR3" in cat:
-				valueUp = isrfsr("isr", "1L", "up", 6, 2)
-				valueDown = isrfsr("isr", "1L", "down", 6, 2)
+				valueUp = isrfsr(mySyst, "1L", "up", 6, 2)
+				valueDown = isrfsr(mySyst, "1L", "down", 6, 2)
 			if "SR4" in cat:
-				valueUp = isrfsr("isr", "1L", "up", 6, 3)
-				valueDown = isrfsr("isr", "1L", "down", 6, 3)
+				valueUp = isrfsr(mySyst, "1L", "up", 6, 3)
+				valueDown = isrfsr(mySyst, "1L", "down", 6, 3)
 			###
 			if "extraRadCR" in cat and not ("extraRadCRR10" in cat) and not ("extraRadCRR7" in cat):
-				valueUp = isrfsr("isr", "1L", "up", 6, 1)
-				valueDown = isrfsr("isr", "1L", "down", 6, 1)
+				valueUp = isrfsr(mySyst, "1L", "up", 6, 1)
+				valueDown = isrfsr(mySyst, "1L", "down", 6, 1)
 			if "SR13" in cat:
-				valueUp = isrfsr("isr", "1L", "up", 5, 2)
-				valueDown = isrfsr("isr", "1L", "down", 5, 2)
+				valueUp = isrfsr(mySyst, "1L", "up", 5, 2)
+				valueDown = isrfsr(mySyst, "1L", "down", 5, 2)
 			if "SR24" in cat:
-				valueUp = isrfsr("isr", "1L", "up", 5, 2)
-				valueDown = isrfsr("isr", "1L", "down", 5, 2)
+				valueUp = isrfsr(mySyst, "1L", "up", 5, 2)
+				valueDown = isrfsr(mySyst, "1L", "down", 5, 2)
 		else :
 
 			if "topCRR4" in cat:
-				valueUp = isrfsr("isr", "2L", "up", 2, 1)
-				valueDown = isrfsr("isr", "2L", "down", 2, 1)
+				valueUp = isrfsr(mySyst, "2L", "up", 2, 1)
+				valueDown = isrfsr(mySyst, "2L", "down", 2, 1)
 			if "topCRR5" in cat:
-				valueUp = isrfsr("isr", "2L", "up", 2, 2)
-				valueDown = isrfsr("isr", "2L", "down", 2, 2)
+				valueUp = isrfsr(mySyst, "2L", "up", 2, 2)
+				valueDown = isrfsr(mySyst, "2L", "down", 2, 2)
 			if "charmCR6" in cat:
-				valueUp = isrfsr("isr", "2L", "up", 2, 3)
-				valueDown = isrfsr("isr", "2L", "down", 2, 3)
+				valueUp = isrfsr(mySyst, "2L", "up", 2, 3)
+				valueDown = isrfsr(mySyst, "2L", "down", 2, 3)
 			if "extraRadCRR7" in cat:
-				valueUp = isrfsr("isr", "2L", "up", 3, 1)
-				valueDown = isrfsr("isr", "2L", "down", 3, 1)
+				valueUp = isrfsr(mySyst, "2L", "up", 3, 1)
+				valueDown = isrfsr(mySyst, "2L", "down", 3, 1)
 			if "extraRadCRR10" in cat:
-				valueUp = isrfsr("isr", "2L", "up", 4, 1)
-				valueDown = isrfsr("isr", "2L", "down", 4, 1)
+				valueUp = isrfsr(mySyst, "2L", "up", 4, 1)
+				valueDown = isrfsr(mySyst, "2L", "down", 4, 1)
 			if "SR1" in cat and not ("SR13" in cat):
-				valueUp = isrfsr("isr", "2L", "up", 3, 2)
-				valueDown = isrfsr("isr", "2L", "down", 3, 2)
+				valueUp = isrfsr(mySyst, "2L", "up", 3, 2)
+				valueDown = isrfsr(mySyst, "2L", "down", 3, 2)
 			if "SR2" in cat and not ("SR24" in cat):
-				valueUp = isrfsr("isr", "2L", "up", 3, 3)
-				valueDown = isrfsr("isr", "2L", "down", 3, 3)
+				valueUp = isrfsr(mySyst, "2L", "up", 3, 3)
+				valueDown = isrfsr(mySyst, "2L", "down", 3, 3)
 			if "SR3" in cat:
-				valueUp = isrfsr("isr", "2L", "up", 4, 2)
-				valueDown = isrfsr("isr", "2L", "down", 4, 2)
+				valueUp = isrfsr(mySyst, "2L", "up", 4, 2)
+				valueDown = isrfsr(mySyst, "2L", "down", 4, 2)
 			if "SR4" in cat:
-				valueUp = isrfsr("isr", "2L", "up", 4, 3)
-				valueDown = isrfsr("isr", "2L", "down", 4, 3)
+				valueUp = isrfsr(mySyst, "2L", "up", 4, 3)
+				valueDown = isrfsr(mySyst, "2L", "down", 4, 3)
 			###
 			if "extraRadCR" in cat and not ("extraRadCRR10" in cat) and not ("extraRadCRR7" in cat):
-				valueUp = isrfsr("isr", "1L", "up", 3, 1)
-				valueDown = isrfsr("isr", "1L", "down", 3, 1)
+				valueUp = isrfsr(mySyst, "2L", "up", 3, 1)
+				valueDown = isrfsr(mySyst, "2L", "down", 3, 1)
 			if "SR13" in cat:
-				valueUp = isrfsr("isr", "2L", "up", 3, 2)
-				valueDown = isrfsr("isr", "2L", "down", 3, 2)
+				valueUp = isrfsr(mySyst, "2L", "up", 3, 2)
+				valueDown = isrfsr(mySyst, "2L", "down", 3, 2)
 			if "SR24" in cat:
-				valueUp = isrfsr("isr", "2L", "up", 3, 3)
-				valueDown = isrfsr("isr", "2L", "down", 3, 3)
+				valueUp = isrfsr(mySyst, "2L", "up", 3, 3)
+				valueDown = isrfsr(mySyst, "2L", "down", 3, 3)
 
 		idx=-1
 		invert=False
@@ -759,12 +785,15 @@ def writeSystISRFSR(name="test",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
                    valueUp=1+valueUp/100.
 		   valueDown=1+valueDown/100.
 		   mystring='%.2f/%.2f' % (valueDown, valueUp)
+##		   datacard.write("\t"+str(valueL[idx]))
+##		   print 'normalized things=',mystring
 		   datacard.write("\t"+mystring)
 		else:
 		   datacard.write("\t-")
 	datacard.write("\n")
 
 
+## 
 def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
 ##def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT"]):
 	datacard.write(name+"\tlnN")
@@ -819,6 +848,8 @@ def writeSystShape(syst,regexpL=[],regexpCat=None):
 	datacard.write("\n")
 
 def importStat():
+
+
 	for statName in statStore:
 	   stat= statStore[statName]
  	   h=stat["hist"] ## all MC Sum up correctly
@@ -833,6 +864,7 @@ def importStat():
  	   for iBin in range(1,h.GetNbinsX()+1):
  	      c= h.GetBinContent(iBin)
  	      if c>0: continue
+	      ##### TO CHECK #####
  	      h.SetBinError(iBin,minError)
 	   for i in range(0,h.GetNbinsX()):
 	      statsyst = { "wsname": statName + "_Bin%d"%(i+1) +"_STAT" , "name": statName + "_Bin%d"%(i+1) + "_STAT"}
@@ -842,8 +874,8 @@ def importStat():
 	      err = h . GetBinError(i+1) ## err is referred to the sum
 	      c = h.GetBinContent(i+1) ## this is to check the magnitude, not to apply it
 	      if c == 0: continue
-	      if c > 0 and err/c <.01: continue ## don't write less than 1%
-#	      if c > 0 and err/c <.10: continue ## don't write less than 10% // TEMPORARY
+#	      if c > 0 and err/c <.01: continue ## don't write less than 1%
+	      if c > 0 and err/c <.10: continue ## don't write less than 10% // TEMPORARY
 	      hupbin.SetBinContent(i+1,cont+err)
 	      hdnbin.SetBinContent(i+1,cont-err)
 
@@ -867,7 +899,7 @@ def importStat():
 				      if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR13" or cat["var"] == "HT_SR24": al = arglist_obs.at(i)
 			      if doST:
 				      if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs.at(i)
-			      print "-> with var", al
+#			      print "-> with var", al
 
 	      roo_mc_binup = ROOT.RooDataHist(target+"_"+statsyst["wsname"]+"Up",target + "STAT",ROOT.RooArgList(al),hupbin)
 	      pdf_mc_binup = roo_mc_binup
@@ -907,7 +939,8 @@ if doSyst: writeNormSyst("pdf_top",["1.03"],["top"])
 if doSyst: writeNormSyst("QCDscale_ewk",["0.98/1.02"],["ewk"])
 if doSyst: writeNormSyst("pdf_qqbar",["1.04"],["ewk"])
 
-if doSyst: writeSystISRFSR(name="ISRFSR",valueL=["-999","999"], regexpL=["ttlf","ttb","ttbb","tt2b","ttcc"])
+if doSyst: writeSystISRFSR(name="CMS_HPTB_ISR",valueL=["-999","999"], regexpL=["ttlf","ttb","ttbb","tt2b","ttcc"])
+if doSyst: writeSystISRFSR(name="CMS_HPTB_FSR",valueL=["-999","999"], regexpL=["ttlf","ttb","ttbb","tt2b","ttcc"])
 
 
 #if doSyst: writeNormSyst("QCDscale_ttbar",["0.977/1.028"],["ST"])
@@ -1009,6 +1042,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 	h=None
 
 	for s in shifts:
+
          for m in masses:
 
 #	  if m >10 and m ==opts.kMass:
@@ -1031,13 +1065,20 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 		if syst != None:
 			toget += "_" + syst["name"] + s
 		hTmp=tfile.Get(toget)
-		if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
+		if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
 		if hTmp == None:
-			print "<*> Hist '"+toget+"' doesn't exist"
-			raise IOError
+			if syst == None:
+				print "<*> Hist '"+toget+"' doesn't exist"
+				raise IOError
+			if syst != None:
+				print "<*> Hist '"+toget+"' doesn't exist wih the syst cloning now from the central "
+				toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
+				hTmp=tfile.Get(toget)
+				if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
 
 ### SCALE for the 2/3
-		hTmp.Scale(1.5)
+		if mc["name"]!="qcd":
+			hTmp.Scale(1.5)
 
 ### -- MC --
 ##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
@@ -1049,20 +1090,14 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 		h = hTmp
 
-#		if mc["name"]=="Hptb" and h==None: h = hTmp
-
-#		if mc["name"]!="Hptb":
-#			if h==None:h = hTmp
-#			else:
-#				print 'histo to add = ',h.GetName()
-#				h.Add(hTmp)
-		#clean h
-
 	 if h!= None: print "<*> Reading Hist '"+toget+"'",h.Integral(),' nBin=',h.GetNbinsX(), 'underflow=',h.GetBinContent(0), 'overflow=',h.GetBinContent(h.GetNbinsX()+1),' entries=',h.GetEntries()
 
 	 if h.GetBinContent(0)<0:
 		 print "ERROR histogram", h.GetName(),"has negative underflow norm"
 		 raise ValueError
+
+#	  print ' underflow=',h.SetBinContent(0,0)
+#	  print ' overflow=',h.SetBinContent(h.GetNbinsX()+1,0)
 
 	 if h: h.SetBinContent(0,0) ##underflow
 	 if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
@@ -1095,21 +1130,24 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 			 if doST:
 				 if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs.at(i)
 ##			 al = arglist_obs.at(i)
-	 print "-> with var", al
+#	 print "-> with var", al
 
 	 roo_mc = ROOT.RooDataHist(target,target, ROOT.RooArgList(al),h)
-
-	 print '     BEFORE rooFit Bin content',h.GetBinContent(0), '   Bin1=',h.GetBinContent(1), '  Integral=',h.Integral(), '  NBins=',h.GetNbinsX(),'  NEntries=',h.GetEntries()
-
-	 print ' cat[name]' , cat["name"]
-	 hBIS = roo_mc.createHistogram("test", al)
-	 print '     AFTER rooFit Bin content',hBIS.GetBinContent(0), '   Bin1=',hBIS.GetBinContent(1), '  Integral=',hBIS.Integral(), '  NBins=',hBIS.GetNbinsX(),'  NEntries=',h.GetEntries()
 
 	 pdf_mc = roo_mc
 	 getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
 	 g.extend([h,roo_mc,pdf_mc])
+
+### WRITE HISTOGRAMS
+#	 w.writeToFile(fileTmp)
+	 f = ROOT.TFile.Open(fileTmp,"update")
+	 h.SetName(target)
+	 h.Write()
+	 f.Write()
+	 f.Close()
+
 	 if syst==None and m< 10 : # not for signal,
-		 print "DEBUG calling stat with target",target
+#		 print "DEBUG calling stat with target",target
 		 histName=cat["name"]
 		 if histName not in statStore:
 			 statStore[histName] = { "hist":h.Clone(histName + "_STAT"),
@@ -1135,13 +1173,13 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 
 	if do1Third:
-		print '`+++> going to use the do1Third sample'
 		if ((("1Mu" in cat["dir"] or "1Ele" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"])) or "1L" in cat["dir"]): tfile = fIn1Lbin
-		if (("2Ele" in cat["dir"] or "2Mu" in cat["dir"]) or "2L" in cat["dir"]): tfile = fIn2Lbin
+		if (("2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]) or "2L" in cat["dir"]): tfile = fIn2Lbin
+		print '`+++> going to use the do1Third sample',tfile
 	else:
-		print '`+++> going to use the 2/3 sample'
 		if ((("1Mu" in cat["dir"] or "1Ele" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"])) or "1L" in cat["dir"]): tfile = fIn1L
-		if (("2Ele" in cat["dir"] or "2Mu" in cat["dir"]) or "2L" in cat["dir"]): tfile = fIn2L
+		if (("2Ele" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]) or "2L" in cat["dir"]): tfile = fIn2
+		print '`+++> going to use the 2/3 sample',tfile
 
 	if tfile == None:
 		print "<*> File not exists"
@@ -1205,15 +1243,18 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 
 		  if hTmp == None:
 			  print "<*> Hist '"+toget+"' doesn't exist"
-			  raise IOError
+			  ## raise error only if is on the 2Third and for the syst central value
+			  if not do1Third:
+				  if syst == None:
+					  raise IOError
 
-		  if mc["name"]!="Hptb":
+		  if mc["name"]!="Hptb" and hTmp!=None:
 			  if hSum==None: hSum = hTmp
 			  else:
-				  print 'going to add = ',hTmp.GetName()
+#				  print 'going to add = ',hTmp.GetName()
 				  hSum.Add(hTmp)
 
-		  if mc["name"]=="ttlf": hRef=hTmp.Clone()
+		  if mc["name"]=="ttlf" and hTmp!=None: hRef=hTmp.Clone()
 		  if mc["name"]=="Hptb" and m==opts.kMass and hTmp!= None: hSig=hTmp.Clone()
 
 	## here I have hRef, hSum, hSig
@@ -1310,12 +1351,12 @@ for c in catStore:
 ##			print '+++++++++++++++++++++++++++++++'
 ##			raise IOError
 
-	print '+++++++++++++++++++++++++++++++'
-	print '+++++++++++++++++++++++++++++++'
-	print '+++++++++++++++++++++++++++++++'
+#	print '+++++++++++++++++++++++++++++++'
+#	print '+++++++++++++++++++++++++++++++'
+#	print '+++++++++++++++++++++++++++++++'
 ###	print '===> before all=',hSumAll.Integral(),' ref=',hRef.Integral()
-	print '++++++++ ',catStore[c]
-	print '===> ++++++++',catStore[c],'hSumAll1Third.Integral()=',hSumAll1Third.Integral(), 'hSumAll1Third.GetEntries()=',hSumAll1Third.GetEntries() ,' ref=',hRef1Third.Integral(), ' sig=',hSig1Third.Integral()
+#	print '++++++++ ',catStore[c]
+#	print '===> ++++++++',catStore[c],'hSumAll1Third.Integral()=',hSumAll1Third.Integral(), 'hSumAll1Third.GetEntries()=',hSumAll1Third.GetEntries() ,' ref=',hRef1Third.Integral(), ' sig=',hSig1Third.Integral()
 
 ### standard rebin
 #	b = FwRebin.Rebin(hSumAll1Third, hSumAll1Third, maxStat)
@@ -1340,9 +1381,9 @@ for c in catStore:
 	for proc in mcStore:
 		if skip(catStore[c],mcStore[proc]): continue
 		for syst in systStore:
-			print "->calling import pdf with cat=",cat,"proc=",proc,"syst=",syst
-			print " * cat:",catStore[c]
-			print " * syst:", systStore[syst]
+#			print "->calling import pdf with cat=",cat,"proc=",proc,"syst=",syst
+#			print " * cat:",catStore[c]
+#			print " * syst:", systStore[syst]
 			if systStore[syst] == None or systStore[syst]["type"] == "shape" :
 				importPdfFromTH1(catStore[c],mcStore[proc],myBin,LikelihoodMapping,systStore[syst])
 
@@ -1355,39 +1396,39 @@ for c in catStore:
 		raise IOError
 	base="ChargedHiggsTopBottom"
 	target = "data_obs_"+ cat["name"] 
-	toget=base + "/" +cat["dir"] + "/" +  cat["var"]  +"_Data"
+#	toget=base + "/" +cat["dir"] + "/" +  cat["var"]  +"_Data"
 	## PRELIMINARY
-#	toget=base + "/" +cat["dir"] + "/" +  cat["var"]
-#	if  ("1Ele" in cat["dir"] or "2Ele" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]): toget+="_SingleElectron"
-#	elif  "1Mu" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]: toget+="_SingleMuon"
+	toget=base + "/" +cat["dir"] + "/" +  cat["var"]
+	if  ("1Ele" in cat["dir"] or "2Ele" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]): toget+="_SingleElectron"
+	elif  "1Mu" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]: toget+="_SingleMuon"
 
 	h=tfile.Get(toget)
 	if h == None:
 		print "<*> Hist do not exists ",toget
-		raise IOError
+		### MARIA COMMENT THIS FOR NOW
+##		raise IOError
 
 ####This is the data
 ####1L
-##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 
+	if h != None:
+		h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
 
-	h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
-
-
-	if h.GetBinContent(0)<0:
-		print "ERROR histogram", h.GetName(),"has negative underflow obs"
-		raise ValueError
-
-	if h: h.SetBinContent(0,0) ##underflow
-	if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
-
-	for b in range(1,h.GetNbinsX()+1): ##negative yield
-		if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
-
-	if h:
-		if h.Integral() <= 0 :
-			print "ERROR histogram", h.GetName(),"has null norm"
+	if h != None:
+		if h.GetBinContent(0)<0:
+			print "ERROR histogram", h.GetName(),"has negative underflow obs"
 			raise ValueError
+
+		if h: h.SetBinContent(0,0) ##underflow
+		if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
+
+		for b in range(1,h.GetNbinsX()+1): ##negative yield
+			if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
+
+		if h:
+			if h.Integral() <= 0 :
+				print "ERROR histogram", h.GetName(),"has null norm"
+				raise ValueError
 
 #######
 #######
@@ -1405,20 +1446,30 @@ for c in catStore:
 			if doST:
 				if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs.at(i)
 ##			  al = arglist_obs.at(i)
-	print "-> with var", al
+#	print "-> with var", al
 
 #######
 #######
-	roo_data= ROOT.RooDataHist("data_obs_%s"%c,"H_{T}",ROOT.RooArgList(al),h)
-	getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
-	g.extend([h,roo_data])
+
+	if h != None:
+		roo_data= ROOT.RooDataHist("data_obs_%s"%c,"H_{T}",ROOT.RooArgList(al),h)
+		getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
+		g.extend([h,roo_data])
+		f = ROOT.TFile.Open(fileTmp,"update")
+		h.SetName(target)
+		h.Write()
+		f.Write()
+		f.Close()
+
 
 ## import and write statistical uncertainties
-importStat()
+#importStat()
+
+'* autoMCStats 0'
+datacard.write("* autoMCStats 0")
 
 
-
-w.writeToFile(fileTmp)
+w.writeToFile(fileTmp,False)
 print "--------------------" 
 print "datacard=",datName
 print "ws=",fileTmp
