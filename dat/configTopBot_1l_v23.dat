@@ -11,15 +11,16 @@ MCDB=aux/mcdb.2017.v23.txt
 
 Files=
 include=dat/catalog/2017.v23/tt.dat
-include=dat/catalog/2017.v23/ttlep.dat
+#include=dat/catalog/2017.v23/ttlep.dat
 include=dat/catalog/2017.v23/st.dat
 include=dat/catalog/2017.v23/dy_ht.dat
 include=dat/catalog/2017.v23/wjets_ht.dat
 include=dat/catalog/2017.v23/vv.dat
 include=dat/catalog/2017.v23/rares.dat
-include=dat/catalog/2017.v23/ttISRFSR.dat
+#include=dat/catalog/2017.v23/ttISRFSR.dat
 # signal
-include=dat/catalog/2017.v23/topbottom.dat
+#include=dat/catalog/2017.v23/topbottom.dat
+include=dat/catalog/2017.v23/topbottom_ext.dat
 # data
 include=dat/catalog/2017.moriond/singleElecton.dat
 include=dat/catalog/2017.moriond/singleMuon.dat
@@ -31,30 +32,48 @@ pileup=aux/pileup.2017.BCDEFGH.root
 #__________________________________________________________________
 #____________________ SPECIAL SETTINGS _____________________________
 
-#Files=
+Files=
 #include=dat/catalog/2017.v23/ttISRFSR.dat
 #include=dat/catalog/2017.v23/ttlep.dat
 
-#include=dat/catalog/2017.v23/tt.dat
-#include=dat/topBot.OnlyTTbar.dat
+include=dat/catalog/2017.v23/tt.dat
+include=dat/topBot.OnlyTTbar.dat
+##Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d),@SmearSF("TOPRW"!"topreweight")
+##Smear=@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+##Smear=*[0!50]SmearPdfs(%%d)
 
 #include=dat/catalog/2017.v23/topbottom.dat
+#include=dat/catalog/2017.v23/topbottom_ext.dat
 #include=dat/topBot.OnlyChTB.dat
+#Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d)
+#Smear=@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+
+#include=dat/catalog/2017.v23/st.dat
+#include=dat/topBot.OnlyTopMinor.dat
+##Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d)
 
 #include=dat/catalog/2017.v23/st.dat
 #include=dat/catalog/2017.v23/rares.dat
+#include=dat/catalog/2017.v23/vv.dat
+#include=dat/topBot.OnlyRares.dat
 #include=dat/topBot.OnlyTopMinor.dat
+#Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d)
 
 #include=dat/catalog/2017.v23/wjets_ht.dat
 #include=dat/catalog/2017.v23/dy_ht.dat
-#include=dat/catalog/2017.v23/vv.dat
+#include=dat/catalog/2017.v23/dy_lowMass_ht.py
 #include=dat/topBot.OnlyEWK.dat
+#Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d),@SmearSF("htRECO"!"htRECO")
+#Smear=@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
 
-##addfiles=/store/group/phys_higgs/ceballos/Nero/v2.2/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#include=dat/catalog/2017.v23/qcd.dat
+#include=dat/topBot.OnlyQCD.dat
+#Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d)
 
 #include=dat/topBot.DATAOnly.dat
 #include=dat/catalog/2017.moriond/singleElecton.dat
 #include=dat/catalog/2017.moriond/singleMuon.dat
+#Smear=NONE
 
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
@@ -63,11 +82,10 @@ pileup=aux/pileup.2017.BCDEFGH.root
 # Smearer
 
 Smear=NONE
-##Smear=NONE,@SmearUncluster(),@SmearPu,@SmearSF("TOPRW"!"topreweight"),JES,JER,@SmearSF("muTRG"!"muTRG"),*[1!10]SmearJesAndCSV(%%d)
-
-
 ##Smear=*[0!50]SmearPdfs(%%d)
-##Smear=*[8!10]SmearJesAndCSV(%%d)
+##Smear=@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+
+
 ##Smear=NONE,@SmearUncluster(),@SmearPu,@SmearSF("TOPRW"!"topreweight"),JES,JER,@SmearSF("muTRG"!"muTRG"),*[1!10]SmearJesAndCSV(%%d),@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
 
 #old way to do btaggind syst, muon and electron

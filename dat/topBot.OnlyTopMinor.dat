@@ -3,17 +3,6 @@
 #############
 
 config=ChargedHiggsTopBottom|AddLabel('ST')
-##TTTT
-addConfig=ChargedHiggsTopBottom|AddLabel('TTTT')
-##TTZToQQ, TTZToLLNuNu
-addConfig=ChargedHiggsTopBottom|AddLabel('TTZ')
-##TTWJetsToQQ,TTWJetsToLNu
-addConfig=ChargedHiggsTopBottom|AddLabel('TTW')
-##ttHJetTobb,ttHJetToNonbb
-addConfig=ChargedHiggsTopBottom|AddLabel('ttH')
-##TTGJets
-addConfig=ChargedHiggsTopBottom|AddLabel('TTG')
-
 
 ## 1l - 13 samples SR
 ### dedicated high mass
