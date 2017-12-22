@@ -1,9 +1,6 @@
 config=ChargedHiggsTopBottom|AddLabel('WJetsToLNu_HT')
 addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-50_HT')
-
-#addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-10to50')
-#addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_HT-0To70')
-#addConfig=ChargedHiggsTopBottom|AddLabel('WJetsToLNu_HT')
+addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-5to50_HT')
 
 #addConfig=ChargedHiggsTopBottom|AddLabel('WWTo')
 ###WZTo1L1Nu2Q,WZTo1L3Nu,WZTo2L2Q,WZTo3LNu
