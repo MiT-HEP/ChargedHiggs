@@ -278,7 +278,7 @@ void ChargedHiggsTopBottom::setTree(Event*e, string label, string category )
             } else {
                 if(label.find("DYJetsToLL_M-50_HT") !=string::npos) mc =221 ;
                 if(label.find("WJetsToLNu_HT")!=string::npos) mc =222;
-                if(label.find("DYJetsToLL_M-10to50") !=string::npos) mc =223 ;
+                if(label.find("DYJetsToLL_M-5to50_HT") !=string::npos) mc =223 ;
             }
             // EWK
             // missing tribosons
@@ -1570,7 +1570,7 @@ void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasesp
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/thirdBDiscr_"+SR+flavor+l,"thirdBDiscr "+l + "; discr (3rd b-ranked) ",50,0.,1.);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+SR+flavor+l,"minDRbb"+l+";dR_{bb}^{min}",50,0,2*TMath::Pi());
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+SR+flavor+l,"minDRbb_mass "+l+";m(bb)^{dR^{min}})",50,0,500);
-
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/AvCSVPt_"+SR+flavor+l,"AvCSVPt"+l+";AvCSV",50,0.,1.);
     }
 
 
@@ -1591,7 +1591,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
         AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+l);
         AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+l);
-        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HTmcweight_"+l);
+        //        AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/HTmcweight_"+l);
 
         //BDT plot
         for ( unsigned int iBDT=1; iBDT< 17; iBDT++ ) {
@@ -1786,7 +1786,7 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         /////
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",40,0,2000);
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+l,"HT "+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/HTmcweight_"+l,"HT (mcweight)"+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
+        //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/HTmcweight_"+l,"HT (mcweight)"+l+"; HT (P_{T}^{jet}>40 [GeV])",800,0,8000);
 
         /////
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/ST_zoom_"+l,"ST "+l+"; ST ( HT+met+lepsPt )",50,0,2500);
@@ -2231,13 +2231,13 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minDRlb_mass_"+l,"minDRlb_mass "+l+";m(lb)^{dR^{min}})",50,0,500);
         //        Book("ChargedHiggsTopBottom/Baseline/Rlb_"+l,"Rlb "+l+";R_{lb}",100,0,2*TMath::Pi());
 
+        Book("ChargedHiggsTopBottom/"+phasespace+category+"/dRlb_"+l,"dRlb "+l+";dR_{l^{1},b^{1}}",50,0,2*TMath::Pi());
         //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/dEtalb_"+l,"dEtalb "+l+";dEta_{l^{1},b^{1}}",50,0,10);
         //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/dPhilb_"+l,"dPhilb "+l+";dPhi_{l^{1},b^{1}}",50,0,2*TMath::Pi());
-        Book("ChargedHiggsTopBottom/"+phasespace+category+"/dRlb_"+l,"dRlb "+l+";dR_{l^{1},b^{1}}",50,0,2*TMath::Pi());
-
         Book("ChargedHiggsTopBottom/"+phasespace+category+"/minMasslb_"+l,"minMasslb "+l+";m(lb)^{min})",50,0,500);
 
         if(doMorePlot) {
+
             //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/dEtal2b_"+l,"dEtal2b "+l+";dEta_{l^{2},b^{1}}",50,0,10);
             //        Book("ChargedHiggsTopBottom/"+phasespace+category+"/dPhil2b_"+l,"dPhil2b "+l+";abs(dPhi_{l^{2},b^{1}})",50,0,TMath::Pi());
             if(do2lAnalysis) Book("ChargedHiggsTopBottom/"+phasespace+category+"/dRl2b_"+l,"dRl2b "+l+";dR_{l^{2},b^{1}}",50,0,2*TMath::Pi());
@@ -3425,9 +3425,8 @@ void ChargedHiggsTopBottom::classifyHF(Event*e, string label, string category, s
             if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_"+Sregion+LabelHF+label, systname, evt_minDRbb ,e->weight());
             if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/minDRbb_mass_"+Sregion+LabelHF+label, systname, evt_minDRbb_invMass ,e->weight());
             if(e->Bjets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DEtaMaxBB_"+Sregion+LabelHF+label,systname, evt_DEtaMaxBB ,e->weight());
+            //            if(e->NcentralJets()>1) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/AvCSVPt_"+Sregion+LabelHF+label, systname, evt_AvCSVPt ,e->weight());
         }
-
-
     }
 
 }
@@ -3658,6 +3657,9 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     string label = GetLabel(e);
 
     if(e->weight() == 0. ) cout <<"[ChargedHiggsTopBottom]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
+
+
+    if(doMorePlot)  { nbinsBDT=100; doFinal=false; doSplit=false;}
 
     /*
     std::cout << e->GetName() << std::endl;
@@ -4036,11 +4038,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
              || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
              || (label.find("TTJets")!=string::npos)
              )) { e->ApplyTopReweight(); }
-
-        if (not e->IsRealData() and
-            ((label.find("DYJetsToLL_M-50_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) )
-            { e->SetPtEtaSF("htRECO",evt_HT,0); e->ApplySF("htRECO"); }
-
     }
 
     ////$$$$$$$
@@ -4060,26 +4057,28 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         ) return EVENT_NOT_USED;
     */
 
-
-    /*
     // use the 2/3
     if (
         ((label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or
-         (label.find("HplusToTB") !=string::npos) or
+         (label.find("HplusToTB") !=string::npos)  or
+         (label.find("DYJetsToLL_M-5to50_HT") !=string::npos) or
          (label.find("DYJetsToLL_M-50_HT") !=string::npos) or
-         (label.find("WJetsToLNu_HT") !=string::npos)
+         (label.find("WJetsToLNu_HT") !=string::npos) or
+         (label.find("ST") !=string::npos)
          )  and (e->eventNum()%3)==0 ) return EVENT_NOT_USED;
-    */
 
     /*
     // use the 1/3
     if (
         ((label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or
-         (label.find("HplusToTB") !=string::npos) //or
-         //         (label.find("DYJetsToLL_M-50_HT") !=string::npos) or
-         //         (label.find("WJetsToLNu_HT") !=string::npos)
+         (label.find("HplusToTB") !=string::npos) or
+         (label.find("DYJetsToLL_M-5to50_HT") !=string::npos) or
+         (label.find("DYJetsToLL_M-50_HT") !=string::npos) or
+         (label.find("WJetsToLNu_HT") !=string::npos) or
+         (label.find("ST") !=string::npos)
          )  and (e->eventNum()%3)!=0 ) return EVENT_NOT_USED;
     */
+
     /*
     TRandom3 *r = new TRandom3();
     r->SetSeed(0);
@@ -4302,6 +4301,14 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         ////
 
         computeVar(e);
+
+
+        if (not e->IsRealData() and
+            ((label.find("DYJetsToLL_M-50_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("DYJetsToLL_M-5to50_HT") !=string::npos) )  )
+            {
+                e->SetPtEtaSF("htRECO",evt_HT,0); e->ApplySF("htRECO");
+            }
+
 
         if(doTMVA) ReadTmva(e);
         if(doScikit) ReadScikit(e);

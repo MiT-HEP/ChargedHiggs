@@ -25,9 +25,10 @@ public:
     bool doSynch = false;
     bool doICHEP = false;
     bool doBDTSyst = true;
-    bool doFinal = true;
+    bool doFinal = false; // false for final ; no need to compute fancy stuff
     bool writeTree = false; // false for final
     bool doSplit = true; // true for final
+    bool doMorePlot = false; // false for final
 
     // Analysis type
     // do1lAnalysis, do2lAnalysis, doTaulAnalysis from the config
@@ -35,7 +36,7 @@ public:
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
     // doSplitLepCat HARDcoded
-    bool doSplitLepCat = false; // true for final
+    bool doSplitLepCat = true; // true for final
 
     // trigger bits
     bool passTriggerMu=true;
@@ -179,15 +180,15 @@ private:
     GenParticle * WFromTopAss=NULL;
     GenParticle * leptonTopAssH=NULL;
 
-    bool doTMVA{true};
-    bool doScikit{false};
+    bool doTMVA{false};
+    bool doScikit{true};
 
 
-    int nbinsBDT=1000;
+    int nbinsBDT=200;
     // TMVA
-    float binMIN=-1.;
+    //    float binMIN=-1.;
     // Keras
-    //    float binMIN=0.;
+    float binMIN=0.;
     float binMAX=1.;
 
 
