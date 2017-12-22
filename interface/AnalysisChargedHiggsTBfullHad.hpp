@@ -94,8 +94,12 @@ private:
 
 
     bool doTrigger = 0;
+    bool doMCTrg = 0;
     bool doPileUp = 0;
+    bool doHTlimit = 0;
+
     bool doGenSig = 0;
+    bool dorecoGenSig = 0;
     bool doGentt = 0;
 
 

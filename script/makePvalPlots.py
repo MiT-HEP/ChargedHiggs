@@ -59,6 +59,11 @@ sigmas=[1,2,3,4,5,6]
 
 ## Start Drawing
 c=ROOT.TCanvas()
+c.SetCanvasSize(700,500)
+c.SetBottomMargin(0.15)
+c.SetLeftMargin(0.15)
+c.SetTopMargin(0.10)
+c.SetRightMargin(0.10)
 
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
@@ -71,9 +76,13 @@ dummy.GetXaxis().SetRangeUser(xmin,xmax)
 dummy.GetYaxis().SetRangeUser(.5e-3,1)
 
 dummy.GetXaxis().SetTitle("m_{H} [GeV]")
-dummy.GetXaxis().SetTitleSize(0.04)
 dummy.GetYaxis().SetTitle("local p-value")
-dummy.GetYaxis().SetTitleSize(0.04)
+#dummy.GetXaxis().SetTitleSize(0.04)
+#dummy.GetYaxis().SetTitleSize(0.04)
+dummy.GetXaxis().SetTitleSize(0.05)
+dummy.GetYaxis().SetTitleSize(0.05)
+dummy.GetXaxis().SetLabelSize(0.045)
+dummy.GetYaxis().SetLabelSize(0.045)
 
 dummy.Draw("AXIS")
 dummy.Draw("AXIG SAME")
@@ -115,13 +124,13 @@ for i,sig in enumerate(sigmas):
 # draw CMS and lumi
 l = ROOT.TLatex()
 l.SetNDC()
-l.SetTextSize(0.055)
+l.SetTextSize(0.06)
 l.SetTextFont(42)
 l.SetTextAlign(13)
 if opts.paper:
-    l.DrawLatex(0.13,.88,"#bf{CMS}")
+    l.DrawLatex(0.18,.89,"#bf{CMS}")
 else:
-    l.DrawLatex(0.13,.88,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
+    l.DrawLatex(0.18,.89,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
 l.SetTextSize(0.035)
 l.SetTextAlign(31)
 if opts.run12:

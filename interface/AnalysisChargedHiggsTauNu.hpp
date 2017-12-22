@@ -45,13 +45,14 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
             t->SetTrackPtCut(30.);
             t->SetProngsCut(nprongs); 
             t->SetDecayMode(1);
+            //t->SetPiZeroCut(0); 
         }
         inline void SetJetCuts(Jet *j) override { 
             j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535 
             j->SetEtaCut(4.7); 
             j->SetEtaCutCentral(2.5);
             j->SetPtCut(30); 
-            j->SetPuIdCut(-999);
+            j->SetPuIdCut(100); // LOOSE
         }
         void SetGenCuts(GenParticle *g)override {};
         /**/
@@ -67,6 +68,11 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
 
         bool singleTauTrigger{false};
         int nprongs{13};
+
+        // create gen level selections and book histograms
+        bool doGen{true};
+        void analyzeGen(Event* ,string systname);
+        void initGen();
 
 };
 

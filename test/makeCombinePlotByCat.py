@@ -9,6 +9,7 @@ parser=OptionParser()
 parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
 parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true")
 #parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="Hmumu.root")
+parser.add_option("-a","--all",action='store_true',help="All [%default]", default=False)
 opts,args= parser.parse_args()
 
 ########### IMPORT ROOT #############
@@ -65,6 +66,9 @@ def GetLimitFromTree(inputFile,xsec=False):
 		type= 0
 	
 		## TODO OBS
+		if abs(mh-125.) >0.01 : 
+		    print "Ignoring mh=",mh
+		    continue
 			
 		if abs(q-0.5)<1.e-5 : 
 			#exp.SetPoint(g.GetN(), mh,l ) 
@@ -109,13 +113,14 @@ c.SetRightMargin(0.05);
 nCats=len(args)
 
 maxL=31.
-dummy = ROOT.TH2F("dummy","Expected Limits per Category",20,0.,maxL,nCats,1-0.5,nCats+0.5);
+dummy = ROOT.TH2F("dummy","Limits per Category",20,0.,maxL,nCats,1-0.5,nCats+0.5);
 dummy.SetStats(0);
 ci = ROOT.TColor.GetColor("#00ff00");
 dummy.SetFillColor(ci);
 
 for ic,cat in enumerate(args):
     dummy.GetYaxis().SetBinLabel(nCats-ic,"cat%d"%ic);
+
 dummy.GetXaxis().SetTickLength(0.01);
 dummy.GetYaxis().SetTickLength(0);
 dummy.GetXaxis().SetTitle("Upper Limit (95%CL)");
@@ -137,6 +142,16 @@ dummy.GetZaxis().SetTitleFont(42);
 dummy.Draw("");
 #sigYields[(cat,proc)] = ea * config.lumi() * config.xsec(proc) *config.br() # proc+"_HToMuMu_M%d" 
 width = 0.34
+
+if opts.all:
+    dummy.GetYaxis().SetBinLabel(1,"Combined")
+    l=ROOT.TGraph()
+    l.SetLineColor(ROOT.kBlack)
+    l.SetPoint(0,0,1.5)
+    l.SetPoint(1,16,1.5)
+    l.Draw("L SAME")
+    garbage.extend([l])
+
 
 for ic,cat in enumerate(args):
     S=0.0
@@ -174,7 +189,10 @@ for ic,cat in enumerate(args):
     pave2.SetFillColor(ROOT.kOrange)
     pave1.SetFillColor(ROOT.kGreen)
 
-    pavetext = ROOT.TPaveText(0.001,ybinmin,10,ybinmax);
+    txtmin,txtmax=0.001,10
+    if opts.all and ic ==nCats-1:
+        txtmin,txtmax=5,13
+    pavetext = ROOT.TPaveText(txtmin,ybinmin,txtmax,ybinmax);
     if opts.unblind:
         pavetext.AddText("%.1f (%.1f)"%(obs,exp))
     else:
@@ -198,8 +216,23 @@ for ic,cat in enumerate(args):
     pavetext.Draw("SAME")
     garbage.extend([marker,marker2,pave1,pave2,pavetext])
 
+l = ROOT.TLatex()
+l.SetNDC()
+l.SetTextSize(0.05)
+l.SetTextFont(42)
+l.SetTextAlign(31) #inside
+xcms,ycms= 0.9,.18 # inside
+l.DrawLatex(xcms,ycms,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
+
+l.SetTextSize(0.03)
+l.SetTextAlign(31)
+l.DrawLatex(0.89+0.05,.91,"35.9 fb^{-1} (13 TeV)")
 
 c.Modify()
 c.Update()
 
 raw_input("ok?")
+
+c.SaveAs("/afs/cern.ch/user/a/amarini/www/cms-private/Hmumu/2017_08_21_NewCat5_NoTTH//unblind/limitPerCat.png")
+c.SaveAs("/afs/cern.ch/user/a/amarini/www/cms-private/Hmumu/2017_08_21_NewCat5_NoTTH//unblind/limitPerCat.pdf")
+c.SaveAs("/afs/cern.ch/user/a/amarini/www/cms-private/Hmumu/2017_08_21_NewCat5_NoTTH//unblind/limitPerCat.root")

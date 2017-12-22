@@ -1,5 +1,5 @@
 # import ROOT in batch mode
-import sys
+import sys,os
 import math
 oldargv = sys.argv[:]
 #sys.argv = [ '-b-' ]
@@ -14,36 +14,24 @@ ROOT.FWLiteEnabler.enable()
 
 # load FWlite python libraries
 from DataFormats.FWLite import Handle, Events
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/007A3F80-9DB8-E611-9096-0CC47A78A4B8.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/0444930E-ACB8-E611-8A01-0CC47A7452DA.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/1E8E78D8-93B8-E611-853F-0025905A60BC.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/2E4D09C4-C0B8-E611-B02B-0CC47A78A4A6.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/36D91C56-96B8-E611-AC28-0CC47A74525A.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/40FD6185-D0B8-E611-9D2F-0025905A60EE.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/6CF85F7B-B0B8-E611-93BB-0CC47A78A4A6.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/9C6F82AC-B0B8-E611-9DF9-0CC47A78A30E.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/9E923785-D0B8-E611-A410-0CC47A7452DA.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/A27C2A60-B5B8-E611-8511-0CC47A7C3404.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/AAF768F9-AAB8-E611-8EAF-003048FFD79E.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/DC014062-B6B8-E611-A9BD-0CC47A78A2EC.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/E4F8418C-B8B8-E611-9EC7-0CC47A78A4A6.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/E686B2F0-A3B8-E611-8727-0025905B85C6.root
-#/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/F0C900F2-A2B8-E611-B998-0CC47A7452DA.root
-
 ##PUMoriond17
-#files=['/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/F0C900F2-A2B8-E611-B998-0CC47A7452DA.root']
+#/eos/cms//store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1
 
 ## Prev
-#files=['/store/mc/RunIISpring16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/80000/D0A9D6B0-7758-E611-B5E5-0025905B85C6.root']
-files=['file:/afs/cern.ch/user/a/amarini/work/GenProduction/CMSSW_7_1_25_patch4/src/ChHiggs_M1000.root']
-#files=['file:/afs/cern.ch/user/a/amarini/work/GenProduction/CMSSW_7_6_3_patch2/src/HIG-RunIISummer15wmLHEGS-00276.root']
-#files=['/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-300_13TeV_amcatnlo_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/B86AC1AC-01CB-E611-907E-0025905B85CC.root']
+#files=['file:/afs/cern.ch/user/a/amarini/work/GenProduction/CMSSW_7_1_25_patch4/src/ChHiggs_M1000.root']
 
+## Recursive search on eos
+#indir="/eos/cms/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1"
+##files = [indir + filename for filename in os.listdir(indir)[:]]
+#files=[]
+#for root, dirs, fs in os.walk(indir):
+#    files = [ root + "/" + x for x in fs[:] ] 
 
-## TOP BOTTOM
-#files=['/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/90000/EC624DD7-70F1-E611-B4C8-02163E0128AF.root']
-#files=['/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/F656816E-9DDD-E611-9B69-FA163EBAF02E.root']
-#files=['/store/mc/RunIISummer16MiniAODv2/ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/E45B6228-73E3-E611-9EC6-001E67A400F0.root']
+## das query. do voms_proxy_init -voms cms
+from subprocess import check_output
+cmd="das_client.py --limit=1000 --query='file dataset=/ChargedHiggs_HplusTB_HplusToTauNu_M-200_13TeV_amcatnlo_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM'"
+output = check_output(cmd,shell=True)
+files = [ x for x in output.split('\n') if '/store' in x ] 
 
 onMiniAOD=False
 TopBottom=False
@@ -53,8 +41,6 @@ onlyEvent=None
 verbose=False
 h = ROOT.TH1D("hp","hp",1000,500,1500)
 h2 = ROOT.TH1D("hp2","hp2",1000,500,1500)
-#h = ROOT.TH1D("hp","hp",1000,0,1000)
-#h = ROOT.TH1D("hp","hp",1000,1500,2500)
 ## counters events
 try:
    for f in files:
@@ -63,14 +49,19 @@ try:
     if 'file:' in f.split()[0]:
         events = Events(f.split()[0])
     else:
-        events = Events("root://eoscms//"+f.split()[0])
+        #events = Events("root://eoscms//"+f.split()[0])
+        events = Events("root://xrootd-cms.infn.it//"+f.split()[0]) #AAA
     lhe,lheLabel = Handle("LHEEventProduct"),"externalLHEProducer"
     #vector<reco::GenParticle>             "prunedGenParticles"  
     handlePruned  = Handle ("std::vector<reco::GenParticle>")
+    handleJets  = Handle ("std::vector<reco::GenJet>")
+
     if onMiniAOD:
         labelPruned = ("prunedGenParticles")
+        labelJets = ("slimmedGenJets")
     else:
         labelPruned = ("genParticles")
+        labelJets = ("genJets")
         
     for iev,event in enumerate(events):
 
@@ -137,6 +128,11 @@ try:
                         m=m.mother(0)
                     if fromHiggs and not fromTau:
                         nuL.SetPtEtaPhiM(p.pt(),p.eta(),p.phi(),0.0)
+
+        event.getByLabel(labelJets, handleJets)
+        for j in handleJets.product():
+            if verbose:
+                print " *) GenJet :   pt : %s  eta : %s   phi : %s " %(j.pt(),j.eta(),j.phi()) 
 
         hp=tau+nu
         h.Fill(hp.M())

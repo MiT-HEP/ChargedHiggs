@@ -35,6 +35,10 @@ int Tau::IsTau() const {
         if (selectprongs_<10 and selectprongs_ != GetNProng()) return 0;
         if (selectprongs_== 13 and GetNProng() !=1 and GetNProng() !=3) return 0;
         }
+    if ( selectpi0_ >=0 )
+    {
+        if ( selectpi0_ < 10 and GetNPiZero() != selectpi0_) return 0;
+    }
 
     return 1;
 }
@@ -43,10 +47,11 @@ int Tau::IsTauInvIso() const {
     if ( not id ) return 0;
     if ( doEleRej_ and not id_ele) return 0;
     if ( doMuRej_ and not id_mu) return 0;
-    if (iso2 < 3.0 ) return 0;
+    if (iso2 < 2.5 ) return 0;
     //#warning loose inv Iso tau
     //if (iso2 < 2.5 ) return 0;
-    if (iso2 > 20.0 ) return 0;
+    //if (iso2 > 20.0 ) return 0;
+    if (iso2 > 8.0 ) return 0;
     if ( Pt() < ptcut_ ) return 0;
     if ( trackptcut_ >0 and trackptcut_ > trackpt_) return 0;
     if ( selectprongs_ >=0 )

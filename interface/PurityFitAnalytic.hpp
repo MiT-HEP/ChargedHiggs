@@ -56,6 +56,7 @@ class PurityFitAnalytic : public BaseFitter{
         ~PurityFitAnalytic(){};
 
         vector<float> PtBins;
+        vector<float> EtaBins;
         vector<string> bkglabels;
 
         string outname;
