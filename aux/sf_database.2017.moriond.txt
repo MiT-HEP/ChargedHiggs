@@ -80,9 +80,9 @@ muISOloose_runGH th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_GH.root LooseISO_Loos
 muISOloose_runBCDEF th2f aux/LEPTONS/mu_ISO_EfficienciesAndSF_BCDEF.root LooseISO_LooseID_pt_eta/efficienciesDATA/abseta_pt_DATA LooseISO_LooseID_pt_eta/efficienciesMC/abseta_pt_MC
 dummy base 1.0 0.00
 
-################
-##   HT for DY  ##
-################
+#####################################
+##   HT for DY  ## for TB leptonic ##
+#####################################
 
 # dump from SF_DYWeight.root vs HT
 htRECO pteta 0 80  -9999 +9999 0 0
@@ -101,6 +101,11 @@ htRECO pteta 500 750  -9999 +9999 0.9212 0.0251083
 htRECO pteta 750 1000  -9999 +9999 0.836237 0.0432254
 htRECO pteta 1000 1500  -9999 +9999 0.752142 0.0505104
 htRECO pteta 1500 10000  -9999 +9999 0.691789 0.0786085
+
+##############################
+## QCD HT ## for TB fullhad ##
+##############################
+include aux/QCDHTRw.txt
 
 ################
 ##   WG1 Unc  ##
@@ -135,7 +140,7 @@ tauid2 tf1 1.0 0.0002*x
 #include aux/R_reload_eta.txt
 ## finer eta binnig
 #include aux/R_reload_eta2.txt
-include aux/R_reload_eta2_iso8.txt
+#include aux/R_reload_eta2_iso8.txt
 
 #######################
 ### top reweighting ###
