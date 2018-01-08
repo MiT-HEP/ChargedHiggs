@@ -318,6 +318,9 @@ void Looper::NewFile()
 
 
 void Looper::FillEvent(){
+#ifdef VERBOSE
+	if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","FillEvent");
+#endif
 
 	loader_->FillEventInfo();
 

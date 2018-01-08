@@ -265,8 +265,8 @@ for smear in cfg['Smear']:
 		loop.AddSmear(smear)
 
 for corr in cfg['Correct']:
-	if opts.verbose: print "-> constructing corrector",corr
-	if corr=='NONE' : continue
+	if opts.verbose: print "-> constructing corrector: '"+corr+"'"
+	if corr=='NONE' or corr=='' : continue
 	c = r.__getattr__(corr)() 
 	if corr in cfg['config']:
 		for key in cfg['config'][corr]:

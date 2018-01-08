@@ -150,7 +150,10 @@ for idx,fName in enumerate(fileList):
 
 
 print "---------------------------------------------"
-print "internal xSec = ",h_xSec.GetBinContent(1)/h_xSec.GetBinContent(2), "+/-", math.sqrt(1./h_xSec.GetBinContent(2))
+try:
+    print "internal xSec = ",h_xSec.GetBinContent(1)/h_xSec.GetBinContent(2), "+/-", math.sqrt(1./h_xSec.GetBinContent(2))
+except ZeroDivisionError:
+    print "internal xSec Error: Sum is 0"
 print "SumWeights = ", sum.GetBinContent(1)
 print "Tot Entries = ", n
 print "---------------------------------------------"

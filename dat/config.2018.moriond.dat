@@ -23,7 +23,7 @@ SFDB=aux/sf_database.2018.moriond.txt
 
 Lumi=1
 Smear=NONE
-Correct=NONE
+Correct=
 #Correct=MetPhiCorrector
 Final=no
 

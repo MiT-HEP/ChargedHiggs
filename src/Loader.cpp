@@ -72,6 +72,10 @@ int LoadNero::InitTree(){
 
 int LoadNero::FillEvent(){
 
+#ifdef VERBOSE
+	if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","FillEvent");
+#endif
+
     //FillEventInfo(); // new file uses isRealData, but not the weights, called directly
 
     FillJets();
@@ -85,6 +89,9 @@ int LoadNero::FillEvent(){
 }
 
 void LoadNero::FillEventInfo(){
+#ifdef VERBOSE
+	if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","FillEventInfo");
+#endif
     BareEvent *e = dynamic_cast<BareEvent*> ( bare_ [names_["BareEvent"] ] ) ; assert(e!=NULL);
 #ifdef VERBOSE
     if(VERBOSE>0)Log(__FUNCTION__,"DEBUG",string("Processing Event") + Form("%ld:%ld:%ld",e->runNum,e->lumiNum,e->eventNum));
@@ -122,7 +129,7 @@ void LoadNero::FillJets(){
     cout <<"\t * selBits: "	<< tree_->GetBranchStatus("jetSelBits") << " : "<< bj->selBits->size()<<endl;
     cout <<"\t * unc: "		<< tree_->GetBranchStatus("jetUnc") << " : "<< bj->unc->size()<<endl;
     cout <<"\t * bdiscr: "	<< tree_->GetBranchStatus("jetBdiscr") << " : "<< bj->bDiscr->size()<<endl;
-    cout <<"\t * qgl: "		<< tree_->GetBranchStatus("jetQG") << " : "<< bj->qgl->size()<<endl;
+    cout <<"\t * qgl: "		<< tree_->GetBranchStatus("jetQGL") << " : "<< bj->qgl->size()<<endl;
 #endif
 
     for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
@@ -142,11 +149,12 @@ void LoadNero::FillJets(){
             cout <<"\t\t * puId :"<<  bj -> puId -> size() <<endl;
 
             cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Pt() <<endl;
-            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
-            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Phi() <<endl;
+            cout <<"\t\t * Eta :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
+            cout <<"\t\t * Phi :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Phi() <<endl;
         }
 #endif
 //
+#warning FIX_JETID
         bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
         float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
         if ( aeta >2.7 and aeta <=3.0 ) 
@@ -158,17 +166,20 @@ void LoadNero::FillJets(){
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
         // JES
-        //Log(__FUNCTION__,"DEBUG",Form("Going to Fill Jes for jet: %d",iJet));
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("Going to Fill Jes for jet: %d",iJet));
+#endif
 
         j->SetValueUp  (Smearer::JES , (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
         j->SetValueDown(Smearer::JES , (1. - bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
         j->SetFilled(Smearer::JES);
 
-        //Log(__FUNCTION__,"DEBUG",Form(" JesUp=%f", (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
-        //Log(__FUNCTION__,"DEBUG",Form(" JesDown=%f", (1. - bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form(" JesUp=%f", (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form(" JesDown=%f", (1. - bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt()));
 
-        // JER
-        //Log(__FUNCTION__,"DEBUG","Going to Fill Jer");
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","Going to Fill Jer");
+#endif
         if (event_->IsRealData())
         {
             j->SetFilled(Smearer::JER,false);
@@ -179,30 +190,63 @@ void LoadNero::FillJets(){
             j->SetFilled(Smearer::JER);
         }
 
-        //Log(__FUNCTION__,"DEBUG","-> Done");
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> BTag");
+#endif
         // ---
         j->bdiscr = bj -> bDiscr -> at(iJet);
 
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> QGL");
+#endif
         if (tree_->GetBranchStatus("jetQGL") ) j->SetQGL( bj -> qgl -> at(iJet) );
         else j->SetQGL(  -10 ); // Add a warning ? 
 
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> QGL Extend");
+#endif
+        // I don't know why these are not available. Needs to be debugge
         if (tree_->GetBranchStatus("jetQglMult") ) j->SetQGLVar( "mult", bj -> qglMult -> at(iJet) );
-        if (tree_->GetBranchStatus("jetQglNMult") ) j->SetQGLVar( "nmult", bj -> qglNMult -> at(iJet) );
-        if (tree_->GetBranchStatus("jetQglCMult") ) j->SetQGLVar( "cmult", bj -> qglCMult -> at(iJet) );
+        //if (tree_->GetBranchStatus("jetQglNMult") ) j->SetQGLVar( "nmult", bj -> qglNMult -> at(iJet) );
+        //if (tree_->GetBranchStatus("jetQglCMult") ) j->SetQGLVar( "cmult", bj -> qglCMult -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglPtD") ) j->SetQGLVar( "ptD", bj -> qglPtD -> at(iJet) );
-        if (tree_->GetBranchStatus("jetQglPtDrLog") ) j->SetQGLVar( "PtDrLog", bj -> qglPtDrLog -> at(iJet) );
+        //if (tree_->GetBranchStatus("jetQglPtDrLog") ) j->SetQGLVar( "PtDrLog", bj -> qglPtDrLog -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglAxis2") ) j->SetQGLVar( "axis2", bj -> qglAxis2 -> at(iJet) );
-        if (tree_->GetBranchStatus("jetQglAxis1") ) j->SetQGLVar( "axis1", bj -> qglAxis1 -> at(iJet) );
+        //if (tree_->GetBranchStatus("jetQglAxis1") ) j->SetQGLVar( "axis1", bj -> qglAxis1 -> at(iJet) );
     
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> RawPt");
+#endif
         if (tree_->GetBranchStatus("jetrawPt") ) j->rawPt = bj->rawPt -> at(iJet);
+
+        
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG2",Form("MatchedParton:"));
+#endif
         j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUGi2",Form("MotherPdgId"));
+#endif
         j->motherPdgId = bj->motherPdgId -> at(iJet);
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUGi2",Form("iGrMotherPdgId"));
+#endif
         j->grMotherPdgId =  bj-> grMotherPdgId -> at(iJet);
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUGi2",Form("PuId"));
+#endif
         j->SetPuId(bj -> puId -> at(iJet));
 
-        if (tree_->GetBranchStatus("jethadFlavour") ) j->SetHadFlavor(bj -> hadFlavour -> at(iJet));
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUGi2",Form("HadrFlavour, iJet=%d hadSize=%d",iJet,bj->hadFlavour->size()));
+#endif
+
+        if (tree_->GetBranchStatus("jethadFlavour")  and  (bj -> hadFlavour -> size() > iJet)) j->SetHadFlavor(bj -> hadFlavour -> at(iJet));
         else j->SetHadFlavor( -10 );
 
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> Push_back");
+#endif
         // add it
         event_ -> jets_ . push_back(j);
     }
@@ -253,8 +297,8 @@ void LoadNero::FillFatJets(){
             cout <<"[LoadNero]::[FillFatJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
 
             cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Pt() <<endl;
-            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
-            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Phi() <<endl;
+            cout <<"\t\t * Eta :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
+            cout <<"\t\t * Phi :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Phi() <<endl;
         }
 #endif
 //
@@ -264,6 +308,7 @@ void LoadNero::FillFatJets(){
         FatJet *j =new FatJet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
 
+        /*
         j->tau1 = bj -> tau1 -> at(iJet);
         j->tau2 = bj -> tau2 -> at(iJet);
         j->tau3 = bj -> tau3 -> at(iJet);
@@ -291,7 +336,7 @@ void LoadNero::FillFatJets(){
         j->hasSubJetBTag = nSubJetMedium;
         j->hasSubJetBTagLoose = nSubJetLoose;
 
-
+        */
         // add it
         event_ -> fat_ . push_back(j);
 
@@ -431,7 +476,7 @@ void LoadNero::FillTaus(){
         if(VERBOSE>1)cout<<"\t charge= " << bt->Q->size()<<endl;
         if(VERBOSE>1)cout<<"\t iso2= " << bt->isoDeltaBetaCorr->size()<<endl;
         if(VERBOSE>1)cout<<"\t selBits= " << bt->selBits->size()<<endl;
-        if(VERBOSE>1)cout<<"\t match= " << bt->match->size()<<endl;
+        //if(VERBOSE>1)cout<<"\t match= " << bt->match->size()<<endl;
 #endif
         Tau *t = new Tau();
         t->SetP4( *(TLorentzVector*) ((*bt->p4)[iL]) );
