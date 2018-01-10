@@ -135,8 +135,13 @@ class Loop:
             cmd += " && make -j 4"
             self._call(cmd,"build",self.log+"/"+pr.sha)
         self.gh.set_status(pr.sha,'success','build',self.url +"/"+pr.sha+"/build.txt")
-        
-        # TODO
+
+        if True:
+            cmd = "%(cmsenv)s"%dictionary
+            cmd += " && cd ChargedHiggs"
+            cmd += " && python python/Loop.py -v -d dat/configBuildTest.dat"
+            self._call(cmd,"run",self.log+"/"+pr.sha)
+
         self.gh.set_status(pr.sha,'success','run',self.url+"/"+pr.sha+"run.txt")
         ##
         return True
