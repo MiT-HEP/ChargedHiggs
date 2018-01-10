@@ -8,9 +8,10 @@ from optparse import OptionParser, OptionGroup
 from subprocess import call,check_output
 
 parser = OptionParser(usage = "usage");
-parser.add_option("-y","--yes",dest="yes",type="int",help="Should I assume yes as an answer. [0-3],0 = ask, 1= almost always, 3= yes (dangerous).",default=0);
-parser.add_option("-f","--token-file",dest="tokenfile",type="string",help="tokenfile [Default=%default]",default=os.environ["HOME"]+"/.ssh/id_status_token");
-parser.add_option("","--pr",dest="pr",type="string",help="PR number to force check [Default=%default]",default="");
+#parser.add_option("-y","--yes",dest="yes",type="int",help="Should I assume yes as an answer. [0-3],0 = ask, 1= almost always, 3= yes (dangerous).",default=0);
+parser.add_option("-f","--token-file",dest="tokenfile",type="string",help="tokenfile [%default]",default=os.environ["HOME"]+"/.ssh/id_status_token");
+parser.add_option("","--pr",dest="pr",type="string",help="PR number to force check [%default]",default="");
+parser.add_option("-n","--dryrun",dest="dryrun",action='store_true',help="Only List PR.",default=False);
 
 (opts,args) = parser.parse_args()
 
@@ -54,14 +55,13 @@ class Loop:
 
     def TestPr(self,pr):
 
-        print "(V) -> Testing PR",pr.number,pr.title
         ## delete and create target directory
         self._call('[ -d '+ self.tmp +'] && rm -rf ' + self.tmp ,"setup",self.log +"/"+pr.sha)
-        self._call(' '.join(["mkdir","-p",self.tmp],"setup",self.log+"/"+pr.sha)
+        self._call(' '.join(["mkdir","-p",self.tmp]),"setup",self.log+"/"+pr.sha)
 
         ## will be used for substitutions
         dictionary = {'tmp':self.tmp,'origin':pr.origin,'sha':pr.sha,'log':self.log}
-        self._call(' '.join(["mkdir","-p",dictionary["log"]],"setup",self.log+"/"+pr.sha)
+        self._call(' '.join(["mkdir","-p",dictionary["log"]]),"setup",self.log+"/"+pr.sha)
 
         ## get build test configuration
         cmd =  "rm %(tmp)s/config.txt" %dictionary
@@ -175,17 +175,23 @@ class Loop:
 
             ## if ok
             if state=='tocheck' or opts.pr == pr.number :
-                try:
-                    self.TestPr(pr)   
-                except SetupError:
-                    self.gh.set_status(pr.sha,'fail','setup',self.url+"/"+pr.sha+"/setup.txt")
-                except BuildError:
-                    self.gh.set_status(pr.sha,'fail','build',self.url+"/"+pr.sha+"/build.txt")
-                except RunError:
-                    self.gh.set_status(pr.sha,'fail','run',self.url+"/"+pr.sha+"/run.txt")
+                print "(V) -> Testing PR",pr.number,pr.title
+                if not opts.dryrun:
+                    try:
+                        self.TestPr(pr)   
+                    except SetupError:
+                        self.gh.set_status(pr.sha,'fail','setup',self.url+"/"+pr.sha+"/setup.txt")
+                    except BuildError:
+                        self.gh.set_status(pr.sha,'fail','build',self.url+"/"+pr.sha+"/build.txt")
+                    except RunError:
+                        self.gh.set_status(pr.sha,'fail','run',self.url+"/"+pr.sha+"/run.txt")
 
-            if state=='ok': self.pr_checked.append( (pr.number,pr.sha) )
-            if state=='fail': self.pr_checked.append( (pr.number,pr.sha) )
+            if state=='ok': 
+                print "(V)-> PR is OK",pr.number
+                self.pr_checked.append( (pr.number,pr.sha) )
+            if state=='fail': 
+                print "(V)-> PR is failed",pr.number
+                self.pr_checked.append( (pr.number,pr.sha) )
             if state=='pend':
                 print "(V)-> PR is already being checked",pr.number
 
