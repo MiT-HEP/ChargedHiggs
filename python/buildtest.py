@@ -55,8 +55,12 @@ class Loop:
 
     def TestPr(self,pr):
 
+        self.gh.set_status(pr.sha,'pending','setup',self.url +"/" + pr.sha + "/setup.txt")
+        self.gh.set_status(pr.sha,'pending','build',self.url +"/" + pr.sha + "/setup.txt")
+        self.gh.set_status(pr.sha,'pending','run',self.url +"/" + pr.sha + "/setup.txt")
+
         ## delete and create target directory
-        self._call('[ -d '+ self.tmp +'] && rm -rf ' + self.tmp ,"setup",self.log +"/"+pr.sha)
+        self._call('[ -d '+ self.tmp +' ] && rm -rf ' + self.tmp + " || true","setup",self.log +"/"+pr.sha)
         self._call(' '.join(["mkdir","-p",self.tmp]),"setup",self.log+"/"+pr.sha)
 
         ## will be used for substitutions
@@ -64,8 +68,8 @@ class Loop:
         self._call(' '.join(["mkdir","-p",dictionary["log"]]),"setup",self.log+"/"+pr.sha)
 
         ## get build test configuration
-        cmd =  "rm %(tmp)s/config.txt" %dictionary
-        cmd += "wget --no-check-certificate 'https://raw.githubusercontent.com/%(origin)s/%(sha)s/ChargedHiggs/.buildtest.txt' -O %(tmp)s/config.txt"%dictionary 
+        cmd =  "rm %(tmp)s/config.txt || true ;" %dictionary
+        cmd += "wget --no-check-certificate 'https://raw.githubusercontent.com/%(origin)s/%(sha)s/.buildtest.txt' -O %(tmp)s/config.txt"%dictionary 
         self._call(cmd,"setup",self.log+"/"+pr.sha)
 
 
@@ -74,22 +78,23 @@ class Loop:
         dictionary['tag'] = 'cmssw_94x'
         dictionary['coretag'] = 'CMSSW_92X'
         dictionary['combinetag'] = 'v7.0.5'
-        dictionary['combine'] = True
+        dictionary['combine'] = 'yes'
 
         conf = open("%(tmp)s/config.txt"%dictionary)
         for line in conf:
             l = line.split('#')[0]
             l = l.split('\n')[0]
             if '=' in l: dictionary[l.split('=')[0]] = l.split('=')[1]
-
-        if combine.lower() == 'no':     dictionary['combine']=False
-        if combine.lower() == 'false':  dictionary['combine']=False
-        if combine.lower() == 'yes':    dictionary['combine']=True
-        if combine.lower() == 'true':   dictionary['combine']=True
-        if combine.lower() == 'ok':     dictionary['combine']=True
+        
+        combineString = dictionary['combine']
+        if combineString.lower() == 'no':     dictionary['combine']=False
+        if combineString.lower() == 'false':  dictionary['combine']=False
+        if combineString.lower() == 'yes':    dictionary['combine']=True
+        if combineString.lower() == 'true':   dictionary['combine']=True
+        if combineString.lower() == 'ok':     dictionary['combine']=True
         
         # set up cmssw
-        cmd = "cd %(tmp)s && cmsrel %(cmssw)s" %dictionary
+        cmd = "cd %(tmp)s && scramv1 project CMSSW %(cmssw)s" %dictionary
         self._call(cmd,"setup",self.log+"/"+pr.sha)
         
         dictionary['cmsenv'] = "cd %(tmp)s/%(cmssw)s/src && eval `scramv1 runtime -sh`"%dictionary  
@@ -101,13 +106,28 @@ class Loop:
             cmd +=" && cd HiggsAnalysis/CombinedLimit"
             cmd +=" && git fetch origin"
             cmd +=" && git checkout %(combinetag)s"%dictionary
-            cmd +=" && scramv1 b clean; scramv1 b "
+            patch ='''
+--- a/src/SequentialMinimizer.cc
++++ b/src/SequentialMinimizer.cc
+@@ -465,7 +465,7 @@ namespace cmsmath {
+         public:
+            SubspaceMultiGenFunction(const ROOT::Math::IMultiGenFunction *f, int nDim, const int *idx, double *xi) :
+                 f_(f), nDim_(nDim), idx_(idx), x_(xi) {}
+-           virtual IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
++           virtual ROOT::Math::IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
+            virtual unsigned int NDim() const { return nDim_; }
+         private:
+            virtual double DoEval(const double * x) const {
+            '''
+            cmd += ' &&  patch -p1 <<EOF' 
+            cmd += ' && scramv1 b clean; scramv1 b -j 8'
+            cmd += "\n" +patch +"\nEOF\n"
             self._call(cmd,"setup",self.log+"/"+pr.sha)
 
         #setup core/nero
         if True:
             cmd = "%(cmsenv)s"%dictionary
-            cmd +=" && git clone git@github.com:MiT-HEP/NeroProducer.git %(coretag)s"%dictionary
+            cmd +=" && git clone git@github.com:MiT-HEP/NeroProducer.git -b %(coretag)s"%dictionary
             cmd +=" && cd NeroProducer/Core"
             cmd +=" && make -j 16"
             self._call(cmd,"setup",self.log+"/"+pr.sha)
@@ -115,14 +135,14 @@ class Loop:
         #setup chargedHiggs
         if True:
             cmd = "%(cmsenv)s"%dictionary
-            cmd +=" && git clone git@github.com:MiT-HEP/ChargedHiggs.git %(tag)s"%dictionary
+            cmd +=" && git clone git@github.com:MiT-HEP/ChargedHiggs.git -b %(tag)s"%dictionary
             self._call(cmd,"setup",self.log+"/"+pr.sha)
 
         # merge PR
         if True:
             cmd = "%(cmsenv)s"%dictionary
             cmd += " && cd ChargedHiggs"
-            cmd += " && git remote add pr git@github.com:%(origin)s/ChargedHiggs"%dictionary
+            cmd += " && git remote add pr git@github.com:%(origin)s"%dictionary
             cmd += " && git fetch pr "
             cmd += " && git merge --no-ff -m 'merge commit' %(sha)s  "%dictionary
             self._call(cmd,"setup",self.log+"/"+pr.sha)
@@ -161,8 +181,12 @@ class Loop:
         for pr in self.gh.pulls:
             if (pr.number,pr.sha) in self.pr_checked: 
                 continue
+            if opts.pr !="" and int(pr.number) != int(opts.pr) : 
+                print "(V) -> Skipping PR",pr.number,"Request only PR",opts.pr
+                continue
 
             print "(D) -> Considering PR",pr.number,pr.sha
+            pr.Print()
 
             self.gh.get_statuses(pr.sha)
 
@@ -171,10 +195,10 @@ class Loop:
                     print "(V)-> PR has status",context,self.gh.statuses[(sha,context)].state ## success, pending ...
             
             ## define a global state
-            state = self.check_state(sha)
+            state = self.check_state(pr.sha)
 
             ## if ok
-            if state=='tocheck' or opts.pr == pr.number :
+            if state=='tocheck' or int(opts.pr) == int(pr.number) :
                 print "(V) -> Testing PR",pr.number,pr.title
                 if not opts.dryrun:
                     try:
