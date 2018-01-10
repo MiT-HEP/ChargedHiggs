@@ -1,0 +1,6 @@
+include=dat/configHmumu.dat
+Files=
+addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017B-17Nov2017-v1/NeroNtuples_1.root
+Smear=NONE
+Output=Test.root
+Analysis=JsonAnalysis,HmumuAnalysis
