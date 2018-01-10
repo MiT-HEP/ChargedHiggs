@@ -6,9 +6,9 @@
 
 #include "interface/Named.hpp"
 
+// @brief This class will contain the basic MC informations
+//          XSEC, SumOf Event weights, directory ...
 class MC : public Named {
-    // This class will contain the basic MC informations
-    // XSEC, SumOf Event weights, directory ...
     public:
         enum SCALES{none=-1,r1f2=0,r1f5,r2f1,r2f2,r5f1,r5f5};
 

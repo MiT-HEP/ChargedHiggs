@@ -23,3 +23,4 @@ Output=HmmSync.root
 Analysis=JsonAnalysis,HmumuAnalysis
 
 addConfig=HmumuAnalysis|doSync=1
+addConfig=HmumuAnalysis|catType=0

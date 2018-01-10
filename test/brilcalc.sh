@@ -5,6 +5,7 @@ cmsenv
 export PATH=$HOME/.local/bin:/afs/cern.ch/cms/lumi/brilconda-1.1.7/bin:$PATH
 PYTHONPATH=$HOME/.local/lib/python2.7/site-packages:$PYTHONPATH
 python `which brilcalc` lumi --help
+JSON="/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt"
 python `which brilcalc` lumi -i Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt -u '/pb' --normtag /afs/cern.ch/user/l/lumipro/public/normtag_file/normtag_DATACERT.json
 python `which brilcalc` lumi -i Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt -u '/pb' --normtag /afs/cern.ch/user/l/lumipro/public/normtag_file/normtag_DATACERT.json --hltpath=HLT_LooseIsoPFTau50_Trk30_eta2p1_v*
 

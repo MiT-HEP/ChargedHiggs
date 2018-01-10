@@ -819,6 +819,7 @@ void HmumuAnalysis::Init(){
         Branch("hmm","thirdCSV",'F');    
 
         Branch("hmm","pass_recomuons",'I');
+        Branch("hmm","miniIsoLeptons",'I');
         Branch("hmm","pass_asymmcuts",'I');
         Branch("hmm","pass_trigger",'I');
         Branch("hmm","pass_trigger1",'I');
@@ -854,6 +855,8 @@ void HmumuAnalysis::Init(){
 
 int HmumuAnalysis::analyze(Event *e, string systname)
 {
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("Analyze event %ld:%ld:%ld",e->runNum(),e->lumiNum(),e->eventNum()));
+
     if (systname == "" or systname =="NONE") processingSyst_=false;
     else processingSyst_=true;
 
@@ -887,10 +890,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         }
     }
 
-    cut.reset();
-    cut.SetMask(MaxCut-1) ;
-    cut.SetCutBit( Total ) ;
-
     /*
      * TOP PT REWEIGHT
      */
@@ -906,7 +905,16 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         HTXS::HiggsClassification  hc;
         if (label.find( "GluGlu_HToMuMu") != string::npos) hc.prodMode = HTXS::GGF;
         else if (label.find( "VBF_HToMuMu") != string::npos) hc.prodMode = HTXS::VBF;
-        else if (label.find( "ZH_HToMuMu") != string::npos) hc.prodMode = HTXS::GG2ZH; // I should look into the PDF productions GG2ZH vs QQ2ZH
+        else if (label.find( "ZH_HToMuMu") != string::npos) {
+            if (e->GetPdfId(1) <=6 and e->GetPdfId(2) <=6)
+            {
+                hc.prodMode = HTXS::QQ2ZH; // I should look into the PDF productions GG2ZH vs QQ2ZH
+            }
+            else
+            {
+                hc.prodMode = HTXS::GG2ZH; // I should look into the PDF productions GG2ZH vs QQ2ZH
+            }
+        }
         else if (label.find( "WMinusH_HToMuMu") != string::npos) hc.prodMode = HTXS::WH;
         else if (label.find( "WPlusH_HToMuMu") != string::npos) hc.prodMode = HTXS::WH;
         else if (label.find( "ttH_HToMuMu") != string::npos) hc.prodMode = HTXS::TTH;
@@ -1041,6 +1049,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     // ------------------------
     // BTAG SF
     // -----------------------
+  
+#warning NO_BTAGSF 
+    /* 
     if (true) // CSV-SF for passing loose,medium or tigth cuts
     {
         e->ApplyBTagSF(1); //0 loose, 1 medium, 2 tight
@@ -1058,8 +1069,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sf->set();
         e->ApplySF("btag-reweight"); 
     }
+    */
 
     //  ------------------- APPLY SF --------------
+    //
+#warning NO_MU_SF
+
+    /*
     double w_BCDEF = 0.5498;
     double sfTrigger=1.0;
      
@@ -1182,6 +1198,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sf->err = 0.0;
         e->ApplySF("dummy");
     }
+    */
     
     // ***************************
     // **       preselection    **
@@ -1189,8 +1206,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     
 
     // Trigger
-    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 and mu1->Pt() >20 );
-    bool passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); 
+    bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >30 and mu1->Pt() >20 );
+    bool passTrigger=e->IsTriggered("HLT_IsoMu27_v") or e->IsTriggered("HLT_IsoTkMu27_v"); 
 
     bool passTrigger1{false}, passTrigger2{false};
 
@@ -1198,9 +1215,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     {
         //cout <<" DOING TRIGGER MATCHING "<<endl;
         bool passTriggerEvent = passTrigger;
-        passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
-        //if (mu1->Pt() > 26 ) 
-        passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
+        passTrigger1 = (e->IsTriggered("HLT_IsoMu27_v",mu0) or e->IsTriggered("HLT_IsoTkMu27_v",mu0)) ;
+        //if (mu1->Pt() > 30 ) 
+        passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
         passTrigger=passTrigger1 or passTrigger2;
 
         if (passTriggerEvent and not passTrigger) Log(__FUNCTION__,"INFO","Fail to trigger event due to trigger matching");
@@ -1266,6 +1283,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             SetTreeVar("mc",mc);
         }
         SetTreeVar("pass_recomuons",recoMuons);
+        SetTreeVar("miniIsoLeptons",isMiniIsoLeptons);
         SetTreeVar("pass_asymmcuts",passAsymmPtCuts);
         SetTreeVar("pass_trigger",passTrigger);
         SetTreeVar("pass_trigger1",passTrigger1);
@@ -1431,9 +1449,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     //if ( recoMuons and passTrigger and passAsymmPtCuts and passLeptonVeto)
     if ( recoMuons and passTrigger and passAsymmPtCuts)
     {
-        cut.SetCutBit(Leptons);
-        if (passTrigger) cut.SetCutBit(Trigger);
-
         if (VERBOSE)Log(__FUNCTION__,"DEBUG","event pass selection");
 
         float zptrw = 1.;

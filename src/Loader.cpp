@@ -720,6 +720,18 @@ void LoadNero::FillMC(){
     else{
         LogN(__FUNCTION__,"WARNING","Running w/o scale uncertainties. Correct if no-syst.",10);
     }
+
+    if ( tree_ -> GetBranchStatus("pdf1Id") )
+    {
+        event_ -> SetPdfId(1,mc->pdf1Id);
+        event_ -> SetPdfId(2,mc->pdf2Id);
+    }
+    else {
+        LogN(__FUNCTION__,"WARNING","Runnig w/o pdfId information." ,10);
+        event_ -> SetPdfId(1,0);
+        event_ -> SetPdfId(2,0);
+    }
+
     if (tree_->GetBranchStatus("pdfRwgt") and mc->pdfRwgt->size() >= MC_MAX_PDFS)
     {
         for (unsigned i=0 ; i< MC_MAX_PDFS;++i) event_->GetWeight()->SetPdfWeight( mc->pdfRwgt->at(i), i);

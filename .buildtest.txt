@@ -1,0 +1,12 @@
+## BuildTestConfiguration ##
+CMSSW=CMSSW_9_4_1
+
+#charged higgs tag/branch
+tag=cmssw_94x
+
+#nero tag/branch
+coretag=CMSSW_92X
+
+# combine 
+combine=yes
+combinetag=v7.0.5

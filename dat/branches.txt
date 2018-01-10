@@ -57,6 +57,8 @@ metPuppi
 ### EVENT
 isRealData
 rho
+pdf1Id
+pdf2Id
 npv
 puTrueInt
 runNum
