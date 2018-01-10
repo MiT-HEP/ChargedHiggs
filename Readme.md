@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/MiT-HEP/ChargedHiggs.svg?branch=master)](https://travis-ci.org/MiT-HEP/ChargedHiggs)
+[![Build Status](https://amarini.web.cern.ch/amarini/ChargedHiggs/cmssw_94x.svg)](https://amarini.web.cern.ch/amarini/ChargedHiggs/cmssw_94x/)
 
 # Charged Higgs Analysis Code
 

@@ -11,6 +11,7 @@ parser = OptionParser(usage = "usage");
 #parser.add_option("-y","--yes",dest="yes",type="int",help="Should I assume yes as an answer. [0-3],0 = ask, 1= almost always, 3= yes (dangerous).",default=0);
 parser.add_option("-f","--token-file",dest="tokenfile",type="string",help="tokenfile [%default]",default=os.environ["HOME"]+"/.ssh/id_status_token");
 parser.add_option("","--pr",dest="pr",type="string",help="PR number to force check [%default]",default="");
+parser.add_option("","--branch",dest="branch",type="string",help="Branch force check [%default]",default="");
 parser.add_option("-n","--dryrun",dest="dryrun",action='store_true',help="Only List PR.",default=False);
 
 (opts,args) = parser.parse_args()
@@ -36,7 +37,7 @@ class Loop:
         # tmp area
         self.tmp = "/tmp/"+os.environ['USER'] +"/ChPr/"
         self.log = os.environ["HOME"] +"/www/ChargedHiggs/"
-        self.url = "https://" +os.environ['USER']+".web.cern.ch/"+os.environ['USER']+'/ChPr'
+        self.url = "https://" +os.environ['USER']+".web.cern.ch/"+os.environ['USER']+'/ChargedHiggs'
 
     def _call(self,cmd,errtype="build",logdir = ""):
         #cmd += " 2>&1 | tee %(log)s/setup.txt"%dictionary
@@ -44,9 +45,9 @@ class Loop:
             final_cmd=cmd
         else:
             final_cmd="{ "+ cmd +" ; } 2>&1 >>" + logdir + "/"+errtype +".txt"
-        st = call(cmd,shell=True)
+        st = call(final_cmd,shell=True)
         if st != 0: 
-            print "-> Unable to run '"+cmd+"'"
+            print "-> Unable to run '"+final_cmd+"'"
             if errtype=="setup":raise SetupError
             if errtype=="build":raise BuildError
             if errtype=="run": raise RunError
@@ -59,6 +60,8 @@ class Loop:
         self.gh.set_status(pr.sha,'pending','build',self.url +"/" + pr.sha + "/setup.txt")
         self.gh.set_status(pr.sha,'pending','run',self.url +"/" + pr.sha + "/setup.txt")
 
+        #create log directory
+        self._call(' '.join(["mkdir","-p",self.log +"/"+pr.sha]),"setup")
         ## delete and create target directory
         self._call('[ -d '+ self.tmp +' ] && rm -rf ' + self.tmp + " || true","setup",self.log +"/"+pr.sha)
         self._call(' '.join(["mkdir","-p",self.tmp]),"setup",self.log+"/"+pr.sha)
@@ -106,6 +109,10 @@ class Loop:
             cmd +=" && cd HiggsAnalysis/CombinedLimit"
             cmd +=" && git fetch origin"
             cmd +=" && git checkout %(combinetag)s"%dictionary
+
+            self._call(cmd,"setup",self.log+"/"+pr.sha)
+            cmd = "%(cmsenv)s"%dictionary
+            cmd +=" && cd HiggsAnalysis/CombinedLimit"
             patch ='''
 --- a/src/SequentialMinimizer.cc
 +++ b/src/SequentialMinimizer.cc
@@ -120,8 +127,12 @@ class Loop:
             virtual double DoEval(const double * x) const {
             '''
             cmd += ' &&  patch -p1 <<EOF' 
-            cmd += ' && scramv1 b clean; scramv1 b -j 8'
             cmd += "\n" +patch +"\nEOF\n"
+            self._call(cmd,"setup") ## no log fol EOF
+
+            cmd = "%(cmsenv)s"%dictionary
+            cmd +=" && cd HiggsAnalysis/CombinedLimit"
+            cmd += ' && scramv1 b clean; scramv1 b -j 8'
             self._call(cmd,"setup",self.log+"/"+pr.sha)
 
         #setup core/nero
@@ -219,6 +230,44 @@ class Loop:
             if state=='pend':
                 print "(V)-> PR is already being checked",pr.number
 
+    def test_branch(self,branch):
+        self.gh.get_head(branch)
+        head = self.gh.head[branch]
+        self.gh.get_statuses(head)
+        state = self.check_state(head)
+
+        if state == 'tocheck' or opts.branch ==branch:
+            print "(V)-> Checking branch",branch
+            pr = github.PullReq() ## construct a fake PR
+            pr.sha=head
+            pr.number=0
+            pr.title ="branch testing"
+            pr.origin="MiT-HEP/ChargedHiggs"
+            if not opts.dryrun:
+                try:
+                    call("cp -v "+self.log+"/ci-status-images/img/icecave/regular/build-status/build-status-pending.png " + self.log+ "/" + branch +".svg", shell=True) #don't check status
+                    self.TestPr(pr)   
+                    call("cp -v "+self.log+"/ci-status-images/img/icecave/regular/build-status/build-status-passing.png " + self.log+ "/" + branch +".svg", shell=True) #don't check status
+                except SetupError:
+                    self.gh.set_status(pr.sha,'fail','setup',self.url+"/"+pr.sha+"/setup.txt")
+                    call("cp -v "+self.log+"/ci-status-images/img/icecave/regular/build-status/build-status-error.png " + self.log+ "/" + branch +".svg", shell=True) #don't check status
+                except BuildError:
+                    self.gh.set_status(pr.sha,'fail','build',self.url+"/"+pr.sha+"/build.txt")
+                    call("cp -v "+self.log+"/ci-status-images/img/icecave/regular/build-status/build-status-error.png " + self.log+ "/" + branch +".svg", shell=True) #don't check status
+                except RunError:
+                    self.gh.set_status(pr.sha,'fail','run',self.url+"/"+pr.sha+"/run.txt")
+                    call("cp -v "+self.log+"/ci-status-images/img/icecave/regular/build-status/build-status-error.png " + self.log+ "/" + branch +".svg", shell=True) #don't check status
+        if state=='ok': 
+            print "(V)-> Branch is OK",branch
+        if state=='fail': 
+            print "(V)-> Branch is failed",branch
+        if state=='pend':
+            print "(V)-> Branch is already being checked",branch
+
 if __name__=="__main__":
+
     loop=Loop() 
-    loop.main()
+    if opts.branch == "": ## don't loop over pr if branch is specified
+        loop.main()
+    if opts.pr == "": ## don't test branches if a pr is specified
+        loop.test_branch("cmssw_94x")
