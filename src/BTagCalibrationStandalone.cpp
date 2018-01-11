@@ -523,7 +523,9 @@ std::pair<float, float> BTagCalibrationReader::BTagCalibrationReaderImpl::min_ma
 
 BTagCalibrationReader::BTagCalibrationReader(BTagEntry::OperatingPoint op,
                                              std::string sysType):
-  pimpl(new BTagCalibrationReaderImpl(op, sysType)) {}
+  pimpl {new BTagCalibrationReaderImpl(op, sysType)}
+{
+}
 
 void BTagCalibrationReader::load(const BTagCalibration & c,
                                  BTagEntry::JetFlavor jf,
@@ -546,5 +548,9 @@ std::pair<float, float> BTagCalibrationReader::min_max_pt(BTagEntry::JetFlavor j
 {
   return pimpl->min_max_pt(jf, eta, discr);
 }
+
+// pimpl fully defined
+BTagCalibrationReader::~BTagCalibrationReader() {}
+BTagCalibrationReader::BTagCalibrationReader() {}
 
 
