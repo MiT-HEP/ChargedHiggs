@@ -6,6 +6,11 @@
 #include "interface/SplitMC.hpp"
 #include <memory>
 
+#include "TRandom3.h"
+#include "TPython.h"
+
+#include "TStopwatch.h"
+
 #include "interface/Output.hpp" // DataStore
 #include "TMVA/Reader.h"
 #include "TMVA/Tools.h"
@@ -19,15 +24,19 @@ public:
 
     bool doSynch = false;
     bool doICHEP = false;
-    bool writeTree = false;
-    bool doSplit = true;
-    bool doBDTSyst = false;
-    bool doFinal = false;
+    bool doBDTSyst = true;
+    bool doFinal = false; // false for final ; no need to compute fancy stuff
+    bool writeTree = false; // false for final
+    bool doSplit = true; // true for final
+    bool doMorePlot = false; // false for final
 
     // Analysis type
+    // do1lAnalysis, do2lAnalysis, doTaulAnalysis from the config
     bool do1lAnalysis=false;
     bool do2lAnalysis=false;
     bool doTaulAnalysis=false;
+    // doSplitLepCat HARDcoded
+    bool doSplitLepCat = true; // true for final
 
     // trigger bits
     bool passTriggerMu=true;
@@ -111,6 +120,7 @@ private:
     double evt_HT=-1;
     double evt_ST=-1;
     double evt_DRlbmaxPt=-1;
+    double evt_MlbmaxPt=-1;
 
     double evt_minDRbb=-1;
     double evt_minDRbb_invMass=-1;
@@ -151,10 +161,11 @@ private:
     double evt_C=0;
     double evt_FW2=0;
 
-    vector<float> bdt;
 
     int nGenB = 0 ;
     int genLepSig = 0 ;
+
+    int ev_forTrain = 0;
 
     /////
     /////
@@ -169,15 +180,40 @@ private:
     GenParticle * WFromTopAss=NULL;
     GenParticle * leptonTopAssH=NULL;
 
-    /////
-    /////
+    bool doTMVA{false};
+    bool doScikit{true};
 
+
+    int nbinsBDT=200;
+    // TMVA
+    //    float binMIN=-1.;
+    // Keras
+    float binMIN=0.;
+    float binMAX=1.;
+
+
+    /************
+     *   TMVA   *
+     ************/
+
+    vector<float> bdt;  // score
     DataStore varValues_;
-
-    //
-    //TMVA::Reader *reader_ ;
     vector<TMVA::Reader*> readers_;
+    void InitTmva();
+    void ReadTmva(Event*e);
 
+
+    /**********************************
+     *          SCIKIT                *
+     **********************************/
+
+    std::unique_ptr<TPython> py;
+    vector<float> x;
+    vector<string> discr;
+    vector<float> scikit; // like bdt
+
+    void InitScikit();
+    void ReadScikit(Event*e);
 
 };
 

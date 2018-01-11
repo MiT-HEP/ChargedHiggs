@@ -14,6 +14,8 @@ parser.add_option("-o","--outname",dest="outname",help="Name of output pdf/png/C
 #parser.add_option("-v","--verbose",dest="verbose",default=False,action="store_true")
 #parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
 parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true",help="Draw observation")
+parser.add_option("","--run12",dest="run12",default=False,action="store_true")
+parser.add_option("","--paper",dest="paper",default=False,action="store_true")
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -57,6 +59,11 @@ sigmas=[1,2,3,4,5,6]
 
 ## Start Drawing
 c=ROOT.TCanvas()
+c.SetCanvasSize(700,500)
+c.SetBottomMargin(0.15)
+c.SetLeftMargin(0.15)
+c.SetTopMargin(0.10)
+c.SetRightMargin(0.10)
 
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
@@ -68,8 +75,14 @@ dummy.GetXaxis().SetRangeUser(xmin,xmax)
 #dummy.GetYaxis().SetRangeUser(1.e-10,1)
 dummy.GetYaxis().SetRangeUser(.5e-3,1)
 
-dummy.GetXaxis().SetTitle("m_{H}")
+dummy.GetXaxis().SetTitle("m_{H} [GeV]")
 dummy.GetYaxis().SetTitle("local p-value")
+#dummy.GetXaxis().SetTitleSize(0.04)
+#dummy.GetYaxis().SetTitleSize(0.04)
+dummy.GetXaxis().SetTitleSize(0.05)
+dummy.GetYaxis().SetTitleSize(0.05)
+dummy.GetXaxis().SetLabelSize(0.045)
+dummy.GetYaxis().SetLabelSize(0.045)
 
 dummy.Draw("AXIS")
 dummy.Draw("AXIG SAME")
@@ -111,13 +124,19 @@ for i,sig in enumerate(sigmas):
 # draw CMS and lumi
 l = ROOT.TLatex()
 l.SetNDC()
-l.SetTextSize(0.055)
+l.SetTextSize(0.06)
 l.SetTextFont(42)
 l.SetTextAlign(13)
-l.DrawLatex(0.13,.88,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
+if opts.paper:
+    l.DrawLatex(0.18,.89,"#bf{CMS}")
+else:
+    l.DrawLatex(0.18,.89,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
 l.SetTextSize(0.035)
 l.SetTextAlign(31)
-l.DrawLatex(0.90,.91,"35.9 fb^{-1} (13 TeV)")
+if opts.run12:
+    l.DrawLatex(0.90,.91,"5.0 fb^{-1} (7 TeV) + 19.8 fb^{-1} (8 TeV) + 35.9 fb^{-1} (13 TeV)")
+else:
+    l.DrawLatex(0.90,.91,"35.9 fb^{-1} (13 TeV)")
 
 c.SetLogy(True)
 c.Update()

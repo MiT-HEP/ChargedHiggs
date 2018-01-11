@@ -65,6 +65,14 @@ int SmearJesAndCSV::smear(Event *e)
             if (syst_>0) sf->systType = Systematics::CSVLFStats2up;
             else         sf->systType = Systematics::CSVLFStats2down;
             break;
+    case Systematics::CSVCErr1up :
+            if (syst_>0) sf->systType = Systematics::CSVCErr1up;
+            else         sf->systType = Systematics::CSVCErr1down;
+            break;
+    case Systematics::CSVCErr2up :
+            if (syst_>0) sf->systType = Systematics::CSVCErr2up;
+            else         sf->systType = Systematics::CSVCErr2down;
+            break;
     case Systematics::NA : 
                         sf->systType = Systematics::NA;
             break;

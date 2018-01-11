@@ -20,6 +20,10 @@ parser.add_option("","--mcdb",dest="mcdb",help="the mc_database",default="aux/mc
 parser.add_option(""  ,"--yaxis",help="Y axis range Y1,Y2 [%default]",default="")
 parser.add_option(""  ,"--xaxis",help="X axis range X1,X2 [%default]",default="")
 parser.add_option("","--exclude",dest="exclude",help="Exclude mh points MH1,MH2,.. [%default]",default="")
+parser.add_option("","--run12",dest="run12",default=False,action="store_true")
+parser.add_option("","--paper",dest="paper",default=False,action="store_true")
+parser.add_option("","--supplementary",dest="supplementary",default=False,action="store_true")
+parser.add_option("","--M125",dest="M125",default=False,action="store_true")
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -116,8 +120,6 @@ def GetLimitFromTree(inputFile,unblind=False):
 		q  = limitTree.quantileExpected
 		type= 0
 	
-		## TODO OBS
-			
 		if abs(q-0.5)<1.e-5 : 
 			#exp.SetPoint(g.GetN(), mh,l ) 
 			median.append(  (mh,l) ) 
@@ -178,23 +180,82 @@ def GetLimitFromTree(inputFile,unblind=False):
 
 	return obs,exp,oneSigma,twoSigma
 
+def GetLimitFromTreeObsOnly(inputFile):
+	''' Get Limit Histo from Combine tree'''
+
+	## Make Limit plot
+	fInput= ROOT.TFile.Open(inputFile)
+
+	if fInput == None:
+		print "**** ERROR ****"
+		print " file ",f,"does not exist"
+		print "***************"
+
+	limitTree = fInput.Get("limit")
+	if limitTree == None:
+		print "**** ERROR ****"
+		print " limit tree not present in file",f
+		print "***************"
+	
+	#Expected
+	obs=ROOT.TGraphAsymmErrors()
+	obs.SetName("obs")
+	
+	data    = []
+	
+	## loop over the entries and figure out if they are median, 1s/2s or observed	
+	for iEntry in range(0,limitTree.GetEntries()):
+		limitTree.GetEntry(iEntry)
+		mh = limitTree.mh
+		l  = limitTree.limit
+		q  = limitTree.quantileExpected
+		type= 0
+	
+		if q <-.5: # -1
+			data.append( (mh,l) ) 
+	
+	data.sort()
+	## merge the list into TGraphs.
+	for i in range(0,len(data)):
+		count= obs.GetN()
+	
+		mh= data[i][0]
+
+		isToExclude=False
+		if opts.exclude != "":
+			for mtest in opts.exclude.split(','):
+				if float(mtest) == mh:
+					isToExclude = True
+		if isToExclude: 
+			print "Excluding MH=",mh,"from the plot"
+			continue
+		print "Setting point",count,mh,data[i][1]	
+		obs.SetPoint(count,mh,data[i][1])
+
+	return obs
+
 list_data = []
 list_exp = []
 list_oneSigma=[]
 list_twoSigma=[]
 
+colors=[ROOT.kBlack,ROOT.kRed,ROOT.kBlue,ROOT.kMagenta,ROOT.kViolet]
+
 for idx,f in enumerate(opts.file.split(',')):
 	obs,exp,oneSigma,twoSigma = GetLimitFromTree(f,opts.unblind)
+	if exp.GetN() ==0 and opts.unblind:
+	    print "Getting obs only:",f
+	    obs = GetLimitFromTreeObsOnly(f)
 
-
+	col = colors[idx]
 	if idx == 0 :
 		obs.SetMarkerStyle(21)
-		obs.SetMarkerSize(0.8)
+		obs.SetMarkerSize(0.5)
 		obs.SetLineColor(1)
 		obs.SetLineWidth(2)
 		obs.SetFillStyle(0)
-		obs.SetMarkerColor(ROOT.kBlack)
-		obs.SetLineColor(ROOT.kBlack)
+		obs.SetMarkerColor(col)
+		obs.SetLineColor(col)
 		
 		exp.SetLineColor(1)
 		exp.SetLineStyle(2)
@@ -215,28 +276,17 @@ for idx,f in enumerate(opts.file.split(',')):
 			print "***************** "
 
 	else:
-		obs.SetMarkerStyle(21+idx)
-		obs.SetMarkerSize(0.8)
-		obs.SetLineColor(1)
+		obs.SetMarkerStyle(20+idx)
+		obs.SetMarkerSize(0.5)
+		obs.SetMarkerColor(col)
+		obs.SetLineColor(col)
 		obs.SetLineWidth(2)
 		obs.SetFillStyle(0)
 	
+		exp.SetLineWidth(2)
 		exp.SetLineStyle(7)
 		exp.SetFillStyle(0)
-
-		if idx== 1:
-			exp.SetLineColor(ROOT.kMagenta)
-		elif idx==2:
-			exp.SetLineColor(ROOT.kCyan)
-		elif idx==3:
-			exp.SetLineColor(ROOT.kBlue)
-			exp.SetLineStyle(3)
-		elif idx==4:
-			exp.SetLineColor(ROOT.kViolet+1)
-			exp.SetLineStyle(5)
-		else:
-			exp.SetLineColor(1)
-
+		exp.SetLineColor(col)
 
 		oneSigma.SetLineStyle(3)
 		twoSigma.SetLineStyle(3)
@@ -249,25 +299,20 @@ for idx,f in enumerate(opts.file.split(',')):
 
 
 	list_data.append(obs)
-	list_exp.append(exp)
-	list_oneSigma.append(oneSigma)
-	list_twoSigma.append(twoSigma)
 
-#if opts.xsec:
-#	exp8TeV, obs8TeV= EigthTeVGraph()
-#
-#	exp8TeV.SetLineColor(ROOT.kRed+2)
-#	exp8TeV.SetLineStyle(7)
-#	exp8TeV.SetFillStyle(0)
-#
-#	obs8TeV.SetMarkerColor(ROOT.kRed+2)
-#	obs8TeV.SetLineColor(ROOT.kRed+2)
-#	obs8TeV.SetMarkerSize(0.8)
-#	obs8TeV.SetMarkerStyle(21)
-#	obs8TeV.SetFillStyle(0)
+	if not (opts.M125 and idx> 0):
+	    list_exp.append(exp)
+	    list_oneSigma.append(oneSigma)
+	    list_twoSigma.append(twoSigma)
+
 
 ## Start Drawing
 c=ROOT.TCanvas()
+c.SetCanvasSize(700,500)
+c.SetBottomMargin(0.15)
+c.SetLeftMargin(0.15)
+c.SetTopMargin(0.10)
+c.SetRightMargin(0.05)
 
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
@@ -285,7 +330,11 @@ dummy.GetYaxis().SetTitle("#sigma/#sigma_{MSSM}")
 
 if opts.xaxis != "" and float(opts.xaxis.split(',')[1]) <135: ## SM?
 	dummy.GetXaxis().SetTitle("m_{H} [GeV]")
-	dummy.GetYaxis().SetTitle("#sigma/#sigma_{SM}")
+	dummy.GetXaxis().SetTitleSize(0.05)
+	dummy.GetYaxis().SetTitleSize(0.05)
+	dummy.GetXaxis().SetLabelSize(0.045)
+	dummy.GetYaxis().SetLabelSize(0.045)
+	dummy.GetYaxis().SetTitle("95% CL Limit on #sigma/#sigma_{SM}")
 else:
     c.SetLogy()
 
@@ -317,7 +366,12 @@ for idx in range(0,len(list_exp) ):
 		list_oneSigma[idx].Draw("PE3 SAME")
 	#mg.Add(list_exp[idx])
 	list_exp[idx].Draw("L SAME")
-	if opts.unblind: list_data[idx].Draw("P SAME")
+	if opts.unblind: list_data[idx].Draw("LP SAME")
+if opts.M125:
+	list_data[1].SetLineColor(ROOT.kRed)
+	list_data[1].SetLineWidth(2)
+	list_data[1].SetLineStyle(7)
+	list_data[1].Draw("L SAME")
 
 #mg.Draw("3")
 #mg.Draw("LPX")
@@ -335,37 +389,61 @@ line.Draw("L SAME")
 
 
 dummy.Draw("AXIS SAME")
-dummy.Draw("AXIS X+ Y+ SAME")
+#dummy.Draw("AXIS X+ Y+ SAME")
 dummy.Draw("AXIG SAME")
 
 # draw latex
 l = ROOT.TLatex()
 l.SetNDC()
-l.SetTextSize(0.05)
+l.SetTextSize(0.06)
 l.SetTextFont(42)
-l.SetTextAlign(13)
+#l.SetTextAlign(11) #outside
+#xcms,ycms= 0.18,.91 # outside
+l.SetTextAlign(13) #inside
+xcms,ycms= 0.18,.88 # inside
 if opts.unblind:
-    l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Preliminary}}")
+    if opts.paper:
+        #l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Preliminary}}")
+        if opts.supplementary:
+            l.DrawLatex(xcms,ycms,"#bf{CMS} #scale[0.75]{#it{Supplementary}}")
+        else:
+            l.DrawLatex(xcms,ycms,"#bf{CMS}")
+    else:
+        if opts.supplementary:
+            l.DrawLatex(xcms,ycms,"#bf{CMS} #scale[0.75]{#it{Preliminary Supplementary}}")
+        else:
+            l.DrawLatex(xcms,ycms,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
 else:
-    l.DrawLatex(0.13,.88,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
-l.SetTextSize(0.03)
+    l.DrawLatex(xcms,ycms,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
+l.SetTextSize(0.035)
 l.SetTextAlign(31)
-l.DrawLatex(0.89,.91,"35.9 fb^{-1} (13 TeV)")
+if opts.run12:
+    l.DrawLatex(0.89+0.05,.91,"5.0 fb^{-1} (7 TeV) + 19.8 fb^{-1} (8 TeV) + 35.9 fb^{-1} (13 TeV)")
+else:
+    l.DrawLatex(0.89+0.05,.91,"35.9 fb^{-1} (13 TeV)")
 
 #draw legend
-leg = ROOT.TLegend(0.65,.55,.88,.88)
+enlarge = 0.0
+if opts.M125: enlarge=0.08
+leg = ROOT.TLegend(0.70-enlarge,.55,.88+0.05,.88)
 leg.SetFillStyle(0)
 leg.SetBorderSize(0)
 
 for idx in range(0, len(list_exp) ) :
-	label = "expected"
+	label = ""
 	if opts.label !="":
 		label = opts.label.split(',')[idx]
-	leg.AddEntry(list_exp[idx], label, "L" )
+
+	if opts.unblind:
+		leg.AddEntry(list_data[idx],"Observed"+label,"LP")
+	leg.AddEntry(list_exp[idx], "Expected" + label, "L" )
+
+	if opts.M125:
+		leg.AddEntry(list_data[1],"Expected (SM m_{H}=125 GeV)"+label,"L")
 	
 	if idx==0:
-		leg.AddEntry(list_oneSigma[idx], "1 s.d.","FL") 
-		leg.AddEntry(list_twoSigma[idx], "2 s.d.","FL") 
+		leg.AddEntry(list_oneSigma[idx], "#pm 1 #sigma","FL") 
+		leg.AddEntry(list_twoSigma[idx], "#pm 2 #sigma","FL") 
 
 ##### PRINT TABLE LATEX
 doTable=True
@@ -404,6 +482,8 @@ if doTable:
 
 leg.Draw()
 
+c.Modified()
+c.Update()
 raw_input("Looks ok?")
 
 c.SaveAs(opts.outname + ".pdf")

@@ -3,6 +3,8 @@
 #include "TF1.h"
 #include <fstream>
 
+#define VERBOSE 1
+
 
 void PurityFitAnalytic::init(){
     fIn_ = TFile::Open(inname.c_str() );
@@ -12,12 +14,12 @@ void PurityFitAnalytic::init(){
 void PurityFitAnalytic::fit(){
     // Uperp, EtMiss
     string what="EtMiss";
-    string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_Data";
-    string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_%s";
-    string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_%s";
-    string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_Data";
-    string fullselInv   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_IsoInv_FullSelection_NoR_Data";
-    string tauname="ChargedHiggsQCDPurity/Vars/TauPt_pt%.0f_%.0f_Data"; // use to compute the mean
+    string signame   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_IsoInv_Data";
+    string bkgname   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_%s";
+    string bkgnameInv="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_IsoInv_%s";
+    string targetname="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_Data";
+    string fullselInv   ="ChargedHiggsQCDPurity/Vars/"+ what + "_pt%.0f_%.0f_eta0.0_2.1_IsoInv_FullSelection_NoR_Data";
+    string tauname="ChargedHiggsQCDPurity/Vars/TauPt_pt%.0f_%.0f_eta0.0_2.1_Data"; // use to compute the mean
 
     if (bkglabels.empty() )
     {

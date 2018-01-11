@@ -16,6 +16,8 @@ parser.add_option("-o","--outdir",dest='outdir',type="string",help="output direc
 parser.add_option("-x","--xrange",dest='xrange',type="string",help="xrange [%default]",default="60,150")
 parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
 parser.add_option("","--noRatio",dest='noRatio',action="store_true",help="don't plot ratio in bkg plots [%default]",default=False)
+parser.add_option("","--paper",dest="paper",default=False,action="store_true")
+parser.add_option("","--unblind",dest="blind",default=True,action="store_false",help="Unblinded plots")
 
 
 print "-> Looking for basepath"
@@ -81,13 +83,13 @@ def MpvAndSigmaEff(h, q=0.68):
     high=h.GetBinCenter(h.GetNbinsX())
 
     ## FIXME FAST
-    for ibin in range(0,h.GetNbinsX()):
-        for jbin in range(ibin+1,h.GetNbinsX()):
-            if h.Integral(ibin+1,jbin+1)> q *s:
-                if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
-                    low = h.GetBinCenter(ibin+1)
-                    high=h.GetBinCenter(jbin+1)
-                #break ## j -loop can end here
+    ### for ibin in range(0,h.GetNbinsX()):
+    ###     for jbin in range(ibin+1,h.GetNbinsX()):
+    ###         if h.Integral(ibin+1,jbin+1)> q *s:
+    ###             if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
+    ###                 low = h.GetBinCenter(ibin+1)
+    ###                 high=h.GetBinCenter(jbin+1)
+    ###             #break ## j -loop can end here
 
     ## FWHM
     hm = h.GetMaximum()*0.5;
@@ -175,7 +177,7 @@ if doSig:
             if idx==0:
                 c.cd()
                 h.Draw("AXIS")
-                h.Draw("AXIS X+ Y+ SAME")
+                #h.Draw("AXIS X+ Y+ SAME")
                 h.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
                 h.GetXaxis().SetTitleOffset(1.2)
                 h.GetYaxis().SetTitle("#varepsilon A")
@@ -222,7 +224,10 @@ if doSig:
         txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
         txt.SetTextSize(30)
         txt.SetTextAlign(13)
-        txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
+        if opts.paper:
+            txt.DrawLatex(.16,.93,"#bf{CMS}")
+        else:
+            txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
         txt.SetTextSize(20)
         txt.SetTextAlign(11)
         d=0.04
@@ -242,23 +247,30 @@ if doSig:
         	raw_input("ok?")
         else:
             ## FIXME FAST
-            ##pass
-        	c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".pdf")
-        	c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".png")
+            pass
+            c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".pdf")
+            c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".png")
 
-if doSig:## signal composition plot
-    colors = [ ROOT.kGreen+3, ROOT.kRed+2, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kBlue-4];
-    c=ROOT.TCanvas("c_"+cat+"_sig_composition","canvas",800,800)
 
-    c.Range(-14.67532,-1.75,11.2987,15.75);
-    c.SetFillColor(0);
-    c.SetBorderMode(0);
-    c.SetBorderSize(2);
-    c.SetTopMargin(0.16);
-    c.SetLeftMargin(0.25);
-    c.SetRightMargin(0.05);
-    c.SetFrameBorderMode(0);
-    c.SetFrameBorderMode(0);
+if doSig: ## signal composition plot
+    #colors = [ ROOT.kGreen+3, ROOT.kRed+2, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kBlue-4];
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    c0=ROOT.TCanvas("c_"+cat+"_sig_composition","canvas",1600,800)
+    ## old -> new
+
+    pad0 = ROOT.TPad("p0","P0",0,0,.5,1)
+    pad0.Range(-14.67532,-1.75,11.2987,15.75);
+    pad0.SetFillColor(0);
+    pad0.SetBorderMode(0);
+    pad0.SetBorderSize(2);
+    pad0.SetTopMargin(0.16);
+    #pad0.SetLeftMargin(0.25);
+    pad0.SetLeftMargin(0.15);
+    pad0.SetRightMargin(0.05);
+    pad0.SetFrameBorderMode(0);
+    pad0.SetFrameBorderMode(0);
+    pad0.Draw()
+    pad0.cd()
 
     nCats=len(categories)
     dummy = ROOT.TH2F("dummy","",10,0.,100.,nCats,1-0.5,nCats+0.5);
@@ -267,10 +279,12 @@ if doSig:## signal composition plot
     dummy.SetFillColor(ci);
 
     for ic,cat in enumerate(categories):
-        dummy.GetYaxis().SetBinLabel(nCats-ic,cat);
+        #dummy.GetYaxis().SetBinLabel(nCats-ic,cat);
+        dummy.GetYaxis().SetBinLabel(nCats-ic,"cat %d"%ic);
+
     dummy.GetXaxis().SetTickLength(0.01);
     dummy.GetYaxis().SetTickLength(0);
-    dummy.GetXaxis().SetTitle("Signal Fraction (%)");
+    dummy.GetXaxis().SetTitle("Signal Fraction [%]");
     dummy.GetXaxis().SetNdivisions(510);
     dummy.GetXaxis().SetLabelFont(42);
     dummy.GetXaxis().SetLabelSize(0.045);
@@ -309,7 +323,9 @@ if doSig:## signal composition plot
             print proc,"(",sigFrac[(cat,proc)],"%)",
         print
         sys.stdout.flush()
-        ybin = nCats-ic;
+        #mCatToCat = [0,4,7,1,10,6,9,8,5,3,2,13,11,12,14] ## cat in position 
+        ybin = nCats-ic; ## 1-1 mapping
+        #ybin= nCats - mCatToCat[ic]
         print "ybin for cat",cat,"is",ybin
         ybinmin = ybin-width;
         ybinmax = ybin+width;
@@ -358,15 +374,214 @@ if doSig:## signal composition plot
         tex_m.DrawLatex(starts[i]+0.04,0.84+0.025,processName[i]);
         garbage.append(pave)
 
-    c.Modify()
-    c.Update()
+    pad0.Modify()
+    pad0.Update()
+    #if opts.outdir=="":
+    #    raw_input("ok?")
+    #else:
+    #    extra=""
+    #    if opts.cat !="all" and opts.cat != "": extra ="_"+cat
+    #    c.SaveAs(opts.outdir + "/signal_composition"+extra+"_v2.pdf")
+    #    c.SaveAs(opts.outdir + "/signal_composition"+extra+"_v2.png")
+
+    #if doSig: ## second part of sig_composition plots
+    store={}
+    ## HARD CODED
+    #cat FWHM S B 2*seff
+    store[0]=(4.225,13.7011591071,13231.7157693	    ,4.6   )
+    store[1]=(6.9625,7.94811874212,3045.8045022	    ,7.0875)
+    store[2]=(7.6125,3.65736690377,1114.51171432	,7.175 )
+    store[3]=(7.225,15.6108564484,9691.20230885	    ,6.925 )
+    store[4]=(7.125,3.92614388493,737.111398075	    ,7.1625)
+    store[5]=(2.8,9.55409583467,1342.2596781    	,2.9375)
+    store[6]=(2.975,8.75569409378,958.643661642 	,3.0625)
+    store[7]=(4.2125,13.6841024699,2160.16332991	,4.275 )
+    store[8]=(4.0375,19.6326181152,3919.49608056	,4.1   )
+    store[9]=(2.875,8.42564316187,2250.5907442	    ,2.9875)
+    store[10]=(4.075,27.6634639092,9111.17905663	,4.1375)
+    store[11]=(3.975,5.54844144425,382.397889426	,4.375 )
+    store[12]=(4.2125,13.5373697551,1525.50287759	,4.3375)
+    store[13]=(3.1625,9.32283638139,736.375775813	,3.1625)
+    store[14]=(4.1375,8.96665127646,346.018640557	,4.4   )
+    store[15]=(0.00,.00,1.00	,0.0   )
+    store[16]=(0.00,.00,1.00	,0.0   )
+    store[17]=(0.00,.00,1.00	,0.0   )
+    store[18]=(0.00,.00,1.00	,0.0   )
+    store[19]=(0.00,.00,1.00	,0.0   )
+    #c=ROOT.TCanvas("c_"+cat+"_sig_composition 2","canvas",800,800)
+    ## old -> new
+
+    #c.Range(-14.67532,-1.75,11.2987,15.75);
+    #c.SetFillColor(0);
+    #c.SetBorderMode(0);
+    #c.SetBorderSize(2);
+    #c.SetTopMargin(0.16);
+    #c.SetLeftMargin(0.25);
+    #c.SetRightMargin(0.05);
+    #c.SetFrameBorderMode(0);
+
+    #pad1 = ROOT.TPad("p1","p1",0,0,.5,1)
+    #pad2 = ROOT.TPad("p2","p2",0.5,0,1,1)
+    c0.cd()
+    pad1 = ROOT.TPad("p1","p1",0.5,0,.75,1)
+    pad2 = ROOT.TPad("p2","p2",0.75,0,1,1)
+    pad1.SetFillColor(0);
+    pad1.SetBorderMode(0);
+    pad1.SetBorderSize(2);
+    pad1.SetTopMargin(0.16);
+    pad1.SetLeftMargin(0.05);
+    pad1.SetRightMargin(0.05);
+    pad1.SetFrameBorderMode(0);
+
+    pad2.SetFillColor(0);
+    pad2.SetBorderMode(0);
+    pad2.SetBorderSize(2);
+    pad2.SetTopMargin(0.16);
+    pad2.SetLeftMargin(0.05);
+    pad2.SetRightMargin(0.05);
+    pad2.SetFrameBorderMode(0);
+
+    pad1.Draw()
+    pad2.Draw()
+
+    ci = ROOT.TColor.GetColor("#00ff00");
+
+    nCats=len(categories)
+    dummy1 = ROOT.TH2F("dummy1","",10,0.,10.,nCats,1-0.5,nCats+0.5);
+    dummy1.SetStats(0);
+    dummy1.SetFillColor(ci);
+
+    dummy2 = ROOT.TH2F("dummy2","",10,0.,0.49,nCats,1-0.5,nCats+0.5);
+    dummy2.SetStats(0);
+    dummy2.SetFillColor(ci);
+
+    for ic,cat in enumerate(categories):
+        #dummy.GetYaxis().SetBinLabel(nCats-ic,cat);
+        #dummy1.GetYaxis().SetBinLabel(nCats-ic,"cat %d"%ic);
+        #dummy2.GetYaxis().SetBinLabel(nCats-ic,"cat %d"%ic);
+        dummy1.GetYaxis().SetBinLabel(nCats-ic,"");
+        dummy2.GetYaxis().SetBinLabel(nCats-ic,"");
+
+    dummy1.GetXaxis().SetTitle("Width [GeV]");
+    dummy2.GetXaxis().SetTitle("S/#sqrt{B} in FWHM");
+    for d in [dummy1,dummy2]:
+        d.GetXaxis().SetTickLength(0.01);
+        d.GetYaxis().SetTickLength(0);
+        d.GetXaxis().SetLabelFont(42);
+        d.GetXaxis().SetLabelSize(0.045*2);
+        d.GetXaxis().SetLabelOffset( -0.03);
+        d.GetXaxis().SetTitleSize(0.045*2);
+        d.GetXaxis().SetTitleOffset(0.95/2.);
+        d.GetXaxis().SetTitleFont(42);
+        d.GetYaxis().SetLabelSize(0.035*2);
+        d.GetYaxis().SetTitleSize(0.045*2);
+        d.GetYaxis().SetTitleOffset(1.1);
+        d.GetYaxis().SetTitleFont(42);
+        d.GetZaxis().SetLabelFont(42);
+        d.GetZaxis().SetLabelSize(0.035*2);
+        d.GetZaxis().SetTitleSize(0.035*2);
+        d.GetZaxis().SetTitleFont(42);
+        d.GetYaxis().SetNdivisions(510);
+    dummy1.GetXaxis().SetNdivisions(510);
+    dummy2.GetXaxis().SetNdivisions(505);
+
+    ## normalized stacked fractions
+    ymin = 0.0
+    width = 0.34
+
+    sigFrac = {}
+
+    pad1.cd()
+    dummy1.Draw()
+    for ic,cat in enumerate(categories):
+        S=0.0
+        #mCatToCat = [0,4,7,1,10,6,9,8,5,3,2,13,11,12,14] ## cat in position 
+        ybin = nCats-ic; ## 1-1 mapping
+        #ybin= nCats - mCatToCat[ic]
+        print "ybin for cat",cat,"is",ybin
+        ybinmin = ybin-width;
+        #ybinmax = ybin+width;
+        ybinmax = ybin;
+        xbinmin = 0;
+        xbinmax = store[ic][0]/2.;
+
+        pave = ROOT.TPave(xbinmin,ybinmin,xbinmax,ybinmax);
+        pave.SetFillColor(ROOT.kBlue+2);
+        pave.Draw();
+        pave.SetBorderSize(0);
+        garbage.append(pave)
+
+        ybinmin = ybin
+        ybinmax = ybin+width;
+        xbinmin = 0;
+        xbinmax = store[ic][3]/2.;
+
+        pave = ROOT.TPave(xbinmin,ybinmin,xbinmax,ybinmax);
+        pave.SetFillColor(ROOT.kRed+2);
+        pave.Draw();
+        pave.SetBorderSize(0);
+        garbage.append(pave)
+
+    tex_m=ROOT.TLatex();
+    tex_m.SetNDC();
+    tex_m.SetTextAlign(12);
+    tex_m.SetTextSize(0.05);
+    tex_m.SetLineWidth(2);
+    starts=[0.28,0.5]
+    labels=["#sigma_{HM}","#sigma_{eff}"]
+    colors=[ROOT.kBlue+2,ROOT.kRed+2]
+    for i in range(0,len(starts)):
+        pave=ROOT.TPave(starts[i],0.85,starts[i]+.06,0.85+0.03,0,"NDC");
+        pave.SetFillColor(colors[i]);
+        pave.Draw();
+        tex_m.DrawLatex(starts[i]+0.08,0.84+0.025,labels[i]);
+        garbage.append(pave)
+
+    pad2.cd()
+    dummy2.Draw()
+    for ic,cat in enumerate(categories):
+        S=0.0
+        #mCatToCat = [0,4,7,1,10,6,9,8,5,3,2,13,11,12,14] ## cat in position 
+        ybin = nCats-ic; ## 1-1 mapping
+        #ybin= nCats - mCatToCat[ic]
+        print "ybin for cat",cat,"is",ybin
+        ybinmin = ybin-width;
+        ybinmax = ybin+width;
+        xbinmin = 0;
+        #xbinmax = store[ic][1]/(store[ic][1]+store[ic][2]) *100.;
+        xbinmax = store[ic][1]/(math.sqrt(store[ic][2]));
+
+        pave = ROOT.TPave(xbinmin,ybinmin,xbinmax,ybinmax);
+        pave.SetFillColor(46);
+        pave.Draw();
+        pave.SetBorderSize(0);
+        garbage.append(pave)
+
+    pad2.cd()
+    txt=ROOT.TLatex()
+    txt.SetNDC()
+    txt.SetTextFont(43)
+    txt.SetTextSize(30)
+    txt.SetTextAlign(31)
+    #txt.DrawLatex(.93,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
+    txt.SetTextSize(48)
+    txt.SetTextAlign(11)
+    pad0.cd()
+    if opts.paper:
+        txt.DrawLatex(.01,.93,"#bf{CMS}")
+    else:
+        txt.DrawLatex(.01,.93,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
+
+    c0.Modify()
+    c0.Update()
     if opts.outdir=="":
         raw_input("ok?")
     else:
         extra=""
         if opts.cat !="all" and opts.cat != "": extra ="_"+cat
-        c.SaveAs(opts.outdir + "/signal_composition"+extra+".pdf")
-        c.SaveAs(opts.outdir + "/signal_composition"+extra+".png")
+        c0.SaveAs(opts.outdir + "/signal_composition"+extra+"_v4.pdf")
+        c0.SaveAs(opts.outdir + "/signal_composition"+extra+"_v4.png")
+
 
 if doSig:## EA plot
     c=ROOT.TCanvas("c_"+cat+"_ea","canvas",800,800)
@@ -469,7 +684,7 @@ if doSig:## EA plot
     leg.Draw()
 
     dummy.Draw("AXIS SAME")
-    dummy.Draw("AXIS X+ Y+ SAME")
+    #dummy.Draw("AXIS X+ Y+ SAME")
     c.Modify()
     c.Update()
     if opts.outdir=="":
@@ -495,7 +710,7 @@ if doSig:## EA plot inclusive only
     dummy.GetXaxis().SetTitle("m_{H} [GeV]")
     dummy.GetXaxis().SetTitleOffset(1.3)
     dummy.GetYaxis().SetTitle("#varepsilon A")
-    dummy.GetYaxis().SetTitleOffset(1.4)
+    dummy.GetYaxis().SetTitleOffset(1.5)
     dummy.GetYaxis().SetRangeUser(.26,.75)
 
     txt=ROOT.TLatex()
@@ -506,7 +721,10 @@ if doSig:## EA plot inclusive only
     #txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
     txt.SetTextSize(30)
     txt.SetTextAlign(13)
-    txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Simulation Preliminary}}")
+    if opts.paper:
+        txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Simulation}}")
+    else:
+        txt.DrawLatex(.16,.93,"#bf{CMS} #scale[0.7]{#it{Simulation Preliminary}}")
 
     x0=.5
     y0=.20
@@ -521,7 +739,7 @@ if doSig:## EA plot inclusive only
     leg.Draw()
 
     dummy.Draw("AXIS SAME")
-    dummy.Draw("AXIS X+ Y+ SAME")
+    #dummy.Draw("AXIS X+ Y+ SAME")
     c.Modify()
     c.Update()
     if opts.outdir=="":
@@ -613,7 +831,7 @@ if doBkg:
     garbage.extend([sig,bkg,leg])
 
     ## BLIND 120-130
-    blind=True
+    blind=opts.blind
     if opts.var != "Mmm":blind=False
     if blind:
         ibin0= hdata.FindBin(120)
@@ -806,7 +1024,7 @@ if doBkg:
         dummy.GetXaxis().SetTitle("BDT Output")
 
     if 'BdtOnH' in opts.var and opts.doRemap:
-        dummy.GetXaxis().SetTitle("BDT Quantile")
+        dummy.GetXaxis().SetTitle("transformed BDT")
 
     if 'Met' in opts.var:
         dummy.GetXaxis().SetTitle("E_{T}^{miss}[GeV]")
@@ -855,7 +1073,7 @@ if doBkg:
 
     hdata.Draw("P E X0 SAME")
 
-    dummy.Draw("AXIS X+ Y+ SAME")
+    #dummy.Draw("AXIS X+ Y+ SAME")
     dummy.Draw("AXIS SAME")
 
     txt=ROOT.TLatex()
@@ -866,8 +1084,10 @@ if doBkg:
     txt.DrawLatex(.95,.96,"%.1f fb^{-1} (13 TeV)"%(float(config.lumi()/1000.)))
     txt.SetTextSize(30)
     txt.SetTextAlign(13)
-    #txt.DrawLatex(.16,.92,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
-    txt.DrawLatex(.18,.92,"#bf{CMS}")
+    if opts.paper:
+        txt.DrawLatex(.18,.92,"#bf{CMS}")
+    else:
+        txt.DrawLatex(.16,.92,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
     txt.SetTextSize(20)
     txt.SetTextAlign(11)
     if cat != "":
@@ -911,7 +1131,7 @@ if doBkg:
         errAll.Divide(mcAll)
         r.Divide(mcAll)
         r.Draw("AXIS")
-        r.Draw("AXIS X+ Y+ SAME")
+        #r.Draw("AXIS X+ Y+ SAME")
 
         txt.SetTextSize(16)
         txt.SetTextAlign(23)

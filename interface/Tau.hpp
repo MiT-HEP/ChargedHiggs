@@ -24,6 +24,7 @@ class Tau: virtual public Object,
     float trackptcut_{0};
 
     int selectprongs_{-1};
+    int selectpi0_{-1};
     bool oldId{0};
 
     int selectdecay_{-1};
@@ -45,6 +46,7 @@ class Tau: virtual public Object,
     void inline SetEtaCut(const float& x){etacut_=x;}
     void inline SetProngsCut(const int& x){selectprongs_=x;}
     void inline SetDecayMode(const int& x){selectdecay_=x;} // 0=NEW, 1=OLD
+    void inline SetPiZeroCut(const int& x){selectpi0_=x;}
     void inline SetIso2(const float&x ) {iso2=x;}
     void inline SetId( const int&x) {id=x;}
     void inline SetIdEle( const int&x) {id_ele=x;}

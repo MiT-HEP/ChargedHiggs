@@ -1,6 +1,6 @@
 sub=ceballosUser|/store/user/ceballos/Nero/v2.2/
 sub=ceballosHig|/store/group/phys_higgs/ceballos/Nero/v2.2/
-sub=zdemiragExoMonov2|/store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/
+#sub=zdemiragExoMonov2|/store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/
 
 addfiles=%(ceballosUser)s/WWTo2L2Nu_13TeV-powheg
 addfiles=%(ceballosUser)s/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8

@@ -1,0 +1,120 @@
+##configure Looper
+##### This file store the configuratino to run all the analysis
+##### if you want to make a config file that overwrite some changes just create a new one with the line
+##### Loader=LoadNero
+##### include=dat/config.txt
+##### Files=....,....,...
+
+include=dat/config.2017.moriond.dat
+
+MCDB=aux/mcdb.2017.v23.txt
+
+Files=
+include=dat/catalog/2017.v23/tt.dat
+#include=dat/catalog/2017.v23/ttlep.dat
+include=dat/catalog/2017.v23/st.dat
+include=dat/catalog/2017.v23/dy_ht.dat
+include=dat/catalog/2017.v23/wjets_ht.dat
+include=dat/catalog/2017.v23/vv.dat
+include=dat/catalog/2017.v23/rares.dat
+#include=dat/catalog/2017.v23/ttISRFSR.dat
+# signal
+#include=dat/catalog/2017.v23/topbottom.dat
+include=dat/catalog/2017.v23/topbottom_ext.dat
+# data
+include=dat/catalog/2017.moriond/singleElecton.dat
+include=dat/catalog/2017.moriond/singleMuon.dat
+#
+
+include=dat/topBot.2017.dat
+pileup=aux/pileup.2017.BCDEFGH.root
+
+#__________________________________________________________________
+#____________________ SPECIAL SETTINGS _____________________________
+
+Files=
+#include=dat/catalog/2017.v23/ttISRFSR.dat
+#include=dat/catalog/2017.v23/ttlep.dat
+
+include=dat/catalog/2017.v23/tt.dat
+include=dat/topBot.OnlyTTbar.dat
+##Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d),@SmearSF("TOPRW"!"topreweight")
+##Smear=@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+##Smear=*[0!50]SmearPdfs(%%d)
+
+#include=dat/catalog/2017.v23/topbottom.dat
+#include=dat/catalog/2017.v23/topbottom_ext.dat
+#include=dat/topBot.OnlyChTB.dat
+#Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d)
+#Smear=@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+
+#include=dat/catalog/2017.v23/st.dat
+#include=dat/topBot.OnlyTopMinor.dat
+##Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d)
+
+#include=dat/catalog/2017.v23/st.dat
+#include=dat/catalog/2017.v23/rares.dat
+#include=dat/catalog/2017.v23/vv.dat
+#include=dat/topBot.OnlyRares.dat
+#include=dat/topBot.OnlyTopMinor.dat
+#Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d)
+
+#include=dat/catalog/2017.v23/wjets_ht.dat
+#include=dat/catalog/2017.v23/dy_ht.dat
+#include=dat/catalog/2017.v23/dy_lowMass_ht.py
+#include=dat/topBot.OnlyEWK.dat
+#Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d),@SmearSF("htRECO"!"htRECO")
+#Smear=@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+
+#include=dat/catalog/2017.v23/qcd.dat
+#include=dat/topBot.OnlyQCD.dat
+#Smear=NONE,@SmearUncluster(),@SmearPu,JER,*[1!10]SmearJesAndCSV(%%d)
+
+#include=dat/topBot.DATAOnly.dat
+#include=dat/catalog/2017.moriond/singleElecton.dat
+#include=dat/catalog/2017.moriond/singleMuon.dat
+#Smear=NONE
+
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+# Smearer
+
+Smear=NONE
+##Smear=*[0!50]SmearPdfs(%%d)
+##Smear=@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+
+
+##Smear=NONE,@SmearUncluster(),@SmearPu,@SmearSF("TOPRW"!"topreweight"),JES,JER,@SmearSF("muTRG"!"muTRG"),*[1!10]SmearJesAndCSV(%%d),@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+
+#old way to do btaggind syst, muon and electron
+#Smear=@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),@SmearSF("muID"!"muIDtight"),@SmearSF("muTRG"!"muTRG"),@SmearSF("muISO"!"muISO"),@SmearSF("muRECO"!"muRECO"),@SmearSF("eleTight"!"eletight")
+
+################################# ANALYSIS CONFIGURATION ############################
+
+Correct=NONE
+#Correct=MetPhiCorrector
+#Final=no
+Final=yes
+# final remember: no tree, no data, w/ syst
+EntryPerSecond=10
+
+#________________________________________________________________
+#____________________ CONFIGURATION _____________________________
+#
+##########  ANALYSIS  ################
+Analysis=JsonAnalysis,MetFiltersAnalysis,ChargedHiggsTopBottom
+#Analysis=JsonAnalysis,SplitMCAnalysis,MetFiltersAnalysis,ChargedHiggsTopBottom
+
+addConfig=ChargedHiggsTopBottom|do1lAnalysis=1,do2lAnalysis=0,doTaulAnalysis=0,doSynch=0
+Output=ChHiggs_1l.root
+
+#addConfig=ChargedHiggsTopBottom|do1lAnalysis=0,do2lAnalysis=1,doTaulAnalysis=0,doSynch=0
+#Output=ChHiggs_2l.root
+
+#addConfig=ChargedHiggsTopBottom|do1lAnalysis=0,do2lAnalysis=0,doTaulAnalysis=1,doSynch=0
+#Output=ChHiggs_taul.root
+
+
+

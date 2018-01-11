@@ -1,0 +1,14 @@
+sub=dalfonsoHiggs|/store/group/phys_higgs/HiggsExo/dalfonso/80x_MC_v2/v2.3/
+
+#addfiles=%(dalfonsoHiggs)s/JetHT
+
+addfiles=%(dalfonsoHiggs)s/JetHT/JetHT_Run2016B-03Feb2017_ver2-v2
+addfiles=%(dalfonsoHiggs)s/JetHT/JetHT_Run2016C-03Feb2017-v1
+addfiles=%(dalfonsoHiggs)s/JetHT/JetHT_Run2016D-03Feb2017-v1
+addfiles=%(dalfonsoHiggs)s/JetHT/JetHT_Run2016E-03Feb2017-v1
+addfiles=%(dalfonsoHiggs)s/JetHT/JetHT_Run2016F-03Feb2017-v1
+addfiles=%(dalfonsoHiggs)s/JetHT/JetHT_Run2016G-03Feb2017-v1
+addfiles=%(dalfonsoHiggs)s/JetHT/JetHT_Run2016H-03Feb2017_ver2-v1
+addfiles=%(dalfonsoHiggs)s/JetHT/JetHT_Run2016H-03Feb2017_ver3-v1
+
+

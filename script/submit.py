@@ -25,6 +25,7 @@ job_opts.add_option("","--hadoop" ,dest='hadoop',action='store_true',help="Use H
 job_opts.add_option("-c","--cp" ,dest='cp',action='store_true',help="cp Eos file locally. Do not use xrootd. ",default=False)
 job_opts.add_option("","--nosyst" ,dest='nosyst',action='store_true',help="Do not Run Systematics",default=False)
 job_opts.add_option("","--config" ,dest='config',action='append',type="string",help="add line in configuration",default=[])
+job_opts.add_option("","--venv" ,dest='venv',action='store_true',help="Use virtual environment in ChHiggs/venv",default=False)
 
 hadd_opts=OptionGroup(parser,"Hadd options","these options modify the behaviour of hadd")
 hadd_opts.add_option("","--hadd" ,dest='hadd',action='store_true',help="Hadd Directory.",default=False)
@@ -447,6 +448,10 @@ if not opts.hadoop:
 	sh.write('cd %s\n'%(os.getcwd() ) )
 	sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
 	sh.write('eval `scramv1 runtime -sh`\n') # cmsenv
+
+	if opts.venv:
+		sh.write('PYTHONPATH=%s/venv/lib/python2.7/site-packages/:$PYTHONPATH\n'%os.getcwd())
+		sh.write('PATH=%s/venv/bin:$PATH\n'%os.getcwd())
 
 	if opts.tar:
 		sh.write("mkdir -p $WORKDIR/%s_%d\n"%(opts.dir,iJob))

@@ -79,6 +79,8 @@ class SmearJesAndCSV : virtual public SmearBase
             if (num == 5){num_=Systematics::CSVHFStats2up; name_="CSVRHFSTAT2";}
             if (num == 6){num_=Systematics::CSVLFStats1up; name_="CSVRLFSTAT1";}
             if (num == 7){num_=Systematics::CSVLFStats2up; name_="CSVRLFSTAT2";}
+            if (num == 8){num_=Systematics::CSVCErr1up; name_="CSVRCERR1";}
+            if (num == 9){num_=Systematics::CSVCErr2up; name_="CSVRCERR2";}
 
             jes . reset (new SmearJes());
         }

@@ -1,4 +1,4 @@
-sub=zdemiragExoMonov2|/store/group/phys_exotica/monojet/zdemirag/moriond80x_MC_v2/v2.2/
+sub=zdemiragExoMonov2|/store/group/phys_higgs/ceballos/moriond80x_MC_v2/v2.2/
 
 addfiles=/store/user/amarini/Nero/v2.2/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-0To70
 addfiles=%(zdemiragExoMonov2)s/WJetsToLNu_HT-70To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8

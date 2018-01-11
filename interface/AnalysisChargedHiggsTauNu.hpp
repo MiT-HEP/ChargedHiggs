@@ -32,7 +32,10 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
             l->SetMediumCut(false);
             l->SetLooseCut(true); //loose muon and electrons for veto
         }
-        inline void SetPhotonCuts(Photon *p) override {p->SetIsoCut(-1); p->SetPtCut(30);}
+        inline void SetPhotonCuts(Photon *p) override {
+            p->SetIsoCut(-1); 
+            p->SetPtCut(30);
+        }
         inline void SetTauCuts(Tau *t) override { 
             t->SetIsoCut(2.5); 
             t->SetEtaCut(2.1); 
@@ -42,13 +45,14 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
             t->SetTrackPtCut(30.);
             t->SetProngsCut(nprongs); 
             t->SetDecayMode(1);
+            //t->SetPiZeroCut(0); 
         }
         inline void SetJetCuts(Jet *j) override { 
             j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535 
             j->SetEtaCut(4.7); 
             j->SetEtaCutCentral(2.5);
             j->SetPtCut(30); 
-            j->SetPuIdCut(-999);
+            j->SetPuIdCut(100); // LOOSE
         }
         void SetGenCuts(GenParticle *g)override {};
         /**/
@@ -62,10 +66,13 @@ class ChargedHiggsTauNu:  virtual public AnalysisBase
         // define blind region: Data; Mt> 50
         bool Unblind(Event *e) override { if (e->IsRealData() and e->Mt() > 50) return unblind; return true;} // if is not data, no need to return something else
 
-        bool is80X{false};
-        bool isLightMass{false};
         bool singleTauTrigger{false};
-        int nprongs{1};
+        int nprongs{13};
+
+        // create gen level selections and book histograms
+        bool doGen{true};
+        void analyzeGen(Event* ,string systname);
+        void initGen();
 
 };
 

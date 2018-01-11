@@ -1,0 +1,95 @@
+# QCD R-factor computed by PurityFit
+tauinviso_1p pteta 50 55 -2.1 2.1 0.595489 0
+tauinviso_1p pteta 55 60 -2.1 2.1 0.537337 0
+tauinviso_1p pteta 60 65 -2.1 2.1 0.492242 0
+tauinviso_1p pteta 65 70 -2.1 2.1 0.481754 0
+tauinviso_1p pteta 70 80 -2.1 2.1 0.470658 0
+tauinviso_1p pteta 80 90 -2.1 2.1 0.473028 0
+tauinviso_1p pteta 90 100 -2.1 2.1 0.491014 0
+tauinviso_1p pteta 100 125 -2.1 2.1 0.552536 0
+tauinviso_1p pteta 125 150 -2.1 2.1 0.739883 0
+tauinviso_1p pteta 150 175 -2.1 2.1 0.751726 0
+tauinviso_1p pteta 175 200 -2.1 2.1 0.722257 0
+tauinviso_1p pteta 200 250 -2.1 2.1 0.671518 0
+tauinviso_1p pteta 250 500 -2.1 2.1 0.581382 0
+tauinviso_1p pteta 500 750 -2.1 2.1 0.453955 0
+tauinviso_1p pteta 750 1000 -2.1 2.1 0.46062 0
+#
+tauinviso_3p pteta 50 55 -2.1 2.1 0.089965 0
+tauinviso_3p pteta 55 60 -2.1 2.1 0.0965602 0
+tauinviso_3p pteta 60 65 -2.1 2.1 0.0967557 0
+tauinviso_3p pteta 65 70 -2.1 2.1 0.0974862 0
+tauinviso_3p pteta 70 80 -2.1 2.1 0.0935505 0
+tauinviso_3p pteta 80 90 -2.1 2.1 0.0830717 0
+tauinviso_3p pteta 90 100 -2.1 2.1 0.0737452 0
+tauinviso_3p pteta 100 125 -2.1 2.1 0.0877798 0
+tauinviso_3p pteta 125 150 -2.1 2.1 0.126595 0
+tauinviso_3p pteta 150 175 -2.1 2.1 0.113546 0
+tauinviso_3p pteta 175 200 -2.1 2.1 0.0948027 0
+tauinviso_3p pteta 200 250 -2.1 2.1 0.0798642 0
+tauinviso_3p pteta 250 500 -2.1 2.1 0.0607694 0
+tauinviso_3p pteta 500 750 -2.1 2.1 0.0770729 0
+
+tauinviso pteta 50 55 -2.1 2.1 0.246397 0
+tauinviso pteta 55 60 -2.1 2.1 0.237148 0
+tauinviso pteta 60 65 -2.1 2.1 0.222391 0
+tauinviso pteta 65 70 -2.1 2.1 0.216737 0
+tauinviso pteta 70 80 -2.1 2.1 0.211514 0
+tauinviso pteta 80 90 -2.1 2.1 0.210116 0
+tauinviso pteta 90 100 -2.1 2.1 0.214804 0
+tauinviso pteta 100 125 -2.1 2.1 0.259226 0
+tauinviso pteta 125 150 -2.1 2.1 0.400095 0
+tauinviso pteta 150 175 -2.1 2.1 0.443278 0
+tauinviso pteta 175 200 -2.1 2.1 0.450573 0
+tauinviso pteta 200 250 -2.1 2.1 0.447633 0
+tauinviso pteta 250 500 -2.1 2.1 0.434947 0
+tauinviso pteta 500 750 -2.1 2.1 0.40563 0
+tauinviso pteta 750 1000 -2.1 2.1 0.428208 0
+##
+tauinvisospline_1p spline 52.4858 0.595489 0
+tauinvisospline_1p spline 57.4419 0.537337 0
+tauinvisospline_1p spline 62.4588 0.492242 0
+tauinvisospline_1p spline 67.4356 0.481754 0
+tauinvisospline_1p spline 74.7427 0.470658 0
+tauinvisospline_1p spline 84.771 0.473028 0
+tauinvisospline_1p spline 94.906 0.491014 0
+tauinvisospline_1p spline 113.376 0.552536 0
+tauinvisospline_1p spline 136.566 0.739883 0
+tauinvisospline_1p spline 161.258 0.751726 0
+tauinvisospline_1p spline 186.269 0.722257 0
+tauinvisospline_1p spline 220.633 0.671518 0
+tauinvisospline_1p spline 308.672 0.581382 0
+tauinvisospline_1p spline 573.906 0.453955 0
+tauinvisospline_1p spline 837.383 0.46062 0
+##
+tauinvisospline_3p spline 52.4858 0.089965 0
+tauinvisospline_3p spline 57.4419 0.0965602 0
+tauinvisospline_3p spline 62.4588 0.0967557 0
+tauinvisospline_3p spline 67.4356 0.0974862 0
+tauinvisospline_3p spline 74.7427 0.0935505 0
+tauinvisospline_3p spline 84.771 0.0830717 0
+tauinvisospline_3p spline 94.906 0.0737452 0
+tauinvisospline_3p spline 113.376 0.0877798 0
+tauinvisospline_3p spline 136.566 0.126595 0
+tauinvisospline_3p spline 161.258 0.113546 0
+tauinvisospline_3p spline 186.269 0.0948027 0
+tauinvisospline_3p spline 220.633 0.0798642 0
+tauinvisospline_3p spline 308.672 0.0607694 0
+tauinvisospline_3p spline 573.906 0.0770729 0
+tauinvisospline_3p spline 8000 0.0770729 0
+##
+tauinvisospline spline 52.4858 0.246397 0
+tauinvisospline spline 57.4419 0.237148 0
+tauinvisospline spline 62.4588 0.222391 0
+tauinvisospline spline 67.4356 0.216737 0
+tauinvisospline spline 74.7427 0.211514 0
+tauinvisospline spline 84.771 0.210116 0
+tauinvisospline spline 94.906 0.214804 0
+tauinvisospline spline 113.376 0.259226 0
+tauinvisospline spline 136.566 0.400095 0
+tauinvisospline spline 161.258 0.443278 0
+tauinvisospline spline 186.269 0.450573 0
+tauinvisospline spline 220.633 0.447633 0
+tauinvisospline spline 308.672 0.434947 0
+tauinvisospline spline 573.906 0.40563 0
+tauinvisospline spline 837.383 0.428208 0

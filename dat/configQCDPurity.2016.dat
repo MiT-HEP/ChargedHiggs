@@ -49,9 +49,9 @@ addConfig=ChargedHiggsQCDPurity|PtBins.push_back(50),PtBins.push_back(55),PtBins
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(70),PtBins.push_back(80),PtBins.push_back(90),PtBins.push_back(100)
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(125),PtBins.push_back(150),PtBins.push_back(175),PtBins.push_back(200)
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(250),PtBins.push_back(500),PtBins.push_back(750),PtBins.push_back(1000)
+addConfig=ChargedHiggsQCDPurity|EtaBins.push_back(0),EtaBins.push_back(0.5),EtaBins.push_back(0.9),EtaBins.push_back(1.44),EtaBins.push_back(1.7),EtaBins.push_back(2.0),EtaBins.push_back(2.1)
 addConfig=ChargedHiggsQCDPurity|PtBins.push_back(8000)
 addConfig=ChargedHiggsQCDPurity|unblind=1
-addConfig=ChargedHiggsQCDPurity|is80X=1
-addConfig=ChargedHiggsQCDPurity|nprongs=3
+addConfig=ChargedHiggsQCDPurity|nprongs=13
 
 
