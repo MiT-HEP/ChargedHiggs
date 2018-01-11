@@ -12,6 +12,7 @@ parser = OptionParser(usage = "usage");
 parser.add_option("-f","--token-file",dest="tokenfile",type="string",help="tokenfile [%default]",default=os.environ["HOME"]+"/.ssh/id_status_token");
 parser.add_option("","--pr",dest="pr",type="string",help="PR number to force check [%default]",default="");
 parser.add_option("","--branch",dest="branch",type="string",help="Branch force check [%default]",default="");
+parser.add_option("-x","--nosummary",dest="summary",action='store_false',help="Don't send summary comment on PR",default=True);
 parser.add_option("-n","--dryrun",dest="dryrun",action='store_true',help="Only List PR.",default=False);
 
 (opts,args) = parser.parse_args()
@@ -26,6 +27,8 @@ class BuildError(Exception):
 class RunError(Exception):
     pass
 
+class OtherError(Exception):
+    pass
 
 class Loop:
     ## main loop
@@ -51,6 +54,7 @@ class Loop:
             if errtype=="setup":raise SetupError
             if errtype=="build":raise BuildError
             if errtype=="run": raise RunError
+            if errtype=="other":raise OtherError
             raise ValueError
         return
 
@@ -174,6 +178,21 @@ class Loop:
             self._call(cmd,"run",self.log+"/"+pr.sha)
 
         self.gh.set_status(pr.sha,'success','run',self.url+"/"+pr.sha+"/run.txt")
+
+        ## Produce summary comment
+        if opts.summary and pr.num > 0:
+            cmd = "%(cmsenv)s"%dictionary
+            cmd += " && cd ChargedHiggs"
+            cmd += " && python script/Hmumu/plotValidation.py"
+            cmd += " && cp plot.png " + self.log + "/" + pr.sha +"/plot.png"
+
+            self._call(cmd,"other") ## no log
+            comment="""PR is successfull.
+                Summary is available at:
+                ![summary](%s/%s/plot.png)
+                """ % (self.url,pr.sha)
+            self.gh.submit_comment(pr.num,comment,"pulls")
+        
         ##
         return True
 
@@ -244,7 +263,7 @@ class Loop:
             print "(V)-> Checking branch",branch
             pr = github.PullReq() ## construct a fake PR
             pr.sha=head
-            pr.number=0
+            pr.number=-1
             pr.title ="branch testing"
             pr.origin="MiT-HEP/ChargedHiggs"
             if not opts.dryrun:
