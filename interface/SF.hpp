@@ -250,7 +250,7 @@ class SF_WG1: virtual public SF
 
     public:
         enum TYPES { THU_WG1=0,THU_2017=1};
-        TYPES type{THU_WG1};
+        TYPES type{THU_2017};
         int nuisance{0};
         //
         //
@@ -263,6 +263,27 @@ class SF_WG1: virtual public SF
         //void init();
 
         void print() const override;
+        double get() override ;
+
+};
+
+class SF_NNLOPS_Reweight: virtual public SF
+{
+    // these graphs, are in number of jets
+    vector<TGraph*> w;
+
+    int njets {-1};
+    double Hpt{0};
+
+    public:
+        SF_NNLOPS_Reweight(){};
+        SF_NNLOPS_Reweight(const string& fname):SF(){init(fname);};
+        const string name() const override {return "SF_NNLOPS_Reweight";}
+        virtual void print() const  override;
+        //virtual void clearSyst(){ syst=0;}
+        void init(const string& fname);
+        /// @brief set the pt and njets 
+        virtual void set(double pt,int nj){Hpt=pt; njets=nj;}
         double get() override ;
 
 };

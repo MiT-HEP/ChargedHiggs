@@ -902,6 +902,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (not e->IsRealData()){
 
+        if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start HTXS Classification");
+
         HTXS::HiggsClassification  hc;
         if (label.find( "GluGlu_HToMuMu") != string::npos) hc.prodMode = HTXS::GGF;
         else if (label.find( "VBF_HToMuMu") != string::npos) hc.prodMode = HTXS::VBF;

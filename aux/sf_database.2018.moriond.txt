@@ -19,6 +19,7 @@
 ##   WG1 Unc  ##
 ################
 wg1 wg1
+nnlops nnlops aux/NNLOPS_reweight.root
 
 ################
 ##  Double    ##
