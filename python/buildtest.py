@@ -26,7 +26,6 @@ class BuildError(Exception):
     pass
 class RunError(Exception):
     pass
-
 class OtherError(Exception):
     pass
 
@@ -185,13 +184,16 @@ class Loop:
             cmd += " && cd ChargedHiggs"
             cmd += " && python script/Hmumu/plotValidation.py"
             cmd += " && cp plot.png " + self.log + "/" + pr.sha +"/plot.png"
-
-            self._call(cmd,"other") ## no log
-            comment="""PR is successfull.
-                Summary is available at:
-                ![summary](%s/%s/plot.png)
-                """ % (self.url,pr.sha)
-            self.gh.submit_comment(pr.num,comment,"pulls")
+            
+            try:
+                self._call(cmd,"other") ## no log
+                comment="""PR is successfull.
+                    Summary is available at:
+                    ![summary](%s/%s/plot.png)
+                    """ % (self.url,pr.sha)
+                self.gh.submit_comment(pr.num,comment,"pulls")
+            except OtherError:
+                pass
         
         ##
         return True
