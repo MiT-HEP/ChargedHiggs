@@ -85,6 +85,14 @@ void Weight::AddWG1SF( string label){
     sf_db[label]->label = label;
 }
 
+void Weight::AddNNLOPSSF( string label, string filename){
+    sf_db[label] = new SF_NNLOPS_Reweight(filename);
+    sf_db[label]->sf = 1.0;
+    sf_db[label]->err = 0.0;
+    sf_db[label]->syst = 0;
+    sf_db[label]->label = label;
+}
+
 void Weight::AddPtEtaSF( string label,double pt1, double pt2 , double eta1, double eta2, double sf, double err){
     #ifdef VERBOSE
         if(VERBOSE>0) cout <<"[Weight]::[AddPtEtaSF]::[DEBUG1] adding sf label '"<<label<<"'"<<endl;

@@ -531,6 +531,44 @@ double SF_WG1::get() {
     }
 }
 
+// -------------------- NNLO PS Reweight -------------------------
+void SF_NNLOPS_Reweight::init(const string & fname)
+{
+    TFile *fIn = TFile::Open(fname.c_str());
+    if (fIn == NULL) Log(__FUNCTION__,"ERROR","Unable to open file:"+fname);
+
+    for(unsigned nj = 0 ; nj<=3; ++nj)
+    {
+        w.push_back( (TGraph*)fIn->Get(Form("gr_NNLOPSratio_pt_mcatnlo_%djet",nj))->Clone() );
+    }
+}
+double SF_NNLOPS_Reweight::get()
+{
+    if (syst !=0 ){
+        Log(__FUNCTION__,"ERROR","Systematics shifts not implemented for NNLOPS Reweight");
+        throw abortException() ;
+    }
+    double weight{1};
+
+    if (njets < 0) return 1.0;
+    switch (njets){
+    case 0: return w[0] -> Eval(min(Hpt,125.0)); break;
+    case 1: return w[1] -> Eval(min(Hpt,625.0)); break;
+    case 2: return w[2] -> Eval(min(Hpt,800.0)); break;
+    default: return w[3] ->Eval(min(Hpt,925.0)); break;
+    }
+    return 1.0;
+}
+void SF_NNLOPS_Reweight::print() const
+{
+    SF::print();
+    Log(__FUNCTION__,"INFO",Form("wsize=%u",w.size()));
+    Log(__FUNCTION__,"INFO",Form("njets=%d",njets));
+    Log(__FUNCTION__,"INFO",Form("Hpt=%f",Hpt));
+    Log(__FUNCTION__,"INFO","------------------------------");
+}
+// ---------------------------------------------------------------
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

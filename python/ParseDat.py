@@ -365,8 +365,13 @@ def ReadSFDB(file,verbose=False):
 			sf  = 1.0
 			err = 0.0
 
+		elif type == 'nnlops':
+			sf  = 1.0
+			err = 0.0
+            R['filename'] = l.split(' ')[2]
+
 		elif type == 'csv':
-			R['filename'] = l.split(' ' )[2]
+			R['filename'] = l.split(' ')[2]
 			sf=0.0 ## ignored
 			err=0.0 ## ignored
 

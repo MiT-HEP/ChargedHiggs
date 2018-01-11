@@ -148,6 +148,7 @@ class Looper{
         /// @brief add sf with label value and error
         inline void AddSF( string label, double sf, double err){ event_->GetWeight() -> AddSF(label,sf,err);}
         inline void AddWG1SF( string label){ event_->GetWeight() -> AddWG1SF(label);}
+        inline void AddNNLOPSSF( string label, string filename) {event_->GetWeight() -> AddNNLOPSSF(label,filename);}
         inline void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err)
         {event_ -> GetWeight()  -> AddPtEtaSF(label,pt1,pt2,eta1,eta2,sf,err); }
         inline void AddSplineSF(string label, double pt, double sf, double err){ event_->GetWeight() -> AddSplineSF(label,pt,sf,err);}
