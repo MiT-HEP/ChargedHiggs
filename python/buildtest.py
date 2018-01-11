@@ -173,7 +173,7 @@ class Loop:
             cmd += " && python python/Loop.py -v -d dat/configBuildTest.dat"
             self._call(cmd,"run",self.log+"/"+pr.sha)
 
-        self.gh.set_status(pr.sha,'success','run',self.url+"/"+pr.sha+"run.txt")
+        self.gh.set_status(pr.sha,'success','run',self.url+"/"+pr.sha+"/run.txt")
         ##
         return True
 
@@ -214,11 +214,15 @@ class Loop:
                 if not opts.dryrun:
                     try:
                         self.TestPr(pr)   
+                        print "(V) -> PR Success",pr.number,pr.title
                     except SetupError:
+                        print "(V) -> PR Fail Setup",pr.number,pr.title
                         self.gh.set_status(pr.sha,'fail','setup',self.url+"/"+pr.sha+"/setup.txt")
                     except BuildError:
+                        print "(V) -> PR Build Setup",pr.number,pr.title
                         self.gh.set_status(pr.sha,'fail','build',self.url+"/"+pr.sha+"/build.txt")
                     except RunError:
+                        print "(V) -> PR Run Setup",pr.number,pr.title
                         self.gh.set_status(pr.sha,'fail','run',self.url+"/"+pr.sha+"/run.txt")
 
             if state=='ok': 
