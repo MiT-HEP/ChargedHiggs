@@ -12,6 +12,7 @@ parser = OptionParser(usage = "usage");
 parser.add_option("-f","--token-file",dest="tokenfile",type="string",help="tokenfile [%default]",default=os.environ["HOME"]+"/.ssh/id_status_token");
 parser.add_option("","--pr",dest="pr",type="string",help="PR number to force check [%default]",default="");
 parser.add_option("","--branch",dest="branch",type="string",help="Branch force check [%default]",default="");
+parser.add_option("-x","--nosummary",dest="summary",action='store_false',help="Don't send summary comment on PR",default=True);
 parser.add_option("-n","--dryrun",dest="dryrun",action='store_true',help="Only List PR.",default=False);
 
 (opts,args) = parser.parse_args()
@@ -25,7 +26,8 @@ class BuildError(Exception):
     pass
 class RunError(Exception):
     pass
-
+class OtherError(Exception):
+    pass
 
 class Loop:
     ## main loop
@@ -51,6 +53,7 @@ class Loop:
             if errtype=="setup":raise SetupError
             if errtype=="build":raise BuildError
             if errtype=="run": raise RunError
+            if errtype=="other":raise OtherError
             raise ValueError
         return
 
@@ -174,6 +177,24 @@ class Loop:
             self._call(cmd,"run",self.log+"/"+pr.sha)
 
         self.gh.set_status(pr.sha,'success','run',self.url+"/"+pr.sha+"/run.txt")
+
+        ## Produce summary comment
+        if opts.summary and pr.number > 0:
+            cmd = "%(cmsenv)s"%dictionary
+            cmd += " && cd ChargedHiggs"
+            cmd += " && python script/Hmumu/plotValidation.py"
+            cmd += " && cp plot.png " + self.log + "/" + pr.sha +"/plot.png"
+            
+            try:
+                self._call(cmd,"other") ## no log
+                comment="""PR is successfull.
+                    Summary is available at:
+                    ![summary](%s/%s/plot.png)
+                    """ % (self.url,pr.sha)
+                self.gh.submit_comment(pr.number,comment)
+            except OtherError:
+                pass
+        
         ##
         return True
 
@@ -235,16 +256,20 @@ class Loop:
                 print "(V)-> PR is already being checked",pr.number
 
     def test_branch(self,branch):
+        print "(D)-> Considering branch",branch
         self.gh.get_head(branch)
         head = self.gh.head[branch]
         self.gh.get_statuses(head)
+        for sha,context in self.gh.statuses:
+            if  sha == head:
+                print "(V)-> Branch has status",context,self.gh.statuses[(sha,context)].state
         state = self.check_state(head)
 
         if state == 'tocheck' or opts.branch ==branch:
             print "(V)-> Checking branch",branch
             pr = github.PullReq() ## construct a fake PR
             pr.sha=head
-            pr.number=0
+            pr.number=-1
             pr.title ="branch testing"
             pr.origin="MiT-HEP/ChargedHiggs"
             if not opts.dryrun:
