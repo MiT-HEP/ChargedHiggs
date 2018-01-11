@@ -209,7 +209,7 @@ class Loop:
             state = self.check_state(pr.sha)
 
             ## if ok
-            if state=='tocheck' or int(opts.pr) == int(pr.number) :
+            if state=='tocheck' or (opts.pr != "" and int(opts.pr) == int(pr.number) ) :
                 print "(V) -> Testing PR",pr.number,pr.title
                 if not opts.dryrun:
                     try:

@@ -368,7 +368,7 @@ def ReadSFDB(file,verbose=False):
 		elif type == 'nnlops':
 			sf  = 1.0
 			err = 0.0
-            R['filename'] = l.split(' ')[2]
+			R['filename'] = l.split(' ')[2]
 
 		elif type == 'csv':
 			R['filename'] = l.split(' ')[2]
