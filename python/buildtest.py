@@ -179,7 +179,7 @@ class Loop:
         self.gh.set_status(pr.sha,'success','run',self.url+"/"+pr.sha+"/run.txt")
 
         ## Produce summary comment
-        if opts.summary and pr.num > 0:
+        if opts.summary and pr.number > 0:
             cmd = "%(cmsenv)s"%dictionary
             cmd += " && cd ChargedHiggs"
             cmd += " && python script/Hmumu/plotValidation.py"
@@ -191,7 +191,7 @@ class Loop:
                     Summary is available at:
                     ![summary](%s/%s/plot.png)
                     """ % (self.url,pr.sha)
-                self.gh.submit_comment(pr.num,comment,"pulls")
+                self.gh.submit_comment(pr.number,comment)
             except OtherError:
                 pass
         
@@ -256,9 +256,13 @@ class Loop:
                 print "(V)-> PR is already being checked",pr.number
 
     def test_branch(self,branch):
+        print "(D)-> Considering branch",branch
         self.gh.get_head(branch)
         head = self.gh.head[branch]
         self.gh.get_statuses(head)
+        for sha,context in self.gh.statuses:
+            if  sha == head:
+                print "(V)-> Branch has status",context,self.gh.statuses[(sha,context)].state
         state = self.check_state(head)
 
         if state == 'tocheck' or opts.branch ==branch:
