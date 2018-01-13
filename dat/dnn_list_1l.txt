@@ -9,7 +9,7 @@
 'Cen'
 'met_pt'
 'lep1_pt'
-'DRlbmaxPt'
+'MlbmaxPt'
 'MJJJmaxPt'
 'NcentralJets'
 'NBJets'
