@@ -4,7 +4,7 @@ import re
 
 from optparse import OptionParser
 usage='''compareSync.py file1 file2
-	the files need to have run[,] lumi[,] event
+	the files need to have run[,] lumi[,] event[,] [field1] [field2]
 	MIT can be parsed with:
 	cat log.txt | grep Trigger | cut -d' ' -f 2 | tr -d '(' | tr -d ')' | sed 's/,/, /g' > trigger-mit.txt 
 	separator: , space :

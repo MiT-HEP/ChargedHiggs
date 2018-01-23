@@ -19,6 +19,7 @@ Event::~Event(){
 void Event::ClearEvent(){
 
     for (auto o :  jets_ ) ChargedHiggs::Delete(o);
+    for (auto o :  tracks_ ) ChargedHiggs::Delete(o);
     for (auto o :  fat_ ) ChargedHiggs::Delete(o);
     for (auto o :  leps_ ) ChargedHiggs::Delete(o);
     for (auto o :  taus_ ) ChargedHiggs::Delete(o);
@@ -32,6 +33,7 @@ void Event::ClearEvent(){
     phos_ . clear();
     genparticles_ . clear();
     genjets_ . clear();
+    tracks_ . clear();
 
     weight_ -> clearSF( );
 
@@ -39,6 +41,7 @@ void Event::ClearEvent(){
 
 void Event::clearSyst(){
     for ( auto o: jets_) o->clearSyst();
+    for ( auto o: tracks_) o->clearSyst();
     for ( auto o: fat_) o->clearSyst();
     for ( auto o: taus_) o->clearSyst();
     for ( auto o: leps_) o->clearSyst();
@@ -233,6 +236,14 @@ void Event::validate(){
             if(p->IsPho() )j-> computeValidity(p);
         }
 
+    }
+    /// only against leptons, 
+    // against jet we will need to see in the variables
+    for ( auto j : tracks_ )
+    {
+        j-> resetValidity();
+        for(auto l : leps_)
+            if(l->IsLep() )j-> computeValidity(l);
     }
     return ;
 }
@@ -665,6 +676,34 @@ bool Event::GenParticleDecayedFrom( int iGenPar, int apdgid ,int& idx){
     int moidx = g->GetParentIdx();
     if (moidx == iGenPar) return false;
     return GenParticleDecayedFrom( moidx, apdgid,idx);
+}
+
+
+pair<int,float> Event::softVariables(Object *j1, Object *j2, float cut,float dR)
+{
+    int NJets=0;
+    float HT=0.;
+    float maxeta = std::max(j1->Eta(),j2->Eta());
+    float mineta = std::min(j1->Eta(),j2->Eta());
+    for(auto j : tracks_ )
+    {
+        if (j->Eta()> maxeta ) continue;
+        if (j->Eta()< mineta ) continue;
+        if (j->Pt() < cut ) continue;
+        if (j->DeltaR(j1) < dR) continue;
+        if (j->DeltaR(j2) < dR) continue;
+        bool islep=false;
+        for( int il = 0; ;++il)
+        {
+            Lepton *l= GetLepton(il);
+            if (l==NULL or islep) break;
+            if (j->DeltaR(l) < dR) islep=true;
+        }
+        if (islep) continue;
+        HT+=j->Pt();
+        NJets+=1;
+    }
+    return pair<int,float>(NJets,HT);
 }
 
 
