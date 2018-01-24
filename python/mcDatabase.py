@@ -53,9 +53,10 @@ if opts.rec:
 				break
 		if idx <0: label = re.sub('.*/','',dir)
 		## 
-		if nf >0 and not re.match("Run2015",dir) and not re.match("Run2016",dir) and "/failed" not in dir: ## remove data
+		if nf >0 and not re.match("Run2015",dir) and not re.match("Run2016",dir) and not re.match('Run2017',dir) \
+                and not re.match('SingleMuon',dir) and not re.match('DoubleMuon',dir)  and "/failed" not in dir:
 			print "Found one directory:",dir
-			cmd = "python %s -e %s -x %f -l %s -f %s"%(sys.argv[0],dir,opts.xsec,label,opts.file)
+			cmd = "python %s -e %s -x %f -l '%s' -f %s"%(sys.argv[0],dir,opts.xsec,label,opts.file)
 			print "going to execute",cmd
 			call(cmd,shell=True)
 	exit(0)
@@ -92,14 +93,16 @@ if opts.dat != "":
 		if label == 'SingleElectron': continue # exclude data
 		if label == 'DoubleMuon': continue # exclude data
 		if label == 'DoubleElectron': continue # exclude data
+		if re.match('Run201[5,6,7]',label): continue
 
-		cmd = "python %s -e %s -x %f -l %s -f %s"%(sys.argv[0],f,opts.xsec,label,opts.file)
+		cmd = "python %s -e %s -x %f -l '%s' -f %s"%(sys.argv[0],f,opts.xsec,label,opts.file)
 		if label in mcdb:
 			print "* label", label, "already parsed. Cmd was:"
 			print "  ",cmd
 			continue
-		print "going to execute",cmd
-		call(cmd,shell=True)
+		elif label != '':
+		    print "going to execute",cmd
+		    call(cmd,shell=True)
 	exit(0)
 
 

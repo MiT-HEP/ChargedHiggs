@@ -66,6 +66,7 @@ for ientry in range(0,t.GetEntries()):
     print_progress(ientry,nentries)
 
     if not t.pass_all: continue
+    if not t.pass_leptonveto: continue
     if t.mass <80 or t.mass > 85 : continue ## sync
     if t.nbjets >0 : continue
     print >>All,t.eventNum

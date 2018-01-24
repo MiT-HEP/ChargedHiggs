@@ -4,6 +4,8 @@
 #include <string>
 using namespace std;
 
+/// @brief class that defines a named object
+/// @brief adds log functionalities
 class Named
 {
     public:

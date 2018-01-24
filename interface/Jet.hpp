@@ -3,6 +3,7 @@
 
 #include "interface/Object.hpp"
 #include "interface/Smearable.hpp"
+#include "interface/Handlers.hpp"
 #include <algorithm>
 #include <string>
 #include <map>
@@ -21,106 +22,67 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float bcut_; /// ** bcut on the bJets discr
     float etacutcentral_;
     float  qgl_ ; // To Set
+
     float puidcut_{-100};
     float puId;
+
+    float deepB; // ** deep btag discriminator (B+BB)
+    float deepbcut_ {-100};
+
     TLorentzVector pp4;
 
-    float hadFlavor_;
+    int hadFlavor_;
 
     // qgl vars
     std::map<std::string,float> qglVars_;
 
     public:
 
-    inline int IsJetExceptValidity() const { 
-        if( std::isnan(Pt()) ) return 0; 
-        if( Pt() < ptcut_ ) return 0; 
-        if( fabs(Eta()) >= etacut_) return 0;
-        if( puidcut_ > -100 and puidcut_ < 100 and puId < puidcut_ ) return 0; 
-        if(puidcut_ == 100 ) { // Loose
-            float aeta= abs(Eta());
-            float pt = p4.Pt(); // no syst
-            if ( aeta< 2.5){
-                if (pt >=30 and pt< 50 and puId <-0.89)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.97)  return 0;
-            }
-            else if (aeta < 2.75){
-                if (pt >=30 and pt< 50 and puId <-0.52)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.68)  return 0;
-            }
-            else if (aeta < 3.00){
-                if (pt >=30 and pt< 50 and puId <-0.38)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.53)  return 0;
-            }
-            else if (aeta < 5.00){
-                if (pt >=30 and pt< 50 and puId <-0.30)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.47)  return 0;
-            }
-        }
-        if(puidcut_ == 200 ) { // Medium
-            float aeta= abs(Eta());
-            float pt = p4.Pt(); // no syst
-            if ( aeta< 2.5){
-                if (pt >=30 and pt< 50 and puId <+0.61)  return 0;
-                if (pt >=10 and pt< 30 and puId <+0.18)  return 0;
-            }
-            else if (aeta < 2.75){
-                if (pt >=30 and pt< 50 and puId <-0.35)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.55)  return 0;
-            }
-            else if (aeta < 3.00){
-                if (pt >=30 and pt< 50 and puId <-0.23)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.42)  return 0;
-            }
-            else if (aeta < 5.00){
-                if (pt >=30 and pt< 50 and puId <-0.17)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.36)  return 0;
-            }
-        }
-        if(puidcut_ == 300 ) { // Tight
-            float aeta= abs(Eta());
-            float pt = p4.Pt(); // no syst
-            if ( aeta< 2.5){
-                if (pt >=30 and pt< 50 and puId <+0.86)  return 0;
-                if (pt >=10 and pt< 30 and puId <+0.69)  return 0;
-            }
-            else if (aeta < 2.75){
-                if (pt >=30 and pt< 50 and puId <-0.10)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.35)  return 0;
-            }
-            else if (aeta < 3.00){
-                if (pt >=30 and pt< 50 and puId <-0.05)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.26)  return 0;
-            }
-            else if (aeta < 5.00){
-                if (pt >=30 and pt< 50 and puId <-0.01)  return 0;
-                if (pt >=10 and pt< 30 and puId <-0.21)  return 0;
-            }
-        }
-        return 1;
-    }
+    ///@brief return if it is a jet, except object cleaning
+    int IsJetExceptValidity() const ;
 
-
+    ///@brief set the pu id cut
     void SetPuIdCut(float x) {puidcut_=x;}
+    ///@brief set the pt cut 
     void SetPtCut(float x){ptcut_= x;}
+    ///@brief set the eta cut
     void SetEtaCut(float x){etacut_ = x;}
+    ///@brief set the the eta cut for the "central" region
     void SetEtaCutCentral( float x) {etacutcentral_=x;}
+    ///@brief set the the csv cut (only one between standard and deep requirement can be set). To unset use -100.
     void SetBCut(float x) {bcut_=x;}
+    ///@brief set the deep b csv tagger (deep b+bb). only one between std and deep can be set. To unset use -100
+    void SetDeepBCut(float x) {deepbcut_=x;}
+    ///@brief set the QGL discriminator
     inline void SetQGL(float qgl){ qgl_ = qgl;}
+    ///@brief set variable 
     inline void SetQGLVar(std::string name,float value){
             std::transform(name.begin(),name.end(),name.begin(),::tolower ) ;
             qglVars_[name] = value;
             };
+    /// @brief set the pileup id
     void SetPuId(float x) {puId=x;}
-    float GetPuId() {return puId;}
-    void SetHadFlavor(float x) {hadFlavor_=x;}
+    /// @brief get the pu id value
+    inline float GetPuId() const {return puId;}
+    /// @brief set the hadron flavour
+    void SetHadFlavor(const int& x) {hadFlavor_=x;}
 
+    /// @brief get the deep B tag discr (B+BB)
+    inline float GetDeepB() const {return deepB;}
+    /// @brief set the deep B discri (B+BB)
+    void SetDeepB(const float& x) {deepB=x;}
+
+    /// @brief constructor
     Jet() ; 
 
+    /// @brief rjected by DR with other analysis objects
     int isValid; // rejected by DR
+    /// @brief reject by DR with CR analysis objects
     int isValidInvIso;
 
+    /// @brief std btag discriminator
     float bdiscr; // 
+    /// @brief rawPt
     float rawPt;
 
     //Gen-level info
@@ -128,10 +90,12 @@ class Jet : virtual public Object, virtual public SmearableComplex
     int motherPdgId;
     int grMotherPdgId;
 
+    ///@brief return parton flavor. >94X will be from ghosts
     inline int Flavor() const { return pdgId;}
+    ///@brief return hadron flavor
     inline int hadFlavor() const { return hadFlavor_;}
 
-    // ---
+    /// @brief return pt, corrected by systematics
     inline float Pt() const override { 
             // --- cout<<"[Jet]::[Pt]::[DEBUG]"<<"Requested Pt for jet"<<endl;
             // --- cout<<"[Jet]::[Pt]::[DEBUG]"<<Form(" syst=%d",syst)<<endl;
@@ -145,11 +109,14 @@ class Jet : virtual public Object, virtual public SmearableComplex
             if (syst>0 ) return ptUpSyst[type];
             else return ptDownSyst[type];
     }
+
+    /// @brief return Energy corrected by systematics
     inline float E() const override { 
         if (syst == 0) return p4.E(); 
         else return Pt()/p4.Pt() *p4.E();
     }
-
+    
+    /// @brief return p4 corrected by systematics
     inline TLorentzVector & GetP4() override {
         if (syst == 0) return p4;
         if (syst!=0 ) {
@@ -161,12 +128,17 @@ class Jet : virtual public Object, virtual public SmearableComplex
             }
         }
     }
-
+    
+    /// @brief return systematic uncertainty under consideration
     inline float GetUnc() const { return Pt()/p4.Pt(); }
 
+    /// @brief clear systematics
     inline void  clearSyst() override {Object::clearSyst() ;syst = 0; isValid=1;type=Smearer::NONE;} // reset smearing
 
+    /// @brief return qgl discriminator value
     inline float QGL() const { return qgl_; } 
+
+    /// @brief return variable (name) of qgl discriminator
     inline float QGLVar(std::string name) const {
             std::transform(name.begin(),name.end(),name.begin(),::tolower ) ;
             return qglVars_.find(name)->second; // this will throw an exception if not found
@@ -174,44 +146,55 @@ class Jet : virtual public Object, virtual public SmearableComplex
     // ---
     inline int IsObject() const override {return IsJet();}
 
+    /// @brief return true if it is a jet to be considered. (pass all selection)
     inline int IsJet() const { 
         if (not isValid) return 0; 
         return IsJetExceptValidity();
     }
-
+    
+    /// @brief return true if it is a jet to be considered in CR (inverse isolation validation)
     inline int IsJetInvIso() const { 
         if (not isValidInvIso) return 0; 
         return IsJetExceptValidity();
     }
 
+    /// @brief return true if jet is central and pass full selection
     inline int IsCentralJet() const {
         if ( not IsJet() ) return 0;
         if ( fabs(Eta()) >= etacutcentral_ ) return 0;
         return 1;
     }
 
+    /// @brief return true if jet is central and pass inverse isolation selection (CR)
     inline int IsCentralJetInvIso() const {
         if ( not IsJetInvIso() ) return 0;
         if ( fabs(Eta()) >= etacutcentral_ ) return 0;
         return 1;
     }
-
+    
+    /// @brief return true if jet is forward (non central) and pass full selection
     inline int IsForwardJet() const {
         if ( not IsJet() ) return 0;
         if ( fabs(Eta()) < etacutcentral_ ) return 0;
         return 1;
     }
 
+    /// @brief return btag discriminator. Don't use this function to check if it is a bjet
     inline float Btag() const { return bdiscr ; } // don't use this function, to check if it is a bjet
-    inline int IsBJet() const { if( bdiscr > bcut_  and IsJet() and fabs(Eta()) <= betacut_ )   return 1; return 0;}
 
-    inline int IsBJetInvIso() const { if( bdiscr > bcut_  and IsJetInvIso() and fabs(Eta()) <= betacut_ )   return 1; return 0;}
+    /// @brief return true if it is a tagged bjet
+    int IsBJet() const ;
 
+    /// @brief return true
+    int IsBJetInvIso() const ;
+
+    /// @brief update validity of jet (dR) with respect to an object.. inverse will use it for the inverse isolation requirements.
     inline void computeValidity( Object* o, float dR = 0.4,bool inverse=false)
     {
         if (inverse){if ( DeltaR (*o) < dR )  isValidInvIso = 0;}
         else { if ( DeltaR (*o) < dR )  isValid = 0;}
     }
+    /// @brief reset valitidy status.
     inline void resetValidity(){isValid=1;isValidInvIso=1;}
 };
 

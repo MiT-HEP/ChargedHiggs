@@ -1,0 +1,9 @@
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/
+
+addfiles=%(amariniHmm)s/GluGlu_HToMuMu_M125_13TeV_amcatnloFXFX_pythia8
+addfiles=%(amariniHmm)s/VBFH_HToMuMu_M125_13TeV_amcatnloFXFX_pythia8
+addfiles=%(amariniHmm)s/WMinusH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniHmm)s/WPlusH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniHmm)s/ZH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniHmm)s/ttH_HToMuMu_M125_13TeV_powheg_pythia8
+

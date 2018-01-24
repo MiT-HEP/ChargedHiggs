@@ -48,6 +48,8 @@ class HmumuAnalysis: virtual public AnalysisBase
         Lepton *mu0{NULL},*mu1{NULL};
         vector<Jet*> selectedJets;
         float mjj1; //for drawing filled in the bdt loop
+        float softHt;// for drawing filled in the sync
+        int   softNj; // for drawing filled in the sync
         bool isMiniIsoLeptons{false};
         
 

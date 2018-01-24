@@ -310,7 +310,7 @@ RooAbsPdf* PdfModelBuilder::getZModExp2(string prefix, int order){
     if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
             "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) ",*plist);
     if (order ==2 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
-            "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1+ @5@*(@4-.5))",*plist);
+            "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1+ @5*(@4-.5))",*plist);
     if (order ==3 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),
             "TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * ( 1+ @5*3*@4*@4 + @6*6*@4*(1-@4)+ (-@5-@6)*3*(1-@4)*(1-@4) )",*plist);
     if (order ==4 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),

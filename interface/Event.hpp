@@ -10,6 +10,7 @@ using namespace std;
 #include "interface/Object.hpp"
 #include "interface/Jet.hpp"
 #include "interface/FatJet.hpp"
+#include "interface/TrackJet.hpp"
 #include "interface/Lepton.hpp"
 #include "interface/Tau.hpp"
 #include "interface/Met.hpp"
@@ -41,7 +42,8 @@ class Event{
     protected:
     vector<Lepton*> leps_;
     vector<Jet*>    jets_;
-    vector<FatJet*>    fat_;
+    vector<FatJet*> fat_;
+    vector<TrackJet*> tracks_;
     vector<Tau*>    taus_;
     vector<Photon*> phos_;
     vector<GenParticle*>    genparticles_; // gen particles
@@ -194,10 +196,20 @@ class Event{
     inline int NFatJets()const {int n=0; for(auto j : fat_) if(j->IsFatJet()) n++; return n;}
     inline int Ntaus(){int n=0; for(auto t : taus_) if(t->IsTau()) n++; return n;}
     inline int Nleps(){int n=0; for(auto t : leps_) if(t->IsLep()) n++; return n;}
-    inline int NGenPar(){return genparticles_.size();}
+    inline int NGenPar() const {return genparticles_.size();}
 
+    ///@brief compute soft variables. Njets and HT in the eta gap between j1 and j2 excluded with dR. Exclude all good leptons (e/mu) as well.
+    pair<int,float> softVariables(Object *j1, Object *j2, float cut=10, float dR=0.1) ;
+    ///@brief soft activity variable. Number of jets in the eta gap between j1 and j2 excluded with dR. Exclude all good leptons (e/mu) as well.
+    inline int softNJets(Object *j1, Object *j2, float cut=10, float dR=0.1){ return softVariables(j1,j2,cut,dR).first;}
+    ///@brief soft activity variable. HT in the eta gap between j1 and j2 excluded with dR. Exclude all good leptons (e/mu) as well.
+    inline float softHT(Object *j1, Object *j2, float cut=10,float dR=0.1){return softVariables(j1,j2,cut,dR).second;}
+    
+    /// @brief Get leading Tau
     inline Tau*  LeadTau(){ return GetTau(0);} 
+    /// @brief Get leading Jet
     inline Jet*  LeadJet(){ return GetJet(0);}
+    /// @brief Get leading BJet
     inline Jet*  LeadBjet(){ return GetBjet(0);}
 
     inline float Mvis() {  TLorentzVector e(0,0,0,0); 
@@ -206,7 +218,9 @@ class Event{
         for(auto t : taus_ )  if ( t->IsTau() ) e += t->GetP4();
         return e.M();
     }
+
     enum MtType { MtTau =0 , MtMuon, MtLepton, MtTauInv };
+    /// @brief Compute Mt against: muon, lepton Tau, TauInv
     float Mt(MtType type=MtTau ) ; // 0 tau, 1 muon ,...
 
     // Q and 

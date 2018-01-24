@@ -212,7 +212,8 @@ class HmmConfig():
             raise ValueError
 
     def lumi(self):
-        return 35867
+        #return 35867 ## 2016
+        return 41860
 
     #def readScaleUnc(self,f="Hmumu/syst/scale/scales.txt"):
     #    self.scale ={} #("cat","proc") = mean, sigma

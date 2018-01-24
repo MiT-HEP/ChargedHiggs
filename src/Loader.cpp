@@ -7,6 +7,7 @@
 #include "NeroProducer/Core/interface/BareMonteCarlo.hpp"
 #include "NeroProducer/Core/interface/BareMet.hpp"
 #include "NeroProducer/Core/interface/BareFatJets.hpp"
+#include "NeroProducer/Core/interface/BareTrackJets.hpp"
 #include "NeroProducer/Core/interface/BareLeptons.hpp"
 #include "NeroProducer/Core/interface/BarePhotons.hpp"
 #include "NeroProducer/Core/interface/BareTaus.hpp"
@@ -42,6 +43,7 @@ int LoadNero::InitTree(){
         "BareMet",
         "BareTrigger",
         "BarePhotons",
+        "BareTrackJets",
     };
     for (const string & c : classes)
     {
@@ -80,6 +82,7 @@ int LoadNero::FillEvent(){
 
     FillJets();
     FillFatJets();
+    FillTrackJets();
     FillLeptons();
     FillPhotons();
     FillTaus();
@@ -243,6 +246,13 @@ void LoadNero::FillJets(){
 
         if (tree_->GetBranchStatus("jethadFlavour")  and  (bj -> hadFlavour -> size() > iJet)) j->SetHadFlavor(bj -> hadFlavour -> at(iJet));
         else j->SetHadFlavor( -10 );
+
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUGi2",Form("DeepB, iJet=%d deepSize=%d deepBBsize = %d",iJet,bj->deepB->size(),bj->deepBB->size()));
+#endif
+
+        if (tree_->GetBranchStatus("deepB")  and  (bj -> deepB -> size() > iJet)) j->SetDeepB(bj -> deepB -> at(iJet) + bj-> deepBB -> at(iJet));
+        else j->SetDeepB( -10 );
 
 #ifdef VERBOSE
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> Push_back");
@@ -888,6 +898,46 @@ void LoadNero::NewFile(){
     bare_[ names_["BareLeptons"] ]->setBranchAddresses(tree_);
 
 }; // should take care of loading the trigger names
+
+void LoadNero::FillTrackJets(){
+    //fill Jets
+    #ifdef VERBOSE
+    if(VERBOSE>1) Log(__FUNCTION__,"DEBUG","Filling TrackJets");
+    #endif
+
+    BareTrackJets *bj = dynamic_cast<BareTrackJets*> ( bare_ [ names_[ "BareTrackJets" ] ] ); assert (bj !=NULL);
+
+    if ( tree_ ->GetBranchStatus("trackjetP4") == 0 ){ 
+        LogN(__FUNCTION__,"WARNING","TrackJets Not FILLED",10);
+        return;
+    }
+
+
+    for (int iJet=0;iJet< bj -> p4 ->GetEntries() ; ++iJet)
+    {
+
+        #ifdef VERBOSE
+        if (VERBOSE >1 )
+        {
+            cout <<"[LoadNero]::[FillJets]::[DEBUG2] considering jet: "<<iJet << " / "<< bj -> p4 ->GetEntries() <<endl;
+            cout <<"\t\t * Pt :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Pt() <<endl;
+            cout <<"\t\t * Eta :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Eta() <<endl;
+            cout <<"\t\t * Phi :"<<  ((TLorentzVector*) bj -> p4 -> At(iJet)) ->Phi() <<endl;
+        }
+        #endif
+        //
+        TrackJet *j =new TrackJet();
+        j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
+
+        #ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> Push_back");
+        #endif
+        // add it
+        event_ -> tracks_ . push_back(j);
+
+    }
+}
+
 // ---------------------------END NERO ---------------------
 
 // Register

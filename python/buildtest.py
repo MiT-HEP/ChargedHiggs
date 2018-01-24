@@ -14,6 +14,7 @@ parser.add_option("","--pr",dest="pr",type="string",help="PR number to force che
 parser.add_option("","--branch",dest="branch",type="string",help="Branch force check [%default]",default="");
 parser.add_option("-x","--nosummary",dest="summary",action='store_false',help="Don't send summary comment on PR",default=True);
 parser.add_option("-n","--dryrun",dest="dryrun",action='store_true',help="Only List PR.",default=False);
+parser.add_option("-v","--verbose",dest='verbose',type='int',help="Verbosity Level [%default]",default=1);
 
 (opts,args) = parser.parse_args()
 
@@ -40,6 +41,17 @@ class Loop:
         self.tmp = "/tmp/"+os.environ['USER'] +"/ChPr/"
         self.log = os.environ["HOME"] +"/www/ChargedHiggs/"
         self.url = "https://" +os.environ['USER']+".web.cern.ch/"+os.environ['USER']+'/ChargedHiggs'
+        ## bash color string
+        self.color={}
+        self.color['red'] ="\033[01;31m"
+        self.color['green']  = "\033[01;32m"
+        self.color['yellow']  = "\033[01;33m"
+        self.color['blue']  = "\033[01;34m"
+        self.color['pink']  = "\033[01;35m"
+        self.color['cyan']  = "\033[01;36m"
+        self.color['white']  = "\033[00m"\
+
+        self.verbose = 1
 
     def _call(self,cmd,errtype="build",logdir = ""):
         #cmd += " 2>&1 | tee %(log)s/setup.txt"%dictionary
@@ -49,7 +61,7 @@ class Loop:
             final_cmd="{ "+ cmd +" ; } 2>&1 >>" + logdir + "/"+errtype +".txt"
         st = call(final_cmd,shell=True)
         if st != 0: 
-            print "-> Unable to run '"+final_cmd+"'"
+            if self.verbose >=0: print "["+self.color['red']+"ERROR"+self.color['white']+"] Unable to run '"+final_cmd+"'"
             if errtype=="setup":raise SetupError
             if errtype=="build":raise BuildError
             if errtype=="run": raise RunError
@@ -211,62 +223,65 @@ class Loop:
         self.gh.get_pullreq()
 
         for pr in self.gh.pulls:
+            if self.verbose >=1 : print ## new line
             if (pr.number,pr.sha) in self.pr_checked: 
                 continue
             if opts.pr !="" and int(pr.number) != int(opts.pr) : 
-                print "(V) -> Skipping PR",pr.number,"Request only PR",opts.pr
+                if self.verbose >=1: print " -> Skipping PR",pr.number,self.color["cyan"]+pr.title+self.color["white"]
                 continue
 
-            print "(D) -> Considering PR",pr.number,pr.sha
-            pr.Print()
+            if self.verbose >=1: print "Considering PR",pr.number,self.color["cyan"]+pr.title+self.color["white"],"("+pr.sha+")"
+            if self.verbose >=2: pr.Print()
 
             self.gh.get_statuses(pr.sha)
 
             for sha,context in self.gh.statuses:
                 if  sha == pr.sha:
-                    print "(V)-> PR has status",context,self.gh.statuses[(sha,context)].state ## success, pending ...
+                    if self.verbose >=2: print "-> PR has status",context,self.gh.statuses[(sha,context)].state ## success, pending ...
             
             ## define a global state
             state = self.check_state(pr.sha)
 
             ## if ok
             if state=='tocheck' or (opts.pr != "" and int(opts.pr) == int(pr.number) ) :
-                print "(V) -> Testing PR",pr.number,pr.title
+                if self.verbose >=1 : print " -> "+self.color['yellow']+"Testing"+self.color['white']+" PR",pr.number,pr.title
                 if not opts.dryrun:
                     try:
                         self.TestPr(pr)   
-                        print "(V) -> PR Success",pr.number,pr.title
+                        if self.verbose>=1: print "   * PR "+self.color['green']+"Success"+self.color['white'],pr.number,pr.title
                     except SetupError:
-                        print "(V) -> PR Fail Setup",pr.number,pr.title
+                        if self.verbose>=1: print "   * PR "+self.color['red']+"Fail Setup"+self.color['white'],pr.number,pr.title
                         self.gh.set_status(pr.sha,'fail','setup',self.url+"/"+pr.sha+"/setup.txt")
                     except BuildError:
-                        print "(V) -> PR Build Setup",pr.number,pr.title
+                        if self.verbose>=1: print "   * PR "+self.color['red']+"Fail Build"+self.color['white'],pr.number,pr.title
                         self.gh.set_status(pr.sha,'fail','build',self.url+"/"+pr.sha+"/build.txt")
                     except RunError:
-                        print "(V) -> PR Run Setup",pr.number,pr.title
+                        if self.verbose>=1: print "   * PR "+self.color['red']+"Run"+self.color['white'],pr.number,pr.title
                         self.gh.set_status(pr.sha,'fail','run',self.url+"/"+pr.sha+"/run.txt")
 
             if state=='ok': 
-                print "(V)-> PR is OK",pr.number
+                if self.verbose>=1: print " -> PR is in state "+self.color["green"]+"OK"+self.color['white'],pr.number
                 self.pr_checked.append( (pr.number,pr.sha) )
             if state=='fail': 
-                print "(V)-> PR is failed",pr.number
+                if self.verbose>=1: print " -> PR is in state "+self.color['red']+"failed"+self.color['white'],pr.number
                 self.pr_checked.append( (pr.number,pr.sha) )
             if state=='pend':
-                print "(V)-> PR is already being checked",pr.number
+                if self.verbose>=1: print " -> PR is already in state "+self.color['yellow']+"pending"+self.color['white'],pr.number
 
     def test_branch(self,branch):
-        print "(D)-> Considering branch",branch
+        if self.verbose>=1:
+            print 
+            print "Considering branch",self.color['cyan']+branch+self.color['white']
         self.gh.get_head(branch)
         head = self.gh.head[branch]
         self.gh.get_statuses(head)
         for sha,context in self.gh.statuses:
             if  sha == head:
-                print "(V)-> Branch has status",context,self.gh.statuses[(sha,context)].state
+                if opts.verbose >=2 : print " -> Branch has status",context,self.gh.statuses[(sha,context)].state
         state = self.check_state(head)
 
         if state == 'tocheck' or opts.branch ==branch:
-            print "(V)-> Checking branch",branch
+            if self.verbose >=1 : print " -> "+self.color['yellow']+"Testing"+self.color['white']+" branch",branch
             pr = github.PullReq() ## construct a fake PR
             pr.sha=head
             pr.number=-1
@@ -287,15 +302,17 @@ class Loop:
                     self.gh.set_status(pr.sha,'fail','run',self.url+"/"+pr.sha+"/run.txt")
                     call("cp -v "+self.log+"/ci-status-images/img/icecave/regular/build-status/build-status-error.png " + self.log+ "/" + branch +".svg", shell=True) #don't check status
         if state=='ok': 
-            print "(V)-> Branch is OK",branch
+            if self.verbose>=1: print " -> Branch is in state "+self.color["green"]+"OK"+self.color['white'],branch
         if state=='fail': 
-            print "(V)-> Branch is failed",branch
+            if self.verbose>=1: print " -> Branch is in state "+self.color['red']+"failed"+self.color['white'],branch
         if state=='pend':
-            print "(V)-> Branch is already being checked",branch
+            if self.verbose>=1: print " -> Branch is already in state "+self.color['yellow']+"pending"+self.color['white'],branch
 
 if __name__=="__main__":
 
     loop=Loop() 
+    loop.verbose = opts.verbose
+
     if opts.branch == "": ## don't loop over pr if branch is specified
         loop.main()
     if opts.pr == "": ## don't test branches if a pr is specified

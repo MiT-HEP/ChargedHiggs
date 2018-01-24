@@ -69,7 +69,8 @@ if opts.rec:
 				break
 		if idx <0: label = re.sub('.*/','',dir)
 
-		if nd==0 and nf >0 and not re.match("Run2015",dir) : # exclude Run directories
+		if nd==0 and nf >0 and not re.match("Run2015",dir) and not re.match('Run2016',dir) and not re.match('Run2017',dir) \
+                and not re.match('SingleMuon',dir) and not re.match('DoubleMuon',dir): # exclude Run directories
 			print "Found one directory:",dir
 			cmd = "python %s -e %s -l %s -f %s --run '%s'"%(sys.argv[0],dir,label,opts.file,opts.run)
 			print "going to execute",cmd

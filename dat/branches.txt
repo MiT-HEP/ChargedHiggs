@@ -8,6 +8,7 @@ jetcemf
 jetnemf
 jetnhef
 jetchef
+jetDeep*
 ## QG
 jetQglCMult
 jetQglNMult
@@ -33,6 +34,8 @@ fatjetAK8CHSSoftdropMass
 fatjetAK8CHSCorrectedPrunedMass
 fatjetAK8CHSsubjet_btag
 fatjetAK8CHSfirstSubjet
+### TrackJets
+trackjet*
 ### Leptons
 lepP4
 lepIso
