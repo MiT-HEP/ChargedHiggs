@@ -454,7 +454,7 @@ void ChargedHiggsTopBottom::ReadScikit(Event*e) {
         scikit.clear();
         // offset by one
         scikit.push_back(-1);
-        bool dov2=false;
+        int versionKeras=4; // 1 used for dec16 // 2 was bad // 3 january // 4 as 3 but with the M
 
         // for each mass
         for(unsigned iMass =1 ;iMass< 20 ; ++iMass) {
@@ -470,18 +470,20 @@ void ChargedHiggsTopBottom::ReadScikit(Event*e) {
             x.push_back(evt_FW2); //7
             x.push_back(evt_C); //8
              /* new entries */
-            if(dov2) x.push_back(e->GetMet().Pt());
-            if(dov2) x.push_back(leadLep->GetP4().Pt());
-            if(!dov2) x.push_back(evt_minDRlb); //9
-            if(!dov2) x.push_back(evt_avDRBB); //10
+            if(versionKeras==2 || versionKeras==3 || versionKeras==4) x.push_back(e->GetMet().Pt()); //9
+            if(versionKeras==2 || versionKeras==3 || versionKeras==4) x.push_back(leadLep->GetP4().Pt()); //10
+            if(versionKeras==1) x.push_back(evt_minDRlb); //9
+            if(versionKeras==1) x.push_back(evt_avDRBB); //10
              /* */
-            x.push_back(evt_DRlbmaxPt); //11  (to be replaced with the Mass)
+            if(versionKeras==3)  x.push_back(evt_DRlbmaxPt); //11
+            if(versionKeras==4)  x.push_back(evt_MlbmaxPt); //11
+             /* */
             if(do1lAnalysis)  x.push_back(evt_MJJJmaxPt); //12
              /* new entries */
-            if(dov2 & do2lAnalysis)  x.push_back(trailLep->GetP4().Pt());
+            if(versionKeras==2 && do2lAnalysis)  x.push_back(trailLep->GetP4().Pt()); //12
              /* */
-            if(do2lAnalysis)  x.push_back(evt_MTmin); //12
-            if(do2lAnalysis)  x.push_back((leadLep->GetP4().Pt()-trailLep->GetP4().Pt())/(leadLep->GetP4().Pt()+trailLep->GetP4().Pt())); ////// MARIA
+            if((versionKeras==3 || versionKeras==4) && do2lAnalysis)  x.push_back(evt_MTmin); //12
+            if((versionKeras==3 || versionKeras==4) && do2lAnalysis)  x.push_back((leadLep->GetP4().Pt()-trailLep->GetP4().Pt())/(leadLep->GetP4().Pt()+trailLep->GetP4().Pt())); //12
             x.push_back(e->NcentralJets()); //13
             x.push_back(e->Bjets()); //14
             if (iMass==1) x.push_back(180);
@@ -514,8 +516,8 @@ void ChargedHiggsTopBottom::ReadScikit(Event*e) {
 
             float kerasDiscr=-1;
             if(do1lAnalysis) kerasDiscr= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15] ] ] ))[0][0]");
-            if(!dov2 && do2lAnalysis) kerasDiscr= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16] ] ] ))[0][0]");
-            if(dov2 && do2lAnalysis) kerasDiscr= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17] ] ] ))[0][0]");
+            if(versionKeras==2 && do2lAnalysis) kerasDiscr= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17] ] ] ))[0][0]");
+            if((versionKeras==1 || versionKeras==3 || versionKeras==4) && do2lAnalysis) kerasDiscr= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16] ] ] ))[0][0]");
             //            std::cout << "event to SYNCH:: run=" << e->runNum() << " lumi=" << e->lumiNum() << " evt=" << e->eventNum(); //<< std::endl;
             //            std::cout << "  iMass==" << iMass << " KERAS " << keras1l << std::endl;
             scikit.push_back(kerasDiscr);
@@ -559,431 +561,68 @@ void ChargedHiggsTopBottom::InitTmva() {
     for( size_t i=0;i<weights.size() ;++i)
         readers_ . push_back( new TMVA::Reader() );
 
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 1l - high mass " << endl;
 
-    for (int i=0; i<1; i++) {
+    if(do1lAnalysis) {
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO READ: 1l " << endl;
 
-        // i = 0
-        // 1l - high mass
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //0
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i);//1
-        AddVariable("DRl1b1",'F',i);//2
-        AddVariable("DRlbmaxPT",'F',i); //3
-        AddVariable("DEtaMaxBB",'F',i); //4
-        AddVariable("MassMinlb",'F',i); //5
-        AddVariable("AvCSVPt",'F',i); //6
-        AddVariable("MJJJmaxPt",'F',i); //7
-        AddVariable("FW2",'F',i); //8
-        AddVariable("Cen",'F',i); //9
-        AddVariable("DRbbmin",'F',i); //10
-        AddVariable("DRlbmin",'F',i); //11
-        AddVariable("AvDRBB",'F',i);//12
+        for (int i=0; i<16; i++) {
 
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+            // i = 0
+            AddVariable("ht",'F',i);//0
+            AddVariable("NcentralJets",'F',i); //1
+            AddVariable("NBJets",'F',i); //2
+            AddVariable("met_pt",'F',i); //3
+            AddVariable("bjet_pt[0]",'F',i); //4
+            AddVariable("lep1_pt",'F',i); //5
+            AddVariable("DRbbmin",'F',i); //6
+            AddVariable("AvCSVPt",'F',i); //7
+            AddVariable("DEtaMaxBB",'F',i); //8
+            AddVariable("FW2",'F',i); //9
+            AddVariable("DRl1b1",'F',i);//10
+            AddVariable("MassMinlb",'F',i); //11
+            AddVariable("Cen",'F',i); //12
+            AddVariable("MJJJmaxPt",'F',i); //13
+            AddVariable("MlbmaxPt",'F',i); //14
 
-    }
+            //            AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+            AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 1l - medium mass " << endl;
+        }}
 
-    for (int i=1; i<2; i++) {
+    if(do2lAnalysis) {
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO READ: 2l " << endl;
 
-        // i = 1
-        // 1l - medium mass
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //0
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i);//1
-        AddVariable("DRl1b1",'F',i);//2
-        AddVariable("DEtaMaxBB",'F',i); //3
-        AddVariable("DRbbmin",'F',i); //4
-        AddVariable("MassMinlb",'F',i); //5
-        AddVariable("AvCSVPt",'F',i); //6
-        AddVariable("FW2",'F',i); //7
-        AddVariable("MJJJmaxPt",'F',i); //8
-        AddVariable("Cen",'F',i); //9
-        AddVariable("DRlbmin",'F',i); //10
-        AddVariable("AvDRBB",'F',i);//11
-        AddVariable("DRlbmaxPT",'F',i); //12
+        for (int i=16; i<16+16; i++) {
 
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+            // i = 1
+            // i = 0
+            AddVariable("ht",'F',i);//0
+            AddVariable("NcentralJets",'F',i); //1
+            AddVariable("NBJets",'F',i); //2
+            AddVariable("met_pt",'F',i); //3
+            AddVariable("bjet_pt[0]",'F',i); //4
+            AddVariable("lep1_pt",'F',i); //5
+            AddVariable("DRbbmin",'F',i); //6
+            AddVariable("AvCSVPt",'F',i); //7
+            AddVariable("DEtaMaxBB",'F',i); //8
+            AddVariable("FW2",'F',i); //9
+            AddVariable("DRl1b1",'F',i);//10
+            AddVariable("MassMinlb",'F',i); //11
+            AddVariable("Cen",'F',i); //12
+            AddVariable("MlbmaxPt",'F',i); //14
+            AddVariable("DRlbmaxPt",'F',i); //14
+            AddVariable("(lep1_pt-lep2_pt)/(lep1_pt+lep2_pt)",'F',i); //14
 
-    }
+            //            AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
+            AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
 
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 1l - low mass " << endl;
-
-    for (int i=2; i<2+1; i++) {
-
-        // i = 2
-        // 1l - low + 6,5,4,3,2,1 mass
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //0
-        // GREEN
-        AddVariable("ht",'F',i);//0
-        AddVariable("AvDRBB",'F',i);//1
-        AddVariable("DRl1b1",'F',i);//2
-        AddVariable("DRlbmaxPT",'F',i); //3
-        AddVariable("DEtaMaxBB",'F',i); //4
-        AddVariable("DRbbmin",'F',i); //5
-        AddVariable("MassMinlb",'F',i); //6
-        AddVariable("AvCSVPt",'F',i); //7
-        AddVariable("FW2",'F',i); //8
-        AddVariable("Cen",'F',i); //9
-        AddVariable("MJJJmaxPt",'F',i); //10
-        AddVariable("DRlbmin",'F',i); //11
-        AddVariable("bjet_pt[0]",'F',i); //12
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-    //////
-    //////
-    //////
-
+        }}
 
     cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 1l - 14,13,12,11  " << endl;
-
-    for (int i=3; i<3+4; i++) {
-
-        // i = 3,4,5,6
-        // 1l - 14,13,12,11
-
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //0
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i);//1
-        AddVariable("DRl1b1",'F',i);//2
-        AddVariable("DRlbmaxPT",'F',i); //3
-        AddVariable("DEtaMaxBB",'F',i); //4
-        AddVariable("MassMinlb",'F',i); //5
-        AddVariable("AvCSVPt",'F',i); //6
-        AddVariable("MJJJmaxPt",'F',i); //7
-        AddVariable("FW2",'F',i); //8
-        AddVariable("Cen",'F',i); //9
-        AddVariable("DRbbmin",'F',i); //10
-        AddVariable("DRlbmin",'F',i); //11
-        AddVariable("AvDRBB",'F',i);//12
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
     cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 1l - 9,7  " << endl;
-
-
-    for (int i=7; i<7+2; i++) {
-
-        // 1l - 9,10 - medium mass
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //0
-        // GREEN
-        AddVariable("ht",'F',i);//1
-        AddVariable("DRl1b1",'F',i);//2
-        AddVariable("DRlbmaxPT",'F',i); //3
-        AddVariable("MassMinlb",'F',i); //5
-        AddVariable("AvCSVPt",'F',i); //6
-        AddVariable("FW2",'F',i); //8
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("Cen",'F',i); //9
-        AddVariable("DRlbmin",'F',i); //11
-        AddVariable("AvDRBB",'F',i);//12
-        AddVariable("DEtaMaxBB",'F',i); //4
-        AddVariable("DRbbmin",'F',i); //10
-        AddVariable("MJJJmaxPt",'F',i); //7
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
     cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 1l - 6,5,4,3,2,1  " << endl;
-
-    for (int i=9; i<9+6; i++) {
-
-        // i = 9,10,11,12,12,14
-        // 1l - low + 6,5,4,3,2,1 mass
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //0
-        // GREEN
-        AddVariable("ht",'F',i);//0
-        AddVariable("AvDRBB",'F',i);//1
-        AddVariable("DRl1b1",'F',i);//2
-        AddVariable("DRlbmaxPT",'F',i); //3
-        AddVariable("DEtaMaxBB",'F',i); //4
-        AddVariable("DRbbmin",'F',i); //5
-        AddVariable("MassMinlb",'F',i); //6
-        AddVariable("AvCSVPt",'F',i); //7
-        AddVariable("FW2",'F',i); //8
-        AddVariable("Cen",'F',i); //9
-        AddVariable("MJJJmaxPt",'F',i); //10
-        AddVariable("DRlbmin",'F',i); //11
-        AddVariable("bjet_pt[0]",'F',i); //12
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-    //////
-    //////
-    //////
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 2l - high mass " << endl;
-
-    for (int i=15; i<15+1; i++) {
-
-        // i = 0,1,2,3,4
-        // 2l - high + 14,13,12,11 - high mass
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //1
-        AddVariable("(lep1_pt-lep2_pt)/(lep1_pt+lep2_pt)",'F',i); //1
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //2
-        AddVariable("ht",'F',i);//3
-        AddVariable("AvDRBB",'F',i);//4
-        AddVariable("DRl1b1",'F',i);//5
-        AddVariable("DRlbmaxPT",'F',i); //6
-        AddVariable("DEtaMaxBB",'F',i); //7
-        AddVariable("MassMinlb",'F',i); //8
-        AddVariable("AvCSVPt",'F',i); //9
-        AddVariable("mtMin",'F',i); //10
-        AddVariable("DRlbmin",'F',i); //11
-        AddVariable("FW2",'F',i); //12
-        AddVariable("DRbbmin",'F',i); //13
-        AddVariable("Cen",'F',i); //14
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 2l - medium mass " << endl;
-
-    for (int i=16; i<16+1; i++) {
-
-        // i = 18
-        // 2l - medium mass
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //1
-
-        // GREEN
-        AddVariable("(lep1_pt-lep2_pt)/(lep1_pt+lep2_pt)",'F',i); //14
-        AddVariable("bjet_pt[0]",'F',i); //8
-        AddVariable("ht",'F',i);//2
-        AddVariable("DRl1b1",'F',i);//3
-        AddVariable("DRlbmaxPT",'F',i); //4
-        AddVariable("DEtaMaxBB",'F',i); //12
-        AddVariable("DRbbmin",'F',i); //13
-        AddVariable("MassMinlb",'F',i); //5
-        AddVariable("AvCSVPt",'F',i); //6
-        AddVariable("FW2",'F',i); //7
-        AddVariable("mtMin",'F',i); //15
-        AddVariable("Cen",'F',i); //9
-        AddVariable("AvDRBB",'F',i);//11
-        AddVariable("DRlbmin",'F',i); //10
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 2l - low mass " << endl;
-
-    for (int i=17; i<17+1; i++) {
-
-        // i = 17
-        // 2l - low
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //1
-        AddVariable("(lep1_pt-lep2_pt)/(lep1_pt+lep2_pt)",'F',i); //1
-        // GREEN
-        AddVariable("ht",'F',i);//2
-        AddVariable("AvDRBB",'F',i);//3
-        AddVariable("DRl1b1",'F',i);//4
-        AddVariable("DRlbmaxPT",'F',i); //5
-        AddVariable("DEtaMaxBB",'F',i); //6
-        AddVariable("DRbbmin",'F',i); //7
-        AddVariable("MassMinlb",'F',i); //8
-        AddVariable("AvCSVPt",'F',i); //9
-        AddVariable("FW2",'F',i); //10
-        AddVariable("bjet_pt[0]",'F',i); //11
-        AddVariable("mtMin",'F',i); //12
-        AddVariable("DRlbmin",'F',i); //13
-        AddVariable("Cen",'F',i); //14
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 2l - 14,13,12,11 - high mass " << endl;
-
-    for (int i=18; i<18+4; i++) {
-
-        // i = 18,19,29,21
-        // 2l - low + 14,13,12,11
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //1
-        AddVariable("(lep1_pt-lep2_pt)/(lep1_pt+lep2_pt)",'F',i); //1
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //2
-        AddVariable("ht",'F',i);//3
-        AddVariable("AvDRBB",'F',i);//4
-        AddVariable("DRl1b1",'F',i);//5
-        AddVariable("DRlbmaxPT",'F',i); //6
-        AddVariable("DEtaMaxBB",'F',i); //7
-        AddVariable("MassMinlb",'F',i); //8
-        AddVariable("AvCSVPt",'F',i); //9
-        AddVariable("mtMin",'F',i); //10
-        AddVariable("DRlbmin",'F',i); //11
-        AddVariable("FW2",'F',i); //12
-        AddVariable("DRbbmin",'F',i); //13
-        AddVariable("Cen",'F',i); //14
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 2l - medium mass " << endl;
-
-    for (int i=22; i<22+2; i++) {
-
-        // i = 18
-        // 2l - medium mass
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //1
-
-        // GREEN
-        AddVariable("ht",'F',i);//3
-        AddVariable("DRl1b1",'F',i);//4
-        AddVariable("DRlbmaxPT",'F',i); //5
-        AddVariable("MassMinlb",'F',i); //8
-        AddVariable("AvCSVPt",'F',i); //9
-        AddVariable("FW2",'F',i); //10
-        AddVariable("bjet_pt[0]",'F',i); //2
-        AddVariable("Cen",'F',i); //12
-        AddVariable("DRlbmin",'F',i); //14
-        AddVariable("AvDRBB",'F',i);//13
-        AddVariable("DEtaMaxBB",'F',i); //6
-        AddVariable("DRbbmin",'F',i); //7
-        AddVariable("(lep1_pt-lep2_pt)/(lep1_pt+lep2_pt)",'F',i); //1
-        AddVariable("mtMin",'F',i); //11
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 2l - low mass " << endl;
-
-    //    for (int i=19; i<19+7; i++) {
-    for (int i=24; i<24+6; i++) {
-
-        // i = 24,25,26,27,28,29
-        // 2l - low 6,,5,4,3,2,1
-        AddVariable("NcentralJets",'F',i); //0
-        AddVariable("NBJets",'F',i); //1
-        AddVariable("(lep1_pt-lep2_pt)/(lep1_pt+lep2_pt)",'F',i); //1
-        // GREEN
-        AddVariable("ht",'F',i);//2
-        AddVariable("AvDRBB",'F',i);//3
-        AddVariable("DRl1b1",'F',i);//4
-        AddVariable("DRlbmaxPT",'F',i); //5
-        AddVariable("DEtaMaxBB",'F',i); //6
-        AddVariable("DRbbmin",'F',i); //7
-        AddVariable("MassMinlb",'F',i); //8
-        AddVariable("AvCSVPt",'F',i); //9
-        AddVariable("FW2",'F',i); //10
-        AddVariable("bjet_pt[0]",'F',i); //11
-        AddVariable("mtMin",'F',i); //12
-        AddVariable("DRlbmin",'F',i); //13
-        AddVariable("Cen",'F',i); //14
-
-        AddSpectator("mc",'F',i); AddSpectator("lep_category",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-
-    //////
-    //////
-    //////
-
-    /*
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO READ: 2D - 2l " << endl;
-
-    for (int i=18; i<18+6; i++) {
-        // 0,1,2
-
-        // 2d - 2l - high mass
-        // 2d - 2l - medium mass
-        // 2d - 2l - low mass
-        // GREEN
-        AddVariable("bjet_pt[0]",'F',i); //0
-        AddVariable("ht",'F',i); //1
-        AddVariable("AvDRBB",'F',i);//2
-        AddVariable("DRl1b1",'F',i); //3
-        AddVariable("DRlbmin",'F',i); //4
-        AddVariable("DRlbmaxPT",'F',i); //5
-        AddVariable("DEtaMaxBB",'F',i); //6
-        AddVariable("DRbbmin",'F',i); //7
-        AddVariable("MassMinlb",'F',i); //8
-        AddVariable("AvCSVPt",'F',i); //9
-        AddVariable("FW2",'F',i); //10
-        AddVariable("Cen",'F',i); //11
-        AddVariable("mtMin",'F',i); //12
-        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-
-    */
-
-
-    /*
-    // this is for the DNN
-    for (int i=18; i<19; i++) {
-        // 0,1,2
-
-        // 2l - high mass
-        // 2l - medium mass
-        // 2l - low mass
-        AddVariable("ht",'F',i);
-        AddVariable("met_pt",'F',i);
-        AddVariable("lep1_pt",'F',i);
-        AddVariable("bjet_pt[0]",'F',i);
-        AddVariable("DRl1b1",'F',i);
-        AddVariable("DRbbmin",'F',i);
-        AddVariable("MassDRbbmin",'F',i);
-        AddVariable("MassDRlbmin",'F',i);
-        AddVariable("mt",'F',i);
-        //    AddVariable("mt2bb",'F',3);
-        AddVariable("mt2bb1l",'F',i);
-        AddVariable("Cen",'F',i);
-        AddVariable("HemiOut",'F',i);
-        AddVariable("DEtaMaxBB",'F',i);
-        AddVariable("DRlbmaxPT",'F',i);
-        AddVariable("AvCSVPt",'F',i);
-        //        AddVariable("st",'F',i);
-        //        AddVariable("mtMin",'F',i);
-
-        AddSpectator("mc",'F',i); AddSpectator("run",'F',i); AddSpectator("lumi",'F',i); AddSpectator("evt",'F',i);
-
-    }
-    */
-
 
     // load weights
     for( size_t i=0;i<weights.size() ;++i)
@@ -1004,11 +643,8 @@ void ChargedHiggsTopBottom::InitScikit(){
     py -> Exec("import numpy as np");
     py -> Exec("from sklearn.externals import joblib ");
     /* original (no leptonPT, no MET) */
-    if(do1lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_1l_keras_trained_model.h5')");
-    if(do2lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_2l_keras_trained_model.h5')");
-
-    //    if(do1lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_1l_keras_trained_model_metLepPt.h5')");
-    //    if(do2lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_2l_keras_trained_model_metLepPt.h5')");
+    if(do1lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_1l_keras_trained_model_MlbmaxPt.h5')");
+    if(do2lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_2l_keras_trained_model_MlbmaxPt.h5')");
 
     py -> Exec("kmodel.summary()");
 
@@ -4045,7 +3681,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
          (label.find("ST") !=string::npos)
          )  and (e->eventNum()%3)==0 ) return EVENT_NOT_USED;
     */
-    /*
+
     // use the 1/3
     if (
         ((label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or
@@ -4055,7 +3691,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
          (label.find("WJetsToLNu_HT") !=string::npos) or
          (label.find("ST") !=string::npos)
          )  and (e->eventNum()%3)!=0 ) return EVENT_NOT_USED;
-    */
+
     /*
     TRandom3 *r = new TRandom3();
     r->SetSeed(0);

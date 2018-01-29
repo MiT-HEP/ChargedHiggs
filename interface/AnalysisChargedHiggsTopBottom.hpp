@@ -184,10 +184,12 @@ private:
     bool doScikit{true};
 
 
-    int nbinsBDT=200;
     // TMVA
+    //    int nbinsBDT=400;
     //    float binMIN=-1.;
+
     // Keras
+    int nbinsBDT=200;
     float binMIN=0.;
     float binMAX=1.;
 
