@@ -23,9 +23,9 @@ public:
     virtual ~ChargedHiggsTopBottom () {}
 
     bool doSynch = false;
-    bool doICHEP = false;
+    bool doQCD = false;
     bool doBDTSyst = true;
-    bool doFinal = false; // false for final ; no need to compute fancy stuff
+    bool doFinal = true; // true for final ; no need to compute fancy stuff
     bool writeTree = false; // false for final
     bool doSplit = true; // true for final
     bool doMorePlot = false; // false for final
@@ -184,10 +184,12 @@ private:
     bool doScikit{true};
 
 
-    int nbinsBDT=200;
     // TMVA
+    //    int nbinsBDT=400;
     //    float binMIN=-1.;
+
     // Keras
+    int nbinsBDT=200;
     float binMIN=0.;
     float binMAX=1.;
 
