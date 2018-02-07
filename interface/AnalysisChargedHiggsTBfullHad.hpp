@@ -87,14 +87,15 @@ private:
                   MaxCut
     };
 
-    bool doSig = 0; 
-    bool doMirror = 1;
+    bool doSig = 1; 
+    bool doMirror = 0;
     bool doZeroB = 0;
     bool doLep = 0;
 
-
     bool doTrigger = 0;
     bool doMCTrg = 0;
+
+    bool doAss = 0;
     bool doPileUp = 0;
     bool doHTlimit = 0;
 
@@ -134,6 +135,7 @@ private:
     Jet* secondbwbb=NULL;   //wbb
 
     //fatjets
+    int numFat=0;
     int numtop=0;
     FatJet* topJet=NULL;    //tb
     FatJet* wJet=NULL;      //wbb
