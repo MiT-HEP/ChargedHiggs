@@ -36,11 +36,12 @@ public:
 
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
-    void fatjetPlot(Event*e, string label, string systname, string phasespace, bool Mirror);
+    void fatjetPlot(Event*e, string label, string category, string systname, string phasespace, bool Mirror);
     void higgsPlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
-    void classifyHF(Event*e, string label, string category, string systname, string jetname, string SR);
+    void classifyHF(Event*e, string label, string category, string systname, string phasespace, string SR);
+    void classifyhadflavor(Event*e, string label, string category, string systname, string phasespace);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
     void classifyLabelGenEv(Event*e, string label, string systname, string phasespace);
@@ -88,7 +89,7 @@ private:
     };
 
     bool doSig = 1; 
-    bool doMirror = 0;
+    bool doMirror = 1;
     bool doZeroB = 0;
     bool doLep = 0;
 
@@ -102,7 +103,7 @@ private:
     bool doGenSig = 0;
     bool dorecoGenSig = 0;
     bool doGentt = 0;
-
+    bool dohadflavor = 1;
 
     double evt_ST=-1;
     double evt_HT=-1;
