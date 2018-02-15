@@ -251,7 +251,7 @@ void LoadNero::FillJets(){
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUGi2",Form("DeepB, iJet=%d deepSize=%d deepBBsize = %d",iJet,bj->deepB->size(),bj->deepBB->size()));
 #endif
 
-        if (tree_->GetBranchStatus("deepB")  and  (bj -> deepB -> size() > iJet)) j->SetDeepB(bj -> deepB -> at(iJet) + bj-> deepBB -> at(iJet));
+        if (tree_->GetBranchStatus("jetDeepB")  and  (bj -> deepB -> size() > iJet)) j->SetDeepB(bj -> deepB -> at(iJet) + bj-> deepBB -> at(iJet));
         else j->SetDeepB( -10 );
 
 #ifdef VERBOSE

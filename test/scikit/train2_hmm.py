@@ -37,13 +37,15 @@ from sklearn.pipeline import Pipeline
 
 def build_model():
     model = Sequential()
-    model.add(Dense(30, input_dim=16,activation='tanh') )
+    model.add(Dense(60, input_dim=16,activation='tanh') )
+    model.add(Dense(60,activation='relu') )
     model.add(Dense(20,activation='tanh'))
     model.add(Dense(1,activation='sigmoid'))
     
     model.compile(
             #loss='mean_squared_error',
-            loss='binary_crossentropy',
+            #loss='binary_crossentropy',
+            loss='categorical_crossentropy',
             #optimizer='sgd',
             optimizer='adam',
             metrics=['accuracy'])

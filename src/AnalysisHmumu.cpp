@@ -32,7 +32,6 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
 }
 
 void HmumuAnalysis::SetJetCuts(Jet *j) { 
-    j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535 
     j->SetEtaCut(4.7); 
     j->SetEtaCutCentral(2.5); 
     j->SetPtCut(30); 
@@ -40,7 +39,11 @@ void HmumuAnalysis::SetJetCuts(Jet *j) {
     //j->SetPuIdCut(-999);
     //#warning PUID
     j->SetPuIdCut(100);
-    j->SetDeepBCut(-100); // L = 0.2219, M=0.6324, T=0.8958
+    // medium CSV
+    //j->SetBCut(0.8484); //L=0.5803 , M=  0.8838, T=9693
+    //j->SetDeepBCut(-100); // L = 0.1522, M=0.4941, T=0.8001
+    j->SetBCut(-100); //L=0.5426 , M=  0.8484, T0.9535 
+    j->SetDeepBCut(0.4941); 
 }
 
 void HmumuAnalysis::SetTauCuts(Tau *t){ 
@@ -99,6 +102,8 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     vector<Jet*> selectedJets_local;
     int nbjets=0;
     int nbloose=0;
+    int nblooseDeep=0; //L = 0.2219, M=0.6324, T=0.8958
+    int nbjetsDeep=0;
     for(unsigned ij=0 ; ;++ij)
     {
         Jet *j = e->GetBareJet(ij);
@@ -118,8 +123,10 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
         
         //count bjets
         if (abs(j->Eta())>2.4 ) continue;
-        if (j->Btag() > 0.5426) nbloose+=1;
-        if (j->Btag() > 0.8484) nbjets+=1;
+        //if (j->Btag() > 0.5426) nbloose+=1;
+        //if (j->Btag() > 0.8484) nbjets+=1;
+        if (j->GetDeepB() > 0.2219) nbloose+=1;
+        if (j->GetDeepB() > 0.6324) nbjets+=1;
     }
     std::sort(selectedJets_local.begin(),selectedJets_local.end(),[](Jet const *a, Jet const *b ){return a->Pt() > b->Pt();});
 
@@ -259,6 +266,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
         pt_ = Hmm.Pt();
         selectedJets.clear();
         for(auto j : selectedJets_local) selectedJets.push_back(j);
+        updateMjj();
         isMiniIsoLeptons=true;
     }
     else 
@@ -366,7 +374,7 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     return vbfStr +"_" + muStr;
 }
 
-string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets,float met,float metphi){
+string HmumuAnalysis::CategoryBdt(Event *e){
     bdt.clear();
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryBdt");
     // return the right category
@@ -383,19 +391,19 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
     SetVariable("dimu_eta",Hmm.Eta());    
     SetVariable("dimu_abs_dEta",fabs(mu0->Eta()-mu1->Eta()));    
     SetVariable("dimu_abs_dPhi",fabs(mu0->DeltaPhi(*mu1)));
-    if (jets.size() >=1)
+    if (selectedJets.size() >=1)
     {
         //SetVariable("jet1_pt",jets[0]->Pt());    
-        SetVariable("jet1_eta",jets[0]->Eta());    
+        SetVariable("jet1_eta",selectedJets[0]->Eta());    
     }
     else{
         //SetVariable("jet1_pt",0.);    
         SetVariable("jet1_eta",-5.);    
     }
-    if (jets.size() >=2)
+    if (selectedJets.size() >=2)
     {
         //SetVariable("jet2_pt",jets[1]->Pt());    
-        SetVariable("jet2_eta",jets[1]->Eta());    
+        SetVariable("jet2_eta",selectedJets[1]->Eta());    
     }   
     else
     {
@@ -403,38 +411,27 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         SetVariable("jet2_eta",-5.);    
     }   
 
-    vector<pair<float,float> > mjj_detajj;
+    SetVariable("dijet1_mass", (mjj.size()>0) ? mjj[0].first:-1);    
+    SetVariable("dijet2_mass", (mjj.size()>1) ? mjj[1].first:-1);    
 
-    for(unsigned i=0;i<jets.size() ;++i)
-    for (unsigned j=i+1;j<jets.size();++j)
-    {
-        mjj_detajj.push_back( pair<float,float>(jets[i]->InvMass( jets[j] ), fabs( jets[i]->Eta() - jets[j]->Eta() )) );
-    }
+    float deta1=-1;
+    if (mjj.size()> 0) deta1 = fabs( selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta());
+    float deta2=-1;
+    if (mjj.size()> 1) deta2 = fabs( selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta());
+    SetVariable("dijet1_abs_dEta",deta1);    
+    SetVariable("dijet2_abs_dEta",deta2);    
 
-    for(size_t i=mjj_detajj.size(); i<4;++i)
-    {
-        mjj_detajj.push_back(pair<float,float>(0.,-1));
-    }
-
-    sort ( mjj_detajj.begin(),mjj_detajj.end(), [](const pair<float,float>&x,const pair<float,float>&y){if (x.first > y.first) return true;if (x.first<y.first) return false; return x.second > y.second; } );
-    SetVariable("dijet1_mass",mjj_detajj[0].first);    mjj1 = mjj_detajj[0].first;
-    SetVariable("dijet2_mass",mjj_detajj[1].first);    
-    //SetVariable("dijet3_mass",mjj_detajj[2].first);    
-    //SetVariable("dijet4_mass",mjj_detajj[3].first);    
-    SetVariable("dijet1_abs_dEta",mjj_detajj[0].second);    
-    SetVariable("dijet2_abs_dEta",mjj_detajj[1].second);    
-    //SetVariable("dijet3_abs_dEta",mjj_detajj[2].second);    
-    //SetVariable("dijet4_abs_dEta",mjj_detajj[3].second);    
-    
 
     int nbjets=0;
+    int nbjetsCSV=0;
     int ncentjets=0;
     int nfwdjets=0;
 
-    for(unsigned i=0;i<jets.size() ;++i)
+    for(unsigned i=0;i<selectedJets.size() ;++i)
     {
-        if (jets[i]->IsBJet() and jets[i]->Pt() >30 and abs(jets[i]->Eta())<2.4)  nbjets +=1;
-        if (abs(jets[i]->Eta())<2.4)
+        if (selectedJets[i]->IsBJet() and selectedJets[i]->Pt() >30 and abs(selectedJets[i]->Eta())<2.4)  nbjets +=1;
+        if (selectedJets[i]->Btag()>0.8484 and selectedJets[i]->Pt() >30 and abs(selectedJets[i]->Eta())<2.4)  nbjetsCSV +=1;
+        if (abs(selectedJets[i]->Eta())<2.4)
             { 
                 ncentjets +=1; 
             }
@@ -443,8 +440,8 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
 
     SetVariable("nJetsCent",ncentjets);    
     SetVariable("nJetsFwd",nfwdjets);    
-    SetVariable("nBMed",nbjets);    
-    SetVariable("MET",met);    
+    SetVariable("nBMed",nbjetsCSV);    
+    SetVariable("MET",e->GetMet().Pt());    
 
     for(unsigned i =0 ;i< readers_.size() ; ++i)
     {
@@ -498,24 +495,91 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
 
         scikit.clear();
         x.clear();
-        //x.push_back( *(float*)varValues_.GetPointer("Hpt") );
-        x.push_back( mu0->Pt()/Hmm.M()); //#0
-        x.push_back( mu1->Pt()/Hmm.M());
+
+        x.push_back (Hmm.Pt());
+        x.push_back (Hmm.Eta());
+        x.push_back (Hmm.Phi());
+        x.push_back( mu0->DeltaPhi(mu1));
+        x.push_back( fabs(mu0->Eta()-mu1->Eta()));
         x.push_back( mu0->Eta());
         x.push_back( mu1->Eta());
-        x.push_back( mu0->Phi());
-        x.push_back( mu1->Phi()); // #5
-        x.push_back( Hmm.Pt());
-        x.push_back( Hmm.Eta());
-        x.push_back( Hmm.Phi()); //
-        x.push_back( mjj_detajj[0].first );
-        x.push_back( mjj_detajj[1].first );
-        x.push_back( mjj_detajj[0].second );
-        x.push_back( mjj_detajj[1].second );
-        x.push_back( nbjets );
-        x.push_back( jets.size() );
-        x.push_back( (jets.size()>0)?jets[0]->Pt():0. );
-        x.push_back( met );
+        x.push_back( ncentjets);
+        x.push_back( selectedJets.size());
+
+        float aveQGLcent=0.0;
+        float maxCSV=0.0;
+        float leadDeepB = -100.;
+        float maxDeepB = -100.;
+        float aveCSV=0.0;
+        float htCent=0.0;
+
+            vector<float> csv_score;
+            vector<pair<float,float>> qgl_score;
+
+            if (selectedJets.size() >0)
+            {
+                leadDeepB = selectedJets[0]->GetDeepB();
+            }
+
+            for(unsigned i=0;i<selectedJets.size() ;++i)
+            {
+                if (abs(selectedJets[i]->Eta())<2.4)
+                { 
+                    aveQGLcent += selectedJets[i]->QGL(); 
+                    csv_score.push_back(selectedJets[i]->Btag());
+                    qgl_score.push_back(pair<float,float>(selectedJets[i]->Pt(),selectedJets[i]->QGL()));
+                    maxCSV = std::max(selectedJets[i]->Btag(),maxCSV)  ;
+                    aveCSV += selectedJets[i]->Btag() * selectedJets[i]->Pt() ;
+                    htCent += selectedJets[i]->Pt();
+                    maxDeepB = std::max(selectedJets[i]->GetDeepB(),maxDeepB)  ;
+                }
+                else nfwdjets +=1;
+            }
+            if (ncentjets >0 ) aveQGLcent /= ncentjets;
+            if (htCent>0) aveCSV /=htCent;
+            sort(csv_score.begin(),csv_score.end());
+            sort(qgl_score.begin(),qgl_score.end(),[](const pair<float,float >&x,const pair<float, float >&y){ if (x.first> y.first) return true; if(x.first<y.first)return false; return x.second> y.second; } );
+
+        x.push_back( htCent);
+        x.push_back( passLeptonVeto);
+        x.push_back( (mjj.size() >0 ) ? mjj[0].first : 0.0);
+        x.push_back( (mjj.size() >1 ) ? mjj[1].first : 0.0);
+        x.push_back( (mjj.size()>0) ? fabs(selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta()): -1.0 ); 
+        x.push_back( (mjj.size()>1) ? fabs(selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta()): -1.0 );
+        int soft1Njets=-1,soft5Njets=-1,soft10Njets=-1;
+        float soft1Ht=-1,soft5Ht=-1,soft10Ht=-1;
+        if (mjj.size() >0 )
+        {
+            Jet * j1= selectedJets[mjj[0].second.first];
+            Jet * j2= selectedJets[mjj[0].second.second];
+            pair<int,float> soft1 = e->softVariables(j1,j2,1.);
+            pair<int,float> soft5 = e->softVariables(j1,j2,5.);
+            pair<int,float> soft10 = e->softVariables(j1,j2,10.);
+            soft1Njets= soft1.first;
+            soft1Ht= soft1.second;
+            soft5Njets= soft5.first;
+            soft5Ht= soft5.second;
+            soft10Njets= soft10.first;
+            soft10Ht= soft10.second;
+        }
+        x.push_back( soft1Njets);
+        x.push_back( soft1Ht);
+        x.push_back( soft5Njets);
+        x.push_back( soft5Ht);
+        x.push_back( soft10Njets);
+        x.push_back( soft10Ht);
+
+        x.push_back( (qgl_score.size() >0) ? qgl_score[0].second : -1 );
+        x.push_back( (qgl_score.size() >1) ? qgl_score[1].second : -1 );
+        x.push_back( (qgl_score.size() >2) ? qgl_score[2].second : -1 );
+        x.push_back( nbjetsCSV );
+        x.push_back( maxDeepB );
+        x.push_back( leadDeepB );
+        x.push_back( maxCSV );
+
+        x.push_back( ChargedHiggs::mt(mu0->Pt(),e->GetMet().Pt(),mu0->Phi(),e->GetMet().Phi()));
+        x.push_back(ChargedHiggs::mt(mu1->Pt(),e->GetMet().Pt(),mu1->Phi(),e->GetMet().Phi()));
+        x.push_back( e->GetMet().Pt() );
 
 
 
@@ -529,24 +593,13 @@ string HmumuAnalysis::CategoryBdt(Lepton*mu0, Lepton*mu1, const vector<Jet*>& je
         //    sw.Stop(); time_bdtg += sw.CpuTime(); sw.Reset(); sw.Start();
         //#endif
 
-        //float sgd= py->Eval("sgd.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-        //#ifdef SCIKIT_TIMING
-        //    sw.Stop(); time_sgd += sw.CpuTime(); sw.Reset(); sw.Start();
-        //#endif
-
-        //float svr= py->Eval("svr.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
-        //#ifdef SCIKIT_TIMING
-        //    sw.Stop(); time_svr += sw.CpuTime(); sw.Reset(); sw.Start();
-        //#endif
-
-        //float mlp= py->Eval("mlp.predict([[x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]]])[0]");
         #ifdef SCIKIT_TIMING
             sw.Stop(); time_mlp += sw.CpuTime(); sw.Reset(); sw.Start();
         #endif
     
         //py->Exec( "print 'X=',x,x[0],x[1]"); DEBUG
         //py->Exec( "print 'eval=',kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16] ] ] ))[0][0]");
-        float keras= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16] ] ] ))[0][0]");
+        float keras= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17], x[18], x[19],x[20],x[21],x[22],x[23],x[24],x[25],x[26],x[27], x[28] ] ] ))[0][0]");
         ////float keras=-999;
         //#ifdef SCIKIT_TIMING
         //    sw.Stop(); time_keras += sw.CpuTime(); sw.Reset(); sw.Start();
@@ -598,8 +651,8 @@ void HmumuAnalysis::InitScikit(){
     //discr.push_back("BTDG");
     //discr.push_back("SGD");
     //discr.push_back("SVR");
-    discr.push_back("MLP");
-    //discr.push_back("KERAS");
+    //discr.push_back("MLP");
+    discr.push_back("KERAS");
 
     py . reset(new TPython);
     //py -> Exec("from sklearn.ensemble import RandomForestClassifier");
@@ -633,7 +686,7 @@ void HmumuAnalysis::InitScikit(){
     //py ->Exec("par=joblib.load('aux/hmm/PAR.pkl')");
     //py ->Exec("sgd=joblib.load('aux/hmm/SGD.pkl')");
     //py ->Exec("bdtg=joblib.load('aux/hmm/BDTG.pkl')");
-    py ->Exec("kmodel=keras.models.load_model('aux/hmm/KERAS.hd')");
+    py ->Exec("kmodel=keras.models.load_model('aux/hmm/keras.hd')");
     //py ->Exec("ridge=joblib.load('aux/hmm/Ridge.pkl')");
     //py ->Exec("en=joblib.load('aux/hmm/EN.pkl')");
 
@@ -877,11 +930,11 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     else processingSyst_=true;
 
     //** reset 
-    mjj1=0.0; // only for plotting
     mt=0.0;// WHLep only for plotting
     TLorentzVector zero(0,0,0,0);
     Hmm.SetP4(zero); // make sure it is 0.
     selectedJets.clear();
+    mjj.clear();
     //
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
@@ -1031,6 +1084,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     {
         selectedJets.push_back(e->GetJet(i));
     }
+    updateMjj();
 
     // SYNCH DEBUG run: 299149 LS:76 event: 67754842
     if ( (e->eventNum() == 67754842 and e->runNum() == 299149 and e->lumiNum() == 76)  or
@@ -1070,9 +1124,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     // OFFICIAL CATEGORIZATION
     string category;
 
-    if (catType==2) category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt(),e->GetMet().Phi());
+    if (catType==2) category = CategoryBdt(e);
     else if (catType==3) { 
-        category = CategoryBdt(mu0,mu1,selectedJets,e->GetMet().Pt(),e->GetMet().Phi()); 
+        category = CategoryBdt(e); 
         string categoryExc = CategoryExclusive(e); 
         recoMuons = mu0 != NULL and mu1 !=NULL;  // muons may have been recomputed here
 
@@ -1265,7 +1319,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         if (not passTriggerEvent and passTrigger) Log(__FUNCTION__,"ERROR","Event triggered by object but not globally");
     }
 
-    bool passLeptonVeto= true;
+    passLeptonVeto= true;
     if (e->GetMuon(2) != NULL) passLeptonVeto=false;
 
     if (recoMuons)
@@ -1284,7 +1338,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
                ) passLeptonVeto=false; // FIXME 10 ?!?
         }
     }
-
 
     if (doSync and not processingSyst_) {
         // global info
@@ -1411,10 +1464,10 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             { 
                 ncentjets +=1; 
                 aveQGLcent += selectedJets[i]->QGL(); 
-                csv_score.push_back(selectedJets[i]->bdiscr);
+                csv_score.push_back(selectedJets[i]->Btag());
                 qgl_score.push_back(pair<float,float>(selectedJets[i]->Pt(),selectedJets[i]->QGL()));
-                maxCSV = std::max(selectedJets[i]->bdiscr,maxCSV)  ;
-                aveCSV += selectedJets[i]->bdiscr * selectedJets[i]->Pt() ;
+                maxCSV = std::max(selectedJets[i]->Btag(),maxCSV)  ;
+                aveCSV += selectedJets[i]->Btag() * selectedJets[i]->Pt() ;
                 htCent += selectedJets[i]->Pt();
                 maxDeepB = std::max(selectedJets[i]->GetDeepB(),maxDeepB)  ;
             }
@@ -1425,14 +1478,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sort(csv_score.begin(),csv_score.end());
         sort(qgl_score.begin(),qgl_score.end(),[](const pair<float,float >&x,const pair<float, float >&y){ if (x.first> y.first) return true; if(x.first<y.first)return false; return x.second> y.second; } );
 
-        // compute mjj ranked variables
-        vector<pair<float,pair<int,int> > > mjj; // mjj -> ijet, jjet
-        for(unsigned i=0;i<selectedJets.size() ;++i)
-        for (unsigned j=i+1;j<selectedJets.size();++j)
-        {
-            mjj.push_back( pair<float,pair<int,int> >(selectedJets[i]->InvMass( selectedJets[j] ), pair<int,int>(i,j) ) );
-        }
-        sort ( mjj.begin(),mjj.end(), [](  const pair<float,pair<int,int> >&x,const pair<float, pair<int,int> >&y){if (x.first > y.first) return true;if (x.first<y.first) return false; if  (x.second.first < y.second.first) return true; if (x.second.first > y.second.first) return false; return x.second.second < y.second.second; } );
 
         SetTreeVar("aveQGLCent",aveQGLcent);
         SetTreeVar("aveCSV",aveCSV);
@@ -1468,8 +1513,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             SetTreeVar("softHt5",soft5.second);
             SetTreeVar("softNjets10",soft10.first);
             SetTreeVar("softHt10",soft10.second);
-            softNj=soft1.first;
-            softHt=soft1.second;
         }
         else{
             SetTreeVar("softNjets1",-1);
@@ -1480,8 +1523,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             SetTreeVar("softHt5",-1);
             SetTreeVar("softNjets10",-1);
             SetTreeVar("softHt10",-1);
-            softNj=-1.;
-            softHt=-1;
         }
 
         SetTreeVar("mjj_1",(mjj.size() >0 ) ? mjj[0].first: 0.0);
@@ -1512,14 +1553,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (doSync and (systname == "JESUp" or systname=="JESDown") ) 
     {
-        vector<pair<float,pair<int,int> > > mjj; // mjj -> ijet, jjet
-        for(unsigned i=0;i<selectedJets.size() ;++i)
-        for (unsigned j=i+1;j<selectedJets.size();++j)
-        {
-            mjj.push_back( pair<float,pair<int,int> >(selectedJets[i]->InvMass( selectedJets[j] ), pair<int,int>(i,j) ) );
-        }
-        sort ( mjj.begin(),mjj.end(), [](  const pair<float,pair<int,int> >&x,const pair<float, pair<int,int> >&y){if (x.first > y.first) return true;if (x.first<y.first) return false; if  (x.second.first < y.second.first) return true; if (x.second.first > y.second.first) return false; return x.second.second < y.second.second; } );
-
         SetTreeVar("mjj_1_"+systname,(mjj.size() > 0 ) ? mjj[0].first: 0.0);
         SetTreeVar("mjj_2_"+systname,(mjj.size() > 1 ) ? mjj[1].first: 0.0);
     }
@@ -1550,24 +1583,38 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         }
 
         if (mass_ >= 110 and mass_<150){
+
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, pt_,e->weight());
             Fill("HmumuAnalysis/Vars/PtOnH_zptrwg_"+ label,systname, pt_,e->weight() *zptrw);
+            float mjj1=(mjj.size() >0 ) ? mjj[0].first:-1 ; 
             Fill("HmumuAnalysis/Vars/Mjj1OnH_" + label,systname, mjj1,e->weight() ) ;
-            Fill("HmumuAnalysis/Vars/SoftNJetsOnH_" + label,systname, softNj,e->weight() ) ;
-            Fill("HmumuAnalysis/Vars/SoftHtOnH_" + label,systname, softNj,e->weight() ) ;
+
+            if (mjj.size()> 0)
+            {
+                Jet * j1= selectedJets[mjj[0].second.first];
+                Jet * j2= selectedJets[mjj[0].second.second];
+                pair<int,float> soft1 = e->softVariables(j1,j2,1.);
+                int softNj=soft1.first;
+                float softHt=soft1.second;
+                Fill("HmumuAnalysis/Vars/SoftNJetsOnH_" + label,systname, softNj,e->weight() ) ;
+                Fill("HmumuAnalysis/Vars/SoftHtOnH_" + label,systname, softHt,e->weight() ) ;
+            }
+
             if (selectedJets.size() >0)
             {
                 Fill("HmumuAnalysis/Vars/DeepBOnH_"+ label,systname, selectedJets[0]->GetDeepB(),e->weight());
                 Fill("HmumuAnalysis/Vars/PtJet1OnH_"+ label,systname, selectedJets[0]->Pt(),e->weight());
                 Fill("HmumuAnalysis/Vars/EtaJet1OnH_"+ label,systname, selectedJets[0]->Eta(),e->weight());
             }
+
             if (selectedJets.size() >1)
             {
                 Fill("HmumuAnalysis/Vars/PtJet2OnH_"+ label,systname, selectedJets[1]->Pt(),e->weight());
                 Fill("HmumuAnalysis/Vars/EtaJet2OnH_"+ label,systname, selectedJets[1]->Eta(),e->weight());
             }
+
             Fill("HmumuAnalysis/Vars/NJetsOnH_"+ label,systname, selectedJets.size(),e->weight());
             Fill("HmumuAnalysis/Vars/NBJetsOnH_"+ label,systname, e->Bjets(),e->weight());
             if(catType>=2 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
@@ -1614,6 +1661,17 @@ void HmumuAnalysis::EndEvent(){
     {
         FillTree("hmm");
     }
+}
+
+void HmumuAnalysis::updateMjj(){
+    mjj.clear();
+    for(unsigned i=0;i<selectedJets.size() ;++i)
+        for (unsigned j=i+1;j<selectedJets.size();++j)
+        {
+            mjj.push_back( pair<float,pair<int,int> >(selectedJets[i]->InvMass( selectedJets[j] ), pair<int,int>(i,j) ) );
+        }
+    sort ( mjj.begin(),mjj.end(), [](  const pair<float,pair<int,int> >&x,const pair<float, pair<int,int> >&y){if (x.first > y.first) return true;if (x.first<y.first) return false; if  (x.second.first < y.second.first) return true; if (x.second.first > y.second.first) return false; return x.second.second < y.second.second; } );
+
 }
 
 float HmumuAnalysis::getZPtReweight(float Zpt)

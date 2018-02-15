@@ -23,11 +23,12 @@ include=dat/catalog/2018.moriond/hmm.dat
 
 ### DATA
 #include=catalog/2018.moriond/singleMuon.dat
-addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017B-17Nov2017-v1/
-addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017C-17Nov2017-v1/
-addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017D-17Nov2017-v1/
-addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017E-17Nov2017-v1/
-addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017F-17Nov2017-v1/
+#
+#addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017B-17Nov2017-v1/
+#addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017C-17Nov2017-v1/
+#addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017D-17Nov2017-v1/
+#addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017E-17Nov2017-v1/
+#addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017F-17Nov2017-v1/
 
 include=dat/hmumu.dat
 addConfig=HmumuAnalysis|doEvenOnly=1
