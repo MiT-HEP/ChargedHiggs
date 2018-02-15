@@ -39,7 +39,8 @@ class HmumuAnalysis: virtual public AnalysisBase
 
 
     private:
-
+        
+        void updateMjj(); // from selectedJets. Call it each time selectedJets is modified, but only once: D
         // selected Objects
         float mass_;
         float pt_;
@@ -47,9 +48,8 @@ class HmumuAnalysis: virtual public AnalysisBase
         Object Hmm;
         Lepton *mu0{NULL},*mu1{NULL};
         vector<Jet*> selectedJets;
-        float mjj1; //for drawing filled in the bdt loop
-        float softHt;// for drawing filled in the sync
-        int   softNj; // for drawing filled in the sync
+        vector<pair<float,pair<int,int> > > mjj; // mjj -> ijet, jjet
+        //Set soft variables
         bool isMiniIsoLeptons{false};
         
 
@@ -65,7 +65,7 @@ class HmumuAnalysis: virtual public AnalysisBase
 
         string Category(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets);
         //string CategoryAutoCat(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets,float met,float metphi);
-        string CategoryBdt(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets,float met,float metphi);
+        string CategoryBdt(Event *e);
 
         enum CutFlow{ Total=0, 
             Leptons,
@@ -110,6 +110,8 @@ class HmumuAnalysis: virtual public AnalysisBase
         vector<string> discr;
         void InitScikit();
         vector<float> scikit; // like bdt
+
+        bool passLeptonVeto{true};
 
 };
 
