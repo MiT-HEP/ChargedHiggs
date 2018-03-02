@@ -47,7 +47,7 @@ public:
     void classifyLabelGenEv(Event*e, string label, string systname, string phasespace);
     void getCandidate(Event*e, string label, string systname, string phasespace, bool mirror);
     void PlotAss(Event*e, string label, string systname, string phasespace);
-
+    void PtNsubCor(Event*e, string label, string systname, string phasespace);
 
     void computeVar(Event*e);
 
@@ -91,19 +91,21 @@ private:
     bool doSig = 1; 
     bool doMirror = 1;
     bool doZeroB = 0;
-    bool doLep = 0;
+    bool doLep = 1;
 
     bool doTrigger = 0;
     bool doMCTrg = 0;
 
-    bool doAss = 0;
+    bool doAssDis = 0;
     bool doPileUp = 0;
-    bool doHTlimit = 0;
+    bool doHTlimit = 1;
+
+    bool dotemp = 0;
 
     bool doGenSig = 0;
     bool dorecoGenSig = 0;
     bool doGentt = 0;
-    bool dohadflavor = 1;
+    bool dohadflavor = 0;
 
     double evt_ST=-1;
     double evt_HT=-1;
@@ -136,7 +138,8 @@ private:
     Jet* secondbwbb=NULL;   //wbb
 
     //fatjets
-    int numFat=0;
+    int numFatA=0;
+    int numFatB=0;
     int numtop=0;
     FatJet* topJet=NULL;    //tb
     FatJet* wJet=NULL;      //wbb
