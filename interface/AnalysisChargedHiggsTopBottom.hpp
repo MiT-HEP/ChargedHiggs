@@ -189,7 +189,8 @@ private:
     //    float binMIN=-1.;
 
     // Keras
-    int nbinsBDT=200;
+    //    int nbinsBDT=200;
+    int nbinsBDT=1000;
     float binMIN=0.;
     float binMAX=1.;
 
