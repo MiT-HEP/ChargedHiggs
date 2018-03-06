@@ -89,23 +89,23 @@ private:
     };
 
     bool doSig = 1; 
-    bool doMirror = 1;
+    bool doMirror = 0;
     bool doZeroB = 0;
-    bool doLep = 1;
+    bool doLep = 0;
 
     bool doTrigger = 0;
     bool doMCTrg = 0;
 
     bool doAssDis = 0;
     bool doPileUp = 0;
-    bool doHTlimit = 1;
-
     bool dotemp = 0;
+    bool dohadflavor = 0;
+
+    bool doHTlimit = 0;
 
     bool doGenSig = 0;
-    bool dorecoGenSig = 0;
+    bool dorecoGenSig = 1;
     bool doGentt = 0;
-    bool dohadflavor = 0;
 
     double evt_ST=-1;
     double evt_HT=-1;
@@ -132,7 +132,7 @@ private:
 
     
     //bjets
-    Jet* leadingb=NULL;     // tb,wbb
+    Jet* leadingb=NULL;     // tb, wbb
     Jet* leadingbWBJ = NULL;//wbj
     Jet* secondb=NULL;      //wbj
     Jet* secondbwbb=NULL;   //wbb
