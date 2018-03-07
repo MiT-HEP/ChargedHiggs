@@ -10,9 +10,10 @@ import FwBinning as FwRebin
 #maxStat=0.13
 maxStat=0.3
 
-doSyst = True
+LikeBins=50
 
-LikeBins=1
+doSyst = False
+
 likelihoodBinning = FwRebin.RebinLikelihood(LikeBins)
 
 parser= OptionParser()
@@ -97,7 +98,6 @@ def PartonShowerSyst(type, cat, direction, njet, nbjet, proc):
 
         fIn = ROOT.TFile(filename, "READ")
 
-#	print "%s_%s%s_%s" % (proc,type, direction, cat)
         h = fIn.Get("%s_%s%s_%s" % (proc,type, direction, cat))
         syst = h.GetBinContent(nbjet, njet)
         fIn.Close()
@@ -108,112 +108,6 @@ def RebinN(h,nBin):
 	''' Rebin with un-even bins '''
 	h1=h.Rebin(nBin)
 	return h1
-
-def Rebin1LHT(h):
-        ''' Rebin with un-even bins '''
-        mybins=array('d',[0, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 420, 440, 460, 480, 500, 550, 600, 700, 800, 1000, 1250, 1500, 2000, 3000, 4000, 5000, 8000])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
-
-def Rebin2LHT(h):
-        ''' Rebin with un-even bins '''
-        mybins=array('d',[0, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 420, 440, 460, 480, 500, 550, 600, 700, 800, 1000, 2000, 4000, 8000])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
-
-def RebinBDT1(h):
-        ''' Rebin with un-even bins '''
-	print 'using BDT1 - high 1l'
-        mybins=array('d',[-1,
-                           -0.95,-0.90,-0.85,-0.80,-0.75,-0.70,-0.65,-0.6,
-                           -0.56,-0.52,-0.48,-0.44,-0.40,
-                           -0.36,-0.32,
-                           -0.28,-0.24,
-                           -0.2,-0.16,-0.12,
-                           -0.08,-0.04,
-                           0.0,0.04,0.08,
-                           0.12,0.16,0.2,
-                           0.24,0.28,
-                           0.32,0.36,0.40,
-                           0.42,0.44,0.46,0.48,0.5,
-                           0.52,0.54,0.56,0.58,0.6,
-                           0.62,0.64,0.66,0.68,0.7,
-                           0.72,0.74,0.76,0.78,0.8,
-                           0.82,0.84,0.86,0.88,0.9,
-                           0.92,0.94,0.96,0.98,
-                           1.])
-	h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-	return h1
-
-def RebinBDT2(h):
-        ''' Rebin with un-even bins '''
-	print 'using BDT2'
-        mybins=array('d',[-1,
-                           -0.90,-0.8,-0.75,-0.7,
-                           -0.65,-0.6,-0.55,-0.50,-0.45,-0.40,
-                           -0.36,-0.32,-0.28,-0.24,-0.20,
-                           -0.16,-0.12,-0.08,-0.04,0.0,
-                           0.04,0.08,0.12,
-                           0.16,0.20,0.24,0.28,0.32,0.36,0.40,
-                           0.44,0.48,0.52,0.56,0.60,0.64,0.68,
-                           0.72,0.76,0.80,0.9,
-                           1.])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
-
-
-def RebinBDT3(h):
-        ''' Rebin with un-even bins '''
-        print 'using binning BDT3'
-        mybins=array('d',[-1,
-                           -0.95,-0.9,-0.85,-0.8,-0.75,-0.7,-0.65,-0.6,-0.55,-0.5,
-                           -0.46,-0.44,-0.4,-0.36,-0.32,-0.28,-0.24,-0.2,-0.16,-0.12,
-                           -0.08,-0.04,-0., 0.04,0.08,0.12,0.16,0.2,0.24,0.28,
-                           0.32,0.36,0.4,0.44,0.48,0.52,0.56,0.6,
-                           0.65,0.7,
-                           0.75,0.8,
-                           0.85,0.9,
-                           0.95,
-			   1.])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
-
-def RebinBDT4(h):
-        ''' Rebin with un-even bins '''
-        print 'using BDT4 high-2l'
-        mybins=array('d',[-1,
-                           -0.95, -0.90,
-                           -0.85, -0.80,
-                           -0.75, -0.7,
-                           -0.65, -0.60, -0.55, -0.50, -0.45, -0.40,
-                           -0.35, -0.30, -0.25, -0.20, -0.15, -0.10,
-                           -0.05,  0.0,   0.05, 0.10, 0.15,0.20,
-                           0.25,0.30,
-                           0.35,0.40,
-                           0.45,0.50,
-                           0.55,0.60,
-                           0.65,0.70,
-                           0.80,
-			   1.])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
-
-def RebinBDT6(h):
-        ''' Rebin with un-even bins '''
-        print 'using BDT6 low-2l'
-        mybins=array('d',[-1,
-                           -0.7,-0.6,-0.5,-0.4,
-                           -0.3,-0.25,-0.20,-0.15,-0.10,
-                           -0.05, 0.0, 0.05, 0.10, 0.15, 0.20,
-                           0.25,0.30,
-                           0.35,0.40,
-                           0.45,0.50,0.55,0.60,0.65,
-                           0.70,0.75,0.80,0.85,0.90,
-                           1.])
-        h1=h.Rebin(len(mybins)-1,h.GetName()+"_rebin",mybins)
-        return h1
-
-
 
 fIn1L = ROOT.TFile.Open(opts.input1L,"READ")
 fIn2L = ROOT.TFile.Open(opts.input2L,"READ")
@@ -469,6 +363,7 @@ for y in channel:
 					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
+#					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW","VHToNonbb_M125","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WZTo","ZZZ","WZZ","WWZ","WWW","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
 					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
@@ -481,6 +376,7 @@ for y in channel:
 					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
+#					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW","VHToNonbb_M125","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","ZZTo"],"num":6},
 					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
@@ -519,13 +415,6 @@ for y in channel:
 					"CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":[".*"]}, ## name used for shape
 					"CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":[".*"]} ## name used for shape
 					####
-############
-############
-############
-## need to add the shapes of the PDF and scales (for both take the envelop CMS_HPTB_Q2scale_xxx) farlo solo per il ttbar/signal ???
-# Jan ISR up/down, name CMS_HPTB_IFSR_xxx, solo su top as lN
-# check the topMass
-#					"CMS_scale_uncluster":{"type":"shape", "wsname":"UNCLUSTER","name":"CMS_scale_uncluster","proc":[".*"]}, ## name used for shape
 					}
 			else:
 				systStore={
@@ -539,12 +428,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="FEB26_bin100/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="FEB26_bin50/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "FEB26_bin100/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "FEB26_bin50/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -556,7 +445,7 @@ datacard.write("-------------------------------------\n")
 w.factory("ht[0,8000]"); # RooRealVar
 ht=w.var("ht")
 
-w.factory("bdt[-1,1]")
+w.factory("bdt[0,1]")
 bdt=w.var("bdt")
 
 w.factory("bdt2D[-0.5,3.5]")
@@ -575,7 +464,7 @@ for x in catStore:
 	htx.setBins(LikeBins)
 	arglist_obs.add(htx)
 
-	w.factory("bdt_"+x+"[-1,1]"); # RooRealVar
+	w.factory("bdt_"+x+"[0,1]"); # RooRealVar
 	bdtx=w.var("bdt_"+x)
 	bdtx.setBins(LikeBins)
 	arglist_obs_bdt.add(bdtx)
@@ -881,6 +770,7 @@ def importStat():
  	   for iBin in range(1,h.GetNbinsX()+1):
  	      c= h.GetBinContent(iBin)
  	      if c>0: continue
+	      ##### TO CHECK #####
  	      h.SetBinError(iBin,minError)
 	   for i in range(0,h.GetNbinsX()):
 	      statsyst = { "wsname": statName + "_Bin%d"%(i+1) +"_STAT" , "name": statName + "_Bin%d"%(i+1) + "_STAT"}
@@ -1015,9 +905,9 @@ if doSyst: writeSystISRFSR(name="CMS_HPTB_HDAMP",valueL=["-999","999"], regexpL=
 def envelop(tfile,togetClone, s) :
 
 	hname=togetClone+'RF'+s
-	print hname
 
 	hTmp=tfile.Get(hname)
+#	hTmp.Rebin(5)
 	h=hTmp.Clone()
 
 	if hTmp==None: return
@@ -1025,6 +915,7 @@ def envelop(tfile,togetClone, s) :
 	for w in [ 'R','F','RF']:
 
 		hTmp=tfile.Get(togetClone+w+s)
+#		hTmp.Rebin(5)
 
 		for iBin in range(1,h.GetNbinsX()+1):
 			c= h.GetBinContent(iBin)
@@ -1046,6 +937,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 	if syst == None: shifts=["x"]
 	else: shifts=["Up","Down"]
+#	else: shifts=["Down","Up"]
 
 	skip=False
 	if syst != None:
@@ -1081,139 +973,153 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 	for s in shifts:
 
-         for m in masses:
+		hTmpSum=None
 
-#	  if m >10 and m ==opts.kMass:
-#		  target = "pdf_" + mc["name"] +"_M-%d"%m+"_"+ cat["name"]
+		for m in masses:
 
-          target = "pdf_" + mc["name"] +"_"+ cat["name"]
+			target = "pdf_" + mc["name"] +"_"+ cat["name"]
 
-	  if syst != None:
-		  target += "_" + syst["wsname"] + s
-
-	  for hname in mc["hist"]:
-	        toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
-
-		if mc["name"]=="Hptb" and m==opts.kMass:
-			toget=toget%m
-
-		if mc["name"]=="Hptb" and m!=opts.kMass:
-			continue
-
-		if syst != None:
-			togetClone = toget + "_" + syst["name"]
-		        toget += "_" + syst["name"] + s
-
-		hTmp=None
-
-		if "QCDscale" in target:
-			if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in mc["name"] or "DYJetsToLL_M-50_HT" in mc["name"] or "DYJetsToLL_M-5to50_HT" in mc["name"] or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"]:
-#				print 'GOING TO DO THE ',mc["name"]
-				hTmp = envelop(tfile,togetClone,s)
-				toget = togetClone+'RF'+s
-		else:
-			hTmp=tfile.Get(toget)
-
-		if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
-		if hTmp == None:
-			if syst == None:
-				print "<*> Hist '"+toget+"' doesn't exist"
-				raise IOError
 			if syst != None:
-				print "<*> Hist '"+toget+"' doesn't exist wih the syst cloning now from the central "
+				target += "_" + syst["wsname"] + s
+
+##			print  mc["hist"]
+
+			for hname in mc["hist"]:
 				toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
-				hTmp=tfile.Get(toget)
+
+				hTmp=None
+
+				if mc["name"]=="Hptb" and m==opts.kMass:
+					toget=toget%m
+
+				if mc["name"]=="Hptb" and m!=opts.kMass:
+					continue
+
+				if syst != None:
+					togetClone = toget + "_" + syst["name"]
+					toget += "_" + syst["name"] + s
+
+
+				if "QCDscale" in target:
+					if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in mc["name"] or "DYJetsToLL_M-50_HT" in mc["name"] or "DYJetsToLL_M-5to50_HT" in mc["name"] or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"]:
+						hTmp = envelop(tfile,togetClone,s)
+						toget = togetClone+'RF'+s
+				else:
+					hTmp=tfile.Get(toget)
+
 				if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
+				if hTmp == None:
+					if syst == None:
+						print "<*> Hist '"+toget+"' doesn't exist"
+						raise IOError
+					if syst != None:
+						print "<*> Hist '"+toget+"' doesn't exist wih the syst cloning now from the central "
+						toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
+						hTmp=tfile.Get(toget)
+						#				if hTmp!= None:
+						#					hTmp.Rebin(5)
+						if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
 
 ### SCALE for the 2/3
-
-		if mc["name"]!="qcd" and not "ZZTo" in mc["hist"] and not "WWTo" in mc["hist"] and not "WZTo" in mc["hist"] and not "ZZZ" in mc["hist"] and not "WZZ" in mc["hist"] and not "WWZ" in mc["hist"] and not "WWW" in mc["hist"] and not "VHToNonbb_M125" in mc["hist"] and not "WH_HToBB_WToLNu_M125" in mc["hist"] and not "ZH_HToBB_ZToLL" in mc["hist"]:
-			hTmp.Scale(1.5)
+				if mc["name"]!="qcd" and not "ZZTo" in mc["hist"] and not "WWTo" in mc["hist"] and not "WZTo" in mc["hist"] and not "ZZZ" in mc["hist"] and not "WZZ" in mc["hist"] and not "WWZ" in mc["hist"] and not "WWW" in mc["hist"] and not "VHToNonbb_M125" in mc["hist"] and not "WH_HToBB_WToLNu_M125" in mc["hist"] and not "ZH_HToBB_ZToLL" in mc["hist"]:
+					hTmp.Scale(1.5)
 
 ### -- MC --
+##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 #####1L
 
 		## tranform the HT into the likelihood
-		hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
+				hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
 #		print LikelihoodMapping
+#
+#		h = hTmp
 
-		h = hTmp
+#				if mc["name"]=="Hptb" and hTmpSum==None: hTmpSum = hTmp
+#				if mc["name"]=="Hptb":
+#					print 'doing Hptb'
+#					if hTmpSum==None:
+#						print 'doing check on None'
+#						hTmpSum = hTmp
+#
+#				if mc["name"]!="Hptb":
+				if hTmpSum==None:hTmpSum = hTmp
+				else:
+					hTmpSum.Add(hTmp)
 
-	 if h!= None: print "<*> Reading Hist '"+toget+"'",h.Integral(),' nBin=',h.GetNbinsX(), 'underflow=',h.GetBinContent(0), 'overflow=',h.GetBinContent(h.GetNbinsX()+1),' entries=',h.GetEntries()
+		#clean h
 
-	 if h.GetBinContent(0)<0:
-		 print "ERROR histogram", h.GetName(),"has negative underflow norm"
-		 raise ValueError
+			h=hTmpSum
 
-#	  print ' underflow=',h.SetBinContent(0,0)
-#	  print ' overflow=',h.SetBinContent(h.GetNbinsX()+1,0)
+		if h!= None: print "<*> Read Hist '"+toget+"'",h.Integral(),' nBin=',h.GetNbinsX(), 'underflow=',h.GetBinContent(0), 'overflow=',h.GetBinContent(h.GetNbinsX()+1),' entries=',h.GetEntries()
 
-	 if h: h.SetBinContent(0,0) ##underflow
-	 if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
+		if h.GetBinContent(0)<0:
+			print "ERROR histogram", h.GetName(),"has negative underflow norm"
+			raise ValueError
 
-	 if h: ##negative yield
-		 for b in range(1,h.GetNbinsX()+1):
-			#			  if h.GetBinContent(b) <0 : print ' negative weights in bin',b
-			 if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
+		#	  print ' underflow=',h.SetBinContent(0,0)
+		#	  print ' overflow=',h.SetBinContent(h.GetNbinsX()+1,0)
 
-	 if h:
-		 if h.Integral() <= 0 :
-			 print "ERROR histogram", h.GetName(),"has null norm"
-			 raise ValueError
+		if h: h.SetBinContent(0,0) ##underflow
+		if h: h.SetBinContent(h.GetNbinsX()+1,0) #overflow
+
+		if h: ##negative yield
+			for b in range(1,h.GetNbinsX()+1):
+				#			  if h.GetBinContent(b) <0 : print ' negative weights in bin',b
+				if h.GetBinContent(b) <0 : h.SetBinContent(b,0)
+
+		if h:
+			if h.Integral() <= 0 :
+				print "ERROR histogram", h.GetName(),"has null norm"
+				raise ValueError
 
 	 #save RooDataHist
-	 h.Scale(opts.lumi)
 
-	 print "* Importing ",target
+		h.Scale(opts.lumi)
 
-	 for i in range(0,len(arglist_obs)):
-##		  print '===> name',arglist_obs.at(i).GetName(), 'for ',i
+		print "* Importing ",target
 
-		 if cat["name"] in arglist_obs.at(i).GetName():
+		for i in range(0,len(arglist_obs)):
 
-			 al=arglist_obs_bdt.at(i)
-			 if "bdt2D" in cat["var"]: al=arglist_obs_bdt2D.at(i)
+			if cat["name"] in arglist_obs.at(i).GetName():
 
-			 if not doST:
-				 if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR13" or cat["var"] == "HT_SR24": al = arglist_obs.at(i)
-			 if doST:
-				 if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs.at(i)
-##			 al = arglist_obs.at(i)
-#	 print "-> with var", al
+				al=arglist_obs_bdt.at(i)
+				if "bdt2D" in cat["var"]: al=arglist_obs_bdt2D.at(i)
 
-	 roo_mc = ROOT.RooDataHist(target,target, ROOT.RooArgList(al),h)
+				if not doST:
+					if cat["var"] == "HT" or cat["var"] == "HT_SR1" or cat["var"] == "HT_SR2" or cat["var"] == "HT_SR3"or cat["var"] == "HT_SR4" or cat["var"] == "HT_SR13" or cat["var"] == "HT_SR24": al = arglist_obs.at(i)
+				if doST:
+					if cat["var"] == "ST" or cat["var"] == "ST_SR1" or cat["var"] == "ST_SR2" or cat["var"] == "ST_SR3"or cat["var"] == "ST_SR4" or cat["var"] == "ST_SR13" or cat["var"] == "ST_SR24": al = arglist_obs.at(i)
 
-	 pdf_mc = roo_mc
-	 getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
-	 g.extend([h,roo_mc,pdf_mc])
+		roo_mc = ROOT.RooDataHist(target,target, ROOT.RooArgList(al),h)
+
+		pdf_mc = roo_mc
+		getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
+		g.extend([h,roo_mc,pdf_mc])
 
 ### WRITE HISTOGRAMS
 #	 w.writeToFile(fileTmp)
-	 f = ROOT.TFile.Open(fileTmp,"update")
-	 h.SetName(target)
-	 h.Write()
-	 f.Write()
-	 f.Close()
+		f = ROOT.TFile.Open(fileTmp,"update")
+		h.SetName(target)
+		h.Write()
+		f.Write()
+		f.Close()
 
-	 if syst==None and m< 10 : # not for signal,
-#		 print "DEBUG calling stat with target",target
-		 histName=cat["name"]
-		 if histName not in statStore:
-			 statStore[histName] = { "hist":h.Clone(histName + "_STAT"),
-						 "mc":mc["name"],
-						 "cat":cat["name"],
-						 "target":target,
-						 "hist0":h.Clone(histName + "_STAT0")
-						 }
-		 else:
-			 statStore[histName]["hist"] . Add (h )
-##			if mc["name"] == 'TT':  ## put TT and reference
-##			if mc["name"] == 'TTlight':  ## put TTlight and reference
-			 if mc["name"] == 'ttlf':  ## put TTlight and reference
-				 statStore[histName]["mc"]= mc["name"]
-				 statStore[histName]["target"]= target
-				 statStore[histName]["hist0"] . Delete()
-				 statStore[histName]["hist0"] = h.Clone(histName + "_STAT0")
+		if syst==None and m< 10 :
+			histName=cat["name"]
+			if histName not in statStore:
+				statStore[histName] = { "hist":h.Clone(histName + "_STAT"),
+							"mc":mc["name"],
+							"cat":cat["name"],
+							"target":target,
+							"hist0":h.Clone(histName + "_STAT0")
+							}
+			else:
+				statStore[histName]["hist"] . Add (h )
+				if mc["name"] == 'ttlf':  ## put TTlight and reference
+					statStore[histName]["mc"]= mc["name"]
+					statStore[histName]["target"]= target
+					statStore[histName]["hist0"] . Delete()
+					statStore[histName]["hist0"] = h.Clone(histName + "_STAT0")
 	return
 
 #################
@@ -1288,6 +1194,9 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 			  continue
 
 		  hTmp=tfile.Get(toget)
+#		  if hTmp!= None:
+#			  hTmp.Rebin(5)
+
 		  if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(),'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1), ' entries=',hTmp.GetEntries()
 
 		  if hTmp == None:
@@ -1337,6 +1246,7 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 			raise ValueError
 
 	if hSum!=None:
+		print "hSum.Integral",hSum.Integral()
 		hSum.Scale(opts.lumi)
 
 	if hRef!=None:
@@ -1370,10 +1280,13 @@ for c in catStore:
 		if mc["name"]=="Hptb":
 			print '1/3 hSig outside importPdfFromTH1SumBKG',sig.Integral()
 			hSig1Third=sig
-		if hSumAll1Third==None:
-			hSumAll1Third=hSumTMP
-		else:
-			hSumAll1Third.Add(hSumTMP)
+		if hSumTMP!=None:
+			if hSumAll1Third==None:
+				print 'before hSumAll1Third',hSumAll1Third
+				hSumAll1Third=hSumTMP
+			else:
+				print 'after else',hSumTMP
+				hSumAll1Third.Add(hSumTMP)
 
 #	## use the 2/3 of the sample
 #	for proc in mcStore:
@@ -1425,12 +1338,12 @@ for c in catStore:
 
 
 	LikelihoodMapping = likelihoodBinning.createMapping(hSumAll1Third, hSig1Third)
-##	print LikelihoodMapping
+#	print LikelihoodMapping
 
 	for proc in mcStore:
 		if skip(catStore[c],mcStore[proc]): continue
 		for syst in systStore:
-#			print "->calling import pdf with cat=",cat,"proc=",proc,"syst=",syst
+#			print "-> 2/3 calling import pdf with cat=",cat,"proc=",proc,"syst=",syst
 #			print " * cat:",catStore[c]
 #			print " * syst:", systStore[syst]
 			if systStore[syst] == None or systStore[syst]["type"] == "shape" :
@@ -1452,6 +1365,9 @@ for c in catStore:
 	elif  "1Mu" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]: toget+="_SingleMuon"
 
 	h=tfile.Get(toget)
+#	if h != None:
+#		h.Rebin(5)
+
 	if h == None:
 		print "<*> Hist do not exists ",toget
 		### MARIA COMMENT THIS FOR NOW
@@ -1459,6 +1375,7 @@ for c in catStore:
 
 ####This is the data
 ####1L
+##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 
 	if h != None:
 		h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
