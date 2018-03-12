@@ -202,6 +202,10 @@ for key in sfdb:
 	if key['type'] == 'pteta':
 		if opts.verbose: print label,key['type'],  key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['sf'],key['err'] 
 		loop.AddPtEtaSF(label, key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['sf'],key['err'])
+	if key['type'] == 'ptetaeff':
+		if opts.verbose: print label,key['type'],key['pt1'],key['pt2'],key['eta1'],key['eta2'],key['dataEff'],key['mcEff'],key['dataErr'],key['mcErr']
+		#print "ptetaeff SF", "available keys are:",','.join([k for k in key]), key
+		loop.AddPtEtaEff( label, key['pt1'],key['pt2'],key['eta1'],key['eta2'],key['dataEff'],key['mcEff'],key['dataErr'],key['mcErr'])
 	if key['type'] == 'ptetarun':
 		if opts.verbose: print label,key['type'],  key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['run1'],key['run2'],key['sf'],key['err'] 
 		loop.AddPtEtaRunSF(label, key['pt1'] ,key['pt2'],key['eta1'],key['eta2'],key['run1'],key['run2'],key['sf'],key['err'])

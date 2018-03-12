@@ -76,6 +76,7 @@ class Weight : virtual public SmearableBase {
     void AddWG1SF( string label);
     void AddNNLOPSSF( string label, string filename); 
     void AddPtEtaSF( string label, double pt1,double pt2 ,double eta1 ,double eta2,double sf, double err);
+    void AddPtEtaEff( string label, double pt1,double pt2 ,double eta1 ,double eta2,double dataEff, double mcEff,double dataErr,double mcErr);
     void AddTh2fSF(string label, string filename);
     void AddTh2fSF(string label, string filename,string effData, string effMc, string errData, string errMc);
     void AddSplineSF(string label, double pt, double sf, double err);

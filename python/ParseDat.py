@@ -465,6 +465,69 @@ def ReadSFDB(file,verbose=False):
 				L.append(R1)
 			R=None
 			continue ## lines loop
+
+		elif type == 'json-muon':
+			#usage json-muon aux/mu/RunBC_data_ID.json aux/mu/RunBC_mc_ID.json NUM_SoftID_DEN_genTracks
+			# assuming same name in data and mc
+			R['filename-data'] = l.split(' ')[2]
+			R['filename-mc'] = l.split(' ')[3]
+			R['id-type'] = l.split(' ')[4] 
+			R['type'] = 'ptetaeff'
+			jstring = open(R['filename-data']).read()
+			jData=json.loads( jstring )
+			jstring = open(R['filename-mc']).read()
+			jMc = json.loads(jstring)
+			print "* Reading SF from",R['filename-data'],R["filename-mc"],R['id-type']
+			if R['id-type'] not in jData:
+				print "[ERROR] unknown id",R['id-type'], "in",R['filename-data']
+				print "available id are:", ','.join([k for k in jData])
+				raise ValueError
+			if R['id-type'] not in jMc:
+				print "[ERROR] unknown id",R['id-type'], "in",R['filename-mc']
+				print "available id are:", ','.join([k for k in jMc])
+				raise ValueError
+			idData = jData[R['id-type']]
+			idMc = jMc[R['id-type']]
+			if 'abseta_pt' not in idData:
+				print "[ERROR]",'abseta_pt',"not in json"
+				print "available sf are", ','.join([k for k in idData]),"in",R["filename-data"]
+				raise ValueError
+			if 'abseta_pt' not in idMc:
+				print "[ERROR]",'abseta_pt',"not in json"
+				print "available sf are", ','.join([k for k in idMc]),"in",R["filename-mc"]
+				raise ValueError
+
+			for etarange in idData['abseta_pt']:
+				if etarange not in idMc['abseta_pt']:
+					print "[ERROR] eta range",etarange,"not common between data and mc files"
+					raise ValueError
+				etaStr= re.sub("abseta:\\[","", re.sub('\\]','',etarange))
+				R['eta1'] = float(etaStr.split(',')[0])
+				R['eta2'] = float(etaStr.split(',')[1])
+				for ptrange in idData['abseta_pt'][etarange]:
+					if ptrange not in idMc['abseta_pt'][etarange]:
+					    print "[ERROR] pt range",ptrange,"not common between data and mc files in eta range",etarange
+					    raise ValueError
+					ptStr = re.sub('pt:\\[','',re.sub('\\]','',ptrange))
+					R['pt1'] = float(ptStr.split(',')[0])
+					R['pt2'] = float(ptStr.split(',')[1])
+
+					dataEff = idData['abseta_pt'][etarange][ptrange]['value']
+					dataErr = idData['abseta_pt'][etarange][ptrange]['error']
+					mcEff = idMc['abseta_pt'][etarange][ptrange]['value']
+					mcErr = idMc['abseta_pt'][etarange][ptrange]['error']
+                    
+					R["dataEff"]=dataEff
+					R["dataErr"]=dataErr
+					R["mcEff"]=mcEff
+					R["mcErr"]=mcErr
+
+					print "  * Loading Effiencies: ",R["pt1"],R["pt2"],R['eta1'],R['eta2']," -- ",R["dataEff"],R["mcEff"]
+					R1={} ## copy 
+					for key in R: R1[key] = R[key]
+					L.append(R1)
+			R=None
+			continue ## lines loop
 			 
 		else:
 			print "sf",label,"of type",type,"not supported in the sf database"

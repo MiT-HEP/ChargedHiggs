@@ -771,6 +771,12 @@ void HmumuAnalysis::Init(){
         }
     }
     //
+    if(doUnbinned)
+    {
+        InitTree("final");
+        Branch("final","cat",'I');
+        Branch("final","mmm",'D');
+    }
 
 	Log(__FUNCTION__,"INFO","Booking Histograms");
     for ( string l : AllLabel()  ) {
@@ -1168,62 +1174,72 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     //  ------------------- APPLY SF --------------
     //
-#warning NO_MU_SF
 
     /*
-    double w_BCDEF = 0.5498;
+    /SingleMuon/Run2017B-17Nov2017-v1/MINIAOD   297047-299329   4.802
+    /SingleMuon/Run2017C-17Nov2017-v1/MINIAOD   299368-302029   9.629
+    /SingleMuon/Run2017D-17Nov2017-v1/MINIAOD   302031-302663   4.235
+    /SingleMuon/Run2017E-17Nov2017-v1/MINIAOD   303824-304797   9.268
+    /SingleMuon/Run2017F-17Nov2017-v1/MINIAOD   305040-306462   13.433
+    Run2017     --  41.368 
+    */
+    double w_BC= 4.802+9.629;
+    double w_DE= 2.435+9.628;
+    double w_F = 13.433;
+
+    //#warning NO_MU_TRG_SF
     double sfTrigger=1.0;
      
     // Trigger SF
-    if (true){
-        SF* sf0_runGH =e->GetWeight()->GetSF("muTRG_runGH");
-        SF* sf0_runBCDEF =e->GetWeight()->GetSF("muTRG_runBCDEF");
 
-        if (sf0_runGH== NULL) cout<<"Unable to get SF TRG GH"<<endl;
+    if (true){
+        //SF* sf0_runGH =e->GetWeight()->GetSF("muTRG_runGH");
+        SF* sf0_runBCDEF =e->GetWeight()->GetSF("mu_trigger_runBCDEF");
+
+        //if (sf0_runGH== NULL) cout<<"Unable to get SF TRG GH"<<endl;
         if (sf0_runBCDEF== NULL) cout<<"Unable to get SF TRG BCDEF"<<endl;
 
-        SF_PtEta_And_Eff* sf_runGH = dynamic_cast<SF_PtEta_And_Eff*>(sf0_runGH);
+        //SF_PtEta_And_Eff* sf_runGH = dynamic_cast<SF_PtEta_And_Eff*>(sf0_runGH);
         SF_PtEta_And_Eff* sf_runBCDEF = dynamic_cast<SF_PtEta_And_Eff*>(sf0_runBCDEF);
-        if (sf_runGH== NULL) {cout<<"Unable to convert SF TRG GH:" <<endl; sf0_runGH->print(); }
+        //if (sf_runGH== NULL) {cout<<"Unable to convert SF TRG GH:" <<endl; sf0_runGH->print(); }
         if (sf_runBCDEF== NULL) {cout<<"Unable to convert SF TRG BCDEF:" <<endl; sf0_runBCDEF->print(); }
 
-        double effdata_runGH=1.0,effmc_runGH =1.0;
+        //double effdata_runGH=1.0,effmc_runGH =1.0;
         double effdata_runBCDEF=1.0,effmc_runBCDEF =1.0;
 
         bool changed=false;
         if (mu0)
         {
             changed=true;
-            sf_runGH->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
-            //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*sf_runGH->getDataErr() ) ;
-            effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.5%
-            effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
+            //sf_runGH->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
+            //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.5%
+            //effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
 
-            sf_runBCDEF->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
+            sf_runBCDEF->set( std::max(mu0->Pt(),float(30.1)), fabs(mu0->Eta()) );
             //effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*sf_runBCDEF->getDataErr() ) ;
-            effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.5% correlated with runGH
+            effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*0.005 ) ; // 0.5% correlated with runGH
             effmc_runBCDEF *= 1.- (sf_runBCDEF->getMCEff()) ;
         }
 
-        if (mu1 and mu1->Pt() > 26)
+        if (mu1 and mu1->Pt() > 30)
         {
             changed=true;
 
-            sf_runGH->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
+            //sf_runGH->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
             //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*sf_runGH->getDataErr() ) ;
-            effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.05%
-            effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
+            //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.05%
+            //effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
 
-            sf_runBCDEF->set( std::max(mu1->Pt(),float(26.1)) ,fabs(mu1->Eta()) );
+            sf_runBCDEF->set( std::max(mu1->Pt(),float(30.1)) ,fabs(mu1->Eta()) );
             //effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*sf_runBCDEF->getDataErr() ) ;
-            effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runGH->syst*0.005) ; // 0.5% correlated runGH runBCDEF
+            effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*0.005) ; // 0.5% correlated runGH runBCDEF
             effmc_runBCDEF *= 1.- (sf_runBCDEF->getMCEff()) ;
         }
 
         if(changed)
         {
-            effdata_runGH = 1.-effdata_runGH;
-            effmc_runGH = 1.-effmc_runGH;
+            //effdata_runGH = 1.-effdata_runGH;
+            //effmc_runGH = 1.-effmc_runGH;
 
             effdata_runBCDEF = 1.-effdata_runBCDEF;
             effmc_runBCDEF = 1.-effmc_runBCDEF;
@@ -1235,7 +1251,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         //sftrig->err = 0.0;
         //e->ApplySF("dummy");
         //
-        sfTrigger = (1.-w_BCDEF)* effdata_runGH / effmc_runGH + w_BCDEF*effdata_runBCDEF/effmc_runBCDEF;
+        //sfTrigger = (1.-w_BCDEF)* effdata_runGH / effmc_runGH + w_BCDEF*effdata_runBCDEF/effmc_runBCDEF;
+        sfTrigger = effdata_runBCDEF/effmc_runBCDEF;
     }
     
     // ID
@@ -1243,46 +1260,59 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (mu0)
     {
-        e->SetPtEtaSF("muID_runBCDEF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
-        //float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->get(); // include syst
-        float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->sf + e->GetWeight()->GetSF("muID_runGH")->syst*0.01; // 1% correlated runGH
-        e->SetPtEtaSF("muID_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
-        //float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
-        float sf2 = e->GetWeight()->GetSF("muID_runGH")->sf + e->GetWeight()->GetSF("muID_runGH")->syst*0.01; // 1%
-        sfId *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        e->SetPtEtaSF("mu_id_runBC", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
+
+        e->SetPtEtaSF("mu_id_runDE", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
+
+        e->SetPtEtaSF("mu_id_runF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
+
+        sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
+
     if (mu1)
     {
-        e->SetPtEtaSF("muID_runBCDEF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        //float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->get();
-        float sf1 = e->GetWeight()->GetSF("muID_runBCDEF")->sf + e->GetWeight()->GetSF("muID_runGH")->syst *0.01; // 1% correlated runGH
-        e->SetPtEtaSF("muID_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        //float sf2 = e->GetWeight()->GetSF("muID_runGH")->get();
-        float sf2 = e->GetWeight()->GetSF("muID_runGH")->sf + e->GetWeight()->GetSF("muID_runGH")->syst *0.01;
-        sfId *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        e->SetPtEtaSF("mu_id_runBC", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
+
+        e->SetPtEtaSF("mu_id_runDE", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
+
+        e->SetPtEtaSF("mu_id_runF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
+
+        sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
 
     double sfIso=1.0; // TODO, apply a different sf for miniIsolation, use flag isMiniIsoLeptons
     // ISO Loose
     if (mu0)
     {
-        e->SetPtEtaSF("muISOloose_runBCDEF",std::max( mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
-        //float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->get();
-        float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->sf + e->GetWeight()->GetSF("muISOloose_runGH")->syst*0.005; // .5% correlated runGH
-        e->SetPtEtaSF("muISOloose_runGH", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
-        //float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
-        float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->sf + e->GetWeight()->GetSF("muISOloose_runGH")->syst*0.005; // .5%
-        sfIso *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        e->SetPtEtaSF("mu_iso_runBC", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
+
+        e->SetPtEtaSF("mu_iso_runDE", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
+
+        e->SetPtEtaSF("mu_iso_runF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
+
+        sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
     if (mu1)
     {
-        e->SetPtEtaSF("muISOloose_runBCDEF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        //float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->get();
-        float sf1 = e->GetWeight()->GetSF("muISOloose_runBCDEF")->sf + e->GetWeight()->GetSF("muISOloose_runGH")->syst*0.005; // .5% correlated runGH
-        e->SetPtEtaSF("muISOloose_runGH", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
-        //float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->get();
-        float sf2 = e->GetWeight()->GetSF("muISOloose_runGH")->sf + e->GetWeight()->GetSF("muISOloose_runGH")->syst*0.005 ; // .5%
-        sfIso *= w_BCDEF*sf1 + (1.-w_BCDEF) *sf2;
+        e->SetPtEtaSF("mu_iso_runBC", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
+
+        e->SetPtEtaSF("mu_iso_runDE", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
+
+        e->SetPtEtaSF("mu_iso_runF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
+
+        sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
     
     // apply trigger, id and iso sf
@@ -1293,7 +1323,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sf->err = 0.0;
         e->ApplySF("dummy");
     }
-    */
     
     // ***************************
     // **       preselection    **
@@ -1643,13 +1672,42 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             }
         }
 
+        //if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
+        if(Unblind(e) and category != "")
+        {
+            Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
+            if (doUnbinned and mass_>110 and mass_<150 and (not processingSyst_))
+            {
+                int cat=0;
+                if (category=="cat0") cat=0;
+                else if (category=="cat1") cat=1;
+                else if (category=="cat2") cat=2;
+                else if (category=="cat3") cat=3;
+                else if (category=="cat4") cat=4;
+                else if (category=="cat5") cat=5;
+                else if (category=="cat6") cat=6;
+                else if (category=="cat7") cat=7;
+                else if (category=="cat8") cat=8;
+                else if (category=="cat9") cat=9;
+                else if (category=="cat10") cat=10;
+                else if (category=="cat11") cat=11;
+                else if (category=="cat12") cat=12;
+                else if (category=="cat13") cat=13;
+                else if (category=="cat14") cat=14;
+                else if (category=="cat15") cat=15;
+                else if (category=="cat16") cat=16;
+                else if (category=="cat17") cat=17;
+                else if (category=="cat18") cat=18;
+                else if (category=="cat19") cat=19;
+                else cat=20;
+                SetTreeVar("mmm",mass_);
+                SetTreeVar("cat",cat);
+                FillTree("final");
+            }
 
-        if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
-        if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
+        } //Unblind and category != ""
 
-        //if(Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
-        //if(Unblind(e) and categoryDirty == "ttHLep")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
-    }
+    } // reco pass trigger and pass asymm cuts
 
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
