@@ -1401,7 +1401,7 @@ void ChargedHiggsTopBottomFullHad::Preselection()
         }
 
         if(doMirror){
-            BookHistojet(l, "","OneBOneMirrorFat");
+            /*BookHistojet(l, "","OneBOneMirrorFat");
             BookHistojet(l, "_t0b", "OneBOneMirrorFat");
             BookHistojet(l, "_t1b", "OneBOneMirrorFat");
             BookHistojet(l, "_wbb", "OneBOneMirrorFat");
@@ -1413,15 +1413,15 @@ void ChargedHiggsTopBottomFullHad::Preselection()
             BookFatjetPro(l, "_t1b", "OneBOneMirrorFat", "");
             BookFatjetPro(l, "_wbb", "OneBOneMirrorFat", "");
             BookFatjetPro(l, "_wbj", "OneBOneMirrorFat", "");
-            BookFatjetPro(l, "_no", "OneBOneMirrorFat", ""); 
+            BookFatjetPro(l, "_no", "OneBOneMirrorFat", ""); */
 
             BookHisto(l, "","OneBOneMirrorFat");
-            /*BookHisto(l, "","OneBOneMirrorFat_one_lowj");
+            BookHisto(l, "","OneBOneMirrorFat_one_lowj");
             BookHisto(l, "","OneBOneMirrorFat_two_lowj");
             BookHisto(l, "","OneBOneMirrorFat_three_lowj");
             BookHisto(l, "","OneBOneMirrorFat_one_highj");
             BookHisto(l, "","OneBOneMirrorFat_two_highj");
-            BookHisto(l, "","OneBOneMirrorFat_three_highj");*/
+            BookHisto(l, "","OneBOneMirrorFat_three_highj");
             
         }
         
@@ -2186,7 +2186,7 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
     ///// to implement W + b + j , higgs candidate
     ///// j can be the leading jet from the higgs or the b from the top
 
-    double maxcsv = 0.;
+    double maxcsv = 0.5426;
     int orderj = -1;    
 
     double mintopmass1 = 999.;
@@ -2325,8 +2325,6 @@ void ChargedHiggsTopBottomFullHad::PlotAss(Event*e, string label, string systnam
         if(topJet!=NULL && e->GetCentralJet(j)->DeltaR(*topJet) < 1.2) continue;
         if(wJet!=NULL && e->GetCentralJet(j)->DeltaR(*wJet) < 1.2) continue;
         if(wJetwbj!=NULL && e->GetCentralJet(j)->DeltaR(*wJetwbj) < 1.2) continue;
-        if(evt_MH_Wbb>0 && topFromHOpenCand.DeltaR(e->GetCentralJet(j)->GetP4()) < 1.2) continue;
-        if(evt_MH_wbj>0 && topFromHwbj.DeltaR(e->GetCentralJet(j)->GetP4()) < 1.2) continue;
 
         num_otherj++;
 
@@ -3609,7 +3607,7 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
         //**** offline selection plan B ****//
         if(num_otherj <= 2 && (evt_MH_Wbb>0 || evt_MH_wbj>0)){ if(evt_HT<900 && numFatB == 0) return EVENT_NOT_USED; }
         
-        getCandidate(e,label,systname,"OneBOneMirrorFat",true);
+    /*    getCandidate(e,label,systname,"OneBOneMirrorFat",true);
         PlotAss(e,label,systname,"OneBOneMirrorFat");
         if(dotemp) PtNsubCor(e,label,systname,"OneBOneMirrorFat");
 
@@ -3635,14 +3633,14 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
             if(dohadflavor) classifyhadflavor(e,label,"_wbj",systname,"OneBOneMirrorFat");
         }
         
-        /*
+        */
         if(e->Bjets() == 1 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneMirrorFat_one_lowj",true);
         else if(e->Bjets() == 1 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneMirrorFat_one_highj",true);
         else if(e->Bjets() == 2 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneMirrorFat_two_lowj",true);
         else if(e->Bjets() == 2 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneMirrorFat_two_highj",true);
         else if(e->Bjets() >= 3 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneMirrorFat_three_lowj",true);
         else if(e->Bjets() >= 3 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneMirrorFat_three_highj",true);  
-        */   
+       
     }
 
 
