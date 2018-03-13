@@ -9,7 +9,7 @@ sys.path.insert(0, 'script')
 import FwBinning as FwRebin
 maxStat=0.15
 
-LikeBins=100
+LikeBins=10
 
 doRebin = False
 applyLikelihoodRebinBin = True
@@ -17,7 +17,7 @@ applyLikelihoodRebinBin = True
 doSyst = False
 likelihoodBinning = FwRebin.RebinLikelihood(LikeBins)
 
-doSChannel = True
+doSChannel = False
 
 parser= OptionParser()
 
@@ -34,13 +34,19 @@ parser= OptionParser()
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/SoHot.root")
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/midAug.root")
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/lateAug.root")
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
 
-##/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHigg/midAug.root
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/crazylimit0306.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/crazylimit0306.root")
 
-parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
-parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
+if doSyst:
+	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
+	parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
+else:
+	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
+	parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
+
 parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", default=35867)
 
 extra = OptionGroup(parser,"Extra options:","")
@@ -130,7 +136,7 @@ channel = []
 
 ### FINAL conf
 basecat = ["OneBOneFat_one_highj","OneBOneFat_two_highj","OneBOneFat_three_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj","OneBOneFat_three_lowj"
-###	   ,"OneBOneFat1l_one_highj","OneBOneFat1l_two_highj","OneBOneFat1l_three_highj", "OneBOneFat1l_one_lowj","OneBOneFat1l_two_lowj","OneBOneFat1l_three_lowj"
+	   ,"OneBOneFat1l_one_highj","OneBOneFat1l_two_highj","OneBOneFat1l_three_highj", "OneBOneFat1l_one_lowj","OneBOneFat1l_two_lowj","OneBOneFat1l_three_lowj"
 	   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj","OneBOneMirrorFat_three_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj","OneBOneMirrorFat_three_lowj"
 	   ]
 
@@ -140,8 +146,12 @@ if doSChannel:
 	label="sChan_"
 else:
 	channel = ["t0b","t1b","wbb","wbj"]
+#	channel = ["t0b"]
+#	channel = ["t1b"]
+#	channel = ["wbb"]
+#	channel = ["wbj"]
 	label="fullHad_"
-#label="t1b_fullHad_"
+#	label="wbj_fullHad_"
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 statStore = {} ## used to store th1d for stat uncertainties
@@ -155,17 +165,25 @@ for y in channel:
 	for x in basecat:
 
 		region = ["_in","_above","_below"]
+
+		if "OneBOneFat1l" in x:
+			region = ["_all"]
+
 		for reg in region:
 
 			masses = [ opts.kMass ]
 			for mas in masses:
 
-				name = x+ "_" + y + mas + reg
+				if "OneBOneFat1l" in x:
+					name = x+ "_" + y
+				else:
+					name = x+ "_" + y + mas + reg
+
 	#		catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"invariantExt"}
 
 				# DO NOT USE THESE as the trigger is not fully efficient (need planB trigger/selection)
-				if "_lowj" in x and y=="wbb": continue
-				if "_lowj" in x and y=="wbj": continue
+#				if "_lowj" in x and y=="wbb": continue
+#				if "_lowj" in x and y=="wbj": continue
 
 				# UNDEFINED
 				if "OneBOneFat_one" in x and y=="wbb": continue
@@ -193,8 +211,20 @@ for y in channel:
 
 				# very rare situation three_lowj_t0b
 				if "_three_lowj" in x and y=="t0b": continue
+				if "OneBOneMirrorFat_three" in x and y=="t1b": continue
 
-				catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["top"],"var":"HT_"+mas+reg}
+				if "OneBOneFat1l_three_highj" in x: continue
+				if "OneBOneFat1l_three_lowj" in x and ( y=="wbb" or y=="t1b"): continue
+				if "OneBOneFat1l_two_highj" in x and ( y=="wbb" or y=="wbj" or y=="t0b" or y=="t1b"): continue
+				if "OneBOneFat1l_two_lowj" in x and ( y=="wbb" or y=="wbj" or y=="t0b" or y=="t1b") : continue
+				if "OneBOneFat1l_one_highj" in x and (y=="t0b" or y=="wbj"): continue
+				if "OneBOneFat1l_one_lowj" in x and (y=="t0b" or y=="wbj"): continue
+
+				if "OneBOneFat1l" in x:
+					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["top"],"var":"HT"+reg}
+					name = x+ "_" + y
+				else:
+					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["top"],"var":"HT_"+mas+reg}
 
 				catStore[name]['file'] = fIn
 
@@ -221,13 +251,13 @@ for y in channel:
                                         "CMS_eff_e":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_e","name":"XXX"},
                                         "CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t","name":"XXX"},
 					### Theory modeling
-                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["top"]},
-                                        "QCDscaleT":{"type":"shape", "wsname":"QCDscaleTTbar","name":"Scale","proc":["top"]},
-                                        "QCDscaleS":{"type":"shape", "wsname":"QCDscaleHptb","name":"Scale","proc":["Hptb"]},
+#                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["top"]},
+#                                        "QCDscaleT":{"type":"shape", "wsname":"QCDscaleTTbar","name":"Scale","proc":["top"]},
+#                                        "QCDscaleS":{"type":"shape", "wsname":"QCDscaleHptb","name":"Scale","proc":["Hptb"]},
 					### MET-Jets-PU
-                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]},
-                                        "CMS_scale_uncluster":{"type":"lnN", "value":["1.02"],"proc":[".*"],"wsname":"CMS_scale_uncluster","name":"XXX"},
-                                        "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
+#                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]},
+#                                        "CMS_scale_uncluster":{"type":"lnN", "value":["1.02"],"proc":[".*"],"wsname":"CMS_scale_uncluster","name":"XXX"},
+#                                        "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
                                         "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":[".*"]},
                                         ##Light jets Heavy flavor contamination
 					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":[".*"]},
@@ -252,12 +282,12 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_MARCH3/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_MARCH8_bin10/"+label+VarTest+opts.kMass+"_"+opts.output
 #fileTmp="MIAO_JULY7/"+channel[0]+"_"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_MARCH3/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_MARCH8_bin10/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 #datName = "MIAO_JULY7/"+channel[0]+"_"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
@@ -553,17 +583,28 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 	else: shifts=["Up","Down"]
 
 	# do not consider the QCD_HT in the 1l CR
-	if mc["name"]=="qcd" and "OneBOneFat1l" in cat["name"]: return
+##	if mc["name"]=="qcd" and "OneBOneFat1l" in cat["name"]: return
 
 	h=None
 	for s in shifts:
+
+		hTmpSum=None
 		for m in masses:
 
-#			print '2/3 mass now is =',m
-			myTMPmass = "%d_"%m
-			if m==500 and "1500" in cat["name"]: continue
-			if m==500 and "2500" in cat["name"]: continue
-			if myTMPmass not in cat["name"]: continue
+
+			if not "OneBOneFat1l" in cat["name"]:
+				#	  print  '1/3 mass now is =', str(m)
+#				if m==500 and "1500" in cat["name"]: continue
+#				if m==500 and "2500" in cat["name"]: continue
+#				if str(m) not in cat["name"]: continue
+
+#				if mc["name"]=="Hptb":
+#					toget=toget%m
+
+				myTMPmass = "%d_"%m
+				if m==500 and "1500" in cat["name"]: continue
+				if m==500 and "2500" in cat["name"]: continue
+				if myTMPmass not in cat["name"]: continue
 
 			print '==========> '
 			print '==========> cat["name"] ===> ', cat["name"]
@@ -580,23 +621,32 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 			for hname in mc["hist"]:
 				toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
 
-			if mc["name"]=="Hptb":
-				toget=toget%m
-			if syst != None:
-				toget += "_" + syst["name"] + s
-			hTmp=tfile.Get(toget)
-			print "<*> Reading Hist '"+toget+"'",hTmp.Integral()
-			if hTmp == None:
-				print "<*> Hist '"+toget+"' doesn't exist"
-				raise IOError
+				hTmp=None
+
+				if mc["name"]=="Hptb":
+					toget=toget%m
+
+				if syst != None:
+					toget += "_" + syst["name"] + s
+
+				hTmp=tfile.Get(toget)
+				print "<*> Reading Hist '"+toget+"'",hTmp.Integral()
+
+				if hTmp == None:
+					print "<*> Hist '"+toget+"' doesn't exist"
+					raise IOError
 
 ### -- MC --
 #			print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 #####1L
 
-			if applyLikelihoodRebinBin:
-				hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
-			h = hTmp
+				if applyLikelihoodRebinBin:
+					hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
+				if hTmpSum==None:hTmpSum = hTmp
+				else:
+					hTmpSum.Add(hTmp)
+
+				h=hTmpSum
 
 		if h!= None: print "<*> Read Hist '"+toget+"'",h.Integral(),' nBin=',h.GetNbinsX(), 'underflow=',h.GetBinContent(0), 'overflow=',h.GetBinContent(h.GetNbinsX()+1),' entries=',h.GetEntries()
 
@@ -616,8 +666,6 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				raise ValueError
 
 	  #save RooDataHist
-		if"2500" in cat["name"]:
-			h.Scale(1./2.04788481245e-05)
 
 		h.Scale(opts.lumi)
 
@@ -631,7 +679,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 		roo_mc = ROOT.RooDataHist(target,target,ROOT.RooArgList(al),h)
 		pdf_mc = roo_mc
 
-		hBIS = roo_mc.createHistogram("test", al)
+#		hBIS = roo_mc.createHistogram("test", al)
 
 		getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
 		g.extend([h,roo_mc,pdf_mc])
@@ -713,24 +761,28 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 #				print hname, 'mc["name"]=', mc["name"],	'hRef, hSum, hSig',hRef, hSum, hSig
 				toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
 
-			#	  print  '1/3 mass now is =', str(m)
-				if m==500 and "1500" in cat["name"]: continue
-				if m==500 and "2500" in cat["name"]: continue
-				if str(m) not in cat["name"]: continue
+				if "OneBOneFat1l" in cat["name"]:
+					if mc["name"]=="Hptb":
+						toget=toget%m
 
-				if mc["name"]=="Hptb":
-					toget=toget%m
+				else:
+					#	  print  '1/3 mass now is =', str(m)
+					if m==500 and "1500" in cat["name"]: continue
+					if m==500 and "2500" in cat["name"]: continue
+					if str(m) not in cat["name"]: continue
+
+					if mc["name"]=="Hptb":
+						toget=toget%m
 
 				if syst != None:
 					toget += "_" + syst["name"] + s
 
-				print toget
 				hTmp=tfile.Get(toget)
 				if hTmp!= None: print "<*> 1/3 Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
 
 				if hTmp == None:
 					print "<*> Hist '"+toget+"' doesn't exist"
-	                         ## raise error only if is on the 2Third and for the syst central value
+	                ## raise error only if is on the 2Third and for the syst central value
 					if not do1Third:
 						if syst == None:
 							raise IOError
@@ -745,8 +797,6 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 				if mc["name"]=="top" and hTmp!=None: hRef=hTmp.Clone()
 				if mc["name"]=="Hptb" and hTmp!= None:
 					hSig=hTmp.Clone()
-					if"2500" in cat["name"]:
-						hSig.Scale(1./2.04788481245e-05)
 
 	if hRef: hRef.SetBinContent(0,0) ##underflow
 	if hRef: hRef.SetBinContent(hRef.GetNbinsX()+1,0) #overflow
@@ -809,10 +859,21 @@ for cat in catStore:
                 mc=mcStore[proc]
                 if mc["name"]=="Hptb":
                         hSig1Third=sig
-                if hSumAll1Third==None:
-                        hSumAll1Third=hSumTMP
-                else:
-                        hSumAll1Third.Add(hSumTMP)
+		if hSumTMP!=None:
+			if hSumAll1Third==None:
+				hSumAll1Third=hSumTMP
+			else:
+				hSumAll1Third.Add(hSumTMP)
+
+
+#	print '====================='
+#	print '====================='
+#	print '====================='
+#	print 'I have hRef, hSum, hSig'
+#	print "hSumAll1Third=",hSumAll1Third.Integral(),"hSig1Third=",hSig1Third.Integral()
+#	print '====================='
+#	print '====================='
+#	print '====================='
 
         LikelihoodMapping = likelihoodBinning.createMapping(hSumAll1Third, hSig1Third)
 
@@ -852,7 +913,8 @@ for cat in catStore:
 	h=tfile.Get(toget)
 	if h == None:
 		print "<*> Hist do not exists ",toget
-                ### MARIA COMMENT THIS FOR NOW                                                                                                                                                          ##		raise IOError
+                ### MARIA COMMENT THIS FOR NOW
+##		raise IOError
 
 
 	if h != None:
