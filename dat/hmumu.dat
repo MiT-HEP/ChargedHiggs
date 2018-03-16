@@ -1,5 +1,6 @@
 
-config=HmumuAnalysis|AddLabel('DY')
+config=HmumuAnalysis|AddLabel('DYJetsToLL_M-105To160')
+addConfig=HmumuAnalysis|AddLabel('DY')
 addConfig=HmumuAnalysis|AddLabel('TTTT')
 
 addConfig=HmumuAnalysis|AddLabel('TTW')
