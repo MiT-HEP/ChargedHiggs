@@ -3,13 +3,13 @@
 #############
 
 config=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-3000_13TeV_amcatnlo_pythia8')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-2500_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-2000_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-1500_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-1000_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-800_13TeV_amcatnlo_pythia8')
-###addConfig=ChargedHiggsTopBottomFullHad|AddLabel('HplusToTB_M-750')
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-650_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-500_13TeV_amcatnlo_pythia8')
-###addConfig=ChargedHiggsTopBottomFullHad|AddLabel('HplusToTB_M-450')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-400_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-350_13TeV_amcatnlo_pythia8')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ChargedHiggs_HplusTB_HplusToTB_M-300_13TeV_amcatnlo_pythia8')
@@ -25,14 +25,16 @@ addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WprimeToTB_TToHad_M-1500')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WprimeToTB_TToHad_M-2000')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WprimeToTB_TToHad_M-3000')
 
-#addConfig=ChargedHiggsTopBottomFullHad|AddLabel('DYJetsToLL_M-50_HT')
+#####addConfig=ChargedHiggsTopBottomFullHad|AddLabel('DYJetsToLL_M-50_HT')
+##DY All
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('DYJets')
 
-addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WJetsToLNu_HT')
 
-addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WJetsToQQ_HT')
-addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ZJetsToQQ_HT')
-addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ZJetsToNuNu_HT')
+## 'WJetsToLNu_HT' and 'WJetsToQQ_HT'
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WJets')
+
+## 'ZJetsToQQ_HT' and 'ZJetsToNuNu_HT'
+addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ZJets')
 
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('JetHT')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('SingleMuon')
@@ -46,6 +48,8 @@ addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TTG')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ttH')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('TTTT')
 
+
+### to add ZZTo WWTo WZTo and triboson
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('VH')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('WH')
 addConfig=ChargedHiggsTopBottomFullHad|AddLabel('ZH')

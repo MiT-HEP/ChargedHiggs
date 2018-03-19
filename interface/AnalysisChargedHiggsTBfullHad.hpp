@@ -36,17 +36,18 @@ public:
 
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
-    void fatjetPlot(Event*e, string label, string systname, string phasespace, bool Mirror);
+    void fatjetPlot(Event*e, string label, string category, string systname, string phasespace, bool Mirror);
     void higgsPlot(Event*e, string label, string category, string systname, string phasespace);
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
-    void classifyHF(Event*e, string label, string category, string systname, string jetname, string SR);
+    void classifyHF(Event*e, string label, string category, string systname, string phasespace, string SR);
+    void classifyhadflavor(Event*e, string label, string category, string systname, string phasespace);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
 
     void classifyLabelGenEv(Event*e, string label, string systname, string phasespace);
     void getCandidate(Event*e, string label, string systname, string phasespace, bool mirror);
     void PlotAss(Event*e, string label, string systname, string phasespace);
-
+    void PtNsubCor(Event*e, string label, string systname, string phasespace);
 
     void computeVar(Event*e);
 
@@ -87,21 +88,24 @@ private:
                   MaxCut
     };
 
-    bool doSig = 0; 
+    bool doSig = 1; 
     bool doMirror = 1;
     bool doZeroB = 0;
-    bool doLep = 0;
-
+    bool doLep = 1;
 
     bool doTrigger = 0;
     bool doMCTrg = 0;
+
+    bool doAssDis = 0;
     bool doPileUp = 0;
-    bool doHTlimit = 0;
+    bool dotemp = 0;    //do fat_pT_nsub correlation
+    bool dohadflavor = 0;
+
+    bool doHTlimit = 1;
 
     bool doGenSig = 0;
     bool dorecoGenSig = 0;
     bool doGentt = 0;
-
 
     double evt_ST=-1;
     double evt_HT=-1;
@@ -128,12 +132,14 @@ private:
 
     
     //bjets
-    Jet* leadingb=NULL;     // tb,wbb
+    Jet* leadingb=NULL;     // tb, wbb
     Jet* leadingbWBJ = NULL;//wbj
     Jet* secondb=NULL;      //wbj
     Jet* secondbwbb=NULL;   //wbb
 
     //fatjets
+    int numFatA=0;
+    int numFatB=0;
     int numtop=0;
     FatJet* topJet=NULL;    //tb
     FatJet* wJet=NULL;      //wbb
