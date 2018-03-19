@@ -1210,7 +1210,7 @@ void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasesp
 void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespace)
 {
 
-        cout <<"[ChargedHiggsTopBottom]::[Init]::[INFO] Boking Final Histo" <<l<<endl;
+    //        cout <<"[ChargedHiggsTopBottom]::[Init]::[INFO] Booking Final Histo" <<l<<endl;
 
         /**********************************************
          *                   Final                     *
@@ -3672,12 +3672,19 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
 
     /*
     // use the 2/3
+    // QCD is full
+    // diboson+triboson is full
     if (
         ((label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or
          (label.find("HplusToTB") !=string::npos)  or
          (label.find("DYJetsToLL_M-5to50_HT") !=string::npos) or
          (label.find("DYJetsToLL_M-50_HT") !=string::npos) or
          (label.find("WJetsToLNu_HT") !=string::npos) or
+         (label.find("TTTT") !=string::npos) or
+         (label.find("TTZ") !=string::npos) or
+         (label.find("TTW") !=string::npos) or
+         (label.find("ttH") !=string::npos) or
+         (label.find("TTG") !=string::npos) or
          (label.find("ST") !=string::npos)
          )  and (e->eventNum()%3)==0 ) return EVENT_NOT_USED;
     */
