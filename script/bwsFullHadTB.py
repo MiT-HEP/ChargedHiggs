@@ -155,6 +155,8 @@ else:
 #	channel = ["wbj"]
 	label="fullHad_"
 #	label="wbj_fullHad_"
+#	label="counting_"
+#	label="sronly_"
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 statStore = {} ## used to store th1d for stat uncertainties
@@ -167,8 +169,12 @@ VarTest=""
 for y in channel:
 	for x in basecat:
 
-
 		region = ["_in","_above","_below"]
+
+#		if True:
+#			region = ["_in"]
+#			if "OneBOneFat1l" in x: continue
+#			if "OneBOneMirrorFat" in x:continue
 
 		if "OneBOneFat1l" in x:
 			region = ["_all"]
@@ -279,12 +285,14 @@ for y in channel:
                                         "CMS_eff_m":{"type":"lnN", "value":["1.04"] ,"proc":[".*"],"wsname":"CMS_eff_m","name":"XXX"},
                                         "CMS_eff_e":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_e","name":"XXX"},
                                         "CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t","name":"XXX"},
+					### trigger efficiency
+                                        "CMS_eff_trigger":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"CMS_eff_triggger","name":"XXX"},
 					### Theory modeling
-#                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["top"]},
+                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["top"]},
 #                                        "QCDscaleT":{"type":"shape", "wsname":"QCDscaleTTbar","name":"Scale","proc":["top"]},
 #                                        "QCDscaleS":{"type":"shape", "wsname":"QCDscaleHptb","name":"Scale","proc":["Hptb"]},
 					### MET-Jets-PU
-#                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]},
+                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]},
 #                                        "CMS_scale_uncluster":{"type":"lnN", "value":["1.02"],"proc":[".*"],"wsname":"CMS_scale_uncluster","name":"XXX"},
 #                                        "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
                                         "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":[".*"]},
@@ -455,6 +463,7 @@ def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
 	datacard.write("\n")
 
 def writeSystShape(syst,regexpL=[],regexpCat=None):
+	# this function put a bunch of 1
 	name=syst["wsname"]
 	datacard.write(name+"\tshape")
 
@@ -544,9 +553,12 @@ for syst in systStore:
 	if systStore[syst]["type"] == "shape":
 		writeSystShape(systStore[syst],systStore[syst]["proc"])
 
-#if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb","ttbb","tt2b"])
-#if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042","1.042","1.042"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042","1.042","1.042"],["ttlf","ttcc","ttb","ttbb","tt2b"])
 ###if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
 
 #if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttlf",["1.50"],["ttlf"])
 #if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttcc",["1.50"],["ttcc"])
@@ -626,6 +638,29 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 	if syst == None: shifts=["x"]
 	else: shifts=["Up","Down"]
+
+	skip=False
+	if syst != None:
+		  skip=True
+
+		  invert=False
+		  regexpL = syst["proc"]
+		  print '==================='
+		  print '====',syst
+		  print '====',syst["proc"],'  ',mc["name"]
+		  print '==================='
+		  for i,regexp in enumerate(regexpL):
+			  if regexp != "" and regexp[0] == '!':
+				  invert=True
+				  regexp=regexp[1:]
+			  match=re.search(regexp,mc["name"])
+			  if (match  and not invert) or (not match and invert):
+				  idx=i
+				  skip=False
+				  break
+
+	if skip: return
+
 
 	h=None
 	for s in shifts:
