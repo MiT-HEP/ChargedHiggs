@@ -9,7 +9,7 @@ sys.path.insert(0, 'script')
 import FwBinning as FwRebin
 maxStat=0.15
 
-LikeBins=100
+LikeBins=10
 
 doRebin = False
 applyLikelihoodRebinBin = True
@@ -17,7 +17,7 @@ applyLikelihoodRebinBin = True
 doSyst = False
 likelihoodBinning = FwRebin.RebinLikelihood(LikeBins)
 
-doSChannel = True
+doSChannel = False
 
 parser= OptionParser()
 
@@ -34,13 +34,22 @@ parser= OptionParser()
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/SoHot.root")
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/midAug.root")
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/lateAug.root")
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
 
-##/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHigg/midAug.root
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/crazylimit0306.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/crazylimit0306.root")
 
-parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
-parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/pipilimitnew.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/pipilimitnew.root")
+
+if doSyst:
+	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
+	parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_SYST.txt")
+else:
+	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
+	parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
+
 parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", default=35867)
 
 extra = OptionGroup(parser,"Extra options:","")
@@ -130,18 +139,24 @@ channel = []
 
 ### FINAL conf
 basecat = ["OneBOneFat_one_highj","OneBOneFat_two_highj","OneBOneFat_three_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj","OneBOneFat_three_lowj"
-###	   ,"OneBOneFat1l_one_highj","OneBOneFat1l_two_highj","OneBOneFat1l_three_highj", "OneBOneFat1l_one_lowj","OneBOneFat1l_two_lowj","OneBOneFat1l_three_lowj"
+	   ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
 	   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj","OneBOneMirrorFat_three_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj","OneBOneMirrorFat_three_lowj"
 	   ]
 
 if doSChannel:
-#	channel = ["t0b","t1b"]
-	channel = ["t1b"]
+	channel = ["t0b","t1b"]
+#	channel = ["t1b"]
 	label="sChan_"
 else:
 	channel = ["t0b","t1b","wbb","wbj"]
+#	channel = ["t0b"]
+#	channel = ["t1b"]
+#	channel = ["wbb"]
+#	channel = ["wbj"]
 	label="fullHad_"
-#label="t1b_fullHad_"
+#	label="wbj_fullHad_"
+#	label="counting_"
+#	label="sronly_"
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 statStore = {} ## used to store th1d for stat uncertainties
@@ -155,60 +170,110 @@ for y in channel:
 	for x in basecat:
 
 		region = ["_in","_above","_below"]
+
+#		if True:
+#			region = ["_in"]
+#			if "OneBOneFat1l" in x: continue
+#			if "OneBOneMirrorFat" in x:continue
+
+		if "OneBOneFat1l" in x:
+			region = ["_all"]
+
 		for reg in region:
 
 			masses = [ opts.kMass ]
 			for mas in masses:
 
-				name = x+ "_" + y + mas + reg
+				if "OneBOneFat1l" in x:
+					name = x+ "_" + y
+				else:
+					name = x+ "_" + y + mas + reg
+
 	#		catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"invariantExt"}
 
-				# DO NOT USE THESE as the trigger is not fully efficient (need planB trigger/selection)
-				if "_lowj" in x and y=="wbb": continue
-				if "_lowj" in x and y=="wbj": continue
+				# THIS IS planB
+#				if "_lowj" in x and y=="wbb": continue
+#				if "_lowj" in x and y=="wbj": continue
 
 				# UNDEFINED
 				if "OneBOneFat_one" in x and y=="wbb": continue
 				if "OneBOneMirrorFat_one" in x and y=="wbb": continue
 				if "OneBOneFat1l_one" in x and y=="wbb": continue
 
-                                # (?????????)
 				# UNDEFINED
-				# they should not exist but are filled
+				# they should not exist but some are filled
 				if "OneBOneFat_one" in x and y=="t1b": continue
 				if "OneBOneMirrorFat_one" in x and y=="t1b": continue
+				if "OneBOneFat1l_one" in x and y=="t1b": continue
 
 				if "OneBOneFat_three" in x and y=="wbj": continue
 				if "OneBOneMirrorFat_three" in x and y=="wbj": continue
-
-				# UNDEFINED
-				if "OneBOneFat1l_one" in x and y=="t1b": continue
 				if "OneBOneFat1l_three" in x and y=="wbj": continue
 
-				# for the 2000,2500,3000: (They are all in the below bin)
-				if "OneBOneMirrorFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
-				if "OneBOneMirrorFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
-				if "OneBOneFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
-				if "OneBOneFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
+				if opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
+					#				# for the 2000,2500,3000: (They are all in the below bin)
+					if "OneBOneMirrorFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
+					if "OneBOneMirrorFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
+					#				## recovered the wbb - in
+					if "OneBOneFat" in x and y=="wbb" and ("above" in reg ): continue
+					if "OneBOneFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
 
-				# very rare situation three_lowj_t0b
-				if "_three_lowj" in x and y=="t0b": continue
+				# t0b/t1b & 3b NO STAT very rare situation
+				if "OneBOneMirrorFat_three_lowj" in x and y=="t1b": continue
+				if "OneBOneMirrorFat_three_highj" in x and y=="t1b": continue
 
-				catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["top"],"var":"HT_"+mas+reg}
+				if doSChannel or (opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000"):
+					if "OneBOneFat_three" in x and y=="t0b": continue
+					if "OneBOneMirrorFat_three" in x and y=="t0b": continue
+
+				## NO STAT
+				if "OneBOneFat1l_one" in x and (y=="t0b" or y=="wbj"): continue
+				##
+				if "OneBOneFat1l_two" in x and ( y=="wbb" or y=="wbj" or y=="t0b" or y=="t1b"): continue
+				##
+				if "OneBOneFat1l_three" in x and ( y=="wbb" or y=="t1b" or y=="t0b"): continue
+
+				if "OneBOneFat1l" in x:
+					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["top"],"var":"HT"+reg}
+					name = x+ "_" + y
+				else:
+					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["top"],"var":"HT_"+mas+reg}
 
 				catStore[name]['file'] = fIn
 
-				catStore[name]["hasMC"]=["qcd","top","Hptb"]
+### QCD correlated
+#				catStore[name]["hasMC"]=["qcd","top","Hptb"]
+
+### QCD uncorrelated
+				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","top","Hptb"]
+				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","top","Hptb"]
+				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","top","Hptb"]
+				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","top","Hptb"]
+				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","top","Hptb"]
+				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","top","Hptb"]
+
                         if doSChannel:
 				mcStore={
 					"Hptb":{"name":"Hptb", "hist":["WprimeToTB_TToHad_M-%d"], "num":0 },
-					"qcd":{"name":"qcd", "hist":["QCD_HT"], "num":1 },
+##					"qcd":{"name":"qcd", "hist":["QCD_HT"], "num":1 },
+					"qcd_wx_one":{"name":"qcd_wx_one", "hist":["QCD_HT"], "num":1 },
+					"qcd_wx_two":{"name":"qcd_wx_two", "hist":["QCD_HT"], "num":1 },
+					"qcd_wx_three":{"name":"qcd_wx_three", "hist":["QCD_HT"], "num":1 },
+					"qcd_tx_one":{"name":"qcd_tx_one", "hist":["QCD_HT"], "num":1 },
+					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":1 },
+					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":1 },
 					"top":{ "name":"top","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2}
 					}
 			else:
 				mcStore={
 					"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-					"qcd":{"name":"qcd", "hist":["QCD_HT"], "num":1 },
+##					"qcd":{"name":"qcd", "hist":["QCD_HT"], "num":1 },
+					"qcd_wx_one":{"name":"qcd_wx_one", "hist":["QCD_HT"], "num":1 },
+					"qcd_wx_two":{"name":"qcd_wx_two", "hist":["QCD_HT"], "num":1 },
+					"qcd_wx_three":{"name":"qcd_wx_three", "hist":["QCD_HT"], "num":1 },
+					"qcd_tx_one":{"name":"qcd_tx_one", "hist":["QCD_HT"], "num":1 },
+					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":1 },
+					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":1 },
 					"top":{ "name":"top","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2}
 					}
 
@@ -220,14 +285,16 @@ for y in channel:
                                         "CMS_eff_m":{"type":"lnN", "value":["1.04"] ,"proc":[".*"],"wsname":"CMS_eff_m","name":"XXX"},
                                         "CMS_eff_e":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_e","name":"XXX"},
                                         "CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t","name":"XXX"},
+					### trigger efficiency
+                                        "CMS_eff_trigger":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"CMS_eff_triggger","name":"XXX"},
 					### Theory modeling
                                         "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["top"]},
-                                        "QCDscaleT":{"type":"shape", "wsname":"QCDscaleTTbar","name":"Scale","proc":["top"]},
-                                        "QCDscaleS":{"type":"shape", "wsname":"QCDscaleHptb","name":"Scale","proc":["Hptb"]},
+#                                        "QCDscaleT":{"type":"shape", "wsname":"QCDscaleTTbar","name":"Scale","proc":["top"]},
+#                                        "QCDscaleS":{"type":"shape", "wsname":"QCDscaleHptb","name":"Scale","proc":["Hptb"]},
 					### MET-Jets-PU
                                         "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]},
-                                        "CMS_scale_uncluster":{"type":"lnN", "value":["1.02"],"proc":[".*"],"wsname":"CMS_scale_uncluster","name":"XXX"},
-                                        "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
+#                                        "CMS_scale_uncluster":{"type":"lnN", "value":["1.02"],"proc":[".*"],"wsname":"CMS_scale_uncluster","name":"XXX"},
+#                                        "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
                                         "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":[".*"]},
                                         ##Light jets Heavy flavor contamination
 					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":[".*"]},
@@ -252,13 +319,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_MARCH3/"+label+VarTest+opts.kMass+"_"+opts.output
-#fileTmp="MIAO_JULY7/"+channel[0]+"_"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_MARCH17/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_MARCH3/"+label+ VarTest+opts.kMass+"_" + datNameTmp
-#datName = "MIAO_JULY7/"+channel[0]+"_"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_MARCH17/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -292,20 +357,39 @@ def skip(cat,mc):
 	return True
 
 
-## write shapes
+## write shapes in workspace
+#if False: # data
+#	datacard.write("shapes data_obs *\t" + fileTmp +"\t")
+#	datacard.write("w:data_obs_$CHANNEL")
+#	datacard.write("\n")
+#if True: # Sig
+#	datacard.write("shapes Hptb *\t" + fileTmp +"\t")
+#	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL\t")
+#	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
+#	datacard.write("\n")
+#if True: #bkg
+#	datacard.write("shapes * * %s\t"%fileTmp +"\t")
+#	datacard.write("w:pdf_$PROCESS_$CHANNEL\t")
+#	datacard.write("w:pdf_$PROCESS_$CHANNEL_$SYSTEMATIC\n")
+#datacard.write("-------------------------------------\n")
+#datacard.write("## Observation\n")
+
+## write shapes in histograms
 if False: # data
-	datacard.write("shapes data_obs *\t" + fileTmp +"\t")
-	datacard.write("w:data_obs_$CHANNEL")
-	datacard.write("\n")
+        datacard.write("shapes data_obs *\t" + fileTmp +"\t")
+        datacard.write("data_obs_$CHANNEL")
+        datacard.write("\n")
 if True: # Sig
-	datacard.write("shapes Hptb *\t" + fileTmp +"\t")
-	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL\t")
-	datacard.write("w:pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
-	datacard.write("\n")
-if True: #bkg
-	datacard.write("shapes * * %s\t"%fileTmp +"\t")
-	datacard.write("w:pdf_$PROCESS_$CHANNEL\t")
-	datacard.write("w:pdf_$PROCESS_$CHANNEL_$SYSTEMATIC\n")
+        datacard.write("shapes Hptb *\t" + fileTmp +"\t")
+        datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL\t")
+        datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
+#        datacard.write("pdf_$PROCESS_$CHANNEL\t")
+#        datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC")
+        datacard.write("\n")
+if True: # bkg
+        datacard.write("shapes * * %s\t"%fileTmp +"\t")
+        datacard.write("pdf_$PROCESS_$CHANNEL\t")
+        datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC\n")
 datacard.write("-------------------------------------\n")
 datacard.write("## Observation\n")
 
@@ -379,6 +463,7 @@ def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
 	datacard.write("\n")
 
 def writeSystShape(syst,regexpL=[],regexpCat=None):
+	# this function put a bunch of 1
 	name=syst["wsname"]
 	datacard.write(name+"\tshape")
 
@@ -468,9 +553,12 @@ for syst in systStore:
 	if systStore[syst]["type"] == "shape":
 		writeSystShape(systStore[syst],systStore[syst]["proc"])
 
-#if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb","ttbb","tt2b"])
-#if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042","1.042","1.042"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042","1.042","1.042"],["ttlf","ttcc","ttb","ttbb","tt2b"])
 ###if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
 
 #if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttlf",["1.50"],["ttlf"])
 #if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttcc",["1.50"],["ttcc"])
@@ -543,27 +631,57 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
-	if mc["name"]=="Hptb":masses=[400,500,650,800,1000,1500,2000,2500,3000]
+	if mc["name"]=="Hptb":masses=[400,500,650,800,900,1000,1500,2000,2500,3000]
 ##	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,650,800,1000,1500,2000,2500,3000]
-	elif doSChannel and mc["name"]=="Hptb":masses=[800]
-
+##	elif doSChannel and mc["name"]=="Hptb":masses=[800]
 	else: masses=[0]
 
 	if syst == None: shifts=["x"]
 	else: shifts=["Up","Down"]
 
-	# do not consider the QCD_HT in the 1l CR
-	if mc["name"]=="qcd" and "OneBOneFat1l" in cat["name"]: return
+	skip=False
+	if syst != None:
+		  skip=True
+
+		  invert=False
+		  regexpL = syst["proc"]
+		  print '==================='
+		  print '====',syst
+		  print '====',syst["proc"],'  ',mc["name"]
+		  print '==================='
+		  for i,regexp in enumerate(regexpL):
+			  if regexp != "" and regexp[0] == '!':
+				  invert=True
+				  regexp=regexp[1:]
+			  match=re.search(regexp,mc["name"])
+			  if (match  and not invert) or (not match and invert):
+				  idx=i
+				  skip=False
+				  break
+
+	if skip: return
+
 
 	h=None
 	for s in shifts:
+
+		hTmpSum=None
 		for m in masses:
 
-#			print '2/3 mass now is =',m
-			myTMPmass = "%d_"%m
-			if m==500 and "1500" in cat["name"]: continue
-			if m==500 and "2500" in cat["name"]: continue
-			if myTMPmass not in cat["name"]: continue
+
+			if not "OneBOneFat1l" in cat["name"]:
+				#	  print  '1/3 mass now is =', str(m)
+#				if m==500 and "1500" in cat["name"]: continue
+#				if m==500 and "2500" in cat["name"]: continue
+#				if str(m) not in cat["name"]: continue
+
+#				if mc["name"]=="Hptb":
+#					toget=toget%m
+
+				myTMPmass = "%d_"%m
+				if m==500 and "1500" in cat["name"]: continue
+				if m==500 and "2500" in cat["name"]: continue
+				if myTMPmass not in cat["name"]: continue
 
 			print '==========> '
 			print '==========> cat["name"] ===> ', cat["name"]
@@ -580,23 +698,33 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 			for hname in mc["hist"]:
 				toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
 
-			if mc["name"]=="Hptb":
-				toget=toget%m
-			if syst != None:
-				toget += "_" + syst["name"] + s
-			hTmp=tfile.Get(toget)
-			print "<*> Reading Hist '"+toget+"'",hTmp.Integral()
-			if hTmp == None:
-				print "<*> Hist '"+toget+"' doesn't exist"
-				raise IOError
+				hTmp=None
+
+				if mc["name"]=="Hptb":
+					toget=toget%m
+
+				if syst != None:
+					toget += "_" + syst["name"] + s
+
+				hTmp=tfile.Get(toget)
+##				hTmp.Rebin(5)
+				print "<*> Reading Hist '"+toget+"'",hTmp.Integral()
+
+				if hTmp == None:
+					print "<*> Hist '"+toget+"' doesn't exist"
+					raise IOError
 
 ### -- MC --
 #			print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 #####1L
 
-			if applyLikelihoodRebinBin:
-				hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
-			h = hTmp
+				if applyLikelihoodRebinBin:
+					hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
+				if hTmpSum==None:hTmpSum = hTmp
+				else:
+					hTmpSum.Add(hTmp)
+
+				h=hTmpSum
 
 		if h!= None: print "<*> Read Hist '"+toget+"'",h.Integral(),' nBin=',h.GetNbinsX(), 'underflow=',h.GetBinContent(0), 'overflow=',h.GetBinContent(h.GetNbinsX()+1),' entries=',h.GetEntries()
 
@@ -616,8 +744,6 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				raise ValueError
 
 	  #save RooDataHist
-		if"2500" in cat["name"]:
-			h.Scale(1./2.04788481245e-05)
 
 		h.Scale(opts.lumi)
 
@@ -631,11 +757,19 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 		roo_mc = ROOT.RooDataHist(target,target,ROOT.RooArgList(al),h)
 		pdf_mc = roo_mc
 
-		hBIS = roo_mc.createHistogram("test", al)
+#		hBIS = roo_mc.createHistogram("test", al)
 
 		getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
 		g.extend([h,roo_mc,pdf_mc])
-		w.writeToFile(fileTmp)
+#		w.writeToFile(fileTmp)
+
+### WRITE HISTOGRAMS
+                f = ROOT.TFile.Open(fileTmp,"update")
+                h.SetName(target)
+                h.Write()
+                f.Write()
+                f.Close()
+
 
 		if syst==None and m< 10 : # not for signal,
 			print "DEBUG calling stat with target",target
@@ -670,9 +804,9 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
                 print "<*> File not exists"
                 raise IOError
         base="ChargedHiggsTopBottom"
-	if mc["name"]=="Hptb":masses=[400,500,650,800,1000,1500,2000,2500,3000]
+	if mc["name"]=="Hptb":masses=[400,500,650,800,900,1000,1500,2000,2500,3000]
 ##	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,650,800,1000,1500,2000,2500,3000]
-	elif doSChannel and mc["name"]=="Hptb":masses=[800]
+#	elif doSChannel and mc["name"]=="Hptb":masses=[800]
         else: masses=[0]
 
         if syst == None: shifts=["x"]
@@ -713,24 +847,29 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 #				print hname, 'mc["name"]=', mc["name"],	'hRef, hSum, hSig',hRef, hSum, hSig
 				toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
 
-			#	  print  '1/3 mass now is =', str(m)
-				if m==500 and "1500" in cat["name"]: continue
-				if m==500 and "2500" in cat["name"]: continue
-				if str(m) not in cat["name"]: continue
+				if "OneBOneFat1l" in cat["name"]:
+					if mc["name"]=="Hptb":
+						toget=toget%m
 
-				if mc["name"]=="Hptb":
-					toget=toget%m
+				else:
+					#	  print  '1/3 mass now is =', str(m)
+					if m==500 and "1500" in cat["name"]: continue
+					if m==500 and "2500" in cat["name"]: continue
+					if str(m) not in cat["name"]: continue
+
+					if mc["name"]=="Hptb":
+						toget=toget%m
 
 				if syst != None:
 					toget += "_" + syst["name"] + s
 
-				print toget
 				hTmp=tfile.Get(toget)
+##				hTmp.Rebin(5)
 				if hTmp!= None: print "<*> 1/3 Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
 
 				if hTmp == None:
 					print "<*> Hist '"+toget+"' doesn't exist"
-	                         ## raise error only if is on the 2Third and for the syst central value
+	                ## raise error only if is on the 2Third and for the syst central value
 					if not do1Third:
 						if syst == None:
 							raise IOError
@@ -745,8 +884,6 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 				if mc["name"]=="top" and hTmp!=None: hRef=hTmp.Clone()
 				if mc["name"]=="Hptb" and hTmp!= None:
 					hSig=hTmp.Clone()
-					if"2500" in cat["name"]:
-						hSig.Scale(1./2.04788481245e-05)
 
 	if hRef: hRef.SetBinContent(0,0) ##underflow
 	if hRef: hRef.SetBinContent(hRef.GetNbinsX()+1,0) #overflow
@@ -809,10 +946,21 @@ for cat in catStore:
                 mc=mcStore[proc]
                 if mc["name"]=="Hptb":
                         hSig1Third=sig
-                if hSumAll1Third==None:
-                        hSumAll1Third=hSumTMP
-                else:
-                        hSumAll1Third.Add(hSumTMP)
+		if hSumTMP!=None:
+			if hSumAll1Third==None:
+				hSumAll1Third=hSumTMP
+			else:
+				hSumAll1Third.Add(hSumTMP)
+
+
+#	print '====================='
+#	print '====================='
+#	print '====================='
+#	print 'I have hRef, hSum, hSig'
+#	print "hSumAll1Third=",hSumAll1Third.Integral(),"hSig1Third=",hSig1Third.Integral()
+#	print '====================='
+#	print '====================='
+#	print '====================='
 
         LikelihoodMapping = likelihoodBinning.createMapping(hSumAll1Third, hSig1Third)
 
@@ -824,12 +972,6 @@ for cat in catStore:
 			print " * syst:", systStore[syst]
 			if systStore[syst] == None or systStore[syst]["type"] == "shape" :
 				importPdfFromTH1(catStore[cat],mcStore[proc],myBin,LikelihoodMapping,systStore[syst])
-
-## import and write statistical uncertainties
-#if doSyst: importStat()
-#importStat()
-#'* autoMCStats 0'
-#datacard.write("* autoMCStats 0")
 
 
 ###-----------------------------------------------------
@@ -850,10 +992,11 @@ for cat in catStore:
 #	elif  "1Mu" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]: toget+="_SingleMuon"
 
 	h=tfile.Get(toget)
+##	if h : h.Rebin(5)
 	if h == None:
 		print "<*> Hist do not exists ",toget
-                ### MARIA COMMENT THIS FOR NOW                                                                                                                                                          ##		raise IOError
-
+                ### MARIA COMMENT THIS FOR NOW
+##		raise IOError
 
 	if h != None:
                 h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
@@ -879,8 +1022,20 @@ for cat in catStore:
 		roo_data= ROOT.RooDataHist("data_obs_%s"%c,"Mass",ROOT.RooArgList(al),h)
 		getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
 		g.extend([h,roo_data])
+		f = ROOT.TFile.Open(fileTmp,"update")
+                h.SetName(target)
+                h.Write()
+                f.Write()
+                f.Close()
 
-w.writeToFile(fileTmp)
+
+## import and write statistical uncertainties
+#if doSyst: importStat()
+#importStat()
+'* autoMCStats 0'
+datacard.write("* autoMCStats 0")
+
+w.writeToFile(fileTmp,False)
 print "--------------------" 
 print "datacard=",datName
 print "ws=",fileTmp
