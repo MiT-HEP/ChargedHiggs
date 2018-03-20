@@ -47,5 +47,6 @@
 	
 	<!-- Additional shapes -->
 	<class name="RooCMSShape"/>
-	<class name="RooVoigtianShape"/>
+    <class name="RooVoigtianShape"/>
+    <class name="RooBinnedUncertainties"/>
 </lcgdict>

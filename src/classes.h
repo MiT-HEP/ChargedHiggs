@@ -68,6 +68,7 @@
 #include "interface/TmvaTrainer.hpp"
 #include "interface/Trigger.hpp"
 #include "interface/Weight.hpp"
+#include "interface/RooBinnedUncertainties.hpp"
 
 // put template stuff here, MyClass<T> myclass;
 //nampspace{
