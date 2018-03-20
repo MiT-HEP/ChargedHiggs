@@ -95,7 +95,7 @@ class Loop:
         dictionary['cmssw'] = 'CMSSW_9_4_1'
         dictionary['tag'] = 'cmssw_94x'
         dictionary['coretag'] = 'CMSSW_92X'
-        dictionary['combinetag'] = 'v7.0.5'
+        dictionary['combinetag'] = 'v7.0.7'
         dictionary['combine'] = 'yes'
 
         conf = open("%(tmp)s/config.txt"%dictionary)
@@ -126,24 +126,26 @@ class Loop:
             cmd +=" && git checkout %(combinetag)s"%dictionary
 
             self._call(cmd,"setup",self.log+"/"+pr.sha)
-            cmd = "%(cmsenv)s"%dictionary
-            cmd +=" && cd HiggsAnalysis/CombinedLimit"
-            patch ='''
---- a/src/SequentialMinimizer.cc
-+++ b/src/SequentialMinimizer.cc
-@@ -465,7 +465,7 @@ namespace cmsmath {
-         public:
-            SubspaceMultiGenFunction(const ROOT::Math::IMultiGenFunction *f, int nDim, const int *idx, double *xi) :
-                 f_(f), nDim_(nDim), idx_(idx), x_(xi) {}
--           virtual IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
-+           virtual ROOT::Math::IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
-            virtual unsigned int NDim() const { return nDim_; }
-         private:
-            virtual double DoEval(const double * x) const {
-            '''
-            cmd += ' &&  patch -p1 <<EOF' 
-            cmd += "\n" +patch +"\nEOF\n"
-            self._call(cmd,"setup") ## no log fol EOF
+
+            # patch
+            #cmd = "%(cmsenv)s"%dictionary
+            #cmd +=" && cd HiggsAnalysis/CombinedLimit"
+            #patch ='''
+            #--- a/src/SequentialMinimizer.cc
+            #+++ b/src/SequentialMinimizer.cc
+            #@@ -465,7 +465,7 @@ namespace cmsmath {
+            #         public:
+            #            SubspaceMultiGenFunction(const ROOT::Math::IMultiGenFunction *f, int nDim, const int *idx, double *xi) :
+            #                 f_(f), nDim_(nDim), idx_(idx), x_(xi) {}
+            #-           virtual IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
+            #+           virtual ROOT::Math::IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
+            #            virtual unsigned int NDim() const { return nDim_; }
+            #         private:
+            #            virtual double DoEval(const double * x) const {
+            #            '''
+            #cmd += ' &&  patch -p1 <<EOF' 
+            #cmd += "\n" +patch +"\nEOF\n"
+            #self._call(cmd,"setup") ## no log for EOF
 
             cmd = "%(cmsenv)s"%dictionary
             cmd +=" && cd HiggsAnalysis/CombinedLimit"

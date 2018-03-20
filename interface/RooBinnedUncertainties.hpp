@@ -17,6 +17,9 @@
  * Licence: gpl-3.0
  */
 
+#define MAX_NUIS 20
+#define MAX_BINS 1000
+
 class RooBinnedUncertainties : public RooAbsPdf
 {
     int _nbins{0}; 
@@ -26,8 +29,11 @@ class RooBinnedUncertainties : public RooAbsPdf
     RooRealProxy _pdf; //pdf
 
     RooListProxy _coefList ; //list of nuisances/morphers. No constrain is put on these parameters. Use gaussian priors, if like.
-    std::vector<std::vector< float> > shiftUp; // shifts up, [nuis][bin]
-    std::vector<std::vector< float> > shiftDown;
+    //std::vector<std::vector< float> > shiftUp{}; // shifts up, [nuis][bin]
+    //std::vector<std::vector< float> > shiftDown{};
+
+    Double_t shiftUp[MAX_NUIS][MAX_BINS]; // huge ? 
+    Double_t shiftDown[MAX_NUIS][MAX_BINS];
 
     
     public:
@@ -49,9 +55,19 @@ class RooBinnedUncertainties : public RooAbsPdf
              _pdf("pdf",this,other._pdf),
              _coefList("coefList",this,other._coefList),
              _nbins(other._nbins), _xmin(other._xmin),_xmax(other._xmax)
-        {}
+            //shiftUp(other.shiftUp),shiftDown(other.shiftDown)
+        {
+            // mem cp should be faster
+            int nNuis=_coefList.getSize();
+            for(unsigned inuis=0;inuis < nNuis ; ++inuis)
+            for(unsigned ibin=0;ibin<other._nbins;++ibin)
+            {
+                shiftUp[inuis][ibin] = other.shiftUp[inuis][ibin];
+                shiftDown[inuis][ibin] = other.shiftDown[inuis][ibin];
+            }
+        }
 
-        virtual TObject* clone(const char* newname) const { return new RooBinnedUncertainties(*this, newname); }
+        virtual TObject* clone(const char* newname) const override { return new RooBinnedUncertainties(*this, newname); }
         virtual ~RooBinnedUncertainties() {}
 
         // asymmetric shifts
@@ -65,8 +81,17 @@ class RooBinnedUncertainties : public RooAbsPdf
             }
 
             _coefList.add(nuis) ; // not owned
-            shiftUp.push_back(up);
-            shiftDown.push_back(down);
+
+            int nNuis = _coefList.getSize();
+
+            assert(nNuis <=MAX_NUIS);
+
+            for(unsigned i=0; i< _nbins;++i) {  
+                shiftUp[nNuis-1][i] = up[i]; 
+                shiftDown[nNuis-1][i] = down[i];
+            }
+            //shiftUp.push_back(up);
+            //shiftDown.push_back(down);
 
             //_coefList.print(std::cout);
         }
@@ -82,7 +107,7 @@ class RooBinnedUncertainties : public RooAbsPdf
             std::cout<< "Binning: "<< _nbins <<" in ["<< _xmin<<","<< _xmax<<"]"<<std::endl;
             std::cout<< "Underlying pdf: "<< _pdf.arg().GetName()<<std::endl;
             std::cout<< "Morphers: "<<std::endl;
-            for (unsigned inuis=0;inuis<shiftUp.size(); ++inuis)
+            for (unsigned inuis=0;inuis<_coefList.getSize(); ++inuis)
             {
                 std::cout<< "    *) "<<static_cast<RooAbsReal*>(_coefList.at(inuis))->GetName()<<":";
                 for(int i=0;i<_nbins;++i)
@@ -108,7 +133,7 @@ class RooBinnedUncertainties : public RooAbsPdf
                 double c = _pdf; // central value of the pdf 
                 double d=0.; //delta induced by nuisances in bin, ibin
 
-                for(unsigned inuis =0 ;inuis< shiftUp.size() ;++inuis)
+                for(unsigned inuis =0 ;inuis< _coefList.getSize() ;++inuis)
                 {
                     double p=static_cast<RooAbsReal*>(_coefList.at(inuis))->getVal(); 
                     if (p>=0) d+= p*shiftUp[inuis][ibin];
