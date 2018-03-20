@@ -15,4 +15,5 @@ FatJet::FatJet() :Object(){
   softdropMasscut_=0;
   nSubjetscut_=0;
   hbbcut_=0;
+  sdmasssyst_=0;
 }
