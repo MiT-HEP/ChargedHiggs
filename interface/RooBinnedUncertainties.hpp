@@ -36,6 +36,7 @@ class RooBinnedUncertainties : public RooAbsPdf
         RooBinnedUncertainties() : RooAbsPdf(){}
         RooBinnedUncertainties(const char* name, const char *title) : RooAbsPdf(name,title){}
         RooBinnedUncertainties(const char* name, const char *title, RooRealVar& obs,RooAbsPdf&pdf,int nbins, double xmin,double xmax) :
+            RooAbsPdf(name,title),
              _x("x", "Dependent", this, obs),
              _pdf("pdf", "Dependent", this, pdf),
              _nbins(nbins), _xmin(xmin), _xmax(xmax)
