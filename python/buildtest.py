@@ -156,7 +156,7 @@ class Loop:
             #only clean. because scram b will be retried 5 times
             cmd = "%(cmsenv)s"%dictionary
             cmd +=" && cd HiggsAnalysis/CombinedLimit"
-            cmd += ' && scramv1 b clean;'
+            cmd += ' && scramv1 b clean'
             self._call(cmd,"setup",self.log+"/"+pr.sha)
 
             #retry scram b up to 5 times
