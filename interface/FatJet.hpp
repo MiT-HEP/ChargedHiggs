@@ -30,6 +30,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
 
     float hadFlavor_;
 
+    int sdmasssyst_;
+
     // FIXME: add puppi
 
     TLorentzVector pp4;
@@ -74,6 +76,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float subjet_btag_max{0};
 
 
+    int sdmasssyst{0};
+
     int isValid;
     //Gen-level info
 
@@ -87,7 +91,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float SDTau2() const { return sdtau2 ; }
     inline float SDTau3() const { return sdtau3 ; }
 
-    inline float SDMass() const { return softdropMass ; }
+    inline float SDMass() const { return (1+0.05*sdmasssyst)*softdropMass ; }
+    //    inline float SDMass() const { return softdropMass ; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
 
     inline float subjetCSV1() const { return subjet_btag1 ; }
@@ -96,7 +101,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float subjetCSVmax() const { return subjet_btag_max ; }
     inline int NSubj() const { return nSubjets ; }
 
-
+    void clearSyst() override {Object::clearSyst(); sdmasssyst=0;}
 
     inline int IsSubjetBTag() const { return hasSubJetBTag ; }
     inline int IsSubjetBTagLoose() const { return hasSubJetBTagLoose ; }
