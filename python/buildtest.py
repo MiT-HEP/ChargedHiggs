@@ -53,13 +53,19 @@ class Loop:
 
         self.verbose = 1
 
-    def _call(self,cmd,errtype="build",logdir = ""):
+    def _call(self,cmd,errtype="build",logdir = "",trials=1):
         #cmd += " 2>&1 | tee %(log)s/setup.txt"%dictionary
         if logdir=="":
             final_cmd=cmd
         else:
             final_cmd="{ "+ cmd +" ; } 2>&1 >>" + logdir + "/"+errtype +".txt"
         st = call(final_cmd,shell=True)
+        if st !=0 and trials > 1:
+            trial=1
+            while trial < trials and st!=0:
+                print "[" + self.color['green'] + "INFO" + self.color["white"] +"] Calling trial",trial,"of",trials
+                st = call(final_cmd,shell=True)
+                
         if st != 0: 
             if self.verbose >=0: print "["+self.color['red']+"ERROR"+self.color['white']+"] Unable to run '"+final_cmd+"'"
             if errtype=="setup":raise SetupError
@@ -128,29 +134,36 @@ class Loop:
             self._call(cmd,"setup",self.log+"/"+pr.sha)
 
             # patch
-            #cmd = "%(cmsenv)s"%dictionary
-            #cmd +=" && cd HiggsAnalysis/CombinedLimit"
-            #patch ='''
-            #--- a/src/SequentialMinimizer.cc
-            #+++ b/src/SequentialMinimizer.cc
-            #@@ -465,7 +465,7 @@ namespace cmsmath {
-            #         public:
-            #            SubspaceMultiGenFunction(const ROOT::Math::IMultiGenFunction *f, int nDim, const int *idx, double *xi) :
-            #                 f_(f), nDim_(nDim), idx_(idx), x_(xi) {}
-            #-           virtual IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
-            #+           virtual ROOT::Math::IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
-            #            virtual unsigned int NDim() const { return nDim_; }
-            #         private:
-            #            virtual double DoEval(const double * x) const {
-            #            '''
-            #cmd += ' &&  patch -p1 <<EOF' 
-            #cmd += "\n" +patch +"\nEOF\n"
-            #self._call(cmd,"setup") ## no log for EOF
-
             cmd = "%(cmsenv)s"%dictionary
             cmd +=" && cd HiggsAnalysis/CombinedLimit"
-            cmd += ' && scramv1 b clean; scramv1 b -j 8'
+            patch ='''
+--- a/src/SequentialMinimizer.cc
++++ b/src/SequentialMinimizer.cc
+@@ -465,7 +465,7 @@ namespace cmsmath {
+         public:
+            SubspaceMultiGenFunction(const ROOT::Math::IMultiGenFunction *f, int nDim, const int *idx, double *xi) :
+                 f_(f), nDim_(nDim), idx_(idx), x_(xi) {}
+-           virtual IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
++           virtual ROOT::Math::IBaseFunctionMultiDim * Clone() const { return new SubspaceMultiGenFunction(*this); }
+            virtual unsigned int NDim() const { return nDim_; }
+         private:
+            virtual double DoEval(const double * x) const {
+            '''
+            cmd += ' &&  patch -p1 <<EOF' 
+            cmd += "\n" +patch +"\nEOF\n"
+            self._call(cmd,"setup") ## no log for EOF
+
+            #only clean. because scram b will be retried 5 times
+            cmd = "%(cmsenv)s"%dictionary
+            cmd +=" && cd HiggsAnalysis/CombinedLimit"
+            cmd += ' && scramv1 b clean;'
             self._call(cmd,"setup",self.log+"/"+pr.sha)
+
+            #retry scram b up to 5 times
+            cmd = "%(cmsenv)s"%dictionary
+            cmd +=" && cd HiggsAnalysis/CombinedLimit"
+            cmd += ' &&  scramv1 b -j 8'
+            self._call(cmd,"setup",self.log+"/"+pr.sha,5)
 
         #setup core/nero
         if True:

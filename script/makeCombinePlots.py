@@ -279,7 +279,7 @@ for idx,f in enumerate(opts.file.split(',')):
 
 	else:
 		obs.SetMarkerStyle(20+idx)
-		obs.SetMarkerSize(0.5)
+		obs.SetMarkerSize(0.3)
 		obs.SetMarkerColor(col)
 		obs.SetLineColor(col)
 		obs.SetLineWidth(2)
@@ -320,10 +320,10 @@ ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 
 if opts.xaxis != "":
-	dummy = ROOT.TH1D("dummy","dummy",100, float(opts.xaxis.split(',')[0]), float(opts.xaxis.split(',')[1]))
-	dummy.GetXaxis().SetRangeUser(200,3000)
+	dummy = ROOT.TH1D("dummy","dummy",1000, float(opts.xaxis.split(',')[0]), float(opts.xaxis.split(',')[1]))
 else:
 	dummy = ROOT.TH1D("dummy","dummy",1000, 0, 3000)
+	dummy.GetXaxis().SetRangeUser(200,3000)
 
 dummy.GetYaxis().SetRangeUser(1e2,1e8)
 
@@ -512,7 +512,7 @@ if opts.newleg:
     ## Draw data
     dataPoint.Draw("SAME")
     dataLine.Draw("SAME")
-    ltx.DrawLatex(xmin+ textSep,ymax,"Data")
+    ltx.DrawLatex(xmin+ textSep,ymax,"Observed")
     
     ## draw median and error
     y_exp = ymax - entryDelta
@@ -552,11 +552,12 @@ if opts.newleg:
         l_exp125.SetLineStyle(2)
         l_exp125.SetLineWidth(3)
         l_exp125.Draw("SAME")
-        ltx.DrawLatex(xmin +textSep,y_exp125,"Expected (#scale[0.7]{m_{H} = 125 GeV})")
+        ltx.DrawLatex(xmin +textSep,y_exp125,"Expected (SM #scale[0.7]{m_{H} = 125 GeV})")
 else:
     leg.Draw()
 
 dummy.Draw("AXIS SAME")
+c.RedrawAxis()
 
 c.Modified()
 c.Update()
