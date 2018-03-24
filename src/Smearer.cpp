@@ -248,17 +248,6 @@ int SmearWG1::smear(Event *e){
 
 }
 
-int SmearSDMassScale::smear(Event *e)
-{
-
-    for (auto f : GetFatJets(e))
-        {
-            f->sdmasssyst = syst_;
-        }
-
-    return SMEAR_OK;
-
-}
 
 // Local Variables:
 // mode:c++

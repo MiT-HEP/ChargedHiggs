@@ -18,12 +18,11 @@ likelihoodBinning = FwRebin.RebinLikelihood(LikeBins)
 
 parser= OptionParser()
 
-#### FILES w/ KERAS connected (V1) for AN
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/FEB26_FINAL_2ThirdSYST_KerasV5_bin1000_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/FEB26_FINAL_2ThirdSYST_KerasV4_bin1000_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/MARCH15_FINAL_2ThirdSYST_KerasV5_bin1000_wDATA_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/MARCH15_FINAL_2ThirdSYST_KerasV5_bin1000_wDATA_2l.root")
 
-parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/FEB26_FINAL_1Third_bin1000_1l.root")
-parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/FEB26_FINAL_1Third_bin1000_2l.root")
+parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/MARCH15_FINAL_1Third_bin1000_1l.root")
+parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/MARCH15_FINAL_1Third_bin1000_2l.root")
 
 ######
 ######
@@ -128,11 +127,13 @@ channel = []
 #1l
 if opts.kTest==0 or opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==8 or opts.kTest==9 or opts.kTest==10 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16 or opts.kTest==100 or opts.kTest==101  or opts.kTest==102:
 	channel = ["1Mu","1Ele"]
+##	channel = ["1L"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7","charmCR"]
 
 #2l
 if opts.kTest==30 or opts.kTest==31 or opts.kTest==32 or opts.kTest==33 or opts.kTest==34 or opts.kTest==35 or opts.kTest==36 or opts.kTest==37 or opts.kTest==38 or opts.kTest==39 or opts.kTest==40 or opts.kTest==41 or opts.kTest==42 or opts.kTest==43 or opts.kTest==44 or opts.kTest==45 or opts.kTest==46 or opts.kTest==200 or opts.kTest==201  or opts.kTest==202:
 	channel = ["1Mu1Ele","2Mu","2Ele"]
+#	channel = ["2L"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
 
 ### combined
@@ -161,7 +162,9 @@ doJanTEST = False
 for y in channel:
 	for x in basecat:
 		label="2l_"
-		if y == "1Ele" or y == "1Mu" or y == "1L": label="1l_"
+		if y == "1L": label="1L_"
+		if y == "1Ele" or y == "1Mu": label="1l_"
+		if y == "2L": label="2L_"
 ##		if opts.kTest==20: label="combined_"
 
 		srList = [""]
@@ -231,7 +234,7 @@ for y in channel:
 				if opts.kTest==35 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["5"]
 				if opts.kTest==36 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["6"]
 				if opts.kTest==37 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["7"]
-				if opts.kTest==38 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "1L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["8"]
+				if opts.kTest==38 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["8"]
 				if opts.kTest==39 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["9"]
 				if opts.kTest==40 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["10"]
 				if opts.kTest==41 and (y == "2Ele" or y == "2Mu" or y == "1Mu1Ele" or y == "2L") and ( x=="Baseline" or x=="charmCR" or "extraRadCR" in x ): srList = ["11"]
@@ -428,12 +431,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="FEB26_bin50/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="MARCH23_DATA/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "FEB26_bin50/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "MARCH23_DATA/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -503,7 +506,7 @@ def skip(cat,mc):
 
 
 ## write shapes in workspace
-if False: # data
+if True: # data
 	datacard.write("shapes data_obs *\t" + fileTmp +"\t")
 	datacard.write("data_obs_$CHANNEL")
 	datacard.write("\n")
@@ -527,7 +530,7 @@ datacard.write("bin\t")
 for cat in catStore:
 	datacard.write("%s\t"%cat)
 datacard.write("\n")
-datacard.write("bin\t")
+datacard.write("observation\t")
 for cat in catStore:
 	datacard.write("-1\t")
 datacard.write("\n")
@@ -603,7 +606,7 @@ def writeSystISRFSR(name="test",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 ##		regexpL=["ttlf","ttb","ttbb","tt2b","ttcc"]
 
 #		if "1L" in cat:
-		if "1Ele" in cat or "1Mu" in cat and not "1Ele1Mu" in cat:
+		if "1L" in cat or "1Ele" in cat or "1Mu" in cat and not "1Ele1Mu" in cat :
 		###
 			if "topCRR4" in cat:
 				valueUp = PartonShowerSyst(mySyst, "1L", "up", 4, 1, proc)
@@ -906,16 +909,52 @@ def envelop(tfile,togetClone, s) :
 
 	hname=togetClone+'RF'+s
 
-	hTmp=tfile.Get(hname)
-#	hTmp.Rebin(5)
+	if "1L" in hname:
+		toget_1=hname.replace("_1L", "_1Mu")
+		toget_2=hname.replace("_1L", "_1Ele")
+		hTmp=tfile.Get(toget_1)
+		hTmp2=tfile.Get(toget_2)
+		if hTmp!=None and hTmp2!=None:hTmp.Add(hTmp2)
+	elif "2L" in hname:
+		toget_1=hname.replace("_2L", "_2Mu")
+		toget_2=hname.replace("_2L", "_2Ele")
+		toget_3=hname.replace("_2L", "_1Mu1Ele")
+		hTmp=tfile.Get(toget_1)
+		hTmp2=tfile.Get(toget_2)
+		hTmp3=tfile.Get(toget_3)
+		if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
+		if hTmp!=None and hTmp3!=None: hTmp.Add(hTmp3)
+	else:
+		hTmp=tfile.Get(hname)
+
+	hTmp.Rebin(5)
 	h=hTmp.Clone()
 
 	if hTmp==None: return
 
 	for w in [ 'R','F','RF']:
 
-		hTmp=tfile.Get(togetClone+w+s)
-#		hTmp.Rebin(5)
+		hnameClone=togetClone+w+s
+
+		if "1L" in hname:
+			toget_1=hnameClone.replace("_1L", "_1Mu")
+			toget_2=hnameClone.replace("_1L", "_1Ele")
+			hTmp=tfile.Get(toget_1)
+			hTmp2=tfile.Get(toget_2)
+			if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
+		elif "2L" in hname:
+			toget_1=hnameClone.replace("_2L", "_2Mu")
+			toget_2=hnameClone.replace("_2L", "_2Ele")
+			toget_3=hnameClone.replace("_2L", "_1Mu1Ele")
+			hTmp=tfile.Get(toget_1)
+			hTmp2=tfile.Get(toget_2)
+			hTmp3=tfile.Get(toget_3)
+			if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
+			if hTmp!=None and hTmp3!=None: hTmp.Add(hTmp3)
+		else:
+			hTmp=tfile.Get(hnameClone)
+
+		hTmp.Rebin(5)
 
 		for iBin in range(1,h.GetNbinsX()+1):
 			c= h.GetBinContent(iBin)
@@ -1002,10 +1041,30 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 				if "QCDscale" in target:
 					if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in mc["name"] or "DYJetsToLL_M-50_HT" in mc["name"] or "DYJetsToLL_M-5to50_HT" in mc["name"] or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"]:
+
 						hTmp = envelop(tfile,togetClone,s)
-						toget = togetClone+'RF'+s
+
 				else:
-					hTmp=tfile.Get(toget)
+					if "1L" in cat["dir"]:
+						toget_1=toget.replace("_1L", "_1Mu")
+						toget_2=toget.replace("_1L", "_1Ele")
+						hTmp=tfile.Get(toget_1)
+						hTmp2=tfile.Get(toget_2)
+						if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
+					elif "2L" in cat["dir"]:
+						toget_1=toget.replace("_2L", "_2Mu")
+						toget_2=toget.replace("_2L", "_2Ele")
+						toget_3=toget.replace("_2L", "_1Mu1Ele")
+						hTmp=tfile.Get(toget_1)
+						hTmp2=tfile.Get(toget_2)
+						hTmp3=tfile.Get(toget_3)
+						if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
+						if hTmp!=None and hTmp3!=None: hTmp.Add(hTmp3)
+					else:
+						hTmp=tfile.Get(toget)
+
+					if hTmp!= None:
+						hTmp.Rebin(5)
 
 				if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
 				if hTmp == None:
@@ -1015,9 +1074,27 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 					if syst != None:
 						print "<*> Hist '"+toget+"' doesn't exist wih the syst cloning now from the central "
 						toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_" + hname
-						hTmp=tfile.Get(toget)
-						#				if hTmp!= None:
-						#					hTmp.Rebin(5)
+
+						if "1L" in cat["dir"]:
+							toget_1=toget.replace("_1L", "_1Mu")
+							toget_2=toget.replace("_1L", "_1Ele")
+							hTmp=tfile.Get(toget_1)
+							hTmp2=tfile.Get(toget_2)
+							if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
+						elif "2L" in cat["dir"]:
+							toget_1=toget.replace("_2L", "_2Mu")
+							toget_2=toget.replace("_2L", "_2Ele")
+							toget_3=toget.replace("_2L", "_1Mu1Ele")
+							hTmp=tfile.Get(toget_1)
+							hTmp2=tfile.Get(toget_2)
+							hTmp3=tfile.Get(toget_3)
+							if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
+							if hTmp!=None and hTmp3!=None: hTmp.Add(hTmp3)
+						else:
+							hTmp=tfile.Get(toget)
+
+						if hTmp!= None:
+							hTmp.Rebin(5)
 						if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
 
 ### SCALE for the 2/3
@@ -1193,9 +1270,26 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 		  if mc["name"]=="Hptb" and m!=opts.kMass:
 			  continue
 
-		  hTmp=tfile.Get(toget)
-#		  if hTmp!= None:
-#			  hTmp.Rebin(5)
+		  if "1L" in cat["dir"]:
+			  toget_1=toget.replace("_1L", "_1Mu")
+			  toget_2=toget.replace("_1L", "_1Ele")
+			  hTmp=tfile.Get(toget_1)
+			  hTmp2=tfile.Get(toget_2)
+			  if hTmp!= None and hTmp2!= None: hTmp.Add(hTmp2)
+		  elif "2L" in cat["dir"]:
+			  toget_1=toget.replace("_2L", "_2Mu")
+			  toget_2=toget.replace("_2L", "_2Ele")
+			  toget_3=toget.replace("_2L", "_1Mu1Ele")
+			  hTmp=tfile.Get(toget_1)
+			  hTmp2=tfile.Get(toget_2)
+			  hTmp3=tfile.Get(toget_3)
+			  if hTmp!= None and hTmp2!= None: hTmp.Add(hTmp2)
+			  if hTmp!= None and hTmp3!= None: hTmp.Add(hTmp3)
+		  else:
+			  hTmp=tfile.Get(toget)
+
+		  if hTmp!= None:
+			  hTmp.Rebin(5)
 
 		  if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(),'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1), ' entries=',hTmp.GetEntries()
 
@@ -1351,6 +1445,7 @@ for c in catStore:
 
 ##import data
 ###for c in catStore:
+
 	cat=catStore[c]
 	tfile = cat["file"]
 	if tfile == None:
@@ -1364,9 +1459,31 @@ for c in catStore:
 	if  ("1Ele" in cat["dir"] or "2Ele" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]): toget+="_SingleElectron"
 	elif  "1Mu" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]: toget+="_SingleMuon"
 
-	h=tfile.Get(toget)
-#	if h != None:
-#		h.Rebin(5)
+	if "1L" in cat["dir"]:
+		toget_1=toget.replace("_1L", "_1Mu")
+		toget_1+="_SingleMuon"
+		toget_2=toget.replace("_1L", "_1Ele")
+		toget_2+="_SingleElectron"
+		h=tfile.Get(toget_1)
+		hTmp2=tfile.Get(toget_2)
+		if h!= None: h.Add(hTmp2)
+	elif "2L" in cat["dir"]:
+		toget_1=toget.replace("_2L", "_2Mu")
+		toget_1+="_SingleMuon"
+		toget_2=toget.replace("_2L", "_2Ele")
+		toget_2+="_SingleElectron"
+		toget_3=toget.replace("_2L", "_1Mu1Ele")
+		toget_3+="_SingleMuon"
+		h=tfile.Get(toget_1)
+		hTmp2=tfile.Get(toget_2)
+		hTmp3=tfile.Get(toget_3)
+		if h!= None and hTmp2: h.Add(hTmp2)
+		if h!= None and hTmp3: h.Add(hTmp3)
+	else:
+		h=tfile.Get(toget)
+
+	if h != None:
+		h.Rebin(5)
 
 	if h == None:
 		print "<*> Hist do not exists ",toget
