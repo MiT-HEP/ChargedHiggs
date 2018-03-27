@@ -20,7 +20,7 @@
 #define MAX_NUIS 20
 #define MAX_BINS 1000
 
-//#define DEBUG 1
+//#define DEBUG_RooBinnedUncertainties 1
 
 class RooBinnedUncertainties : public RooAbsPdf
 {
@@ -51,9 +51,9 @@ class RooBinnedUncertainties : public RooAbsPdf
              _nbins(nbins), _xmin(xmin), _xmax(xmax),
              _coefList("coef","Dependent",this)
             {
-            #ifdef DEBUG
-            std::cout<< "[DEBUG]"<<" Called nominal constructor: "<< GetName()<< std::endl;
-            #endif
+            //#ifdef DEBUG_RooBinnedUncertainties
+            //std::cout<< "[DEBUG]"<<" Called nominal constructor: "<< GetName()<< std::endl;
+            //#endif
             }
 
         //copy constructor and clone
@@ -64,9 +64,9 @@ class RooBinnedUncertainties : public RooAbsPdf
              _coefList("coefList",this,other._coefList),
              _nbins(other._nbins), _xmin(other._xmin),_xmax(other._xmax)
         {
-            #ifdef DEBUG
-            std::cout<< "[DEBUG]"<<" Called copy constructor:"<< GetName()<<"<-"<< other.GetName()<<std::endl;
-            #endif
+            //#ifdef DEBUG_RooBinnedUncertainties
+            //std::cout<< "[DEBUG]"<<" Called copy constructor:"<< GetName()<<"<-"<< other.GetName()<<std::endl;
+            //#endif
             // mem cp should be faster
             for(unsigned inuis=0;inuis < _coefList.getSize() ; ++inuis)
             for(unsigned ibin=0;ibin<other._nbins;++ibin)
@@ -95,12 +95,12 @@ class RooBinnedUncertainties : public RooAbsPdf
 
             //coefList[nNuis] = RooRealProxy("proxy",( std::string("Proxy for ") + nuis.GetName() ).c_str(),this,nuis);
 
-            #ifdef DEBUG
-            std::cout<<"[DEBUG]"<<"Adding Proxy:"<<nNuis<<std::endl;
-            _coefList.Print("VA");
-            std::cout<<"[DEBUG]"<<"   --- _x Proxy:"<<nNuis<<std::endl;
-            _x.Print("VA");
-            #endif
+            //#ifdef DEBUG_RooBinnedUncertainties
+            //std::cout<<"[DEBUG]"<<"Adding Proxy:"<<nNuis<<std::endl;
+            //_coefList.Print("VA");
+            //std::cout<<"[DEBUG]"<<"   --- _x Proxy:"<<nNuis<<std::endl;
+            //_x.Print("VA");
+            //#endif
 
 
 
@@ -156,28 +156,27 @@ class RooBinnedUncertainties : public RooAbsPdf
                 double c = _pdf;
                 double d=0.; //delta induced by nuisances in bin, ibin
 
-                #ifdef DEBUG
-                std::cout<<"[DEBUG]"<<"Evaluating at val:"<<x<<std::endl;
-                std::cout<<"[DEBUG]"<<"  --- pdf: "<< c <<std::endl;
-                #endif
+                //#ifdef DEBUG_RooBinnedUncertainties
+                //std::cout<<"[DEBUG]"<<"Evaluating at val:"<<x<<std::endl;
+                //std::cout<<"[DEBUG]"<<"  --- pdf: "<< c <<std::endl;
+                //#endif
 
                 for(unsigned inuis =0 ;inuis< _coefList.getSize() ;++inuis)
                 {
                     double p=static_cast<RooAbsReal*>(_coefList.at(inuis))->getVal(); 
 
-                    #ifdef DEBUG
-                    std::cout<<"[DEBUG]"<<"  --- nuis: "<<inuis<< ": "<< static_cast<RooAbsReal*>(_coefList.at(inuis))->GetName() <<" "<< p <<std::endl;
-                    //std::cout<<"[DEBUG]"<<"  --- nuis: "<<inuis<< ": "<< coefList[inuis].arg().GetName() <<" "<< p <<std::endl;
-                    std::cout<<"[DEBUG]"<<"          : "<< shiftDown[inuis][ibin]<<"/"<<shiftUp[inuis][ibin] <<std::endl;
-                    #endif
+                    //#ifdef DEBUG_RooBinnedUncertainties
+                    //std::cout<<"[DEBUG]"<<"  --- nuis: "<<inuis<< ": "<< static_cast<RooAbsReal*>(_coefList.at(inuis))->GetName() <<" "<< p <<std::endl;
+                    //std::cout<<"[DEBUG]"<<"          : "<< shiftDown[inuis][ibin]<<"/"<<shiftUp[inuis][ibin] <<std::endl;
+                    //#endif
 
                     if (p>=0) d+= p*shiftUp[inuis][ibin];
                     else      d+= p*shiftDown[inuis][ibin]; // p carries the sign
 
                 }
-                #ifdef DEBUG
-                std::cout<<"[DEBUG]"<<" --- Returning value"<< ((_absolute)?(c+d):(c*(d+1.0))) <<std::endl;
-                #endif
+                //#ifdef DEBUG_RooBinnedUncertainties
+                //std::cout<<"[DEBUG]"<<" --- Returning value"<< ((_absolute)?(c+d):(c*(d+1.0))) <<std::endl;
+                //#endif
                 return (_absolute)?(c+d):(c*(d+1.0));
         }
     private:
