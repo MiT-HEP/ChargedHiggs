@@ -41,7 +41,7 @@ def Import(w,obj):
 ## Global variables
 #MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ','EWK_LLJJ' ]
 MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ' ]
-Systs=["JES","PU","ScaleRF:DY","ScaleR:DY","ScaleF:DY","ScaleR:TT","ScaleF:TT","ScaleRF:TT"]
+Systs=["JES","PU","ScaleRF:DY","ScaleR:DY","ScaleF:DY","ScaleR:TT","ScaleF:TT","ScaleRF:TT" ] #"Linear:0.2"]
 config= eval(opts.hmm)
 config.Print()
 w=ROOT.RooWorkspace("w","w")
@@ -80,6 +80,7 @@ def GetMC(cat,nuis="",match=""):
     for ib in range(0,bin0) + range(bin1+1,h.GetNbinsX()+2): ## excluded bin0, bin1
         h.SetBinContent(ib,0)
         h.SetBinError(ib,0)
+
     return h
 
 histos=[]
@@ -135,8 +136,19 @@ if opts.binput != "":
             else: 
                 s= syst_str
                 match=""
-            hup=GetMC(cat,"_"+s+"Up",match)    
-            hdown=GetMC(cat,"_"+s+"Down",match)    
+            if s == "Linear": ## DEBUG
+                raise ValueError("Do you really want me?")
+                hup=h.Clone("LinearUp")
+                hdown=h.Clone("LinearDown")
+                alpha=float(match)
+                for ib in range(bin0,bin1+1): ## excluded bin0, bin1
+                    #print "Linear debug: Multiplying for",(1.+alpha*float(ib-bin0)/float(bin1-bin0) )
+                    hup.SetBinContent(ib,h.GetBinContent(ib) * (1.+alpha*float(ib-bin0)/float(bin1-bin0) ))
+                    hdown.SetBinContent(ib,h.GetBinContent(ib) * (1.-alpha*float(ib-bin0)/float(bin1-bin0) ))
+            else:
+                hup=GetMC(cat,"_"+s+"Up",match)    
+                hdown=GetMC(cat,"_"+s+"Down",match)    
+
             hup.Add(h,-1)
             hdown.Add(h,-1)
 
