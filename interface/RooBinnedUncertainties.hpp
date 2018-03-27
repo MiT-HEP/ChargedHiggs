@@ -22,6 +22,7 @@
 
 class RooBinnedUncertainties : public RooAbsPdf
 {
+    int _absolute{0}; //shifts are absolute or relative. (TODO: Absolute, figure out norm) 
     int _nbins{0}; 
     double _xmin{0.0};
     double _xmax{0.0}; // in this way it is faster to figure out the bin
@@ -104,6 +105,7 @@ class RooBinnedUncertainties : public RooAbsPdf
 
         void info(){
             std::cout<< "------------------ "<<this->GetName() << " ----------------"<<std::endl;
+            std::cout<< ((_absolute)? "Absolute Shifts" : "Relative Shifts") <<std::endl;
             std::cout<< "Binning: "<< _nbins <<" in ["<< _xmin<<","<< _xmax<<"]"<<std::endl;
             std::cout<< "Underlying pdf: "<< _pdf.arg().GetName()<<std::endl;
             std::cout<< "Morphers: "<<std::endl;
@@ -122,11 +124,13 @@ class RooBinnedUncertainties : public RooAbsPdf
                 double x = _x; // observable value
                 int ibin= int(std::floor( (x-_xmin)/(_xmax-_xmin) * _nbins ));
                 if (ibin<0) { 
-                    std::cout <<"[WARINING] ibin found to be (<0) for x ("<<x<<") in ["<<_xmin<<","<<_xmax<<"]. Setting to 0."<<std::endl;
-                    ibin=0;}
+                    std::cout <<"[WARNING] ibin found to be (<0) for x ("<<x<<") in ["<<_xmin<<","<<_xmax<<"]. Setting to 0."<<std::endl;
+                    ibin=0;
+                }
                 if (ibin>=_nbins)
                 {
-                    std::cout <<"[WARINING] ibin found to be (>="<<_nbins<<") for x ("<<x<<") in ["<<_xmin<<","<<_xmax<<"]. Setting to "<<_nbins-1<<"."<<std::endl;
+                    if ( fabs(_xmax-x)>0.001) // last bin is close
+                        std::cout <<"[WARNING] ibin found to be (>="<<_nbins<<") for x ("<<x<<") in ["<<_xmin<<","<<_xmax<<"]. Setting to "<<_nbins-1<<"."<<std::endl;
                     ibin=_nbins-1;
                 }
                 
@@ -140,7 +144,7 @@ class RooBinnedUncertainties : public RooAbsPdf
                     else      d+= p*shiftDown[inuis][ibin]; // p carries the sign
 
                 }
-                return c+d;
+                return (_absolute)?(c+d):(c*(d+1.0));
         }
     private:
         ClassDef(RooBinnedUncertainties,1) 

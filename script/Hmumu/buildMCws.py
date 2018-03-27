@@ -35,11 +35,13 @@ ROOT.gROOT.SetBatch()
 
 ### general functions
 def Import(w,obj):
-    getattr(w,'import')(obj,ROOT.RooCmdArg())
+    #getattr(w,'import')(obj,ROOT.RooCmdArg())
+    getattr(w,'import')(obj,ROOT.RooFit.RecycleConflictNodes())
 
 ## Global variables
-MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ','EWK_LLJJ' ]
-Systs=["JES","PU","ScaleRF","ScaleR","ScaleF"]
+#MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ','EWK_LLJJ' ]
+MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ' ]
+Systs=["JES","PU","ScaleRF:DY","ScaleR:DY","ScaleF:DY","ScaleR:TT","ScaleF:TT","ScaleRF:TT"]
 config= eval(opts.hmm)
 config.Print()
 w=ROOT.RooWorkspace("w","w")
@@ -50,11 +52,19 @@ x=ROOT.RooRealVar("mmm","mmm",config.xmin,config.xmax)
 arglist_obs=ROOT.RooArgList(x)
 
 #####
-
-def GetMC(cat,nuis=""):
+import re
+def GetMC(cat,nuis="",match=""):
+    print "->Getting MC:",cat,nuis,match
     h=None
     for idx,mc in enumerate(MonteCarlo):
-        hTmp=fIn.Get("HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis)
+        useNuis=True
+        if match != "":
+            useNuis=False
+            if re.search(match,mc): useNuis = True
+        nuis_str = ""
+        if useNuis: nuis_str = nuis[:]
+        hTmp=fIn.Get("HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str)
+        print "       Adding *","HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str
         if hTmp == None:
             if idx>1: ## make sure that DY and TT are there
                 print "[WARNING]: Unable to get mc",mc,"for cat",cat
@@ -104,58 +114,62 @@ if opts.binput != "":
     bIn=ROOT.TFile.Open(opts.binput)
     if bIn == None: raise IOError("Unable to open file:" + opts.binput)
     wb=bIn.Get("w")
+
     for icat,cat in enumerate(config.categories):
         name= config.bkg_functions[icat]
+        h=GetMC(cat)    
         bfunc = wb.pdf(name)
         if bfunc == None: raise IOError("Unable to get func" + name)
-        ## import pdf from Background Model
-        ## move to the binned version -> systematics attached to MC
-        ##  name2="bkg_func_binned_"+cat
-        ##  pars=ROOT.RooArgList()
-        ##  if 'zmod_' in name: 
-        ##      #name="zmod_cat%d_ord1"%cat
-        ##      pars.add(wb.var(name+"_a"))
-        ##      pars.add(wb.var(name+"_b"))
-        ##      pars.add(wb.var(name+"_c"))
-        ##  elif 'exp' in name: 
-        ##      #name="exp_cat%d_ord3"%cat
-        ##      pars.add(wb.var(name+"_p1"))
-        ##      pars.add(wb.var(name+"_p2"))
-        ##      pars.add(wb.var(name+"_f1"))
-        ##  elif 'zmod2' in name:
-        ##      #name="zmod2_cat%d_ord5"%cat
-        ##      pars.add(wb.var(name+"_a"))
-        ##      pars.add(wb.var(name+"_b"))
-        ##      pars.add(wb.var(name+"_c"))
-        ##      pars.add(wb.var(name+"_e"))
-        ##      pars.add(wb.var(name+"_f"))
-        ##      pars.add(wb.var(name+"_g"))
-        ##      pars.add(wb.var(name+"_h"))
-        ##  else:
-        ##      raise ValueError('Unsupported function:'+name)
-        #b2 = ROOT. RooParametricShapeBinPdf( name2,name,bfunc, x,pars,histos[icat])
         name2="bkg_func_binned_"+cat
         b2= ROOT.RooBinnedUncertainties(name2,name,x,bfunc, bin1-bin0,config.xmin,config.xmax)
-        for s in Systs:
-            hup=GetMC(cat,"_"+s+"Up")    
-            hdown=GetMC(cat,"_"+s+"Down")    
+
+        ## uncertainties reflected in the rate
+        nuisRateStr="1."
+        nuisRateAL = ROOT.RooArgList()
+        nuisRateCount=0
+
+        for syst_str in Systs:
+            if ':' in syst_str: 
+                s=syst_str.split(':')[0]
+                match=syst_str.split(':')[1]
+            else: 
+                s= syst_str
+                match=""
+            hup=GetMC(cat,"_"+s+"Up",match)    
+            hdown=GetMC(cat,"_"+s+"Down",match)    
             hup.Add(h,-1)
             hdown.Add(h,-1)
 
             up=ROOT.std.vector('float')()
             dn=ROOT.std.vector('float')()
             for i in range (0,bin1-bin0):
-                up.push_back(hup.GetBinContent( bin0+i) )
-                dn.push_back(hdown.GetBinContent( bin0+i) )
+                up.push_back(hup.GetBinContent( bin0+i) / h.GetBinContent(bin0+i)  )
+                dn.push_back(hdown.GetBinContent( bin0+i) / h.GetBinContent(bin0+i) )
             
-            n = ROOT.RooRealVar(s,"systematic: "+s,-4.,4)
+            nuisName = s
+            if match != "": nuisName += "_" + match
+            n = ROOT.RooRealVar(nuisName,"systematic: "+s +" " + match,-4.,4)
             objs.append(n)
             print "--> Adding uncertainty",s
             b2.addUncertainty(n, up, dn)
+            print "--> Adding to the rate:" 
+            nuisRateAL.add( n)
+
+            I_nominal = h.Integral()
+            DeltaIup=hup.Integral() / I_nominal
+            DeltaIdown=hdown.Integral() / I_nominal
+            nuisRateStr += " + ( %f*@%d*(@%d>=0) ) + ( %f*@%d*(@%d<0) )"%(DeltaIup,nuisRateCount,nuisRateCount,DeltaIdown,nuisRateCount,nuisRateCount)
+            nuisRateCount +=1
     
         b2.info()
         Import(w,b2)
         objs.append(b2)
+
+        nuisRate=ROOT.RooFormulaVar("bkg_func_binned_norm_nuis_"+cat,nuisRateStr,nuisRateAL)
+        print "-> TotalNuisRate is:",nuisRateStr
+        Import(w,nuisRate)
+        objs.append(nuisRateAL)
+        objs.append(nuisRate)
 
 print "-> Writing"
 w.writeToFile(opts.output)
