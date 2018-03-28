@@ -9,6 +9,9 @@ parser.add_option("","--binput",type='string',help="Backgorund Model Input ROOT 
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="MC.root")
 parser.add_option("-v","--var",dest='var',type="string",help="variable [%default]",default="Mmm")
 parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
+parser.add_option("-s","--smooth",dest="smooth",action="store_true",help="Smooth systematic histograms [%default]",default=False)
+parser.add_option("","--fit",dest="fit",action="store_true",help="Smooth systematic histograms [%default]",default=False)
+parser.add_option("","--plot",dest="plot",action="store_true",help="Produce plots [%default]",default=False)
 opts,args= parser.parse_args()
 
 print "-> Looking for basepath"
@@ -31,7 +34,7 @@ sys.argv=oldArgv[:]
 
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
-ROOT.gROOT.SetBatch()
+if not opts.plot:ROOT.gROOT.SetBatch()
 
 ### general functions
 def Import(w,obj):
@@ -41,7 +44,8 @@ def Import(w,obj):
 ## Global variables
 #MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ','EWK_LLJJ' ]
 MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ' ]
-Systs=["JES","PU","ScaleRF:DY","ScaleR:DY","ScaleF:DY","ScaleR:TT","ScaleF:TT","ScaleRF:TT" ] #"Linear:0.2"]
+#Systs=["JES","PU","ScaleRF:DY","ScaleR:DY","ScaleF:DY","ScaleR:TT","ScaleF:TT","ScaleRF:TT" ] #"Linear:0.2"]
+Systs=["ScaleRF:DY"] 
 config= eval(opts.hmm)
 config.Print()
 w=ROOT.RooWorkspace("w","w")
@@ -64,7 +68,7 @@ def GetMC(cat,nuis="",match=""):
         nuis_str = ""
         if useNuis: nuis_str = nuis[:]
         hTmp=fIn.Get("HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str)
-        print "       Adding *","HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str
+        #print "       Adding *","HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str
         if hTmp == None:
             if idx>1: ## make sure that DY and TT are there
                 print "[WARNING]: Unable to get mc",mc,"for cat",cat
@@ -85,6 +89,7 @@ def GetMC(cat,nuis="",match=""):
 
 histos=[]
 for cat in config.categories:
+    print "-> Producing MC targets (RooDataHist)"
     h=GetMC(cat)    
     bin0 = h.FindBin(config.xmin)
     bin1 = h.FindBin(config.xmax)
@@ -156,8 +161,80 @@ if opts.binput != "":
             dn=ROOT.std.vector('float')()
             for i in range (0,bin1-bin0):
                 up.push_back(hup.GetBinContent( bin0+i) / h.GetBinContent(bin0+i)  )
-                dn.push_back(hdown.GetBinContent( bin0+i) / h.GetBinContent(bin0+i) )
-            
+                dn.push_back(- hdown.GetBinContent( bin0+i) / h.GetBinContent(bin0+i) )# - because is going to be multiplied by -1 at -1sigma
+            if opts.smooth: 
+                sigma=100 
+                up2=ROOT.std.vector('float')()
+                dn2=ROOT.std.vector('float')()
+                for ibin in range(0,up.size()):
+                    numUp=0.0
+                    numDn=0.0
+                    den=0.0
+                    for jbin in range(0,up.size()):
+                        weight=math.exp( -(ibin-jbin)**2/(2.*sigma))
+                        den+=weight
+                        numUp+=up[jbin] *weight
+                        numDn+=dn[jbin] *weight
+                    up2.push_back(numUp/den)
+                    dn2.push_back(numDn/den)
+                up=up2
+                dn=dn2
+
+            if opts.fit:
+                htmpUp=ROOT.TH1D("tmpU","tmp",up.size(),0,up.size())
+                htmpDn=ROOT.TH1D("tmpD","tmp",up.size(),0,up.size())
+                for ibin in range(0,up.size()):
+                    htmpUp.SetBinContent(ibin+1,up[ibin])
+                    htmpDn.SetBinContent(ibin+1,dn[ibin])
+
+                prev=0.
+                func=None
+                for n  in range(1,5):
+                    myfunc=None
+                    if n==1: myfunc=ROOT.TF1("myfunc1","[0]+x*[1]",0,up.size())
+                    elif n==2:myfunc=ROOT.TF1("myfunc2","[0]+x*[1]+x*x*[2]",0,up.size())
+                    elif n==3:myfunc=ROOT.TF1("myfunc3","[0]+x*[1]+x*x*[2]+[3]*x*x*x",0,up.size())
+                    elif n==4:myfunc=ROOT.TF1("myfunc4","[0]+x*[1]+x*x*[2]+[3]*x*x*x+[4]*x*x*x*x",0,up.size())
+                    elif n==5:myfunc=ROOT.TF1("myfunc5","[0]+x*[1]+x*x*[2]+[3]*x*x*x+[4]*x*x*x*x+[5]*x*x*x*x*x",0,up.size())
+                    htmpUp.Fit("myfunc%d"%n,"WQN")
+                    htmpUp.Fit("myfunc%d"%n,"WQNM")
+                    chi2=myfunc.GetChisquare()
+                    ftest= (prev-chi2)/1. / (chi2/(up.size()-n))
+                    prob = 1.-ROOT.TMath.FDistI(ftest,1,up.size()-n)
+                    prev=chi2
+                    if n==5: func=myfunc
+                    if (prob >0.05 and n > 1) or n==5:
+                        # exit strategy
+                        print "-> fTest choose degree",n,"for up variation","prob=",prob
+                        for ibin in range(0,up.size()):
+                            up[ibin] = func.Eval(htmpUp.GetBinCenter(ibin))
+                        break
+                    func=myfunc
+
+                prev=0.
+                func=None
+                for n  in range(1,5):
+                    myfunc=None
+                    if n==1: myfunc=ROOT.TF1("myfunc1","[0]+x*[1]",0,dn.size())
+                    elif n==2:myfunc=ROOT.TF1("myfunc2","[0]+x*[1]+x*x*[2]",0,dn.size())
+                    elif n==3:myfunc=ROOT.TF1("myfunc3","[0]+x*[1]+x*x*[2]+[3]*x*x*x",0,dn.size())
+                    elif n==4:myfunc=ROOT.TF1("myfunc4","[0]+x*[1]+x*x*[2]+[3]*x*x*x+[4]*x*x*x*x",0,dn.size())
+                    elif n==5:myfunc=ROOT.TF1("myfunc5","[0]+x*[1]+x*x*[2]+[3]*x*x*x+[4]*x*x*x*x+[5]*x*x*x*x*x",0,dn.size())
+                    htmpDn.Fit("myfunc%d"%n,"WQN")
+                    htmpDn.Fit("myfunc%d"%n,"WQNM")
+                    chi2=myfunc.GetChisquare()
+                    ftest= (prev-chi2)/1. / (chi2/(dn.size()-n))
+                    prob = 1.-ROOT.TMath.FDistI(ftest,1,dn.size()-n)
+                    prev=chi2
+                    if n==5: func=myfunc
+                    if (prob >0.05 and n > 1) or n==5:
+                        # exit strategy
+                        print "-> fTest choose degree",n,"for dn variation","prob=",prob
+                        for ibin in range(0,dn.size()):
+                            dn[ibin] = func.Eval(htmpDn.GetBinCenter(ibin))
+                        break
+                    func=myfunc
+
             nuisName = s
             if match != "": nuisName += "_" + match
             n = ROOT.RooRealVar(nuisName,"systematic: "+s +" " + match,-4.,4)
@@ -169,9 +246,59 @@ if opts.binput != "":
 
             I_nominal = h.Integral()
             DeltaIup=hup.Integral() / I_nominal
-            DeltaIdown=hdown.Integral() / I_nominal
+            DeltaIdown= - hdown.Integral() / I_nominal
             nuisRateStr += " + ( %f*@%d*(@%d>=0) ) + ( %f*@%d*(@%d<0) )"%(DeltaIup,nuisRateCount,nuisRateCount,DeltaIdown,nuisRateCount,nuisRateCount)
             nuisRateCount +=1
+
+            if opts.plot:
+                print "-> Plotting Syst",syst_str
+                c=ROOT.TCanvas("c","c",800,800)
+                hSystUp=ROOT.TH1D("hSystUp","hSystUp",up.size(),0,up.size())
+                hSystDn=ROOT.TH1D("hSystDn","hSystDn",dn.size(),0,dn.size())
+                for ibin in range(0,up.size()):
+                    hSystUp.SetBinContent(ibin+1,+up[ibin])
+                    hSystDn.SetBinContent(ibin+1,-dn[ibin])
+                hSystUp.SetLineColor(38)
+                hSystUp.SetFillColor(38)
+                hSystUp.SetFillStyle(3004)
+                hSystUp.SetLineWidth(2)
+                hSystDn.SetLineColor(46)
+                hSystDn.SetFillColor(46)
+                hSystDn.SetFillStyle(3005)
+                hSystDn.SetLineWidth(2)
+                
+                hSystUp.SetMaximum( max(hSystUp.GetMaximum(),hSystDn.GetMaximum()) *1.2)
+                hSystUp.SetMinimum( min(hSystUp.GetMinimum(),hSystDn.GetMinimum()) *1.2)
+                hSystUp.Draw("H")
+                hSystDn.Draw("H SAME")
+
+                if opts.fit or opts.smooth:
+                    hSystOrigUp=ROOT.TH1D("hSystOUp","hSystUp",up.size(),0,up.size())
+                    hSystOrigDn=ROOT.TH1D("hSystODn","hSystDn",dn.size(),0,dn.size())
+                    for ibin in range(0,up.size()):
+                        hSystOrigUp.SetBinContent(ibin+1,hup.GetBinContent( bin0+ibin) / h.GetBinContent(bin0+ibin) )
+                        hSystOrigDn.SetBinContent(ibin+1,-hdown.GetBinContent( bin0+ibin) / h.GetBinContent(bin0+ibin) )
+                    hSystOrigUp.SetMarkerColor(ROOT.kRed)
+                    hSystOrigDn.SetMarkerColor(ROOT.kBlue)
+
+                    hSystOrigUp.SetMarkerStyle(20)
+                    hSystOrigDn.SetMarkerStyle(21)
+                    hSystOrigUp.SetMarkerSize(0.5)
+                    hSystOrigDn.SetMarkerSize(0.5)
+
+                    hSystOrigUp.Draw("P SAME")
+                    hSystOrigDn.Draw("P SAME")
+
+
+                ltx=ROOT.TLatex()
+                ltx.SetNDC()
+                ltx.SetTextFont(42)
+                ltx.SetTextSize(0.03)
+                ltx.SetTextAlign(11)
+                ltx.DrawLatex(0.15,0.12,"Integaral = %f/%f"%(DeltaIup,DeltaIdown))
+                ltx.DrawLatex(0.15,0.16,"%s"%(syst_str))
+                
+                raw_input("Ok?")
     
         b2.info()
         Import(w,b2)

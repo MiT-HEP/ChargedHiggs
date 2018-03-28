@@ -177,6 +177,24 @@ class RooBinnedUncertainties : public RooAbsPdf
                 //#ifdef DEBUG_RooBinnedUncertainties
                 //std::cout<<"[DEBUG]"<<" --- Returning value"<< ((_absolute)?(c+d):(c*(d+1.0))) <<std::endl;
                 //#endif
+                if ( c*(d+1.0) < 0 ) 
+                {
+                    std::cout<<"[WARNING]: Returning value less than 0"<<std::endl;
+                    std::cout<<"         : c="<<c<< " d="<<d<<std::endl;
+                    for(unsigned inuis =0 ;inuis< _coefList.getSize() ;++inuis)
+                    {
+                        double p=static_cast<RooAbsReal*>(_coefList.at(inuis))->getVal(); 
+                        double s = 0;
+                        if (p>=0) s = p*shiftUp[inuis][ibin];
+                        else      s = p*shiftDown[inuis][ibin]; // p carries the sign
+
+                        std::cout<<"[DEBUG]"<<"  --- nuis: "<<inuis<< ": "<< static_cast<RooAbsReal*>(_coefList.at(inuis))->GetName() 
+                            <<" "<< p 
+                            <<" shiftUp/Dn "<< shiftUp[inuis][ibin]<<"/"<<shiftDown[inuis][ibin]
+                            <<" d="<<s 
+                            <<std::endl;
+                    }
+                }
                 return (_absolute)?(c+d):(c*(d+1.0));
         }
     private:
