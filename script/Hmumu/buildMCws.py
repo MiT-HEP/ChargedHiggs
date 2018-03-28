@@ -12,6 +12,7 @@ parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [
 parser.add_option("-s","--smooth",dest="smooth",action="store_true",help="Smooth systematic histograms [%default]",default=False)
 parser.add_option("","--fit",dest="fit",action="store_true",help="Smooth systematic histograms [%default]",default=False)
 parser.add_option("","--plot",dest="plot",action="store_true",help="Produce plots [%default]",default=False)
+parser.add_option("","--batch",dest="batch",action="store_true",help="Force batch in plot mode [%default]",default=False)
 opts,args= parser.parse_args()
 
 print "-> Looking for basepath"
@@ -34,7 +35,7 @@ sys.argv=oldArgv[:]
 
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
-if not opts.plot:ROOT.gROOT.SetBatch()
+if not opts.plot or opts.batch:ROOT.gROOT.SetBatch()
 
 ### general functions
 def Import(w,obj):
@@ -44,8 +45,8 @@ def Import(w,obj):
 ## Global variables
 #MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ','EWK_LLJJ' ]
 MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ' ]
-#Systs=["JES","PU","ScaleRF:DY","ScaleR:DY","ScaleF:DY","ScaleR:TT","ScaleF:TT","ScaleRF:TT" ] #"Linear:0.2"]
-Systs=["ScaleRF:DY"] 
+Systs=["JES","PU","ScaleRF:DY","ScaleR:DY","ScaleF:DY","ScaleR:TT","ScaleF:TT","ScaleRF:TT" ] #"Linear:0.2"]
+#Systs=["ScaleRF:DY"] 
 config= eval(opts.hmm)
 config.Print()
 w=ROOT.RooWorkspace("w","w")
@@ -181,6 +182,10 @@ if opts.binput != "":
                 dn=dn2
 
             if opts.fit:
+
+                upSmooth=ROOT.std.vector('float')(up)
+                dnSmooth=ROOT.std.vector('float')(dn)  ## save for plotting
+
                 htmpUp=ROOT.TH1D("tmpU","tmp",up.size(),0,up.size())
                 htmpDn=ROOT.TH1D("tmpD","tmp",up.size(),0,up.size())
                 for ibin in range(0,up.size()):
@@ -189,7 +194,7 @@ if opts.binput != "":
 
                 prev=0.
                 func=None
-                for n  in range(1,5):
+                for n  in range(1,6):
                     myfunc=None
                     if n==1: myfunc=ROOT.TF1("myfunc1","[0]+x*[1]",0,up.size())
                     elif n==2:myfunc=ROOT.TF1("myfunc2","[0]+x*[1]+x*x*[2]",0,up.size())
@@ -203,6 +208,7 @@ if opts.binput != "":
                     prob = 1.-ROOT.TMath.FDistI(ftest,1,up.size()-n)
                     prev=chi2
                     if n==5: func=myfunc
+                    if n>1:print "-> fTest prob for degree",n,"prob=",prob
                     if (prob >0.05 and n > 1) or n==5:
                         # exit strategy
                         print "-> fTest choose degree",n,"for up variation","prob=",prob
@@ -213,7 +219,7 @@ if opts.binput != "":
 
                 prev=0.
                 func=None
-                for n  in range(1,5):
+                for n  in range(1,6):
                     myfunc=None
                     if n==1: myfunc=ROOT.TF1("myfunc1","[0]+x*[1]",0,dn.size())
                     elif n==2:myfunc=ROOT.TF1("myfunc2","[0]+x*[1]+x*x*[2]",0,dn.size())
@@ -227,6 +233,7 @@ if opts.binput != "":
                     prob = 1.-ROOT.TMath.FDistI(ftest,1,dn.size()-n)
                     prev=chi2
                     if n==5: func=myfunc
+                    if n>1:print "-> fTest prob for degree",n,"prob=",prob
                     if (prob >0.05 and n > 1) or n==5:
                         # exit strategy
                         print "-> fTest choose degree",n,"for dn variation","prob=",prob
@@ -267,8 +274,8 @@ if opts.binput != "":
                 hSystDn.SetFillStyle(3005)
                 hSystDn.SetLineWidth(2)
                 
-                hSystUp.SetMaximum( max(hSystUp.GetMaximum(),hSystDn.GetMaximum()) *1.2)
-                hSystUp.SetMinimum( min(hSystUp.GetMinimum(),hSystDn.GetMinimum()) *1.2)
+                hSystUp.SetMaximum( max(hSystUp.GetMaximum(),hSystDn.GetMaximum(),0.045) *1.2)
+                hSystUp.SetMinimum( min(hSystUp.GetMinimum(),hSystDn.GetMinimum(),-0.045) *1.2)
                 hSystUp.Draw("H")
                 hSystDn.Draw("H SAME")
 
@@ -289,16 +296,36 @@ if opts.binput != "":
                     hSystOrigUp.Draw("P SAME")
                     hSystOrigDn.Draw("P SAME")
 
+                if opts.fit and opts.smooth: ## Draw SmoothLine
+                    hSystSmoothUp=ROOT.TH1D("hSystSmoothUp","hSystSmoothUp",up.size(),0,up.size())
+                    hSystSmoothDn=ROOT.TH1D("hSystSmoothDn","hSystSmoothDn",dn.size(),0,dn.size())
+                    for ibin in range(0,up.size()):
+                        hSystSmoothUp.SetBinContent(ibin+1,+upSmooth[ibin])
+                        hSystSmoothDn.SetBinContent(ibin+1,-dnSmooth[ibin])
+                    hSystSmoothUp.SetLineColor(ROOT.kRed+2)
+                    hSystSmoothUp.SetLineWidth(2)
+
+                    hSystSmoothDn.SetLineColor(ROOT.kBlue+2)
+                    hSystSmoothDn.SetLineWidth(2)
+
+                    hSystSmoothDn.Draw("HIST SAME")
+                    hSystSmoothUp.Draw("HIST SAME")
+
 
                 ltx=ROOT.TLatex()
                 ltx.SetNDC()
                 ltx.SetTextFont(42)
                 ltx.SetTextSize(0.03)
                 ltx.SetTextAlign(11)
-                ltx.DrawLatex(0.15,0.12,"Integaral = %f/%f"%(DeltaIup,DeltaIdown))
+                ltx.DrawLatex(0.15,0.12,"Integral = %f/%f"%(DeltaIup,DeltaIdown))
                 ltx.DrawLatex(0.15,0.16,"%s"%(syst_str))
+                ltx.SetTextSize(0.04)
+                ltx.DrawLatex(0.15,0.21,"#bf{%s}"%(cat))
                 
-                raw_input("Ok?")
+                c.Modified()
+                c.Update()
+                if not opts.batch: raw_input("Ok?")
+                c.SaveAs("bkgmc/"+cat+"_"+re.sub(':',"_",syst_str) +".pdf" )
     
         b2.info()
         Import(w,b2)
