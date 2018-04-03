@@ -153,6 +153,11 @@ private:
     int num_otherfj = 0;
     int num_otherbj = 0;
     int num_otherj = 0;
+    int overlapb=0;
+    ////int numlooseb = 0;
+    //Lepton for tt1l
+    Lepton* oneele = NULL;
+    Lepton* onemu = NULL;
 
     /////
     /////

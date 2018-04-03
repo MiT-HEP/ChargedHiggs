@@ -111,7 +111,9 @@ include aux/RMet110_v10.txt
 ############
 ## QCD HT ##
 ############
-include aux/QCDHTRw.txt
+include aux/QCDHTtopRw.txt
+include aux/QCDHTWRw.txt
+##include aux/QCDHTRw.txt
 
 #######################
 ### top reweighting ###
