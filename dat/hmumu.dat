@@ -22,9 +22,18 @@ addConfig=HmumuAnalysis|AddLabel('ZZ')
 addConfig=HmumuAnalysis|AddLabel('EWK_LLJJ')
 
 ## need to add 125, in order to have different masses
+addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M120')
+addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M130')
+
+## need both to book and recognize
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125')
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M130')
+
+addConfig=HmumuAnalysis|AddLabel('VBFHToMuMu_M120')
+addConfig=HmumuAnalysis|AddLabel('VBFHToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('VBFHToMuMu_M130')
 
 addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('VBF_HToMuMu_M125')

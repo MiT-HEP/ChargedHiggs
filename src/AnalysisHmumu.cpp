@@ -945,6 +945,15 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
+
+    if ( label == "GluGluHToMuMu_M120") label = "GluGlu_HToMuMu_M120";
+    if ( label == "GluGluHToMuMu_M125") label = "GluGlu_HToMuMu_M125";
+    if ( label == "GluGluHToMuMu_M130") label = "GluGlu_HToMuMu_M130";
+
+    if ( label == "VBFHToMuMu_M120") label = "VBF_HToMuMu_M120";
+    if ( label == "VBFHToMuMu_M125") label = "VBF_HToMuMu_M125";
+    if ( label == "VBFHToMuMu_M130") label = "VBF_HToMuMu_M130";
+
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
 
