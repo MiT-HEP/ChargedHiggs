@@ -53,13 +53,19 @@ class Loop:
 
         self.verbose = 1
 
-    def _call(self,cmd,errtype="build",logdir = ""):
+    def _call(self,cmd,errtype="build",logdir = "",trials=1):
         #cmd += " 2>&1 | tee %(log)s/setup.txt"%dictionary
         if logdir=="":
             final_cmd=cmd
         else:
             final_cmd="{ "+ cmd +" ; } 2>&1 >>" + logdir + "/"+errtype +".txt"
         st = call(final_cmd,shell=True)
+        if st !=0 and trials > 1:
+            trial=1
+            while trial < trials and st!=0:
+                print "[" + self.color['green'] + "INFO" + self.color["white"] +"] Calling trial",trial,"of",trials
+                st = call(final_cmd,shell=True)
+                
         if st != 0: 
             if self.verbose >=0: print "["+self.color['red']+"ERROR"+self.color['white']+"] Unable to run '"+final_cmd+"'"
             if errtype=="setup":raise SetupError
@@ -95,7 +101,7 @@ class Loop:
         dictionary['cmssw'] = 'CMSSW_9_4_1'
         dictionary['tag'] = 'cmssw_94x'
         dictionary['coretag'] = 'CMSSW_92X'
-        dictionary['combinetag'] = 'v7.0.5'
+        dictionary['combinetag'] = 'v7.0.7'
         dictionary['combine'] = 'yes'
 
         conf = open("%(tmp)s/config.txt"%dictionary)
@@ -126,6 +132,8 @@ class Loop:
             cmd +=" && git checkout %(combinetag)s"%dictionary
 
             self._call(cmd,"setup",self.log+"/"+pr.sha)
+
+            # patch
             cmd = "%(cmsenv)s"%dictionary
             cmd +=" && cd HiggsAnalysis/CombinedLimit"
             patch ='''
@@ -143,12 +151,19 @@ class Loop:
             '''
             cmd += ' &&  patch -p1 <<EOF' 
             cmd += "\n" +patch +"\nEOF\n"
-            self._call(cmd,"setup") ## no log fol EOF
+            self._call(cmd,"setup") ## no log for EOF
 
+            #only clean. because scram b will be retried 5 times
             cmd = "%(cmsenv)s"%dictionary
             cmd +=" && cd HiggsAnalysis/CombinedLimit"
-            cmd += ' && scramv1 b clean; scramv1 b -j 8'
+            cmd += ' && scramv1 b clean'
             self._call(cmd,"setup",self.log+"/"+pr.sha)
+
+            #retry scram b up to 5 times
+            cmd = "%(cmsenv)s"%dictionary
+            cmd +=" && cd HiggsAnalysis/CombinedLimit"
+            cmd += ' &&  scramv1 b -j 8'
+            self._call(cmd,"setup",self.log+"/"+pr.sha,5)
 
         #setup core/nero
         if True:

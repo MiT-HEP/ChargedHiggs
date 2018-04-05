@@ -101,6 +101,7 @@ class HmumuAnalysis: virtual public AnalysisBase
         vector<string> weights;
 
         bool doScikit{true};
+        bool doUnbinned{true};
     protected:
     /**********************************
      *          SCIKIT                *

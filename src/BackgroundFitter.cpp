@@ -1291,7 +1291,7 @@ void BackgroundFitter::fit(){
 
         //RooMultiPdf multipdf;
         RooMultiPdf pdf_bkg(Form("pdf_cat%d_bkg",cat),"multipdf",pdf_cat,storedPdfs);
-        RooRealVar pdf_norm(Form("pdf_cat%d_bkg_norm",cat),"norm", hist_[name]->sumEntries()) ;
+        RooRealVar pdf_norm(Form("pdf_cat%d_bkg_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
         //pdf_norm.setConstant();
 
         w_ -> import (pdf_bkg,RecycleConflictNodes());  

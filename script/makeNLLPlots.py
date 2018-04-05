@@ -26,6 +26,7 @@ parser.add_option("","--run12",dest="run12",default=False,action="store_true")
 parser.add_option("","--paper",dest="paper",default=False,action="store_true")
 parser.add_option("","--nosmooth",dest="nosmooth",default=False,action="store_true",help="No Smooth")
 parser.add_option("","--debug",dest="debug",default=False,action="store_true")
+parser.add_option("","--precision",dest="precision",default="4.1f",help="precision [%default]")
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -77,6 +78,14 @@ def findQuantile(pts,cl):
 
 	return min,max
 
+def shiftToMinimum(res):
+    minNLL = min([re[1] for re in res])
+    res2=[]
+    for xv,nll in res:
+        res2.append( (xv,nll - minNLL) ) 
+    #print "->Found minimum at",xv,nll,"->0"
+    return res2
+
 def smoothNLL(gr,res):
   print "-> Smooth"
   minVal = min([re[0] for re in res])
@@ -127,6 +136,7 @@ def smoothNLL_v3(gr,res,w=0.3,delta=0.05):
 def cleanSpikes1D(rfix):
 
  # cindex is where deltaNLL = 0 (pre anything)
+ cindex=-1
  MAXDER = 1.0
  for i,r in enumerate(rfix):
    if abs(r[1]) <0.001: cindex = i
@@ -220,9 +230,11 @@ for i in range(tree.GetEntries()):
   if 2*tree.deltaNLL < 100:
     res.append([xv,2*tree.deltaNLL])
 res.sort()
+res=shiftToMinimum(res)
 ## clean spikes
 res = cleanSpikes1D(res)
 minNLL = min([re[1] for re in res])
+print "minNLL is",minNLL
 
 obs=ROOT.TGraph()
 for re, nll in res: 
@@ -253,6 +265,7 @@ if opts.stat != "":
       if 2*treeStat.deltaNLL < 100:
         stat.append([xv,2*treeStat.deltaNLL])
     stat.sort()
+    stat=shiftToMinimum(stat)
     ## clean spikes
     stat = cleanSpikes1D(stat)
     minNLLStat = min([re[1] for re in stat])
@@ -276,10 +289,20 @@ if opts.stat != "":
     print "BestFit (Stat)  : %4.4f +%4.4g -%4.4g (==%4.4g)" % ( xminStat, eplusStat , eminusStat,xmin )
 
 graphsMore={}
+textMore={}
+
 if opts.more != "":
     for s in opts.more.split(','):
         more=[]
-        filename,label=s.split(':')
+        if len(s.split(':')) == 2:
+            filename,label=s.split(':')
+            dosmooth=True
+        else:
+            filename,label,smoothstr=s.split(':')
+            dosmooth=True
+            if smoothstr=='false':
+                dosmooth=False
+                print "unsetting smoothing for",label
         print "Doing label",label
         obsM=None
         fIn=ROOT.TFile.Open(filename)
@@ -307,7 +330,7 @@ if opts.more != "":
         obsM.SetName(label)
         obsM.SetTitle(label)
 
-        graphsMore[label]=(obsM,more)
+        graphsMore[label]=(obsM,more,dosmooth)
     
         xminM = m
         eplusM = h-xmin
@@ -342,9 +365,12 @@ else:
     if opts.more !="":
         color = [ROOT.kRed,ROOT.kGreen,ROOT.kOrange,ROOT.kCyan]
         for idx,label in enumerate(graphsMore):
-            obsM,more = graphsMore[label]
+            obsM,more,dosmooth = graphsMore[label]
             print "processing (v2)",label, obsM.GetName(),len(more)
-            obsM2 = smoothNLL_v3(obsM,more)
+            if dosmooth:
+                obsM2 = smoothNLL_v3(obsM,more)
+            else:
+                obsM2=obsM
             obsM2.SetLineColor( color[idx%len(color)] )
             obsM2.SetTitle(label)
             obsM2.Draw("C SAME")
@@ -359,7 +385,9 @@ else:
             print "BestFit (",label,"Smooth) : %4.4f +%4.4g -%4.4g" % ( xminSmooth, eplusM , eminusM )
             # override for legend
             obsM.SetLineColor(color[idx%len(color)] )
-            graphsMore[label] = (obsM2,more)
+            graphsMore[label] = (obsM2,more,dosmooth)
+            textMore[label]= (label+":" +"#hat{#mu}_{SM} = %"+opts.precision+" ^{#font[122]{+}%"+opts.precision+"}_{#font[122]{-}%"+opts.precision+"}")%(xminSmooth,eplusM,eminusM)
+            
             if opts.debug:
                 obsM.SetLineWidth(3)
                 obsM.Draw("L SAME")
@@ -371,10 +399,15 @@ else:
     m,m1 = findQuantile(res_smooth,0);
     l,h  = findQuantile(res_smooth,1);
     xminSmooth = m
-    if not opts.run12:
-        eplus = h-xmin
-        eminus = xmin-l
-    print "BestFit (Smooth) : %4.4f +%4.4g -%4.4g" % ( xminSmooth, eplus , eminus )
+    #if not opts.run12:
+    eplusSmooth = h-xmin
+    eminusSmooth = xmin-l
+    print "BestFit (Smooth) : %4.4f +%4.4g -%4.4g" % ( xminSmooth, eplusSmooth , eminusSmooth )
+    ## OVERRIDE xmin, eplus eminus
+    if True:
+        xmin=xminSmooth
+        eplus=eplusSmooth
+        eminus=eminusSmooth
 
     if opts.stat!="":
         res_stat_smooth = []
@@ -409,13 +442,16 @@ l.DrawLatex(0.8,0.88,"H#rightarrow#mu#mu")
 l.SetTextSize(0.045)
 l.SetTextAlign(23)
 if opts.stat == "":
-    if opts.run12:
-        l.DrawLatex(0.8,0.88-.1,"#hat{#mu}_{SM} = %4.1f ^{#font[122]{+}%4.1f}_{#font[122]{-}%4.1f}"%(xmin,eplus,eminus))
-    else:
-        print "FIXME, Draw Latex"
-        l.DrawLatex(0.78,0.88-.1,"#hat{#mu}_{SM} = %4.1f #font[122]{#pm}%4.1f"%(0.7,1.0))
+    l.DrawLatex(0.8,0.88-.1,("#hat{#mu}_{SM} = %"+opts.precision+" ^{#font[122]{+}%"+opts.precision+"}_{#font[122]{-}%"+opts.precision+"}")%(xmin,eplus,eminus))
+    #if opts.run12:
+    #else:
+    #    l.DrawLatex(0.8,0.88-.1,"#hat{#mu}_{SM} = %4.1f ^{#font[122]{+}%4.1f}_{#font[122]{-}%4.1f}"%(xmin,eplus,eminus))
 else:
-    l.DrawLatex(0.37,0.88-.1,"#splitline{#hat{#mu}_{SM} = %4.1f ^{#font[122]{+}%4.1f}_{#font[122]{-}%4.1f}}{#scale[0.7]{ =  %4.1f ^{#font[122]{+}%4.1f}_{#font[122]{-}%4.1f} (stat) #oplus ^{#font[122]{+}%4.1f}_{#font[122]{-}%4.1f} (syst)}}"%(xmin,eplus,eminus,xmin,eplusStat,eminusStat ,eplusSyst, eminusSyst ))
+    l.DrawLatex(0.37,0.88-.1,("#splitline{#hat{#mu}_{SM} = %"+opts.precision+" ^{#font[122]{+}%"+opts.precision+"}_{#font[122]{-}%"+opts.precision+"}}{#scale[0.7]{ =  %"+opts.precision+" ^{#font[122]{+}%"+opts.precision+"}_{#font[122]{-}%"+opts.precision+"} (stat) #oplus ^{#font[122]{+}%"+opts.precision+"}_{#font[122]{-}%"+opts.precision+"} (syst)}}")%(xmin,eplus,eminus,xmin,eplusStat,eminusStat ,eplusSyst, eminusSyst ))
+
+if opts.more !="":
+    for idx,label in enumerate(textMore):
+        l.DrawLatex(0.37,0.88-.1 -.1*idx,textMore[label])
 
 print
 print "---------------------------"
@@ -456,7 +492,7 @@ if opts.stat != "" and not opts.nosmooth:
 
 if opts.more != "":
     for label in graphsMore:
-        obsM,more = graphsMore[label]
+        obsM,more,dosmooth = graphsMore[label]
         leg.AddEntry(obsM,label,"L")
 
 

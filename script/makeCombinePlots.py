@@ -23,7 +23,8 @@ parser.add_option("","--exclude",dest="exclude",help="Exclude mh points MH1,MH2,
 parser.add_option("","--run12",dest="run12",default=False,action="store_true")
 parser.add_option("","--paper",dest="paper",default=False,action="store_true")
 parser.add_option("","--supplementary",dest="supplementary",default=False,action="store_true")
-parser.add_option("","--M125",dest="M125",default=False,action="store_true")
+parser.add_option("","--M125",dest="M125",default=False,help="The second file is the MH=125 asimov",action="store_true")
+parser.add_option("-n","--newlegend",dest="newleg",action='store_true',help="NewLegend [%default]",default=False);
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -250,7 +251,7 @@ for idx,f in enumerate(opts.file.split(',')):
 	col = colors[idx]
 	if idx == 0 :
 		obs.SetMarkerStyle(21)
-		obs.SetMarkerSize(0.5)
+		obs.SetMarkerSize(1.0)
 		obs.SetLineColor(1)
 		obs.SetLineWidth(2)
 		obs.SetFillStyle(0)
@@ -260,12 +261,13 @@ for idx,f in enumerate(opts.file.split(',')):
 		exp.SetLineColor(1)
 		exp.SetLineStyle(2)
 		exp.SetFillStyle(0)
+		exp.SetLineWidth(2)
 		
 		oneSigma.SetLineStyle(2)
 		twoSigma.SetLineStyle(2)
 		
 		oneSigma.SetFillColor(ROOT.kGreen+1)
-		twoSigma.SetFillColor(ROOT.kOrange)
+		twoSigma.SetFillColor(ROOT.kYellow)
 
 		### PRINT MORE ##
 		if opts.unblind:
@@ -277,7 +279,7 @@ for idx,f in enumerate(opts.file.split(',')):
 
 	else:
 		obs.SetMarkerStyle(20+idx)
-		obs.SetMarkerSize(0.5)
+		obs.SetMarkerSize(0.3)
 		obs.SetMarkerColor(col)
 		obs.SetLineColor(col)
 		obs.SetLineWidth(2)
@@ -318,10 +320,10 @@ ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 
 if opts.xaxis != "":
-	dummy = ROOT.TH1D("dummy","dummy",100, float(opts.xaxis.split(',')[0]), float(opts.xaxis.split(',')[1]))
-	dummy.GetXaxis().SetRangeUser(200,3000)
+	dummy = ROOT.TH1D("dummy","dummy",1000, float(opts.xaxis.split(',')[0]), float(opts.xaxis.split(',')[1]))
 else:
 	dummy = ROOT.TH1D("dummy","dummy",1000, 0, 3000)
+	dummy.GetXaxis().SetRangeUser(200,3000)
 
 dummy.GetYaxis().SetRangeUser(1e2,1e8)
 
@@ -334,6 +336,10 @@ if opts.xaxis != "" and float(opts.xaxis.split(',')[1]) <135: ## SM?
 	dummy.GetYaxis().SetTitleSize(0.05)
 	dummy.GetXaxis().SetLabelSize(0.045)
 	dummy.GetYaxis().SetLabelSize(0.045)
+	dummy.GetXaxis().SetLabelOffset(0.02)
+	dummy.GetYaxis().SetLabelOffset(0.02)
+	dummy.GetXaxis().SetTitleOffset(1.2)
+	dummy.GetYaxis().SetTitleOffset(1.1)
 	dummy.GetYaxis().SetTitle("95% CL Limit on #sigma/#sigma_{SM}")
 else:
     c.SetLogy()
@@ -415,7 +421,7 @@ if opts.unblind:
             l.DrawLatex(xcms,ycms,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
 else:
     l.DrawLatex(xcms,ycms,"#bf{CMS}, #scale[0.75]{#it{Simulation}}")
-l.SetTextSize(0.035)
+l.SetTextSize(0.04)
 l.SetTextAlign(31)
 if opts.run12:
     l.DrawLatex(0.89+0.05,.91,"5.0 fb^{-1} (7 TeV) + 19.8 fb^{-1} (8 TeV) + 35.9 fb^{-1} (13 TeV)")
@@ -479,8 +485,79 @@ if doTable:
 #if opts.xsec:
 #	leg.AddEntry(exp8TeV, "expected (8TeV)","L")
 #	leg.AddEntry(obs8TeV, "observed (8TeV)","PL")
+obj=[]
+if opts.newleg:
+    print "-> Adding NEW Legend"
+    ltx = ROOT.TLatex()
+    obj.append(ltx)
+    ltx . SetNDC()
+    ltx . SetTextSize(0.05)
+    ltx . SetTextFont(42)
+    ltx . SetTextAlign(12)
+    xmin = 0.4
+    ymax = .85
+    textSep = 0.05
+    delta = 0.045
+    entryDelta = 0.07
+    dataPoint =  ROOT.TMarker(xmin,ymax,20)
+    dataPoint.SetMarkerColor(ROOT.kBlack)
+    dataPoint.SetMarkerStyle(list_data[0].GetMarkerStyle())
+    dataPoint.SetMarkerSize(list_data[0].GetMarkerSize())
+    dataPoint.SetNDC()
+    dataLine =  ROOT.TLine(xmin-delta/2., ymax ,xmin + delta/2, ymax)
+    dataLine.SetNDC()
+    dataLine.SetLineColor(ROOT.kBlack)
+    dataLine.SetLineWidth(1)
+    obj += [dataPoint,dataLine]
+    ## Draw data
+    dataPoint.Draw("SAME")
+    dataLine.Draw("SAME")
+    ltx.DrawLatex(xmin+ textSep,ymax,"Observed")
+    
+    ## draw median and error
+    y_exp = ymax - entryDelta
+    vertical=False
+    if vertical:
+        l_exp = ROOT.TLine(xmin,y_exp -delta/2., xmin,y_exp+delta/2.)
+        l_exp.SetNDC()
+        l_exp.SetLineColor(ROOT.kBlack)
+        l_exp.SetLineWidth(2)
+        l_exp.SetLineColor(1)
+        l_exp.SetLineStyle(7)
+        oneSigma = ROOT.TPave(xmin-delta/3.,y_exp-delta/2.,xmin+delta/3.,y_exp+delta/2.,0,"NDC")
+        twoSigma = ROOT.TPave(xmin-delta*2/3.,y_exp-delta/2.,xmin+delta*2/3.,y_exp+delta/2.,0,"NDC")
+        obj . extend([l_exp,oneSigma,twoSigma])
+    else:
+        l_exp = ROOT.TLine(xmin-delta/2.,y_exp, xmin + delta/2.,y_exp)
+        l_exp.SetNDC()
+        l_exp.SetLineColor(ROOT.kBlack)
+        l_exp.SetLineWidth(3)
+        l_exp.SetLineColor(1)
+        l_exp.SetLineStyle(2)
+        oneSigma = ROOT.TPave(xmin-delta/2.,y_exp-delta/3.,xmin+delta/2.,y_exp+delta/3.,0,"NDC")
+        twoSigma = ROOT.TPave(xmin-delta/2.,y_exp-delta*2/3.,xmin+delta/2.,y_exp+delta*2/3.,0,"NDC")
+        obj . extend([l_exp,oneSigma,twoSigma])
+    oneSigma.SetFillColor(ROOT.kGreen+1)
+    twoSigma.SetFillColor(ROOT.kYellow)
+    twoSigma.Draw("SAME")
+    oneSigma.Draw("SAME")
+    l_exp.Draw("SAME")
+    ltx.DrawLatex(xmin +textSep,y_exp,"Expected (#scale[0.7]{background, 68% CL, 95% CL})")
 
-leg.Draw()
+    if opts.M125:
+        y_exp125 = ymax - 2*entryDelta
+        l_exp125 = ROOT.TLine(xmin-delta/2.,y_exp125 , xmin+delta/2.,y_exp125)
+        l_exp125.SetNDC()
+        l_exp125.SetLineColor(ROOT.kRed)
+        l_exp125.SetLineStyle(2)
+        l_exp125.SetLineWidth(3)
+        l_exp125.Draw("SAME")
+        ltx.DrawLatex(xmin +textSep,y_exp125,"Expected (SM #scale[0.7]{m_{H} = 125 GeV})")
+else:
+    leg.Draw()
+
+dummy.Draw("AXIS SAME")
+c.RedrawAxis()
 
 c.Modified()
 c.Update()

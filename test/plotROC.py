@@ -9,7 +9,7 @@ import numpy as np
 from optparse import OptionParser
 parser = OptionParser()
 
-parser.add_option("-f","--file",dest="file",type="string",help="File:var[:legend] list comma separated",default="weights/output.root:DNN:dnn")
+parser.add_option("-f","--file",dest="file",type="string",help="File:var[:legend][:flip] list comma separated",default="weights/output.root:DNN:dnn")
 parser.add_option("-t","--tree",dest="tree",type="string",help="Tree [%default]",default="dataset/TestTree")
 (opts,args)=parser.parse_args()
 
@@ -95,11 +95,19 @@ styles=[ 1          ,1 ,1 , 7, 7,7]
 leg = ROOT .TLegend(0.18,0.18,.4,.5)
 leg.SetBorderSize(0)
 
+allSig=[]
+allBkg=[]
+allLeg=[]
+
 for idx,s in enumerate(opts.file.split(',')):
     f = s.split(":")[0]
     v = s.split(":")[1]
     if len(s.split(':')) >2: l = s.split(":")[2]
     else: l = f+"_"+v
+
+    if len(s.split(':')) >3: flip = bool(s.split(":")[3])
+    else: flip = False
+
     col = colors[idx]
     sty = styles[idx]
     fIn = ROOT.TFile.Open(f)
@@ -138,14 +146,14 @@ for idx,s in enumerate(opts.file.split(',')):
             if t.classID == 0 : hSig.Fill(val, t.weight)
             else : hBkg.Fill(val,t.weight)
     else:
-        t.Draw(v + ">>hSig","weight * (classID==0)","goff") ## 0 = sig
-        t.Draw(v + ">>hBkg","weight * (classID==1)","goff") ## 1 = bkg
+        t.Draw(v + ">>hSig","weight * (classID==1)","goff") ## 0 = sig
+        t.Draw(v + ">>hBkg","weight * (classID==0)","goff") ## 1 = bkg
         if doLike:
             t0=fIn.Get("dataset/TrainTree")
             hSig0 = hSig.Clone("hSig0")
             hBkg0 = hBkg.Clone("hBkg0")
-            t0.Draw(v + ">>hSig0","weight * (classID==0)","goff") ## 0 = sig
-            t0.Draw(v + ">>hBkg0","weight * (classID==1)","goff") ## 1 = bkg
+            t0.Draw(v + ">>hSig0","weight * (classID==1)","goff") ## 0 = sig
+            t0.Draw(v + ">>hBkg0","weight * (classID==0)","goff") ## 1 = bkg
             ## one Tree -> hSig0 = hSig
             ## rmap to a likelihood ratio s/s+b
             hSig0.Scale(1./hSig0.Integral())
@@ -193,6 +201,13 @@ for idx,s in enumerate(opts.file.split(',')):
     hSig.Scale(1./hSig.Integral())
     hBkg.Scale(1./hBkg.Integral())
 
+    hSig.SetName("sig_%s"%l)
+    hBkg.SetName("bkg_%s"%l)
+    ROOT.gROOT.cd()
+    allSig.append(hSig.Clone())
+    allBkg.append(hBkg.Clone())
+    allLeg.append(l)
+
     ### c0.cd(idx+1)
     ### hSig.DrawNormalized("HIST")
     ### hBkg.DrawNormalized("HIST SAME")
@@ -209,8 +224,9 @@ for idx,s in enumerate(opts.file.split(',')):
 
     for i in range (0, hSig .GetNbinsX() ):
         rsig = hSig.Integral(1, i+1) ## sig efficiency is 1.-sig
-        sig = 1.-rsig
-        rej = hBkg.Integral(1, i+1) ## bkg rej
+        sig = 1.-rsig if not flip else rsig
+        rbkg = hBkg.Integral(1, i+1) ## bkg rej
+        rej = rbkg if not flip else 1.-rbkg
         #rej = 1.-bkg
         n = g.GetN()
         if n> 0 and sig == g.GetX()[n-1] and rej == g.GetY()[n-1] : continue ## remove duplicates
@@ -221,12 +237,58 @@ for idx,s in enumerate(opts.file.split(',')):
     objs.append(g)
     leg.AddEntry(g,l,"L")
 
-    hSig.Delete()
-    hBkg.Delete()
+    #hSig.Delete()
+    #hBkg.Delete()
 
 leg.Draw("SAME")
 c.Modify()
 c.Update()
+
+c2=ROOT.TCanvas("c2","c2",800,600)
+c2.SetBottomMargin(0.15)
+c2.SetLeftMargin(0.15)
+c2.SetRightMargin(0.05)
+c2.SetTopMargin(0.07)
+leg2 = ROOT .TLegend(0.18,0.65,.4,.94)
+leg2.SetBorderSize(0)
+leg2.SetFillStyle(0)
+m=0
+for idx in range(0,len(allSig)):
+    hSig=allSig[idx]
+    hBkg=allBkg[idx]
+    hSig.Rebin(20)
+    hBkg.Rebin(20)
+    hSig.SetLineColor(38)
+    hSig.SetLineWidth(2)
+    hBkg.SetLineColor(46)
+    hBkg.SetLineWidth(2)
+    hBkg.SetLineStyle(idx+1)
+    hSig.SetLineStyle(idx+1)
+    m=max(m,hSig.GetMaximum())
+    m=max(m,hBkg.GetMaximum())
+    if idx==0:
+        v = opts.file.split(',')[0].split(":")[1]
+        hSig.SetTitle("Signal and Background Distributions")
+        hSig.Draw("HIST")
+        hSig.GetXaxis().SetTitle(v)
+    else: hSig.Draw("HIST SAME")
+    hBkg.Draw("HIST SAME")
+    if idx==0:
+        leg2.AddEntry(hSig,"Sig","F")
+        leg2.AddEntry(hBkg,"Bkg","F")
+    hDummy=ROOT.TH1D("h","h",1,0,1)
+    hDummy.SetLineColor(ROOT.kGray+2)
+    hDummy.SetLineWidth(2)
+    hDummy.SetLineStyle(idx+1)
+    leg2.AddEntry(hDummy,allLeg[idx],"L")
+    objs.append(hDummy)
+
+allSig[0].SetMaximum(m*1.2)
+leg2.Draw()
+
+c2.Modify()
+c2.Update()
+
 raw_input("ok?")
 
 
