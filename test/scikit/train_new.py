@@ -15,33 +15,35 @@ from keras.optimizers import SGD
 #    return initializations.normal(shape, scale=0.05, name=name)
 
 def build_model():
+    print "-> building model"
     model = Sequential()
-    model.add(Dense(40, input_dim=17,activation='tanh') )
+    model.add(Dense(100, input_dim=29,activation='tanh') )
     model.add(Dropout(0.25))
-    model.add(Dense(25,activation='tanh'))
+    model.add(Dense(50,activation='tanh'))
     model.add(Dense(1,activation='sigmoid'))
     
     model.compile(
             #loss='mean_squared_error',
             #loss='categorical_crossentropy',
             loss='binary_crossentropy',
-            #optimizer=SGD(lr=0.01),
-            optimizer='adam',
+            optimizer=SGD(lr=0.01),
+            #optimizer='adam',
             metrics=['accuracy'])
     return model
 
-print "-> skip model construction"
-#model=build_model()
-#model.save('model.h5')
+model=build_model()
+model.save('model.h5')
+#print "-> skip model construction"
 
 ########## USE TMVA FOR TRAINING ########
 import ROOT
 
 ROOT.TMVA.Tools.Instance()
+# for KERAS TRAINING IS NEEDED
 #ROOT.TMVA.PyMethodBase.PyInitialize()
 #print "TMVA:",ROOT.TMVA_RELEASE
 
-multiclass=True
+multiclass=False
 if multiclass:
     print "-> Using multiclassification"
 
@@ -56,7 +58,7 @@ outname="output.root" if not multiclass else "multiclass.root"
 out=ROOT.TFile(outname,"RECREATE");
 
 analysis="Classification" if not multiclass else "multiclass"
-factory = ROOT.TMVA.Factory("factory",out,"!V:!Silent:Color:DrawProgressBar:Transformations=I;P;:AnalysisType=%s"%analysis)
+factory = ROOT.TMVA.Factory("factory",out,"!V:!Silent:Color:DrawProgressBar:Transformations=I;:AnalysisType=%s"%analysis)
 
 dataset="dataset" if not multiclass else "datamulti"
 dataloader=ROOT.TMVA.DataLoader(dataset);
@@ -75,7 +77,7 @@ features=[
         "pass_leptonveto",
         ## vbf variables
         "mjj_1","mjj_2","detajj_1","detajj_2",
-        "softNjets1","softHt1","softNjets5","softNjets10",
+        "softNjets1","softHt1","softHt5","softHt10",
         "firstQGL","secondQGL","thirdQGL",
         ## bjets variables
         "nbjets","maxDeepB","leadDeepB","maxCSV",
@@ -136,7 +138,7 @@ if not multiclass:
                 );
 else:
     factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
-                ROOT.TString("!H:!V:NTrees=2000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.99:Pray")
+                ROOT.TString("!H:!V:NTrees=5000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
                 );
 
 factory . TrainAllMethods();

@@ -1,7 +1,13 @@
-## LABEL type pt eta sf err
-## include file
-############# 
+##############################
+## LABEL type pt eta sf err ##
+## include file             ##
+##############################
 
+###########
+## DUMMY ##
+###########
+# don't rely on the value of a dummy sf. use it as store
+dummy base 1.0 0.0
 
 ###################
 ## Electron from POG ##
@@ -13,7 +19,16 @@
 # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonWorkInProgressAndPagResults#Results_on_the_full_2016_data
 # https://indico.cern.ch/event/594396/contributions/2402538/attachments/1389409/2116003/20161215_MuonPOG_GeneralPPD.pdf
 
+mu_id_runBC json-muon aux/mu/RunBC_data_ID.json aux/mu/RunBC_mc_ID.json NUM_MediumID_DEN_genTracks
+mu_id_runDE json-muon aux/mu/RunDE_data_ID.json aux/mu/RunDE_mc_ID.json NUM_MediumID_DEN_genTracks
+mu_id_runF json-muon aux/mu/RunF_data_ID.json aux/mu/RunF_mc_ID.json NUM_MediumID_DEN_genTracks
 
+mu_iso_runBC json-muon aux/mu/RunBC_data_ISO.json aux/mu/RunBC_mc_ISO.json NUM_LooseRelIso_DEN_MediumID
+mu_iso_runDE json-muon aux/mu/RunDE_data_ISO.json aux/mu/RunDE_mc_ISO.json NUM_LooseRelIso_DEN_MediumID
+mu_iso_runF json-muon aux/mu/RunF_data_ISO.json aux/mu/RunF_mc_ISO.json NUM_LooseRelIso_DEN_MediumID
+
+#mu_trigger_runBCDEF json-muon
+mu_trigger_runBCDEF th2f aux/mu/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root IsoMu27_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu27_PtEtaBins/efficienciesMC/abseta_pt_MC
 
 ################
 ##   WG1 Unc  ##

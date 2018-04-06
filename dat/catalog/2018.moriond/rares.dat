@@ -1,0 +1,8 @@
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.2/
+addfiles=%(amariniHmm)s/TTWJetsToLNu_TuneCP5_13TeV-amcatnlo-pythia8
+addfiles=%(amariniHmm)s/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8
+addfiles=%(amariniHmm)s/WWTo2L2Nu_NNPDF31_TuneCP5_13TeV-powheg-pythia8
+addfiles=%(amariniHmm)s/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8
+addfiles=%(amariniHmm)s/ZZTo2L2Nu_13TeV_powheg_pythia8
+addfiles=%(amariniHmm)s/ZZTo4L_13TeV_powheg_pythia8
+
