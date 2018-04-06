@@ -11,6 +11,7 @@ parser.add_option("-t","--trainscheme",type='int',help="Variable scheme", defaul
 
 opts,args=parser.parse_args()
 
+print "-> running train_hmm with options:",' '.join(sys.argv)
 
 import ROOT
 ROOT.TMVA.Tools.Instance()

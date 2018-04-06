@@ -3,15 +3,15 @@ should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 universe = vanilla
 transfer_input_files = train_hmm.py
+#trasfer_output_files = output_var_$(var)_train_$(train).root,dataset_var_$(var)_train_$(train)
 arguments = $(var) $(train)
-log  = test.var.$(var).train.$(train).log
-output = test.var.$(var).train.$(train).out
-error = test.var.$(var).train.$(train).err
-trasfer_output_files = output_var_$(var)_train_$(train).root dataset_var_$(var)_train_$(train)
+log  = log/test.var.$(var).train.$(train).log
+output = log/test.var.$(var).train.$(train).out
+error = log/test.var.$(var).train.$(train).err
+requirements = Arch == "X86_64" && OpSysAndVer == "SL6" && HasFileTransfer
 
 ## var [0:4] train[0:6]
 #for var in {0..4}; do for train in {0..6}; do echo var=$var; echo train=$train; echo Queue ; echo ; done ; done
-
 var=0
 train=0
 Queue
@@ -151,5 +151,4 @@ Queue
 var=4
 train=6
 Queue
-
 
