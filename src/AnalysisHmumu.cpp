@@ -1269,13 +1269,16 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (mu0)
     {
-        e->SetPtEtaSF("mu_id_runBC", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
+        float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
+
+        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,fabs(mu0->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_id_runDE", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_id_runF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_id_runF", pt_for_sf,fabs(mu0->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
@@ -1283,13 +1286,15 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (mu1)
     {
-        e->SetPtEtaSF("mu_id_runBC", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
+        float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
+        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,fabs(mu1->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_id_runDE", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_id_runF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_id_runF", pt_for_sf,fabs(mu1->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
@@ -1299,26 +1304,30 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     // ISO Loose
     if (mu0)
     {
-        e->SetPtEtaSF("mu_iso_runBC", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
+        float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
+        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,fabs(mu0->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_iso_runDE", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_iso_runF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,fabs(mu0->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
     if (mu1)
     {
-        e->SetPtEtaSF("mu_iso_runBC", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
+        float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
+        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,fabs(mu1->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_iso_runDE", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_iso_runF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,fabs(mu1->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
@@ -1463,7 +1472,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         SetTreeVar("metphi" ,e->GetMet().Phi());
 
         // basic jet info
-        for(int ijet=0;ijet<selectedJets.size();++ijet)
+        for(int ijet=0;ijet<std::min(selectedJets.size(),size_t(20));++ijet)
         {
             SetTreeVar("jet_pt" ,ijet,selectedJets[ijet]->Pt());
             SetTreeVar("jet_eta",ijet,selectedJets[ijet]->Eta());

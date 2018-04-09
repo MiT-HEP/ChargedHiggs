@@ -49,9 +49,10 @@ if multiclass:
 
 ## BOOK Tree
 t=ROOT.TChain("hmm")
-for n in range(0,100):
-    if n in [53,55,59,73,93,94]: continue #exclude running jobs
-    t.Add("/eos/user/a/amarini/Hmumu/fwk/2018_01_25_ExclusiveCategoriesAndTree/ChHiggs_%d.root"%n)
+#for n in range(0,100):
+#    if n in [53,55,59,73,93,94]: continue #exclude running jobs
+#    t.Add("/eos/user/a/amarini/Hmumu/fwk/2018_01_25_ExclusiveCategoriesAndTree/ChHiggs_%d.root"%n)
+t.Add("/eos/user/a/amarini/Hmumu/fwk/2018_04_04_ExclusiveCategoriesAndTree/ChHiggs*root")
 print "TotEntries=",t.GetEntries()
 
 outname="output.root" if not multiclass else "multiclass.root"
@@ -91,9 +92,9 @@ for x in features:
 dataloader.AddSpectator("bdt");
 dataloader.AddSpectator("mass");
 
-print "FIX VBF in generator"
-#xsec = "(mc < -10 && mc >=-19 )*48.58* 0002176 + (mc< -20 && mc >= -29)*  3.782*0.0002176 + (mc < -30 && mc >= -39) * 0.8839*0.0002176 + (mc <-40 && mc >= -49)*0.5328*0.0002176 + (mc < -50 && mc>-59)*0.84*0.0002176 + (mc < -60 && mc >=-69) * 0.5071*0.0002176";
-xsec = "(mc < -10 && mc >=-19 )*48.58* 0002176 + (mc< -20 && mc >= -29 || (mc==0 && runNum==1))*  3.782*0.0002176 + (mc < -30 && mc >= -39) * 0.8839*0.0002176 + (mc <-40 && mc >= -49)*0.5328*0.0002176 + (mc < -50 && mc>-59)*0.84*0.0002176 + (mc < -60 && mc >=-69) * 0.5071*0.0002176";
+xsec = "(mc < -10 && mc >=-19 )*48.58* 0002176 + (mc< -20 && mc >= -29)*  3.782*0.0002176 + (mc < -30 && mc >= -39) * 0.8839*0.0002176 + (mc <-40 && mc >= -49)*0.5328*0.0002176 + (mc < -50 && mc>-59)*0.84*0.0002176 + (mc < -60 && mc >=-69) * 0.5071*0.0002176";
+#print "FIX VBF in generator"
+#xsec = "(mc < -10 && mc >=-19 )*48.58* 0002176 + (mc< -20 && mc >= -29 || (mc==0 && runNum==1))*  3.782*0.0002176 + (mc < -30 && mc >= -39) * 0.8839*0.0002176 + (mc <-40 && mc >= -49)*0.5328*0.0002176 + (mc < -50 && mc>-59)*0.84*0.0002176 + (mc < -60 && mc >=-69) * 0.5071*0.0002176";
 dataloader.AddSpectator("xsec:= weight* ("+xsec +")");
 dataloader.SetBackgroundWeightExpression( "weight" );
 dataloader.SetSignalWeightExpression( "weight * (" + xsec + ")" );
@@ -101,9 +102,9 @@ dataloader.SetSignalWeightExpression( "weight * (" + xsec + ")" );
 if not multiclass:
     dataloader . AddSignalTree(    t, 1.0 );
     dataloader . AddBackgroundTree(    t, 1.0 );
-    #sigCut = ROOT.TCut ( "pass_all && (mc < 0 && mc <= -10) && mass >110 && mass <150"); 
-    print "FIX VBF (2)"
-    sigCut = ROOT.TCut ( "pass_all && (mc <= 0 && mc <= -10 && runNum==1) && mass >110 && mass <150"); 
+    sigCut = ROOT.TCut ( "pass_all && (mc < 0 && mc <= -10) && mass >110 && mass <150"); 
+    #print "FIX VBF (2)"
+    #sigCut = ROOT.TCut ( "pass_all && (mc <= 0 && mc <= -10 && runNum==1) && mass >110 && mass <150"); 
     bgCut = ROOT.TCut ( "pass_all && ( mc == 10 || mc == 20) && mass >110 && mass <150"); 
     dataloader. PrepareTrainingAndTestTree(sigCut,   bgCut, "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V");
 
