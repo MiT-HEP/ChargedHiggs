@@ -66,7 +66,11 @@ elif opts.varscheme==3: # no soft
 	features=[ "Hpt","Heta","Hphi","deltaphi","deltaeta","eta1","eta2","ncentjets","njets","htCent","pass_leptonveto","mjj_1","mjj_2","detajj_1","detajj_2","firstQGL","secondQGL","thirdQGL","nbjets","maxDeepB","leadDeepB","maxCSV","mt1","mt2","met",]
 elif opts.varscheme==4: # no mt and b info
 	features=[ "Hpt","Heta","Hphi","deltaphi","deltaeta","eta1","eta2","ncentjets","njets","htCent","pass_leptonveto","mjj_1","mjj_2","detajj_1","detajj_2","softNjets1","softHt1","softHt5","softHt10","firstQGL","secondQGL","thirdQGL","nbjets","met",]
-elif opts.varscheme==5: # all (to copy)
+elif opts.varscheme==5: # no qg, + no soft, + no mt and b info
+	features=[ "Hpt","Heta","Hphi","deltaphi","deltaeta","eta1","eta2","ncentjets","njets","htCent","pass_leptonveto","mjj_1","mjj_2","detajj_1","detajj_2","nbjets","met",]
+elif opts.varscheme==6: # no qg, + no soft, + no mt and b info, + no lepton_veto
+	features=[ "Hpt","Heta","Hphi","deltaphi","deltaeta","eta1","eta2","ncentjets","njets","htCent","mjj_1","mjj_2","detajj_1","detajj_2","nbjets","met",]
+elif opts.varscheme==7: # all (to copy)
 	features=[ "Hpt","Heta","Hphi","deltaphi","deltaeta","eta1","eta2","ncentjets","njets","htCent","pass_leptonveto","mjj_1","mjj_2","detajj_1","detajj_2","softNjets1","softHt1","softHt5","softHt10","firstQGL","secondQGL","thirdQGL","nbjets","maxDeepB","leadDeepB","maxCSV","mt1","mt2","met",]
 
 for x in features:

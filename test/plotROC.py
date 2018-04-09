@@ -6,11 +6,13 @@ import numpy as np
 #import keras
 #print "keras version=",keras.__version__
 
+usage="Plot ROCs out of TMVA output"
 from optparse import OptionParser
-parser = OptionParser()
+parser = OptionParser(usage=usage)
 
 parser.add_option("-f","--file",dest="file",type="string",help="File:var[:legend][:flip] list comma separated",default="weights/output.root:DNN:dnn")
-parser.add_option("-t","--tree",dest="tree",type="string",help="Tree [%default]",default="dataset/TestTree")
+parser.add_option("-t","--tree",dest="tree",type="string",help="Tree [%default]",default="TestTree")
+#parser.add_option("-m","--multiclass",dest="multiclass",action="store_true",help="Switch on Multiclass mode [%default]",default=False)
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -89,8 +91,8 @@ one.SetPoint(1,1,0)
 one.SetLineColor(ROOT.kGray+1)
 one.Draw("L SAME")
 
-colors=[ ROOT.kBlack,38,46,ROOT.kOrange, 8, ROOT.kBlue]
-styles=[ 1          ,1 ,1 , 7, 7,7]
+colors=[ ROOT.kBlack,38,46,ROOT.kOrange, 8, ROOT.kBlue,ROOT.kGreen,ROOT.kCyan,ROOT.kMagenta]
+styles=[ 1          ,1 ,1 , 7, 		7, 7,		3	, 3,3]
 
 leg = ROOT .TLegend(0.18,0.18,.4,.5)
 leg.SetBorderSize(0)
@@ -112,8 +114,21 @@ for idx,s in enumerate(opts.file.split(',')):
     sty = styles[idx]
     fIn = ROOT.TFile.Open(f)
     t = fIn.Get(opts.tree)
+    if t==None:
+        #  try to find directory
+        n= fIn.GetListOfKeys().GetSize() 
+        for ikey in range(0,n):
+            name=fIn.GetListOfKeys().At(ikey).GetName()
+            obj=fIn.Get(name)
+            if obj.InheritsFrom("TDirectory"):t = fIn.Get(name+"/"+opts.tree)
+            if t != None: 
+                print "[INFO]","using tree in directory",name
+                break
+    if t==None: 
+        print "[ERROR]","Unable to grab tree",opts.tree,"from",f
+        continue
 
-    print "-> processing var",v
+    print "-> processing var",v, "from file",f
     doLike=False
     if v[0] =="~": 
         v=v[1:]
