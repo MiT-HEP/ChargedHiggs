@@ -7,8 +7,12 @@ from optparse import OptionParser,OptionGroup
 
 sys.path.insert(0, 'script')
 import FwBinning as FwRebin
+import SystematicSmoother as SS
 maxStat=0.15
 
+# original binning is 10GeV
+nRebinHT=1
+##LikeBins=1
 LikeBins=10
 
 doRebin = False
@@ -21,15 +25,9 @@ doSChannel = False
 
 parser= OptionParser()
 
-#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/crazylimit0306.root")
-#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/crazylimit0306.root")
-
-#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/pipilimitnew.root")
-#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/pipilimitnew.root")
-
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze2limit.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze2limit.root")
-
+# new fixed (SYST only)
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit.root")
 
 if doSyst:
 	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
@@ -42,6 +40,7 @@ parser.add_option("-l","--lumi",type='float',help="Luminosity. [%default]", defa
 
 extra = OptionGroup(parser,"Extra options:","")
 extra.add_option("-k","--kMass",type='string',help = "Which mass point. [%default]", default=1000)
+extra.add_option("-c","--kCat",type='int',help = "Which category. [%default]", default=0)
 #extra.add_option("-r","--rebin",type='int',help = "Rebin Histogram. [%default]", default=-1)
 #
 #parser.add_option_group(extra)
@@ -118,6 +117,63 @@ channel = []
 #########
 
 
+def Merge3B(tfile,hname):
+
+	hname_1=hname.replace("_two", "_three")
+	hTmp=tfile.Get(hname)
+	hTmp1=tfile.Get(hname_1)
+	if hTmp!=None and hTmp1!=None: hTmp.Add(hTmp1)
+
+	return hTmp
+
+
+def MergeAbove(tfile,hname):
+
+	hname_1=hname.replace("_below", "_above")
+	hTmp=tfile.Get(hname)
+	hTmp1=tfile.Get(hname_1)
+	if hTmp!=None and hTmp1!=None: hTmp.Add(hTmp1)
+
+	return hTmp
+
+
+def MergeAbove3B(tfile,hname):
+
+	## histos has "below" and "two"
+
+	hname_=hname.replace("_below", "_above")
+	hname_1=hname_.replace("_two", "_three")
+	# original
+	hTmp=tfile.Get(hname)
+	# changed
+	hTmp1=tfile.Get(hname_1)
+	if hTmp!=None and hTmp1!=None: hTmp.Add(hTmp1)
+
+	return hTmp
+
+
+def mergeCategory(tfile,toget):
+
+	if doSChannel:
+
+		if "_two" in toget and not "_below" in toget:
+			hTmp = Merge3B(tfile,toget)
+		elif "_below" in toget and not "_two" in toget:
+			hTmp = MergeAbove(tfile,toget)
+		elif "_below" and "_two" in toget:
+			hTmp = MergeAbove3B(tfile,toget)
+
+		else:
+			hTmp = tfile.Get(toget)
+	else:
+		if "_below" in toget:
+			hTmp = MergeAbove(tfile,toget)
+		else:
+			hTmp = tfile.Get(toget)
+
+	return hTmp
+
+
 ### TEST conf
 #channel = ["t0b"]
 #channel = ["t1b"]
@@ -126,25 +182,42 @@ channel = []
 #basecat = ["OneBOneFat_two_highj"]
 
 ### FINAL conf
-basecat = ["OneBOneFat_one_highj","OneBOneFat_two_highj","OneBOneFat_three_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj","OneBOneFat_three_lowj"
-	   ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
-	   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj","OneBOneMirrorFat_three_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj","OneBOneMirrorFat_three_lowj"
-	   ]
+if doSChannel:
+	basecat = ["OneBOneFat_one_highj","OneBOneFat_two_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj"
+		   ##	   ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
+		   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj"
+		   ]
+else:
+	basecat = ["OneBOneFat_one_highj","OneBOneFat_two_highj","OneBOneFat_three_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj","OneBOneFat_three_lowj"
+		   ##	   ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
+		   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj","OneBOneMirrorFat_three_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj","OneBOneMirrorFat_three_lowj"
+		   ]
+
 
 if doSChannel:
-	channel = ["t0b","t1b"]
-#	channel = ["t1b"]
+	channel = ["t0b","t1b","wbb","wbj"]
 	label="sChan_"
 else:
-	channel = ["t0b","t1b","wbb","wbj"]
-#	channel = ["t0b"]
-#	channel = ["t1b"]
-#	channel = ["wbb"]
-#	channel = ["wbj"]
-	label="fullHad_"
-#	label="wbj_fullHad_"
+
+	if opts.kCat==0:
+		channel = ["t0b","t1b","wbb","wbj"]
+#		channel = ["t0b","t1b","wbb"]
+		label="fullHad_"
+	if opts.kCat==1:
+		channel = ["t0b"]
+		label="t0b_fullHad_"
+	if opts.kCat==2:
+		channel = ["t1b"]
+		label="t1b_fullHad_"
+	if opts.kCat==3:
+		channel = ["wbb"]
+		label="wbb_fullHad_"
+	if opts.kCat==4:
+		channel = ["wbj"]
+		label="wbj_fullHad_"
 #	label="counting_"
 #	label="sronly_"
+#	label="inonly_"
 
 catStore = { } ## name -> {"file", extra options for syst}, hasSignal
 statStore = {} ## used to store th1d for stat uncertainties
@@ -157,8 +230,10 @@ VarTest=""
 for y in channel:
 	for x in basecat:
 
-		region = ["_in","_above","_below"]
+##		region = ["_in","_above","_below"]
+		region = ["_in","_below"]
 
+#counting
 #		if True:
 #			region = ["_in"]
 #			if "OneBOneFat1l" in x: continue
@@ -179,53 +254,68 @@ for y in channel:
 
 	#		catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"invariantExt"}
 
-				# THIS IS planB
-#				if "_lowj" in x and y=="wbb": continue
-#				if "_lowj" in x and y=="wbj": continue
 
 				# UNDEFINED
 				if "OneBOneFat_one" in x and y=="wbb": continue
 				if "OneBOneMirrorFat_one" in x and y=="wbb": continue
 				if "OneBOneFat1l_one" in x and y=="wbb": continue
 
-				# UNDEFINED
-				# they should not exist but some are filled
-				if "OneBOneFat_one" in x and y=="t1b": continue
-				if "OneBOneMirrorFat_one" in x and y=="t1b": continue
-				if "OneBOneFat1l_one" in x and y=="t1b": continue
+				## generally BKG very rare
+				if "_three_lowj" in x and y=="wbj": continue
 
-				if "OneBOneFat_three" in x and y=="wbj": continue
-				if "OneBOneMirrorFat_three" in x and y=="wbj": continue
-				if "OneBOneFat1l_three" in x and y=="wbj": continue
+				## very rare
+				if opts.kMass=="400":
+					if "_three_highj" in x and y=="wbj": continue
+					if "_two_lowj" in x and y=="wbj": continue
+					if "_two_lowj" in x and y=="wbb": continue
+					if "_three_lowj" in x and y=="t0b" and "in" in reg: continue
+					if "_one_highj" in x and (y=="t1b" or y=="t0b") and "in" in reg: continue
 
-				if opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
-					#				# for the 2000,2500,3000: (They are all in the below bin)
-					if "OneBOneMirrorFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
-					if "OneBOneMirrorFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
-					#				## recovered the wbb - in
-					if "OneBOneFat" in x and y=="wbb" and ("above" in reg ): continue
-					if "OneBOneFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
+                                if opts.kMass=="3000":
+##					if "_two_highj" in x and y=="wbb": continue
+##					if "_three_lowj" in x and (y=="t0b") and "above" in reg: continue
+					if "_three_lowj" in x and (y=="t1b") and "in" in reg: continue
 
-				# t0b/t1b & 3b NO STAT very rare situation
-				if "OneBOneMirrorFat_three_lowj" in x and y=="t1b": continue
-				if "OneBOneMirrorFat_three_highj" in x and y=="t1b": continue
+				# strange with systematics
+                                if opts.kMass=="2500":
+					if "_three_lowj" in x and (y=="t0b") and "in" in reg: continue
 
-				if doSChannel or (opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000"):
-					if "OneBOneFat_three" in x and y=="t0b": continue
-					if "OneBOneMirrorFat_three" in x and y=="t0b": continue
+                                ## below are for associated only
+				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and "in" in reg:
+					if "_three_lowj" in x and y=="wbb": continue
+					if "_one_lowj" in x and y=="wbj": continue
 
-				## NO STAT
-				if "OneBOneFat1l_one" in x and (y=="t0b" or y=="wbj"): continue
-				##
-				if "OneBOneFat1l_two" in x and ( y=="wbb" or y=="wbj" or y=="t0b" or y=="t1b"): continue
-				##
-				if "OneBOneFat1l_three" in x and ( y=="wbb" or y=="t1b" or y=="t0b"): continue
+				if doSChannel and (opts.kMass=="800" or opts.kMass=="900" or opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
+					if "_two_highj" in x and y=="wbb": continue
+					if "_one_highj" in x and y=="wbj": continue
+
+				if doSChannel and (opts.kMass=="900" or opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
+					if "_two_lowj" in x and y=="wbj": continue
+					if "_two_highj" in x and y=="wbj": continue
+
+				if doSChannel and (opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
+					if y=="wbb": continue
+					if y=="wbj": continue
+
+				if not doSChannel and (opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
+					if "_two_lowj" in x and y=="wbj": continue
+					if "_three_highj" in x and y=="wbj": continue
+
+                                if not doSChannel and (opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
+					if "_one_highj" in x and y=="wbj": continue
+					if "_two_highj" in x and y=="wbj": continue
+
+                                if not doSChannel and (opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
+					if "_two_lowj" in x and y=="wbb": continue
+					if "_three_lowj" in x and y=="wbb": continue
+					if "_three_highj" in x and y=="wbb": continue
+					if "_one_lowj" in x and y=="wbj": continue
 
 				if "OneBOneFat1l" in x:
-					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["top"],"var":"HT"+reg}
+					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["ttbar"],"var":"HT"+reg}
 					name = x+ "_" + y
 				else:
-					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["top"],"var":"HT_"+mas+reg}
+					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["ttbar"],"var":"HT_"+mas+reg}
 
 				catStore[name]['file'] = fIn
 
@@ -233,36 +323,36 @@ for y in channel:
 #				catStore[name]["hasMC"]=["qcd","top","Hptb"]
 
 ### QCD uncorrelated
-				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","top","Hptb"]
-				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","top","Hptb"]
-				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","top","Hptb"]
-				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","top","Hptb"]
-				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","top","Hptb"]
-				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","top","Hptb"]
+				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","ttbar","Hptb"]
+				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","ttbar","Hptb"]
+				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","ttbar","Hptb"]
+				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","ttbar","Hptb"]
+				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","ttbar","Hptb"]
+				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","ttbar","Hptb"]
 
                         if doSChannel:
 				mcStore={
 					"Hptb":{"name":"Hptb", "hist":["WprimeToTB_TToHad_M-%d"], "num":0 },
 ##					"qcd":{"name":"qcd", "hist":["QCD_HT"], "num":1 },
 					"qcd_wx_one":{"name":"qcd_wx_one", "hist":["QCD_HT"], "num":1 },
-					"qcd_wx_two":{"name":"qcd_wx_two", "hist":["QCD_HT"], "num":1 },
-					"qcd_wx_three":{"name":"qcd_wx_three", "hist":["QCD_HT"], "num":1 },
-					"qcd_tx_one":{"name":"qcd_tx_one", "hist":["QCD_HT"], "num":1 },
-					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":1 },
-					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":1 },
-					"top":{ "name":"top","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2}
+					"qcd_wx_two":{"name":"qcd_wx_two", "hist":["QCD_HT"], "num":2 },
+					"qcd_wx_three":{"name":"qcd_wx_three", "hist":["QCD_HT"], "num":3 },
+					"qcd_tx_one":{"name":"qcd_tx_one", "hist":["QCD_HT"], "num":4 },
+					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":5 },
+					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":6 },
+					"ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":7}
 					}
 			else:
 				mcStore={
 					"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
 ##					"qcd":{"name":"qcd", "hist":["QCD_HT"], "num":1 },
 					"qcd_wx_one":{"name":"qcd_wx_one", "hist":["QCD_HT"], "num":1 },
-					"qcd_wx_two":{"name":"qcd_wx_two", "hist":["QCD_HT"], "num":1 },
-					"qcd_wx_three":{"name":"qcd_wx_three", "hist":["QCD_HT"], "num":1 },
-					"qcd_tx_one":{"name":"qcd_tx_one", "hist":["QCD_HT"], "num":1 },
-					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":1 },
-					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":1 },
-					"top":{ "name":"top","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2}
+					"qcd_wx_two":{"name":"qcd_wx_two", "hist":["QCD_HT"], "num":2 },
+					"qcd_wx_three":{"name":"qcd_wx_three", "hist":["QCD_HT"], "num":3 },
+					"qcd_tx_one":{"name":"qcd_tx_one", "hist":["QCD_HT"], "num":4 },
+					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":5 },
+					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":6 },
+					"ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":7}
 					}
 
                         if doSyst:
@@ -270,30 +360,31 @@ for y in channel:
                                         "None":None,
                                         "lumi_13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi_13TeV","name":"XXX"},
 					### lepton veto
-                                        "CMS_eff_m":{"type":"lnN", "value":["1.04"] ,"proc":[".*"],"wsname":"CMS_eff_m","name":"XXX"},
-                                        "CMS_eff_e":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_e","name":"XXX"},
-                                        "CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t","name":"XXX"},
+                                        "CMS_eff_l":{"type":"lnN", "value":["0.96"] ,"proc":[".*"],"wsname":"CMS_eff_l","name":"XXX"}, ## name used for shape
+                                        "CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t","name":"XXX"}, ## name used for shape
 					### trigger efficiency
                                         "CMS_eff_trigger":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"CMS_eff_triggger","name":"XXX"},
 					### Theory modeling
-                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["top"]},
-#                                        "QCDscaleT":{"type":"shape", "wsname":"QCDscaleTTbar","name":"Scale","proc":["top"]},
-#                                        "QCDscaleS":{"type":"shape", "wsname":"QCDscaleHptb","name":"Scale","proc":["Hptb"]},
+                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttbar"]},
+                                        "QCDscaleT":{"type":"shape", "wsname":"QCDscaleTTbar","name":"Scale","proc":["ttbar"]},
+                                        "QCDscaleS":{"type":"shape", "wsname":"QCDscaleHptb","name":"Scale","proc":["Hptb"]},
 					### MET-Jets-PU
                                         "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]},
                                         "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":[".*"]},
-                                        "CMS_SDmassScale":{"type":"shape", "wsname":"CMS_SDmassSCALE","name":"SDmassSCALE","proc":[".*"]},
+                                        "CMS_SDMassScale":{"type":"shape", "wsname":"CMS_SDMassSCALE","name":"SDMassSCALE","proc":[".*"]},
 #                                        "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
-                                        "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":[".*"]},
+                                        "CMS_scale_j_qcd":{"type":"shape", "wsname":"CMS_scale_j_qcd","name":"JESANDCSV","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+                                        "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":["Hptb","ttbar"]},
                                         ##Light jets Heavy flavor contamination
 					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":[".*"]},
                                         ##Heavy jets light flavor contamination
-                                        "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":[".*"]},
+                                        "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF_0l_qcd","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+                                        "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF_0l","name":"CSVRLF","proc":["Hptb","ttbar"]},
                                         ##Linear and quadratic uncertainties
 					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":[".*"]},
 					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":[".*"]},
-                                        "CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":[".*"]},
-                                        "CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":[".*"]},
+                                        "CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1_0l","name":"CSVRLFSTAT1","proc":[".*"]},
+                                        "CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2_0l","name":"CSVRLFSTAT2","proc":[".*"]},
                                         "CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":[".*"]},
                                         "CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":[".*"]}
                                         ####
@@ -308,11 +399,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_MARCH23/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_APR16/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_MARCH23/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_APR16/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -370,10 +461,10 @@ if False: # data
         datacard.write("\n")
 if True: # Sig
         datacard.write("shapes Hptb *\t" + fileTmp +"\t")
-        datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL\t")
-        datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
-#        datacard.write("pdf_$PROCESS_$CHANNEL\t")
-#        datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC")
+#        datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL\t")
+#        datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
+        datacard.write("pdf_$PROCESS_$CHANNEL\t")
+        datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC")
         datacard.write("\n")
 if True: # bkg
         datacard.write("shapes * * %s\t"%fileTmp +"\t")
@@ -542,9 +633,13 @@ for syst in systStore:
 	if systStore[syst]["type"] == "shape":
 		writeSystShape(systStore[syst],systStore[syst]["proc"])
 
-if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb","ttbb","tt2b"])
-if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042","1.042","1.042"],["ttlf","ttcc","ttb","ttbb","tt2b"])
-###if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024"],["ttbar"])
+if doSyst: writeNormSyst("pdf_gg",["1.042"],["ttbar"])
+if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027"],["ttbar"])
+
+#if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+#if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042","1.042","1.042"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+##if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027"],["ttlf","ttcc","ttb","ttbb","tt2b"])
 
 if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
 if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
@@ -612,7 +707,71 @@ if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_
 ## 		g.extend([hupbin,roo_mc_binup,pdf_mc_binup])
 ## 		g.extend([hdnbin,roo_mc_bindn,pdf_mc_bindn])
 
-## improt Everything in ws TODO
+
+def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
+
+        hTmpNom=mergeCategory(tfile,togetNom)
+        hTmpUp=mergeCategory(tfile,togetSyst+'Up')
+        hTmpDown=mergeCategory(tfile,togetSyst+'Down')
+
+        if hTmpUp==None: return hTmpNom
+        if hTmpDown==None: return hTmpNom
+
+        for iBin in range(1,hTmpNom.GetNbinsX()+1):
+#               c= hTmpNom.SetBinError(iBin,0)
+                c= hTmpUp.SetBinError(iBin,0)
+                c= hTmpDown.SetBinError(iBin,0)
+
+        if 'JESANDCSV' in togetSyst or "PU" in togetSyst or "JER" in togetSyst or "SDMassScale" in togetSyst:
+#               return hTmpNom
+                hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/forMIAO/APR16/SYST").smooth()
+        else:
+                hUp = hTmpUp
+                hDown = hTmpDown
+
+        if 'Up' in s:
+                return hUp
+
+        if 'Down' in s:
+                return hDown
+
+
+def envelop(tfile,togetClone, s) :
+
+        hname=togetClone+'RF'+s
+
+        hTmp=mergeCategory(tfile,hname)
+
+##	if hTmp!=None: hTmp.Rebin(nRebinHT)
+
+        h=hTmp.Clone()
+
+        if hTmp==None: return
+
+        for w in [ 'R','F','RF']:
+
+                hnameClone=togetClone+w+s
+
+                hTmp=mergeCategory(tfile,hnameClone)
+
+##		if hTmp!=None: hTmp.Rebin(nRebinHT)
+
+                for iBin in range(1,h.GetNbinsX()+1):
+                        c= h.GetBinContent(iBin)
+
+			## take the maximum for the Up
+                        if "Up" in s and hTmp.GetBinContent(iBin)>c:
+                                h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
+
+                        ## take the minimum for the Down
+                        if "Down" in s and hTmp.GetBinContent(iBin)<c:
+                                h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
+
+        return h
+
+
+
+## import Everything in ws TODO
 def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 	tfile = cat["file"]
@@ -620,9 +779,10 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 		print "<*> File not exists"
 		raise IOError
 	base="ChargedHiggsTopBottom"
-	if mc["name"]=="Hptb":masses=[400,500,650,800,900,1000,1500,2000,2500,3000]
+	if doSChannel and mc["name"]=="Hptb":masses=[800,900,1000,1500,2000,2500,3000]
+	elif mc["name"]=="Hptb":masses=[400,500,650,800,1000,1500,2000,2500,3000]
+##	if mc["name"]=="Hptb":masses=[400,500,650,800,900,1000,1500,2000,2500,3000]
 ##	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,650,800,1000,1500,2000,2500,3000]
-##	elif doSChannel and mc["name"]=="Hptb":masses=[800]
 	else: masses=[0]
 
 	if syst == None: shifts=["x"]
@@ -679,7 +839,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 			target = "pdf_" + mc["name"] +"_"+ cat["name"]
 			if m >10 :
-				target = "pdf_" + mc["name"] +"_M-%d"%m+"_"+ cat["name"]
+				target = "pdf_" + mc["name"] + "_" + cat["name"]
 
 			if syst != None:
 				target += "_" + syst["wsname"] + s
@@ -692,12 +852,26 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				if mc["name"]=="Hptb":
 					toget=toget%m
 
+
+				togetNom = toget
+                                togetSyst = ''
 				if syst != None:
+					togetSyst = toget + "_" + syst["name"]
 					toget += "_" + syst["name"] + s
 
-				hTmp=tfile.Get(toget)
-##				hTmp.Rebin(5)
-				print "<*> Reading Hist '"+toget+"'",hTmp.Integral()
+				if "Scale" in toget:
+					if mc["name"]=="Hptb" or mc["name"]=="ttbar":
+						hTmp = envelop(tfile,togetSyst,s)
+#						toget = togetClone+'RF'+s
+
+				elif syst != None:
+
+                                        hTmp = SmoothAndMergeSyst(tfile,togetNom,togetSyst,s)
+				else:
+                                        hTmp = mergeCategory(tfile,togetNom)
+
+				if hTmp!=None: hTmp.Rebin(nRebinHT)
+				if hTmp!=None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral()
 
 				if hTmp == None:
 					print "<*> Hist '"+toget+"' doesn't exist"
@@ -793,9 +967,9 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
                 print "<*> File not exists"
                 raise IOError
         base="ChargedHiggsTopBottom"
-	if mc["name"]=="Hptb":masses=[400,500,650,800,900,1000,1500,2000,2500,3000]
+	if doSChannel and mc["name"]=="Hptb":masses=[800,900,1000,1500,2000,2500,3000]
+	elif mc["name"]=="Hptb":masses=[400,500,650,800,1000,1500,2000,2500,3000]
 ##	if mc["name"]=="Hptb":masses=[180,200,220,250,300,350,400,500,650,800,1000,1500,2000,2500,3000]
-#	elif doSChannel and mc["name"]=="Hptb":masses=[800]
         else: masses=[0]
 
         if syst == None: shifts=["x"]
@@ -850,10 +1024,12 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 						toget=toget%m
 
 				if syst != None:
+##					togetClone = toget + "_" + syst["name"]
 					toget += "_" + syst["name"] + s
 
 				hTmp=tfile.Get(toget)
-##				hTmp.Rebin(5)
+
+				if hTmp!= None: hTmp.Rebin(nRebinHT)
 				if hTmp!= None: print "<*> 1/3 Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
 
 				if hTmp == None:
@@ -870,7 +1046,7 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 						#  print 'going to add = ',hTmp.GetName()
 						hSum.Add(hTmp)
 
-				if mc["name"]=="top" and hTmp!=None: hRef=hTmp.Clone()
+				if mc["name"]=="ttbar" and hTmp!=None: hRef=hTmp.Clone()
 				if mc["name"]=="Hptb" and hTmp!= None:
 					hSig=hTmp.Clone()
 
@@ -980,8 +1156,9 @@ for cat in catStore:
 #	if  ("1Ele" in cat["dir"] or "2Ele" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]): toget+="_SingleElectron"
 #	elif  "1Mu" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]: toget+="_SingleMuon"
 
+	## MARIA REMEMBER TO MERGE THE CATEGORY
 	h=tfile.Get(toget)
-##	if h : h.Rebin(5)
+	if h!= None: h.Rebin(nRebinHT)
 	if h == None:
 		print "<*> Hist do not exists ",toget
                 ### MARIA COMMENT THIS FOR NOW
