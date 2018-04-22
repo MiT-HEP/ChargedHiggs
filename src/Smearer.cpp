@@ -260,6 +260,30 @@ int SmearSDMassScale::smear(Event *e)
 
 }
 
+int SmearTau21Scale::smear(Event *e)
+{
+
+    for (auto f : GetFatJets(e))
+        {
+            f->tau21syst = syst_;
+        }
+
+    return SMEAR_OK;
+
+}
+
+int SmearTau32Scale::smear(Event *e)
+{
+
+    for (auto f : GetFatJets(e))
+        {
+            f->tau32syst = syst_;
+        }
+
+    return SMEAR_OK;
+
+}
+
 // Local Variables:
 // mode:c++
 // indent-tabs-mode:nil

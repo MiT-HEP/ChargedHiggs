@@ -837,28 +837,47 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj_other"+"/PtB1_"+l,"PtB1 "+l + "; B leading ",200,0,1000); ///ranges
 
 
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_thbh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_tb"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_thb"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_other"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_thbh"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_thb"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_tb"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_tbh"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t0b_other"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
 
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_thbh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_tb"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_thb"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_other"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_thbh"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_thb"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_tb"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_tbh"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t1b_other"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_th_nb"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_th_bh"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_wh_nb"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_wh_bh"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_ntnw_nb"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_ntnw_bh"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb_other"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbj_good"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbj_bad"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbj_other"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
 
 
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_tbh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_tbh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_wbb_th_bh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
-        Book2D("ChargedHiggsTopBottom/"+phasespace+"_wbj_good"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,320,400,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_thbh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_tb"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_thb"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_other"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_thbh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_tb"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_thb"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_other"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+
+
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t0b_tbh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_t1b_tbh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_wbb_th_bh"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
+        Book2D("ChargedHiggsTopBottom/"+phasespace+"_wbj_good"+"/Pt_Mass_tb_"+l,"Pt_Mass_tb "+l + ";Mass (tb) [GeV] ",360,100,3700,360,0,3600);
     }
-    
-    //higgs mass short range
-    //Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",80,400,1200);
-    //Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/invariant_"+l,"invariant "+l + ";Mass (tb) [GeV] ",80,400,1200);
-    //Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",80,400,1200);
-    //Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/invariant_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",80,400,1200);
     
 
     /// this is the histogram for the limits
@@ -867,6 +886,11 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
     Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/invariantExt_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
     Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/invariantExt_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
     
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/invariantRed_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/invariantRed_"+l,"invariant "+l + ";Mass (tb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/invariantRed_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+    Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/invariantRed_"+l,"invariant "+l + ";Mass (wbb) [GeV] ",360,100,3700);
+
 
     if(doTrigger){
         Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/invariant_OR_"+l,"invariant_OR "+l+"; Mass (tb) [GeV] ",360,100,3700);
@@ -999,6 +1023,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
         Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/DRAPtb_"+l,"DRAPtb "+l + "; DRap (t,b)", 100,0,5);
         Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/PtB1_"+l,"PtB1 "+l + "; B leading ",200,0,1000); ///ranges
         Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/PtTopH_"+l,"PtTopH "+l + "; Top Makes Higgs ",120,0,1200); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
         Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/nbsubjet_"+l,"nbsubjet "+l + "; nbsubjet ",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/nbsubjetloose_"+l,"nbsubjetloose "+l + "; nbsubjetloose ",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/softdropM_"+l,"softdropM "+l + "; SDMass of top [GeV] ",55,0,220);
@@ -1017,7 +1042,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_all_"+l);
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_all_"+l,"HT_all "+l + "; HT[GeV] ",800,0,8000); ///range
         }else{
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_below_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_500_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_650_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_800_below_"+l);
@@ -1027,7 +1052,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_2000_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_2500_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_3000_below_"+l);
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_in_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_500_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_650_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_800_in_"+l);
@@ -1037,7 +1062,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_2000_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_2500_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_3000_in_"+l);
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_above_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_500_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_650_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_800_above_"+l);
@@ -1048,7 +1073,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_2500_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_3000_above_"+l);
 
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_below_"+l,"HT_400_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_below_"+l,"HT_400_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_500_below_"+l,"HT_500_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_650_below_"+l,"HT_650_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_800_below_"+l,"HT_800_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1058,7 +1083,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_2000_below_"+l,"HT_2000_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_2500_below_"+l,"HT_2500_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_3000_below_"+l,"HT_3000_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_in_"+l,"HT_400_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_in_"+l,"HT_400_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_500_in_"+l,"HT_500_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_650_in_"+l,"HT_650_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_800_in_"+l,"HT_800_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1068,7 +1093,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_2000_in_"+l,"HT_2000_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_2500_in_"+l,"HT_2500_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_3000_in_"+l,"HT_3000_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_above_"+l,"HT_400_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_400_above_"+l,"HT_400_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_500_above_"+l,"HT_500_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_650_above_"+l,"HT_650_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t0b"+"/HT_800_above_"+l,"HT_800_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1091,6 +1116,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
         Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/DRAPtb_"+l,"DRAPtb "+l + "; DRap (t,b)", 100,0,5);
         Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/PtB1_"+l,"PtB1 "+l + "; B leading ",200,0,1000); ///ranges
         Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/PtTopH_"+l,"PtTopH "+l + "; Top Makes Higgs ",120,0,1200); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
         Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/nbsubjet_"+l,"nbsubjet "+l + "; nbsubjet ",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/nbsubjetloose_"+l,"nbsubjetloose "+l + "; nbsubjetloose ",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/softdropM_"+l,"softdropM "+l + "; SDMass of top [GeV] ",55,0,220);
@@ -1109,7 +1135,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_all_"+l);
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_all_"+l,"HT_all "+l + "; HT[GeV] ",800,0,8000); ///range
         }else{
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_below_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_500_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_650_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_800_below_"+l);
@@ -1119,7 +1145,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_2000_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_2500_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_3000_below_"+l);
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_in_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_500_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_650_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_800_in_"+l);
@@ -1129,7 +1155,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_2000_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_2500_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_3000_in_"+l);
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_above_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_500_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_650_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_800_above_"+l);
@@ -1140,7 +1166,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_2500_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_3000_above_"+l);
     
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_below_"+l,"HT_400_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_below_"+l,"HT_400_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_500_below_"+l,"HT_500_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_650_below_"+l,"HT_650_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_800_below_"+l,"HT_800_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1150,7 +1176,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_2000_below_"+l,"HT_2000_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_2500_below_"+l,"HT_2500_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_3000_below_"+l,"HT_3000_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_in_"+l,"HT_400_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_in_"+l,"HT_400_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_500_in_"+l,"HT_500_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_650_in_"+l,"HT_650_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_800_in_"+l,"HT_800_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1160,7 +1186,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_2000_in_"+l,"HT_2000_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_2500_in_"+l,"HT_2500_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_3000_in_"+l,"HT_3000_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_above_"+l,"HT_400_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_400_above_"+l,"HT_400_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_500_above_"+l,"HT_500_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_650_above_"+l,"HT_650_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_t1b"+"/HT_800_above_"+l,"HT_800_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1185,6 +1211,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/PtTopH_"+l,"PtTopH "+l + "; Top(W+b) ",120,0,1200); ///ranges
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/PtWH_"+l,"PtWH "+l + "; W ",150,0,1500);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/PtWHafter_"+l,"PtWHafter "+l + "; W ",150,0,1500);
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/nbsubjet_"+l,"nbsubjet "+l + "; nbsubjet ",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/nbsubjetloose_"+l,"nbsubjetloose "+l + "; nbsubjetloose ",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/softdropM_"+l,"softdropM "+l + "; SDMass of top [GeV] ",55,0,220);
@@ -1196,8 +1223,9 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/num_lo_fj_"+l,"num_lo_fj "+l + "; #leftover fatjets", 10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/num_lo_bj_"+l,"num_lo_bj "+l + "; #leftover bjets", 10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/num_lo_j_"+l,"num_lo_j "+l + "; #leftover jets", 10,0,10);
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/DRWb_"+l,"DRWb "+l + ";DR (W,b)", 100,0,5);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/Masst_"+l,"Masst "+l + "; top Mass ",40,100,300); ///ranges
-        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/Masstbefore_"+l,"Masstbefore "+l + "; top Mass ",40,100,300); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/Masstbefore_"+l,"Masstbefore "+l + "; top Mass ",200,0,400); ///ranges
     }
     //HT divided
     if(doHTlimit){
@@ -1205,7 +1233,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_all_"+l);
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_all_"+l,"HT_all "+l + "; HT[GeV] ",800,0,8000); ///range
         }else{
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_below_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_500_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_650_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_800_below_"+l);
@@ -1215,7 +1243,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_2000_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_2500_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_3000_below_"+l);
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_in_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_500_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_650_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_800_in_"+l);
@@ -1224,7 +1252,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_1500_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_2000_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_2500_in_"+l);
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_3000_in_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_3000_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_500_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_650_above_"+l);
@@ -1236,7 +1264,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_2500_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_3000_above_"+l);
 
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_below_"+l,"HT_400_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_below_"+l,"HT_400_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_500_below_"+l,"HT_500_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_650_below_"+l,"HT_650_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_800_below_"+l,"HT_800_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1246,7 +1274,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_2000_below_"+l,"HT_2000_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_2500_below_"+l,"HT_2500_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_3000_below_"+l,"HT_3000_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_in_"+l,"HT_400_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_in_"+l,"HT_400_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_500_in_"+l,"HT_500_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_650_in_"+l,"HT_650_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_800_in_"+l,"HT_800_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1256,7 +1284,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_2000_in_"+l,"HT_2000_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_2500_in_"+l,"HT_2500_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_3000_in_"+l,"HT_3000_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_above_"+l,"HT_400_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_400_above_"+l,"HT_400_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_500_above_"+l,"HT_500_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_650_above_"+l,"HT_650_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/HT_800_above_"+l,"HT_800_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1282,6 +1310,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/PtTopH_"+l,"PtTopH "+l + "; Top(W+b) ",120,0,1200); ///ranges
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/PtWH_"+l,"PtWH "+l + "; W ",150,0,1500);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/PtWHafter_"+l,"PtWHafter "+l + "; W ",150,0,1500);
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/PtH_"+l,"PtH "+l + "; Ch-higgs ",400,0,4000); ///ranges
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/nbsubjet_"+l,"nbsubjet "+l + "; nbsubjet ",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/nbsubjetloose_"+l,"nbsubjetloose "+l + "; nbsubjetloose ",10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/softdropM_"+l,"softdropM "+l + "; SDMass of top [GeV] ",55,0,220);
@@ -1293,8 +1322,9 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/num_lo_fj_"+l,"num_lo_fj "+l + "; #leftover fatjets", 10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/num_lo_bj_"+l,"num_lo_bj "+l + "; #leftover bjets", 10,0,10);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/num_lo_j_"+l,"num_lo_j "+l + "; #leftover jets", 10,0,10);    
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/DRWb_"+l,"DRWb "+l + ";DR (W,b)", 100,0,5);
         Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/Masst_"+l,"Masst "+l + "; top Mass ",40,100,300); ///ranges
-        Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/Masstbefore_"+l,"Masstbefore "+l + "; top Mass ",40,100,300); ///ranges
+        Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/Masstbefore_"+l,"Masstbefore "+l + "; top Mass ",200,0,400); ///ranges
     }
     //HT divided
     if(doHTlimit){
@@ -1302,7 +1332,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_all_"+l);
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_all_"+l,"HT_all "+l + "; HT[GeV] ",800,0,8000); ///range
         }else{
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_below_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_500_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_650_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_800_below_"+l);
@@ -1312,7 +1342,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_2000_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_2500_below_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_3000_below_"+l);
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_in_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_500_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_650_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_800_in_"+l);
@@ -1322,7 +1352,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_2000_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_2500_in_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_3000_in_"+l);
-            //AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_above_"+l);
+            AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_500_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_650_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_800_above_"+l);
@@ -1333,7 +1363,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_2500_above_"+l);
             AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_3000_above_"+l);
 
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_below_"+l,"HT_400_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_below_"+l,"HT_400_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_500_below_"+l,"HT_500_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_650_below_"+l,"HT_650_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_800_below_"+l,"HT_800_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1343,7 +1373,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_2000_below_"+l,"HT_2000_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_2500_below_"+l,"HT_2500_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_3000_below_"+l,"HT_3000_below_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_in_"+l,"HT_400_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_in_"+l,"HT_400_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_500_in_"+l,"HT_500_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_650_in_"+l,"HT_650_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_800_in_"+l,"HT_800_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1353,7 +1383,7 @@ void ChargedHiggsTopBottomFullHad::BookHisto(string l, string category, string p
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_2000_in_"+l,"HT_2000_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_2500_in_"+l,"HT_2500_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_3000_in_"+l,"HT_3000_in_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
-            //Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_above_"+l,"HT_400_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
+            Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_400_above_"+l,"HT_400_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_500_above_"+l,"HT_500_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_650_above_"+l,"HT_650_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
             Book("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/HT_800_above_"+l,"HT_800_above_ "+l + "; HT[GeV] ",800,0,8000); ///ranges
@@ -1384,6 +1414,17 @@ void ChargedHiggsTopBottomFullHad::Preselection()
         //BookFatjetPro(l, "","Baseline","");
         //BookFatjetPro(l, "","OneBOneFat", "");
 
+        if(doTrigger && !doMCTrg){
+            BookHistojet(l, "","OneBOneFat_th");
+            BookHistojet(l, "","OneBOneFat_tl");
+            BookHistojet(l, "","OneBOneFat_Wh");
+            BookHistojet(l, "","OneBOneFat_Wl");
+
+            BookFatjetPro(l, "","OneBOneFat_th", "");
+            BookFatjetPro(l, "","OneBOneFat_tl", "");
+            BookFatjetPro(l, "","OneBOneFat_Wh", "");
+            BookFatjetPro(l, "","OneBOneFat_Wl", "");
+        }
     
         if(doZeroB){
             BookHistojet(l, "","NoB");
@@ -1414,7 +1455,7 @@ void ChargedHiggsTopBottomFullHad::Preselection()
             BookHistojet(l, "_wbb", "OneBOneFat1l");
             BookHistojet(l, "_wbj", "OneBOneFat1l");
             
-            BookHisto(l, "","OneBOneFat1l"); */
+            BookHisto(l, "","OneBOneFat1l");*/
             BookHisto(l, "","OneBOneFat1l_one");
             BookHisto(l, "","OneBOneFat1l_two");
             BookHisto(l, "","OneBOneFat1l_three");
@@ -1457,19 +1498,19 @@ void ChargedHiggsTopBottomFullHad::Preselection()
             BookHistojet(l, "_t0b", "OneBOneFat");
             BookHistojet(l, "_t1b", "OneBOneFat");
             BookHistojet(l, "_wbb", "OneBOneFat");
-            BookHistojet(l, "_wbj", "OneBOneFat");*/
-              
-            BookHisto(l, "","OneBOneFat");
-            /*BookHisto(l, "","OneBOneFat_one_lowj");
+            BookHistojet(l, "_wbj", "OneBOneFat");
+   
+            BookHisto(l, "","OneBOneFat");*/
+            BookHisto(l, "","OneBOneFat_one_lowj");
             BookHisto(l, "","OneBOneFat_two_lowj");
             BookHisto(l, "","OneBOneFat_three_lowj");
             BookHisto(l, "","OneBOneFat_one_highj");
             BookHisto(l, "","OneBOneFat_two_highj");
-            BookHisto(l, "","OneBOneFat_three_highj");*/
+            BookHisto(l, "","OneBOneFat_three_highj");
         }
 
         if(doMirror){
-         /*   BookHistojet(l, "","OneBOneMirrorFat");
+            /*BookHistojet(l, "","OneBOneMirrorFat");
             BookHistojet(l, "_t0b", "OneBOneMirrorFat");
             BookHistojet(l, "_t1b", "OneBOneMirrorFat");
             BookHistojet(l, "_wbb", "OneBOneMirrorFat");
@@ -2175,7 +2216,7 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
         Jet* ab = e->GetBjet(mm);
         for(int kfjet=0;kfjet!=e->NFatJets();kfjet++) {
             FatJet* AK8jet = e->GetFatJet(kfjet);
-            if( (!mirror and AK8jet->IsTopJet()) or (mirror and AK8jet->IsTopJetMirror()) ) { if(ab->DeltaR(*AK8jet) < 0.8) flag_lb[mm] = 1; }
+            if( (!mirror and (AK8jet->IsTopJet() or AK8jet->IsWJet())) or (mirror and (AK8jet->IsTopJetMirror() or AK8jet->IsWJetMirror())) ) { if(ab->DeltaR(*AK8jet) < 0.8) flag_lb[mm] = 1; }
         }
     }
 
@@ -2184,8 +2225,6 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
         leadingokb = mm; break;
     }
 
-//    if(leadingokb==(-1)) return;
-//    leadingb = e->GetBjet(leadingokb);
     if(leadingokb!=(-1)) leadingb = e->GetBjet(leadingokb);
 
     double maxptb0 = 40.;
@@ -2196,7 +2235,7 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
         if(mayb0->bdiscr < 0.8484 && mayb0->bdiscr > 0.5426 && mayb0->Pt() > maxptb0){
             for(int kfjet=0;kfjet!=e->NFatJets();kfjet++) {
                 FatJet* AK8jet = e->GetFatJet(kfjet);
-                if( (!mirror and AK8jet->IsTopJet()) or (mirror and AK8jet->IsTopJetMirror()) ) { if(mayb0->DeltaR(*AK8jet) < 0.8) flag_b0 = 1; }
+                if( (!mirror and (AK8jet->IsTopJet() or AK8jet->IsWJet() )) or (mirror and (AK8jet->IsTopJetMirror() or AK8jet->IsWJetMirror())) ) { if(mayb0->DeltaR(*AK8jet) < 0.8) flag_b0 = 1; }
             }
             if(flag_b0 == 0){
                 maxptb0 = mayb0->Pt();
@@ -2261,7 +2300,6 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
 
         for(int ib=0;ib!=e->Bjets();ib++) {
 
-//            if(flag_lb[ib] == 1 || ib == leadingokb) continue;
             if(flag_lb[ib] == 1) continue;
             if(e->GetBjet(ib) == leadingb) continue;
 
@@ -2270,8 +2308,8 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
             if(mayt.DeltaR(leadingb->GetP4())<1.2) continue;
 
             Double_t deltopmass = fabs(mayt.M() - ChargedHiggs::Mtop);
-            //if (deltopmass < mintopmass && mayt.M() > 135. && mayt.M() < 220.) {
-            if (deltopmass < mintopmass) {
+            if (deltopmass < mintopmass && mayt.M() > 135. && mayt.M() < 220.) {
+            //if (deltopmass < mintopmass) {
                 topFromHOpenCand = mayt;
                 //                      orderW = j;orderb = ib;
                 secondbwbb=e->GetBjet(ib);
@@ -2283,16 +2321,11 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
         }
     }
 
-//    higgsPlot(e, label, "_wbb",systname,phasespace);
+    higgsPlot(e, label, "_wbb",systname,phasespace);
 
-//    if(evt_MH_Wbb > 0) return;
+    if(evt_MH_Wbb > 0) return;
 
 
-    if(not (phasespace.find("GetCate")!=string::npos) && evt_MH_Wbb > 0){
-        Fill("ChargedHiggsTopBottom/"+phasespace+"_wbb"+"/Masstbefore_"+label,systname,  topFromHOpenCand.M() ,e->weight());
-    }
-    if(evt_MH_Wbb > 0 && topFromHOpenCand.M() > 135. && topFromHOpenCand.M() < 220.) {higgsPlot(e, label, "_wbb",systname,phasespace); return;}
-    else{evt_MH_Wbb=-1; evt_PtH_Wbb=-1;wJet=NULL;secondbwbb=NULL;topFromHOpenCand.SetXYZM(0.,0.,0.,0.);};
     /////
     ///// to implement W + b + j , higgs candidate
     ///// j can be the leading jet from the higgs or the b from the top
@@ -2310,7 +2343,7 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
         if(mayb->bdiscr < 0.8484 && mayb->bdiscr > maxcsv){
             for(int kfjet=0;kfjet!=e->NFatJets();kfjet++) {
                 FatJet* AK8jet = e->GetFatJet(kfjet);
-                if( (!mirror and AK8jet->IsTopJet()) or (mirror and AK8jet->IsTopJetMirror()) ) { if(mayb->DeltaR(*AK8jet) < 0.8) flag_jet = 1; }
+                if( (!mirror and (AK8jet->IsTopJet() or AK8jet->IsWJet()) ) or (mirror and (AK8jet->IsTopJetMirror() or AK8jet->IsWJetMirror())) ) { if(mayb->DeltaR(*AK8jet) < 0.8) flag_jet = 1; }
             }
             if(flag_jet == 0){
                 maxcsv = mayb->bdiscr;
@@ -2341,8 +2374,8 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
             if(wjt.DeltaR(leadingbWBJ->GetP4())<1.2) continue;
 
             Double_t deltopmass1 = fabs(wjt.M() - ChargedHiggs::Mtop);
-            //if (deltopmass1 < mintopmass1 && wjt.M() > 135. && wjt.M() < 220.) {
-            if (deltopmass1 < mintopmass1){
+            if (deltopmass1 < mintopmass1 && wjt.M() > 135. && wjt.M() < 220.) {
+            //if (deltopmass1 < mintopmass1){
                 mintopmass1 = deltopmass1;
                 topFromHwbj = wjt;
                 wJetwbj = temp;
@@ -2366,8 +2399,8 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
             if(wjt.DeltaR(leadingbWBJ->GetP4())<1.2) continue;
 
             Double_t deltopmass2 = fabs(wjt.M() - ChargedHiggs::Mtop);
-            //if (deltopmass2 < mintopmass1 && wjt.M() > 135. && wjt.M() < 220.) {
-            if (deltopmass2 < mintopmass1){
+            if (deltopmass2 < mintopmass1 && wjt.M() > 135. && wjt.M() < 220.) {
+            //if (deltopmass2 < mintopmass1){
                 mintopmass1 = deltopmass2;
                 topFromHwbj = wjt;
                 wJetwbj = temp;
@@ -2378,14 +2411,8 @@ void ChargedHiggsTopBottomFullHad::getCandidate(Event*e, string label, string sy
     }
 
 
-//    higgsPlot(e, label, "_wbj",systname,phasespace);
+    higgsPlot(e, label, "_wbj",systname,phasespace);
 
-    if(not (phasespace.find("GetCate")!=string::npos) && evt_MH_wbj>0){
-        Fill("ChargedHiggsTopBottom/"+phasespace+"_wbj"+"/Masstbefore_"+label,systname,  topFromHwbj.M() ,e->weight());
-    }
-
-    if(evt_MH_wbj>0 && topFromHwbj.M() > 135. && topFromHwbj.M() < 220.) {higgsPlot(e, label, "_wbj",systname,phasespace);}
-    else{wJetwbj=NULL;evt_MH_wbj=-1;evt_PtH_wbj=-1;topFromHwbj.SetXYZM(0.,0.,0.,0.);}
 
 }
 
@@ -2394,7 +2421,6 @@ void ChargedHiggsTopBottomFullHad::PlotAss(Event*e, string label, string systnam
     num_otherfj = 0;
     num_otherbj = 0;
     num_otherj = 0;
-    //overlapb=0;
 
     string range_j = "";
 
@@ -2459,8 +2485,6 @@ void ChargedHiggsTopBottomFullHad::PlotAss(Event*e, string label, string systnam
     
     for(int j=0; j!= e->Bjets() ; j++){
 
-        //if((evt_MH_t0b>0 || evt_MH_t1b>0) && topJet!=NULL && e->GetBjet(j)->DeltaR(*topJet) < 0.8) overlapb = 1;
-        //else if(evt_MH_Wbb>0) overlapb = 1;
 
         if(leadingb!=NULL && e->GetBjet(j) == leadingb) continue;
         if(leadingbWBJ!=NULL && e->GetBjet(j) == leadingbWBJ) continue;
@@ -2475,9 +2499,6 @@ void ChargedHiggsTopBottomFullHad::PlotAss(Event*e, string label, string systnam
         num_otherbj++;
     }
 
-
-    //if((evt_MH_t0b>0 || evt_MH_t1b>0 || evt_MH_Wbb>0) && leadingb->bdiscr < 0.8484) overlapb -= 1;
-    //else if(evt_MH_wbj>0 && leadingbWBJ->bdiscr < 0.8484) overlapb -= 1;
 
 
     if(phasespace.find("GetCate")!=string::npos) return;
@@ -2636,7 +2657,6 @@ void ChargedHiggsTopBottomFullHad::jetPlot(Event*e, string label, string categor
     //// forward vs central
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_"+label,systname, evt_HT ,e->weight());
-    //Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_zoom_"+label,systname, evt_HT ,e->weight());
 
     Fill("ChargedHiggsTopBottom/"+phasespace+category+"/ST_"+label,systname, evt_ST ,e->weight());
 
@@ -2760,19 +2780,19 @@ void ChargedHiggsTopBottomFullHad::fatjetPlot(Event*e, string label, string cate
         }
         if(e->IsTriggered("HLT_PFHT900_v") && (doMCTrg || e->IsTriggered("HLT_IsoMu24_v") || e->IsTriggered("HLT_Mu50_v"))){
             Fill("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_PFHT900_"+puornot+label,systname, fatjet->Pt() ,e->weight());
-            Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_HT_PFHT900_"+puornot+label,systname,evt_HT,fatjet->Pt(),e->weight());
+            //Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_HT_PFHT900_"+puornot+label,systname,evt_HT,fatjet->Pt(),e->weight());
         }
         if(e->IsTriggered("HLT_AK8PFJet450_v") && (doMCTrg || e->IsTriggered("HLT_IsoMu24_v") || e->IsTriggered("HLT_Mu50_v"))){
             Fill("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_AK8PFJet450_"+puornot+label,systname, fatjet->Pt() ,e->weight());
-            Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_HT_AK8PFJet450_"+puornot+label,systname,evt_HT,fatjet->Pt(),e->weight());
+            //Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_HT_AK8PFJet450_"+puornot+label,systname,evt_HT,fatjet->Pt(),e->weight());
         }
         if(e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v") && (doMCTrg || e->IsTriggered("HLT_IsoMu24_v") || e->IsTriggered("HLT_Mu50_v"))){
             Fill("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_AK8PFHT700_"+puornot+label,systname, fatjet->Pt() ,e->weight());
-            Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_HT_AK8PFHT700_"+puornot+label,systname,evt_HT,fatjet->Pt(),e->weight());
+            //Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_HT_AK8PFHT700_"+puornot+label,systname,evt_HT,fatjet->Pt(),e->weight());
         }
         if(e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") && (doMCTrg || e->IsTriggered("HLT_IsoMu24_v") || e->IsTriggered("HLT_Mu50_v"))){
             Fill("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_AK8PFJet360_"+puornot+label,systname, fatjet->Pt() ,e->weight());
-            Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_HT_AK8PFJet360_"+puornot+label,systname,evt_HT,fatjet->Pt(),e->weight());
+            //Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/fatpt_HT_AK8PFJet360_"+puornot+label,systname,evt_HT,fatjet->Pt(),e->weight());
         }
 
         if(e->IsTriggered("HLT_PFHT450_SixJet40_BTagCSV_p056_v") && (doMCTrg || e->IsTriggered("HLT_IsoMu24_v") || e->IsTriggered("HLT_Mu50_v"))) {
@@ -2820,13 +2840,17 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
 
     // this is for all label
     if(evt_MH_t1b>0 and (category.find("_t1b_")!=string::npos))  {Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_t1b,e->weight());
-                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,leadingb->Pt(),e->weight());}
+                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,leadingb->Pt(),e->weight());
+                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtH_"+label,systname,evt_PtH_t1b,e->weight());}
     if(evt_MH_t0b>0 and (category.find("_t0b_")!=string::npos))  {Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_t0b,e->weight());
-                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,leadingb->Pt() ,e->weight());}
+                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,leadingb->Pt() ,e->weight());
+                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtH_"+label,systname,evt_PtH_t0b,e->weight());}
     if(evt_MH_Wbb>0 and (category.find("_wbb_")!=string::npos))  {Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_Wbb,e->weight());
-                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,leadingb->Pt() ,e->weight());}
+                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,leadingb->Pt() ,e->weight());
+                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtH_"+label,systname,evt_PtH_Wbb,e->weight());}
     if(evt_MH_wbj>0 and (category.find("_wbj_")!=string::npos))  {Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_wbj,e->weight());
-                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,leadingbWBJ->Pt() ,e->weight());}
+                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,leadingbWBJ->Pt() ,e->weight());
+                                                                    Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtH_"+label,systname,evt_PtH_wbj,e->weight());}
 
 
     if(evt_MH_t1b>0 and (category.find("_t1b_")!=string::npos)) Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/Pt_Mass_tb_"+label,systname,evt_MH_t1b,evt_PtH_t1b,e->weight());
@@ -2838,10 +2862,9 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
     if(evt_MH_t1b>0 and (category.find("_t1b")!=string::npos) and not (category.find("_t1b_")!=string::npos) and not (phasespace.find("GetCate")!=string::npos)) {
         //Pt-Mass-2D
         //if(!doHTlimit) Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/Pt_Mass_tb_"+label,systname,evt_MH_t1b,evt_PtH_t1b,e->weight());
-        //invariant mass short range
-        //Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_t1b,e->weight());
         //invariant mass
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantExt_"+label,systname,evt_MH_t1b,e->weight());
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantRed_"+label,systname,evt_MH_t1b+(ChargedHiggs::Mtop - topJet->SDMass()),e->weight());
 
         if(doTrigger){
             if( (e->IsTriggered("HLT_PFHT450_SixJet40_BTagCSV_p056_v") || e->IsTriggered("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v") || e->IsTriggered("HLT_PFHT900_v") || e->IsTriggered("HLT_AK8PFJet450_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) && (doMCTrg || e->IsTriggered("HLT_IsoMu24_v") || e->IsTriggered("HLT_Mu50_v")) )
@@ -2886,6 +2909,8 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,  leadingb->Pt() ,e->weight());
         //pt of the selected top
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtTopH_"+label,systname, topJet->Pt() ,e->weight());
+        //pt of higgs
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtH_"+label,systname, evt_PtH_t1b, e->weight());
         //NSubJetB
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/nbsubjet_"+label,systname, topJet->IsSubjetBTag(), e->weight());
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/nbsubjetloose_"+label,systname, topJet->IsSubjetBTagLoose(), e->weight());
@@ -2899,64 +2924,65 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
          if(phasespace.find("OneBOneFat1l")!=string::npos){
             Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_all_"+label,systname, evt_HT ,e->weight());
          }else{
-        /*
-          if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t1b < 350. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 350. and evt_MH_t1b < 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_in_"+label,systname, evt_HT ,e->weight());
+        
+          if( (label.find("M-400") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t1b < 360. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 360. and evt_MH_t1b < 460. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t1b >= 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_above_"+label,systname, evt_HT ,e->weight());
           }
-        */
-          if( (label.find("M-500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t1b < 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 450. and evt_MH_t1b < 575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+       //   if( (label.find("M-500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t1b < 460. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 460. and evt_MH_t1b < 580. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 580. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-650") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t1b < 595. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 595. and evt_MH_t1b < 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_in_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-650") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+       //   if( (label.find("M-650") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t1b < 600. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 600. and evt_MH_t1b < 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t1b >= 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-800") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-800") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-800") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_t1b < 730. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t1b >= 730. and evt_MH_t1b < 850. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t1b >= 850. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-900") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-900") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-900") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_t1b < 815. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t1b >= 815. and evt_MH_t1b < 950. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t1b >= 950. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-1000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t1b < 900. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 900. and evt_MH_t1b < 1050. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_in_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-1000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-1000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t1b < 910. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 910. and evt_MH_t1b < 1050. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t1b >= 1050. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-1500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t1b < 1350. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 1350. and evt_MH_t1b < 1550. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 1550. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-1500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+       //   if( (label.find("M-1500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t1b < 1370. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 1370. and evt_MH_t1b < 1560. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 1560. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-2000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t1b < 1810. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 1810. and evt_MH_t1b < 2070. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 2070. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-2000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+       //   if( (label.find("M-2000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t1b < 1830. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 1830. and evt_MH_t1b < 2060. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 2060. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-2500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t1b < 2295. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 2295. and evt_MH_t1b < 2565. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 2565. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-2500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-2500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t1b < 2260. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 2260. and evt_MH_t1b < 2590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 2590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-3000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t1b < 2750. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t1b >= 2750. and evt_MH_t1b < 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_in_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-3000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-3000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t1b < 2760. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t1b >= 2760. and evt_MH_t1b < 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t1b >= 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_above_"+label,systname, evt_HT ,e->weight());
           }
          } //end phasespace else
@@ -2967,10 +2993,9 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
     if(evt_MH_t0b>0 and (category.find("_t0b")!=string::npos) and not (category.find("_t0b_")!=string::npos) and not (phasespace.find("GetCate")!=string::npos)) {
         //Pt-Mass-2D
         //if(!doHTlimit) Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/Pt_Mass_tb_"+label,systname,evt_MH_t0b,evt_PtH_t0b,e->weight());
-        //invariant mass short range
-        //Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_t0b,e->weight());
         //invariant mass
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantExt_"+label,systname,evt_MH_t0b,e->weight());
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantRed_"+label,systname,evt_MH_t0b+(ChargedHiggs::Mtop - topJet->SDMass()),e->weight());
 
         if(doTrigger){
             if( (e->IsTriggered("HLT_PFHT450_SixJet40_BTagCSV_p056_v") || e->IsTriggered("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v") || e->IsTriggered("HLT_PFHT900_v") || e->IsTriggered("HLT_AK8PFJet450_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) && (doMCTrg || e->IsTriggered("HLT_IsoMu24_v") || e->IsTriggered("HLT_Mu50_v")) )
@@ -3015,6 +3040,8 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,  leadingb->Pt() ,e->weight());
         //pt of the selected top
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtTopH_"+label,systname, topJet->Pt() ,e->weight());
+        //pt of higgs
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtH_"+label,systname, evt_PtH_t0b, e->weight());
         //NSubJet
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/nbsubjet_"+label,systname, topJet->IsSubjetBTag(), e->weight());
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/nbsubjetloose_"+label,systname, topJet->IsSubjetBTagLoose(), e->weight());
@@ -3028,65 +3055,65 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
          if(phasespace.find("OneBOneFat1l")!=string::npos){
             Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_all_"+label,systname, evt_HT ,e->weight());
          }else{
-        /*
-          if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-400") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_t0b < 350. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 350. and evt_MH_t0b < 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_above_"+label,systname, evt_HT ,e->weight());
           }
-        */
-          if( (label.find("M-500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t0b < 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t0b >= 450. and evt_MH_t0b < 575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t0b >= 575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t0b < 440. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t0b >= 440. and evt_MH_t0b < 580. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t0b >= 580. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-650") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t0b < 595. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t0b >= 595. and evt_MH_t0b < 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t0b >= 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-650") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-650") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t0b < 590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t0b >= 590. and evt_MH_t0b < 690. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t0b >= 690. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-800") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-800") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-800") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_t0b < 730. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 730. and evt_MH_t0b < 850. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 850. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-900") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-900") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-900") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_t0b < 815. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 815. and evt_MH_t0b < 950. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 950. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-1000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-1000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-1000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_t0b < 900. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 900. and evt_MH_t0b < 1050. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 1050. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-1500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-1500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-1500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_t0b < 1350. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 1350. and evt_MH_t0b < 1550. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 1550. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_above_"+label,systname, evt_HT ,e->weight());
           }
-        
-          if( (label.find("M-2000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t0b < 1830. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t0b >= 1830. and evt_MH_t0b < 2060. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_in_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-2000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-2000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t0b < 1790. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t0b >= 1790. and evt_MH_t0b < 2060. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_t0b >= 2060. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-2500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t0b < 2260. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t0b >= 2260. and evt_MH_t0b < 2575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t0b >= 2575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-2500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-2500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t0b < 2310. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t0b >= 2310. and evt_MH_t0b < 2560. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t0b >= 2560. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-3000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_t0b < 2760. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t0b >= 2760. and evt_MH_t0b < 3070. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_t0b >= 3070. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-3000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-3000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_t0b < 2750. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t0b >= 2750. and evt_MH_t0b < 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_t0b >= 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_above_"+label,systname, evt_HT ,e->weight());
           }
          } //end phasespace else
         } //end do HT divided
@@ -3098,10 +3125,9 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
     if(evt_MH_Wbb>0 and (category.find("_wbb")!=string::npos) and not (category.find("_wbb_")!=string::npos) and not (phasespace.find("GetCate")!=string::npos)) {
         //Pt-Mass-2D
         //if(!doHTlimit) Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/Pt_Mass_tb_"+label,systname,evt_MH_Wbb,evt_PtH_Wbb,e->weight());
-        //invariant mass short range
-        //Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_Wbb,e->weight());
         //invariant mass
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantExt_"+label,systname,evt_MH_Wbb,e->weight());
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantRed_"+label,systname,evt_MH_Wbb+(ChargedHiggs::Mtop - topFromHOpenCand.M()),e->weight());
 
         if(doTrigger){
             if( (e->IsTriggered("HLT_PFHT450_SixJet40_BTagCSV_p056_v") || e->IsTriggered("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v") || e->IsTriggered("HLT_PFHT900_v") || e->IsTriggered("HLT_AK8PFJet450_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v")  || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) && (doMCTrg || e->IsTriggered("HLT_IsoMu24_v") || e->IsTriggered("HLT_Mu50_v")) )
@@ -3141,6 +3167,8 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
 
         // mass of the top candidate
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Masst_"+label,systname,  topFromHOpenCand.M() ,e->weight());
+        //DeltaR(W,b)
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DRWb_"+label,systname,  secondbwbb->DeltaR(*wJet), e->weight());
 
         //DeltaR(t,b)
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DRtb_"+label,systname,  topFromHOpenCand.DeltaR(leadingb->GetP4()), e->weight());
@@ -3150,6 +3178,8 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,  leadingb->Pt() ,e->weight());
         //pt of the selected top
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtTopH_"+label,systname, topFromHOpenCand.Pt() ,e->weight());
+        //pt of higgs
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtH_"+label,systname, evt_PtH_Wbb, e->weight());
         //Pt of W selected
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtWH_"+label,systname, wJet->Pt() ,e->weight());
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtWHafter_"+label,systname, (wJet->Pt() > 1500.) ? (wJet->Pt())/1.08 : (wJet->Pt())/( 1.02255 + 6.73418e-05 * wJet->Pt() - 1.84253e-08 * wJet->Pt() * wJet->Pt()), e->weight());
@@ -3166,64 +3196,64 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
          if(phasespace.find("OneBOneFat1l")!=string::npos){
             Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_all_"+label,systname, evt_HT ,e->weight());
          }else{
-        /*
-          if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-400") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_Wbb < 350. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 350. and evt_MH_Wbb < 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_above_"+label,systname, evt_HT ,e->weight());
           }
-        */
-          if( (label.find("M-500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_Wbb < 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_Wbb >= 450. and evt_MH_Wbb < 575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_Wbb >= 575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_Wbb < 430. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_Wbb >= 430. and evt_MH_Wbb < 580. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_Wbb >= 580. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-650") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_Wbb < 590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_Wbb >= 590. and evt_MH_Wbb < 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_in_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-650") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-650") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_Wbb < 570. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_Wbb >= 570. and evt_MH_Wbb < 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-800") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-800") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-800") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_Wbb < 720. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 720. and evt_MH_Wbb < 840. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 840. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-900") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-900") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-900") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_Wbb < 805. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 805. and evt_MH_Wbb < 940. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 940. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-1000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-1000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-1000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_Wbb < 890. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 890. and evt_MH_Wbb < 1040. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 1040. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-1500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_Wbb < 1360. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_Wbb >= 1360. and evt_MH_Wbb < 1530. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_in_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-1500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-1500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_Wbb < 1380. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_Wbb >= 1380. and evt_MH_Wbb < 1530. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 1530. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-2000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_Wbb < 1800. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_Wbb >= 1800. and evt_MH_Wbb < 2050. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_Wbb >= 2050. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-2000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-2000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_Wbb < 1760. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_Wbb >= 1760. and evt_MH_Wbb < 2060. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_Wbb >= 2060. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-2500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_Wbb < 2250. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_Wbb >= 2250. and evt_MH_Wbb < 2590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_Wbb >= 2590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-2500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-2500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_Wbb < 2190. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_Wbb >= 2190. and evt_MH_Wbb < 2560. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_Wbb >= 2560. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-3000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_Wbb < 2730. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_Wbb >= 2730. and evt_MH_Wbb < 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_in_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-3000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-3000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_Wbb < 2580. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_Wbb >= 2580. and evt_MH_Wbb < 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_Wbb >= 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_above_"+label,systname, evt_HT ,e->weight());
           }
          } //end phasespace else
@@ -3235,10 +3265,9 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
     if(evt_MH_wbj>0 and (category.find("_wbj")!=string::npos) and not (category.find("_wbj_")!=string::npos) and not (phasespace.find("GetCate")!=string::npos)) {
         //Pt-Mass-2D
         //if(!doHTlimit) Fill2D("ChargedHiggsTopBottom/"+phasespace+category+"/Pt_Mass_tb_"+label,systname,evt_MH_wbj,evt_PtH_wbj,e->weight());
-        //invariant mass short range
-        //Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariant_"+label,systname,evt_MH_wbj,e->weight());
         //invariant mass
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantExt_"+label,systname,evt_MH_wbj,e->weight());
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/invariantRed_"+label,systname,evt_MH_wbj+(ChargedHiggs::Mtop - topFromHwbj.M()),e->weight());
 
         if(doTrigger){
             if( (e->IsTriggered("HLT_PFHT450_SixJet40_BTagCSV_p056_v") || e->IsTriggered("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v") || e->IsTriggered("HLT_PFHT900_v") || e->IsTriggered("HLT_AK8PFJet450_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v")  || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")) && (doMCTrg || e->IsTriggered("HLT_IsoMu24_v") || e->IsTriggered("HLT_Mu50_v")) )
@@ -3278,6 +3307,8 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
 
         // mass of the top candidate
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/Masst_"+label,systname,  topFromHwbj.M() ,e->weight());
+        //Delta(W,b)
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DRWb_"+label,systname,  secondb->DeltaR(*wJetwbj), e->weight());
 
         //DeltaR(t,b)
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/DRtb_"+label,systname,  topFromHwbj.DeltaR(leadingbWBJ->GetP4()), e->weight());
@@ -3287,6 +3318,8 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtB1_"+label,systname,  leadingbWBJ->Pt() ,e->weight());
         //pt of the selected top
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtTopH_"+label,systname, topFromHwbj.Pt() ,e->weight());
+        //pt of higgs
+        Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtH_"+label,systname,evt_PtH_wbj,e->weight());
         //Pt of W selected
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtWH_"+label,systname, wJetwbj->Pt() ,e->weight());
         Fill("ChargedHiggsTopBottom/"+phasespace+category+"/PtWHafter_"+label,systname, (wJetwbj->Pt() > 1500.) ? (wJetwbj->Pt())/1.08 : (wJetwbj->Pt())/(1.02255 + 6.73418e-05 * wJetwbj->Pt() - 1.84253e-08 * wJetwbj->Pt() * wJetwbj->Pt()), e->weight());
@@ -3303,65 +3336,65 @@ void ChargedHiggsTopBottomFullHad::higgsPlot(Event*e, string label, string categ
          if(phasespace.find("OneBOneFat1l")!=string::npos){
             Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_all_"+label,systname, evt_HT ,e->weight());
          }else{
-        /*
-          if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_wbj < 350. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 350. and evt_MH_wbj < 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-400") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-400") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_wbj < 370. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 370. and evt_MH_wbj < 430. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 430. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_400_above_"+label,systname, evt_HT ,e->weight());
           }
-        */
-          if( (label.find("M-500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_wbj < 450. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 450. and evt_MH_wbj < 575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 575. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_above_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 450. and evt_MH_wbj < 565. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 565. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-650") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_wbj < 590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 590. and evt_MH_wbj < 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 680. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-650") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-650") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_wbj < 570. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 570. and evt_MH_wbj < 670. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 670. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_650_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-800") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_wbj < 720. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 720. and evt_MH_wbj < 840. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 840. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-800") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-800") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_wbj < 690. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 690. and evt_MH_wbj < 850. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 850. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_800_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-900") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-900") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+       //   if( (label.find("M-900") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_wbj < 805. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_wbj >= 805. and evt_MH_wbj < 940. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_wbj >= 940. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_900_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-1000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-1000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-1000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_wbj < 890. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_below_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_wbj >= 890. and evt_MH_wbj < 1040. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_wbj >= 1040. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1000_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-1500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_wbj < 1360. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 1360. and evt_MH_wbj < 1530. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_in_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-1500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+        //  if( (label.find("M-1500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_wbj < 1350. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 1350. and evt_MH_wbj < 1530. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_wbj >= 1530. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_1500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-2000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_wbj < 1800. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 1800. and evt_MH_wbj < 2050. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 2050. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_above_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-2000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-2000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_wbj < 1720. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 1720. and evt_MH_wbj < 2160. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 2160. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2000_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-2500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
-            if( evt_MH_wbj < 2250. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 2250. and evt_MH_wbj < 2590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_in_"+label,systname, evt_HT ,e->weight());
+          if( (label.find("M-2500") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-2500") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+            if( evt_MH_wbj < 2160. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_below_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 2160. and evt_MH_wbj < 2590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_in_"+label,systname, evt_HT ,e->weight());
             else if( evt_MH_wbj >= 2590. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_2500_above_"+label,systname, evt_HT ,e->weight());
           }
-
-          if( (label.find("M-3000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
+          if( (label.find("M-3000") !=string::npos) or (not (label.find("ChargedHiggs") !=string::npos) and not (label.find("WprimeToTB") !=string::npos))  ){
+         // if( (label.find("M-3000") !=string::npos) or (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or (label.find("QCD_HT") !=string::npos) ){
             if( evt_MH_wbj < 2580. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_below_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 2580. and evt_MH_wbj < 3250. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_in_"+label,systname, evt_HT ,e->weight());
-            else if( evt_MH_wbj >= 3250. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_above_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 2580. and evt_MH_wbj < 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_in_"+label,systname, evt_HT ,e->weight());
+            else if( evt_MH_wbj >= 3080. ) Fill("ChargedHiggsTopBottom/"+phasespace+category+"/HT_3000_above_"+label,systname, evt_HT ,e->weight());
           }
          } //end phasespace else
         }//end of do HT divided
@@ -3437,7 +3470,7 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
 
     if(e->weight() == 0. ) cout <<"[ChargedHiggsTopBottom]::[analyze]::[INFO] Even Weight is NULL !!"<< e->weight() <<endl;
 
-//    SetOnlyFinal(true);
+    SetOnlyFinal(true);
 
     CutSelector cut;
     cut.SetMask(MaxCut-1);
@@ -3551,9 +3584,13 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
 
             if(it->IsMuon() && it->Pt() > 27 && fabs(it->Eta()) <= 2.4) trimu++;
         }
-        if(e->GetMet().Pt() > 100 && trimu>0){
+        if(e->GetMet().Pt() <= 100 && trimu>0){
             fatjetPlot(e,label,"",systname,"OneBOneFat",false);
             jetPlot(e, label, "", systname,"OneBOneFat");
+            if(e->Topjets()>0 && e->NcentralJets()>4){fatjetPlot(e,label,"",systname,"OneBOneFat_th",false);jetPlot(e, label, "", systname,"OneBOneFat_th");}
+            else if(e->Topjets()>0 && e->NcentralJets()<=4){fatjetPlot(e,label,"",systname,"OneBOneFat_tl",false);jetPlot(e, label, "", systname,"OneBOneFat_tl");} 
+            else if(e->Wjets()>0 && e->NcentralJets()>6){fatjetPlot(e,label,"",systname,"OneBOneFat_Wh",false);jetPlot(e, label, "", systname,"OneBOneFat_Wh");}
+            else if(e->Wjets()>0 && e->NcentralJets()<=6){fatjetPlot(e,label,"",systname,"OneBOneFat_Wl",false);jetPlot(e, label, "", systname,"OneBOneFat_Wl");}
         }
     }
 
@@ -3770,13 +3807,11 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
         PlotAss(e,label,systname,"GetCate");
         //**** offline selection plan B ****//
         if(num_otherj <= 2 && (evt_MH_Wbb>0 || evt_MH_wbj>0)){ if(evt_HT<900 && numFatB == 0) return EVENT_NOT_USED; }
-
-        
+        /*
         getCandidate(e,label,systname,"OneBOneFat",false);
         PlotAss(e,label,systname,"OneBOneFat");
         if(dotemp) PtNsubCor(e,label,systname,"OneBOneFat");
         
-        /*
         fatjetPlot(e,label,"",systname,"OneBOneFat",false);
         jetPlot(e, label, "", systname,"OneBOneFat");
         if(dohadflavor) classifyhadflavor(e,label,"",systname,"OneBOneFat");
@@ -3799,9 +3834,10 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
             fatjetPlot(e,label,"_wbj",systname,"OneBOneFat",false);
             if(dohadflavor) classifyhadflavor(e,label,"_wbj",systname,"OneBOneFat");
         }
+
         
         if(doGentt) classifyHF(e,label,"",systname,"OneBOneFat","");
-                          
+        */                  
         
         if(e->Bjets() == 1 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneFat_one_lowj",false); 
         else if(e->Bjets() == 1 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneFat_one_highj",false);
@@ -3809,7 +3845,7 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
         else if(e->Bjets() == 2 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneFat_two_highj",false);
         else if(e->Bjets() >= 3 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneFat_three_lowj",false);
         else if(e->Bjets() >= 3 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneFat_three_highj",false);
-        */       
+               
            
         if(dorecoGenSig){
             if ( not e->IsRealData() and ((label.find("HplusToTB") !=string::npos ) or (label.find("WprimeToTB") !=string::npos))){
@@ -3832,6 +3868,7 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
         PlotAss(e,label,systname,"GetCateMirror");
         //**** offline selection plan B ****//
         if(num_otherj <= 2 && (evt_MH_Wbb>0 || evt_MH_wbj>0)){ if(evt_HT<900 && numFatB == 0) return EVENT_NOT_USED; }
+
         /*        
         getCandidate(e,label,systname,"OneBOneMirrorFat",true);
         PlotAss(e,label,systname,"OneBOneMirrorFat");
@@ -3843,19 +3880,19 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
         
         if(evt_MH_t0b>0) {
             jetPlot(e, label, "_t0b", systname, "OneBOneMirrorFat");      
-           // fatjetPlot(e,label,"_t0b",systname,"OneBOneMirrorFat",true);
+            fatjetPlot(e,label,"_t0b",systname,"OneBOneMirrorFat",true);
             if(dohadflavor) classifyhadflavor(e,label,"_t0b",systname,"OneBOneMirrorFat");
         }else if(evt_MH_t1b>0) {
             jetPlot(e, label, "_t1b", systname, "OneBOneMirrorFat"); 
-           // fatjetPlot(e,label,"_t1b",systname,"OneBOneMirrorFat",true);
+            fatjetPlot(e,label,"_t1b",systname,"OneBOneMirrorFat",true);
             if(dohadflavor) classifyhadflavor(e,label,"_t1b",systname,"OneBOneMirrorFat");
         }else if(evt_MH_Wbb>0) {
             jetPlot(e, label, "_wbb", systname, "OneBOneMirrorFat"); 
-           // fatjetPlot(e,label,"_wbb",systname,"OneBOneMirrorFat",true);
+            fatjetPlot(e,label,"_wbb",systname,"OneBOneMirrorFat",true);
             if(dohadflavor) classifyhadflavor(e,label,"_wbb",systname,"OneBOneMirrorFat");
         }else if(evt_MH_wbj>0) {
             jetPlot(e, label, "_wbj", systname, "OneBOneMirrorFat"); 
-           // fatjetPlot(e,label,"_wbj",systname,"OneBOneMirrorFat",true);
+            fatjetPlot(e,label,"_wbj",systname,"OneBOneMirrorFat",true);
             if(dohadflavor) classifyhadflavor(e,label,"_wbj",systname,"OneBOneMirrorFat");
         }
         */   
@@ -3866,7 +3903,7 @@ int ChargedHiggsTopBottomFullHad::analyze(Event*e,string systname)
         else if(e->Bjets() == 2 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneMirrorFat_two_highj",true);
         else if(e->Bjets() >= 3 && num_otherj <= 2) getCandidate(e,label,systname,"OneBOneMirrorFat_three_lowj",true);
         else if(e->Bjets() >= 3 && num_otherj > 2) getCandidate(e,label,systname,"OneBOneMirrorFat_three_highj",true);  
-           
+              
     }
 
 

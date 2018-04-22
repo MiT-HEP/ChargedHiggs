@@ -224,7 +224,22 @@ class SmearWG1 : virtual public SmearBase
 class SmearSDMassScale : virtual public SmearBase
 {
     public:
-        SmearSDMassScale() : SmearBase(){ name_ = "SDmassSCALE";}
+        SmearSDMassScale() : SmearBase(){ name_ = "SDMassSCALE";}
+        int smear(Event*e) override;
+};
+
+
+class SmearTau21Scale : virtual public SmearBase
+{
+    public:
+        SmearTau21Scale() : SmearBase(){ name_ = "Tau21SCALE";}
+        int smear(Event*e) override;
+};
+
+class SmearTau32Scale : virtual public SmearBase
+{
+    public:
+        SmearTau32Scale() : SmearBase(){ name_ = "Tau32SCALE";}
         int smear(Event*e) override;
 };
 
