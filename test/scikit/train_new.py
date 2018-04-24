@@ -1,5 +1,7 @@
 ### BUILD MODEL WITH KERAS
 
+#import tensorflow as tf
+#sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 import keras
 print "keras version=",keras.__version__
 
@@ -17,30 +19,40 @@ from keras.optimizers import SGD
 def build_model():
     print "-> building model"
     model = Sequential()
-    model.add(Dense(100, input_dim=29,activation='tanh') )
-    model.add(Dropout(0.25))
-    model.add(Dense(50,activation='tanh'))
-    model.add(Dense(1,activation='sigmoid'))
+    l2_val=1e-2
+    #model.add(Dense(100,kernel_regularizer=l2(l2_val), activity_regularizer=l2(l2_val), input_dim=29,activation='tanh') )
+    #model.add(Dense(100, input_dim=29,activation='tanh') )
+    model.add(Dense(100,kernel_regularizer=l2(l2_val), activity_regularizer=l2(l2_val), input_dim=29,activation='tanh') )
+    model.add(Dropout(0.20))
+    model.add(Dense(50,activity_regularizer=l2(l2_val),activation='tanh'))
+    model.add(Dense(20,activation='tanh'))
+    model.add(Dense(2,activation='tanh')) 
     
     model.compile(
             #loss='mean_squared_error',
-            #loss='categorical_crossentropy',
-            loss='binary_crossentropy',
+            loss='categorical_crossentropy',
+            #loss='binary_crossentropy',
             optimizer=SGD(lr=0.01),
             #optimizer='adam',
-            metrics=['accuracy'])
+            metrics=['accuracy','precision',])
     return model
 
 model=build_model()
 model.save('model.h5')
+model.summary()
 #print "-> skip model construction"
+try:
+    from keras.utils.visualize_util import plot
+    plot(model, to_file='model.png', show_shapes=True)
+except:
+    print('[INFO] Failed to make model plot')
 
 ########## USE TMVA FOR TRAINING ########
 import ROOT
 
 ROOT.TMVA.Tools.Instance()
 # for KERAS TRAINING IS NEEDED
-#ROOT.TMVA.PyMethodBase.PyInitialize()
+ROOT.TMVA.PyMethodBase.PyInitialize()
 #print "TMVA:",ROOT.TMVA_RELEASE
 
 multiclass=False
@@ -96,26 +108,31 @@ xsec = "(mc < -10 && mc >=-19 )*48.58* 0002176 + (mc< -20 && mc >= -29)*  3.782*
 #print "FIX VBF in generator"
 #xsec = "(mc < -10 && mc >=-19 )*48.58* 0002176 + (mc< -20 && mc >= -29 || (mc==0 && runNum==1))*  3.782*0.0002176 + (mc < -30 && mc >= -39) * 0.8839*0.0002176 + (mc <-40 && mc >= -49)*0.5328*0.0002176 + (mc < -50 && mc>-59)*0.84*0.0002176 + (mc < -60 && mc >=-69) * 0.5071*0.0002176";
 dataloader.AddSpectator("xsec:= weight* ("+xsec +")");
-dataloader.SetBackgroundWeightExpression( "weight" );
-dataloader.SetSignalWeightExpression( "weight * (" + xsec + ")" );
 
 if not multiclass:
+    print "FIXME TT"
+    ttfix = "(mc>0 && (mc<20||mc>30)) * 1 +(mc>=20 && mc<30)*88.20/831"; # bkg weight
+    dataloader.SetBackgroundWeightExpression( "weight* ( "+ttfix+")" );
+    #dataloader.SetBackgroundWeightExpression( "weight" );
+    dataloader.SetSignalWeightExpression( "weight * (" + xsec + ")" );
     dataloader . AddSignalTree(    t, 1.0 );
     dataloader . AddBackgroundTree(    t, 1.0 );
-    sigCut = ROOT.TCut ( "pass_all && (mc < 0 && mc <= -10) && mass >110 && mass <150"); 
+    sigCut = ROOT.TCut ( "pass_all && (mc < 0 && mc <= -10) && mass >110 && mass <150 && eventNum%2==0"); 
     #print "FIX VBF (2)"
     #sigCut = ROOT.TCut ( "pass_all && (mc <= 0 && mc <= -10 && runNum==1) && mass >110 && mass <150"); 
-    bgCut = ROOT.TCut ( "pass_all && ( mc == 10 || mc == 20) && mass >110 && mass <150"); 
+    bgCut = ROOT.TCut ( "pass_all && ( mc == 10 || mc == 20) && mass >110 && mass <150 && eventNum %2==0"); 
     dataloader. PrepareTrainingAndTestTree(sigCut,   bgCut, "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V");
 
 if multiclass:
     dataloader.AddTree(t,"DY",1.0,ROOT.TCut("(mass>110 && mass<150) && pass_all && (mc>=10 && mc<20) && eventNum%2==0"))
     dataloader.AddTree(t,"TT",1.0,ROOT.TCut("(mass>110 && mass<150) && pass_all && (mc>=20 && mc<30) && eventNum%2==0"))
     dataloader.AddTree (t, "ggH", 1.0, ROOT.TCut("(mass >110 && mass <150) && pass_all && ( mc<-10 && mc >-20) &&eventNum%2==0") );
-    print "FIX VBF (2)"
-    dataloader.AddTree (t, "qqH", 1.0, ROOT.TCut("(mass >110 && mass <150) && pass_all && (( mc<-20 && mc >-30)|| (mc==0 && runNum==1) ) && eventNum%2==0") );
+    dataloader.AddTree (t, "qqH", 1.0, ROOT.TCut("(mass >110 && mass <150) && pass_all && ( mc<-20 && mc >-30) && eventNum%2==0") );
     dataloader.AddTree (t,  "VH", 1.0, ROOT.TCut("(mass >110 && mass <150) && pass_all && ( mc<-30 && mc >-60) && eventNum%2==0") );
     dataloader.AddTree (t, "ttH", 1.0, ROOT.TCut("(mass >110 && mass <150) && pass_all && ( mc<-60 && mc > -70) && eventNum%2==0") );
+    print "FIXME TT"
+    xsec += " + (mc>0 && (mc<20||mc>30)) * 1 +(mc>=20 && mc<30)*88.20/831"; # bkg weight
+    dataloader.SetWeightExpression("weight* (" +xsec+")")
     
     print "------------ NTRIES -------------------"
     print "DY",t.GetEntries("(mass>110 && mass<150) && pass_all && (mc>=10 && mc<20) && eventNum%2==0")
@@ -129,18 +146,18 @@ if multiclass:
     dataloader.PrepareTrainingAndTestTree( ROOT.TCut(""), "SplitMode=Random:NormMode=NumEvents:!V" ); 
 
 
-#print "-> BOOKING KERAS"
-#factory.BookMethod(dataloader, ROOT.TMVA.Types.kPyKeras, "PyKeras", "H:!V:VarTransform=D,N:FileNameModel=model.h5:NumEpochs=50:BatchSize=128:SaveBestOnly=true:LearningRateSchedule=30,0.005;40,0.001;30,0.001")
+print "-> BOOKING KERAS"
+factory.BookMethod(dataloader, ROOT.TMVA.Types.kPyKeras, "PyKeras", "H:!V:VarTransform=D,N:FileNameModel=model.h5:NumEpochs=50:BatchSize=128:SaveBestOnly=true:LearningRateSchedule=30,0.005;40,0.001;30,0.001")
 
-print "-> BOOKING BDTG"
-if not multiclass:
-    factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, "BDTG",
-                "!H:!V:NTrees=1200:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.99:SeparationType=SDivSqrtSPlusB:Pray"
-                );
-else:
-    factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
-                ROOT.TString("!H:!V:NTrees=5000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
-                );
+#print "-> BOOKING BDTG"
+#if not multiclass:
+#    factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, "BDTG",
+#                "!H:!V:NTrees=1200:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.99:SeparationType=SDivSqrtSPlusB:Pray"
+#                );
+#else:
+#    factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
+#                ROOT.TString("!H:!V:NTrees=5000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
+#                );
 
 factory . TrainAllMethods();
 factory . TestAllMethods();

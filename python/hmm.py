@@ -96,6 +96,7 @@ class HmmConfig():
         for x in ["xmin","xmax","muCategories","procCategories","categories","sig_mass_points","processes","datacard_procs","sigfit_scale_unc","sigfit_smear_unc","catVersion","fitVersion","bkg_functions"]:
             print x+"=",eval("self."+x)
         print "------------------------"
+        print "lumi:",self.lumi()
         print "125: BR",self.br(125)
         print "   : ggH",self.xsec('ggH',125),"qqH",self.xsec('qqH',125.),'WPlusH',self.xsec('WPlusH',125),"WMinusH",self.xsec("WMinusH",125.),"ZH",self.xsec('ZH',125),"ttH",self.xsec('ttH',125)
         print "------------------------"
@@ -300,6 +301,7 @@ if __name__=="__main__":
     hmm.Print()
     hmmAutoCat.Print()
     hmmTTH.Print()
+    hmmWithTTH.Print()
 
 import ROOT
 from array import array
