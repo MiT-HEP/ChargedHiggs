@@ -35,10 +35,10 @@ int SmearJesSource::smear(Event *e)
 	//Log(__FUNCTION__,"DEBUG",Form("Getting Uncertainties up=%f down=%d",sup,sdw));
 
 	j->SetValueUp(Smearer::SOURCES,j->Pt() * (1+ sup) ) ;
-	j->SetValueDown(Smearer::SOURCES,j->Pt() * (1+sdw) ) ;
+	j->SetValueDown(Smearer::SOURCES,j->Pt() * (1-sdw) ) ;
 
-	TLorentzVector sUp (j->GetP4() ) ; sUp * (1+sup);
-	TLorentzVector sDown (j->GetP4() ) ; sDown * (1+sdw);
+	TLorentzVector sUp (j->GetP4() ) ; sUp *= (1+sup);
+	TLorentzVector sDown (j->GetP4() ) ; sDown *= (1-sdw);
 
 	smearedUp += sUp;
 	smearedDown += sDown;
