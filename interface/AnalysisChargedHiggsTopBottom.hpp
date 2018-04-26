@@ -22,6 +22,8 @@ public:
     ChargedHiggsTopBottom() : AnalysisBase () {}
     virtual ~ChargedHiggsTopBottom () {}
 
+    bool doJECSources = true;
+
     bool doSynch = false;
     bool doQCD = false;
     bool doBDTSyst = true;

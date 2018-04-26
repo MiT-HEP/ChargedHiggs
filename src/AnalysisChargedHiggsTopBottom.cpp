@@ -643,8 +643,8 @@ void ChargedHiggsTopBottom::InitScikit(){
     py -> Exec("import numpy as np");
     py -> Exec("from sklearn.externals import joblib ");
     /* original (no leptonPT, no MET) */
-    if(do1lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_1l_keras_trained_model_MlbmaxPt.h5')");
-    if(do2lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_2l_keras_trained_model_MlbmaxPt.h5')");
+    if(do1lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_1l_keras_trained_model_MlbmaxPt_long.h5')");
+    if(do2lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_2l_keras_trained_model_MlbmaxPt_long.h5')");
 
     py -> Exec("kmodel.summary()");
 
@@ -955,18 +955,18 @@ void ChargedHiggsTopBottom::BookSplit(string label, string category)
     Book(Form("ChargedHiggsTopBottom/CutFlow/SplitMC%s_%u",category.c_str(),0),"split mc cut flow",2,0,2);
     Book(Form("ChargedHiggsTopBottom/CutFlow/SplitMCWeight%s_%u",category.c_str(),0),"split mc cut flow",2,0,2);
 
-    AddFinalHisto(Form("ChargedHiggsTopBottom/CutFlow/SplitMC%s_%u",category.c_str(),mc));
+    //    AddFinalHisto(Form("ChargedHiggsTopBottom/CutFlow/SplitMC%s_%u",category.c_str(),mc));
     Book(Form("ChargedHiggsTopBottom/CutFlow/SplitMC%s_%u",category.c_str(),mc),"split mc cut flow",2,0,2);
 
-    AddFinalHisto(Form("ChargedHiggsTopBottom/CutFlow/SplitMCWeight%s_%u",category.c_str(),mc));
+    //    AddFinalHisto(Form("ChargedHiggsTopBottom/CutFlow/SplitMCWeight%s_%u",category.c_str(),mc));
     Book(Form("ChargedHiggsTopBottom/CutFlow/SplitMCWeight%s_%u",category.c_str(),mc),"split mc cut flow weight",2,0,2);
 
     ////
 
-    AddFinalHisto(Form("ChargedHiggsTopBottom/CutFlow/SplitMCCR%s_%u",category.c_str(),mc));
+    //    AddFinalHisto(Form("ChargedHiggsTopBottom/CutFlow/SplitMCCR%s_%u",category.c_str(),mc));
     Book(Form("ChargedHiggsTopBottom/CutFlow/SplitMCCR%s_%u",category.c_str(),mc),"split mc cut flow",2,0,2);
 
-    AddFinalHisto(Form("ChargedHiggsTopBottom/CutFlow/SplitMCWeightCR%s_%u",category.c_str(),mc));
+    //    AddFinalHisto(Form("ChargedHiggsTopBottom/CutFlow/SplitMCWeightCR%s_%u",category.c_str(),mc));
     Book(Form("ChargedHiggsTopBottom/CutFlow/SplitMCWeightCR%s_%u",category.c_str(),mc),"split mc cut flow weight",2,0,2);
 
 }
@@ -1128,9 +1128,11 @@ void ChargedHiggsTopBottom::BookFlavor(string l, string category, string phasesp
         // TEMPORARY
         //        doBDTSyst=true;
 
+        if(doJECSources and iBDT!=9) continue;
         if(do1lAnalysis or do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+SR+flavor+l);
 
     }
+
 
     if(do1lAnalysis && doTMVA) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lh_"+SR+flavor+l);
     if(do1lAnalysis && doTMVA) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt1lm_"+SR+flavor+l);
@@ -1230,13 +1232,10 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
             // TEMPORARY
             //            doBDTSyst=true;
-
+            if(doJECSources and iBDT!=9) continue;
             // SR
             if(doBDTSyst and do1lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+l);
             if(doBDTSyst and do2lAnalysis) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+l);
-
-            // 2D
-            //            if(iBDT>24 and iBDT<37) continue; // this is the 2d // // //  25-36
 
         }
 
@@ -1282,6 +1281,8 @@ void ChargedHiggsTopBottom::BookHisto(string l, string category, string phasespa
 
                 // TEMPORARY
                 //                doBDTSyst=true;
+
+                if(doJECSources and iBDT!=9) continue;
 
                 if(doSplit) {
                     if(doBDTSyst and (do1lAnalysis or do2lAnalysis)) AddFinalHisto("ChargedHiggsTopBottom/"+phasespace+category+"/bdt"+BDT+"_"+"SR1_"+l);
@@ -3670,7 +3671,6 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
         ) return EVENT_NOT_USED;
     */
 
-    /*
     // use the 2/3
     // QCD is full
     // diboson+triboson is full
@@ -3687,8 +3687,8 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
          (label.find("TTG") !=string::npos) or
          (label.find("ST") !=string::npos)
          )  and (e->eventNum()%3)==0 ) return EVENT_NOT_USED;
-    */
 
+    /*
     // use the 1/3
     if (
         ((label.find("TT_TuneCUETP8M2T4_13TeV-powheg-pythia8") !=string::npos) or
@@ -3698,6 +3698,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
          (label.find("WJetsToLNu_HT") !=string::npos) or
          (label.find("ST") !=string::npos)
          )  and (e->eventNum()%3)!=0 ) return EVENT_NOT_USED;
+    */
 
     /*
     TRandom3 *r = new TRandom3();
