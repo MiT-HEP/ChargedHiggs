@@ -16,4 +16,6 @@ FatJet::FatJet() :Object(){
   nSubjetscut_=0;
   hbbcut_=0;
   sdmasssyst_=0;
+  tau21syst_=0;
+  tau32syst_=0;
 }

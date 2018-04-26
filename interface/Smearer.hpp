@@ -32,6 +32,7 @@ class SmearBase : public Named {
         virtual int smear(Event *e){return 0;}; // 0 = success; 1 not applicable to the event
         virtual int smear(CorrectorBase *c){return 0;}; // 0 = success; 1 not applicable to the event
         virtual inline vector<Jet*> &GetJets(Event *e){return e->jets_;}
+        virtual inline vector<FatJet*> &GetFatJets(Event *e){return e->fat_;}
         virtual inline vector<Tau*> &GetTaus(Event *e){return e->taus_;}
         virtual inline Met &GetMet(Event *e){return e->met_;}
 };
@@ -218,6 +219,30 @@ class SmearWG1 : virtual public SmearBase
         const string sfname(){ return sfname_ ;}
 
 };
+
+
+class SmearSDMassScale : virtual public SmearBase
+{
+    public:
+        SmearSDMassScale() : SmearBase(){ name_ = "SDMassSCALE";}
+        int smear(Event*e) override;
+};
+
+
+class SmearTau21Scale : virtual public SmearBase
+{
+    public:
+        SmearTau21Scale() : SmearBase(){ name_ = "Tau21SCALE";}
+        int smear(Event*e) override;
+};
+
+class SmearTau32Scale : virtual public SmearBase
+{
+    public:
+        SmearTau32Scale() : SmearBase(){ name_ = "Tau32SCALE";}
+        int smear(Event*e) override;
+};
+
 
 #endif
 // Local Variables:

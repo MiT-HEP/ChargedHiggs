@@ -50,6 +50,9 @@ int Looper::AddSmear(string name){
 	if (name == "JES"){ SmearJes *s = new SmearJes(); systs_ . push_back(s); return 0;}
 	if (name == "JER"){ SmearJer *s = new SmearJer(); systs_ . push_back(s); return 0;}
 	if (name == "PU"){ SmearPu *s = new SmearPu(); systs_ . push_back(s); return 0;}
+    	if (name == "SDMassSCALE"){ SmearSDMassScale *s = new SmearSDMassScale(); systs_ . push_back(s); return 0;}
+	if (name == "Tau21SCALE"){ SmearTau21Scale *s = new SmearTau21Scale(); systs_ . push_back(s); return 0;}
+	if (name == "Tau32SCALE"){ SmearTau32Scale *s = new SmearTau32Scale(); systs_ . push_back(s); return 0;}
 
 	cout <<"[Looper]::[AddSmear]::[WARNING] Smear "<<name<<" does NOT exist!!!"<<endl;
 	return 1; // maybe throw exception

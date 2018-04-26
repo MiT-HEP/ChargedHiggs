@@ -31,6 +31,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float hadFlavor_;
 
     int sdmasssyst_;
+    int tau21syst_;
+    int tau32syst_;
 
     // FIXME: add puppi
 
@@ -77,6 +79,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
 
 
     int sdmasssyst{0};
+    int tau21syst{0};
+    int tau32syst{0};
 
     int isValid;
     //Gen-level info
@@ -101,7 +105,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float subjetCSVmax() const { return subjet_btag_max ; }
     inline int NSubj() const { return nSubjets ; }
 
-    void clearSyst() override {Object::clearSyst(); sdmasssyst=0;}
+    void clearSyst() override {Object::clearSyst(); sdmasssyst=0; tau21syst=0; tau32syst=0;}
 
     inline int IsSubjetBTag() const { return hasSubJetBTag ; }
     inline int IsSubjetBTagLoose() const { return hasSubJetBTagLoose ; }
@@ -121,16 +125,25 @@ class FatJet : virtual public Object, virtual public SmearableBase
         return IsJetExceptValidity();
     }
 
+    inline float Tau21() const {
+        if(tau2 > 0 and tau1 > 0) return (1+0.11*tau21syst)*(tau2/tau1);
+        else return 0.;
+    }
+
+    inline float Tau32() const {
+        if(tau3 > 0 and tau2 > 0) return (1+0.1*tau32syst)*(tau3/tau2);
+        else return 0.;
+    }
+
 
     // tipically 250 GeV
-//    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105.  and tau2 < tau1*0.6  and IsJet() )   return 1; return 0;}
-//    inline int IsWJetMirror() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105.  and tau2 > tau1*0.6  and IsJet() )   return 1; return 0;}
-    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.6  and IsFatJet() and IsSubjetBTagLoose() == 0 )   return 1; return 0;}
-    inline int IsWJetMirror() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 > tau1*0.6  and IsFatJet() and IsSubjetBTagLoose() == 0 )   return 1; return 0;}
+//    inline int IsWJet() const { if( Pt() > 207. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.6  and IsFatJet() and IsSubjetBTagLoose() == 0 )   return 1; return 0;}
+//    inline int IsWJetMirror() const { if( Pt() > 207. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 > tau1*0.6  and IsFatJet() and IsSubjetBTagLoose() == 0 )   return 1; return 0;}
+    inline int IsWJet() const { if( Pt() > 207. and SDMass() > 65. and SDMass() < 105. and tau2 > 0 and tau1 > 0 and Tau21() < 0.6 and IsFatJet() and IsSubjetBTag() == 0 )   return 1; return 0;}
+    inline int IsWJetMirror() const { if( Pt() > 207. and SDMass() > 65. and SDMass() < 105. and tau2 > 0 and tau1 > 0 and Tau21() > 0.6  and IsFatJet() and IsSubjetBTag() == 0 )   return 1; return 0;}
     // tipically 400 GeV
-//    inline int IsTopJet() const { if( softdropMass > 135. and softdropMass < 220. and tau3 < tau2*0.81  and IsFatJet() and IsSubjetBTag()>0)   return 1; return 0;}
-    inline int IsTopJet() const { if( Pt() > 400. and softdropMass > 135. and softdropMass < 220. and tau3 > 0 and tau2 > 0 and tau3 < tau2*0.67  and IsFatJet() ) return 1; return 0;}
-    inline int IsTopJetMirror() const { if( Pt() > 400. and softdropMass > 135. and softdropMass < 220. and tau3 > 0 and tau2 > 0 and tau3 > tau2*0.67  and IsFatJet() ) return 1; return 0;}
+    inline int IsTopJet() const { if( Pt() > 400. and SDMass() > 135. and SDMass() < 220. and tau3 > 0 and tau2 > 0 and Tau32() < 0.67  and IsFatJet() ) return 1; return 0;}
+    inline int IsTopJetMirror() const { if( Pt() > 400. and SDMass() > 135. and SDMass() < 220. and tau3 > 0 and tau2 > 0 and Tau32() > 0.67  and IsFatJet() ) return 1; return 0;}
 };
 
 #endif
