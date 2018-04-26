@@ -26,19 +26,19 @@ int SmearJesSource::smear(Event *e)
 
 	jecUnc_->setJetPt(j->Pt());
 	jecUnc_->setJetEta(j->Eta());
-	float sup =  jecUnc_->getUncertainty(true);;
+	float sup =  jecUnc_->getUncertainty(true);
 
 	jecUnc_->setJetPt(j->Pt()); // need to be reset
 	jecUnc_->setJetEta(j->Eta());
-	float sdw =  jecUnc_->getUncertainty(false);;
+	float sdw =  jecUnc_->getUncertainty(false);
 
 	//Log(__FUNCTION__,"DEBUG",Form("Getting Uncertainties up=%f down=%d",sup,sdw));
 
 	j->SetValueUp(Smearer::SOURCES,j->Pt() * (1+ sup) ) ;
-	j->SetValueDown(Smearer::SOURCES,j->Pt() * (1+sdw) ) ;
+	j->SetValueDown(Smearer::SOURCES,j->Pt() * (1 - sdw) ) ;
 
-	TLorentzVector sUp (j->GetP4() ) ; sUp * (1+sup);
-	TLorentzVector sDown (j->GetP4() ) ; sDown * (1+sdw);
+	TLorentzVector sUp (j->GetP4() ) ; sUp *= (1+sup);
+	TLorentzVector sDown (j->GetP4() ) ; sDown *= (1 - sdw);
 
 	smearedUp += sUp;
 	smearedDown += sDown;
