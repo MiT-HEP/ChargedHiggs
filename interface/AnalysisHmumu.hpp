@@ -47,8 +47,12 @@ class HmumuAnalysis: virtual public AnalysisBase
         float mt; // with WHLep, only
         Object Hmm;
         Lepton *mu0{NULL},*mu1{NULL};
-        vector<Jet*> selectedJets;
+        vector<Jet*> selectedJets; // final that match to the one above
         vector<pair<float,pair<int,int> > > mjj; // mjj -> ijet, jjet
+
+        // this are related to miniIso if run
+        vector<Jet*> selectedJetsMiniIso; 
+        vector<Lepton*> miniIsoLeptons;
         //Set soft variables
         bool isMiniIsoLeptons{false};
         

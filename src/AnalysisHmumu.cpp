@@ -70,7 +70,9 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
      */
     string category = "";
 
-    vector<Lepton*> miniIsoLeptons;
+    miniIsoLeptons.clear();
+    selectedJetsMiniIso.clear();
+
     int nMuons=0;
     for(unsigned il=0 ; ;++il)
     {
@@ -99,10 +101,11 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     std::sort(miniIsoLeptons.begin(),miniIsoLeptons.end(),[](Lepton const *a, Lepton const *b ){return a->Pt() > b->Pt();});
 
     // chek jets 
-    vector<Jet*> selectedJets_local;
+    //vector<Jet*> selectedJetsMiniIso;
+    //selectedJetsMiniIso.clear();
     int nbjets=0;
     int nbloose=0;
-    int nblooseDeep=0; //L = 0.2219, M=0.6324, T=0.8958
+    int nblooseDeep=0; //L = 0.1522, M=0.4941, T=??
     int nbjetsDeep=0;
     for(unsigned ij=0 ; ;++ij)
     {
@@ -119,16 +122,16 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
         if (isLep) continue;
 
         //OK
-        selectedJets_local.push_back(j);
+        selectedJetsMiniIso.push_back(j);
         
         //count bjets
         if (abs(j->Eta())>2.4 ) continue;
         //if (j->Btag() > 0.5426) nbloose+=1;
         //if (j->Btag() > 0.8484) nbjets+=1;
-        if (j->GetDeepB() > 0.2219) nbloose+=1;
-        if (j->GetDeepB() > 0.6324) nbjets+=1;
+        if (j->GetDeepB() > 0.1522) nbloose+=1;
+        if (j->GetDeepB() > 0.4941) nbjets+=1;
     }
-    std::sort(selectedJets_local.begin(),selectedJets_local.end(),[](Jet const *a, Jet const *b ){return a->Pt() > b->Pt();});
+    std::sort(selectedJetsMiniIso.begin(),selectedJetsMiniIso.end(),[](Jet const *a, Jet const *b ){return a->Pt() > b->Pt();});
 
     // find reco Muons: Opposite Charge 
     Lepton * mu0_local=NULL;
@@ -146,7 +149,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
 
     // CHECK first ttH categories, priority is in the order ttHLep, ttHHadr
     if (category == "" and nbloose >0 and miniIsoLeptons.size() >2) category = "ttHLep";
-    if (category == "" and nbloose >0 and selectedJets_local.size() > 4) category = "ttHHadr";
+    if (category == "" and nbloose >0 and selectedJetsMiniIso.size() > 4) category = "ttHHadr";
 
     //if ttH fails, check ZH Lept
     if (category == "" and miniIsoLeptons.size() >=4) //ZH Z->ee
@@ -265,7 +268,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
         mass_=Hmm.M();
         pt_ = Hmm.Pt();
         selectedJets.clear();
-        for(auto j : selectedJets_local) selectedJets.push_back(j);
+        for(auto j : selectedJetsMiniIso) selectedJets.push_back(j);
         updateMjj();
         isMiniIsoLeptons=true;
     }
@@ -895,6 +898,7 @@ void HmumuAnalysis::InitTmvaMIT(){
     for( size_t i=0;i<weights.size() ;++i)
         readers_ . push_back( new TMVA::Reader() );
 
+    //varscheme = 3 "Hpt","Heta","Hphi","deltaphi","deltaeta","eta1","eta2","ncentjets","njets","htCent","pass_leptonveto","mjj_1","mjj_2","detajj_1","detajj_2","firstQGL","secondQGL","thirdQGL","nbjets","maxDeepB","leadDeepB","maxCSV","mt1","mt2","met",]
     AddVariable("Hpt",'F');    
     AddVariable("Heta",'F');    
     AddVariable("Hphi",'F');    
@@ -910,10 +914,10 @@ void HmumuAnalysis::InitTmvaMIT(){
     AddVariable("mjj_2",'F');    
     AddVariable("detajj_1",'F');    
     AddVariable("detajj_2",'F');    
-    AddVariable("softNjets1",'F');    
-    AddVariable("softHt1",'F');    
-    AddVariable("softHt5",'F');    
-    AddVariable("softHt10",'F');    
+    //AddVariable("softNjets1",'F');    
+    //AddVariable("softHt1",'F');    
+    //AddVariable("softHt5",'F');    
+    //AddVariable("softHt10",'F');    
     AddVariable("firstQGL",'F');    
     AddVariable("secondQGL",'F');    
     AddVariable("thirdQGL",'F');    
@@ -927,7 +931,7 @@ void HmumuAnalysis::InitTmvaMIT(){
 
     // 
     AddSpectator("bdt",'F');SetVariable("bdt",0.);
-    AddSpectator("mass",'F');SetVariable("samp_wgt",0.);
+    AddSpectator("mass",'F');SetVariable("mass",0.);
     AddSpectator("weight*((mc<-10&&mc>=-19)*48.58*0002176+(mc<-20&&mc>=-29)*3.782*0.0002176+(mc<-30&&mc>=-39)*0.8839*0.0002176+(mc<-40&&mc>=-49)*0.5328*0.0002176+(mc<-50&&mc>-59)*0.84*0.0002176+(mc<-60&&mc>=-69)*0.5071*0.0002176)",'F');SetVariable("weight*((mc<-10&&mc>=-19)*48.58*0002176+(mc<-20&&mc>=-29)*3.782*0.0002176+(mc<-30&&mc>=-39)*0.8839*0.0002176+(mc<-40&&mc>=-49)*0.5328*0.0002176+(mc<-50&&mc>-59)*0.84*0.0002176+(mc<-60&&mc>=-69)*0.5071*0.0002176)",0.);
 
     // load weights
@@ -1031,6 +1035,12 @@ void HmumuAnalysis::Init(){
         {
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
 	        //Book2D ("HmumuAnalysis/Vars/JetEtaPhi_"+ c + "_"+ l ,"Jet EtaPhi; eta; phi;Events", 100,-5,5,100,-3.1415,3.1415); // CHECK2D
+            // ------------ MATCHED TO GEN HIGGS STUDIES -----
+	        Book ("HmumuAnalysis/Vars/match_"+ c + "_"+ l ,"Match [GeV];Events", 10,0-.5,10-.5); 
+	        Book ("HmumuAnalysis/Vars/match_ok_DRB_"+ c + "_"+ l ,"Match [GeV];Events", 100,0,1.); 
+	        Book ("HmumuAnalysis/Vars/match_fake_DRB_"+ c + "_"+ l ,"Match [GeV];Events", 100,0,1.); 
+	        Book ("HmumuAnalysis/Vars/match_ok_DRJ_"+ c + "_"+ l ,"Match [GeV];Events", 100,0,1.); 
+	        Book ("HmumuAnalysis/Vars/match_fake_DRJ_"+ c + "_"+ l ,"Match [GeV];Events", 100,0,1.); 
         }
 
     } //end label loop
@@ -1371,7 +1381,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     // BTAG SF
     // -----------------------
   
-#warning NO_BTAGSF 
+    #warning NO_BTAGSF 
     /* 
     if (true) // CSV-SF for passing loose,medium or tigth cuts
     {
@@ -1901,8 +1911,81 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             }
         }
 
+        // Check if matching is correct
+        if (category != "" and label.find("HToMuMu") != string::npos)
+        {
+            //mu0 mu1
+            bool mu0Matched=false;
+            bool mu1Matched=false;
+            for(int ig=0;;++ig)
+            {
+                GenParticle *gp = e->GetGenStable(ig,13,2.5) ;
+                if (gp ==NULL) break;
+                if ( fabs(gp -> GetParentPdgId()) == 25 )
+                {
+                    //good muon
+                    //GREPME
+                    if ( mu0->DeltaR(gp) < 0.1) {
+                        mu0Matched=true;
+                    }
+                    if ( mu1->DeltaR(gp) < 0.1) {
+                        mu1Matched=true; 
+                    }
+                }
+            }
+            //0 = ALL 
+            //1 = Matched 0
+            //2 = Matched 1
+            //3 = Matched Both
+            Fill("HmumuAnalysis/Vars/match_"+ category + "_"+ label,systname,0, e->weight() );
+            if ( mu0Matched)Fill("HmumuAnalysis/Vars/match_"+ category + "_"+ label,systname,1, e->weight() );
+            if ( mu1Matched)Fill("HmumuAnalysis/Vars/match_"+ category + "_"+ label,systname,2, e->weight() );
+            if ( mu0Matched and mu1Matched)Fill("HmumuAnalysis/Vars/match_"+ category + "_"+ label,systname,3, e->weight() );
+
+
+            // find closest jet and closest b
+            float drMinJ=100;
+            float drMinB=100;
+            //Jet * closeJ{NULL}, *closeB{NULL};
+            for(auto j : selectedJets)
+            {
+                if (j->GetDeepB() > 0.1522 and drMinB > mu0->DeltaR(j) ) { /*closeB = j;*/ drMinB = mu0->DeltaR(j); }
+                if ( drMinJ > mu0->DeltaR(j) ) { /*closeJ = j;*/ drMinJ = mu0->DeltaR(j); }
+            }
+
+            if (mu0Matched){
+                Fill("HmumuAnalysis/Vars/match_ok_DRB_"+ category + "_"+ label,systname, drMinB,e->weight());
+                Fill("HmumuAnalysis/Vars/match_ok_DRJ_"+ category + "_"+ label,systname, drMinJ,e->weight());
+            }
+            else
+            {
+                Fill("HmumuAnalysis/Vars/match_fake_DRB_"+ category + "_"+ label,systname, drMinB,e->weight());
+                Fill("HmumuAnalysis/Vars/match_fake_DRJ_"+ category + "_"+ label,systname, drMinJ,e->weight());
+            }
+            // same with mu1
+            drMinJ=100;
+            drMinB=100;
+            //Jet * closeJ{NULL}, *closeB{NULL};
+            for(auto j : selectedJets)
+            {
+                if (j->GetDeepB() > 0.1522 and drMinB > mu1->DeltaR(j) ) { /*closeB = j;*/ drMinB = mu1->DeltaR(j); }
+                if ( drMinJ > mu1->DeltaR(j) ) { /*closeJ = j;*/ drMinJ = mu1->DeltaR(j); }
+            }
+
+            if (mu1Matched){
+                Fill("HmumuAnalysis/Vars/match_ok_DRB_"+ category + "_"+ label,systname, drMinB,e->weight());
+                Fill("HmumuAnalysis/Vars/match_ok_DRJ_"+ category + "_"+ label,systname, drMinJ,e->weight());
+            }
+            else
+            {
+                Fill("HmumuAnalysis/Vars/match_fake_DRB_"+ category + "_"+ label,systname, drMinB,e->weight());
+                Fill("HmumuAnalysis/Vars/match_fake_DRJ_"+ category + "_"+ label,systname, drMinJ,e->weight());
+            }
+
+        }
+
         //if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
-        if(Unblind(e) and category != "")
+        if( category != "")
         {
             Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
             if (doUnbinned and mass_>110 and mass_<150 and (not processingSyst_))
