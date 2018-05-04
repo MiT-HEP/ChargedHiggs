@@ -374,6 +374,151 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
     return vbfStr +"_" + muStr;
 }
 
+string HmumuAnalysis::CategoryBdtMIT(Event *e){
+    bdt.clear();
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryBdt");
+    // return the right category
+    if (mu0== NULL or mu1==NULL) return "";
+
+    float eta0 = mu0->Eta();
+    float eta1 = mu1->Eta();
+
+    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon0 eta0=%f | Pt=%f Pz=%f",mu0->Eta(),mu0->Pt(),mu0->GetP4().Pz()));
+    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon1 eta1=%f | Pt=%f Pz=%f",mu1->Eta(),mu1->Pt(),mu1->GetP4().Pz()));
+   
+
+    SetVariable("Hpt",Hmm.Pt());    
+    SetVariable("Heta",Hmm.Eta());    
+    SetVariable("Hphi",Hmm.Phi());    
+    SetVariable("deltaeta",fabs(mu0->Eta()-mu1->Eta()));    
+    SetVariable("deltaphi",fabs(mu0->DeltaPhi(*mu1)));
+
+    SetVariable("eta1",mu0->Eta());    
+    SetVariable("eta2",mu1->Eta());    
+    SetVariable("njets",selectedJets.size());    
+    SetVariable("mt1",ChargedHiggs::mt(mu0->Pt(),e->GetMet().Pt(),mu0->Phi(),e->GetMet().Phi()));    
+    SetVariable("mt2",ChargedHiggs::mt(mu1->Pt(),e->GetMet().Pt(),mu1->Phi(),e->GetMet().Phi()));    
+    SetVariable("met",e->GetMet().Pt());    
+    SetVariable("pass_leptonveto",passLeptonVeto);    
+
+    // compute secondary jets variables: TODO unify computation of variables
+    int nbjets=0;
+    int ncentjets=0;
+    int nfwdjets=0;
+    float aveQGLcent=0.0;
+    float maxCSV=0.0;
+    float leadDeepB = -100.;
+    float maxDeepB = -100.;
+    float aveCSV=0.0;
+    float htCent=0.0;
+        vector<float> csv_score;
+        vector<pair<float,float>> qgl_score;
+
+        if (selectedJets.size() >0)
+        {
+            leadDeepB = selectedJets[0]->GetDeepB();
+        }
+
+        for(unsigned i=0;i<selectedJets.size() ;++i)
+        {
+            if (selectedJets[i]->IsBJet() and selectedJets[i]->Pt() >30 and abs(selectedJets[i]->Eta())<2.4)  nbjets +=1;
+            if (abs(selectedJets[i]->Eta())<2.4)
+            { 
+                ncentjets +=1; 
+                aveQGLcent += selectedJets[i]->QGL(); 
+                csv_score.push_back(selectedJets[i]->Btag());
+                qgl_score.push_back(pair<float,float>(selectedJets[i]->Pt(),selectedJets[i]->QGL()));
+                maxCSV = std::max(selectedJets[i]->Btag(),maxCSV)  ;
+                aveCSV += selectedJets[i]->Btag() * selectedJets[i]->Pt() ;
+                htCent += selectedJets[i]->Pt();
+                maxDeepB = std::max(selectedJets[i]->GetDeepB(),maxDeepB)  ;
+            }
+            else nfwdjets +=1;
+        }
+        if (ncentjets >0 ) aveQGLcent /= ncentjets;
+        if (htCent>0) aveCSV /=htCent;
+        sort(csv_score.begin(),csv_score.end());
+        sort(qgl_score.begin(),qgl_score.end(),[](const pair<float,float >&x,const pair<float, float >&y){ if (x.first> y.first) return true; if(x.first<y.first)return false; return x.second> y.second; } );
+
+    SetVariable("ncentjets",ncentjets);    
+    SetVariable("htCent",htCent);    
+    SetVariable("nbjets",nbjets);    
+    SetVariable("maxDeepB",maxDeepB);    
+    SetVariable("leadDeepB",leadDeepB);    
+    SetVariable("maxCSV",maxDeepB);    
+    //mjj vars
+    SetVariable("mjj_1",(mjj.size() >0 ) ? mjj[0].first: 0.0);
+    SetVariable("mjj_2",(mjj.size() > 1) ? mjj[1].first: 0.0);
+    SetVariable("detajj_1",(mjj.size()>0) ? fabs(selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta()): -1.0);
+    SetVariable("detajj_2",(mjj.size()>1) ? fabs(selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta()): -1.0);
+
+    //soft variables
+    if (mjj.size() >0)
+        {
+            Jet * j1= selectedJets[mjj[0].second.first];
+            Jet * j2= selectedJets[mjj[0].second.second];
+            pair<int,float> soft1 = e->softVariables(j1,j2,1.);
+            pair<int,float> soft2 = e->softVariables(j1,j2,2.);
+            pair<int,float> soft5 = e->softVariables(j1,j2,5.);
+            pair<int,float> soft10 = e->softVariables(j1,j2,10.);
+
+            SetVariable("softNjets1",soft1.first);    
+            SetVariable("softHt1",soft1.second);    
+            SetVariable("softHt5",soft5.second);    
+            SetVariable("softHt10",soft10.second);    
+        } else {
+            SetVariable("softNjets1",-1);    
+            SetVariable("softHt1",-1);    
+            SetVariable("softHt5",-1);    
+            SetVariable("softHt10",-1);    
+        }
+    // qgl
+    SetVariable("firstQGL",  (qgl_score.size() >0) ? qgl_score[0].second : -1 );
+    SetVariable("secondQGL", (qgl_score.size() >1) ? qgl_score[1].second : -1 );
+    SetVariable("thirdQGL",  (qgl_score.size() >2) ? qgl_score[2].second : -1 );
+
+    for(unsigned i =0 ;i< readers_.size() ; ++i)
+    {
+         bdt.push_back(readers_[i]->EvaluateMVA("BDTG_default") );
+    }
+
+    int icat=-100; string catStr="";
+
+    float mu_max_eta = std::max(fabs(mu0->Eta()),fabs(mu1->Eta()));
+    float mu_ave_eta = (fabs(mu0->Eta())+fabs(mu1->Eta()))/2.;
+
+    //*
+    if ( bdt[0] < -0.400 ) icat = 0 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 1.900 ) icat = 1 ;
+    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 1.900 ) icat = 2 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta >= 1.900 ) icat = 3 ;
+    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 1.900 ) icat = 4 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta < 0.900 ) icat = 5 ;
+    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta < 0.900 ) icat = 6 ;
+    if ( mu_max_eta < 1.900 and bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 0.900 ) icat = 7 ;
+    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 and mu_max_eta < 1.9) icat = 8 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 0.9 ) icat = 9 ;
+    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900  and mu_max_eta >=0.9) icat = 10 ;
+    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 11 ;
+    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 12;
+    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 13 ;
+    if ( bdt[0] >= 0.730 ) icat = 14 ;
+    //
+
+    if (icat>=0) catStr=Form("cat%d",icat);
+
+    if (doSync and not processingSyst_)
+    {
+        SetTreeVar("bdt",bdt[0]);
+        SetTreeVar("cat",icat);
+    }
+
+    // SciKit
+
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + catStr);
+    return catStr;
+}
+
 string HmumuAnalysis::CategoryBdt(Event *e){
     bdt.clear();
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryBdt");
@@ -744,6 +889,56 @@ void HmumuAnalysis::InitTmva(){
 
 }
 
+void HmumuAnalysis::InitTmvaMIT(){
+    Log(__FUNCTION__,"INFO","Init Reader");
+    TMVA::Tools::Instance();
+    for( size_t i=0;i<weights.size() ;++i)
+        readers_ . push_back( new TMVA::Reader() );
+
+    AddVariable("Hpt",'F');    
+    AddVariable("Heta",'F');    
+    AddVariable("Hphi",'F');    
+    AddVariable("deltaphi",'F');    
+    AddVariable("deltaeta",'F');
+    AddVariable("eta1",'F');    
+    AddVariable("eta2",'F');    
+    AddVariable("ncentjets",'F');    
+    AddVariable("njets",'F');    
+    AddVariable("htCent",'F');    
+    AddVariable("pass_leptonveto",'F');    
+    AddVariable("mjj_1",'F');    
+    AddVariable("mjj_2",'F');    
+    AddVariable("detajj_1",'F');    
+    AddVariable("detajj_2",'F');    
+    AddVariable("softNjets1",'F');    
+    AddVariable("softHt1",'F');    
+    AddVariable("softHt5",'F');    
+    AddVariable("softHt10",'F');    
+    AddVariable("firstQGL",'F');    
+    AddVariable("secondQGL",'F');    
+    AddVariable("thirdQGL",'F');    
+    AddVariable("nbjets",'F');    
+    AddVariable("maxDeepB",'F');    
+    AddVariable("leadDeepB",'F');    
+    AddVariable("maxCSV",'F');    
+    AddVariable("mt1",'F');    
+    AddVariable("mt2",'F');    
+    AddVariable("met",'F');    
+
+    // 
+    AddSpectator("bdt",'F');SetVariable("bdt",0.);
+    AddSpectator("mass",'F');SetVariable("samp_wgt",0.);
+    AddSpectator("weight*((mc<-10&&mc>=-19)*48.58*0002176+(mc<-20&&mc>=-29)*3.782*0.0002176+(mc<-30&&mc>=-39)*0.8839*0.0002176+(mc<-40&&mc>=-49)*0.5328*0.0002176+(mc<-50&&mc>-59)*0.84*0.0002176+(mc<-60&&mc>=-69)*0.5071*0.0002176)",'F');SetVariable("weight*((mc<-10&&mc>=-19)*48.58*0002176+(mc<-20&&mc>=-29)*3.782*0.0002176+(mc<-30&&mc>=-39)*0.8839*0.0002176+(mc<-40&&mc>=-49)*0.5328*0.0002176+(mc<-50&&mc>-59)*0.84*0.0002176+(mc<-60&&mc>=-69)*0.5071*0.0002176)",0.);
+
+    // load weights
+    for( size_t i=0;i<weights.size() ;++i)
+        {
+            Log(__FUNCTION__,"INFO",Form("Loading weights idx=%d:",i)+weights[i]);
+            readers_[i]->BookMVA("BDTG_default",weights[i].c_str());
+        }
+
+}
+
 void HmumuAnalysis::Init(){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
     rnd_ . reset( new TRandom3() ) ;
@@ -753,9 +948,9 @@ void HmumuAnalysis::Init(){
     if (catType>=1)
     {
         categories_.clear();
-        for (int i=0;i<30;++i)
-            categories_.push_back(Form("cat%d",i));
-        InitTmva();
+        for (int i=0;i<30;++i) categories_.push_back(Form("cat%d",i));
+        if (catType<4)InitTmva();
+        if (catType>=4)InitTmvaMIT();
         if (doScikit)InitScikit();
     }
     else
@@ -1151,6 +1346,22 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         if (categoryExc == "WHLep" ) category="cat18";   // 
         if (categoryExc == "ggHX" and category == "" ) category="cat19";   // 
     } 
+    else if (catType ==4)
+    {
+        category = CategoryBdtMIT(e); 
+    }
+    else if (catType ==5) // MIT + exclusive
+    {
+        category = CategoryBdtMIT(e); 
+        string categoryExc = CategoryExclusive(e); 
+        recoMuons = mu0 != NULL and mu1 !=NULL;  // muons may have been recomputed here
+
+        if (categoryExc == "ttHHadr") category = "cat15";// 
+        if (categoryExc == "ttHLep" ) category="cat16";  // 
+        if (categoryExc == "ZHLep" ) category="cat17";   // 
+        if (categoryExc == "WHLep" ) category="cat18";   // 
+        if (categoryExc == "ggHX" and category == "" ) category="cat19";   // 
+    }
     else category = Category(mu0, mu1, selectedJets);
 
     // --------------- DIRTY CATEGORIES -----------
@@ -1269,13 +1480,16 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (mu0)
     {
-        e->SetPtEtaSF("mu_id_runBC", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
+        float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
+
+        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,fabs(mu0->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_id_runDE", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_id_runF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_id_runF", pt_for_sf,fabs(mu0->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
@@ -1283,13 +1497,15 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (mu1)
     {
-        e->SetPtEtaSF("mu_id_runBC", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
+        float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
+        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,fabs(mu1->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_id_runDE", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_id_runF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_id_runF", pt_for_sf,fabs(mu1->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
@@ -1299,26 +1515,30 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     // ISO Loose
     if (mu0)
     {
-        e->SetPtEtaSF("mu_iso_runBC", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
+        float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
+        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,fabs(mu0->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_iso_runDE", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_iso_runF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,fabs(mu0->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
     if (mu1)
     {
-        e->SetPtEtaSF("mu_iso_runBC", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
+        float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
+        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,fabs(mu1->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_iso_runDE", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_iso_runF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,fabs(mu1->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
@@ -1463,7 +1683,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         SetTreeVar("metphi" ,e->GetMet().Phi());
 
         // basic jet info
-        for(int ijet=0;ijet<selectedJets.size();++ijet)
+        for(int ijet=0;ijet<std::min(selectedJets.size(),size_t(20));++ijet)
         {
             SetTreeVar("jet_pt" ,ijet,selectedJets[ijet]->Pt());
             SetTreeVar("jet_eta",ijet,selectedJets[ijet]->Eta());

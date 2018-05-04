@@ -48,8 +48,12 @@ def print_progress(done,tot,n=30,every=10000):
 
 dir=opts.outdir+"/"
 call(["mkdir","-p", dir])
-fIn=ROOT.TFile.Open(opts.input)
-t=fIn.Get("hmm")
+
+#fIn=ROOT.TFile.Open(opts.input)
+#t=fIn.Get("hmm")
+t=ROOT.TChain("hmm")
+nfiles= t.Add(opts.input)
+print "-> Considering",nfiles,"in the chain"
 
 vbf0 = open(dir+"vbf0.txt","w")
 oneb = open(dir+"oneb.txt","w")

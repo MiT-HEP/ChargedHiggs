@@ -66,6 +66,7 @@ class HmumuAnalysis: virtual public AnalysisBase
         string Category(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets);
         //string CategoryAutoCat(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets,float met,float metphi);
         string CategoryBdt(Event *e);
+        string CategoryBdtMIT(Event *e);
 
         enum CutFlow{ Total=0, 
             Leptons,
@@ -87,6 +88,7 @@ class HmumuAnalysis: virtual public AnalysisBase
         vector<TMVA::Reader*> readers_;
 
         void InitTmva();
+        void InitTmvaMIT();
         vector<float> bdt;
 
         // Variables

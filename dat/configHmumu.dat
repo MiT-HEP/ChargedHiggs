@@ -22,7 +22,7 @@ include=dat/catalog/2018.moriond/hmm.dat
 #include=dat/catalog/2017.moriond/hmm_amcatnlo.dat
 
 ### DATA
-#include=catalog/2018.moriond/singleMuon.dat
+include=dat/catalog/2018.moriond/singleMuon.dat
 #
 #addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017B-17Nov2017-v1/
 #addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.1/SingleMuon/Run2017C-17Nov2017-v1/

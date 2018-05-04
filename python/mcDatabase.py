@@ -214,6 +214,7 @@ else:
 	### H-> mumu
 	elif 'HToMuMu' in opts.label: xsec=1
 	### TT
+	elif 'TTTo2L2Nu' in opts.label: xsec=88.20
 	elif 'TT' in opts.label: xsec=831
 	## ST
 	elif 'ST_s-channel_4f_InclusiveDecays' in opts.label: xsec=10.32

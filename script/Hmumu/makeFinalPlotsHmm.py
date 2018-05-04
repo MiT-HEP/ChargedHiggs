@@ -319,7 +319,11 @@ if doSig: ## signal composition plot
                 print "* Ignoring",(cat,proc)
         print " ** Cat=",cat,":",
         for proc in config.processes:
-            sigFrac[(cat,proc)] = sigYields[(cat,proc)]/S*100.; #sigYields becomes fractions here!
+            try:
+                sigFrac[(cat,proc)] = sigYields[(cat,proc)]/S*100.; #sigYields becomes fractions here!
+            except ZeroDivisionError: 
+                print "[WARNING] ZeroDivisionError in ",cat,proc
+                sigFrac[(cat,proc)] = 0.
             print proc,"(",sigFrac[(cat,proc)],"%)",
         print
         sys.stdout.flush()
