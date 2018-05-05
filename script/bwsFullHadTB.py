@@ -18,16 +18,63 @@ LikeBins=10
 doRebin = False
 applyLikelihoodRebinBin = True
 
-doSyst = False
+doSyst = True
 likelihoodBinning = FwRebin.RebinLikelihood(LikeBins)
 
 doSChannel = False
 
 parser= OptionParser()
 
-# new fixed (SYST only)
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit.root")
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/June12.root")
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/hysteriaMeow.root")
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ohho.root")
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ssolstice.root")
+
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ldoJune.root")
+##parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/bebetter.root")
+
+####
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/insaneM.root")
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/SoHot.root")
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/midAug.root")
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/lateAug.root")
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/updlimit.root")
+
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/crazylimit0306.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/crazylimit0306.root")
+
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/pipilimitnew.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/pipilimitnew.root")
+
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze2limit.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze2limit.root")
+
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze1limit.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze1limit.root")
+
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze00limit.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze00limit.root")
+
+## this is the one used for the freezed note
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze00systlimit.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/freze00systlimit.root")
+
+# new fixed (STAT only)
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0limit.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0limit.root")
+
+# new fixed (SYST)
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit.root")
+
+# new fixed (minor SYST only)
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit_ALL.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit_ALL.root")
+
+## fixed mass window for 400-500 + lowered the bjet PT 40->30 
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/finaltry.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/finaltry.root")
 
 if doSyst:
 	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_SYST.root")
@@ -181,6 +228,11 @@ def mergeCategory(tfile,toget):
 #channel = ["wbj"]
 #basecat = ["OneBOneFat_two_highj"]
 
+#basecat = ["OneBOneFat_one_highj","OneBOneFat_two_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj"
+##	   ,"OneBOneFat1l_one","OneBOneFat1l_two"
+#	   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj"
+#	   ]
+
 ### FINAL conf
 if doSChannel:
 	basecat = ["OneBOneFat_one_highj","OneBOneFat_two_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj"
@@ -196,6 +248,11 @@ else:
 
 if doSChannel:
 	channel = ["t0b","t1b","wbb","wbj"]
+##	channel = ["wbj"]
+##	channel = ["t1b"]
+##	label="sChan_"
+##	label="sChan_sronly_"
+##	label="sChan_inonly_"
 	label="sChan_"
 else:
 
@@ -311,6 +368,91 @@ for y in channel:
 					if "_three_highj" in x and y=="wbb": continue
 					if "_one_lowj" in x and y=="wbj": continue
 
+
+#				if opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
+##				if opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
+#					if y=="wbj": continue
+#					if "_three" in x and y=="wbb": continue
+#					if "_two" in x and y=="wbj": continue
+#					if "_two" in x and y=="wbb" and opts.kMass=="3000": continue
+#					if "_three" in x and y=="t0b": continue
+
+
+#				if opts.kMass=="2500" or opts.kMass=="3000":
+					#				# for the 2000,2500,3000: (They are all in the below bin)
+#					if "OneBOneMirrorFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
+#					if "OneBOneMirrorFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
+#					if "OneBOneFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
+#					if "OneBOneFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
+
+
+##				if "OneBOneMirrorFat_three_lowj" in x and y=="t0b": continue 
+#				if "_three" in x and ("above" in reg) and (y=="t0b"): continue 
+#				if "_three" in x and ("above" in reg) and (y=="t1b"): continue 
+#				if "_two" in x and ("above" in reg) and (y=="t0b"): continue 
+#				if "_two" in x and ("above" in reg) and (y=="t1b"): continue 
+#				if "_three" in x and (y=="wbb"): continue 
+#				if "_three" in x and (y=="wbj"): continue
+
+#				if doSChannel and opts.kMass=="3000":
+#					if ("in" in reg or "above" in reg): continue
+
+#				if doSChannel and opts.kMass=="3000":				
+#					if "OneBOneFat_two_lowj" in x and y=="t1b" and "in" in reg: continue 
+#					if "OneBOneMirrorFat_two_highj" in x and y=="t1b" and ("above" in reg) : continue
+#					if "OneBOneFat_two_highj" in x and y=="t1b" and ("in" in reg) : continue
+#					if "OneBOneMirrorFat_two_highj" in x and y=="t1b" and ("in" in reg) : continue
+
+#				if "OneBOneFat_one_lowj" in x and y=="wbb": continue 
+#				if "OneBOneMirrorFat_one_highj" in x and y=="wbb": continue
+
+#				if opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
+#					#				# for the 2000,2500,3000: (They are all in the below bin)
+#					if "OneBOneMirrorFat" in x and y=="wbb" and ("above" in reg): continue
+#					if "OneBOneMirrorFat" in x and y=="wbj" and ("above" in reg): continue
+#					if "OneBOneFat" in x and y=="wbb" and ("above" in reg): continue
+#					if "OneBOneFat" in x and y=="wbj" and ("above" in reg): continue
+
+				# THIS IS planB
+#				if "_lowj" in x and y=="wbb": continue
+#				if "_lowj" in x and y=="wbj": continue
+
+
+				# UNDEFINED
+				# they should not exist but some are filled
+#				if "OneBOneFat_one" in x and y=="t1b": continue
+#				if "OneBOneMirrorFat_one" in x and y=="t1b": continue
+#				if "OneBOneFat1l_one" in x and y=="t1b": continue
+
+#				if "OneBOneFat_three" in x and y=="wbj": continue
+#				if "OneBOneMirrorFat_three" in x and y=="wbj": continue
+#				if "OneBOneFat1l_three" in x and y=="wbj": continue
+
+#				if opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
+#					#				# for the 2000,2500,3000: (They are all in the below bin)
+#					if "OneBOneMirrorFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
+#					if "OneBOneMirrorFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
+#					#				## recovered the wbb - in
+#					if "OneBOneFat" in x and y=="wbb" and ("above" in reg ): continue
+#					if "OneBOneFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
+
+#				# t0b/t1b & 3b NO STAT very rare situation
+#				if "OneBOneMirrorFat_three_lowj" in x and y=="t1b": continue
+#				if "OneBOneMirrorFat_three_highj" in x and y=="t1b": continue
+
+#				if doSChannel or (opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000"):
+#					if "OneBOneFat_three" in x and y=="t0b": continue
+#					if "OneBOneMirrorFat_three" in x and y=="t0b": continue
+
+#				## NO STAT
+#				if "OneBOneFat1l_one" in x and (y=="t0b" or y=="wbj"): continue
+				##
+##				if "OneBOneFat1l_two" in x and ( y=="wbb" or y=="wbj" or y=="t0b" or y=="t1b"): continue
+#				if "OneBOneFat1l_two" in x and ( y=="wbb" or y=="wbj" or y=="t0b" or y=="t1b"): continue
+				##
+##				if "OneBOneFat1l_three" in x and ( y=="wbb" or y=="t1b" or y=="t0b"): continue
+#				if "OneBOneFat1l_three" in x and ( y=="wbb" or y=="t1b" or y=="t0b"): continue
+
 				if "OneBOneFat1l" in x:
 					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["ttbar"],"var":"HT"+reg}
 					name = x+ "_" + y
@@ -378,13 +520,13 @@ for y in channel:
                                         ##Light jets Heavy flavor contamination
 					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":[".*"]},
                                         ##Heavy jets light flavor contamination
-                                        "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF_0l_qcd","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
-                                        "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF_0l","name":"CSVRLF","proc":["Hptb","ttbar"]},
+                                        "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF_qcd","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+                                        "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["Hptb","ttbar"]},
                                         ##Linear and quadratic uncertainties
 					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":[".*"]},
 					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":[".*"]},
-                                        "CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1_0l","name":"CSVRLFSTAT1","proc":[".*"]},
-                                        "CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2_0l","name":"CSVRLFSTAT2","proc":[".*"]},
+                                        "CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":[".*"]},
+                                        "CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":[".*"]},
                                         "CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":[".*"]},
                                         "CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":[".*"]}
                                         ####
@@ -739,8 +881,7 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
 def envelop(tfile,togetClone, s) :
 
         hname=togetClone+'RF'+s
-
-        hTmp=mergeCategory(tfile,hname)
+        hTmp=MergeCategory(tfile,hname)
 
 ##	if hTmp!=None: hTmp.Rebin(nRebinHT)
 
@@ -749,27 +890,25 @@ def envelop(tfile,togetClone, s) :
         if hTmp==None: return
 
         for w in [ 'R','F','RF']:
+                for var in [ 'Up','Down']:
 
-                hnameClone=togetClone+w+s
+                        hnameClone=togetClone+w+var
 
-                hTmp=mergeCategory(tfile,hnameClone)
+                        hTmp=MergeCategory(tfile,hnameClone)
 
-##		if hTmp!=None: hTmp.Rebin(nRebinHT)
+##			if hTmp!=None: hTmp.Rebin(nRebinHT)
 
-                for iBin in range(1,h.GetNbinsX()+1):
-                        c= h.GetBinContent(iBin)
+                        for iBin in range(1,h.GetNbinsX()+1):
+                                c= h.GetBinContent(iBin)
 
-			## take the maximum for the Up
-                        if "Up" in s and hTmp.GetBinContent(iBin)>c:
-                                h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
+                        ## take the maximum for the Up and Down                                                                                                                           
+                                if 'Up' in s and hTmp.GetBinContent(iBin)>c:
+                                        h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
 
-                        ## take the minimum for the Down
-                        if "Down" in s and hTmp.GetBinContent(iBin)<c:
-                                h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
-
+                        ## take the minimum for the Down                                                                                                                                  
+                                if 'Down' in s and hTmp.GetBinContent(iBin)<c:
+                                        h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
         return h
-
-
 
 ## import Everything in ws TODO
 def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
@@ -840,6 +979,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 			target = "pdf_" + mc["name"] +"_"+ cat["name"]
 			if m >10 :
 				target = "pdf_" + mc["name"] + "_" + cat["name"]
+#				target = "pdf_" + mc["name"] +"_M-%d"%m+"_"+ cat["name"]
 
 			if syst != None:
 				target += "_" + syst["wsname"] + s
@@ -867,6 +1007,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				elif syst != None:
 
                                         hTmp = SmoothAndMergeSyst(tfile,togetNom,togetSyst,s)
+##                                      hTmp = MergeCategory(tfile,togetSyst+s)                                                                                                                                                            
 				else:
                                         hTmp = mergeCategory(tfile,togetNom)
 
