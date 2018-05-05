@@ -12,6 +12,7 @@ import SystematicSmoother as SS
 maxStat=0.3
 
 LikeBins=50
+#LikeBins=1
 
 doSyst = False
 
@@ -30,8 +31,8 @@ parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%defau
 ######
 
 if doSyst:
-	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="_smooth_workspace_SYST.root")
-	parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="_smooth_cms_datacard_topbottom_SYST.txt")
+	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="_workspace_SYST.root")
+	parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="_cms_datacard_topbottom_SYST.txt")
 else :
 	parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="workspace_STAT.root")
 	parser.add_option("-d","--datCardName",type='string',help="Output txt file. [%default]", default="cms_datacard_topbottom_STAT.txt")
@@ -127,8 +128,8 @@ channel = []
 
 #1l
 if opts.kTest==0 or opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==8 or opts.kTest==9 or opts.kTest==10 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16 or opts.kTest==100 or opts.kTest==101  or opts.kTest==102:
-#	channel = ["1Mu","1Ele"]
-	channel = ["1L"]
+	channel = ["1Mu","1Ele"]
+#	channel = ["1L"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7","charmCR"]
 
 #2l
@@ -328,7 +329,11 @@ for y in channel:
 #			if opts.kTest==19: VarTest="2d_high_"
 
 			for reg in region:
+				# use the HT in the topCR
+#				name = x+ "_" + y + "" + reg
+				# use the DNN everywhere in the topCR
 				name = x+ "_" + y + "" + sr + "" + reg
+
 #				x=macroRegion  y=1L  sr=bdtX reg=SR12 if thee
 
 				## BDT 1-14 for each mass point and for the merged set
@@ -367,12 +372,13 @@ for y in channel:
 					"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
 					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
 					"ttb":{ "name":"ttb","hist":["tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
-					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
-					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
-					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
+###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+###					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
+					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 #					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW","VHToNonbb_M125","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
-					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WZTo","ZZZ","WZZ","WWZ","WWW","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WZTo","ZZZ","WZZ","WWZ","WWW","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":5},
+					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":6}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
 					}
 			else:
@@ -380,12 +386,13 @@ for y in channel:
 					"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
 					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
 					"ttb":{ "name":"ttb","hist":["tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
-					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
-					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
-					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":5},
+#					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+#					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
+					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 #					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW","VHToNonbb_M125","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
-					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","ZZTo"],"num":6},
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":7}
+					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","ZZTo"],"num":5},
+					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":6}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
 					}
 
@@ -395,20 +402,61 @@ for y in channel:
 #					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":[".*"]} ## name used for shape
 
 					"lumi_13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi_13TeV","name":"XXX"}, ## name used for shape
+					## 2l
 					"CMS_eff_l":{"type":"lnN", "value":["1.04"] ,"proc":[".*"],"wsname":"CMS_eff_l","name":"XXX"}, ## name used for shape
-					"CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t","name":"XXX"}, ## name used for shape
+					## 1l
+					"CMS_eff_m":{"type":"lnN", "value":["1.04"] ,"proc":[".*"],"wsname":"CMS_eff_m","name":"XXX"}, ## name used for shape
+					"CMS_eff_e":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_e","name":"XXX"}, ## name used for shape
+					"CMS_eff_t_veto":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t_veto","name":"XXX"}, ## name used for shape
 					"CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":[".*"]}, ## name used for shape
 ##                                        "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":[".*"]},
 					"CMS_scale_uncluster":{"type":"lnN", "value":["1.02"],"proc":[".*"],"wsname":"CMS_scale_uncluster","name":"XXX"}, ## name used for shape
+                                        ####
+                                        #### Theo
+                                        ####
 					"CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
-					"CMS_HTreweight":{"type":"shape", "wsname":"CMS_HTreweight","name":"htRECO","proc":["ewk"]}, ## name used for shape
+					"CMS_HPTB_mcreweight_ewk":{"type":"shape", "wsname":"CMS_HPTB_mcreweight_ewk","name":"htRECO","proc":["ewk"]}, ## name used for shape
 ##					"QCDscale":{"type":"shape", "wsname":"QCDscale","name":"ScaleRF","proc":["Hptb","ttlf","ttb","ttbb","tt2b","ttcc"]} ## name used for shape
-					"QCDscaleT":{"type":"shape", "wsname":"QCDscaleTTbar","name":"Scale","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
-					"QCDscaleV":{"type":"shape", "wsname":"QCDscaleEwk","name":"Scale","proc":["ewk"]}, ## name used for shape
-					"QCDscaleS":{"type":"shape", "wsname":"QCDscaleHptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
+					"muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
+					"muRF_ewk":{"type":"shape", "wsname":"muRF_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
+					"muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
 					"CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]}, ## name used for shape
-##					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JES","proc":[".*"]}, ## name used for shape
+                                        ####
+                                        #### JEC sources
+                                        ####
+#					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JES","proc":[".*"]}, ## name used for shape
 					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_AbsoluteStat_j":{"type":"shape", "wsname":"CMS_scale_AbsoluteStat_j","name":"JES_AbsoluteStat","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_AbsoluteScale_j":{"type":"shape", "wsname":"CMS_scale_AbsoluteScale_j","name":"JES_AbsoluteScale","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_AbsoluteMPFBias_j":{"type":"shape", "wsname":"CMS_scale_AbsoluteMPFBias_j","name":"JES_AbsoluteMPFBias","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_Fragmentation_j":{"type":"shape", "wsname":"CMS_scale_Fragmentation_j","name":"JES_Fragmentation","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_SinglePionECAL_j":{"type":"shape", "wsname":"CMS_scale_SinglePionECAL_j","name":"JES_SinglePionECAL","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_SinglePionHCAL_j":{"type":"shape", "wsname":"CMS_scale_SinglePionECAL_j","name":"JES_SinglePionHCAL","proc":[".*"]}, ## name used for shape
+# 					"CMS_scale_FlavorQCD_j":{"type":"shape", "wsname":"CMS_scale_FlavorQCD_j","name":"JES_FlavorQCD","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_TimePtEta_j":{"type":"shape", "wsname":"CMS_scale_TimePtEta_j","name":"JES_TimePtEta","proc":[".*"]}, ## name used for shape
+					#####
+#                                        "CMS_scale_RelativeJEREC1_j":{"type":"shape", "wsname":"CMS_scale_RelativeJEREC1_j","name":"JES_RelativeJEREC1","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_RelativePtBB_j":{"type":"shape", "wsname":"CMS_scale_RelativePtBB_j","name":"JES_RelativePtBB","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_RelativePtEC1_j":{"type":"shape", "wsname":"CMS_scale_RelativePtEC1_j","name":"JES_RelativePtEC1","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_RelativeBalance_j":{"type":"shape", "wsname":"CMS_scale_RelativePtBalance_j","name":"JES_RelativeBal","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_RelativeFSR_j":{"type":"shape", "wsname":"CMS_scale_RelativeFSR_j","name":"JES_RelativeFSR","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_RelativeStatFSR_j":{"type":"shape", "wsname":"CMS_scale_RelativeStatFSR_j","name":"JES_RelativeStatFSR","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_RelativeStatEC_j":{"type":"shape", "wsname":"CMS_scale_RelativeStatEC_j","name":"JES_RelativeStatEC","proc":[".*"]}, ## name used for shape
+					#####
+#                                        "CMS_scale_PileUpPtBB_j":{"type":"shape", "wsname":"CMS_scale_PileUpPtBB_j","name":"JES_PileUpPtBB","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_PileUpPtEC1_j":{"type":"shape", "wsname":"CMS_scale_PileUpPtEC1_j","name":"JES_PileUpPtEC1","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_PileUpDataMC_j":{"type":"shape", "wsname":"CMS_scale_PileUpDataMC_j","name":"JES_PileUpDataMC","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_PileUpPtRef_j":{"type":"shape", "wsname":"CMS_scale_PileUpPtRef_j","name":"JES_PileUpPtRef","proc":[".*"]}, ## name used for shape
+					##### comment since are null
+#                                        "CMS_scale_RelativeJEREC2_j":{"type":"shape", "wsname":"CMS_scale_RelativeJEREC2_j","name":"JES_RelativeJEREC2","proc":[".*"]}, ## name used for shape                                   #                                        "CMS_scale_RelativePtEC2_j":{"type":"shape", "wsname":"CMS_scale_RelativePtEC2_j","name":"JES_RelativePtEC2","proc":[".*"]}, ## name used for shape                                                               
+#                                        "CMS_scale_PileUpPtEC2_j":{"type":"shape", "wsname":"CMS_scale_PileUpPtEC2_j","name":"JES_PileUpPtEC2","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_RelativeJERHF_j":{"type":"shape", "wsname":"CMS_scale_RelativeJERHF_j","name":"JES_RelativeJERHF","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_RelativePtHF_j":{"type":"shape", "wsname":"CMS_scale_RelativePtHF_j","name":"JES_RelativePtHF","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_RelativeStatHF_j":{"type":"shape", "wsname":"CMS_scale_RelativeStatHF_j","name":"JES_RelativeStatHF","proc":[".*"]}, ## name used for shape
+#                                        "CMS_scale_PileUpPtHF_j":{"type":"shape", "wsname":"CMS_scale_PileUpPtHF_j","name":"JES_PileUpPtHF","proc":[".*"]}, ## name used for shape
+                                        ####
+                                        #### BTAG UNC
+                                        ####
 					##Light jets Heavy flavor contamination
 					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":[".*"]}, ## name used for shape
 					##Heavy jets light flavor contamination
@@ -435,12 +483,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="APR16/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="MAY4/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "APR16/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "MAY4/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -511,18 +559,18 @@ def skip(cat,mc):
 
 ## write shapes in workspace
 if True: # data
-	datacard.write("shapes data_obs *\t" + fileTmp +"\t")
+	datacard.write("shapes data_obs *\t" + fileTmp.split('/')[1] +"\t")
 	datacard.write("data_obs_$CHANNEL")
 	datacard.write("\n")
 if True: # Sig
-	datacard.write("shapes Hptb *\t" + fileTmp +"\t")
+	datacard.write("shapes Hptb *\t" + fileTmp.split('/')[1] +"\t")
 ###	datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL\t")
 ###	datacard.write("pdf_$PROCESS_M-$MASS_$CHANNEL_$SYSTEMATIC")
 	datacard.write("pdf_$PROCESS_$CHANNEL\t")
 	datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC")
 	datacard.write("\n")
 if True: #bkg
-	datacard.write("shapes * * %s\t"%fileTmp +"\t")
+	datacard.write("shapes * * %s\t"%fileTmp.split('/')[1] +"\t")
 	datacard.write("pdf_$PROCESS_$CHANNEL\t")
 	datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC\n")
 datacard.write("-------------------------------------\n")
@@ -619,7 +667,7 @@ def writeSystISRFSR(name="test",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 			if "topCRR5" in cat:
 				valueUp = PartonShowerSyst(mySyst, "1L", "up", 4, 2, proc)
 				valueDown = PartonShowerSyst(mySyst, "1L", "down", 4, 2, proc)
-			if "charmCR6" in cat:
+			if "charmCR" in cat:
 				valueUp = PartonShowerSyst(mySyst, "1L", "up", 4, 3, proc)
 				valueDown = PartonShowerSyst(mySyst, "1L", "down", 4, 3, proc)
 			if "extraRadCRR7" in cat:
@@ -659,7 +707,7 @@ def writeSystISRFSR(name="test",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 			if "topCRR5" in cat:
 				valueUp = PartonShowerSyst(mySyst, "2L", "up", 2, 2, proc)
 				valueDown = PartonShowerSyst(mySyst, "2L", "down", 2, 2, proc)
-			if "charmCR6" in cat:
+			if "charmCR" in cat:
 				valueUp = PartonShowerSyst(mySyst, "2L", "up", 2, 3, proc)
 				valueDown = PartonShowerSyst(mySyst, "2L", "down", 2, 3, proc)
 			if "extraRadCRR7" in cat:
@@ -705,7 +753,7 @@ def writeSystISRFSR(name="test",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 
 
 ## 
-def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
+def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""],regexpCat=[]):
 ##def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT"]):
 	datacard.write(name+"\tlnN")
 	invert=False
@@ -723,8 +771,18 @@ def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
 			if (match and not invert) or (not match and invert):
 				idx=i
 				break
+		idx2=-1
+		invert=False
+		for i,regexp in enumerate(regexpCat):
+			match=re.search(regexp,cat)
+			if regexp != "" and regexp[0] == '!':
+				invert=True
+				regexp=regexp[1:]
+			if (match and not invert) or (not match and invert):
+				idx2=i
+				break
 
-		if (idx>=0):
+		if (idx>=0 and (idx2>=0 or len(regexpCat)==0 )):
 		   datacard.write("\t"+valueL[idx])
 		else:
 		   datacard.write("\t-")
@@ -833,7 +891,16 @@ def importStat():
 for syst in systStore:
 	if syst == "None": continue
 	if systStore[syst]["type"] == "lnN":
-		writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
+		if "CMS_eff_m" in systStore[syst]["wsname"]:
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["1Mu"])
+		elif "CMS_eff_e" in systStore[syst]["wsname"]:
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["1Ele"])
+		elif "CMS_eff_l" in systStore[syst]["wsname"]:
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["2L"])
+		elif "CMS_eff_t_veto" in systStore[syst]["wsname"]:
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["1Mu","1Ele"])
+		else:
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 	if systStore[syst]["type"] == "shape":
 
 #		if opts.kTest==0 or opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==8 or opts.kTest==9 or opts.kTest==10 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16 or opts.kTest==100 or opts.kTest==101  or opts.kTest==102:
@@ -854,17 +921,18 @@ for syst in systStore:
 
 if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb","ttbb","tt2b"])
 if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042","1.042","1.042"],["ttlf","ttcc","ttb","ttbb","tt2b"])
+if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027"],["ttlf","ttb","ttbb","tt2b","ttcc"])
 
-if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttlf",["1.50"],["ttlf"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttcc",["1.50"],["ttcc"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttb",["1.50"],["ttb"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttbb",["1.50"],["ttbb"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDscale_tt2b",["1.50"],["tt2b"])
+###if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttlf",["1.50"],["ttlf"])
+if doSyst: writeNormSyst("bgnorm_ttcc",["1.50"],["ttcc"])
+if doSyst: writeNormSyst("bgnorm_ttb",["1.50"],["ttb"])
+if doSyst: writeNormSyst("bgnorm_ttbb",["1.50"],["ttbb"])
+##if doSyst: writeNormSyst("bgnorm_tt2b",["1.50"],["tt2b"])
 
 ## "top" get the value od the single top
 if doSyst: writeNormSyst("QCDscale_top",["0.977/1.028"],["top"])
 if doSyst: writeNormSyst("pdf_top",["1.026"],["top"])
-if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027","1.022"],["ttlf","ttb","ttbb","tt2b","ttcc","top"])
+if doSyst: writeNormSyst("CMS_mass_top",["1.022"],["top"])
 
 ## "ewk" get the envelop of the DY and W+jets
 if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008"],["ewk"])
@@ -961,9 +1029,12 @@ def MergeCategory(tfile,hname):
 
 		#nominal
 	if hTmp!= None and "bdt" in hname:
+		# in the histos nbin=1000 then rebin5
 		hTmp.Rebin(5)
 	elif hTmp!= None:
-		hTmp.Rebin(800)
+		# in the histos nbin=10GeV bin then rebin5
+		hTmp.Rebin(5)
+		#hTmp.Rebin(800)
 
 
 	return hTmp
@@ -986,10 +1057,10 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
 		c= hTmpUp.SetBinError(iBin,0)
 		c= hTmpDown.SetBinError(iBin,0)
 
-#	if 'JESANDCSV' in togetSyst or "TOPRW" in togetSyst:
-	if 'JESANDCSV' in togetSyst or "PU" in togetSyst or "JER" in togetSyst:
-#		return hTmpNom
-		hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/ChargedHiggsTB/APR13/SYST").smooth()
+	if 'JESANDCSV' in togetSyst or 'JES_' in togetSyst or "PU" in togetSyst or "JER" in togetSyst:
+##	if 'typo' in togetSyst:
+##		return hTmpNom
+		hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/ChargedHiggsTB/MAY3/SYST/").smooth()
 	else:
 		hUp = hTmpUp
 		hDown = hTmpDown
@@ -1003,29 +1074,28 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
 def envelop(tfile,togetClone, s) :
 
 	hname=togetClone+'RF'+s
-
 	hTmp=MergeCategory(tfile,hname)
-
 	h=hTmp.Clone()
 
 	if hTmp==None: return
 
 	for w in [ 'R','F','RF']:
+		for var in [ 'Up','Down']:
 
-		hnameClone=togetClone+w+s
+			hnameClone=togetClone+w+var
 
-		hTmp=MergeCategory(tfile,hnameClone)
+			hTmp=MergeCategory(tfile,hnameClone)
 
-		for iBin in range(1,h.GetNbinsX()+1):
-			c= h.GetBinContent(iBin)
+			for iBin in range(1,h.GetNbinsX()+1):
+				c= h.GetBinContent(iBin)
 
-			## take the maximum for the Up
-			if "Up" in s and hTmp.GetBinContent(iBin)>c:
-				h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
+			## take the maximum for the Up and Down
+				if 'Up' in s and hTmp.GetBinContent(iBin)>c:
+					h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
 
 			## take the minimum for the Down
-			if "Down" in s and hTmp.GetBinContent(iBin)<c:
-				h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
+				if 'Down' in s and hTmp.GetBinContent(iBin)<c:
+					h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
 	return h
 
 ## import Everything in ws TODO
@@ -1112,8 +1182,9 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 
 ###
-				if syst != None and "QCDscale" in target:
-					if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in mc["name"] or "DYJetsToLL_M-50_HT" in mc["name"] or "DYJetsToLL_M-5to50_HT" in mc["name"] or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"]:
+##				if syst != None and "QCDscale" in target:
+				if syst != None and "muRF" in target:
+					if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in togetSyst or "DYJetsToLL_M-50_HT" in togetSyst or "DYJetsToLL_M-5to50_HT" in togetSyst or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"]:
 
 						hTmp = envelop(tfile,togetSyst,s)
 
@@ -1506,9 +1577,12 @@ for c in catStore:
 		h=tfile.Get(toget)
 
 	if h != None and "bdt" in cat["var"]:
+		# in the histos nbin=1000 then rebin5
 		h.Rebin(5)
 	elif h != None:
-		h.Rebin(800)
+		# in the histos nbin=10GeV bin then rebin5
+		h.Rebin(5)
+		#h.Rebin(800)
 
 	if h == None:
 		print "<*> Hist do not exists ",toget
