@@ -226,7 +226,8 @@ void LoadNero::FillJets(){
 #ifdef VERBOSE
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUG2",Form("MatchedParton:"));
 #endif
-        j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
+        //j->pdgId =  bj->matchedPartonPdgId -> at(iJet);
+        j->pdgId =  bj->flavour -> at(iJet);
 #ifdef VERBOSE
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUGi2",Form("MotherPdgId"));
 #endif
