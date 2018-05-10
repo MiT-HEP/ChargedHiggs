@@ -1,35 +1,15 @@
 #include "interface/Rochester.hpp"
+#include "TRandom.h"
 
 void RochesterCorrections::Init(){
-    Log(__FUNCTION__,"INFO","Init Rochester Corrections with aux/rcdata.2016.v3");
-    corrector_.reset(new RoccoR("aux/rcdata.2016.v3") ) ;
+    Log(__FUNCTION__,"INFO","Init Rochester Corrections with aux/rochester/RoccoR2017v0.txt");
+    corrector_.reset(new RoccoR("aux/rochester/RoccoR2017v0.txt") ) ;
 }
 
 int RochesterCorrections::correct(Event *e){
     for (auto & lep : GetLepVector(e))
     {
         if (not lep->IsMuonDirty() ) continue; // check only it's muon w/o any Id
-        /*
-           Here: 
-           Q is charge
-           nl is trackerLayersWithMeasurement \\
-           u1 and u2 are random numbers distributed uniformly between 0 and 1 (gRandom->Rndm());
-           s is error set (default is 0)
-           m is error member (default is 0)
-
-    Following variations are provided currently
-    -------------------------------------------------------------------------------------
-    	 set        members	comment
-    Default  0	    1		default, reference based on madgraph sample, with pt distribution reweighted to data in |Y| bins. 
-    Stat     1          100         pre-generated stat. variations; can include more (e.g. 400). RMS over these would give stat. uncertainty
-    Zpt      2          1           derived without reweighting reference to data. Difference wrt central can be taken as systematics
-    Ewk      3          1           Ad-hoc weighting applied to reference to change sw2 and Zw. Use for x-check for now. Need to compare with Powheg (may become default). 
-    CorDm    4          5           varied profile mass window; one can take maximum deviation as systematics
-    FitDm    5          5           varied fitting mass window; one can take maximum deviation as systematics
-    LHEw     6          0           (please ignore for now)
-    Run      7          7           derived from B,C,D,E,F,G,H; for cross-check study. No dramatic run denendence observed. MC's should be split by lumi if applied this way. 
-    AMCNLO   8          1           derived from limited stat. amcnlo sample; for cross-check study
-         */
         // reset uncorrected value
         ResetUncorr(*lep);
         //

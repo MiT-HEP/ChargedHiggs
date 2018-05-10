@@ -804,6 +804,7 @@ if doBkg:
 
     print "-> Getting data hist","HmumuAnalysis/"+opts.dir+"/" + opts.var +  cat +"_Data"
     hdata=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_Data" )
+    if hdata==None:print "[ERROR]","Unable to fetch data histogram"
     hdata.Rebin(rebin)
     hdata.SetMarkerStyle(20)
     hdata.SetMarkerColor(ROOT.kBlack)

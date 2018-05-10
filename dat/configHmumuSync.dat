@@ -5,7 +5,7 @@ Files=
 ## Signal
 #include=dat/catalog/2017.moriond/hmm.dat
 #sub=amariniUser|/store/user/amarini/Nero/v2.2.1
-addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.2/SingleMuon/Run2017B-17Nov2017-v1
+addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.2/SingleMuon/SingleMuon-Run2017B
 #Run2017C-17Nov2017-v1
 #Run2017D-17Nov2017-v1
 #Run2017E-17Nov2017-v1

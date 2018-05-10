@@ -52,6 +52,6 @@ Correct=
 #Correct=ScaleAndSmear
 #Correct=ScaleAndSmear,KaMuCa,JetFilter2016
 #Correct=ScaleAndSmear,KaMuCa
-#Correct=ScaleAndSmear,RochesterCorrections
+Correct=RochesterCorrections
 
 Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis
