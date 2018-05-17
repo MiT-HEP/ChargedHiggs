@@ -72,6 +72,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
 
     miniIsoLeptons.clear();
     selectedJetsMiniIso.clear();
+    selectedFatjets.clear();
 
     int nMuons=0;
     for(unsigned il=0 ; ;++il)
@@ -244,9 +245,34 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     }
 
     // VH Hadronic boosted 
-    // if (category == "")
-    // {
-    // }
+    if (category == "") // mu0_local and mu1_local arenot null!
+    {
+        bool vhhadr=false;
+        // find fatjets
+        for(int ifat=0; ;++ifat)
+        {
+            FatJet* f =  e->GetBareFatJet(ifat);
+            if (f==NULL) break;
+            if (f->Pt() < 200) continue;
+            if (fabs(f->Eta())>2.4) continue;
+            if ( f->SDTau2()/f->SDTau1() >0.6) continue;
+            if ( f->SDMass() < 65 or f->SDMass() >105) continue; 
+            if (mu0_local->DeltaR(f) <0.8) continue;
+            if (mu1_local->DeltaR(f) <0.8) continue;
+            //cleaning wrt the muons
+            //
+            // top t32 and mass 105:220
+            vhhadr=true;
+            selectedFatjets.push_back(f);
+        }
+        // sort
+        if (vhhadr)
+        {
+            std::sort(selectedFatjets.begin(),selectedFatjets.end(),[](FatJet const *a, FatJet const *b ){return a->Pt() > b->Pt();});
+            category="VHHadr";
+        }
+
+    }
 
     // ggHX: I have a ggH with miniIso but not with std selection
     if (category=="")
@@ -1354,7 +1380,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         if (categoryExc == "ttHLep" ) category="cat16";  // 
         if (categoryExc == "ZHLep" ) category="cat17";   // 
         if (categoryExc == "WHLep" ) category="cat18";   // 
-        if (categoryExc == "ggHX" and category == "" ) category="cat19";   // 
+        if (categoryExc == "VHHadr" ) category="cat19";   // 
+        if (categoryExc == "ggHX" and category == "" ) category="cat20";   // 
     } 
     else if (catType ==4)
     {

@@ -1,0 +1,12 @@
+#!/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_9_4_1/src/ChargedHiggs/test/scikit/SLC7/venv/bin/python2.7
+# EASY-INSTALL-ENTRY-SCRIPT: 'Theano==1.0.1','console_scripts','theano-nose'
+__requires__ = 'Theano==1.0.1'
+import re
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+    sys.exit(
+        load_entry_point('Theano==1.0.1', 'console_scripts', 'theano-nose')()
+    )

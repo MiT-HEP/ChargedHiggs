@@ -1,0 +1,10 @@
+#!/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_9_4_1/src/ChargedHiggs/test/scikit/SLC7/venv/bin/python2.7
+# EASY-INSTALL-ENTRY-SCRIPT: 'pip==9.0.1','console_scripts','pip2'
+__requires__ = 'pip==9.0.1'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('pip==9.0.1', 'console_scripts', 'pip2')()
+    )

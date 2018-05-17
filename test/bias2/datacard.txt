@@ -1,0 +1,17 @@
+imax *
+jmax *
+kmax *
+-------------
+shapes bkg * workspace.root w:pdf
+shapes sig * workspace.root w:sig
+shapes data_obs * workspace.root w:data_obs
+----------------
+bin bin0
+observation -1
+----------------
+bin bin0 bin0
+process bkg sig
+process 1  0
+rate 1. 1.
+----------------
+fake lnN - 1.0001

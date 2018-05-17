@@ -1,0 +1,54 @@
+ <<< Combine >>> 
+>>> including systematics
+Configured fallback algorithm Minuit2,migrad, strategy 0, tolerance 0.1
+   Options for Robust Minimizer :: 
+        Tolerance  0.1
+        Strategy   0
+        Type,Algo  Minuit2,Migrad
+>>> method used is FitDiagnostics
+>>> random number generator seed is 123456
+Set Range of Parameter lambda To : (-5,5)
+Set Range of Parameter x To : (0,100)
+Set Default Value of Parameter mu To : 3
+mu
+RooArgSet:: = (mu)
+The model has no constrained nuisance parameters. Please run the limit tool with no systematics (option -S 0).
+To make things easier, I will assume you have done it.
+Computing results starting from observation (a-posteriori)
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Int_t' for branch 'fit_status'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Int_t' for branch 'fit_status'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'r'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'r'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'rErr'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'rErr'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'rLoErr'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'rLoErr'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'rHiErr'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'rHiErr'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Int_t' for branch 'numbadnll'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Int_t' for branch 'numbadnll'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'nll_min'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'nll_min'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'nll_nll0'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'n_exp_binch1_proc_sig'; must be one character.
+Warning in <TBranch::TBranch>: Extra characters after type tag 'Double_t' for branch 'n_exp_final_binch1_proc_bkg'; must be one character.
+PDF didn't factorize!
+Parameters: 
+  1) RooRealVar::                 lambda = -0.5
+  2) RooRealVar::                     mu = 3
+  3) RooRealVar::  n_exp_binch1_proc_bkg = 1
+  4) RooRealVar::                      r = 1
+  5) RooRealVar:: shapeBkg_bkg_ch1__norm = 8
+  6) RooRealVar::                  sigma = 1
+Obs: 
+  1) RooRealVar::           x = 0.199286
+  2) RooCategory:: CMS_channel = ch1(idx = 0)
+
+index 0, Name ch1/sig, val 1
+index 1, Name ch1/bkg, val 6.46869
+index 0, Name ch1/sig, val 4.23276
+index 1, Name ch1/bkg, val 3.76547
+
+ --- FitDiagnostics ---
+Best fit r: 4.23276  -1.93008/+2.54841  (68% CL)
+Done in 0.00 min (cpu), 0.00 min (real)

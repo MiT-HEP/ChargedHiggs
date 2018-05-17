@@ -1,0 +1,7 @@
+executable=run.sh
+universe = vanilla  
+log=test_condor.log
+error=test_condor.err
+output=test_condor.out
++JobFlavor = "microcentury"
+Queue

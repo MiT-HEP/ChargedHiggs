@@ -1,0 +1,32 @@
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z A0-mu-mu@1 --xrange 150,1000,10 --yrange 0,60,1
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z prod:b-b-A0 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z prod:g-g-A0 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z A0-mu-mu --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z Mh0 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z HH-mu-mu@1 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z HH-mu-mu --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z prod:b-b-HH --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z prod:g-g-HH --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py -o BSMHmm_mhmodm.root -x MA0 -y TB -z MHH --xrange 150,1000,10 --yrange 0,60,1 -a
+
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z A0-mu-mu@1 --xrange 150,1000,10 --yrange 0,60,1
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z prod:b-b-A0 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z prod:g-g-A0 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z A0-mu-mu --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z Mh0 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z HH-mu-mu@1 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z HH-mu-mu --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z prod:b-b-HH --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z prod:g-g-HH --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmodp-LHCHXSWG.in -o BSMHmm_mhmodp.root -x MA0 -y TB -z MHH --xrange 150,1000,10 --yrange 0,60,1 -a
+
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z A0-mu-mu@1 --xrange 150,1000,10 --yrange 0,60,1
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z prod:b-b-A0 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z prod:g-g-A0 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z A0-mu-mu --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z Mh0 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z HH-mu-mu@1 --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z HH-mu-mu --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z prod:b-b-HH --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z prod:g-g-HH --xrange 150,1000,10 --yrange 0,60,1 -a
+python script/feynHiggs.py --infile=mhmaxup-LHCHXSWG.in -o BSMHmm_mhmaxup.root -x MA0 -y TB -z MHH --xrange 150,1000,10 --yrange 0,60,1 -a
