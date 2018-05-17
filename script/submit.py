@@ -205,7 +205,7 @@ if opts.status:
 		    print " -------------------------------------"
 		#if opts.fullstatus:
 		notRunning=[]
-		bjobs = check_output("bjobs -w",shell=True)
+		bjobs = re.sub('//','/',check_output("bjobs -w",shell=True))
 		for iJob in run+pend:
 		    #test/Hmumu/Hmumu_2017_04_05_Bdt/Job_76
 		    if not re.search( re.sub('//','/','%s/Job_%d\s'%(opts.dir,int(iJob))),bjobs):notRunning.append( iJob)
@@ -215,6 +215,7 @@ if opts.status:
 		if len(notRunning) >0 :
 		    print " NOT RUNNING! ",PrintLine(notRunning)
 		    print " -------------------------------------"
+
 	exit(0)
 
 if opts.resubmit:
