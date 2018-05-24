@@ -11,8 +11,7 @@ import SystematicSmoother as SS
 #maxStat=0.13
 maxStat=0.3
 
-LikeBins=50
-#LikeBins=1
+LikeBins=100
 
 doSyst = False
 
@@ -377,7 +376,8 @@ for y in channel:
 					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 #					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW","VHToNonbb_M125","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
-					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WZTo","ZZZ","WZZ","WWZ","WWW","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":5},
+#					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WZTo","ZZZ","WZZ","WWZ","WWW","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":5},
+					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT"],"num":5},
 					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":6}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
 					}
@@ -483,12 +483,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="MAY4/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="MAY23/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "MAY4/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "MAY23/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -893,8 +893,11 @@ for syst in systStore:
 	if systStore[syst]["type"] == "lnN":
 		if "CMS_eff_m" in systStore[syst]["wsname"]:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["1Mu"])
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["1Mu1Ele"])
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["2Mu"])
 		elif "CMS_eff_e" in systStore[syst]["wsname"]:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["1Ele"])
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["2Ele"])
 		elif "CMS_eff_l" in systStore[syst]["wsname"]:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["2L"])
 		elif "CMS_eff_t_veto" in systStore[syst]["wsname"]:
@@ -925,8 +928,8 @@ if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.02
 
 ###if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttlf",["1.50"],["ttlf"])
 if doSyst: writeNormSyst("bgnorm_ttcc",["1.50"],["ttcc"])
-if doSyst: writeNormSyst("bgnorm_ttb",["1.50"],["ttb"])
-if doSyst: writeNormSyst("bgnorm_ttbb",["1.50"],["ttbb"])
+if doSyst: writeNormSyst("bgnorm_ttb",["1.50"],["ttb$"])
+if doSyst: writeNormSyst("bgnorm_ttbb",["1.50"],["ttbb$"])
 ##if doSyst: writeNormSyst("bgnorm_tt2b",["1.50"],["tt2b"])
 
 ## "top" get the value od the single top
@@ -1210,7 +1213,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 						if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
 
 ### SCALE for the 2/3
-				if mc["name"]!="qcd" and not "ZZTo" in mc["hist"] and not "WWTo" in mc["hist"] and not "WZTo" in mc["hist"] and not "ZZZ" in mc["hist"] and not "WZZ" in mc["hist"] and not "WWZ" in mc["hist"] and not "WWW" in mc["hist"] and not "VHToNonbb_M125" in mc["hist"] and not "WH_HToBB_WToLNu_M125" in mc["hist"] and not "ZH_HToBB_ZToLL" in mc["hist"]:
+				if mc["name"]!="qcd" and not "ZZTo" in hname and not "WWTo" in hname and not "WZTo" in hname and not "ZZZ" in hname and not "WZZ" in hname and not "WWZ" in hname and not "WWW" in hname and not "VHToNonbb_M125" in hname and not "WH_HToBB_WToLNu_M125" in hname and not "ZH_HToBB_ZToLL" in hname:
 					hTmp.Scale(1.5)
 
 ### -- MC --
