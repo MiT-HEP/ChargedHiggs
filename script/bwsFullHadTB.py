@@ -12,7 +12,7 @@ maxStat=0.15
 
 # original binning is 10GeV
 nRebinHT=1
-##LikeBins=1
+##nRebinHT=5
 LikeBins=10
 
 doRebin = False
@@ -69,8 +69,13 @@ parser= OptionParser()
 #parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit.root")
 
 # new fixed (minor SYST only)
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit_ALL.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit_ALL.root")
+### USED MIT meeting
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit_ALL.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit_ALL.root")
+
+### NEW TO BE USED
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp0syst.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp0syst.root")
 
 ## fixed mass window for 400-500 + lowered the bjet PT 40->30 
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/finaltry.root")
@@ -218,6 +223,9 @@ def mergeCategory(tfile,toget):
 		else:
 			hTmp = tfile.Get(toget)
 
+
+	if hTmp!=None: hTmp.Rebin(nRebinHT)
+
 	return hTmp
 
 
@@ -235,25 +243,40 @@ def mergeCategory(tfile,toget):
 
 ### FINAL conf
 if doSChannel:
-	basecat = ["OneBOneFat_one_highj","OneBOneFat_two_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj"
-		   ##	   ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
+	basecat = [ "OneBOneFat_one_highj","OneBOneFat_two_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj"
+		   ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
 		   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj"
 		   ]
 else:
-	basecat = ["OneBOneFat_one_highj","OneBOneFat_two_highj","OneBOneFat_three_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj","OneBOneFat_three_lowj"
+	basecat = [ "OneBOneFat_one_highj","OneBOneFat_two_highj","OneBOneFat_three_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj","OneBOneFat_three_lowj"
 		   ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
 		   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj","OneBOneMirrorFat_three_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj","OneBOneMirrorFat_three_lowj"
 		   ]
 
-
 if doSChannel:
-	channel = ["t0b","t1b","wbb","wbj"]
+	if opts.kCat==0:
+		channel = ["t0b","t1b","wbb","wbj"]
+		label="sChan_"
+	if opts.kCat==1:
+		channel = ["t0b"]
+		label="t0b_sChan_"
+	if opts.kCat==2:
+		channel = ["t1b"]
+		label="t1b_sChan_"
+	if opts.kCat==3:
+		channel = ["wbb"]
+		label="wbb_sChan_"
+	if opts.kCat==4:
+		channel = ["wbj"]
+		label="wbj_sChan_"
+
 ##	channel = ["wbj"]
 ##	channel = ["t1b"]
 ##	label="sChan_"
 ##	label="sChan_sronly_"
 ##	label="sChan_inonly_"
-	label="sChan_"
+##	label="sChan_"
+
 else:
 
 	if opts.kCat==0:
@@ -319,26 +342,37 @@ for y in channel:
 
 				## generally BKG very rare
 				if "_three_lowj" in x and y=="wbj": continue
+				if "OneBOneFat1l_three" in x and y=="wbj": continue
+				if "_three_highj" in x and y=="wbj": continue
+				if "OneBOneFat1l_two" in x and y=="wbj": continue
+
+##				if doSChannel and "OneBOneFat1l_three" in x: continue
 
 				## very rare
 				if opts.kMass=="400":
+					## wbj
 					if "_three_highj" in x and y=="wbj": continue
 					if "_two_lowj" in x and y=="wbj": continue
+					## wbb
 					if "_two_lowj" in x and y=="wbb": continue
+					## t0b and t1b
+					if "_two_highj" in x and y=="t0b" and "below" in reg: continue
 					if "_three_lowj" in x and y=="t0b" and "in" in reg: continue
 					if "_one_highj" in x and (y=="t1b" or y=="t0b") and "in" in reg: continue
+					if "_one_lowj" in x and (y=="t1b") and "below" in reg: continue
+					if "_three" in x and y=="t0b" and "below" in reg: continue
 
                                 if opts.kMass=="3000":
 ##					if "_two_highj" in x and y=="wbb": continue
 ##					if "_three_lowj" in x and (y=="t0b") and "above" in reg: continue
 					if "_three_lowj" in x and (y=="t1b") and "in" in reg: continue
 
-				# strange with systematics
                                 if opts.kMass=="2500":
 					if "_three_lowj" in x and (y=="t0b") and "in" in reg: continue
 
                                 ## below are for associated only
-				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and "in" in reg or "below" in reg:
+#				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and "in" in reg or "below" in reg:
+				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and "below" in reg or "in" in reg:
 					if "_three_lowj" in x and y=="wbb": continue
 					if "_one_lowj" in x and y=="wbj": continue
 
@@ -361,6 +395,8 @@ for y in channel:
                                 if not doSChannel and (opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
 					if "_one_highj" in x and y=="wbj": continue
 					if "_two_highj" in x and y=="wbj": continue
+					if "_three_lowj" in x and y=="wbb": continue
+					if "_three_highj" in x and y=="wbb": continue
 
                                 if not doSChannel and (opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
 					if "_two_lowj" in x and y=="wbb": continue
@@ -465,12 +501,19 @@ for y in channel:
 #				catStore[name]["hasMC"]=["qcd","top","Hptb"]
 
 ### QCD uncorrelated
-				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","ttbar","Hptb","top","ewk"]
-				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","ttbar","Hptb","top","ewk"]
-				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","ttbar","Hptb","top","ewk"]
-				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","ttbar","Hptb","top","ewk"]
-				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","ttbar","Hptb","top","ewk"]
-				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","ttbar","Hptb","top","ewk"]
+#				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","ttbar","Hptb","top","ewk"]
+#				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","ttbar","Hptb","top","ewk"]
+#				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","ttbar","Hptb","top","ewk"]
+#				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","ttbar","Hptb","top","ewk"]
+#				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","ttbar","Hptb","top","ewk"]
+#				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","ttbar","Hptb","top","ewk"]
+
+				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","ttbar","Hptb"]
+				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","ttbar","Hptb"]
+				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","ttbar","Hptb"]
+				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","ttbar","Hptb"]
+				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","ttbar","Hptb"]
+				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","ttbar","Hptb"]
 
                         if doSChannel:
 				mcStore={
@@ -524,9 +567,9 @@ for y in channel:
                                         "CMS_scale_j_qcd":{"type":"shape", "wsname":"CMS_scale_j_qcd","name":"JESANDCSV","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":["Hptb","ttbar","top","ewk"]},
                                         ##Light jets Heavy flavor contamination
+					"CMS_btag_HF_qcd":{"type":"shape", "wsname":"CMS_btag_HF_qcd","name":"CSVRHF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
 					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
                                         ##Heavy jets light flavor contamination
-                                        "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF_qcd","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["Hptb","ttbar","top"]},
                                         ##Linear and quadratic uncertainties
 					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":[".*"]},
@@ -547,11 +590,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_MAY24/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_MAY30/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_MAY24/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_MAY30/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -604,16 +647,25 @@ def skip(cat,mc):
 
 ## write shapes in histograms
 if False: # data
-        datacard.write("shapes data_obs *\t" + fileTmp.split('/')[1] +"\t")
+# for MARIA
+        datacard.write("shapes data_obs *\t" + fileTmp +"\t")
+# for JAN
+#        datacard.write("shapes data_obs *\t" + fileTmp.split('/')[1] +"\t")
         datacard.write("data_obs_$CHANNEL")
         datacard.write("\n")
 if True: # Sig
-        datacard.write("shapes Hptb *\t" + fileTmp.split('/')[1] +"\t")
+# for MARIA
+        datacard.write("shapes Hptb *\t" + fileTmp +"\t")
+# for JAN
+#        datacard.write("shapes Hptb *\t" + fileTmp.split('/')[1] +"\t")
         datacard.write("pdf_$PROCESS_$CHANNEL\t")
         datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC")
         datacard.write("\n")
 if True: # bkg
-        datacard.write("shapes * * %s\t"%fileTmp.split('/')[1] +"\t")
+# for MARIA
+        datacard.write("shapes * * %s\t"%fileTmp +"\t")
+# for JAN
+#        datacard.write("shapes * * %s\t"%fileTmp.split('/')[1] +"\t")
         datacard.write("pdf_$PROCESS_$CHANNEL\t")
         datacard.write("pdf_$PROCESS_$CHANNEL_$SYSTEMATIC\n")
 datacard.write("-------------------------------------\n")
@@ -663,6 +715,32 @@ datacard.write("-------------------------------------\n")
 # write systematics
 
 ## 
+def writeNormSystLU(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
+##def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT"]):
+	datacard.write(name+"\tlnU")
+	invert=False
+
+        for cat in catStore:
+            for proc in mcStore:
+                if skip(catStore[cat],mcStore[proc]): continue
+		idx=-1
+		invert=False
+		for i,regexp in enumerate(regexpL):
+			match=re.search(regexp,proc)
+			if regexp != "" and regexp[0] == '!':
+				invert=True
+				regexp=regexp[1:]
+			if (match and not invert) or (not match and invert):
+				idx=i
+				break
+
+		if (idx>=0):
+		   datacard.write("\t"+valueL[idx])
+		else:
+		   datacard.write("\t-")
+	datacard.write("\n")
+
+
 def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
 ##def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT"]):
 	datacard.write(name+"\tlnN")
@@ -777,7 +855,10 @@ for syst in systStore:
 	if systStore[syst]["type"] == "lnN":
 		writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 	if systStore[syst]["type"] == "shape":
-		writeSystShape(systStore[syst],systStore[syst]["proc"])
+                if "muRF" in systStore[syst]["wsname"]:
+			if not doSChannel: writeSystShape(systStore[syst],systStore[syst]["proc"])
+		else:
+			writeSystShape(systStore[syst],systStore[syst]["proc"])
 
 if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024"],["ttbar"])
 if doSyst: writeNormSyst("pdf_gg",["1.042"],["ttbar"])
@@ -788,8 +869,10 @@ if doSyst: writeNormSyst("QCDscale_top",["0.977/1.028"],["top"])
 if doSyst: writeNormSyst("pdf_top",["1.026"],["top"])
 if doSyst: writeNormSyst("CMS_mass_top",["1.022"],["top"])
 
-if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
+#if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
+#if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_",["2.","2.","2."],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_",["2.","2.","2."],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
 
 ## "ewk" get the envelop of the DY and W+jets
 if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008"],["ewk"])
@@ -890,7 +973,7 @@ def envelop(tfile,togetClone, s) :
         hname=togetClone+'RF'+s
         hTmp=mergeCategory(tfile,hname)
 
-##	if hTmp!=None: hTmp.Rebin(nRebinHT)
+#	if hTmp!=None: hTmp.Rebin(nRebinHT)
 
         h=hTmp.Clone()
 
@@ -903,7 +986,7 @@ def envelop(tfile,togetClone, s) :
 
                         hTmp=mergeCategory(tfile,hnameClone)
 
-##			if hTmp!=None: hTmp.Rebin(nRebinHT)
+#			if hTmp!=None: hTmp.Rebin(nRebinHT)
 
                         for iBin in range(1,h.GetNbinsX()+1):
                                 c= h.GetBinContent(iBin)
@@ -963,25 +1046,26 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 		hTmpSum=None
 		for m in masses:
 
+#			print '==========> '
+#			print '==========> cat["name"] ===> ', cat["name"]
+#			print '==========> mc["name"]  ===> ', mc["name"]
+#			print '==========> m  ===> ', m
+#			print '==========> '
 
 			if not "OneBOneFat1l" in cat["name"]:
 				#	  print  '1/3 mass now is =', str(m)
-#				if m==500 and "1500" in cat["name"]: continue
-#				if m==500 and "2500" in cat["name"]: continue
-#				if str(m) not in cat["name"]: continue
+##				if m==500 and "1500" in cat["name"]: continue
+##				if m==500 and "2500" in cat["name"]: continue
+##				if str(m) not in cat["name"]: continue
 
-#				if mc["name"]=="Hptb":
-#					toget=toget%m
+##				if mc["name"]=="Hptb":
+##					toget=toget%m
 
 				myTMPmass = "%d_"%m
 				if m==500 and "1500" in cat["name"]: continue
 				if m==500 and "2500" in cat["name"]: continue
 				if myTMPmass not in cat["name"]: continue
 
-#			print '==========> '
-#			print '==========> cat["name"] ===> ', cat["name"]
-#			print '==========> mc["name"]  ===> ',mc["name"]
-#			print '==========> '
 
 			target = "pdf_" + mc["name"] +"_"+ cat["name"]
 			if m >10 :
@@ -999,6 +1083,24 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				if mc["name"]=="Hptb":
 					toget=toget%m
 
+                                if mc["name"]=="Hptb":
+					if "OneBOneFat1l" in cat["name"]:
+
+						stringToParce="_M-"+opts.kMass
+
+                                                if stringToParce in toget:
+                                                        myTMPmass = "%d_"%m
+                                                        print 'here is the one I want', stringToParce, ' to check inside',toget
+                                                else:
+                                                        continue
+
+#				print '==========> '
+#				print '==========> toget  ===> ', toget
+#				print '==========> hname ===> ', hname
+#				print '==========> cat["name"] ===> ', cat["name"]
+#				print '==========> mc["name"]  ===> ', mc["name"]
+#				print '==========> '
+#				print 'here is the one I want', opts.kMass
 
 				togetNom = toget
                                 togetSyst = ''
@@ -1006,7 +1108,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 					togetSyst = toget + "_" + syst["name"]
 					toget += "_" + syst["name"] + s
 
-				if syst != None and "muRF" in toget:
+				if syst != None and "muRF" in syst["wsname"] and not doSChannel:
 					if mc["name"]=="Hptb" or mc["name"]=="ttbar":
 						hTmp = envelop(tfile,togetSyst,s)
 #						toget = togetClone+'RF'+s
@@ -1014,11 +1116,12 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				elif syst != None:
 
                                         hTmp = SmoothAndMergeSyst(tfile,togetNom,togetSyst,s)
-##                                      hTmp = MergeCategory(tfile,togetSyst+s)                                                                                                                                                            
+##                                      hTmp = MergeCategory(tfile,togetSyst+s)
+
 				else:
                                         hTmp = mergeCategory(tfile,togetNom)
 
-				if hTmp!=None: hTmp.Rebin(nRebinHT)
+##				if hTmp!=None: hTmp.Rebin(nRebinHT)
 				if hTmp!=None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral()
 
 				if hTmp == None:
@@ -1026,12 +1129,12 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 					raise IOError
 
 				## foor QCD we do not apply the tauVeto and trigger
-				if mc["name"]=="qcd":
+				if mc["name"]=="qcd" and hTmp:
 					hTmp.Scale(0.93)
 				## top and W scale factor (for now only in ttbar later also signal)
-				if ( mc["name"]=="ttbar" or mc["name"]=="top") and ("t0b" in toget or "t1b" in toget):
+				if ( mc["name"]=="ttbar" or mc["name"]=="top") and ("t0b" in toget or "t1b" in toget) and hTmp:
 					hTmp.Scale(1.11)
-				if ( mc["name"]=="ttbar" or mc["name"]=="top") and ("wbb" in toget or "wbj" in toget):
+				if ( mc["name"]=="ttbar" or mc["name"]=="top") and ("wbb" in toget or "wbj" in toget) and hTmp:
 					hTmp.Scale(1.06)
 
 ### -- MC --
@@ -1170,6 +1273,15 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 				if "OneBOneFat1l" in cat["name"]:
 					if mc["name"]=="Hptb":
 						toget=toget%m
+
+						stringToParce="_M-"+opts.kMass
+
+                                                if stringToParce in toget:
+                                                        myTMPmass = "%d_"%m
+                                                        print '1/3 here is the one I want', stringToParce, ' to check inside',toget
+                                                else:
+                                                        continue
+
 
 				else:
 					#	  print  '1/3 mass now is =', str(m)
@@ -1341,15 +1453,17 @@ for cat in catStore:
 		if cat["name"] in arglist_obs.at(i).GetName():
 			al = arglist_obs.at(i)
 
-	if h != None:
-		roo_data= ROOT.RooDataHist("data_obs_%s"%c,"Mass",ROOT.RooArgList(al),h)
-		getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
-		g.extend([h,roo_data])
-		f = ROOT.TFile.Open(fileTmp,"update")
-                h.SetName(target)
-                h.Write()
-                f.Write()
-                f.Close()
+### comment data for may25
+
+#	if h != None:
+#		roo_data= ROOT.RooDataHist("data_obs_%s"%c,"Mass",ROOT.RooArgList(al),h)
+#		getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
+#		g.extend([h,roo_data])
+#		f = ROOT.TFile.Open(fileTmp,"update")
+#                 h.SetName(target)
+#                 h.Write()
+#                f.Write()
+#                f.Close()
 
 
 ## import and write statistical uncertainties
