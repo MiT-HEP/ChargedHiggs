@@ -44,6 +44,15 @@ addConfig=ChargedHiggsTopBottom|AddLabel('TTTo2L2Nu_ttbbFilter')
 addConfig=ChargedHiggsTopBottom|AddLabel('TTToSemilepton_ttbbFilter')
 
 addConfig=ChargedHiggsTopBottom|AddLabel('ST')
+
+## placeholder for all the di/triboson
+addConfig=ChargedHiggsTopBottom|AddLabel('EWK')
+
+## triboson
+addConfig=ChargedHiggsTopBottom|AddLabel('WWW')
+addConfig=ChargedHiggsTopBottom|AddLabel('WWZ')
+addConfig=ChargedHiggsTopBottom|AddLabel('WZZ')
+addConfig=ChargedHiggsTopBottom|AddLabel('ZZZ')
 ##WWTo2L2Nu,WWToLNuQQ
 addConfig=ChargedHiggsTopBottom|AddLabel('WWTo')
 ##WZTo1L1Nu2Q,WZTo1L3Nu,WZTo2L2Q,WZTo3LNu
@@ -58,6 +67,9 @@ addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-5to50_HT')
 addConfig=ChargedHiggsTopBottom|AddLabel('DYJetsToLL_M-50_HT')
 addConfig=ChargedHiggsTopBottom|AddLabel('WJetsToLNu_HT')
 
+## placeholder for all the tt+X
+addConfig=ChargedHiggsTopBottom|AddLabel('TTX')
+
 addConfig=ChargedHiggsTopBottom|AddLabel('TTTT')
 ##TTZToQQ, TTZToLLNuNu, TTZH
 addConfig=ChargedHiggsTopBottom|AddLabel('TTZ')
@@ -69,11 +81,6 @@ addConfig=ChargedHiggsTopBottom|AddLabel('ttH')
 addConfig=ChargedHiggsTopBottom|AddLabel('TTG')
 ##tZq_ll_4f,tZq_nunu_4f
 #addConfig=ChargedHiggsTopBottom|AddLabel('tZq')
-## triboson
-addConfig=ChargedHiggsTopBottom|AddLabel('WWW')
-addConfig=ChargedHiggsTopBottom|AddLabel('WWZ')
-addConfig=ChargedHiggsTopBottom|AddLabel('WZZ')
-addConfig=ChargedHiggsTopBottom|AddLabel('ZZZ')
 ## QCD
 addConfig=ChargedHiggsTopBottom|AddLabel('QCD_HT')
 

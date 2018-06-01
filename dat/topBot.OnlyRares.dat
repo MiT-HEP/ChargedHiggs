@@ -13,6 +13,10 @@ addConfig=ChargedHiggsTopBottom|AddLabel('ttH')
 ##TTGJets
 addConfig=ChargedHiggsTopBottom|AddLabel('TTG')
 
+addConfig=ChargedHiggsTopBottom|AddLabel('TTX')
+
+addConfig=ChargedHiggsTopBottom|AddLabel('EWK')
+
 addConfig=ChargedHiggsTopBottom|AddLabel('WWTo')
 ###WZTo1L1Nu2Q,WZTo1L3Nu,WZTo2L2Q,WZTo3LNu
 addConfig=ChargedHiggsTopBottom|AddLabel('WZTo')
