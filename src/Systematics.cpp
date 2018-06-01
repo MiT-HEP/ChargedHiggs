@@ -62,10 +62,10 @@ void Systematics::init() {
   add( JESTimeRunHup,            JESTimeRunHdown,            "JESTimeRunH",              "TimeRunH"            );   
   add( CSVLFup,                  CSVLFdown,                  "LF",                    "LF"                  );
   add( CSVHFup,                  CSVHFdown,                  "HF",                    "HF"                  );
-  add( CSVLFStats1up,            CSVLFStats1down,            "Stats1",              "LFStats1"            );
-  add( CSVHFStats1up,            CSVHFStats1down,            "Stats1",              "HFStats1"            );
-  add( CSVLFStats2up,            CSVLFStats2down,            "Stats2",              "LFStats2"            );
-  add( CSVHFStats2up,            CSVHFStats2down,            "Stats2",              "HFStats2"            );
+  add( CSVLFStats1up,            CSVLFStats1down,            "LFStats1",              "LFStats1"            );
+  add( CSVHFStats1up,            CSVHFStats1down,            "HFStats1",              "HFStats1"            );
+  add( CSVLFStats2up,            CSVLFStats2down,            "LFStats2",              "LFStats2"            );
+  add( CSVHFStats2up,            CSVHFStats2down,            "HFStats2",              "HFStats2"            );
   add( CSVCErr1up,               CSVCErr1down,               "cErr1",                 "CErr1"               );
   add( CSVCErr2up,               CSVCErr2down,               "cErr2",                 "CErr2"               );
 }
