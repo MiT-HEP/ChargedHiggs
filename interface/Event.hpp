@@ -26,6 +26,7 @@ class AnalysisBase;
 class ChargedHiggsEWKEmbedding;
 class Loader;
 class LoadNero;
+class LoadNano;
 
 /**
  * @brief Event class containing a complete set of event
@@ -34,6 +35,7 @@ class Event{
     friend class Looper;
     friend class Loader;
     friend class LoadNero;
+    friend class LoadNano;
     friend class SmearBase;
     friend class AnalysisBase;
     friend class CorrectorBase;

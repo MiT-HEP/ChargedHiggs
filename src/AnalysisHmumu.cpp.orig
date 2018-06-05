@@ -70,10 +70,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
      */
     string category = "";
 
-    miniIsoLeptons.clear();
-    selectedJetsMiniIso.clear();
-    selectedFatjets.clear();
-
+    vector<Lepton*> miniIsoLeptons;
     int nMuons=0;
     for(unsigned il=0 ; ;++il)
     {
@@ -102,11 +99,10 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     std::sort(miniIsoLeptons.begin(),miniIsoLeptons.end(),[](Lepton const *a, Lepton const *b ){return a->Pt() > b->Pt();});
 
     // chek jets 
-    //vector<Jet*> selectedJetsMiniIso;
-    //selectedJetsMiniIso.clear();
+    vector<Jet*> selectedJets_local;
     int nbjets=0;
     int nbloose=0;
-    int nblooseDeep=0; //L = 0.1522, M=0.4941, T=??
+    int nblooseDeep=0; //L = 0.2219, M=0.6324, T=0.8958
     int nbjetsDeep=0;
     for(unsigned ij=0 ; ;++ij)
     {
@@ -123,16 +119,16 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
         if (isLep) continue;
 
         //OK
-        selectedJetsMiniIso.push_back(j);
+        selectedJets_local.push_back(j);
         
         //count bjets
         if (abs(j->Eta())>2.4 ) continue;
         //if (j->Btag() > 0.5426) nbloose+=1;
         //if (j->Btag() > 0.8484) nbjets+=1;
-        if (j->GetDeepB() > 0.1522) nbloose+=1;
-        if (j->GetDeepB() > 0.4941) nbjets+=1;
+        if (j->GetDeepB() > 0.2219) nbloose+=1;
+        if (j->GetDeepB() > 0.6324) nbjets+=1;
     }
-    std::sort(selectedJetsMiniIso.begin(),selectedJetsMiniIso.end(),[](Jet const *a, Jet const *b ){return a->Pt() > b->Pt();});
+    std::sort(selectedJets_local.begin(),selectedJets_local.end(),[](Jet const *a, Jet const *b ){return a->Pt() > b->Pt();});
 
     // find reco Muons: Opposite Charge 
     Lepton * mu0_local=NULL;
@@ -150,7 +146,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
 
     // CHECK first ttH categories, priority is in the order ttHLep, ttHHadr
     if (category == "" and nbloose >0 and miniIsoLeptons.size() >2) category = "ttHLep";
-    if (category == "" and nbloose >0 and selectedJetsMiniIso.size() > 4) category = "ttHHadr";
+    if (category == "" and nbloose >0 and selectedJets_local.size() > 4) category = "ttHHadr";
 
     //if ttH fails, check ZH Lept
     if (category == "" and miniIsoLeptons.size() >=4) //ZH Z->ee
@@ -245,66 +241,9 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     }
 
     // VH Hadronic boosted 
-    /*
-    if (category == "") // mu0_local and mu1_local arenot null!
-    {
-        bool vhhadr=false;
-        // find fatjets
-        for(int ifat=0; ;++ifat)
-        {
-            FatJet* f =  e->GetBareFatJet(ifat);
-            if (f==NULL) break;
-            // loose
-            if (f->Pt() < 100) continue;
-            if (fabs(f->Eta())>2.4) continue;
-            //if ( f->SDTau2()/f->SDTau1() > 0.8) continue;
-            if ( f->Tau2()/f->Tau1() > 0.6) continue;
-            if ( f->SDMass() < 65 or f->SDMass() >150) continue; 
-            if (mu0_local->DeltaR(f) <0.8) continue;
-            if (mu1_local->DeltaR(f) <0.8) continue;
-           
-            // nominal 
-            // if (f->Pt() < 200) continue; 
-            // if (fabs(f->Eta())>2.4) continue;
-            // if ( f->SDTau2()/f->SDTau1() >0.6) continue;
-            // if ( f->SDMass() < 65 or f->SDMass() >105) continue; 
-            // if (mu0_local->DeltaR(f) <0.8) continue;
-            // if (mu1_local->DeltaR(f) <0.8) continue;
-            //
-            // top t32 and mass 105:220
-            vhhadr=true;
-            selectedFatjets.push_back(f);
-        }
-        // sort
-        if (vhhadr)
-        {
-            std::sort(selectedFatjets.begin(),selectedFatjets.end(),[](FatJet const *a, FatJet const *b ){return a->Pt() > b->Pt();});
-            category="VHHadr";
-        }
-
-    }
-    */
-    if (category == "") { // VH Hadr resolved
-        // TODO kin fit assuming met 0
-            bool vhhadrres=false;
-            float met = e->GetMet().Pt();
-            if (nbjets==0 and met <35){
-                // loop over the selected jets local
-                for(unsigned ijet=0;ijet < selectedJetsMiniIso.size();++ijet) 
-                for(unsigned jjet=ijet+1;jjet < selectedJetsMiniIso.size();++jjet) 
-                {
-                    //compute the invariant mass between ijet and jjet 
-                    //
-                    Object Z ;
-                    Z.SetP4(zero); // make sure it is 0.
-                    Z+= *selectedJetsMiniIso[ijet];
-                    Z+= *selectedJetsMiniIso[jjet];
-                    if ( Z.M() > 70 and Z.M()< 100 ) vhhadrres=true;
-                }
-
-            }
-            if (vhhadrres)category="VHHadr";
-    }
+    // if (category == "")
+    // {
+    // }
 
     // ggHX: I have a ggH with miniIso but not with std selection
     if (category=="")
@@ -326,7 +265,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
         mass_=Hmm.M();
         pt_ = Hmm.Pt();
         selectedJets.clear();
-        for(auto j : selectedJetsMiniIso) selectedJets.push_back(j);
+        for(auto j : selectedJets_local) selectedJets.push_back(j);
         updateMjj();
         isMiniIsoLeptons=true;
     }
@@ -433,151 +372,6 @@ string HmumuAnalysis::Category(Lepton*mu0, Lepton*mu1, const vector<Jet*>& jets)
 
     if (vbfStr == "" ) return "";
     return vbfStr +"_" + muStr;
-}
-
-string HmumuAnalysis::CategoryBdtMIT(Event *e){
-    bdt.clear();
-    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryBdt");
-    // return the right category
-    if (mu0== NULL or mu1==NULL) return "";
-
-    float eta0 = mu0->Eta();
-    float eta1 = mu1->Eta();
-
-    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon0 eta0=%f | Pt=%f Pz=%f",mu0->Eta(),mu0->Pt(),mu0->GetP4().Pz()));
-    if (VERBOSE>2)Log(__FUNCTION__,"DEBUG",Form("Muon1 eta1=%f | Pt=%f Pz=%f",mu1->Eta(),mu1->Pt(),mu1->GetP4().Pz()));
-   
-
-    SetVariable("Hpt",Hmm.Pt());    
-    SetVariable("Heta",Hmm.Eta());    
-    SetVariable("Hphi",Hmm.Phi());    
-    SetVariable("deltaeta",fabs(mu0->Eta()-mu1->Eta()));    
-    SetVariable("deltaphi",fabs(mu0->DeltaPhi(*mu1)));
-
-    SetVariable("eta1",mu0->Eta());    
-    SetVariable("eta2",mu1->Eta());    
-    SetVariable("njets",selectedJets.size());    
-    SetVariable("mt1",ChargedHiggs::mt(mu0->Pt(),e->GetMet().Pt(),mu0->Phi(),e->GetMet().Phi()));    
-    SetVariable("mt2",ChargedHiggs::mt(mu1->Pt(),e->GetMet().Pt(),mu1->Phi(),e->GetMet().Phi()));    
-    SetVariable("met",e->GetMet().Pt());    
-    SetVariable("pass_leptonveto",passLeptonVeto);    
-
-    // compute secondary jets variables: TODO unify computation of variables
-    int nbjets=0;
-    int ncentjets=0;
-    int nfwdjets=0;
-    float aveQGLcent=0.0;
-    float maxCSV=0.0;
-    float leadDeepB = -100.;
-    float maxDeepB = -100.;
-    float aveCSV=0.0;
-    float htCent=0.0;
-        vector<float> csv_score;
-        vector<pair<float,float>> qgl_score;
-
-        if (selectedJets.size() >0)
-        {
-            leadDeepB = selectedJets[0]->GetDeepB();
-        }
-
-        for(unsigned i=0;i<selectedJets.size() ;++i)
-        {
-            if (selectedJets[i]->IsBJet() and selectedJets[i]->Pt() >30 and abs(selectedJets[i]->Eta())<2.4)  nbjets +=1;
-            if (abs(selectedJets[i]->Eta())<2.4)
-            { 
-                ncentjets +=1; 
-                aveQGLcent += selectedJets[i]->QGL(); 
-                csv_score.push_back(selectedJets[i]->Btag());
-                qgl_score.push_back(pair<float,float>(selectedJets[i]->Pt(),selectedJets[i]->QGL()));
-                maxCSV = std::max(selectedJets[i]->Btag(),maxCSV)  ;
-                aveCSV += selectedJets[i]->Btag() * selectedJets[i]->Pt() ;
-                htCent += selectedJets[i]->Pt();
-                maxDeepB = std::max(selectedJets[i]->GetDeepB(),maxDeepB)  ;
-            }
-            else nfwdjets +=1;
-        }
-        if (ncentjets >0 ) aveQGLcent /= ncentjets;
-        if (htCent>0) aveCSV /=htCent;
-        sort(csv_score.begin(),csv_score.end());
-        sort(qgl_score.begin(),qgl_score.end(),[](const pair<float,float >&x,const pair<float, float >&y){ if (x.first> y.first) return true; if(x.first<y.first)return false; return x.second> y.second; } );
-
-    SetVariable("ncentjets",ncentjets);    
-    SetVariable("htCent",htCent);    
-    SetVariable("nbjets",nbjets);    
-    SetVariable("maxDeepB",maxDeepB);    
-    SetVariable("leadDeepB",leadDeepB);    
-    SetVariable("maxCSV",maxDeepB);    
-    //mjj vars
-    SetVariable("mjj_1",(mjj.size() >0 ) ? mjj[0].first: 0.0);
-    SetVariable("mjj_2",(mjj.size() > 1) ? mjj[1].first: 0.0);
-    SetVariable("detajj_1",(mjj.size()>0) ? fabs(selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta()): -1.0);
-    SetVariable("detajj_2",(mjj.size()>1) ? fabs(selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta()): -1.0);
-
-    //soft variables
-    if (mjj.size() >0)
-        {
-            Jet * j1= selectedJets[mjj[0].second.first];
-            Jet * j2= selectedJets[mjj[0].second.second];
-            pair<int,float> soft1 = e->softVariables(j1,j2,1.);
-            pair<int,float> soft2 = e->softVariables(j1,j2,2.);
-            pair<int,float> soft5 = e->softVariables(j1,j2,5.);
-            pair<int,float> soft10 = e->softVariables(j1,j2,10.);
-
-            SetVariable("softNjets1",soft1.first);    
-            SetVariable("softHt1",soft1.second);    
-            SetVariable("softHt5",soft5.second);    
-            SetVariable("softHt10",soft10.second);    
-        } else {
-            SetVariable("softNjets1",-1);    
-            SetVariable("softHt1",-1);    
-            SetVariable("softHt5",-1);    
-            SetVariable("softHt10",-1);    
-        }
-    // qgl
-    SetVariable("firstQGL",  (qgl_score.size() >0) ? qgl_score[0].second : -1 );
-    SetVariable("secondQGL", (qgl_score.size() >1) ? qgl_score[1].second : -1 );
-    SetVariable("thirdQGL",  (qgl_score.size() >2) ? qgl_score[2].second : -1 );
-
-    for(unsigned i =0 ;i< readers_.size() ; ++i)
-    {
-         bdt.push_back(readers_[i]->EvaluateMVA("BDTG_default") );
-    }
-
-    int icat=-100; string catStr="";
-
-    float mu_max_eta = std::max(fabs(mu0->Eta()),fabs(mu1->Eta()));
-    float mu_ave_eta = (fabs(mu0->Eta())+fabs(mu1->Eta()))/2.;
-
-    //*
-    if ( bdt[0] < -0.400 ) icat = 0 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 1.900 ) icat = 1 ;
-    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 1.900 ) icat = 2 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta >= 1.900 ) icat = 3 ;
-    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 1.900 ) icat = 4 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta < 0.900 ) icat = 5 ;
-    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta < 0.900 ) icat = 6 ;
-    if ( mu_max_eta < 1.900 and bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 0.900 ) icat = 7 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 and mu_max_eta < 1.9) icat = 8 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 0.9 ) icat = 9 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900  and mu_max_eta >=0.9) icat = 10 ;
-    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 11 ;
-    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 12;
-    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 13 ;
-    if ( bdt[0] >= 0.730 ) icat = 14 ;
-    //
-
-    if (icat>=0) catStr=Form("cat%d",icat);
-
-    if (doSync and not processingSyst_)
-    {
-        SetTreeVar("bdt",bdt[0]);
-        SetTreeVar("cat",icat);
-    }
-
-    // SciKit
-
-    if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Category: returning '" + catStr);
-    return catStr;
 }
 
 string HmumuAnalysis::CategoryBdt(Event *e){
@@ -950,57 +744,6 @@ void HmumuAnalysis::InitTmva(){
 
 }
 
-void HmumuAnalysis::InitTmvaMIT(){
-    Log(__FUNCTION__,"INFO","Init Reader");
-    TMVA::Tools::Instance();
-    for( size_t i=0;i<weights.size() ;++i)
-        readers_ . push_back( new TMVA::Reader() );
-
-    //varscheme = 3 "Hpt","Heta","Hphi","deltaphi","deltaeta","eta1","eta2","ncentjets","njets","htCent","pass_leptonveto","mjj_1","mjj_2","detajj_1","detajj_2","firstQGL","secondQGL","thirdQGL","nbjets","maxDeepB","leadDeepB","maxCSV","mt1","mt2","met",]
-    AddVariable("Hpt",'F');    
-    AddVariable("Heta",'F');    
-    AddVariable("Hphi",'F');    
-    AddVariable("deltaphi",'F');    
-    AddVariable("deltaeta",'F');
-    AddVariable("eta1",'F');    
-    AddVariable("eta2",'F');    
-    AddVariable("ncentjets",'F');    
-    AddVariable("njets",'F');    
-    AddVariable("htCent",'F');    
-    AddVariable("pass_leptonveto",'F');    
-    AddVariable("mjj_1",'F');    
-    AddVariable("mjj_2",'F');    
-    AddVariable("detajj_1",'F');    
-    AddVariable("detajj_2",'F');    
-    //AddVariable("softNjets1",'F');    
-    //AddVariable("softHt1",'F');    
-    //AddVariable("softHt5",'F');    
-    //AddVariable("softHt10",'F');    
-    AddVariable("firstQGL",'F');    
-    AddVariable("secondQGL",'F');    
-    AddVariable("thirdQGL",'F');    
-    AddVariable("nbjets",'F');    
-    AddVariable("maxDeepB",'F');    
-    AddVariable("leadDeepB",'F');    
-    AddVariable("maxCSV",'F');    
-    AddVariable("mt1",'F');    
-    AddVariable("mt2",'F');    
-    AddVariable("met",'F');    
-
-    // 
-    AddSpectator("bdt",'F');SetVariable("bdt",0.);
-    AddSpectator("mass",'F');SetVariable("mass",0.);
-    AddSpectator("weight*((mc<-10&&mc>=-19)*48.58*0002176+(mc<-20&&mc>=-29)*3.782*0.0002176+(mc<-30&&mc>=-39)*0.8839*0.0002176+(mc<-40&&mc>=-49)*0.5328*0.0002176+(mc<-50&&mc>-59)*0.84*0.0002176+(mc<-60&&mc>=-69)*0.5071*0.0002176)",'F');SetVariable("weight*((mc<-10&&mc>=-19)*48.58*0002176+(mc<-20&&mc>=-29)*3.782*0.0002176+(mc<-30&&mc>=-39)*0.8839*0.0002176+(mc<-40&&mc>=-49)*0.5328*0.0002176+(mc<-50&&mc>-59)*0.84*0.0002176+(mc<-60&&mc>=-69)*0.5071*0.0002176)",0.);
-
-    // load weights
-    for( size_t i=0;i<weights.size() ;++i)
-        {
-            Log(__FUNCTION__,"INFO",Form("Loading weights idx=%d:",i)+weights[i]);
-            readers_[i]->BookMVA("BDTG_default",weights[i].c_str());
-        }
-
-}
-
 void HmumuAnalysis::Init(){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
     rnd_ . reset( new TRandom3() ) ;
@@ -1010,9 +753,9 @@ void HmumuAnalysis::Init(){
     if (catType>=1)
     {
         categories_.clear();
-        for (int i=0;i<30;++i) categories_.push_back(Form("cat%d",i));
-        if (catType<4)InitTmva();
-        if (catType>=4)InitTmvaMIT();
+        for (int i=0;i<30;++i)
+            categories_.push_back(Form("cat%d",i));
+        InitTmva();
         if (doScikit)InitScikit();
     }
     else
@@ -1028,12 +771,6 @@ void HmumuAnalysis::Init(){
         }
     }
     //
-    if(doUnbinned)
-    {
-        InitTree("final");
-        Branch("final","cat",'I');
-        Branch("final","mmm",'D');
-    }
 
 	Log(__FUNCTION__,"INFO","Booking Histograms");
     for ( string l : AllLabel()  ) {
@@ -1093,12 +830,6 @@ void HmumuAnalysis::Init(){
         {
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
 	        //Book2D ("HmumuAnalysis/Vars/JetEtaPhi_"+ c + "_"+ l ,"Jet EtaPhi; eta; phi;Events", 100,-5,5,100,-3.1415,3.1415); // CHECK2D
-            // ------------ MATCHED TO GEN HIGGS STUDIES -----
-	        Book ("HmumuAnalysis/Vars/match_"+ c + "_"+ l ,"Match [GeV];Events", 10,0-.5,10-.5); 
-	        Book ("HmumuAnalysis/Vars/match_ok_DRB_"+ c + "_"+ l ,"Match [GeV];Events", 100,0,1.); 
-	        Book ("HmumuAnalysis/Vars/match_fake_DRB_"+ c + "_"+ l ,"Match [GeV];Events", 100,0,1.); 
-	        Book ("HmumuAnalysis/Vars/match_ok_DRJ_"+ c + "_"+ l ,"Match [GeV];Events", 100,0,1.); 
-	        Book ("HmumuAnalysis/Vars/match_fake_DRJ_"+ c + "_"+ l ,"Match [GeV];Events", 100,0,1.); 
         }
 
     } //end label loop
@@ -1208,15 +939,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
-
-    if ( label == "GluGluHToMuMu_M120") label = "GluGlu_HToMuMu_M120";
-    if ( label == "GluGluHToMuMu_M125") label = "GluGlu_HToMuMu_M125";
-    if ( label == "GluGluHToMuMu_M130") label = "GluGlu_HToMuMu_M130";
-
-    if ( label == "VBFHToMuMu_M120") label = "VBF_HToMuMu_M120";
-    if ( label == "VBFHToMuMu_M125") label = "VBF_HToMuMu_M125";
-    if ( label == "VBFHToMuMu_M130") label = "VBF_HToMuMu_M130";
-
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
 
@@ -1412,26 +1134,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         if (categoryExc == "ttHLep" ) category="cat16";  // 
         if (categoryExc == "ZHLep" ) category="cat17";   // 
         if (categoryExc == "WHLep" ) category="cat18";   // 
-        if (categoryExc == "VHHadr" ) category="cat19";   // 
-        if (categoryExc == "ggHX" and category == "" ) category="cat20";   // 
+        if (categoryExc == "ggHX" and category == "" ) category="cat19";   // 
     } 
-    else if (catType ==4)
-    {
-        category = CategoryBdtMIT(e); 
-    }
-    else if (catType ==5) // MIT + exclusive
-    {
-        category = CategoryBdtMIT(e); 
-        string categoryExc = CategoryExclusive(e); 
-        recoMuons = mu0 != NULL and mu1 !=NULL;  // muons may have been recomputed here
-
-        if (categoryExc == "ttHHadr") category = "cat15";// 
-        if (categoryExc == "ttHLep" ) category="cat16";  // 
-        if (categoryExc == "ZHLep" ) category="cat17";   // 
-        if (categoryExc == "WHLep" ) category="cat18";   // 
-        if (categoryExc == "VHHadr" ) category="cat19";   // 
-        if (categoryExc == "ggHX" and category == "" ) category="cat20";   // 
-    }
     else category = Category(mu0, mu1, selectedJets);
 
     // --------------- DIRTY CATEGORIES -----------
@@ -1441,7 +1145,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     // BTAG SF
     // -----------------------
   
-    #warning NO_BTAGSF 
+#warning NO_BTAGSF 
     /* 
     if (true) // CSV-SF for passing loose,medium or tigth cuts
     {
@@ -1550,16 +1254,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (mu0)
     {
-        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
-        float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
-
-        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_id_runBC", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_id_runDE", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_id_runF", pt_for_sf,fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_id_runF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
@@ -1567,15 +1268,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     if (mu1)
     {
-        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
-        float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
-        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_id_runBC", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_id_runDE", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_id_runF", pt_for_sf,fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_id_runF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
@@ -1585,30 +1284,26 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     // ISO Loose
     if (mu0)
     {
-        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
-        float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
-        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_iso_runBC", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_iso_runDE", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,fabs(mu0->Eta()) );
+        e->SetPtEtaSF("mu_iso_runF", std::max(mu0->Pt(),float(20.1)),fabs(mu0->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
     if (mu1)
     {
-        float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
-        float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
-        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_iso_runBC", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_iso_runDE", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,fabs(mu1->Eta()) );
+        e->SetPtEtaSF("mu_iso_runF", std::max(mu1->Pt(),float(20.1)),fabs(mu1->Eta()) );
         float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
         sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
@@ -1753,7 +1448,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         SetTreeVar("metphi" ,e->GetMet().Phi());
 
         // basic jet info
-        for(int ijet=0;ijet<std::min(selectedJets.size(),size_t(20));++ijet)
+        for(int ijet=0;ijet<selectedJets.size();++ijet)
         {
             SetTreeVar("jet_pt" ,ijet,selectedJets[ijet]->Pt());
             SetTreeVar("jet_eta",ijet,selectedJets[ijet]->Eta());
@@ -1945,9 +1640,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
             Fill("HmumuAnalysis/Vars/NJetsOnH_"+ label,systname, selectedJets.size(),e->weight());
             Fill("HmumuAnalysis/Vars/NBJetsOnH_"+ label,systname, e->Bjets(),e->weight());
-            if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
-            if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ label,systname, bdt[0] ,e->weight()*zptrw);
-            if(catType>=2 and bdt.size() >0 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
+            if(catType>=2 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
+            if(catType>=2 )Fill("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ label,systname, bdt[0] ,e->weight()*zptrw);
+            if(catType>=2 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
                 Fill("HmumuAnalysis/Vars/BdtOnH_BB_"+ label,systname, bdt[0] ,e->weight());
             if (doScikit and catType==2){
                 for(size_t i=0;i<discr.size();++i)
@@ -1971,115 +1666,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             }
         }
 
-        // Check if matching is correct
-        if (category != "" and label.find("HToMuMu") != string::npos)
-        {
-            //mu0 mu1
-            bool mu0Matched=false;
-            bool mu1Matched=false;
-            for(int ig=0;;++ig)
-            {
-                GenParticle *gp = e->GetGenStable(ig,13,2.5) ;
-                if (gp ==NULL) break;
-                if ( fabs(gp -> GetParentPdgId()) == 25 )
-                {
-                    //good muon
-                    //GREPME
-                    if ( mu0->DeltaR(gp) < 0.1) {
-                        mu0Matched=true;
-                    }
-                    if ( mu1->DeltaR(gp) < 0.1) {
-                        mu1Matched=true; 
-                    }
-                }
-            }
-            //0 = ALL 
-            //1 = Matched 0
-            //2 = Matched 1
-            //3 = Matched Both
-            Fill("HmumuAnalysis/Vars/match_"+ category + "_"+ label,systname,0, e->weight() );
-            if ( mu0Matched)Fill("HmumuAnalysis/Vars/match_"+ category + "_"+ label,systname,1, e->weight() );
-            if ( mu1Matched)Fill("HmumuAnalysis/Vars/match_"+ category + "_"+ label,systname,2, e->weight() );
-            if ( mu0Matched and mu1Matched)Fill("HmumuAnalysis/Vars/match_"+ category + "_"+ label,systname,3, e->weight() );
 
+        if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
+        if(Unblind(e) and category != "")Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
 
-            // find closest jet and closest b
-            float drMinJ=100;
-            float drMinB=100;
-            //Jet * closeJ{NULL}, *closeB{NULL};
-            for(auto j : selectedJets)
-            {
-                if (j->GetDeepB() > 0.1522 and drMinB > mu0->DeltaR(j) ) { /*closeB = j;*/ drMinB = mu0->DeltaR(j); }
-                if ( drMinJ > mu0->DeltaR(j) ) { /*closeJ = j;*/ drMinJ = mu0->DeltaR(j); }
-            }
-
-            if (mu0Matched){
-                Fill("HmumuAnalysis/Vars/match_ok_DRB_"+ category + "_"+ label,systname, drMinB,e->weight());
-                Fill("HmumuAnalysis/Vars/match_ok_DRJ_"+ category + "_"+ label,systname, drMinJ,e->weight());
-            }
-            else
-            {
-                Fill("HmumuAnalysis/Vars/match_fake_DRB_"+ category + "_"+ label,systname, drMinB,e->weight());
-                Fill("HmumuAnalysis/Vars/match_fake_DRJ_"+ category + "_"+ label,systname, drMinJ,e->weight());
-            }
-            // same with mu1
-            drMinJ=100;
-            drMinB=100;
-            //Jet * closeJ{NULL}, *closeB{NULL};
-            for(auto j : selectedJets)
-            {
-                if (j->GetDeepB() > 0.1522 and drMinB > mu1->DeltaR(j) ) { /*closeB = j;*/ drMinB = mu1->DeltaR(j); }
-                if ( drMinJ > mu1->DeltaR(j) ) { /*closeJ = j;*/ drMinJ = mu1->DeltaR(j); }
-            }
-
-            if (mu1Matched){
-                Fill("HmumuAnalysis/Vars/match_ok_DRB_"+ category + "_"+ label,systname, drMinB,e->weight());
-                Fill("HmumuAnalysis/Vars/match_ok_DRJ_"+ category + "_"+ label,systname, drMinJ,e->weight());
-            }
-            else
-            {
-                Fill("HmumuAnalysis/Vars/match_fake_DRB_"+ category + "_"+ label,systname, drMinB,e->weight());
-                Fill("HmumuAnalysis/Vars/match_fake_DRJ_"+ category + "_"+ label,systname, drMinJ,e->weight());
-            }
-
-        }
-
-        //if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
-        if( category != "")
-        {
-            Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
-            if (doUnbinned and mass_>110 and mass_<150 and (not processingSyst_))
-            {
-                int cat=0;
-                if (category=="cat0") cat=0;
-                else if (category=="cat1") cat=1;
-                else if (category=="cat2") cat=2;
-                else if (category=="cat3") cat=3;
-                else if (category=="cat4") cat=4;
-                else if (category=="cat5") cat=5;
-                else if (category=="cat6") cat=6;
-                else if (category=="cat7") cat=7;
-                else if (category=="cat8") cat=8;
-                else if (category=="cat9") cat=9;
-                else if (category=="cat10") cat=10;
-                else if (category=="cat11") cat=11;
-                else if (category=="cat12") cat=12;
-                else if (category=="cat13") cat=13;
-                else if (category=="cat14") cat=14;
-                else if (category=="cat15") cat=15;
-                else if (category=="cat16") cat=16;
-                else if (category=="cat17") cat=17;
-                else if (category=="cat18") cat=18;
-                else if (category=="cat19") cat=19;
-                else cat=20;
-                SetTreeVar("mmm",mass_);
-                SetTreeVar("cat",cat);
-                FillTree("final");
-            }
-
-        } //Unblind and category != ""
-
-    } // reco pass trigger and pass asymm cuts
+        //if(Unblind(e) and (categoryDirty=="ttHHadr" or categoryDirty == "superPure") )Fill("HmumuAnalysis/Vars/Mmm_"+ categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
+        //if(Unblind(e) and categoryDirty == "ttHLep")Fill("HmumuAnalysis/Vars/Mmm_"+categoryDirty+"_"+ label,systname, mass_,e->weight()) ;
+    }
 
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
