@@ -53,6 +53,10 @@ class HmumuAnalysis: virtual public AnalysisBase
         // this are related to miniIso if run
         vector<Jet*> selectedJetsMiniIso; 
         vector<Lepton*> miniIsoLeptons;
+        
+        // fatjets VH Hadronic tags (and TODO hadronic top)
+        vector<FatJet*> selectedFatjets;
+
         //Set soft variables
         bool isMiniIsoLeptons{false};
         

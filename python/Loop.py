@@ -62,11 +62,14 @@ if status >= 0 and opts.verbose: print "DONE"
 
 if opts.verbose: print "-> Load ChargedHiggs library"
 if rpath:
-	r.gSystem.Load( "./bin/libChargedHiggs.so")
+    r.gSystem.Load( "./bin/libChargedHiggs.so")
 else: ## it's likely that this will work
-	r.gSystem.Load("./bin/libChargedHiggs.0.so")
-if opts.verbose: print "DONE",
+    r.gSystem.Load("./bin/libChargedHiggs.0.so")
+
+if opts.verbose: print "DONE"
+
 ################ CREATING LOOPER ##########
+if opts.verbose: print "-> Importing Looper"
 from ROOT import Looper
 from ROOT import LoaderFactory
 
@@ -75,14 +78,16 @@ loop = Looper()
 loop.SetEntryPerSecond(100);
 
 ################ LOAD CONFIGURATION ########
+if opts.verbose: print "-> Load Configuration"
+
 from ParseDat import *
 cfg = ParseDat(opts.dat)
 
 if opts.verbose:
-	PrintDat(cfg)
+    print "-> Printing dat"
+    PrintDat(cfg)
 
-if 'EntryPerSecond' in cfg:
-	loop.SetEntryPerSecond( cfg['EntryPerSecond'])
+if 'EntryPerSecond' in cfg:loop.SetEntryPerSecond( cfg['EntryPerSecond'])
 
 ################ Loader ####
 if opts.verbose: print "-> Init Loader:",cfg['Loader']
@@ -91,9 +96,9 @@ loop.InitLoader(cfg['Loader']);
 
 for file in cfg['Files']:
     for f in FindEOS(file):
-	if f == '': continue
-	if opts.verbose: print "Adding file: '"+f+"'"
-	loop.AddToChain(f)
+        if f == '': continue
+        if opts.verbose: print "Adding file: '"+f+"'"
+        loop.AddToChain(f)
 
 
 if opts.verbose: print "-> InitTree"
@@ -103,10 +108,10 @@ loop.InitTree();
 if opts.verbose: print "-> Activate branches"
 branches=[]
 for file in cfg['Branches']:
-	branches.extend( ReadBranches(file) )
+    branches.extend( ReadBranches(file) )
 for b in branches:
-	if opts.verbose: print " * ",b
-	loop.ActivateBranch(b)
+    if opts.verbose: print " * ",b
+    loop.ActivateBranch(b)
 
 ## init output
 if opts.verbose: print "-> Opening output file '"+cfg['Output']+"'",
