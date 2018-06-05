@@ -245,6 +245,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     }
 
     // VH Hadronic boosted 
+    /*
     if (category == "") // mu0_local and mu1_local arenot null!
     {
         bool vhhadr=false;
@@ -253,13 +254,22 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
         {
             FatJet* f =  e->GetBareFatJet(ifat);
             if (f==NULL) break;
-            if (f->Pt() < 200) continue;
+            // loose
+            if (f->Pt() < 100) continue;
             if (fabs(f->Eta())>2.4) continue;
-            if ( f->SDTau2()/f->SDTau1() >0.6) continue;
-            if ( f->SDMass() < 65 or f->SDMass() >105) continue; 
+            //if ( f->SDTau2()/f->SDTau1() > 0.8) continue;
+            if ( f->Tau2()/f->Tau1() > 0.6) continue;
+            if ( f->SDMass() < 65 or f->SDMass() >150) continue; 
             if (mu0_local->DeltaR(f) <0.8) continue;
             if (mu1_local->DeltaR(f) <0.8) continue;
-            //cleaning wrt the muons
+           
+            // nominal 
+            // if (f->Pt() < 200) continue; 
+            // if (fabs(f->Eta())>2.4) continue;
+            // if ( f->SDTau2()/f->SDTau1() >0.6) continue;
+            // if ( f->SDMass() < 65 or f->SDMass() >105) continue; 
+            // if (mu0_local->DeltaR(f) <0.8) continue;
+            // if (mu1_local->DeltaR(f) <0.8) continue;
             //
             // top t32 and mass 105:220
             vhhadr=true;
@@ -272,6 +282,28 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
             category="VHHadr";
         }
 
+    }
+    */
+    if (category == "") { // VH Hadr resolved
+        // TODO kin fit assuming met 0
+            bool vhhadrres=false;
+            float met = e->GetMet().Pt();
+            if (nbjets==0 and met <35){
+                // loop over the selected jets local
+                for(unsigned ijet=0;ijet < selectedJetsMiniIso.size();++ijet) 
+                for(unsigned jjet=ijet+1;jjet < selectedJetsMiniIso.size();++jjet) 
+                {
+                    //compute the invariant mass between ijet and jjet 
+                    //
+                    Object Z ;
+                    Z.SetP4(zero); // make sure it is 0.
+                    Z+= *selectedJetsMiniIso[ijet];
+                    Z+= *selectedJetsMiniIso[jjet];
+                    if ( Z.M() > 70 and Z.M()< 100 ) vhhadrres=true;
+                }
+
+            }
+            if (vhhadrres)category="VHHadr";
     }
 
     // ggHX: I have a ggH with miniIso but not with std selection
@@ -1397,7 +1429,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         if (categoryExc == "ttHLep" ) category="cat16";  // 
         if (categoryExc == "ZHLep" ) category="cat17";   // 
         if (categoryExc == "WHLep" ) category="cat18";   // 
-        if (categoryExc == "ggHX" and category == "" ) category="cat19";   // 
+        if (categoryExc == "VHHadr" ) category="cat19";   // 
+        if (categoryExc == "ggHX" and category == "" ) category="cat20";   // 
     }
     else category = Category(mu0, mu1, selectedJets);
 

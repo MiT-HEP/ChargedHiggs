@@ -287,15 +287,16 @@ class HmmConfigWithTTH(HmmConfigAutoCat):
         self.bkg_functions=["zmod2_cat0_ord5","zmod2_cat1_ord5","exp_cat2_ord3","zmod2_cat3_ord5","exp_cat4_ord3","zmod2_cat5_ord5","zmod_cat6_ord1","zmod2_cat7_ord5","zmod2_cat8_ord5","zmod2_cat9_ord5","zmod2_cat10_ord5","zmod_cat11_ord1","zmod_cat12_ord1","zmod2_cat13_ord5","zmod_cat14_ord1"]
         
 class HmmConfigExCat(HmmConfigAutoCat):
-    def __init__(self):
+    def __init__(self,n=20):
         HmmConfigAutoCat.__init__(self)
         #self.categories=[ "cat%d"%x for x in range(0,17)]
-        self.categories=[ "cat%d"%x for x in range(0,20)]
+        self.categories=[ "cat%d"%x for x in range(0,n)]
         self.computeVersioning()
 
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
 hmmExCat = HmmConfigExCat()
+hmmExCatBoost = HmmConfigExCat(21)
 
 if __name__=="__main__":
     hmm.Print()

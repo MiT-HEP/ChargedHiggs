@@ -146,6 +146,8 @@ def ParseDat(name):
 						config[key][type] = R[key][type]
 				elif key == 'Files' and 'Files' in config: ## if already exists, extend it, otherwise cgo to default (sub)
 					config['Files'].extend( R['Files'] )
+				elif key == 'Loader' : # LoadNero is the default and all the dat have it. FIXME
+					if R[key] != "LoadNero": config[key] = R[key]
 				else:
 					config[key] = R[key]
 	return config
@@ -542,17 +544,20 @@ def ReadSFDB(file,verbose=False):
 	return L
 
 def ReadBranches(fileName):
-	''' Read Branches from a files '''
-	R=[]		
-	f =open(fileName,"r")	
-	for line in f:
-		l = line.split('#')[0]
-		l = re.sub('\n','',l)
-		if l == "": continue
-		l=re.sub('^ *','',l).split()[0]
-		b = StringKey(l)
-		R.append(b)
-	return R
+    ''' Read Branches from a files '''
+    R=[]
+    if fileName =="": 
+        print "[WARNING]: Branch file not provided. Returning empty list."
+        return R
+    f =open(fileName,"r")
+    for line in f:
+        l = line.split('#')[0]
+        l = re.sub('\n','',l)
+        if l == "": continue
+        l=re.sub('^ *','',l).split()[0]
+        b = StringKey(l)
+        R.append(b)
+    return R
 
 def chunkIt(seq, num):
   ''' Take a list seq and return a n lists'''

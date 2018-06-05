@@ -412,6 +412,7 @@ if doSig: ## signal composition plot
     store[17]=(0.00,.00,1.00	,0.0   )
     store[18]=(0.00,.00,1.00	,0.0   )
     store[19]=(0.00,.00,1.00	,0.0   )
+    store[20]=(0.00,.00,1.00	,0.0   )
     #c=ROOT.TCanvas("c_"+cat+"_sig_composition 2","canvas",800,800)
     ## old -> new
 
