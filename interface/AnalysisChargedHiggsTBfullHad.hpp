@@ -31,7 +31,7 @@ public:
     void BookHistojet(string l, string category, string phasespace);
     void BookFlavor(string l, string category, string phasespace, string flavor, string SR);
     void BookGenMatch(string l, string category, string phasespace, string cut321, string state);
-    void BookEnCorr(string category, string phasespace);
+    void BookEnCorr(string l, string category, string phasespace);
     void Preselection();
 
     // function with various plots
@@ -54,7 +54,7 @@ public:
     void printSynch(Event*e);
 
     bool genInfoForSignal(Event*e);
-    void Encorrection(Event*e, string systname, string phasespace);
+    void Encorrection(Event*e, string label, string systname, string phasespace);
 
 
     int analyze(Event*,string systname) override;
@@ -132,6 +132,7 @@ private:
 
     
     //bjets
+    Jet* leadingbtb=NULL;     // tb
     Jet* leadingb=NULL;     // tb, wbb
     Jet* leadingbWBJ = NULL;//wbj
     Jet* secondb=NULL;      //wbj
@@ -158,6 +159,9 @@ private:
     //Lepton for tt1l
     Lepton* oneele = NULL;
     Lepton* onemu = NULL;
+    Lepton* oneele1 = NULL;
+    Lepton* onemu1 = NULL;
+
 
     /////
     /////
