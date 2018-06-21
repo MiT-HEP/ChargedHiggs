@@ -12,8 +12,9 @@ maxStat=0.15
 
 # original binning is 10GeV
 nRebinHT=1
-##nRebinHT=5
+#nRebinHT=5
 LikeBins=10
+#LikeBins=1
 
 doRebin = False
 applyLikelihoodRebinBin = True
@@ -249,8 +250,8 @@ if doSChannel:
 		   ]
 else:
 	basecat = [ "OneBOneFat_one_highj","OneBOneFat_two_highj","OneBOneFat_three_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj","OneBOneFat_three_lowj"
-		   ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
-		   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj","OneBOneMirrorFat_three_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj","OneBOneMirrorFat_three_lowj"
+		    ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
+		    ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj","OneBOneMirrorFat_three_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj","OneBOneMirrorFat_three_lowj"
 		   ]
 
 if doSChannel:
@@ -501,19 +502,12 @@ for y in channel:
 #				catStore[name]["hasMC"]=["qcd","top","Hptb"]
 
 ### QCD uncorrelated
-#				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","ttbar","Hptb","top","ewk"]
-#				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","ttbar","Hptb","top","ewk"]
-#				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","ttbar","Hptb","top","ewk"]
-#				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","ttbar","Hptb","top","ewk"]
-#				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","ttbar","Hptb","top","ewk"]
-#				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","ttbar","Hptb","top","ewk"]
-
-				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","ttbar","Hptb"]
-				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","ttbar","Hptb"]
-				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","ttbar","Hptb"]
-				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","ttbar","Hptb"]
-				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","ttbar","Hptb"]
-				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","ttbar","Hptb"]
+				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","ttbar","Hptb","top","ewk"]
+				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","ttbar","Hptb","top","ewk"]
+				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","ttbar","Hptb","top","ewk"]
+				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","ttbar","Hptb","top","ewk"]
+				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","ttbar","Hptb","top","ewk"]
+				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","ttbar","Hptb","top","ewk"]
 
                         if doSChannel:
 				mcStore={
@@ -562,16 +556,19 @@ for y in channel:
 					### MET-Jets-PU
                                         "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
                                         "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
-                                        "CMS_SDMassScale":{"type":"shape", "wsname":"CMS_SDMassSCALE","name":"SDMassSCALE","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
+                                        "CMS_scale_SDMass":{"type":"shape", "wsname":"CMS_scale_SDMass","name":"SDMassSCALE","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
+                                        "CMS_eff_Tau21":{"type":"lnN", "value":["1.08","1.08"] ,"proc":["ttbar","Hptb"],"wsname":"CMS_eff_Tau21","name":"XXX"}, ## name used for shape
+                                        "CMS_eff_Tau32":{"type":"lnN", "value":["1.02","1.02"] ,"proc":["ttbar","Hptb"],"wsname":"CMS_eff_Tau32","name":"XXX"}, ## name used for shape
 #                                        "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
                                         "CMS_scale_j_qcd":{"type":"shape", "wsname":"CMS_scale_j_qcd","name":"JESANDCSV","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":["Hptb","ttbar","top","ewk"]},
                                         ##Light jets Heavy flavor contamination
-					"CMS_btag_HF_qcd":{"type":"shape", "wsname":"CMS_btag_HF_qcd","name":"CSVRHF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
-					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
+					"CMS_btag_HF_qcd":{"type":"shape", "wsname":"CMS_btag_HF_qcd","name":"CSVRHF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":["ttbar","top","Hptb"]},
                                         ##Heavy jets light flavor contamination
-                                        "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["Hptb","ttbar","top"]},
+                                        "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","Hptb","ttbar","top"]},
                                         ##Linear and quadratic uncertainties
+					# note decouple the qcd
 					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":[".*"]},
 					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":[".*"]},
                                         "CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":[".*"]},
@@ -590,11 +587,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_MAY30/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_JUNE21/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_MAY30/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_JUNE21/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -716,7 +713,6 @@ datacard.write("-------------------------------------\n")
 
 ## 
 def writeNormSystLU(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
-##def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT"]):
 	datacard.write(name+"\tlnU")
 	invert=False
 
@@ -740,30 +736,45 @@ def writeNormSystLU(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 		   datacard.write("\t-")
 	datacard.write("\n")
 
+def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""],regexpCat=[]):
+        datacard.write(name+"\tlnN")
+        invert=False
 
-def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]):
-##def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT"]):
-	datacard.write(name+"\tlnN")
-	invert=False
+	for cat in catStore:
+		print cat
+		for proc in mcStore:
+			print proc
+			if skip(catStore[cat],mcStore[proc]): continue
+			idx=-1
+			invert=False
+			for i,regexp in enumerate(regexpL):
+				print 'regexp',regexp,' proc',proc
+				match=re.search(regexp,proc)
+				if regexp != "" and regexp[0] == '!':
+					invert=True
+					regexp=regexp[1:]
+				if (match and not invert) or (not match and invert):
+					idx=i
+					break
+			idx2=-1
+			invert=False
+			for i,regexp in enumerate(regexpCat):
+				print 'regexp',regexp,' proc',cat
+				match=re.search(regexp,cat)
+				if regexp != "" and regexp[0] == '!':
+					invert=True
+					regexp=regexp[1:]
+				if (match and not invert) or (not match and invert):
+					idx2=i
+					break
 
-        for cat in catStore:
-            for proc in mcStore:
-                if skip(catStore[cat],mcStore[proc]): continue
-		idx=-1
-		invert=False
-		for i,regexp in enumerate(regexpL):
-			match=re.search(regexp,proc)
-			if regexp != "" and regexp[0] == '!':
-				invert=True
-				regexp=regexp[1:]
-			if (match and not invert) or (not match and invert):
-				idx=i
-				break
-
-		if (idx>=0):
-		   datacard.write("\t"+valueL[idx])
-		else:
-		   datacard.write("\t-")
+			print cat, proc
+			if (idx>=0 and (idx2>=0 or len(regexpCat)==0 )):
+				print 'idx',idx,' valueL[idx]=' ,valueL
+				print 'idx2',idx2, ' valueL[idx]=',valueL
+				datacard.write("\t"+valueL[idx])
+			else:
+				datacard.write("\t-")
 	datacard.write("\n")
 
 def writeSystShape(syst,regexpL=[],regexpCat=None):
@@ -853,7 +864,12 @@ def importStat():
 for syst in systStore:
 	if syst == "None": continue
 	if systStore[syst]["type"] == "lnN":
-		writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
+                if "CMS_eff_Tau21" in systStore[syst]["wsname"]:
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["wbb","wbj"])
+                elif "CMS_eff_Tau32" in systStore[syst]["wsname"]:
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["t0b","t1b"])
+		else:
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 	if systStore[syst]["type"] == "shape":
                 if "muRF" in systStore[syst]["wsname"]:
 			if not doSChannel: writeSystShape(systStore[syst],systStore[syst]["proc"])
@@ -862,7 +878,7 @@ for syst in systStore:
 
 if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024"],["ttbar"])
 if doSyst: writeNormSyst("pdf_gg",["1.042"],["ttbar"])
-if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027"],["ttbar"])
+if doSyst: writeNormSyst("CMS_mass_top",["1.027"],["ttbar"])
 
 ## "top" get the value od the single top
 if doSyst: writeNormSyst("QCDscale_top",["0.977/1.028"],["top"])
@@ -871,8 +887,8 @@ if doSyst: writeNormSyst("CMS_mass_top",["1.022"],["top"])
 
 #if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
 #if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
-if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_",["2.","2.","2."],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
-if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_",["2.","2.","2."],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure",["2.","2.","2."],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure",["2.","2.","2."],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
 
 ## "ewk" get the envelop of the DY and W+jets
 if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008"],["ewk"])
@@ -954,9 +970,9 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
                 c= hTmpUp.SetBinError(iBin,0)
                 c= hTmpDown.SetBinError(iBin,0)
 
-        if 'JESANDCSV' in togetSyst or "PU" in togetSyst or "JER" in togetSyst or "SDMassScale" in togetSyst:
-#               return hTmpNom
-                hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/forMIAO/APR16/SYST").smooth()
+        if ('CSV' in togetSyst and not "CSVRHF" in togetSyst) or "PU" in togetSyst or "JER" in togetSyst or "SDMassScale" in togetSyst:
+               return hTmpNom
+                hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/forMIAO/JUNE14/SYST").smooth()
         else:
                 hUp = hTmpUp
                 hDown = hTmpDown
@@ -1132,10 +1148,14 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				if mc["name"]=="qcd" and hTmp:
 					hTmp.Scale(0.93)
 				## top and W scale factor (for now only in ttbar later also signal)
+				## https://twiki.cern.ch/twiki/bin/view/CMS/JetTopTagging#13_TeV_working_points_CMSSW_8_0
+				## https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging
 				if ( mc["name"]=="ttbar" or mc["name"]=="top") and ("t0b" in toget or "t1b" in toget) and hTmp:
-					hTmp.Scale(1.11)
-				if ( mc["name"]=="ttbar" or mc["name"]=="top") and ("wbb" in toget or "wbj" in toget) and hTmp:
 					hTmp.Scale(1.06)
+					# uncertainties +0.08 -0.04
+				if ( mc["name"]=="ttbar" or mc["name"]=="top") and ("wbb" in toget or "wbj" in toget) and hTmp:
+					hTmp.Scale(1.11)
+					## need to have an uncetainty of 0.08
 
 ### -- MC --
 #			print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
@@ -1275,7 +1295,7 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 						toget=toget%m
 
 						stringToParce="_M-"+opts.kMass
-
+						
                                                 if stringToParce in toget:
                                                         myTMPmass = "%d_"%m
                                                         print '1/3 here is the one I want', stringToParce, ' to check inside',toget
