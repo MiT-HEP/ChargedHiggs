@@ -252,7 +252,7 @@ else:
 	basecat = [ "OneBOneFat_one_highj","OneBOneFat_two_highj","OneBOneFat_three_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj","OneBOneFat_three_lowj"
 		    ,"OneBOneFat1l_one","OneBOneFat1l_two","OneBOneFat1l_three"
 		    ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj","OneBOneMirrorFat_three_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj","OneBOneMirrorFat_three_lowj"
-		   ]
+		    ]
 
 if doSChannel:
 	if opts.kCat==0:
@@ -587,11 +587,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_JUNE21/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_JUNE22/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_JUNE21/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_JUNE22/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -643,7 +643,7 @@ def skip(cat,mc):
 #datacard.write("## Observation\n")
 
 ## write shapes in histograms
-if False: # data
+if True: # data
 # for MARIA
         datacard.write("shapes data_obs *\t" + fileTmp +"\t")
 # for JAN
@@ -668,13 +668,12 @@ if True: # bkg
 datacard.write("-------------------------------------\n")
 datacard.write("## Observation\n")
 
-
 # write observation
 datacard.write("bin\t")
 for cat in catStore:
 	datacard.write("%s\t"%cat)
 datacard.write("\n")
-datacard.write("bin\t")
+datacard.write("observation\t")
 for cat in catStore:
 	datacard.write("-1\t")
 datacard.write("\n")
@@ -970,12 +969,18 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
                 c= hTmpUp.SetBinError(iBin,0)
                 c= hTmpDown.SetBinError(iBin,0)
 
-        if ('CSV' in togetSyst and not "CSVRHF" in togetSyst) or "PU" in togetSyst or "JER" in togetSyst or "SDMassScale" in togetSyst:
-               return hTmpNom
-                hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/forMIAO/JUNE14/SYST").smooth()
-        else:
-                hUp = hTmpUp
-                hDown = hTmpDown
+	if LikeBins==1:
+
+		hUp = hTmpUp
+		hDown = hTmpDown
+
+	else:
+
+		if ('CSV' in togetSyst and not "CSVRHF" in togetSyst) or "PU" in togetSyst or "JER" in togetSyst or "SDMassScale" in togetSyst:
+			hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/forMIAO/JUNE14/SYST").smooth()
+		else:
+			hUp = hTmpUp
+			hDown = hTmpDown
 
         if 'Up' in s:
                 return hUp
@@ -1316,9 +1321,10 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 ##					togetClone = toget + "_" + syst["name"]
 					toget += "_" + syst["name"] + s
 
-				hTmp=tfile.Get(toget)
+#				hTmp=tfile.Get(toget)
+#				if hTmp!= None: hTmp.Rebin(nRebinHT)
+				hTmp=mergeCategory(tfile,toget)
 
-				if hTmp!= None: hTmp.Rebin(nRebinHT)
 				if hTmp!= None: print "<*> 1/3 Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
 
 				if hTmp == None:
@@ -1439,19 +1445,13 @@ for cat in catStore:
 		raise IOError
 	base="ChargedHiggsTopBottom"
 	target = "data_obs_"+ cat["name"] 
-## MARIA temporaty fix since the data histo is not filled
 	toget=base + "/" +cat["dir"] + "/" +  cat["var"]  +"_Data"
-#	toget=base + "/" +cat["dir"] + "/" +  cat["var"] + "_QCD_HT"
-#	if  ("1Ele" in cat["dir"] or "2Ele" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]): toget+="_SingleElectron"
-#	elif  "1Mu" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]: toget+="_SingleMuon"
 
-	## MARIA REMEMBER TO MERGE THE CATEGORY
-	h=tfile.Get(toget)
-	if h!= None: h.Rebin(nRebinHT)
+	h=mergeCategory(tfile,toget)
+
 	if h == None:
 		print "<*> Hist do not exists ",toget
-                ### MARIA COMMENT THIS FOR NOW
-##		raise IOError
+		raise IOError
 
 	if h != None:
                 h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
@@ -1473,17 +1473,16 @@ for cat in catStore:
 		if cat["name"] in arglist_obs.at(i).GetName():
 			al = arglist_obs.at(i)
 
-### comment data for may25
-
-#	if h != None:
+	if h != None:
+# comment the roofit part
 #		roo_data= ROOT.RooDataHist("data_obs_%s"%c,"Mass",ROOT.RooArgList(al),h)
 #		getattr(w,'import')(roo_data,ROOT.RooCmdArg()) ## import is a reserved word in python :(, the cmdArg is there to solve a disambiguate issue
 #		g.extend([h,roo_data])
-#		f = ROOT.TFile.Open(fileTmp,"update")
-#                 h.SetName(target)
-#                 h.Write()
-#                f.Write()
-#                f.Close()
+		f = ROOT.TFile.Open(fileTmp,"update")
+		h.SetName(target)
+		h.Write()
+                f.Write()
+                f.Close()
 
 
 ## import and write statistical uncertainties
