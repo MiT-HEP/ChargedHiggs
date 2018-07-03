@@ -1,9 +1,13 @@
-##configure Looper
+##configure Loope
 ##### This file store the configuratino to run all the analysis
 ##### if you want to make a config file that overwrite some changes just create a new one with the line
 ##### include=dat/config.txt
 ##### Files=....,....,...
-include=dat/config.2017.moriond.dat 
+#
+#include=dat/config.2018.moriond.dat 
+
+Files=
+include=dat/catalog/2018.dijet.dat
 
 ################
 ### DATASETS ###
@@ -37,9 +41,14 @@ Branches=dat/branches.txt
 ###
 #pileup=aux/pileup.root
 ######MCDB=aux/mcdb.TauNu.2017.dat
-pileup=aux/pileup.TauNu.moriond.root
-MCDB=aux/mcdb.qg.txt
+#pileup=aux/pileup.TauNu.moriond.root
+#MCDB=aux/mcdb.qg.txt
 #pileup=aux/pileup.2017.qg.root
+MCDB=aux/mcdb.Hmumu.2018.dat
+pileup=aux/pileup.2018.moriond.Prompt.ZeroBias.root
+#pileup=aux/pileup.2018.moriond.Prompt.ZeroBias.lowpu.root
+SFDB=aux/sf_database.2018.moriond.txt
+
 pileupRun=
 pileupLumi=
 #Lumi=2110 ## doing nothing
@@ -50,8 +59,8 @@ pileupLumi=
 # Smearer
 #Smear=JER,JES,@SmearBase
 #Smear=NONE,JER,JES
-MCDB=aux/mcdb.TauNu.2017.dat
-pileup=aux/pileup.TauNu.moriond.root
+#MCDB=aux/mcdb.TauNu.2017.dat
+#pileup=aux/pileup.TauNu.moriond.root
 Smear=NONE
 Correct=NONE
 #Correct=MetPhiCorrector
@@ -65,7 +74,7 @@ Correct=NONE
 ###  QG   ###
 #############
 
-config=QGAnalysis|AddLabel('DY'),AddLabel('QCD'),doMM=1,doJJ=0
+config=QGAnalysis|AddLabel('DY'),AddLabel('QCD'),doMM=0,doJJ=1
 
 ############
 ### JSON ###
