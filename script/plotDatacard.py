@@ -293,7 +293,7 @@ for ich in range (0,maxch):
             if v.GetName() in datacard['poi']: color_tag="bgcolor=\"palegreen\""
             fontcolor="color=\"blue\"" if isConstrained(v) else "color=\"black\""
             #print >>fout,"<tr>","<td",color_tag," border=\"1\"> ","%s"%var,"</td> <td",color_tag," border=\"1\">"," \"%g[%g,%g] %s\"</td>"%(v.getVal(),v.getMin(),v.getMax(), "C" if v.isConstant() else "F"),"</tr>",
-            print >>fout,"<tr>","<td",color_tag," border=\"1\"> ","<font %s>"%fontcolor,"%s"%var,"</font></td> <td",color_tag," border=\"1\">","<font %s>"%fontcolor," \"%g[%g,%g] %s\"</font></td>"%(v.getVal(),v.getMin(),v.getMax(), "C" if v.isConstant() else "F"),"</tr>",
+            print >>fout,"<tr>","<td",color_tag," border=\"1\"> ","<font %s>"%fontcolor,"%s"%var,"</font></td> <td",color_tag," border=\"1\">","<font %s>"%fontcolor," %g[%g,%g] %s</font></td>"%(v.getVal(),v.getMin(),v.getMax(), "C" if v.isConstant() else "F"),"</tr>",
         if has_unique:print >>fout ,"</table>>]"
 
         for var in datacard[ich]["proc_vars"][iproc]:
@@ -314,7 +314,7 @@ for ich in range (0,maxch):
         if v.isConstant(): color_tag="bgcolor=\"gold\""
         if v.GetName() in datacard['poi']: color_tag="bgcolor=\"palegreen\""
         fontcolor="color=\"blue\"" if isConstrained(v) else "color=\"black\""
-        print >>fout,"<tr>","<td",color_tag," border=\"1\"> ","<font %s>"%fontcolor,"%s"%var,"</font></td> <td",color_tag," border=\"1\">","<font %s>"%fontcolor," \"%g[%g,%g] %s\"</font></td>"%(v.getVal(),v.getMin(),v.getMax(), "C" if v.isConstant() else "F"),"</tr>",
+        print >>fout,"<tr>","<td",color_tag," border=\"1\"> ","<font %s>"%fontcolor,"%s"%var,"</font></td> <td",color_tag," border=\"1\">","<font %s>"%fontcolor," %g[%g,%g] %s</font></td>"%(v.getVal(),v.getMin(),v.getMax(), "C" if v.isConstant() else "F"),"</tr>",
     if has_ch_orphans:print >>fout ,"</table>>]"
     if has_ch_orphans:print >>fout,"cluster_ch%d -> orphans_ch%d"%(ich,ich)
 
