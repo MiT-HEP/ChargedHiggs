@@ -4,6 +4,10 @@ from optparse import OptionParser
 usage='''Usage: %prog [options] inputFile.
         Use e.g. https://dreampuf.github.io/GraphvizOnline/ (fdp) to convert to image.
         Original Author: Andrea Carlo Marini. July 2018.
+
+        Known limitation/TODO:
+        * loadSnapshot
+        * if '_' are present in proc/channels may not fetch correctly names
     '''
 parser=OptionParser(usage=usage)
 parser.add_option("-w","--wsname",help="Ws name [%default]",default=None)
