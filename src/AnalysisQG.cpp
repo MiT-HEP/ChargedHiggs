@@ -1,4 +1,3 @@
-
 #include "interface/AnalysisQG.hpp"
 #include <iostream>
 
@@ -47,7 +46,7 @@ int QGAnalysis::Rematch(Event *e, Jet *j, float dR){
     for (gp = e->GetGenParticle(ig) ; gp != NULL ; gp=e->GetGenParticle(++ig))
         {
         
-            cout << "GEN num: " << ig << " pdg id: " << gp->GetPdgId() << " genpt: " << gp->Pt() << " geneta: " << gp->Eta() << " deltaR: " << gp->DeltaR(j) << endl;
+            //cout << "GEN num: " << ig << " pdg id: " << gp->GetPdgId() << " genpt: " << gp->Pt() << " geneta: " << gp->Eta() << " deltaR: " << gp->DeltaR(j) << endl;
         if  (gp->DeltaR(j) >dR) continue;
         if  ( abs(gp->GetPdgId()) > 6 and abs(gp->GetPdgId()) !=21 ) continue; // only quark and gluons
         if  ( abs(gp->GetPdgId()) ==0  ) continue; 
@@ -71,7 +70,7 @@ int QGAnalysis::Rematch(Event *e, Jet *j, float dR){
         }
 
         }
-    cout << "SELECTED GEN: " << " pdg id: " << jet_pdg << " genpt: " << genpt << " geneta: " << geneta <<  " deltaR: " << deltaR << endl;
+    //cout << "SELECTED GEN: " << " pdg id: " << jet_pdg << " genpt: " << genpt << " geneta: " << geneta <<  " deltaR: " << deltaR << endl;
     return jet_pdg;
 
 }
@@ -113,6 +112,7 @@ void QGAnalysis::Init(){
     if (doMM) InitMM();
     if (doJJ) InitJJ();
     InitTmva();
+    qgLikelihood_ . reset ( new QGLikelihoodCalculator("/afs/cern.ch/user/s/strolog/public/forGiorgia/pdfQG_AK4chs_13TeV_v1_94X_ghosts.root") ) ;
     return;
 }
 
@@ -154,8 +154,9 @@ void QGAnalysis::InitTmva(){
 void QGAnalysis::InitMM(){
 
     Log(__FUNCTION__,"INFO","Booking Histos for Zmm");
-
+    
     for ( string l : AllLabel()  ) {
+
         Book ("QGAnalysis/CutFlow/CutFlowZmm_"+ l ,"CutFlow;Events",10,-.5,10-.5);
         Book ("QGAnalysis/Zmm/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 100,50,200);
         // 
@@ -171,19 +172,25 @@ void QGAnalysis::InitMM(){
                 int nbins=200;
 
                 if ( v == "axis2" || v == "axis1") { xmin=0; xmax=10;}
-                if ( v == "mult") { xmin=0; xmax=100;nbins=100;}
+                if ( v == "mult") { xmin=0; xmax=50;nbins=50;}
                 if ( v == "cmult" || v == "nmult") { xmin=0; xmax=50;nbins=50;}
                 if ( v == "PtDrLog" ) {xmin=0; xmax=1.5;}
 
                 Book ("QGAnalysis/Zmm/"+v +"_"+ t+"_"+ l ,v+"_" + t, 200, xmin, xmax);
-                Book ("QGAnalysis/Zmm/BDT_"+t+"_"+ l ,"BDT_" + t, 200,-1,1.0);
+                //Book ("QGAnalysis/Zmm/BDT_"+t+"_"+ l ,"BDT_" + t, 200,-1,1.0);
                 Book ("QGAnalysis/Zmm/QGL_"+t+"_"+ l ,"QGL_" + t, 200,0.,1.0);
+                Book ("QGAnalysis/Zmm/QGL_n_"+t+"_"+ l ,"QGL_n_" + t, 200,0.,1.0);
                 for(int ptb=0;ptb < ptBins.size()-1; ++ptb)         
                 for(int aetab=0;aetab < aetaBins.size()-1; ++aetab)
                 {
+                    //cout << "QGAnalysis/Zmm/QGL_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l << endl;
+                    //if(t=="U" && l=="DY") { cout  << "====>UNDEFINED WITH PT" << ptBins[ptb] << "AND ETA" << aetaBins[aetab] << endl;}
+
                     Book ("QGAnalysis/Zmm/"+v+"_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,v +"_" + t, nbins,xmin,xmax);
-                    Book ("QGAnalysis/Zmm/BDT_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,"BDT_" + t, nbins,-1.,1.);
+                    //Book ("QGAnalysis/Zmm/BDT_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,"BDT_" + t, nbins,-1.,1.);
                     Book ("QGAnalysis/Zmm/QGL_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,"QGL_" + t, nbins,0.,1.);
+                    Book ("QGAnalysis/Zmm/QGL_n_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,"QGL_n_" + t, nbins,0.,1.);
+
                 } // pt-eta
             } // vars
         } // types
@@ -196,6 +203,7 @@ void QGAnalysis::InitJJ(){
     Log(__FUNCTION__,"INFO","Booking Histos for DiJet");
 
     for ( string l : AllLabel()  ) {
+
         Book ("QGAnalysis/CutFlow/CutFlowDiJet_"+ l ,"CutFlow;Events",10,-.5,10-.5);
         // 
         Book ("QGAnalysis/DiJet/Npv_"+ l ,"Npv jj", 50,0,50);
@@ -214,15 +222,17 @@ void QGAnalysis::InitJJ(){
                 if ( v == "PtDrLog" ) {xmin=0; xmax=1.5;}
 
                 Book ("QGAnalysis/DiJet/"+v +"_"+ t+"_"+ l ,v+"_" + t, 200,xmin,xmax);
-                Book ("QGAnalysis/DiJet/BDT_"+t+"_"+ l ,"BDT_" + t, 200,-1,1.0);
+                //Book ("QGAnalysis/DiJet/BDT_"+t+"_"+ l ,"BDT_" + t, 200,-1,1.0);
+                Book ("QGAnalysis/DiJet/QGL_n_"+t+"_"+ l ,"QGL_n_" + t, 200,0.,1.0);
                 Book ("QGAnalysis/DiJet/QGL_"+t+"_"+ l ,"QGL_" + t, 200,0.,1.0);
 
                 for(int ptb=0;ptb < ptBins.size()-1; ++ptb)         
                 for(int aetab=0;aetab < aetaBins.size()-1; ++aetab)
                 {
                     Book ("QGAnalysis/DiJet/"+v+"_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,v +"_" + t, nbins,xmin,xmax);
-                    Book ("QGAnalysis/DiJet/BDT_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,"BDT_" + t, nbins,-1.,1.);
+                    //Book ("QGAnalysis/DiJet/BDT_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,"BDT_" + t, nbins,-1.,1.);
                     Book ("QGAnalysis/DiJet/QGL_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,"QGL_" + t, nbins,0.,1.);
+                    Book ("QGAnalysis/DiJet/QGL_n_"+t+Form("_pt%.0f_%.0f",ptBins[ptb],ptBins[ptb+1]) + Form("_eta%.1f_%.1f",aetaBins[aetab],aetaBins[aetab+1])+"_"+ l ,"QGL_n_" + t, nbins,0.,1.);
                 } // pt-eta
             } // vars
         } // types
@@ -232,8 +242,7 @@ void QGAnalysis::InitJJ(){
 
 int QGAnalysis::analyzeMM(Event *e, string systname)
 {
-
-    if ( e->IsRealData() and e->GetName().find("DoubleMuon") == string::npos )  return 0; // avoid data double counting
+    if ( e->IsRealData() and e->GetName().find("SingleMuon") == string::npos )  return 0; // avoid data double counting
     //if ( e->IsRealData() and e->runNum() <= 278801) return 0; //split B2F and FGH runs
     //Log(__FUNCTION__,"DEBUG","Analyzing");
 
@@ -241,6 +250,7 @@ int QGAnalysis::analyzeMM(Event *e, string systname)
     cut.reset();
     cut.SetMask(MaxCut-1) ;
     cut.SetCutBit( Total ) ;
+
     Fill("QGAnalysis/CutFlow/CutFlowZmm_"+label,systname,Total,e->weight());
 
     Lepton*mu0 = e->GetMuon(0);
@@ -284,20 +294,21 @@ int QGAnalysis::analyzeMM(Event *e, string systname)
         string etaStr=Binning::findBinStr( aetaBins, fabs(j0->Eta()), "eta%.1f_%.1f");
         //string ptStr=Binning::findBinStr( ptBins, j0->Pt(), "pt%.0f_%.0f"); // binned with Jet PT
         string ptStr=Binning::findBinStr( ptBins, Z.Pt(), "pt%.0f_%.0f"); // binned with Z PT
-        //int flavor = abs(j0->Flavor()); // parton flavor
-        cout << "nEvent: " << e->eventNum() << " lumi: " << e->lumiNum() << endl;
-        int flavor = Rematch(e,j0,0.4); // rematching with gen particles. See above.
+        int flavor = abs(j0->Flavor()); // parton flavor
+
+        //int flavor = Rematch(e,j0,0.4); // rematching with gen particles. See above.
         string type="U";
         if (flavor == 21) type="G";
         else if (flavor <= 6 and flavor != 0) type="Q"; 
         
-        cout << "id: " << type << " pt: " << j0->Pt() << " eta: " << j0->Eta() << " phi: " << j0->Phi() << " Zpt: " << Z.Pt() << endl;
-        cout << "------------------------------------" << endl;
+        //cout << "id: " << type << " pt: " << j0->Pt() << " eta: " << j0->Eta() << " phi: " << j0->Phi() << " Zpt: " << Z.Pt() << endl;
+        //cout << "------------------------------------" << endl;
         SetVariable("axis1",-TMath::Log(j0->QGLVar("axis1")));
         SetVariable("axis2",-TMath::Log(j0->QGLVar("axis2")));
         SetVariable("ptD",j0->QGLVar("ptD"));
         SetVariable("pt_dr_log/pt",j0->QGLVar("PtDrLog")/j0->Pt());
         SetVariable("charged_multiplicity",j0->QGLVar("cmult"));
+        //SetVariable("mult",j0->QGLVar("mult"));
         
         /*SetVariable("axis1", 3.4148640);
         SetVariable("axis2", 4.6128964);                                                                                                          
@@ -312,34 +323,44 @@ int QGAnalysis::analyzeMM(Event *e, string systname)
             idx = binmap[ pair<int,int>(BdtPtBin(j0->Pt()),BdtEtaBin(j0->Eta()))];
         if(idx >=0 and readers_[idx] != NULL ) bdt = readers_[idx] ->EvaluateMVA("BDTG");
         
+        float mult = j0->QGLVar("mult");
+        float ptD = j0->QGLVar("ptD");
+        float axis2=-TMath::Log(j0->QGLVar("axis2"));
+        float newQGL = -1;
+        if (mult >2 ) newQGL = qgLikelihood_ -> computeQGLikelihood( j0->Pt(), abs(j0->Eta() ),  e->Rho() , {mult, ptD, axis2} );
+
         //cout << bdt << endl;
         // global 
         
-        Fill("QGAnalysis/Zmm/BDT_" +type +"_"+ label, systname, bdt,e->weight()) ;
+        //Fill("QGAnalysis/Zmm/BDT_" +type +"_"+ label, systname, bdt,e->weight()) ;
         Fill("QGAnalysis/Zmm/QGL_" +type +"_"+ label, systname, j0->QGL(),e->weight()) ;        
+        Fill("QGAnalysis/Zmm/QGL_n_" +type +"_"+ label, systname, newQGL,e->weight()) ;        
         Fill("QGAnalysis/Zmm/mult_" +type +"_"+ label, systname, j0->QGLVar("mult"),e->weight()) ;
-        Fill("QGAnalysis/Zmm/cmult_" +type +"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
-        Fill("QGAnalysis/Zmm/nmult_" +type +"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
+        //Fill("QGAnalysis/Zmm/cmult_" +type +"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
+        //Fill("QGAnalysis/Zmm/nmult_" +type +"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
         Fill("QGAnalysis/Zmm/ptD_" +type +"_"+ label, systname, j0->QGLVar("ptD"),e->weight()) ;
-        Fill("QGAnalysis/Zmm/PtDrLog_" +type +"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
+        //Fill("QGAnalysis/Zmm/PtDrLog_" +type +"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
         Fill("QGAnalysis/Zmm/axis2_" +type +"_"+ label, systname, -TMath::Log(j0->QGLVar("axis2")),e->weight()) ;
-        Fill("QGAnalysis/Zmm/axis1_" +type +"_"+ label, systname, -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
-        
+        //Fill("QGAnalysis/Zmm/axis1_" +type +"_"+ label, systname, -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
+
         // binned
         if (etaStr != "NotFound" and ptStr != "NotFound")
         {
+            //cout <<" Filling QGAnalysis/Zmm/QGL_" +type +"_" + ptStr + "_" + etaStr+"_"+ label<< endl;
+            //if(type=="U" && label=="DY") { cout  << "====>FILLING UNDEFINED WITH PT: " << ptStr << endl;}
             /*COMMENT ME*/
             //Log(__FUNCTION__,"DEBUG",Form("Filling eta=%s, pt=%s, cmult=%.1f",etaStr.c_str(),ptStr.c_str(), j0->QGLVar("cmult")) );
             /**/
-            Fill("QGAnalysis/Zmm/BDT_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, bdt ,e->weight()) ;
+            //Fill("QGAnalysis/Zmm/BDT_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, bdt ,e->weight()) ;
             Fill("QGAnalysis/Zmm/QGL_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGL(),e->weight()) ;
+            Fill("QGAnalysis/Zmm/QGL_n_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, newQGL,e->weight()) ;
             Fill("QGAnalysis/Zmm/mult_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("mult"),e->weight()) ;
-            Fill("QGAnalysis/Zmm/cmult_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
-            Fill("QGAnalysis/Zmm/nmult_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
+            //Fill("QGAnalysis/Zmm/cmult_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
+            //Fill("QGAnalysis/Zmm/nmult_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
             Fill("QGAnalysis/Zmm/ptD_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("ptD"),e->weight()) ;
-            Fill("QGAnalysis/Zmm/PtDrLog_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
+            //Fill("QGAnalysis/Zmm/PtDrLog_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
             Fill("QGAnalysis/Zmm/axis2_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis2")),e->weight()) ;
-            Fill("QGAnalysis/Zmm/axis1_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
+            //Fill("QGAnalysis/Zmm/axis1_" +type +"_" + ptStr + "_" + etaStr+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
         }
 
     }
@@ -369,7 +390,6 @@ int QGAnalysis::analyzeJJ(Event *e, string systname)
     }
 
     if ( j0->DeltaPhi(*j1) > 2.5 ) cut.SetCutBit(DiJetDeltaPhi);
-
     if( cut.passAllUpTo(DiJetTwoJets) ) Fill("QGAnalysis/CutFlow/CutFlowDiJet_"+label,systname,DiJetDeltaPhi,e->weight());
     if (cut.passAll() ){    
         Fill("QGAnalysis/CutFlow/CutFlowDiJet_"+label,systname,DiJetMaxCut,e->weight());
@@ -379,14 +399,14 @@ int QGAnalysis::analyzeJJ(Event *e, string systname)
         LogN(__FUNCTION__,"WARNING","Not T&P diJet",10);
         string ptStrJ0=Binning::findBinStr( ptBins, j0->Pt(), "pt%.0f_%.0f"); 
         string ptStrJ1=Binning::findBinStr( ptBins, j1->Pt(), "pt%.0f_%.0f"); 
-        //int flavorJ0 = abs(j0->Flavor());
-        int flavorJ0 = Rematch(e,j0,0.4);
+        int flavorJ0 = abs(j0->Flavor());
+        //int flavorJ0 = Rematch(e,j0,0.4);
         string typeJ0="U";
         if (flavorJ0 == 21) typeJ0="G";
         else if (flavorJ0 < 6 and flavorJ0 != 0) typeJ0="Q"; 
 
-        //int flavorJ1 = abs(j1->Flavor());
-        int flavorJ1 = Rematch(e,j1,0.4);
+        int flavorJ1 = abs(j1->Flavor());
+        //int flavorJ1 = Rematch(e,j1,0.4);
         string typeJ1="U";
         if (flavorJ1 == 21) typeJ1="G";
         else if (flavorJ1 < 6 and flavorJ1 != 0) typeJ1="Q";            
@@ -403,6 +423,7 @@ int QGAnalysis::analyzeJJ(Event *e, string systname)
         SetVariable("ptD",j0->QGLVar("ptD"));
         SetVariable("pt_dr_log/pt",j0->QGLVar("PtDrLog")/j0->Pt());
         SetVariable("charged_multiplicity",j0->QGLVar("cmult"));
+        //SetVariable("mult",j0->QGLVar("mult"));
 
         if(idx_0 >=0 and readers_[idx_0] != NULL ) bdt_0 = readers_[idx_0] ->EvaluateMVA("BDTG");
 
@@ -411,64 +432,83 @@ int QGAnalysis::analyzeJJ(Event *e, string systname)
         SetVariable("ptD",j1->QGLVar("ptD"));
         SetVariable("pt_dr_log/pt",j1->QGLVar("PtDrLog")/j1->Pt());
         SetVariable("charged_multiplicity",j1->QGLVar("cmult"));
+        //SetVariable("mult",j1->QGLVar("mult"));
 
         if(idx_1 >=0 and readers_[idx_1] != NULL ) bdt_1 = readers_[idx_1] ->EvaluateMVA("BDTG");
 
+        float mult = j0->QGLVar("mult");
+        float ptD = j0->QGLVar("ptD");
+        float axis2=-TMath::Log(j0->QGLVar("axis2"));
+
+        float newQGL_0 = -1;
+        if (mult >2 ) newQGL_0 = qgLikelihood_ -> computeQGLikelihood( j0->Pt(), abs(j0->Eta() ),  e->Rho() , {mult, ptD, axis2} );
+
+        mult = j1->QGLVar("mult");
+        ptD = j1->QGLVar("ptD");
+        axis2=-TMath::Log(j1->QGLVar("axis2"));
+        float newQGL_1 = -1;
+        if (mult >2 ) newQGL_1 = qgLikelihood_ -> computeQGLikelihood( j1->Pt(), abs(j1->Eta() ),  e->Rho() , {mult, ptD, axis2} );
         //cout << bdt_1 << endl;
 
         //cout << " Jet Pt: " << j1->Pt() << " Jet Eta: " << j1->Eta() << " PtDrLog: " << j1->QGLVar("PtDrLog")/j1->Pt()  << " axis2: " <<  -TMath::Log(j1->QGLVar("axis2")) << " axis1: " <<  -TMath::Log(j1->QGLVar("axis1"))  << " ptD: " << j1->QGLVar("ptD") << endl;
 
         // global 
 
-        Fill("QGAnalysis/DiJet/BDT_" +typeJ0 +"_"+ label, systname, bdt_0, e->weight()) ;
-        Fill("QGAnalysis/DiJet/BDT_" +typeJ1 +"_"+ label, systname, bdt_1, e->weight()) ;
+        //Fill("QGAnalysis/DiJet/BDT_" +typeJ0 +"_"+ label, systname, bdt_0, e->weight()) ;
+        //Fill("QGAnalysis/DiJet/BDT_" +typeJ1 +"_"+ label, systname, bdt_1, e->weight()) ;
 
         Fill("QGAnalysis/DiJet/QGL_" +typeJ0 +"_"+ label, systname, j0->QGL(),e->weight()) ;
         Fill("QGAnalysis/DiJet/QGL_" +typeJ1 +"_"+ label, systname, j1->QGL(),e->weight()) ;
-         
+
+        Fill("QGAnalysis/DiJet/QGL_n_" +typeJ0 +"_"+ label, systname, newQGL_0,e->weight()) ;
+        Fill("QGAnalysis/DiJet/QGL_n_" +typeJ1 +"_"+ label, systname, newQGL_1,e->weight()) ;
+
         Fill("QGAnalysis/DiJet/mult_" +typeJ0 +"_"+ label, systname, j0->QGLVar("mult"),e->weight()) ;
-        Fill("QGAnalysis/DiJet/cmult_" +typeJ0 +"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
-        Fill("QGAnalysis/DiJet/nmult_" +typeJ0 +"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
+        //Fill("QGAnalysis/DiJet/cmult_" +typeJ0 +"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
+        //Fill("QGAnalysis/DiJet/nmult_" +typeJ0 +"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
         Fill("QGAnalysis/DiJet/ptD_" +typeJ0 +"_"+ label, systname, j0->QGLVar("ptD"),e->weight()) ;
-        Fill("QGAnalysis/DiJet/PtDrLog_" +typeJ0 +"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
+        //Fill("QGAnalysis/DiJet/PtDrLog_" +typeJ0 +"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
         Fill("QGAnalysis/DiJet/axis2_" +typeJ0 +"_"+ label, systname,  -TMath::Log(j0->QGLVar("axis2")),e->weight()) ;
-        Fill("QGAnalysis/DiJet/axis1_" +typeJ0 +"_"+ label, systname,  -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
+        //Fill("QGAnalysis/DiJet/axis1_" +typeJ0 +"_"+ label, systname,  -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
 
         Fill("QGAnalysis/DiJet/mult_" +typeJ1 +"_"+ label, systname, j1->QGLVar("mult"),e->weight()) ;
-        Fill("QGAnalysis/DiJet/nmult_" +typeJ1 +"_"+ label, systname, j1->QGLVar("nmult"),e->weight()) ;
-        Fill("QGAnalysis/DiJet/cmult_" +typeJ1 +"_"+ label, systname, j1->QGLVar("cmult"),e->weight()) ;
+        //Fill("QGAnalysis/DiJet/nmult_" +typeJ1 +"_"+ label, systname, j1->QGLVar("nmult"),e->weight()) ;
+        //Fill("QGAnalysis/DiJet/cmult_" +typeJ1 +"_"+ label, systname, j1->QGLVar("cmult"),e->weight()) ;
         Fill("QGAnalysis/DiJet/ptD_" +typeJ1 +"_"+ label, systname, j1->QGLVar("ptD"),e->weight()) ;
-        Fill("QGAnalysis/DiJet/PtDrLog_" +typeJ1 +"_"+ label, systname, j1->QGLVar("PtDrLog")/j1->Pt(),e->weight()) ;
+        //Fill("QGAnalysis/DiJet/PtDrLog_" +typeJ1 +"_"+ label, systname, j1->QGLVar("PtDrLog")/j1->Pt(),e->weight()) ;
         Fill("QGAnalysis/DiJet/axis2_" +typeJ1 +"_"+ label, systname,  -TMath::Log(j1->QGLVar("axis2")),e->weight()) ;
-        Fill("QGAnalysis/DiJet/axis1_" +typeJ1 +"_"+ label, systname,  -TMath::Log(j1->QGLVar("axis1")),e->weight()) ;
+        //Fill("QGAnalysis/DiJet/axis1_" +typeJ1 +"_"+ label, systname,  -TMath::Log(j1->QGLVar("axis1")),e->weight()) ;
         // binned
         
         // pt1 <-> pt0: TP
         if (etaStrJ0 != "NotFound" and ptStrJ1 != "NotFound")
         {
-            Fill("QGAnalysis/DiJet/BDT_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, bdt_0,e->weight()) ;
+
+            //Fill("QGAnalysis/DiJet/BDT_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, bdt_0,e->weight()) ;
             Fill("QGAnalysis/DiJet/QGL_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGL(),e->weight()) ;
-            Fill("QGAnalysis/DiJet/nmult_" +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
-            Fill("QGAnalysis/DiJet/cmult_" +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
+            Fill("QGAnalysis/DiJet/QGL_n_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, newQGL_0,e->weight()) ;
+            //Fill("QGAnalysis/DiJet/nmult_" +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("nmult"),e->weight()) ;
+            //Fill("QGAnalysis/DiJet/cmult_" +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("cmult"),e->weight()) ;
             Fill("QGAnalysis/DiJet/mult_" +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("mult"),e->weight()) ;
             Fill("QGAnalysis/DiJet/ptD_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("ptD"),e->weight()) ;
-            Fill("QGAnalysis/DiJet/PtDrLog_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
+            //Fill("QGAnalysis/DiJet/PtDrLog_"  +typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, j0->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
             Fill("QGAnalysis/DiJet/axis2_"+typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis2")),e->weight()) ;
-            Fill("QGAnalysis/DiJet/axis1_"+typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
+            //Fill("QGAnalysis/DiJet/axis1_"+typeJ0 +"_" + ptStrJ1 + "_" + etaStrJ0+"_"+ label, systname, -TMath::Log(j0->QGLVar("axis1")),e->weight()) ;
 
         }
 
         if (etaStrJ1 != "NotFound" and ptStrJ0 != "NotFound")
         {
-            Fill("QGAnalysis/DiJet/BDT_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, bdt_1,e->weight()) ;
+            //Fill("QGAnalysis/DiJet/BDT_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, bdt_1,e->weight()) ;
             Fill("QGAnalysis/DiJet/QGL_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGL(),e->weight()) ;
+            Fill("QGAnalysis/DiJet/QGL_n_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, newQGL_1,e->weight()) ;
             Fill("QGAnalysis/DiJet/mult_" +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("mult"),e->weight()) ;
-            Fill("QGAnalysis/DiJet/nmult_" +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("nmult"),e->weight()) ;
-            Fill("QGAnalysis/DiJet/cmult_" +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("cmult"),e->weight()) ;
+            //Fill("QGAnalysis/DiJet/nmult_" +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("nmult"),e->weight()) ;
+            //Fill("QGAnalysis/DiJet/cmult_" +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("cmult"),e->weight()) ;
             Fill("QGAnalysis/DiJet/ptD_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("ptD"),e->weight()) ;
-            Fill("QGAnalysis/DiJet/PtDrLog_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
+            //Fill("QGAnalysis/DiJet/PtDrLog_"  +typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, j1->QGLVar("PtDrLog")/j0->Pt(),e->weight()) ;
             Fill("QGAnalysis/DiJet/axis2_"+typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, -TMath::Log(j1->QGLVar("axis2")),e->weight()) ;
-            Fill("QGAnalysis/DiJet/axis1_"+typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, -TMath::Log(j1->QGLVar("axis1")),e->weight()) ;
+            //Fill("QGAnalysis/DiJet/axis1_"+typeJ1 +"_" + ptStrJ0 + "_" + etaStrJ1+"_"+ label, systname, -TMath::Log(j1->QGLVar("axis1")),e->weight()) ;
         }
 
     }
@@ -479,12 +519,10 @@ int QGAnalysis::analyzeJJ(Event *e, string systname)
 
 int QGAnalysis::analyze(Event *e, string systname)
 {
-
     if (e->weight() == 0.) Log(__FUNCTION__,"WARNING","Event Weight is NULL");
     if (doMM) analyzeMM(e,systname);
     if (doJJ) analyzeJJ(e,systname);
     return 0;
-
 }
 
 // Local Variables:
