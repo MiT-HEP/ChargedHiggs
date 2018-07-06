@@ -337,9 +337,9 @@ for y in channel:
 
 
 				# UNDEFINED
-				if "OneBOneFat_one" in x and y=="wbb": continue
-				if "OneBOneMirrorFat_one" in x and y=="wbb": continue
-				if "OneBOneFat1l_one" in x and y=="wbb": continue
+#				if "OneBOneFat_one" in x and y=="wbb": continue
+#				if "OneBOneMirrorFat_one" in x and y=="wbb": continue
+#				if "OneBOneFat1l_one" in x and y=="wbb": continue
 
 				## generally BKG very rare
 				if "_three_lowj" in x and y=="wbj": continue
@@ -373,7 +373,7 @@ for y in channel:
 
                                 ## below are for associated only
 #				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and "in" in reg or "below" in reg:
-				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and "below" in reg or "in" in reg:
+				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and ("below" in reg or "in" in reg):
 					if "_three_lowj" in x and y=="wbb": continue
 					if "_one_lowj" in x and y=="wbj": continue
 
@@ -1150,7 +1150,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 					raise IOError
 
 				## foor QCD we do not apply the tauVeto and trigger
-				if mc["name"]=="qcd" and hTmp:
+				if "qcd" in mc["name"] and hTmp:
 					hTmp.Scale(0.93)
 				## top and W scale factor (for now only in ttbar later also signal)
 				## https://twiki.cern.ch/twiki/bin/view/CMS/JetTopTagging#13_TeV_working_points_CMSSW_8_0
@@ -1321,8 +1321,6 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 ##					togetClone = toget + "_" + syst["name"]
 					toget += "_" + syst["name"] + s
 
-#				hTmp=tfile.Get(toget)
-#				if hTmp!= None: hTmp.Rebin(nRebinHT)
 				hTmp=mergeCategory(tfile,toget)
 
 				if hTmp!= None: print "<*> 1/3 Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
