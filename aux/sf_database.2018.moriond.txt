@@ -30,6 +30,14 @@ mu_iso_runF json-muon aux/mu/RunF_data_ISO.json aux/mu/RunF_mc_ISO.json NUM_Loos
 #mu_trigger_runBCDEF json-muon
 mu_trigger_runBCDEF th2f aux/mu/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root IsoMu27_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu27_PtEtaBins/efficienciesMC/abseta_pt_MC
 
+
+################
+##  PreFiring ##
+################
+#prefire th2f aux/l1.root:h_JetHT_AllEras_inclusive
+#prefire th2f aux/l1.root:h_JetHT_AllEras_inclusive_emf
+prefire th2f aux/l1_2017.root:h_JetHT_AllEras_inclusive_emf
+
 ################
 ##   WG1 Unc  ##
 ################
@@ -43,9 +51,12 @@ double base 2.0 0.00
 
 ###################
 ## BTag from POG ##
-## https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80XReReco
+## https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
 ###################
-#btag csv aux/CSVv2_Moriond17_B_H.csv
+bdeep csv aux/BTag/DeepCSV_94XSF_V2_B_F.csv
+#bdeep-B csv aux/BTag/DeepCSV_94XSF_V2_B.csv
+#bdeep-CE csv aux/BTag/DeepCSV_94XSF_V2_C_E.csv
+#bdeep-EF csv aux/BTag/DeepCSV_94XSF_V2_E_F.csv
 #btag-reweight csv-reweight
 
 #############

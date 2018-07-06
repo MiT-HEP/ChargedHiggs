@@ -6,8 +6,11 @@ import matplotlib.pyplot as plt
 # using to understand how to implement GAN
 # https://github.com/roatienza/Deep-Learning-Experiments/blob/master/Experiments/Tensorflow/GAN/dcgan_mnist.py
 # https://deeplearning4j.org/generative-adversarial-network
+
 ## probably multiply merge and add is the right way
 #https://statcompute.wordpress.com/2017/01/08/an-example-of-merge-layer-in-keras/
+# this is the resolution model
+# https://statcompute.wordpress.com/2017/01/08/an-example-of-merge-layer-in-keras/
 
 class ElapsedTimer(object):
     def __init__(self):
@@ -32,65 +35,66 @@ from keras.layers import multiply
 from keras.layers import Input
 from keras.optimizers import Adam, RMSprop
 
-#from keras.engine.base_layer import Layer
-from keras.layers.merge import _Merge
-#from keras import backend as K
+from keras import backend as K
 
 from utils import ElapsedTimer
 timer = ElapsedTimer()
 
-class Divide(_Merge):
-    """Layer that divide (element-wise) a list of inputs.
-    It takes as input a list of 2 tensors,
-    all of the same shape, and returns
-    a single tensor (also of the same shape).
-    """
+#def neg_categorical_crossentropy(y_true,y_pred):
+#    ''' 
+#    neg of https://github.com/keras-team/keras/blob/master/keras/losses.py
+#    '''
 
-    def _merge_function(self, inputs):
-        if len(inputs) != 2 : raise ValueError("Divide Layer expect exactly 2 inputs. Instead I got %d."%len(inputs))
-        output = inputs[0]
-        output /= inputs[1]
-        return output
+from keras.losses import *
+def negate(y_true,y_pred):
+    return -categorical_crossentropy(y_true, y_pred)
 
-##
-# this is the resolution model
-# https://statcompute.wordpress.com/2017/01/08/an-example-of-merge-layer-in-keras/
 
 def build_sigma():
     branch1 = Sequential()  ## input = reco_variables
-    branch1.add(Dense(40, input_dim=5,activation='tanh') )
+    branch1.add(Dense(40, input_dim=4,activation='tanh') )
     branch1.add(Dropout(0.25))
     branch1.add(Dense(25,activation='tanh'))
-    branch1.add(Dense(1,activation='tanh')) #pt, eta, phi, ....
+    branch1.add(Dense(1,activation='tanh')) # [pt, eta, phi,npv]
     return branch1
 
-def build_model1():
-
-    # this is the sigma
-    branch1 = build_sigma()
+def build_model1(b1):
+    branch1=b1
     branch2=Input(input_dim=5) # pt, eta, phi, ptr/ptg, rnd
 
-    model1 = Sequential()  ## input =  [ [ pt,eta,phi, ...], [pt, eta ,phi,ptr/ptg,rnd] ]
+    model1 = Sequential()  ## input =  [ [ pt,eta,phi,npv ], [pt, eta ,phi,ptr/ptg,rnd] ]
     model1.add(Merge([branch1,branch2],mode='concat'))
     model1.add(Lambda(lambda x: ( x[1]*(1.+x[5]*x[0]*x[4]),x[2],x[3] ))) ##input = [ sigma, pt, eta ,phi, ptr/ptg,rnd, -> output = [pt', eta,phi,]
     
-    #model.compile(
-    #        loss='mean_squared_error',
-    #        #loss='binary_crossentropy',
-    #        optimizer='sgd',
-    #        #optimizer='adam',
-    #        metrics=['accuracy'])
-    #return model
+    return model1
 
-def build_model2():
+def model_mc(): 
     ''' Smear the two muons and return the invariant mass'''
-    muon1=build_model1()
-    muon2=build_model1()
+    smearer=build_sigma()
+    muon1=build_model1(smearer)
+    muon2=build_model1(smearer)
     model = Squential()
-    model.add(Merge( [muon1,muon2],mode='concat'))
+    model.add(Merge( [muon1,muon2],mode='concat')) # input [ [pt,eta,phi], [pt,eta,phi] ]
     #muonMass=0.105
     # massless approx
     model.add(Lambda(lambda x: (math.sqrt((2.*x[0]*x[3])*(math.cosh(x[1]-x[4])-math.cos(x[2]-x[5])))) ))
+
+def model_data(): 
+    muon1=Input(input_dim=3)
+    muon2=Input(input_dim=3)
+    model = Squential()
+    model.add(Merge( [muon1,muon2],mode='concat')) # input [ [pt,eta,phi], [pt,eta,phi]
+    #muonMass=0.105
+    # massless approx
+    model.add(Lambda(lambda x: (math.sqrt((2.*x[0]*x[3])*(math.cosh(x[1]-x[4])-math.cos(x[2]-x[5])))) ))
+
+    return model
+
+def discriminator():
+    model=Sequential()
+    model.add(input ?+???
+    model.compile(loss=negate, 
+            optimizer='sgd',metrics['accuracy'])
 
 ## TODO construct model to discriminate between data and MC
 

@@ -52,6 +52,7 @@ class Event{
     vector<GenJet*> genjets_;
 
     Met met_;
+    vector<bool>    triggerFinalOR_; // bx=-2, -1, 0, 1 ,2
     vector<bool>    triggerFired_;
     int isRealData_;
     int runNum_;
@@ -256,6 +257,9 @@ class Event{
     virtual void validate();
     bool IsTriggered(string name, Trigger *trigger = NULL, bool isNone=false); // the None do not check if it is the L3 or LF -- only for taus and matching
 
+    //@brief Get if L1 Final or Fired for bx = -2,-1,0,1,2
+    inline bool GetL1FinalOr(int bx) const{ return triggerFinalOR_[bx+2];}
+
     // SF utils
     inline void SetPtEtaSF(string label, float pt, float eta){  weight_ -> SetPtEtaSF(label,pt,eta);}
     inline void SetWPSF(string label, int wp){  weight_ -> SetWPSF(label,wp);}
@@ -266,6 +270,8 @@ class Event{
     // 
     ///@brief apply top pt reweighting to the event.
     void ApplyTopReweight();
+    ///@brief apply L1 prefire efficiencies to the event
+    void ApplyL1PreFire();
     ///@brief apply btagging scale factor to the event. Working points (wp) correspond to loose,medium and tight.
     void ApplyBTagSF(int wp=0);
     void ApplyTauSF(Tau*t,bool prongs=true,const string& extra="");

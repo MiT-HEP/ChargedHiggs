@@ -16,36 +16,45 @@ int RochesterCorrections::correct(Event *e){
         int s=0; int m=0;
         if ( e->IsRealData()){
             double dataSF = corrector_->kScaleDT(lep->Charge(),lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(),s,m);
-                Scale( *lep, dataSF);
+            if (dataSF>1.5 or dataSF<0.5) {
+                //Log(__FUNCTION__,"WARNING",Form("Rochester corrections SF on data is too high (or too low) %lf. Setting it to 1!",dataSF));
+                dataSF=1;
+            }
+            Scale( *lep, dataSF);
         }
         else {
-        //for MC, if matched gen-level muon (genPt) is available, use this function
-        int mcIdx=-1;
-        vector<GenParticle*> gen=GetGenVector(e);
-        for (int gp=0; gp< gen.size();++gp)
-        {
-            if (gen[gp]->DeltaR(*lep) >.1) continue;
-            if ( abs(gen[gp]->GetPdgId() ) != 13 ) continue; // muon
-            if ( not gen[gp]->IsPromptFinalState() ) continue; 
-            mcIdx=gp ;
-            break;
-        }
-        double mcSF = 1;
-        double u1=gRandom->Rndm(),u2=gRandom->Rndm();
+            //for MC, if matched gen-level muon (genPt) is available, use this function
+            int mcIdx=-1;
+            vector<GenParticle*> gen=GetGenVector(e);
+            for (int gp=0; gp< gen.size();++gp)
+            {
+                if (gen[gp]->DeltaR(*lep) >.1) continue;
+                if ( abs(gen[gp]->GetPdgId() ) != 13 ) continue; // muon
+                if ( not gen[gp]->IsPromptFinalState() ) continue; 
+                mcIdx=gp ;
+                break;
+            }
+            double mcSF = 1;
+            double u1=gRandom->Rndm(),u2=gRandom->Rndm();
 
-        int nl=15; 
-        if (lep->GetNLayers() >0 ) nl=lep->GetNLayers();
+            int nl=15; 
+            if (lep->GetNLayers() >0 ) nl=lep->GetNLayers();
 
-        if (mcIdx>=0)
-        {
-            //Log(__FUNCTION__,"DEBUG",Form("-> Correcting MC with: ch=%d pt=%f eta=%f nl=%d u1=%f s=%f m=%f idx=%d",lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),nl,u1,s,m,mcIdx));
-            //Log(__FUNCTION__,"DEBUG",Form("->  -----      and gen: idx=%d pt=%f eta=%f",mcIdx,gen[mcIdx]->Pt(),gen[mcIdx]->Eta()));
-            mcSF=corrector_->kScaleFromGenMC(lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, gen[mcIdx]->Pt(), u1, s, m);
-        }
-        else
-        {
-            mcSF = corrector_->kScaleAndSmearMC(lep->Charge(),lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, u1, u2, s, m);
-        }
+            if (mcIdx>=0)
+            {
+                //Log(__FUNCTION__,"DEBUG",Form("-> Correcting MC with: ch=%d pt=%f eta=%f nl=%d u1=%f s=%f m=%f idx=%d",lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),nl,u1,s,m,mcIdx));
+                //Log(__FUNCTION__,"DEBUG",Form("->  -----      and gen: idx=%d pt=%f eta=%f",mcIdx,gen[mcIdx]->Pt(),gen[mcIdx]->Eta()));
+                mcSF=corrector_->kScaleFromGenMC(lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, gen[mcIdx]->Pt(), u1, s, m);
+            }
+            else
+            {
+                mcSF = corrector_->kScaleAndSmearMC(lep->Charge(),lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, u1, u2, s, m);
+            }
+            if (mcSF>1.5 or mcSF<0.5) {
+                Log(__FUNCTION__,"WARNING",Form("Rochester corrections SF on MC is too high (or too low) %lf. Setting it to 1!",mcSF));
+                mcSF=1;
+            }
+            Scale( *lep, mcSF);
         }
 
     }

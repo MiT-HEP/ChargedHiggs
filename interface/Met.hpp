@@ -19,6 +19,8 @@ class Met :
     public:
         Met() : Object(), SmearableComplex() {syst = 0 ;}
         float gen ;
+        bool filterbadPFMuon{false};
+        bool filterbadChHadrons{false};
 
         inline bool passFullRecommendation()const { return FullRecommendation;}
         inline void setFullRecommendation(bool value){ FullRecommendation=value;}

@@ -76,11 +76,13 @@ r1f5
 r5f5
 pdfRwgt
 filterSelBits
+filter*
 ## TRIGGER
 triggerFired
 triggerTaus
 triggerLeps
 triggerNoneTaus
+triggerL1FOR
 ## GEN
 metP4_GEN
 #

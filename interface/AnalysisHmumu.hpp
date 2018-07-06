@@ -50,6 +50,8 @@ class HmumuAnalysis: virtual public AnalysisBase
         vector<Jet*> selectedJets; // final that match to the one above
         vector<pair<float,pair<int,int> > > mjj; // mjj -> ijet, jjet
 
+        map<string,float> jetVar_;
+
         // this are related to miniIso if run
         vector<Jet*> selectedJetsMiniIso; 
         vector<Lepton*> miniIsoLeptons;
@@ -62,6 +64,9 @@ class HmumuAnalysis: virtual public AnalysisBase
         
 
         bool processingSyst_{false}; // used for tree
+
+        bool isSingleMuon{false};
+        bool isDoubleMuon{false};
 
         // select cuts
         CutSelector cut;

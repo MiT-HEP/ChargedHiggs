@@ -15,6 +15,10 @@
 #endif
 
 //#warning Hmumu ANALYSIS NON ISO
+//
+#define DEEP_B_LOOSE 0.1522
+#define DEEP_B_MEDIUM 0.4941
+#define DEEP_B_TIGHT 0.8001
 
 void HmumuAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
@@ -43,7 +47,7 @@ void HmumuAnalysis::SetJetCuts(Jet *j) {
     //j->SetBCut(0.8484); //L=0.5803 , M=  0.8838, T=9693
     //j->SetDeepBCut(-100); // L = 0.1522, M=0.4941, T=0.8001
     j->SetBCut(-100); //L=0.5426 , M=  0.8484, T0.9535 
-    j->SetDeepBCut(0.4941); 
+    j->SetDeepBCut(DEEP_B_MEDIUM); 
 }
 
 void HmumuAnalysis::SetTauCuts(Tau *t){ 
@@ -129,8 +133,8 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
         if (abs(j->Eta())>2.4 ) continue;
         //if (j->Btag() > 0.5426) nbloose+=1;
         //if (j->Btag() > 0.8484) nbjets+=1;
-        if (j->GetDeepB() > 0.1522) nbloose+=1;
-        if (j->GetDeepB() > 0.4941) nbjets+=1;
+        if (j->GetDeepB() > DEEP_B_LOOSE) nbloose+=1;
+        if (j->GetDeepB() > DEEP_B_MEDIUM) nbjets+=1;
     }
     std::sort(selectedJetsMiniIso.begin(),selectedJetsMiniIso.end(),[](Jet const *a, Jet const *b ){return a->Pt() > b->Pt();});
 
@@ -463,80 +467,28 @@ string HmumuAnalysis::CategoryBdtMIT(Event *e){
     SetVariable("pass_leptonveto",passLeptonVeto);    
 
     // compute secondary jets variables: TODO unify computation of variables
-    int nbjets=0;
-    int ncentjets=0;
-    int nfwdjets=0;
-    float aveQGLcent=0.0;
-    float maxCSV=0.0;
-    float leadDeepB = -100.;
-    float maxDeepB = -100.;
-    float aveCSV=0.0;
-    float htCent=0.0;
-        vector<float> csv_score;
-        vector<pair<float,float>> qgl_score;
 
-        if (selectedJets.size() >0)
-        {
-            leadDeepB = selectedJets[0]->GetDeepB();
-        }
-
-        for(unsigned i=0;i<selectedJets.size() ;++i)
-        {
-            if (selectedJets[i]->IsBJet() and selectedJets[i]->Pt() >30 and abs(selectedJets[i]->Eta())<2.4)  nbjets +=1;
-            if (abs(selectedJets[i]->Eta())<2.4)
-            { 
-                ncentjets +=1; 
-                aveQGLcent += selectedJets[i]->QGL(); 
-                csv_score.push_back(selectedJets[i]->Btag());
-                qgl_score.push_back(pair<float,float>(selectedJets[i]->Pt(),selectedJets[i]->QGL()));
-                maxCSV = std::max(selectedJets[i]->Btag(),maxCSV)  ;
-                aveCSV += selectedJets[i]->Btag() * selectedJets[i]->Pt() ;
-                htCent += selectedJets[i]->Pt();
-                maxDeepB = std::max(selectedJets[i]->GetDeepB(),maxDeepB)  ;
-            }
-            else nfwdjets +=1;
-        }
-        if (ncentjets >0 ) aveQGLcent /= ncentjets;
-        if (htCent>0) aveCSV /=htCent;
-        sort(csv_score.begin(),csv_score.end());
-        sort(qgl_score.begin(),qgl_score.end(),[](const pair<float,float >&x,const pair<float, float >&y){ if (x.first> y.first) return true; if(x.first<y.first)return false; return x.second> y.second; } );
-
-    SetVariable("ncentjets",ncentjets);    
-    SetVariable("htCent",htCent);    
-    SetVariable("nbjets",nbjets);    
-    SetVariable("maxDeepB",maxDeepB);    
-    SetVariable("leadDeepB",leadDeepB);    
-    SetVariable("maxCSV",maxDeepB);    
+    SetVariable("ncentjets",jetVar_["ncentjets"]);    
+    SetVariable("htCent",jetVar_["htCent"]);    
+    SetVariable("nbjets",jetVar_["nbjets"]);    
+    SetVariable("maxDeepB",jetVar_["maxDeepB"]);    
+    SetVariable("leadDeepB",jetVar_["leadDeepB"]);    
+    SetVariable("maxCSV",jetVar_["maxDeepB"]); //Change to Deep
     //mjj vars
-    SetVariable("mjj_1",(mjj.size() >0 ) ? mjj[0].first: 0.0);
-    SetVariable("mjj_2",(mjj.size() > 1) ? mjj[1].first: 0.0);
-    SetVariable("detajj_1",(mjj.size()>0) ? fabs(selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta()): -1.0);
-    SetVariable("detajj_2",(mjj.size()>1) ? fabs(selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta()): -1.0);
+    SetVariable("mjj_1",jetVar_["mjj_1"]);
+    SetVariable("mjj_2",jetVar_["mjj_2"]);
+    SetVariable("detajj_1",jetVar_["detajj_1"]);
+    SetVariable("detajj_2",jetVar_["detajj_2"]);
 
     //soft variables
-    if (mjj.size() >0)
-        {
-            Jet * j1= selectedJets[mjj[0].second.first];
-            Jet * j2= selectedJets[mjj[0].second.second];
-            pair<int,float> soft1 = e->softVariables(j1,j2,1.);
-            pair<int,float> soft2 = e->softVariables(j1,j2,2.);
-            pair<int,float> soft5 = e->softVariables(j1,j2,5.);
-            pair<int,float> soft10 = e->softVariables(j1,j2,10.);
-
-            SetVariable("softNjets1",soft1.first);    
-            SetVariable("softHt1",soft1.second);    
-            SetVariable("softHt5",soft5.second);    
-            SetVariable("softHt10",soft10.second);    
-        } else {
-            SetVariable("softNjets1",-1);    
-            SetVariable("softHt1",-1);    
-            SetVariable("softHt5",-1);    
-            SetVariable("softHt10",-1);    
-        }
+    SetVariable("softNjets1",jetVar_["softNjets1"]);    
+    SetVariable("softHt1",jetVar_["softHt1"]);    
+    SetVariable("softHt5",jetVar_["sofHt5"]);    
+    SetVariable("softHt10",jetVar_["softHt10"]);    
     // qgl
-    SetVariable("firstQGL",  (qgl_score.size() >0) ? qgl_score[0].second : -1 );
-    SetVariable("secondQGL", (qgl_score.size() >1) ? qgl_score[1].second : -1 );
-    SetVariable("thirdQGL",  (qgl_score.size() >2) ? qgl_score[2].second : -1 );
+    SetVariable("firstQGL",  jetVar_["firstQGL"]);
+    SetVariable("secondQGL", jetVar_["secondQGL"]);
+    SetVariable("thirdQGL",  jetVar_["thirdQGL"]);
 
     for(unsigned i =0 ;i< readers_.size() ; ++i)
     {
@@ -627,7 +579,8 @@ string HmumuAnalysis::CategoryBdt(Event *e){
     SetVariable("dijet1_abs_dEta",deta1);    
     SetVariable("dijet2_abs_dEta",deta2);    
 
-
+    //OUTDATE TODO
+    //
     int nbjets=0;
     int nbjetsCSV=0;
     int ncentjets=0;
@@ -743,7 +696,7 @@ string HmumuAnalysis::CategoryBdt(Event *e){
             }
             if (ncentjets >0 ) aveQGLcent /= ncentjets;
             if (htCent>0) aveCSV /=htCent;
-            sort(csv_score.begin(),csv_score.end());
+            sort(csv_score.begin(),csv_score.end(),std::greater<float>());
             sort(qgl_score.begin(),qgl_score.end(),[](const pair<float,float >&x,const pair<float, float >&y){ if (x.first> y.first) return true; if(x.first<y.first)return false; return x.second> y.second; } );
 
         x.push_back( htCent);
@@ -1041,6 +994,13 @@ void HmumuAnalysis::Init(){
 
 	    // Control variables
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
+	    Book ("HmumuAnalysis/Vars/MuonPt_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/MuonEta_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,-5,5);
+
+	    Book ("HmumuAnalysis/Vars/MuonMiniIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
+	    Book ("HmumuAnalysis/Vars/MuonMiniIso_Pt_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/MuonMiniIso_Eta_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,-5,5);
+
 	    Book ("HmumuAnalysis/Vars/MetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnH_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnZ_rw_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
@@ -1052,6 +1012,8 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/BdtOnZ_"+ l ,"Bdt On Z (70-110);Bdt;Events", 1000,-1,1);
 	    Book ("HmumuAnalysis/Vars/BdtOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 	    Book ("HmumuAnalysis/Vars/BdtOnH_BB_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+
+	    Book ("HmumuAnalysis/Vars/BdtOnH_Prefire_"+ l ,"Bdt On Hmm for events that prefire (110-150);Bdt;Events", 1000,-1,1); // useful only if run unprefirebale and data
 
         // zpt reweight
 	    Book ("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
@@ -1065,11 +1027,19 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/EtaJet2OnH_"+ l ,"EtaJet2 On Hmm (110-150);Bdt;Events", 200,-5,5);
 	    Book ("HmumuAnalysis/Vars/NJetsOnH_"+ l ,"NJets On Hmm (110-150);Bdt;Events", 10,0,10);
 	    Book ("HmumuAnalysis/Vars/NBJetsOnH_"+ l ,"NBJets On Hmm (110-150);Bdt;Events", 10,0,10);
+	    Book ("HmumuAnalysis/Vars/DeltaEtaJJ1OnH_"+ l ,"EtaJet1 On Hmm (110-150);Bdt;Events", 200,0,10);
 
         // btag, soft track activity
 	    Book ("HmumuAnalysis/Vars/SoftNJetsOnH_"+ l ,"NJets On Hmm (110-150);Bdt;Events", 10,0,10);
-	    Book ("HmumuAnalysis/Vars/SoftHtOnH_"+ l ,"NJets On Hmm (110-150);Bdt;Events", 1000,0,1000);
-	    Book ("HmumuAnalysis/Vars/DeepBOnH_"+ l ,"NJets On Hmm (110-150);Bdt;Events", 100,0,1);
+	    Book ("HmumuAnalysis/Vars/SoftHtOnH_"+ l ,"SoftHT On Hmm (110-150);Bdt;Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/DeepBOnH_"+ l ,"DeepB On Hmm (110-150);Bdt;Events", 100,0,1);
+	    Book ("HmumuAnalysis/Vars/MaxCSVOnH_"+ l ,"DeepB On Hmm (110-150);Bdt;Events", 100,0,1);
+
+        // qg
+	    Book ("HmumuAnalysis/Vars/QGLJet1OnH_"+ l ,"QGL On Hmm (110-150);QGL;Events", 100,0,1);
+        // mt
+	    Book ("HmumuAnalysis/Vars/Mt1OnH_"+ l ,"QGL On Hmm (110-150);QGL;Events", 200,0,1000);
+	    Book ("HmumuAnalysis/Vars/Mt2OnH_"+ l ,"QGL On Hmm (110-150);QGL;Events", 200,0,1000);
 
         // exclusive categories related variables
 	    Book ("HmumuAnalysis/Vars/MtOnH_WLep_"+ l ,"Mt;mt [GeV];Events", 1000,0,1000); 
@@ -1191,7 +1161,7 @@ void HmumuAnalysis::Init(){
 
 }
 
-int HmumuAnalysis::analyze(Event *e, string systname)
+int HmumuAnalysis::analyze(Event *event, string systname)
 {
     if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("Analyze event %ld:%ld:%ld",e->runNum(),e->lumiNum(),e->eventNum()));
 
@@ -1204,6 +1174,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     Hmm.SetP4(zero); // make sure it is 0.
     selectedJets.clear();
     mjj.clear();
+    jetVar_.clear();
     //
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
@@ -1216,6 +1187,10 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     if ( label == "VBFHToMuMu_M120") label = "VBF_HToMuMu_M120";
     if ( label == "VBFHToMuMu_M125") label = "VBF_HToMuMu_M125";
     if ( label == "VBFHToMuMu_M130") label = "VBF_HToMuMu_M130";
+
+    //multiPD. No need to keep separate histograms, but save the flags
+    if (label.find("SingleMuon") !=string::npos) {isSingleMuon=true; label="Data";} else { isSingleMuon=false;}
+    if (label.find("DoubleMuon") !=string::npos) {isDoubleMuon=true; label="Data";} else {isDoubleMuon=false;}
 
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
@@ -1242,6 +1217,13 @@ int HmumuAnalysis::analyze(Event *e, string systname)
      */
 
     e->ApplyTopReweight();
+
+    /*
+     * L1 PreFiring Map
+     */
+
+    //#warning NO_PREFIRE
+    e->ApplyL1PreFire();
 
     /*
      * HIGGS REWEIGHT -- UNCERTAINTIES
@@ -1364,39 +1346,9 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     }
     updateMjj();
 
-    // SYNCH DEBUG run: 299149 LS:76 event: 67754842
-    if ( (e->eventNum() == 67754842 and e->runNum() == 299149 and e->lumiNum() == 76)  or
-         (e->eventNum() == 479703485 and e->runNum() == 297722 and e->lumiNum() == 314)
-        ){
-        Log(__FUNCTION__,"SYNC-DEBUG",Form("Selected Jets: %ld:%ld:%lu",e->runNum(),e->lumiNum(),e->eventNum()));
-        for (auto & j : selectedJets)
-         Log(__FUNCTION__,"SYNC-DEBUG",Form("jet (pt,eta,phi): %f %f %f",j->Pt(),j->Eta(),j->Phi()));
-        Log(__FUNCTION__,"SYNC-DEBUG",Form("All jets"));
-        for(int i=0;;++i)
-        {
-            Jet *j = e->GetBareJet(i);
-            if (j==NULL) break;
-            Log(__FUNCTION__,"SYNC-DEBUG",Form("Considering jet (%f,%f,%f)",j->Pt(),j->Eta(),j->Phi()));
-            Log(__FUNCTION__,"SYNC-DEBUG",Form("    * IsJet %d",j->IsJet()));
-            Log(__FUNCTION__,"SYNC-DEBUG",Form("    * IsJetEV %d",j->IsJetExceptValidity()));
-            Log(__FUNCTION__,"SYNC-DEBUG",Form("    * PuId= %f",j->GetPuId()));
-        }
-
-
-
-    }
     ///
 
     // ------------------- DIRTY CATEGORIES for studies
-    int nbloose=0;
-    for(int i=0;i < e->Njets() ;++i){
-        Jet *j= e->GetJet(i);
-        if ( not j->IsJet() ) continue;
-        if (fabs(j->Eta() ) >2.4) continue;
-        if (j->Btag() > 0.5426 ) continue;
-        nbloose += 1;
-    }
-
 
     // ------------------------------------
     // OFFICIAL CATEGORIZATION
@@ -1441,8 +1393,8 @@ int HmumuAnalysis::analyze(Event *e, string systname)
     // BTAG SF
     // -----------------------
   
-    #warning NO_BTAGSF 
-    /* 
+    //#warning NO_BTAGSF 
+     
     if (true) // CSV-SF for passing loose,medium or tigth cuts
     {
         e->ApplyBTagSF(1); //0 loose, 1 medium, 2 tight
@@ -1460,7 +1412,6 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         sf->set();
         e->ApplySF("btag-reweight"); 
     }
-    */
 
     //  ------------------- APPLY SF --------------
     //
@@ -1630,11 +1581,14 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
     // Trigger
     bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >30 and mu1->Pt() >20 );
-    bool passTrigger=e->IsTriggered("HLT_IsoMu27_v") or e->IsTriggered("HLT_IsoTkMu27_v"); 
 
+    if (multipd_) passAsymmPtCuts= (recoMuons and mu0->Pt() >26 and mu1->Pt() >20);
+
+    bool passTrigger=e->IsTriggered("HLT_IsoMu27_v") or e->IsTriggered("HLT_IsoTkMu27_v"); 
     bool passTrigger1{false}, passTrigger2{false};
 
-    if (  recoMuons and ( (label.find("HToMuMu") != string::npos or e->IsRealData()) ) ) // 
+    //if (  recoMuons and ( (label.find("HToMuMu") != string::npos or e->IsRealData()) ) ) 
+    if (recoMuons) 
     {
         //cout <<" DOING TRIGGER MATCHING "<<endl;
         bool passTriggerEvent = passTrigger;
@@ -1642,6 +1596,21 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         //if (mu1->Pt() > 30 ) 
         passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
         passTrigger=passTrigger1 or passTrigger2;
+
+        if (multipd_) // switch to HLT_IsoMu24. 
+        {
+            // The or, is there for the prescale case. May change with sf and syst
+            passTrigger1 = passTrigger1 || (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
+            passTrigger2 = passTrigger2 || (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
+            passTrigger=passTrigger1 or passTrigger2;
+        
+        }
+        
+        if (multipd_ and isDoubleMuon and passTrigger) return 0; // Single Muon has precedence over  DoubleMuon. Assume this event is already been analyzed
+        if (multipd_ and isDoubleMuon and fabs(mu0->Eta())<2.1 and fabs(mu1->Eta())<2.1){
+                // no trigger matching here.Check dimuon trigge
+                passTrigger = e->IsTriggered("HLT_DoubleIsoMu20_eta2p1_v");
+        }
 
         if (passTriggerEvent and not passTrigger) Log(__FUNCTION__,"INFO","Fail to trigger event due to trigger matching");
         if (not passTriggerEvent and passTrigger) Log(__FUNCTION__,"ERROR","Event triggered by object but not globally");
@@ -1767,96 +1736,37 @@ int HmumuAnalysis::analyze(Event *e, string systname)
         }
 
         // compute secondary jets variables
-        int nbjets=0;
-        int ncentjets=0;
-        int nfwdjets=0;
-        float aveQGLcent=0.0;
-        float maxCSV=0.0;
-        float leadDeepB = -100.;
-        float maxDeepB = -100.;
-        float aveCSV=0.0;
-        float htCent=0.0;
-
-        vector<float> csv_score;
-        vector<pair<float,float>> qgl_score;
-
-        if (selectedJets.size() >0)
-        {
-            leadDeepB = selectedJets[0]->GetDeepB();
-        }
-
-        for(unsigned i=0;i<selectedJets.size() ;++i)
-        {
-            if (selectedJets[i]->IsBJet() and selectedJets[i]->Pt() >30 and abs(selectedJets[i]->Eta())<2.4)  nbjets +=1;
-            if (abs(selectedJets[i]->Eta())<2.4)
-            { 
-                ncentjets +=1; 
-                aveQGLcent += selectedJets[i]->QGL(); 
-                csv_score.push_back(selectedJets[i]->Btag());
-                qgl_score.push_back(pair<float,float>(selectedJets[i]->Pt(),selectedJets[i]->QGL()));
-                maxCSV = std::max(selectedJets[i]->Btag(),maxCSV)  ;
-                aveCSV += selectedJets[i]->Btag() * selectedJets[i]->Pt() ;
-                htCent += selectedJets[i]->Pt();
-                maxDeepB = std::max(selectedJets[i]->GetDeepB(),maxDeepB)  ;
-            }
-            else nfwdjets +=1;
-        }
-        if (ncentjets >0 ) aveQGLcent /= ncentjets;
-        if (htCent>0) aveCSV /=htCent;
-        sort(csv_score.begin(),csv_score.end());
-        sort(qgl_score.begin(),qgl_score.end(),[](const pair<float,float >&x,const pair<float, float >&y){ if (x.first> y.first) return true; if(x.first<y.first)return false; return x.second> y.second; } );
 
 
-        SetTreeVar("aveQGLCent",aveQGLcent);
-        SetTreeVar("aveCSV",aveCSV);
-        SetTreeVar("maxCSV",maxCSV);
-        SetTreeVar("secondCSV", ( csv_score.size() >1) ? csv_score[1] : -1.);
-        SetTreeVar("thirdCSV" , ( csv_score.size() >2) ? csv_score[2] : -1.);
+        SetTreeVar("aveQGLCent", jetVar_["aveQGLcent"]);
+        SetTreeVar("aveCSV",jetVar_["aveCSV"]);
+        SetTreeVar("maxCSV",jetVar_["maxCSV"]);
+        SetTreeVar("secondCSV", jetVar_["secondCSV"]);
+        SetTreeVar("thirdCSV" , jetVar_["thirdCSV"]);
 
-        SetTreeVar("firstQGL",  (qgl_score.size() >0) ? qgl_score[0].second : -1 );
-        SetTreeVar("secondQGL", (qgl_score.size() >1) ? qgl_score[1].second : -1 );
-        SetTreeVar("thirdQGL",  (qgl_score.size() >2) ? qgl_score[2].second : -1 );
+        SetTreeVar("firstQGL",  jetVar_["firstQGL"]);
+        SetTreeVar("secondQGL", jetVar_["secondQGL"]);
+        SetTreeVar("thirdQGL",  jetVar_["thirdQGL"]);
         
-        SetTreeVar("htCent",htCent);
-        SetTreeVar("nbjets",nbjets);
-        SetTreeVar("ncentjets",ncentjets);
-        SetTreeVar("nfwdjets",nfwdjets);
+        SetTreeVar("htCent",jetVar_["htCent"]);
+        SetTreeVar("nbjets",jetVar_["nbjets"]);
+        SetTreeVar("ncentjets",jetVar_["ncentjets"]);
+        SetTreeVar("nfwdjets",jetVar_["nfwdjets"]);
 
-        SetTreeVar("leadDeepB",leadDeepB ); 
-        SetTreeVar("maxDeepB",maxDeepB ); 
+        SetTreeVar("leadDeepB",jetVar_["leadDeepB"]); 
+        SetTreeVar("maxDeepB",jetVar_["maxDeepB"] ); 
 
-        if (mjj.size() >0)
-        {
-            Jet * j1= selectedJets[mjj[0].second.first];
-            Jet * j2= selectedJets[mjj[0].second.second];
-            pair<int,float> soft1 = e->softVariables(j1,j2,1.);
-            pair<int,float> soft2 = e->softVariables(j1,j2,2.);
-            pair<int,float> soft5 = e->softVariables(j1,j2,5.);
-            pair<int,float> soft10 = e->softVariables(j1,j2,10.);
-            SetTreeVar("softNjets1",soft1.first);
-            SetTreeVar("softHt1",soft1.second);
-            SetTreeVar("softNjets2",soft2.first);
-            SetTreeVar("softHt2",soft2.second);
-            SetTreeVar("softNjets5",soft5.first);
-            SetTreeVar("softHt5",soft5.second);
-            SetTreeVar("softNjets10",soft10.first);
-            SetTreeVar("softHt10",soft10.second);
-        }
-        else{
-            SetTreeVar("softNjets1",-1);
-            SetTreeVar("softHt1",-1);
-            SetTreeVar("softNjets2",-1);
-            SetTreeVar("softHt2",-1);
-            SetTreeVar("softNjets5",-1);
-            SetTreeVar("softHt5",-1);
-            SetTreeVar("softNjets10",-1);
-            SetTreeVar("softHt10",-1);
-        }
+        SetTreeVar("softNjets1",jetVar_["softNjets1"]);
+        SetTreeVar("softHt1",jetVar_["softHt1"]);
+        SetTreeVar("softNjets5",jetVar_["softNjets5"]);
+        SetTreeVar("softHt5",jetVar_["softHt5"]);
+        SetTreeVar("softNjets10",jetVar_["softNjets10"]);
+        SetTreeVar("softHt10",jetVar_["softHt10"]);
 
-        SetTreeVar("mjj_1",(mjj.size() >0 ) ? mjj[0].first: 0.0);
-        SetTreeVar("mjj_2",(mjj.size() > 1) ? mjj[1].first: 0.0);
-        SetTreeVar("detajj_1",(mjj.size()>0) ? fabs(selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta()): -1.0);
-        SetTreeVar("detajj_2",(mjj.size()>1) ? fabs(selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta()): -1.0);
+        SetTreeVar("mjj_1",jetVar_["mjj_1"]);
+        SetTreeVar("mjj_2",jetVar_["mjj_2"]);
+        SetTreeVar("detajj_1",jetVar_["detajj_1"]);
+        SetTreeVar("detajj_2",jetVar_["detajj_2"]);
 
         vector<float> ht_mjj;
         for(unsigned imjj =0; imjj<mjj.size() ;++imjj)
@@ -1912,29 +1822,46 @@ int HmumuAnalysis::analyze(Event *e, string systname)
 
         if (mass_ >= 110 and mass_<150){
 
+            if (not isMiniIsoLeptons) {
+                Fill("HmumuAnalysis/Vars/MuonIso_"+ label,systname, mu0->Isolation(),e->weight());
+                Fill("HmumuAnalysis/Vars/MuonPt_"+ label,systname, mu0->Pt(),e->weight());
+                Fill("HmumuAnalysis/Vars/MuonEta_"+ label,systname, mu0->Eta(),e->weight());
+
+                Fill("HmumuAnalysis/Vars/MuonIso_"+ label,systname, mu1->Isolation(),e->weight());
+                Fill("HmumuAnalysis/Vars/MuonPt_"+ label,systname, mu1->Pt(),e->weight());
+                Fill("HmumuAnalysis/Vars/MuonEta_"+ label,systname, mu1->Eta(),e->weight());
+            }
+            else{
+                Fill("HmumuAnalysis/Vars/MuonMiniIso_"+ label,systname, mu0->MiniIsolation(),e->weight());
+                Fill("HmumuAnalysis/Vars/MuonMiniIso_Pt_"+ label,systname, mu0->Pt(),e->weight());
+                Fill("HmumuAnalysis/Vars/MuonMiniIso_Eta_"+ label,systname, mu0->Eta(),e->weight());
+
+                Fill("HmumuAnalysis/Vars/MuonMiniIso_"+ label,systname, mu1->MiniIsolation(),e->weight());
+                Fill("HmumuAnalysis/Vars/MuonMiniIso_Pt_"+ label,systname, mu1->Pt(),e->weight());
+                Fill("HmumuAnalysis/Vars/MuonMiniIso_Eta_"+ label,systname, mu1->Eta(),e->weight());
+            }
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/Mt1OnH_"+ label,systname,ChargedHiggs::mt(mu0->Pt(),e->GetMet().Pt(),mu0->Phi(),e->GetMet().Phi()) ,e->weight());
+            Fill("HmumuAnalysis/Vars/Mt2OnH_"+ label,systname,ChargedHiggs::mt(mu1->Pt(),e->GetMet().Pt(),mu1->Phi(),e->GetMet().Phi()) ,e->weight());
             Fill("HmumuAnalysis/Vars/MetOnH_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnH_"+ label,systname, pt_,e->weight());
             Fill("HmumuAnalysis/Vars/PtOnH_zptrwg_"+ label,systname, pt_,e->weight() *zptrw);
-            float mjj1=(mjj.size() >0 ) ? mjj[0].first:-1 ; 
-            Fill("HmumuAnalysis/Vars/Mjj1OnH_" + label,systname, mjj1,e->weight() ) ;
+            Fill("HmumuAnalysis/Vars/Mjj1OnH_" + label,systname, jetVar_["mjj_1"],e->weight() ) ;
+            Fill("HmumuAnalysis/Vars/DeltaEtaJJ1OnH_" + label,systname, jetVar_["detajj_1"],e->weight() ) ;
 
             if (mjj.size()> 0)
             {
-                Jet * j1= selectedJets[mjj[0].second.first];
-                Jet * j2= selectedJets[mjj[0].second.second];
-                pair<int,float> soft1 = e->softVariables(j1,j2,1.);
-                int softNj=soft1.first;
-                float softHt=soft1.second;
-                Fill("HmumuAnalysis/Vars/SoftNJetsOnH_" + label,systname, softNj,e->weight() ) ;
-                Fill("HmumuAnalysis/Vars/SoftHtOnH_" + label,systname, softHt,e->weight() ) ;
+                Fill("HmumuAnalysis/Vars/SoftNJetsOnH_" + label,systname, jetVar_["softNjets1"],e->weight() ) ;
+                Fill("HmumuAnalysis/Vars/SoftHtOnH_" + label,systname, jetVar_["softHt1"],e->weight() ) ;
             }
 
             if (selectedJets.size() >0)
             {
-                Fill("HmumuAnalysis/Vars/DeepBOnH_"+ label,systname, selectedJets[0]->GetDeepB(),e->weight());
+                Fill("HmumuAnalysis/Vars/DeepBOnH_"+ label,systname, jetVar_["leadDeepB"],e->weight());
+                Fill("HmumuAnalysis/Vars/MaxCSVOnH_"+ label,systname, jetVar_["maxCSV"],e->weight());
                 Fill("HmumuAnalysis/Vars/PtJet1OnH_"+ label,systname, selectedJets[0]->Pt(),e->weight());
                 Fill("HmumuAnalysis/Vars/EtaJet1OnH_"+ label,systname, selectedJets[0]->Eta(),e->weight());
+                Fill("HmumuAnalysis/Vars/QGLJet1OnH_"+ label,systname, selectedJets[0]->QGL(),e->weight());
             }
 
             if (selectedJets.size() >1)
@@ -1946,6 +1873,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             Fill("HmumuAnalysis/Vars/NJetsOnH_"+ label,systname, selectedJets.size(),e->weight());
             Fill("HmumuAnalysis/Vars/NBJetsOnH_"+ label,systname, e->Bjets(),e->weight());
             if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
+            if(catType>=2 and bdt.size() >0 and e->GetL1FinalOr(-1))Fill("HmumuAnalysis/Vars/BdtOnH_Prefire_"+ label,systname, bdt[0] ,e->weight());
             if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ label,systname, bdt[0] ,e->weight()*zptrw);
             if(catType>=2 and bdt.size() >0 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
                 Fill("HmumuAnalysis/Vars/BdtOnH_BB_"+ label,systname, bdt[0] ,e->weight());
@@ -2009,7 +1937,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             //Jet * closeJ{NULL}, *closeB{NULL};
             for(auto j : selectedJets)
             {
-                if (j->GetDeepB() > 0.1522 and drMinB > mu0->DeltaR(j) ) { /*closeB = j;*/ drMinB = mu0->DeltaR(j); }
+                if (j->GetDeepB() > DEEP_B_LOOSE and drMinB > mu0->DeltaR(j) ) { /*closeB = j;*/ drMinB = mu0->DeltaR(j); }
                 if ( drMinJ > mu0->DeltaR(j) ) { /*closeJ = j;*/ drMinJ = mu0->DeltaR(j); }
             }
 
@@ -2028,7 +1956,7 @@ int HmumuAnalysis::analyze(Event *e, string systname)
             //Jet * closeJ{NULL}, *closeB{NULL};
             for(auto j : selectedJets)
             {
-                if (j->GetDeepB() > 0.1522 and drMinB > mu1->DeltaR(j) ) { /*closeB = j;*/ drMinB = mu1->DeltaR(j); }
+                if (j->GetDeepB() > DEEP_B_LOOSE and drMinB > mu1->DeltaR(j) ) { /*closeB = j;*/ drMinB = mu1->DeltaR(j); }
                 if ( drMinJ > mu1->DeltaR(j) ) { /*closeJ = j;*/ drMinJ = mu1->DeltaR(j); }
             }
 
@@ -2102,6 +2030,81 @@ void HmumuAnalysis::updateMjj(){
         }
     sort ( mjj.begin(),mjj.end(), [](  const pair<float,pair<int,int> >&x,const pair<float, pair<int,int> >&y){if (x.first > y.first) return true;if (x.first<y.first) return false; if  (x.second.first < y.second.first) return true; if (x.second.first > y.second.first) return false; return x.second.second < y.second.second; } );
 
+    // update jet variables 
+    jetVar_.clear();
+    jetVar_["maxCSV"]=-1.;
+    jetVar_["maxDeepB"]=-1.;
+    jetVar_["aveCSV"]=0.;
+    jetVar_["ncentjets"]=0;
+    jetVar_["leadCSV"] = -1;
+    jetVar_["aveQGLcent"]=0.;
+    jetVar_["htCent"]=0.;
+    jetVar_["nfwdjets"]=0.;
+
+    vector<float> csv_score;
+    vector<float> deepb_score;
+    vector<pair<float,float>> qgl_score;
+
+    for(unsigned i=0;i<selectedJets.size() ;++i)
+    {
+        if ( abs(selectedJets[i]->Eta())<2.4)
+        {
+            jetVar_["ncentjets"]+=1;
+            csv_score.push_back(selectedJets[i]->Btag());
+            deepb_score.push_back(selectedJets[i]->GetDeepB());
+            qgl_score.push_back(pair<float,float>(selectedJets[i]->Pt(),selectedJets[i]->QGL()));
+            jetVar_["aveCSV"] += selectedJets[i]->Btag()*selectedJets[i]->Pt(); // pt-weighte
+            jetVar_["aveQGLcent"] += selectedJets[i]->QGL(); // not pt weighted
+            jetVar_["htCent"] += selectedJets[i]->Pt();
+        }
+        else
+        {
+            jetVar_["nfwdjets"] +=1;
+        }
+    }
+    if (jetVar_["ncentjets"]>0) jetVar_["aveQGLcent"] /= jetVar_["ncentjets"];
+    if (jetVar_["htCent"]>0) jetVar_["aveCSV"] /= jetVar_["htCent"];
+    jetVar_["leadCSV"] =  (selectedJets.size()>0) ?selectedJets[0]->GetDeepB():-1;
+    sort(csv_score.begin(),csv_score.end(),std::greater<float>());
+    jetVar_["maxCSV"]=(csv_score.size()>0)?csv_score[0]:-1;
+    jetVar_["secondCSV"] = (csv_score.size()>1)?csv_score[1]:-1;
+    jetVar_["thirdCSV"] = (csv_score.size()>2)?csv_score[2]:-1;
+
+    sort(deepb_score.begin(),deepb_score.end(),std::greater<float>());
+    jetVar_["maxDeepB"]=(deepb_score.size()>0)?deepb_score[0]:-1;
+
+    sort(qgl_score.begin(),qgl_score.end(),[](const pair<float,float >&x,const pair<float, float >&y){ if (x.first> y.first) return true; if(x.first<y.first)return false; return x.second> y.second; } );
+    jetVar_["firstQGL"]  =  (qgl_score.size() >0) ? qgl_score[0].second : -1 ;
+    jetVar_["secondQGL"] = (qgl_score.size() >1) ? qgl_score[1].second : -1 ;
+    jetVar_["thirdQGL"]  =  (qgl_score.size() >2) ? qgl_score[2].second : -1 ;
+
+    // soft
+    if (mjj.size() >0)
+        {
+            Jet * j1= selectedJets[mjj[0].second.first];
+            Jet * j2= selectedJets[mjj[0].second.second];
+            pair<int,float> soft1 = e->softVariables(j1,j2,1.);
+            pair<int,float> soft2 = e->softVariables(j1,j2,2.);
+            pair<int,float> soft5 = e->softVariables(j1,j2,5.);
+            pair<int,float> soft10 = e->softVariables(j1,j2,10.);
+            jetVar_["softNjets1"] = soft1.first;    
+            jetVar_["softHt1"] = soft1.second;    
+            jetVar_["softHt5"] = soft5.second;    
+            jetVar_["softNjets5"] = soft5.first;    
+            jetVar_["softHt10"] = soft10.second;    
+            jetVar_["softNjets10"] = soft10.first;    
+    }else{
+            jetVar_["softNjets1"] = -1 ;    
+            jetVar_["softNjets5"] = -1 ;    
+            jetVar_["softNjets10"] = -1 ;    
+            jetVar_["softHt1"] = -1 ;    
+            jetVar_["softHt5"] = -1 ;    
+            jetVar_["softHt10"] = -1 ;    
+    }
+    jetVar_["mjj_1"] = (mjj.size() >0 ) ? mjj[0].first: 0.0;
+    jetVar_["mjj_2"] = (mjj.size() > 1) ? mjj[1].first: 0.0;
+    jetVar_["detajj_1"] = (mjj.size()>0) ? fabs(selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta()): -1.0;
+    jetVar_["detajj_2"] = (mjj.size()>1) ? fabs(selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta()): -1.0;
 }
 
 float HmumuAnalysis::getZPtReweight(float Zpt)

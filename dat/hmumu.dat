@@ -63,3 +63,4 @@ addConfig=HmumuAnalysis|unblind=1
 addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_mit_2018_May26_v0.xml')
 addConfig=HmumuAnalysis|catType=4
 addConfig=HmumuAnalysis|doScikit=0
+

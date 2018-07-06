@@ -317,10 +317,16 @@ if opts.hadd:
 from ParseDat import *
 config=ParseDat(opts.input)
 
+ds=DirectoryStore()
+ds.init()
+for f in config['Files']: ds.add(f) ## w/o * expansion
+ds.end()
+
 call("[ -d %s ] && rm -r %s"%(opts.dir,opts.dir),shell=True)
 call("mkdir -p %s"%opts.dir,shell=True)
 cmdFile=open("%s/submit_cmd.sh"%opts.dir,"w")
 cmdFile.write("##Commands used to submit on batch. Automatic written by python/submit.py script\n")
+cmdFile.write("##"+' '.join(sys.argv)+"\n")
 
 if opts.tar:
 	cmd=["tar","-czf","%s/package.tar.gz"%opts.dir]
@@ -418,6 +424,7 @@ if opts.hadoop: ### T3 MIT
    run.write("mkdir -p ../NeroProducer/Core/interface\n")
    run.write("cp -v bin/interface/* ../NeroProducer/Core/interface\n") 
    run.write('LD_LIBRARY_PATH=./:./bin/:$LD_LIBRARY_PATH\n')
+   run.write('LD_LIBRARY_PATH=$LD_LIBRARY_PATH:'+os.environ['PWD']+':'+os.environ['PWD']+"/bin"+'\n')
    run.write("echo --- ENV ---- %s\n"%redirect)
    run.write("env | sed 's/^/ENV ---/' %s \n"%redirect)
    run.write("echo --- LS ---- %s\n"%redirect)
@@ -604,6 +611,10 @@ if not opts.hadoop:
             pass
         else:
             ## submit batch
+            ## if basedir.startswith("/eos"): 
+            ##     cmdline = "bsub -q " + opts.queue + " -o /dev/null" + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
+            ## else:
+            ##     cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
             cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
             print cmdline
             cmdFile.write(cmdline+"\n")

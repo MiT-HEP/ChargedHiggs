@@ -9,6 +9,7 @@
 #include "interface/AnalysisChargedHiggsTopBottom.hpp"
 #include "interface/AnalysisChargedHiggsZW.hpp"
 #include "interface/AnalysisChargedHiggsTBfullHad.hpp"
+#include "interface/AnalysisEfficiencies.hpp"
 #include "interface/AnalysisDY.hpp"
 #include "interface/AnalysisGG.hpp"
 #include "interface/AnalysisHmumu.hpp"
@@ -69,6 +70,7 @@
 #include "interface/Trigger.hpp"
 #include "interface/Weight.hpp"
 #include "interface/RooBinnedUncertainties.hpp"
+#include "interface/UnfirableFilter.hpp"
 
 // put template stuff here, MyClass<T> myclass;
 //nampspace{

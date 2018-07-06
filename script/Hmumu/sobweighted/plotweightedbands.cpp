@@ -851,12 +851,16 @@ int main(int argc, char *argv[]) {
     }
     else if (i==ncats) {
     std::cout << "[INFO] draw " << "unweighted " << " s and b pdfs" << std::endl; 
+    for(int i=1;i<=hbkgplotfine->GetNbinsX();++i)hbkgplotfine->SetBinError(i,0);
+    for(int i=1;i<=hsigbkgplotfine->GetNbinsX();++i)hsigbkgplotfine->SetBinError(i,0);
       hbkgplotfine->Draw("LSAME");
       hbkgplot->Draw("LSAME");
       hsigbkgplotfine->Draw("LSAME");
     }
     else if (i==(ncats+1)) {
     std::cout << "[INFO] draw " << "weighted " << " s and b pdfs" << std::endl; 
+    for(int i=1;i<=hwbkgplotfine->GetNbinsX();++i)hwbkgplotfine->SetBinError(i,0);
+    for(int i=1;i<=hwsigbkgplotfine->GetNbinsX();++i)hwsigbkgplotfine->SetBinError(i,0);
       hwbkgplotfine->Draw("LSAME");
       hwsigbkgplotfine->Draw("LSAME");      
     }

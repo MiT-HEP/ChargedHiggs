@@ -606,10 +606,41 @@ void Event::ApplyTopReweight(){
     }
 }
 
+void Event::ApplyL1PreFire(){
+    //SF_TH2F *sf=(SF_TH2F*)GetWeight()->GetSF("prefire");
+    if (IsRealData() ) return;
+    SF* dummy=GetWeight()->GetSF("dummy");
+    float eventsf = 1.;
+    bool changed=false;
+    for(int i=0;;++i)
+    {
+        Jet*j=GetJet(i); // or bare?
+        if(j==NULL) break;
+        // pt w/o systematics
+        float eta= j->GetP4Dirty().Eta();
+        float pt = j->GetP4Dirty().Pt();
+        float ptem= j->GetP4Dirty().Pt() * (j->GetCEMF() + j->GetNEMF());
+    
+        if (ptem<40.) continue; // only < 40 has prefire information:
+        SetPtEtaSF("prefire",ptem,fabs(eta));
+        eventsf *= (1.-GetWeight()->GetSF("prefire")->get() );
+        changed=true;
+    }
+    //if (changed)eventsf= 1.-eventsf;
+    if (changed)eventsf= eventsf;  // I want to apply the efficiency that all not prefire
+
+    dummy->sf=eventsf;
+    dummy->syst=0;
+    dummy->err=0;
+
+    ApplySF("dummy");
+    return;
+}
+
 //#define VERBOSE 2
 void Event::ApplyBTagSF(int wp)
 {
-    SetWPSF("btag",wp); // loose, for sf
+    SetWPSF("bdeep",wp); // loose, for sf
 
 #ifdef VERBOSE
     if (VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","Starting BTAG SF"); 
@@ -618,11 +649,11 @@ void Event::ApplyBTagSF(int wp)
     for (int i=0;i<NcentralJets() ;++i)
     {
      Jet *j=GetCentralJet(i);
-     SetJetFlavorSF("btag",j->hadFlavor());
+     SetJetFlavorSF("bdeep",j->hadFlavor());
 
      if (j->IsBJet() ) // is btagged
      {
-         GetWeight()->GetSF("btag")->SetVeto(0);
+         GetWeight()->GetSF("bdeep")->SetVeto(0);
      }
      else{
          //GetWeight()->GetSF("btag")->SetVeto(1); //1.-x
@@ -630,16 +661,16 @@ void Event::ApplyBTagSF(int wp)
          continue;
      }
 
-     SetPtEtaSF("btag",j->Pt(), j->Eta() );
+     SetPtEtaSF("bdeep",j->Pt(), j->Eta() );
 
 #ifdef VERBOSE
      if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Applying btag sf for jet: %f,%f,%d = %f",j->Pt(),j->Eta(),j->Flavor(),GetWeight()->GetSF("btag")->get()));
 #endif
      //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("-> Applying SF of %e for bjet=%d flavor=%d",GetWeight()->GetSF("btag")->get(),j->IsBJet(),j->Flavor()));
 
-     if (GetWeight()->GetSF("btag")->get() <.2 or GetWeight()->GetSF("btag")->get()>2.) continue; // not believable
+     if (GetWeight()->GetSF("bdeep")->get() <.2 or GetWeight()->GetSF("bdeep")->get()>2.) continue; // not believable
 
-     ApplySF("btag");
+     ApplySF("bdeep");
     }
 #ifdef VERBOSE
    if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","End BTAG SF"); 

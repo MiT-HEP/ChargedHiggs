@@ -16,6 +16,11 @@ void AnalysisBase::Book2D(string name, string title, int nBins,double xmin,doubl
     output_ -> Book2D(name,title,nBins,xmin,xmax,nBins2,ymin,ymax);
 }
 
+void AnalysisBase::Book2D(string name, string title,int nBins, double*xbound,int nBins2, double*ybound)
+{
+    output_ -> Book2D(name,title,nBins,xbound,nBins2,ybound);
+}
+
 void AnalysisBase::Book(string name, string title, int nBins,double *xbound)
 {
     output_ -> Book(name,title,nBins,xbound);

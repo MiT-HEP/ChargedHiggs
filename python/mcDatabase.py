@@ -213,11 +213,19 @@ else:
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=1
 	### H-> mumu
 	elif 'HToMuMu' in opts.label: xsec=1
+	##TTX
+	elif 'TTZToQQ' in opts.label: xsec=0.5297
+	elif 'TTZToLLNuNu' in opts.label: xsec=0.2529
+	elif 'TTWJetsToQQ' in opts.label:xsec=0.40620
+	elif 'TTWJetsToLNu' in opts.label:xsec=0.2043
+	elif 'TTGJets' in opts.label:xsec=3.697
+	elif 'TTTT' in opts.label:xsec=0.009103
 	### TT
 	elif 'TTTo2L2Nu' in opts.label: xsec=88.20
 	elif 'TT' in opts.label: xsec=831
 	## ST
 	elif 'ST_s-channel_4f_InclusiveDecays' in opts.label: xsec=10.32
+	elif 'ST_s-channel_4f_leptonDecays' in opts.label: xsec=3.365
 	elif 'ST_t-channel_antitop_4f' in opts.label: xsec=80.95
 	elif 'ST_t-channel_top_4f' in opts.label: xsec=136.02
 	elif 'ST_tW_antitop_5f' in opts.label: xsec=30.09
@@ -256,15 +264,22 @@ else:
 	elif 'W3' in opts.label: xsec=1821.46719
 	elif 'W4' in opts.label: xsec=939.684984
 	##VV
-	elif 'WWTo2L2Nu-powheg' in opts.label: xsec=12.46
+	elif 'WWTo2L2Nu' in opts.label: xsec=12.46
 	elif 'WZTo1L1Nu2Q' in opts.label: xsec=10.71
 	elif 'WZTo1L3Nu' in opts.label: xsec=3.033
 	elif 'WZTo2L2Q' in opts.label: xsec=5.595
 	elif 'WZTo3LNu' in opts.label: xsec=4.42965
-	elif 'ZZTo2L2Q' in opts.label: xsec=0.564
+	elif 'ZZTo2L2Nu' in opts.label: xsec=0.5644
+	elif 'ZZTo2L2Q' in opts.label: xsec=3.22
 	elif 'ZZTo4L' in opts.label: xsec=1.256
-	elif 'WWToLNuQQ' in opts.label: xsec=52
-    ### EWK EWK_LLJJ_MLL-50_MJJ-120
+	elif 'WWToLNuQQ' in opts.label: xsec=45.68
+	elif 'WWTo1L1NuQQ' in opts.label: xsec=45.68
+	#VVV
+	elif 'WWW' in opts.label: xsec=0.2086
+	elif 'WWZ' in opts.label: xsec=0.1651
+	elif 'WZZ' in opts.label: xsec=0.05565
+	elif 'ZZZ' in opts.label: xsec=0.01398
+	### EWK EWK_LLJJ_MLL-50_MJJ-120
 	elif 'EWK_LLJJ' in opts.label: xsec=1.630
 	##
 	#elif '' in opts.label: xsec=

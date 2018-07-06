@@ -29,6 +29,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float deepB; // ** deep btag discriminator (B+BB)
     float deepbcut_ {-100};
 
+    float nemf_,cemf_;
+
     TLorentzVector pp4;
 
     int hadFlavor_;
@@ -71,6 +73,12 @@ class Jet : virtual public Object, virtual public SmearableComplex
     inline float GetDeepB() const {return deepB;}
     /// @brief set the deep B discri (B+BB)
     void SetDeepB(const float& x) {deepB=x;}
+
+    //float nemf_,cemf_;
+    void SetNEMF(const float x) {nemf_=x;}
+    void SetCEMF(const float x) {cemf_=x;}
+    inline float GetNEMF()const {return nemf_;}
+    inline float GetCEMF()const {return cemf_;}
 
     /// @brief constructor
     Jet() ; 

@@ -1,5 +1,12 @@
 sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.2/
 
-addfiles=%(amariniHmm)s/SingleMuon
+#addfiles=%(amariniHmm)s/SingleMuon
+
+addfiles=%(amariniHmm)s/SingleMuon/SingleMuon-Run2017B
+addfiles=%(amariniHmm)s/SingleMuon/SingleMuon-Run2017C
+addfiles=%(amariniHmm)s/SingleMuon/SingleMuon-Run2017D
+addfiles=%(amariniHmm)s/SingleMuon/SingleMuon-Run2017E
+addfiles=%(amariniHmm)s/SingleMuon/SingleMuon-Run2017F
+
 
 

@@ -13,9 +13,11 @@ class AnalysisBase : public Named
 {
     private:
     Output *output_; // set automatically
-    bool multipd_{false};
 
     protected:
+
+    bool multipd_{false};
+    Event *e;
     // --- this are the default values. override these functions
     virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.15);l->SetEtaCut(2.4); l->SetTightCut(false);l->SetVetoCut();}
     //virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.25);l->SetEtaCut(2.4); l->SetTightCut(false);}
@@ -33,7 +35,7 @@ class AnalysisBase : public Named
     //--
     void doInit() {Init();}
     void doEnd() { End();} 
-    int doAnalyze(Event*e,string systname){ SetCuts(e); e->validate(); return analyze(e,systname);}
+    int doAnalyze(Event*event,string systname){ e=event;SetCuts(e); e->validate(); return analyze(e,systname);}
     //
     virtual void inline SetOutput( Output *o ) { output_ = o ;}
     virtual int analyze(Event*,string systname){return EVENT_NOT_USED;}
@@ -46,6 +48,7 @@ class AnalysisBase : public Named
     void Book(string name, string title,int nBins, double xmin, double xmax);
     void Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2,double ymin,double ymax);
     void Book(string name, string title,int nBins, double *xbound);
+    void Book2D(string name, string title,int nBins, double*xbound,int nBins2, double*ybound);
     void Fill(string name, string syst , double value, double weight=1);
     void Fill2D(string name, string syst , double valueX,double valueY, double weight=1);
     TH1D* GetHisto(string name, string systname);

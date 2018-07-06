@@ -107,6 +107,8 @@ void LoadNero::FillEventInfo(){
     event_ -> rho_ = e->rho;
 
     event_ -> met_ . setFullRecommendation ( e->selBits & BareEvent::FullRecommendation );
+    event_ -> met_ . filterbadPFMuon = e->filterbadPFMuon;
+    event_ -> met_ . filterbadChHadrons = e->filterbadChCandidate;
 
     BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["BareVertex"] ] ) ; assert(v!=NULL);
     event_ -> npv_ = v->npv;
@@ -157,17 +159,20 @@ void LoadNero::FillJets(){
         }
 #endif
 //
-#warning FIX_JETID
         bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
-        float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
-        if ( aeta >2.7 and aeta <=3.0 ) 
-        {
-            id = id and (bj->nhef->at(iJet) < .98)  and (bj->nemf -> at(iJet) >0.01);
-        }
+        //float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
+        //if ( aeta >2.7 and aeta <=3.0 ) 
+        //{
+        //    id = id and (bj->nhef->at(iJet) < .98)  and (bj->nemf -> at(iJet) >0.01);
+        //}
         if (not id) continue;
 
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
+
+        //
+        j->SetNEMF(bj->nemf -> at(iJet) );
+        j->SetCEMF(bj->cemf -> at(iJet) );
         // JES
 #ifdef VERBOSE
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("Going to Fill Jes for jet: %d",iJet));
@@ -857,6 +862,15 @@ void LoadNero::FillTrigger(){
     event_ -> triggerFired_ . clear();
     for(size_t i=0;i< tr ->triggerFired ->size() ;++i)
         event_ -> triggerFired_ . push_back ( bool( (*tr->triggerFired)[i]  ) );
+
+    // Trigger FOR
+    event_->triggerFinalOR_.clear();
+    event_->triggerFinalOR_.resize(5,0);
+    event_->triggerFinalOR_[0] = (tr->l1FOR & BareTrigger::FORM2);
+    event_->triggerFinalOR_[1] = (tr->l1FOR & BareTrigger::FORM1);
+    event_->triggerFinalOR_[2] = (tr->l1FOR & BareTrigger::FOR);
+    event_->triggerFinalOR_[3] = (tr->l1FOR & BareTrigger::FORP1);
+    event_->triggerFinalOR_[4] = (tr->l1FOR & BareTrigger::FORP2);
 
 } // end fill trigger
 void LoadNero::NewFile(){

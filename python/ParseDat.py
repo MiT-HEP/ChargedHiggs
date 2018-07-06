@@ -566,3 +566,48 @@ def chunkIt(seq, num):
   for j in range(0,len(seq) ):
         R[ j%num ].append(seq[j])
   return R
+
+
+from datetime import datetime
+class DirectoryStore:
+    ''' This class aims to identify which directories are used and by whom. Using datetime, json, os'''
+    def __init__(self):
+        self.fname="./.nero.json"
+        self.isinit=False
+        self.db={}
+        self.verbose=False
+
+    def init(self):
+        ''' Read the database '''
+        self.db ={} 
+        self.user = os.environ['USER']
+        if self.verbose: print "[DEBUG]: User is",self.user
+        self.isinit=True
+
+        if self.verbose: print "[DEBUG]: Reading File:",self.fname
+        try: 
+            jstring = open(self.fname).read()
+        except IOError as e:
+            print "[ERROR] Unable to open file",self.fname,"assuming it doesn't exist"
+            return self
+
+        self.db=json.loads( jstring )
+        return self
+
+    def add(self,d):
+        ''' Add or update directory usage '''
+        if d not in self.db:
+            self.db[d]={}
+        #if self.user not in self.db[d]:self.db[d][self.user] =""
+        ## assuming that now is always an update
+        self.db[d][self.user] = "%d/%d/%d"%(datetime.today().year,datetime.today().month,datetime.today().day)
+        return self
+    def end(self):
+        ''' write the database'''
+        jstring = json.dumps(self.db,sort_keys=True, indent=4)
+        fd=open(self.fname,"write")
+        fd.write(jstring)
+        fd.close()
+        self.isinit=False
+        return self
+
