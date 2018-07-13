@@ -12,6 +12,10 @@ import SystematicSmoother as SS
 maxStat=0.3
 
 LikeBins=100
+# in the histos nbin=1000 then rebin5, those with
+nBinsHT=1
+#nBinsHT=2
+#nBinsHT=5
 
 doSyst = False
 
@@ -19,11 +23,11 @@ likelihoodBinning = FwRebin.RebinLikelihood(LikeBins)
 
 parser= OptionParser()
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/MARCH15_FINAL_2ThirdSYST_KerasV5_bin1000_wDATA_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/MARCH15_FINAL_2ThirdSYST_KerasV5_bin1000_wDATA_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE29_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE29_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
 
-parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/MARCH15_FINAL_1Third_bin1000_1l.root")
-parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/MARCH15_FINAL_1Third_bin1000_2l.root")
+parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_1l_1Third.root")
+parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_2l_1Third.root")
 
 ######
 ######
@@ -377,8 +381,8 @@ for y in channel:
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 #					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW","VHToNonbb_M125","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
 #					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WZTo","ZZZ","WZZ","WWZ","WWW","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":5},
-					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT"],"num":5},
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":6}
+					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","EWK"],"num":5},
+					"top":{ "name":"top","hist":["TTX","ST"],"num":6}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
 					}
 			else:
@@ -390,9 +394,8 @@ for y in channel:
 #					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
-#					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW","VHToNonbb_M125","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
-					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","ZZTo"],"num":5},
-					"top":{ "name":"top","hist":["TTZ","TTW","TTG","ttH","TTTT","ST"],"num":6}
+					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","EWK"],"num":5},
+					"top":{ "name":"top","hist":["TTX","ST"],"num":6}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
 					}
 
@@ -417,9 +420,22 @@ for y in channel:
 					"CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
 					"CMS_HPTB_mcreweight_ewk":{"type":"shape", "wsname":"CMS_HPTB_mcreweight_ewk","name":"htRECO","proc":["ewk"]}, ## name used for shape
 ##					"QCDscale":{"type":"shape", "wsname":"QCDscale","name":"ScaleRF","proc":["Hptb","ttlf","ttb","ttbb","tt2b","ttcc"]} ## name used for shape
-					"muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
-					"muRF_ewk":{"type":"shape", "wsname":"muRF_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
-					"muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
+					"muRFenv_ttbar":{"type":"shape", "wsname":"muRFenv_ttbar","name":"Scale","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
+#					"muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
+#					"muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"Scale","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
+#					"muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"Scale","proc":["ttlf","ttb","ttbb","tt2b","ttcc"]}, ## name used for shape
+					"muRFenv_ewk":{"type":"shape", "wsname":"muRFenv_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
+#					"muRF_ewk":{"type":"shape", "wsname":"muRF_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
+#					"muR_ewk":{"type":"shape", "wsname":"muR_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
+#					"muF_ewk":{"type":"shape", "wsname":"muF_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
+					"muRFenv_Hptb":{"type":"shape", "wsname":"muRFenv_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
+#					"muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
+#					"muR_Hptb":{"type":"shape", "wsname":"muR_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
+#					"muF_Hptb":{"type":"shape", "wsname":"muF_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
+					"muRFenv_top":{"type":"shape", "wsname":"muRFenv_top","name":"Scale","proc":["top"]}, ## name used for shape
+#					"muRF_top":{"type":"shape", "wsname":"muRF_top","name":"Scale","proc":["top"]}, ## name used for shape
+#					"muR_top":{"type":"shape", "wsname":"muR_top","name":"Scale","proc":["top"]}, ## name used for shape
+#					"muF_top":{"type":"shape", "wsname":"muF_top","name":"Scale","proc":["top"]}, ## name used for shape
 					"CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]}, ## name used for shape
                                         ####
                                         #### JEC sources
@@ -483,12 +499,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="MAY23/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="JULY5/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "MAY23/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "JULY5/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -753,8 +769,8 @@ def writeSystISRFSR(name="test",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 
 
 ## 
-def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""],regexpCat=[]):
 ##def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT"]):
+def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""],regexpCat=[]):
 	datacard.write(name+"\tlnN")
 	invert=False
 
@@ -1032,12 +1048,9 @@ def MergeCategory(tfile,hname):
 
 		#nominal
 	if hTmp!= None and "bdt" in hname:
-		# in the histos nbin=1000 then rebin5
-		hTmp.Rebin(5)
+		hTmp.Rebin(nBinsHT)
 	elif hTmp!= None:
-		# in the histos nbin=10GeV bin then rebin5
-		hTmp.Rebin(5)
-		#hTmp.Rebin(800)
+		hTmp.Rebin(nBinsHT)
 
 
 	return hTmp
@@ -1060,13 +1073,15 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
 		c= hTmpUp.SetBinError(iBin,0)
 		c= hTmpDown.SetBinError(iBin,0)
 
-	if 'JESANDCSV' in togetSyst or 'JES_' in togetSyst or "PU" in togetSyst or "JER" in togetSyst:
-##	if 'typo' in togetSyst:
-##		return hTmpNom
+        if LikeBins==1 or LikeBins==2:
+
+                hUp = hTmpUp
+                hDown = hTmpDown
+
+        else:
+
+		# SMOOTH ALL
 		hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/ChargedHiggsTB/MAY3/SYST/").smooth()
-	else:
-		hUp = hTmpUp
-		hDown = hTmpDown
 
 	if 'Up' in s:
 		return hUp
@@ -1186,8 +1201,8 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 ###
 ##				if syst != None and "QCDscale" in target:
-				if syst != None and "muRF" in target:
-					if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in togetSyst or "DYJetsToLL_M-50_HT" in togetSyst or "DYJetsToLL_M-5to50_HT" in togetSyst or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"]:
+				if syst != None and "muRFenv" in target:
+					if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in togetSyst or "DYJetsToLL_M-50_HT" in togetSyst or "DYJetsToLL_M-5to50_HT" in togetSyst or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"] or "ST" in togetSyst:
 
 						hTmp = envelop(tfile,togetSyst,s)
 
@@ -1580,12 +1595,9 @@ for c in catStore:
 		h=tfile.Get(toget)
 
 	if h != None and "bdt" in cat["var"]:
-		# in the histos nbin=1000 then rebin5
-		h.Rebin(5)
+		h.Rebin(nBinsHT)
 	elif h != None:
-		# in the histos nbin=10GeV bin then rebin5
-		h.Rebin(5)
-		#h.Rebin(800)
+		h.Rebin(nBinsHT)
 
 	if h == None:
 		print "<*> Hist do not exists ",toget
