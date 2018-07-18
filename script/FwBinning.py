@@ -463,8 +463,8 @@ class RebinLikelihood:
             self.directionalRebin("left")
             return
 
-        if direction == "left" : r = range(1, self.h.GetNbinsX()) # do not include the last bin
-        if direction == "right" : r = reversed(range(2, self.h.GetNbinsX()+1)) # start from the right bin towards the left (do not include the zero!)
+        if direction == "left" : r = range(1, self.h_bkg.GetNbinsX()) # do not include the last bin
+        if direction == "right" : r = reversed(range(2, self.h_bkg.GetNbinsX()+1)) # start from the right bin towards the left (do not include the zero!)
         for i in r:
             if self.mergeCriteria(i):
                 if direction == "left":
