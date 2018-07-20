@@ -246,6 +246,7 @@ print >>fout, "outputorder=\"edgesfirst\""
 print >>fout
 print >>fout,"subgraph cluster_vars{"
 print >>fout,"label=\"\""
+
 for var in datacard["vars"]:
     v=ws.var(var)
     if var not in datacard['counts']: datacard['counts'][var]=0
@@ -257,7 +258,9 @@ for var in datacard["vars"]:
     #print >>fout, "%s [label=\"%s\\n%g [%g,%g] %s\",style=filled, color=%s]"%(var,var,v.getVal(),v.getMin(),v.getMax(), "C" if v.isConstant() else "F",color)
     fontcolor="color=\"blue\"" if isConstrained(v) else "color=\"black\""
     print >>fout, "%s [label=<<font %s>%s<br/>%g [%g,%g] %s</font>>,style=filled, color=%s]"%(var,fontcolor,var,v.getVal(),v.getMin(),v.getMax(), "C" if v.isConstant() else "F",color)
-print "}"
+
+print "}" ## end subgraph
+
 print >>fout
 
 ch_colors=["khaki","palegreen","paleturquoise","lavender","plum","mistyrose"]
@@ -270,8 +273,8 @@ line_colors=['deepskyblue', 'salmon', 'forestgreen', 'purple', 'aquamarine', 'in
 for ich in range (0,maxch):
     print>>fout, "subgraph cluster_ch%d{"%ich
     print>>fout, "label=%s"%datacard[ich]["ch_name"]
-    print >>fout,"labelloc = \"t\""
-    print >>fout,"labeljust=\"c\""
+    print>>fout, "labelloc = \"t\""
+    print>>fout, "labeljust=\"c\""
     print>>fout, "style=filled"
     print>>fout, "color="+ch_colors[ich%len(ch_colors)]
     #print>>fout, "ch%d [label=\"%s\"]"%(ich,datacard[ich]["ch_name"])

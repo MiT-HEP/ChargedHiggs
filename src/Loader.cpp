@@ -159,12 +159,16 @@ void LoadNero::FillJets(){
         }
 #endif
 //
-        bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
-        //float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
-        //if ( aeta >2.7 and aeta <=3.0 ) 
-        //{
-        //    id = id and (bj->nhef->at(iJet) < .98)  and (bj->nemf -> at(iJet) >0.01);
-        //}
+        //bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
+#warning TIGHT_ID_2017_REIMPLEMENTED
+        bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetTight;
+        float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
+        if ( aeta >2.7 and aeta <=3.0 ) 
+        {
+            id = ( bj->nemf->at(iJet) >0.02 and bj->nemf->at(iJet) <0.99 and bj->qglMult->at(iJet) >2 ) ;
+            //if (bj->nemf->at(iJet) <0.02 ) id=false;
+        }
+
         if (not id) continue;
 
         Jet *j =new Jet();

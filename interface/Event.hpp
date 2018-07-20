@@ -270,8 +270,9 @@ class Event{
     // 
     ///@brief apply top pt reweighting to the event.
     void ApplyTopReweight();
-    ///@brief apply L1 prefire efficiencies to the event
-    void ApplyL1PreFire();
+    ///@brief apply L1 prefire efficiencies to the event. 
+    ///return the total reweight
+    double ApplyL1PreFire();
     ///@brief apply btagging scale factor to the event. Working points (wp) correspond to loose,medium and tight.
     void ApplyBTagSF(int wp=0);
     void ApplyTauSF(Tau*t,bool prongs=true,const string& extra="");

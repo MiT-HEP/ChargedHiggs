@@ -838,7 +838,8 @@ if doBkg:
 
     ## BLIND 120-130
     blind=opts.blind
-    if opts.var != "Mmm":blind=False
+    #if opts.var != "Mmm":blind=False
+    if "Mmm" not in opts.var:blind=False
     if blind:
         ibin0= hdata.FindBin(120)
         ibin1= hdata.FindBin(130)

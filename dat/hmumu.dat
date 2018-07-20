@@ -56,10 +56,13 @@ addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M130')
 addConfig=HmumuAnalysis|AddLabel('ttHToNonbb_M125')
 
+## HH
+addConfig=HmumuAnalysis|AddLabel('VBFHHTo2B2Mu_CV_1_C2V_1_C3_1')
+addConfig=HmumuAnalysis|AddLabel('GluGluToHHTo2B2M_node_4')
+
 addConfig=HmumuAnalysis|unblind=1
 #addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
 #addConfig=HmumuAnalysis|catType=2
-#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_2018_Apr10_v0.xml')
 addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_mit_2018_May26_v0.xml')
 addConfig=HmumuAnalysis|catType=4
 addConfig=HmumuAnalysis|doScikit=0

@@ -51,7 +51,7 @@ int RochesterCorrections::correct(Event *e){
                 mcSF = corrector_->kScaleAndSmearMC(lep->Charge(),lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, u1, u2, s, m);
             }
             if (mcSF>1.5 or mcSF<0.5) {
-                Log(__FUNCTION__,"WARNING",Form("Rochester corrections SF on MC is too high (or too low) %lf. Setting it to 1!",mcSF));
+                //Log(__FUNCTION__,"WARNING",Form("Rochester corrections SF on MC is too high (or too low) %lf. Setting it to 1!",mcSF));
                 mcSF=1;
             }
             Scale( *lep, mcSF);

@@ -7,6 +7,9 @@
 
 #include "interface/HiggsTemplateCrossSections.hpp"
 
+#include "TVectorD.h"
+#include "TMatrixD.h"
+
 #define VERBOSE 0
 
 //#define SCIKIT_TIMING
@@ -501,22 +504,40 @@ string HmumuAnalysis::CategoryBdtMIT(Event *e){
     float mu_ave_eta = (fabs(mu0->Eta())+fabs(mu1->Eta()))/2.;
 
     //*
-    if ( bdt[0] < -0.400 ) icat = 0 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 1.900 ) icat = 1 ;
-    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 1.900 ) icat = 2 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta >= 1.900 ) icat = 3 ;
-    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 1.900 ) icat = 4 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta < 0.900 ) icat = 5 ;
-    if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta < 0.900 ) icat = 6 ;
-    if ( mu_max_eta < 1.900 and bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 0.900 ) icat = 7 ;
-    if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 and mu_max_eta < 1.9) icat = 8 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 0.9 ) icat = 9 ;
-    if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900  and mu_max_eta >=0.9) icat = 10 ;
-    if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 11 ;
-    if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 12;
-    if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 13 ;
-    if ( bdt[0] >= 0.730 ) icat = 14 ;
+    //if ( bdt[0] < -0.400 ) icat = 0 ;
+    //if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 1.900 ) icat = 1 ;
+    //if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 1.900 ) icat = 2 ;
+    //if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta >= 1.900 ) icat = 3 ;
+    //if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 1.900 ) icat = 4 ;
+    //if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta < 0.900 ) icat = 5 ;
+    //if ( bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta < 0.900 ) icat = 6 ;
+    //if ( mu_max_eta < 1.900 and bdt[0] >= 0.250 and bdt[0] < 0.400 and mu_max_eta >= 0.900 ) icat = 7 ;
+    //if ( bdt[0] >= 0.050 and bdt[0] < 0.250 and mu_max_eta >= 0.900 and mu_max_eta < 1.9) icat = 8 ;
+    //if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 0.9 ) icat = 9 ;
+    //if ( bdt[0] >= -0.400 and bdt[0] < 0.050 and mu_max_eta < 1.900  and mu_max_eta >=0.9) icat = 10 ;
+    //if ( bdt[0] < 0.730 and bdt[0] >= 0.650 ) icat = 11 ;
+    //if ( mu_max_eta < 1.900 and bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta >= 0.900 ) icat = 12;
+    //if ( bdt[0] < 0.650 and bdt[0] >= 0.400 and mu_max_eta < 0.900 ) icat = 13 ;
+    //if ( bdt[0] >= 0.730 ) icat = 14 ;
     //
+    //
+    if (mu_max_eta <0.9) // BB
+    {
+        if (bdt[0] >0.92) icat=0;
+        else if (bdt[0] > 0.79)icat=1;
+        else if (bdt[0] > 0.5) icat=2;
+        else                   icat=3;
+    }
+    else if (mu_max_eta <1.9){ // XO
+        if (bdt[0]> 0.68) icat=4;
+        else if(bdt[0] >0.25) icat=5;
+        else icat=6;
+    }
+    else{
+        if (bdt[0] >0.6) icat=7;
+        else if (bdt[0] >0.1) icat=8;
+        else icat=9;
+    }
 
     if (icat>=0) catStr=Form("cat%d",icat);
 
@@ -1014,6 +1035,7 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/BdtOnH_BB_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 
 	    Book ("HmumuAnalysis/Vars/BdtOnH_Prefire_"+ l ,"Bdt On Hmm for events that prefire (110-150);Bdt;Events", 1000,-1,1); // useful only if run unprefirebale and data
+	    Book ("HmumuAnalysis/Vars/BdtOnH_NoPrefire_"+ l ,"Bdt On Hmm for events that prefire (110-150);Bdt;Events", 1000,-1,1); // w/o prefire weights
 
         // zpt reweight
 	    Book ("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
@@ -1057,6 +1079,17 @@ void HmumuAnalysis::Init(){
                 Book ("HmumuAnalysis/Vars/"+s+"OnH_BB_"+ l ,s+" On Hmm (110-150);"+s+";Events", 1000,-1,1.0001);
             }
         }
+
+	    Book2D ("HmumuAnalysis/Vars/BtdMass_BB_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 800,110,150,200,-1,1);
+	    Book2D ("HmumuAnalysis/Vars/BtdMass_XO_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 800,110,150,200,-1,1);
+	    Book2D ("HmumuAnalysis/Vars/BtdMass_XE_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 800,110,150,200,-1,1);
+
+	    Book ("HmumuAnalysis/Vars/Mbb_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mbbkf_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mbbkf2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mmm_KF_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mmm_KF2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 
         // --- histograms for limits extraction
         for(const auto & c : categories_)
@@ -1223,7 +1256,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
      */
 
     //#warning NO_PREFIRE
-    e->ApplyL1PreFire();
+    double l1prefire=1.0;
+    l1prefire=e->ApplyL1PreFire(); // apply to the event weight, but keep it for comp
 
     /*
      * HIGGS REWEIGHT -- UNCERTAINTIES
@@ -1358,7 +1392,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     else if (catType==3) { 
         category = CategoryBdt(e); 
         string categoryExc = CategoryExclusive(e); 
-        recoMuons = mu0 != NULL and mu1 !=NULL;  // muons may have been recomputed here
+        recoMuons = (mu0 != NULL and mu1 !=NULL);  // muons may have been recomputed here
+        isExclusiveCat = ( categoryExc!="" and categoryExc!="ggHX");
+        if (categoryExc == "ggHX" and category == "") isExclusiveCat=true;
 
         if (categoryExc == "ttHHadr") category = "cat15";// 
         if (categoryExc == "ttHLep" ) category="cat16";  // 
@@ -1376,13 +1412,15 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         category = CategoryBdtMIT(e); 
         string categoryExc = CategoryExclusive(e); 
         recoMuons = mu0 != NULL and mu1 !=NULL;  // muons may have been recomputed here
+        isExclusiveCat = ( categoryExc!="" and categoryExc!="ggHX");
+        if (categoryExc == "ggHX" and category == "") isExclusiveCat=true;
 
-        if (categoryExc == "ttHHadr") category = "cat15";// 
-        if (categoryExc == "ttHLep" ) category="cat16";  // 
-        if (categoryExc == "ZHLep" ) category="cat17";   // 
-        if (categoryExc == "WHLep" ) category="cat18";   // 
-        if (categoryExc == "VHHadr" ) category="cat19";   // 
-        if (categoryExc == "ggHX" and category == "" ) category="cat20";   // 
+        if (categoryExc == "ttHHadr") category = "cat10";// 
+        if (categoryExc == "ttHLep" ) category="cat11";  // 
+        if (categoryExc == "ZHLep" ) category="cat12";   // 
+        if (categoryExc == "WHLep" ) category="cat13";   // 
+        if (categoryExc == "VHHadr" ) category="cat14";   // 
+        if (categoryExc == "ggHX" and category == "" ) category="cat15";   // 
     }
     else category = Category(mu0, mu1, selectedJets);
 
@@ -1857,7 +1895,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
             if (selectedJets.size() >0)
             {
-                Fill("HmumuAnalysis/Vars/DeepBOnH_"+ label,systname, jetVar_["leadDeepB"],e->weight());
+                Fill("HmumuAnalysis/Vars/DeepBOnH_"+ label,systname, jetVar_["maxDeepB"],e->weight());
                 Fill("HmumuAnalysis/Vars/MaxCSVOnH_"+ label,systname, jetVar_["maxCSV"],e->weight());
                 Fill("HmumuAnalysis/Vars/PtJet1OnH_"+ label,systname, selectedJets[0]->Pt(),e->weight());
                 Fill("HmumuAnalysis/Vars/EtaJet1OnH_"+ label,systname, selectedJets[0]->Eta(),e->weight());
@@ -1873,6 +1911,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/NJetsOnH_"+ label,systname, selectedJets.size(),e->weight());
             Fill("HmumuAnalysis/Vars/NBJetsOnH_"+ label,systname, e->Bjets(),e->weight());
             if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
+            if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_NoPrefire_"+ label,systname, bdt[0] ,e->weight()/l1prefire);
             if(catType>=2 and bdt.size() >0 and e->GetL1FinalOr(-1))Fill("HmumuAnalysis/Vars/BdtOnH_Prefire_"+ label,systname, bdt[0] ,e->weight());
             if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ label,systname, bdt[0] ,e->weight()*zptrw);
             if(catType>=2 and bdt.size() >0 and fabs(mu0->Eta())<0.8 and fabs(mu1->Eta())<0.8)
@@ -1896,6 +1935,27 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             {
                 Fill("HmumuAnalysis/Vars/NJets_ggHX_"+ label,systname, selectedJets.size(),e->weight()) ;
                 Fill("HmumuAnalysis/Vars/DeltaR_ggHX_"+ label,systname,mu0->DeltaR(mu1),e->weight()) ;
+            }
+        }
+
+        if (mass_>60 and category != "")
+        {
+	        //Book ("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ l ,"Mass (110-150);Bdt;Events", 2000,60,160);
+	        //Book ("HmumuAnalysis/Vars/Mmm_KF_HbbHmm_"+ l ,"Mass (110-150);Bdt;Events", 2000,60,160);
+            float met = e->GetMet().Pt();
+            if (met < 60)
+            {
+
+            Fill("HmumuAnalysis/Vars/Mbb_HbbHmm_"+ label,systname, jetVar_["mbb"],e->weight());
+            Fill("HmumuAnalysis/Vars/Mbbkf_HbbHmm_"+ label,systname, jetVar_["mbbkf"],e->weight());
+            Fill("HmumuAnalysis/Vars/Mbbkf2_HbbHmm_"+ label,systname, jetVar_["mbbkf2"],e->weight());
+
+            if (jetVar_["mbb"] > 120 and jetVar_["mbb"]< 130) 
+                Fill("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ label,systname, mass_,e->weight());
+            if (jetVar_["mbbkf"] > 120 and jetVar_["mbbkf"]< 130) 
+                Fill("HmumuAnalysis/Vars/Mmm_KF_HbbHmm_"+ label,systname, mass_,e->weight());
+            if (jetVar_["mbbkf2"] > 120 and jetVar_["mbbkf2"]< 130) 
+                Fill("HmumuAnalysis/Vars/Mmm_KF2_HbbHmm_"+ label,systname, mass_,e->weight());
             }
         }
 
@@ -1976,6 +2036,15 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         if( category != "")
         {
             Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
+
+            if (not isExclusiveCat and not processingSyst_){ // don't need syst for this
+                bool isBB= fabs(mu0->Eta()) < 0.9 and fabs(mu1->Eta())<0.9;
+                bool isOO= fabs(mu0->Eta()) < 1.9 and fabs(mu1->Eta())<1.9;
+                if (isBB) Fill2D("HmumuAnalysis/Vars/BtdMass_BB_"+ label,systname,mass_,bdt[0],e->weight());
+                else if (isOO) Fill2D("HmumuAnalysis/Vars/BtdMass_XO_"+ label,systname,mass_,bdt[0],e->weight());
+                else Fill2D("HmumuAnalysis/Vars/BtdMass_XE_"+ label,systname,mass_,bdt[0],e->weight());
+            }
+
             if (doUnbinned and mass_>110 and mass_<150 and (not processingSyst_))
             {
                 int cat=0;
@@ -2064,7 +2133,8 @@ void HmumuAnalysis::updateMjj(){
     }
     if (jetVar_["ncentjets"]>0) jetVar_["aveQGLcent"] /= jetVar_["ncentjets"];
     if (jetVar_["htCent"]>0) jetVar_["aveCSV"] /= jetVar_["htCent"];
-    jetVar_["leadCSV"] =  (selectedJets.size()>0) ?selectedJets[0]->GetDeepB():-1;
+    jetVar_["leadCSV"] =  (selectedJets.size()>0) ?selectedJets[0]->Btag():-1;
+    jetVar_["leadDeepB"] =  (selectedJets.size()>0) ?selectedJets[0]->GetDeepB():-1;
     sort(csv_score.begin(),csv_score.end(),std::greater<float>());
     jetVar_["maxCSV"]=(csv_score.size()>0)?csv_score[0]:-1;
     jetVar_["secondCSV"] = (csv_score.size()>1)?csv_score[1]:-1;
@@ -2105,6 +2175,100 @@ void HmumuAnalysis::updateMjj(){
     jetVar_["mjj_2"] = (mjj.size() > 1) ? mjj[1].first: 0.0;
     jetVar_["detajj_1"] = (mjj.size()>0) ? fabs(selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta()): -1.0;
     jetVar_["detajj_2"] = (mjj.size()>1) ? fabs(selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta()): -1.0;
+
+    // double b
+    int nbjets=0;
+    Jet *b1=NULL,*b2=NULL;
+    int idx_b1=-1,idx_b2=-1;
+    for(unsigned i=0;i<selectedJets.size() ;++i)
+    {
+        Jet *j=selectedJets[i];
+        if (abs(j->Eta())>2.4 ) continue;
+        if (j->GetDeepB() > DEEP_B_MEDIUM) nbjets+=1;
+        if (b1 ==NULL) {b1=j;idx_b1=i;}
+        else if (b2==NULL) {b2=j;idx_b2=i;}
+    }
+
+    TLorentzVector recoil(0,0,0,0);
+    recoil+=Hmm.GetP4();
+    for(unsigned i=0;i<selectedJets.size() ;++i)
+    {
+        Jet *j=selectedJets[i];
+        if (j==b1 or j==b2) continue;
+        recoil+=j->GetP4();
+    }
+
+    jetVar_["mbb"] = 0.;
+    jetVar_["mbbkf"] = 0.;
+    jetVar_["mbbkf2"] = 0.;
+    if (nbjets >=2)
+    {
+        TLorentzVector BB(0,0,0,0);
+        BB += b1->GetP4() ;
+        BB += b2->GetP4() ;
+        jetVar_["mbb"]=BB.M();
+
+        TLorentzVector BB_KF(0,0,0,0);
+        float px=recoil.Px();
+        float py=recoil.Py();
+
+        float px_j1= b1->GetP4().Px() ;
+        float px_j2= b2->GetP4().Px() ;
+        float py_j1= b1->GetP4().Py() ;
+        float py_j2= b2->GetP4().Py() ;
+
+        float D =px_j1 * py_j2 - py_j1*px_j2;
+        float Da = px_j2*py - px*py_j2;
+        float Db = px*py_j1 - px_j1*py;
+        float alpha= Da/D;
+        float beta = Db/D;
+
+        TLorentzVector b1_kf=b1->GetP4();
+        TLorentzVector b2_kf=b2->GetP4();
+        b1_kf *= alpha;
+        b2_kf *= beta;
+
+        BB_KF += b1_kf;
+        BB_KF += b2_kf;
+        jetVar_["mbbkf"] = BB_KF.M();
+
+        int N=selectedJets.size();
+        TVectorD x(N+2),c(N+2);
+        TMatrixD A(N+2,N+2);
+        
+        float pHx = Hmm.GetP4().Px();
+        float pHy = Hmm.GetP4().Py();
+        c(0) = -pHx;
+        c(1) = -pHy;
+        for(int i=0;i<N;++i) c(i+2)=2;
+        for(int i=0;i<N;++i) A(0,i+2) = selectedJets[i]->GetP4().Px();
+        for(int i=0;i<N;++i) A(1,i+2) = selectedJets[i]->GetP4().Py();
+        for(int i=0;i<N;++i) A(i+2,0) = -selectedJets[i]->GetP4().Px();
+        for(int i=0;i<N;++i) A(i+2,1) = -selectedJets[i]->GetP4().Py();
+        for(int i=0;i<N;++i) A(i+2,i+2) = 2;
+
+        A.Invert();
+        x=A*c;
+
+        TLorentzVector b1_kf2=b1->GetP4();
+        TLorentzVector b2_kf2=b2->GetP4();
+        b1_kf2 *= x(idx_b1+2);
+        b2_kf2 *= x(idx_b2+2);
+        TLorentzVector BB_KF2(0,0,0,0);
+        BB_KF2+=b1_kf2;
+        BB_KF2+=b2_kf2;
+        jetVar_["mbbkf2"] = BB_KF2.M();
+
+        //Log(__FUNCTION__,"DEBUG","------------------------------------------------");
+        //if (mu0 == NULL or mu1==NULL) Log(__FUNCTION__,"DEBUG","-> no Muons");
+        //Log(__FUNCTION__,"DEBUG",Form("mbbkf: mbb=%f mbbkf=%f alpha=%f beta=%f njets=%d ptZ=%f phiZ=%f ptBB=%f phiBB=%f",jetVar_["mbb"],jetVar_["mbbkf"],alpha,beta,selectedJets.size(),recoil.Pt(),recoil.Phi(),BB_KF.Pt(),BB_KF.Phi()));
+        //Log(__FUNCTION__,"DEBUG",Form("mbbkf2: mbb=%f mbbkf=%f mbbkf2=%f alpha=%f beta=%f njets=%d ptZ=%f phiZ=%f ptBB=%f phiBB=%f",jetVar_["mbb"],jetVar_["mbbkf"],jetVar_["mbbkf2"],x(idx_b1+2),x(idx_b2+2),selectedJets.size(),Hmm.Pt(),Hmm.Phi(),BB_KF2.Pt(),BB_KF2.Phi()));
+        //Log(__FUNCTION__,"DEBUG",Form("Dphi=%f",BB_KF.DeltaPhi(recoil)));
+        //Log(__FUNCTION__,"DEBUG",Form("MET=%f",e->GetMet().Pt()));
+        //BB_KF += recoil;
+        //Log(__FUNCTION__,"DEBUG",Form("Closure =%f ==0",BB_KF.Pt()));
+        //Log(__FUNCTION__,"DEBUG","------------------------------------------------");
+    }
 }
 
 float HmumuAnalysis::getZPtReweight(float Zpt)

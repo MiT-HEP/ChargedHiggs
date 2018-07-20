@@ -606,15 +606,15 @@ void Event::ApplyTopReweight(){
     }
 }
 
-void Event::ApplyL1PreFire(){
+double Event::ApplyL1PreFire(){
     //SF_TH2F *sf=(SF_TH2F*)GetWeight()->GetSF("prefire");
-    if (IsRealData() ) return;
+    if (IsRealData() ) return 1.;
     SF* dummy=GetWeight()->GetSF("dummy");
     float eventsf = 1.;
     bool changed=false;
     for(int i=0;;++i)
     {
-        Jet*j=GetJet(i); // or bare?
+        Jet*j=GetBareJet(i); // or bare?-> Probably PU Id clean the EG ones
         if(j==NULL) break;
         // pt w/o systematics
         float eta= j->GetP4Dirty().Eta();
@@ -634,7 +634,7 @@ void Event::ApplyL1PreFire(){
     dummy->err=0;
 
     ApplySF("dummy");
-    return;
+    return eventsf;
 }
 
 //#define VERBOSE 2

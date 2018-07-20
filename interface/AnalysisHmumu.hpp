@@ -128,6 +128,7 @@ class HmumuAnalysis: virtual public AnalysisBase
         vector<float> scikit; // like bdt
 
         bool passLeptonVeto{true};
+        bool isExclusiveCat{false};
 
 };
 
