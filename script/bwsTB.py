@@ -30,10 +30,10 @@ parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]
 parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_1l_1Third.root")
 parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_2l_1Third.root")
 
-#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE29_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
+#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
 #parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
 
-#parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_1l_1Third.root")
+#parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_1l_1Third.root")
 #parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_2l_1Third.root")
 
 ######
@@ -138,7 +138,7 @@ channel = []
 
 #1l
 if opts.kTest==0 or opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==8 or opts.kTest==9 or opts.kTest==10 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16 or opts.kTest==100 or opts.kTest==101  or opts.kTest==102:
-	channel = ["1Mu","1ele"]
+	channel = ["1Mu","1Ele"]
 #	channel = ["1L"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7","charmCR"]
 
@@ -176,6 +176,8 @@ for y in channel:
 		label="2l_"
 		if y == "1L": label="1L_"
 		if y == "1Ele" or y == "1Mu": label="1l_"
+##		if y == "1Ele" or y == "1Mu": label="1Mu_"
+##		if y == "1Ele" or y == "1Mu": label="1Ele_"
 		if y == "2L": label="2L_"
 ##		if opts.kTest==20: label="combined_"
 
@@ -475,7 +477,7 @@ for y in channel:
 #                                        "CMS_scale_PileUpDataMC_j":{"type":"shape", "wsname":"CMS_scale_PileUpDataMC_j","name":"JES_PileUpDataMC","proc":[".*"]}, ## name used for shape
 #                                        "CMS_scale_PileUpPtRef_j":{"type":"shape", "wsname":"CMS_scale_PileUpPtRef_j","name":"JES_PileUpPtRef","proc":[".*"]}, ## name used for shape
 					##### comment since are null
-#                                        "CMS_scale_RelativeJEREC2_j":{"type":"shape", "wsname":"CMS_scale_RelativeJEREC2_j","name":"JES_RelativeJEREC2","proc":[".*"]}, ## name used for shape                                   #                                        "CMS_scale_RelativePtEC2_j":{"type":"shape", "wsname":"CMS_scale_RelativePtEC2_j","name":"JES_RelativePtEC2","proc":[".*"]}, ## name used for shape                                                               
+#                                        "CMS_scale_RelativeJEREC2_j":{"type":"shape", "wsname":"CMS_scale_RelativeJEREC2_j","name":"JES_RelativeJEREC2","proc":[".*"]}, ## name used for shape
 #                                        "CMS_scale_PileUpPtEC2_j":{"type":"shape", "wsname":"CMS_scale_PileUpPtEC2_j","name":"JES_PileUpPtEC2","proc":[".*"]}, ## name used for shape
 #                                        "CMS_scale_RelativeJERHF_j":{"type":"shape", "wsname":"CMS_scale_RelativeJERHF_j","name":"JES_RelativeJERHF","proc":[".*"]}, ## name used for shape
 #                                        "CMS_scale_RelativePtHF_j":{"type":"shape", "wsname":"CMS_scale_RelativePtHF_j","name":"JES_RelativePtHF","proc":[".*"]}, ## name used for shape
@@ -510,12 +512,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="JULY29_HT200_like100/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="JULY30_TEST/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "JULY29_HT200_like100/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "JULY30_TEST/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -950,9 +952,9 @@ for syst in systStore:
 
 
 
-if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb"])
-if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042","1.042","1.042"],["ttlf","ttcc","ttb"])
-if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027","1.027","1.027"],["ttlf","ttcc","ttb"])
+if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024"],["ttlf","ttcc","ttb"])
+if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042"],["ttlf","ttcc","ttb"])
+if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027"],["ttlf","ttcc","ttb"])
 
 ###if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttlf",["1.50"],["ttlf"])
 if doSyst: writeNormSyst("bgnorm_ttcc",["1.50"],["ttcc"])
@@ -1101,9 +1103,11 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
 	if 'Down' in s:
 		return hDown
 
-def envelop(tfile,togetClone, s) :
+def envelop(tfile,togetNom, togetSyst, s) :
 
-	hname=togetClone+'RF'+s
+	hTmpNom=MergeCategory(tfile,togetNom)
+
+	hname=togetSyst+'RF'+s
 	hTmp=MergeCategory(tfile,hname)
 	h=hTmp.Clone()
 
@@ -1112,21 +1116,36 @@ def envelop(tfile,togetClone, s) :
 	for w in [ 'R','F','RF']:
 		for var in [ 'Up','Down']:
 
-			hnameClone=togetClone+w+var
+			hnameSyst=togetSyst+w+var
 
-			hTmp=MergeCategory(tfile,hnameClone)
+			hTmp=MergeCategory(tfile,hnameSyst)
 
 			for iBin in range(1,h.GetNbinsX()+1):
 				c= h.GetBinContent(iBin)
 
-			## take the maximum for the Up and Down
+			## take the maximum for the Up
 				if 'Up' in s and hTmp.GetBinContent(iBin)>c:
 					h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
 
 			## take the minimum for the Down
 				if 'Down' in s and hTmp.GetBinContent(iBin)<c:
 					h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
-	return h
+
+	if 'Up' in s:
+		hTmpUp = h
+		hTmpDown = hTmpNom
+
+	if 'Down' in s:
+		hTmpUp = hTmpNom
+		hTmpDown = h
+
+	hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
+
+	if 'Up' in s:
+		return hUp
+
+	if 'Down' in s:
+		return hDown
 
 ## import Everything in ws TODO
 def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
@@ -1216,7 +1235,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				if syst != None and "muRFenv" in target:
 					if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in togetSyst or "DYJetsToLL_M-50_HT" in togetSyst or "DYJetsToLL_M-5to50_HT" in togetSyst or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"] or "ST" in togetSyst:
 
-						hTmp = envelop(tfile,togetSyst,s)
+						hTmp = envelop(tfile,togetNom,togetSyst,s)
 
 				elif syst != None:
 
