@@ -18,23 +18,23 @@ nBinsHT=1
 #nBinsHT=4
 #nBinsHT=5
 
-doSyst = False
+doSyst = True
 
 likelihoodBinning = FwRebin.RebinLikelihood(LikeBins)
 
 parser= OptionParser()
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE29_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE29_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
+#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE29_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
+#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE29_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
 
-parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_1l_1Third.root")
-parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_2l_1Third.root")
+#parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_1l_1Third.root")
+#parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_2l_1Third.root")
 
-#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
-#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
 
-#parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_1l_1Third.root")
-#parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_2l_1Third.root")
+parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_1l_1Third.root")
+parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_2l_1Third.root")
 
 ######
 ######
@@ -512,12 +512,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="JULY30_TEST/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="AUG1_HT200_like100/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "JULY30_TEST/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "AUG1_HT200_like100/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -1133,19 +1133,14 @@ def envelop(tfile,togetNom, togetSyst, s) :
 
 	if 'Up' in s:
 		hTmpUp = h
-		hTmpDown = hTmpNom
-
-	if 'Down' in s:
-		hTmpUp = hTmpNom
-		hTmpDown = h
-
-	hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
-
-	if 'Up' in s:
+		hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpUp.Clone("test1"),"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
 		return hUp
 
 	if 'Down' in s:
+		hTmpDown = h
+		hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpDown.Clone("test1"), hTmpDown,"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
 		return hDown
+
 
 ## import Everything in ws TODO
 def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
