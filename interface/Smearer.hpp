@@ -64,6 +64,7 @@ class SmearJesAndCSV : virtual public SmearBase
     std::unique_ptr<SmearJes> jes;
     //int num_; // this follow the  CSV Reweight skim, while  the constructor is 1->5
     Systematics::Type num_;
+    int highPt{0};
 
     public:
         SmearJesAndCSV() : SmearBase(){ 
@@ -73,6 +74,7 @@ class SmearJesAndCSV : virtual public SmearBase
         SmearJesAndCSV(int num) : SmearBase(){ 
             // num -> 1,5 (1 is JES
             num_ = Systematics::NA;
+            highPt=0;
             if (num == 1){num_=Systematics::JESup;name_="JESANDCSV";}
             if (num == 2){num_=Systematics::CSVHFup;name_="CSVRHF";}
             if (num == 3){num_=Systematics::CSVLFup;name_="CSVRLF";}
@@ -82,6 +84,10 @@ class SmearJesAndCSV : virtual public SmearBase
             if (num == 7){num_=Systematics::CSVLFStats2up; name_="CSVRLFSTAT2";}
             if (num == 8){num_=Systematics::CSVCErr1up; name_="CSVRCERR1";}
             if (num == 9){num_=Systematics::CSVCErr2up; name_="CSVRCERR2";}
+            if (num == 10){num_=Systematics::JESup;highPt=1;name_="JESANDCSVHighPt";}
+            if (num == 11){num_=Systematics::CSVHFup;highPt=1;name_="CSVRHFHighPt";}
+            if (num == 12){num_=Systematics::CSVLFup;highPt=1;name_="CSVRLFHighPt";}
+            if (num == 13){num_=Systematics::CSVCErr1up; highPt=1;name_="CSVRCERR1HighPt";}
 
             jes . reset (new SmearJes());
         }
