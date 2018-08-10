@@ -30,11 +30,23 @@ parser= OptionParser()
 #parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_1l_1Third.root")
 #parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JUNE1_2l_1Third.root")
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
+## 650 missing, more signal stat
+#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
+#parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
 
-parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_1l_1Third.root")
-parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_2l_1Third.root")
+#parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_1l_1Third.root")
+#parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/JULY29_2l_1Third.root")
+
+
+##more signal stat , 2L bTag for signal and top
+
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
+##parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bTag_bin200_wDATA_2l.root")
+
+parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_1l_1Third.root")
+parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_2l_1Third.root")
+
 
 ######
 ######
@@ -382,13 +394,18 @@ for y in channel:
 			if y == "1Ele" or y == "1Mu" or y == "1L":
 				mcStore={
 					"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
+##MADGAPH
+#					"ttb":{ "name":"ttb","hist":["tt2b_TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8","tt2bMerged_TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8","tt1b_TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8"],"num":2},
+#					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+#					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
+##POWHEG
 ###					"ttb":{ "name":"ttb","hist":["tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 ###					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"ttb":{ "name":"ttb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
 #					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW","VHToNonbb_M125","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
 #					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WZTo","ZZZ","WZZ","WWZ","WWW","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":5},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","EWK"],"num":4},
@@ -398,13 +415,18 @@ for y in channel:
 			else:
 				mcStore={
 					"Hptb":{"name":"Hptb", "hist":["ChargedHiggs_HplusTB_HplusToTB_M-%d_13TeV_amcatnlo_pythia8"], "num":0 },
-					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
+##MADGAPH
+#					"ttb":{ "name":"ttb","hist":["tt2b_TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8","tt2bMerged_TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8","tt1b_TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8"],"num":2},
+#					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+#					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
+##POWHEG
 ###					"ttb":{ "name":"ttb","hist":["tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 ###					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"ttb":{ "name":"ttb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","EWK"],"num":4},
 					"top":{ "name":"top","hist":["TTX","ST"],"num":5}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
@@ -497,7 +519,11 @@ for y in channel:
 					"CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":[".*"]}, ## name used for shape
 					"CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":[".*"]}, ## name used for shape
 					"CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":[".*"]}, ## name used for shape
-					"CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":[".*"]} ## name used for shape
+					"CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":[".*"]}, ## name used for shape
+					"CMS_scale_jHighPtDown":{"type":"shape", "wsname":"CMS_scale_j_HighPtDown","name":"JESANDCSVHighPtDown","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
+					"CMS_btag_HFHighPtDown":{"type":"shape", "wsname":"CMS_btag_HFHighPtDown","name":"CSVRHFHighPtDown","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
+					"CMS_btag_LFHighPtDown":{"type":"shape", "wsname":"CMS_btag_LFHighPtDown","name":"CSVRLFHighPtDown","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
+					"CMS_btag_CFerr1HighPtDown":{"type":"shape", "wsname":"CMS_btag_CFerr1HighPtDown","name":"CSVRCERR1HighPtDown","proc":["Hptb","ttlf","ttb","ttcc"]} ## name used for shape
 					####
 					}
 			else:
@@ -512,12 +538,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="AUG1_HT200_like100/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="AUG8_HT200_bTag/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "AUG1_HT200_like100/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "AUG8_HT200_bTag/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -958,7 +984,7 @@ if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027"],["ttlf","ttc
 
 ###if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttlf",["1.50"],["ttlf"])
 if doSyst: writeNormSyst("bgnorm_ttcc",["1.50"],["ttcc"])
-if doSyst: writeNormSyst("bgnorm_ttb",["1.50"],["ttb$"])
+if doSyst: writeNormSyst("bgnorm_ttb",["1.30"],["ttb$"])
 #if doSyst: writeNormSyst("bgnorm_ttbb",["1.50"],["ttbb$"])
 ##if doSyst: writeNormSyst("bgnorm_tt2b",["1.50"],["tt2b"])
 
@@ -1252,14 +1278,16 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 						if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
 
+				if mc["name"]=="ttb":
+					hTmp.Scale(1.83)
+
 ### SCALE for the 2/3
-				if mc["name"]!="qcd" and not "ZZTo" in hname and not "WWTo" in hname and not "WZTo" in hname and not "ZZZ" in hname and not "WZZ" in hname and not "WWZ" in hname and not "WWW" in hname and not "VHToNonbb_M125" in hname and not "WH_HToBB_WToLNu_M125" in hname and not "ZH_HToBB_ZToLL" in hname:
+				if mc["name"]!="qcd" and not "EWK" in hname:
 					hTmp.Scale(1.5)
 
 ### -- MC --
 ##		print 'xxxxxxxxx hname=',hname,' base=',base,'cat["dir"]',cat["dir"]
 #####1L
-
 		## tranform the HT into the likelihood
 				hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
 #		print LikelihoodMapping
