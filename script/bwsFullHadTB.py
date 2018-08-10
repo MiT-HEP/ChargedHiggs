@@ -13,8 +13,9 @@ maxStat=0.15
 # original binning is 10GeV
 nRebinHT=1
 #nRebinHT=5
-LikeBins=10
-#LikeBins=1
+#LikeBins=10
+LikeBins=1
+#LikeBins=2
 
 doRebin = False
 applyLikelihoodRebinBin = True
@@ -74,12 +75,19 @@ parser= OptionParser()
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit_ALL.root")
 #parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/post0systlimit_ALL.root")
 
-### NEW TO BE USED
+### USED at the pre-approval
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp0syst.root")
 #parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp0syst.root")
 
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2twothird.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2onethird.root")
+### removing spikes and without low HT cut
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2twothird.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2onethird.root")
+
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systNoSpi.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systNoSpi.root")
+
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systttb70.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systttb70.root")
 
 ## REMEMBER TO:
 # a) change the rebin 20% to 50% Inf
@@ -513,12 +521,12 @@ for y in channel:
 #				catStore[name]["hasMC"]=["qcd","top","Hptb"]
 
 ### QCD uncorrelated
-				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","ttb","ttc","ttlight","Hptb","top","ewk"]
-				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","ttb","ttc","ttlight","Hptb","top","ewk"]
-				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","ttb","ttc","ttlight","Hptb","top","ewk"]
-				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","ttb","ttc","ttlight","Hptb","top","ewk"]
-				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","ttb","ttc","ttlight","Hptb","top","ewk"]
-				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","ttb","ttc","ttlight","Hptb","top","ewk"]
+				if ( y=="wbb" or y=="wbj") and "_one" in x: catStore[name]["hasMC"]=["qcd_wx_one","ttbar","Hptb","top","ewk"]
+				if ( y=="wbb" or y=="wbj") and "_two" in x: catStore[name]["hasMC"]=["qcd_wx_two","ttbar","Hptb","top","ewk"]
+				if ( y=="wbb" or y=="wbj") and "_three" in x: catStore[name]["hasMC"]=["qcd_wx_three","ttbar","Hptb","top","ewk"]
+				if ( y=="t0b" or y=="t1b") and "_one" in x: catStore[name]["hasMC"]=["qcd_tx_one","ttbar","Hptb","top","ewk"]
+				if ( y=="t0b" or y=="t1b") and "_two" in x: catStore[name]["hasMC"]=["qcd_tx_two","ttbar","Hptb","top","ewk"]
+				if ( y=="t0b" or y=="t1b") and "_three" in x: catStore[name]["hasMC"]=["qcd_tx_three","ttbar","Hptb","top","ewk"]
 
                         if doSChannel:
 				mcStore={
@@ -530,11 +538,10 @@ for y in channel:
 					"qcd_tx_one":{"name":"qcd_tx_one", "hist":["QCD_HT"], "num":4 },
 					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":5 },
 					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":6 },
-                                        "ttb":{ "name":"ttb","hist":["ttb_TT_TuneCUETP8M2T4"],"num":7},
-                                        "ttc":{ "name":"ttc","hist":["ttc_TT_TuneCUETP8M2T4"],"num":8},
-                                        "ttlight":{ "name":"ttlight","hist":["ttlight_TT_TuneCUETP8M2T4"],"num":9},
-					"top":{ "name":"top","hist":["ST","TTX"],"num":10},
-					"ewk":{ "name":"ewk","hist":["ewk"],"num":11}
+##                                        "ttbar":{ "name":"ttbar","hist":["ttb_TT_TuneCUETP8M2T4","ttc_TT_TuneCUETP8M2T4","ttlight_TT_TuneCUETP8M2T4"],"num":7},
+                                        "ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":7},
+					"top":{ "name":"top","hist":["ST","TTX"],"num":8},
+					"ewk":{ "name":"ewk","hist":["ewk"],"num":9}
 					}
 			else:
 				mcStore={
@@ -546,11 +553,10 @@ for y in channel:
 					"qcd_tx_one":{"name":"qcd_tx_one", "hist":["QCD_HT"], "num":4 },
 					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":5 },
 					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":6 },
-                                        "ttb":{ "name":"ttb","hist":["ttb_TT_TuneCUETP8M2T4"],"num":7},
-                                        "ttc":{ "name":"ttc","hist":["ttc_TT_TuneCUETP8M2T4"],"num":8},
-                                        "ttlight":{ "name":"ttlight","hist":["ttlight_TT_TuneCUETP8M2T4"],"num":9},
-					"top":{ "name":"top","hist":["ST","TTX"],"num":10},
-					"ewk":{ "name":"ewk","hist":["ewk"],"num":11}
+#                                        "ttbar":{ "name":"ttbar","hist":["ttb_TT_TuneCUETP8M2T4","ttc_TT_TuneCUETP8M2T4","ttlight_TT_TuneCUETP8M2T4"],"num":7},
+                                        "ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":7},
+					"top":{ "name":"top","hist":["ST","TTX"],"num":8},
+					"ewk":{ "name":"ewk","hist":["ewk"],"num":9}
 					}
 
                         if doSyst:
@@ -563,31 +569,44 @@ for y in channel:
 					### trigger efficiency
                                         "CMS_eff_trigger":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"CMS_eff_triggger","name":"XXX"},
 					### Theory modeling
-                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttb","ttc","ttlight"]},
-                                        "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttb","ttc","ttlight"]},
+                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttbar"]},
+                                        "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttbar"]},
                                         "muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]},
 					### MET-Jets-PU
-                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttb","ttc","ttlight","top","Hptb"]},
-                                        "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttb","ttc","ttlight","top","Hptb"]},
-                                        "CMS_scale_SDMass":{"type":"shape", "wsname":"CMS_scale_SDMass","name":"SDMassSCALE","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttb","ttc","ttlight","top","Hptb"]},
-                                        "CMS_eff_Tau21":{"type":"lnN", "value":["1.08","1.08","1.08","1.08"] ,"proc":["ttb","ttc","ttlight","Hptb"],"wsname":"CMS_eff_Tau21","name":"XXX"}, ## name used for shape
-                                        "CMS_eff_Tau32":{"type":"lnN", "value":["1.02","1.02","1.02","1.02"] ,"proc":["ttb","ttc","ttlight","Hptb"],"wsname":"CMS_eff_Tau32","name":"XXX"}, ## name used for shape
+                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three""ttbar","top","Hptb"]},
+                                        "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
+					## SDmass
+                                        "CMS_scale_SDMass":{"type":"shape", "wsname":"CMS_scale_SDMass","name":"SDMassSCALE","proc":["ttbar","top","Hptb"]},
+                                        "CMS_scale_SDMass_qcd_wx":{"type":"shape", "wsname":"CMS_scale_SDMass_qcd_wx","name":"SDMassSCALE","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three"]},
+                                        "CMS_scale_SDMass_qcd_tx":{"type":"shape", "wsname":"CMS_scale_SDMass_qcd_tx","name":"SDMassSCALE","proc":["qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+					## Taus
+                                        "CMS_eff_Tau21":{"type":"lnN", "value":["1.08","1.08","1.08"] ,"proc":["ttbar","top","Hptb"],"wsname":"CMS_eff_Tau21","name":"XXX"}, ## name used for shape
+                                        "CMS_eff_Tau32":{"type":"lnN", "value":["1.02","1.02","1.02"] ,"proc":["ttbar","top","Hptb"],"wsname":"CMS_eff_Tau32","name":"XXX"}, ## name used for shape
+					## JER/S
                                         "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
-                                        "CMS_scale_j_qcd":{"type":"shape", "wsname":"CMS_scale_j_qcd","name":"JESANDCSV","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
-                                        "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":["Hptb","ttb","ttc","ttlight","top"]},
+                                        "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":["Hptb","ttbar","top"]},
+                                        "CMS_scale_j_qcd_wx":{"type":"shape", "wsname":"CMS_scale_j_qcd_wx","name":"JESANDCSV","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three"]},
+                                        "CMS_scale_j_qcd_tx":{"type":"shape", "wsname":"CMS_scale_j_qcd_tx","name":"JESANDCSV","proc":["qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ##Light jets Heavy flavor contamination
 					"CMS_btag_HF_qcd":{"type":"shape", "wsname":"CMS_btag_HF_qcd","name":"CSVRHF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
-					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":["ttb","ttc","ttlight","top","Hptb"]},
+					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":["ttbar","top","Hptb"]},
                                         ##Heavy jets light flavor contamination
-                                        "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","Hptb","ttb","ttc","ttlight","top"]},
+                                        "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["ttbar","top","Hptb"]},
+                                        "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ##Linear and quadratic uncertainties
 					# note decouple the qcd
-					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":["ttb","ttc","ttlight","top","Hptb","top"]},
-					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":["ttb","ttc","ttlight","top","Hptb","top"]},
-                                        "CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":["ttb","ttc","ttlight","top","Hptb","top"]},
-                                        "CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":["ttb","ttc","ttlight","top","Hptb","top"]},
-                                        "CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":["ttb","ttc","ttlight","top","Hptb","top"]},
-                                        "CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":["ttb","ttc","ttlight","top","Hptb","top"]}
+					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":["ttbar","top","Hptb","top"]},
+					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":["ttbar","top","Hptb","top"]},
+                                        "CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":["ttbar","top","Hptb","top"]},
+                                        "CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":["ttbar","top","Hptb","top"]},
+                                        "CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":["ttbar","top","Hptb","top"]},
+                                        "CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":["ttbar","top","Hptb","top"]},
+					"CMS_btag_HFstat1_qcd":{"type":"shape", "wsname":"CMS_btag_HFstat1_qcd","name":"CSVRHFSTAT1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+					"CMS_btag_HFstat2_qcd":{"type":"shape", "wsname":"CMS_btag_HFstat2_qcd","name":"CSVRHFSTAT2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+                                        "CMS_btag_LFstat1_qcd":{"type":"shape", "wsname":"CMS_btag_LFstat1_qcd","name":"CSVRLFSTAT1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+                                        "CMS_btag_LFstat2_qcd":{"type":"shape", "wsname":"CMS_btag_LFstat2_qcd","name":"CSVRLFSTAT2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+                                        "CMS_btag_CFerr1_qcd":{"type":"shape", "wsname":"CMS_btag_CFerr1_qcd","name":"CSVRCERR1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+                                        "CMS_btag_CFerr2_qcd":{"type":"shape", "wsname":"CMS_btag_CFerr2_qcd","name":"CSVRCERR2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]}
                                         ####
                                         }
                         else:
@@ -600,11 +619,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_JULY27/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_AUG10/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_JULY27/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_AUG10/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -729,7 +748,9 @@ def writeNormSystLU(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 	invert=False
 
         for cat in catStore:
+
             for proc in mcStore:
+
                 if skip(catStore[cat],mcStore[proc]): continue
 		idx=-1
 		invert=False
@@ -882,19 +903,29 @@ for syst in systStore:
 		else:
 			writeSystShape(systStore[syst],systStore[syst]["proc"])
 
-if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024","0.965/1.024","0.965/1.024"],["ttb","ttc","ttlight"])
-if doSyst: writeNormSyst("pdf_gg",["1.042","1.042","1.042"],["ttb","ttc","ttlight"])
-if doSyst: writeNormSyst("CMS_mass_top",["1.027","1.027","1.027"],["ttb","ttc","ttlight"])
+if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024"],["ttbar"])
+if doSyst: writeNormSyst("pdf_gg",["1.042"],["ttbar"])
+if doSyst: writeNormSyst("CMS_mass_top",["1.027"],["ttbar"])
 
 ## "top" get the value od the single top
 if doSyst: writeNormSyst("QCDscale_top",["0.977/1.028"],["top"])
 if doSyst: writeNormSyst("pdf_top",["1.026"],["top"])
 if doSyst: writeNormSyst("CMS_mass_top",["1.022"],["top"])
 
+#if doSyst: writeNormSyst("bgnorm_tt2b",["1.50"],["tt2b"])
+#if doSyst: writeNormSyst("bgnorm_ttb",["1.30"],["ttb"])
+#if doSyst: writeNormSyst("bgnorm_ttc",["1.50"],["ttc"])
+#if doSyst: writeNormSyst("bgnorm_ttlight",["1.50"],["ttlight"])
+
 #if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
 #if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_",["1.20","1.20","1.20"],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
-if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure",["2.","2.","2."],["qcd_wx_one","qcd_wx_two","qcd_wx_three"])
-if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure",["2.","2.","2."],["qcd_tx_one","qcd_tx_two","qcd_tx_three"])
+
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_wx_one",["2."],["qcd_wx_one"])
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_wx_two",["2."],["qcd_wx_two"])
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_wx_three",["2."],["qcd_wx_three"])
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_tx_one",["2."],["qcd_tx_one"])
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_tx_two",["2."],["qcd_tx_two"])
+if doSyst: writeNormSystLU("CMS_HPTB_QCDnonclosure_tx_three",["2."],["qcd_tx_three"])
 
 ## "ewk" get the envelop of the DY and W+jets
 if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008"],["ewk"])
@@ -905,7 +936,6 @@ if doSyst: writeNormSyst("pdf_qqbar",["1.04"],["ewk"])
 #if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttb",["1.50"],["ttb"])
 #if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttbb",["1.50"],["ttbb"])
 #if doSyst: writeNormSyst("CMS_HPTB_QCDscale_tt2b",["1.50"],["tt2b"])
-
 
 #if doSyst: writeNormSyst("QCDscale_ewk",["0.98/1.02"],["ewk"])
 #if doSyst: writeNormSyst("pdf_qqbar",["1.04"],["ewk"])
@@ -991,8 +1021,6 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
 #			hDown = hTmpDown
 
 		hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpDown,"~/www/forMIAO/JUNE14/SYST").smooth()
-		hUp = hTmpUp
-		hDown = hTmpDown
 
         if 'Up' in s:
                 return hUp
@@ -1000,34 +1028,44 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
         if 'Down' in s:
                 return hDown
 
+## Envelop+Smooth
+def envelop(tfile,togetNom, togetSyst, s) :
 
-def envelop(tfile,togetClone, s) :
+	hTmpNom=mergeCategory(tfile,togetNom)
 
-        hname=togetClone+'RF'+s
-        hTmp=mergeCategory(tfile,hname)
+	hname=togetSyst+'RF'+s
+	hTmp=mergeCategory(tfile,hname)
+	h=hTmp.Clone()
 
-        h=hTmp.Clone()
+	if hTmp==None: return
 
-        if hTmp==None: return
+	for w in [ 'R','F','RF']:
+		for var in [ 'Up','Down']:
 
-        for w in [ 'R','F','RF']:
-                for var in [ 'Up','Down']:
+			hnameSyst=togetSyst+w+var
 
-                        hnameClone=togetClone+w+var
+			hTmp=mergeCategory(tfile,hnameSyst)
 
-                        hTmp=mergeCategory(tfile,hnameClone)
+			for iBin in range(1,h.GetNbinsX()+1):
+				c= h.GetBinContent(iBin)
 
-                        for iBin in range(1,h.GetNbinsX()+1):
-                                c= h.GetBinContent(iBin)
+	## take the maximum for the Up
+			if 'Up' in s and hTmp.GetBinContent(iBin)>c:
+				h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
 
-                        ## take the maximum for the Up and Down                                                                                                                           
-                                if 'Up' in s and hTmp.GetBinContent(iBin)>c:
-                                        h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
+	## take the minimum for the Down
+			if 'Down' in s and hTmp.GetBinContent(iBin)<c:
+				h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
 
-                        ## take the minimum for the Down                                                                                                                                  
-                                if 'Down' in s and hTmp.GetBinContent(iBin)<c:
-                                        h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
-        return h
+        if 'Up' in s:
+                hTmpUp = h
+                hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpUp.Clone("test1"),"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
+                return hUp
+
+        if 'Down' in s:
+                hTmpDown = h
+                hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpDown.Clone("test1"), hTmpDown,"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
+                return hDown
 
 ## import Everything in ws TODO
 def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
@@ -1138,14 +1176,12 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 					toget += "_" + syst["name"] + s
 
 				if syst != None and "muRF" in syst["wsname"] and not doSChannel:
-					if mc["name"]=="Hptb" or mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight":
-						hTmp = envelop(tfile,togetSyst,s)
-#						toget = togetClone+'RF'+s
+					if mc["name"]=="Hptb" or mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or mc["name"]=="ttbar":
+						hTmp = envelop(tfile,togetNom,togetSyst,s)
 
 				elif syst != None:
 
                                         hTmp = SmoothAndMergeSyst(tfile,togetNom,togetSyst,s)
-##                                      hTmp = MergeCategory(tfile,togetSyst+s)
 
 				else:
                                         hTmp = mergeCategory(tfile,togetNom)
@@ -1156,8 +1192,9 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 					print "<*> Hist '"+toget+"' doesn't exist"
 					raise IOError
 
-				if ( mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or "qcd" in mc["name"] ) and hTmp:
-					hTmp.Scale(1.50)
+# not using the 1/3 and 2/3
+#				if ( mc["name"]=="ttbar" or mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or "qcd" in mc["name"] ) and hTmp:
+#					hTmp.Scale(1.50)
 
 #				## foor QCD we do not apply the tauVeto and trigger
 #				if "qcd" in mc["name"] and hTmp:
@@ -1165,10 +1202,10 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				## top and W scale factor (for now only in ttbar later also signal)
 				## https://twiki.cern.ch/twiki/bin/view/CMS/JetTopTagging#13_TeV_working_points_CMSSW_8_0
 				## https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging
-				if ( mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or mc["name"]=="top") and ("t0b" in toget or "t1b" in toget) and hTmp:
+				if ( mc["name"]=="ttbar" or mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or mc["name"]=="top") and ("t0b" in toget or "t1b" in toget) and hTmp:
 					hTmp.Scale(1.06)
 					# uncertainties +0.08 -0.04
-				if ( mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or mc["name"]=="top") and ("wbb" in toget or "wbj" in toget) and hTmp:
+				if ( mc["name"]=="ttbar" or mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or mc["name"]=="top") and ("wbb" in toget or "wbj" in toget) and hTmp:
 					hTmp.Scale(1.11)
 					## need to have an uncetainty of 0.08
 
