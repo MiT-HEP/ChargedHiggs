@@ -82,12 +82,12 @@ int func(const gsl_vector * beta, void * p, gsl_vector * f)
     std::vector<info> *infos = (std::vector<info>*)p;
     int N=infos->size();
     // 0 1 projections in x/y
-    float Sx=0.,Sy=0.;
-    float lx = gsl_vector_get(beta,0);
-    float ly = gsl_vector_get(beta,1);
+    double Sx=0.,Sy=0.;
+    double lx = gsl_vector_get(beta,0);
+    double ly = gsl_vector_get(beta,1);
     for(int i=0;i<N;++i)  // the N-1 is H (constant)
     {
-        float bi = 0.;
+        double bi = 0.;
         if (not infos->at(i).constant) bi=gsl_vector_get(beta,i+2);
         Sx += infos->at(i).p4.Px() * std::exp(bi);
         Sy += infos->at(i).p4.Py() * std::exp(bi);
@@ -97,13 +97,13 @@ int func(const gsl_vector * beta, void * p, gsl_vector * f)
 
     assert(infos->at(N-1).constant); // the last sholud be the only one constant
 
-    float pHx = infos->at(N-1).p4.Px();
-    float pHy = infos->at(N-1).p4.Py();
+    double pHx = infos->at(N-1).p4.Px();
+    double pHy = infos->at(N-1).p4.Py();
     for(int i=0;i<N-1;++i)
     {
-        float bi = gsl_vector_get(beta,i+2);
-        float si = infos->at(i).sigma;
-        float fi=2*(bi/si-1)/(si) - lx*std::exp(bi)*pHx - ly*std::exp(bi)*pHy;
+        double bi = gsl_vector_get(beta,i+2);
+        double si = infos->at(i).sigma;
+        double fi=2*(bi)/(si*si) - lx*std::exp(bi)*pHx - ly*std::exp(bi)*pHy;
         gsl_vector_set(f,i+2,fi); 
     }
 
@@ -116,48 +116,69 @@ void func2 (const gsl_vector * alpha, void * params, double * f, gsl_vector * g)
 {
     std::vector<info> *infos = (std::vector<info>*)params;
     int N=infos->size();
-    float pHx = infos->at(N-1).p4.Px();
-    float pHy = infos->at(N-1).p4.Py();
+    double pHx = infos->at(N-1).p4.Px();
+    double pHy = infos->at(N-1).p4.Py();
 
-    float lambda=infos->at(N-1).lambda; //static
+    double lambda=infos->at(N-1).lambda; //static
     bool doNorm=infos->at(N-1).doNorm;
-    float norm=1.;
+    double norm=1.;
 
     int Na=N-1; // number of params to minimize
 
     // compute Etmiss
-    float metx=pHx , mety=pHy;
+    double metx=pHx , mety=pHy;
     if (doNorm) norm += infos->at(N-1).p4.Pt();
     for(unsigned i=0;i<Na;++i)
     {
-        float ai= gsl_vector_get(alpha,i);
+        double ai= gsl_vector_get(alpha,i);
         metx += ai*infos->at(i).p4.Px();
         mety += ai*infos->at(i).p4.Py();
         if (doNorm) norm += infos->at(i).p4.Pt();
     }
 
     // compute f and derivative
-    float value=0.0;
+    double value=0.0;
     for(unsigned i=0;i<Na;++i)
     {
-        float ai= gsl_vector_get(alpha,i);
+        double ai= gsl_vector_get(alpha,i);
         //if (ai <=0) GSL_NAN;
-        float lai= std::log(ai);
-        float si = infos->at(i).sigma;
+        double lai= std::log(ai);
+        double si = infos->at(i).sigma;
 
-        value+= std::pow( lai/si-float(1.),2);
+        value+= std::pow( lai/si,2);
 
-        float dfi=
-            float(2.)* ( lai/si-float(1.))/(ai*si) + 
-            lambda/norm*float(2.) * metx * infos->at(N-1).p4.Px() +
-            lambda/norm*float(2.) * mety * infos->at(N-1).p4.Py();
+        double dfi=
+            double(2.)* ( lai )/(ai*si*si) + 
+            lambda/norm*double(2.) * metx * infos->at(i).p4.Px() +
+            lambda/norm*double(2.) * mety * infos->at(i).p4.Py();
         if (g != NULL) gsl_vector_set(g,i,dfi);
     }
 
+    //double val2=value; //DEBUG
     value += lambda/norm * std::pow(metx,2) + lambda/norm*std::pow(mety,2);
 
     if (f!=NULL) *f=value;
-
+   
+    /* 
+    if(true){ // DEBUG
+        printf("--> func2 \n");
+        printf("norm=%d\n",doNorm);
+        printf("norm=%lf\n",norm);
+        printf("lambda=%lf\n",lambda);
+        printf("metx=%lf\n",metx);
+        printf("mety=%lf\n",mety);
+        printf("f=%lf\n",value);
+        printf("f=(pen) %lf +(metx) %lf +(mety) %lf\n",val2,lambda/norm * std::pow(metx,2),lambda/norm*std::pow(mety,2));
+        if (g != NULL){
+            printf("df= (");
+            for(int i=0;i<Na;++i) printf("%.5lf,",gsl_vector_get(g,i));
+            printf(")\n");
+        }
+        printf("a= (");
+        for(int i=0;i<Na;++i) printf("%.5lf,",gsl_vector_get(alpha,i));
+        printf(")\n");
+    }
+    */
     return ;
 }
 
@@ -239,9 +260,10 @@ void KinematicFit::runGeneric(){
             status =
                 gsl_multiroot_test_residual (s->f, 1e-3);
         }
-        while (status == GSL_CONTINUE && iter < 1000);
+        while (status == GSL_CONTINUE && iter < maxIteration);
 
-        printf ("status = %s\n", gsl_strerror (status));
+        //printf ("status = %s\n", gsl_strerror (status));
+        if (status != GSL_SUCCESS) std::cout<<"[WARNING] Unable to find minimum"<<std::endl;
 
         // copy values  beta-> alpha
         alpha.clear();
@@ -271,29 +293,44 @@ void KinematicFit::runGeneric(){
 
         const gsl_multimin_fdfminimizer_type *T;
         gsl_multimin_fdfminimizer *s;
-        T = gsl_multimin_fdfminimizer_conjugate_fr;
+        //T = gsl_multimin_fdfminimizer_conjugate_fr;
+        T = gsl_multimin_fdfminimizer_steepest_descent;
         s = gsl_multimin_fdfminimizer_alloc (T, p4.size());
 
-        gsl_multimin_fdfminimizer_set (s, &F, x, 1.e-2, 1e-4);
+        gsl_multimin_fdfminimizer_set (s, &F, x, 1e-2, 0.1); // first step-size and tolerance = decrease parameter
+
         do
         {
             iter++;
             status = gsl_multimin_fdfminimizer_iterate (s);
+            //printf("* Status of iterate is %d.\n",status);
 
-            if (status) break; // exit on success
+            if (status) break; // exit on error
 
-            status = gsl_multimin_test_gradient (s->gradient, 1e-3);
-
+            status = gsl_multimin_test_gradient (s->gradient, 1e-3); // absolute tolerance
+            
+            /* DEBUG
+            printf("-> status of gradient is %d\n",status);
+            printf("-> gradient is (");
+            
+            for(unsigned i=0;i<p4.size();++i)
+                printf("%.5f,",gsl_vector_get(s->gradient,i));
+            printf(")\n");
+            
             if (status == GSL_SUCCESS) 
                 printf ("Minimum found at:\n");
+            if (status == GSL_ENOPROG) 
+                printf ("Unable to progress towards a solution:\n");
 
-            printf ("%5d (%.5f,%.5f,...) %10.5f\n", iter,
-                    gsl_vector_get (s->x, 0), 
-                    gsl_vector_get (s->x, 1), 
-                    s->f);
+            printf("-> iter %5d (",iter); 
+            for(unsigned i=0;i<p4.size();++i)printf("%.5f,",gsl_vector_get (s->x, i));
+            printf(") %10.5f\n",s->f);
+            */
 
         }
-        while (status == GSL_CONTINUE && iter < 100);
+        while (status == GSL_CONTINUE && iter < maxIteration);
+
+        if (status != GSL_SUCCESS) std::cout<<"[WARNING] Unable to find minimum"<<std::endl;
 
         //copy back alpha vector
         alpha.clear();

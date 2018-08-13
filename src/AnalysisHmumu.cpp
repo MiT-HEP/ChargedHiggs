@@ -2245,6 +2245,7 @@ void HmumuAnalysis::updateMjj(){
         BB_KF3+=b2_kf3;
         jetVar_["mbbkf3"] = BB_KF3.M();
 
+        /*
         kf->doGhost=true;
         kf->run();
         
@@ -2254,6 +2255,7 @@ void HmumuAnalysis::updateMjj(){
         Log(__FUNCTION__,"DEBUG",Form("x(b2) %f ==%f",x(idx_b2+2),kf->alpha[idx_b2]));
         Log(__FUNCTION__,"DEBUG",Form("mbb=%f mbbcorr=%f mbbkf2=%f mbbkf3=%f",jetVar_["mbb"],jetVar_["mbbcorr"],jetVar_["mbbkf2"],jetVar_["mbbkf3"]));
         Log(__FUNCTION__,"DEBUG","------------------------------------------------");
+        */
 
         /* 
         Log(__FUNCTION__,"DEBUG","------------------------------------------------");
