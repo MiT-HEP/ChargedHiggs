@@ -7,6 +7,7 @@ import sys
 sys.setrecursionlimit(10000)
 import ROOT
 import time
+import re
 
 class ElapsedTimer(object):
     def __init__(self):
@@ -29,6 +30,7 @@ print "keras version=",keras.__version__
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
+import keras.regularizers as regularizers
 from keras.wrappers.scikit_learn import KerasRegressor
 from keras.utils import np_utils
 
@@ -89,10 +91,10 @@ def build_model():
     model = Sequential()
     #model.add(Convolution2D(32, 3, 3, activation='relu', input_shape=(1,28,28)))
     #model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(Dense(40, input_dim=len(features),activation='relu') )
+    model.add(Dense(40, input_dim=len(features),activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
     model.add(Dropout(0.25))
-    model.add(Dense(25,activation='tanh'))
-    model.add(Dense(10,activation='relu'))
+    model.add(Dense(25,activation='tanh',use_bias=True,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='glorot_normal',bias_initializer='zeros'))
+    model.add(Dense(10,activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros'))
     model.add(Dense(1,activation='sigmoid'))
     
     model.compile(
@@ -124,103 +126,96 @@ mctypes= [[-15,-10],##ggH
           [20,29], ## TT
         ]
 
+#import threading
+#lock=threading.Lock()
+#def threadsafe(f):
+#    global lock
+#    def wrapper(*a,**kw):
+#        with lock:
+#            return f(*a,**kw)
+#    return wrapper
 
 def fill(batchsize=10000):
    print "-> Start fill"
    X=[]
-   y=[]
-   w=[]
-   t=ROOT.TChain("hmm")
+   Y=[]
+   W=[]
+
+   #t=ROOT.TChain("hmm")
+   #for idx in range(0,300):
+   #    #t.Add("/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v4/ChHiggs_%d.root"%idx)
+   #    if idx==1 or idx==56: continue
+   #    if idx>10: break
+   #    t.Add("/eos/cms/store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx)
 
    for idx in range(0,300):
-       #t.Add("/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v4/ChHiggs_%d.root"%idx)
        if idx==1 or idx==56: continue
-       t.Add("/eos/cms/store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx)
+       f=ROOT.TFile.Open("root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx)
+       t=f.Get("hmm")
+       if t==None: print "ERROR File",f.GetName(),"does not exist"
+       print "Entries in file",idx,"Entries=",t.GetEntries()
+       for ientry in range(0,t.GetEntries()):
+            t.GetEntry(ientry)
 
-   print "TotEntries=",t.GetEntries()
+            if t.eventNum %2 ==0: continue
+            ## selection
+            if t.mass <110 or t.mass >150 : continue
+            if not (t.pass_recomuons and t.pass_asymmcuts and t.pass_trigger)  : continue
+            #dpOp = (res.resolution(t.pt1,t.eta1)) **2 + (res.resolution(t.pt2,t.eta2)**2)
+            #dmOm = math.sqrt(dpOp)
+            #dm = dmOm * t.mass
 
-   for ientry in range(0,t.GetEntries()):
-        t.GetEntry(ientry)
+            ### define weight
+            #w.append(1./dm * t.mcWeight * t.puWeight)
+            #w.append(1./dm )
 
-        if t.eventNum %2 ==0: continue
-        ## selection
-        if t.mass <110 or t.mass >150 : continue
-        if not (t.pass_recomuons and t.pass_asymmcuts and t.pass_trigger)  : continue
-        #dpOp = (res.resolution(t.pt1,t.eta1)) **2 + (res.resolution(t.pt2,t.eta2)**2)
-        #dmOm = math.sqrt(dpOp)
-        #dm = dmOm * t.mass
+            ptj1 = 0.
+            if t.njets >0 : ptj1=t.jet_pt[0]
 
-        ### define weight
-        #w.append(1./dm * t.mcWeight * t.puWeight)
-        #w.append(1./dm )
+            ## fill
 
-        ptj1 = 0.
-        if t.njets >0 : ptj1=t.jet_pt[0]
+            #'@' -> 't.', '~'
+            x= [ eval(re.sub('@','t.',s)) if '@' in s else eval(re.sub('~','',s)) if '~' in s else eval("t."+s) for s in features ]
+            ## fill -- target
 
-        ## fill
+            if t.mc< 0 : y=1
+            else : y=0
 
-        #'@' -> 't.', '~'
-        x= [ eval("t."+s) if '@' not in s else eval(re.sub('@','t.',s)) if '~' not in s else eval(s)  for s in features ]
+            Y.append(y)
+            X.append(x)
+            
+            xsec=1
+            if t.mc <0 :  xsec*=2.176E-4
+            if t.mc <-10 and t.mc >-15 : xsec*=48.58
+            if t.mc <-20 and t.mc >-25 : xsec*=3.78
+            w= t.mcWeight * xsec
+            W.append(w )
+            
+            #yield np.array([x]),np.array([y]),np.array([w])
 
-        #x= [          t.pt1/t.mass, #0
-        #              t.pt2/t.mass, #1
-        #              t.eta1, #eta1 #2
-        #              t.eta2, #eta2 #3
-        #              t.phi1, #phi1 #4
-        #              t.phi2, #phi1 #5
-        #              #
-        #              t.Hpt, ## Hpt       #6
-        #              t.Heta, ## Heta     #7 
-        #              t.Hphi, ## Hphi     #8
-        #              t.mjj_1, ##mjj      #9
-        #              t.mjj_2,            #10
-        #              t.detajj_1, ##detajj#11
-        #              t.detajj_2,         #12
-        #              #t.nbjets, ##nb      #13
-        #              t.maxDeepB,      #13
-        #              t.njets, ##nj       #14
-        #              ptj1, ##jpt         #15
-        #              t.met, ##met         #16
-        #              t.softNjets1,   #17
-        #              t.softHt1,      #18
-        #              t.firstQGL,     #19
-        #              t.secondQGL,    #20
-        #              t.thirdQGL,     #21
-        #              t.costhetastar,     #22
-        #          ]
-        #res (pt,eta)
-        ## fill -- target
-        if t.mc< 0 : y.append(1)
-        else : y.append(0)
-        X.append(x)
-        
-        xsec=1
-        if t.mc <0 :  xsec*=2.176E-4
-        if t.mc <-10 and t.mc >-15 : xsec*=48.58
-        if t.mc <-20 and t.mc >-25 : xsec*=3.78
+            if batchsize>0 and len(Y)>=batchsize: 
+                yield np.array(X),np.array(Y),np.array(W)
+                X=[]
+                Y=[]
+                W=[]
 
-        w.append(t.mcWeight * xsec )
-
-        if n>0 and len(y)>=n: 
-            yield np.array(X),np.array(y),np.array(w)
-            X=[]
-            y=[]
-            w=[]
    print "-> End batch"
-   yield np.array(X),np.array(y),np.array(w)
+   return
 
 
 timer = ElapsedTimer()
 
-for ibatch, (X,y) in enumerate(fill(10000)):
-    print "---- DEBUG",ibatch,"----------"
-    print "X=",X
-    print "y=",y
-    print "w=",w
-    print "------------------------------"
-    if ibatch ==0:
-        classifier.fit(X,y,sample_weight=w)
-    classifier.train_on_batch(X,y,sample_weight=w)
+#for ibatch, (X,y,w) in enumerate(fill(10000)):
+#    print "---- DEBUG",ibatch,"----------"
+#    print "X=",X
+#    print "y=",y
+#    print "w=",w
+#    print "------------------------------"
+#    if ibatch ==0:
+#        classifier.fit(X,y,sample_weight=w)
+#    classifier.train_on_batch(X,y,sample_weight=w)
+
+classifier.fit_generator(fill(10000),steps_per_epoch=10000, epochs=10)#,workers=3)
 
 print "-> End training"
 
