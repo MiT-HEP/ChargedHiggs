@@ -283,6 +283,14 @@ void Weight::SetJetFlavorSF(const string& label, int flavor)
     p->setJetFlavor(flavor);
 }
 
+void Weight::SetDiscrSF( const string& label, float discr)
+{
+    SF_CSV *p =  dynamic_cast<SF_CSV*> ( sf_db[label] );
+    if (p==NULL) Log(__FUNCTION__,"ERROR", " SF '" + label + "' is not CSV" );
+    p->setDiscr(discr);
+
+}
+
 // -----------------------
 string Weight::LoadMC( string label) 
 { 

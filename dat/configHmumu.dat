@@ -16,6 +16,8 @@ include=dat/catalog/2018.moriond/rares.dat
 
 ## Signal
 include=dat/catalog/2018.moriond/hmm.dat
+## HH
+#include=dat/catalog/2018.moriond/hh.dat
 
 ### DATA
 include=dat/catalog/2018.moriond/singleMuon.dat
@@ -32,7 +34,9 @@ addConfig=HmumuAnalysis|doEvenOnly=1
 
 #Smear=NONE
 #Smear=NONE,JES,JER,PU,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag")
-Smear=NONE,JES,PU
+#Smear=NONE,JES,PU
+Smear=NONE
+#Smear=NONE,PU,*[1!10]SmearJesAndCSV(%%d!1)
 
 #Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag")
 #Smear=NONE,*[-133!0]SmearKaMuCa(%%d),*[1!135]SmearKaMuCa(%%d)

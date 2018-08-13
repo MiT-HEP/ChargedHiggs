@@ -123,6 +123,7 @@ n=0
 myTmp= r.TFile.Open("/tmp/" + os.environ["USER"] + "/mytmp.root","RECREATE")
 myTmp.cd()
 sum=r.TH1D("SumWeights","Sum of mcWeights",1,0,2)
+sum2=r.TH1D("SumWeights","Sum of mcWeights^2",1,0,2)
 
 for idx,fName in enumerate(fileList):
 	print "processing file:",idx,"/",len(fileList)," : ", fName
@@ -148,6 +149,9 @@ for idx,fName in enumerate(fileList):
 	mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)
 	t.Draw("1>>mysum","mcWeight") ##>>+ doesn't work
 	sum.Add(mysum)
+	mysum2=r.TH1D("mysum2","Sum of mcWeights^2",1,0,2)
+	t.Draw("1>>mysum2","mcWeight*mcWeight") ##>>+ doesn't work
+	sum2.Add(mysum2)
 	n += t.GetEntries()
 	fROOT.Close()
 
@@ -159,6 +163,8 @@ except ZeroDivisionError:
     print "internal xSec Error: Sum is 0"
 print "SumWeights = ", sum.GetBinContent(1)
 print "Tot Entries = ", n
+print "SumWeights2 = ", sum2.GetBinContent(1)
+print "Effective Events = ", (sum.GetBinContent(1))**2 / sum2.GetBinContent(1), "Ratio=",(sum.GetBinContent(1))**2 / sum2.GetBinContent(1) /n
 print "---------------------------------------------"
 ### LABEL dir Entries xSec
 f = open (opts.file,"a")

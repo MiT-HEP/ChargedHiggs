@@ -107,8 +107,11 @@ void LoadNero::FillEventInfo(){
     event_ -> rho_ = e->rho;
 
     event_ -> met_ . setFullRecommendation ( e->selBits & BareEvent::FullRecommendation );
-    event_ -> met_ . filterbadPFMuon = e->filterbadPFMuon;
-    event_ -> met_ . filterbadChHadrons = e->filterbadChCandidate;
+
+    //if (tree_->GetBranchStatus("filterbadPFMuon"){ // TO REMOVE and pass with flags
+    //    event_ -> met_ . filterbadPFMuon = e->filterbadPFMuon;
+    //    event_ -> met_ . filterbadChHadrons = e->filterbadChCandidate;
+    //}
 
     BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["BareVertex"] ] ) ; assert(v!=NULL);
     event_ -> npv_ = v->npv;
@@ -160,8 +163,10 @@ void LoadNero::FillJets(){
 #endif
 //
         //bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
-#warning TIGHT_ID_2017_REIMPLEMENTED
+        
+//#warning TIGHT_FROM_NTUPLES
         bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetTight;
+#warning TIGHT_ID_2017_REIMPLEMENTED
         float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
         if ( aeta >2.7 and aeta <=3.0 ) 
         {
@@ -225,6 +230,11 @@ void LoadNero::FillJets(){
         //if (tree_->GetBranchStatus("jetQglPtDrLog") ) j->SetQGLVar( "PtDrLog", bj -> qglPtDrLog -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglAxis2") ) j->SetQGLVar( "axis2", bj -> qglAxis2 -> at(iJet) );
         //if (tree_->GetBranchStatus("jetQglAxis1") ) j->SetQGLVar( "axis1", bj -> qglAxis1 -> at(iJet) );
+        
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> B Correction");
+#endif
+        if (tree_->GetBranchStatus("jetBCorr")) j->SetBCorrection(bj->bcorr->at(iJet), bj->bcorrunc->at(iJet));
     
 #ifdef VERBOSE
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> RawPt");

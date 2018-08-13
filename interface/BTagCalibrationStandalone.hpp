@@ -153,26 +153,34 @@ protected:
 class BTagCalibrationReader
 {
 public:
+  class BTagCalibrationReaderImpl;
   BTagCalibrationReader() ;// pimpl needs to be complete when implemented
-  BTagCalibrationReader(BTagEntry::OperatingPoint op,
-                        std::string sysType="central");
   ~BTagCalibrationReader(); // pimpl needs to be complete when implemented
+
+  BTagCalibrationReader(BTagEntry::OperatingPoint op,
+                        const std::string & sysType="central",
+                        const std::vector<std::string> & otherSysTypes={});
 
   void load(const BTagCalibration & c,
             BTagEntry::JetFlavor jf,
-            std::string measurementType="comb");
+            const std::string & measurementType="comb");
 
   double eval(BTagEntry::JetFlavor jf,
               float eta,
               float pt,
               float discr=0.) const;
 
-  std::pair<float, float> min_max_pt(BTagEntry::JetFlavor jf, 
-                                     float eta, 
+  double eval_auto_bounds(const std::string & sys,
+                          BTagEntry::JetFlavor jf,
+                          float eta,
+                          float pt,
+                          float discr=0.) const;
+
+  std::pair<float, float> min_max_pt(BTagEntry::JetFlavor jf,
+                                     float eta,
                                      float discr=0.) const;
 
 protected:
-  class BTagCalibrationReaderImpl;
   std::unique_ptr<BTagCalibrationReaderImpl> pimpl;
 };
 

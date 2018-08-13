@@ -53,7 +53,7 @@ double base 2.0 0.00
 ## BTag from POG ##
 ## https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
 ###################
-bdeep csv aux/BTag/DeepCSV_94XSF_V2_B_F.csv
+bdeep csv aux/BTag/DeepCSV_94XSF_V3_B_F.csv
 #bdeep-B csv aux/BTag/DeepCSV_94XSF_V2_B.csv
 #bdeep-CE csv aux/BTag/DeepCSV_94XSF_V2_C_E.csv
 #bdeep-EF csv aux/BTag/DeepCSV_94XSF_V2_E_F.csv

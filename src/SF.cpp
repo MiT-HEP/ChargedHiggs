@@ -343,58 +343,70 @@ void SF_CSV::init(string filename)
     //    string measB="mujets";
     string measB="comb";
     string measL="incl";
-    calib=new BTagCalibration("CSVv2",filename);
+    //calib=new BTagCalibration("CSVv2",filename);
+    //Log(__FUNCTION__,"DEBUG","calibration");
+    calib=new BTagCalibration("DeepCSV",filename);
+    //Log(__FUNCTION__,"DEBUG","ReaderL: Constructor");
     readerL=new BTagCalibrationReader( BTagEntry::OP_LOOSE,  // operating point 
-                    "central"           // systematics type
+                    "central" ,          // systematics type
+                    {"up","down"}        // other systes
                      );
-    readerL->load( *calib, BTagEntry::FLAV_B,measB); readerL->load( *calib, BTagEntry::FLAV_C,measB); readerL->load( *calib, BTagEntry::FLAV_UDSG,measL);
+    //Log(__FUNCTION__,"DEBUG","ReaderL: load");
+    readerL->load( *calib, BTagEntry::FLAV_B,measB); 
+    readerL->load( *calib, BTagEntry::FLAV_C,measB); 
+    readerL->load( *calib, BTagEntry::FLAV_UDSG,measL);
 
-    readerL_up=new BTagCalibrationReader( BTagEntry::OP_LOOSE,"up" );
-    readerL_down=new BTagCalibrationReader( BTagEntry::OP_LOOSE, "down" );
+    //Log(__FUNCTION__,"DEBUG","ReaderM: Constructor");
+    readerM=new BTagCalibrationReader( BTagEntry::OP_MEDIUM, "central", {"up","down"});
+    readerM->load( *calib, BTagEntry::FLAV_B,measB); 
+    readerM->load( *calib, BTagEntry::FLAV_C,measB); 
+    readerM->load( *calib, BTagEntry::FLAV_UDSG,measL);
 
-    readerL_up->load( *calib, BTagEntry::FLAV_B,measB); readerL_up->load( *calib, BTagEntry::FLAV_C,measB); readerL_up->load( *calib, BTagEntry::FLAV_UDSG,measL);
-    readerL_down->load( *calib, BTagEntry::FLAV_B,measB); readerL_down->load( *calib, BTagEntry::FLAV_C,measB); readerL_down->load( *calib, BTagEntry::FLAV_UDSG,measL);
+    //Log(__FUNCTION__,"DEBUG","ReaderT: Constructor");
+    readerT=new BTagCalibrationReader( BTagEntry::OP_TIGHT, "central", {"up","down"});
 
-    readerM=new BTagCalibrationReader( BTagEntry::OP_MEDIUM, "central" );
-    readerM_up=new BTagCalibrationReader(  BTagEntry::OP_MEDIUM,  "up" );
-    readerM_down=new BTagCalibrationReader(  BTagEntry::OP_MEDIUM,  "down" );
+    readerT->load( *calib, BTagEntry::FLAV_B,measB); 
+    readerT->load( *calib, BTagEntry::FLAV_C,measB); 
+    readerT->load( *calib, BTagEntry::FLAV_UDSG,measL);
 
-    readerM->load( *calib, BTagEntry::FLAV_B,measB); readerM->load( *calib, BTagEntry::FLAV_C,measB); readerM->load( *calib, BTagEntry::FLAV_UDSG,measL);
-    readerM_up->load( *calib, BTagEntry::FLAV_B,measB); readerM_up->load( *calib, BTagEntry::FLAV_C,measB); readerM_up->load( *calib, BTagEntry::FLAV_UDSG,measL);
-    readerM_down->load( *calib, BTagEntry::FLAV_B,measB); readerM_down->load( *calib, BTagEntry::FLAV_C,measB); readerM_down->load( *calib, BTagEntry::FLAV_UDSG,measL);
+    /// reshaping
+    Log(__FUNCTION__,"DEBUG","ReaderR: Constructor");
+    readerR=new BTagCalibrationReader( BTagEntry::OP_RESHAPING, "central",{"down_cferr1","down_cferr2","down_hf","down_hfstats1","down_hfstats2","down_jes","down_lf","down_lfstats1","down_lfstats2","up_cferr1","up_cferr2","up_hf","up_hfstats1","up_hfstats2","up_jes","up_lf","up_lfstats1","up_lfstats2"} );
 
-    readerT=new BTagCalibrationReader( BTagEntry::OP_TIGHT, "central" );
-    readerT_up=new BTagCalibrationReader( BTagEntry::OP_TIGHT,  "up" );
-    readerT_down=new BTagCalibrationReader( BTagEntry::OP_TIGHT,  "down" );
-
-    readerT->load( *calib, BTagEntry::FLAV_B,measB); readerT->load( *calib, BTagEntry::FLAV_C,measB); readerT->load( *calib, BTagEntry::FLAV_UDSG,measL);
-    readerT_up->load( *calib, BTagEntry::FLAV_B,measB); readerT_up->load( *calib, BTagEntry::FLAV_C,measB); readerT_up->load( *calib, BTagEntry::FLAV_UDSG,measL);
-    readerT_down->load( *calib, BTagEntry::FLAV_B,measB); readerT_down->load( *calib, BTagEntry::FLAV_C,measB); readerT_down->load( *calib, BTagEntry::FLAV_UDSG,measL);
-
+    Log(__FUNCTION__,"DEBUG","ReaderR: load");
+    readerR->load( *calib, BTagEntry::FLAV_B,"iterativefit"); 
+    readerR->load( *calib, BTagEntry::FLAV_C,"iterativefit"); 
+    readerR->load( *calib, BTagEntry::FLAV_UDSG,"iterativefit");
+    Log(__FUNCTION__,"DEBUG","Done");
     return;
 }
 
 void SF_CSV::set( float pt, float eta)
 {
-   set(pt,eta,cached_wp,cached_flavor); 
+   set(pt,eta,cached_wp,cached_flavor,cached_discr); 
 }
 
 void SF_CSV::setWP(int wp){
-   set(cached_pt,cached_eta,wp,cached_flavor); 
+   set(cached_pt,cached_eta,wp,cached_flavor,cached_discr); 
 }
 
 void SF_CSV::setJetFlavor(int flavor){
-   set(cached_pt,cached_eta,cached_wp,flavor); 
+   set(cached_pt,cached_eta,cached_wp,flavor,cached_discr); 
+}
+
+void SF_CSV::setDiscr(float discr){
+   set(cached_pt,cached_eta,cached_wp,cached_flavor,discr); 
 }
 
 
-void SF_CSV::set( float pt, float eta, int wp, int flavor)
+void SF_CSV::set( float pt, float eta, int wp, int flavor,float discr)
 {
     // -- cache --
     cached_pt=pt;
     cached_eta=eta;
     cached_wp=wp;
     cached_flavor=flavor;
+    cached_discr=discr;
 
     // change flavor to be easy to parse later
     flavor = abs(flavor);
@@ -409,46 +421,54 @@ void SF_CSV::set( float pt, float eta, int wp, int flavor)
     auto BTEFlav = BTagEntry::FLAV_B;
     if (isCJet) BTEFlav = BTagEntry::FLAV_C;
     if (isLJet) BTEFlav = BTagEntry::FLAV_UDSG;
-    
-    if ( (isBJet or isCJet) and pt> MaxBJetPt ) { pt=MaxBJetPt; scaleSyst=2.0;}
-    if (isLJet and pt> MaxLJetPt ) { pt=MaxLJetPt; scaleSyst=2.0;}
-    if ( (isBJet or isCJet) and pt< MinBJetPt ) { pt=MinBJetPt; scaleSyst=2.0;}
-    if (isLJet and pt< MinLJetPt ) { pt=MinLJetPt; scaleSyst=2.0;}
+   
+    // now done with auto_bounds 
+    //if ( (isBJet or isCJet) and pt> MaxBJetPt ) { pt=MaxBJetPt; scaleSyst=2.0;}
+    //if (isLJet and pt> MaxLJetPt ) { pt=MaxLJetPt; scaleSyst=2.0;}
+    //if ( (isBJet or isCJet) and pt< MinBJetPt ) { pt=MinBJetPt; scaleSyst=2.0;}
+    //if (isLJet and pt< MinLJetPt ) { pt=MinLJetPt; scaleSyst=2.0;}
     
     BTagCalibrationReader *nominal{0};
-    BTagCalibrationReader *up{0};
-    BTagCalibrationReader *down{0};
 
     if (wp ==0)
     {
-        nominal = readerL; up = readerL_up ; down=readerL_down;
+        nominal = readerL; 
     }
     else if (wp ==1)
     {
-        nominal = readerM; up = readerM_up ; down=readerM_down;
+        nominal = readerM; 
     }
     else if (wp ==2)
     {
-        nominal = readerT; up = readerT_up ; down=readerT_down;
+        nominal = readerT; 
+    }
+    else if (wp ==3)
+    {
+        nominal = readerR; 
     }
     else { Log(__FUNCTION__,"ERROR","Unsupported WP"); throw abortException() ;}
 
-    sf=nominal->eval(BTEFlav, eta, pt);
+    // ********************************** //
+    sf=nominal->eval_auto_bounds("central",BTEFlav, eta, pt,discr);
+    // ********************************** //
 
-    if (simpleError){
-        errUp=(up->eval(BTEFlav, eta, pt) -sf ) * scaleSyst;
-        errDown=(sf - down->eval(BTEFlav, eta, pt) ) * scaleSyst;
+    if (simpleError and wp !=3){
+        errUp=(nominal->eval_auto_bounds("up",BTEFlav, eta, pt,discr) -sf ) * scaleSyst;
+        errDown=(sf - nominal->eval_auto_bounds("down",BTEFlav, eta, pt,discr) ) * scaleSyst;
     }
-    else // independent errors for L and B/C
+    else if (wp !=3)// independent errors for L and B/C
     {
         double active=1.0;
 
         if (BTEFlav == BTagEntry::FLAV_B or BTEFlav== BTagEntry::FLAV_C and systB==0) active=0.0;
         if (BTEFlav == BTagEntry::FLAV_UDSG and systL==0) active=0.0;
 
-
-        errUp=(up->eval(BTEFlav, eta, pt) -sf ) * scaleSyst * active ;
-        errDown=(sf - down->eval(BTEFlav, eta, pt) ) * scaleSyst *active ;
+        errUp=(nominal->eval_auto_bounds("up",BTEFlav, eta, pt,discr) -sf ) * active ;
+        errDown=(sf - nominal->eval_auto_bounds("down",BTEFlav, eta, pt,discr) ) * active ;
+    }
+    else if (systType !=""){ // reshaping
+        sf=nominal->eval_auto_bounds(systType,BTEFlav, eta, pt,discr) ;//-sf ) ;
+         
     }
 
     return;

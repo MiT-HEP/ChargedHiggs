@@ -110,8 +110,13 @@ if opts.classname== "Fitter":
         fitter.processes.push_back(procStr)
     fitter.inputMasks.clear()
     for catStr in config.categories:
-        fitter.inputMasks.push_back("HmumuAnalysis/Vars/Mmm_"+catStr+"_%s_HToMuMu_M%.0f")
-        for procStr in [ "GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]:
+
+        if catStr=="": 
+            fitter.inputMasks. push_back( config.dirname+config.varname + "_" + config.sigspec)
+        else:
+            fitter.inputMasks.push_back(config.dirname+config.varname+"_"+catStr+"_"+config.sigspec)
+
+        for procStr in config.processes:
             if procStr == "ttH":
                 fitter.SetGaussians(fitter.inputMasks.size()-1,procStr, 2)
             else:
@@ -178,7 +183,10 @@ if opts.classname== "BackgroundFitter":
     ## Hmumu
     fitter.inputMasks.clear()
     for catStr in config.categories:
-        fitter.inputMasks.push_back("HmumuAnalysis/Vars/Mmm_"+catStr+"_Data")
+        if catStr =="":
+            fitter.inputMasks.push_back(config.dirname + config.varname+"_Data")
+        else:
+            fitter.inputMasks.push_back(config.dirname + config.varname+"_"+catStr+"_Data")
 
 ################ INIT FITTER ##########
 if opts.verbose: print "-> Init"

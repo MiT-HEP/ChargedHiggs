@@ -3,7 +3,7 @@
 
 void RochesterCorrections::Init(){
     Log(__FUNCTION__,"INFO","Init Rochester Corrections with aux/rochester/RoccoR2017v0.txt");
-    corrector_.reset(new RoccoR("aux/rochester/RoccoR2017v0.txt") ) ;
+    corrector_.reset(new RoccoR("aux/rochester/RoccoR2017v1.txt") ) ;
 }
 
 int RochesterCorrections::correct(Event *e){
@@ -44,10 +44,14 @@ int RochesterCorrections::correct(Event *e){
             {
                 //Log(__FUNCTION__,"DEBUG",Form("-> Correcting MC with: ch=%d pt=%f eta=%f nl=%d u1=%f s=%f m=%f idx=%d",lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),nl,u1,s,m,mcIdx));
                 //Log(__FUNCTION__,"DEBUG",Form("->  -----      and gen: idx=%d pt=%f eta=%f",mcIdx,gen[mcIdx]->Pt(),gen[mcIdx]->Eta()));
-                mcSF=corrector_->kScaleFromGenMC(lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, gen[mcIdx]->Pt(), u1, s, m);
+                //v0
+                //mcSF=corrector_->kScaleFromGenMC(lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, gen[mcIdx]->Pt(), u1, s, m);
+                mcSF=corrector_->kSpreadMC(lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), gen[mcIdx]->Pt(), s, m);
             }
             else
             {
+                //v0
+                //mcSF = corrector_->kScaleAndSmearMC(lep->Charge(),lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, u1, u2, s, m);
                 mcSF = corrector_->kScaleAndSmearMC(lep->Charge(),lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, u1, u2, s, m);
             }
             if (mcSF>1.5 or mcSF<0.5) {

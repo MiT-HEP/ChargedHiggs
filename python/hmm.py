@@ -11,6 +11,9 @@ class HmmConfig():
     '''
     def __init__(self):
         ## CATEGORIES and MAP ##
+        self.dirname="HmumuAnalysis/Vars/" 
+        self.varname="Mmm"
+        self.sigspec="%s_HToMuMu_M%.0f" ## the %s is for the process substitution
         self.muCategories=["BB","BO","BE","OO","OE","EE"]
         #self.procCategories= [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]
         self.procCategories= [ "VBF0","GF","VBF1","Untag0","Untag1"]
@@ -198,8 +201,8 @@ class HmmConfig():
         elif type == "ggH" or type=="GluGlu": col=0
         elif type == "ttH": col=5
         elif type == "bbH" and mass==125 : return 4.880E-01
-        elif type == "WMinusH": col=2
-        elif type == "WPlusH": col=3
+        elif type == "WMinusH": col=3
+        elif type == "WPlusH": col=2
 
         if col<0 : raise ValueError
 
@@ -291,10 +294,31 @@ class HmmConfigExCat(HmmConfigAutoCat):
         self.SimpleScaleAndSmear()
         self.computeVersioning()
 
+
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
-hmmExCat = HmmConfigExCat()
+hmmExCat = HmmConfigExCat(16)
 hmmExCatBoost = HmmConfigExCat(21)
+
+class HHConfig(HmmConfig):
+    def __init__(self):
+        HmmConfig.__init__(self)
+        self.categories=[""]
+        self.processes=["GluGluToHHTo2B2M_node_4"]
+        self.sig_mass_points=[125]
+        self.sigfit_gaussians={}
+        self.varname="Mmm_KF2_HbbHmm"
+        #inputMask = dir + var +"_" + cat +"_"  + sigspec  if cat=="" w/o __
+        self.sigspec="%s" ## the %s is for the process substitution
+
+        # KEY: TH1D      Mmm_HbbHmm_GluGluToHHTo2B2M_node_4;1    Mass (110-150)
+        # KEY: TH1D      Mmm_HbbHmm_VBFHHTo2B2Mu_CV_1_C2V_1_C3_1;1       Mass (110-150)
+        # KEY: TH1D      Mmm_KF2_HbbHmm_GluGluToHHTo2B2M_node_4;1        Mass (110-150)
+        # KEY: TH1D      Mmm_KF2_HbbHmm_VBFHHTo2B2Mu_CV_1_C2V_1_C3_1;1 
+        self.SimpleScaleAndSmear()
+        self.computeVersioning()
+
+hh=HHConfig()
 
 if __name__=="__main__":
     #hmm.Print()

@@ -2,6 +2,7 @@
 jetP4
 jetUnc
 jetBdiscr
+jetBCorr*
 jetSelBits
 jetQGL
 jetcemf

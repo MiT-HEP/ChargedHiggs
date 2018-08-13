@@ -16,8 +16,9 @@ parser.add_option("-f","--file"	,dest="file"	,type='string',help="InputFile. [De
 parser.add_option("-o","--output",dest="out"	,type='string',help="OutputFile. [Default=%default]",default='TauOptHisto.root')
 parser.add_option("-s","--sig"	,dest="sig"	,type='string',help="Sig Histo. [Default=%default]",default='Iso_Match_HplusToTauNu-M200')
 parser.add_option("-b","--bkg"	,dest="bkg"	,type='string',help="Bkg Histo. [Default=%default]",default='Iso_Lead_QCD')
-parser.add_option("-l","--lumi"	,dest="lumi"	,type='float' ,help="InputFile. [Default=%default]",default=5000)
+parser.add_option("-l","--lumi"	,dest="lumi"	,type='float' ,help="InputFile. [Default=%default]",default=-1)
 parser.add_option("-g","--great",dest="great",action='store_true',help="Sig Cut is greater than, instead of less than",default=False)
+parser.add_option("-a","--abs",dest="abs",action='store_true',help="Apply Abs on the fly",default=False)
 
 parser.add_option("","--double",dest="double",action='store_true',help="Do Double Boundary optimisation. (single variable, two cat)",default=False)
 
@@ -37,6 +38,21 @@ fOutput = ROOT.TFile.Open(opts.out,"RECREATE")
 if fInput == None:
 	print "'"+opts.file+"': No such file or directory"
 
+## import hmm config to normalize Higgs signals
+print "-> Looking for basepath"
+basepath = ""
+mypath = os.path.abspath(os.getcwd())
+while mypath != "" and mypath != "/":
+	if "ChargedHiggs" in os.path.basename(mypath):
+		basepath = os.path.abspath(mypath)
+	mypath = os.path.dirname(mypath)
+print "-> Base Path is " + basepath
+sys.path.insert(0,basepath)
+sys.path.insert(0,basepath +"/python")
+from hmm import *
+config = hmm
+if opts.lumi<0: opts.lumi=config.lumi()
+
 def RemoveSpikes(h, eonly = True,n = 1):
 	for i in range(1+n, h.GetNbinsX() + 1 -n ): 
 		c = h.GetBinContent(i)
@@ -55,24 +71,62 @@ def RemoveSpikes(h, eonly = True,n = 1):
 		if not eonly and  cm > 1.5*c:
 			h.SetBinContent(i,cm)
 
-def GetHistoFromFile( nameString ):
-	''' Collect from the inputFiles the histograms and Add them'''
-	sig = fInput.FindObjectAny( nameString )
+def Abs(h):
+    ''' Apply Abs '''
+    for i in range(1,h.GetNbinsX()+1):
+        c=h.GetBinContent(i)
+        e=h.GetBinError(i)
+        x=h.GetBinCenter(i)
+        if x>= 0 : continue
+        i1=h.FindBin(-x)
+        c1=h.GetBinContent(i1)
+        e1=h.GetBinError(i1)
+        #
+        h.SetBinContent(i,0)
+        h.SetBinError(i,0)
+        h.SetBinContent(i1,c+c1)
+        h.SetBinError(i1,math.sqrt(e*e+e1*e1))
+    return
 
-	if sig == None:
-		if opts.verbose: print "try to add multiple histo:" 
-		for s in nameString.split(','):
-			if sig == None: 
-				sig = fInput.FindObjectAny(s)
-				if sig == None: print "Error: no histo",s
-			else:
-				h_s = fInput.FindObjectAny(s)
-				if h_s == None: print "Error: no histo",s
-				sig.Add(h_s)
-	if sig == None:
-		print "ERROR: sig histogram not define: '"+nameString+"'"
-	RemoveSpikes(sig)
-	return sig
+def GetHistoFromFile( nameString ):
+    ''' Collect from the inputFiles the histograms and Add them'''
+    sig = fInput.FindObjectAny( nameString )
+
+    if sig !=None:
+        if 'GluGlu_HToMuMu' in nameString: sig.Scale(config.xsec('GluGlu') * config.br())
+        if 'VBF_HToMuMu' in nameString: sig.Scale(config.xsec('VBF') * config.br())
+        if 'WPlusH_HToMuMu' in nameString: sig.Scale(config.xsec('WPlusH') * config.br())
+        if 'WMinusH_HToMuMu' in nameString: sig.Scale(config.xsec('WMinusH') * config.br())
+        if 'ZH_HToMuMu' in nameString: sig.Scale(config.xsec('ZH') * config.br())
+        if 'ttH_HToMuMu' in nameString: sig.Scale(config.xsec('ttH') * config.br())
+
+    if sig == None:
+        if opts.verbose: print "try to add multiple histo:" 
+        for s in nameString.split(','):
+            if sig == None: 
+                sig = fInput.FindObjectAny(s)
+                if sig == None: print "Error: no histo",s
+                if 'GluGlu_HToMuMu' in s:   sig.Scale(config.xsec('GluGlu') * config.br())
+                if 'VBF_HToMuMu' in s:      sig.Scale(config.xsec('VBF') * config.br())
+                if 'WPlusH_HToMuMu' in s:   sig.Scale(config.xsec('WPlusH') * config.br())
+                if 'WMinusH_HToMuMu' in s:  sig.Scale(config.xsec('WMinusH') * config.br())
+                if 'ZH_HToMuMu' in s:       sig.Scale(config.xsec('ZH') * config.br())
+                if 'ttH_HToMuMu' in s:      sig.Scale(config.xsec('ttH') * config.br())
+            else:
+                h_s = fInput.FindObjectAny(s)
+                if h_s == None: print "Error: no histo",s
+                if 'GluGlu_HToMuMu' in s: h_s.Scale(config.xsec('GluGlu') * config.br())
+                if 'VBF_HToMuMu' in s: h_s.Scale(config.xsec('VBF') * config.br())
+                if 'WPlusH_HToMuMu' in s: h_s.Scale(config.xsec('WPlusH') * config.br())
+                if 'WMinusH_HToMuMu' in s: h_s.Scale(config.xsec('WMinusH') * config.br())
+                if 'ZH_HToMuMu' in s: h_s.Scale(config.xsec('ZH') * config.br())
+                if 'ttH_HToMuMu' in s: h_s.Scale(config.xsec('ttH') * config.br())
+                sig.Add(h_s)
+    if sig == None:
+    	print "ERROR: sig histogram not define: '"+nameString+"'"
+    if opts.abs:Abs(sig)
+    RemoveSpikes(sig)
+    return sig
 
 
 def errorAoAB(a,ea,c,ec):

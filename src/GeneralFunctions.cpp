@@ -13,7 +13,8 @@ float ChargedHiggs::deltaPhi(const float phi1,const float phi2)
 
 float ChargedHiggs::mt( const float pt1,  const float pt2, const  float phi1, const float phi2)
 {
-    return TMath::Sqrt( 2* pt1 * pt2 * ( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi1,phi2)) ) );
+    if (TMath::IsNaN(pt1) or TMath::IsNaN(pt2) or TMath::IsNaN(phi1) or TMath::IsNaN(phi2) ) return 0.;
+    return TMath::Sqrt( 2.* fabs(pt1) * fabs(pt2) * fabs( 1.-TMath::Cos(ChargedHiggs::deltaPhi(phi1,phi2)) ) );
 }
 
 float ChargedHiggs::mtMassive( const TLorentzVector p1,  const TLorentzVector p2)
@@ -109,6 +110,16 @@ double ChargedHiggs::CosThetaCS( const TLorentzVector *v1, const TLorentzVector 
     TVector3 direction_cs = (refV_vb1_direction - refV_vb2_direction).Unit(); // CS direction
 
     return TMath::Cos(direction_cs.Angle(refV_v1.Vect()));
+}
+
+// this should be ~CosThetaStarCS in the center of mass
+double ChargedHiggs::CosThetaStar(const TLorentzVector*v1, const TLorentzVector*v2)
+{
+    TLorentzVector v=*v1+*v2;
+    const double deta= fabs(v1->Eta() - v2->Eta() );
+    const double M=v.M();
+    const double Pt = v.Pt();
+    return fabs(std::sinh(deta)) / std::sqrt( 1+ std::pow(Pt/M,2)) * 2 * v1->Pt() * v2->Pt() / std::pow(M,2);
 }
 
 

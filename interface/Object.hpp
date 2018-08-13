@@ -10,6 +10,8 @@ class CorrectorBase;
 class Object
 {
     friend class CorrectorBase;
+    friend class Event;
+
     protected:
         // this class provide the really basic information used at analysis level
         TLorentzVector p4;

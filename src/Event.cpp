@@ -638,9 +638,11 @@ double Event::ApplyL1PreFire(){
 }
 
 //#define VERBOSE 2
-void Event::ApplyBTagSF(int wp)
+double Event::ApplyBTagSF(int wp)
 {
+    double sf=1.;
     SetWPSF("bdeep",wp); // loose, for sf
+
 
 #ifdef VERBOSE
     if (VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","Starting BTAG SF"); 
@@ -648,33 +650,37 @@ void Event::ApplyBTagSF(int wp)
     //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("-> Considering NCJ=%d",NcentralJets() ));
     for (int i=0;i<NcentralJets() ;++i)
     {
-     Jet *j=GetCentralJet(i);
-     SetJetFlavorSF("bdeep",j->hadFlavor());
+        Jet *j=GetCentralJet(i);
+        SetJetFlavorSF("bdeep",j->hadFlavor());
 
-     if (j->IsBJet() ) // is btagged
-     {
-         GetWeight()->GetSF("bdeep")->SetVeto(0);
-     }
-     else{
-         //GetWeight()->GetSF("btag")->SetVeto(1); //1.-x
-         //GetWeight()->GetSF("btag")->SetVeto(0); //???
-         continue;
-     }
+        if (wp == 3) // reshaping
+            SetDiscrSF("bdeep",j->GetDeepB());
 
-     SetPtEtaSF("bdeep",j->Pt(), j->Eta() );
+        if (not j->IsBJet() and wp !=3) continue;
+
+        SetPtEtaSF("bdeep",j->Pt(), j->Eta() );
 
 #ifdef VERBOSE
-     if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Applying btag sf for jet: %f,%f,%d = %f",j->Pt(),j->Eta(),j->Flavor(),GetWeight()->GetSF("btag")->get()));
+        if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Applying bdeep sf for jet: %f,%f,%d = %f",j->Pt(),j->Eta(),j->Flavor(),GetWeight()->GetSF("bdeep")->get()));
 #endif
-     //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("-> Applying SF of %e for bjet=%d flavor=%d",GetWeight()->GetSF("btag")->get(),j->IsBJet(),j->Flavor()));
+        
+        //if (wp==3)
+        //{
+        //    float newvalue= GetWeight()->GetSF("bdeep")->get();
+        //    j->SetDeepBSF(newvalue);
+        //    Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Old value was %f new value is %f",j->GetBareDeepB(),newvalue));
+        //}
+        //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("SF For jet %d with pt=%f eta=%f hf=%d is %lf",i,j->Pt(),j->Eta(),j->hadFlavor(),GetWeight()->GetSF("bdeep")->get()));
 
-     if (GetWeight()->GetSF("bdeep")->get() <.2 or GetWeight()->GetSF("bdeep")->get()>2.) continue; // not believable
+        if (GetWeight()->GetSF("bdeep")->get() <.2 or GetWeight()->GetSF("bdeep")->get()>2.) continue; // not believable
 
-     ApplySF("bdeep");
+        ApplySF("bdeep");
+        sf *= GetWeight()->GetSF("bdeep")->get();
     }
 #ifdef VERBOSE
    if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","End BTAG SF"); 
 #endif
+   return sf;
 }
 
 void Event::ApplyTauSF(Tau*t,bool prongs,const string& extra)
@@ -695,6 +701,20 @@ void Event::ApplyTauSF(Tau*t,bool prongs,const string& extra)
 
     SetPtEtaSF(sfname,t->Pt(),t->Eta());
     ApplySF(sfname);
+
+}
+
+#include "interface/MetNoJec.hpp"
+void Event::ApplyMetNoJEC(double eta0,double eta1)
+{
+    // I want the possibility to apply it at some point.
+    if (not metnojec_) metnojec_.reset(new MetNoJEC());
+
+    //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Met Was %f",GetMet().Pt()));
+
+    metnojec_->correct(this);
+
+    //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Met Now is %f",GetMet().Pt()));
 
 }
 

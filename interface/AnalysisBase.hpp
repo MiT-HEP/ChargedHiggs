@@ -17,7 +17,7 @@ class AnalysisBase : public Named
     protected:
 
     bool multipd_{false};
-    Event *e;
+    Event *e{NULL};
     // --- this are the default values. override these functions
     virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.15);l->SetEtaCut(2.4); l->SetTightCut(false);l->SetVetoCut();}
     //virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.25);l->SetEtaCut(2.4); l->SetTightCut(false);}
