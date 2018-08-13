@@ -5,7 +5,8 @@
 #include <map>
 #include <string>
 
-#define MAX_MUON
+#define MAX_MUON 10
+#define MAX_JET 20
 
 class LoadNano : public Loader
 {
@@ -30,6 +31,25 @@ class LoadNano : public Loader
         bool Muon_mediumId[MAX_MUON];
         bool Muon_tightId[MAX_MUON];
         bool Muon_isPFcand[MAX_MUON];
+
+        // jet
+        int nJet;
+        float  Jet_pt[MAX_JET];
+        float  Jet_eta[MAX_JET];
+        float  Jet_phi[MAX_JET];
+        float  Jet_mass[MAX_JET];
+
+        float  Jet_chEmEF[MAX_JET];
+        float  Jet_neEmEF[MAX_JET];
+        float  Jet_chHEF[MAX_JET];
+        float  Jet_neHEF[MAX_JET];
+        float  Jet_qgl[MAX_JET];
+        float  Jet_bReg[MAX_JET];
+        float  Jet_puId[MAX_JET];
+
+        float  Jet_jetId[MAX_JET];
+        float  Jet_btagDeepB[MAX_JET];
+        float  Jet_btagCSVV2[MAX_JET];
 
         
     public:

@@ -16,7 +16,8 @@ from DataFormats.FWLite import Handle, Events, Runs
 
 #files=open("files.txt","read")
 #files=["/store/mc/RunIISummer16MiniAODv2/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/0AF0207B-EFBE-E611-B4BE-0CC47A7FC858.root"]
-files=["/store/mc/RunIIFall17MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/50000/BAF0844D-E7D9-E711-8888-FA163E4F4F50.root"]
+#files=["/store/mc/RunIIFall17MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/50000/BAF0844D-E7D9-E711-8888-FA163E4F4F50.root"]
+files=["/eos/cms/store/user//amarini/Sync/5AC9148F-9842-E811-892B-3417EBE535DA.root"]
 h = ROOT.TH1D("ht","ht",1300,0,13000)
 h2 = ROOT.TH1D("htsec","ht",1300,0,13000)
 
@@ -50,7 +51,7 @@ try:
             
         events = Events("root://eoscms//"+f.split()[0])
         lhe,lheLabel = Handle("LHEEventProduct"),"externalLHEProducer"
-        break
+        #break
         for iev,event in enumerate(events):
             print "\nEvent %d: run %6d, lumi %4d, event %12d" % (iev,event.eventAuxiliary().run(), event.eventAuxiliary().luminosityBlock(),event.eventAuxiliary().event())
             if iev > 10: break
@@ -63,7 +64,7 @@ try:
             ht=0.0
             print "\n\n---------"
             for i in range(0,lhe.product().weights().size() ):
-                 print "W=",lhe.product().weights()[i].wgt,lhe.product().weights()[i].id
+                 print "W[",i,"]=",lhe.product().weights()[i].wgt,lhe.product().weights()[i].id
 except KeyboardInterrupt:
     pass
 

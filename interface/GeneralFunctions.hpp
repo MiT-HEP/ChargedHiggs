@@ -49,6 +49,7 @@ namespace ChargedHiggs{
     }
 
     double CosThetaCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS=13) ;
+    double CosThetaStar(const TLorentzVector *v1, const TLorentzVector*v2) ;
 
     constexpr float Mw = 80.385;
     constexpr float Mh = 125.;

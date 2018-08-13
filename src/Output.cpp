@@ -175,6 +175,21 @@ void Output::Book(string name, string title,int nBins, double *xbound)
     prototypes_ [name ] -> Sumw2();
 }
 
+void Output::Book2D(string name, string title,int nBins, double*xbound,int nBins2, double *ybound)
+{ 
+    if (not PassFinal(name) ) return ;
+
+    if ( Exists(name) )
+        cout <<"[Output]::[Book2D]::[ERROR] a TH1D/TH2D histo with the same name '"<<name<<"' already exist"<<endl;
+
+    prototypes2D_ [name] = new TH2D( (name+"_proto").c_str(),
+            title.c_str(), 
+            nBins,xbound,
+            nBins2,ybound
+            ); 
+    prototypes2D_ [name] -> Sumw2();
+}
+
 TH1D* Output::Get(string name,string systname)
 { 
     if (systname == "" or systname == "NONE") 

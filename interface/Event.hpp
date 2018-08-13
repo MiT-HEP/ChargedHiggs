@@ -52,6 +52,7 @@ class Event{
     vector<GenJet*> genjets_;
 
     Met met_;
+    vector<bool>    triggerFinalOR_; // bx=-2, -1, 0, 1 ,2
     vector<bool>    triggerFired_;
     int isRealData_;
     int runNum_;
@@ -256,19 +257,30 @@ class Event{
     virtual void validate();
     bool IsTriggered(string name, Trigger *trigger = NULL, bool isNone=false); // the None do not check if it is the L3 or LF -- only for taus and matching
 
+    //@brief Get if L1 Final or Fired for bx = -2,-1,0,1,2
+    inline bool GetL1FinalOr(int bx) const{ return triggerFinalOR_[bx+2];}
+
     // SF utils
     inline void SetPtEtaSF(string label, float pt, float eta){  weight_ -> SetPtEtaSF(label,pt,eta);}
     inline void SetWPSF(string label, int wp){  weight_ -> SetWPSF(label,wp);}
     inline void SetJetFlavorSF(string label, int flavor){  weight_ -> SetJetFlavorSF(label,flavor);}
+    inline void SetDiscrSF(string label, float discr){  weight_ -> SetDiscrSF(label,discr);}
     void ApplySF(string label){ weight_ -> ApplySF(label) ; } 
     bool ExistSF(string label){ return weight_ -> ExistSF(label); }
 
     // 
     ///@brief apply top pt reweighting to the event.
     void ApplyTopReweight();
+    ///@brief apply L1 prefire efficiencies to the event. 
+    ///return the total reweight
+    double ApplyL1PreFire();
     ///@brief apply btagging scale factor to the event. Working points (wp) correspond to loose,medium and tight.
-    void ApplyBTagSF(int wp=0);
+    double ApplyBTagSF(int wp=0);
+    //@brief apply sf for taus
     void ApplyTauSF(Tau*t,bool prongs=true,const string& extra="");
+    //@brief remove JEC from met in eta-2.5/3.0
+    void ApplyMetNoJEC(double eta0=2.5, double eta1=3.0);
+    std::unique_ptr<CorrectorBase> metnojec_; // corrector for method above
 
     ///@brief Get Jet Matched to an object (o) without any selection.
     Jet* GetMatchedBareJet(Object *o,float dR=0.4){ for(unsigned iJet=0;iJet<jets_.size();++iJet) if (o->DeltaR(jets_[iJet])<dR) return jets_[iJet]; return (Jet*)NULL; }

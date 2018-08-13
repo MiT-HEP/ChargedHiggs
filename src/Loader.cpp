@@ -108,6 +108,11 @@ void LoadNero::FillEventInfo(){
 
     event_ -> met_ . setFullRecommendation ( e->selBits & BareEvent::FullRecommendation );
 
+    //if (tree_->GetBranchStatus("filterbadPFMuon"){ // TO REMOVE and pass with flags
+    //    event_ -> met_ . filterbadPFMuon = e->filterbadPFMuon;
+    //    event_ -> met_ . filterbadChHadrons = e->filterbadChCandidate;
+    //}
+
     BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["BareVertex"] ] ) ; assert(v!=NULL);
     event_ -> npv_ = v->npv;
 }
@@ -157,17 +162,26 @@ void LoadNero::FillJets(){
         }
 #endif
 //
-#warning FIX_JETID
-        bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
+        //bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetLoose;
+        
+//#warning TIGHT_FROM_NTUPLES
+        bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetTight;
+#warning TIGHT_ID_2017_REIMPLEMENTED
         float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
         if ( aeta >2.7 and aeta <=3.0 ) 
         {
-            id = id and (bj->nhef->at(iJet) < .98)  and (bj->nemf -> at(iJet) >0.01);
+            id = ( bj->nemf->at(iJet) >0.02 and bj->nemf->at(iJet) <0.99 and bj->qglMult->at(iJet) >2 ) ;
+            //if (bj->nemf->at(iJet) <0.02 ) id=false;
         }
+
         if (not id) continue;
 
         Jet *j =new Jet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
+
+        //
+        j->SetNEMF(bj->nemf -> at(iJet) );
+        j->SetCEMF(bj->cemf -> at(iJet) );
         // JES
 #ifdef VERBOSE
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUG",Form("Going to Fill Jes for jet: %d",iJet));
@@ -216,6 +230,11 @@ void LoadNero::FillJets(){
         //if (tree_->GetBranchStatus("jetQglPtDrLog") ) j->SetQGLVar( "PtDrLog", bj -> qglPtDrLog -> at(iJet) );
         if (tree_->GetBranchStatus("jetQglAxis2") ) j->SetQGLVar( "axis2", bj -> qglAxis2 -> at(iJet) );
         //if (tree_->GetBranchStatus("jetQglAxis1") ) j->SetQGLVar( "axis1", bj -> qglAxis1 -> at(iJet) );
+        
+#ifdef VERBOSE
+        if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> B Correction");
+#endif
+        if (tree_->GetBranchStatus("jetBCorr")) j->SetBCorrection(bj->bcorr->at(iJet), bj->bcorrunc->at(iJet));
     
 #ifdef VERBOSE
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> RawPt");
@@ -857,6 +876,15 @@ void LoadNero::FillTrigger(){
     event_ -> triggerFired_ . clear();
     for(size_t i=0;i< tr ->triggerFired ->size() ;++i)
         event_ -> triggerFired_ . push_back ( bool( (*tr->triggerFired)[i]  ) );
+
+    // Trigger FOR
+    event_->triggerFinalOR_.clear();
+    event_->triggerFinalOR_.resize(5,0);
+    event_->triggerFinalOR_[0] = (tr->l1FOR & BareTrigger::FORM2);
+    event_->triggerFinalOR_[1] = (tr->l1FOR & BareTrigger::FORM1);
+    event_->triggerFinalOR_[2] = (tr->l1FOR & BareTrigger::FOR);
+    event_->triggerFinalOR_[3] = (tr->l1FOR & BareTrigger::FORP1);
+    event_->triggerFinalOR_[4] = (tr->l1FOR & BareTrigger::FORP2);
 
 } // end fill trigger
 void LoadNero::NewFile(){

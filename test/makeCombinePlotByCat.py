@@ -226,13 +226,13 @@ l.DrawLatex(xcms,ycms,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
 
 l.SetTextSize(0.03)
 l.SetTextAlign(31)
-l.DrawLatex(0.89+0.05,.91,"35.9 fb^{-1} (13 TeV)")
+l.DrawLatex(0.89+0.05,.91,"41.9 fb^{-1} (13 TeV)")
 
 c.Modify()
 c.Update()
 
 raw_input("ok?")
+c.SaveAs("limitPerCat.png")
+c.SaveAs("limitPerCat.pdf")
+c.SaveAs("limitPerCat.root")
 
-c.SaveAs("/afs/cern.ch/user/a/amarini/www/cms-private/Hmumu/2017_08_21_NewCat5_NoTTH//unblind/limitPerCat.png")
-c.SaveAs("/afs/cern.ch/user/a/amarini/www/cms-private/Hmumu/2017_08_21_NewCat5_NoTTH//unblind/limitPerCat.pdf")
-c.SaveAs("/afs/cern.ch/user/a/amarini/www/cms-private/Hmumu/2017_08_21_NewCat5_NoTTH//unblind/limitPerCat.root")

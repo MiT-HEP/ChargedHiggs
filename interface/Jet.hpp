@@ -22,12 +22,17 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float bcut_; /// ** bcut on the bJets discr
     float etacutcentral_;
     float  qgl_ ; // To Set
+    float unc_ ; // not used in the systematic smearing, but in the kinematic fits. Relative unceratainty
 
     float puidcut_{-100};
     float puId;
 
     float deepB; // ** deep btag discriminator (B+BB)
     float deepbcut_ {-100};
+
+    float nemf_,cemf_;
+
+    float bcorr_{1.}, bcorrunc_{1.};
 
     TLorentzVector pp4;
 
@@ -53,6 +58,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     void SetBCut(float x) {bcut_=x;}
     ///@brief set the deep b csv tagger (deep b+bb). only one between std and deep can be set. To unset use -100
     void SetDeepBCut(float x) {deepbcut_=x;}
+    ///@brief set the B Regressions and unc
+    void SetBCorrection(float x, float unc){bcorr_=x;bcorrunc_=unc;}
     ///@brief set the QGL discriminator
     inline void SetQGL(float qgl){ qgl_ = qgl;}
     ///@brief set variable 
@@ -67,10 +74,24 @@ class Jet : virtual public Object, virtual public SmearableComplex
     /// @brief set the hadron flavour
     void SetHadFlavor(const int& x) {hadFlavor_=x;}
 
+    ///@brief  set deepB with sf
+    //inline float SetDeepBSF(float x){ deepB_SF=x; isDeepBSFSet=1;}
     /// @brief get the deep B tag discr (B+BB)
-    inline float GetDeepB() const {return deepB;}
+    //inline float GetDeepB() const {if (isDeepBSFSet) return deepB_SF; else return deepB;}
+    //inline float GetBareDeepB() const {return deepB;}
+    inline float GetDeepB() const { return deepB;}
     /// @brief set the deep B discri (B+BB)
     void SetDeepB(const float& x) {deepB=x;}
+
+    ///@brief get bregression
+    inline float GetBCorrection() const{return bcorr_;}
+    inline float GetBCorrectionUncertainty() const{return bcorrunc_;}
+
+    //float nemf_,cemf_;
+    void SetNEMF(const float x) {nemf_=x;}
+    void SetCEMF(const float x) {cemf_=x;}
+    inline float GetNEMF()const {return nemf_;}
+    inline float GetCEMF()const {return cemf_;}
 
     /// @brief constructor
     Jet() ; 
@@ -94,7 +115,9 @@ class Jet : virtual public Object, virtual public SmearableComplex
     inline int Flavor() const { return pdgId;}
     ///@brief return hadron flavor
     inline int hadFlavor() const { return hadFlavor_;}
-
+    
+    //@brief get JES uncertainty
+    inline float GetJESUnc() const { return (ptUpSyst[Smearer::JES]/p4.Pt()-1.0) ;}
     /// @brief return pt, corrected by systematics
     inline float Pt() const override { 
             // --- cout<<"[Jet]::[Pt]::[DEBUG]"<<"Requested Pt for jet"<<endl;

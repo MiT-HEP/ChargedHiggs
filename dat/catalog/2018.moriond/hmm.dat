@@ -11,4 +11,8 @@ addfiles=%(amariniHmm)s/GluGluHToMuMu_M125_13TeV_amcatnloFXFX_pythia8
 addfiles=%(amariniHmm)s/VBFHToMuMu_M125_13TeV_amcatnlo_pythia8
 
 
+addfiles=%(amariniHmm)s/GluGlu_HToMuMu_M120_13TeV_amcatnloFXFX_pythia8
+addfiles=%(amariniHmm)s/GluGluHToMuMu_M130_13TeV_amcatnloFXFX_pythia8
+addfiles=%(amariniHmm)s/VBFHToMuMu_M120_13TeV_amcatnlo_pythia8
+addfiles=%(amariniHmm)s/VBFHToMuMu_M130_13TeV_amcatnlo_pythia8
 

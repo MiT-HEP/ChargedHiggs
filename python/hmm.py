@@ -11,6 +11,9 @@ class HmmConfig():
     '''
     def __init__(self):
         ## CATEGORIES and MAP ##
+        self.dirname="HmumuAnalysis/Vars/" 
+        self.varname="Mmm"
+        self.sigspec="%s_HToMuMu_M%.0f" ## the %s is for the process substitution
         self.muCategories=["BB","BO","BE","OO","OE","EE"]
         #self.procCategories= [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]
         self.procCategories= [ "VBF0","GF","VBF1","Untag0","Untag1"]
@@ -198,8 +201,8 @@ class HmmConfig():
         elif type == "ggH" or type=="GluGlu": col=0
         elif type == "ttH": col=5
         elif type == "bbH" and mass==125 : return 4.880E-01
-        elif type == "WMinusH": col=2
-        elif type == "WPlusH": col=3
+        elif type == "WMinusH": col=3
+        elif type == "WPlusH": col=2
 
         if col<0 : raise ValueError
 
@@ -257,17 +260,6 @@ class HmmConfigWithTTH(HmmConfigAutoCat):
         self.categories=[ "cat%d"%x for x in range(0,15)]
         self.computeVersioning()
         self.sigfit_gaussians[("cat2","GluGlu")] = 2  ## 11
-        ## self.sigfit_gaussians[("cat15","GluGlu")] = 1  ## 11
-        ## self.sigfit_gaussians[("cat16","GluGlu")] = 1  ## 11
-        ## #self.sigfit_gaussians[("cat4","GluGlu")] = 2  ##  AMC
-        ## self.sigfit_gaussians[("cat15","VBF")] = 1  ## 11
-        ## self.sigfit_gaussians[("cat16","VBF")] = 1  ## 11
-        ## self.sigfit_gaussians[("cat15","WPlusH")] = 1  ## 11
-        ## self.sigfit_gaussians[("cat16","WPlusH")] = 1  ## 11
-        ## self.sigfit_gaussians[("cat15","WMinusH")] = 1  ## 11
-        ## self.sigfit_gaussians[("cat16","WMinusH")] = 1  ## 11
-        ## self.sigfit_gaussians[("cat16","ZH")] = 2  ## 11
-        ## self.sigfit_gaussians[("cat16","ZH")] = 1  ## 11
         self.sigfit_gaussians[("cat11","ZH")] = 2  ## 11
         self.sigfit_gaussians[("cat2","ttH")] = 2  ## 11
         self.sigfit_gaussians[("cat2","ttH")] = 3  ## 11
@@ -285,24 +277,55 @@ class HmmConfigWithTTH(HmmConfigAutoCat):
 
         ## self.bkg_functions=["zmod2_cat0_ord5","zmod2_cat1_ord5","exp_cat2_ord3","zmod2_cat3_ord5","exp_cat4_ord3","zmod2_cat5_ord5","zmod_cat6_ord1","zmod2_cat7_ord5","zmod2_cat8_ord5","zmod2_cat9_ord5","zmod2_cat10_ord5","zmod_cat11_ord1","zmod_cat12_ord1","zmod2_cat13_ord5","zmod_cat14_ord1","bern2_cat15_ord4","bern2_cat16_ord5"]
         self.bkg_functions=["zmod2_cat0_ord5","zmod2_cat1_ord5","exp_cat2_ord3","zmod2_cat3_ord5","exp_cat4_ord3","zmod2_cat5_ord5","zmod_cat6_ord1","zmod2_cat7_ord5","zmod2_cat8_ord5","zmod2_cat9_ord5","zmod2_cat10_ord5","zmod_cat11_ord1","zmod_cat12_ord1","zmod2_cat13_ord5","zmod_cat14_ord1"]
+        self.SimpleScaleAndSmear()
+        self.computeVersioning()
         
 class HmmConfigExCat(HmmConfigAutoCat):
     def __init__(self,n=20):
         HmmConfigAutoCat.__init__(self)
         #self.categories=[ "cat%d"%x for x in range(0,17)]
         self.categories=[ "cat%d"%x for x in range(0,n)]
+        self.sigfit_gaussians={}
+        #[("cat2","GluGlu")] = 2  ## 11
+        #self.processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
+        for p in ["ZH","WPlusH","WMinusH","ttH"]: ## simplify for the time being
+            for cat in self.categories:
+                self.sigfit_gaussians[(p,cat)] = 1;
+        self.SimpleScaleAndSmear()
         self.computeVersioning()
+
 
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
-hmmExCat = HmmConfigExCat()
+hmmExCat = HmmConfigExCat(16)
 hmmExCatBoost = HmmConfigExCat(21)
 
+class HHConfig(HmmConfig):
+    def __init__(self):
+        HmmConfig.__init__(self)
+        self.categories=[""]
+        self.processes=["GluGluToHHTo2B2M_node_4"]
+        self.sig_mass_points=[125]
+        self.sigfit_gaussians={}
+        self.varname="Mmm_KF2_HbbHmm"
+        #inputMask = dir + var +"_" + cat +"_"  + sigspec  if cat=="" w/o __
+        self.sigspec="%s" ## the %s is for the process substitution
+
+        # KEY: TH1D      Mmm_HbbHmm_GluGluToHHTo2B2M_node_4;1    Mass (110-150)
+        # KEY: TH1D      Mmm_HbbHmm_VBFHHTo2B2Mu_CV_1_C2V_1_C3_1;1       Mass (110-150)
+        # KEY: TH1D      Mmm_KF2_HbbHmm_GluGluToHHTo2B2M_node_4;1        Mass (110-150)
+        # KEY: TH1D      Mmm_KF2_HbbHmm_VBFHHTo2B2Mu_CV_1_C2V_1_C3_1;1 
+        self.SimpleScaleAndSmear()
+        self.computeVersioning()
+
+hh=HHConfig()
+
 if __name__=="__main__":
-    hmm.Print()
-    hmmAutoCat.Print()
-    hmmTTH.Print()
+    #hmm.Print()
+    #hmmAutoCat.Print()
+    #hmmTTH.Print()
     hmmWithTTH.Print()
+    hmmExCatBoost.Print()
 
 import ROOT
 from array import array

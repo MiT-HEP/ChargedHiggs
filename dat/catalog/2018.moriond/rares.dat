@@ -1,8 +1,21 @@
 sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.2/
-addfiles=%(amariniHmm)s/TTWJetsToLNu_TuneCP5_13TeV-amcatnlo-pythia8
-addfiles=%(amariniHmm)s/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8
-addfiles=%(amariniHmm)s/WWTo2L2Nu_NNPDF31_TuneCP5_13TeV-powheg-pythia8
+#addfiles=%(amariniHmm)s/TTWJetsToLNu_TuneCP5_13TeV-amcatnlo-pythia8
+
+addfiles=%(amariniHmm)s/TTWJetsToLNu_TuneCP5_PSweights_13TeV-amcatnloFXFX-madspin-pythia8
+addfiles=%(amariniHmm)s/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/TTZ
+addfiles=%(amariniHmm)s/TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8
+addfiles=%(amariniHmm)s/TTTT_TuneCP5_PSweights_13TeV-amcatnlo-pythia8
+
+addfiles=%(amariniHmm)s/WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(amariniHmm)s/WWTo2L2Nu_NNPDF31_TuneCP5_PSweights_13TeV-powheg-pythia8
+addfiles=%(amariniHmm)s/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(amariniHmm)s/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8
 addfiles=%(amariniHmm)s/ZZTo2L2Nu_13TeV_powheg_pythia8
-addfiles=%(amariniHmm)s/ZZTo4L_13TeV_powheg_pythia8
+addfiles=%(amariniHmm)s/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(amariniHmm)s/ZZTo4L_13TeV_powheg_pythia8/ZZT24L
+
+addfiles=%(amariniHmm)s/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8
+addfiles=%(amariniHmm)s/WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8
+addfiles=%(amariniHmm)s/WZZ_TuneCP5_13TeV-amcatnlo-pythia8
+addfiles=%(amariniHmm)s/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8
 

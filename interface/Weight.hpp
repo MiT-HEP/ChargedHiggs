@@ -94,6 +94,7 @@ class Weight : virtual public SmearableBase {
     void SetPtEtaSF(const string& label,double pt , double eta);
     void SetWPSF(const string& label, int wp);
     void SetJetFlavorSF(const string& label, int flavor);
+    void SetDiscrSF( const string& label, float discr);
     void ApplySF(const string& label);
     inline bool ExistSF(const string& label){ if (sf_db.find(label) != sf_db.end() ) return true; else return false; }
 

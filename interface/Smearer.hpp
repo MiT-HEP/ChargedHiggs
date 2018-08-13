@@ -63,24 +63,26 @@ class SmearJesAndCSV : virtual public SmearBase
     std::unique_ptr<SmearJes> jes;
     //int num_; // this follow the  CSV Reweight skim, while  the constructor is 1->5
     Systematics::Type num_;
+    int bsystType=0; // 0 = CSVReweight, 1= CSV
 
     public:
         SmearJesAndCSV() : SmearBase(){ 
             num_=Systematics::NA; // --> Systematics::Type
             name_ = Form("CSVR_NA");
         }
-        SmearJesAndCSV(int num) : SmearBase(){ 
+        SmearJesAndCSV(int num,int bsyst =0) : SmearBase(){ 
             // num -> 1,5 (1 is JES
+            bsystType=bsyst;
             num_ = Systematics::NA;
-            if (num == 1){num_=Systematics::JESup;name_="JESANDCSV";}
-            if (num == 2){num_=Systematics::CSVHFup;name_="CSVRHF";}
-            if (num == 3){num_=Systematics::CSVLFup;name_="CSVRLF";}
-            if (num == 4){num_=Systematics::CSVHFStats1up; name_="CSVRHFSTAT1";}
-            if (num == 5){num_=Systematics::CSVHFStats2up; name_="CSVRHFSTAT2";}
-            if (num == 6){num_=Systematics::CSVLFStats1up; name_="CSVRLFSTAT1";}
-            if (num == 7){num_=Systematics::CSVLFStats2up; name_="CSVRLFSTAT2";}
-            if (num == 8){num_=Systematics::CSVCErr1up; name_="CSVRCERR1";}
-            if (num == 9){num_=Systematics::CSVCErr2up; name_="CSVRCERR2";}
+            if (num == 1){num_=Systematics::JESup;name_="JESANDBR";}
+            if (num == 2){num_=Systematics::CSVHFup;name_="BRHF";}
+            if (num == 3){num_=Systematics::CSVLFup;name_="BRLF";}
+            if (num == 4){num_=Systematics::CSVHFStats1up; name_="BRHFSTAT1";}
+            if (num == 5){num_=Systematics::CSVHFStats2up; name_="BRHFSTAT2";}
+            if (num == 6){num_=Systematics::CSVLFStats1up; name_="BRLFSTAT1";}
+            if (num == 7){num_=Systematics::CSVLFStats2up; name_="BRLFSTAT2";}
+            if (num == 8){num_=Systematics::CSVCErr1up; name_="BRCFERR1";}
+            if (num == 9){num_=Systematics::CSVCErr2up; name_="BRCFERR2";}
 
             jes . reset (new SmearJes());
         }

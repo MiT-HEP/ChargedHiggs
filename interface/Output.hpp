@@ -94,6 +94,7 @@ class Output{
         void Book(string name, string title,int nBins, double *xbound);
 
         void Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2,double ymin,double ymax);
+        void Book2D(string name, string title,int nBins, double *xbound,int nBins2,double*ybound);
         //
         virtual void Fill(string name, string syst , double value, double weight=1);
         virtual void Fill2D(string name, string syst , double valueX, double valueY, double weight=1);

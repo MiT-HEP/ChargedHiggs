@@ -33,53 +33,108 @@ int SmearJesAndCSV::smear(Event *e)
     else jes->SetSyst(0);
     
     jes->smear(e);
-    SF_CSVReweight * sf= dynamic_cast<SF_CSVReweight*>(e->GetWeight()->GetSF("btag-reweight"));
 
-    switch( num_ )
+    if (bsystType==0)
     {
-    case Systematics::JESup :
-            if (syst_>0) sf->systType = Systematics::JESup;
-            else         sf->systType = Systematics::JESdown;
-            break;
-    case Systematics::CSVLFup :
-            if (syst_>0) sf->systType = Systematics::CSVLFup;
-            else         sf->systType = Systematics::CSVLFdown;
-            break;
-    case Systematics::CSVHFup :
-            if (syst_>0) sf->systType = Systematics::CSVHFup;
-            else         sf->systType = Systematics::CSVHFdown;
-            break;
-    case Systematics::CSVHFStats1up :
-            if (syst_>0) sf->systType = Systematics::CSVHFStats1up;
-            else         sf->systType = Systematics::CSVHFStats1down;
-            break;
-    case Systematics::CSVHFStats2up :
-            if (syst_>0) sf->systType = Systematics::CSVHFStats2up;
-            else         sf->systType = Systematics::CSVHFStats2down;
-            break;
-    case Systematics::CSVLFStats1up :
-            if (syst_>0) sf->systType = Systematics::CSVLFStats1up;
-            else         sf->systType = Systematics::CSVLFStats1down;
-            break;
-    case Systematics::CSVLFStats2up :
-            if (syst_>0) sf->systType = Systematics::CSVLFStats2up;
-            else         sf->systType = Systematics::CSVLFStats2down;
-            break;
-    case Systematics::CSVCErr1up :
-            if (syst_>0) sf->systType = Systematics::CSVCErr1up;
-            else         sf->systType = Systematics::CSVCErr1down;
-            break;
-    case Systematics::CSVCErr2up :
-            if (syst_>0) sf->systType = Systematics::CSVCErr2up;
-            else         sf->systType = Systematics::CSVCErr2down;
-            break;
-    case Systematics::NA : 
-                        sf->systType = Systematics::NA;
-            break;
-    default : 
-                        sf->systType = Systematics::NA;
-            break;
+        SF_CSVReweight * sf= dynamic_cast<SF_CSVReweight*>(e->GetWeight()->GetSF("btag-reweight"));
+
+        switch( num_ )
+        {
+            case Systematics::JESup :
+                if (syst_>0) sf->systType = Systematics::JESup;
+                else         sf->systType = Systematics::JESdown;
+                break;
+            case Systematics::CSVLFup :
+                if (syst_>0) sf->systType = Systematics::CSVLFup;
+                else         sf->systType = Systematics::CSVLFdown;
+                break;
+            case Systematics::CSVHFup :
+                if (syst_>0) sf->systType = Systematics::CSVHFup;
+                else         sf->systType = Systematics::CSVHFdown;
+                break;
+            case Systematics::CSVHFStats1up :
+                if (syst_>0) sf->systType = Systematics::CSVHFStats1up;
+                else         sf->systType = Systematics::CSVHFStats1down;
+                break;
+            case Systematics::CSVHFStats2up :
+                if (syst_>0) sf->systType = Systematics::CSVHFStats2up;
+                else         sf->systType = Systematics::CSVHFStats2down;
+                break;
+            case Systematics::CSVLFStats1up :
+                if (syst_>0) sf->systType = Systematics::CSVLFStats1up;
+                else         sf->systType = Systematics::CSVLFStats1down;
+                break;
+            case Systematics::CSVLFStats2up :
+                if (syst_>0) sf->systType = Systematics::CSVLFStats2up;
+                else         sf->systType = Systematics::CSVLFStats2down;
+                break;
+            case Systematics::CSVCErr1up :
+                if (syst_>0) sf->systType = Systematics::CSVCErr1up;
+                else         sf->systType = Systematics::CSVCErr1down;
+                break;
+            case Systematics::CSVCErr2up :
+                if (syst_>0) sf->systType = Systematics::CSVCErr2up;
+                else         sf->systType = Systematics::CSVCErr2down;
+                break;
+            case Systematics::NA : 
+                sf->systType = Systematics::NA;
+                break;
+            default : 
+                sf->systType = Systematics::NA;
+                break;
+        }
     }
+    else if (bsystType==1)
+    {
+        SF_CSV * sf= dynamic_cast<SF_CSV*>(e->GetWeight()->GetSF("bdeep"));
+        switch( num_ )
+        {
+            case Systematics::JESup :
+                if (syst_>0) sf->systType = "up_jes";
+                else         sf->systType = "down_jes";
+                break;
+            case Systematics::CSVLFup :
+                if (syst_>0) sf->systType = "up_lf";
+                else         sf->systType = "down_lf";
+                break;
+            case Systematics::CSVHFup :
+                if (syst_>0) sf->systType = "up_hf";
+                else         sf->systType = "down_hf";
+                break;
+            case Systematics::CSVHFStats1up :
+                if (syst_>0) sf->systType = "up_hfstats1";
+                else         sf->systType = "down_hfstats1";
+                break;
+            case Systematics::CSVHFStats2up :
+                if (syst_>0) sf->systType = "up_hfstats2";
+                else         sf->systType = "down_hfstats2";
+                break;
+            case Systematics::CSVLFStats1up :
+                if (syst_>0) sf->systType = "up_lfstats1";
+                else         sf->systType = "down_hfstats1";
+                break;
+            case Systematics::CSVLFStats2up :
+                if (syst_>0) sf->systType = "up_hfstats2";
+                else         sf->systType = "down_hfstats2";
+                break;
+            case Systematics::CSVCErr1up :
+                if (syst_>0) sf->systType = "up_cferr1";
+                else         sf->systType = "down_cferr1";
+                break;
+            case Systematics::CSVCErr2up :
+                if (syst_>0) sf->systType = "up_cferr2";
+                else         sf->systType = "down_cferr1";
+                break;
+            case Systematics::NA : 
+                sf->systType = "";
+                break;
+            default : 
+                sf->systType = Systematics::NA;
+                break;
+        }
+    }
+    else
+    {cout <<" UNKNOWN bsystType:"<<bsystType<<endl;}
 
     return SMEAR_OK;
 }

@@ -206,26 +206,30 @@ class SF_CSV : public SF_Asymm
     //int syst;
     //
     BTagCalibration *calib {0};
-    BTagCalibrationReader *readerL{0}, *readerL_up={0}, *readerL_down={0};
-    BTagCalibrationReader *readerM{0}, *readerM_up={0}, *readerM_down={0};
-    BTagCalibrationReader *readerT{0}, *readerT_up={0}, *readerT_down={0};
-    constexpr static float MaxBJetPt = 670.;
-    constexpr static float MaxLJetPt = 1000.;
-    constexpr static float MinBJetPt = 30.;
-    constexpr static float MinLJetPt = 20.;
+    BTagCalibrationReader *readerR{0};
+    BTagCalibrationReader *readerL{0};
+    BTagCalibrationReader *readerM{0};
+    BTagCalibrationReader *readerT{0};
 
     float cached_pt{30.};
     float cached_eta{0};
     int cached_wp{0};
     int cached_flavor{0};
+    float cached_discr{0.};
 
     public:
         SF_CSV() {};
-        ~SF_CSV(){ delete readerL;delete readerL_up;delete readerL_down;delete readerM;delete readerM_up;delete readerM_down;delete readerT;delete readerT_up;delete readerT_down;delete calib;}
+        ~SF_CSV(){ delete readerL;
+            delete readerM;
+            delete readerT;
+            delete readerR;
+            delete calib;
+        }
         void init (string filename);
         // flavor is pdgid, wp 0==Loose, 1==Medium, 2 = Tight
-        void set (float pt, float eta, int wp,int flavor );
+        void set (float pt, float eta, int wp,int flavor, float discr );
         void set (float pt, float eta); // use cached for the others
+        void setDiscr(float discr);
         void setWP(int wp);
         void setJetFlavor(int flavor);
         void print() const override{};
@@ -237,9 +241,10 @@ class SF_CSV : public SF_Asymm
 
         bool simpleError{true};
         int systL{0},systB{0};
+        std::string systType="";
 
         double get() override;
-        void clearSyst() override { SF_Asymm::clearSyst(); systL=0; systB=0;}
+        void clearSyst() override { SF_Asymm::clearSyst(); systL=0; systB=0;systType="";}
 };
 
 class SF_WG1: virtual public SF

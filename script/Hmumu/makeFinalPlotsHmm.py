@@ -838,7 +838,8 @@ if doBkg:
 
     ## BLIND 120-130
     blind=opts.blind
-    if opts.var != "Mmm":blind=False
+    #if opts.var != "Mmm":blind=False
+    if "Mmm" not in opts.var:blind=False
     if blind:
         ibin0= hdata.FindBin(120)
         ibin1= hdata.FindBin(130)
@@ -896,20 +897,20 @@ if doBkg:
             h.SetFillColor(ROOT.kOrange-4)
             leg1.append((h,"EWK_LLJJ","F"))
         elif mc == 'TTTT' :
-            h.SetFillColor(ROOT.kGray)
+            h.SetFillColor(ROOT.kViolet-9)
             leg1.append((h,"TTX","F"))
         elif mc == 'TTW' or mc == 'TTZ' or mc =='TTG' :
             h.SetLineWidth(0)
             draw=False
-            h.SetFillColor(ROOT.kGray)
-            h.SetLineColor(ROOT.kGray)
+            h.SetFillColor(ROOT.kViolet-9)
+            h.SetLineColor(ROOT.kViolet-9)
         elif mc == 'WWZ' or mc == "ZZZ" or mc == "WZZ":
             h.SetLineWidth(0)
             draw=False
-            h.SetLineColor(ROOT.kViolet-9)
-            h.SetFillColor(ROOT.kViolet-9)
+            h.SetLineColor(ROOT.kGray)
+            h.SetFillColor(ROOT.kGray)
         elif mc == 'WWW' :
-            h.SetFillColor(ROOT.kViolet-9)
+            h.SetFillColor(ROOT.kGray)
             leg1.append((h,"VVV","F"))
 
         bkg.Add(h,draw)
@@ -933,41 +934,44 @@ if doBkg:
         h.Rebin(rebin)
         br = config.br()
         h.SetLineColor(ROOT.kBlack)
-        h.SetLineWidth(3)
+        h.SetLineWidth(5)
         h.SetFillStyle(0)
         draw=True
         if 'GluGlu' in mc:
-            h.SetLineColor(38)
+            h.SetLineColor(ROOT.kBlack)
+            h.SetLineStyle(7)
             xsec=config.xsec("ggH")
             #leg.AddEntry(h,"ggH","L")
             leg2.append((h,"ggH","L"))
         elif 'VBF' in mc:
             h.SetLineColor(46)
-            h.SetLineStyle(2)
+            h.SetLineStyle(7)
             #leg.AddEntry(h,"qqH","L")
-            leg2.append((h,"qqH","L"))
+            leg2.append((h,"VBF","L"))
             xsec=config.xsec("VBF")
         elif 'WMinusH' in mc: 
             h.SetLineColor(ROOT.kGreen+2)
-            h.SetLineStyle(2)
+            h.SetLineStyle(7)
             xsec=config.xsec("WPlusH")
             #leg.AddEntry(h,"W^{+}H","L")
-            leg2.append((h,"W^{+}H","L"))
+            #leg2.append((h,"W^{+}H","L"))
+            draw=False
         elif 'WPlusH' in mc:
             h.SetLineColor(ROOT.kGreen+2)
             h.SetLineStyle(7)
             xsec=config.xsec("WMinusH")
             #leg.AddEntry(h,"W^{-}H","L")
-            leg2.append((h,"W^{-}H","L"))
+            #leg2.append((h,"W^{-}H","L"))
+            draw=False
         elif 'ZH' in mc:
-            h.SetLineColor(ROOT.kCyan)
-            h.SetLineStyle(3)
+            h.SetLineColor(ROOT.kGreen+2)
+            h.SetLineStyle(7)
             #leg.AddEntry(h,"ZH","L")
             leg2.append((h,"ZH","L"))
             xsec=config.xsec("ZH")
         elif 'ttH' in mc:
-            h.SetLineColor(ROOT.kOrange)
-            h.SetLineStyle(3)
+            h.SetLineColor(38)
+            h.SetLineStyle(7)
             #leg.AddEntry(h,"ttH","L")
             leg2.append((h,"ttH","L"))
             xsec=config.xsec("ttH")
@@ -1030,7 +1034,7 @@ if doBkg:
         dummy.GetXaxis().SetTitle("BDT Output")
 
     if 'BdtOnH' in opts.var and opts.doRemap:
-        dummy.GetXaxis().SetTitle("transformed BDT")
+        dummy.GetXaxis().SetTitle("Transformed BDT")
 
     if 'Met' in opts.var:
         dummy.GetXaxis().SetTitle("E_{T}^{miss}[GeV]")

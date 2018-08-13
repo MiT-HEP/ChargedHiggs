@@ -5,6 +5,7 @@
 #include "interface/CutSelector.hpp"
 #include "interface/SF_CSVReweight.hpp" // REMOVEME AFTER MERGE OF MR PR
 #include "interface/Output.hpp" // DataStore
+#include "interface/KinematicFit.hpp" //
 
 #include "TMVA/Reader.h"
 #include "TMVA/Tools.h"
@@ -12,6 +13,8 @@
 class TRandom;
 #include "TPython.h"
 #include <memory>
+
+#include "interface/JetResolutionObject.hpp"
 
 class HmumuAnalysis: virtual public AnalysisBase
 {
@@ -39,6 +42,9 @@ class HmumuAnalysis: virtual public AnalysisBase
 
 
     private:
+        //cache event,run, lumi for filling
+        unsigned eventNum,runNum,lumiNum;
+        bool fillTree{false}; // used to skim output trees.
         
         void updateMjj(); // from selectedJets. Call it each time selectedJets is modified, but only once: D
         // selected Objects
@@ -50,18 +56,30 @@ class HmumuAnalysis: virtual public AnalysisBase
         vector<Jet*> selectedJets; // final that match to the one above
         vector<pair<float,pair<int,int> > > mjj; // mjj -> ijet, jjet
 
+        map<string,float> jetVar_;
+
         // this are related to miniIso if run
         vector<Jet*> selectedJetsMiniIso; 
         vector<Lepton*> miniIsoLeptons;
         
         // fatjets VH Hadronic tags (and TODO hadronic top)
         vector<FatJet*> selectedFatjets;
+        vector<Jet*> selectedJetsVHHadr;
 
         //Set soft variables
         bool isMiniIsoLeptons{false};
         
 
         bool processingSyst_{false}; // used for tree
+
+        bool isSingleMuon{false};
+        bool isDoubleMuon{false};
+
+        bool passTrigger{false};
+        bool passTrigger1{false};
+        bool passTrigger2{false};
+        bool passAsymmPtCuts{false};
+        bool passLeptonVeto{false};
 
         // select cuts
         CutSelector cut;
@@ -97,14 +115,18 @@ class HmumuAnalysis: virtual public AnalysisBase
 
         void InitTmva();
         void InitTmvaMIT();
+
+        void FillSyncTree(const string& label, const string&systname ,const string& category);
         vector<float> bdt;
 
         // Variables
         template<class T>
         void SetVariable( string name, T value){ varValues_.Set(name, value); }
+
         // not working
-        //template<class T>
-        //T GetVariable( string name){ return *(T*)varValues_.GetPointer(name); } ;
+        template<class T>
+        T GetVariable( string name);//{ return *(T*)varValues_.GetPointer(name); } ;
+
         void AddVariable( string name, char type);
         void AddSpectator( string name, char type);
     public:
@@ -122,8 +144,11 @@ class HmumuAnalysis: virtual public AnalysisBase
         void InitScikit();
         vector<float> scikit; // like bdt
 
-        bool passLeptonVeto{true};
-
+        bool isExclusiveCat{false};
+       
+       // Kinematic fit 
+        std::unique_ptr<JME::JetResolutionObject> jet_resolution;
+        std::unique_ptr<KinematicFit> kf;
 };
 
 

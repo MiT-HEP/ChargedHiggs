@@ -1,0 +1,5 @@
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.2.1/
+
+addfiles=%(amariniHmm)s/GluGluToHHTo2B2M_node_4_13TeV-madgraph
+addfiles=%(amariniHmm)s/VBFHHTo2B2Mu_CV_1_C2V_1_C3_1_13TeV-madgraph
+

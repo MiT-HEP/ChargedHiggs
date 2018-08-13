@@ -20,6 +20,7 @@ job_opts.add_option("-t","--no-tar" ,dest='tar',action='store_false',help="Do no
 job_opts.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do not Submit",default=False)
 job_opts.add_option("","--no-compress" ,dest='compress',action='store_false',help="Don't compress",default=True)
 job_opts.add_option("","--compress"    ,dest='compress',action='store_true',help="Compress stdout/err")
+job_opts.add_option("","--local"    ,dest='local',action='store_true',help="Use local directory for output and later cp",default=False)
 job_opts.add_option("-m","--mount-eos" ,dest='mount',action='store_true',help="Mount eos file system.",default=False)
 job_opts.add_option("","--hadoop" ,dest='hadoop',action='store_true',help="Use Hadhoop and MIT-T3",default=False)
 job_opts.add_option("","--condor" ,dest='condor',action='store_true',help="Use Condor Batch (LXPLUS)",default=False)
@@ -255,6 +256,11 @@ if opts.resubmit:
             call(cmd,shell=True)
             cmd = "rm " + basedir + "/log%d.txt"%iJob + " 2>&1 >/dev/null"
             call(cmd,shell=True)
+            ## try to remove the ChHiggs_%d.root / QCDPurity
+            cmd = "rm " + basedir + "/ChHiggs_%d.root"%iJob + " 2>&1 >/dev/null"
+            call(cmd,shell=True)
+            cmd = "rm " + basedir + "/QCDPurity_%d.root"%iJob + " 2>&1 >/dev/null"
+            call(cmd,shell=True)
 
             if opts.condor:
                 jdl.write("filename=%s/sub%d.sh\n"%(opts.dir,iJob))
@@ -317,10 +323,16 @@ if opts.hadd:
 from ParseDat import *
 config=ParseDat(opts.input)
 
+ds=DirectoryStore()
+ds.init()
+for f in config['Files']: ds.add(f) ## w/o * expansion
+ds.end()
+
 call("[ -d %s ] && rm -r %s"%(opts.dir,opts.dir),shell=True)
 call("mkdir -p %s"%opts.dir,shell=True)
 cmdFile=open("%s/submit_cmd.sh"%opts.dir,"w")
 cmdFile.write("##Commands used to submit on batch. Automatic written by python/submit.py script\n")
+cmdFile.write("##"+' '.join(sys.argv)+"\n")
 
 if opts.tar:
 	cmd=["tar","-czf","%s/package.tar.gz"%opts.dir]
@@ -418,6 +430,7 @@ if opts.hadoop: ### T3 MIT
    run.write("mkdir -p ../NeroProducer/Core/interface\n")
    run.write("cp -v bin/interface/* ../NeroProducer/Core/interface\n") 
    run.write('LD_LIBRARY_PATH=./:./bin/:$LD_LIBRARY_PATH\n')
+   run.write('LD_LIBRARY_PATH=$LD_LIBRARY_PATH:'+os.environ['PWD']+':'+os.environ['PWD']+"/bin"+'\n')
    run.write("echo --- ENV ---- %s\n"%redirect)
    run.write("env | sed 's/^/ENV ---/' %s \n"%redirect)
    run.write("echo --- LS ---- %s\n"%redirect)
@@ -442,7 +455,7 @@ if opts.hadoop: ### T3 MIT
         inputLs.append("%s/input%d.dat"%(subdir,iJob))
         dat.write("include=%s\n"%opts.input)
         dat.write('Files=%s\n'%( ','.join(splittedInput[iJob]) ) )
-        dat.write('Output=%s/%s\n'%(subdir,outname) )
+        dat.write('Output=%s\n'%(outname) )
         if opts.nosyst:
             dat.write("Smear=NONE\n")
         for l in opts.config:
@@ -491,8 +504,8 @@ if not opts.hadoop:
         sh.write('#!/bin/bash\n')
         sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/" \n'%(os.environ['USER']))
         sh.write('cd %s\n'%(os.getcwd() ) )
-        sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
         sh.write('eval `scramv1 runtime -sh`\n') # cmsenv
+        sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
     
         if opts.venv:
             sh.write('PYTHONPATH=%s/venv/lib/python2.7/site-packages/:$PYTHONPATH\n'%os.getcwd())
@@ -560,6 +573,7 @@ if not opts.hadoop:
             sh.write('EXITCODE=${PIPESTATUS[0]}\n')
         else:
             sh.write('EXITCODE=$?\n')
+
         sh.write('rm %s/sub%d.run 2>&1 >/dev/null\n'%(basedir,iJob))
         sh.write('[ $EXITCODE == 0 ] && touch %s/sub%d.done\n'%(basedir,iJob))
         sh.write('[ $EXITCODE != 0 ] && echo $EXITCODE > %s/sub%d.fail\n'%(basedir,iJob))
@@ -572,15 +586,24 @@ if not opts.hadoop:
         if opts.tar:
             if basedir != opts.dir : 
                 sh.write("[ $EXITCODE == 0 ] && mv -v %s/%s %s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(opts.dir,outname,basedir,basedir,iJob,basedir,iJob))
+            elif opts.local:
+                sh.write("[ $EXITCODE == 0 ] && mv -v %s %s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(outname,basedir,basedir,iJob,basedir,iJob))
             if opts.compress:
                 sh.write("mv %s/log%d.txt.gz %s/log%d.txt.gz\n"%(opts.dir,iJob,basedir,iJob) )
+
+
         sh.write('echo "Finished At:"\n')
         sh.write("date\n")
         
         dat=open("%s/input%d.dat"%(opts.dir,iJob),"w")
         dat.write("include=%s\n"%opts.input)
         dat.write(re.sub('%%MOUNTPOINT%%',"./", 'Files=%s\n'%( ','.join(splittedInput[iJob]) ) ))
-        dat.write('Output=%s/%s\n'%(opts.dir,outname) )
+
+        if opts.local:
+            dat.write('Output=%s\n'%(outname) )
+        else:
+            dat.write('Output=%s/%s\n'%(opts.dir,outname) )
+
         if opts.nosyst:
             dat.write("Smear=NONE\n")
         for l in opts.config:
@@ -604,6 +627,10 @@ if not opts.hadoop:
             pass
         else:
             ## submit batch
+            ## if basedir.startswith("/eos"): 
+            ##     cmdline = "bsub -q " + opts.queue + " -o /dev/null" + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
+            ## else:
+            ##     cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
             cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
             print cmdline
             cmdFile.write(cmdline+"\n")

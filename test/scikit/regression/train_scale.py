@@ -1,6 +1,7 @@
 from optparse import OptionParser
 parser=OptionParser()
 parser.add_option("","--mc",action='store_true',default=False,help="do MC")
+parser.add_option("","--rocco",action='store_true',default=False,help="Use Rochester Corrections")
 opts,args=parser.parse_args()
 doMC=opts.mc
 
@@ -10,11 +11,15 @@ np.random.seed(1234567)
 print "numpy version=",np.__version__
 import random
 import math
-import sys
+import sys,os
 import time
 sys.setrecursionlimit(10000)
 import ROOT
 #import uproot
+
+if opts.rocco:
+    ROOT.gSystem.Load(os.environ['CMSSW_BASE']+"/src/ChargedHiggs/bin/libChargedHiggs.0.so")
+    rocco = ROOT.RoccoR("aux/rochester/RoccoR2017v0.txt")
 
 class ElapsedTimer(object):
     def __init__(self):
@@ -123,6 +128,35 @@ def fill(n=-1,model=None,modelEntry=9999):
                        t.npv,           ## 4
                        t.rho,           ## 5
                   ]
+            if opts.rocco :
+               if doMC:
+                   # find gen level mc
+                   mcIdx_m=-1
+                   mcIdx_o=-1
+                   for i in range(0,t.genP4.GetSize()):
+                       if not (t.genFlags[i] & 1 ) : continue
+                       if not abs(t.genPdgId[i]) == 13: continue
+                       if not t.lepP4[m].DeltaR(t.genP4[i])<0.1: mcIdx_m=i
+                       if not t.lepP4[o].DeltaR(t.genP4[i])<0.1: mcIdx_o=i
+                       if mcIdx_m >=0 and mcIdx_o >=0 : break
+                   mcSF_m =1
+                   mcSF_o =1
+                   u1=ROOT.gRandom.Rndm()
+                   u2=ROOT.gRandom.Rndm()
+                   nl = 15
+                   if mcIdx_m >0 :
+                        mcSF_m=rocco->kScaleFromGenMC(lep->Charge(), lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(), nl, gen[mcIdx]->Pt(), u1, s, m);
+               else:
+                   print "DEBUG: Pt was",t.lepP4[m].Pt(),
+                   ch=-1 if t.lepPdgId[m] >0 else 1
+                   dataSFm= rocco.kScaleDT(ch,t.lepP4[m].Pt(),t.lepP4[m].Eta(),t.lepP4[m].Phi(),0,0)
+                   print "DEBUG: Pt was",t.lepP4[m].Pt(),
+                   t.lepP4[m]*=dataSFm
+                   print " -> ",t.lepP4[m].Pt()
+
+                   ch=-1 if t.lepPdgId[o] >0 else 1
+                   dataSFo= rocco.kScaleDT(ch,t.lepP4[o].Pt(),t.lepP4[o].Eta(),t.lepP4[o].Phi(),0,0)
+                   t.lepP4[o]*=dataSFo
 
             targetMass=-1
             if abs(mass.M()-3.09)<0.3: targetMass = 3.09 ## j/psi
@@ -131,7 +165,8 @@ def fill(n=-1,model=None,modelEntry=9999):
             #if abs(mass.M()-10.02)<0.1: targetMass = 10.02 ## upsilon 2S
             #if abs(mass.M()-10.355)<0.1: targetMass = 10.355 ## upsilon 3S
             if abs(mass.M()-91.1876)<20: targetMass = 91.1876 ## Z
-            
+
+
             px1=t.lepP4[m].Px()
             px2=t.lepP4[o].Px() * correctionOther
             py1=t.lepP4[m].Py()
