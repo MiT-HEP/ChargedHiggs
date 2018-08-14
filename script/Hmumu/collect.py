@@ -64,6 +64,11 @@ if len(sys.argv)>2:
     if sys.argv[2] == 'asimov':
         asimov =True
         print "-> Setting asimov"
+subtract=False
+if len(sys.argv)>2:
+    if sys.argv[2] == 'sub':
+        subtract =True
+        print "-> Setting subtraction"
 
 c=ROOT.TCanvas("c","c",600,600)
 c.SetTopMargin(0.15)
@@ -87,6 +92,13 @@ h.GetYaxis().SetTitle("gen")
 h.GetXaxis().SetTitleOffset(1.5)
 h.GetYaxis().SetTitleOffset(2.0)
 
+old=False
+prefix="fitDiagnostics"
+var="r"
+if old:
+    prefix="mlfits"
+    var ="mu"
+
 for gen in range(1,12):
 #for gen in range(0,3):
    #for fit in range(10,11):
@@ -100,16 +112,17 @@ for gen in range(1,12):
       #print "using scheme '"+"*/"+cat+"/mlfit_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit)+"'"
       #higgsCombine_catAll_mu_1_gen_4_fit_default.MaxLikelihoodFit.mH125.123456.root 
       if fit !=20 :
-        files = glob("*/"+cat+"/mlfit_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit))
+        files = glob("*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit))
+        print "* using scheme:","*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit)
       else:
-        files = glob("*/"+cat+"/mlfit_" + cat + "_mu_1_gen_%d_fit_default.root"%(gen))
-        print "* using scheme:","*/"+cat+"/mlfit_" + cat + "_mu_1_gen_%d_fit_default.root"%(gen)
+        files = glob("*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_default.root"%(gen))
+        print "* using scheme:","*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_default.root"%(gen)
       nfiles=len(files)
       for f in files:
           #print "-> Adding file",f
           t.Add(f)
       print "* Adding ",nfiles,"trees for gen=",gen,"fit=",fit
-      t.Draw("(mu-1)*2/(muHiErr+muLoErr)","","goff")
+      t.Draw("("+var+"-1)*2/("+var+"HiErr+"+var+"LoErr)","fit_status==0 && "+var+"HiErr>0 && "+var+"LoErr>0","goff")
       #t.Draw("2*(mu-1)/(muHiErr+muLoErr)","","goff")
       n=t.GetSelectedRows()
       print "      nevents=",n
@@ -118,6 +131,7 @@ for gen in range(1,12):
       	l.append(t.GetV1()[i])
       oldN=len(l)
       l=[ x for x in sorted(l) if x>-20 and x<20 ]
+      #l=[ x for x in sorted(l) ]
       #h.SetBinContent(gen+1,fit+1, l[n/2])
       n=len(l)
       if n==0:
@@ -128,6 +142,13 @@ for gen in range(1,12):
       print "gen=",gen,"fit=",fit,"median=",l[n/2],"n=",n
       #t.Delete()
 
+if subtract:
+    for i in range(1,12):
+        d = h.GetBinContent(i+1,i+1)
+        for j in range(1,12):
+            cx=h.GetBinContent(j+1,i+1)
+            h.SetBinContent(j+1,i+1,cx-d)
+
 h2=h.Clone("h2")
 for i in range(0,h.GetNbinsX()):
     for j in range(0,h.GetNbinsY()):
@@ -135,6 +156,7 @@ for i in range(0,h.GetNbinsX()):
             h2.SetBinContent(i+1,j+1,-.99999)
         if h.GetBinContent(i+1,j+1) >= 1:
             h2.SetBinContent(i+1,j+1,.99999)
+
 h2.Draw("COLZ")
 h.Draw("TEXT SAME")
 h2.GetZaxis().SetRangeUser(-1,1)
@@ -147,6 +169,6 @@ h2.Draw("AXIS X+ Y+ SAME")
 c.Update()
 
 raw_input("ok?")
-c.SaveAs("bias_"+cat+".pdf")
-c.SaveAs("bias_"+cat+".png")
+c.SaveAs("bias_"+cat+("_sub" if subtract else "")+".pdf")
+c.SaveAs("bias_"+cat+("_sub" if subtract else "")+".png")
 
