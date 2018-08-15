@@ -126,16 +126,38 @@ mctypes= [[-15,-10],##ggH
           [20,29], ## TT
         ]
 
-#import threading
-#lock=threading.Lock()
+import threading
+lock=threading.Lock()
 #def threadsafe(f):
-#    global lock
 #    def wrapper(*a,**kw):
 #        with lock:
 #            return f(*a,**kw)
 #    return wrapper
 
-def fill(batchsize=10000):
+class threadsafe_iter:
+    """Takes an iterator/generator and makes it thread-safe by
+    serializing call to the `next` method of given iterator/generator.
+    """
+    def __init__(self, it):
+        self.it = it
+        self.lock = threading.Lock()
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        with self.lock:
+            return self.it.next()
+
+def threadsafe_generator(f):
+    """A decorator that takes a generator function and makes it thread-safe.
+    """
+    def g(*a, **kw):
+        return threadsafe_iter(f(*a, **kw))
+    return g
+
+@threadsafe_generator
+def fill(batchsize=8000):
    print "-> Start fill"
    X=[]
    Y=[]
@@ -198,6 +220,8 @@ def fill(batchsize=10000):
                 X=[]
                 Y=[]
                 W=[]
+       #cycling
+       if idx==299: idx=0
 
    print "-> End batch"
    return
@@ -215,7 +239,22 @@ timer = ElapsedTimer()
 #        classifier.fit(X,y,sample_weight=w)
 #    classifier.train_on_batch(X,y,sample_weight=w)
 
-classifier.fit_generator(fill(10000),steps_per_epoch=10000, epochs=10)#,workers=3)
+from keras.callbacks import Callback
+
+class WeightsSaver(Callback):
+    def __init__(self):
+        self.N = 0
+
+    def on_batch_end(self, batch, logs={}):
+        # batch restart from 0 at each epoch
+        if batch == 0:
+            print "Saving benchmark",self.N
+            name = '/tmp/amarini/weights%08d.h5' % self.N
+            self.model.save_weights(name)
+            self.N +=1
+
+
+classifier.fit_generator(fill(8000),steps_per_epoch=100, epochs=10,callbacks=[WeightsSaver()],workers=4)
 
 print "-> End training"
 
