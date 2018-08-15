@@ -40,8 +40,9 @@ parser= OptionParser()
 
 ##more signal stat , 2L bTag for signal and top
 
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
+#parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
 ##parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bTag_bin200_wDATA_1l.root")
 parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bTag_bin200_wDATA_2l.root")
 
 parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_1l_1Third.root")
@@ -190,6 +191,9 @@ for y in channel:
 		if y == "1Ele" or y == "1Mu": label="1l_"
 ##		if y == "1Ele" or y == "1Mu": label="1Mu_"
 ##		if y == "1Ele" or y == "1Mu": label="1Ele_"
+		if y == "2Ele": label="2Ele_"
+		if y == "2Mu": label="2Mu_"
+		if y == "1Mu1Ele": label="1Mu1Ele_"
 		if y == "2L": label="2L_"
 ##		if opts.kTest==20: label="combined_"
 
@@ -520,10 +524,10 @@ for y in channel:
 					"CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":[".*"]}, ## name used for shape
 					"CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":[".*"]}, ## name used for shape
 					"CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":[".*"]}, ## name used for shape
-					"CMS_scale_jHighPtDown":{"type":"shape", "wsname":"CMS_scale_j_HighPtDown","name":"JESANDCSVHighPtDown","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
-					"CMS_btag_HFHighPtDown":{"type":"shape", "wsname":"CMS_btag_HFHighPtDown","name":"CSVRHFHighPtDown","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
-					"CMS_btag_LFHighPtDown":{"type":"shape", "wsname":"CMS_btag_LFHighPtDown","name":"CSVRLFHighPtDown","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
-					"CMS_btag_CFerr1HighPtDown":{"type":"shape", "wsname":"CMS_btag_CFerr1HighPtDown","name":"CSVRCERR1HighPtDown","proc":["Hptb","ttlf","ttb","ttcc"]} ## name used for shape
+					"CMS_scale_jHighPt":{"type":"shape", "wsname":"CMS_scale_j_HighPt","name":"JESANDCSVHighPt","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
+					"CMS_btag_HFHighPt":{"type":"shape", "wsname":"CMS_btag_HFHighPt","name":"CSVRHFHighPt","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
+					"CMS_btag_LFHighPt":{"type":"shape", "wsname":"CMS_btag_LFHighPt","name":"CSVRLFHighPt","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
+					"CMS_btag_CFerr1HighPt":{"type":"shape", "wsname":"CMS_btag_CFerr1HighPt","name":"CSVRCERR1HighPt","proc":["Hptb","ttlf","ttb","ttcc"]} ## name used for shape
 					####
 					}
 			else:
@@ -538,12 +542,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="AUG8_HT200_bTag/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="AUG12_HT200_bTag/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "AUG8_HT200_bTag/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "AUG12_HT200_bTag/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -1619,11 +1623,16 @@ for c in catStore:
 	base="ChargedHiggsTopBottom"
 	target = "data_obs_"+ cat["name"] 
 #	toget=base + "/" +cat["dir"] + "/" +  cat["var"]  +"_Data"
-	## PRELIMINARY
+
 	toget=base + "/" +cat["dir"] + "/" +  cat["var"]
 	if  ("1Ele" in cat["dir"] or "2Ele" in cat["dir"]) and not ("1Mu1Ele" in cat["dir"]): toget+="_SingleElectron"
 	elif  "1Mu" in cat["dir"] or "2Mu" in cat["dir"] or "1Mu1Ele" in cat["dir"]: toget+="_SingleMuon"
 
+	if "1Mu1Ele" in cat["dir"]:
+		h=tfile.Get(toget)
+		toget_2=toget.replace("_SingleMuon", "_SingleElectron")
+		hTmp2=tfile.Get(toget_2)
+		if h!= None and hTmp2: h.Add(hTmp2)
 	if "1L" in cat["dir"]:
 		toget_1=toget.replace("_1L", "_1Mu")
 		toget_1+="_SingleMuon"
@@ -1639,11 +1648,15 @@ for c in catStore:
 		toget_2+="_SingleElectron"
 		toget_3=toget.replace("_2L", "_1Mu1Ele")
 		toget_3+="_SingleMuon"
+		toget_4=toget.replace("_2L", "_1Mu1Ele")
+		toget_4+="_SingleElectron"
 		h=tfile.Get(toget_1)
 		hTmp2=tfile.Get(toget_2)
 		hTmp3=tfile.Get(toget_3)
+		hTmp4=tfile.Get(toget_4)
 		if h!= None and hTmp2: h.Add(hTmp2)
 		if h!= None and hTmp3: h.Add(hTmp3)
+		if h!= None and hTmp4: h.Add(hTmp4)
 	else:
 		h=tfile.Get(toget)
 
@@ -1654,8 +1667,7 @@ for c in catStore:
 
 	if h == None:
 		print "<*> Hist do not exists ",toget
-		### MARIA COMMENT THIS FOR NOW
-##		raise IOError
+		raise IOError
 
 ####This is the data
 ####1L
