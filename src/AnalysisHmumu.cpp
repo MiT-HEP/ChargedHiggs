@@ -1130,6 +1130,8 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/Mbbcorr_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mbbkf2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mbbkf3_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Bres_HbbHmm_"+ l ,"B Res;res;Events", 2000,-5,5.);
+	    Book ("HmumuAnalysis/Vars/Jres_HbbHmm_"+ l ,"B Res;res;Events", 2000,-5,5.);
 	    Book ("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mmm_KF2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mem_KF2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
@@ -1902,6 +1904,14 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 Fill("HmumuAnalysis/Vars/Mbbkf2_HbbHmm_"+ label,systname, jetVar_["mbbkf2"],e->weight());
                 Fill("HmumuAnalysis/Vars/Mbbkf3_HbbHmm_"+ label,systname, jetVar_["mbbkf3"],e->weight());
 
+                if (jetVar_["mbbcorr"] >10.)
+                {
+                    Fill("HmumuAnalysis/Vars/Bres_HbbHmm_"+ label,systname, jetVar_["bb_b1_res"],e->weight());
+                    Fill("HmumuAnalysis/Vars/Bres_HbbHmm_"+ label,systname, jetVar_["bb_b2_res"],e->weight());
+                    Fill("HmumuAnalysis/Vars/Jres_HbbHmm_"+ label,systname, jetVar_["bb_j1_res"],e->weight());
+                    Fill("HmumuAnalysis/Vars/Jres_HbbHmm_"+ label,systname, jetVar_["bb_j2_res"],e->weight());
+                }
+
                 if (jetVar_["mbbcorr"] > 110 and jetVar_["mbbcorr"]< 140) 
                     Fill("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ label,systname, mass_,e->weight());
                 if (jetVar_["mbbkf2"] > 110 and jetVar_["mbbkf2"]< 140) 
@@ -2126,6 +2136,7 @@ void HmumuAnalysis::updateMjj(){
         {
             kf.reset (new KinematicFit);
             kf->genericType=1;
+            kf->lambda=1.; // lambda->0, MET is neglected, lambda->inf MET->0
         }
 
         kf -> clear();
@@ -2244,6 +2255,55 @@ void HmumuAnalysis::updateMjj(){
         BB_KF3+=b1_kf3;
         BB_KF3+=b2_kf3;
         jetVar_["mbbkf3"] = BB_KF3.M();
+        
+        // Check resolution
+        GenJet *b1_gen=NULL,*b2_gen=NULL;
+        for (int gidx=0;;++gidx)
+        {
+            auto j=e->GetGenJet(gidx) ;
+            if (j==NULL) break;
+            if (j->DeltaR(b1) <0.4) b1_gen=j;
+            if (j->DeltaR(b2) <0.4) b2_gen=j;
+        }
+        GenParticle *b1_genp=NULL,*b2_genp=NULL;
+        for(int gidx=0;;++gidx)
+        {
+            auto g = e->GetGenParticle(gidx);
+            if (g==NULL) break;
+            if ( abs(g->GetPdgId()) != 5) continue;
+            if (g->DeltaR(b1) <0.4 ) b1_genp=g;
+            if (g->DeltaR(b2) <0.4 ) b2_genp=g;
+        }
+
+        jetVar_["bb_b1_res"] = (b1_gen)? (b1->Pt()*b1->GetBCorrection()/b1_gen->Pt()-1.)/myJets[idx_b1].sigma : -10;
+        jetVar_["bb_b2_res"] = (b2_gen)? (b2->Pt()*b2->GetBCorrection()/b2_gen->Pt()-1.)/myJets[idx_b2].sigma : -10;
+
+        // Log(__FUNCTION__,"DEBUG","-----------------------------------------------");
+        // Log(__FUNCTION__,"DEBUG",Form("bb_b1_res is %5.3f Reco = %.1f * %.3f GenJet=%.1f GenB=%.1f",jetVar_["bb_b1_res"],b1->Pt(),b1->GetBCorrection(),(b1_gen)?b1_gen->Pt():-10,(b1_genp)?b1_genp->Pt():-10 ));
+        // Log(__FUNCTION__,"DEBUG",Form("bb_b2_res is %5.3f Reco = %.1f * %.3f GenJet=%.1f GenB=%.1f",jetVar_["bb_b2_res"],b2->Pt(),b2->GetBCorrection(),(b2_gen)?b2_gen->Pt():-10,(b2_genp)?b2_genp->Pt():-10 ));
+        // Log(__FUNCTION__,"DEBUG","-----------------------------------------------");
+        
+        // first leading non-bjets
+        jetVar_["bb_j1_res"] = -10;
+        jetVar_["bb_j2_res"] = -10;
+        int kjet=1;
+        for(int i=0;i<selectedJets.size();++i) // not the ghosts
+        {
+            if (i==idx_b1) continue;
+            if (i==idx_b2) continue;
+            if (kjet>2) continue;
+            for (int gidx=0;;++gidx)
+            {
+                auto j=e->GetGenJet(gidx) ;
+                if (j==NULL) break;
+                if (j->GetP4().DeltaR(myJets[i].p4) <0.4)
+                {
+                    jetVar_[Form("bb_j%d_res",kjet)] = (myJets[i].p4.Pt()/j->Pt()-1.) / myJets[i].sigma;
+                    ++kjet;
+                    break;
+                }
+            }
+        }
 
         /*
         kf->doGhost=true;
