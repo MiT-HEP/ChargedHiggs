@@ -26,6 +26,9 @@ addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M125')
 addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M130')
 
+#catch powheg
+addConfig=HmumuAnalysis|AddLabel('VBFH_HToMuMu_M125_13TeV_powheg_pythia8')
+
 ## need both to book and recognize
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125')

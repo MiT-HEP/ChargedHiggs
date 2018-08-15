@@ -2481,7 +2481,9 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
             SetTreeVar("puWeight",e->GetWeight()->GetBarePUWeight());
             int mc=0;
             if (label.find( "GluGlu_HToMuMu") != string::npos) mc -=10;
+            if (label.find( "GluGlu_HToMuMu") != string::npos and label.find("powheg") != string::npos) mc -=15;
             if (label.find( "VBF_HToMuMu") != string::npos) mc -=20;
+            if (label.find( "VBFH_HToMuMu") != string::npos and label.find("powheg") != string::npos) mc -=25;
             if (label.find( "ZH_HToMuMu") != string::npos) mc -=30;
             if (label.find( "WMinusH_HToMuMu") != string::npos) mc -=40;
             if (label.find( "WPlusH_HToMuMu") != string::npos) mc -=50;
@@ -2498,6 +2500,7 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
             if (label == "EWK_LLJJ") mc =40;
             if (mc == 0) mc =1;
             SetTreeVar("mc",mc);
+            //Log(__FUNCTION__,"DEBUG",Form("mc=%d label=%s",mc,label.c_str()));
         }
         
         int recoMuons= (mu0!=NULL and mu1!=NULL) ? 1:0;
