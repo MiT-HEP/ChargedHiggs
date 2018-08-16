@@ -158,73 +158,79 @@ def threadsafe_generator(f):
 
 @threadsafe_generator
 def fill(batchsize=8000):
-   print "-> Start fill"
-   X=[]
-   Y=[]
-   W=[]
+    print "-> Start fill"
+    X=[]
+    Y=[]
+    W=[]
 
-   #t=ROOT.TChain("hmm")
-   #for idx in range(0,300):
-   #    #t.Add("/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v4/ChHiggs_%d.root"%idx)
-   #    if idx==1 or idx==56: continue
-   #    if idx>10: break
-   #    t.Add("/eos/cms/store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx)
+    #t=ROOT.TChain("hmm")
+    #for idx in range(0,300):
+    #    #t.Add("/eos/user/k/klute/Nero/2017_09_18_HmmTreeMoreVars_v4/ChHiggs_%d.root"%idx)
+    #    if idx==1 or idx==56: continue
+    #    if idx>10: break
+    #    t.Add("/eos/cms/store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx)
+    # /eos/cms/store/user/amarini/Hmumu/fwk/2018_08_15_SyncTreeHH
+    files=["root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx for idx in range(0,300) if idx !=1 and idx !=56]
+    files.extend(["root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_15_SyncTreeHH/ChHiggs_%d.root"%idx for idx in range(0,10)])
+    random.shuffle(files) 
+    while True:
+        for idx in range(0,len(files)):
+            #if idx==1 or idx==56: continue
+            f=ROOT.TFile.Open(files[idx])
 
-   for idx in range(0,300):
-       if idx==1 or idx==56: continue
-       f=ROOT.TFile.Open("root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx)
-       t=f.Get("hmm")
-       if t==None: print "ERROR File",f.GetName(),"does not exist"
-       print "Entries in file",idx,"Entries=",t.GetEntries()
-       for ientry in range(0,t.GetEntries()):
-            t.GetEntry(ientry)
+            t=f.Get("hmm")
+            if t==None: print "ERROR File",f.GetName(),"does not exist"
+            print "Entries in file",idx,"Entries=",t.GetEntries(), f.GetName()
+            for ientry in range(0,t.GetEntries()):
+                 t.GetEntry(ientry)
 
-            if t.eventNum %2 ==0: continue
-            ## selection
-            if t.mass <110 or t.mass >150 : continue
-            if not (t.pass_recomuons and t.pass_asymmcuts and t.pass_trigger)  : continue
-            #dpOp = (res.resolution(t.pt1,t.eta1)) **2 + (res.resolution(t.pt2,t.eta2)**2)
-            #dmOm = math.sqrt(dpOp)
-            #dm = dmOm * t.mass
+                 if t.eventNum %2 ==0: continue
+                 ## selection
+                 if t.mass <110 or t.mass >150 : continue
+                 if not (t.pass_recomuons and t.pass_asymmcuts and t.pass_trigger)  : continue
+                 #dpOp = (res.resolution(t.pt1,t.eta1)) **2 + (res.resolution(t.pt2,t.eta2)**2)
+                 #dmOm = math.sqrt(dpOp)
+                 #dm = dmOm * t.mass
 
-            ### define weight
-            #w.append(1./dm * t.mcWeight * t.puWeight)
-            #w.append(1./dm )
+                 ### define weight
+                 #w.append(1./dm * t.mcWeight * t.puWeight)
+                 #w.append(1./dm )
 
-            ptj1 = 0.
-            if t.njets >0 : ptj1=t.jet_pt[0]
+                 ptj1 = 0.
+                 if t.njets >0 : ptj1=t.jet_pt[0]
 
-            ## fill
+                 ## fill
 
-            #'@' -> 't.', '~'
-            x= [ eval(re.sub('@','t.',s)) if '@' in s else eval(re.sub('~','',s)) if '~' in s else eval("t."+s) for s in features ]
-            ## fill -- target
+                 #'@' -> 't.', '~'
+                 x= [ eval(re.sub('@','t.',s)) if '@' in s else eval(re.sub('~','',s)) if '~' in s else eval("t."+s) for s in features ]
+                 ## fill -- target
 
-            if t.mc< 0 : y=1
-            else : y=0
+                 if t.mc< 0 : y=1
+                 else : y=0
 
-            Y.append(y)
-            X.append(x)
-            
-            xsec=1
-            if t.mc <0 :  xsec*=2.176E-4
-            if t.mc <-10 and t.mc >-15 : xsec*=48.58
-            if t.mc <-20 and t.mc >-25 : xsec*=3.78
-            w= t.mcWeight * xsec
-            W.append(w )
-            
-            #yield np.array([x]),np.array([y]),np.array([w])
+                 Y.append(y)
+                 X.append(x)
+                 
+                 xsec=1
+                 if t.mc <0 :  xsec*=2.176E-4
+                 if t.mc <-10 and t.mc >-15 : xsec*=48.58
+                 if t.mc <-20 and t.mc >-25 : xsec*=3.78
+                 if t.mc <-25 and t.mc >-30 : xsec*=3.78
+                 w= t.mcWeight * xsec
+                 W.append(w )
+                 
+                 #yield np.array([x]),np.array([y]),np.array([w])
 
-            if batchsize>0 and len(Y)>=batchsize: 
-                yield np.array(X),np.array(Y),np.array(W)
-                X=[]
-                Y=[]
-                W=[]
-       #cycling
-       if idx==299: idx=0
+                 if batchsize>0 and len(Y)>=batchsize: 
+                     yield np.array(X),np.array(Y),np.array(W)
+                     X=[]
+                     Y=[]
+                     W=[]
+        #cycling
+        print "cycling"
 
-   print "-> End batch"
-   return
+    print "-> End batch"
+    return
 
 
 timer = ElapsedTimer()
