@@ -257,6 +257,8 @@ class WeightsSaver(Callback):
             print "Saving benchmark",self.N
             name = '/tmp/amarini/weights%08d.h5' % self.N
             self.model.save_weights(name)
+            name = '/tmp/amarini/weights%08d.hd' % self.N
+            self.model.save(name)
             self.N +=1
 
 

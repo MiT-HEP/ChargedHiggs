@@ -318,7 +318,21 @@ class HHConfig(HmmConfig):
         self.SimpleScaleAndSmear()
         self.computeVersioning()
 
+class HHEMConfig(HmmConfig):
+    def __init__(self):
+        HmmConfig.__init__(self)
+        self.categories=[""]
+        self.processes=["GluGluToHHTo2B2M_node_4"]
+        self.sig_mass_points=[125]
+        self.sigfit_gaussians={}
+        self.varname="Mem_KF2_HbbHmm"
+        self.sigspec="%s" ## the %s is for the process substitution
+
+        self.SimpleScaleAndSmear()
+        self.computeVersioning()
+
 hh=HHConfig()
+hhem=HHEMConfig()
 
 if __name__=="__main__":
     #hmm.Print()

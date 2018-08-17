@@ -39,7 +39,7 @@ class ElapsedTimer(object):
     def elapsed_time(self):
         print("Elapsed: %s " % self.elapsed(time.time() - self.start_time) )
 
-classifier =keras.models.load_model("weights00000001.h5")
+
 # '@' -> t. ; '~' w/o t.
 features= [  "@pt1/@mass", #0
              "@pt2/@mass", #1
@@ -67,6 +67,30 @@ features= [  "@pt1/@mass", #0
              "thirdQGL",     #21
              "costhetastar",     #22
         ]
+
+def build_model():
+    from keras.models import Sequential
+    from keras.layers import Dense, Activation, Dropout, Flatten
+    from keras.layers import Convolution2D, MaxPooling2D
+    import keras.regularizers as regularizers
+    ''' Needed if use load_weights instead of load_model'''
+    model = Sequential()
+    model.add(Dense(40, input_dim=len(features),activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
+    model.add(Dropout(0.25))
+    model.add(Dense(25,activation='tanh',use_bias=True,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='glorot_normal',bias_initializer='zeros'))
+    model.add(Dense(10,activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros'))
+    model.add(Dense(1,activation='sigmoid'))
+    
+    model.compile(
+            #loss='mean_squared_error',
+            loss='binary_crossentropy',
+            #optimizer='sgd',
+            optimizer='adam',
+            metrics=['accuracy'])
+    return model
+#classifier =keras.models.load_model("weights00000002.h5")
+classifier = build_model()
+classifier . load_weights("weights00000002.h5")
 
 def loop():
     histos={}
@@ -98,17 +122,25 @@ def loop():
             if t.mc <-10 and t.mc >-15 : xsec*=48.58
             if t.mc <-20 and t.mc >-25 : xsec*=3.78
             w= t.mcWeight * xsec
+            
+            dnn=classifier.predict(np.array([x]))[0][0]
 
+            #print " -------------- DEBUG ---------------"
+            #print "x=",x
+            #print "y=",y
+            #print "w=",w
+            #print "dnn=",dnn
+            #print "-------------------------------------"
 
             if (y==1):
                 histos["bdt_S"].Fill(t.bdt,w)
-                histos["dnn_S"].Fill(classifier.predict([x])[0],w)
+                histos["dnn_S"].Fill(dnn,w)
             else:
                 histos["bdt_B"].Fill(t.bdt,w)
-                histos["dnn_B"].Fill(classifier.predict([x])[0],w)
+                histos["dnn_B"].Fill(dnn,w)
     return histos
 
-fOut=ROOT.TFile.Open("comparison.root")
+fOut=ROOT.TFile.Open("comparison.root","RECREATE")
 histos=loop()
 
 roc_bdt=makeROC( histos["bdt_S"],histos["bdt_B"])

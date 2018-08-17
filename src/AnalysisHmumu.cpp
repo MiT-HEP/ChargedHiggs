@@ -1134,7 +1134,9 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/Jres_HbbHmm_"+ l ,"B Res;res;Events", 2000,-5,5.);
 	    Book ("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mmm_KF2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mmm_KF3_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mem_KF2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mem_KF3_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 
         // --- histograms for limits extraction
         for(const auto & c : categories_)
@@ -1916,16 +1918,25 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                     Fill("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ label,systname, mass_,e->weight());
                 if (jetVar_["mbbkf2"] > 110 and jetVar_["mbbkf2"]< 140) 
                     Fill("HmumuAnalysis/Vars/Mmm_KF2_HbbHmm_"+ label,systname, mass_,e->weight());
+                if (jetVar_["mbbkf3"] > 110 and jetVar_["mbbkf3"]< 140) 
+                    Fill("HmumuAnalysis/Vars/Mmm_KF3_HbbHmm_"+ label,systname, mass_,e->weight());
             }
 
             if (mu0 != NULL and passTrigger and mu0->Pt() >30 and el != NULL and el->Pt() > 20)  // singleMuon trigger
             {
+                Object Hcache;Hcache.SetP4(Hmm.GetP4());//saveit
                 Object Z; 
                 Z.SetP4(zero); 
                 Z += *mu0;
                 Z += *el;
+                Hmm.SetP4(Z.GetP4());
+                updateMjj(); // --> KF is defined with  e m
                 if (jetVar_["mbbkf2"] > 110 and jetVar_["mbbkf2"]< 140) 
                     Fill("HmumuAnalysis/Vars/Mem_KF2_HbbHmm_"+ label,systname, Z.M(),e->weight());
+                if (jetVar_["mbbkf3"] > 110 and jetVar_["mbbkf3"]< 140) 
+                    Fill("HmumuAnalysis/Vars/Mem_KF2_HbbHmm_"+ label,systname, Z.M(),e->weight());
+                Hmm.SetP4(Hcache.GetP4());
+                updateMjj(); // --> KF is defined again with em
             }
         }
 
