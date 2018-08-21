@@ -142,6 +142,7 @@ private:
     int numFatA=0;
     int numFatB=0;
     int numtop=0;
+    double leadingFatPt = 0;
     FatJet* topJet=NULL;    //tb
     FatJet* wJet=NULL;      //wbb
     FatJet* wJetwbj=NULL;   //wbj
