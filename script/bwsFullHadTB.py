@@ -86,8 +86,8 @@ parser= OptionParser()
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systNoSpi.root")
 #parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systNoSpi.root")
 
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systttb70.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systttb70.root")
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systsd.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systsd.root")
 
 ## REMEMBER TO:
 # a) change the rebin 20% to 50% Inf
@@ -381,15 +381,13 @@ for y in channel:
 #2500,3000 if "_three_highj" in x and (y=="t0b") and "in" in reg missing ST
 
                                 if opts.kMass=="3000":
-###					if "_two_highj" in x and y=="wbb": continue
-###					if "_three_lowj" in x and (y=="t0b") and "above" in reg: continue
-######					if "_three_lowj" in x and (y=="t1b") and "in" in reg: continue
-					if "_three_highj" in x and (y=="t0b") and "in" in reg: continue
+					if "_three_lowj" in x and ( y=="t1b" or y=="t0b" ) and "above" in reg: continue
+					if "_three_highj" in x and ( y=="t0b" ) and "in" in reg: continue
 					if "_three_lowj" in x and (y=="t0b") and "in" in reg: continue
 
                                 if opts.kMass=="2500":
-					if "_three_lowj" in x and (y=="t0b") and "in" in reg: continue
-					if "_three_highj" in x and (y=="t0b") and "in" in reg: continue
+					if "_three_highj" in x and (y=="t0b" or y=="t1b") and "in" in reg: continue
+					if "_three_highj" in x and (y=="t0b") and "above" in reg: continue
 
                                 ## below are for associated only
 #				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and "in" in reg or "below" in reg:
@@ -576,7 +574,7 @@ for y in channel:
                                         "muRF_ttbar_in":{"type":"shape", "wsname":"muRF_ttbar_in","name":"Scale","proc":["ttbar"]},
                                         "muRF_ttbar_above":{"type":"shape", "wsname":"muRF_ttbar_above","name":"Scale","proc":["ttbar"]},
 					### MET-Jets-PU
-                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three""ttbar","top","Hptb"]},
+                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
                                         "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
 					## SDmass
                                         "CMS_scale_SDMass":{"type":"shape", "wsname":"CMS_scale_SDMass","name":"SDMassSCALE","proc":["ttbar","top","Hptb"]},
@@ -599,15 +597,15 @@ for y in channel:
 					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":["ttbar","top","Hptb"]},
                                         ##Heavy jets light flavor contamination
                                         "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["ttbar","top","Hptb"]},
-                                        "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+                                        "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF_qcd","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ##Linear and quadratic uncertainties
 					# note decouple the qcd
-					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":["ttbar","top","Hptb","top"]},
-					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":["ttbar","top","Hptb","top"]},
-					"CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":["ttbar","top","Hptb","top"]},
-					"CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":["ttbar","top","Hptb","top"]},
-                                        "CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":["ttbar","top","Hptb","top"]},
-                                        "CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":["ttbar","top","Hptb","top"]},
+					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":["ttbar","top","Hptb"]},
+					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":["ttbar","top","Hptb"]},
+					"CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":["ttbar","top","Hptb"]},
+					"CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":["ttbar","top","Hptb"]},
+                                        "CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":["ttbar","top","Hptb"]},
+                                        "CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":["ttbar","top","Hptb"]},
 					"CMS_btag_HFstat1_qcd":{"type":"shape", "wsname":"CMS_btag_HFstat1_qcd","name":"CSVRHFSTAT1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
 					"CMS_btag_HFstat2_qcd":{"type":"shape", "wsname":"CMS_btag_HFstat2_qcd","name":"CSVRHFSTAT2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         "CMS_btag_LFstat1_qcd":{"type":"shape", "wsname":"CMS_btag_LFstat1_qcd","name":"CSVRLFSTAT1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
@@ -626,11 +624,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_AUG23/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_AUG23_bin2/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_AUG23/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_AUG23_bin2/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -910,6 +908,7 @@ def importStat():
 for syst in systStore:
 	if syst == "None": continue
 	if systStore[syst]["type"] == "lnN":
+		## remember to decorrelate among the mirror and SR
                 if "CMS_eff_Tau21" in systStore[syst]["wsname"]:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["wbb","wbj"])
                 elif "CMS_eff_Tau32" in systStore[syst]["wsname"]:
@@ -1098,23 +1097,30 @@ def envelop(tfile,togetNom, togetSyst, s) :
 			for iBin in range(1,h.GetNbinsX()+1):
 				c= h.GetBinContent(iBin)
 
-	## take the maximum for the Up
-			if 'Up' in s and hTmp.GetBinContent(iBin)>c:
-				h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
+	                        ## take the maximum for the Up
+				if 'Up' in s and hTmp.GetBinContent(iBin)>c:
+					h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
 
-	## take the minimum for the Down
-			if 'Down' in s and hTmp.GetBinContent(iBin)<c:
-				h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
+	                        ## take the minimum for the Down
+				if 'Down' in s and hTmp.GetBinContent(iBin)<c:
+					h.SetBinContent(iBin,hTmp.GetBinContent(iBin))
 
         if 'Up' in s:
                 hTmpUp = h
-                hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpUp.Clone("test1"),"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
-                return hUp
+		if LikeBins==1 or LikeBins==2:
+			return hTmpUp
+
+                else:
+			hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpUp, hTmpUp.Clone("test1"),"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
+			return hUp
 
         if 'Down' in s:
                 hTmpDown = h
-                hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpDown.Clone("test1"), hTmpDown,"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
-                return hDown
+		if LikeBins==1 or LikeBins==2:
+			return hTmpDown
+		else:
+			hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpDown.Clone("test1"), hTmpDown,"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
+			return hDown
 
 ## import Everything in ws TODO
 def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
@@ -1237,7 +1243,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 				if hTmp!=None: print "<*> 2/3 Reading Hist '"+toget+"'",hTmp.Integral()
 
-#				if hTmp.Integral() <= 0 and ( "ewk" in mc["hist"]) :
+#				if hTmp.Integral() <= 0 and ( "ewk" in mc["hist"] or "TTX" in mc["hist"]) :
 #					print "<*> Hist '"+toget+"' norm null but keep going"
 #					hTmp = None
 
@@ -1271,9 +1277,9 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 				if hTmp and applyLikelihoodRebinBin:
 					hTmp = likelihoodBinning.applyMapping(LikelihoodMapping, hTmp)
-				if hTmpSum==None:hTmpSum = hTmp
+				if hTmpSum==None and hTmp:hTmpSum = hTmp
 				else:
-					hTmpSum.Add(hTmp)
+					if hTmp: hTmpSum.Add(hTmp)
 
 				h=hTmpSum
 
@@ -1428,7 +1434,7 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 
 				if hTmp!= None: print "<*> 1/3 Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX()
 
-#				if hTmp.Integral() <= 0 and ( "ewk" in mc["hist"]) :
+#				if hTmp.Integral() <= 0 and ( "ewk" in mc["hist"] or "TTX" in mc["hist"]) :
 #					print "<*> Hist '"+toget+"' norm null but keep going"
 #					hTmp = None
 
