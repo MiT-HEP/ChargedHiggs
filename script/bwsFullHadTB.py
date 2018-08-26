@@ -14,8 +14,8 @@ maxStat=0.15
 nRebinHT=1
 #nRebinHT=5
 #LikeBins=10
-LikeBins=1
-#LikeBins=2
+#LikeBins=1
+LikeBins=2
 
 doRebin = False
 applyLikelihoodRebinBin = True
@@ -326,14 +326,9 @@ for y in channel:
 	for x in basecat:
 
 		region = ["_in","_above","_below"]
-##		region = ["_in","_below"]
-##		region = ["_in"]
 
-#counting
-#		if True:
-#			region = ["_in"]
-#			if "OneBOneFat1l" in x: continue
-#			if "OneBOneMirrorFat" in x:continue
+		if "OneBOneMirrorFat" in x:
+                        region = ["_in"]
 
 		if "OneBOneFat1l" in x:
 			region = ["_all"]
@@ -624,11 +619,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_AUG23_bin2/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_AUG25_bin2/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_AUG23_bin2/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_AUG25_bin2/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -909,6 +904,7 @@ for syst in systStore:
 	if syst == "None": continue
 	if systStore[syst]["type"] == "lnN":
 		## remember to decorrelate among the mirror and SR
+		## remember to decorrelate eff-l for among veto and 1l
                 if "CMS_eff_Tau21" in systStore[syst]["wsname"]:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["wbb","wbj"])
                 elif "CMS_eff_Tau32" in systStore[syst]["wsname"]:
@@ -922,7 +918,7 @@ for syst in systStore:
 		elif "muRF_ttbar_below" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["below"])
 		elif "muRF_ttbar_in" in systStore[syst]["wsname"]:
-			writeSystShape(systStore[syst],systStore[syst]["proc"],["in"])
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["in","OneBOneFat1l"])
 		elif "muRF_ttbar_above" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
 ##
