@@ -48,6 +48,9 @@ parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]
 parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_1l_1Third.root")
 parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_2l_1Third.root")
 
+#parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bTag_bin200_wDATA_1l.root")
+#parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bTag_bin200_wDATA_2l.root")
+
 
 ######
 ######
@@ -151,12 +154,16 @@ channel = []
 
 #1l
 if opts.kTest==0 or opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==8 or opts.kTest==9 or opts.kTest==10 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16 or opts.kTest==100 or opts.kTest==101  or opts.kTest==102:
-	channel = ["1Mu","1Ele"]
-#	channel = ["1L"]
+#	channel = ["1Mu","1Ele"]
+	channel = ["1L"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7","charmCR"]
 
 #2l
 if opts.kTest==30 or opts.kTest==31 or opts.kTest==32 or opts.kTest==33 or opts.kTest==34 or opts.kTest==35 or opts.kTest==36 or opts.kTest==37 or opts.kTest==38 or opts.kTest==39 or opts.kTest==40 or opts.kTest==41 or opts.kTest==42 or opts.kTest==43 or opts.kTest==44 or opts.kTest==45 or opts.kTest==46 or opts.kTest==200 or opts.kTest==201  or opts.kTest==202:
+#	channel = ["2Mu"]
+#	channel = ["2Ele"]
+#	channel = ["1Mu1Ele"]
+#	channel = ["1Mu1Ele","2Mu","2Ele"]
 #	channel = ["1Mu1Ele","2Mu","2Ele"]
 	channel = ["2L"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
@@ -523,11 +530,7 @@ for y in channel:
 					"CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":[".*"]}, ## name used for shape
 					"CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":[".*"]}, ## name used for shape
 					"CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":[".*"]}, ## name used for shape
-					"CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":[".*"]}, ## name used for shape
-					"CMS_scale_jHighPt":{"type":"shape", "wsname":"CMS_scale_j_HighPt","name":"JESANDCSVHighPt","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
-					"CMS_btag_HFHighPt":{"type":"shape", "wsname":"CMS_btag_HFHighPt","name":"CSVRHFHighPt","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
-					"CMS_btag_LFHighPt":{"type":"shape", "wsname":"CMS_btag_LFHighPt","name":"CSVRLFHighPt","proc":["Hptb","ttlf","ttb","ttcc"]}, ## name used for shape
-					"CMS_btag_CFerr1HighPt":{"type":"shape", "wsname":"CMS_btag_CFerr1HighPt","name":"CSVRCERR1HighPt","proc":["Hptb","ttlf","ttb","ttcc"]} ## name used for shape
+					"CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":[".*"]} ## name used for shape
 					####
 					}
 			else:
@@ -542,12 +545,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="AUG12_HT200_bTag/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="AUG22_HT200/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "AUG12_HT200_bTag/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "AUG22_HT200/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -988,7 +991,7 @@ if doSyst: writeNormSyst("CMS_mass_ttbar",["1.027","1.027","1.027"],["ttlf","ttc
 
 ###if doSyst: writeNormSyst("CMS_HPTB_QCDscale_ttlf",["1.50"],["ttlf"])
 if doSyst: writeNormSyst("bgnorm_ttcc",["1.50"],["ttcc"])
-if doSyst: writeNormSyst("bgnorm_ttb",["1.30"],["ttb$"])
+if doSyst: writeNormSyst("bgnorm_ttb",["1.50"],["ttb$"])
 #if doSyst: writeNormSyst("bgnorm_ttbb",["1.50"],["ttbb$"])
 ##if doSyst: writeNormSyst("bgnorm_tt2b",["1.50"],["tt2b"])
 
@@ -1282,8 +1285,8 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 						if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
 
-				if mc["name"]=="ttb":
-					hTmp.Scale(1.83)
+#				if mc["name"]=="ttb":
+#					hTmp.Scale(1.83)
 
 ### SCALE for the 2/3
 				if mc["name"]!="qcd" and not "EWK" in hname:
