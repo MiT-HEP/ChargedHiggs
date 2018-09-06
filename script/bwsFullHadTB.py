@@ -325,7 +325,9 @@ VarTest=""
 for y in channel:
 	for x in basecat:
 
-		region = ["_in","_above","_below"]
+#		region = ["_in","_above","_below"]
+#		region = ["_above","_below"]
+		region = ["_in"]
 
 		if "OneBOneMirrorFat" in x:
 			region = ["_in"]
@@ -935,10 +937,10 @@ for syst in systStore:
 	if systStore[syst]["type"] == "lnN":
 
                 if "CMS_eff_Tau21" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,["1.08","1.08","1.08"],systStore[syst]["proc"],["OneBOneFat_.*_wbb","OneBOneFat_.*_wbj"])
+			writeNormSyst(syst,["1.08","1.08","1.08"],systStore[syst]["proc"],["OneBOneFat_.*_wbb","OneBOneFat_.*_wbj","OneBOneFat1l_.*_wbb","OneBOneFat1l_.*_wbb"])
 			writeNormSyst(syst,["0.92","0.92","0.92"],systStore[syst]["proc"],["OneBOneMirrorFat_.*_wbb","OneBOneMirrorFat_.*_wbj"])
                 elif "CMS_eff_Tau32" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,["1.02","1.02","1.02"],systStore[syst]["proc"],["OneBOneFat_.*_t0b","OneBOneFat_.*_t1b"])
+			writeNormSyst(syst,["1.02","1.02","1.02"],systStore[syst]["proc"],["OneBOneFat_.*_t0b","OneBOneFat_.*_t1b","OneBOneFat1l_.*_t0b","OneBOneFat1l_.*_t1b"])
 			writeNormSyst(syst,["0.98","0.98","0.98"],systStore[syst]["proc"],["OneBOneMirrorFat_.*_t0b","OneBOneMirrorFat_.*_t1b"])
 		elif "CMS_eff_l" in systStore[syst]["wsname"]:
 			writeNormSyst(syst,["1.04"],systStore[syst]["proc"],["OneBOneFat1l_"])
@@ -957,6 +959,7 @@ for syst in systStore:
 #		elif "muRF_ttbar_above" in systStore[syst]["wsname"]:
 #			writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
 ##
+
 		elif "CMS_scale_SDMass_qcd_wx_below" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["below"])
 		elif "CMS_scale_SDMass_qcd_wx_in" in systStore[syst]["wsname"]:
@@ -1009,6 +1012,19 @@ for syst in systStore:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["in"])
 		elif "CMS_scale_Pol_qcd_wx_three_above" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
+
+		elif "CMS_scale_Pol_qcd_wx_one_1l" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["1l"])
+		elif "CMS_scale_Pol_qcd_wx_two_1l" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["1l"])
+		elif "CMS_scale_Pol_qcd_wx_three_1l" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["1l"])
+		elif "CMS_scale_Pol_qcd_tx_one_1l" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["1l"])
+		elif "CMS_scale_Pol_qcd_tx_two_1l" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["1l"])
+		elif "CMS_scale_Pol_qcd_tx_three_1l" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["1l"])
 
 		else:
 			writeSystShape(systStore[syst],systStore[syst]["proc"])
