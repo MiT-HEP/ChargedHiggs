@@ -375,7 +375,16 @@ for y in channel:
 #					if "_one_lowj" in x and (y=="t1b") and "below" in reg: continue
 #					if "_three" in x and y=="t0b" and "below" in reg: continue
 
-#2500,3000 if "_three_highj" in x and (y=="t0b") and "in" in reg missing ST
+
+                                if opts.kMass=="500":
+					if "OneBOneMirrorFat_one_lowj" in x and y=="wbb" and "in" in reg: continue
+					if "OneBOneFat_one_lowj" in x and y=="wbb" and "below" in reg: continue
+					if "_one" in x and y=="wbb" and "all" in reg: continue
+					if "OneBOneFat_three_lowj" in x and y=="wbb" and "below" in reg: continue
+
+                                if opts.kMass=="1500":
+					if "OneBOneMirrorFat_three_highj" in x and y=="wbb" and "in" in reg: continue
+					if "OneBOneMirrorFat_three_lowj" in x and y=="wbb" and "in" in reg: continue
 
                                 if opts.kMass=="3000":
 					if "_three_lowj" in x and ( y=="t1b" or y=="t0b" ) and "above" in reg: continue
