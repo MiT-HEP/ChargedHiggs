@@ -13,9 +13,9 @@ maxStat=0.15
 # original binning is 10GeV
 nRebinHT=1
 #nRebinHT=5
-#LikeBins=10
+LikeBins=10
 #LikeBins=1
-LikeBins=2
+#LikeBins=2
 
 doRebin = False
 applyLikelihoodRebinBin = True
@@ -86,8 +86,18 @@ parser= OptionParser()
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systNoSpi.root")
 #parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp2systNoSpi.root")
 
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systsd.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systsd.root")
+## SEPT6 results
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systsd.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systsd.root")
+
+## SEPT6+Schannel results
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systtt.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systtt.root")
+
+## SEPT9 + Schannel/Associated results
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systmore.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systmore.root")
+
 
 ## REMEMBER TO:
 # a) change the rebin 20% to 50% Inf
@@ -223,12 +233,14 @@ def mergeCategory(tfile,toget):
 
 	if doSChannel:
 
-		if "_two" in toget and not "_below" in toget:
+		if "_two" in toget:
 			hTmp = Merge3B(tfile,toget)
-		elif "_below" in toget and not "_two" in toget:
-			hTmp = MergeAbove(tfile,toget)
-		elif "_below" and "_two" in toget:
-			hTmp = MergeAbove3B(tfile,toget)
+#		if "_two" in toget and not "_below" in toget:
+#			hTmp = Merge3B(tfile,toget)
+#		elif "_below" in toget and not "_two" in toget:
+#			hTmp = MergeAbove(tfile,toget)
+#		elif "_below" and "_two" in toget:
+#			hTmp = MergeAbove3B(tfile,toget)
 
 		else:
 			hTmp = tfile.Get(toget)
@@ -367,7 +379,13 @@ for y in channel:
 					if "_three_highj" in x and y=="wbj": continue
 					if "_two_lowj" in x and y=="wbj": continue
 					## wbb
+					if "_one_highj" in x and y=="wbb": continue
+					if "_one_lowj" in x and y=="wbb": continue
+					if "_two_highj" in x and y=="wbb": continue
 					if "_two_lowj" in x and y=="wbb": continue
+					if "_three_highj" in x and y=="wbb": continue
+					if "_three_lowj" in x and y=="wbb": continue
+					if "OneBOneFat1l" in x and y=="wbb": continue
 					## t0b and t1b
 #					if "_two_highj" in x and y=="t0b" and "below" in reg: continue
 #					if "_three_lowj" in x and y=="t0b" and "in" in reg: continue
@@ -375,31 +393,66 @@ for y in channel:
 #					if "_one_lowj" in x and (y=="t1b") and "below" in reg: continue
 #					if "_three" in x and y=="t0b" and "below" in reg: continue
 
-
                                 if opts.kMass=="500":
-					if "OneBOneMirrorFat_one_lowj" in x and y=="wbb" and "in" in reg: continue
-					if "OneBOneFat_one_lowj" in x and y=="wbb" and "below" in reg: continue
-					if "_one" in x and y=="wbb" and "all" in reg: continue
-					if "OneBOneFat_three_lowj" in x and y=="wbb" and "below" in reg: continue
+                                        if "OneBOneMirrorFat_one_lowj" in x and y=="wbb" and "in" in reg: continue
+                                        if "OneBOneFat_one_lowj" in x and y=="wbb" and "below" in reg: continue
+                                        if "_one" in x and y=="wbb" and "all" in reg: continue
+                                        if "OneBOneFat_three_lowj" in x and y=="wbb" and "below" in reg: continue
 
-                                if opts.kMass=="1500":
+				if opts.kMass=="1500" and not doSChannel:
 					if "OneBOneMirrorFat_three_highj" in x and y=="wbb" and "in" in reg: continue
 					if "OneBOneMirrorFat_three_lowj" in x and y=="wbb" and "in" in reg: continue
 
-                                if opts.kMass=="3000":
+                                if opts.kMass=="3000" and not doSChannel:
 					if "_three_lowj" in x and ( y=="t1b" or y=="t0b" ) and "above" in reg: continue
 					if "_three_highj" in x and ( y=="t0b" ) and "in" in reg: continue
 					if "_three_lowj" in x and (y=="t0b") and "in" in reg: continue
 
-                                if opts.kMass=="2500":
-					if "_three_highj" in x and (y=="t0b" or y=="t1b") and "in" in reg: continue
-					if "_three_highj" in x and (y=="t0b") and "above" in reg: continue
-#					if "_three_lowj" in x and (y=="t0b") and "in" in reg: continue
-#					if "_three_highj" in x and (y=="t0b" or y=="t1b") and "above" in reg: continue
+                                if opts.kMass=="2500" and not doSChannel:
+					if "OneBOneFat_three_highj" in x and (y=="t0b" or y=="t1b") and "in" in reg: continue
+					if "OneBOneFat_three_highj" in x and y=="t0b" and "above" in reg: continue
+					# this one below has overflow
+					if "OneBOneFat_three_highj" in x and y=="t1b" and "above" in reg: continue
+#					if "_three_highj" in x and (y=="t0b" or y=="t1b") and "in" in reg: continue
+#					if "_three_highj" in x and (y=="t0b") and "above" in reg: continue
+###					if "_three_lowj" in x and (y=="t0b") and "in" in reg: continue
+###					if "_three_highj" in x and (y=="t0b" or y=="t1b") and "above" in reg: continue
+
+
+				if (opts.kMass=="1000" or opts.kMass=="900" or opts.kMass=="800") and doSChannel:
+					if "OneBOneFat1l_two" in x and y=="t0b": continue
+					if opts.kMass=="800" and "OneBOneFat1l_two" in x and y=="t1b": continue
+
+				if "OneBOneFat1l" in x and y=="wbb": continue
+
+				if opts.kMass=="800" and doSChannel:
+					if "OneBOneMirrorFat_two_highj" in x and y=="wbb" and "in" in reg : continue
+
+				if opts.kMass=="1500" and doSChannel:
+					if "OneBOneMirrorFat_one_highj" in x and y=="wbb" and "in" in reg : continue
+
+				if opts.kMass=="2000" and doSChannel:
+					if "OneBOneFat_two_highj" in x and "above" in reg and y=="wbb": continue
+					if "OneBOneFat_two_highj" in x and "in" in reg and y=="wbb": continue
+					if "OneBOneMirrorFat_two_highj" in x and "in" in reg and y=="wbb": continue
+					if "OneBOneFat_one_highj" in x and "above" in reg and y=="wbb": continue
+
+				if opts.kMass=="3000" and doSChannel:
+					if "OneBOneFat_two_highj" in x and "above" in reg and y=="wbb": continue
+					if "OneBOneFat_two_highj" in x and "in" in reg and y=="wbb": continue
+					if "OneBOneMirrorFat_two_highj" in x and "in" in reg and y=="wbb": continue
+					if "OneBOneMirrorFat_two_lowj" in x and "in" in reg and y=="wbb": continue
+					if "OneBOneFat_one_highj" in x and "above" in reg and y=="wbb": continue
+					if "OneBOneMirrorFat_one_highj" in x and "in" in reg and y=="wbb": continue
+					if "OneBOneMirrorFat_one_lowj" in x and "in" in reg and y=="wbb": continue
+					if "OneBOneFat_two_lowj" in x and "above" in reg and y=="wbb": continue
+					if "OneBOneFat_two_lowj" in x and "in" in reg and y=="wbb": continue
+					if "OneBOneFat_one_highj" in x and "in" in reg and y=="wbb": continue
+
 
                                 ## below are for associated only
-#				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and "in" in reg or "below" in reg:
-#				if not doSChannel and (opts.kMass=="500" or opts.kMass=="400") and ("below" in reg or "in" in reg):
+#				if not doSChannel and (opts.kMass=="400") and "in" in reg or "below" in reg:
+#				if not doSChannel and (opts.kMass=="400") and ("below" in reg or "in" in reg):
 #					if "_three_lowj" in x and y=="wbb": continue
 #					if "_one_lowj" in x and y=="wbj": continue
 
@@ -422,17 +475,17 @@ for y in channel:
 ######################
 ############ s-channel
 ######################
-				if doSChannel and (opts.kMass=="800" or opts.kMass=="900" or opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
-					if "_two_highj" in x and y=="wbb": continue
-					if "_one_highj" in x and y=="wbj": continue
+#				if doSChannel and (opts.kMass=="800" or opts.kMass=="900" or opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
+#					if "_two_highj" in x and y=="wbb": continue
+#					if "_one_highj" in x and y=="wbj": continue
 
-				if doSChannel and (opts.kMass=="900" or opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
-					if "_two_lowj" in x and y=="wbj": continue
-					if "_two_highj" in x and y=="wbj": continue
+#				if doSChannel and (opts.kMass=="900" or opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
+#					if "_two_lowj" in x and y=="wbj": continue
+#					if "_two_highj" in x and y=="wbj": continue
 
-				if doSChannel and (opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
-					if y=="wbb": continue
-					if y=="wbj": continue
+#				if doSChannel and (opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
+#					if y=="wbb": continue
+#					if y=="wbj": continue
 
 ######################
 ######################
@@ -553,7 +606,8 @@ for y in channel:
 					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":5 },
 					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":6 },
 #                                        "ttbar":{ "name":"ttbar","hist":["ttb_TT_TuneCUETP8M2T4","ttc_TT_TuneCUETP8M2T4","ttlight_TT_TuneCUETP8M2T4"],"num":7},
-                                        "ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":7},
+					"ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4"],"num":7},
+#                                        "ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":7},
 					"top":{ "name":"top","hist":["ST","TTX"],"num":8},
 					"ewk":{ "name":"ewk","hist":["ewk"],"num":9}
 					}
@@ -568,7 +622,8 @@ for y in channel:
 					"qcd_tx_two":{"name":"qcd_tx_two", "hist":["QCD_HT"], "num":5 },
 					"qcd_tx_three":{"name":"qcd_tx_three", "hist":["QCD_HT"], "num":6 },
 #                                        "ttbar":{ "name":"ttbar","hist":["ttb_TT_TuneCUETP8M2T4","ttc_TT_TuneCUETP8M2T4","ttlight_TT_TuneCUETP8M2T4"],"num":7},
-                                        "ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":7},
+					"ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4"],"num":7},
+#                                        "ttbar":{ "name":"ttbar","hist":["TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":7},
 					"top":{ "name":"top","hist":["ST","TTX"],"num":8},
 					"ewk":{ "name":"ewk","hist":["ewk"],"num":9}
 					}
@@ -660,11 +715,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_AUG30_SRinShape/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_SEPT9_Shape/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_AUG30_SRinShape/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_SEPT9_Shape/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -968,7 +1023,6 @@ for syst in systStore:
 #		elif "muRF_ttbar_above" in systStore[syst]["wsname"]:
 #			writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
 ##
-
 		elif "CMS_scale_SDMass_qcd_wx_below" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["below"])
 		elif "CMS_scale_SDMass_qcd_wx_in" in systStore[syst]["wsname"]:
@@ -1021,6 +1075,7 @@ for syst in systStore:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["in"])
 		elif "CMS_scale_Pol_qcd_wx_three_above" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
+
 
 		elif "CMS_scale_Pol_qcd_wx_one_1l" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["1l"])
@@ -1393,6 +1448,9 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 				if hTmp!=None: print "<*> 2/3 Reading Hist '"+toget+"'",hTmp.Integral()
 
+				if mc["name"]=="ttbar" and hTmp:
+                                        hTmp.Scale(0.2)
+
 				if hTmp!=None and hTmp.Integral() <= 0 and ( "ewk" in mc["hist"] or "TTX" in mc["hist"] or "ST" in mc["hist"]) :
 					print "<*> Hist '"+toget+"' norm null but keep going"
 					hTmp.Scale(0)
@@ -1433,7 +1491,14 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 				h=hTmpSum
 
+
+			
 		if h!= None: print "<*> Read Hist '"+toget+"'",h.Integral(),' nBin=',h.GetNbinsX(), 'underflow=',h.GetBinContent(0), 'overflow=',h.GetBinContent(h.GetNbinsX()+1),' entries=',h.GetEntries()
+
+		if h!=None and h.GetBinContent(h.GetNbinsX()+1)!=0: print " ------------------- OVERFLOW ------------------- "
+		if h!=None and h.GetBinContent(h.GetNbinsX()+1)!=0: print "OVERFLOW", h.GetBinContent(h.GetNbinsX()+1), " in ", toget
+		if h!=None and h.GetBinContent(h.GetNbinsX()+1)!=0: raise IOError
+                if h!=None and h.GetBinContent(h.GetNbinsX()+1)!=0: raise ValueError
 
 	#clean h
 
@@ -1587,6 +1652,9 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 				if hTmp!= None and hTmp.Integral() <= 0 and ( "ewk" in mc["hist"] or "ST" in mc["hist"] or "TTX" in mc["hist"]) :
 					print "<*> Hist '"+toget+"' norm null but keep going"
 					hTmp.Scale(0)
+
+                                if mc["name"]=="ttbar" and hTmp:
+                                        hTmp.Scale(0.2)
 
 				if hTmp == None:
 					print "<*> Hist '"+toget+"' doesn't exist"
