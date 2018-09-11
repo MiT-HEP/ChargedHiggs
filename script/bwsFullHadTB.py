@@ -634,9 +634,9 @@ for y in channel:
                                         "None":None,
                                         "lumi_13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi_13TeV","name":"XXX"},
 					### lepton veto 0.96 / for 1l is 1.04
-                                        "CMS_eff_l":{"type":"lnN", "value":["0.96"] ,"proc":[".*"],"wsname":"CMS_eff_l","name":"XXX"}, ## name used for shape
+                                        "CMS_eff_l":{"type":"lnN", "value":["0.96"] ,"proc":["ttbar","top","Hptb","ewk"],"wsname":"CMS_eff_l","name":"XXX"}, ## name used for shape
 					## check the direction of the tau for the combination
-					"CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":[".*"],"wsname":"CMS_eff_t","name":"XXX"}, ## name used for shape
+					"CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":["ttbar","top","Hptb","ewk"],"wsname":"CMS_eff_t","name":"XXX"}, ## name used for shape
 					#### trigger efficiency
                                         "CMS_eff_trigger":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"CMS_eff_triggger","name":"XXX"},
 					### Theory modeling
@@ -647,8 +647,8 @@ for y in channel:
 #                                        "muRF_ttbar_in":{"type":"shape", "wsname":"muRF_ttbar_in","name":"Scale","proc":["ttbar"]},
 #                                        "muRF_ttbar_above":{"type":"shape", "wsname":"muRF_ttbar_above","name":"Scale","proc":["ttbar"]},
 					### MET-Jets-PU
-                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
-                                        "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb"]},
+                                        "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb","ewk"]},
+                                        "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb","ewk"]},
 					## SDmass
                                         "CMS_scale_SDMass":{"type":"shape", "wsname":"CMS_scale_SDMass","name":"SDMassSCALE","proc":["ttbar","top","Hptb"]},
                                         "CMS_scale_SDMass_qcd_wx_below":{"type":"shape", "wsname":"CMS_scale_SDMass_qcd_wx_below","name":"SDMassSCALE","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three"]},
@@ -662,7 +662,7 @@ for y in channel:
                                         "CMS_eff_Tau32":{"type":"lnN", "value":["1.02","1.02","1.02"] ,"proc":["ttbar","top","Hptb"],"wsname":"CMS_eff_Tau32","name":"XXX"}, ## name used for shape
 					## JER/S
                                         "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
-                                        "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":["Hptb","ttbar","top"]},
+                                        "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":["Hptb","ttbar","top","ewk"]},
                                         "CMS_scale_j_qcd_wx":{"type":"shape", "wsname":"CMS_scale_j_qcd_wx","name":"JESANDCSV","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three"]},
                                         "CMS_scale_j_qcd_tx":{"type":"shape", "wsname":"CMS_scale_j_qcd_tx","name":"JESANDCSV","proc":["qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ##Light jets Heavy flavor contamination
