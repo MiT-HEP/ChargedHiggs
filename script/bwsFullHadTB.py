@@ -398,6 +398,7 @@ for y in channel:
                                         if "OneBOneFat_one_lowj" in x and y=="wbb" and "below" in reg: continue
                                         if "_one" in x and y=="wbb" and "all" in reg: continue
                                         if "OneBOneFat_three_lowj" in x and y=="wbb" and "below" in reg: continue
+                                        if "OneBOneFat1l_three" in x and y=="t0b" and "all" in reg: continue
 
 				if opts.kMass=="1500" and not doSChannel:
 					if "OneBOneMirrorFat_three_highj" in x and y=="wbb" and "in" in reg: continue
@@ -686,6 +687,13 @@ for y in channel:
                                         "CMS_btag_CFerr2_qcd":{"type":"shape", "wsname":"CMS_btag_CFerr2_qcd","name":"CSVRCERR2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ####
                                         ## QCD Pol
+                                        "CMS_scale_Pol_qcd_tx_one_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_one_1l","name":"XXX","proc":["qcd_tx_one"]},
+                                        "CMS_scale_Pol_qcd_tx_two_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_two_1l","name":"XXX","proc":["qcd_tx_two"]},
+					"CMS_scale_Pol_qcd_tx_three_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_three_1l","name":"XXX","proc":["qcd_tx_three"]},
+                                        "CMS_scale_Pol_qcd_wx_one_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_one_1l","name":"XXX","proc":["qcd_wx_one"]},
+                                        "CMS_scale_Pol_qcd_wx_two_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_two_1l","name":"XXX","proc":["qcd_wx_two"]},
+                                        "CMS_scale_Pol_qcd_wx_three_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_three_1l","name":"XXX","proc":["qcd_wx_three"]},
+					##
 					"CMS_scale_Pol_qcd_tx_one_below":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_one_below","name":"XXX","proc":["qcd_tx_one"]},
                                         "CMS_scale_Pol_qcd_tx_two_below":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_two_below","name":"XXX","proc":["qcd_tx_two"]},
 					"CMS_scale_Pol_qcd_tx_three_below":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_three_below","name":"XXX","proc":["qcd_tx_three"]},
@@ -715,11 +723,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_SEPT9_Shape/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_SEPT10_Shape/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_SEPT9_Shape/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_SEPT10_Shape/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
