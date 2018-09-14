@@ -24,11 +24,13 @@ class ElapsedTimer(object):
 
 ################## KERAS ################
 
+from sklearn.metrics import roc_auc_score
+
 import keras
 print "keras version=",keras.__version__
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout, Flatten
+from keras.layers import Dense, Activation, Dropout, Flatten, BatchNormalization
 from keras.layers import Convolution2D, MaxPooling2D
 import keras.regularizers as regularizers
 from keras.wrappers.scikit_learn import KerasRegressor
@@ -39,69 +41,70 @@ from sklearn.pipeline import Pipeline
 
 
 import keras.backend as K
-def s_over_sqrt_sb(y_true, y_pred, weights=[1],dim=1):
-    ''' return max( s/s+b) ''' 
-    ## -1,0 -> bkg 
-    ## 1  -> sig
-    ## 2  -> sig ..
-    l = zip(y_pred,y_true)
-    sort(l, reverse=True)
-    s=[0.0 for x in range(0,dim) ]
-    sob=[0.0 for x in range(0,dim) ]
-    A=0.0
-    loss=0.0
-    for p,t in l:
-        A += 1.
-        s[t-1] +=1.
-        sob[t-1] = max(sob[t-1],pow(s[t-1],2)/A)
-    # sum them all
-    S=0.0
-    for k in sob: S+= k
-    return S
 
 # '@' -> t. ; '~' w/o t.
 features= [  "@pt1/@mass", #0
              "@pt2/@mass", #1
              "eta1", #eta1 #2
              "eta2", #eta2 #3
-             "phi1", #phi1 #4
-             "phi2", #phi1 #5
+             #"phi1", #phi1 #4
+             #"phi2", #phi1 #5
              #
              "Hpt", ## Hpt       #6
              "Heta", ## Heta     #7 
-             "Hphi", ## Hphi     #8
+             #"Hphi", ## Hphi     #8
              "mjj_1", ##mjj      #9
-             "mjj_2",            #10
+             #"mjj_2",            #10
              "detajj_1", ##detajj#11
-             "detajj_2",         #12
+             #"detajj_2",         #12
              #t.nbjets", ##nb      #13
              "maxDeepB",      #13
-             "njets", ##nj       #14
+             #"njets", ##nj       #14
              "~ptj1", ##jpt         #15
+             "~ptj2", ##jpt         #15
              "met", ##met         #16
-             "softNjets1",   #17
+             #"softNjets1",   #17
              "softHt1",      #18
              "firstQGL",     #19
-             "secondQGL",    #20
-             "thirdQGL",     #21
+             #"secondQGL",    #20
+             #"thirdQGL",     #21
              "costhetastar",     #22
         ]
+###################### MODEL 3 #################33
+#def build_model():
+#    model = Sequential()
+#    model.add(Dense(40, input_dim=len(features),activation='sigmoid',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
+#    model.add(BatchNormalization() )
+#    model.add(Dropout(0.25))
+#    model.add(Dense(25,activation='sigmoid',use_bias=True,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='glorot_normal',bias_initializer='zeros'))
+#    model.add(BatchNormalization() )
+#    model.add(Dense(10,activation='sigmoid',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros'))
+#    model.add(Dense(1,activation='sigmoid'))
+#    
+#    model.compile(
+#            #loss='mean_squared_error',
+#            loss='binary_crossentropy',
+#            optimizer='sgd',
+#            #optimizer='adam',
+#            metrics=['accuracy'])
+#    return model
 
 def build_model():
     model = Sequential()
-    #model.add(Convolution2D(32, 3, 3, activation='relu', input_shape=(1,28,28)))
-    #model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(Dense(40, input_dim=len(features),activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
-    model.add(Dropout(0.25))
-    model.add(Dense(25,activation='tanh',use_bias=True,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='glorot_normal',bias_initializer='zeros'))
-    model.add(Dense(10,activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros'))
-    model.add(Dense(1,activation='sigmoid'))
+    model.add(Dense(40, input_dim=len(features),activation='sigmoid',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
+    model.add(BatchNormalization() )
+    model.add(Dropout(0.10))
+    model.add(Dense(30,activation='tanh',use_bias=True,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='glorot_normal',bias_initializer='zeros'))
+    model.add(BatchNormalization() )
+    model.add(Dense(10,activation='tanh',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros'))
+    model.add(Dense(4,activation='sigmoid'))
     
     model.compile(
             #loss='mean_squared_error',
             loss='binary_crossentropy',
-            #optimizer='sgd',
-            optimizer='adam',
+            #loss=roc_area,
+            optimizer='sgd',
+            #optimizer='adam',
             metrics=['accuracy'])
     return model
 
@@ -116,7 +119,11 @@ def build_model():
 ###################
 
 
+print "->build model"
 classifier = build_model()
+
+#print "->starting from benchmark"
+#classifier =keras.models.load_model("saved.hd")
 
 
 ### batch loop
@@ -171,20 +178,25 @@ def fill(batchsize=8000):
     #    t.Add("/eos/cms/store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx)
     # /eos/cms/store/user/amarini/Hmumu/fwk/2018_08_15_SyncTreeHH
     files=["root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx for idx in range(0,300) if idx !=1 and idx !=56]
-    files.extend(["root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_15_SyncTreeHH/ChHiggs_%d.root"%idx for idx in range(0,10)])
+    #files.extend(["root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_15_SyncTreeHH/ChHiggs_%d.root"%idx for idx in range(0,10)])
+    files.extend(["root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_23_SyncHH/ChHiggs_%d.root"%idx for idx in range(0,100)])
     random.shuffle(files) 
     while True:
         for idx in range(0,len(files)):
-            #if idx==1 or idx==56: continue
             f=ROOT.TFile.Open(files[idx])
+            if f==None: 
+                print "ERROR File",files[idx],"does not exist. Try to continue"
+                continue
 
             t=f.Get("hmm")
-            if t==None: print "ERROR File",f.GetName(),"does not exist"
+            if t==None: 
+                print "ERROR File",f.GetName(),"does not exist. Try to continue"
+                continue
             print "Entries in file",idx,"Entries=",t.GetEntries(), f.GetName()
             for ientry in range(0,t.GetEntries()):
                  t.GetEntry(ientry)
 
-                 if t.eventNum %2 ==0: continue
+                 #if t.eventNum %2 ==0: continue
                  ## selection
                  if t.mass <110 or t.mass >150 : continue
                  if not (t.pass_recomuons and t.pass_asymmcuts and t.pass_trigger)  : continue
@@ -196,17 +208,31 @@ def fill(batchsize=8000):
                  #w.append(1./dm * t.mcWeight * t.puWeight)
                  #w.append(1./dm )
 
-                 ptj1 = 0.
+                 ptj1 = 29.
                  if t.njets >0 : ptj1=t.jet_pt[0]
+                 ptj2 = 29.
+                 if t.njets >1 : ptj2=t.jet_pt[1]
 
                  ## fill
 
                  #'@' -> 't.', '~'
                  x= [ eval(re.sub('@','t.',s)) if '@' in s else eval(re.sub('~','',s)) if '~' in s else eval("t."+s) for s in features ]
                  ## fill -- target
+                 #if t.mc< 0 : y=1
+                 #else : y=0
 
-                 if t.mc< 0 : y=1
-                 else : y=0
+                 #multi target
+                 if t.mc< 0 : y=[0,0,1,0]
+                 else : y=[1,0,0,0]
+
+                 if t.mc <-20 and t.mc >-30 : y=[0,0,0,1]
+
+                 if t.mc >20: y=[0,1,0,0]
+
+
+                 #[10,19], ## DY
+                 #[20,29], ## TT
+
 
                  Y.append(y)
                  X.append(x)
@@ -215,14 +241,17 @@ def fill(batchsize=8000):
                  if t.mc <0 :  xsec*=2.176E-4
                  if t.mc <-10 and t.mc >-15 : xsec*=48.58
                  if t.mc <-20 and t.mc >-25 : xsec*=3.78
+                 # powheg
+                 if t.mc <-15 and t.mc >-20 : xsec*=48.58
                  if t.mc <-25 and t.mc >-30 : xsec*=3.78
                  w= t.mcWeight * xsec
-                 W.append(w )
+                 W.append(w)
                  
                  #yield np.array([x]),np.array([y]),np.array([w])
 
                  if batchsize>0 and len(Y)>=batchsize: 
-                     yield np.array(X),np.array(Y),np.array(W)
+                     #yield np.array(X),np.array(Y),np.array(W)
+                     yield np.array(X),np.array(Y)
                      X=[]
                      Y=[]
                      W=[]
@@ -235,16 +264,6 @@ def fill(batchsize=8000):
 
 timer = ElapsedTimer()
 
-#for ibatch, (X,y,w) in enumerate(fill(10000)):
-#    print "---- DEBUG",ibatch,"----------"
-#    print "X=",X
-#    print "y=",y
-#    print "w=",w
-#    print "------------------------------"
-#    if ibatch ==0:
-#        classifier.fit(X,y,sample_weight=w)
-#    classifier.train_on_batch(X,y,sample_weight=w)
-
 from keras.callbacks import Callback
 
 class WeightsSaver(Callback):
@@ -255,11 +274,13 @@ class WeightsSaver(Callback):
         # batch restart from 0 at each epoch
         if batch == 0:
             print "Saving benchmark",self.N
-            name = '/tmp/amarini/weights%08d.h5' % self.N
-            self.model.save_weights(name)
-            name = '/tmp/amarini/weights%08d.hd' % self.N
+            #name = 'weights%08d.h5' % self.N
+            #self.model.save_weights(name)
+            name = 'weights%08d.hd' % self.N
             self.model.save(name)
             self.N +=1
+
+from keras.callbacks import Callback
 
 
 classifier.fit_generator(fill(8000),steps_per_epoch=100, epochs=10,callbacks=[WeightsSaver()],workers=4)
@@ -267,7 +288,7 @@ classifier.fit_generator(fill(8000),steps_per_epoch=100, epochs=10,callbacks=[We
 print "-> End training"
 
 # Store model to file
-classifier.save('model.hd')
+classifier.save('model7.hd')
 classifier.summary()
 
 timer.elapsed_time()

@@ -100,6 +100,10 @@ class Event{
     ///@brief get ntuple photon, without selection (Bare), without resorting.
     inline Photon * GetBarePhoton(unsigned iPhoton) const { if (phos_.size() <= iPhoton) return (Photon*) NULL; return phos_[iPhoton]; }
 
+    ///@brief get bare track jet
+    inline TrackJet* GetBareTrackJet(unsigned iJet) const{ if (tracks_.size()<= iJet) return (TrackJet*)NULL; return tracks_[iJet];}
+    //vector<TrackJet*> tracks_;
+
     //
 
     ///@brief get gen id tag for ttbar

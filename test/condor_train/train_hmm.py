@@ -21,9 +21,14 @@ multiclass=opts.multiclass
 if multiclass: print "-> Using multiclassification"
 
 ## BOOK Tree
+files=["root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_10_SyncTree//ChHiggs_%d.root"%idx for idx in range(0,300) if idx !=1 and idx !=56]
+files.extend(["root://eoscms///store/user/amarini/Hmumu/fwk/2018_08_23_SyncHH/ChHiggs_%d.root"%idx for idx in range(0,100)])
+
 t=ROOT.TChain("hmm")
-t.Add("/scratch/amarini/2018_04_04_ExclusiveCategoriesAndTree/ChHiggs*root")
-print "TotEntries=",t.GetEntries()
+#t.Add("/scratch/amarini/2018_04_04_ExclusiveCategoriesAndTree/ChHiggs*root")
+for f in files: t.Add(f)
+#print "TotEntries=",t.GetEntries()
+print "TotEntries(Fast)=",t.GetEntriesFast()
 
 outname="output.root" if not multiclass else "multiclass.root"
 out=ROOT.TFile(opts.outname,"RECREATE");
@@ -55,6 +60,13 @@ features=[
         "nbjets","maxDeepB","leadDeepB","maxCSV",
         ## w/z variables
         "mt1","mt2","met",
+        ]
+
+features=[
+        "pt1/mass","pt2/mass","eta1","eta2","phi1","phi2",
+        "Hpt","Heta","Hphi","mjj_1","mjj_2","detajj_1","detajj_2",
+        "maxDeepB","njets","Alt$(jet_pt[0],0)","met","softNjets1","softHt1",
+        "firstQGL","secondQGL","thirdQGL","costhetastar"
         ]
 # super reduced list
 if opts.varscheme==1:

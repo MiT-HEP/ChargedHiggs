@@ -447,6 +447,8 @@ if opts.hadoop: ### T3 MIT
    inputLs =[]
    subdir="."
    for iJob in range(0,opts.njobs):
+     ntry=0
+     while ntry<3:
         if len(splittedInput[iJob]) == 0 : 
              print "No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white
              continue
@@ -461,6 +463,12 @@ if opts.hadoop: ### T3 MIT
         for l in opts.config:
             dat.write(l+"\n")
         dat.close()
+        # check that created dat file is non-empty
+        ntry+=1
+        if os.stat("%s/input%d.dat"%(opts.dir,iJob)).st_size >20: break
+        print "-> Dat file not written correctly at trial",ntry
+        if ntry==3: 
+            sys.exit(0)
    # create condor.jdl
    outname = re.sub('.root','_$(Process).root',config['Output'])
    condor=open("%s/condor.jdl"%opts.dir,"w")

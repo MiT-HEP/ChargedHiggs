@@ -22,6 +22,8 @@ addConfig=HmumuAnalysis|AddLabel('ZZ')
 addConfig=HmumuAnalysis|AddLabel('EWK_LLJJ')
 
 ## need to add 125, in order to have different masses
+addConfig=HmumuAnalysis|AddLabel('GluGluH_HToMuMu_M125_13TeV_powheg_pythia8')
+
 addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M125')
 addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M130')

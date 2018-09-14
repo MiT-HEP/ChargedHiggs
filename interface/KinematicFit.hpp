@@ -24,10 +24,12 @@ class KinematicFit
         int maxIteration=1000;
     // corrections -- output
         std::vector<float> alpha;
+        float value{0.}; // value at minimum
 
     // Ghost -- config
         bool doGhost{false};
         int nGhost{3}; float sigmaGhost{0.3333}; float ptGhost{30.};
+        void print();
 
     protected:
         void addGhost();

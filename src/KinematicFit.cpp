@@ -4,6 +4,8 @@
 #include "TVectorD.h"
 #include <iostream>
 
+#define VERBOSE 0
+
 void KinematicFit::addGhost()
 {
     if (not doGhost) return;
@@ -47,10 +49,13 @@ void KinematicFit::run(){
 
         alpha.clear();
         alpha.reserve(N); // one for each p4. Not copying lagrange mult
+        value=0.;
         for(int i=0;i<p4.size();++i)
         {
             alpha.push_back(x(i+2));
+            value+= std::pow( (alpha[i] -1.)/sigma[i],2) ;
         }
+    
         return;
 }
 
@@ -197,10 +202,14 @@ void KinematicFit::runGeneric(){
     /* This function use a generic minimization form which is base on a log-normal prior.
      * It should be better as multiplicative prior, because it has a boundary at 0.
      */
+    if(VERBOSE)print();
+    if(VERBOSE)std::cout<<"-->KF Run Generic: type="<<genericType<<std::endl;
 
     addGhost();
     info::doNorm=doNorm;
     info::lambda=lambda;
+
+    if (sigma.size() != p4.size())std::cout<<"[ERROR] KF: sigma size ="<<sigma.size()<<" p4 size="<<p4.size()<<std::endl;
 
     std::vector<info> myinfos;
     for(int i=0;i<p4.size();++i)
@@ -211,6 +220,8 @@ void KinematicFit::runGeneric(){
         a.constant=0;
         myinfos.push_back(a);
     }
+
+    if(VERBOSE)std::cout<<"-->KF Run Generic: A"<<std::endl;
 
     // last position is H
     info a;
@@ -263,7 +274,11 @@ void KinematicFit::runGeneric(){
         while (status == GSL_CONTINUE && iter < maxIteration);
 
         //printf ("status = %s\n", gsl_strerror (status));
-        if (status != GSL_SUCCESS) std::cout<<"[WARNING] Unable to find minimum"<<std::endl;
+        if (status != GSL_SUCCESS) 
+        {
+            std::cout<<"[WARNING] Unable to find minimum"<<std::endl;
+            print();
+        }
 
         // copy values  beta-> alpha
         alpha.clear();
@@ -272,6 +287,7 @@ void KinematicFit::runGeneric(){
         {
             alpha.push_back(std::exp(gsl_vector_get (s->x, i+2)));
         }
+        value=-1.;
         gsl_multiroot_fsolver_free (s);
         gsl_vector_free (x);
     }
@@ -330,7 +346,7 @@ void KinematicFit::runGeneric(){
         }
         while (status == GSL_CONTINUE && iter < maxIteration);
 
-        if (status != GSL_SUCCESS) std::cout<<"[WARNING] Unable to find minimum"<<std::endl;
+        if (status != GSL_SUCCESS) { std::cout<<"[WARNING] Unable to find minimum"<<std::endl; print();}
 
         //copy back alpha vector
         alpha.clear();
@@ -339,7 +355,10 @@ void KinematicFit::runGeneric(){
         {
             float ai= gsl_vector_get (s->x, i);
             alpha.push_back(ai);
+
         }
+        if(VERBOSE)std::cout<<"-->KF Run Generic: F2"<<std::endl;
+        value= func2_f (s->x,&myinfos) ;
         
         //dealloc
         gsl_multimin_fdfminimizer_free (s);
@@ -348,5 +367,33 @@ void KinematicFit::runGeneric(){
     else {
         std::cout<<"[ERROR]:: Unsupported type"<<std::endl;
     }
+    if(VERBOSE)std::cout<<"-->KF Run Generic: RETURN"<<std::endl;
 }
 
+
+void KinematicFit::print()
+{
+    std::cout<<" ------------ KINEMATIC FIT ------------------"<<std::endl;
+    std::cout<<"generic Type="<<genericType <<std::endl;
+    std::cout<<"lambda="<<lambda <<std::endl;
+    std::cout<<"maxIteration="<<maxIteration <<std::endl;
+    std::cout<<"doNorm="<<doNorm <<std::endl;
+    std::cout<<"doGhost="<<doGhost <<std::endl;
+    if (doGhost) std::cout<<"-> nGhost="<<nGhost <<std::endl;
+    if (doGhost) std::cout<<"-> sigmaGhost="<<sigmaGhost <<std::endl;
+    if (doGhost) std::cout<<"-> ptGhost="<<ptGhost <<std::endl;
+
+    for(int i=0;i<p4.size();++i)
+       std::cout <<" * pt="<<p4[i].Pt()
+                 << " eta="<<p4[i].Eta()
+                 << " phi="<<p4[i].Phi()
+                 << " sigma="<<sigma[i]
+                 <<std::endl;
+    std::cout<<"H: pt="<<H.Pt()<<" eta="<<H.Eta()<<" phi="<<H.Phi()<<std::endl;
+    std::cout<<" ---- OUTPUT"<<std::endl;
+    for(int i=0;i<alpha.size();++i)
+         std::cout<<" * a"<<i<<") "<<alpha[i]<<std::endl;
+    std::cout<< " fval="<<value<<std::endl;
+
+    std::cout<<" ---------------------------------------------"<<std::endl;
+}

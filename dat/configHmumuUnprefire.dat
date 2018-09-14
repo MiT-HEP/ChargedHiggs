@@ -1,0 +1,4 @@
+include=dat/configHmumu.dat
+Files=
+addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/Unprefirable/v3.2/SingleMuon/SingleMuon-Run2017F
+Analysis=JsonAnalysis,MetFiltersAnalysis,UnprefirableFiltersAnalysis,HmumuAnalysis

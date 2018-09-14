@@ -49,4 +49,5 @@
 	<class name="RooCMSShape"/>
     <class name="RooVoigtianShape"/>
     <class name="RooBinnedUncertainties"/>
+    <class name="HmmLikelihood"/>
 </lcgdict>

@@ -71,6 +71,7 @@
 #include "interface/Weight.hpp"
 #include "interface/RooBinnedUncertainties.hpp"
 #include "interface/UnfirableFilter.hpp"
+#include "interface/HmmLikelihood.hpp"
 
 // put template stuff here, MyClass<T> myclass;
 //nampspace{
