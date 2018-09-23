@@ -113,7 +113,8 @@ def WorkspaceSubstitution(string):
 
 def PartonShowerSyst(type, cat, direction, njet, nbjet, proc):
 
-	filename="/afs/cern.ch/user/j/jaeyserm/public/forJacopo/PS.root"
+	filename="/afs/cern.ch/user/j/jaeyserm/public/ChargedHiggs/PSNew.root"
+
         if cat == "1L":
                 cat = "1l"
                 njet = njet +1
@@ -195,9 +196,10 @@ for y in channel:
 	for x in basecat:
 		label="2l_"
 		if y == "1L": label="1L_"
-		if y == "1Ele" or y == "1Mu": label="1l_"
-##		if y == "1Ele" or y == "1Mu": label="1Mu_"
-##		if y == "1Ele" or y == "1Mu": label="1Ele_"
+#		if y == "1Ele" or y == "1Mu": label="1l_"
+		if y == "1Mu": label="1Mu_"
+		if y == "1Ele": label="1Ele_"
+		#dilep
 		if y == "2Ele": label="2Ele_"
 		if y == "2Mu": label="2Mu_"
 		if y == "1Mu1Ele": label="1Mu1Ele_"
@@ -545,12 +547,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="AUG22_HT200/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="SEPT12_HT200/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "AUG22_HT200/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "SEPT12_HT200/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -715,9 +717,6 @@ def writeSystISRFSR(name="test",valueL=["1.027","1.026"], regexpL=["TT","ST",""]
 		if "HDAMP" in name:
 			mySyst="hdamp"
 
-		if "ttb" == proc: proc = "tt1b"
-		elif "ttbb" == proc: proc = "tt2b"
-		elif "tt2b" == proc: proc = "tt2bmerged"
 ##		regexpL=["ttlf","ttb","ttbb","tt2b","ttcc"]
 
 #		if "1L" in cat:
