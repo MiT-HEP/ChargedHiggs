@@ -3310,6 +3310,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     if ( label == "WZZ") label = "EWK";
     if ( label == "ZZZ") label = "EWK";
 
+    // redefine plots
+    if ( label == "TT_TuneCUETP8M2T4up_13TeV-powheg-pythia8" ) label = "TT_TuneCUETP8M2T4_13TeV-powheg-pythia8";
+    if ( label == "TT_TuneCUETP8M2T4down_13TeV-powheg-pythia8" ) label = "TT_TuneCUETP8M2T4_13TeV-powheg-pythia8";
+
     /*
     std::cout << e->GetName() << std::endl;
     if(e->GetName().find("SingleMuon")!=string::npos) std::cout << "this should be SingleMuon" << std::endl;
@@ -3386,9 +3390,10 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
             if(doQCD and do2lAnalysis) pairSign = (it->Charge()*leadLep->Charge()>0);
 
             if( pairSign and (it->GetP4() + leadLep->GetP4()).M() > 12 ) {
-                if(pairSign || (it->IsElectron() && leadLep->IsElectron()) ) {
+                if(((it->IsMuon() && leadLep->IsMuon())  || (it->IsElectron() && leadLep->IsElectron()))) {
                     // same flavour
-                    if( (std::abs((it->GetP4() + leadLep->GetP4()).M()-91) > 15) && (it->GetP4() + leadLep->GetP4()).M()>50 ) { trailLep=it; nOSLepPair++; }
+                    if( not doDY && (std::abs((it->GetP4() + leadLep->GetP4()).M()-91) > 15) && (it->GetP4() + leadLep->GetP4()).M()>50 ) { trailLep=it; nOSLepPair++; }
+                    if( doDY && (std::abs((it->GetP4() + leadLep->GetP4()).M()-91) < 15)) { trailLep=it; nOSLepPair++; }
                 } else { trailLep=it; nOSLepPair++; }
             } // and OS
         }
@@ -3661,6 +3666,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
     ////$$$$$$$ Apply SF
     ////$$$$$$$
 
+    /* // do not apply topPT in the central value
     if (not e->IsRealData() and
         ((label.find("TTTo2L2Nu_TuneCUETP8M2")!=string::npos) || (label.find("TTToSemilepton_TuneCUETP8M2")!=string::npos)
          || (label.find("TTTo2L2Nu_ttbbFilter")!=string::npos) || (label.find("TTToSemilepton_ttbbFilter")!=string::npos)
@@ -3671,6 +3677,7 @@ int ChargedHiggsTopBottom::analyze(Event*e,string systname)
          || (label.find("TT_TuneCUETP8M2T4_13TeV-powheg-isrup")!=string::npos)
          || (label.find("TTJets")!=string::npos)
          )) { e->ApplyTopReweight(); }
+    */
 
     ////$$$$$$$
     ////$$$$$$$ Fill Cut Flow

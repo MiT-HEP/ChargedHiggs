@@ -22,10 +22,11 @@ public:
     ChargedHiggsTopBottom() : AnalysisBase () {}
     virtual ~ChargedHiggsTopBottom () {}
 
-    bool doJECSources = true;
+    bool doJECSources = false;
 
     bool doSynch = false;
     bool doQCD = false;
+    bool doDY = false;
     bool doBDTSyst = true;
     bool doFinal = true; // true for final ; no need to compute fancy stuff
     bool writeTree = false; // false for final
