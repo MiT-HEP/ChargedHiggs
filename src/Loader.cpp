@@ -667,6 +667,12 @@ void LoadNero::FillMC(){
 
     event_ -> GetWeight() -> SetMcWeight(  mc->mcWeight );
 
+    if (tree_->GetBranchStatus("nBHadrons") ) {
+        event_ -> SetnBHadrons( mc->nBHadrons );
+    } else {
+        event_ -> SetnBHadrons( -999 );
+    }
+
     if(tree_->GetBranchStatus("genTtbarId")) {
         event_ -> SetGenTtbarId( mc->genTtbarId );
     } else {

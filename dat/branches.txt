@@ -86,6 +86,7 @@ genParent
 genFlags
 genTtbarId
 genjetP4
+nBHadrons
 ## JET
 jethadFlavour
 jetFlavour
