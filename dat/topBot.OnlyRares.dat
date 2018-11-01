@@ -1,23 +1,8 @@
 #############
-###  TTX with X=G,W,Z,TT + diboson + triboson
+###  diboson + triboson
 #############
 
-##TTTT
-config=ChargedHiggsTopBottom|AddLabel('TTTT')
-##TTZToQQ, TTZToLLNuNu
-addConfig=ChargedHiggsTopBottom|AddLabel('TTZ')
-##TTWJetsToQQ,TTWJetsToLNu
-addConfig=ChargedHiggsTopBottom|AddLabel('TTW')
-##ttHJetTobb,ttHJetToNonbb
-addConfig=ChargedHiggsTopBottom|AddLabel('ttH')
-##TTGJets
-addConfig=ChargedHiggsTopBottom|AddLabel('TTG')
-
-addConfig=ChargedHiggsTopBottom|AddLabel('TTX')
-
-addConfig=ChargedHiggsTopBottom|AddLabel('EWK')
-
-addConfig=ChargedHiggsTopBottom|AddLabel('WWTo')
+config=ChargedHiggsTopBottom|AddLabel('WWTo')
 ###WZTo1L1Nu2Q,WZTo1L3Nu,WZTo2L2Q,WZTo3LNu
 addConfig=ChargedHiggsTopBottom|AddLabel('WZTo')
 ###ZZTo2L2Nu,ZZTo2L2Q,ZZTo4L
@@ -30,6 +15,9 @@ addConfig=ChargedHiggsTopBottom|AddLabel('WWW')
 addConfig=ChargedHiggsTopBottom|AddLabel('WWZ')
 addConfig=ChargedHiggsTopBottom|AddLabel('WZZ')
 addConfig=ChargedHiggsTopBottom|AddLabel('ZZZ')
+
+addConfig=ChargedHiggsTopBottom|AddLabel('EWK')
+
 
 ## 1l - 16
 ###########

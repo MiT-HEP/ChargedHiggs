@@ -2,7 +2,12 @@
 ### TopBottom ###
 #############
 
+#config=ChargedHiggsTopBottom|AddLabel('TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8')
+
 config=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-pythia8')
+
+addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4up_13TeV-powheg-pythia8')
+addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4down_13TeV-powheg-pythia8')
 
 #addConfig=ChargedHiggsTopBottom|AddLabel('TTTo2L2Nu_TuneCUETP8M2')
 #addConfig=ChargedHiggsTopBottom|AddLabel('TTToSemilepton_TuneCUETP8M2')
@@ -10,11 +15,13 @@ config=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-pythia8')
 #addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-pythia8')
 #MC@NLO
 #addConfig=ChargedHiggsTopBottom|AddLabel('TTJets')
-#ISR-FSR
+#ISR-FSR-HDAMP
 #addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown')
 #addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-fsrup')
 #addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-isrdown')
 #addConfig=ChargedHiggsTopBottom|AddLabel('TT_TuneCUETP8M2T4_13TeV-powheg-isrup')
+#addConfig=ChargedHiggsTopBottom|AddLabel('TT_hdampUP_TuneCUETP8M2T4_13TeV-powheg-pythia8')
+#addConfig=ChargedHiggsTopBottom|AddLabel('TT_hdampDOWN_TuneCUETP8M2T4_13TeV-powheg-pythia8')
 
 
 ## 1l - 16
