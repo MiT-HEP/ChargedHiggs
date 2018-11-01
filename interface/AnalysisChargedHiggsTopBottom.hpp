@@ -70,6 +70,7 @@ public:
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
     void classifyHF(Event*e, string label, string category, string systname, string jetname, string SR);
+    void classifyZHF(Event*e, string label, string category, string systname, string jetname, string SR);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
     void fillMoneyPlot(Event*e, string category, string systname,string SRlabel, string label);
 
