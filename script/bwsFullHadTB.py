@@ -11,7 +11,7 @@ import SystematicSmoother as SS
 maxStat=0.15
 
 # original binning is 10GeV
-nRebinHT=1
+nRebinHT=4
 #nRebinHT=5
 LikeBins=10
 #LikeBins=1
@@ -95,9 +95,13 @@ parser= OptionParser()
 #parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systtt.root")
 
 ## SEPT9 + Schannel/Associated results
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systmore.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systmore.root")
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systmore.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systmore.root")
 
+
+## OCT8 + Schannel/Associated results (7 ttbar samples)
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3syst7tt.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3syst7tt.root")
 
 ## REMEMBER TO:
 # a) change the rebin 20% to 50% Inf
@@ -396,9 +400,8 @@ for y in channel:
                                 if opts.kMass=="500":
                                         if "OneBOneMirrorFat_one_lowj" in x and y=="wbb" and "in" in reg: continue
                                         if "OneBOneFat_one_lowj" in x and y=="wbb" and "below" in reg: continue
-                                        if "_one" in x and y=="wbb" and "all" in reg: continue
                                         if "OneBOneFat_three_lowj" in x and y=="wbb" and "below" in reg: continue
-                                        if "OneBOneFat1l_three" in x and y=="t0b" and "all" in reg: continue
+
 
 				if opts.kMass=="1500" and not doSChannel:
 					if "OneBOneMirrorFat_three_highj" in x and y=="wbb" and "in" in reg: continue
@@ -424,7 +427,7 @@ for y in channel:
 					if "OneBOneFat1l_two" in x and y=="t0b": continue
 					if opts.kMass=="800" and "OneBOneFat1l_two" in x and y=="t1b": continue
 
-				if "OneBOneFat1l" in x and y=="wbb": continue
+				if "OneBOneFat1l" in x and y=="wbb" and doSChannel: continue
 
 				if opts.kMass=="800" and doSChannel:
 					if "OneBOneMirrorFat_two_highj" in x and y=="wbb" and "in" in reg : continue
@@ -434,7 +437,6 @@ for y in channel:
 
 				if opts.kMass=="2000" and doSChannel:
 					if "OneBOneFat_two_highj" in x and "above" in reg and y=="wbb": continue
-					if "OneBOneFat_two_highj" in x and "in" in reg and y=="wbb": continue
 					if "OneBOneMirrorFat_two_highj" in x and "in" in reg and y=="wbb": continue
 					if "OneBOneFat_one_highj" in x and "above" in reg and y=="wbb": continue
 
@@ -633,10 +635,9 @@ for y in channel:
                                 systStore={
                                         "None":None,
                                         "lumi_13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi_13TeV","name":"XXX"},
-					### lepton veto 0.96 / for 1l is 1.04
-                                        "CMS_eff_l":{"type":"lnN", "value":["0.96"] ,"proc":["ttbar","top","Hptb","ewk"],"wsname":"CMS_eff_l","name":"XXX"}, ## name used for shape
-					## check the direction of the tau for the combination
-					"CMS_eff_t":{"type":"lnN", "value":["1.03"] ,"proc":["ttbar","top","Hptb","ewk"],"wsname":"CMS_eff_t","name":"XXX"}, ## name used for shape
+					### lepton veto
+                                        "CMS_eff_l":{"type":"lnN", "value":["0.96","0.96","0.96","0.96"] ,"proc":["ttbar","top","Hptb","ewk"],"wsname":"CMS_eff_l","name":"XXX"}, ## name used for shape
+					"CMS_eff_t":{"type":"lnN", "value":["1.03","1.03","1.03","1.03"] ,"proc":["ttbar","top","Hptb","ewk"],"wsname":"CMS_eff_t","name":"XXX"}, ## name used for shape
 					#### trigger efficiency
                                         "CMS_eff_trigger":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"CMS_eff_triggger","name":"XXX"},
 					### Theory modeling
@@ -723,11 +724,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_SEPT10_Shape/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_NOV4_Shape/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_SEPT10_Shape/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_NOV4_Shape/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -1015,8 +1016,8 @@ for syst in systStore:
 			writeNormSyst(syst,["1.02","1.02","1.02"],systStore[syst]["proc"],["OneBOneFat_.*_t0b","OneBOneFat_.*_t1b","OneBOneFat1l_.*_t0b","OneBOneFat1l_.*_t1b"])
 			writeNormSyst(syst,["0.98","0.98","0.98"],systStore[syst]["proc"],["OneBOneMirrorFat_.*_t0b","OneBOneMirrorFat_.*_t1b"])
 		elif "CMS_eff_l" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,["1.04"],systStore[syst]["proc"],["OneBOneFat1l_"])
-			writeNormSyst(syst,["0.96"],systStore[syst]["proc"],["OneBOneFat_","OneBOneMirrorFat_"])
+			writeNormSyst(syst,["1.04","1.04","1.04","1.04"],systStore[syst]["proc"],["OneBOneFat1l_"])
+			writeNormSyst(syst,["0.96","0.96","0.96","0.96"],systStore[syst]["proc"],["OneBOneFat_","OneBOneMirrorFat_"])
 		else:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 
@@ -1312,7 +1313,8 @@ def creatPolShape(tfile,togetNom, s) :
 
         for iBin in range(1,h.GetNbinsX()+1):
                 c = h.GetBinContent(iBin)
-                flo = c * (h.GetBinCenter(iBin)) * 0.1/1000    #linear, 10%/1TeV, range from 5%-500 GeV to 50%-5000GeV
+                flo = c * (h.GetBinCenter(iBin)) * 0.25/1000
+#                flo = c * (h.GetBinCenter(iBin)) * 0.1/1000    #linear, 10%/1TeV, range from 5%-500 GeV to 50%-5000GeV
                 #flo = c * math.log10(h.GetBinCenter(iBin)) * 0.1        #log10, 10%*log(HT/1GeV), range from 27%-500eV to 37%-5000GeV
 
                 if 'Up' in s:
@@ -1440,7 +1442,9 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 					toget += "_" + syst["name"] + s
 
 				if syst != None and "muRF" in syst["wsname"] and not doSChannel:
-					if mc["name"]=="Hptb" or mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or mc["name"]=="ttbar":
+					if mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or mc["name"]=="ttbar":
+						hTmp = envelop(tfile,togetNom,togetSyst,s)
+					if mc["name"]=="Hptb" and not doSChannel:
 						hTmp = envelop(tfile,togetNom,togetSyst,s)
 
                                 elif syst != None and "Pol" in syst["wsname"]:
@@ -1457,7 +1461,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 				if hTmp!=None: print "<*> 2/3 Reading Hist '"+toget+"'",hTmp.Integral()
 
 				if mc["name"]=="ttbar" and hTmp:
-                                        hTmp.Scale(0.2)
+                                        hTmp.Scale(1.0/7)
 
 				if hTmp!=None and hTmp.Integral() <= 0 and ( "ewk" in mc["hist"] or "TTX" in mc["hist"] or "ST" in mc["hist"]) :
 					print "<*> Hist '"+toget+"' norm null but keep going"
@@ -1662,7 +1666,7 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 					hTmp.Scale(0)
 
                                 if mc["name"]=="ttbar" and hTmp:
-                                        hTmp.Scale(0.2)
+                                        hTmp.Scale(1.0/7)
 
 				if hTmp == None:
 					print "<*> Hist '"+toget+"' doesn't exist"
@@ -1788,7 +1792,7 @@ for cat in catStore:
 	h=mergeCategory(tfile,toget)
 
 	if h == None:
-		print "<*> Hist do not exists ",toget
+		print "<*> Hist OBS do not exists ",toget
 		raise IOError
 
 	if h != None:
