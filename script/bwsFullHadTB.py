@@ -399,8 +399,8 @@ for y in channel:
 
                                 if opts.kMass=="500":
                                         if "OneBOneMirrorFat_one_lowj" in x and y=="wbb" and "in" in reg: continue
-                                        if "OneBOneFat_one_lowj" in x and y=="wbb" and "below" in reg: continue
-                                        if "OneBOneFat_three_lowj" in x and y=="wbb" and "below" in reg: continue
+#                                        if "OneBOneFat_one_lowj" in x and y=="wbb" and "below" in reg: continue
+#                                        if "OneBOneFat_three_lowj" in x and y=="wbb" and "below" in reg: continue
 
 
 				if opts.kMass=="1500" and not doSChannel:
@@ -1394,11 +1394,8 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 					togetSyst = toget + "_" + syst["name"]
 					toget += "_" + syst["name"] + s
 
-				if syst != None and "muRF" in syst["wsname"] and not doSChannel:
-					if mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or mc["name"]=="ttbar":
-						hTmp = envelop(tfile,togetNom,togetSyst,s)
-					if mc["name"]=="Hptb" and not doSChannel:
-						hTmp = envelop(tfile,togetNom,togetSyst,s)
+				if syst != None and ("muRF_ttbar" in syst["wsname"] or ("muRF_Hptb" in syst["wsname"] and not doSChannel)):
+					hTmp = envelop(tfile,togetNom,togetSyst,s)
 
                                 elif syst != None and "Pol" in syst["wsname"]:
                                         if "qcd" in mc["name"]:
