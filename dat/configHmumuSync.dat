@@ -13,6 +13,9 @@ addfiles=datasync/GluGluHToMuMu_M125_13TeV_amcatnloFXFX_pythia8/NeroNtuples_MCSy
 
 Smear=NONE
 
+addConfig=HmumuAnalysis|doEvenOnly=0
+addConfig=HmumuAnalysis|doOddOnly=0
+
 #Final=true
 #EntryPerSecond=10
 #
@@ -24,6 +27,7 @@ addConfig=HmumuAnalysis|doSync=1
 
 addConfig=HmumuAnalysis|catType=0
 Output=HmmSync_GGH_catType0.root
+#Output=HmmSync_Data_catType0.root
 
 #addConfig=HmumuAnalysis|catType=5
 #Output=HmmSync_catType5.root

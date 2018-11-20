@@ -305,24 +305,24 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     if (category == "" and mu0_local != NULL and mu1_local!=NULL) { // VH Hadr resolved
         kf->clear();
         if (selectedJetsMiniIso.size() >=2){
-            for (auto j : selectedJetsMiniIso) 
-            {
-                JME::JetParameters bins,vars;
-                vars.setJetPt( j->GetP4().Pt() );
-                bins.setJetEta( j->GetP4().Eta() );
-                bins.setRho( std::min(e->Rho(),float(40.)) ); // corrections up to rho 40.
+            //for (auto j : selectedJetsMiniIso) 
+            //{
+            //    JME::JetParameters bins,vars;
+            //    vars.setJetPt( j->GetP4().Pt() );
+            //    bins.setJetEta( j->GetP4().Eta() );
+            //    bins.setRho( std::min(e->Rho(),float(40.)) ); // corrections up to rho 40.
 
-                float sigma=1.0 ;
+            //    float sigma=1.0 ;
 
-                if ( jet_resolution->getRecord(bins)==NULL){ sigma=1.0;}
-                else{ sigma =  jet_resolution->evaluateFormula( *jet_resolution->getRecord(bins),vars); }
+            //    if ( jet_resolution->getRecord(bins)==NULL){ sigma=1.0;}
+            //    else{ sigma =  jet_resolution->evaluateFormula( *jet_resolution->getRecord(bins),vars); }
 
-                kf->p4.push_back( j->GetP4());
-                kf->sigma.push_back(sigma);
-            }
-            kf->H=Hmm.GetP4();
-            kf->doGhost=false; 
-            kf->runGeneric();
+            //    kf->p4.push_back( j->GetP4());
+            //    kf->sigma.push_back(sigma);
+            //}
+            //kf->H=Hmm.GetP4();
+            //kf->doGhost=false; 
+            //kf->runGeneric();
             bool vhhadrres=false;
             float met = e->GetMet().Pt();
             if (nbjets==0 and met <35){
@@ -339,16 +339,18 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
                         //
                         Log(__FUNCTION__,"DEBUG",Form("Considering VH couple %d,%d alphaS=%u",ijet,jjet,kf->alpha.size()));
                         TLorentzVector Z;
-                        Z += selectedJetsMiniIso[ijet]->GetP4()*kf->alpha[ijet];
-                        Z += selectedJetsMiniIso[jjet]->GetP4()*kf->alpha[jjet];
+                        //Z += selectedJetsMiniIso[ijet]->GetP4()*kf->alpha[ijet];
+                        //Z += selectedJetsMiniIso[jjet]->GetP4()*kf->alpha[jjet];
+                        Z += selectedJetsMiniIso[ijet]->GetP4();
+                        Z += selectedJetsMiniIso[jjet]->GetP4();
 
                         if ( Z.M() > 70 and Z.M()< 110 ){
                             if (not vhhadrres) { // save jets that selected VH tag
                                 selectedJetsVHHadr.push_back(selectedJetsMiniIso[ijet]);
                                 selectedJetsVHHadr.push_back(selectedJetsMiniIso[jjet]);
-                                alphaVHHadr.push_back(kf->alpha[ijet]);
-                                alphaVHHadr.push_back(kf->alpha[jjet]);
-                                valueVHHadr = kf->value;
+                                //alphaVHHadr.push_back(kf->alpha[ijet]);
+                                //alphaVHHadr.push_back(kf->alpha[jjet]);
+                                //valueVHHadr = kf->value;
                             }
                             vhhadrres=true;
                         }
@@ -1212,6 +1214,11 @@ void HmumuAnalysis::Init(){
         Branch("hmm","weight",'D');
         Branch("hmm","mcWeight",'D');
         Branch("hmm","puWeight",'D');
+        Branch("hmm","baremcWeight",'D');
+        Branch("hmm","muonSF",'D');
+        Branch("hmm","btagSF",'D');
+        Branch("hmm","nnlopsSF",'D');
+        Branch("hmm","l1SF",'D');
         Branch("hmm","eventNum",'I');
         Branch("hmm","runNum",'I');
         Branch("hmm","lumiNum",'I');
@@ -1362,6 +1369,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     //#warning NO_PREFIRE
     double l1prefire=1.0;
     l1prefire=e->ApplyL1PreFire(); // apply to the event weight, but keep it for comp
+    if (doSync and not processingSyst_) { SetTreeVar("l1SF",l1prefire);}
+    //Log(__FUNCTION__,"DEBUG",Form("L1Prefire is %lf",l1prefire)); 
 
     /*
      * HIGGS REWEIGHT -- UNCERTAINTIES
@@ -1457,10 +1466,12 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 e->ApplySF("nnlops");
                 nnlops=sf_nnlops->get();
 
+                //Log(__FUNCTION__,"DEBUG",Form("NNLOPS is %lf",nnlops)); 
             }
         }
 
     }
+    if (doSync and not processingSyst_) { SetTreeVar("nnlopsSF",nnlops); }
 
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon0: ");
@@ -1518,8 +1529,11 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         sf->set();
         e->ApplySF("btag-reweight"); 
         btagsf = e->GetWeight()->GetSF("btag-reweight")->get();
+
     }
     
+    //Log(__FUNCTION__,"DEBUG",Form("BtagSF is %lf",btagsf)); 
+    if (doSync and not processingSyst_) { SetTreeVar("btagSF",btagsf);}
     // select jets
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetJets: ");
 
@@ -1628,7 +1642,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             //sf_runGH->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
             //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.5%
             //effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
-            float eta_for_sf= std::min(fabs(mu0->Eta()),2.399);
+            float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
 
             sf_runBCDEF->set( std::max(mu0->Pt(),float(30.1)), eta_for_sf);
             //effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*sf_runBCDEF->getDataErr() ) ;
@@ -1644,7 +1658,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*sf_runGH->getDataErr() ) ;
             //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.05%
             //effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
-            float eta_for_sf= std::min(fabs(mu1->Eta()),2.399);
+            float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
 
             sf_runBCDEF->set( std::max(mu1->Pt(),float(30.1)) ,eta_for_sf );
             //effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*sf_runBCDEF->getDataErr() ) ;
@@ -1673,76 +1687,79 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     
     // ID
     double sfId=1.0;
+    double sfBC=1.0, sfDE=1.0, sfF=1.0;
 
     if (mu0)
     {
         float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
         float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
-        float eta_for_sf= std::min(fabs(mu0->Eta()),2.399);
+        float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
 
         e->SetPtEtaSF("mu_id_runBC", pt_for_sf,eta_for_sf );
-        float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
+        sfBC = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
         e->SetPtEtaSF("mu_id_runDE", pt_for_sf,eta_for_sf );
-        float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
+        sfDE = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
         e->SetPtEtaSF("mu_id_runF", pt_for_sf,eta_for_sf );
-        float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
+        sfF = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
-        sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
+        //sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
 
     if (mu1)
     {
         float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
         float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
-        float eta_for_sf= std::min(fabs(mu1->Eta()),2.399);
+        float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
         e->SetPtEtaSF("mu_id_runBC", pt_for_sf,eta_for_sf);
-        float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
+        sfBC *= e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
         e->SetPtEtaSF("mu_id_runDE", pt_for_sf,eta_for_sf );
-        float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
+        sfDE *= e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
         e->SetPtEtaSF("mu_id_runF", pt_for_sf,eta_for_sf);
-        float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
+        sfF *= e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
-        sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
 
+    sfId = (w_BC*sfBC + w_DE*sfDE + w_F*sfF)/(w_BC+w_DE+w_F);
+
+    sfBC=1.0; sfDE=1.0; sfF=1.0;
     double sfIso=1.0; // TODO, apply a different sf for miniIsolation, use flag isMiniIsoLeptons
     // ISO Loose
     if (mu0)
     {
         float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
-        float eta_for_sf= std::min(fabs(mu0->Eta()),2.399);
+        float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
         float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
         e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,eta_for_sf);
-        float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
+        sfBC = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
         e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,eta_for_sf);
-        float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
+        sfDE = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
         e->SetPtEtaSF("mu_iso_runF", pt_for_sf,eta_for_sf);
-        float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
+        sfF = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
-        sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
+        //sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
     if (mu1)
     {
         float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
         float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
-        float eta_for_sf= std::min(fabs(mu1->Eta()),2.399);
+        float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
         e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,eta_for_sf );
-        float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
+        sfBC *= e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
         e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,eta_for_sf);
-        float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
+        sfDE *= e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
         e->SetPtEtaSF("mu_iso_runF", pt_for_sf,eta_for_sf);
-        float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
+        sfF*= e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
-        sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
+    sfIso = (w_BC*sfBC + w_DE*sfDE + w_F*sfF)/(w_BC+w_DE+w_F);
     
     // apply trigger, id and iso sf
     {
@@ -1751,6 +1768,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         sf->sf= sfId*sfIso*sfTrigger; //syst already included
         sf->err = 0.0;
         e->ApplySF("dummy");
+
+        if (doSync and not processingSyst_) {SetTreeVar("muonSF",sf->sf);}
     }
     
     // ***************************
@@ -1772,8 +1791,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         //cout <<" DOING TRIGGER MATCHING "<<endl;
         bool passTriggerEvent = passTrigger;
         passTrigger1 = (e->IsTriggered("HLT_IsoMu27_v",mu0) or e->IsTriggered("HLT_IsoTkMu27_v",mu0)) ;
-        //if (mu1->Pt() > 30 ) 
-        passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
+        if (mu1->Pt() > 30 ) 
+            passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
         passTrigger=passTrigger1 or passTrigger2;
 
         if (multipd_) // switch to HLT_IsoMu24. 
@@ -2779,16 +2798,23 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
         SetTreeVar("runNum",e->runNum());
         SetTreeVar("lumiNum",e->lumiNum());
 
+        SetTreeVar("baremcWeight",1.);
+        //SetTreeVar("muonSF",1.);
+        //SetTreeVar("btagSF",1.);
+        //SetTreeVar("nnlopsSF",1.); // reset both for data and MC
+
         if (e->IsRealData()){
             SetTreeVar("mc",0);
             SetTreeVar("mcWeight",1.);
             SetTreeVar("puWeight",1.);
             SetTreeVar("weight",1.);
+
         }
 
         else {
             SetTreeVar("weight",e->weight());
             SetTreeVar("mcWeight",e->GetWeight()->GetBareMCWeight() * e->GetWeight()->GetBareMCXsec() / e->GetWeight()->GetBareNevents());
+            SetTreeVar("baremcWeight",e->GetWeight()->GetBareMCWeight());
             SetTreeVar("puWeight",e->GetWeight()->GetBarePUWeight());
             int mc=0;
             if (label.find( "GluGlu_HToMuMu") != string::npos) mc -=10;

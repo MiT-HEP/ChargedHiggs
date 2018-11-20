@@ -30,7 +30,7 @@ import keras
 print "keras version=",keras.__version__
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout, Flatten, BatchNormalization
+from keras.layers import Dense, Activation, Dropout, Flatten, BatchNormalization, Input, Merge
 from keras.layers import Convolution2D, MaxPooling2D
 import keras.regularizers as regularizers
 from keras.wrappers.scikit_learn import KerasRegressor
@@ -89,25 +89,104 @@ features= [  "@pt1/@mass", #0
 #            metrics=['accuracy'])
 #    return model
 
-def build_model():
+def build_model8():
     model = Sequential()
-    model.add(Dense(40, input_dim=len(features),activation='sigmoid',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
+    #model.add(Dense(40, input_dim=len(features),activation='sigmoid',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
+    #model.add(BatchNormalization() )
+    #model.add(Dropout(0.10))
+    #model.add(Dense(30,activation='tanh',use_bias=True,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='glorot_normal',bias_initializer='zeros'))
+    #model.add(BatchNormalization() )
+    #model.add(Dense(10,activation='tanh',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros'))
+    #model.add(Dense(4,activation='sigmoid'))
+
+    model.add(Dense(60, input_dim=len(features),activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
     model.add(BatchNormalization() )
     model.add(Dropout(0.10))
-    model.add(Dense(30,activation='tanh',use_bias=True,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='glorot_normal',bias_initializer='zeros'))
-    model.add(BatchNormalization() )
-    model.add(Dense(10,activation='tanh',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros'))
+    #model.add(Dense(40, input_dim=len(features),activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) ) ## model9
+    #model.add(BatchNormalization() )## model9
     model.add(Dense(4,activation='sigmoid'))
     
     model.compile(
             #loss='mean_squared_error',
-            loss='binary_crossentropy',
+            #loss='binary_crossentropy',
+            loss='categorical_crossentropy',
             #loss=roc_area,
             optimizer='sgd',
             #optimizer='adam',
             metrics=['accuracy'])
     return model
 
+def build_model9():
+    '''>>> classifier.summary() model 8
+    _________________________________________________________________
+    Layer (type)                 Output Shape              Param #   
+    =================================================================
+    dense_1 (Dense)              (None, 60)                960       
+    _________________________________________________________________
+    batch_normalization_1 (Batch (None, 60)                240       
+    _________________________________________________________________
+    dropout_1 (Dropout)          (None, 60)                0         
+    _________________________________________________________________
+    dense_2 (Dense)              (None, 4)                 244       
+    =================================================================
+    Total params: 1,444
+    Trainable params: 1,324
+    Non-trainable params: 120
+    '''
+
+    model8=keras.models.load_model("model8.hd")
+
+    model=Sequential()
+    #model.add( Input( shape=(len(features),)) )
+    ## add first layer non-trainable
+    layer1=model8.layers[0]
+    layer2=model8.layers[1]
+    layer3=model8.layers[2]
+    layer1.trainable=False
+    layer2.trainable=False
+    layer3.trainable=False
+    layer1.name+="_mod8"
+    layer2.name+="_mod8"
+    layer3.name+="_mod8"
+
+    print layer1
+
+    model=Sequential()
+    model.add(layer1)
+    model.add(layer2)
+    model.add(layer3)
+
+    model.add(Dense(30,activation='tanh',use_bias=False,kernel_initializer='glorot_normal',kernel_regularizer=regularizers.l2(0.01))) ## model9
+    model.add(Dense(4,activation='sigmoid'))
+
+    model.compile(
+            #loss='mean_squared_error',
+            #loss='binary_crossentropy',
+            loss='categorical_crossentropy',
+            #loss=roc_area,
+            optimizer='sgd',
+            #optimizer='adam',
+            metrics=['accuracy'])
+
+    return model
+
+def build_model10():
+    model = Sequential()
+    model.add(Dense(40, input_dim=len(features),activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
+    model.add(BatchNormalization() )
+    model.add(Dropout(0.10))
+    model.add(Dense(60, input_dim=len(features),activation='relu',use_bias=True,kernel_initializer='glorot_normal',bias_initializer='zeros',kernel_regularizer=regularizers.l2(0.01),bias_regularizer=regularizers.l2(0.01)) )
+    model.add(Dense(4,activation='sigmoid'))
+    
+    model.compile(
+            #loss='mean_squared_error',
+            #loss='binary_crossentropy',
+            loss='categorical_crossentropy',
+            #loss=roc_area,
+            optimizer='sgd',
+            #optimizer='adam',
+            metrics=['accuracy'])
+    return model
 
 ################# ROOT ###############
 #ROOT.gSystem.Load("MuonResolution/MyRes_cc.so")
@@ -119,8 +198,12 @@ def build_model():
 ###################
 
 
-print "->build model"
-classifier = build_model()
+#print "->build model"
+#classifier = build_model()
+print "->build model9"
+classifier = build_model9()
+
+classifier.summary()
 
 #print "->starting from benchmark"
 #classifier =keras.models.load_model("saved.hd")
@@ -288,7 +371,7 @@ classifier.fit_generator(fill(8000),steps_per_epoch=100, epochs=10,callbacks=[We
 print "-> End training"
 
 # Store model to file
-classifier.save('model7.hd')
+classifier.save('model9.hd')
 classifier.summary()
 
 timer.elapsed_time()

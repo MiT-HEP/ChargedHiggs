@@ -74,7 +74,7 @@ features= [  "@pt1/@mass", #0
              "costhetastar",     #22
         ]
 
-classifier =keras.models.load_model("model7.hd")
+classifier =keras.models.load_model("model9.hd")
 multiclass=True
 do2D=True
 import threading
@@ -83,13 +83,13 @@ lock=threading.Lock()
 
 histos={}
 for mc in ["S","B"]:
-    histos["bdt_"+mc] = ROOT.TH1D("bdt_"+mc,"bdt_"+mc,200,-1,1);
-    histos["dnn_"+mc] = ROOT.TH1D("dnn_"+mc,"dnn_"+mc,10000,-1,1);
-    histos["dnn1_"+mc] = ROOT.TH1D("dnn1_"+mc,"dnn_"+mc,10000,-1,6);
-    histos["dnn2_"+mc] = ROOT.TH1D("dnn2_"+mc,"dnn_"+mc,10000,-1,6);
-    histos["dnn3_"+mc] = ROOT.TH1D("dnn3_"+mc,"dnn_"+mc,10000,-1,6);
+    histos["bdt_"+mc] = ROOT.TH1D("bdt_"+mc,"bdt_"+mc,200,-1,1.0001);
+    histos["dnn_"+mc] = ROOT.TH1D("dnn_"+mc,"dnn_"+mc,10000,-1,1.0001);
+    histos["dnn1_"+mc] = ROOT.TH1D("dnn1_"+mc,"dnn_"+mc,10000,-1,6.0001);
+    histos["dnn2_"+mc] = ROOT.TH1D("dnn2_"+mc,"dnn_"+mc,10000,-1,6.0001);
+    histos["dnn3_"+mc] = ROOT.TH1D("dnn3_"+mc,"dnn_"+mc,10000,-1,6.0001);
     for multi in ['DY','TT','ggH','qqH']:
-        histos["dnn_"+multi+"_"+mc] = ROOT.TH1D("dnn_"+multi+"_"+mc,"dnn_"+mc,10000,-1,1);
+        histos["dnn_"+multi+"_"+mc] = ROOT.TH1D("dnn_"+multi+"_"+mc,"dnn_"+mc,10000,-1,1.0001);
 
 if do2D:
     for mc in ["S","B"]:
@@ -101,6 +101,9 @@ if do2D:
             if 'pt' in v or 'mjj' in v or 'Ht' in v or 'met' in v:
                 xmin=0
                 xmax=1000
+            if 'pt1/mass' in v or 'pt2/mass' in v:
+                xmin=0
+                xmax=20
             if 'njets' in v or 'Njets' in v : 
                 nbins=10
                 xmin=0
@@ -117,7 +120,7 @@ if do2D:
             if 'phi' in v:
                 xmin=-3.1416
                 xmax=3.1416
-            histos[v+"_"+mc] = ROOT.TH2D(v+"_"+mc,v,10000,-1,6,nbins,xmin,xmax)
+            histos[v+"_"+mc] = ROOT.TH2D(v+"_"+mc,v,10000,-1,6.0001,nbins,xmin,xmax)
 
 def loop(idx_num):
     global histos
@@ -211,7 +214,8 @@ def loop(idx_num):
                 dnn1 =pmax+ np.sum(selp*p) 
                 dnn2 =pmax+ np.sum(sell*p)  ## I do it on p, not on l
 
-                dnn3 = 0.25*dnnSM[2]+0.75*dnnSM[3]
+                #dnn3 = 0.25*dnnSM[2]+0.75*dnnSM[3]
+                dnn3 = dnn0[2]+dnn0[3]
             else:
                 dnn=classifier.predict(np.array([x]))[0][0]
 
@@ -271,7 +275,7 @@ for t in threads:
     t.join()
 print " ************* Done ***************"
 
-fOut=ROOT.TFile.Open("comparison.root","RECREATE")
+fOut=ROOT.TFile.Open("comparison_model9.root","RECREATE")
 fOut.cd()
 fOut.cd()
 for hstr in histos: histos[hstr].Write()

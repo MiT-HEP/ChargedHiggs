@@ -133,7 +133,7 @@ data=wIn.data("dataObs_cat%d"%opts.cat)
 
 rebinMass=ROOT.RooFormulaVar ("rebinMass","Rebinned Mass","2*(@0-%(xmin)f)/(%(xmax)f-%(xmin)f) - 1."%{"xmax":xmax,"xmin":xmin},ROOT.RooArgList(x));
 
-maxOrder=10 ## even?
+maxOrder=6 ## even?
 legendre=[ ROOT.RooLegendre("l_cat%d_l%d"%(opts.cat,i),"l%d"%i,rebinMass,i) for i in range(0,maxOrder+1)]
 
 order=[0]
@@ -222,6 +222,8 @@ for im in range(0,2**(maxOrder+1)):
 
     storedPdfs.add(model)
     Import(wOut,model)
+
+print "-> ",storedPdfs.getSize(),"models inside the envelope"
 print "BESTNLL"
 print bestnll
 print "-----"
