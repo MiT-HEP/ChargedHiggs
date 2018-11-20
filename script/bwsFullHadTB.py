@@ -98,10 +98,13 @@ parser= OptionParser()
 #parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systmore.root")
 #parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3systmore.root")
 
-
 ## OCT8 + Schannel/Associated results (7 ttbar samples)
-parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3syst7tt.root")
-parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3syst7tt.root")
+#parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3syst7tt.root")
+#parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/ntufile/preapp3syst7tt.root")
+
+## as above but w/o TOPt (7 ttbar samples)
+parser.add_option("","--input",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/PreApp3jerALL/PreApp3notopre.root")
+parser.add_option("","--inputBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/user/h/hum/work/public/CMSSW_8_0_26_patch1/src/ChargedHiggs/PreApp3jerALL/PreApp3notopre.root")
 
 ## REMEMBER TO:
 # a) change the rebin 20% to 50% Inf
@@ -274,7 +277,7 @@ def mergeCategory(tfile,toget):
 
 ### FINAL conf
 if doSChannel:
-	basecat = [ "OneBOneFat_one_highj","OneBOneFat_two_highj", "OneBOneFat_one_lowj","OneBOneFat_two_lowj"
+	basecat = [ "OneBOneFat_one_lowj","OneBOneFat_two_lowj","OneBOneFat_one_highj","OneBOneFat_two_highj"
 		   ,"OneBOneFat1l_one","OneBOneFat1l_two"
 		   ,"OneBOneMirrorFat_one_highj","OneBOneMirrorFat_two_highj", "OneBOneMirrorFat_one_lowj","OneBOneMirrorFat_two_lowj"
 		   ]
@@ -341,9 +344,9 @@ VarTest=""
 for y in channel:
 	for x in basecat:
 
-#		region = ["_in","_above","_below"]
+		region = ["_in","_above","_below"]
 #		region = ["_above","_below"]
-		region = ["_in"]
+#		region = ["_in"]
 
 		if "OneBOneMirrorFat" in x:
 			region = ["_in"]
@@ -363,6 +366,7 @@ for y in channel:
 
 	#		catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"invariantExt"}
 
+#----------------------------------------------------------------------------------------------------------
 
 				# UNDEFINED
 #				if "OneBOneFat_one" in x and y=="wbb": continue
@@ -399,29 +403,28 @@ for y in channel:
 
                                 if opts.kMass=="500":
                                         if "OneBOneMirrorFat_one_lowj" in x and y=="wbb" and "in" in reg: continue
-#                                        if "OneBOneFat_one_lowj" in x and y=="wbb" and "below" in reg: continue
-#                                        if "OneBOneFat_three_lowj" in x and y=="wbb" and "below" in reg: continue
+                                        if "OneBOneMirrorFat_one_lowj" in x and y=="wbj" and "in" in reg: continue
+                                        if "OneBOneMirrorFat_two_lowj" in x and y=="wbj" and "in" in reg: continue
 
+                                if opts.kMass=="650":
+                                        if "OneBOneMirrorFat_two_lowj" in x and y=="wbj" and "in" in reg: continue
 
 				if opts.kMass=="1500" and not doSChannel:
 					if "OneBOneMirrorFat_three_highj" in x and y=="wbb" and "in" in reg: continue
-					if "OneBOneMirrorFat_three_lowj" in x and y=="wbb" and "in" in reg: continue
-
-                                if opts.kMass=="3000" and not doSChannel:
-					if "_three_lowj" in x and ( y=="t1b" or y=="t0b" ) and "above" in reg: continue
-					if "_three_highj" in x and ( y=="t0b" ) and "in" in reg: continue
-					if "_three_lowj" in x and (y=="t0b") and "in" in reg: continue
 
                                 if opts.kMass=="2500" and not doSChannel:
 					if "OneBOneFat_three_highj" in x and (y=="t0b" or y=="t1b") and "in" in reg: continue
 					if "OneBOneFat_three_highj" in x and y=="t0b" and "above" in reg: continue
-					# this one below has overflow
-					if "OneBOneFat_three_highj" in x and y=="t1b" and "above" in reg: continue
-#					if "_three_highj" in x and (y=="t0b" or y=="t1b") and "in" in reg: continue
-#					if "_three_highj" in x and (y=="t0b") and "above" in reg: continue
-###					if "_three_lowj" in x and (y=="t0b") and "in" in reg: continue
-###					if "_three_highj" in x and (y=="t0b" or y=="t1b") and "above" in reg: continue
+#					# this one below has overflow
+#					if "OneBOneFat_three_highj" in x and y=="t1b" and "above" in reg: continue
 
+				if opts.kMass=="3000" and not doSChannel:
+#					# this one below has overflow
+				        if "OneBOneFat_three_highj" in x and (y=="t1b") and "above" in reg: continue
+				        if "OneBOneFat_three_highj" in x and (y=="t0b") and "in" in reg: continue
+					if "OneBOneMirrorFat_three_lowj" in x and (y=="t0b") and "in" in reg: continue
+
+#----------------------------------------------------------------------------------------------------------
 
 				if (opts.kMass=="1000" or opts.kMass=="900" or opts.kMass=="800") and doSChannel:
 					if "OneBOneFat1l_two" in x and y=="t0b": continue
@@ -432,150 +435,25 @@ for y in channel:
 				if opts.kMass=="800" and doSChannel:
 					if "OneBOneMirrorFat_two_highj" in x and y=="wbb" and "in" in reg : continue
 
-				if (opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="3000") and doSChannel:
+				if (opts.kMass=="1500") and doSChannel:
 					if "OneBOneMirrorFat_one_highj" in x and y=="wbb" and "in" in reg : continue
 
 				if opts.kMass=="2000" and doSChannel:
 					if "OneBOneFat_two_highj" in x and "above" in reg and y=="wbb": continue
 					if "OneBOneFat_one_highj" in x and "above" in reg and y=="wbb": continue
-
+					if "OneBOneMirrorFat_two_highj" in x and "in" in reg and y=="wbb": continue
+#
 				if opts.kMass=="3000" and doSChannel:
 					if "OneBOneFat_two_highj" in x and "above" in reg and y=="wbb": continue
-					if "OneBOneFat_two_highj" in x and "in" in reg and y=="wbb": continue
-					if "OneBOneMirrorFat_two_lowj" in x and "in" in reg and y=="wbb": continue
 					if "OneBOneFat_one_highj" in x and "above" in reg and y=="wbb": continue
+
+					if "OneBOneFat_two_highj" in x and "in" in reg and y=="wbb": continue
 					if "OneBOneMirrorFat_one_highj" in x and "in" in reg and y=="wbb": continue
-					if "OneBOneMirrorFat_one_lowj" in x and "in" in reg and y=="wbb": continue
-					if "OneBOneFat_two_lowj" in x and "above" in reg and y=="wbb": continue
-					if "OneBOneFat_two_lowj" in x and "in" in reg and y=="wbb": continue
-					if "OneBOneFat_one_highj" in x and "in" in reg and y=="wbb": continue
+					if "OneBOneMirrorFat_two_highj" in x and "in" in reg and y=="wbb": continue
 
 
-                                ## below are for associated only
-#				if not doSChannel and (opts.kMass=="400") and "in" in reg or "below" in reg:
-#				if not doSChannel and (opts.kMass=="400") and ("below" in reg or "in" in reg):
-#					if "_three_lowj" in x and y=="wbb": continue
-#					if "_one_lowj" in x and y=="wbj": continue
+#----------------------------------------------------------------------------------------------------------
 
-#				if not doSChannel and (opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
-#					if "_two_lowj" in x and y=="wbj": continue
-#					if "_three_highj" in x and y=="wbj": continue
-
-#                                if not doSChannel and (opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
-#					if "_one_highj" in x and y=="wbj": continue
-#					if "_two_highj" in x and y=="wbj": continue
-#					if "_three_lowj" in x and y=="wbb": continue
-#					if "_three_highj" in x and y=="wbb": continue
-
-#                                if not doSChannel and (opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
-#					if "_two_lowj" in x and y=="wbb": continue
-#					if "_three_lowj" in x and y=="wbb": continue
-#					if "_three_highj" in x and y=="wbb": continue
-#					if "_one_lowj" in x and y=="wbj": continue
-
-######################
-############ s-channel
-######################
-#				if doSChannel and (opts.kMass=="800" or opts.kMass=="900" or opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
-#					if "_two_highj" in x and y=="wbb": continue
-#					if "_one_highj" in x and y=="wbj": continue
-
-#				if doSChannel and (opts.kMass=="900" or opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
-#					if "_two_lowj" in x and y=="wbj": continue
-#					if "_two_highj" in x and y=="wbj": continue
-
-#				if doSChannel and (opts.kMass=="1000" or opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000") and "in" in reg:
-#					if y=="wbb": continue
-#					if y=="wbj": continue
-
-######################
-######################
-######################
-
-
-#				if opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
-##				if opts.kMass=="1500" or opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
-#					if y=="wbj": continue
-#					if "_three" in x and y=="wbb": continue
-#					if "_two" in x and y=="wbj": continue
-#					if "_two" in x and y=="wbb" and opts.kMass=="3000": continue
-#					if "_three" in x and y=="t0b": continue
-
-
-#				if opts.kMass=="2500" or opts.kMass=="3000":
-					#				# for the 2000,2500,3000: (They are all in the below bin)
-#					if "OneBOneMirrorFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
-#					if "OneBOneMirrorFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
-#					if "OneBOneFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
-#					if "OneBOneFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
-
-
-##				if "OneBOneMirrorFat_three_lowj" in x and y=="t0b": continue 
-#				if "_three" in x and ("above" in reg) and (y=="t0b"): continue 
-#				if "_three" in x and ("above" in reg) and (y=="t1b"): continue 
-#				if "_two" in x and ("above" in reg) and (y=="t0b"): continue 
-#				if "_two" in x and ("above" in reg) and (y=="t1b"): continue 
-#				if "_three" in x and (y=="wbb"): continue 
-#				if "_three" in x and (y=="wbj"): continue
-
-#				if doSChannel and opts.kMass=="3000":
-#					if ("in" in reg or "above" in reg): continue
-
-#				if doSChannel and opts.kMass=="3000":				
-#					if "OneBOneFat_two_lowj" in x and y=="t1b" and "in" in reg: continue 
-#					if "OneBOneMirrorFat_two_highj" in x and y=="t1b" and ("above" in reg) : continue
-#					if "OneBOneFat_two_highj" in x and y=="t1b" and ("in" in reg) : continue
-#					if "OneBOneMirrorFat_two_highj" in x and y=="t1b" and ("in" in reg) : continue
-
-#				if "OneBOneFat_one_lowj" in x and y=="wbb": continue 
-#				if "OneBOneMirrorFat_one_highj" in x and y=="wbb": continue
-
-#				if opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
-#					#				# for the 2000,2500,3000: (They are all in the below bin)
-#					if "OneBOneMirrorFat" in x and y=="wbb" and ("above" in reg): continue
-#					if "OneBOneMirrorFat" in x and y=="wbj" and ("above" in reg): continue
-#					if "OneBOneFat" in x and y=="wbb" and ("above" in reg): continue
-#					if "OneBOneFat" in x and y=="wbj" and ("above" in reg): continue
-
-				# THIS IS planB
-#				if "_lowj" in x and y=="wbb": continue
-#				if "_lowj" in x and y=="wbj": continue
-
-
-				# UNDEFINED
-				# they should not exist but some are filled
-#				if "OneBOneFat_one" in x and y=="t1b": continue
-#				if "OneBOneMirrorFat_one" in x and y=="t1b": continue
-#				if "OneBOneFat1l_one" in x and y=="t1b": continue
-
-#				if "OneBOneFat_three" in x and y=="wbj": continue
-#				if "OneBOneMirrorFat_three" in x and y=="wbj": continue
-#				if "OneBOneFat1l_three" in x and y=="wbj": continue
-
-#				if opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000":
-#					#				# for the 2000,2500,3000: (They are all in the below bin)
-#					if "OneBOneMirrorFat" in x and y=="wbb" and ("above" in reg or "in" in reg): continue
-#					if "OneBOneMirrorFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
-#					#				## recovered the wbb - in
-#					if "OneBOneFat" in x and y=="wbb" and ("above" in reg ): continue
-#					if "OneBOneFat" in x and y=="wbj" and ("above" in reg or "in" in reg): continue
-
-#				# t0b/t1b & 3b NO STAT very rare situation
-#				if "OneBOneMirrorFat_three_lowj" in x and y=="t1b": continue
-#				if "OneBOneMirrorFat_three_highj" in x and y=="t1b": continue
-
-#				if doSChannel or (opts.kMass=="2000" or opts.kMass=="2500" or opts.kMass=="3000"):
-#					if "OneBOneFat_three" in x and y=="t0b": continue
-#					if "OneBOneMirrorFat_three" in x and y=="t0b": continue
-
-#				## NO STAT
-#				if "OneBOneFat1l_one" in x and (y=="t0b" or y=="wbj"): continue
-				##
-##				if "OneBOneFat1l_two" in x and ( y=="wbb" or y=="wbj" or y=="t0b" or y=="t1b"): continue
-#				if "OneBOneFat1l_two" in x and ( y=="wbb" or y=="wbj" or y=="t0b" or y=="t1b"): continue
-				##
-##				if "OneBOneFat1l_three" in x and ( y=="wbb" or y=="t1b" or y=="t0b"): continue
-#				if "OneBOneFat1l_three" in x and ( y=="wbb" or y=="t1b" or y=="t0b"): continue
 
 				if "OneBOneFat1l" in x:
 					catStore [ name ] = { "name": name,"dir": x+ "_" + y,"file": None, "hasMC":["all"],"var":"HT"+reg}
@@ -639,9 +517,12 @@ for y in channel:
 					#### trigger efficiency
                                         "CMS_eff_trigger":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"CMS_eff_triggger","name":"XXX"},
 					### Theory modeling
-                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttbar"]},
+##                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttbar"]},
                                         "muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]},
                                         "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttbar"]},
+#                                        "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"ScaleRF","proc":["ttbar"]},
+#                                        "muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"ScaleF","proc":["ttbar"]},
+#                                        "muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"ScaleR","proc":["ttbar"]},
 #                                        "muRF_ttbar_below":{"type":"shape", "wsname":"muRF_ttbar_below","name":"Scale","proc":["ttbar"]},
 #                                        "muRF_ttbar_in":{"type":"shape", "wsname":"muRF_ttbar_in","name":"Scale","proc":["ttbar"]},
 #                                        "muRF_ttbar_above":{"type":"shape", "wsname":"muRF_ttbar_above","name":"Scale","proc":["ttbar"]},
@@ -661,30 +542,31 @@ for y in channel:
                                         "CMS_eff_Tau32":{"type":"lnN", "value":["1.02","1.02","1.02"] ,"proc":["ttbar","top","Hptb"],"wsname":"CMS_eff_Tau32","name":"XXX"}, ## name used for shape
 					## JER/S
                                         "CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]},
-                                        "CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":["Hptb","ttbar","top","ewk"]},
-                                        "CMS_scale_j_qcd_wx":{"type":"shape", "wsname":"CMS_scale_j_qcd_wx","name":"JESANDCSV","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three"]},
-                                        "CMS_scale_j_qcd_tx":{"type":"shape", "wsname":"CMS_scale_j_qcd_tx","name":"JESANDCSV","proc":["qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+					"CMS_scale_j":{"type":"shape", "wsname":"CMS_scale_j","name":"JESANDCSV","proc":["Hptb","ttbar","top","ewk"]},
+					"CMS_scale_j_qcd_wx":{"type":"shape", "wsname":"CMS_scale_j_qcd_wx","name":"JESANDCSV","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three"]},
+					"CMS_scale_j_qcd_tx":{"type":"shape", "wsname":"CMS_scale_j_qcd_tx","name":"JESANDCSV","proc":["qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+                                        ## b-tagging
                                         ##Light jets Heavy flavor contamination
-					"CMS_btag_HF_qcd":{"type":"shape", "wsname":"CMS_btag_HF_qcd","name":"CSVRHF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
 					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":["ttbar","top","Hptb"]},
+					"CMS_btag_HF_qcd":{"type":"shape", "wsname":"CMS_btag_HF_qcd","name":"CSVRHF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ##Heavy jets light flavor contamination
-                                        "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["ttbar","top","Hptb"]},
-                                        "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF_qcd","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+					 "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["ttbar","top","Hptb"]},
+					 "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF_qcd","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ##Linear and quadratic uncertainties
 					# note decouple the qcd
 					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":["ttbar","top","Hptb"]},
 					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":["ttbar","top","Hptb"]},
 					"CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":["ttbar","top","Hptb"]},
 					"CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":["ttbar","top","Hptb"]},
-                                        "CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":["ttbar","top","Hptb"]},
-                                        "CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":["ttbar","top","Hptb"]},
+					"CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":["ttbar","top","Hptb"]},
+					"CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":["ttbar","top","Hptb"]},
+					##
 					"CMS_btag_HFstat1_qcd":{"type":"shape", "wsname":"CMS_btag_HFstat1_qcd","name":"CSVRHFSTAT1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
 					"CMS_btag_HFstat2_qcd":{"type":"shape", "wsname":"CMS_btag_HFstat2_qcd","name":"CSVRHFSTAT2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
-                                        "CMS_btag_LFstat1_qcd":{"type":"shape", "wsname":"CMS_btag_LFstat1_qcd","name":"CSVRLFSTAT1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
-                                        "CMS_btag_LFstat2_qcd":{"type":"shape", "wsname":"CMS_btag_LFstat2_qcd","name":"CSVRLFSTAT2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
-                                        "CMS_btag_CFerr1_qcd":{"type":"shape", "wsname":"CMS_btag_CFerr1_qcd","name":"CSVRCERR1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
-                                        "CMS_btag_CFerr2_qcd":{"type":"shape", "wsname":"CMS_btag_CFerr2_qcd","name":"CSVRCERR2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
-                                        ####
+					"CMS_btag_LFstat1_qcd":{"type":"shape", "wsname":"CMS_btag_LFstat1_qcd","name":"CSVRLFSTAT1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+					"CMS_btag_LFstat2_qcd":{"type":"shape", "wsname":"CMS_btag_LFstat2_qcd","name":"CSVRLFSTAT2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+					"CMS_btag_CFerr1_qcd":{"type":"shape", "wsname":"CMS_btag_CFerr1_qcd","name":"CSVRCERR1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+					"CMS_btag_CFerr2_qcd":{"type":"shape", "wsname":"CMS_btag_CFerr2_qcd","name":"CSVRCERR2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ## QCD Pol
                                         "CMS_scale_Pol_qcd_tx_one_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_one_1l","name":"XXX","proc":["qcd_tx_one"]},
                                         "CMS_scale_Pol_qcd_tx_two_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_two_1l","name":"XXX","proc":["qcd_tx_two"]},
@@ -693,7 +575,7 @@ for y in channel:
                                         "CMS_scale_Pol_qcd_wx_two_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_two_1l","name":"XXX","proc":["qcd_wx_two"]},
                                         "CMS_scale_Pol_qcd_wx_three_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_three_1l","name":"XXX","proc":["qcd_wx_three"]},
 					##
-                                        "CMS_scale_Pol_qcd_tx_one_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_one_in","name":"XXX","proc":["qcd_tx_one"]},
+					"CMS_scale_Pol_qcd_tx_one_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_one_in","name":"XXX","proc":["qcd_tx_one"]},
                                         "CMS_scale_Pol_qcd_tx_two_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_two_in","name":"XXX","proc":["qcd_tx_two"]},
                                         "CMS_scale_Pol_qcd_tx_three_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_three_in","name":"XXX","proc":["qcd_tx_three"]},
                                         "CMS_scale_Pol_qcd_wx_one_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_one_in","name":"XXX","proc":["qcd_wx_one"]},
@@ -710,11 +592,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_NOV6_Shape/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_NOV20_Shape/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_NOV6_Shape/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_NOV20_Shape/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -1032,19 +914,18 @@ for syst in systStore:
 		elif "CMS_scale_SDMass_qcd_tx_above" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
 
-		elif "CMS_scale_Pol_qcd_tx_one_in" in systStore[syst]["wsname"]:
-			writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-		elif "CMS_scale_Pol_qcd_tx_two_in" in systStore[syst]["wsname"]:
-			writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-		elif "CMS_scale_Pol_qcd_tx_three_in" in systStore[syst]["wsname"]:
-			writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-
-		elif "CMS_scale_Pol_qcd_wx_one_in" in systStore[syst]["wsname"]:
-			writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-		elif "CMS_scale_Pol_qcd_wx_two_in" in systStore[syst]["wsname"]:
-			writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-		elif "CMS_scale_Pol_qcd_wx_three_in" in systStore[syst]["wsname"]:
-			writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
+                elif "CMS_scale_Pol_qcd_tx_one_in" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
+                elif "CMS_scale_Pol_qcd_tx_two_in" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
+                elif "CMS_scale_Pol_qcd_tx_three_in_" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
+                elif "CMS_scale_Pol_qcd_wx_one_in" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
+                elif "CMS_scale_Pol_qcd_wx_two_in" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
+                elif "CMS_scale_Pol_qcd_wx_three_in" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
 
 		elif "CMS_scale_Pol_qcd_wx_one_1l" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["1l"])
@@ -1089,16 +970,22 @@ if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_tx_three_1l",["1.50"],["qcd_tx_
 if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_wx_one_sr",["1.50"],["qcd_wx_one"],["OneBOneFat_.*"])
 if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_wx_two_sr",["1.50"],["qcd_wx_two"],["OneBOneFat_.*"])
 if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_wx_three_sr",["1.50"],["qcd_wx_three"],["OneBOneFat_.*"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_tx_one_sr",["1.50"],["qcd_tx_one"],["OneBOneFat_.*"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_tx_two_sr",["1.50"],["qcd_tx_two"],["OneBOneFat_.*"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_tx_three_sr",["1.50"],["qcd_tx_three"],["OneBOneFat_.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t0_one_sr",["1.50"],["qcd_tx_one"],["OneBOneFat_.*_t0.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t0_two_sr",["1.50"],["qcd_tx_two"],["OneBOneFat_.*_t0.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t0_three_sr",["1.50"],["qcd_tx_three"],["OneBOneFat_.*_t0.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t1_one_sr",["1.50"],["qcd_tx_one"],["OneBOneFat_.*_t1.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t1_two_sr",["1.50"],["qcd_tx_two"],["OneBOneFat_.*_t1.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t1_three_sr",["1.50"],["qcd_tx_three"],["OneBOneFat_.*_t1.*"])
 
 if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_wx_one_mr",["1.50"],["qcd_wx_one"],["OneBOneMirrorFat_.*"])
 if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_wx_two_mr",["1.50"],["qcd_wx_two"],["OneBOneMirrorFat_.*"])
 if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_wx_three_mr",["1.50"],["qcd_wx_three"],["OneBOneMirrorFat_.*"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_tx_one_mr",["1.50"],["qcd_tx_one"],["OneBOneMirrorFat_.*"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_tx_two_mr",["1.50"],["qcd_tx_two"],["OneBOneMirrorFat_.*"])
-if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_tx_three_mr",["1.50"],["qcd_tx_three"],["OneBOneMirrorFat_.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t0_one_mr",["1.50"],["qcd_tx_one"],["OneBOneMirrorFat_.*_t0.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t0_two_mr",["1.50"],["qcd_tx_two"],["OneBOneMirrorFat_.*_t0.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t0_three_mr",["1.50"],["qcd_tx_three"],["OneBOneMirrorFat_.*_t0.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t1_one_mr",["1.50"],["qcd_tx_one"],["OneBOneMirrorFat_.*_t1.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t1_two_mr",["1.50"],["qcd_tx_two"],["OneBOneMirrorFat_.*_t1.*"])
+if doSyst: writeNormSyst("CMS_HPTB_QCDnonclosure_t1_three_mr",["1.50"],["qcd_tx_three"],["OneBOneMirrorFat_.*_t1.*"])
 
 ## "ewk" get the envelop of the DY and W+jets
 if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008"],["ewk"])
@@ -1266,7 +1153,7 @@ def creatPolShape(tfile,togetNom, s) :
 
         for iBin in range(1,h.GetNbinsX()+1):
                 c = h.GetBinContent(iBin)
-                flo = c * (h.GetBinCenter(iBin)) * 0.25/1000
+                flo = c * (h.GetBinCenter(iBin)) * 0.30/1000
 #                flo = c * (h.GetBinCenter(iBin)) * 0.1/1000    #linear, 10%/1TeV, range from 5%-500 GeV to 50%-5000GeV
                 #flo = c * math.log10(h.GetBinCenter(iBin)) * 0.1        #log10, 10%*log(HT/1GeV), range from 27%-500eV to 37%-5000GeV
 
@@ -1274,8 +1161,8 @@ def creatPolShape(tfile,togetNom, s) :
                         h.SetBinContent(iBin,c+flo)
 
                 if 'Down' in s:
-                        h.SetBinContent(iBin,c-flo)
-
+                        if c-flo > 0: h.SetBinContent(iBin,c-flo)
+                        else: h.SetBinContent(iBin,0)
 
         normnew = h.Integral()
         h.Scale(normold/normnew)
@@ -1421,8 +1308,8 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 					print "<*> Hist '"+toget+"' doesn't exist"
 #					raise IOError
 	                ## raise error only if is on the 2Third and for the syst central value
-					if not ( "ST" in mc["hist"] or "ewk" in mc["hist"] or "TTX" in mc["hist"]) :
-						raise IOError
+					if "ST" in mc["hist"] or "ewk" in mc["hist"] or "TTX" in mc["hist"] : continue
+					else: raise IOError
 
 # not using the 1/3 and 2/3
 #				if ( mc["name"]=="ttb" or mc["name"]=="ttc" or mc["name"]=="ttlight" or "qcd" in mc["name"] ) and hTmp:
@@ -1483,29 +1370,31 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 		print "* Importing ",target
 
-		for i in range(0,len(arglist_obs)):
-			if cat["name"] in arglist_obs.at(i).GetName():
-				al = arglist_obs.at(i)
+		if h:
+
+			for i in range(0,len(arglist_obs)):
+				if cat["name"] in arglist_obs.at(i).GetName():
+					al = arglist_obs.at(i)
 ##	  print "-> with var", al[0]
 
-		roo_mc = ROOT.RooDataHist(target,target,ROOT.RooArgList(al),h)
-		pdf_mc = roo_mc
+			roo_mc = ROOT.RooDataHist(target,target,ROOT.RooArgList(al),h)
+			pdf_mc = roo_mc
 
 #		hBIS = roo_mc.createHistogram("test", al)
 
-		getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
-		g.extend([h,roo_mc,pdf_mc])
+			getattr(w,'import')(pdf_mc,ROOT.RooCmdArg())
+			g.extend([h,roo_mc,pdf_mc])
 #		w.writeToFile(fileTmp)
 
 ### WRITE HISTOGRAMS
                 f = ROOT.TFile.Open(fileTmp,"update")
-                h.SetName(target)
-                h.Write()
+                if h: h.SetName(target)
+                if h: h.Write()
                 f.Write()
                 f.Close()
 
 
-		if syst==None and m< 10 : # not for signal,
+		if h and syst==None and m< 10 : # not for signal,
 			print "DEBUG calling stat with target",target
 			histName=cat["name"]
 			if histName not in statStore:
