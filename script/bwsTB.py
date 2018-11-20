@@ -42,15 +42,13 @@ parser= OptionParser()
 
 #parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bin200_wDATA_1l.root")
 ##parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bin200_wDATA_2l.root")
-parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bTag_bin200_wDATA_1l.root")
-parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bTag_bin200_wDATA_2l.root")
 
-parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_1l_1Third.root")
-parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_2l_1Third.root")
+###---- these are the good files
+parser.add_option("","--input2L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/NOV1_FINAL_2ThirdSYST_wDATA_2l.root")
+parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/NOV1_2l_1Third.root")
 
-#parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bTag_bin200_wDATA_1l.root")
-#parser.add_option("","--input2LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/AUG6_FINAL_2ThirdSYST_bTag_bin200_wDATA_2l.root")
-
+parser.add_option("","--input1L",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs//NOV1_FINAL_2ThirdSYST_wDATA_1l.root")
+parser.add_option("","--input1LBin",type='string',help="Input ROOT file. [%default]", default="/afs/cern.ch/work/d/dalfonso/CMSSW_9_1_0_pre2_ReTestNERO/src/ChargedHiggs/NOV1_1l_1Third.root")
 
 ######
 ######
@@ -155,6 +153,8 @@ channel = []
 
 #1l
 if opts.kTest==0 or opts.kTest==1 or opts.kTest==2 or opts.kTest==3 or opts.kTest==4 or opts.kTest==5 or opts.kTest==6 or opts.kTest==7 or opts.kTest==8 or opts.kTest==9 or opts.kTest==10 or opts.kTest==11 or opts.kTest==12 or opts.kTest==13 or opts.kTest==14 or opts.kTest==15 or opts.kTest==16 or opts.kTest==100 or opts.kTest==101  or opts.kTest==102:
+#	channel = ["1Ele"]
+#	channel = ["1Mu"]
 #	channel = ["1Mu","1Ele"]
 	channel = ["1L"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7","charmCR"]
@@ -164,7 +164,6 @@ if opts.kTest==30 or opts.kTest==31 or opts.kTest==32 or opts.kTest==33 or opts.
 #	channel = ["2Mu"]
 #	channel = ["2Ele"]
 #	channel = ["1Mu1Ele"]
-#	channel = ["1Mu1Ele","2Mu","2Ele"]
 #	channel = ["1Mu1Ele","2Mu","2Ele"]
 	channel = ["2L"]
 	basecat = ["Baseline","topCRR4","topCRR5","extraRadCRR10","extraRadCRR7"]
@@ -396,13 +395,17 @@ for y in channel:
 
        ## set the MC sample
 				if x=="charmCR":
-					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb","ttx"]
+#					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","dy_hf","Hptb","ttx"]
 				if "extraRadCR" in x:
-					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb","ttx"]
+#					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","dy_hf","Hptb","ttx"]
 				if "topCR" in x:
-					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb","ttx"]
+#					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","dy_hf","Hptb","ttx"]
 				if x=="Baseline":
-					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb","ttx"]
+#					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","dy_hf","Hptb","ttx"]
 
 			if y == "1Ele" or y == "1Mu" or y == "1L":
 				mcStore={
@@ -416,13 +419,14 @@ for y in channel:
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 ###					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+### NOMINAL
 					"ttb":{ "name":"ttb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
-#					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WWTo","WZTo","ZZZ","WZZ","WWZ","WWW","VHToNonbb_M125","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":6},
-#					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","ZZTo","WZTo","ZZZ","WZZ","WWZ","WWW","WH_HToBB_WToLNu_M125","ZH_HToBB_ZToLL"],"num":5},
+##
 					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","EWK"],"num":4},
-					"top":{ "name":"top","hist":["TTX","ST"],"num":5}
+					"top":{ "name":"top","hist":["ST"],"num":5},
+					"ttx":{ "name":"ttx","hist":["TTX"],"num":7}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
 					}
 			else:
@@ -437,11 +441,15 @@ for y in channel:
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 ###					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
+#### NOMINAL
 					"ttb":{ "name":"ttb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
-					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","EWK"],"num":4},
-					"top":{ "name":"top","hist":["TTX","ST"],"num":5}
+##					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","EWK"],"num":4},
+					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","light_DYJetsToLL_M-50_HT","EWK"],"num":4},
+					"dy_hf":{ "name":"dy_hf","hist":["bb_DYJetsToLL_M-50_HT"],"num":6},
+					"top":{ "name":"top","hist":["ST"],"num":5},
+					"ttx":{ "name":"ttx","hist":["TTX"],"num":7}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
 					}
 
@@ -463,27 +471,35 @@ for y in channel:
                                         ####
                                         #### Theo
                                         ####
-					"CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
-					"CMS_HPTB_mcreweight_ewk":{"type":"shape", "wsname":"CMS_HPTB_mcreweight_ewk","name":"htRECO","proc":["ewk"]}, ## name used for shape
+#					"CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
+					"CMS_HPTB_mcreweight_ewk":{"type":"shape", "wsname":"CMS_HPTB_mcreweight_ewk","name":"htRECO","proc":["ewk","dy_hf"]}, ## name used for shape
 ##					"QCDscale":{"type":"shape", "wsname":"QCDscale","name":"ScaleRF","proc":["Hptb","ttlf","ttb","ttbb","tt2b","ttcc"]} ## name used for shape
-					"muRFenv_ttbar":{"type":"shape", "wsname":"muRFenv_ttbar","name":"Scale","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
-#					"muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
-#					"muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"Scale","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
-#					"muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"Scale","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
+#					"muRFenv_ttbar":{"type":"shape", "wsname":"muRFenv_ttbar","name":"Scale","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
+					"muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"ScaleRF","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
+					"muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"ScaleR","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
+					"muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"ScaleF","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
 
-					"muRFenv_ewk":{"type":"shape", "wsname":"muRFenv_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
-#					"muRF_ewk":{"type":"shape", "wsname":"muRF_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
-#					"muR_ewk":{"type":"shape", "wsname":"muR_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
-#					"muF_ewk":{"type":"shape", "wsname":"muF_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
+#					"muRFenv_ewk":{"type":"shape", "wsname":"muRFenv_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
+#					"muRFenv_ewk":{"type":"shape", "wsname":"muRFenv_ewk","name":"Scale","proc":["ewk","dy_hf"]}, ## name used for shape
+					"muRF_ewk":{"type":"shape", "wsname":"muRF_ewk","name":"ScaleRF","proc":["ewk","dy_hf"]}, ## name used for shape
+					"muR_ewk":{"type":"shape", "wsname":"muR_ewk","name":"ScaleR","proc":["ewk","dy_hf"]}, ## name used for shape
+					"muF_ewk":{"type":"shape", "wsname":"muF_ewk","name":"ScaleF","proc":["ewk","dy_hf"]}, ## name used for shape
 
-					"muRFenv_Hptb":{"type":"shape", "wsname":"muRFenv_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
-#					"muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
-#					"muR_Hptb":{"type":"shape", "wsname":"muR_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
-#					"muF_Hptb":{"type":"shape", "wsname":"muF_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
+#					"muRFenv_Hptb":{"type":"shape", "wsname":"muRFenv_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
+					"muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"ScaleRF","proc":["Hptb"]}, ## name used for shape
+					"muR_Hptb":{"type":"shape", "wsname":"muR_Hptb","name":"ScaleR","proc":["Hptb"]}, ## name used for shape
+					"muF_Hptb":{"type":"shape", "wsname":"muF_Hptb","name":"ScaleF","proc":["Hptb"]}, ## name used for shape
+
 #					"muRFenv_top":{"type":"shape", "wsname":"muRFenv_top","name":"Scale","proc":["top"]}, ## name used for shape
 #					"muRF_top":{"type":"shape", "wsname":"muRF_top","name":"Scale","proc":["top"]}, ## name used for shape
 #					"muR_top":{"type":"shape", "wsname":"muR_top","name":"Scale","proc":["top"]}, ## name used for shape
 #					"muF_top":{"type":"shape", "wsname":"muF_top","name":"Scale","proc":["top"]}, ## name used for shape
+
+#					"muRFenv_ttx":{"type":"shape", "wsname":"muRFenv_ttx","name":"Scale","proc":["ttx"]}, ## name used for shape
+					"muRF_ttx":{"type":"shape", "wsname":"muRF_ttx","name":"ScaleRF","proc":["ttx"]}, ## name used for shape
+					"muR_ttx":{"type":"shape", "wsname":"muR_ttx","name":"ScaleR","proc":["ttx"]}, ## name used for shape
+					"muF_ttx":{"type":"shape", "wsname":"muF_ttx","name":"ScaleF","proc":["ttx"]}, ## name used for shape
+
 					"CMS_res_j":{"type":"shape", "wsname":"CMS_res_j","name":"JER","proc":[".*"]}, ## name used for shape
                                         ####
                                         #### JEC sources
@@ -547,12 +563,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="SEPT12_HT200/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="NOV17_HT200_UE_1Mu_muRF/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "SEPT12_HT200/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "NOV17_HT200_UE_1Mu_muRF/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -963,7 +979,7 @@ for syst in systStore:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["2L"])
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["1L"])
 		elif "CMS_eff_t_veto" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["1Mu","1Ele"])
+			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"],["1Mu$","1Ele$"])
 		else:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 	if systStore[syst]["type"] == "shape":
@@ -994,14 +1010,24 @@ if doSyst: writeNormSyst("bgnorm_ttb",["1.50"],["ttb$"])
 #if doSyst: writeNormSyst("bgnorm_ttbb",["1.50"],["ttbb$"])
 ##if doSyst: writeNormSyst("bgnorm_tt2b",["1.50"],["tt2b"])
 
+## V+jets HF
+#if doSyst: writeNormSyst("bgnorm_dy_hf",["1.50"],["dy_hf"])
+
 ## "top" get the value od the single top
 if doSyst: writeNormSyst("QCDscale_top",["0.977/1.028"],["top"])
-if doSyst: writeNormSyst("pdf_top",["1.026"],["top"])
+if doSyst: writeNormSyst("pdf_qg",["1.026"],["top"])
 if doSyst: writeNormSyst("CMS_mass_top",["1.022"],["top"])
 
-## "ewk" get the envelop of the DY and W+jets
+## "ewk" get the envelop of the DY and W+jets from the AN2017_063_v11
 if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008"],["ewk"])
 if doSyst: writeNormSyst("pdf_qqbar",["1.04"],["ewk"])
+#if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008","0.996/1.008"],["ewk","dy_hf"])
+#if doSyst: writeNormSyst("pdf_qqbar",["1.04","1.04"],["ewk","dy_hf"])
+
+### "ttx" take the ttW from the AN2017_063_v11
+if doSyst: writeNormSyst("QCDscale_ttx",["0.88/1.13"],["ttx"])
+if doSyst: writeNormSyst("pdf_qqbar",["1.02"],["ttx"])
+if doSyst: writeNormSyst("CMS_mass_top",["1.022"],["ttx"])
 
 if doSyst: writeSystISRFSR(name="CMS_HPTB_ISR",valueL=["-999","999"], regexpL=["ttlf","ttb","ttcc"])
 if doSyst: writeSystISRFSR(name="CMS_HPTB_FSR",valueL=["-999","999"], regexpL=["ttlf","ttb","ttcc"])
@@ -1090,7 +1116,14 @@ def MergeCategory(tfile,hname):
 		if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
 		if hTmp!=None and hTmp3!=None: hTmp.Add(hTmp3)
 	else:
+
 		hTmp=tfile.Get(hname)
+## temporaty need to fix for the merged categories
+#		print 'MergeCategory ',hname
+#		if "bb_DYJetsTo" in hname:
+#			hTmp = MergeDYHF(tfile,hname)
+#		else: hTmp=tfile.Get(hname)
+
 
 		#nominal
 	if hTmp!= None and "bdt" in hname:
@@ -1172,6 +1205,20 @@ def envelop(tfile,togetNom, togetSyst, s) :
 		hTmpDown = h
 		hUp, hDown = SS.SystematicSmoother(hTmpNom, hTmpDown.Clone("test1"), hTmpDown,"~/www/ChargedHiggsTB/JULY30/SYST/").smooth()
 		return hDown
+
+
+def MergeDYHF(tfile,hname):
+
+	hname_1=hname.replace("bb_DYJetsTo", "b_DYJetsTo")
+	hname_2=hname.replace("bb_DYJetsTo", "other_DYJetsTo")
+	hTmp=tfile.Get(hname)
+	hTmp1=tfile.Get(hname_1)
+	hTmp2=tfile.Get(hname_2)
+	if hTmp!=None and hTmp1!=None: hTmp.Add(hTmp1)
+	if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
+
+        return hTmp
+
 
 
 ## import Everything in ws TODO
@@ -1260,7 +1307,7 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 ###
 ##				if syst != None and "QCDscale" in target:
 				if syst != None and "muRFenv" in target:
-					if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in togetSyst or "DYJetsToLL_M-50_HT" in togetSyst or "DYJetsToLL_M-5to50_HT" in togetSyst or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"] or "ST" in togetSyst:
+					if  mc["name"]=="Hptb" or "WJetsToLNu_HT" in togetSyst or "DYJetsToLL_M-50_HT" in togetSyst or "DYJetsToLL_M-5to50_HT" in togetSyst or "ttlf" in mc["name"] or "ttb" in mc["name"] or "ttbb" in mc["name"] or "tt2b" in mc["name"] or "ttcc" in mc["name"] or "ST" in togetSyst or "TTX" in togetSyst:
 
 						hTmp = envelop(tfile,togetNom,togetSyst,s)
 
@@ -1284,11 +1331,14 @@ def importPdfFromTH1(cat,mc,myBin,LikelihoodMapping,syst=None):
 
 						if hTmp!= None: print "<*> Reading Hist '"+toget+"' integral=",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(), 'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1),' entries=',hTmp.GetEntries()
 
-#				if mc["name"]=="ttb":
-#					hTmp.Scale(1.83)
+				# added the UE events
+				if hTmp and ( mc["name"]=="ttb" or mc["name"]=="ttbb" or mc["name"]=="ttcc" or mc["name"]=="ttlf" ) :
+					hTmp.Scale(1./4)
 
 ### SCALE for the 2/3
-				if mc["name"]!="qcd" and not "EWK" in hname:
+#				if mc["name"]!="qcd" and not "EWK" in hname and not "TT_TuneCUETP8M2T4_13TeV" in hname:
+# only the SIGNAL/TTBAR and V+jets are skimmed
+				if hTmp and mc["name"]!="qcd" and not "EWK" in hname and not "TTX" in hname and not "ST" in hname:
 					hTmp.Scale(1.5)
 
 ### -- MC --
@@ -1460,6 +1510,10 @@ def importPdfFromTH1SumBKG(cat,mc,syst=None,do1Third=False):
 			  continue
 
 		  hTmp = MergeCategory(tfile,toget)
+
+		  # added the UE events
+		  if hTmp and ( mc["name"]=="ttb" or mc["name"]=="ttbb" or mc["name"]=="ttcc" or mc["name"]=="ttlf") :
+			  hTmp.Scale(1./4)
 
 		  if hTmp!= None: print "<*> Reading Hist '"+toget+"'",hTmp.Integral(),' nBin=',hTmp.GetNbinsX(),'underflow=',hTmp.GetBinContent(0), 'overflow=',hTmp.GetBinContent(hTmp.GetNbinsX()+1), ' entries=',hTmp.GetEntries()
 
@@ -1635,7 +1689,7 @@ for c in catStore:
 		toget_2=toget.replace("_SingleMuon", "_SingleElectron")
 		hTmp2=tfile.Get(toget_2)
 		if h!= None and hTmp2: h.Add(hTmp2)
-	if "1L" in cat["dir"]:
+	elif "1L" in cat["dir"]:
 		toget_1=toget.replace("_1L", "_1Mu")
 		toget_1+="_SingleMuon"
 		toget_2=toget.replace("_1L", "_1Ele")
