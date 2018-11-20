@@ -1,0 +1,6 @@
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.3
+sub=amariniUser|/eos/user/a/amarini/Nero/v3.3
+sub=amariniCms|/store/user/amarini/Nero/v3.3
+
+addfiles=%(amariniHmm)s/DoubleMuon/
+
