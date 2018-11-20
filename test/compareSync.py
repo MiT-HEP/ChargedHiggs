@@ -15,25 +15,26 @@ parser.add_option("-k","--field",type="int",help="field to compare [%default]",d
 
 
 def ReadFile(name,field=-1):
-	R={}
-	In=open(name)
-	for line in In:
-		l=line.split('#')[0]
-		l=re.sub(',',' ',l)
-		l=re.sub(':',' ',l)
-		l=re.sub('\n','',l)
-		try:
-			run=l.split()[0]
-			lumi=l.split()[1]
-			e=l.split()[2]
-			if field>=0: 	
-				val = float(l.split()[2+field])
-				R[ (run,lumi,e) ] = val
-			else:
-				R[ (run,lumi,e) ] = 1
-		except IndexError:
-			print "Ignoring line: '"+line+"'"
-	return R
+    R={}
+    In=open(name)
+    for line in In:
+        l=line.split('#')[0]
+        l=re.sub(',',' ',l)
+        l=re.sub(':',' ',l)
+        l=re.sub('\n','',l)
+        try:
+            run=l.split()[0]
+            lumi=l.split()[1]
+            e=l.split()[2]
+            if field>=0:
+                val = float(l.split()[2+field])
+                R[ (run,lumi,e) ] = val
+            else:
+                R[ (run,lumi,e) ] = 1
+        except IndexError:
+            print "Ignoring line: '"+line+"'"
+            print "-> Requested field",field+2,"while available are only",len(l.split())
+    return R
 
 def ReadFileOld(name):
 	R=set([])
@@ -53,9 +54,9 @@ def ReadFileOld(name):
 	return R
 
 def PrintSet(s):
-	for key in s:
-		print ', '.join(key)
-	return
+    for key in s:
+        print ', '.join(key)
+    return
 
 d1=ReadFile(args[0],opts.field)
 d2=ReadFile(args[1],opts.field)
@@ -74,24 +75,34 @@ maxRelDiff=0.
 RelDiffKey=None
 
 if opts.field >=0:
-	print "------ DIFF -------"
-	for key in (s1&s2) :
-		print "Key=("+','.join(key)+") Delta=",d1[key]-d2[key]
-		if maxDiff< d1[key]-d2[key]:
-			DiffKey=key
-			maxDiff=max(maxDiff,d1[key]-d2[key])
-		if maxRelDiff<2*(d1[key]-d2[key])/(d1[key]+d2[key]):
-			DiffRelKey=key
-			maxRelDiff=max(maxRelDiff, 2*(d1[key]-d2[key])/(d1[key]+d2[key]) )
-	print "-------------------"
+    print "------ DIFF -------"
+    for key in (s1&s2) :
+        print "Key=("+','.join(key)+") Delta=",d1[key]-d2[key]
+        if maxDiff< d1[key]-d2[key]:
+            DiffKey=key
+            maxDiff=max(maxDiff,d1[key]-d2[key])
+        try:
+            if maxRelDiff<2*(d1[key]-d2[key])/(d1[key]+d2[key]):
+                DiffRelKey=key
+                maxRelDiff=max(maxRelDiff, 2*(d1[key]-d2[key])/(d1[key]+d2[key]) )
+        except ZeroDivisionError:
+            pass
+    import ROOT
+    delta=ROOT.TH1D("delta","delta",100,-maxDiff,maxDiff)
+    for key in (s1&s2): 
+        if d1[key] == 0 or d2[key]==0: continue
+        delta.Fill(d1[key]-d2[key])
+    delta.Draw("HIST")
+    raw_input("ok?")
+    print "-------------------"
 
 print "------ SUMMARY ----"
 print "common",len( s1&s2) 
 print "only s1",len(s1-s2)
 print "only s2",len(s2-s1)
 if opts.field >=0:
-	print "maxDiff=",maxDiff, "on key=",DiffKey
-	print "maxRelDiff=",maxRelDiff*100,"%","on key",DiffRelKey
+    print "maxDiff=",maxDiff, "on key=",DiffKey
+    print "maxRelDiff=",maxRelDiff*100,"%","on key",DiffRelKey
 print "-------------------"
 
 

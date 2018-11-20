@@ -3,3 +3,8 @@ sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.2.1/
 addfiles=%(amariniHmm)s/GluGluToHHTo2B2M_node_4_13TeV-madgraph
 addfiles=%(amariniHmm)s/VBFHHTo2B2Mu_CV_1_C2V_1_C3_1_13TeV-madgraph
 
+## put here if ntuples are not reproduced with regression
+addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.3.alpha/VBFH_HToMuMu_M125_13TeV_powheg_pythia8
+#
+addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.3.alpha/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8
+

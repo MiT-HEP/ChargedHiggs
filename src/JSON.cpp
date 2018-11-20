@@ -32,6 +32,7 @@ bool JsonAnalysis::CheckLumi(long run, int lumi){
     return false;
 }
 
+#define SYNC_VERBOSE 1
 int JsonAnalysis::analyze(Event* e,string systname)
 {
     // if not Init, return true
@@ -42,10 +43,18 @@ int JsonAnalysis::analyze(Event* e,string systname)
 
     Fill("Json/CutFlow/CutFlow_Data",systname,0,1);
 
+    if (SYNC_VERBOSE and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
+        Log(__FUNCTION__,"SYNC",Form("Analyze event %ld:%ld:%ld",e->runNum(),e->lumiNum(),e->eventNum()));
+
     if ( CheckLumi(e->runNum(), e->lumiNum()  )){
         Fill("Json/CutFlow/CutFlow_Data",systname,1,1); // pass
+        if (SYNC_VERBOSE and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
+            Log(__FUNCTION__,"SYNC","Pass");
         return JSON_EVENT_PASS;
     }
+
+    if (SYNC_VERBOSE and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
+        Log(__FUNCTION__,"SYNC","Fail");
 
     return JSON_EVENT_FAIL;
 

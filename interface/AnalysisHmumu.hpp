@@ -65,6 +65,8 @@ class HmumuAnalysis: virtual public AnalysisBase
         // fatjets VH Hadronic tags (and TODO hadronic top)
         vector<FatJet*> selectedFatjets;
         vector<Jet*> selectedJetsVHHadr;
+        vector<float> alphaVHHadr;
+        float valueVHHadr;
 
         //Set soft variables
         bool isMiniIsoLeptons{false};

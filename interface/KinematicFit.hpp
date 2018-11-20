@@ -21,12 +21,15 @@ class KinematicFit
         int genericType{0}; // 0 = no met;  1= min met
         float lambda{1.}; //mixing value for met minimization
         bool doNorm{true}; // mixing is normalized first
+        int maxIteration=1000;
     // corrections -- output
         std::vector<float> alpha;
+        float value{0.}; // value at minimum
 
     // Ghost -- config
         bool doGhost{false};
         int nGhost{3}; float sigmaGhost{0.3333}; float ptGhost{30.};
+        void print();
 
     protected:
         void addGhost();

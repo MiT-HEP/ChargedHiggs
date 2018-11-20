@@ -13,6 +13,7 @@ parser = OptionParser(usage=usage)
 parser.add_option("-f","--file",dest="file",type="string",help="File:var[:legend][:flip] list comma separated",default="weights/output.root:DNN:dnn")
 parser.add_option("-t","--tree",dest="tree",type="string",help="Tree [%default]",default="TestTree")
 #parser.add_option("-m","--multiclass",dest="multiclass",action="store_true",help="Switch on Multiclass mode [%default]",default=False)
+parser.add_option("-b","--binning",dest="bins",type="string",help="Binning [%default]",default="")
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -26,48 +27,38 @@ def keras_from_minitree_hmm(t,fname='scikit/model.hd'):
     global model 
     if model== None:
         model = keras.models.load_model(fname)
-        #float keras= py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16] ] ] ))[0][0]");
-    x= [ t.pt1/t.mass, #0
-         t.pt2/t.mass, #1
-         t.eta1, #eta1 #2
-         t.eta2, #eta2 #3
-         t.phi1, #phi1 #4
-         t.phi2, #phi1 #5
-         #
-         t.Hpt, ## Hpt       #6
-         t.Heta, ## Heta     #7 
-         t.Hphi, ## Hphi     #8
-         t.mjj_1, ##mjj      #9
-         t.mjj_2,            #10
-         t.detajj_1, ##detajj#11
-         t.detajj_2,         #12
-         t.nbjets, ##nb      #13
-         t.njets, ##nj       #14
-         t.ptj1, ##jpt         #15 ###  TO FIX ?
-         t.met ##met         #16
+    features= [  
+             "@pt1/@mass", #0
+             "@pt2/@mass", #1
+             "eta1", #eta1 #2
+             "eta2", #eta2 #3
+             "phi1", #phi1 #4
+             "phi2", #phi1 #5
+             #
+             "Hpt", ## Hpt       #6
+             "Heta", ## Heta     #7 
+             "Hphi", ## Hphi     #8
+             "mjj_1", ##mjj      #9
+             "mjj_2",            #10
+             "detajj_1", ##detajj#11
+             "detajj_2",         #12
+             #t.nbjets", ##nb      #13
+             "maxDeepB",      #13
+             "njets", ##nj       #14
+             "~ptj1", ##jpt         #15
+             "met", ##met         #16
+             "softNjets1",   #17
+             "softHt1",      #18
+             "firstQGL",     #19
+             "secondQGL",    #20
+             "thirdQGL",     #21
+             "costhetastar",     #22
         ]
+    ptj1 = 0.
+    if t.njets >0 : ptj1=t.jet_pt[0]
+    x= [ eval(re.sub('@','t.',s)) if '@' in s else eval(re.sub('~','',s)) if '~' in s else eval("t."+s) for s in features ]
     return model.predict( np.array ( [ x ] )) [0][0]
 
-def keras_from_minitree_tb(t,fname='scikit/KERAS_tb.hd'):
-    global model 
-    if model== None:
-        model = keras.models.load_model(fname)
-    x= [          
-            t.bjet_pt_0_,
-            t.ht,
-            t.DRl1b1,
-            t.DEtaMaxBB,
-            t.DRbbmin,
-            t.MassMinlb,
-            t.AvCSVPt,
-            t.FW2,
-            t.MJJJmaxPt,
-            t.Cen,
-            t.DRlbmin,
-            t.AvDRBB,
-            t.DRlbmaxPT,
-            ]
-    return model.predict( np.array ( [ x ] )) [0][0]
 
 c = ROOT.TCanvas("c","c",int(500*1.5),int(450*1.5))
 c.SetBottomMargin(0.15)
@@ -142,6 +133,16 @@ for idx,s in enumerate(opts.file.split(',')):
         nbins=200
         xmin=0
         xmax=4000
+    if v=="HmmLikelihood":
+        nbins=2000
+        xmin=-200
+        xmax=0
+
+    if opts.bins!="":
+        nbins=int(opts.bins.split(",")[0])
+        xmin=float(opts.bins.split(",")[1])
+        xmax=float(opts.bins.split(",")[2])
+        print "Binning is",nbins,xmin,xmax
 
     hSig = ROOT.TH1D("hSig","hSig",nbins,xmin,xmax)
     hBkg = ROOT.TH1D("hBkg","hBkg",nbins,xmin,xmax)
@@ -154,11 +155,19 @@ for idx,s in enumerate(opts.file.split(',')):
             val = keras_from_minitree_hmm(t,'scikit/model.hd')
             if t.classID == 0 : hSig.Fill(val, t.weight)
             else : hBkg.Fill(val,t.weight)
-    if v == "htb_keras":
+    elif v == "htb_keras":
         for ientry in range(0,t.GetEntries()):
             t.GetEntry(ientry)
             val = keras_from_minitree_tb(t)
             if t.classID == 0 : hSig.Fill(val, t.weight)
+            else : hBkg.Fill(val,t.weight)
+    elif v =='HmmLikelihood':
+        ROOT.gSystem.Load("../../bin/libChargedHiggs.so")
+        hmm=ROOT.HmmLikelihood()
+        for ientry in range(0,t.GetEntries()):
+            t.GetEntry(ientry)
+            val= hmm.likelihood(t.Hpt,t.Heta,t.mjj_1,t.mjj_2,t.detajj_1,t.detajj_2,t.ncentjets,t.firstQGL,t.maxDeepB,t.softHt1)
+            if t.classID == 0 : hSig.Fill(val,t.weight)
             else : hBkg.Fill(val,t.weight)
     else:
         t.Draw(v + ">>hSig","weight * (classID==1)","goff") ## 0 = sig
@@ -268,17 +277,38 @@ leg2 = ROOT .TLegend(0.18,0.65,.4,.94)
 leg2.SetBorderSize(0)
 leg2.SetFillStyle(0)
 m=0
+allLikelihood=[]
 for idx in range(0,len(allSig)):
     hSig=allSig[idx]
     hBkg=allBkg[idx]
-    hSig.Rebin(20)
-    hBkg.Rebin(20)
+    if opts.bins=="":
+        hSig.Rebin(20)
+        hBkg.Rebin(20)
     hSig.SetLineColor(38)
     hSig.SetLineWidth(2)
     hBkg.SetLineColor(46)
     hBkg.SetLineWidth(2)
     hBkg.SetLineStyle(idx+1)
     hSig.SetLineStyle(idx+1)
+    hL = hSig.Clone(hSig.GetName()+"_likelihood")
+    hL.Reset("ACE")
+    doCDF=True
+    for ibin in range(0,hSig.GetNbinsX()):
+        s=hSig.GetBinContent(ibin+1)
+        b=hBkg.GetBinContent(ibin+1)
+        if s+b <=0 or doCDF:
+            s=hSig.Integral(ibin+1,hSig.GetNbinsX())
+            b=hBkg.Integral(ibin+1,hSig.GetNbinsX())
+        if s+b <=0:
+            s=0.
+            b=1.
+        l=s/(s+b) 
+        hL.SetBinContent(ibin+1,l) 
+    hL.SetLineColor(8)
+    hL.SetLineWidth(2)
+    hL.SetLineStyle(idx+1)
+    allLikelihood.append(hL)
+
     m=max(m,hSig.GetMaximum())
     m=max(m,hBkg.GetMaximum())
     if idx==0:
@@ -297,6 +327,11 @@ for idx in range(0,len(allSig)):
     hDummy.SetLineStyle(idx+1)
     leg2.AddEntry(hDummy,allLeg[idx],"L")
     objs.append(hDummy)
+
+for hL in allLikelihood:
+    hL.Scale(m)
+    hL.Draw("HIST SAME")
+print "M",m
 
 allSig[0].SetMaximum(m*1.2)
 leg2.Draw()

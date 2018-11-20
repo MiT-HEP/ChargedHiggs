@@ -52,9 +52,10 @@ void EfficienciesAnalysis::SetPhotonCuts(Photon *p){
 void EfficienciesAnalysis::EndEvent(){}
 
 void EfficienciesAnalysis::Init(){
-    double ptbins[]={0,10,18,20,22,24,26,27,28,30,35,40,50,60,100,120,200,300,500,8000};
+    double ptbins[]={0,10,20,50,8000};
     int nbins=sizeof(ptbins)/sizeof(double)-1;
-    double ebins[]={2.4, -2.1, -1.6, -1.2, -0.9, -0.3, -0.2, 0.2, 0.3, 0.9, 1.2, 1.6, 2.1, 2.4};
+    //double ebins[]={2.4, -2.1, -1.6, -1.2, -0.9, -0.3, -0.2, 0.2, 0.3, 0.9, 1.2, 1.6, 2.1, 2.4};
+    double ebins[]={0,0.5,1.0,1.5,2.0,2.4};
     int nebins=sizeof(ebins)/sizeof(double)-1;
 
     for ( string l : AllLabel()  ) {
@@ -79,7 +80,7 @@ void EfficienciesAnalysis::Init(){
 
 int EfficienciesAnalysis::analyze(Event *event, string systname)
 {
-    bool refTrigger = true; // Run On HLT ZeroBias
+    bool refTrigger = true; // Run On HLT ZeroBias or JetHT
     string label = GetLabel(e);
     //if (label.find("SingleMuon") !=string::npos) {isSingleMuon=true; label="Data";} else { isSingleMuon=false;}
     //if (label.find("DoubleMuon") !=string::npos) {isDoubleMuon=true; label="Data";} else {isDoubleMuon=false;}

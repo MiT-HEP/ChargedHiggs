@@ -23,6 +23,7 @@
 #define DEEP_B_MEDIUM 0.4941
 #define DEEP_B_TIGHT 0.8001
 
+#define SYNC_VERBOSE 1
 
 template<>
 float HmumuAnalysis::GetVariable( string name){ return *(float*)varValues_.GetPointer(name); } ;
@@ -89,6 +90,8 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     selectedJetsMiniIso.clear();
     selectedFatjets.clear();
     selectedJetsVHHadr.clear();
+    alphaVHHadr.clear();
+    valueVHHadr=-1;
 
     int nMuons=0;
     for(unsigned il=0 ; ;++il)
@@ -300,31 +303,64 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     }
     */
     if (category == "" and mu0_local != NULL and mu1_local!=NULL) { // VH Hadr resolved
-        // TODO kin fit assuming met 0
+        kf->clear();
+        if (selectedJetsMiniIso.size() >=2){
+            //for (auto j : selectedJetsMiniIso) 
+            //{
+            //    JME::JetParameters bins,vars;
+            //    vars.setJetPt( j->GetP4().Pt() );
+            //    bins.setJetEta( j->GetP4().Eta() );
+            //    bins.setRho( std::min(e->Rho(),float(40.)) ); // corrections up to rho 40.
+
+            //    float sigma=1.0 ;
+
+            //    if ( jet_resolution->getRecord(bins)==NULL){ sigma=1.0;}
+            //    else{ sigma =  jet_resolution->evaluateFormula( *jet_resolution->getRecord(bins),vars); }
+
+            //    kf->p4.push_back( j->GetP4());
+            //    kf->sigma.push_back(sigma);
+            //}
+            //kf->H=Hmm.GetP4();
+            //kf->doGhost=false; 
+            //kf->runGeneric();
             bool vhhadrres=false;
             float met = e->GetMet().Pt();
             if (nbjets==0 and met <35){
                 // loop over the selected jets local
                 for(unsigned ijet=0;ijet < selectedJetsMiniIso.size();++ijet) 
-                for(unsigned jjet=ijet+1;jjet < selectedJetsMiniIso.size();++jjet) 
-                {
-                    //compute the invariant mass between ijet and jjet 
-                    //
-                    Object Z ;
-                    Z.SetP4(zero); // make sure it is 0.
-                    Z+= *selectedJetsMiniIso[ijet];
-                    Z+= *selectedJetsMiniIso[jjet];
-                    if ( Z.M() > 70 and Z.M()< 100 ){
-                        if (not vhhadrres) { // save jets that selected VH tag
-                            selectedJetsVHHadr.push_back(selectedJetsMiniIso[ijet]);
-                            selectedJetsVHHadr.push_back(selectedJetsMiniIso[jjet]);
+                    for(unsigned jjet=ijet+1;jjet < selectedJetsMiniIso.size();++jjet) 
+                    {
+                        //compute the invariant mass between ijet and jjet 
+                        //
+                        //Object Z ;
+                        //Z.SetP4(zero); // make sure it is 0.
+                        //Z+= *selectedJetsMiniIso[ijet];
+                        //Z+= *selectedJetsMiniIso[jjet];
+                        //
+                        Log(__FUNCTION__,"DEBUG",Form("Considering VH couple %d,%d alphaS=%u",ijet,jjet,kf->alpha.size()));
+                        TLorentzVector Z;
+                        //Z += selectedJetsMiniIso[ijet]->GetP4()*kf->alpha[ijet];
+                        //Z += selectedJetsMiniIso[jjet]->GetP4()*kf->alpha[jjet];
+                        Z += selectedJetsMiniIso[ijet]->GetP4();
+                        Z += selectedJetsMiniIso[jjet]->GetP4();
+
+                        if ( Z.M() > 70 and Z.M()< 110 ){
+                            if (not vhhadrres) { // save jets that selected VH tag
+                                selectedJetsVHHadr.push_back(selectedJetsMiniIso[ijet]);
+                                selectedJetsVHHadr.push_back(selectedJetsMiniIso[jjet]);
+                                //alphaVHHadr.push_back(kf->alpha[ijet]);
+                                //alphaVHHadr.push_back(kf->alpha[jjet]);
+                                //valueVHHadr = kf->value;
+                            }
+                            vhhadrres=true;
                         }
-                        vhhadrres=true;
                     }
-                }
 
             }
             if (vhhadrres)category="VHHadr";
+        }
+
+        // TODO kin fit assuming met 0
     }
 
     // ggHX: I have a ggH with miniIso but not with std selection
@@ -1001,6 +1037,20 @@ void HmumuAnalysis::Init(){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
     rnd_ . reset( new TRandom3() ) ;
 
+    if (not jet_resolution)
+    { // init jet resolution
+        Log(__FUNCTION__,"INFO","Init JER");
+        jet_resolution.reset( new JME::JetResolutionObject("aux/jer/Summer16_25nsV1/Summer16_25nsV1_MC_PtResolution_AK4PFchs.txt") ) ;
+    }
+
+    if (not kf)
+    {
+        Log(__FUNCTION__,"INFO","Init KF");
+        kf.reset (new KinematicFit);
+        kf->genericType=1;
+        kf->lambda=1.; // lambda->0, MET is neglected, lambda->inf MET->0
+    }
+
     // define categories -- for booking histos
     Log(__FUNCTION__,"INFO",Form("Loading Configuration with catType=%d",catType) );
     if (catType>=1)
@@ -1109,7 +1159,15 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/Ptjj_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
 	    Book ("HmumuAnalysis/Vars/DPhimmjj_VHHadr_"+ l ,"DPhijj;#Delta#phi(j,j) ;Events", 100,0,3.1416); 
 	    Book ("HmumuAnalysis/Vars/DEtammjj_VHHadr_"+ l ,"DEtajj;#Delta#eta(j,j) ;Events", 100,0,10); 
+        //
+	    Book ("HmumuAnalysis/Vars/Mjjkf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
+	    Book ("HmumuAnalysis/Vars/Malljkf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
+	    Book ("HmumuAnalysis/Vars/Metkf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
+	    Book ("HmumuAnalysis/Vars/Valuekf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 1000,0,100); 
 
+	    Book ("HmumuAnalysis/Vars/Mjjkf4_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
+	    Book ("HmumuAnalysis/Vars/Malljkf4_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
+	    Book ("HmumuAnalysis/Vars/Metkf4_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
         // Study cut for tag categories ttH, WH,ZH, 
 
         //Scikit
@@ -1130,9 +1188,16 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/Mbbcorr_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mbbkf2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mbbkf3_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mbbkf4_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Bres_HbbHmm_"+ l ,"B Res;res;Events", 2000,-5,5.);
+	    Book ("HmumuAnalysis/Vars/Jres_HbbHmm_"+ l ,"B Res;res;Events", 2000,-5,5.);
 	    Book ("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mmm_KF2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mmm_KF3_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mem_KF2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    Book ("HmumuAnalysis/Vars/Mem_KF3_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+
+	    //Book2D ("HmumuAnalysis/Vars/M4m_HmmHmm_"+ l ,"Mass 4 muons XX compatibles;m_{4#mu};Events", 8000,0,2000,1000,0,500);
 
         // --- histograms for limits extraction
         for(const auto & c : categories_)
@@ -1149,6 +1214,11 @@ void HmumuAnalysis::Init(){
         Branch("hmm","weight",'D');
         Branch("hmm","mcWeight",'D');
         Branch("hmm","puWeight",'D');
+        Branch("hmm","baremcWeight",'D');
+        Branch("hmm","muonSF",'D');
+        Branch("hmm","btagSF",'D');
+        Branch("hmm","nnlopsSF",'D');
+        Branch("hmm","l1SF",'D');
         Branch("hmm","eventNum",'I');
         Branch("hmm","runNum",'I');
         Branch("hmm","lumiNum",'I');
@@ -1247,6 +1317,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
     // cache to understand if the event as been processed when I arrived at the End() function
     // ----------------------------------------
+    //
+    if (SYNC_VERBOSE and not processingSyst_ and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
+        Log(__FUNCTION__,"SYNC",Form("Analyze event %ld:%ld:%ld",e->runNum(),e->lumiNum(),e->eventNum()));
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
@@ -1296,6 +1369,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     //#warning NO_PREFIRE
     double l1prefire=1.0;
     l1prefire=e->ApplyL1PreFire(); // apply to the event weight, but keep it for comp
+    if (doSync and not processingSyst_) { SetTreeVar("l1SF",l1prefire);}
+    //Log(__FUNCTION__,"DEBUG",Form("L1Prefire is %lf",l1prefire)); 
 
     /*
      * HIGGS REWEIGHT -- UNCERTAINTIES
@@ -1391,10 +1466,12 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 e->ApplySF("nnlops");
                 nnlops=sf_nnlops->get();
 
+                //Log(__FUNCTION__,"DEBUG",Form("NNLOPS is %lf",nnlops)); 
             }
         }
 
     }
+    if (doSync and not processingSyst_) { SetTreeVar("nnlopsSF",nnlops); }
 
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetMuon0: ");
@@ -1409,6 +1486,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
     bool recoMuons= mu0 != NULL and mu1 !=NULL; 
     if (recoMuons and mu0->Charge() * mu1->Charge() != -1 ) recoMuons=false; // 
+
+    if (SYNC_VERBOSE and not processingSyst_ and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
+        Log(__FUNCTION__,"SYNC",Form("Selected Muons are: mu0=%ld mu1=%ld pt=%f,%f",long(mu0),long(mu1),(mu0)?mu0->Pt():0,(mu1)?mu1->Pt():0));
 
 
     if (recoMuons)
@@ -1449,8 +1529,11 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         sf->set();
         e->ApplySF("btag-reweight"); 
         btagsf = e->GetWeight()->GetSF("btag-reweight")->get();
+
     }
     
+    //Log(__FUNCTION__,"DEBUG",Form("BtagSF is %lf",btagsf)); 
+    if (doSync and not processingSyst_) { SetTreeVar("btagSF",btagsf);}
     // select jets
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetJets: ");
 
@@ -1472,6 +1555,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     if (catType==2) category = CategoryBdt(e);
     else if (catType==3) { 
         category = CategoryBdt(e); 
+
+
         string categoryExc = CategoryExclusive(e); 
         recoMuons = (mu0 != NULL and mu1 !=NULL);  // muons may have been recomputed here
         isExclusiveCat = ( categoryExc!="" and categoryExc!="ggHX");
@@ -1483,6 +1568,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         if (categoryExc == "WHLep" ) category="cat18";   // 
         if (categoryExc == "VHHadr" ) category="cat19";   // 
         if (categoryExc == "ggHX" and category == "" ) category="cat20";   // 
+
+        // enforce it for VBF Pisa
+        //if (jetVar_["mjj_1"] > 400) category="cat21";
     } 
     else if (catType ==4)
     {
@@ -1502,6 +1590,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         if (categoryExc == "WHLep" ) category="cat13";   // 
         if (categoryExc == "VHHadr" ) category="cat14";   // 
         if (categoryExc == "ggHX" and category == "" ) category="cat15";   // 
+
+        // enforce it for VBF Pisa
+        //if (jetVar_["mjj_1"] > 400) category="cat16";
     }
     else category = Category(mu0, mu1, selectedJets);
 
@@ -1551,8 +1642,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             //sf_runGH->set( std::max(mu0->Pt(),float(26.1)), fabs(mu0->Eta()) );
             //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.5%
             //effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
+            float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
 
-            sf_runBCDEF->set( std::max(mu0->Pt(),float(30.1)), fabs(mu0->Eta()) );
+            sf_runBCDEF->set( std::max(mu0->Pt(),float(30.1)), eta_for_sf);
             //effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*sf_runBCDEF->getDataErr() ) ;
             effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*0.005 ) ; // 0.5% correlated with runGH
             effmc_runBCDEF *= 1.- (sf_runBCDEF->getMCEff()) ;
@@ -1566,8 +1658,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*sf_runGH->getDataErr() ) ;
             //effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005 ) ; // 0.05%
             //effmc_runGH *= 1.- (sf_runGH->getMCEff()) ;
+            float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
 
-            sf_runBCDEF->set( std::max(mu1->Pt(),float(30.1)) ,fabs(mu1->Eta()) );
+            sf_runBCDEF->set( std::max(mu1->Pt(),float(30.1)) ,eta_for_sf );
             //effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*sf_runBCDEF->getDataErr() ) ;
             effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*0.005) ; // 0.5% correlated runGH runBCDEF
             effmc_runBCDEF *= 1.- (sf_runBCDEF->getMCEff()) ;
@@ -1594,72 +1687,79 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     
     // ID
     double sfId=1.0;
+    double sfBC=1.0, sfDE=1.0, sfF=1.0;
 
     if (mu0)
     {
         float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
         float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
+        float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
 
-        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,fabs(mu0->Eta()) );
-        float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
+        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,eta_for_sf );
+        sfBC = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,fabs(mu0->Eta()) );
-        float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
+        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,eta_for_sf );
+        sfDE = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_id_runF", pt_for_sf,fabs(mu0->Eta()) );
-        float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
+        e->SetPtEtaSF("mu_id_runF", pt_for_sf,eta_for_sf );
+        sfF = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
-        sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
+        //sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
 
     if (mu1)
     {
         float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
         float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
-        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,fabs(mu1->Eta()) );
-        float sf1 = e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
+        float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
+        e->SetPtEtaSF("mu_id_runBC", pt_for_sf,eta_for_sf);
+        sfBC *= e->GetWeight()->GetSF("mu_id_runBC")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,fabs(mu1->Eta()) );
-        float sf2 = e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
+        e->SetPtEtaSF("mu_id_runDE", pt_for_sf,eta_for_sf );
+        sfDE *= e->GetWeight()->GetSF("mu_id_runDE")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_id_runF", pt_for_sf,fabs(mu1->Eta()) );
-        float sf3 = e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
+        e->SetPtEtaSF("mu_id_runF", pt_for_sf,eta_for_sf);
+        sfF *= e->GetWeight()->GetSF("mu_id_runF")->sf + e->GetWeight()->GetSF("mu_id_runBC")->syst*0.01; // 1% correlagted with BC
 
-        sfId *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
 
+    sfId = (w_BC*sfBC + w_DE*sfDE + w_F*sfF)/(w_BC+w_DE+w_F);
+
+    sfBC=1.0; sfDE=1.0; sfF=1.0;
     double sfIso=1.0; // TODO, apply a different sf for miniIsolation, use flag isMiniIsoLeptons
     // ISO Loose
     if (mu0)
     {
         float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
+        float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
         float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
-        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,fabs(mu0->Eta()) );
-        float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
+        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,eta_for_sf);
+        sfBC = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,fabs(mu0->Eta()) );
-        float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
+        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,eta_for_sf);
+        sfDE = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,fabs(mu0->Eta()) );
-        float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
+        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,eta_for_sf);
+        sfF = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
-        sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
+        //sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
     if (mu1)
     {
         float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
         float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
-        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,fabs(mu1->Eta()) );
-        float sf1 = e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
+        float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
+        e->SetPtEtaSF("mu_iso_runBC", pt_for_sf,eta_for_sf );
+        sfBC *= e->GetWeight()->GetSF("mu_iso_runBC")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated 
 
-        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,fabs(mu1->Eta()) );
-        float sf2 = e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
+        e->SetPtEtaSF("mu_iso_runDE", pt_for_sf,eta_for_sf);
+        sfDE *= e->GetWeight()->GetSF("mu_iso_runDE")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlated with BC
 
-        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,fabs(mu1->Eta()) );
-        float sf3 = e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
+        e->SetPtEtaSF("mu_iso_runF", pt_for_sf,eta_for_sf);
+        sfF*= e->GetWeight()->GetSF("mu_iso_runF")->sf + e->GetWeight()->GetSF("mu_iso_runBC")->syst*0.01; // 1% correlagted with BC
 
-        sfIso *= (w_BC*sf1 + w_DE*sf2 + w_F*sf3)/(w_BC+w_DE+w_F);
     }
+    sfIso = (w_BC*sfBC + w_DE*sfDE + w_F*sfF)/(w_BC+w_DE+w_F);
     
     // apply trigger, id and iso sf
     {
@@ -1668,6 +1768,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         sf->sf= sfId*sfIso*sfTrigger; //syst already included
         sf->err = 0.0;
         e->ApplySF("dummy");
+
+        if (doSync and not processingSyst_) {SetTreeVar("muonSF",sf->sf);}
     }
     
     // ***************************
@@ -1689,8 +1791,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         //cout <<" DOING TRIGGER MATCHING "<<endl;
         bool passTriggerEvent = passTrigger;
         passTrigger1 = (e->IsTriggered("HLT_IsoMu27_v",mu0) or e->IsTriggered("HLT_IsoTkMu27_v",mu0)) ;
-        //if (mu1->Pt() > 30 ) 
-        passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
+        if (mu1->Pt() > 30 ) 
+            passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
         passTrigger=passTrigger1 or passTrigger2;
 
         if (multipd_) // switch to HLT_IsoMu24. 
@@ -1710,7 +1812,11 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
         if (passTriggerEvent and not passTrigger) Log(__FUNCTION__,"INFO","Fail to trigger event due to trigger matching");
         if (not passTriggerEvent and passTrigger) Log(__FUNCTION__,"ERROR","Event triggered by object but not globally");
+
+        if (SYNC_VERBOSE and not processingSyst_ and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
+            Log(__FUNCTION__,"SYNC",Form("Trigger: passTrigger=%d passTrigger1=%d passTRigger2=%d",passTriggerEvent,passTrigger1,passTrigger2));
     }
+
 
     passLeptonVeto= true;
     if (e->GetMuon(2) != NULL) passLeptonVeto=false;
@@ -1748,6 +1854,61 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/DeepBOnZ_emu_"+flStr+"_"+ label,systname, jetVar_["maxDeepB"],e->weight()/btagsf);
         }
     }
+
+    if (mu0 != NULL and passTrigger and mu0->Pt() >30 and el != NULL and el->Pt() > 20)  // singleMuon trigger
+    { // emu selection 
+        Object Hcache;Hcache.SetP4(Hmm.GetP4());//saveit
+        Object Z; 
+        Z.SetP4(zero); 
+        Z += *mu0;
+        Z += *el;
+        Hmm.SetP4(Z.GetP4());
+        updateMjj(); // --> KF is defined with  e m
+        if (jetVar_["mbbkf2"] > 110 and jetVar_["mbbkf2"]< 140) 
+            Fill("HmumuAnalysis/Vars/Mem_KF2_HbbHmm_"+ label,systname, Z.M(),e->weight());
+        if (jetVar_["mbbkf3"] > 110 and jetVar_["mbbkf3"]< 140) 
+            Fill("HmumuAnalysis/Vars/Mem_KF3_HbbHmm_"+ label,systname, Z.M(),e->weight());
+        Hmm.SetP4(Hcache.GetP4());
+        updateMjj(); // --> KF is defined again with em
+    }
+
+    // 4mu selection
+    //if (passTrigger)
+    //for (float mh=0;mh<=1000;mh+=0.5)
+    //{
+    //    float mw=1.; //mass window around the Higg
+    //    //float mh=125.; // higgs mass
+
+    //    vector<Lepton*> allMuons;
+    //    for(int il =0;;++il) { Lepton*l=e->GetMuon(il); if (l==NULL) break ; else allMuons.push_back(l);}
+    //    
+    //    // if there is a muon, assign it as first muon
+    //    Lepton*my_mu0=(allMuons.size()>0)?allMuons[0]:NULL;
+    //    if (my_mu0) allMuons.erase(allMuons.begin());
+    //    
+    //    Lepton*my_mu1=NULL;
+    //    for( unsigned il=0;il<allMuons.size() and my_mu0 != NULL;++il){ Lepton *l=allMuons[il]; if (my_mu0->Charge()*l->Charge()==-1 and fabs(my_mu0->InvMass(l) -mh )<mw ){ my_mu1=l; allMuons.erase(allMuons.begin()+il);break;} }
+
+    //    // take again the first available muon
+    //    Lepton*my_mu2=(allMuons.size()>0)?allMuons[0]:NULL;
+    //    if (my_mu2) allMuons.erase(allMuons.begin());
+
+    //    Lepton*my_mu3=NULL;
+    //    for( unsigned il=0;il<allMuons.size() and my_mu2 != NULL;++il){ Lepton *l=allMuons[il]; if (my_mu2->Charge()*l->Charge()==-1 and fabs(my_mu2->InvMass(l) -mh )<mw ){ my_mu3=l; allMuons.erase(allMuons.begin()+il);break;} }
+    //    
+    //    if (my_mu0 and my_mu1 and my_mu2 and my_mu3)
+    //    {
+    //        Object X;
+    //        X.SetP4(zero); // make sure it is 0
+    //        X +=  *my_mu0;
+    //        X +=  *my_mu1;
+    //        X +=  *my_mu2;
+    //        X +=  *my_mu3;
+    //        //Fill ("HmumuAnalysis/Vars/M4m_HmmHmm_"+ label,systname,X.M() ,e->weight());
+	//        //Book2D ("HmumuAnalysis/Vars/M4m_HmmHmm_"+ l ,"Mass 4 muons XX compatibles;m_{4#mu};Events", 8000,0,2000,1000,0,500);
+    //        Fill2D("HmumuAnalysis/Vars/M4m_HmmHmm_"+ label,systname,X.M(),mh,e->weight());
+    //    }
+    //}
 
     // -- FINAL SELECTION --
     FillSyncTree(label, systname ,category);
@@ -1880,6 +2041,17 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
                 Fill("HmumuAnalysis/Vars/DPhimmjj_VHHadr_"+ label,systname, jj.DeltaPhi(Hmm.GetP4()),e->weight()) ;
                 Fill("HmumuAnalysis/Vars/DEtammjj_VHHadr_"+ label,systname, fabs(jj.Eta()-Hmm.Eta()),e->weight()) ;
+
+                // KF
+                Fill("HmumuAnalysis/Vars/Mjjkf_VHHadr_"+ label,systname, jetVar_["mjjkf"],e->weight()) ;
+                Fill("HmumuAnalysis/Vars/Malljkf_VHHadr_"+ label,systname, jetVar_["malljkf"],e->weight()) ;
+                Fill("HmumuAnalysis/Vars/Metkf_VHHadr_"+ label,systname, jetVar_["metkf"],e->weight()) ;
+                Fill("HmumuAnalysis/Vars/Valuekf_VHHadr_"+ label,systname, jetVar_["valuekf"],e->weight()) ;
+
+                Fill("HmumuAnalysis/Vars/Mjjkf4_VHHadr_"+ label,systname, jetVar_["mjjkf4"],e->weight()) ;
+                Fill("HmumuAnalysis/Vars/Malljkf4_VHHadr_"+ label,systname, jetVar_["malljkf4"],e->weight()) ;
+                Fill("HmumuAnalysis/Vars/Metkf4_VHHadr_"+ label,systname, jetVar_["metkf4"],e->weight()) ;
+
             
             }
 
@@ -1901,23 +2073,26 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 Fill("HmumuAnalysis/Vars/Mbbcorr_HbbHmm_"+ label,systname, jetVar_["mbbcorr"],e->weight());
                 Fill("HmumuAnalysis/Vars/Mbbkf2_HbbHmm_"+ label,systname, jetVar_["mbbkf2"],e->weight());
                 Fill("HmumuAnalysis/Vars/Mbbkf3_HbbHmm_"+ label,systname, jetVar_["mbbkf3"],e->weight());
+                Fill("HmumuAnalysis/Vars/Mbbkf4_HbbHmm_"+ label,systname, jetVar_["mbbkf4"],e->weight());
+
+                if (jetVar_["mbbcorr"] >10.)
+                {
+                    Fill("HmumuAnalysis/Vars/Bres_HbbHmm_"+ label,systname, jetVar_["bb_b1_res"],e->weight());
+                    Fill("HmumuAnalysis/Vars/Bres_HbbHmm_"+ label,systname, jetVar_["bb_b2_res"],e->weight());
+                    Fill("HmumuAnalysis/Vars/Jres_HbbHmm_"+ label,systname, jetVar_["bb_j1_res"],e->weight());
+                    Fill("HmumuAnalysis/Vars/Jres_HbbHmm_"+ label,systname, jetVar_["bb_j2_res"],e->weight());
+                }
 
                 if (jetVar_["mbbcorr"] > 110 and jetVar_["mbbcorr"]< 140) 
                     Fill("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ label,systname, mass_,e->weight());
                 if (jetVar_["mbbkf2"] > 110 and jetVar_["mbbkf2"]< 140) 
                     Fill("HmumuAnalysis/Vars/Mmm_KF2_HbbHmm_"+ label,systname, mass_,e->weight());
+                if (jetVar_["mbbkf3"] > 110 and jetVar_["mbbkf3"]< 140) 
+                    Fill("HmumuAnalysis/Vars/Mmm_KF3_HbbHmm_"+ label,systname, mass_,e->weight());
             }
 
-            if (mu0 != NULL and passTrigger and mu0->Pt() >30 and el != NULL and el->Pt() > 20)  // singleMuon trigger
-            {
-                Object Z; 
-                Z.SetP4(zero); 
-                Z += *mu0;
-                Z += *el;
-                if (jetVar_["mbbkf2"] > 110 and jetVar_["mbbkf2"]< 140) 
-                    Fill("HmumuAnalysis/Vars/Mem_KF2_HbbHmm_"+ label,systname, Z.M(),e->weight());
-            }
         }
+        
 
         //if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if( category != "")
@@ -1986,6 +2161,7 @@ void HmumuAnalysis::EndEvent(){
 }
 
 void HmumuAnalysis::updateMjj(){
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var ");
     mjj.clear();
     for(unsigned i=0;i<selectedJets.size() ;++i)
         for (unsigned j=i+1;j<selectedJets.size();++j)
@@ -2047,6 +2223,7 @@ void HmumuAnalysis::updateMjj(){
     jetVar_["thirdQGL"]  =  (qgl_score.size() >2) ? qgl_score[2].second : -1 ;
 
     // soft
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var (soft) ");
     if (mjj.size() >0)
         {
             Jet * j1= selectedJets[mjj[0].second.first];
@@ -2074,6 +2251,7 @@ void HmumuAnalysis::updateMjj(){
     jetVar_["detajj_1"] = (mjj.size()>0) ? fabs(selectedJets[mjj[0].second.first]->Eta() - selectedJets[mjj[0].second.second]->Eta()): -1.0;
     jetVar_["detajj_2"] = (mjj.size()>1) ? fabs(selectedJets[mjj[1].second.first]->Eta() - selectedJets[mjj[1].second.second]->Eta()): -1.0;
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var (b-jets) ");
     // double b
     int nbjets=0;
     Jet *b1=NULL,*b2=NULL;
@@ -2087,19 +2265,15 @@ void HmumuAnalysis::updateMjj(){
         else if (b2==NULL) {b2=j;idx_b2=i;}
     }
 
-    TLorentzVector recoil(0,0,0,0);
-    recoil+=Hmm.GetP4();
-    //for(unsigned i=0;i<selectedJets.size() ;++i)
-    //{
-    //    Jet *j=selectedJets[i];
-    //    if (j==b1 or j==b2) continue;
-    //    recoil+=j->GetP4();
-    //}
+
+    kf -> clear();
 
     jetVar_["mbb"] = 0.;
     jetVar_["mbbcorr"] = 0.;
     jetVar_["mbbkf2"] = 0.;
     jetVar_["mbbkf3"] = 0.;
+    jetVar_["mbbkf4"] = 0.;// with track jets
+
     if (nbjets >=2)
     {
         TLorentzVector BB(0,0,0,0);
@@ -2122,22 +2296,6 @@ void HmumuAnalysis::updateMjj(){
                float var() {return sigma*sigma;}
         }; 
 
-        if (not kf)
-        {
-            kf.reset (new KinematicFit);
-            kf->genericType=1;
-        }
-
-        kf -> clear();
-
-        if (not jet_resolution)
-        { // init jet resolution
-            cout<<"INIT JER"<<endl;
-            jet_resolution.reset( new JME::JetResolutionObject("aux/jer/Summer16_25nsV1/Summer16_25nsV1_MC_PtResolution_AK4PFchs.txt") ) ;
-            //cout<<" --------------------- "<<endl;
-            //jet_resolution->dump();
-            //cout<<" --------------------- "<<endl;
-        }
 
         idx_b1=-1; //this refers to myJets
         idx_b2=-1;
@@ -2244,7 +2402,116 @@ void HmumuAnalysis::updateMjj(){
         BB_KF3+=b1_kf3;
         BB_KF3+=b2_kf3;
         jetVar_["mbbkf3"] = BB_KF3.M();
+        
+        // Check resolution
+        GenJet *b1_gen=NULL,*b2_gen=NULL;
+        for (int gidx=0;;++gidx)
+        {
+            auto j=e->GetGenJet(gidx) ;
+            if (j==NULL) break;
+            if (j->DeltaR(b1) <0.4) b1_gen=j;
+            if (j->DeltaR(b2) <0.4) b2_gen=j;
+        }
+        GenParticle *b1_genp=NULL,*b2_genp=NULL;
+        for(int gidx=0;;++gidx)
+        {
+            auto g = e->GetGenParticle(gidx);
+            if (g==NULL) break;
+            if ( abs(g->GetPdgId()) != 5) continue;
+            if (g->DeltaR(b1) <0.4 ) b1_genp=g;
+            if (g->DeltaR(b2) <0.4 ) b2_genp=g;
+        }
 
+        jetVar_["bb_b1_res"] = (b1_gen)? (b1->Pt()*b1->GetBCorrection()/b1_gen->Pt()-1.)/myJets[idx_b1].sigma : -10;
+        jetVar_["bb_b2_res"] = (b2_gen)? (b2->Pt()*b2->GetBCorrection()/b2_gen->Pt()-1.)/myJets[idx_b2].sigma : -10;
+
+        { // kf4: jets + track jets + generic + overlap removal
+            kf->clear();
+            for (auto j : selectedJets) 
+            {
+                TLorentzVector p4=j->GetP4();
+                //aJet.sigma = j->GetJESUnc();
+                JME::JetParameters bins,vars;
+                vars.setJetPt( j->GetP4().Pt() );
+                bins.setJetEta( j->GetP4().Eta() );
+                bins.setRho( std::min(e->Rho(),float(40.)) ); // corrections up to rho 40.
+                float sigma=1.0 ;
+
+                if ( jet_resolution->getRecord(bins)==NULL)sigma=1.0;
+                else  sigma =  jet_resolution->evaluateFormula( *jet_resolution->getRecord(bins),vars); 
+
+                if (j->IsBJet() and fabs(j->Eta())<2.4) {
+                    p4 *= j->GetBCorrection();
+                    sigma = j->GetBCorrectionUncertainty() / 1.1775; // I assume they give the HWHM
+                }
+
+                if (j==b1) idx_b1=myJets.size()-1;
+                if (j==b2) idx_b2=myJets.size()-1;
+
+                // mv through kf
+                kf->p4.push_back( j->GetP4());
+                kf->sigma.push_back(sigma);
+            }
+            for(unsigned it=0;;++it)
+            {
+                TrackJet*t=e->GetBareTrackJet(it);
+                if (t==NULL) break;
+                if (t->Pt()<5) continue; // not converging -> too many?
+                bool toexclude=false;
+                if (mu0 and t->DeltaR(mu0)<0.1) toexclude=true;
+                if (mu1 and t->DeltaR(mu1)<0.1) toexclude=true;
+                for (auto j : selectedJets) 
+                {
+                    if (t->DeltaR(j) <0.4) toexclude=true;
+                    if (toexclude)break;
+                }
+                if (toexclude) continue;
+
+                kf->p4.push_back( t->GetP4() * (3./2.)); // correct for the non track part
+                kf->sigma.push_back(0.05);
+            }
+
+            kf->H=Hmm.GetP4();
+            kf->runGeneric(); 
+
+            TLorentzVector b1_kf4=(b1->GetP4()*b1->GetBCorrection());
+            TLorentzVector b2_kf4=(b2->GetP4()*b2->GetBCorrection());
+            b1_kf4 *= kf->alpha[idx_b1];
+            b2_kf4 *= kf->alpha[idx_b2];
+            TLorentzVector BB_KF4(0,0,0,0);
+            BB_KF4+=b1_kf4;
+            BB_KF4+=b2_kf4;
+            jetVar_["mbbkf4"] = BB_KF4.M();
+        }
+
+        // Log(__FUNCTION__,"DEBUG","-----------------------------------------------");
+        // Log(__FUNCTION__,"DEBUG",Form("bb_b1_res is %5.3f Reco = %.1f * %.3f GenJet=%.1f GenB=%.1f",jetVar_["bb_b1_res"],b1->Pt(),b1->GetBCorrection(),(b1_gen)?b1_gen->Pt():-10,(b1_genp)?b1_genp->Pt():-10 ));
+        // Log(__FUNCTION__,"DEBUG",Form("bb_b2_res is %5.3f Reco = %.1f * %.3f GenJet=%.1f GenB=%.1f",jetVar_["bb_b2_res"],b2->Pt(),b2->GetBCorrection(),(b2_gen)?b2_gen->Pt():-10,(b2_genp)?b2_genp->Pt():-10 ));
+        // Log(__FUNCTION__,"DEBUG","-----------------------------------------------");
+        
+        // first leading non-bjets
+        jetVar_["bb_j1_res"] = -10;
+        jetVar_["bb_j2_res"] = -10;
+        int kjet=1;
+        for(int i=0;i<selectedJets.size();++i) // not the ghosts
+        {
+            if (i==idx_b1) continue;
+            if (i==idx_b2) continue;
+            if (kjet>2) continue;
+            for (int gidx=0;;++gidx)
+            {
+                auto j=e->GetGenJet(gidx) ;
+                if (j==NULL) break;
+                if (j->GetP4().DeltaR(myJets[i].p4) <0.4)
+                {
+                    jetVar_[Form("bb_j%d_res",kjet)] = (myJets[i].p4.Pt()/j->Pt()-1.) / myJets[i].sigma;
+                    ++kjet;
+                    break;
+                }
+            }
+        }
+
+        /*
         kf->doGhost=true;
         kf->run();
         
@@ -2254,6 +2521,7 @@ void HmumuAnalysis::updateMjj(){
         Log(__FUNCTION__,"DEBUG",Form("x(b2) %f ==%f",x(idx_b2+2),kf->alpha[idx_b2]));
         Log(__FUNCTION__,"DEBUG",Form("mbb=%f mbbcorr=%f mbbkf2=%f mbbkf3=%f",jetVar_["mbb"],jetVar_["mbbcorr"],jetVar_["mbbkf2"],jetVar_["mbbkf3"]));
         Log(__FUNCTION__,"DEBUG","------------------------------------------------");
+        */
 
         /* 
         Log(__FUNCTION__,"DEBUG","------------------------------------------------");
@@ -2280,8 +2548,132 @@ void HmumuAnalysis::updateMjj(){
         Log(__FUNCTION__,"DEBUG","------------------------------------------------");
         */
         
+    }// at least 2 b
+
+    jetVar_["malljkf"] = 0.;
+    jetVar_["mjjkf"] = 0.;
+    jetVar_["metkf"] = 0.;
+    jetVar_["valuekf"] = 0.;
+
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var (2-jets) ");
+    if (selectedJets.size()>=2)
+    { // kinematic fit for VH
+        kf->clear();
+        for (auto j : selectedJets) 
+        {
+            JME::JetParameters bins,vars;
+            vars.setJetPt( j->GetP4().Pt() );
+            bins.setJetEta( j->GetP4().Eta() );
+            bins.setRho( std::min(e->Rho(),float(40.)) ); // corrections up to rho 40.
+            
+            float sigma=1.0 ;
+
+            if ( jet_resolution->getRecord(bins)==NULL){ sigma=1.0;}
+            else{ sigma =  jet_resolution->evaluateFormula( *jet_resolution->getRecord(bins),vars); }
+
+            kf->p4.push_back( j->GetP4());
+            kf->sigma.push_back(sigma);
+        }
+        if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("updateMjj: jet var (2-jets) p2 jet size=%d",selectedJets.size()));
+
+        kf->H=Hmm.GetP4();
+        kf->runGeneric();
         
-    }
+        TLorentzVector jall; // mjjkf metkf malljkf
+        TLorentzVector jj; // mjjkf metkf malljkf
+        if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("updateMjj: (2-j) p3"));
+        for(unsigned i =0 ; i<selectedJets.size();++i) 
+        {
+            if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("updateMjj: (2-j) -- considering jets (%d) kfsize=%u",i,kf->alpha.size()));
+            TLorentzVector p4= selectedJets[i]->GetP4();
+            p4*=kf->alpha[i];
+            jall+=p4;
+            for(unsigned j =i+1 ; j<selectedJets.size();++j) 
+            {
+                if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("updateMjj: (2-j) -- considering jets (%d,%d) kfsize=%u",i,j,kf->alpha.size()));
+                TLorentzVector p4_2= selectedJets[j]->GetP4();
+                p4_2*=kf->alpha[j];
+                TLorentzVector jj_tmp=p4+p4_2;
+                if (jj.M() < jj_tmp.M()) jj=jj_tmp;
+            }
+        }
+        jetVar_["malljkf"] = jall.M();
+        jetVar_["mjjkf"] = jj.M();
+        jall+=Hmm.GetP4();
+        // met
+        jetVar_["metkf"] = jall.Pt();
+        jetVar_["valuekf"] = kf->value;
+    } // end KF for VH
+
+    // do the kf4 also for vh
+    jetVar_["malljkf4"] = 0.;
+    jetVar_["mjjkf4"] = 0.;
+    jetVar_["metkf4"] = 0.;
+
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var (2-jets) ");
+    if (selectedJets.size()>=2)
+    { // kinematic fit 4 for VH
+        kf->clear();
+        for (auto j : selectedJets) 
+        {
+            JME::JetParameters bins,vars;
+            vars.setJetPt( j->GetP4().Pt() );
+            bins.setJetEta( j->GetP4().Eta() );
+            bins.setRho( std::min(e->Rho(),float(40.)) ); // corrections up to rho 40.
+            float sigma=1.0 ;
+
+            if ( jet_resolution->getRecord(bins)==NULL){ sigma=1.0;}
+            else{ sigma =  jet_resolution->evaluateFormula( *jet_resolution->getRecord(bins),vars); }
+
+            kf->p4.push_back( j->GetP4());
+            kf->sigma.push_back(sigma);
+        }
+
+        for(unsigned it=0;;++it)
+        {
+            TrackJet*t=e->GetBareTrackJet(it);
+            if (t==NULL) break;
+            if (t->Pt()<5) continue; // not converging -> too many?
+            bool toexclude=false;
+            if (mu0 and t->DeltaR(mu0)<0.1) toexclude=true;
+            if (mu1 and t->DeltaR(mu1)<0.1) toexclude=true;
+            for (auto j : selectedJets) 
+            {
+                if (t->DeltaR(j) <0.4) toexclude=true;
+                if (toexclude)break;
+            }
+            if (toexclude) continue;
+
+            //kf->p4.push_back( t->GetP4());
+            kf->p4.push_back( t->GetP4() * (3./2.)); // correct for the non track part
+            kf->sigma.push_back(0.05);
+        }
+
+        kf->H=Hmm.GetP4();
+        kf->runGeneric();
+        
+        TLorentzVector jall; // mjjkf metkf malljkf
+        TLorentzVector jj; // mjjkf metkf malljkf
+        for(unsigned i =0 ; i<selectedJets.size();++i) 
+        {
+            TLorentzVector p4= selectedJets[i]->GetP4();
+            p4*=kf->alpha[i];
+            jall+=p4;
+            for(unsigned j =i+1 ; j<selectedJets.size();++j) 
+            {
+                TLorentzVector p4_2= selectedJets[j]->GetP4();
+                p4_2*=kf->alpha[j];
+                TLorentzVector jj_tmp=p4+p4_2;
+                if (jj.M() < jj_tmp.M()) jj=jj_tmp;
+            }
+        }
+        jetVar_["malljkf4"] = jall.M();
+        jetVar_["mjjkf4"] = jj.M();
+        jall+=Hmm.GetP4();
+        // met
+        jetVar_["metkf4"] = jall.Pt();
+    } // end KF for VH
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var (end) ");
 }
 
 float HmumuAnalysis::getZPtReweight(float Zpt)
@@ -2406,20 +2798,29 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
         SetTreeVar("runNum",e->runNum());
         SetTreeVar("lumiNum",e->lumiNum());
 
+        SetTreeVar("baremcWeight",1.);
+        //SetTreeVar("muonSF",1.);
+        //SetTreeVar("btagSF",1.);
+        //SetTreeVar("nnlopsSF",1.); // reset both for data and MC
+
         if (e->IsRealData()){
             SetTreeVar("mc",0);
             SetTreeVar("mcWeight",1.);
             SetTreeVar("puWeight",1.);
             SetTreeVar("weight",1.);
+
         }
 
         else {
             SetTreeVar("weight",e->weight());
             SetTreeVar("mcWeight",e->GetWeight()->GetBareMCWeight() * e->GetWeight()->GetBareMCXsec() / e->GetWeight()->GetBareNevents());
+            SetTreeVar("baremcWeight",e->GetWeight()->GetBareMCWeight());
             SetTreeVar("puWeight",e->GetWeight()->GetBarePUWeight());
             int mc=0;
             if (label.find( "GluGlu_HToMuMu") != string::npos) mc -=10;
+            if (label.find( "GluGluH_HToMuMu") != string::npos and label.find("powheg") != string::npos) mc -=15;
             if (label.find( "VBF_HToMuMu") != string::npos) mc -=20;
+            if (label.find( "VBFH_HToMuMu") != string::npos and label.find("powheg") != string::npos) mc -=25;
             if (label.find( "ZH_HToMuMu") != string::npos) mc -=30;
             if (label.find( "WMinusH_HToMuMu") != string::npos) mc -=40;
             if (label.find( "WPlusH_HToMuMu") != string::npos) mc -=50;
@@ -2436,6 +2837,7 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
             if (label == "EWK_LLJJ") mc =40;
             if (mc == 0) mc =1;
             SetTreeVar("mc",mc);
+            //Log(__FUNCTION__,"DEBUG",Form("mc=%d label=%s",mc,label.c_str()));
         }
         
         int recoMuons= (mu0!=NULL and mu1!=NULL) ? 1:0;

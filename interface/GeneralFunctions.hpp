@@ -48,12 +48,14 @@ namespace ChargedHiggs{
         return std::sqrt( std::pow(et1 + et2,2) - pt12);
     }
 
-    double CosThetaCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS=13) ;
+    double CosThetaCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS=13) ; // sqrtS is in TeV
+    double PhiCS( const TLorentzVector *v1, const TLorentzVector *v2,float sqrtS=13);
     double CosThetaStar(const TLorentzVector *v1, const TLorentzVector*v2) ;
 
     constexpr float Mw = 80.385;
     constexpr float Mh = 125.;
     constexpr float Mtop = 173.34;
+    constexpr double pMass=0.938272;
 
    template<typename T>
    std::string printBinary(const T& x){ std::bitset<sizeof(T)*8> b(x); return b.to_string() ; }

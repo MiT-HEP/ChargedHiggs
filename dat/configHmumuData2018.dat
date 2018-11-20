@@ -1,0 +1,11 @@
+include=dat/configHmumu.dat
+Files=
+
+### DATA
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.2/
+addfiles=%(amariniHmm)s/SingleMuon/SingleMuon-Run2018A-PromptReco-v1
+addfiles=%(amariniHmm)s/SingleMuon/SingleMuon-Run2018A-PromptReco-v2
+addfiles=%(amariniHmm)s/SingleMuon/SingleMuon-Run2018A-PromptReco-v3
+addfiles=%(amariniHmm)s/SingleMuon/SingleMuon-Run2018B-PromptReco-v1
+
+include=dat/json.data.2018.dat

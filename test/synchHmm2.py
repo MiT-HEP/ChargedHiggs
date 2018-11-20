@@ -6,6 +6,8 @@ from optparse import OptionParser,OptionGroup
 parser= OptionParser()
 parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="HmmSync.root")
 parser.add_option("-o","--outdir",type='string',help="OutputDir. [%default]", default="sync")
+parser.add_option("-f","--full",action='store_true',help="Save Full tree", default=False)
+parser.add_option("","--mc",action='store_true',help="Save mc weights to full tree", default=False)
 opts, args = parser.parse_args()
 
 from subprocess import call
@@ -62,15 +64,37 @@ vbf1 = open(dir+"vbf1.txt","w")
 untag0 = open(dir+"untag0.txt","w")
 untag1 = open(dir+"untag1.txt","w")
 All = open(dir+"all.txt","w")
+if opts.full:
+    full=open(dir+"full.txt","w")
+    fullsep=' '
+    fulltree=["runNum","lumiNum","eventNum","pt1","eta1","pt2","eta2","mass","njets","mjj_1","nbjets"]
+    if opts.mc:
+        fulltree.extend([
+            "baremcWeight",
+            "muonSF",
+            "btagSF",
+            "nnlopsSF",
+            "l1SF",
+            ])
+    print >>full,fullsep.join(fulltree)
 
 nentries=t.GetEntries()
 print "Runnig over",t.GetEntries(),"entries"
+
 for ientry in range(0,t.GetEntries()):
     t.GetEntry(ientry)
     print_progress(ientry,nentries)
 
     if not (t.pass_recomuons and t.pass_asymmcuts and t.pass_trigger)  : continue
     if not t.pass_leptonveto: continue
+
+    if opts.full:
+        #print >> full, fullsep.join( [ str(eval('t.'+x)) if 'xxx' not in x else "-" for x in fulltree])
+        print >> full, fullsep.join( [ 
+            '-' if 'xxx' in x else 
+            "%.4f"%eval('t.'+x) if 'SF' in x else
+            str(eval('t.'+x))
+            for x in fulltree])
     if t.mass <80 or t.mass > 85 : continue ## sync
     if t.nbjets >0 : continue
     print >>All,t.eventNum
