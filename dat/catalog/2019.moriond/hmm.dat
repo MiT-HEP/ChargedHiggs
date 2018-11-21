@@ -8,15 +8,15 @@ addfiles=%(amariniCms)s/GluGluHToMuMu_M120_13TeV_amcatnloFXFX_pythia8
 addfiles=%(amariniCms)s/GluGluHToMuMu_M125_13TeV_amcatnloFXFX_pythia8
 addfiles=%(amariniCms)s/GluGluHToMuMu_M130_13TeV_amcatnloFXFX_pythia8
 
-addfiles=%(amariniCms)s/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniHmm)s/GluGlu_HToMuMu_M125_13TeV_powheg_pythia8
 
 addfiles=%(amariniCms)s/VBFHToMuMu_M120_13TeV_amcatnlo_pythia8
 addfiles=%(amariniCms)s/VBFHToMuMu_M125_13TeV_amcatnlo_pythia8
 addfiles=%(amariniCms)s/VBFHToMuMu_M130_13TeV_amcatnlo_pythia8
 
-addfiles=%(amariniCms)s/VBFH_HToMuMu_M125_13TeV_powheg_pythia8
+addfiles=%(amariniHmm)s/VBFH_HToMuMu_M125_13TeV_powheg_pythia8
 
-addfiles=%(amariniCms)s/WminusH_HTMuMu_WToAll_M120_13TeV_powheg_pythia8
+addfiles=%(amariniCms)s/WminusH_HToMuMu_WToAll_M120_13TeV_powheg_pythia8
 addfiles=%(amariniCms)s/WminusH_HToMuMu_WToAll_M125_13TeV_powheg_pythia8
 addfiles=%(amariniCms)s/WminusH_HToMuMu_WToAll_M130_13TeV_powheg_pythia8
 

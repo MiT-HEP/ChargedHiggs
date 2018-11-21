@@ -330,7 +330,7 @@ ds.end()
 
 call("[ -d %s ] && rm -r %s"%(opts.dir,opts.dir),shell=True)
 call("mkdir -p %s"%opts.dir,shell=True)
-cmdFile=open("%s/submit_cmd.sh"%opts.dir,"w")
+cmdFile=open("%s/submit_cmd.txt"%opts.dir,"w")
 cmdFile.write("##Commands used to submit on batch. Automatic written by python/submit.py script\n")
 cmdFile.write("##"+' '.join(sys.argv)+"\n")
 
@@ -602,6 +602,7 @@ if not opts.hadoop:
 
         sh.write('echo "Finished At:"\n')
         sh.write("date\n")
+        sh.close()
         
         dat=open("%s/input%d.dat"%(opts.dir,iJob),"w")
         dat.write("include=%s\n"%opts.input)
@@ -616,7 +617,8 @@ if not opts.hadoop:
             dat.write("Smear=NONE\n")
         for l in opts.config:
             dat.write(l+"\n")
-    
+
+        dat.close()
         ## make the sh file executable
         call(["chmod","u+x","%s/sub%d.sh"%(opts.dir,iJob)])
     
@@ -627,11 +629,11 @@ if not opts.hadoop:
         ## submit
         if opts.condor:
             ## submit condor
-            print "-> Submitting","%s/condor.jdl"%opts.dir
-            cmd = "condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,opts.dir)
-            print "   cmd=",cmd
-            if not opts.dryrun: 
-                call(cmd, shell=True)
+            #print "-> Submitting","%s/condor.jdl"%opts.dir
+            #cmd = "condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,opts.dir)
+            #print "   cmd=",cmd
+            #if not opts.dryrun: 
+            #    call(cmd, shell=True)
             pass
         else:
             ## submit batch
@@ -645,4 +647,12 @@ if not opts.hadoop:
     
             if not opts.dryrun: 
                 call(cmdline,shell=True)
+    #for iJob in range(0,opts.njobs) end for loop
+    if opts.condor:
+            ## submit condor
+            print "-> Submitting","%s/condor.jdl"%opts.dir
+            cmd = "condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,opts.dir)
+            print "   cmd=",cmd
+            if not opts.dryrun: 
+                call(cmd, shell=True)
 ## END

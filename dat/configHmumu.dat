@@ -8,19 +8,19 @@ Files=
 ## Drell-Yan
 #include=dat/catalog/2017.moriond/dy_ht.dat
 #
-include=dat/catalog/2018.moriond/dy_amcatnlo.dat
-include=dat/catalog/2018.moriond/tt.dat
-include=dat/catalog/2018.moriond/st.dat
-include=dat/catalog/2018.moriond/rares.dat
+include=dat/catalog/2019.moriond/dy_amcatnlo.dat
+include=dat/catalog/2019.moriond/tt.dat
+include=dat/catalog/2019.moriond/st.dat
+include=dat/catalog/2019.moriond/rares.dat
 
 
 ## Signal
-include=dat/catalog/2018.moriond/hmm.dat
+include=dat/catalog/2019.moriond/hmm.dat
 ## HH
 #include=dat/catalog/2018.moriond/hh.dat
 
 ### DATA
-include=dat/catalog/2018.moriond/singleMuon.dat
+include=dat/catalog/2019.moriond/singleMuon.dat
 
 
 include=dat/hmumu.dat
@@ -46,8 +46,8 @@ Smear=NONE
 EntryPerSecond=10
 
 
-MCDB=aux/mcdb.Hmumu.2018.dat
-pileup=aux/pileup.2018.EOY.root
+MCDB=aux/mcdb.Hmumu.2019.dat
+pileup=aux/pileup.2019.root
 Correct=
 #Correct=ScaleAndSmear
 #Correct=ScaleAndSmear,KaMuCa,JetFilter2016
