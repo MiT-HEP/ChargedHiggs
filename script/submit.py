@@ -592,10 +592,10 @@ if not opts.hadoop:
         outname = re.sub('.root','_%d.root'%iJob,config['Output'])
     
         if opts.tar:
-            if basedir != opts.dir : 
-                sh.write("[ $EXITCODE == 0 ] && mv -v %s/%s %s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(opts.dir,outname,basedir,basedir,iJob,basedir,iJob))
-            elif opts.local:
+            if opts.local:
                 sh.write("[ $EXITCODE == 0 ] && mv -v %s %s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(outname,basedir,basedir,iJob,basedir,iJob))
+            elif basedir != opts.dir: 
+                sh.write("[ $EXITCODE == 0 ] && mv -v %s/%s %s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(opts.dir,outname,basedir,basedir,iJob,basedir,iJob))
             if opts.compress:
                 sh.write("mv %s/log%d.txt.gz %s/log%d.txt.gz\n"%(opts.dir,iJob,basedir,iJob) )
 
