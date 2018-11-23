@@ -395,17 +395,13 @@ for y in channel:
 
        ## set the MC sample
 				if x=="charmCR":
-					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb","ttx"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","dy_hf","Hptb","ttx"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","ewk_hf","Hptb","ttx"]
 				if "extraRadCR" in x:
-					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb","ttx"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","dy_hf","Hptb","ttx"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","ewk_hf","Hptb","ttx"]
 				if "topCR" in x:
-					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb","ttx"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","dy_hf","Hptb","ttx"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","ewk_hf","Hptb","ttx"]
 				if x=="Baseline":
-					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","Hptb","ttx"]
-#					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","dy_hf","Hptb","ttx"]
+					catStore[name]["hasMC"]=["ttlf","ttb","ttcc","top","ewk","ewk_hf","Hptb","ttx"]
 
 			if y == "1Ele" or y == "1Mu" or y == "1L":
 				mcStore={
@@ -423,8 +419,9 @@ for y in channel:
 					"ttb":{ "name":"ttb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
-##
-					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","EWK"],"num":4},
+##					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","DYJetsToLL_M-5to50_HT","EWK"],"num":4},
+					"ewk":{ "name":"ewk","hist":["light_WJetsToLNu_HT","DYJetsToLL_M-50_HT"],"num":4},
+					"ewk_hf":{ "name":"ewk_hf","hist":["bb_WJetsToLNu_HT"],"num":6},
 					"top":{ "name":"top","hist":["ST"],"num":5},
 					"ttx":{ "name":"ttx","hist":["TTX"],"num":7}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
@@ -441,13 +438,12 @@ for y in channel:
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 ###					"tt2b":{ "name":"tt2b","hist":["tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":4},
 ###					"ttbb":{ "name":"ttbb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
-#### NOMINAL
 					"ttb":{ "name":"ttb","hist":["tt2b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt2bMerged_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8","tt1b_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":2},
 					"ttcc":{ "name":"ttcc","hist":["ttc_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":3},
 					"ttlf":{ "name":"ttlf","hist":["ttlight_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8"],"num":1},
 ##					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","DYJetsToLL_M-50_HT","EWK"],"num":4},
-					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","light_DYJetsToLL_M-50_HT","EWK"],"num":4},
-					"dy_hf":{ "name":"dy_hf","hist":["bb_DYJetsToLL_M-50_HT"],"num":6},
+					"ewk":{ "name":"ewk","hist":["WJetsToLNu_HT","light_DYJetsToLL_M-50_HT"],"num":4},
+					"ewk_hf":{ "name":"ewk_hf","hist":["bb_DYJetsToLL_M-50_HT"],"num":6},
 					"top":{ "name":"top","hist":["ST"],"num":5},
 					"ttx":{ "name":"ttx","hist":["TTX"],"num":7}
 #					"qcd":{ "name":"top","hist":["QCD_HT"],"num":8}
@@ -472,21 +468,20 @@ for y in channel:
                                         #### Theo
                                         ####
 #					"CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
-					"CMS_HPTB_mcreweight_ewk":{"type":"shape", "wsname":"CMS_HPTB_mcreweight_ewk","name":"htRECO","proc":["ewk","dy_hf"]}, ## name used for shape
+					"CMS_HPTB_mcreweight_ewk":{"type":"shape", "wsname":"CMS_HPTB_mcreweight_ewk","name":"htRECO","proc":["ewk","ewk_hf"]}, ## name used for shape
 ##					"QCDscale":{"type":"shape", "wsname":"QCDscale","name":"ScaleRF","proc":["Hptb","ttlf","ttb","ttbb","tt2b","ttcc"]} ## name used for shape
 #					"muRFenv_ttbar":{"type":"shape", "wsname":"muRFenv_ttbar","name":"Scale","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
-					"muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"ScaleRF","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
+#					"muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"ScaleRF","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
 					"muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"ScaleR","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
 					"muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"ScaleF","proc":["ttlf","ttb","ttcc"]}, ## name used for shape
 
-#					"muRFenv_ewk":{"type":"shape", "wsname":"muRFenv_ewk","name":"Scale","proc":["ewk"]}, ## name used for shape
 #					"muRFenv_ewk":{"type":"shape", "wsname":"muRFenv_ewk","name":"Scale","proc":["ewk","dy_hf"]}, ## name used for shape
-					"muRF_ewk":{"type":"shape", "wsname":"muRF_ewk","name":"ScaleRF","proc":["ewk","dy_hf"]}, ## name used for shape
-					"muR_ewk":{"type":"shape", "wsname":"muR_ewk","name":"ScaleR","proc":["ewk","dy_hf"]}, ## name used for shape
-					"muF_ewk":{"type":"shape", "wsname":"muF_ewk","name":"ScaleF","proc":["ewk","dy_hf"]}, ## name used for shape
+#					"muRF_ewk":{"type":"shape", "wsname":"muRF_ewk","name":"ScaleRF","proc":["ewk","ewk_hf"]}, ## name used for shape
+					"muR_ewk":{"type":"shape", "wsname":"muR_ewk","name":"ScaleR","proc":["ewk","ewk_hf"]}, ## name used for shape
+					"muF_ewk":{"type":"shape", "wsname":"muF_ewk","name":"ScaleF","proc":["ewk","ewk_hf"]}, ## name used for shape
 
 #					"muRFenv_Hptb":{"type":"shape", "wsname":"muRFenv_Hptb","name":"Scale","proc":["Hptb"]}, ## name used for shape
-					"muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"ScaleRF","proc":["Hptb"]}, ## name used for shape
+#					"muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"ScaleRF","proc":["Hptb"]}, ## name used for shape
 					"muR_Hptb":{"type":"shape", "wsname":"muR_Hptb","name":"ScaleR","proc":["Hptb"]}, ## name used for shape
 					"muF_Hptb":{"type":"shape", "wsname":"muF_Hptb","name":"ScaleF","proc":["Hptb"]}, ## name used for shape
 
@@ -496,7 +491,7 @@ for y in channel:
 #					"muF_top":{"type":"shape", "wsname":"muF_top","name":"Scale","proc":["top"]}, ## name used for shape
 
 #					"muRFenv_ttx":{"type":"shape", "wsname":"muRFenv_ttx","name":"Scale","proc":["ttx"]}, ## name used for shape
-					"muRF_ttx":{"type":"shape", "wsname":"muRF_ttx","name":"ScaleRF","proc":["ttx"]}, ## name used for shape
+#					"muRF_ttx":{"type":"shape", "wsname":"muRF_ttx","name":"ScaleRF","proc":["ttx"]}, ## name used for shape
 					"muR_ttx":{"type":"shape", "wsname":"muR_ttx","name":"ScaleR","proc":["ttx"]}, ## name used for shape
 					"muF_ttx":{"type":"shape", "wsname":"muF_ttx","name":"ScaleF","proc":["ttx"]}, ## name used for shape
 
@@ -563,12 +558,12 @@ for y in channel:
 #print "---------------------- --------"
 
 #fileTmp="AUG6_HT/"+label+VarTest+opts.output
-fileTmp="NOV17_HT200_UE_1Mu_muRF/"+ label + VarTest + str(opts.kMass) + opts.output
+fileTmp="NOV23_HT200_UE_1Mu/"+ label + VarTest + str(opts.kMass) + opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
 #datName = "AUG6_HT/"+ label + VarTest + datNameTmp
-datName = "NOV17_HT200_UE_1Mu_muRF/"+ label + VarTest + str(opts.kMass) + datNameTmp
+datName = "NOV23_HT200_UE_1Mu/"+ label + VarTest + str(opts.kMass) + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -1011,7 +1006,7 @@ if doSyst: writeNormSyst("bgnorm_ttb",["1.50"],["ttb$"])
 ##if doSyst: writeNormSyst("bgnorm_tt2b",["1.50"],["tt2b"])
 
 ## V+jets HF
-#if doSyst: writeNormSyst("bgnorm_dy_hf",["1.50"],["dy_hf"])
+#if doSyst: writeNormSyst("bgnorm_ewk_hf",["1.50"],["ewk_hf"])
 
 ## "top" get the value od the single top
 if doSyst: writeNormSyst("QCDscale_top",["0.977/1.028"],["top"])
@@ -1019,8 +1014,10 @@ if doSyst: writeNormSyst("pdf_qg",["1.026"],["top"])
 if doSyst: writeNormSyst("CMS_mass_top",["1.022"],["top"])
 
 ## "ewk" get the envelop of the DY and W+jets from the AN2017_063_v11
-if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008"],["ewk"])
-if doSyst: writeNormSyst("pdf_qqbar",["1.04"],["ewk"])
+#if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008"],["ewk"])
+#if doSyst: writeNormSyst("pdf_qqbar",["1.04"],["ewk"])
+if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008","0.996/1.008"],["ewk","ewk_hf"])
+if doSyst: writeNormSyst("pdf_qqbar",["1.04","1.04"],["ewk","ewk_hf"])
 #if doSyst: writeNormSyst("QCDscale_ewk",["0.996/1.008","0.996/1.008"],["ewk","dy_hf"])
 #if doSyst: writeNormSyst("pdf_qqbar",["1.04","1.04"],["ewk","dy_hf"])
 
@@ -1116,14 +1113,13 @@ def MergeCategory(tfile,hname):
 		if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
 		if hTmp!=None and hTmp3!=None: hTmp.Add(hTmp3)
 	else:
-
-		hTmp=tfile.Get(hname)
+#		hTmp=tfile.Get(hname)
 ## temporaty need to fix for the merged categories
-#		print 'MergeCategory ',hname
-#		if "bb_DYJetsTo" in hname:
-#			hTmp = MergeDYHF(tfile,hname)
-#		else: hTmp=tfile.Get(hname)
-
+		if "bb_DYJetsTo" in hname:
+			hTmp = MergeDYHF(tfile,hname)
+		elif "bb_WJetsToLNu" in hname:
+			hTmp = MergeWHF(tfile,hname)
+		else: hTmp=tfile.Get(hname)
 
 		#nominal
 	if hTmp!= None and "bdt" in hname:
@@ -1138,7 +1134,6 @@ def MergeCategory(tfile,hname):
 
 
 def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
-
 
 	hTmpNom=MergeCategory(tfile,togetNom)
 	hTmpUp=MergeCategory(tfile,togetSyst+'Up')
@@ -1209,14 +1204,25 @@ def envelop(tfile,togetNom, togetSyst, s) :
 
 def MergeDYHF(tfile,hname):
 
-	hname_1=hname.replace("bb_DYJetsTo", "b_DYJetsTo")
-	hname_2=hname.replace("bb_DYJetsTo", "other_DYJetsTo")
+        hname_1=hname.replace("bb_DYJetsTo", "b_DYJetsTo")
+        hname_2=hname.replace("bb_DYJetsTo", "other_DYJetsTo")
+        hTmp=tfile.Get(hname)
+        hTmp1=tfile.Get(hname_1)
+        hTmp2=tfile.Get(hname_2)
+        if hTmp!=None and hTmp1!=None: hTmp.Add(hTmp1)
+        if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
+
+        return hTmp
+
+
+def MergeWHF(tfile,hname):
+	hname_1=hname.replace("bb_WJetsToLNu", "b_WJetsToLNu_HT")
+	hname_2=hname.replace("bb_WJetsToLNu", "other_WJetsToLNu")
 	hTmp=tfile.Get(hname)
 	hTmp1=tfile.Get(hname_1)
 	hTmp2=tfile.Get(hname_2)
 	if hTmp!=None and hTmp1!=None: hTmp.Add(hTmp1)
 	if hTmp!=None and hTmp2!=None: hTmp.Add(hTmp2)
-
         return hTmp
 
 
