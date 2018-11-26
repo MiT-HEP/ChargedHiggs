@@ -337,7 +337,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
                         //Z+= *selectedJetsMiniIso[ijet];
                         //Z+= *selectedJetsMiniIso[jjet];
                         //
-                        Log(__FUNCTION__,"DEBUG",Form("Considering VH couple %d,%d alphaS=%u",ijet,jjet,kf->alpha.size()));
+                        //Log(__FUNCTION__,"DEBUG",Form("Considering VH couple %d,%d alphaS=%u",ijet,jjet,kf->alpha.size()));
                         TLorentzVector Z;
                         //Z += selectedJetsMiniIso[ijet]->GetP4()*kf->alpha[ijet];
                         //Z += selectedJetsMiniIso[jjet]->GetP4()*kf->alpha[jjet];
@@ -1318,12 +1318,13 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     // cache to understand if the event as been processed when I arrived at the End() function
     // ----------------------------------------
     //
-    if (SYNC_VERBOSE and not processingSyst_ and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
-        Log(__FUNCTION__,"SYNC",Form("Analyze event %ld:%ld:%ld",e->runNum(),e->lumiNum(),e->eventNum()));
+    //if (SYNC_VERBOSE and not processingSyst_ and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
+    //    Log(__FUNCTION__,"SYNC",Form("Analyze event %ld:%ld:%ld",e->runNum(),e->lumiNum(),e->eventNum()));
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
 
+    // translate to a consistent set
     if ( label == "GluGluHToMuMu_M120") label = "GluGlu_HToMuMu_M120";
     if ( label == "GluGluHToMuMu_M125") label = "GluGlu_HToMuMu_M125";
     if ( label == "GluGluHToMuMu_M130") label = "GluGlu_HToMuMu_M130";
@@ -1331,6 +1332,22 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     if ( label == "VBFHToMuMu_M120") label = "VBF_HToMuMu_M120";
     if ( label == "VBFHToMuMu_M125") label = "VBF_HToMuMu_M125";
     if ( label == "VBFHToMuMu_M130") label = "VBF_HToMuMu_M130";
+
+    if ( label == "WplusH_HToMuMu_WToAll_M120") label = "WPlusH_HToMuMu_M120";
+    if ( label == "WplusH_HToMuMu_WToAll_M125") label = "WPlusH_HToMuMu_M125";
+    if ( label == "WplusH_HToMuMu_WToAll_M130") label = "WPlusH_HToMuMu_M130";
+
+    if ( label == "WminusH_HToMuMu_WToAll_M120") label = "WMinusH_HToMuMu_M120";
+    if ( label == "WminusH_HToMuMu_WToAll_M125") label = "WMinusH_HToMuMu_M125";
+    if ( label == "WminusH_HToMuMu_WToAll_M130") label = "WMinusH_HToMuMu_M130";
+
+    if ( label == "ZH_HToMuMu_ZToAll_M120") label = "ZH_HToMuMu_M120";
+    if ( label == "ZH_HToMuMu_ZToAll_M125") label = "ZH_HToMuMu_M125";
+    if ( label == "ZH_HToMuMu_ZToAll_M130") label = "ZH_HToMuMu_M130";
+
+    if ( label == "ttHToMuMu_M120") label = "ttH_HToMuMu_M120";
+    if ( label == "ttHToMuMu_M125") label = "ttH_HToMuMu_M125";
+    if ( label == "ttHToMuMu_M130") label = "ttH_HToMuMu_M130";
 
     //multiPD. No need to keep separate histograms, but save the flags
     if (label.find("SingleMuon") !=string::npos) {isSingleMuon=true; label="Data";} else { isSingleMuon=false;}
