@@ -510,7 +510,7 @@ for y in channel:
                         if doSyst:
                                 systStore={
                                         "None":None,
-                                        "lumi_13TeV":{"type":"lnN", "value":["1.025"] ,"proc":[".*"],"wsname":"lumi_13TeV","name":"XXX"},
+                                        "lumi_13TeV":{"type":"lnN", "value":["1.025","1.025","1.025","1.025"] ,"proc":["ttbar","top","Hptb","ewk"],"wsname":"lumi_13TeV","name":"XXX"},
 					### lepton veto
                                         "CMS_eff_l":{"type":"lnN", "value":["0.96","0.96","0.96","0.96"] ,"proc":["ttbar","top","Hptb","ewk"],"wsname":"CMS_eff_l","name":"XXX"}, ## name used for shape
 					"CMS_eff_t":{"type":"lnN", "value":["1.03","1.03","1.03","1.03"] ,"proc":["ttbar","top","Hptb","ewk"],"wsname":"CMS_eff_t","name":"XXX"}, ## name used for shape
@@ -520,6 +520,7 @@ for y in channel:
 ##                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttbar"]},
                                         "muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]},
                                         "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttbar"]},
+                                        "muRF_ewk":{"type":"shape", "wsname":"muRF_ewk","name":"Scale","proc":["ewk"]},
 #                                        "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"ScaleRF","proc":["ttbar"]},
 #                                        "muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"ScaleF","proc":["ttbar"]},
 #                                        "muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"ScaleR","proc":["ttbar"]},
@@ -528,7 +529,7 @@ for y in channel:
 #                                        "muRF_ttbar_above":{"type":"shape", "wsname":"muRF_ttbar_above","name":"Scale","proc":["ttbar"]},
 					### MET-Jets-PU
                                         "CMS_pileup":{"type":"shape", "wsname":"CMS_pileup","name":"PU","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb","ewk"]},
-                                        "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three","ttbar","top","Hptb","ewk"]},
+                                        "CMS_scale_uncluster":{"type":"shape", "wsname":"CMS_scale_uncluster","name":"UNCLUSTER","proc":["ttbar","top","Hptb","ewk"]},
 					## SDmass
                                         "CMS_scale_SDMass":{"type":"shape", "wsname":"CMS_scale_SDMass","name":"SDMassSCALE","proc":["ttbar","top","Hptb"]},
                                         "CMS_scale_SDMass_qcd_wx_below":{"type":"shape", "wsname":"CMS_scale_SDMass_qcd_wx_below","name":"SDMassSCALE","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three"]},
@@ -547,19 +548,19 @@ for y in channel:
 					"CMS_scale_j_qcd_tx":{"type":"shape", "wsname":"CMS_scale_j_qcd_tx","name":"JESANDCSV","proc":["qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ## b-tagging
                                         ##Light jets Heavy flavor contamination
-					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":["ttbar","top","Hptb"]},
+					"CMS_btag_HF":{"type":"shape", "wsname":"CMS_btag_HF","name":"CSVRHF","proc":["ttbar","top","Hptb","ewk"]},
 					"CMS_btag_HF_qcd":{"type":"shape", "wsname":"CMS_btag_HF_qcd","name":"CSVRHF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ##Heavy jets light flavor contamination
-					 "CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["ttbar","top","Hptb"]},
-					 "CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF_qcd","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
+					"CMS_btag_LF":{"type":"shape", "wsname":"CMS_btag_LF","name":"CSVRLF","proc":["ttbar","top","Hptb","ewk"]},
+					"CMS_btag_LF_qcd":{"type":"shape", "wsname":"CMS_btag_LF_qcd","name":"CSVRLF","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
                                         ##Linear and quadratic uncertainties
 					# note decouple the qcd
-					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":["ttbar","top","Hptb"]},
-					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":["ttbar","top","Hptb"]},
-					"CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":["ttbar","top","Hptb"]},
-					"CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":["ttbar","top","Hptb"]},
-					"CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":["ttbar","top","Hptb"]},
-					"CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":["ttbar","top","Hptb"]},
+					"CMS_btag_HFstat1":{"type":"shape", "wsname":"CMS_btag_HFstat1","name":"CSVRHFSTAT1","proc":["ttbar","top","Hptb","ewk"]},
+					"CMS_btag_HFstat2":{"type":"shape", "wsname":"CMS_btag_HFstat2","name":"CSVRHFSTAT2","proc":["ttbar","top","Hptb","ewk"]},
+					"CMS_btag_LFstat1":{"type":"shape", "wsname":"CMS_btag_LFstat1","name":"CSVRLFSTAT1","proc":["ttbar","top","Hptb","ewk"]},
+					"CMS_btag_LFstat2":{"type":"shape", "wsname":"CMS_btag_LFstat2","name":"CSVRLFSTAT2","proc":["ttbar","top","Hptb","ewk"]},
+					"CMS_btag_CFerr1":{"type":"shape", "wsname":"CMS_btag_CFerr1","name":"CSVRCERR1","proc":["ttbar","top","Hptb","ewk"]},
+					"CMS_btag_CFerr2":{"type":"shape", "wsname":"CMS_btag_CFerr2","name":"CSVRCERR2","proc":["ttbar","top","Hptb","ewk"]},
 					##
 					"CMS_btag_HFstat1_qcd":{"type":"shape", "wsname":"CMS_btag_HFstat1_qcd","name":"CSVRHFSTAT1","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
 					"CMS_btag_HFstat2_qcd":{"type":"shape", "wsname":"CMS_btag_HFstat2_qcd","name":"CSVRHFSTAT2","proc":["qcd_wx_one","qcd_wx_two","qcd_wx_three","qcd_tx_one","qcd_tx_two","qcd_tx_three"]},
@@ -878,14 +879,11 @@ for syst in systStore:
 	if systStore[syst]["type"] == "lnN":
 
                 if "CMS_eff_Tau21" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,["1.08","1.08","1.08"],systStore[syst]["proc"],["OneBOneFat_.*_wbb","OneBOneFat_.*_wbj","OneBOneFat1l_.*_wbb","OneBOneFat1l_.*_wbb"])
-			writeNormSyst(syst,["0.92","0.92","0.92"],systStore[syst]["proc"],["OneBOneMirrorFat_.*_wbb","OneBOneMirrorFat_.*_wbj"])
+			writeNormSyst(syst,["1.08","1.08","1.08","1.08","0.92","0.92"],systStore[syst]["proc"],["OneBOneFat_.*_wbb","OneBOneFat_.*_wbj","OneBOneFat1l_.*_wbb","OneBOneFat1l_.*_wbb","OneBOneMirrorFat_.*_wbb","OneBOneMirrorFat_.*_wbj"])
                 elif "CMS_eff_Tau32" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,["1.02","1.02","1.02"],systStore[syst]["proc"],["OneBOneFat_.*_t0b","OneBOneFat_.*_t1b","OneBOneFat1l_.*_t0b","OneBOneFat1l_.*_t1b"])
-			writeNormSyst(syst,["0.98","0.98","0.98"],systStore[syst]["proc"],["OneBOneMirrorFat_.*_t0b","OneBOneMirrorFat_.*_t1b"])
+			writeNormSyst(syst,["1.02","1.02","1.02","1.02","0.98","0.98"],systStore[syst]["proc"],["OneBOneFat_.*_t0b","OneBOneFat_.*_t1b","OneBOneFat1l_.*_t0b","OneBOneFat1l_.*_t1b","OneBOneMirrorFat_.*_t0b","OneBOneMirrorFat_.*_t1b"])
 		elif "CMS_eff_l" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,["1.04","1.04","1.04","1.04"],systStore[syst]["proc"],["OneBOneFat1l_"])
-			writeNormSyst(syst,["0.96","0.96","0.96","0.96"],systStore[syst]["proc"],["OneBOneFat_","OneBOneMirrorFat_"])
+			writeNormSyst(syst,["1.04","0.96","0.96"],systStore[syst]["proc"],["OneBOneFat1l_","OneBOneFat_","OneBOneMirrorFat_"])
 		else:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 
@@ -945,12 +943,12 @@ for syst in systStore:
 
 if doSyst: writeNormSyst("QCDscale_ttbar",["0.965/1.024"],["ttbar"])
 if doSyst: writeNormSyst("pdf_gg",["1.042"],["ttbar"])
-if doSyst: writeNormSyst("CMS_mass_top",["1.027"],["ttbar"])
+#if doSyst: writeNormSyst("CMS_mass_top",["1.027"],["ttbar"])
 
 ## "top" get the value od the single top
 if doSyst: writeNormSyst("QCDscale_top",["0.977/1.028"],["top"])
 if doSyst: writeNormSyst("pdf_top",["1.026"],["top"])
-if doSyst: writeNormSyst("CMS_mass_top",["1.022"],["top"])
+if doSyst: writeNormSyst("CMS_mass_top",["1.027","1.022"],["ttbar","top"])
 
 #if doSyst: writeNormSyst("bgnorm_tt2b",["1.50"],["tt2b"])
 #if doSyst: writeNormSyst("bgnorm_ttb",["1.30"],["ttb"])
