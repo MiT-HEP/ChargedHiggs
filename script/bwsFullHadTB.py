@@ -518,9 +518,14 @@ for y in channel:
                                         "CMS_eff_trigger":{"type":"lnN", "value":["1.05"] ,"proc":[".*"],"wsname":"CMS_eff_triggger","name":"XXX"},
 					### Theory modeling
 ##                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttbar"]},
-                                        "muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]},
-                                        "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttbar"]},
-                                        "muRF_ewk":{"type":"shape", "wsname":"muRF_ewk","name":"Scale","proc":["ewk"]},
+##                                        "muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]},
+                                        "muR_Hptb":{"type":"shape", "wsname":"muR_Hptb","name":"Scale","proc":["Hptb"]},
+                                        "muF_Hptb":{"type":"shape", "wsname":"muF_Hptb","name":"Scale","proc":["Hptb"]},
+##                                        "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttbar"]},
+                                        "muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"Scale","proc":["ttbar"]},
+                                        "muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"Scale","proc":["ttbar"]},
+                                        "muF_ewk":{"type":"shape", "wsname":"muF_ewk","name":"ScaleF","proc":["ewk"]},
+                                        "muR_ewk":{"type":"shape", "wsname":"muR_ewk","name":"ScaleR","proc":["ewk"]},
 #                                        "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"ScaleRF","proc":["ttbar"]},
 #                                        "muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"ScaleF","proc":["ttbar"]},
 #                                        "muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"ScaleR","proc":["ttbar"]},
@@ -593,11 +598,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_NOV20_Shape/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_TEST/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_NOV20_Shape/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_TEST/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -877,18 +882,17 @@ def importStat():
 for syst in systStore:
 	if syst == "None": continue
 	if systStore[syst]["type"] == "lnN":
-
                 if "CMS_eff_Tau21" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,["1.08","1.08","1.08","1.08","0.92","0.92"],systStore[syst]["proc"],["OneBOneFat_.*_wbb","OneBOneFat_.*_wbj","OneBOneFat1l_.*_wbb","OneBOneFat1l_.*_wbb","OneBOneMirrorFat_.*_wbb","OneBOneMirrorFat_.*_wbj"])
+                        writeNormSyst(syst,["1.08","1.08","0.92","0.92","1.08","1.08","0.92","0.92","1.08","1.08","0.92","0.92"],systStore[syst]["proc"],["OneBOneFat.*_wbb","OneBOneFat.*_wbj","OneBOneMirrorFat_.*_wbb","OneBOneMirrorFat_.*_wbj"])
                 elif "CMS_eff_Tau32" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,["1.02","1.02","1.02","1.02","0.98","0.98"],systStore[syst]["proc"],["OneBOneFat_.*_t0b","OneBOneFat_.*_t1b","OneBOneFat1l_.*_t0b","OneBOneFat1l_.*_t1b","OneBOneMirrorFat_.*_t0b","OneBOneMirrorFat_.*_t1b"])
-		elif "CMS_eff_l" in systStore[syst]["wsname"]:
-			writeNormSyst(syst,["1.04","0.96","0.96"],systStore[syst]["proc"],["OneBOneFat1l_","OneBOneFat_","OneBOneMirrorFat_"])
+                        writeNormSyst(syst,["1.02","1.02","0.98","0.98","1.02","1.02","0.98","0.98","1.02","1.02","0.98","0.98"],systStore[syst]["proc"],["OneBOneFat.*_t0b","OneBOneFat.*_t1b","OneBOneMirrorFat_.*_t0b","OneBOneMirrorFat_.*_t1b"])
+                elif "CMS_eff_l" in systStore[syst]["wsname"]:
+                        writeNormSyst(syst,["1.04","0.96","0.96","1.04","0.96","0.96","1.04","0.96","0.96","1.04","0.96","0.96"],systStore[syst]["proc"],["OneBOneFat1l_.*","OneBOneFat_.*","OneBOneMirrorFat_.*"])
 		else:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 
 	if systStore[syst]["type"] == "shape":
-                if "muRF_Hptb" in systStore[syst]["wsname"]:
+                if "muRF_Hptb" in systStore[syst]["wsname"] or "muF_Hptb" in systStore[syst]["wsname"] or "muF_Hptb" in systStore[syst]["wsname"]:
 			if not doSChannel: writeSystShape(systStore[syst],systStore[syst]["proc"])
 ##
 #		elif "muRF_ttbar_below" in systStore[syst]["wsname"]:
