@@ -409,12 +409,12 @@ for y in channel:
                                 if opts.kMass=="650":
                                         if "OneBOneMirrorFat_two_lowj" in x and y=="wbj" and "in" in reg: continue
 
-				if opts.kMass=="1500" and not doSChannel:
-					if "OneBOneMirrorFat_three_highj" in x and y=="wbb" and "in" in reg: continue
+#				if opts.kMass=="1500" and not doSChannel:
+#					if "OneBOneMirrorFat_three_highj" in x and y=="wbb" and "in" in reg: continue
 
                                 if opts.kMass=="2500" and not doSChannel:
 					if "OneBOneFat_three_highj" in x and (y=="t0b" or y=="t1b") and "in" in reg: continue
-					if "OneBOneFat_three_highj" in x and y=="t0b" and "above" in reg: continue
+#					if "OneBOneFat_three_highj" in x and y=="t0b" and "above" in reg: continue
 #					# this one below has overflow
 #					if "OneBOneFat_three_highj" in x and y=="t1b" and "above" in reg: continue
 
@@ -519,11 +519,11 @@ for y in channel:
 					### Theory modeling
 ##                                        "CMS_topreweight":{"type":"shape", "wsname":"CMS_topreweight","name":"TOPRW","proc":["ttbar"]},
 ##                                        "muRF_Hptb":{"type":"shape", "wsname":"muRF_Hptb","name":"Scale","proc":["Hptb"]},
-                                        "muR_Hptb":{"type":"shape", "wsname":"muR_Hptb","name":"Scale","proc":["Hptb"]},
-                                        "muF_Hptb":{"type":"shape", "wsname":"muF_Hptb","name":"Scale","proc":["Hptb"]},
+                                        "muR_Hptb":{"type":"shape", "wsname":"muR_Hptb","name":"ScaleR","proc":["Hptb"]},
+                                        "muF_Hptb":{"type":"shape", "wsname":"muF_Hptb","name":"ScaleF","proc":["Hptb"]},
 ##                                        "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"Scale","proc":["ttbar"]},
-                                        "muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"Scale","proc":["ttbar"]},
-                                        "muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"Scale","proc":["ttbar"]},
+                                        "muF_ttbar":{"type":"shape", "wsname":"muF_ttbar","name":"ScaleF","proc":["ttbar"]},
+                                        "muR_ttbar":{"type":"shape", "wsname":"muR_ttbar","name":"ScaleR","proc":["ttbar"]},
                                         "muF_ewk":{"type":"shape", "wsname":"muF_ewk","name":"ScaleF","proc":["ewk"]},
                                         "muR_ewk":{"type":"shape", "wsname":"muR_ewk","name":"ScaleR","proc":["ewk"]},
 #                                        "muRF_ttbar":{"type":"shape", "wsname":"muRF_ttbar","name":"ScaleRF","proc":["ttbar"]},
@@ -581,12 +581,24 @@ for y in channel:
                                         "CMS_scale_Pol_qcd_wx_two_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_two_1l","name":"XXX","proc":["qcd_wx_two"]},
                                         "CMS_scale_Pol_qcd_wx_three_1l":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_three_1l","name":"XXX","proc":["qcd_wx_three"]},
 					##
-					"CMS_scale_Pol_qcd_tx_one_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_one_in","name":"XXX","proc":["qcd_tx_one"]},
+					"CMS_scale_Pol_qcd_tx_one_below":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_one_below","name":"XXX","proc":["qcd_tx_one"]},
+                                        "CMS_scale_Pol_qcd_tx_two_below":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_two_below","name":"XXX","proc":["qcd_tx_two"]},
+                                        "CMS_scale_Pol_qcd_tx_three_below":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_three_below","name":"XXX","proc":["qcd_tx_three"]},
+                                        "CMS_scale_Pol_qcd_wx_one_below":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_one_below","name":"XXX","proc":["qcd_wx_one"]},
+                                        "CMS_scale_Pol_qcd_wx_two_below":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_two_below","name":"XXX","proc":["qcd_wx_two"]},
+                                        "CMS_scale_Pol_qcd_wx_three_below":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_three_below","name":"XXX","proc":["qcd_wx_three"]},
+                                        "CMS_scale_Pol_qcd_tx_one_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_one_in","name":"XXX","proc":["qcd_tx_one"]},
                                         "CMS_scale_Pol_qcd_tx_two_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_two_in","name":"XXX","proc":["qcd_tx_two"]},
                                         "CMS_scale_Pol_qcd_tx_three_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_three_in","name":"XXX","proc":["qcd_tx_three"]},
                                         "CMS_scale_Pol_qcd_wx_one_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_one_in","name":"XXX","proc":["qcd_wx_one"]},
                                         "CMS_scale_Pol_qcd_wx_two_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_two_in","name":"XXX","proc":["qcd_wx_two"]},
-                                        "CMS_scale_Pol_qcd_wx_three_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_three_in","name":"XXX","proc":["qcd_wx_three"]}
+                                        "CMS_scale_Pol_qcd_wx_three_in":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_three_in","name":"XXX","proc":["qcd_wx_three"]},
+                                        "CMS_scale_Pol_qcd_tx_one_above":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_one_above","name":"XXX","proc":["qcd_tx_one"]},
+                                        "CMS_scale_Pol_qcd_tx_two_above":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_two_above","name":"XXX","proc":["qcd_tx_two"]},
+                                        "CMS_scale_Pol_qcd_tx_three_above":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_tx_three_above","name":"XXX","proc":["qcd_tx_three"]},
+                                        "CMS_scale_Pol_qcd_wx_one_above":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_one_above","name":"XXX","proc":["qcd_wx_one"]},
+                                        "CMS_scale_Pol_qcd_wx_two_above":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_two_above","name":"XXX","proc":["qcd_wx_two"]},
+                                        "CMS_scale_Pol_qcd_wx_three_above":{"type":"shape", "wsname":"CMS_scale_Pol_qcd_wx_three_above","name":"XXX","proc":["qcd_wx_three"]}
                                         }
                         else:
 				systStore={
@@ -598,11 +610,11 @@ for cat in catStore:
 	print "* ",cat,":",catStore[cat]
 print "---------------------- --------"
 
-fileTmp="MIAO_TEST/"+label+VarTest+opts.kMass+"_"+opts.output
+fileTmp="MIAO_DEC10/"+label+VarTest+opts.kMass+"_"+opts.output
 
 w = ROOT.RooWorkspace("w","w")
 datNameTmp = opts.datCardName
-datName = "MIAO_TEST/"+label+ VarTest+opts.kMass+"_" + datNameTmp
+datName = "MIAO_DEC10/"+label+ VarTest+opts.kMass+"_" + datNameTmp
 
 datacard=open(datName,"w")
 datacard.write("-------------------------------------\n")
@@ -778,10 +790,13 @@ def writeNormSyst(name="lumi",valueL=["1.027","1.026"], regexpL=["TT","ST",""],r
 					idx2=i
 					break
 
-			if (idx>=0 and (idx2>=0 or len(regexpCat)==0 )):
-				datacard.write("\t"+valueL[idx])
+			if (idx>=0 and len(regexpCat)==0):
+                                datacard.write("\t"+valueL[idx])
+			elif (idx>=0 and idx2>=0):
+                                datacard.write("\t"+valueL[idx * len(regexpCat) + idx2])
 			else:
-				datacard.write("\t-")
+                                datacard.write("\t-")
+
 	datacard.write("\n")
 
 def writeSystShape(syst,regexpL=[],regexpCat=[]):
@@ -892,7 +907,7 @@ for syst in systStore:
 			writeNormSyst(syst,systStore[syst]["value"],systStore[syst]["proc"])
 
 	if systStore[syst]["type"] == "shape":
-                if "muRF_Hptb" in systStore[syst]["wsname"] or "muF_Hptb" in systStore[syst]["wsname"] or "muF_Hptb" in systStore[syst]["wsname"]:
+                if "muRF_Hptb" in systStore[syst]["wsname"] or "muF_Hptb" in systStore[syst]["wsname"] or "muR_Hptb" in systStore[syst]["wsname"]:
 			if not doSChannel: writeSystShape(systStore[syst],systStore[syst]["proc"])
 ##
 #		elif "muRF_ttbar_below" in systStore[syst]["wsname"]:
@@ -916,18 +931,44 @@ for syst in systStore:
 		elif "CMS_scale_SDMass_qcd_tx_above" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
 
+
+                elif "CMS_scale_Pol_qcd_tx_one_below" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["below"])
                 elif "CMS_scale_Pol_qcd_tx_one_in" in systStore[syst]["wsname"]:
-                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-                elif "CMS_scale_Pol_qcd_tx_two_in" in systStore[syst]["wsname"]:
-                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-                elif "CMS_scale_Pol_qcd_tx_three_in_" in systStore[syst]["wsname"]:
-                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-                elif "CMS_scale_Pol_qcd_wx_one_in" in systStore[syst]["wsname"]:
-                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-                elif "CMS_scale_Pol_qcd_wx_two_in" in systStore[syst]["wsname"]:
-                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
-                elif "CMS_scale_Pol_qcd_wx_three_in" in systStore[syst]["wsname"]:
-                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in","below","above"])
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in"])
+                elif "CMS_scale_Pol_qcd_tx_one_above" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
+                elif "CMS_scale_Pol_qcd_tx_two_below" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["below"])
+		elif "CMS_scale_Pol_qcd_tx_two_in" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in"])
+		elif "CMS_scale_Pol_qcd_tx_two_above" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
+		elif "CMS_scale_Pol_qcd_tx_three_below" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["below"])
+		elif "CMS_scale_Pol_qcd_tx_three_in" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in"])
+		elif "CMS_scale_Pol_qcd_tx_three_above" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
+
+		elif "CMS_scale_Pol_qcd_wx_one_below" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["below"])
+		elif "CMS_scale_Pol_qcd_wx_one_in" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in"])
+		elif "CMS_scale_Pol_qcd_wx_one_above" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
+		elif "CMS_scale_Pol_qcd_wx_two_below" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["below"])
+		elif "CMS_scale_Pol_qcd_wx_two_in" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["in"])
+		elif "CMS_scale_Pol_qcd_wx_two_above" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
+		elif "CMS_scale_Pol_qcd_wx_three_below" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["below"])
+		elif "CMS_scale_Pol_qcd_wx_three_in" in systStore[syst]["wsname"]:
+			writeSystShape(systStore[syst],systStore[syst]["proc"],["in"])
+		elif "CMS_scale_Pol_qcd_wx_three_above" in systStore[syst]["wsname"]:
+                        writeSystShape(systStore[syst],systStore[syst]["proc"],["above"])
 
 		elif "CMS_scale_Pol_qcd_wx_one_1l" in systStore[syst]["wsname"]:
 			writeSystShape(systStore[syst],systStore[syst]["proc"],["1l"])
@@ -1063,6 +1104,10 @@ def SmoothAndMergeSyst(tfile,togetNom,togetSyst,s):
 
         if hTmpUp==None: return hTmpNom
         if hTmpDown==None: return hTmpNom
+
+        if hTmpUp.Integral()<=0: return hTmpNom
+        if hTmpDown.Integral()<=0: return hTmpNom
+
 
         for iBin in range(1,hTmpNom.GetNbinsX()+1):
 #               c= hTmpNom.SetBinError(iBin,0)
