@@ -31,12 +31,12 @@ output=check_output(cmd,shell=True)
 #blacklist=["/eos/cms/store/group/phys_higgs/cmshtt/amarini/ChargedHToTauNu_M500_amcatnlo_madspin_13TeV_pythia8/GEN/180821_121144/0000/step1_10.root"]
 blacklist=[]
 files = [ "file:"+x for x in output.split('\n') if '/store' in x and x not in blacklist] 
-
+files = ["file:/afs/cern.ch/user/a/amarini/public/forMiao/step5.root"]
 onMiniAOD=False
 
 #onlyEvent=12345
 onlyEvent=None
-verbose=False
+verbose=True
 
 h={}
 
