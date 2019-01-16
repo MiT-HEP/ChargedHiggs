@@ -1,6 +1,6 @@
-sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.3
-sub=amariniUser|/eos/user/a/amarini/Nero/v3.3
-sub=amariniCms|/store/user/amarini/Nero/v3.3
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.4
+sub=amariniUser|/eos/user/a/amarini/Nero/v3.4
+sub=amariniCms|/store/user/amarini/Nero/v3.4
 
 addfiles=%(amariniHmm)s/TTTT_TuneCP5_PSweights_13TeV-amcatnlo-pythia8
 addfiles=%(amariniHmm)s/TTWJetsToLNu_TuneCP5_PSweights_13TeV-amcatnloFXFX-madspin-pythia8
