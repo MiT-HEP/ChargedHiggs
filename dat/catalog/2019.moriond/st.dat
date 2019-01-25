@@ -1,0 +1,15 @@
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.4
+sub=amariniUser|/eos/user/a/amarini/Nero/v3.4
+sub=amariniCms|/store/user/amarini/Nero/v3.4
+
+addfiles=%(amariniHmm)s/ST_s-channel_4f_leptonDecays_TuneCP5_PSweights_13TeV-amcatnlo-pythia8
+addfiles=%(amariniHmm)s/ST_t-channel_antitop_5f_TuneCP5_PSweights_13TeV-powheg-pythia8
+addfiles=%(amariniHmm)s/ST_t-channel_top_5f_TuneCP5_13TeV-powheg-pythia8
+addfiles=%(amariniHmm)s/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8
+addfiles=%(amariniHmm)s/ST_tW_top_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8
+
+
+
+
+
+

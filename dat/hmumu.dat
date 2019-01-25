@@ -23,10 +23,7 @@ addConfig=HmumuAnalysis|AddLabel('EWK_LLJJ')
 
 ## need to add 125, in order to have different masses
 addConfig=HmumuAnalysis|AddLabel('GluGluH_HToMuMu_M125_13TeV_powheg_pythia8')
-
-addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M120')
-addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M125')
-addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M130')
+addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125_13TeV_powheg_pythia8')
 
 #catch powheg
 addConfig=HmumuAnalysis|AddLabel('VBFH_HToMuMu_M125_13TeV_powheg_pythia8')
@@ -59,7 +56,31 @@ addConfig=HmumuAnalysis|AddLabel('WPlusH_HToMuMu_M130')
 addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M125')
 addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('ttH_HToMuMu_M130')
-addConfig=HmumuAnalysis|AddLabel('ttHToNonbb_M125')
+
+
+#addConfig=HmumuAnalysis|AddLabel('ttHToNonbb_M125')
+
+## add capital/uncapital Plus
+addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M120')
+addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('GluGluHToMuMu_M130')
+
+addConfig=HmumuAnalysis|AddLabel('WplusH_HToMuMu_WToAll_M120')
+addConfig=HmumuAnalysis|AddLabel('WplusH_HToMuMu_WToAll_M125')
+addConfig=HmumuAnalysis|AddLabel('WplusH_HToMuMu_WToAll_M130')
+
+addConfig=HmumuAnalysis|AddLabel('WminusH_HToMuMu_WToAll_M120')
+addConfig=HmumuAnalysis|AddLabel('WminusH_HToMuMu_WToAll_M125')
+addConfig=HmumuAnalysis|AddLabel('WminusH_HToMuMu_WToAll_M130')
+
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_ZToAll_M120')
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_ZToAll_M125')
+addConfig=HmumuAnalysis|AddLabel('ZH_HToMuMu_ZToAll_M130')
+
+#ttHToMuMu_M130
+addConfig=HmumuAnalysis|AddLabel('ttHToMuMu_M120')
+addConfig=HmumuAnalysis|AddLabel('ttHToMuMu_M125')
+addConfig=HmumuAnalysis|AddLabel('ttHToMuMu_M130')
 
 ## HH
 addConfig=HmumuAnalysis|AddLabel('VBFHHTo2B2Mu_CV_1_C2V_1_C3_1')
