@@ -760,8 +760,8 @@ doBkg=not opts.noBkg
 if doBkg:
   if opts.cat == "all":
     for cat in categories: 
-        print "-> calling","python %s -i %s -d %s -v %s -c %s --noSig -o %s"% (sys.argv[0],opts.input,opts.dir,opts.var,cat,opts.outdir)
-        call("python %s -i %s -d %s -v %s -c %s --noSig -o %s"% (sys.argv[0],opts.input,opts.dir,opts.var,cat,opts.outdir),shell=True)
+        print "-> calling","python %s -i %s -d %s -v %s -c %s --noSig -o %s --hmm %s"% (sys.argv[0],opts.input,opts.dir,opts.var,cat,opts.outdir,opts.hmm)
+        call("python %s -i %s -d %s -v %s -c %s --noSig -o %s --hmm %s"% (sys.argv[0],opts.input,opts.dir,opts.var,cat,opts.outdir,opts.hmm),shell=True)
   else:
     cat ='_'+opts.cat
     if opts.cat == "": cat = ""
@@ -816,15 +816,23 @@ if doBkg:
     #mcs=["DY","TT","ST","WZ","WW","ZZ"]
     #BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     if opts.noRatio:
-        BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY"]
+        #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY",]
+        BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DYJetsToLL_M-105To160"]
+        BkgMonteCarlos2=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY"]
     else:
-        BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
+        #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
+        BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DY"]
+        BkgMonteCarlos2=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DYJetsToLL_M-105To160"]
+
     #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     mcAll=None
 
     #bkg=ROOT.THStack()
     bkg=Stack()
     bkg.SetName("bkgmc"+cat)
+
+    bkg2=Stack()
+    bkg2.SetName("bkgmc2"+cat)
 
     b_systs_up=[ Stack() for x in systs]
     b_systs_down=[ Stack() for x in systs]
@@ -836,7 +844,7 @@ if doBkg:
     sig=Stack()
     sig.SetName("sigmc"+cat)
 
-    garbage.extend([sig,bkg,leg])
+    garbage.extend([sig,bkg,bkg2,leg])
 
     ## BLIND 120-130
     blind=opts.blind
@@ -849,7 +857,7 @@ if doBkg:
             hdata.SetBinContent(ibin,0)
             hdata.SetBinError(ibin,0)
 
-    for mc in BkgMonteCarlos:
+    for mc in list(set(BkgMonteCarlos + BkgMonteCarlos2)):
         print "* Getting bkg","HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc
         h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc )
         if h==None:
@@ -878,6 +886,12 @@ if doBkg:
             h.SetFillColor(ROOT.kBlue-10)
             leg1.append( (h,"DY","F") )
             #leg.AddEntry(h,"DY","F")
+        elif mc == "DYJetsToLL_M-105To160":
+            h.SetFillStyle(0)
+            h.SetFillColor(ROOT.kCyan)
+            h.SetLineColor(ROOT.kCyan)
+            h.SetLineWidth(3)
+            leg1.append( (h,"DY (105-160)","F") )
         elif mc == 'TT':
             h.SetFillColor(ROOT.kRed-10)
             leg1.append( (h,"t#bar{t}+st","F"))
@@ -915,12 +929,18 @@ if doBkg:
             h.SetFillColor(ROOT.kGray)
             leg1.append((h,"VVV","F"))
 
-        bkg.Add(h,draw)
+        if mc in BkgMonteCarlos: 
+            bkg.Add(h,draw)
+            if mcAll==None:
+                mcAll=h.Clone("mcAll"+cat)
+            else:
+                mcAll.Add(h)
+        if mc in BkgMonteCarlos2: 
+            # only draw top DY
+            if 'DY' in mc: draw = True
+            else: draw= False
+            bkg2.Add(h,draw)
 
-        if mcAll==None:
-            mcAll=h.Clone("mcAll"+cat)
-        else:
-            mcAll.Add(h)
     ##end bkg loop
     for mc in reversed(sigMonteCarlos):
         m=125
@@ -1003,6 +1023,7 @@ if doBkg:
         qm.SetBase(sig.GetHist() )
         sig.Remap(qm)
         bkg.Remap(qm)
+        bkg2.Remap(qm)
         for x in b_systs_up: x.Remap(qm)
         for x in b_systs_down: x.Remap(qm)
         hdata = qm.Apply(hdata)
@@ -1076,6 +1097,7 @@ if doBkg:
     dummy.GetXaxis().SetTitleSize(24)
 
     bkg.Draw("HIST SAME")
+    bkg2.Draw("HIST SAME")
     #color=38
     sig.Draw("HIST SAME")
     sig.Print()
@@ -1115,6 +1137,13 @@ if doBkg:
     errAll.SetFillColor(ROOT.kGray)
     errAll.SetMarkerColor(ROOT.kGray)
 
+    bkg2R = bkg2.GetHist().Clone("bkg2R")
+    ## 
+    bkg2R.SetFillStyle(0)
+    bkg2R.SetFillColor(ROOT.kCyan)
+    bkg2R.SetLineColor(ROOT.kCyan)
+    bkg2R.SetLineWidth(3)
+
     leg.SetNColumns(2)
 
     if not opts.noRatio:
@@ -1141,9 +1170,13 @@ if doBkg:
 
         
         errAll.Divide(mcAll)
+        bkg2R.Divide(mcAll)
+
         r.Divide(mcAll)
         r.Draw("AXIS")
         #r.Draw("AXIS X+ Y+ SAME")
+
+
 
         txt.SetTextSize(16)
         txt.SetTextAlign(23)
@@ -1211,8 +1244,11 @@ if doBkg:
                 up = cont +e
                 errAll.SetBinContent(ibin+1,0.5)
                 errAll.SetBinError(ibin+1,0.5+up)
-                
+        
+
         errAll.Draw("E2 SAME")
+        bkg2R.Draw("HIST SAME")
+
         #r.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
         r.GetXaxis().SetTitle(dummy.GetXaxis().GetTitle())
         r.GetXaxis().SetTitleOffset(1.2)
@@ -1256,7 +1292,7 @@ if doBkg:
 
         r.Draw("P E X0 SAME")
 
-        garbage.extend([g,r])
+        garbage.extend([g,r,bkg2R])
 
     if opts.outdir=="":
         raw_input("ok?")

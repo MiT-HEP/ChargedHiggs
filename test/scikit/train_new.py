@@ -37,22 +37,22 @@ def build_model():
             metrics=['accuracy','precision',])
     return model
 
-model=build_model()
-model.save('model.h5')
-model.summary()
+#model=build_model()
+#model.save('model.h5')
+#model.summary()
 #print "-> skip model construction"
-try:
-    from keras.utils.visualize_util import plot
-    plot(model, to_file='model.png', show_shapes=True)
-except:
-    print('[INFO] Failed to make model plot')
+#try:
+#    from keras.utils.visualize_util import plot
+#    plot(model, to_file='model.png', show_shapes=True)
+#except:
+#    print('[INFO] Failed to make model plot')
 
 ########## USE TMVA FOR TRAINING ########
 import ROOT
 
 ROOT.TMVA.Tools.Instance()
 # for KERAS TRAINING IS NEEDED
-ROOT.TMVA.PyMethodBase.PyInitialize()
+#ROOT.TMVA.PyMethodBase.PyInitialize()
 #print "TMVA:",ROOT.TMVA_RELEASE
 
 multiclass=False
@@ -64,7 +64,9 @@ t=ROOT.TChain("hmm")
 #for n in range(0,100):
 #    if n in [53,55,59,73,93,94]: continue #exclude running jobs
 #    t.Add("/eos/user/a/amarini/Hmumu/fwk/2018_01_25_ExclusiveCategoriesAndTree/ChHiggs_%d.root"%n)
-t.Add("/eos/user/a/amarini/Hmumu/fwk/2018_04_04_ExclusiveCategoriesAndTree/ChHiggs*root")
+#t.Add("/eos/user/a/amarini/Hmumu/fwk/2018_04_04_ExclusiveCategoriesAndTree/ChHiggs*root")
+#t.Add("/eos/user/a/amarini/Hmumu/fwk/2019_02_11_Hmm2018Sync_Feb4/ChHiggs*root")
+t.Add("/eos/user/a/amarini/Hmumu/fwk/2019_02_18_Hmm2018Sync_Feb15/ChHiggs*root")
 print "TotEntries=",t.GetEntries()
 
 outname="output.root" if not multiclass else "multiclass.root"
@@ -87,15 +89,21 @@ features=[
         ## jets variables
         "ncentjets","njets","htCent",
         ## additional leptons: to expand
-        "pass_leptonveto",
+        #"pass_leptonveto",
         ## vbf variables
         "mjj_1","mjj_2","detajj_1","detajj_2",
-        "softNjets1","softHt1","softHt5","softHt10",
-        "firstQGL","secondQGL","thirdQGL",
+        #"softNjets1","softHt1","softHt5","softHt10",
+        #"firstQGL","secondQGL","thirdQGL",
         ## bjets variables
-        "nbjets","maxDeepB","leadDeepB","maxCSV",
+        "nbjets","maxDeepB","leadDeepB", #,"maxCSV",
         ## w/z variables
         "mt1","mt2","met",
+        ## photons
+        "Alt$(pho_pt[0],0.)",
+        "Alt$(pho_eta[0],0.)",
+        "Alt$(pho_dr1[0],0.)",
+        "Alt$(pho_dr2[0],0.)",
+        ##"npho",
         ]
 
 for x in features:
@@ -110,9 +118,9 @@ xsec = "(mc < -10 && mc >=-19 )*48.58* 0002176 + (mc< -20 && mc >= -29)*  3.782*
 dataloader.AddSpectator("xsec:= weight* ("+xsec +")");
 
 if not multiclass:
-    print "FIXME TT"
-    ttfix = "(mc>0 && (mc<20||mc>30)) * 1 +(mc>=20 && mc<30)*88.20/831"; # bkg weight
-    dataloader.SetBackgroundWeightExpression( "weight* ( "+ttfix+")" );
+    #print "FIXME TT"
+    #ttfix = "(mc>0 && (mc<20||mc>30)) * 1 +(mc>=20 && mc<30)*88.20/831"; # bkg weight
+    dataloader.SetBackgroundWeightExpression( "weight" );
     #dataloader.SetBackgroundWeightExpression( "weight" );
     dataloader.SetSignalWeightExpression( "weight * (" + xsec + ")" );
     dataloader . AddSignalTree(    t, 1.0 );
@@ -120,18 +128,20 @@ if not multiclass:
     sigCut = ROOT.TCut ( "pass_all && (mc < 0 && mc <= -10) && mass >110 && mass <150 && eventNum%2==0"); 
     #print "FIX VBF (2)"
     #sigCut = ROOT.TCut ( "pass_all && (mc <= 0 && mc <= -10 && runNum==1) && mass >110 && mass <150"); 
-    bgCut = ROOT.TCut ( "pass_all && ( mc == 10 || mc == 20) && mass >110 && mass <150 && eventNum %2==0"); 
+    bgCut = ROOT.TCut ( "pass_all && ( mc == 11 || mc == 20) && mass >110 && mass <150 && eventNum %2==0"); 
     dataloader. PrepareTrainingAndTestTree(sigCut,   bgCut, "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V");
 
 if multiclass:
-    dataloader.AddTree(t,"DY",1.0,ROOT.TCut("(mass>110 && mass<150) && pass_all && (mc>=10 && mc<20) && eventNum%2==0"))
+    dataloader.AddTree(t,"DY",1.0,ROOT.TCut("(mass>110 && mass<150) && pass_all && (mc ==11) && eventNum%2==0"))
+    #dataloader.AddTree(t,"DY",1.0,ROOT.TCut("(mass>110 && mass<150) && pass_all && (mc>=10 && mc<20) && eventNum%2==0"))
     dataloader.AddTree(t,"TT",1.0,ROOT.TCut("(mass>110 && mass<150) && pass_all && (mc>=20 && mc<30) && eventNum%2==0"))
     dataloader.AddTree (t, "ggH", 1.0, ROOT.TCut("(mass >110 && mass <150) && pass_all && ( mc<-10 && mc >-20) &&eventNum%2==0") );
     dataloader.AddTree (t, "qqH", 1.0, ROOT.TCut("(mass >110 && mass <150) && pass_all && ( mc<-20 && mc >-30) && eventNum%2==0") );
     dataloader.AddTree (t,  "VH", 1.0, ROOT.TCut("(mass >110 && mass <150) && pass_all && ( mc<-30 && mc >-60) && eventNum%2==0") );
     dataloader.AddTree (t, "ttH", 1.0, ROOT.TCut("(mass >110 && mass <150) && pass_all && ( mc<-60 && mc > -70) && eventNum%2==0") );
-    print "FIXME TT"
-    xsec += " + (mc>0 && (mc<20||mc>30)) * 1 +(mc>=20 && mc<30)*88.20/831"; # bkg weight
+    # print "FIXME TT"
+    #xsec += " + (mc>0 && (mc<20||mc>30)) * 1 +(mc>=20 && mc<30)*88.20/831"; # bkg weight
+    xsec = "1"
     dataloader.SetWeightExpression("weight* (" +xsec+")")
     
     print "------------ NTRIES -------------------"
@@ -147,17 +157,17 @@ if multiclass:
 
 
 print "-> BOOKING KERAS"
-factory.BookMethod(dataloader, ROOT.TMVA.Types.kPyKeras, "PyKeras", "H:!V:VarTransform=D,N:FileNameModel=model.h5:NumEpochs=50:BatchSize=128:SaveBestOnly=true:LearningRateSchedule=30,0.005;40,0.001;30,0.001")
+#factory.BookMethod(dataloader, ROOT.TMVA.Types.kPyKeras, "PyKeras", "H:!V:VarTransform=D,N:FileNameModel=model.h5:NumEpochs=50:BatchSize=128:SaveBestOnly=true:LearningRateSchedule=30,0.005;40,0.001;30,0.001")
 
-#print "-> BOOKING BDTG"
-#if not multiclass:
-#    factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, "BDTG",
-#                "!H:!V:NTrees=1200:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.99:SeparationType=SDivSqrtSPlusB:Pray"
-#                );
-#else:
-#    factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
-#                ROOT.TString("!H:!V:NTrees=5000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
-#                );
+print "-> BOOKING BDTG"
+if not multiclass:
+    factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, "BDTG",
+                "!H:!V:NTrees=1200:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.99:SeparationType=SDivSqrtSPlusB:Pray"
+                );
+else:
+    factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
+                ROOT.TString("!H:!V:NTrees=5000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
+                );
 
 factory . TrainAllMethods();
 factory . TestAllMethods();

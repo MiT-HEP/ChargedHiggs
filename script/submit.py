@@ -206,16 +206,21 @@ if opts.status:
 		    print " -------------------------------------"
 		#if opts.fullstatus:
 		notRunning=[]
-		bjobs = re.sub('//','/',check_output("bjobs -w",shell=True))
-		for iJob in run+pend:
-		    #test/Hmumu/Hmumu_2017_04_05_Bdt/Job_76
-		    if not re.search( re.sub('//','/','%s/Job_%d\s'%(opts.dir,int(iJob))),bjobs):notRunning.append( iJob)
-		    #cmd = "bjobs -w | grep '%s/Job_%d\>'"%(opts.dir,int(iJob))
-		    #status = call(cmd,shell=True)
-		    #if status != 0: notRunning.append( iJob)
-		if len(notRunning) >0 :
-		    print " NOT RUNNING! ",PrintLine(notRunning)
+		#bjobs = re.sub('//','/',check_output("bjobs -w",shell=True))
+        condor_q= check_output("condor_q",shell=True) 
+        if opts.dir not in condor_q: 
+		    print " NOT RUNNING! (condor) ", opts.dir
 		    print " -------------------------------------"
+
+		#for iJob in run+pend:
+		#    #test/Hmumu/Hmumu_2017_04_05_Bdt/Job_76
+		#    if not re.search( re.sub('//','/','%s/Job_%d\s'%(opts.dir,int(iJob))),bjobs):notRunning.append( iJob)
+		#    #cmd = "bjobs -w | grep '%s/Job_%d\>'"%(opts.dir,int(iJob))
+		#    #status = call(cmd,shell=True)
+		#    #if status != 0: notRunning.append( iJob)
+		#if len(notRunning) >0 :
+		#    print " NOT RUNNING! ",PrintLine(notRunning)
+		#    print " -------------------------------------"
 
 	exit(0)
 

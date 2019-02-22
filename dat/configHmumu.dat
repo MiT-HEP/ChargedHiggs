@@ -6,7 +6,7 @@ include=dat/config.2018.moriond.dat
 
 Files=
 ## Drell-Yan
-#include=dat/catalog/2017.moriond/dy_ht.dat
+include=dat/catalog/2017.moriond/dy_ht.dat
 #
 include=dat/catalog/2019.moriond/dy_amcatnlo.dat
 include=dat/catalog/2019.moriond/tt.dat

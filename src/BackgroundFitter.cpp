@@ -15,7 +15,6 @@
 
 #include "HiggsAnalysis/CombinedLimit/interface/HGGRooPdfs.h"
 
-#include "TRandom3.h"
 #include "TArrow.h"
 
 #include <iostream>
@@ -23,58 +22,6 @@
 
 using namespace RooFit;
 
-class PdfModelBuilder
-{
-    RooRealVar *obs_var;
-    map<string,RooRealVar*> params;
-    map<string,RooFormulaVar*> prods;
-    map<string,RooAbsPdf*> pdfs;
-    map<string,RooDataHist*> hists;
-    TRandom3 *RandomGen{NULL} ;
-    private:
-    bool replace(std::string& str, const std::string& from, const std::string& to) { // from SO
-        size_t start_pos = str.find(from);
-        if(start_pos == std::string::npos) return false;
-        str.replace(start_pos, from.length(), to);
-        return true;
-    }
-    public:
-        PdfModelBuilder(){};
-        ~PdfModelBuilder(){};
-        //
-        void setObsVar(RooRealVar *var){obs_var=var; prods["obs_range"] = new RooFormulaVar(Form("%s_range",obs_var->GetName()),"normalized obs var",Form("(@0-%f)/(%f)",obs_var->getMin(),obs_var->getMax()-obs_var->getMin()),*obs_var);};
-        RooAbsPdf* getBernstein(string prefix, int order,bool positive=true);
-        RooAbsPdf* getModBernstein(string prefix, int order);
-        //RooAbsPdf* getChebychev(string prefix, int order);
-        //RooAbsPdf* getPowerLaw(string prefix, int order);
-        //RooAbsPdf* getPowerLawSingle(string prefix, int order);
-        RooAbsPdf* getPowerLawGeneric(string prefix, int order);
-        //RooAbsPdf* getExponential(string prefix, int order);
-        RooAbsPdf* getExponentialSingle(string prefix, int order);
-        RooAbsPdf* getLaurentSeries(string prefix, int order);
-        RooAbsPdf* getLogPol(string prefix, int order);
-        RooAbsPdf* getExpPol(string prefix, int order); // e^pol
-        RooAbsPdf* getDYBernstein(string prefix, int order,TH1D*dy);
-        RooAbsPdf* getZPhotonRun1(string prefix, int order);
-        RooAbsPdf* getZModExp(string prefix, int order); // BWZ * (1+x)
-        RooAbsPdf* getZModExp2(string prefix, int order); /// BWZ * (1+x + x(1-x))
-        RooAbsPdf* getBWZ(string prefix, int order);
-        RooAbsPdf* getPolyTimesFewz(string prefix,int order,string fname);
-
-        // get the order for the ftest
-        // prefix are bern, powlaw, exp, lau
-        // return the relevalt to be included in the multipdf
-        RooAbsPdf* getPdf(const string& prefix,int order );
-        RooAbsPdf* getPdf(const string& prefix,int order, TH1D*h ) { 
-            if (prefix.find( "dybern")!=string::npos) return getDYBernstein(prefix+ Form("_ord%d",order),order,h); else return getPdf(prefix,order);
-        }
-        RooAbsPdf* fTest(const string& prefix,RooDataHist*,int *ord=NULL,const string&plotDir="",TH1D*h=NULL);
-        void runFit(RooAbsPdf *pdf, RooDataHist *data, double *NLL, int *stat_t, int MaxTries);
-        double getProbabilityFtest(double chi2, int ndof);
-        double getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooDataHist *data, std::string name, bool blind=true);
-
-
-};
 
 double PdfModelBuilder::getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooDataHist *data, std::string name,bool blind){
 

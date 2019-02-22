@@ -72,9 +72,12 @@ void HmumuAnalysis::SetTauCuts(Tau *t){
     t->SetDecayMode(1);
 }
 
-void HmumuAnalysis::SetPhotonCuts(Photon *p){
+void HmumuAnalysis::SetPhotonCuts(Photon *p){ // Already selecting Medium ided photons
+    // I'm removing jets that look really likes photons.
     p->SetIsoCut(-1); 
-    p->SetPtCut(8000);
+    p->SetIsoRelCut(0.15); 
+    p->SetPtCut(30);
+    p->SetEtaCut(1.44);
 }
 
 string HmumuAnalysis::CategoryExclusive(Event *e)
@@ -324,6 +327,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
             //kf->doGhost=false; 
             //kf->runGeneric();
             bool vhhadrres=false;
+            bool highmjj=false; // if there is a pair with high mjj, veto it
             float met = e->GetMet().Pt();
             if (nbjets==0 and met <35){
                 // loop over the selected jets local
@@ -343,8 +347,10 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
                         //Z += selectedJetsMiniIso[jjet]->GetP4()*kf->alpha[jjet];
                         Z += selectedJetsMiniIso[ijet]->GetP4();
                         Z += selectedJetsMiniIso[jjet]->GetP4();
-
-                        if ( Z.M() > 70 and Z.M()< 110 ){
+                        auto dphijj = selectedJetsMiniIso[ijet]->DeltaPhi(selectedJetsMiniIso[jjet]);
+                        
+                        if ( Z.M()> 250) highmjj=true;
+                        if ( Z.M() > 70 and Z.M()< 110 and dphijj < 2.0){
                             if (not vhhadrres) { // save jets that selected VH tag
                                 selectedJetsVHHadr.push_back(selectedJetsMiniIso[ijet]);
                                 selectedJetsVHHadr.push_back(selectedJetsMiniIso[jjet]);
@@ -357,7 +363,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
                     }
 
             }
-            if (vhhadrres)category="VHHadr";
+            if (vhhadrres and not highmjj)category="VHHadr";
         }
 
         // TODO kin fit assuming met 0
@@ -1163,7 +1169,7 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/Mjjkf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
 	    Book ("HmumuAnalysis/Vars/Malljkf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
 	    Book ("HmumuAnalysis/Vars/Metkf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
-	    Book ("HmumuAnalysis/Vars/Valuekf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 1000,0,100); 
+	    //Book ("HmumuAnalysis/Vars/Valuekf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 1000,0,100); 
 
 	    Book ("HmumuAnalysis/Vars/Mjjkf4_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
 	    Book ("HmumuAnalysis/Vars/Malljkf4_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
@@ -1191,7 +1197,8 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/Mbbkf4_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Bres_HbbHmm_"+ l ,"B Res;res;Events", 2000,-5,5.);
 	    Book ("HmumuAnalysis/Vars/Jres_HbbHmm_"+ l ,"B Res;res;Events", 2000,-5,5.);
-	    Book ("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
+	    //Book ("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160); // 2000 60 160
+	    Book ("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 20000,0,1000); // 2000 60 160
 	    Book ("HmumuAnalysis/Vars/Mmm_KF2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mmm_KF3_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mem_KF2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
@@ -1285,6 +1292,13 @@ void HmumuAnalysis::Init(){
         Branch("hmm","deltaphi",'F');
         Branch("hmm","deltaeta",'F');
         Branch("hmm","costhetastar",'F');
+
+        //photons
+        Branch("hmm","npho",'I'); // with eta less than 1.44
+        Branch("hmm","pho_pt",'d',20,"npho");
+        Branch("hmm","pho_eta",'d',20,"npho");
+        Branch("hmm","pho_dr1",'d',20,"npho");
+        Branch("hmm","pho_dr2",'d',20,"npho");
 
         Branch("hmm","bdt",'F');
         if (doScikit) Branch("hmm","keras",'F');
@@ -2063,7 +2077,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 Fill("HmumuAnalysis/Vars/Mjjkf_VHHadr_"+ label,systname, jetVar_["mjjkf"],e->weight()) ;
                 Fill("HmumuAnalysis/Vars/Malljkf_VHHadr_"+ label,systname, jetVar_["malljkf"],e->weight()) ;
                 Fill("HmumuAnalysis/Vars/Metkf_VHHadr_"+ label,systname, jetVar_["metkf"],e->weight()) ;
-                Fill("HmumuAnalysis/Vars/Valuekf_VHHadr_"+ label,systname, jetVar_["valuekf"],e->weight()) ;
+                //Fill("HmumuAnalysis/Vars/Valuekf_VHHadr_"+ label,systname, jetVar_["valuekf"],e->weight()) ;
 
                 Fill("HmumuAnalysis/Vars/Mjjkf4_VHHadr_"+ label,systname, jetVar_["mjjkf4"],e->weight()) ;
                 Fill("HmumuAnalysis/Vars/Malljkf4_VHHadr_"+ label,systname, jetVar_["malljkf4"],e->weight()) ;
@@ -2111,7 +2125,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         }
         
 
-        //if(Unblind(e))Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
+        Fill("HmumuAnalysis/Vars/Mmm_"+ label,systname, mass_,e->weight()) ;
         if( category != "")
         {
             Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
@@ -2154,7 +2168,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
 
 
-            if (doUnbinned and mass_>110 and mass_<150 and (not processingSyst_) )
+            if (doUnbinned and mass_>110 and mass_<150 and (not processingSyst_) and e->IsRealData())
             {
                 SetTreeVar("mmm",mass_);
                 FillTree("final");
@@ -2361,7 +2375,7 @@ void HmumuAnalysis::updateMjj(){
         // kf->run() sholud be the same of kf2
 
         // Add Ghost? kf can switch them on easily
-        if(true){
+        if(false){
             MyJet a,b,c;
             a.p4.SetPtEtaPhiM(30,0,0,0);
             b.p4.SetPtEtaPhiM(30,0,+2./3*TMath::Pi(),0);
@@ -2846,6 +2860,7 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
             if (label.find( "M125") != string::npos) mc -=2;
             if (label.find( "M130") != string::npos) mc -=3;
             if (label == "DY") mc =10;
+            if (label == "DYJetsToLL_M-105To160") mc =11;
             if (label == "TT") mc =20;
             if (label == "ST") mc =21;
             if (label == "WW") mc =30;
@@ -2923,6 +2938,7 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
             SetTreeVar("jet_phi",ijet,0.0);
         }
 
+
         // compute secondary jets variables
 
 
@@ -2956,6 +2972,31 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
         SetTreeVar("mjj_2"      ,jetVar_["mjj_2"]);
         SetTreeVar("detajj_1"   ,jetVar_["detajj_1"]);
         SetTreeVar("detajj_2"   ,jetVar_["detajj_2"]);
+
+        //compute photons
+        vector<Photon*> selectedPhotons;
+        for(int ipho=0;;++ipho)
+        {
+            Photon* p=e->GetPhoton(ipho);
+            if(p == NULL) break;
+            selectedPhotons.push_back(p);
+        }
+
+        SetTreeVar("npho",selectedPhotons.size());
+        for(int ipho=0;ipho<std::min(selectedPhotons.size(),size_t(20));++ipho)
+        {
+            SetTreeVar("pho_pt" ,ipho,selectedPhotons[ipho]->Pt());
+            SetTreeVar("pho_eta" ,ipho,selectedPhotons[ipho]->Eta());
+            if (mu0) {SetTreeVar("pho_dr1" ,ipho,selectedPhotons[ipho]->DeltaR(mu0));} else {SetTreeVar("pho_dr1" ,ipho,0.);}
+            if (mu1) {SetTreeVar("pho_dr2" ,ipho,selectedPhotons[ipho]->DeltaR(mu1));} else {SetTreeVar("pho_dr2" ,ipho,0.);}
+        }
+        for(int ipho=selectedPhotons.size();ipho<20 ;++ipho)
+        {
+            SetTreeVar("pho_pt" ,ipho,0.0);
+            SetTreeVar("pho_eta" ,ipho,0.0);
+            SetTreeVar("pho_dr1" ,ipho,0.0);
+            SetTreeVar("pho_dr2" ,ipho,0.0);
+        }
 
         // fill category
         int cat=-1;

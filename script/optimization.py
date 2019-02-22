@@ -32,6 +32,7 @@ parser.add_option("","--twoBound2D",dest="doubleTwoD",action='store_true',help="
 
 import ROOT
 
+print "-> Opening file",opts.file
 fInput = ROOT.TFile.Open(opts.file)
 fOutput = ROOT.TFile.Open(opts.out,"RECREATE")
 
@@ -90,7 +91,8 @@ def Abs(h):
 
 def GetHistoFromFile( nameString ):
     ''' Collect from the inputFiles the histograms and Add them'''
-    sig = fInput.FindObjectAny( nameString )
+    sig = fInput.Get( nameString )
+    if sig==None: sig = fInput.FindObjectAny( nameString )
 
     if sig !=None:
         if 'GluGlu_HToMuMu' in nameString: sig.Scale(config.xsec('GluGlu') * config.br())
@@ -104,8 +106,9 @@ def GetHistoFromFile( nameString ):
         if opts.verbose: print "try to add multiple histo:" 
         for s in nameString.split(','):
             if sig == None: 
-                sig = fInput.FindObjectAny(s)
-                if sig == None: print "Error: no histo",s
+                sig = fInput.Get(s)
+                if sig == None: sig = fInput.FindObjectAny(s)
+                if sig == None: print "Error: no histo '"+s+"'"
                 if 'GluGlu_HToMuMu' in s:   sig.Scale(config.xsec('GluGlu') * config.br())
                 if 'VBF_HToMuMu' in s:      sig.Scale(config.xsec('VBF') * config.br())
                 if 'WPlusH_HToMuMu' in s:   sig.Scale(config.xsec('WPlusH') * config.br())
@@ -113,7 +116,8 @@ def GetHistoFromFile( nameString ):
                 if 'ZH_HToMuMu' in s:       sig.Scale(config.xsec('ZH') * config.br())
                 if 'ttH_HToMuMu' in s:      sig.Scale(config.xsec('ttH') * config.br())
             else:
-                h_s = fInput.FindObjectAny(s)
+                h_s = fInput.Get(s)
+                if h_s == None: h_s = fInput.FindObjectAny(s)
                 if h_s == None: print "Error: no histo",s
                 if 'GluGlu_HToMuMu' in s: h_s.Scale(config.xsec('GluGlu') * config.br())
                 if 'VBF_HToMuMu' in s: h_s.Scale(config.xsec('VBF') * config.br())
@@ -209,6 +213,28 @@ def CreateSosB(sig,bkg):
 		else:
 			h2.SetBinContent(i, 0)
 	return h2
+
+def CreateAsimovStat(sig,bkg):
+	''' Create S/sqrt(B) plots'''
+	h2= sig.Clone("AsimovStatSign")
+	h2.Reset("ICESM")
+	h3= sig.Clone("AsimovStatSignTwoCat")
+	h3.Reset("ICESM")
+	for i in range(1, sig.GetNbinsX() +1 ):
+		sig_int = ComputeEff(sig,1,i, opts.great)
+		bkg_int = ComputeEff(bkg,1,i, opts.great)
+		sig_int *= opts.lumi
+		bkg_int *= opts.lumi
+		h2.SetBinContent(i, ROOT.RooStats.AsimovSignificance(sig_int,bkg_int))
+        
+		sig_2 = sig.Integral()*opts.lumi - sig_int
+		bkg_2 = bkg.Integral()*opts.lumi - bkg_int
+
+		z1 = ROOT.RooStats.AsimovSignificance(sig_int,bkg_int) if bkg_int >0 else 0.
+		z2 = ROOT.RooStats.AsimovSignificance(sig_2,bkg_2) if bkg_2 > 0 else 0.
+		h3.SetBinContent(i, math.sqrt(z1**2 + z2**2)) ## this is not an approximation. This is the Asimov significance for two cats!
+
+	return h2,h3
 
 def CreateSosB2D(sig,bkg):
 	''' Create a 2D S/sqrt(B) plots'''
@@ -711,10 +737,18 @@ if __name__ == "__main__":
 		SosB.Write()
 		CreateSoB(sig,bkg).Write()
 		CreateRoC(sig,bkg).Write()
+		AS,AS2=CreateAsimovStat(sig,bkg)
+		AS.Write()
+		AS2.Write()
 		
 		print " ->  One Boundary"
 		(iMax,z) = FindMaximum(SosB)
 		print "max one boundary is",iMax,"->",sig.GetBinCenter(iMax)," Z = ",z
+		print " -> Asimov Significance"
+		(iMax,z) = FindMaximum(AS)
+		print "max one boundary is",iMax,"->",sig.GetBinCenter(iMax)," Z = ",z
+		(iMax,z) = FindMaximum(AS2)
+		print "max for two cat is",iMax,"->",sig.GetBinCenter(iMax)," Z = ",z
 
 		if opts.double:
 			print " ->  Starting Two Boundaries optimization"

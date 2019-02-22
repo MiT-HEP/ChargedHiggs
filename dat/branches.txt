@@ -17,7 +17,6 @@ jetQglMult
 jetQglPtD
 jetQglAxis1
 jetQglAxis2
-jetQglPtDrLog
 ### PHOTON
 photonP4
 photonSelBits
@@ -51,7 +50,6 @@ lep*
 tauP4
 #tauId
 tauQ
-tauIso
 tauSelBits
 tau*
 ### MET
