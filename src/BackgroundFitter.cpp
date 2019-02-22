@@ -379,11 +379,17 @@ RooAbsPdf* PdfModelBuilder::getPolyTimesFewz(string prefix,int order,string fnam
     if ( dat.is_open() )
     {
         float m, y, e;
+        float last=-999;
         while (!dat.eof() )
         {
            dat >> m;
            dat >> y; 
            dat >> e;
+           if ( fabs(last-m)< 1e-10) {
+               cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] ignoring duplicate "<<m<<" "<<y<<endl;
+               continue;
+           }
+           last=m;
            mass.push_back(m);
            xsec.push_back(y);
            cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] inserting "<<m<<" "<<y<<endl;
@@ -391,7 +397,7 @@ RooAbsPdf* PdfModelBuilder::getPolyTimesFewz(string prefix,int order,string fnam
         dat.close();
     }
 
-    float m0 = 110.-0.1;     
+    float m0 = obs_var->getMin()-0.1;     
 
     if (mass[0] > m0)
     {
@@ -402,10 +408,23 @@ RooAbsPdf* PdfModelBuilder::getPolyTimesFewz(string prefix,int order,string fnam
         xsec.insert(xsec.begin(),y0);
     }
 
+    if (mass[ mass.size() -1] < obs_var->getMax()+0.1)
+    {
+        float m1 = obs_var->getMax()+.1;     
+        int N=mass.size()-1;
+        float y0 = (xsec[N] - xsec[N-1]) / (mass[N]-mass[N-1])*(m1 - mass[N]) + xsec[N];
+
+        cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] "<< xsec[N] <<","<< xsec[N-1] <<","<< mass[N]<<","<< mass[N-1] <<endl;
+        cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] inserting (extra) "<<m1<<" "<<y0<<endl;
+        mass.push_back(m1);
+        xsec.push_back(y0);
+    }
+
     cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] constructing spline size="<<mass.size()<<endl;
 
     // TODO -1?
-    RooSpline1D *spl=new RooSpline1D( (prefix +"_spl").c_str(),(prefix +"_spl").c_str(),*obs_var,mass.size()-1, &(mass[0]),&(xsec[0]) );
+    //RooSpline1D *spl=new RooSpline1D( (prefix +"_spl").c_str(),(prefix +"_spl").c_str(),*obs_var,mass.size()-1, &(mass[0]),&(xsec[0]) );
+    RooSpline1D *spl=new RooSpline1D( (prefix +"_spl").c_str(),(prefix +"_spl").c_str(),*obs_var,mass.size(), &(mass[0]),&(xsec[0]) );
 
     //for(float m= 110; m<150 ;m+=0.5)
     //{
