@@ -44,6 +44,7 @@
 	<class name="BackgroundFitter"/>
 	<class name="PurityFit"/>
 	<class name="PurityFitAnalytic"/>
+	<class name="PdfModelBuilder"/>
 	
 	<!-- Additional shapes -->
 	<class name="RooCMSShape"/>

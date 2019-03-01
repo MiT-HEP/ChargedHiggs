@@ -166,13 +166,13 @@ void LoadNero::FillJets(){
         
 //#warning TIGHT_FROM_NTUPLES
         bool id = (bj->selBits -> at( iJet)  ) & BareJets::Selection::JetTight;
-#warning TIGHT_ID_2017_REIMPLEMENTED
-        float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
-        if ( aeta >2.7 and aeta <=3.0 ) 
-        {
-            id = ( bj->nemf->at(iJet) >0.02 and bj->nemf->at(iJet) <0.99 and bj->qglMult->at(iJet) >2 ) ;
-            //if (bj->nemf->at(iJet) <0.02 ) id=false;
-        }
+        //#warning TIGHT_ID_2017_REIMPLEMENTED
+        //        float aeta=fabs(( (TLorentzVector*) ((*bj->p4)[iJet])) -> Eta());
+        //        if ( aeta >2.7 and aeta <=3.0 ) 
+        //        {
+        //            id = ( bj->nemf->at(iJet) >0.02 and bj->nemf->at(iJet) <0.99 and bj->qglMult->at(iJet) >2 ) ;
+        //            //if (bj->nemf->at(iJet) <0.02 ) id=false;
+        //        }
 
         if (not id) continue;
 
@@ -502,7 +502,7 @@ void LoadNero::FillTaus(){
     {
 #ifdef VERBOSE
         if(VERBOSE>1)cout <<"[LoadNero]::[FillTaus]::[DEBUG] Filling Taus n."<<iL <<" of "<<bt -> p4 -> GetEntries() <<endl;
-        if(VERBOSE>1)cout<<"\t iso= " << bt->iso->size()<<endl;
+        //if(VERBOSE>1)cout<<"\t iso= " << bt->iso->size()<<endl;
         if(VERBOSE>1)cout<<"\t charge= " << bt->Q->size()<<endl;
         if(VERBOSE>1)cout<<"\t iso2= " << bt->isoDeltaBetaCorr->size()<<endl;
         if(VERBOSE>1)cout<<"\t selBits= " << bt->selBits->size()<<endl;
@@ -510,7 +510,7 @@ void LoadNero::FillTaus(){
 #endif
         Tau *t = new Tau();
         t->SetP4( *(TLorentzVector*) ((*bt->p4)[iL]) );
-        t-> SetIso ((*bt->iso) [iL] );
+        //t-> SetIso ((*bt->iso) [iL] );
         t-> SetCharge( bt -> Q -> at(iL) );
         t-> SetType( 15 );
         t-> SetId  ((bt -> selBits -> at(iL) ) & BareTaus::Selection::TauDecayModeFindingNewDMs );
@@ -557,29 +557,6 @@ void LoadNero::FillTaus(){
 #endif
         BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["BareVertex"] ] ) ; assert(v!=NULL);
         BareJets *bj = dynamic_cast<BareJets*> ( bare_ [names_["BareJets"] ] ) ; assert(bj!=NULL);
-        // --- duplicate regression variables
-        t -> regVars_ . nvtx    = v -> npv;
-        t -> regVars_ . tauPt   =  t->Pt() ; //  just copied, no corrections
-        t -> regVars_ . tauEta  =  t->Eta() ;
-        t -> regVars_ . tauIso  = (*bt->iso) [iL];
-        t -> regVars_ . tauQ    = bt -> Q -> at(iL);
-        t -> regVars_ . tauIso2 = bt -> isoDeltaBetaCorr -> at(iL);
-        t -> regVars_ . tauM    = bt -> M -> at(iL);
-        t -> regVars_ . tauChargedIsoPtSum  = bt -> chargedIsoPtSum -> at(iL);
-
-        t -> regVars_ . jetPt =-10;
-        t -> regVars_ . jetEta =-10;
-        for(int ij=0;ij< bj->p4->GetEntries() ;ij++)
-        {
-            TLorentzVector* j = (TLorentzVector*)bj->p4->At(ij);
-            if ( t -> GetP4() . DeltaR(*j) > 0.1) continue;
-            t -> regVars_ . jetPt = j->Pt();
-            t -> regVars_ . jetEta = j->Eta();
-            break;
-        }
-
-
-        t -> regVars_ . tauNeutralIsoPtSum  = bt -> neutralIsoPtSum -> at(iL);
 
         //---------------------------------------------
         event_ -> taus_ . push_back(t);

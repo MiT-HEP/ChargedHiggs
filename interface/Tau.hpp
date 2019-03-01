@@ -101,19 +101,6 @@ class Tau: virtual public Object,
         }
 
     // --- REGRESSION 
-    struct regression{
-        float nvtx; 
-        float tauPt;
-        float tauEta;
-        float tauM;
-        float tauQ;
-        float tauIso;
-        float tauIso2;
-        float tauChargedIsoPtSum;
-        float tauNeutralIsoPtSum;
-        float jetPt;
-        float jetEta;
-    } regVars_;
 };
 
 

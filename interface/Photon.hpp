@@ -9,9 +9,11 @@ class Photon : virtual public Object,
 {
     protected:
         float isocut_;
+        float etacut_ {-1}; // ** eta cut on the accepted photons
         float ptcut_;
         float isorelcut_{-1};
     public:
+        inline void SetEtaCut(float x) {etacut_ = x;}
         inline void SetPtCut(float x) {ptcut_ = x;}
         inline void SetIsoCut(float x) {isocut_ = x;}
         inline void SetIsoRelCut( float x){isorelcut_=x;}
@@ -25,6 +27,7 @@ class Photon : virtual public Object,
             if (not id ) return 0; // medium
             if ( isocut_ > 0 and iso > isocut_) return 0;
             if ( ptcut_ > 0 and Pt() < ptcut_ ) return 0;
+            if ( etacut_ > 0 and std::abs(Eta()) > etacut_ ) return 0;
             if ( isorelcut_ >=0 and iso/Pt() > isorelcut_) return 0;
 
             return 1;

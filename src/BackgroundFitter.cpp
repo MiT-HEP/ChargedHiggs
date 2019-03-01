@@ -15,7 +15,6 @@
 
 #include "HiggsAnalysis/CombinedLimit/interface/HGGRooPdfs.h"
 
-#include "TRandom3.h"
 #include "TArrow.h"
 
 #include <iostream>
@@ -23,58 +22,6 @@
 
 using namespace RooFit;
 
-class PdfModelBuilder
-{
-    RooRealVar *obs_var;
-    map<string,RooRealVar*> params;
-    map<string,RooFormulaVar*> prods;
-    map<string,RooAbsPdf*> pdfs;
-    map<string,RooDataHist*> hists;
-    TRandom3 *RandomGen{NULL} ;
-    private:
-    bool replace(std::string& str, const std::string& from, const std::string& to) { // from SO
-        size_t start_pos = str.find(from);
-        if(start_pos == std::string::npos) return false;
-        str.replace(start_pos, from.length(), to);
-        return true;
-    }
-    public:
-        PdfModelBuilder(){};
-        ~PdfModelBuilder(){};
-        //
-        void setObsVar(RooRealVar *var){obs_var=var; prods["obs_range"] = new RooFormulaVar(Form("%s_range",obs_var->GetName()),"normalized obs var",Form("(@0-%f)/(%f)",obs_var->getMin(),obs_var->getMax()-obs_var->getMin()),*obs_var);};
-        RooAbsPdf* getBernstein(string prefix, int order,bool positive=true);
-        RooAbsPdf* getModBernstein(string prefix, int order);
-        //RooAbsPdf* getChebychev(string prefix, int order);
-        //RooAbsPdf* getPowerLaw(string prefix, int order);
-        //RooAbsPdf* getPowerLawSingle(string prefix, int order);
-        RooAbsPdf* getPowerLawGeneric(string prefix, int order);
-        //RooAbsPdf* getExponential(string prefix, int order);
-        RooAbsPdf* getExponentialSingle(string prefix, int order);
-        RooAbsPdf* getLaurentSeries(string prefix, int order);
-        RooAbsPdf* getLogPol(string prefix, int order);
-        RooAbsPdf* getExpPol(string prefix, int order); // e^pol
-        RooAbsPdf* getDYBernstein(string prefix, int order,TH1D*dy);
-        RooAbsPdf* getZPhotonRun1(string prefix, int order);
-        RooAbsPdf* getZModExp(string prefix, int order); // BWZ * (1+x)
-        RooAbsPdf* getZModExp2(string prefix, int order); /// BWZ * (1+x + x(1-x))
-        RooAbsPdf* getBWZ(string prefix, int order);
-        RooAbsPdf* getPolyTimesFewz(string prefix,int order,string fname);
-
-        // get the order for the ftest
-        // prefix are bern, powlaw, exp, lau
-        // return the relevalt to be included in the multipdf
-        RooAbsPdf* getPdf(const string& prefix,int order );
-        RooAbsPdf* getPdf(const string& prefix,int order, TH1D*h ) { 
-            if (prefix.find( "dybern")!=string::npos) return getDYBernstein(prefix+ Form("_ord%d",order),order,h); else return getPdf(prefix,order);
-        }
-        RooAbsPdf* fTest(const string& prefix,RooDataHist*,int *ord=NULL,const string&plotDir="",TH1D*h=NULL);
-        void runFit(RooAbsPdf *pdf, RooDataHist *data, double *NLL, int *stat_t, int MaxTries);
-        double getProbabilityFtest(double chi2, int ndof);
-        double getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooDataHist *data, std::string name, bool blind=true);
-
-
-};
 
 double PdfModelBuilder::getGoodnessOfFit(RooRealVar *mass, RooAbsPdf *mpdf, RooDataHist *data, std::string name,bool blind){
 
@@ -432,11 +379,17 @@ RooAbsPdf* PdfModelBuilder::getPolyTimesFewz(string prefix,int order,string fnam
     if ( dat.is_open() )
     {
         float m, y, e;
+        float last=-999;
         while (!dat.eof() )
         {
            dat >> m;
            dat >> y; 
            dat >> e;
+           if ( fabs(last-m)< 1e-10) {
+               cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] ignoring duplicate "<<m<<" "<<y<<endl;
+               continue;
+           }
+           last=m;
            mass.push_back(m);
            xsec.push_back(y);
            cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] inserting "<<m<<" "<<y<<endl;
@@ -444,7 +397,7 @@ RooAbsPdf* PdfModelBuilder::getPolyTimesFewz(string prefix,int order,string fnam
         dat.close();
     }
 
-    float m0 = 110.-0.1;     
+    float m0 = obs_var->getMin()-0.1;     
 
     if (mass[0] > m0)
     {
@@ -455,10 +408,23 @@ RooAbsPdf* PdfModelBuilder::getPolyTimesFewz(string prefix,int order,string fnam
         xsec.insert(xsec.begin(),y0);
     }
 
+    if (mass[ mass.size() -1] < obs_var->getMax()+0.1)
+    {
+        float m1 = obs_var->getMax()+.1;     
+        int N=mass.size()-1;
+        float y0 = (xsec[N] - xsec[N-1]) / (mass[N]-mass[N-1])*(m1 - mass[N]) + xsec[N];
+
+        cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] "<< xsec[N] <<","<< xsec[N-1] <<","<< mass[N]<<","<< mass[N-1] <<endl;
+        cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] inserting (extra) "<<m1<<" "<<y0<<endl;
+        mass.push_back(m1);
+        xsec.push_back(y0);
+    }
+
     cout <<"[PdfModelBuilder]::[getPolyTimesFewz]::[DEBUG] constructing spline size="<<mass.size()<<endl;
 
     // TODO -1?
-    RooSpline1D *spl=new RooSpline1D( (prefix +"_spl").c_str(),(prefix +"_spl").c_str(),*obs_var,mass.size()-1, &(mass[0]),&(xsec[0]) );
+    //RooSpline1D *spl=new RooSpline1D( (prefix +"_spl").c_str(),(prefix +"_spl").c_str(),*obs_var,mass.size()-1, &(mass[0]),&(xsec[0]) );
+    RooSpline1D *spl=new RooSpline1D( (prefix +"_spl").c_str(),(prefix +"_spl").c_str(),*obs_var,mass.size(), &(mass[0]),&(xsec[0]) );
 
     //for(float m= 110; m<150 ;m+=0.5)
     //{

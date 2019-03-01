@@ -21,7 +21,8 @@ class HmmConfig():
         for muStr in self.muCategories:
               for catStr in self.procCategories:
                   self.categories.append(catStr+"_"+muStr);
-
+        
+        self.year=2017
         ### FIT ###
         self.xmin = 110
         self.xmax=150
@@ -96,6 +97,7 @@ class HmmConfig():
     def Print(self):
         print "--- Hmm Configurator ---"
         print "Name:",self.__class__.__name__
+        print "Year:",self.year
         for x in ["xmin","xmax","muCategories","procCategories","categories","sig_mass_points","processes","datacard_procs","sigfit_scale_unc","sigfit_smear_unc","catVersion","fitVersion","bkg_functions"]:
             print x+"=",eval("self."+x)
         print "------------------------"
@@ -216,8 +218,10 @@ class HmmConfig():
             raise ValueError
 
     def lumi(self):
-        #return 35867 ## 2016
-        return 41860
+        if self.year==2016: return 35867 ## 2016
+        if self.year==2017: return 41860
+        if self.year==2018: return 59970
+        raise ValueError("Unknown year %d for lumi calculation"%self.year)
 
     #def readScaleUnc(self,f="Hmumu/syst/scale/scales.txt"):
     #    self.scale ={} #("cat","proc") = mean, sigma
@@ -281,7 +285,7 @@ class HmmConfigWithTTH(HmmConfigAutoCat):
         self.computeVersioning()
         
 class HmmConfigExCat(HmmConfigAutoCat):
-    def __init__(self,n=20):
+    def __init__(self,n=20,year=2017):
         HmmConfigAutoCat.__init__(self)
         #self.categories=[ "cat%d"%x for x in range(0,17)]
         self.categories=[ "cat%d"%x for x in range(0,n)]
@@ -293,12 +297,16 @@ class HmmConfigExCat(HmmConfigAutoCat):
                 self.sigfit_gaussians[(p,cat)] = 1;
         self.SimpleScaleAndSmear()
         self.computeVersioning()
+        self.year=year
 
 
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
 hmmExCat = HmmConfigExCat(17) ## 16 + mjj
 hmmExCatBoost = HmmConfigExCat(22) ## 21 + mjj
+
+hmmExCat2018 = HmmConfigExCat(17,2018) ## 16 + mjj
+hmmExCatBoost2018 = HmmConfigExCat(22,2018) ## 21 + mjj
 
 class HHConfig(HmmConfig):
     def __init__(self):
@@ -340,6 +348,8 @@ if __name__=="__main__":
     #hmmTTH.Print()
     hmmWithTTH.Print()
     hmmExCatBoost.Print()
+    hmmExCat2018.Print()
+    hmmExCatBoost2018.Print()
 
 import ROOT
 from array import array
@@ -539,22 +549,6 @@ class StringToCpp():
         print self.Parse("gt_bdt_score_0p400_lt_bdt_score_0p730_lt_bdt_score_0p650_lt_dimu_max_abs_eta_0p900"),cat,"=",11,";"
         print self.Parse("gt_bdt_score_0p400_gt_bdt_score_0p730"),cat,"=",12,";"
 
-        #print self.Parse("gt_bdt_score_0p395_gt_bdt_score_0p727_gt_dimu_avg_abs_eta_1p954"),cat,"=",0,";"
-        #print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_lt_bdt_score_n0p399"),cat,"=",1,";"
-        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_gt_bdt_score_0p246_gt_dimu_max_abs_eta_1p902"),cat,"=",2,";"
-        #print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_gt_dimu_max_abs_eta_1p965"),cat,"=",3,";"
-        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_gt_dimu_max_abs_eta_1p787"),cat,"=",4,";"
-        #print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_lt_dimu_max_abs_eta_1p965_lt_bdt_score_n0p115"),cat,"=",5,";"
-        #print self.Parse("lt_bdt_score_0p395_lt_bdt_score_0p051_gt_bdt_score_n0p399_lt_dimu_max_abs_eta_1p965_gt_bdt_score_n0p115"),cat,"=",6,";"
-        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_lt_dimu_max_abs_eta_0p915_lt_bdt_score_0p261"),cat,"=",7,";"
-        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_lt_dimu_max_abs_eta_1p787_lt_bdt_score_0p527"),cat,"=",8,";"
-        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_gt_dimu_max_abs_eta_0p917_lt_dimu_max_abs_eta_1p787_gt_bdt_score_0p527"),cat,"=",9,";"
-        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_lt_dimu_max_abs_eta_0p915_gt_bdt_score_0p261"),cat,"=",10,";"
-        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_gt_bdt_score_0p246_lt_dimu_max_abs_eta_1p902"),cat,"=",11,";"
-        #print self.Parse("lt_bdt_score_0p395_gt_bdt_score_0p051_gt_dimu_max_abs_eta_0p915_lt_bdt_score_0p246"),cat,"=",12,";"
-        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_gt_bdt_score_0p645"),cat,"=",13,";"
-        #print self.Parse("gt_bdt_score_0p395_lt_bdt_score_0p727_lt_bdt_score_0p645_lt_dimu_max_abs_eta_0p917"),cat,"=",14,";"
-        #print self.Parse("gt_bdt_score_0p395_gt_bdt_score_0p727_lt_dimu_avg_abs_eta_1p954"),cat,"=",15,";"
         return 
 
 

@@ -53,8 +53,6 @@
 #include "interface/PurityFit.hpp"
 #include "interface/PurityFitAnalytic.hpp"
 #include "interface/PurityFitBase.hpp"
-#include "interface/RegressionReader.hpp"
-#include "interface/RegressionTrainer.hpp"
 #include "interface/RoccoR.hpp"
 #include "interface/Rochester.hpp"
 #include "interface/RooCMSShape.hpp"
