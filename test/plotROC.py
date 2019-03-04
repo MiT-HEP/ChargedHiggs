@@ -14,6 +14,7 @@ parser.add_option("-f","--file",dest="file",type="string",help="File:var[:legend
 parser.add_option("-t","--tree",dest="tree",type="string",help="Tree [%default]",default="TestTree")
 #parser.add_option("-m","--multiclass",dest="multiclass",action="store_true",help="Switch on Multiclass mode [%default]",default=False)
 parser.add_option("-b","--binning",dest="bins",type="string",help="Binning [%default]",default="")
+parser.add_option("","--selection",dest="selection",type="string",help="Selection [%default]",default="")
 (opts,args)=parser.parse_args()
 
 sys.argv=[]
@@ -170,14 +171,15 @@ for idx,s in enumerate(opts.file.split(',')):
             if t.classID == 0 : hSig.Fill(val,t.weight)
             else : hBkg.Fill(val,t.weight)
     else:
-        t.Draw(v + ">>hSig","weight * (classID==1)","goff") ## 0 = sig
-        t.Draw(v + ">>hBkg","weight * (classID==0)","goff") ## 1 = bkg
+        selstring="" if opts.selection=="" else " && "+opts.selection
+        t.Draw(v + ">>hSig","weight * (classID==1 %s)"%selstring,"goff") ## 0 = sig
+        t.Draw(v + ">>hBkg","weight * (classID==0 %s)"%selstring,"goff") ## 1 = bkg
         if doLike:
             t0=fIn.Get("dataset/TrainTree")
             hSig0 = hSig.Clone("hSig0")
             hBkg0 = hBkg.Clone("hBkg0")
-            t0.Draw(v + ">>hSig0","weight * (classID==1)","goff") ## 0 = sig
-            t0.Draw(v + ">>hBkg0","weight * (classID==0)","goff") ## 1 = bkg
+            t0.Draw(v + ">>hSig0","weight * (classID==1 %s)"%selstring,"goff") ## 0 = sig
+            t0.Draw(v + ">>hBkg0","weight * (classID==0 %s)"%selstring,"goff") ## 1 = bkg
             ## one Tree -> hSig0 = hSig
             ## rmap to a likelihood ratio s/s+b
             hSig0.Scale(1./hSig0.Integral())

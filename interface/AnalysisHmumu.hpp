@@ -19,6 +19,8 @@ class TRandom;
 class HmumuAnalysis: virtual public AnalysisBase
 {
     public:
+        int year=2017; // master switch for year configuration
+
         HmumuAnalysis() : AnalysisBase () {}
         virtual ~HmumuAnalysis (){}
 

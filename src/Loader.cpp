@@ -425,6 +425,11 @@ void LoadNero::FillLeptons(){
         //    l->SetIso ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
         //}
         l-> SetP4( lp4 );
+        if (tree_->GetBranchStatus("lepKinfitP4"))
+        {
+            TLorentzVector kfp4= *(TLorentzVector*) ((*bl->kinfitP4)[iL]);
+            l-> SetKFP4( kfp4 );
+        }
         l-> SetCharge (((*bl->pdgId)[iL] >0) ?  -1: 1 ); 
         l-> SetTightId (( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight)); 
         l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepMedium));

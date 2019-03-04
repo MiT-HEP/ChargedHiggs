@@ -606,12 +606,19 @@ void Event::ApplyTopReweight(){
     }
 }
 
-double Event::ApplyL1PreFire(){
+double Event::ApplyL1PreFire(int year){
     //SF_TH2F *sf=(SF_TH2F*)GetWeight()->GetSF("prefire");
     if (IsRealData() ) return 1.;
+    
+    string name = "prefire";
+    if (year==2016) name="prefire2016";
+    else if (year==2017) name="prefire2017";
+    else if (year==2018) return 1.0;
+
     SF* dummy=GetWeight()->GetSF("dummy");
     float eventsf = 1.;
     bool changed=false;
+
     for(int i=0;;++i)
     {
         Jet*j=GetBareJet(i); // or bare?-> Probably PU Id clean the EG ones
@@ -622,8 +629,8 @@ double Event::ApplyL1PreFire(){
         float ptem= j->GetP4Dirty().Pt() * (j->GetCEMF() + j->GetNEMF());
     
         if (ptem<40.) continue; // only < 40 has prefire information:
-        SetPtEtaSF("prefire",ptem,fabs(eta));
-        eventsf *= (1.-GetWeight()->GetSF("prefire")->get() );
+        SetPtEtaSF(name,ptem,fabs(eta));
+        eventsf *= (1.-GetWeight()->GetSF(name)->get() );
         changed=true;
     }
     //if (changed)eventsf= 1.-eventsf;
@@ -638,10 +645,14 @@ double Event::ApplyL1PreFire(){
 }
 
 //#define VERBOSE 2
-double Event::ApplyBTagSF(int wp)
+double Event::ApplyBTagSF(int wp,int year)
 {
     double sf=1.;
-    SetWPSF("bdeep",wp); // loose, for sf
+    string name="bdeep";
+    if (year==2017) name="bdeep2017";
+    else if (year==2018) name="bdeep2018";
+    else if (year==2016) name ="bdeep2016";
+    SetWPSF(name,wp); // loose, for sf
 
 
 #ifdef VERBOSE
@@ -651,17 +662,17 @@ double Event::ApplyBTagSF(int wp)
     for (int i=0;i<NcentralJets() ;++i)
     {
         Jet *j=GetCentralJet(i);
-        SetJetFlavorSF("bdeep",j->hadFlavor());
+        SetJetFlavorSF(name,j->hadFlavor());
 
         if (wp == 3) // reshaping
-            SetDiscrSF("bdeep",j->GetDeepB());
+            SetDiscrSF(name,j->GetDeepB());
 
         if (not j->IsBJet() and wp !=3) continue;
 
-        SetPtEtaSF("bdeep",j->Pt(), j->Eta() );
+        SetPtEtaSF(name,j->Pt(), j->Eta() );
 
 #ifdef VERBOSE
-        if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Applying bdeep sf for jet: %f,%f,%d = %f",j->Pt(),j->Eta(),j->Flavor(),GetWeight()->GetSF("bdeep")->get()));
+        if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Applying bdeep sf '%s' for jet: %f,%f,%d = %f",name.c_str(),j->Pt(),j->Eta(),j->Flavor(),GetWeight()->GetSF(name)->get()));
 #endif
         
         //if (wp==3)
@@ -672,10 +683,10 @@ double Event::ApplyBTagSF(int wp)
         //}
         //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("SF For jet %d with pt=%f eta=%f hf=%d is %lf",i,j->Pt(),j->Eta(),j->hadFlavor(),GetWeight()->GetSF("bdeep")->get()));
 
-        if (GetWeight()->GetSF("bdeep")->get() <.2 or GetWeight()->GetSF("bdeep")->get()>2.) continue; // not believable
+        if (GetWeight()->GetSF(name)->get() <.2 or GetWeight()->GetSF(name)->get()>2.) continue; // not believable
 
-        ApplySF("bdeep");
-        sf *= GetWeight()->GetSF("bdeep")->get();
+        ApplySF(name);
+        sf *= GetWeight()->GetSF(name)->get();
     }
 #ifdef VERBOSE
    if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","End BTAG SF"); 

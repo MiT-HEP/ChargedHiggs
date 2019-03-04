@@ -55,6 +55,7 @@
 #include "interface/PurityFitBase.hpp"
 #include "interface/RoccoR.hpp"
 #include "interface/Rochester.hpp"
+#include "interface/VertexKinFit.hpp"
 #include "interface/RooCMSShape.hpp"
 #include "interface/RooVoigtianShape.hpp"
 #include "interface/ScaleAndSmear.hpp"

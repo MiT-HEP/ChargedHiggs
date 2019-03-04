@@ -302,10 +302,10 @@ class HmmConfigExCat(HmmConfigAutoCat):
 
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
-hmmExCat = HmmConfigExCat(17) ## 16 + mjj
+hmmExCat = HmmConfigExCat(16) ## 16 + mjj
 hmmExCatBoost = HmmConfigExCat(22) ## 21 + mjj
 
-hmmExCat2018 = HmmConfigExCat(17,2018) ## 16 + mjj
+hmmExCat2018 = HmmConfigExCat(16,2018) ## 16 + mjj
 hmmExCatBoost2018 = HmmConfigExCat(22,2018) ## 21 + mjj
 
 class HHConfig(HmmConfig):
