@@ -1658,8 +1658,10 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         {
             changed=true;
             float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
+            //float eta_for_sf= std::max(std::min(mu0->Eta(),2.399F),-2.399F);
+            float pt_for_sf = std::max(mu0->Pt(),30.1F);
 
-            sf_runBCDEF->set( std::max(mu0->Pt(),float(30.1)), eta_for_sf);
+            sf_runBCDEF->set( pt_for_sf, eta_for_sf);
             effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*0.005 ) ; // 0.5% correlated with runGH
             effmc_runBCDEF *= 1.- (sf_runBCDEF->getMCEff()) ;
         }
@@ -1669,8 +1671,10 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             changed=true;
 
             float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
+            //float eta_for_sf= std::max(std::min(mu1->Eta(),2.399F),-2.399F);
+            float pt_for_sf = std::max(mu1->Pt(),30.1F);
 
-            sf_runBCDEF->set( std::max(mu1->Pt(),float(30.1)) ,eta_for_sf );
+            sf_runBCDEF->set( pt_for_sf ,eta_for_sf );
             effdata_runBCDEF *= 1.-(sf_runBCDEF->getDataEff()+sf_runBCDEF->syst*0.005) ; 
             effmc_runBCDEF *= 1.- (sf_runBCDEF->getMCEff()) ;
         }
@@ -1703,6 +1707,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         {
             changed=true;
             float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
+            //float eta_for_sf= std::max(std::min(mu0->Eta(),2.399F),-2.399F);
+            float pt_for_sf = std::max(mu0->Pt(),30.1F);
 
             sf_runBF->set( std::max(mu0->Pt(),float(30.1)), eta_for_sf);
             sf_runGH->set( std::max(mu0->Pt(),float(30.1)), eta_for_sf);
@@ -1717,9 +1723,11 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             changed=true;
 
             float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
+            //float eta_for_sf= std::max(std::min(mu1->Eta(),2.399F),-2.399F);
+            float pt_for_sf = std::max(mu1->Pt(),30.1F);
 
-            sf_runBF->set( std::max(mu1->Pt(),float(30.1)) ,eta_for_sf );
-            sf_runGH->set( std::max(mu1->Pt(),float(30.1)) ,eta_for_sf );
+            sf_runBF->set( pt_for_sf ,eta_for_sf );
+            sf_runGH->set( pt_for_sf ,eta_for_sf );
             effdata_runBF *= 1.-(sf_runBF->getDataEff()+sf_runGH->syst*0.005) ; // 0.5% correlated runGH runBCDEF
             effdata_runGH *= 1.-(sf_runGH->getDataEff()+sf_runGH->syst*0.005) ; // 0.5% correlated runGH runBCDEF
             effmc_runBF *= 1.- (sf_runBF->getMCEff()) ;
@@ -1757,9 +1765,11 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         {
             changed=true;
             float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
+            //float eta_for_sf= std::max(std::min(mu0->Eta(),2.399F),-2.399F);
+            float pt_for_sf = std::max(mu0->Pt(),30.1F);
 
-            sf_runA->set( std::max(mu0->Pt(),float(30.1)), eta_for_sf);
-            sf_runBD->set( std::max(mu0->Pt(),float(30.1)), eta_for_sf);
+            sf_runA->set( pt_for_sf, eta_for_sf);
+            sf_runBD->set( pt_for_sf, eta_for_sf);
             effdata_runA *= 1.-(sf_runA->getDataEff()+sf_runBD->syst*0.005 ) ; // 0.5% correlated with runBD
             effdata_runBD *= 1.-(sf_runBD->getDataEff()+sf_runBD->syst*0.005 ) ; // 0.5% correlated with runBD
             effmc_runA *= 1.- (sf_runA->getMCEff()) ;
@@ -1771,9 +1781,11 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             changed=true;
 
             float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
+            //float eta_for_sf= std::max(std::min(mu1->Eta(),2.399F),-2.399F);
+            float pt_for_sf = std::max(mu1->Pt(),30.1F);
 
-            sf_runA->set( std::max(mu1->Pt(),float(30.1)) ,eta_for_sf );
-            sf_runBD->set( std::max(mu1->Pt(),float(30.1)) ,eta_for_sf );
+            sf_runA->set( pt_for_sf ,eta_for_sf );
+            sf_runBD->set( pt_for_sf ,eta_for_sf );
             effdata_runA *= 1.-(sf_runA->getDataEff()+sf_runBD->syst*0.005) ; // 0.5% correlated runBD runBCDEF
             effdata_runBD *= 1.-(sf_runBD->getDataEff()+sf_runBD->syst*0.005) ; // 0.5% correlated runBD runBCDEF
             effmc_runA *= 1.- (sf_runA->getMCEff()) ;
@@ -1880,7 +1892,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         {
             float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
             float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
-            float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
+            //float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
+            float eta_for_sf= std::max(std::min(mu0->Eta(),2.399F),-2.399F); // id 2016 is in eta and not in aeta
 
             e->SetPtEtaSF("mu_id_2016_runBF", pt_for_sf,eta_for_sf );
             sfBF = e->GetWeight()->GetSF("mu_id_2016_runBF")->sf ; 
@@ -1902,7 +1915,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         {
             float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
             float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
-            float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
+            //float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
+            float eta_for_sf= std::max(std::min(mu1->Eta(),2.399F),-2.399F); // id 2016 is in eta and not in aeta
 
             e->SetPtEtaSF("mu_id_2016_runBF", pt_for_sf,eta_for_sf );
             sfBF *= e->GetWeight()->GetSF("mu_id_2016_runBF")->sf ; 
@@ -1969,7 +1983,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         {
             float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
             float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
-            float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
+            float eta_for_sf= std::min(fabs(mu0->Eta()),2.399F);
 
             e->SetPtEtaSF("mu_iso_2018", pt_for_sf,eta_for_sf );
             sf = e->GetWeight()->GetSF("mu_iso_2018")->sf ; 
@@ -1993,12 +2007,12 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         {
             float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
             float pt_for_sf = std::min(std::max(mu0->Pt(),min_pt_sf),max_pt_sf);
-            float eta_for_sf= std::min(fabs(mu0->Eta()),float(2.399));
-
-            e->SetPtEtaSF("mu_iso_2018_runBF", pt_for_sf,eta_for_sf );
-            sfBF = e->GetWeight()->GetSF("mu_iso_2018_runBF")->sf ; 
-            e->SetPtEtaSF("mu_iso_2018_runGH", pt_for_sf,eta_for_sf );
-            sfGH = e->GetWeight()->GetSF("mu_iso_2018_runGH")->sf ; 
+            //float eta_for_sf= std::min(fabs(mu0->Eta()),2.399F);
+            float eta_for_sf= std::max(std::min(mu0->Eta(),2.399F),-2.399F); // id 2016 is in eta and not in aeta
+            e->SetPtEtaSF("mu_iso_2016_runBF", pt_for_sf,eta_for_sf );
+            sfBF = e->GetWeight()->GetSF("mu_iso_2016_runBF")->sf ; 
+            e->SetPtEtaSF("mu_iso_2016_runGH", pt_for_sf,eta_for_sf );
+            sfGH = e->GetWeight()->GetSF("mu_iso_2016_runGH")->sf ; 
 
         }
 
@@ -2006,14 +2020,15 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         {
             float min_pt_sf=20.+0.001,max_pt_sf=120.-0.001;
             float pt_for_sf = std::min(std::max(mu1->Pt(),min_pt_sf),max_pt_sf);
-            float eta_for_sf= std::min(fabs(mu1->Eta()),float(2.399));
+            //float eta_for_sf= std::min(fabs(mu1->Eta()),2.399F);
+            float eta_for_sf= std::max(std::min(mu1->Eta(),2.399F),-2.399F); // id 2016 is in eta and not in aeta
             e->SetPtEtaSF("mu_iso_2018_runBF", pt_for_sf,eta_for_sf);
-            sfBF *= e->GetWeight()->GetSF("mu_iso_2018_runBF")->sf ; 
+            sfBF *= e->GetWeight()->GetSF("mu_iso_2016_runBF")->sf ; 
             e->SetPtEtaSF("mu_iso_2018_runGH", pt_for_sf,eta_for_sf);
-            sfGH *= e->GetWeight()->GetSF("mu_iso_2018_runGH")->sf ; 
+            sfGH *= e->GetWeight()->GetSF("mu_iso_2016_runGH")->sf ; 
 
         }
-        sfId = w_2016_BF*sfBF + w_2016_GH*sfGH;
+        sfIso = w_2016_BF*sfBF + w_2016_GH*sfGH;
     }
     
     // apply trigger, id and iso sf

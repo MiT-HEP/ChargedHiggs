@@ -51,8 +51,8 @@ mu_trigger_runBCDEF th2f aux/mu/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root IsoM
 
 mu_trigger_afterHLT_2018 th2f aux/mu/2018/EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root IsoMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
 mu_trigger_beforeHLT_2018 th2f aux/mu/2018/EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root IsoMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
-mu_iso_2018 th2f  aux/mu/2018/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO.root:NUM_LooseRelIso_DEN_MediumID_pt_abseta
-mu_id_2018 th2f  aux/mu/2018/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta
+mu_iso_2018 th2f  aux/mu/2018/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO.root:NUM_LooseRelIso_DEN_MediumID_pt_abseta:flip
+mu_id_2018 th2f  aux/mu/2018/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta:flip
 
 ################
 ##  PreFiring ##
