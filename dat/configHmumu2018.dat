@@ -1,0 +1,40 @@
+include=dat/configHmumu.dat
+
+Files=
+include=dat/catalog/2019.moriond.year2018/dy_amcatnlo.dat
+include=dat/catalog/2019.moriond.year2018/tt.dat
+include=dat/catalog/2019.moriond.year2018/st.dat
+#include=dat/catalog/2019.moriond.year2018/rares.dat
+
+
+## Signal
+include=dat/catalog/2019.moriond.year2018/hmm.dat
+
+### DATA
+include=dat/catalog/2019.moriond.year2018/singleMuon.dat
+
+MCDB=aux/mcdb.Hmumu.2019.year2018.dat
+pileup=aux/pileup.2018.root
+
+#### NO CORRECTION ####
+#Correct=
+
+#### ROCHESTER ONLY
+Correct=RochesterCorrections
+config=RochesterCorrections|year="2018",allow_reset=1
+
+## KINETIC FIT ONLY
+#Correct=VertexKinfit
+
+### KINETIC FIT & ROCHESTER
+# only the first should reset the object
+#Correct=VertexKinfit,RochesterCorrections
+#config=RochesterCorrections|year="2018",allow_reset=0
+
+####
+addConfig=HmumuAnalysis|year=2018
+
+include=dat/json.2018.moriond.dat
+Analysis=MetFiltersAnalysis,HmumuAnalysis
+
+#config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON_v1.txt')

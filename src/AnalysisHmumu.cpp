@@ -60,6 +60,9 @@ void HmumuAnalysis::SetJetCuts(Jet *j) {
     //j->SetPuIdCut(-999);
     //#warning PUID
     j->SetPuIdCut(100);
+    // Noise hard cut on jets
+    //if (year==2017) 
+    j->SetEENoiseCut(false);
     // medium CSV
     j->SetBCut(-100); //L=0.5426 , M=  0.8484, T0.9535 
     j->SetDeepBCut(DEEP_B_MEDIUM); 
@@ -333,7 +336,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
             bool vhhadrres=false;
             bool highmjj=false; // if there is a pair with high mjj, veto it
             float met = e->GetMet().Pt();
-            if (nbjets==0 and met <35){
+            if (nbjets==0 and met <70){
                 // loop over the selected jets local
                 for(unsigned ijet=0;ijet < selectedJetsMiniIso.size();++ijet) 
                     for(unsigned jjet=ijet+1;jjet < selectedJetsMiniIso.size();++jjet) 
@@ -349,6 +352,8 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
                         TLorentzVector Z;
                         //Z += selectedJetsMiniIso[ijet]->GetP4()*kf->alpha[ijet];
                         //Z += selectedJetsMiniIso[jjet]->GetP4()*kf->alpha[jjet];
+                        //
+                        if (selectedJetsMiniIso[ijet]->QGL()<0.5 or selectedJetsMiniIso[jjet]->QGL()<0.5) continue; 
                         Z += selectedJetsMiniIso[ijet]->GetP4();
                         Z += selectedJetsMiniIso[jjet]->GetP4();
                         auto dphijj = selectedJetsMiniIso[ijet]->DeltaPhi(selectedJetsMiniIso[jjet]);
@@ -1105,8 +1110,10 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/MuonMiniIso_Eta_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,-5,5);
 
 	    Book ("HmumuAnalysis/Vars/MetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/RawMetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnH_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnH_nojec_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/RawMetOnH_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnZ_rw_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnH_rw_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnZ_"+ l ,"Pt On Z (70-110);Met [GeV];Events", 1000,0,1000);
@@ -2205,6 +2212,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         
         if (mass_ >= 70 and mass_<110){
             Fill("HmumuAnalysis/Vars/MetOnZ_"+ label,systname, e->GetMet().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/RawMetOnZ_"+ label,systname, e->GetMet().GetRawMetP4().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnZ_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, pt_ ,e->weight());
 
@@ -2247,6 +2255,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             }
 
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().GetRawMetP4().Pt(),e->weight());
 
             Fill("HmumuAnalysis/Vars/Mt1OnH_"+ label,systname,ChargedHiggs::mt(mu0->Pt(),e->GetMet().Pt(),mu0->Phi(),e->GetMet().Phi()) ,e->weight());
             Fill("HmumuAnalysis/Vars/Mt2OnH_"+ label,systname,ChargedHiggs::mt(mu1->Pt(),e->GetMet().Pt(),mu1->Phi(),e->GetMet().Phi()) ,e->weight());
@@ -2258,8 +2267,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/Mjj1OnH_" + label,systname, jetVar_["mjj_1"],e->weight() ) ;
             Fill("HmumuAnalysis/Vars/DeltaEtaJJ1OnH_" + label,systname, jetVar_["detajj_1"],e->weight() ) ;
 
-            #warning MetNoJec Applied only to plots
-            e->ApplyMetNoJEC();
+            //#warning MetNoJec Applied only to plots
+            //e->ApplyMetNoJEC();
+            
             Fill("HmumuAnalysis/Vars/MetOnH_nojec_"+ label,systname, e->GetMet().Pt(),e->weight());
 
             if (mjj.size()> 0)
@@ -2560,7 +2570,7 @@ void HmumuAnalysis::updateMjj(){
     jetVar_["mbbkf3"] = 0.;
     jetVar_["mbbkf4"] = 0.;// with track jets
 
-    if (nbjets >=2)
+    if (nbjets >=2 and mu0 and mu1)
     {
         TLorentzVector BB(0,0,0,0);
         BB += b1->GetP4() ;
@@ -2845,8 +2855,8 @@ void HmumuAnalysis::updateMjj(){
     jetVar_["valuekf"] = 0.;
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var (2-jets) ");
-    if (selectedJets.size()>=2)
-    { // kinematic fit for VH
+    if (selectedJets.size()>=2 and mu0 and mu1)
+    { // kinematic fit (version 2) for VH
         kf->clear();
         for (auto j : selectedJets) 
         {
@@ -2900,7 +2910,7 @@ void HmumuAnalysis::updateMjj(){
     jetVar_["metkf4"] = 0.;
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var (2-jets) ");
-    if (selectedJets.size()>=2)
+    if (selectedJets.size()>=2 and mu0 and mu1)
     { // kinematic fit 4 for VH
         kf->clear();
         for (auto j : selectedJets) 

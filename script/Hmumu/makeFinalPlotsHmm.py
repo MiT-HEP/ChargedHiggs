@@ -82,7 +82,7 @@ def MpvAndSigmaEff(h, q=0.68):
     low=h.GetBinCenter(1)
     high=h.GetBinCenter(h.GetNbinsX())
 
-    ## FIXME AST
+    ## FIXME FAST
     #for ibin in range(0,h.GetNbinsX()):
     #    for jbin in range(ibin+1,h.GetNbinsX()):
     #        if h.Integral(ibin+1,jbin+1)> q *s:
@@ -139,7 +139,9 @@ garbage=[]
 doSig=not opts.noSig
 sigYields={} ##(cat,proc) -> Nevents, for next sig composition plot
 eaStore={} ##(cat,proc,MH) -> ea
+
 if doSig:
+  yieldFile=open( opts.outdir + "/signal_yields.txt","w")
   for cat in categories:
     for mc in sigMonteCarlos:
         c=ROOT.TCanvas("c_"+cat+"_"+mc,"canvas",800,800)
@@ -194,7 +196,7 @@ if doSig:
 
                 ## save for sig composition plot
                 sigYields[(cat,proc)] = ea * config.lumi() * config.xsec(proc) *config.br() # proc+"_HToMuMu_M%d" 
-
+                print >>yieldFile ,cat,proc,sigYields[(cat,proc)]
                 if hdata !=None:
                 	s,b=SoB(h,hdata,low,high,re.sub("_HToMuMu.*","",mc))
                 	c.cd()
@@ -250,7 +252,7 @@ if doSig:
             pass
             c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".pdf")
             c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".png")
-
+  yieldFile.close()
 
 if doSig: ## signal composition plot
     #colors = [ ROOT.kGreen+3, ROOT.kRed+2, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kBlue-4];
@@ -390,31 +392,76 @@ if doSig: ## signal composition plot
 
     #if doSig: ## second part of sig_composition plots
     store={}
-    ## HARD CODED
-    #cat FWHM S B 2*seff
-    store[0]=(4.225,13.7011591071,13231.7157693	    ,4.6   )
-    store[1]=(6.9625,7.94811874212,3045.8045022	    ,7.0875)
-    store[2]=(7.6125,3.65736690377,1114.51171432	,7.175 )
-    store[3]=(7.225,15.6108564484,9691.20230885	    ,6.925 )
-    store[4]=(7.125,3.92614388493,737.111398075	    ,7.1625)
-    store[5]=(2.8,9.55409583467,1342.2596781    	,2.9375)
-    store[6]=(2.975,8.75569409378,958.643661642 	,3.0625)
-    store[7]=(4.2125,13.6841024699,2160.16332991	,4.275 )
-    store[8]=(4.0375,19.6326181152,3919.49608056	,4.1   )
-    store[9]=(2.875,8.42564316187,2250.5907442	    ,2.9875)
-    store[10]=(4.075,27.6634639092,9111.17905663	,4.1375)
-    store[11]=(3.975,5.54844144425,382.397889426	,4.375 )
-    store[12]=(4.2125,13.5373697551,1525.50287759	,4.3375)
-    store[13]=(3.1625,9.32283638139,736.375775813	,3.1625)
-    store[14]=(4.1375,8.96665127646,346.018640557	,4.4   )
-    store[15]=(0.00,.00,1.00	,0.0   )
-    store[16]=(0.00,.00,1.00	,0.0   )
-    store[17]=(0.00,.00,1.00	,0.0   )
-    store[18]=(0.00,.00,1.00	,0.0   )
-    store[19]=(0.00,.00,1.00	,0.0   )
-    store[20]=(0.00,.00,1.00	,0.0   )
-    store[21]=(0.00,.00,1.00	,0.0   )
-    store[22]=(0.00,.00,1.00	,0.0   )
+    if True: # recompute fwhm from histo
+        print " ----------------------- RECOMPUTING STORE -------------------"
+        for ic,cat in enumerate(categories):
+          print "cat",cat
+          htot=None
+          for mc in reversed(sigMonteCarlos):
+            m=125
+            #print "* Getting sig","HmumuAnalysis/"+opts.dir+"/" + opts.var +"_"+ cat +"_"+mc%(m) 
+            try:
+                h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var +"_"+ cat +"_"+mc%(m) )
+            except:
+                #print "<*> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) 
+                h=None
+            
+            if h==None: 
+                #print "<*> Ignoring", "HmumuAnalysis/"+opts.dir+"/" + opts.var + "_" + cat +"_"+mc%(m) 
+                continue
+
+            if 'GluGlu' in mc:
+                xsec=config.xsec("ggH")
+            elif 'VBF' in mc:
+                xsec=config.xsec("VBF")
+            elif 'WMinusH' in mc: 
+                xsec=config.xsec("WPlusH")
+            elif 'WPlusH' in mc:
+                xsec=config.xsec("WMinusH")
+            elif 'ZH' in mc:
+                xsec=config.xsec("ZH")
+            elif 'ttH' in mc:
+                xsec=config.xsec("ttH")
+            h.Scale(config.lumi())
+            h.Scale(xsec*config.br())
+            if htot==None: 
+                htot= h.Clone("htot")
+                garbage.append(htot)
+            else : htot.Add(h)
+            #print "--> Htot",htot.Integral()
+          mpv, low ,high,fwhm =  MpvAndSigmaEff(htot, 0.682689)
+          store[ic] = (fwhm,htot.Integral(),100,(high-low))
+
+          #print " ------------------ RECOMPUTED STORE  -------------------------"
+          #print store
+          #print " --------------------------------------------------------------"
+    else:
+        print " ----------------------- HARD-CODED STORE -------------------"
+        ## HARD CODED --from fit
+        #cat FWHM S B 2*seff
+        store[0]=(4.225,13.7011591071,13231.7157693    ,4.6   )
+        store[1]=(6.9625,7.94811874212,3045.8045022	    ,7.0875)
+        store[2]=(7.6125,3.65736690377,1114.51171432	,7.175 )
+        store[3]=(7.225,15.6108564484,9691.20230885	    ,6.925 )
+        store[4]=(7.125,3.92614388493,737.111398075	    ,7.1625)
+        store[5]=(2.8,9.55409583467,1342.2596781    	,2.9375)
+        store[6]=(2.975,8.75569409378,958.643661642 	,3.0625)
+        store[7]=(4.2125,13.6841024699,2160.16332991	,4.275 )
+        store[8]=(4.0375,19.6326181152,3919.49608056	,4.1   )
+        store[9]=(2.875,8.42564316187,2250.5907442	    ,2.9875)
+        store[10]=(4.075,27.6634639092,9111.17905663	,4.1375)
+        store[11]=(3.975,5.54844144425,382.397889426	,4.375 )
+        store[12]=(4.2125,13.5373697551,1525.50287759	,4.3375)
+        store[13]=(3.1625,9.32283638139,736.375775813	,3.1625)
+        store[14]=(4.1375,8.96665127646,346.018640557	,4.4   )
+        store[15]=(0.00,.00,1.00	,0.0   )
+        store[16]=(0.00,.00,1.00	,0.0   )
+        store[17]=(0.00,.00,1.00	,0.0   )
+        store[18]=(0.00,.00,1.00	,0.0   )
+        store[19]=(0.00,.00,1.00	,0.0   )
+        store[20]=(0.00,.00,1.00	,0.0   )
+        store[21]=(0.00,.00,1.00	,0.0   )
+        store[22]=(0.00,.00,1.00	,0.0   )
     #c=ROOT.TCanvas("c_"+cat+"_sig_composition 2","canvas",800,800)
     ## old -> new
 

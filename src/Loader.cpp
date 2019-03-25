@@ -592,6 +592,8 @@ void LoadNero::FillMet(){
     //     if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
     // #endif
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
+    event_ -> met_ . SetRawMetP4( *met -> RawMet ) ;
+    //event_ -> met_ . trackMet = *met -> trackMet ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
     //event_ -> met_ . ptUp = met-> ptJESUP -> at(0);

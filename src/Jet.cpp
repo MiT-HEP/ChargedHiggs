@@ -109,6 +109,13 @@ int Jet::IsJetExceptValidity() const {
             if (pt >=10 and pt< 30 and puId <-0.21)  return 0;
         }
     }
+
+    if (eenoise_) {
+        float aeta= abs(Eta());
+        // MET Recipe v2 for EE noise
+        if (rawPt < 50 and aeta <3.139 and aeta > 2.65)
+            return 0;
+    }
     return 1;
 }
 
