@@ -425,6 +425,11 @@ void LoadNero::FillLeptons(){
         //    l->SetIso ((*bl->chIso) [iL]  +  TMath::Max( (*bl->nhIso) [iL] + (*bl->phoIso) [iL] - .5*(*bl->puIso) [iL], 0. ) );
         //}
         l-> SetP4( lp4 );
+        if (tree_->GetBranchStatus("lepKinfitP4"))
+        {
+            TLorentzVector kfp4= *(TLorentzVector*) ((*bl->kinfitP4)[iL]);
+            l-> SetKFP4( kfp4 );
+        }
         l-> SetCharge (((*bl->pdgId)[iL] >0) ?  -1: 1 ); 
         l-> SetTightId (( bl->selBits -> at(iL) & BareLeptons::Selection::LepTight)); 
         l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepMedium));
@@ -587,6 +592,8 @@ void LoadNero::FillMet(){
     //     if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Met PtDown ==1: "<<met-> ptJESDOWN -> size()<<endl;;
     // #endif
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
+    event_ -> met_ . SetRawMetP4( *met -> RawMet ) ;
+    //event_ -> met_ . trackMet = *met -> trackMet ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
     //event_ -> met_ . ptUp = met-> ptJESUP -> at(0);

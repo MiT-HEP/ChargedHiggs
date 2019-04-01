@@ -1,0 +1,16 @@
+### automatically produced
+----------------------
+ibin *
+jbin *
+kbin *
+----------------------
+shapes * * workspace.root w:$PROCESS
+----------------------
+bin          ch0
+observation  -1
+----------------------
+bin          ch0      ch0
+process      sig      bkg
+process        0        1
+rate           1        1
+----------------------

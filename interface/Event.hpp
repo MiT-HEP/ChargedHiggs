@@ -265,8 +265,8 @@ class Event{
     inline bool GetL1FinalOr(int bx) const{ return triggerFinalOR_[bx+2];}
 
     // SF utils
-    inline void SetPtEtaSF(string label, float pt, float eta){  weight_ -> SetPtEtaSF(label,pt,eta);}
-    inline void SetWPSF(string label, int wp){  weight_ -> SetWPSF(label,wp);}
+    inline void SetPtEtaSF(const string& label, float pt, float eta){  weight_ -> SetPtEtaSF(label,pt,eta);}
+    inline void SetWPSF(const string & label, int wp){  weight_ -> SetWPSF(label,wp);}
     inline void SetJetFlavorSF(string label, int flavor){  weight_ -> SetJetFlavorSF(label,flavor);}
     inline void SetDiscrSF(string label, float discr){  weight_ -> SetDiscrSF(label,discr);}
     void ApplySF(string label){ weight_ -> ApplySF(label) ; } 
@@ -277,9 +277,9 @@ class Event{
     void ApplyTopReweight();
     ///@brief apply L1 prefire efficiencies to the event. 
     ///return the total reweight
-    double ApplyL1PreFire();
+    double ApplyL1PreFire(int year=2017);
     ///@brief apply btagging scale factor to the event. Working points (wp) correspond to loose,medium and tight.
-    double ApplyBTagSF(int wp=0);
+    double ApplyBTagSF(int wp=0,int year=2017);
     //@brief apply sf for taus
     void ApplyTauSF(Tau*t,bool prongs=true,const string& extra="");
     //@brief remove JEC from met in eta-2.5/3.0

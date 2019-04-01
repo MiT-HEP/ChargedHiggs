@@ -27,6 +27,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float puidcut_{-100};
     float puId;
 
+    bool  eenoise_{false};// reject noise from ee with cuts
+
     float deepB; // ** deep btag discriminator (B+BB)
     float deepbcut_ {-100};
 
@@ -46,6 +48,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     ///@brief return if it is a jet, except object cleaning
     int IsJetExceptValidity() const ;
 
+    ///@brief set ee noise cut on
+    void SetEENoiseCut(bool x){eenoise_ = x;}
     ///@brief set the pu id cut
     void SetPuIdCut(float x) {puidcut_=x;}
     ///@brief set the pt cut 

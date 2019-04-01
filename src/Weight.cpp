@@ -179,23 +179,52 @@ void Weight::AddTh2fSF(string label, string filename)
         return;
     }
     SF_TH2F *p = new SF_TH2F();
+
+    p -> label = label;
+    sf_db[label] = p;
+
     if (filename.find(":") !=string::npos)
     {
         string fname=filename.substr(0,filename.find(":"));
         string hname=filename.substr(filename.find(":")+1);  
-        if (hname.find(":") == string::npos) p->init(fname,hname);
+        if (hname.find(":") == string::npos) {
+            p->init(fname,hname);
+            return;
+        }
         else { // errhist is present
             string errname = hname.substr( hname.find(":") +1);
             hname  = hname.substr(0,hname.find(":") );
-            p->init(fname,hname,errname);
+            if (errname == "flip"){
+                Log(__FUNCTION__,"WARNING","SF "+ label +" will be flipped: X=pt, Y=eta");
+                p->init(fname,hname,"",true);
+                return;
+            }
+            if (errname.find(":") == string::npos)
+            {
+                p->init(fname,hname,errname);
+                return ;
+            }
+            else
+            {
+                if (errname.substr(errname.find(":")+1) == "flip")
+                {
+                    Log(__FUNCTION__,"WARNING","SF "+ label +" will be flipped: X=pt, Y=eta");
+                    p->init(fname, hname, errname.substr(0,errname.find(":")), true);
+                    return;
+                }
+                else 
+                {
+                    Log(__FUNCTION__,"WARNING","SF "+ label +" last separator is not flip. Ignoring it");
+                    p->init(fname,hname,errname.substr(0,errname.find(":")));
+                    return;
+                }
+            }
         }
     }
     else
     {
         p -> init(filename);
     }
-    p -> label = label;
-    sf_db[label] = p;
 }
 
 void Weight::AddTh2fSF(string label, string filename,string effData, string effMc, string errData, string errMc)

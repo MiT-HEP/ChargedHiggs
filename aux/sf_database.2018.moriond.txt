@@ -16,9 +16,23 @@ dummy base 1.0 0.0
 ###################
 ## Muon from POG ##
 ###################
-# https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonWorkInProgressAndPagResults#Results_on_the_full_2016_data
-# https://indico.cern.ch/event/594396/contributions/2402538/attachments/1389409/2116003/20161215_MuonPOG_GeneralPPD.pdf
+# 2016
+#mu_trigger_runBF json-muon aux/mu/2016/EfficienciesStudies_2016_trigger_EfficienciesAndSF_RunBtoF.json 
 
+mu_trigger_2016_runBF th2f aux/mu/2016/mu_trigger_EfficienciesAndSF_RunBtoF.root IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
+mu_trigger_2016_runGH th2f aux/mu/2016/mu_trigger_EfficienciesAndSF_Period4.root IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
+
+mu_id_2016_runBF th2f aux/mu/2016/EfficienciesStudies_2016_legacy_rereco_rootfiles_RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_eta_pt
+mu_id_2016_runGH th2f aux/mu/2016/EfficienciesStudies_2016_legacy_rereco_rootfiles_RunGH_SF_ID.root:NUM_MediumID_DEN_genTracks_eta_pt
+
+mu_id_2016_lowpt_runBF th2f aux/mu/2016/EfficienciesStudies_2016_legacy_rereco_Jpsi_rootfiles_RunBCDEF_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta
+mu_id_2016_lowpt_runGH th2f aux/mu/2016/EfficienciesStudies_2016_legacy_rereco_Jpsi_rootfiles_RunGH_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta
+
+mu_iso_2016_runBF th2f aux/mu/2016/EfficienciesStudies_2016_legacy_rereco_rootfiles_RunBCDEF_SF_ISO.root:NUM_LooseRelIso_DEN_MediumID_eta_pt
+mu_iso_2016_runGH th2f aux/mu/2016/EfficienciesStudies_2016_legacy_rereco_rootfiles_RunGH_SF_ISO.root:NUM_LooseRelIso_DEN_MediumID_eta_pt
+
+
+# 2017
 mu_id_runBC json-muon aux/mu/RunBC_data_ID.json aux/mu/RunBC_mc_ID.json NUM_MediumID_DEN_genTracks
 mu_id_runDE json-muon aux/mu/RunDE_data_ID.json aux/mu/RunDE_mc_ID.json NUM_MediumID_DEN_genTracks
 mu_id_runF json-muon aux/mu/RunF_data_ID.json aux/mu/RunF_mc_ID.json NUM_MediumID_DEN_genTracks
@@ -27,16 +41,27 @@ mu_iso_runBC json-muon aux/mu/RunBC_data_ISO.json aux/mu/RunBC_mc_ISO.json NUM_L
 mu_iso_runDE json-muon aux/mu/RunDE_data_ISO.json aux/mu/RunDE_mc_ISO.json NUM_LooseRelIso_DEN_MediumID
 mu_iso_runF json-muon aux/mu/RunF_data_ISO.json aux/mu/RunF_mc_ISO.json NUM_LooseRelIso_DEN_MediumID
 
+#mu 2017 low pT
+mu_id_BF_lowpt json-muon aux/mu/2017/RunBCDEF_data_ID_JPsi.json aux/mu/2017/RunBCDEF_mc_ID_JPsi.json NUM_MediumID_DEN_genTracks
+
 #mu_trigger_runBCDEF json-muon
 mu_trigger_runBCDEF th2f aux/mu/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root IsoMu27_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu27_PtEtaBins/efficienciesMC/abseta_pt_MC
 
+# 2018
+
+mu_trigger_afterHLT_2018 th2f aux/mu/2018/EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root IsoMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
+mu_trigger_beforeHLT_2018 th2f aux/mu/2018/EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root IsoMu24_PtEtaBins/efficienciesDATA/abseta_pt_DATA IsoMu24_PtEtaBins/efficienciesMC/abseta_pt_MC
+mu_iso_2018 th2f  aux/mu/2018/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO.root:NUM_LooseRelIso_DEN_MediumID_pt_abseta:flip
+mu_id_2018 th2f  aux/mu/2018/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.root:NUM_MediumID_DEN_genTracks_pt_abseta:flip
 
 ################
 ##  PreFiring ##
 ################
 #prefire th2f aux/l1.root:h_JetHT_AllEras_inclusive
 #prefire th2f aux/l1.root:h_JetHT_AllEras_inclusive_emf
-prefire th2f aux/l1_2017.root:h_JetHT_AllEras_inclusive_emf
+#prefire th2f aux/l1_2017.root:h_JetHT_AllEras_inclusive_emf
+prefire2017 th2f aux/l1prefire/L1prefiring_jetempt_2017BtoF.root:L1prefiring_jetempt_2017BtoF
+prefire2016 th2f aux/l1prefire/L1prefiring_jetempt_2016BtoH.root:L1prefiring_jetempt_2016BtoH
 
 ################
 ##   WG1 Unc  ##
@@ -53,10 +78,9 @@ double base 2.0 0.00
 ## BTag from POG ##
 ## https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
 ###################
-bdeep csv aux/BTag/DeepCSV_94XSF_V3_B_F.csv
-#bdeep-B csv aux/BTag/DeepCSV_94XSF_V2_B.csv
-#bdeep-CE csv aux/BTag/DeepCSV_94XSF_V2_C_E.csv
-#bdeep-EF csv aux/BTag/DeepCSV_94XSF_V2_E_F.csv
+bdeep2017 csv aux/BTag/DeepCSV_94XSF_V3_B_F.csv
+bdeep2018 csv aux/BTag/DeepCSV_102XSF_V1.csv
+bdeep2016 csv aux/BTag/DeepCSV_2016LegacySF_V1.csv
 #btag-reweight csv-reweight
 
 #############
@@ -73,7 +97,6 @@ tauid2 tf1 1.0 0.0002*x
 ### top reweighting ###
 ### https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopSystematics#pt_top_Reweighting
 #######################
-##topreweight tf2 TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137*y)) 1-TMath::Sqrt(TMath::Exp(0.156-0.00137*x)*TMath::Exp(0.156-0.00137*y))
 topreweight tf2 TMath::Sqrt(TMath::Exp(0.0615-0.0005*x)*TMath::Exp(0.0615-0.0005*y)) 1-TMath::Sqrt(TMath::Exp(0.0615-0.0005*x)*TMath::Exp(0.0615-0.0005*y))
 
 ###################

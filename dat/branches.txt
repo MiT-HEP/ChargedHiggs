@@ -56,6 +56,7 @@ tau*
 metP4
 metSyst*
 metPuppi
+RawMet
 ### EVENT
 isRealData
 rho

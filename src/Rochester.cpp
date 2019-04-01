@@ -2,8 +2,8 @@
 #include "TRandom.h"
 
 void RochesterCorrections::Init(){
-    Log(__FUNCTION__,"INFO","Init Rochester Corrections with aux/rochester/RoccoR2017v0.txt");
-    corrector_.reset(new RoccoR("aux/rochester/RoccoR2017v1.txt") ) ;
+    Log(__FUNCTION__,"INFO","Init Rochester Corrections with aux/rochester/RoccoR"+year+".txt");
+    corrector_.reset(new RoccoR("aux/rochester/RoccoR"+year+".txt") ) ;
 }
 
 int RochesterCorrections::correct(Event *e){

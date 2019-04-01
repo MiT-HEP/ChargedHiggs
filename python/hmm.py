@@ -220,7 +220,8 @@ class HmmConfig():
     def lumi(self):
         if self.year==2016: return 35867 ## 2016
         if self.year==2017: return 41860
-        if self.year==2018: return 59970
+        #if self.year==2018: return 59970
+        if self.year==2018: return 59710 #https://hypernews.cern.ch/HyperNews/CMS/get/physics-announcements/5530/1/1.html
         raise ValueError("Unknown year %d for lumi calculation"%self.year)
 
     #def readScaleUnc(self,f="Hmumu/syst/scale/scales.txt"):
@@ -302,10 +303,10 @@ class HmmConfigExCat(HmmConfigAutoCat):
 
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
-hmmExCat = HmmConfigExCat(17) ## 16 + mjj
+hmmExCat = HmmConfigExCat(16) ## 16 + mjj
 hmmExCatBoost = HmmConfigExCat(22) ## 21 + mjj
 
-hmmExCat2018 = HmmConfigExCat(17,2018) ## 16 + mjj
+hmmExCat2018 = HmmConfigExCat(16,2018) ## 16 + mjj
 hmmExCatBoost2018 = HmmConfigExCat(22,2018) ## 21 + mjj
 
 class HHConfig(HmmConfig):

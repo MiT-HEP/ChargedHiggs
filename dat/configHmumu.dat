@@ -6,7 +6,7 @@ include=dat/config.2018.moriond.dat
 
 Files=
 ## Drell-Yan
-include=dat/catalog/2017.moriond/dy_ht.dat
+#include=dat/catalog/2017.moriond/dy_ht.dat
 #
 include=dat/catalog/2019.moriond/dy_amcatnlo.dat
 include=dat/catalog/2019.moriond/tt.dat
@@ -53,6 +53,9 @@ Correct=
 #Correct=ScaleAndSmear,KaMuCa,JetFilter2016
 #Correct=ScaleAndSmear,KaMuCa
 Correct=RochesterCorrections
+config=RochesterCorrections|year="2017"
+addConfig=HmumuAnalysis|doEvenOnly=1
+addConfig=HmumuAnalysis|year=2017
 
 #UnprefirableFiltersAnalysis
 Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis

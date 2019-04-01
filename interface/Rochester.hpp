@@ -4,6 +4,7 @@
 #include "interface/Corrector.hpp"
 #include "interface/RoccoR.hpp"
 #include <memory>
+#include <string>
 
 class RochesterCorrections : public CorrectorBase{
 	public:
@@ -11,6 +12,7 @@ class RochesterCorrections : public CorrectorBase{
 		const string name() const override { return "RochesterCorrections";}
 		void Init() override;
 		std::unique_ptr<RoccoR> corrector_;
+        std::string year{"2017"};
 };
 
 

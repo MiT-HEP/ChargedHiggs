@@ -64,9 +64,7 @@ t=ROOT.TChain("hmm")
 #for n in range(0,100):
 #    if n in [53,55,59,73,93,94]: continue #exclude running jobs
 #    t.Add("/eos/user/a/amarini/Hmumu/fwk/2018_01_25_ExclusiveCategoriesAndTree/ChHiggs_%d.root"%n)
-#t.Add("/eos/user/a/amarini/Hmumu/fwk/2018_04_04_ExclusiveCategoriesAndTree/ChHiggs*root")
-#t.Add("/eos/user/a/amarini/Hmumu/fwk/2019_02_11_Hmm2018Sync_Feb4/ChHiggs*root")
-t.Add("/eos/user/a/amarini/Hmumu/fwk/2019_02_18_Hmm2018Sync_Feb15/ChHiggs*root")
+t.Add("/eos/user/a/amarini/Hmumu/fwk/2019_03_01_Hmm2018Sync_Feb15/ChHiggs*root")
 print "TotEntries=",t.GetEntries()
 
 outname="output.root" if not multiclass else "multiclass.root"
@@ -93,16 +91,18 @@ features=[
         ## vbf variables
         "mjj_1","mjj_2","detajj_1","detajj_2",
         #"softNjets1","softHt1","softHt5","softHt10",
-        #"firstQGL","secondQGL","thirdQGL",
+        "(TMath::IsNaN(firstQGL)?-1:firstQGL)",
+        "(TMath::IsNaN(secondQGL)?-1:secondQGL)",
+        #"thirdQGL",
         ## bjets variables
         "nbjets","maxDeepB","leadDeepB", #,"maxCSV",
         ## w/z variables
         "mt1","mt2","met",
         ## photons
-        "Alt$(pho_pt[0],0.)",
-        "Alt$(pho_eta[0],0.)",
-        "Alt$(pho_dr1[0],0.)",
-        "Alt$(pho_dr2[0],0.)",
+        #"Alt$(pho_pt[0],0.)",
+        #"Alt$(pho_eta[0],0.)",
+        #"Alt$(pho_dr1[0],0.)",
+        #"Alt$(pho_dr2[0],0.)",
         ##"npho",
         ]
 
@@ -125,10 +125,13 @@ if not multiclass:
     dataloader.SetSignalWeightExpression( "weight * (" + xsec + ")" );
     dataloader . AddSignalTree(    t, 1.0 );
     dataloader . AddBackgroundTree(    t, 1.0 );
-    sigCut = ROOT.TCut ( "pass_all && (mc < 0 && mc <= -10) && mass >110 && mass <150 && eventNum%2==0"); 
+    #bb= " && abs(eta1)<0.9 && abs(eta2)<0.9";
+    #oo = " && !(abs(eta1)<0.9 && abs(eta2)<0.9) && abs(eta1) <1.9 && abs (eta2)<1.9"
+    #ee = " && !(abs(eta1)<1.9 && abs(eta2)<1.9)"
+    sigCut = ROOT.TCut ( "pass_all && (mc < 0 && mc <= -10) && mass >110 && mass <150 && eventNum%2==0 " ); 
     #print "FIX VBF (2)"
     #sigCut = ROOT.TCut ( "pass_all && (mc <= 0 && mc <= -10 && runNum==1) && mass >110 && mass <150"); 
-    bgCut = ROOT.TCut ( "pass_all && ( mc == 11 || mc == 20) && mass >110 && mass <150 && eventNum %2==0"); 
+    bgCut = ROOT.TCut ( "pass_all && ( mc == 11 || mc == 20) && mass >110 && mass <150 && eventNum %2==0 " ); 
     dataloader. PrepareTrainingAndTestTree(sigCut,   bgCut, "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V");
 
 if multiclass:
@@ -165,8 +168,12 @@ if not multiclass:
                 "!H:!V:NTrees=1200:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.99:SeparationType=SDivSqrtSPlusB:Pray"
                 );
 else:
+    #default
+    #factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
+    #            ROOT.TString("!H:!V:NTrees=5000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
+    #            );
     factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
-                ROOT.TString("!H:!V:NTrees=5000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
+                ROOT.TString("!H:!V:NTrees=4000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
                 );
 
 factory . TrainAllMethods();

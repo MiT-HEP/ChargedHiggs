@@ -25,6 +25,8 @@ void SF_PtEta::add(double pt1, double pt2,double eta1, double eta2, double sf, d
     store[r].first = sf;
     store[r].second = err;
 
+    Log(__FUNCTION__,"INFO",Form("* Adding sf in range pt [%f,%f), eta[%f,%f)  %f+/-%f",pt1,pt2,eta1,eta2,sf,err) );
+
 #ifdef VERBOSE
     if(VERBOSE>0)cout <<"[SF_PtEta]::[add]::[DEBUG] Adding SF Pt Eta:"<<pt1<<":"<<pt2<<"|"<<eta1<<":"<<eta2<<"|"<<sf<<":"<<err<<endl;
 #endif
@@ -162,7 +164,7 @@ double SF_PtEta_And_Eff::get()
 
 // --- TH1F 
 
-void SF_TH2F::init(string filename,string histname,string errorname)
+void SF_TH2F::init(string filename,string histname,string errorname,bool flipXY)
 {
     TFile *f = TFile::Open(filename.c_str() ) ;
     if (f == NULL){
@@ -199,8 +201,10 @@ void SF_TH2F::init(string filename,string histname,string errorname)
         {
             err=errHist->GetBinContent(aetabin,ptbin);
         }
-        if (ptbin == h->GetNbinsY() ) ptmax = 8000.; // highest is open, current recommendation
-        add(ptmin,ptmax,aetamin,aetamax,sf,err);
+        if (ptbin == h->GetNbinsY() and not flipXY ) ptmax = 8000.; // highest is open, current recommendation
+        if (aetabin == h->GetNbinsX() and flipXY ) aetamax = 8000.; // highest is open, current recommendation
+        if (flipXY){add(aetamin,aetamax,ptmin,ptmax,sf,err);}
+        else {add(ptmin,ptmax,aetamin,aetamax,sf,err);}
     }
 }
 
