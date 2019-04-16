@@ -113,8 +113,13 @@ int Jet::IsJetExceptValidity() const {
     if (eenoise_) {
         float aeta= abs(Eta());
         // MET Recipe v2 for EE noise
+
         if (rawPt < 50 and aeta <3.139 and aeta > 2.65)
             return 0;
+        
+        // SMP recommendation
+        //if (rawPt < 50 and 2.7 < aeta and aeta < 3.0 and nemf_>0.55 )
+        //    return 0;
     }
     return 1;
 }

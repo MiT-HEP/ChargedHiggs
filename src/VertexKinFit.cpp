@@ -5,15 +5,22 @@ void VertexKinfit::Init(){
 }
 
 int VertexKinfit::correct(Event *e){
+    int nMuons=0;
     for (auto & lep : GetLepVector(e))
     {
         if (not lep->IsMuonDirty() ) continue; // check only it's muon w/o any Id
         // reset uncorrected value
         ResetUncorr(*lep);
 
-        if (lep->GetKFP4().Pt() >5) SetP4(*lep,lep->GetKFP4());
+        if (lep->GetKFP4().Pt() >5){
+            SetP4(*lep,lep->GetKFP4());
+            ++nMuons;
+        }
+
+        if (nMuons>=2) break; // only the first two muons.
 
     }//end lepton
+    return 0;
     // end correct
 }
 

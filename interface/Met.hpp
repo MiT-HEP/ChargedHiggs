@@ -13,7 +13,7 @@ class Met :
 
         TLorentzVector pp4;
         TLorentzVector rawMet;
-        //TLorentzVector trackMet;
+        TLorentzVector trackMet;
     protected:
         // filters:
         bool FullRecommendation{false};
@@ -40,6 +40,9 @@ class Met :
         virtual inline float PtGen(){ return gen;} 
         virtual void SetRawMetP4(TLorentzVector &x){rawMet=x;}
         TLorentzVector& GetRawMetP4(){return rawMet;}
+
+        virtual void SetTrackMetP4(TLorentzVector &x){trackMet=x;}
+        TLorentzVector& GetTrackMetP4(){return trackMet;}
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;

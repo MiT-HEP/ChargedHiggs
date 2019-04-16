@@ -61,7 +61,8 @@ void HmumuAnalysis::SetJetCuts(Jet *j) {
     //#warning PUID
     j->SetPuIdCut(100);
     // Noise hard cut on jets
-    //if (year==2017) 
+    if (year==2017) j->SetEENoiseCut(true);
+    else 
     j->SetEENoiseCut(false);
     // medium CSV
     j->SetBCut(-100); //L=0.5426 , M=  0.8484, T0.9535 
@@ -1111,9 +1112,11 @@ void HmumuAnalysis::Init(){
 
 	    Book ("HmumuAnalysis/Vars/MetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/RawMetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/TrackMetOnZ_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnH_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnH_nojec_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/RawMetOnH_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/TrackMetOnH_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnZ_rw_"+ l ,"Met On Z (70-110);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/MetOnH_rw_"+ l ,"Met On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnZ_"+ l ,"Pt On Z (70-110);Met [GeV];Events", 1000,0,1000);
@@ -1142,6 +1145,20 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/NJetsOnH_"+ l ,"NJets On Hmm (110-150);Bdt;Events", 10,0,10);
 	    Book ("HmumuAnalysis/Vars/NBJetsOnH_"+ l ,"NBJets On Hmm (110-150);Bdt;Events", 10,0,10);
 	    Book ("HmumuAnalysis/Vars/DeltaEtaJJ1OnH_"+ l ,"EtaJet1 On Hmm (110-150);Bdt;Events", 200,0,10);
+
+        // study of jet quality in 2.65-3.139 for 2017
+        {
+            std::vector<int> ptbins{0,30,50,80,120,8000};
+            for (const string&v : {"axis1","axis2","ptD","mult","cemf","nemf","ptrawnemf"})
+            for (int ipt=0;ipt<ptbins.size()-1;++ipt)
+            {
+                int nbins=200; float xmin=0,xmax=1;
+                if (v=="axis1" or v=="axis2") {xmin=0; xmax=10;}
+                if (v=="mult") {xmin=0; xmax=100;nbins=100;}
+                Book ("HmumuAnalysis/Vars/"+v+"_Jet1OnH_Eta2p65_2p139_"+Form("pt%d_%d_",ptbins[ipt],ptbins[ipt+1])+ l ,"EtaJet1 On Hmm (110-150);Bdt;Events", nbins,xmin,xmax);
+            }
+        }
+
 
         // btag, soft track activity
 	    Book ("HmumuAnalysis/Vars/SoftNJetsOnH_"+ l ,"NJets On Hmm (110-150);Bdt;Events", 10,0,10);
@@ -1182,9 +1199,6 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/Metkf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
 	    //Book ("HmumuAnalysis/Vars/Valuekf_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 1000,0,100); 
 
-	    Book ("HmumuAnalysis/Vars/Mjjkf4_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
-	    Book ("HmumuAnalysis/Vars/Malljkf4_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
-	    Book ("HmumuAnalysis/Vars/Metkf4_VHHadr_"+ l ,"Ptjj;ptJJ ;Events", 200,0,1000); 
         // Study cut for tag categories ttH, WH,ZH, 
 
         //Scikit
@@ -1205,7 +1219,6 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/Mbbcorr_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mbbkf2_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Mbbkf3_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
-	    Book ("HmumuAnalysis/Vars/Mbbkf4_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160);
 	    Book ("HmumuAnalysis/Vars/Bres_HbbHmm_"+ l ,"B Res;res;Events", 2000,-5,5.);
 	    Book ("HmumuAnalysis/Vars/Jres_HbbHmm_"+ l ,"B Res;res;Events", 2000,-5,5.);
 	    //Book ("HmumuAnalysis/Vars/Mmm_HbbHmm_"+ l ,"Mass (110-150);Hbbw;Events", 2000,60,160); // 2000 60 160
@@ -2207,12 +2220,17 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         if (VERBOSE)Log(__FUNCTION__,"DEBUG","event pass selection");
 
         float zptrw = 1.;
-        if (label == "DY") zptrw = getZPtReweight(pt_ );
+        if (label == "DY") 
+        {
+            if (year == 2016 )zptrw = getZPtReweight(pt_ );
+            else zptrw = getZPtReweight2018(pt_ );
+        }
         //cout<<"ZPtRWgh is "<<zptrw<<endl;
         
         if (mass_ >= 70 and mass_<110){
             Fill("HmumuAnalysis/Vars/MetOnZ_"+ label,systname, e->GetMet().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/RawMetOnZ_"+ label,systname, e->GetMet().GetRawMetP4().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/TrackMetOnZ_"+ label,systname, e->GetMet().GetTrackMetP4().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnZ_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, pt_ ,e->weight());
 
@@ -2255,7 +2273,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             }
 
             Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().Pt(),e->weight());
-            Fill("HmumuAnalysis/Vars/MetOnH_"+ label,systname, e->GetMet().GetRawMetP4().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/RawMetOnH_"+ label,systname, e->GetMet().GetRawMetP4().Pt(),e->weight());
+            Fill("HmumuAnalysis/Vars/TrackMetOnH_"+ label,systname, e->GetMet().GetTrackMetP4().Pt(),e->weight());
 
             Fill("HmumuAnalysis/Vars/Mt1OnH_"+ label,systname,ChargedHiggs::mt(mu0->Pt(),e->GetMet().Pt(),mu0->Phi(),e->GetMet().Phi()) ,e->weight());
             Fill("HmumuAnalysis/Vars/Mt2OnH_"+ label,systname,ChargedHiggs::mt(mu1->Pt(),e->GetMet().Pt(),mu1->Phi(),e->GetMet().Phi()) ,e->weight());
@@ -2286,7 +2305,42 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 Fill("HmumuAnalysis/Vars/PtJet1OnH_"+ label,systname, selectedJets[0]->Pt(),e->weight());
                 Fill("HmumuAnalysis/Vars/EtaJet1OnH_"+ label,systname, selectedJets[0]->Eta(),e->weight());
                 Fill("HmumuAnalysis/Vars/QGLJet1OnH_"+ label,systname, selectedJets[0]->QGL(),e->weight());
-            }
+
+                if ( 2.65<fabs(selectedJets[0]->Eta()) and fabs(selectedJets[0]->Eta())<3.139)
+                {// study of jet quality in 2.65-3.139 for 2017
+                    float ptraw=selectedJets[0]->rawPt;
+                    std::vector<int> ptbins{0,30,50,80,120,8000};
+                    string ptbin="";
+                    for (int ipt=0;ipt<ptbins.size()-1;++ipt)
+                    {
+                        if (ptraw >= ptbins[ipt] and ptraw <ptbins[ipt+1])
+                        {
+                            ptbin=Form("pt%d_%d",ptbins[ipt],ptbins[ipt+1]);
+                        }
+                    }
+                    
+                    if (ptbin != "")
+                    {
+                    //cout<<"DEBUG: -------------------------------" <<endl; 
+                    //cout<<"DEBUG: A1: "<<-TMath::Log(std::max(selectedJets[0]->QGLVar("axis1"),.00007F))<<endl; // ~9.5
+                    //cout<<"DEBUG: A2: "<<-TMath::Log(std::max(selectedJets[0]->QGLVar("axis2"),.00007F))<<endl;
+                    //cout<<"DEBUG: ptD: "<< selectedJets[0]->QGLVar("ptD")<<endl;
+                    //cout<<"DEBUG: mult: "<<selectedJets[0]->QGLVar("mult")<<endl;
+                    //cout<<"DEBUG: ptraw: "<<selectedJets[0]->rawPt<<endl;
+                    //cout<<"DEBUG: pt: "<<selectedJets[0]->Pt()<<endl;
+                    for (const string&v : {"axis1","axis2","ptD","mult","cemf","nemf","ptrawnemf"})
+                        {
+                            float value=-999;
+                            if ( v=="axis1" or v=="axis2"){ value=-TMath::Log(std::max(selectedJets[0]->QGLVar(v),.00007F)) ;}
+                            else if (v=="cemf"){value=selectedJets[0]->GetCEMF();}
+                            else if (v=="nemf"){value=selectedJets[0]->GetNEMF();}
+                            else if (v=="ptrawnemf"){ value=selectedJets[0]->GetNEMF()*ptraw;}
+                            else value=selectedJets[0]->QGLVar(v);
+                            Fill ("HmumuAnalysis/Vars/"+v+"_Jet1OnH_Eta2p65_2p139_"+ptbin+"_"+ label,systname , value,e->weight());
+                        }
+                    }
+                }//end study on jet quality in eta ...
+            }//end jet1
 
             if (selectedJets.size() >1)
             {
@@ -2340,11 +2394,6 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 Fill("HmumuAnalysis/Vars/Metkf_VHHadr_"+ label,systname, jetVar_["metkf"],e->weight()) ;
                 //Fill("HmumuAnalysis/Vars/Valuekf_VHHadr_"+ label,systname, jetVar_["valuekf"],e->weight()) ;
 
-                Fill("HmumuAnalysis/Vars/Mjjkf4_VHHadr_"+ label,systname, jetVar_["mjjkf4"],e->weight()) ;
-                Fill("HmumuAnalysis/Vars/Malljkf4_VHHadr_"+ label,systname, jetVar_["malljkf4"],e->weight()) ;
-                Fill("HmumuAnalysis/Vars/Metkf4_VHHadr_"+ label,systname, jetVar_["metkf4"],e->weight()) ;
-
-            
             }
 
             //if (catType == 3 and category == "cat19") // ggHX
@@ -2365,7 +2414,6 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 Fill("HmumuAnalysis/Vars/Mbbcorr_HbbHmm_"+ label,systname, jetVar_["mbbcorr"],e->weight());
                 Fill("HmumuAnalysis/Vars/Mbbkf2_HbbHmm_"+ label,systname, jetVar_["mbbkf2"],e->weight());
                 Fill("HmumuAnalysis/Vars/Mbbkf3_HbbHmm_"+ label,systname, jetVar_["mbbkf3"],e->weight());
-                Fill("HmumuAnalysis/Vars/Mbbkf4_HbbHmm_"+ label,systname, jetVar_["mbbkf4"],e->weight());
 
                 if (jetVar_["mbbcorr"] >10.)
                 {
@@ -2568,7 +2616,6 @@ void HmumuAnalysis::updateMjj(){
     jetVar_["mbbcorr"] = 0.;
     jetVar_["mbbkf2"] = 0.;
     jetVar_["mbbkf3"] = 0.;
-    jetVar_["mbbkf4"] = 0.;// with track jets
 
     if (nbjets >=2 and mu0 and mu1)
     {
@@ -2724,65 +2771,6 @@ void HmumuAnalysis::updateMjj(){
         jetVar_["bb_b1_res"] = (b1_gen)? (b1->Pt()*b1->GetBCorrection()/b1_gen->Pt()-1.)/myJets[idx_b1].sigma : -10;
         jetVar_["bb_b2_res"] = (b2_gen)? (b2->Pt()*b2->GetBCorrection()/b2_gen->Pt()-1.)/myJets[idx_b2].sigma : -10;
 
-        { // kf4: jets + track jets + generic + overlap removal
-            kf->clear();
-            for (auto j : selectedJets) 
-            {
-                TLorentzVector p4=j->GetP4();
-                //aJet.sigma = j->GetJESUnc();
-                JME::JetParameters bins,vars;
-                vars.setJetPt( j->GetP4().Pt() );
-                bins.setJetEta( j->GetP4().Eta() );
-                bins.setRho( std::min(e->Rho(),float(40.)) ); // corrections up to rho 40.
-                float sigma=1.0 ;
-
-                if ( jet_resolution->getRecord(bins)==NULL)sigma=1.0;
-                else  sigma =  jet_resolution->evaluateFormula( *jet_resolution->getRecord(bins),vars); 
-
-                if (j->IsBJet() and fabs(j->Eta())<2.4) {
-                    p4 *= j->GetBCorrection();
-                    sigma = j->GetBCorrectionUncertainty() / 1.1775; // I assume they give the HWHM
-                }
-
-                if (j==b1) idx_b1=myJets.size()-1;
-                if (j==b2) idx_b2=myJets.size()-1;
-
-                // mv through kf
-                kf->p4.push_back( j->GetP4());
-                kf->sigma.push_back(sigma);
-            }
-            for(unsigned it=0;;++it)
-            {
-                TrackJet*t=e->GetBareTrackJet(it);
-                if (t==NULL) break;
-                if (t->Pt()<5) continue; // not converging -> too many?
-                bool toexclude=false;
-                if (mu0 and t->DeltaR(mu0)<0.1) toexclude=true;
-                if (mu1 and t->DeltaR(mu1)<0.1) toexclude=true;
-                for (auto j : selectedJets) 
-                {
-                    if (t->DeltaR(j) <0.4) toexclude=true;
-                    if (toexclude)break;
-                }
-                if (toexclude) continue;
-
-                kf->p4.push_back( t->GetP4() * (3./2.)); // correct for the non track part
-                kf->sigma.push_back(0.05);
-            }
-
-            kf->H=Hmm.GetP4();
-            kf->runGeneric(); 
-
-            TLorentzVector b1_kf4=(b1->GetP4()*b1->GetBCorrection());
-            TLorentzVector b2_kf4=(b2->GetP4()*b2->GetBCorrection());
-            b1_kf4 *= kf->alpha[idx_b1];
-            b2_kf4 *= kf->alpha[idx_b2];
-            TLorentzVector BB_KF4(0,0,0,0);
-            BB_KF4+=b1_kf4;
-            BB_KF4+=b2_kf4;
-            jetVar_["mbbkf4"] = BB_KF4.M();
-        }
-
         // Log(__FUNCTION__,"DEBUG","-----------------------------------------------");
         // Log(__FUNCTION__,"DEBUG",Form("bb_b1_res is %5.3f Reco = %.1f * %.3f GenJet=%.1f GenB=%.1f",jetVar_["bb_b1_res"],b1->Pt(),b1->GetBCorrection(),(b1_gen)?b1_gen->Pt():-10,(b1_genp)?b1_genp->Pt():-10 ));
         // Log(__FUNCTION__,"DEBUG",Form("bb_b2_res is %5.3f Reco = %.1f * %.3f GenJet=%.1f GenB=%.1f",jetVar_["bb_b2_res"],b2->Pt(),b2->GetBCorrection(),(b2_gen)?b2_gen->Pt():-10,(b2_genp)?b2_genp->Pt():-10 ));
@@ -2904,186 +2892,10 @@ void HmumuAnalysis::updateMjj(){
         jetVar_["valuekf"] = kf->value;
     } // end KF for VH
 
-    // do the kf4 also for vh
-    jetVar_["malljkf4"] = 0.;
-    jetVar_["mjjkf4"] = 0.;
-    jetVar_["metkf4"] = 0.;
-
-    if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var (2-jets) ");
-    if (selectedJets.size()>=2 and mu0 and mu1)
-    { // kinematic fit 4 for VH
-        kf->clear();
-        for (auto j : selectedJets) 
-        {
-            JME::JetParameters bins,vars;
-            vars.setJetPt( j->GetP4().Pt() );
-            bins.setJetEta( j->GetP4().Eta() );
-            bins.setRho( std::min(e->Rho(),float(40.)) ); // corrections up to rho 40.
-            float sigma=1.0 ;
-
-            if ( jet_resolution->getRecord(bins)==NULL){ sigma=1.0;}
-            else{ sigma =  jet_resolution->evaluateFormula( *jet_resolution->getRecord(bins),vars); }
-
-            kf->p4.push_back( j->GetP4());
-            kf->sigma.push_back(sigma);
-        }
-
-        for(unsigned it=0;;++it)
-        {
-            TrackJet*t=e->GetBareTrackJet(it);
-            if (t==NULL) break;
-            if (t->Pt()<5) continue; // not converging -> too many?
-            bool toexclude=false;
-            if (mu0 and t->DeltaR(mu0)<0.1) toexclude=true;
-            if (mu1 and t->DeltaR(mu1)<0.1) toexclude=true;
-            for (auto j : selectedJets) 
-            {
-                if (t->DeltaR(j) <0.4) toexclude=true;
-                if (toexclude)break;
-            }
-            if (toexclude) continue;
-
-            //kf->p4.push_back( t->GetP4());
-            kf->p4.push_back( t->GetP4() * (3./2.)); // correct for the non track part
-            kf->sigma.push_back(0.05);
-        }
-
-        kf->H=Hmm.GetP4();
-        kf->runGeneric();
-        
-        TLorentzVector jall; // mjjkf metkf malljkf
-        TLorentzVector jj; // mjjkf metkf malljkf
-        for(unsigned i =0 ; i<selectedJets.size();++i) 
-        {
-            TLorentzVector p4= selectedJets[i]->GetP4();
-            p4*=kf->alpha[i];
-            jall+=p4;
-            for(unsigned j =i+1 ; j<selectedJets.size();++j) 
-            {
-                TLorentzVector p4_2= selectedJets[j]->GetP4();
-                p4_2*=kf->alpha[j];
-                TLorentzVector jj_tmp=p4+p4_2;
-                if (jj.M() < jj_tmp.M()) jj=jj_tmp;
-            }
-        }
-        jetVar_["malljkf4"] = jall.M();
-        jetVar_["mjjkf4"] = jj.M();
-        jall+=Hmm.GetP4();
-        // met
-        jetVar_["metkf4"] = jall.Pt();
-    } // end KF for VH
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","updateMjj: jet var (end) ");
 }
 
-float HmumuAnalysis::getZPtReweight(float Zpt)
-{
-    if (rzpt_.get() == NULL) {
-        Double_t xAxis1[97] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 160, 170, 180, 190, 200, 250, 300, 400, 500, 600, 8000}; 
-       rzpt_.reset( new TH1D("ratio__1","Pt On Hmm (110-150)",96, xAxis1));
-       rzpt_->SetBinContent(1,1.25442);
-       rzpt_->SetBinContent(2,1.12704);
-       rzpt_->SetBinContent(3,1.12533);
-       rzpt_->SetBinContent(4,1.05604);
-       rzpt_->SetBinContent(5,1.10264);
-       rzpt_->SetBinContent(6,1.08767);
-       rzpt_->SetBinContent(7,1.10362);
-       rzpt_->SetBinContent(8,1.08591);
-       rzpt_->SetBinContent(9,1.06601);
-       rzpt_->SetBinContent(10,1.0916);
-       rzpt_->SetBinContent(11,1.06448);
-       rzpt_->SetBinContent(12,1.01392);
-       rzpt_->SetBinContent(13,1.04377);
-       rzpt_->SetBinContent(14,1.02068);
-       rzpt_->SetBinContent(15,0.994305);
-       rzpt_->SetBinContent(16,1.00707);
-       rzpt_->SetBinContent(17,0.976421);
-       rzpt_->SetBinContent(18,0.975673);
-       rzpt_->SetBinContent(19,0.979493);
-       rzpt_->SetBinContent(20,0.986701);
-       rzpt_->SetBinContent(21,0.921996);
-       rzpt_->SetBinContent(22,0.958257);
-       rzpt_->SetBinContent(23,0.947919);
-       rzpt_->SetBinContent(24,0.915694);
-       rzpt_->SetBinContent(25,0.963098);
-       rzpt_->SetBinContent(26,0.902018);
-       rzpt_->SetBinContent(27,0.921341);
-       rzpt_->SetBinContent(28,0.947538);
-       rzpt_->SetBinContent(29,0.919088);
-       rzpt_->SetBinContent(30,0.89809);
-       rzpt_->SetBinContent(31,0.93795);
-       rzpt_->SetBinContent(32,0.951556);
-       rzpt_->SetBinContent(33,0.920607);
-       rzpt_->SetBinContent(34,0.931718);
-       rzpt_->SetBinContent(35,0.972628);
-       rzpt_->SetBinContent(36,0.991912);
-       rzpt_->SetBinContent(37,0.982581);
-       rzpt_->SetBinContent(38,0.986466);
-       rzpt_->SetBinContent(39,0.948026);
-       rzpt_->SetBinContent(40,0.881102);
-       rzpt_->SetBinContent(41,0.975588);
-       rzpt_->SetBinContent(42,0.967278);
-       rzpt_->SetBinContent(43,0.96418);
-       rzpt_->SetBinContent(44,0.8935);
-       rzpt_->SetBinContent(45,0.984849);
-       rzpt_->SetBinContent(46,0.934862);
-       rzpt_->SetBinContent(47,1.08122);
-       rzpt_->SetBinContent(48,0.90832);
-       rzpt_->SetBinContent(49,0.996306);
-       rzpt_->SetBinContent(50,1.04286);
-       rzpt_->SetBinContent(51,1.01652);
-       rzpt_->SetBinContent(52,0.99927);
-       rzpt_->SetBinContent(53,0.987264);
-       rzpt_->SetBinContent(54,1.00254);
-       rzpt_->SetBinContent(55,0.98932);
-       rzpt_->SetBinContent(56,1.04193);
-       rzpt_->SetBinContent(57,1.02381);
-       rzpt_->SetBinContent(58,1.01032);
-       rzpt_->SetBinContent(59,1.03059);
-       rzpt_->SetBinContent(60,1.01214);
-       rzpt_->SetBinContent(61,1.07218);
-       rzpt_->SetBinContent(62,0.999929);
-       rzpt_->SetBinContent(63,1.06193);
-       rzpt_->SetBinContent(64,0.949346);
-       rzpt_->SetBinContent(65,0.920078);
-       rzpt_->SetBinContent(66,0.973534);
-       rzpt_->SetBinContent(67,1.00212);
-       rzpt_->SetBinContent(68,0.953533);
-       rzpt_->SetBinContent(69,1.01944);
-       rzpt_->SetBinContent(70,1.03041);
-       rzpt_->SetBinContent(71,0.999917);
-       rzpt_->SetBinContent(72,1.07828);
-       rzpt_->SetBinContent(73,1.06935);
-       rzpt_->SetBinContent(74,0.919939);
-       rzpt_->SetBinContent(75,1.06806);
-       rzpt_->SetBinContent(76,1.05322);
-       rzpt_->SetBinContent(77,0.98814);
-       rzpt_->SetBinContent(78,0.982285);
-       rzpt_->SetBinContent(79,1.03646);
-       rzpt_->SetBinContent(80,1.25187);
-       rzpt_->SetBinContent(81,1.02401);
-       rzpt_->SetBinContent(82,1.0413);
-       rzpt_->SetBinContent(83,1.06257);
-       rzpt_->SetBinContent(84,0.982519);
-       rzpt_->SetBinContent(85,1.09106);
-       rzpt_->SetBinContent(86,1.01377);
-       rzpt_->SetBinContent(87,1.03474);
-       rzpt_->SetBinContent(88,0.990248);
-       rzpt_->SetBinContent(89,1.00668);
-       rzpt_->SetBinContent(90,0.975461);
-       rzpt_->SetBinContent(91,1.03657);
-       rzpt_->SetBinContent(92,0.992107);
-       rzpt_->SetBinContent(93,0.861815);
-       rzpt_->SetBinContent(94,0.930741);
-       rzpt_->SetBinContent(95,0.857949);
-       rzpt_->SetBinContent(96,1.0433);
-       rzpt_->SetBinContent(97,2.25209);
-        //rzpt2_.reset( new TF1("myf","1.36959e+00-1.39690e-03*x +x*x*7.11835e-07") );
-    }
-    if (Zpt < 1000) return rzpt_->GetBinContent(rzpt_->FindBin(Zpt));
-    else return 1.0;
-    //if (Zpt < 350) return rzpt_->GetBinContent(rzpt_->FindBin(Zpt));
-    //else return rzpt2_->Eval (std::min(Zpt,float(1000.))) ;
-}
+#include "interface/zpt.hxx"
 
 void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, const string& category){
     if (not doSync) return;

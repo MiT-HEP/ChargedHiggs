@@ -108,7 +108,9 @@ class HmumuAnalysis: virtual public AnalysisBase
         std::unique_ptr<TRandom> rnd_;
 
         float getZPtReweight(float Zpt);
+        float getZPtReweight2018(float Zpt);
         std::unique_ptr<TH1D> rzpt_;
+        std::unique_ptr<TH1D> rzpt2018_;
         std::unique_ptr<TF1> rzpt2_;
 
         /************

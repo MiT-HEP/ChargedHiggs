@@ -55,6 +55,7 @@ int LoadNero::InitTree(){
     // Set Extra: Extend, match ...
     bare_[ names_ ["BareTaus"] ] -> SetExtend();
     bare_[ names_ ["BarePhotons"] ] -> SetExtend();
+    bare_[ names_ ["BareMet"] ] -> SetExtend();
     //dynamic_cast<BareTaus*> (bare_[ names_ ["BareTaus"] ])  -> SetMatch();
     //dynamic_cast<BareFatJets*> (bare_[ names_ ["BareFatJets"] ])  -> cachedPrefix="AK8CHS";
 
@@ -82,7 +83,7 @@ int LoadNero::FillEvent(){
 
     FillJets();
     FillFatJets();
-    FillTrackJets();
+    //FillTrackJets();
     FillLeptons();
     FillPhotons();
     FillTaus();
@@ -239,7 +240,7 @@ void LoadNero::FillJets(){
 #ifdef VERBOSE
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> RawPt");
 #endif
-        if (tree_->GetBranchStatus("jetrawPt") ) j->rawPt = bj->rawPt -> at(iJet);
+        if (tree_->GetBranchStatus("jetRawPt") ) j->rawPt = bj->rawPt -> at(iJet);
 
         
 #ifdef VERBOSE
@@ -593,6 +594,7 @@ void LoadNero::FillMet(){
     // #endif
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     event_ -> met_ . SetRawMetP4( *met -> RawMet ) ;
+    event_ -> met_ . SetTrackMetP4( *met -> trackMet ) ;
     //event_ -> met_ . trackMet = *met -> trackMet ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
@@ -912,7 +914,7 @@ void LoadNero::NewFile(){
 
 }; // should take care of loading the trigger names
 
-void LoadNero::FillTrackJets(){
+/*void LoadNero::FillTrackJets(){
     //fill Jets
     #ifdef VERBOSE
     if(VERBOSE>1) Log(__FUNCTION__,"DEBUG","Filling TrackJets");
@@ -950,6 +952,7 @@ void LoadNero::FillTrackJets(){
 
     }
 }
+*/
 
 // ---------------------------END NERO ---------------------
 

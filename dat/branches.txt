@@ -10,6 +10,7 @@ jetnemf
 jetnhef
 jetchef
 jetDeep*
+jetRawPt
 ## QG
 jetQglCMult
 jetQglNMult
@@ -57,6 +58,7 @@ metP4
 metSyst*
 metPuppi
 RawMet
+trackMet
 ### EVENT
 isRealData
 rho

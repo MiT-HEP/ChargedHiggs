@@ -424,8 +424,9 @@ void Fitter::fit(){
 
             //interpolate model pars
             string splname=Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,i);
-#warning TTH125
-            if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")//ttH125
+            //#warning TTH125
+            //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")//ttH125
+            if (proc=="GluGluToHHTo2B2M_node_4")//ttH125
             //if (false)//ttH all
             {
                 cout <<"DEBUG: Creating RooRealVar: "<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i) <<endl;
