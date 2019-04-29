@@ -110,6 +110,7 @@ double ChargedHiggs::CosThetaCS( const TLorentzVector *v1, const TLorentzVector 
     TVector3 direction_cs = (refV_vb1_direction - refV_vb2_direction).Unit(); // CS direction
 
     return TMath::Cos(direction_cs.Angle(refV_v1.Vect()));
+
 }
 
 double ChargedHiggs::PhiCS( const TLorentzVector *v1, const TLorentzVector *v2,float sqrtS){
@@ -134,12 +135,18 @@ double ChargedHiggs::PhiCS( const TLorentzVector *v1, const TLorentzVector *v2,f
     
     // Definition of zz directions
     TVector3 direction_cs = (refV_vb1_direction - refV_vb2_direction).Unit(); // CS direction
+    TVector3 xAxis_cs = (refV_vb1_direction + refV_vb2_direction).Unit(); // CS direction //??
+    TVector3 yAxis_cs = direction_cs.Cross(xAxis_cs);
+    
+    double phi=std::atan2(refV_v1.Vect()*yAxis_cs , refV_v1.Vect() *xAxis_cs) ; 
     //return (xAxis,yAxis,CSAxis)
-    auto yAxis=(refV_b1.Vect().Unit()-refV_b2.Vect().Unit()).Unit();
-    auto xAxis=yAxis.Cross(direction_cs).Unit();
-    double phi=std::atan2(refV_v1.Vect()*yAxis , refV_v1.Vect() *xAxis) ; 
+    //auto yAxis=(refV_b1.Vect().Unit()-refV_b2.Vect().Unit()).Unit();
+    //auto xAxis=yAxis.Cross(direction_cs).Unit();
+    //double phi=std::atan2(refV_v1.Vect()*yAxis , refV_v1.Vect() *xAxis) ; 
     if(phi<0) return phi + 2*TMath::Pi();
     return phi;
+
+    
 }
 
 // this should be ~CosThetaStarCS in the center of mass

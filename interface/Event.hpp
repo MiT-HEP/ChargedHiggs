@@ -280,9 +280,9 @@ class Event{
     double ApplyL1PreFire(int year=2017);
     ///@brief apply btagging scale factor to the event. Working points (wp) correspond to loose,medium and tight.
     double ApplyBTagSF(int wp=0,int year=2017);
-    //@brief apply sf for taus
+    ///@brief apply sf for taus
     void ApplyTauSF(Tau*t,bool prongs=true,const string& extra="");
-    //@brief remove JEC from met in eta-2.5/3.0
+    ///@brief remove JEC from met in eta-2.5/3.0
     void ApplyMetNoJEC(double eta0=2.5, double eta1=3.0);
     std::unique_ptr<CorrectorBase> metnojec_; // corrector for method above
 

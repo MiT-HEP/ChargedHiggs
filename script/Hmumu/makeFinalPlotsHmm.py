@@ -864,15 +864,17 @@ if doBkg:
     #BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     if opts.noRatio:
         #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY",]
-        if 'OnH' in opts.var and config.year==2017:
+        if 'OnH' in opts.var: #and config.year==2017:
             BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DYJetsToLL_M-105To160"]
         else:
             BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY"]
     else:
         #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
-        if 'OnH' in opts.var and config.year==2017:
+        if 'OnH' in opts.var: # and config.year==2017:
+            print "-> Using 105-160"
             BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DYJetsToLL_M-105To160"]
         else:
+            print "-> Using Inclusive DY"
             BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DY"]
 
     #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
@@ -908,7 +910,8 @@ if doBkg:
             hdata.SetBinContent(ibin,0)
             hdata.SetBinError(ibin,0)
 
-    for mc in list(set(BkgMonteCarlos + BkgMonteCarlos2)):
+    #for mc in list(set(BkgMonteCarlos + BkgMonteCarlos2)):
+    for mc in list(set(BkgMonteCarlos)):
         print "* Getting bkg","HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc
         h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc )
         if h==None:
@@ -1191,10 +1194,10 @@ if doBkg:
 
     #bkg2R = bkg2.GetHist().Clone("bkg2R")
     ## 
-    bkg2R.SetFillStyle(0)
-    bkg2R.SetFillColor(ROOT.kCyan)
-    bkg2R.SetLineColor(ROOT.kCyan)
-    bkg2R.SetLineWidth(3)
+    #bkg2R.SetFillStyle(0)
+    #bkg2R.SetFillColor(ROOT.kCyan)
+    #bkg2R.SetLineColor(ROOT.kCyan)
+    #bkg2R.SetLineWidth(3)
 
     leg.SetNColumns(2)
 
@@ -1222,7 +1225,7 @@ if doBkg:
 
         
         errAll.Divide(mcAll)
-        bkg2R.Divide(mcAll)
+        #bkg2R.Divide(mcAll)
 
         r.Divide(mcAll)
         r.Draw("AXIS")
@@ -1299,7 +1302,7 @@ if doBkg:
         
 
         errAll.Draw("E2 SAME")
-        bkg2R.Draw("HIST SAME")
+        #bkg2R.Draw("HIST SAME")
 
         #r.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
         r.GetXaxis().SetTitle(dummy.GetXaxis().GetTitle())
@@ -1344,7 +1347,8 @@ if doBkg:
 
         r.Draw("P E X0 SAME")
 
-        garbage.extend([g,r,bkg2R])
+        #garbage.extend([g,r,bkg2R])
+        garbage.extend([g,r])
 
     if opts.outdir=="":
         raw_input("ok?")

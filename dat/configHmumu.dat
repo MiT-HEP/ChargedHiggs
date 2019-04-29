@@ -8,19 +8,19 @@ Files=
 ## Drell-Yan
 #include=dat/catalog/2017.moriond/dy_ht.dat
 #
-include=dat/catalog/2019.moriond/dy_amcatnlo.dat
-include=dat/catalog/2019.moriond/tt.dat
-include=dat/catalog/2019.moriond/st.dat
-include=dat/catalog/2019.moriond/rares.dat
+include=dat/catalog/2019.lhcp/year2017/dy_amcatnlo.dat
+include=dat/catalog/2019.lhcp/year2017/tt.dat
+include=dat/catalog/2019.lhcp/year2017/st.dat
+include=dat/catalog/2019.lhcp/year2017/rares.dat
 
 
 ## Signal
-include=dat/catalog/2019.moriond/hmm.dat
+include=dat/catalog/2019.lhcp/year2017/hmm.dat
 ## HH
 #include=dat/catalog/2018.moriond/hh.dat
 
 ### DATA
-include=dat/catalog/2019.moriond/singleMuon.dat
+include=dat/catalog/2019.lhcp/year2017/singleMuon.dat
 
 
 include=dat/hmumu.dat
@@ -60,3 +60,7 @@ addConfig=HmumuAnalysis|year=2017
 #UnprefirableFiltersAnalysis
 Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis
 
+addConfig=HmumuAnalysis|weights.clear()
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2017/TMVAClassification_BDTG.weights.01jet.xml')
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2017/TMVAClassification_BDTG.weights.2jet.xml')

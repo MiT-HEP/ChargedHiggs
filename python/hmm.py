@@ -309,6 +309,8 @@ hmmExCatBoost = HmmConfigExCat(22) ## 21 + mjj
 hmmExCat2018 = HmmConfigExCat(16,2018) ## 16 + mjj
 hmmExCatBoost2018 = HmmConfigExCat(22,2018) ## 21 + mjj
 
+hmmExCat2016 = HmmConfigExCat(16,2016) ## 16 + mjj
+
 class HHConfig(HmmConfig):
     def __init__(self):
         HmmConfig.__init__(self)

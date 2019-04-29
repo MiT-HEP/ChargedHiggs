@@ -37,6 +37,9 @@ void Event::ClearEvent(){
 
     weight_ -> clearSF( );
 
+    //Log(__FUNCTION__,"DEBUG","End ClearEvent");
+    //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","End Clear EVENT ----------" );
+
 }
 
 void Event::clearSyst(){

@@ -407,7 +407,7 @@ float HmumuAnalysis::getZPtReweight2018(float Zpt)
         rzpt2018_->SetBinContent(290,0.923635);
         rzpt2018_->SetBinContent(291,0.96548);
         }
-    if (Zpt < 300) return rzpt2018_->GetBinContent(rzpt2018_->FindBin(Zpt));
+    if (Zpt < 290) return rzpt2018_->GetBinContent(rzpt2018_->FindBin(Zpt));
     else return 1.0;
 }
 

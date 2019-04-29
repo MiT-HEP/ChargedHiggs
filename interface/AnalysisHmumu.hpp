@@ -98,6 +98,9 @@ class HmumuAnalysis: virtual public AnalysisBase
         string CategoryBdt(Event *e);
         string CategoryBdtMIT(Event *e);
 
+        float BdtUCSD(int pos=0,int nj=0);
+        float BdtUF(int pos=0);
+
         enum CutFlow{ Total=0, 
             Leptons,
             Trigger,
@@ -119,8 +122,9 @@ class HmumuAnalysis: virtual public AnalysisBase
         DataStore varValues_;
         vector<TMVA::Reader*> readers_;
 
-        void InitTmva();
-        void InitTmvaMIT();
+        void InitTmva(int pos);
+        void InitTmvaMIT(int pos);
+        void InitTmvaUCSD(int pos,int nj=0);
 
         void FillSyncTree(const string& label, const string&systname ,const string& category);
         vector<float> bdt;
