@@ -316,7 +316,8 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
 
     //if (category == "" and mu0_local != NULL and mu1_local!=NULL) { // VH Hadr resolved
     // use normal muons. Non miniIso
-    if (category == "" and mu0_local != NULL and mu1_local!=NULL) { // VH Hadr resolved
+    //if (category == "" and mu0_local != NULL and mu1_local!=NULL) { // VH Hadr resolved
+    if (category == "" and mu0 != NULL and mu1!=NULL) { // VH Hadr resolved
         kf->clear();
         //if (selectedJetsMiniIso.size() >=2){
         if (selectedJets.size() >=2){
@@ -390,7 +391,7 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     }
 
     // RESET Hmm WARNING!
-    if (category != "")
+    if (category != "" and category != "VHHadr")
     {
         Hmm.SetP4(zero); // make sure it is 0.
         mu0 = mu0_local;
@@ -1328,6 +1329,14 @@ int HmumuAnalysis::analyze(Event *event, string systname)
      */
 
     e->ApplyTopReweight();
+
+    /*
+     * NVTX
+     */
+
+    if (year==2016) { e->SetPtEtaSF("nvtx2016",std::min(e->Npv(),60),0); e->ApplySF("nvtx2016");}
+    if (year==2017) { e->SetPtEtaSF("nvtx2017",std::min(e->Npv(),60),0); e->ApplySF("nvtx2017");}
+    if (year==2018) { e->SetPtEtaSF("nvtx2018",std::min(e->Npv(),60),0); e->ApplySF("nvtx2018");}
 
     /*
      * L1 PreFiring Map
@@ -2273,6 +2282,13 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/NJetsOnH_"+ label,systname, selectedJets.size(),e->weight());
             Fill("HmumuAnalysis/Vars/NBJetsOnH_"+ label,systname, e->Bjets(),e->weight());
             Fill("HmumuAnalysis/Vars/CosThetaCSOnH_"+ label,systname,  ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()),e->weight());
+            
+            if (catType>=2 and bdt.size() >2)
+            {
+                if (selectedJets.size()<2) Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnH_"+label,systname,bdt[1],e->weight());
+                else Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnH_"+label,systname,bdt[2],e->weight());
+            }
+
             if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
             if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_NoPrefire_"+ label,systname, bdt[0] ,e->weight()/l1prefire);
             if(catType>=2 and bdt.size() >0 and e->GetL1FinalOr(-1))Fill("HmumuAnalysis/Vars/BdtOnH_Prefire_"+ label,systname, bdt[0] ,e->weight());
@@ -2365,8 +2381,6 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         {
             Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
 
-            if (selectedJets.size()<2) Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnH_"+label,systname,bdt[1],e->weight());
-            else Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnH_"+label,systname,bdt[2],e->weight());;
 
             if (not processingSyst_ and catType>=2){ // don't need syst for this
                 if (selectedJets.size() <2)Fill2D("HmumuAnalysis/Vars/BdtMassFull_UCSD1_"+ label,systname,mass_,bdt[1],e->weight());

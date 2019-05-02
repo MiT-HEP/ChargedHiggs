@@ -35,8 +35,6 @@ fatjetAK8CHSSoftdropMass
 fatjetAK8CHSCorrectedPrunedMass
 fatjetAK8CHSsubjet_btag
 fatjetAK8CHSfirstSubjet
-### TrackJets
-trackjet*
 ### Leptons
 lepP4
 lepIso
