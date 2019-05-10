@@ -611,6 +611,37 @@ string HmumuAnalysis::CategoryBdtMIT(Event *e){
     return catStr;
 }
 
+string HmumuAnalysis::CategoryBdtUCSD(Event *e){
+    string category="";
+    if (selectedJets.size() >=2)
+    {
+        //-1, -0.6, 0.22, 0.73, 0.9, 1 //dimitry
+        vector<float> bound{-1.00001, -0.6, 0.22, 0.73, 0.9, 1.00001};
+        auto ib= std::lower_bound( bound.begin(),bound.end(),bdt[2] );
+        if(ib==bound.end()){
+            category="cat0"; // shouldn't happen
+        }
+        else{
+            int catnum= (ib-bound.begin())-1;
+            category = Form("cat%d",catnum);
+        }
+    }
+    else{
+        vector<float> bound{-1.0001, -0.37, 0.22, 0.58, 1.00001};
+        //-1, -0.37, 0.22, 0.58, 1 --> dimitry
+        //-1, 0, 0.4, 0.65, 1 --> raffaele
+        auto ib= std::lower_bound(bound.begin(),bound.end(),bdt[1]);
+        if(ib==bound.end()){
+            category="cat5"; // shouldn't happen
+        }
+        else{
+            int catnum= (ib-bound.begin())-1;
+            catnum+=5; // shift with respect to 01jets
+            category = Form("cat%d",catnum);
+        }
+    }
+    return category;
+}
 string HmumuAnalysis::CategoryBdt(Event *e){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start CategoryBdt");
     // return the right category
@@ -1003,6 +1034,11 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/NpvOnH_"+ l ,"Npv;Npv;Events", 100,0,100);
 	    Book ("HmumuAnalysis/Vars/RhoOnH_"+ l ,"Rho;Rho;Events", 400,0,100);
 
+	    Book ("HmumuAnalysis/Vars/NpvOnZ_norwgt_"+ l ,"Npv;Npv;Events", 100,0,100);
+	    Book ("HmumuAnalysis/Vars/NpvOnH_norwgt_"+ l ,"Npv;Npv;Events", 100,0,100);
+	    Book ("HmumuAnalysis/Vars/NpvAll_norwgt_"+ l ,"Npv;Npv;Events", 100,0,100);
+	    Book ("HmumuAnalysis/Vars/NpvAll_"+ l ,"Npv;Npv;Events", 100,0,100);
+
 	    // Control variables
 	    Book ("HmumuAnalysis/Vars/MuonIso_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,0.1);
 	    Book ("HmumuAnalysis/Vars/MuonPt_"+ l ,"Muon Isolation;Iso^{#mu} [GeV];Events", 1000,0,1000);
@@ -1025,7 +1061,18 @@ void HmumuAnalysis::Init(){
 	    Book ("HmumuAnalysis/Vars/PtOnH_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnH_no_nnlops_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
 	    Book ("HmumuAnalysis/Vars/PtOnH_no_btagsf_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
+        
+        // bdt variables
+	    Book ("HmumuAnalysis/Vars/RapOnH_"+ l ,"Rapifity On Hmm (110-150);Met [GeV];Events", 200,-5,5);
+	    Book ("HmumuAnalysis/Vars/CosThetaCSOnH_"+ l ,"Rapifity On Hmm (110-150);Met [GeV];Events", 200,-1,1);
+	    Book ("HmumuAnalysis/Vars/PhiCSOnH_"+ l ,"Rapifity On Hmm (110-150);Met [GeV];Events", 200,-3.1416,3.1416);
+	    Book ("HmumuAnalysis/Vars/MinDrMuJOnH_"+ l ,"Rapifity On Hmm (110-150);Met [GeV];Events", 200,0,10.);
     
+	    Book ("HmumuAnalysis/Vars/PtOnH_2jet_"+ l ,"Pt On Hmm (110-150);Met [GeV];Events", 1000,0,1000);
+	    Book ("HmumuAnalysis/Vars/CosThetaCSOnH_2jet_"+ l ,"Rapifity On Hmm (110-150);Met [GeV];Events", 200,-1,1);
+	    Book ("HmumuAnalysis/Vars/PhiCSOnH_2jet_"+ l ,"Rapifity On Hmm (110-150);Met [GeV];Events", 200,-3.1416,3.1416);
+	    Book ("HmumuAnalysis/Vars/MinDrMuJOnH_2jet_"+ l ,"Rapifity On Hmm (110-150);Met [GeV];Events", 200,0,10.);
+
         // bdt
 	    Book ("HmumuAnalysis/Vars/BdtOnZ_"+ l ,"Bdt On Z (70-110);Bdt;Events", 1000,-1,1);
 	    Book ("HmumuAnalysis/Vars/BdtOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
@@ -1333,10 +1380,11 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     /*
      * NVTX
      */
-
-    if (year==2016) { e->SetPtEtaSF("nvtx2016",std::min(e->Npv(),60),0); e->ApplySF("nvtx2016");}
-    if (year==2017) { e->SetPtEtaSF("nvtx2017",std::min(e->Npv(),60),0); e->ApplySF("nvtx2017");}
-    if (year==2018) { e->SetPtEtaSF("nvtx2018",std::min(e->Npv(),60),0); e->ApplySF("nvtx2018");}
+    
+    float nvtxrwgt=1.0;
+    if (year==2016 and not e->IsRealData()) { e->SetPtEtaSF("nvtx2016",std::min(e->Npv(),60),0); e->ApplySF("nvtx2016");nvtxrwgt= e->GetWeight()->GetSF("nvtx2016")->get();}
+    if (year==2017 and not e->IsRealData()) { e->SetPtEtaSF("nvtx2017",std::min(e->Npv(),60),0); e->ApplySF("nvtx2017");nvtxrwgt=e->GetWeight()->GetSF("nvtx2017")->get(); }
+    if (year==2018 and not e->IsRealData()) { e->SetPtEtaSF("nvtx2018",std::min(e->Npv(),60),0); e->ApplySF("nvtx2018");nvtxrwgt=e->GetWeight()->GetSF("nvtx2018")->get();}
 
     /*
      * L1 PreFiring Map
@@ -1519,20 +1567,19 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
     if (catType==2) category = CategoryBdt(e);
     else if (catType==3) { 
-        category = CategoryBdt(e); 
-
+        category = CategoryBdtUCSD(e); 
 
         string categoryExc = CategoryExclusive(e); 
         recoMuons = (mu0 != NULL and mu1 !=NULL);  // muons may have been recomputed here
         isExclusiveCat = ( categoryExc!="" and categoryExc!="ggHX");
         if (categoryExc == "ggHX" and category == "") isExclusiveCat=true;
 
-        if (categoryExc == "ttHHadr") category = "cat15";// 
-        if (categoryExc == "ttHLep" ) category="cat16";  // 
-        if (categoryExc == "ZHLep" ) category="cat17";   // 
-        if (categoryExc == "WHLep" ) category="cat18";   // 
-        if (categoryExc == "VHHadr" ) category="cat19";   // 
-        if (categoryExc == "ggHX" and category == "" ) category="cat20";   // 
+        if (categoryExc == "ttHHadr") category = "cat9";// 15
+        if (categoryExc == "ttHLep" ) category="cat10";  // 
+        if (categoryExc == "ZHLep" ) category="cat11";   // 
+        if (categoryExc == "WHLep" ) category="cat12";   // 
+        if (categoryExc == "VHHadr" ) category="cat13";   // 
+        if (categoryExc == "ggHX" and category == "" ) category="cat14";   // 
 
         // enforce it for VBF Pisa
         //if (jetVar_["mjj_1"] > 400) category="cat21";
@@ -1996,6 +2043,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
     // Trigger
     passAsymmPtCuts = (recoMuons and  mu0->Pt() >30 and mu1->Pt() >20 );
+    if(year==2016 or year==2018) passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 and mu1->Pt() >20 );
     if (multipd_) passAsymmPtCuts= (recoMuons and mu0->Pt() >26 and mu1->Pt() >20);
 
     if (year==2016)
@@ -2017,7 +2065,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         else if (year==2017) passTrigger1 = (e->IsTriggered("HLT_IsoMu27_v",mu0) or e->IsTriggered("HLT_IsoTkMu27_v",mu0)) ;
         else if (year==2018) passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
 
-        if (mu1->Pt() > 30 ) 
+        if ( (mu1->Pt() > 30 and year==2017) or (mu1->Pt()>26 and (year== 2016 or year==2018) )) 
         {
             if (year==2016) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
             else if (year==2017) passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
@@ -2101,43 +2149,6 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         updateMjj(); // --> KF is defined again with em
     }
 
-    // 4mu selection
-    //if (passTrigger)
-    //for (float mh=0;mh<=1000;mh+=0.5)
-    //{
-    //    float mw=1.; //mass window around the Higg
-    //    //float mh=125.; // higgs mass
-
-    //    vector<Lepton*> allMuons;
-    //    for(int il =0;;++il) { Lepton*l=e->GetMuon(il); if (l==NULL) break ; else allMuons.push_back(l);}
-    //    
-    //    // if there is a muon, assign it as first muon
-    //    Lepton*my_mu0=(allMuons.size()>0)?allMuons[0]:NULL;
-    //    if (my_mu0) allMuons.erase(allMuons.begin());
-    //    
-    //    Lepton*my_mu1=NULL;
-    //    for( unsigned il=0;il<allMuons.size() and my_mu0 != NULL;++il){ Lepton *l=allMuons[il]; if (my_mu0->Charge()*l->Charge()==-1 and fabs(my_mu0->InvMass(l) -mh )<mw ){ my_mu1=l; allMuons.erase(allMuons.begin()+il);break;} }
-
-    //    // take again the first available muon
-    //    Lepton*my_mu2=(allMuons.size()>0)?allMuons[0]:NULL;
-    //    if (my_mu2) allMuons.erase(allMuons.begin());
-
-    //    Lepton*my_mu3=NULL;
-    //    for( unsigned il=0;il<allMuons.size() and my_mu2 != NULL;++il){ Lepton *l=allMuons[il]; if (my_mu2->Charge()*l->Charge()==-1 and fabs(my_mu2->InvMass(l) -mh )<mw ){ my_mu3=l; allMuons.erase(allMuons.begin()+il);break;} }
-    //    
-    //    if (my_mu0 and my_mu1 and my_mu2 and my_mu3)
-    //    {
-    //        Object X;
-    //        X.SetP4(zero); // make sure it is 0
-    //        X +=  *my_mu0;
-    //        X +=  *my_mu1;
-    //        X +=  *my_mu2;
-    //        X +=  *my_mu3;
-    //        //Fill ("HmumuAnalysis/Vars/M4m_HmmHmm_"+ label,systname,X.M() ,e->weight());
-	//        //Book2D ("HmumuAnalysis/Vars/M4m_HmmHmm_"+ l ,"Mass 4 muons XX compatibles;m_{4#mu};Events", 8000,0,2000,1000,0,500);
-    //        Fill2D("HmumuAnalysis/Vars/M4m_HmmHmm_"+ label,systname,X.M(),mh,e->weight());
-    //    }
-    //}
 
     // -- FINAL SELECTION --
     FillSyncTree(label, systname ,category);
@@ -2149,10 +2160,22 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         float zptrw = 1.;
         if (label == "DY" or label == "DYJetsToLL_M-105To160") 
         {
-            if (year == 2016 )zptrw = getZPtReweight(pt_ );
+            if (year == 2016 and label != "DYJetsToLL_M-105To160" )zptrw = getZPtReweight(pt_ );
             else zptrw = getZPtReweight2018(pt_ );
         }
         //cout<<"ZPtRWgh is "<<zptrw<<endl;
+        // generally apply z-pt reweight
+        
+        //{
+        //    SF* sf= e->GetWeight()->GetSF("dummy"); // base, I modify this one
+        //    sf->syst=0;
+        //    sf->sf= zptrw; 
+        //    sf->err = 0.0;
+        //    e->ApplySF("dummy");
+        //}
+
+        Fill("HmumuAnalysis/Vars/NpvAll_"+ label,systname, e->Npv() ,e->weight());
+        Fill("HmumuAnalysis/Vars/NpvAll_norwgt_"+ label,systname, e->Npv() ,e->weight()/nvtxrwgt);
         
         if (mass_ >= 70 and mass_<110){
             Fill("HmumuAnalysis/Vars/MetOnZ_"+ label,systname, e->GetMet().Pt(),e->weight());
@@ -2161,6 +2184,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/MetOnZ_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, pt_ ,e->weight());
             Fill("HmumuAnalysis/Vars/NpvOnZ_"+ label,systname, e->Npv() ,e->weight());
+            Fill("HmumuAnalysis/Vars/NpvOnZ_norwgt_"+ label,systname, e->Npv() ,e->weight()/nvtxrwgt);
             Fill("HmumuAnalysis/Vars/RhoOnZ_"+ label,systname, e->Rho() ,e->weight());
 
             if (jetVar_["maxDeepB"]>-0.5 )
@@ -2215,8 +2239,26 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/Mjj1OnH_" + label,systname, jetVar_["mjj_1"],e->weight() ) ;
             Fill("HmumuAnalysis/Vars/DeltaEtaJJ1OnH_" + label,systname, jetVar_["detajj_1"],e->weight() ) ;
             Fill("HmumuAnalysis/Vars/NpvOnH_"+ label,systname, e->Npv() ,e->weight());
+            Fill("HmumuAnalysis/Vars/NpvOnH_norwgt_"+ label,systname, e->Npv() ,e->weight()/nvtxrwgt);
             Fill("HmumuAnalysis/Vars/RhoOnH_"+ label,systname, e->Rho() ,e->weight());
 
+            Fill("HmumuAnalysis/Vars/RapOnH_"+ label , systname, Hmm.Rapidity(),e->weight());
+            Fill("HmumuAnalysis/Vars/CosThetaCSOnH_"+ label , systname, ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()),e->weight());
+            Fill("HmumuAnalysis/Vars/PhiCSOnH_"+ label , systname, ChargedHiggs::PhiCS(&mu0->GetP4(),&mu1->GetP4()),e->weight());
+
+            float drmj=10;
+            for( auto j : selectedJets)
+            {
+                drmj = min(drmj, float(j->DeltaR(mu0)));
+                drmj = min(drmj, float(j->DeltaR(mu1)));
+            }
+            Fill("HmumuAnalysis/Vars/MinDrMuJOnH_"+ label ,systname,drmj ,e->weight());
+            if (selectedJets.size() >=2){ 
+                Fill("HmumuAnalysis/Vars/PtOnH_2jet_"+ label , systname, Hmm.Pt(),e->weight());
+                Fill("HmumuAnalysis/Vars/CosThetaCSOnH_2jet_"+ label , systname, ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()), e->weight());
+                Fill("HmumuAnalysis/Vars/PhiCSOnH_2jet_"+ label , systname, ChargedHiggs::PhiCS(&mu0->GetP4(),&mu1->GetP4()), e->weight() );
+                Fill("HmumuAnalysis/Vars/MinDrMuJOnH_2jet_"+ label ,systname, drmj, e->weight() );
+            }
             //#warning MetNoJec Applied only to plots
             //e->ApplyMetNoJEC();
             

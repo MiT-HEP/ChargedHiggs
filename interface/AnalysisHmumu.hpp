@@ -97,6 +97,7 @@ class HmumuAnalysis: virtual public AnalysisBase
         //string CategoryAutoCat(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets,float met,float metphi);
         string CategoryBdt(Event *e);
         string CategoryBdtMIT(Event *e);
+        string CategoryBdtUCSD(Event *e);
 
         float BdtUCSD(int pos=0,int nj=0);
         float BdtUF(int pos=0);
