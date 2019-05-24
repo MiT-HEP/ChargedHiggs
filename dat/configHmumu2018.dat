@@ -40,4 +40,5 @@ Analysis=MetFiltersAnalysis,HmumuAnalysis
 addConfig=HmumuAnalysis|weights.clear()
 addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
 addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2018/TMVAClassification_BDTG.weights.01jet.xml')
-addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2018/TMVAClassification_BDTG.weights.2jet.xml')
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2018/TMVAClassification_BDTG.weights.2jet.xml')
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2018/TMVAClassification_BDTG.weights.2jet_bveto.xml')

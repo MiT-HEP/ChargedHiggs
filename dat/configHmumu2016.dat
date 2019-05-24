@@ -36,10 +36,12 @@ addConfig=HmumuAnalysis|year=2016
 
 include=dat/json.2016.dat
 Analysis=MetFiltersAnalysis,HmumuAnalysis
+#Analysis=HmumuAnalysis
 
 #config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON_v1.txt')
 
 addConfig=HmumuAnalysis|weights.clear()
 addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
 addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.01jet.xml')
-addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.2jet.xml')
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.2jet.xml')
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.2jet_bveto.xml')

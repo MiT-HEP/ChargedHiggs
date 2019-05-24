@@ -6,8 +6,8 @@
 
 void KaMuCa::Init(){
     Log(__FUNCTION__,"INFO","Init KaMuCa Corrections with MC_80X_13TeV and DATA_80X_13TeV");
-    correctorMC_.reset(new KalmanMuonCalibrator("MC_80X_13TeV") ) ;
-    correctorDATA_.reset(new KalmanMuonCalibrator("DATA_80X_13TeV") ) ;
+    correctorMC_.reset(new KalmanMuonCalibrator("scale_MC_80X_13TeV") ) ;
+    correctorDATA_.reset(new KalmanMuonCalibrator("scale_DATA_80X_13TeV") ) ;
     if (doResolution) resolution_.reset(new KalmanMuonResolution("aux/KaMuCa/"));
     rnd_ . reset(new TRandom3());
     //rnd_ . SetSeed(123456);
@@ -124,7 +124,8 @@ int KaMuCa::correct(Event *e){
                     lep->GetP4Dirty().Eta(),
                     lep->GetP4Dirty().Phi(),
                     lep->Charge()) / lep->GetP4Dirty().Pt();
-            if (dataSF< 1.e-5) Log(__FUNCTION__,"WARNING",Form("Scaling DATA Leptons by small amount: %f",dataSF) );
+            //Log(__FUNCTION__,"DEBUG",Form("Scaling DATA Leptons by: %f for lepton: %f, %f, %f %d",dataSF,lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(),lep->Charge()) );
+            if (dataSF< 1.e-5) Log(__FUNCTION__,"WARNING",Form("Scaling DATA Leptons by small amount: %f for lepton: %f, %f, %f %d",dataSF,lep->GetP4Dirty().Pt(),lep->GetP4Dirty().Eta(),lep->GetP4Dirty().Phi(),lep->Charge()) );
             Scale( *lep, dataSF);
         }
         else {

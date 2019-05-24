@@ -56,6 +56,7 @@ Correct=RochesterCorrections
 config=RochesterCorrections|year="2017"
 addConfig=HmumuAnalysis|doEvenOnly=1
 addConfig=HmumuAnalysis|year=2017
+addConfig=HmumuAnalysis|doSTXS=1
 
 #UnprefirableFiltersAnalysis
 Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis
@@ -63,4 +64,5 @@ Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis
 addConfig=HmumuAnalysis|weights.clear()
 addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
 addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2017/TMVAClassification_BDTG.weights.01jet.xml')
-addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2017/TMVAClassification_BDTG.weights.2jet.xml')
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2017/TMVAClassification_BDTG.weights.2jet.xml')
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2017/TMVAClassification_BDTG.weights.2jet_bveto.xml')

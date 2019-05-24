@@ -303,13 +303,16 @@ class HmmConfigExCat(HmmConfigAutoCat):
 
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
-hmmExCat = HmmConfigExCat(16) ## 16 + mjj
-hmmExCatBoost = HmmConfigExCat(22) ## 21 + mjj
+hmmExCat = HmmConfigExCat(14) ## 13+mjj
+hmmExCatMjj = HmmConfigExCat(15) ## 13+mjj
+#hmmExCatBoost = HmmConfigExCat(22) ## 21 + mjj
 
-hmmExCat2018 = HmmConfigExCat(16,2018) ## 16 + mjj
-hmmExCatBoost2018 = HmmConfigExCat(22,2018) ## 21 + mjj
+hmmExCat2018 = HmmConfigExCat(14,2018) ## 13 + mjj
+hmmExCatMjj2018 = HmmConfigExCat(15,2018) ## 13 + mjj
+#hmmExCatBoost2018 = HmmConfigExCat(22,2018) ## 21 + mjj
 
-hmmExCat2016 = HmmConfigExCat(16,2016) ## 16 + mjj
+hmmExCat2016 = HmmConfigExCat(14,2016) ## 13 + mjj
+hmmExCatMjj2016 = HmmConfigExCat(15,2016) ## 13 + mjj
 
 class HHConfig(HmmConfig):
     def __init__(self):

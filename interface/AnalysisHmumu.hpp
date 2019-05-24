@@ -41,7 +41,7 @@ class HmumuAnalysis: virtual public AnalysisBase
         int catType{0}; //0 = RunISync, 1=AutoCat, 2=Bdt
         bool doEvenOnly{false}; //signal only even events
         bool doOddOnly{false}; //signal only even events
-
+        bool doSTXS{false};
 
     private:
         //cache event,run, lumi for filling

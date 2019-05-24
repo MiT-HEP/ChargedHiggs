@@ -71,6 +71,7 @@ masses = [125,120,130]
 
 def MpvAndSigmaEff(h, q=0.68):
     ''' Return mpv and sigma eff and FWHM'''
+    if h== None: return (0., 0., 0., 0. )
     imax=-1
     valmax=0.0
     for ibin in range(0,h.GetNbinsX()):
@@ -126,6 +127,33 @@ def SoB(h,hdata,low,high,type=""):
 	#b= f.Integral(mean-low,mean+high)
 	return (s*br*lumi*xsec,b)
 
+def STXSSort(l):
+    return sorted(l[:])
+
+stxsColors={} ## bin -> int, color
+def GetSTXSColor(proc):
+    global stxsColors
+    ci = ROOT.TColor.GetFreeColorIndex();
+    r,g,b=.5,.5,.5
+    for base in ['GG2H','VBF','QQ2HLL','ZH','WH','TTH','BBH']:
+        if base in proc:
+            if base=='GG2H': r,g,b=.7,.7,1.
+            if base=='VBF': r,g,b=1.,.7,.7
+            if base=='ZH' or base=='QQ2HLL': r,g,b=7.,.7,1.
+            if base=='WH': r,g,b=7.,1.,1.
+            if base=='TTH': r,g,b=1.,0.7,1.
+            if 'last'+base in stxsColors:
+                r-= stxsColors['last'+base][0]
+                g-= stxsColors['last'+base][1]
+                b-= stxsColors['last'+base][2]
+            else: stxsColors['last'+base]=[0,0,0]
+            stxsColors['last'+base] += [-.1,-.1,0.]  ## todo -> update shifts correctly
+            if stxsColors['last'+base][0]<0: 
+                stxsColors['last'+base][0]=0
+                stxsColors['last'+base][1]=0
+                stxsColors['last'+base][2]=-0.1
+    color = ROOT.TColor(ci, r,g,b);
+    stxsColors[proc]=(ci,color) ## don't destroy color
 
 ## get files
 fIn = ROOT.TFile.Open(opts.input,"READ")
@@ -137,8 +165,10 @@ canvases=[]
 garbage=[]
 
 doSig=not opts.noSig
+doSTXS=True
 sigYields={} ##(cat,proc) -> Nevents, for next sig composition plot
 eaStore={} ##(cat,proc,MH) -> ea
+stxsStore={}
 
 if doSig:
   yieldFile=open( opts.outdir + "/signal_yields.txt","w")
@@ -168,7 +198,7 @@ if doSig:
 
             proc =re.sub("_HToMuMu.*","",mc) 
             bin0 = h.FindBin(110)
-            bin1 = h.FindBin(150)
+            bin1 = h.FindBin(150-0.0001)
             ea = h.Integral(bin0,bin1)
             dea=array('d',[0.])
             #ea = h.Integral()
@@ -184,7 +214,7 @@ if doSig:
                 h.GetXaxis().SetTitleOffset(1.2)
                 h.GetYaxis().SetTitle("#varepsilon A")
                 h.GetYaxis().SetTitleOffset(1.2)
-                h.GetXaxis().SetRangeUser(100,150)
+                h.GetXaxis().SetRangeUser(100,150-0.0001)
                 #color=38
                 color=46
                 h.SetLineColor(color)
@@ -252,7 +282,154 @@ if doSig:
             pass
             c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".pdf")
             c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".png")
+    #end mc loop
+  #end cat loop
   yieldFile.close()
+if doSig and doSTXS:
+  print "----------- STXS -----------"
+  yieldFileSTXS=open( opts.outdir + "/signal_yields_stxs.txt","w")
+  for cat in categories:
+        d=fIn.Get("HmumuAnalysis/Vars")    
+        for key in d.GetListOfKeys():
+            if re.match('^Mmm_%s_STXS_125_.*'%cat,key.GetName()):
+                h=d.Get(key.GetName())
+                if h==None: print "<*> ERROR in STXS", key.GetName(),"not able to grab?"
+                bin0 = h.FindBin(110)
+                bin1 = h.FindBin(150-0.0001)
+                ea = h.Integral(bin0,bin1)
+                dea=array('d',[0.])
+                h.IntegralAndError(bin0,bin1,dea)
+                proc=''
+                #self.processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
+                if 'BBH' in key.GetName(): proc = 'bbH'
+                elif 'TTH' in key.GetName(): proc='ttH'
+                elif 'WH' in key.GetName() or 'QQ2HLNU' in key.GetName(): proc='WH' ## sum of W+ and W-
+                elif 'QQ2ZH' in key.GetName(): proc='ZH' #
+                elif 'GG2ZH' in key.GetName(): proc='ZH' #
+                elif 'QQ2HLL' in key.GetName(): proc='ZH' #
+                elif 'GGF' in key.GetName() or 'GG2H' in key.GetName(): proc='GluGlu'
+                elif 'VBF' in key.GetName() or 'QQ2HQQ' in key.GetName(): proc='VBF' ## todo -> add distiction between VH and VBF
+                print "proc is",proc, "name is",key.GetName()
+                y=ea*config.lumi() * config.xsec(proc) *config.br()
+                name= re.sub('^.*_STXS_125_','',key.GetName())
+                stxsStore[(cat,name)]= y
+                print >>yieldFileSTXS ,cat,name,y
+  yieldFileSTXS.close()
+  print "----------- STXS DONE -----------"
+
+if doSig and doSTXS: ## signal composition plot
+  for cat in categories:
+    cSTXS=ROOT.TCanvas("c_"+cat+"_stxs","canvas",1600,800)
+    cSTXS.Range(-14.67532,-1.75,11.2987,15.75);
+    cSTXS.SetFillColor(0);
+    cSTXS.SetBorderMode(0);
+    cSTXS.SetBorderSize(2);
+    cSTXS.SetTopMargin(0.16);
+    cSTXS.SetLeftMargin(0.15);
+    cSTXS.SetRightMargin(0.05);
+    cSTXS.SetFrameBorderMode(0);
+    cSTXS.SetFrameBorderMode(0);
+    cSTXS.Draw()
+    cSTXS.cd()
+
+    nCats=len(categories)
+    dummy = ROOT.TH2F("dummy","",10,0.,100.,nCats,1-0.5,nCats+0.5);
+    dummy.SetStats(0);
+    ci = ROOT.TColor.GetColor("#00ff00");
+    dummy.SetFillColor(ci);
+
+    for ic,cat in enumerate(categories):
+        dummy.GetYaxis().SetBinLabel(nCats-ic,"cat %d"%ic);
+
+    dummy.GetXaxis().SetTickLength(0.01);
+    dummy.GetYaxis().SetTickLength(0);
+    dummy.GetXaxis().SetTitle("Signal Fraction [%]");
+    dummy.GetXaxis().SetNdivisions(510);
+    dummy.GetXaxis().SetLabelFont(42);
+    dummy.GetXaxis().SetLabelSize(0.045);
+    dummy.GetXaxis().SetTitleSize(0.045);
+    dummy.GetXaxis().SetTitleOffset(0.95);
+    dummy.GetXaxis().SetTitleFont(42);
+    dummy.GetYaxis().SetNdivisions(510);
+    dummy.GetYaxis().SetLabelSize(0.035);
+    dummy.GetYaxis().SetTitleSize(0.045);
+    dummy.GetYaxis().SetTitleOffset(1.1);
+    dummy.GetYaxis().SetTitleFont(42);
+    dummy.GetZaxis().SetLabelFont(42);
+    dummy.GetZaxis().SetLabelSize(0.035);
+    dummy.GetZaxis().SetTitleSize(0.035);
+    dummy.GetZaxis().SetTitleFont(42);
+    dummy.Draw("");
+
+    ## normalized stacked fractions
+    ymin = 0.0
+    width = 0.34
+
+    stxsFrac = {}
+
+    for ic,cat in enumerate(categories):
+        S=0.0
+        stxsproclist=[]
+        for icat,name in stxsStore:
+            if icat != cat : continue
+            S+=stxsStore[(cat,name)]
+            stxsproclist.append(name)
+        stxsproclist = STXSSort(stxsproclist)
+        for icat,name in stxsStore:
+            if icat != cat : continue
+            try:
+                stxsFrac[(cat,name)] = stxsStore[(cat,name)]/S*100.; #sigYields becomes fractions here!
+            except ZeroDivisionError: 
+                stxsFrac[(cat,proc)] = 0.
+        print
+        sys.stdout.flush()
+        ybin = nCats-ic; ## 1-1 mapping
+        ybinmin = ybin-width;
+        ybinmax = ybin+width;
+        xbinmin = ymin;
+        xbinmax = ymin;
+        pavetext = ROOT.TPaveText(xbinmin+0.5,ybinmin,xbinmin+30.5,ybinmax);
+        pavetext.AddText("%.1f total expected signal"%S)
+        pavetext.SetTextColor(0);
+        pavetext.SetFillStyle(0);
+        pavetext.SetFillColor(0);
+        pavetext.SetLineColor(0);
+        pavetext.SetBorderSize(0);
+
+        for iproc,proc in enumerate(stxsproclist):
+            xbinmax += stxsFrac[(cat,proc)]
+            pave = ROOT.TPave(xbinmin,ybinmin,xbinmax,ybinmax);
+            if proc not in stxsColors:
+                GetSTXSColor(proc)
+            pave.SetFillColor(stxsColors[proc][0]);
+            pave.Draw();
+            pave.SetBorderSize(0);
+            xbinmin +=stxsFrac[(cat,proc)]
+            garbage.append(pave)
+        pavetext.Draw()
+        garbage.append(pavetext)
+    ## legend
+    tex_m=ROOT.TLatex();
+    tex_m.SetNDC();
+    tex_m.SetTextAlign(12);
+    tex_m.SetTextSize(0.025);
+    tex_m.SetLineWidth(2);
+
+    ## Legend
+    processName=stxsproclist
+
+    #starts=[0.28,0.4,0.52,.64,.76,.88]
+    #for i in range(0,len(starts)):
+    #    pave=ROOT.TPave(starts[i%6],0.85-(i/6)*0.04,starts[i]+.03,0.85+0.03-(i/6)*0.04,0,"NDC");
+    #    pave.SetFillColor(colors[i]);
+    #    pave.Draw();
+    #    tex_m.DrawLatex(starts[i]+0.04,0.84+0.025-(i/6)*0.04,processName[i]);
+    #    garbage.append(pave)
+
+    cSTXS.Modify()
+    cSTXS.Update()
+    cSTXS.SaveAs(opts.outdir + "/signal_stxs.pdf")
+    cSTXS.SaveAs(opts.outdir + "/signal_stxs.png")
 
 if doSig: ## signal composition plot
     #colors = [ ROOT.kGreen+3, ROOT.kRed+2, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kBlue-4];
@@ -430,7 +607,10 @@ if doSig: ## signal composition plot
             else : htot.Add(h)
             #print "--> Htot",htot.Integral()
           mpv, low ,high,fwhm =  MpvAndSigmaEff(htot, 0.682689)
-          store[ic] = (fwhm,htot.Integral(),100,(high-low))
+          if htot==None:
+            store[ic] = (fwhm,0.,100,(high-low))
+          else:
+            store[ic] = (fwhm,htot.Integral(),100,(high-low))
 
           #print " ------------------ RECOMPUTED STORE  -------------------------"
           #print store

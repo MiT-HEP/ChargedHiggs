@@ -438,10 +438,10 @@ void LoadNero::FillLeptons(){
         l-> SetLooseId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepLoose));
         l-> SetTrackerMuon ((bl->selBits ->at(iL) & BareLeptons::Selection::MuTracker));
         l-> SetGlobalMuon ((bl->selBits ->at(iL) & BareLeptons::Selection::MuGlobal));
-        if (event_->IsRealData() and event_->runNum() <= 278801 and l->GetType() == 13) // B->F(HIP)
-        {
-            l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::MuMediumB2F) );
-        }
+        //if (event_->IsRealData() and event_->runNum() <= 278801 and l->GetType() == 13) // B->F(HIP)
+        //{
+        //    l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::MuMediumB2F) );
+        //}
         //if (event_->IsRealData() and event_->runNum() >= 278802) // F->G (HIP_FIXED)
         //
         l-> SetPfPt  ( (*bl->lepPfPt) [iL]);

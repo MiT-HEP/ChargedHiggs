@@ -247,8 +247,9 @@ RooAbsPdf* PdfModelBuilder::getZModExp2(string prefix, int order){
         replace(old,Form("ord%d",order),"ord1");
         if (params.find(old) != params.end()) params[pname] -> setVal( params[old]->getVal());
         else cout <<"WARNING UNABLE TO FIND REPLACEMENT FROM "<<old<<" TO "<<pname<<endl;
-        if (order !=1) params[pname] -> setConstant();
+        //if (order !=1) params[pname] -> setConstant(); -> not setting them constant
     }
+
     //if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1 + @5*TMath::Sin(TMath::Sqrt(@4+.2)*4.5*3.1415 ))",*plist);
 
 

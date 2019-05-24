@@ -6,6 +6,7 @@
 #include "interface/GeneralFunctions.hpp"
 
 #include "interface/HiggsTemplateCrossSections.hpp"
+#include "interface/HiggsTemplateCrossSections_Stage1p1.hpp"
 
 #include "TVectorD.h"
 #include "TMatrixD.h"
@@ -616,13 +617,20 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
     if (selectedJets.size() >=2)
     {
         //-1, -0.6, 0.22, 0.73, 0.9, 1 //dimitry
-        vector<float> bound{-1.00001, -0.6, 0.22, 0.73, 0.9, 1.00001};
+        //vector<float> bound{-1.00001, -0.6, 0.22, 0.73, 0.9, 1.00001};
+        //Optimized categories for 2jet_bveto with mjj<400 are as follows:
+        //[-1, -0.76, -0.26, 0.1, 0.55, 1]
+        //Or, if you want four categories:
+        //[-1, -0.12, 0.1, 0.55, 1]
+        vector<float> bound{-1.00001, -.76,-.26,0.1,0.55,1.00001};
+
         auto ib= std::lower_bound( bound.begin(),bound.end(),bdt[2] );
         if(ib==bound.end()){
             category="cat0"; // shouldn't happen
         }
         else{
             int catnum= (ib-bound.begin())-1;
+            if (catnum<0) catnum=0;
             category = Form("cat%d",catnum);
         }
     }
@@ -636,6 +644,7 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
         }
         else{
             int catnum= (ib-bound.begin())-1;
+            if (catnum<0) catnum=0;
             catnum+=5; // shift with respect to 01jets
             category = Form("cat%d",catnum);
         }
@@ -1194,6 +1203,20 @@ void HmumuAnalysis::Init(){
         {
 	        Book ("HmumuAnalysis/Vars/Mmm_"+ c + "_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 2000,60,160); // every 4 (old16) per GeV
 	        //Book2D ("HmumuAnalysis/Vars/JetEtaPhi_"+ c + "_"+ l ,"Jet EtaPhi; eta; phi;Events", 100,-5,5,100,-3.1415,3.1415); // CHECK2D
+            if (doSTXS){
+                // trigger stxs filling
+                STXS::ENumToString(STXS::Stage1p1::GG2HLL_PTV_0_75);
+                if (l == "GluGlu_HToMuMu_M125" or 
+                        l=="VBF_HToMuMu_M125" or 
+                        l=="WPlusH_HToMuMu_M125" or
+                        l=="WMinusH_HToMuMu_M125" or 
+                        l=="ZH_HToMuMu_M125" or
+                        l=="ttH_HToMuMu_M125"){
+                    for (const auto &x : STXS::stxs_to_string){
+                        if (x.second != "" )Book("HmumuAnalysis/Vars/Mmm_"+ c + "_" + l+ "_STXS_125_"+x.second , "Mmm;m^{#mu#mu} [GeV];Events;"+x.second, 2000,60,160);
+                    }
+                }// samples
+            }//STXS
         }
 
     } //end label loop
@@ -1321,6 +1344,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
+    string labelSTXS="";
 
     // translate to a consistent set
     if ( label == "GluGluHToMuMu_M120") label = "GluGlu_HToMuMu_M120";
@@ -1407,22 +1431,43 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start HTXS Classification");
 
         HTXS::HiggsClassification  hc;
-        if (label.find( "GluGlu_HToMuMu") != string::npos) hc.prodMode = HTXS::GGF;
-        else if (label.find( "VBF_HToMuMu") != string::npos) hc.prodMode = HTXS::VBF;
+        STXS::HiggsClassification  hc2;
+        if (label.find( "GluGlu_HToMuMu") != string::npos) {
+            hc.prodMode = HTXS::GGF;
+            hc2.prodMode = STXS::GGF;
+        }
+        else if (label.find( "VBF_HToMuMu") != string::npos) {
+            hc.prodMode = HTXS::VBF;
+            hc2.prodMode = STXS::VBF;
+        }
         else if (label.find( "ZH_HToMuMu") != string::npos) {
             if (e->GetPdfId(1) <=6 and e->GetPdfId(2) <=6)
             {
                 hc.prodMode = HTXS::QQ2ZH; // I should look into the PDF productions GG2ZH vs QQ2ZH
+                hc2.prodMode = STXS::QQ2ZH; 
             }
             else
             {
                 hc.prodMode = HTXS::GG2ZH; // I should look into the PDF productions GG2ZH vs QQ2ZH
+                hc2.prodMode = STXS::GG2ZH; 
             }
         }
-        else if (label.find( "WMinusH_HToMuMu") != string::npos) hc.prodMode = HTXS::WH;
-        else if (label.find( "WPlusH_HToMuMu") != string::npos) hc.prodMode = HTXS::WH;
-        else if (label.find( "ttH_HToMuMu") != string::npos) hc.prodMode = HTXS::TTH;
-        else hc.prodMode = HTXS::UNKNOWN;
+        else if (label.find( "WMinusH_HToMuMu") != string::npos){ 
+            hc.prodMode = HTXS::WH;
+            hc2.prodMode = STXS::WH;
+        }
+        else if (label.find( "WPlusH_HToMuMu") != string::npos) {
+            hc.prodMode = HTXS::WH;
+            hc2.prodMode = STXS::WH;
+        }
+        else if (label.find( "ttH_HToMuMu") != string::npos){
+            hc.prodMode = HTXS::TTH;
+            hc2.prodMode = STXS::TTH;
+        }
+        else {
+            hc.prodMode = HTXS::UNKNOWN;
+            hc2.prodMode = STXS::UNKNOWN;
+        }
 
         
         if (hc.prodMode != HTXS::UNKNOWN)
@@ -1452,9 +1497,18 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 if (g->GetPdgId() <=5 and  e->GenParticleDecayedFrom(ig,24,idx) and idx==idxV) quarkDecayed=true;
             }
             
-            if (Higgs != NULL) hc.higgs =  Higgs->GetP4();
-            if (mu0T != NULL) hc. p4decay_higgs = mu0T -> GetP4();
-            if (V != NULL) hc. V = V -> GetP4();
+            if (Higgs != NULL) {
+                hc.higgs =  Higgs->GetP4();
+                hc2.higgs =  Higgs->GetP4();
+            }
+            if (mu0T != NULL) {
+                hc. p4decay_higgs = mu0T -> GetP4();
+                hc2. p4decay_higgs = mu0T -> GetP4();
+            }
+            if (V != NULL){
+                hc. V = V -> GetP4();
+                hc2. V = V -> GetP4();
+            }
 
             // Get Njets 30
             vector<TLorentzVector> jets;
@@ -1472,6 +1526,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             // classify, only stage1  30 GeV
             hc.stage1_cat_pTjet30GeV = HTXS::Stage1::UNKNOWN;
             hc.stage1_cat_pTjet30GeV = HTXS::getStage1Category( hc.prodMode,hc.higgs, jets,hc.V,quarkDecayed);
+
 
             SF_WG1* sf_wg1 = dynamic_cast<SF_WG1*> (e->GetWeight()->GetSF("wg1") ); 
             sf_wg1->SetNjets30(jets.size());
@@ -1492,6 +1547,11 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 nnlops=sf_nnlops->get();
 
                 //Log(__FUNCTION__,"DEBUG",Form("NNLOPS is %lf",nnlops)); 
+            }
+            if (doSTXS)
+            {
+                hc2.stage1p1_cat= STXS::getStage1p1Category(hc2.prodMode, hc2.higgs, jets, hc2.V, quarkDecayed);
+                labelSTXS=STXS::ENumToString(hc2.stage1p1_cat);
             }
         }
 
@@ -1579,11 +1639,11 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         if (categoryExc == "ZHLep" ) category="cat11";   // 
         if (categoryExc == "WHLep" ) category="cat12";   // 
         if (categoryExc == "VHHadr" ) category="cat13";   // 
-        if (categoryExc == "ggHX" and category == "" ) category="cat14";   // 
+        //if (categoryExc == "ggHX" and category == "" ) category="cat14";   
 
         // enforce it for VBF Pisa
-        //if (jetVar_["mjj_1"] > 400) category="cat21";
-        //if (jetVar_["mjj_lead"] > 400) category="cat21";
+        ////if (jetVar_["mjj_1"] > 400) category="cat14";
+        if (jetVar_["mjj_lead"] > 400) category="cat14";
     } 
     else if (catType ==4)
     {
@@ -2046,12 +2106,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     if(year==2016 or year==2018) passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 and mu1->Pt() >20 );
     if (multipd_) passAsymmPtCuts= (recoMuons and mu0->Pt() >26 and mu1->Pt() >20);
 
-    if (year==2016)
-    passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); 
-    else if (year==2017)
-    passTrigger=e->IsTriggered("HLT_IsoMu27_v") or e->IsTriggered("HLT_IsoTkMu27_v"); 
-    else if (year==2018)
-    passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); 
+    if (year==2016) {passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); }
+    else if (year==2017) {passTrigger=e->IsTriggered("HLT_IsoMu27_v") or e->IsTriggered("HLT_IsoTkMu27_v"); }
+    else if (year==2018) {passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); }
 
     passTrigger1 = false; 
     passTrigger2 = false;
@@ -2072,6 +2129,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             else if (year==2018) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
         }
         passTrigger=passTrigger1 or passTrigger2;
+#warning DISABLING_TRIGGER_MATCHING_2016
+        if (year==2016) passTrigger=passTrigger or passTriggerEvent;
 
         if (multipd_) // switch to HLT_IsoMu24. 
         {
@@ -2107,7 +2166,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             //#warning ABSURD_ELE_VETO
             //|eta| < 1.4442 || 1.566 <|eta| <2.5 
             // DR with muon 
-            if (el->Pt() >10 and 
+            if (el->Pt() >15 and 
                     (fabs(el->Eta()) <1.4442 or fabs(el->Eta())>1.566) and 
                     fabs(el->Eta())<2.5 and
                     mu0->DeltaR(el) >0.4 and mu1->DeltaR(el) >0.4
@@ -2166,13 +2225,13 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         //cout<<"ZPtRWgh is "<<zptrw<<endl;
         // generally apply z-pt reweight
         
-        //{
-        //    SF* sf= e->GetWeight()->GetSF("dummy"); // base, I modify this one
-        //    sf->syst=0;
-        //    sf->sf= zptrw; 
-        //    sf->err = 0.0;
-        //    e->ApplySF("dummy");
-        //}
+        {
+            SF* sf= e->GetWeight()->GetSF("dummy"); // base, I modify this one
+            sf->syst=0;
+            sf->sf= zptrw; 
+            sf->err = 0.0;
+            e->ApplySF("dummy");
+        }
 
         Fill("HmumuAnalysis/Vars/NpvAll_"+ label,systname, e->Npv() ,e->weight());
         Fill("HmumuAnalysis/Vars/NpvAll_norwgt_"+ label,systname, e->Npv() ,e->weight()/nvtxrwgt);
@@ -2422,6 +2481,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         if( category != "")
         {
             Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
+            if (doSTXS and labelSTXS!="") Fill("HmumuAnalysis/Vars/Mmm_"+ category + "_" + label+ "_STXS_125_"+labelSTXS,systname,mass_,e->weight());
 
 
             if (not processingSyst_ and catType>=2){ // don't need syst for this
@@ -3176,15 +3236,15 @@ float HmumuAnalysis::BdtUCSD(int pos,int nj)
     }
     else{
         SetVariable("jet1pt",0.);    
-        SetVariable("jet1eta",-5.);    
+        SetVariable("jet1eta",0.);    
     }
-    float drmj=10;
+    float drmj=100.;
     for( auto j : selectedJets)
     {
         drmj = min(drmj, float(j->DeltaR(mu0)));
         drmj = min(drmj, float(j->DeltaR(mu1)));
     }
-    
+    if (drmj>99.) drmj=0.; 
     SetVariable("drmj",drmj);    
 
     if (selectedJets.size() >=2)
@@ -3237,7 +3297,7 @@ void HmumuAnalysis::InitTmvaUCSD(int pos,int nj){
     AddVariable("met",'F');    
     if (nj==2)AddVariable("zepen",'F');    
     
-    AddVariable("nbjets",'F');    
+    if (weights[pos].find("bveto") == string::npos) AddVariable("nbjets",'F');    
     if (nj==0){
         AddVariable("drmj",'F');    
         AddVariable("njets",'F');    

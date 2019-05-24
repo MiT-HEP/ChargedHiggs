@@ -11,6 +11,7 @@ usage='''compareSync.py file1 file2
 	'''
 parser = OptionParser(usage=usage)
 parser.add_option("-k","--field",type="int",help="field to compare [%default]",default=-1) 
+parser.add_option("","--select",type="string",help="min,max in the first file field for plot[%default]",default="") 
 (opts,args) = parser.parse_args()
 
 
@@ -88,9 +89,11 @@ if opts.field >=0:
         except ZeroDivisionError:
             pass
     import ROOT
-    delta=ROOT.TH1D("delta","delta",100,-maxDiff,maxDiff)
+    #delta=ROOT.TH1D("delta","delta",100,-maxDiff,maxDiff)
+    delta=ROOT.TH1D("delta","delta",1000,-1,1)
     for key in (s1&s2): 
         if d1[key] == 0 or d2[key]==0: continue
+        if opts.select !="" and (d1[key] < float(opts.select.split(',')[0]) or d1[key] > float(opts.select.split(',')[1])): continue
         delta.Fill(d1[key]-d2[key])
     delta.Draw("HIST")
     raw_input("ok?")

@@ -93,7 +93,8 @@ void Fitter::init(){
         for( float& m : mIn)
         {
             //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 
-            if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
+            //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
+            if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
 
             string mass = Form(massMask_.c_str() ,m);
             TH1D *h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
@@ -199,7 +200,8 @@ void Fitter::init(){
 
         //if (proc == "ttH")//ttH125 
         //if (false)//ttH as all
-        if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")
+        //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")
+        if (proc=="GluGluToHHTo2B2M_node_4")
         {
             eaSpline = new RooRealVar(eaName.c_str(),eaName.c_str(),ea_y[0]);
             ((RooRealVar*)eaSpline)->setConstant();
@@ -315,7 +317,8 @@ void Fitter::fit(){
             }
             // return if ttH !=125
             //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 
-            if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
+            //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
+            if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
             //mean and sigma
            // pars[pos+0].setRange(0,125);
 
@@ -413,7 +416,8 @@ void Fitter::fit(){
             for( auto & m: mIn )
             {
                 //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125
-                if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
+                //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
+                if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
                 cout <<" Considering proc='"<<proc<<"' and mass = "<< m<<endl;
 
                 string mass=Form(massMask_.c_str(),m);
