@@ -52,8 +52,13 @@ Correct=
 #Correct=ScaleAndSmear
 #Correct=ScaleAndSmear,KaMuCa,JetFilter2016
 #Correct=ScaleAndSmear,KaMuCa
-Correct=RochesterCorrections
-config=RochesterCorrections|year="2017"
+#Correct=RochesterCorrections
+#config=RochesterCorrections|year="2017"
+Correct=VertexKinfit,RochesterCorrections,FSRRecovery
+config=VertexKinfit|allow_reset=1
+config=RochesterCorrections|year="2017",allow_reset=0
+config=FSRRecovery|allow_reset=0
+
 addConfig=HmumuAnalysis|doEvenOnly=1
 addConfig=HmumuAnalysis|year=2017
 addConfig=HmumuAnalysis|doSTXS=1

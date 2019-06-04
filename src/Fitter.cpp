@@ -11,15 +11,16 @@
 
 using namespace RooFit;
 
-Fitter::Fitter(){
+Fitter::Fitter(string uniq){
+    uniq_=uniq;
     w_ = NULL;
     inputMasks.push_back("ChargedHiggsTauNu/Vars/Mt_HplusToTauNu_M-%.0f_13TeV_amcatnlo");
     datasetMask_ = "hist_%s_cat%d_M%.0f";
     //xsecMask_ = "xsec_Mt_cat%d";
-    xsecMask_ = "xsec_%s_cat%d";
-    eaMask_ = "ea_sigmodel_%s_cat%d";
-    normMask_ = "pdf_sigmodel_%s_cat%d_norm";
-    modelMask_ = "pdf_sigmodel_%s_cat%d";
+    xsecMask_ = "xsec"+uniq_+"_%s_cat%d";
+    eaMask_ = "ea_sigmodel"+uniq_+"_%s_cat%d";
+    normMask_ = "pdf_sigmodel"+uniq_+"_%s_cat%d_norm";
+    modelMask_ = "pdf_sigmodel"+uniq_+"_%s_cat%d";
     massMask_ = "%.0f";
     writeDatasets_ = true;
     plot = true;
@@ -427,7 +428,7 @@ void Fitter::fit(){
             }
 
             //interpolate model pars
-            string splname=Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,i);
+            string splname=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),proc.c_str(),cat,i);
             //#warning TTH125
             //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")//ttH125
             if (proc=="GluGluToHHTo2B2M_node_4")//ttH125
@@ -480,7 +481,7 @@ void Fitter::end(){
 
         string name = Form(modelMask_.c_str(),proc.c_str(),cat);
 
-        cout <<"->Trying to access vars:"<<Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat)<<endl;
+        cout <<"->Trying to access vars:"<<Form("sigmodel%s_%s_cat%d_c0",uniq_.c_str(),proc.c_str(),cat)<<endl;
 
         w_->Print();
 
@@ -489,7 +490,7 @@ void Fitter::end(){
         // construct gaussians
 
         //RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat))));
-        RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
+        RooGaussian *g1 = new RooGaussian(Form("g1%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
 
         RooGaussian *g2{NULL},*g3{NULL};
 
@@ -503,8 +504,8 @@ void Fitter::end(){
 
         //if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
         //if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c4",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c5",proc.c_str(),cat))));
-        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_, *getMeanWithSyst(cat,proc,1), *getSigmaWithSyst(cat,proc,1));
-        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3_%s_cat%d",proc.c_str(),cat),"g3",*x_,  *getMeanWithSyst(cat,proc,2), *getSigmaWithSyst(cat,proc,2));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"g2",*x_, *getMeanWithSyst(cat,proc,1), *getSigmaWithSyst(cat,proc,1));
+        if (nGaussians[pair<int,string>(cat,proc)] >= 3 )g3= new RooGaussian(Form("g3%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"g3",*x_,  *getMeanWithSyst(cat,proc,2), *getSigmaWithSyst(cat,proc,2));
 
         std::unique_ptr<RooAbsPdf> sigModel;
        
@@ -516,15 +517,15 @@ void Fitter::end(){
         else if (nGaussians[pair<int,string>(cat,proc)] ==2) 
         {
            sigModel.reset(new RooAddPdf(name.c_str(),"model",RooArgList(*g1,*g2),
-                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c4",repl_proc.c_str(),repl_cat)))
+                RooArgList( *(w_->function(Form("sigmodel%s_%s_cat%d_c4",uniq_.c_str(),repl_proc.c_str(),repl_cat)))
                     ),
                 kTRUE
                 ));
         }
         else if (nGaussians[pair<int,string>(cat,proc)] ==3) 
            sigModel.reset(new RooAddPdf(name.c_str(),"model",RooArgList(*g1,*g2,*g3),
-                RooArgList( *(w_->function(Form("sigmodel_%s_cat%d_c6",repl_proc.c_str(),repl_cat))),
-                    *(w_->function(Form("sigmodel_%s_cat%d_c7",repl_proc.c_str(),repl_cat)))
+                RooArgList( *(w_->function(Form("sigmodel%s_%s_cat%d_c6",uniq_.c_str(),repl_proc.c_str(),repl_cat))),
+                    *(w_->function(Form("sigmodel%s_%s_cat%d_c7",uniq_.c_str(),repl_proc.c_str(),repl_cat)))
                     ),
                 kTRUE
                 ));
@@ -593,11 +594,11 @@ RooAbsReal* Fitter::getMeanWithSyst(int cat, string proc,int gaus=0){
         }
 
         string scaleFormula = "@0";
-        RooArgList scaleList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",repl_proc.c_str(),repl_cat,0+gaus*2))) );
+        RooArgList scaleList( *(w_->function(Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,0+gaus*2))) );
 
         RooFormulaVar *deltaM=NULL;
         if (gaus >0 )
-            deltaM=new RooFormulaVar(Form("deltaM_%s_cat%d_g%d",proc.c_str(),cat,gaus),"deltaM","@1-@0",RooArgList( *w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,0) ), * w_->function(Form("sigmodel_%s_cat%d_c%d",proc.c_str(),cat,0+gaus*2)) ));
+            deltaM=new RooFormulaVar(Form("deltaM_%s_%s_cat%d_g%d",uniq_.c_str(),proc.c_str(),cat,gaus),"deltaM","@1-@0",RooArgList( *w_->function(Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),proc.c_str(),cat,0) ), * w_->function(Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),proc.c_str(),cat,0+gaus*2)) ));
 
         if (scaleUnc.find( pair<int,string>(mycat,myproc) )   != scaleUnc.end() ) 
         {
@@ -617,7 +618,7 @@ RooAbsReal* Fitter::getMeanWithSyst(int cat, string proc,int gaus=0){
         scaleValue->setConstant();
         scaleNuisance->setConstant();
 
-        string name=Form("sigmodel_%s_cat%d_g%d_mean",proc.c_str(),cat,gaus);
+        string name=Form("sigmodel%s_%s_cat%d_g%d_mean",uniq_.c_str(),proc.c_str(),cat,gaus);
         RooFormulaVar *mean = new RooFormulaVar(name.c_str(),name.c_str(),scaleFormula.c_str(),scaleList);
         w_->import(*mean,RecycleConflictNodes());
         return mean;
@@ -647,7 +648,7 @@ RooAbsReal* Fitter::getSigmaWithSyst(int cat, string proc,int gaus=0){
         }
 
         string smearFormula = "@0";
-        RooArgList smearList( *(w_->function(Form("sigmodel_%s_cat%d_c%d",repl_proc.c_str(),repl_cat,1+gaus*2))) );
+        RooArgList smearList( *(w_->function(Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,1+gaus*2))) );
 
         if (smearUnc.find( pair<int,string>(mycat,myproc) )   != smearUnc.end() ) 
         {
@@ -659,7 +660,7 @@ RooAbsReal* Fitter::getSigmaWithSyst(int cat, string proc,int gaus=0){
         smearValue->setConstant();
         smearNuisance->setConstant();
 
-        string name=Form("sigmodel_%s_cat%d_g%d_sigma",proc.c_str(),cat,gaus);
+        string name=Form("sigmodel%s_%s_cat%d_g%d_sigma",uniq_.c_str(),proc.c_str(),cat,gaus);
         RooFormulaVar *sigma = new RooFormulaVar(name.c_str(),name.c_str(),smearFormula.c_str(),smearList);
         w_->import(*sigma,RecycleConflictNodes());
         return sigma;

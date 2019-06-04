@@ -659,6 +659,22 @@ if not opts.hadoop:
             print "-> Submitting","%s/condor.jdl"%opts.dir
             cmd = "condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,opts.dir)
             print "   cmd=",cmd
-            if not opts.dryrun: 
+            if not opts.dryrun and '/eos/' in opts.dir: 
+                #'/eos/user/a/amarini'
+                user=os.environ['USER']
+                l = opts.dir.split('/') 
+                l2=l[l.index(user)+1:]
+                mydir='/'.join(l2)
+                print "->eos workaround: using local dir",mydir
+                call("mkdir -p %s"%mydir,shell=True)
+                call("cp  %s/*{sh,jdl} %s/"%(opts.dir,mydir),shell=True)
+                call("sed -i'' 's:/eos/user/"+user[0]+"/"+user+"/::g' %s/condor.jdl"%mydir,shell=True)
+                cmd ="condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,mydir)
+                status = call(cmd,shell=True)
+                if status !=0:
+                    print "unable to submit,",cmd
+                else:
+                    print cmd
+            elif not opts.dryrun: 
                 call(cmd, shell=True)
 ## END

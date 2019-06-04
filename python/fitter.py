@@ -38,12 +38,20 @@ if opts.verbose: print "-> Load ChargedHiggs library"
 r.gSystem.Load( "./bin/libChargedHiggs.so")
 if opts.verbose: print "DONE",
 
+if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
+    from hmm import *
+    config = eval(opts.hmm)
+    config.Print()
+
 ################ CREATING FITTER ##########
 ###line = "from ROOT import " + opts.classname
 ###exec(line)
 ###line= "fitter= "+ opts.classname+ "()"
 ###exec(line)
-fitter = r.__getattr__(opts.classname)()
+if opts.classname== "Fitter":
+    fitter = r.__getattr__(opts.classname)("%d"%config.year)
+else:
+    fitter = r.__getattr__(opts.classname)()
 if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
     fitter.outname= opts.outfile
     fitter.inname =opts.file
@@ -90,9 +98,6 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
     fitter.EtaBins.push_back(2.1)
 
 if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
-    from hmm import *
-    config = eval(opts.hmm)
-    config.Print()
     fitter.xmin = config.xmin
     fitter.xmax = config.xmax
     if opts.plotdir != "":

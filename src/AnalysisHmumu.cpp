@@ -622,7 +622,12 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
         //[-1, -0.76, -0.26, 0.1, 0.55, 1]
         //Or, if you want four categories:
         //[-1, -0.12, 0.1, 0.55, 1]
-        vector<float> bound{-1.00001, -.76,-.26,0.1,0.55,1.00001};
+        //vector<float> bound{-1.00001, -.76,-.26,0.1,0.55,1.00001};
+        
+        //29may NoMjj
+        //vector<float> bound{-1.0001, -0.04,  0.26,   0.77,   0.91,   1.0001};
+        //29may Mjj400
+        vector<float> bound{-1.0001, -0.66,  -0.34,  -0.03,  0.5,    1.0001};
 
         auto ib= std::lower_bound( bound.begin(),bound.end(),bdt[2] );
         if(ib==bound.end()){
@@ -635,8 +640,10 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
         }
     }
     else{
-        vector<float> bound{-1.0001, -0.37, 0.22, 0.58, 1.00001};
-        //-1, -0.37, 0.22, 0.58, 1 --> dimitry
+        // 29th may. Dmitry
+        vector<float> bound{-1.00001, -0.58,  -0.02,  0.43,   1.00001};
+        //vector<float> bound{-1.0001, -0.37, 0.22, 0.58, 1.00001};
+        //-1, -0.37, 0.22, 0.58, 1 --> dmitry
         //-1, 0, 0.4, 0.65, 1 --> raffaele
         auto ib= std::lower_bound(bound.begin(),bound.end(),bdt[1]);
         if(ib==bound.end()){
@@ -1643,7 +1650,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
         // enforce it for VBF Pisa
         ////if (jetVar_["mjj_1"] > 400) category="cat14";
-        if (jetVar_["mjj_lead"] > 400) category="cat14";
+        if (jetVar_["mjj_lead"] > 400 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat14";
     } 
     else if (catType ==4)
     {
@@ -2481,7 +2488,15 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         if( category != "")
         {
             Fill("HmumuAnalysis/Vars/Mmm_"+ category+"_"+ label,systname, mass_,e->weight()) ;
-            if (doSTXS and labelSTXS!="") Fill("HmumuAnalysis/Vars/Mmm_"+ category + "_" + label+ "_STXS_125_"+labelSTXS,systname,mass_,e->weight());
+            if (doSTXS and labelSTXS!="" and (
+                        label == "GluGlu_HToMuMu_M125" or 
+                        label =="VBF_HToMuMu_M125" or 
+                        label =="WPlusH_HToMuMu_M125" or
+                        label =="WMinusH_HToMuMu_M125" or 
+                        label =="ZH_HToMuMu_M125" or
+                        label =="ttH_HToMuMu_M125")){
+                Fill("HmumuAnalysis/Vars/Mmm_"+ category + "_" + label+ "_STXS_125_"+labelSTXS,systname,mass_,e->weight());
+            }
 
 
             if (not processingSyst_ and catType>=2){ // don't need syst for this
@@ -3312,11 +3327,19 @@ void HmumuAnalysis::InitTmvaUCSD(int pos,int nj){
     AddVariable("m2eta",'F');    
 
     AddSpectator("hmerr",'F');SetVariable("hmerr",0);
-    AddSpectator("bdtuf",'F');SetVariable("bdtuf",1.);
     AddSpectator("weight",'F');SetVariable("weight",1.);
+    // AddSpectator("bdtuf",'F');SetVariable("bdtuf",1.);
     AddSpectator("hmass",'F');SetVariable("hmass",1.);
     //AddSpectator("dimu_mass_Roch",'F');SetVariable("dimu_mass_Roch",125.);
     //AddSpectator("BASE_cat",'F');SetVariable("BASE_cat",1);
+    //
+    if (nj==2){
+        AddSpectator("nbjets",'F');SetVariable("nbjets",0.);
+    }
+    AddSpectator("bdtucsd_inclusive",'F');SetVariable("bdtucsd_inclusive",1.);
+    AddSpectator("bdtucsd_01jet",'F');SetVariable("bdtucsd_01jet",1.);
+    AddSpectator("bdtucsd_2jet",'F');SetVariable("bdtucsd_2jet",1.);
+
 
     // load weights
     Log(__FUNCTION__,"INFO",Form("Loading weights idx=%d: ",pos)+weights[pos]);

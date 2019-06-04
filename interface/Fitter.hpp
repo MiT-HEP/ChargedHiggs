@@ -65,6 +65,7 @@ class Fitter : virtual public BaseFitter{
     string massMask_;
     string normMask_;
     string modelMask_;
+    string uniq_{""}; // 2016 vs 2017 vs 2018
 
     void info();
 
@@ -89,7 +90,7 @@ class Fitter : virtual public BaseFitter{
     float mhmax{130};
 
     // --- objects that can be called
-    Fitter();
+    Fitter(string uniq="");
     void init() override;	
     void fit() override ;
     void write() ;

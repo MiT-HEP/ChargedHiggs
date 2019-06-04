@@ -54,7 +54,7 @@ if opts.outdir != "":
 
 ############# definitions
 config= eval(opts.hmm)
-config.Print()
+#config.Print()
 categories=config.categories
 
 if opts.cat != "all" and opts.cat != "":
@@ -128,32 +128,57 @@ def SoB(h,hdata,low,high,type=""):
 	return (s*br*lumi*xsec,b)
 
 def STXSSort(l):
-    return sorted(l[:])
+    #return sorted(l[:])
+    ld={}
+    for name,proc in l:
+        if proc not in ld: ld[proc]=[]
+        ld[proc].append( (name,proc) )
+    l2=[]
+    processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
+    for proc in processes: # I want them in the order above
+        if proc not in ld: continue
+        l2.extend(sorted(ld[proc]))
+    return l2
 
 stxsColors={} ## bin -> int, color
-def GetSTXSColor(proc):
+def GetSTXSColor(name,proc):
     global stxsColors
     ci = ROOT.TColor.GetFreeColorIndex();
-    r,g,b=.5,.5,.5
-    for base in ['GG2H','VBF','QQ2HLL','ZH','WH','TTH','BBH']:
-        if base in proc:
-            if base=='GG2H': r,g,b=.7,.7,1.
-            if base=='VBF': r,g,b=1.,.7,.7
-            if base=='ZH' or base=='QQ2HLL': r,g,b=7.,.7,1.
-            if base=='WH': r,g,b=7.,1.,1.
-            if base=='TTH': r,g,b=1.,0.7,1.
-            if 'last'+base in stxsColors:
-                r-= stxsColors['last'+base][0]
-                g-= stxsColors['last'+base][1]
-                b-= stxsColors['last'+base][2]
-            else: stxsColors['last'+base]=[0,0,0]
-            stxsColors['last'+base] += [-.1,-.1,0.]  ## todo -> update shifts correctly
-            if stxsColors['last'+base][0]<0: 
-                stxsColors['last'+base][0]=0
-                stxsColors['last'+base][1]=0
-                stxsColors['last'+base][2]=-0.1
+    rf=array('f',[0.])
+    gf=array('f',[0.])
+    bf=array('f',[0.])
+    processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    ROOT.gROOT.GetColor( colors[processes.index(proc)] ) .GetRGB (rf,gf,bf)
+    r = rf[0]
+    g = gf[0]
+    b = bf[0]
+    print "DEBUG STXS color for proc", proc,"->",r,g,b, "RF",rf,
+    N=20.
+    if proc == "ttH": N=3
+    if 'last'+proc not in stxsColors:
+        stxsColors['last'+proc]=0
+    else:
+        if stxsColors['last'+proc] < N:
+            r += (1.-r)*stxsColors['last'+proc]/ N
+            g += (1.-g)*stxsColors['last'+proc]/ N
+            b += (1.-b)*stxsColors['last'+proc]/ N
+        else:
+            r -= r*(stxsColors['last'+proc]-N)/ N
+            g -= g*(stxsColors['last'+proc]-N)/ N
+            b -= b*(stxsColors['last'+proc]-N)/ N
+    stxsColors['last'+proc] +=1
+    #
+    if r> 1: r=1
+    if g> 1: g=1
+    if b> 1: b=1
+    if r< 0: r=0
+    if g< 0: g=0
+    if b< 0: b=0
+
     color = ROOT.TColor(ci, r,g,b);
-    stxsColors[proc]=(ci,color) ## don't destroy color
+    print "DEBUG STXS final for proc", proc,"and name",name,"->",r,g,b
+    stxsColors[(name,proc)]=(ci,color) ## don't destroy color
 
 ## get files
 fIn = ROOT.TFile.Open(opts.input,"READ")
@@ -291,35 +316,32 @@ if doSig and doSTXS:
   for cat in categories:
         d=fIn.Get("HmumuAnalysis/Vars")    
         for key in d.GetListOfKeys():
-            if re.match('^Mmm_%s_STXS_125_.*'%cat,key.GetName()):
+            if re.match('^Mmm_%s_.*_STXS_125_.*'%cat,key.GetName()):
                 h=d.Get(key.GetName())
                 if h==None: print "<*> ERROR in STXS", key.GetName(),"not able to grab?"
+                mc= re.sub('_STXS.*','',re.sub('^.*%s_'%cat,'',key.GetName()))
+                proc= re.sub('_HToMuMu.*','',mc) # "proc_HToMuMu_M%d"
                 bin0 = h.FindBin(110)
                 bin1 = h.FindBin(150-0.0001)
                 ea = h.Integral(bin0,bin1)
                 dea=array('d',[0.])
                 h.IntegralAndError(bin0,bin1,dea)
-                proc=''
                 #self.processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
-                if 'BBH' in key.GetName(): proc = 'bbH'
-                elif 'TTH' in key.GetName(): proc='ttH'
-                elif 'WH' in key.GetName() or 'QQ2HLNU' in key.GetName(): proc='WH' ## sum of W+ and W-
-                elif 'QQ2ZH' in key.GetName(): proc='ZH' #
-                elif 'GG2ZH' in key.GetName(): proc='ZH' #
-                elif 'QQ2HLL' in key.GetName(): proc='ZH' #
-                elif 'GGF' in key.GetName() or 'GG2H' in key.GetName(): proc='GluGlu'
-                elif 'VBF' in key.GetName() or 'QQ2HQQ' in key.GetName(): proc='VBF' ## todo -> add distiction between VH and VBF
-                print "proc is",proc, "name is",key.GetName()
+                #print "DEBUG proc is",proc, "name is",key.GetName()
                 y=ea*config.lumi() * config.xsec(proc) *config.br()
+                dy=dea[0] * config.lumi() * config.xsec(proc) *config.br()
                 name= re.sub('^.*_STXS_125_','',key.GetName())
-                stxsStore[(cat,name)]= y
-                print >>yieldFileSTXS ,cat,name,y
+                ## the qqH is from VBF and VH, I don't know if we want to split them somehow or to merge as in STXS measurements
+                #if (cat,name) not in stxsStore: stxsStore[(cat,name)]= y
+                #else stxsStore[(cat,name)] += y
+                stxsStore[(cat,name,proc)] = y
+                print >>yieldFileSTXS ,cat,name,proc,y,dy
   yieldFileSTXS.close()
   print "----------- STXS DONE -----------"
 
 if doSig and doSTXS: ## signal composition plot
   for cat in categories:
-    cSTXS=ROOT.TCanvas("c_"+cat+"_stxs","canvas",1600,800)
+    cSTXS=ROOT.TCanvas("c_"+cat+"_stxs","canvas",800,800)
     cSTXS.Range(-14.67532,-1.75,11.2987,15.75);
     cSTXS.SetFillColor(0);
     cSTXS.SetBorderMode(0);
@@ -370,17 +392,17 @@ if doSig and doSTXS: ## signal composition plot
     for ic,cat in enumerate(categories):
         S=0.0
         stxsproclist=[]
-        for icat,name in stxsStore:
+        for icat,name,proc in stxsStore:
             if icat != cat : continue
-            S+=stxsStore[(cat,name)]
-            stxsproclist.append(name)
+            S+=stxsStore[(cat,name,proc)]
+            stxsproclist.append( (name,proc) )
         stxsproclist = STXSSort(stxsproclist)
-        for icat,name in stxsStore:
+        for icat,name,proc in stxsStore:
             if icat != cat : continue
             try:
-                stxsFrac[(cat,name)] = stxsStore[(cat,name)]/S*100.; #sigYields becomes fractions here!
+                stxsFrac[(cat,name,proc)] = stxsStore[(cat,name,proc)]/S*100.; #sigYields becomes fractions here!
             except ZeroDivisionError: 
-                stxsFrac[(cat,proc)] = 0.
+                stxsFrac[(cat,name,proc)] = 0.
         print
         sys.stdout.flush()
         ybin = nCats-ic; ## 1-1 mapping
@@ -396,15 +418,14 @@ if doSig and doSTXS: ## signal composition plot
         pavetext.SetLineColor(0);
         pavetext.SetBorderSize(0);
 
-        for iproc,proc in enumerate(stxsproclist):
-            xbinmax += stxsFrac[(cat,proc)]
+        for iproc, (name,proc) in enumerate(stxsproclist):
+            xbinmax += stxsFrac[(cat,name,proc)]
             pave = ROOT.TPave(xbinmin,ybinmin,xbinmax,ybinmax);
-            if proc not in stxsColors:
-                GetSTXSColor(proc)
-            pave.SetFillColor(stxsColors[proc][0]);
+            if (name,proc) not in stxsColors: GetSTXSColor(name,proc)
+            pave.SetFillColor(stxsColors[(name,proc)][0]);
             pave.Draw();
             pave.SetBorderSize(0);
-            xbinmin +=stxsFrac[(cat,proc)]
+            xbinmin +=stxsFrac[(cat,name,proc)]
             garbage.append(pave)
         pavetext.Draw()
         garbage.append(pavetext)
@@ -416,20 +437,76 @@ if doSig and doSTXS: ## signal composition plot
     tex_m.SetLineWidth(2);
 
     ## Legend
-    processName=stxsproclist
+    processName=[]
+    for iproc, proc in enumerate(config.processes):
+       if proc == 'GluGlu': processName.append("ggH") 
+       elif proc=='VBF' : processName.append("qqH")
+       elif proc=='WMinusH' : processName.append("W^{-}H")
+       elif proc=='WPlusH' : processName.append("W^{+}H")
+       else: processName.append(proc)
 
-    #starts=[0.28,0.4,0.52,.64,.76,.88]
-    #for i in range(0,len(starts)):
-    #    pave=ROOT.TPave(starts[i%6],0.85-(i/6)*0.04,starts[i]+.03,0.85+0.03-(i/6)*0.04,0,"NDC");
-    #    pave.SetFillColor(colors[i]);
-    #    pave.Draw();
-    #    tex_m.DrawLatex(starts[i]+0.04,0.84+0.025-(i/6)*0.04,processName[i]);
-    #    garbage.append(pave)
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    starts=[0.28,0.4,0.52,.64,.76,.88]
+    for i in range(0,len(starts)):
+        pave=ROOT.TPave(starts[i],0.85,starts[i]+.03,0.85+0.03,0,"NDC");
+        pave.SetFillColor(colors[i]);
+        pave.Draw();
+        tex_m.DrawLatex(starts[i]+0.04,0.84+0.025,processName[i]);
+        garbage.append(pave)
 
     cSTXS.Modify()
     cSTXS.Update()
     cSTXS.SaveAs(opts.outdir + "/signal_stxs.pdf")
     cSTXS.SaveAs(opts.outdir + "/signal_stxs.png")
+
+    cSTXSL=ROOT.TCanvas("cSTXS_legend","cSTXS_legend",800,800)
+
+    tex_m=ROOT.TLatex();
+    tex_m.SetNDC();
+    tex_m.SetTextAlign(12);
+    tex_m.SetTextSize(0.025);
+    tex_m.SetLineWidth(2);
+
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    #starts=[0.28,0.4,0.52,.64,.76,.88]
+    starts=[0.10,0.25,0.40,.55,.70,.85]
+    processName=[]
+    for iproc, proc in enumerate(config.processes):
+       if proc == 'GluGlu': processName.append("ggH") 
+       elif proc=='VBF' : processName.append("qqH")
+       elif proc=='WMinusH' : processName.append("W^{-}H")
+       elif proc=='WPlusH' : processName.append("W^{+}H")
+       else: processName.append(proc)
+    for i in range(0,len(starts)):
+        pave=ROOT.TPave(starts[i],0.85,starts[i]+.03,0.85+0.03,0,"NDC");
+        pave.SetFillColor(colors[i]);
+        pave.Draw();
+        tex_m.DrawLatex(starts[i]+0.04,0.84+0.025,processName[i]);
+        garbage.append(pave)
+        
+    tex_m.SetTextSize(0.01);
+    tex_m.SetTextFont(42);
+    tex_m.SetTextAngle(-30);
+    procLast={}
+    l = ROOT.TLine(0,0.82,1,0.82)
+    l.Draw("L SAME")
+    for iproc, (name,proc) in enumerate(stxsproclist):
+        i=config.processes.index(proc)
+        if proc not in procLast: procLast[proc] =0.80
+        procLast[proc] -= 0.04;
+        y=procLast[proc]
+        pave = ROOT.TPave(starts[i],y,starts[i]+0.03,y+0.03);
+        if (name,proc) not in stxsColors: GetSTXSColor(name,proc)
+        tex_m.DrawLatex(starts[i]+0.04,y-0.01+0.025,name);
+        pave.SetFillColor(stxsColors[(name,proc)][0]);
+        pave.Draw();
+        pave.SetBorderSize(0);
+        garbage.append(pave)
+
+    cSTXSL.Modify()
+    cSTXSL.Update()
+    cSTXSL.SaveAs(opts.outdir + "/signal_stxs_leg.pdf")
+    cSTXSL.SaveAs(opts.outdir + "/signal_stxs_leg.png")
 
 if doSig: ## signal composition plot
     #colors = [ ROOT.kGreen+3, ROOT.kRed+2, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kBlue-4];

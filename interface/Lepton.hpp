@@ -47,6 +47,7 @@ class Lepton : virtual public Object,
         bool  globalmuoncut_ {0};
 
         TLorentzVector kfP4_;
+        TLorentzVector fsrP4_;
 
     public:
         inline void SetR9(float x) { r9_=x;}
@@ -78,6 +79,7 @@ class Lepton : virtual public Object,
         inline void SetTrackerMuonCut(bool x=true){trackermuoncut_=x;}
         inline void SetGlobalMuonCut(bool x=true){globalmuoncut_=x;}
         inline void SetKFP4(TLorentzVector&x){kfP4_=x;};
+        inline void SetFsrP4(TLorentzVector&x){fsrP4_=x;};
 
         inline float GetIso()const {return iso;}
         inline bool GetMediumId() const {return mediumId;}
@@ -98,6 +100,7 @@ class Lepton : virtual public Object,
         inline bool GetTrackerMuon()const { return trackerMuon;}
         inline bool GetGlobalMuon()const { return globalMuon;}
         inline TLorentzVector& GetKFP4(){return kfP4_;};
+        inline TLorentzVector& GetFsrP4(){return fsrP4_;};
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;

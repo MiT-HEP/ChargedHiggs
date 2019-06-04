@@ -976,10 +976,28 @@ void BackgroundFitter::fit(){
     PdfModelBuilder modelBuilder;
     modelBuilder.setObsVar(x_);
 
-    TFile *fInput = TFile::Open(inname.c_str() );
-
-    if ( fInput == NULL ) 
-        Log(__FUNCTION__,"ERROR","No such file or directory: '"+ inname + "'");
+    TFile *fInput = NULL;//TFile::Open(inname.c_str() );
+    vector<TFile*>  fAll;
+    if ( inname.find(",") == string::npos){
+        fInput = TFile::Open(inname.c_str() );
+        if ( fInput == NULL ) 
+            Log(__FUNCTION__,"ERROR","No such file or directory: '"+ inname + "'");
+    }
+    else {
+        // split by files
+        vector<string> files;
+        istringstream ss (inname);
+        string token;
+        while (std::getline(ss, token, ',')){
+            if (token == "" ) continue;
+            files.push_back(token); 
+        } 
+        for (auto s : files){
+            fAll.push_back( TFile::Open(s.c_str()));
+            if (fAll[fAll.size()-1] == NULL)
+                Log(__FUNCTION__,"ERROR","No such file or directory: '"+ s + "'");
+        }
+    }
 
     if (plot ) {
             x_->setRange("unblindReg_1",xmin,120);
@@ -993,22 +1011,34 @@ void BackgroundFitter::fit(){
     {
         cout<<"* Getting"<<inputMasks[cat]<<endl;
         string name =  Form("dataHist_cat_%d",cat);
-
-        if ( inputMasks[cat].find(":") == string::npos )
+        
+        if ( inputMasks[cat].find(":") == string::npos ) // no ws
         {
-            TH1D *h = (TH1D*)fInput ->Get( inputMasks[cat].c_str() ) ;
-            h->Rebin(rebin);
+                
+                TH1D *h =NULL;
+                if (fInput != NULL) h=(TH1D*)fInput ->Get( inputMasks[cat].c_str() ) ;
+                else{
+                    h=(TH1D*)fAll[0] ->Get( inputMasks[cat].c_str() ) ;
+                    if (h == NULL) Log(__FUNCTION__,"ERROR","No such histogram is file 0: mask="+inputMasks[cat]);
+                    for (unsigned i=1;i< fAll.size() ;++i)
+                    {
+                        TH1D *tmp = (TH1D*)fAll[i] ->Get( inputMasks[cat].c_str() ) ;
+                        if (tmp == NULL) Log(__FUNCTION__,"ERROR","No such histogramin file i: mask="+inputMasks[cat]);
+                        h->Add(tmp);
+                    }
+                }
 
-            if (h == NULL) 
-                Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]);
+                h->Rebin(rebin);
 
-            // -- Construct RooDataHist
-            hist_ [ name ] = new RooDataHist(
-                    Form(datasetMask_.c_str(),cat),
-                    Form(datasetMask_.c_str(),cat),
-                    *x_,
-                    Import( *h ) 
-                    );
+                if (h == NULL) Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]);
+
+                // -- Construct RooDataHist
+                hist_ [ name ] = new RooDataHist(
+                        Form(datasetMask_.c_str(),cat),
+                        Form(datasetMask_.c_str(),cat),
+                        *x_,
+                        Import( *h ) 
+                        );
         }
         else { // it's already a RooDataHist
             string mask=  inputMasks[cat];
@@ -1057,13 +1087,31 @@ void BackgroundFitter::fit(){
         int dybernOrd;
         string mask= inputMasks[cat];
         string toReplace="Data";
-        if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DY");
+        //if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DY");
+        if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DYJetsToLL_M-105To160");
         cout<<"-> Getting DY from "<<mask<<endl;
-        TH1D *dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
-        if (dy==NULL) cout<<"  and hist doesn't exist"<<endl;
+        TH1D *dy; 
+        if (fInput!=NULL){
+            dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
+            if (dy==NULL) cout<<"  and hist (single file) doesn't exist"<<endl;
+            if ( inname.find("Hmm2016") !=string::npos)dy->Scale(35867); // lumi
+            else if ( inname.find("Hmm2017") !=string::npos)dy->Scale(41860); // lumi
+            else if ( inname.find("Hmm2018") !=string::npos)dy->Scale(59710); // lumi
+        }
+        else {
+            cout<<"-> Assuming 2016/2017/2018 lumis "<<""<<mask<<endl;
+            dy=(TH1D*)fAll[0] ->Get( mask.c_str() ) ;
+            if (dy==NULL) cout<<"  and hist 2016 doesn't exist"<<endl;
+            dy->Scale(35867);
+            TH1D*tmp= (TH1D*)fAll[1] ->Get( mask.c_str() ) ; 
+            if (tmp==NULL) cout<<"  and hist 2017 doesn't exist"<<endl;
+            tmp->Scale(41860); dy->Add(tmp);
+            tmp= (TH1D*)fAll[2] ->Get( mask.c_str() ) ; 
+            if (tmp==NULL) cout<<"  and hist 2018 doesn't exist"<<endl;
+            tmp->Scale(59710); dy->Add(tmp);
+        }
         RooAbsPdf* dybern = NULL;
         if (dy != NULL){
-            dy->Scale(35867); // lumi
             dy->Rebin(10); // lumi
             //dy->Smooth(1); // lumi
             dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);

@@ -20,8 +20,8 @@ pileup=aux/pileup.2018.root
 #Correct=
 
 #### ROCHESTER ONLY
-Correct=RochesterCorrections
-config=RochesterCorrections|year="2018",allow_reset=1
+#Correct=RochesterCorrections
+#config=RochesterCorrections|year="2018",allow_reset=1
 
 ## KINETIC FIT ONLY
 #Correct=VertexKinfit
@@ -30,6 +30,11 @@ config=RochesterCorrections|year="2018",allow_reset=1
 # only the first should reset the object
 #Correct=VertexKinfit,RochesterCorrections
 #config=RochesterCorrections|year="2018",allow_reset=0
+
+Correct=VertexKinfit,RochesterCorrections,FSRRecovery
+config=VertexKinfit|allow_reset=1
+config=RochesterCorrections|year="2018",allow_reset=0
+config=FSRRecovery|allow_reset=0
 
 ####
 addConfig=HmumuAnalysis|year=2018

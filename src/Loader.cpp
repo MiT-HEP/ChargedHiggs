@@ -453,6 +453,11 @@ void LoadNero::FillLeptons(){
         }
         else l->SetNLayers(-999);
 
+        if (  bl->fsrP4->GetEntries() >0 ){
+            TLorentzVector fsrP4= *(TLorentzVector*) ((*bl->fsrP4)[iL]);
+            l-> SetFsrP4( fsrP4 );
+        }
+
 #ifdef VERBOSE
         if(VERBOSE>1) cout<<"[LoadNero]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;
 #endif

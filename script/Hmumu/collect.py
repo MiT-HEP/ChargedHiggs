@@ -112,8 +112,8 @@ for gen in range(1,12):
       #print "using scheme '"+"*/"+cat+"/mlfit_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit)+"'"
       #higgsCombine_catAll_mu_1_gen_4_fit_default.MaxLikelihoodFit.mH125.123456.root 
       if fit !=20 :
-        files = glob("*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit))
-        print "* using scheme:","*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit)
+        files = glob("*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_%d*.root"%(gen,fit))
+        print "* using scheme:","*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_%d*.root"%(gen,fit)
       else:
         files = glob("*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_default.root"%(gen))
         print "* using scheme:","*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_default.root"%(gen)
