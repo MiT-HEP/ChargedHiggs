@@ -179,8 +179,8 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     if(mu0_local == NULL or mu1_local==NULL)  return "";
 
     // CHECK first ttH categories, priority is in the order ttHLep, ttHHadr
-    if (category == "" and nbloose >0 and miniIsoLeptons.size() >2) category = "ttHLep";
-    if (category == "" and nbloose >0 and selectedJetsMiniIso.size() > 4) category = "ttHHadr";
+    if (category == "" and (nbloose >1 or nbjets >0) and miniIsoLeptons.size() >2) category = "ttHLep";
+    if (category == "" and (nbloose >1 or nbjets >0) and selectedJetsMiniIso.size() > 4) category = "ttHHadr";
 
     //if ttH fails, check ZH Lept
     if (category == "" and miniIsoLeptons.size() >=4) //ZH Z->ee
@@ -383,13 +383,13 @@ string HmumuAnalysis::CategoryExclusive(Event *e)
     }
 
     // ggHX: I have a ggH with miniIso but not with std selection
-    if (category=="")
-    {
-        if ( (mu0==NULL or mu1==NULL ) and mu0_local != NULL and mu1_local != NULL)
-        {
-            category = "ggHX";
-        }
-    }
+    //if (category=="")
+    //{
+    //    if ( (mu0==NULL or mu1==NULL ) and mu0_local != NULL and mu1_local != NULL)
+    //    {
+    //        category = "ggHX";
+    //    }
+    //}
 
     // RESET Hmm WARNING!
     if (category != "" and category != "VHHadr")
@@ -600,11 +600,11 @@ string HmumuAnalysis::CategoryBdtMIT(Event *e){
 
     if (icat>=0) catStr=Form("cat%d",icat);
 
-    if (doSync and not processingSyst_)
-    {
-        SetTreeVar("bdt",bdt[0]);
-        SetTreeVar("cat",icat);
-    }
+    //if (doSync and not processingSyst_)
+    //{
+    //    //SetTreeVar("bdt",bdt[0]);
+    //    //SetTreeVar("cat",icat);
+    //}
 
     // SciKit
 
@@ -616,13 +616,10 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
     string category="";
     if (selectedJets.size() >=2)
     {
-        //-1, -0.6, 0.22, 0.73, 0.9, 1 //dimitry
-        //vector<float> bound{-1.00001, -0.6, 0.22, 0.73, 0.9, 1.00001};
-        //Optimized categories for 2jet_bveto with mjj<400 are as follows:
-        //[-1, -0.76, -0.26, 0.1, 0.55, 1]
-        //Or, if you want four categories:
-        //[-1, -0.12, 0.1, 0.55, 1]
-        //vector<float> bound{-1.00001, -.76,-.26,0.1,0.55,1.00001};
+//
+//#warning NOMJJ
+//        //RAFFAELE
+//        vector<float> bound{-1.00001, -0.1, 0.25, 0.55, 1.00001};
         
         //29may NoMjj
         //vector<float> bound{-1.0001, -0.04,  0.26,   0.77,   0.91,   1.0001};
@@ -640,11 +637,11 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
         }
     }
     else{
+        //RAFFAELE
+        //-1, 0, 0.4, 0.65, 1 --> raffaele
+        //vector<float> bound{-1.00001, 0., 0.55, 0.81,.91, 1.00001}; // -> AN ?!?
         // 29th may. Dmitry
         vector<float> bound{-1.00001, -0.58,  -0.02,  0.43,   1.00001};
-        //vector<float> bound{-1.0001, -0.37, 0.22, 0.58, 1.00001};
-        //-1, -0.37, 0.22, 0.58, 1 --> dmitry
-        //-1, 0, 0.4, 0.65, 1 --> raffaele
         auto ib= std::lower_bound(bound.begin(),bound.end(),bdt[1]);
         if(ib==bound.end()){
             category="cat5"; // shouldn't happen
@@ -689,11 +686,11 @@ string HmumuAnalysis::CategoryBdt(Event *e){
 
     if (icat>=0) catStr=Form("cat%d",icat);
 
-    if (doSync and not processingSyst_)
-    {
-        SetTreeVar("bdt",bdt[0]);
-        SetTreeVar("cat",icat);
-    }
+    //if (doSync and not processingSyst_)
+    //{
+    //    SetTreeVar("bdt",bdt[0]);
+    //    SetTreeVar("cat",icat);
+    //}
 
     // SciKit
     if (doScikit)
@@ -1254,6 +1251,7 @@ void HmumuAnalysis::Init(){
         Branch("hmm","mt1",'F');
         Branch("hmm","mt2",'F');
         Branch("hmm","Hpt",'F');
+        Branch("hmm","HY",'F');
         Branch("hmm","njets",'I');
         Branch("hmm","nbjets",'I'); // default btagging
         Branch("hmm","ncentjets",'I');
@@ -1261,6 +1259,11 @@ void HmumuAnalysis::Init(){
         Branch("hmm","jet_pt",'d',20,"njets");
         Branch("hmm","jet_eta",'d',20,"njets");
         Branch("hmm","jet_phi",'d',20,"njets");
+
+        Branch("hmm","drmj",'F');
+        Branch("hmm","detajj_lead",'F');
+        Branch("hmm","dphijj_lead",'F');
+        Branch("hmm","zepen",'F');
 
         // Deep B-tagging. HardestJet. Higher btagged jet.
         Branch("hmm","leadDeepB",'F'); 
@@ -1298,6 +1301,7 @@ void HmumuAnalysis::Init(){
         Branch("hmm","mc",'I');
         Branch("hmm","Heta",'F');
         Branch("hmm","Hphi",'F');
+        Branch("hmm","mjj_lead",'F');
         Branch("hmm","mjj_1",'F');
         Branch("hmm","mjj_2",'F');
         Branch("hmm","detajj_1",'F');
@@ -1305,15 +1309,19 @@ void HmumuAnalysis::Init(){
         Branch("hmm","deltaphi",'F');
         Branch("hmm","deltaeta",'F');
         Branch("hmm","costhetastar",'F');
+        Branch("hmm","phics",'F');
+        //Branch("hmm","",'F');
 
         //photons
-        Branch("hmm","npho",'I'); // with eta less than 1.44
-        Branch("hmm","pho_pt",'d',20,"npho");
-        Branch("hmm","pho_eta",'d',20,"npho");
-        Branch("hmm","pho_dr1",'d',20,"npho");
-        Branch("hmm","pho_dr2",'d',20,"npho");
+        //Branch("hmm","npho",'I'); // with eta less than 1.44
+        //Branch("hmm","pho_pt",'d',20,"npho");
+        //Branch("hmm","pho_eta",'d',20,"npho");
+        //Branch("hmm","pho_dr1",'d',20,"npho");
+        //Branch("hmm","pho_dr2",'d',20,"npho");
 
         Branch("hmm","bdt",'F');
+        Branch("hmm","bdtUCSD01j",'F');
+        Branch("hmm","bdtUCSD2j",'F');
         if (doScikit) Branch("hmm","keras",'F');
 
         Branch("hmm","mjj_1_JESUp",'F');
@@ -1650,6 +1658,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
         // enforce it for VBF Pisa
         ////if (jetVar_["mjj_1"] > 400) category="cat14";
+//#warning NOMJJ
         if (jetVar_["mjj_lead"] > 400 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat14";
     } 
     else if (catType ==4)
@@ -2136,8 +2145,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             else if (year==2018) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
         }
         passTrigger=passTrigger1 or passTrigger2;
-#warning DISABLING_TRIGGER_MATCHING_2016
-        if (year==2016) passTrigger=passTrigger or passTriggerEvent;
+        //#warning DISABLING_TRIGGER_MATCHING_2016
+        //if (year==2016) passTrigger=passTrigger or passTriggerEvent;
 
         if (multipd_) // switch to HLT_IsoMu24. 
         {
@@ -2309,8 +2318,9 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/RhoOnH_"+ label,systname, e->Rho() ,e->weight());
 
             Fill("HmumuAnalysis/Vars/RapOnH_"+ label , systname, Hmm.Rapidity(),e->weight());
-            Fill("HmumuAnalysis/Vars/CosThetaCSOnH_"+ label , systname, ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()),e->weight());
-            Fill("HmumuAnalysis/Vars/PhiCSOnH_"+ label , systname, ChargedHiggs::PhiCS(&mu0->GetP4(),&mu1->GetP4()),e->weight());
+            //Fill("HmumuAnalysis/Vars/CosThetaCSOnH_"+ label , systname, ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()),e->weight());
+            Fill("HmumuAnalysis/Vars/CosThetaCSOnH_"+ label , systname, ChargedHiggs::CosThetaCSPos(mu0,mu1),e->weight());
+            Fill("HmumuAnalysis/Vars/PhiCSOnH_"+ label , systname, ChargedHiggs::PhiCSPos(mu0,mu1),e->weight());
 
             float drmj=10;
             for( auto j : selectedJets)
@@ -2321,8 +2331,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/MinDrMuJOnH_"+ label ,systname,drmj ,e->weight());
             if (selectedJets.size() >=2){ 
                 Fill("HmumuAnalysis/Vars/PtOnH_2jet_"+ label , systname, Hmm.Pt(),e->weight());
-                Fill("HmumuAnalysis/Vars/CosThetaCSOnH_2jet_"+ label , systname, ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()), e->weight());
-                Fill("HmumuAnalysis/Vars/PhiCSOnH_2jet_"+ label , systname, ChargedHiggs::PhiCS(&mu0->GetP4(),&mu1->GetP4()), e->weight() );
+                Fill("HmumuAnalysis/Vars/CosThetaCSOnH_2jet_"+ label , systname, ChargedHiggs::CosThetaCSPos(mu0,mu1), e->weight());
+                Fill("HmumuAnalysis/Vars/PhiCSOnH_2jet_"+ label , systname, ChargedHiggs::PhiCSPos(mu0,mu1), e->weight() );
                 Fill("HmumuAnalysis/Vars/MinDrMuJOnH_2jet_"+ label ,systname, drmj, e->weight() );
             }
             //#warning MetNoJec Applied only to plots
@@ -2389,7 +2399,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
             Fill("HmumuAnalysis/Vars/NJetsOnH_"+ label,systname, selectedJets.size(),e->weight());
             Fill("HmumuAnalysis/Vars/NBJetsOnH_"+ label,systname, e->Bjets(),e->weight());
-            Fill("HmumuAnalysis/Vars/CosThetaCSOnH_"+ label,systname,  ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()),e->weight());
+            Fill("HmumuAnalysis/Vars/CosThetaCSOnH_"+ label,systname,  ChargedHiggs::CosThetaCSPos(mu0,mu1),e->weight());
             
             if (catType>=2 and bdt.size() >2)
             {
@@ -2426,7 +2436,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 TLorentzVector jj=j1->GetP4() + j2->GetP4();
                 Fill("HmumuAnalysis/Vars/DPhijj_VHHadr_"+ label,systname, j1->DeltaPhi(j2),e->weight()) ;
                 Fill("HmumuAnalysis/Vars/DEtajj_VHHadr_"+ label,systname, j1->DeltaEta(j2),e->weight()) ;
-                Fill("HmumuAnalysis/Vars/CosThetaCSmm_VHHadr_"+ label,systname, ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()),e->weight()) ;
+                Fill("HmumuAnalysis/Vars/CosThetaCSmm_VHHadr_"+ label,systname, ChargedHiggs::CosThetaCSPos(mu0,mu1),e->weight()) ;
                 Fill("HmumuAnalysis/Vars/CosThetaCS_VHHadr_"+ label,systname, ChargedHiggs::CosThetaCS(&j1->GetP4(),&j2->GetP4(),13),e->weight()) ;
                 Fill("HmumuAnalysis/Vars/NJets_VHHadr_"+ label,systname, selectedJets.size(),e->weight()) ;
                 Fill("HmumuAnalysis/Vars/Ptjj_VHHadr_"+ label,systname, jj.Pt(),e->weight()) ;
@@ -3021,13 +3031,15 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
             SetTreeVar("phi2",mu1->Phi());
             SetTreeVar("mass",Hmm.M());
             SetTreeVar("Hpt" ,Hmm.Pt());
+            SetTreeVar("HY" ,Hmm.Rapidity());
             SetTreeVar("Heta" ,Hmm.Eta());
             SetTreeVar("Hphi" ,Hmm.Phi());
             SetTreeVar("deltaeta",fabs(mu0->Eta()-mu1->Eta()));    
             SetTreeVar("deltaphi",fabs(mu0->DeltaPhi(*mu1)));
             SetTreeVar("mt1" ,ChargedHiggs::mt(mu0->Pt(),e->GetMet().Pt(),mu0->Phi(),e->GetMet().Phi()));
             SetTreeVar("mt2" ,ChargedHiggs::mt(mu1->Pt(),e->GetMet().Pt(),mu1->Phi(),e->GetMet().Phi()));
-            SetTreeVar("costhetastar",ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()));
+            SetTreeVar("costhetastar",ChargedHiggs::CosThetaCSPos(mu0,mu1));
+            SetTreeVar("phics",ChargedHiggs::PhiCSPos(mu0,mu1));
             fillTree=true; 
         }
         else
@@ -3040,6 +3052,7 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
             SetTreeVar("phi2",-10);
             SetTreeVar("mass",-10);
             SetTreeVar("Hpt" ,-10);
+            SetTreeVar("HY" ,-10);
             SetTreeVar("Heta",-10);
             SetTreeVar("Hphi",-10);
             SetTreeVar("deltaeta",-10);    
@@ -3047,10 +3060,16 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
             SetTreeVar("mt1", -10);
             SetTreeVar("mt2", -10);
             SetTreeVar("costhetastar",-10);
+            SetTreeVar("phics",-10);
         } 
         SetTreeVar("njets",selectedJets.size());
         SetTreeVar("met" ,e->GetMet().Pt());
         SetTreeVar("metphi" ,e->GetMet().Phi());
+
+        SetTreeVar("bdt", (bdt.size()>0)?bdt[0]:-10);
+        SetTreeVar("bdtUCSD01j", (bdt.size()>1)?bdt[1]:-10);
+        SetTreeVar("bdtUCSD2j", (bdt.size()>2)?bdt[2]:-10);
+    
 
         // basic jet info
         for(int ijet=0;ijet<std::min(selectedJets.size(),size_t(20));++ijet)
@@ -3068,7 +3087,22 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
 
 
         // compute secondary jets variables
+        
+        if (recoMuons){
+            float drmj=100.;
+            for( auto j : selectedJets)
+            {
+                drmj = min(drmj, float(j->DeltaR(mu0)));
+                drmj = min(drmj, float(j->DeltaR(mu1)));
+            }
+            if (drmj>99.) drmj=0.; 
+            SetTreeVar("drmj",drmj);    
+        } else SetTreeVar("drmj",-10);
 
+        SetTreeVar("detajj_lead" ,jetVar_["detajj_lead"]);
+        SetTreeVar("dphijj_lead" ,jetVar_["dphijj_lead"]);
+
+        SetVariable("zepen", (selectedJets.size()>2) ? fabs(Hmm.Eta() - (selectedJets[0]->Eta() + selectedJets[1]->Eta())/2.0):-10);    
 
         SetTreeVar("aveQGLCent" ,jetVar_["aveQGLcent"]);
         //SetTreeVar("aveCSV"     ,jetVar_["aveCSV"]);
@@ -3096,12 +3130,14 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
         //SetTreeVar("softNjets10",jetVar_["softNjets10"]);
         //SetTreeVar("softHt10"   ,jetVar_["softHt10"]);
 
+        SetTreeVar("mjj_lead"   ,jetVar_["mjj_lead"]);
         SetTreeVar("mjj_1"      ,jetVar_["mjj_1"]);
         SetTreeVar("mjj_2"      ,jetVar_["mjj_2"]);
         SetTreeVar("detajj_1"   ,jetVar_["detajj_1"]);
         SetTreeVar("detajj_2"   ,jetVar_["detajj_2"]);
 
         //compute photons
+        /*
         vector<Photon*> selectedPhotons;
         for(int ipho=0;;++ipho)
         {
@@ -3125,6 +3161,7 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
             SetTreeVar("pho_dr1" ,ipho,0.0);
             SetTreeVar("pho_dr2" ,ipho,0.0);
         }
+        */
 
         // fill category
         int cat=-1;
@@ -3241,8 +3278,8 @@ float HmumuAnalysis::BdtUCSD(int pos,int nj)
 
     SetVariable("hmmpt",Hmm.Pt());    
     SetVariable("hmmrap",Hmm.Rapidity());    
-    SetVariable("hmmthetacs",ChargedHiggs::CosThetaCS(&mu0->GetP4(),&mu1->GetP4()));    
-    SetVariable("hmmphics",ChargedHiggs::PhiCS(&mu0->GetP4(),&mu1->GetP4()));
+    SetVariable("hmmthetacs",ChargedHiggs::CosThetaCSPos(mu0,mu1));    
+    SetVariable("hmmphics",ChargedHiggs::PhiCSPos(mu0,mu1));
 
     if (selectedJets.size() >=1)
     {

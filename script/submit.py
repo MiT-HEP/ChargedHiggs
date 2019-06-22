@@ -208,7 +208,10 @@ if opts.status:
 		#if opts.fullstatus:
 		notRunning=[]
 		#bjobs = re.sub('//','/',check_output("bjobs -w",shell=True))
-        condor_q= check_output("condor_q",shell=True) 
+        if not opts.nocheck:
+            condor_q= check_output("condor_q",shell=True) 
+        else:
+            condor_q=""
         if opts.dir not in condor_q: 
 		    print " NOT RUNNING! (condor) ", opts.dir
 		    print " -------------------------------------"
@@ -280,9 +283,28 @@ if opts.resubmit:
         ## submit condor
         print "-> Submitting","%s/condor_resubmit.jdl"%opts.dir
         cmd = "condor_submit -batch-name %s %s/condor_resubmit.jdl"%(opts.dir,opts.dir)
-        print "   cmd=",cmd
-        if not opts.dryrun: 
+        if not opts.dryrun and '/eos/' in opts.dir: 
+                #'/eos/user/a/amarini'
+                user=os.environ['USER']
+                l = opts.dir.split('/') 
+                l2=l[l.index(user)+1:]
+                mydir='/'.join(l2)
+                print "->eos workaround: using local dir",mydir
+                call("mkdir -p %s"%mydir,shell=True)
+                call("cp  %s/*{sh,jdl} %s/"%(opts.dir,mydir),shell=True)
+                call("sed -i'' 's:/eos/user/"+user[0]+"/"+user+"/::g' %s/condor_resubmit.jdl"%mydir,shell=True)
+                cmd ="condor_submit -batch-name %s %s/condor_resubmit.jdl"%(opts.dir,mydir)
+                print "   cmd=",cmd
+                status = call(cmd,shell=True)
+                if status !=0:
+                    print "unable to submit,",cmd
+                else:
+                    print cmd
+        elif not opts.dryrun: 
+            print "   cmd=",cmd
             call(cmd, shell=True)
+        else:
+            print "   cmd=",cmd
     exit(0)
 
 if opts.hadd:

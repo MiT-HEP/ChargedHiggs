@@ -25,14 +25,16 @@ int SmearJes::smear(Event *e)
 
 int SmearJesAndCSV::smear(Event *e)
 {
-    // right correlations with jes
-    if (num_==Systematics::JESup and syst_>0)
-        jes->SetSyst(1);
-    else if (num_==Systematics::JESup and syst_<0)
-        jes->SetSyst(-1);
-    else jes->SetSyst(0);
-    
-    jes->smear(e);
+    // right correlations with jes, if wanted
+    if (doSmearJes_){ 
+        if (num_==Systematics::JESup and syst_>0)
+            jes->SetSyst(1);
+        else if (num_==Systematics::JESup and syst_<0)
+            jes->SetSyst(-1);
+        else jes->SetSyst(0);
+
+        jes->smear(e);
+    }
 
     if (bsystType==0)
     {
@@ -86,7 +88,7 @@ int SmearJesAndCSV::smear(Event *e)
     }
     else if (bsystType==1)
     {
-        SF_CSV * sf= dynamic_cast<SF_CSV*>(e->GetWeight()->GetSF("bdeep"));
+        SF_CSV * sf= dynamic_cast<SF_CSV*>(e->GetWeight()->GetSF(bdeep_));
         switch( num_ )
         {
             case Systematics::JESup :

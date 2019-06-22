@@ -6,6 +6,7 @@
 #include "RooExponential.h"
 #include "RooFitResult.h"
 #include "RooHistPdf.h"
+#include "RooProdPdf.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooSpline1D.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooBernsteinFast.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooMultiPdf.h"
@@ -371,6 +372,23 @@ RooAbsPdf* PdfModelBuilder::getDYBernstein(string prefix, int order,TH1D*dy){
     RooAddPdf *dybern = new RooAddPdf(prefix.c_str(),prefix.c_str(),RooArgList(*dypdf,*bern),RooArgList(*f),0 ) ;
     return dybern;
 } 
+
+RooAbsPdf* PdfModelBuilder::getCorePdf(string prefix, int order)
+{
+    RooAbsPdf *bern= getBernstein(prefix+"_bern_",order);
+    RooAbsPdf *zmod= getZModExp("corepdf_bern",1); 
+    //RooAbsPdf *exp= getExponentialSingle("corepdf_exp",1); 
+    // TODO multiply times bernstein
+    //RooCategory cat("corepdfcat","");
+    //RooArgList l;
+    //l.add(*zmod);
+    //l.add(*exp);
+    //RooMultiPdf *multi= new RooMultiPdf("corepdf"+prefix,"core pdf",cat,l);
+    RooProdPdf *core=new RooProdPdf((prefix+"_corepdf").c_str(),"corepdf",*zmod,*bern);
+    return core;
+    
+}
+
 RooAbsPdf* PdfModelBuilder::getPolyTimesFewz(string prefix,int order,string fname="test/bias/FEWZ/h2mu-dsdm-13tev-xs-lux-1jet-nnlo-hp.dat")
 {
     //RooAbsPdf* basePdf = getPdf(prefix + "_base", 0 );
@@ -620,7 +638,10 @@ RooAbsPdf* PdfModelBuilder::getPdf(const string& prefix,int order )
     if (prefix.find("fewz_2j") != string::npos)
         return getPolyTimesFewz(prefix + Form("_ord%d",order),order,"aux/fewz/h2mu-dsdm-13tev-xs-lux-2jet-nnlo-hp.dat");
     if (prefix.find("fewz_full") != string::npos)
-        return getPolyTimesFewz(prefix + Form("_ord%d",order),order,"aux/fewz/h2mu-dsdm-13tev-xs-lux-full-nnlo-hp.dat");
+        //return getPolyTimesFewz(prefix + Form("_ord%d",order),order,"aux/fewz/h2mu-dsdm-13tev-xs-lux-full-nnlo-hp.dat");
+        return getPolyTimesFewz(prefix + Form("_ord%d",order),order,"aux/fewz/h2mu-dimitry-nnlo.dat");
+    if (prefix.find("corepdf") != string::npos)
+        return getCorePdf(prefix,order);
     cout <<"PdfModelBulider::getPdf::[ERROR] unknow prefix"<<endl;
     return NULL;
 }
@@ -1244,6 +1265,7 @@ void BackgroundFitter::fit(){
 
             }
 
+
             if (plot){
                 TCanvas *c = new TCanvas();
                 TLegend *leg = new TLegend(0.6,0.65,0.89,0.89);
@@ -1297,6 +1319,8 @@ void BackgroundFitter::fit(){
             }
         }
 
+        cout<<"*** Fitting COREPDF ***"<<endl;
+        RooAbsPdf*corepdf=modelBuilder.getCorePdf(Form("corepdf_cat%d",cat),2);
 
         // construct final model
         cout<<" -> Constructing Final model for cat"<<cat<<endl;
@@ -1312,6 +1336,10 @@ void BackgroundFitter::fit(){
         w_ -> import (pdf_bkg,RecycleConflictNodes());  
         w_ -> import (pdf_norm,RecycleConflictNodes()); 
         w_ -> import (pdf_cat,RecycleConflictNodes()); 
+
+        RooRealVar corepdf_norm(Form("corepdf_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
+        w_ -> import (*corepdf,RecycleConflictNodes());
+        w_ -> import (corepdf_norm,RecycleConflictNodes());
 
         // -- Plot
         if (plot ) {

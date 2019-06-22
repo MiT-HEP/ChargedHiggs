@@ -164,6 +164,13 @@ class Jet : virtual public Object, virtual public SmearableComplex
 
     /// @brief return qgl discriminator value
     inline float QGL() const { return qgl_; } 
+    inline float QGLcorrect() const { 
+        // pythia
+        if (fabs(Eta())> 2.0 ) return qgl_;
+        if (Flavor() == 21)  return -55.7067*TMath::Power(qgl_,7) + 113.218*TMath::Power(qgl_,6) -21.1421*TMath::Power(qgl_,5) -99.927*TMath::Power(qgl_,4) + 92.8668*TMath::Power(qgl_,3) -34.3663*qgl_*qgl_ + 6.27*qgl_ + 0.612992;
+        if (Flavor() !=0 and abs(Flavor())<5)return -0.666978*qgl_*qgl_*qgl_ + 0.929524*qgl_*qgl_ -0.255505*qgl_ + 0.981581;
+        return qgl_;
+    };
 
     /// @brief return variable (name) of qgl discriminator
     inline float QGLVar(std::string name) const {

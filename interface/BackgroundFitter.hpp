@@ -74,6 +74,7 @@ class PdfModelBuilder
         RooAbsPdf* getZModExp2(string prefix, int order); /// BWZ * (1+x + x(1-x))
         RooAbsPdf* getBWZ(string prefix, int order);
         RooAbsPdf* getPolyTimesFewz(string prefix,int order,string fname);
+        RooAbsPdf* getCorePdf(string prefix, int order);
 
         // get the order for the ftest
         // prefix are bern, powlaw, exp, lau

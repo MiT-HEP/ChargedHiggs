@@ -5,6 +5,7 @@
 #include "interface/Named.hpp"
 #include "interface/Systematics.hpp"
 #include <memory>
+#include <string>
 
 #define SMEAR_OK 0
 #define SMEAR_NA 1
@@ -61,18 +62,21 @@ class SmearJesAndCSV : virtual public SmearBase
     //      15,16 Stat2
     //
     std::unique_ptr<SmearJes> jes;
+    int doSmearJes_{1};
     //int num_; // this follow the  CSV Reweight skim, while  the constructor is 1->5
     Systematics::Type num_;
     int bsystType=0; // 0 = CSVReweight, 1= CSV
+    std::string bdeep_{"bdeep"};
 
     public:
         SmearJesAndCSV() : SmearBase(){ 
             num_=Systematics::NA; // --> Systematics::Type
             name_ = Form("CSVR_NA");
         }
-        SmearJesAndCSV(int num,int bsyst =0) : SmearBase(){ 
+        SmearJesAndCSV(int num, int bsyst =0, const std::string& bdeep="bdeep", int doSmearJes=1) : SmearBase(){ 
             // num -> 1,5 (1 is JES
             bsystType=bsyst;
+            bdeep_=bdeep;
             num_ = Systematics::NA;
             if (num == 1){num_=Systematics::JESup;name_="JESANDBR";}
             if (num == 2){num_=Systematics::CSVHFup;name_="BRHF";}
@@ -85,6 +89,7 @@ class SmearJesAndCSV : virtual public SmearBase
             if (num == 9){num_=Systematics::CSVCErr2up; name_="BRCFERR2";}
 
             jes . reset (new SmearJes());
+            doSmearJes_=doSmearJes;
         }
         int smear(Event*e) override;	
 };
