@@ -305,14 +305,71 @@ hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
 hmmExCat = HmmConfigExCat(14) ## 13+mjj
 hmmExCatMjj = HmmConfigExCat(15) ## 13+mjj
+if True:
+    hmmExCatMjj.sigfit_gaussians[("cat9","GluGlu")] = 2
+    hmmExCatMjj.sigfit_gaussians[("cat10","GluGlu")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat10","VBF")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat11","VBF")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat12","VBF")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat13","VBF")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat0","VBF")] = 2
+    hmmExCatMjj.sigfit_gaussians[("cat1","VBF")] = 2
+    hmmExCatMjj.sigfit_gaussians[("cat2","VBF")] = 2
+    hmmExCatMjj.sigfit_gaussians[("cat5","VBF")] = 2
+    hmmExCatMjj.sigfit_gaussians[("cat9","VBF")] = 2
+    hmmExCatMjj.sigfit_gaussians[("cat11","WMinusH")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat11","WPlusH")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat5","ttH")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat6","ttH")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat7","ttH")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat8","ttH")] = 1
+    hmmExCatMjj.sigfit_gaussians[("cat11","ttH")] = 1
 #hmmExCatBoost = HmmConfigExCat(22) ## 21 + mjj
 
 hmmExCat2018 = HmmConfigExCat(14,2018) ## 13 + mjj
 hmmExCatMjj2018 = HmmConfigExCat(15,2018) ## 13 + mjj
 #hmmExCatBoost2018 = HmmConfigExCat(22,2018) ## 21 + mjj
+if True:
+    hmmExCatMjj2018.sigfit_gaussians[("cat9","GluGlu")] = 2
+    hmmExCatMjj2018.sigfit_gaussians[("cat10","GluGlu")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat10","VBF")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat11","VBF")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat12","VBF")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat13","VBF")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat0","VBF")] = 2
+    hmmExCatMjj2018.sigfit_gaussians[("cat1","VBF")] = 2
+    hmmExCatMjj2018.sigfit_gaussians[("cat2","VBF")] = 2
+    hmmExCatMjj2018.sigfit_gaussians[("cat5","VBF")] = 2
+    hmmExCatMjj2018.sigfit_gaussians[("cat9","VBF")] = 2
+    hmmExCatMjj2018.sigfit_gaussians[("cat11","WMinusH")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat11","WPlusH")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat5","ttH")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat6","ttH")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat7","ttH")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat8","ttH")] = 1
+    hmmExCatMjj2018.sigfit_gaussians[("cat11","ttH")] = 1
 
 hmmExCat2016 = HmmConfigExCat(14,2016) ## 13 + mjj
 hmmExCatMjj2016 = HmmConfigExCat(15,2016) ## 13 + mjj
+if True:
+    hmmExCatMjj2016.sigfit_gaussians[("cat9","GluGlu")] = 2
+    hmmExCatMjj2016.sigfit_gaussians[("cat10","GluGlu")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat10","VBF")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat11","VBF")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat12","VBF")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat13","VBF")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat0","VBF")] = 2
+    hmmExCatMjj2016.sigfit_gaussians[("cat1","VBF")] = 2
+    hmmExCatMjj2016.sigfit_gaussians[("cat2","VBF")] = 2
+    hmmExCatMjj2016.sigfit_gaussians[("cat5","VBF")] = 2
+    hmmExCatMjj2016.sigfit_gaussians[("cat9","VBF")] = 2
+    hmmExCatMjj2016.sigfit_gaussians[("cat11","WMinusH")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat11","WPlusH")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat5","ttH")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat6","ttH")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat7","ttH")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat8","ttH")] = 1
+    hmmExCatMjj2016.sigfit_gaussians[("cat11","ttH")] = 1
 
 class HHConfig(HmmConfig):
     def __init__(self):

@@ -18,6 +18,7 @@ parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [
 parser.add_option("","--noRatio",dest='noRatio',action="store_true",help="don't plot ratio in bkg plots [%default]",default=False)
 parser.add_option("","--paper",dest="paper",default=False,action="store_true")
 parser.add_option("","--unblind",dest="blind",default=True,action="store_false",help="Unblinded plots")
+parser.add_option("","--full",dest="full",default=True,action="store_false",help="Do SigmaEff")
 
 
 print "-> Looking for basepath"
@@ -84,13 +85,16 @@ def MpvAndSigmaEff(h, q=0.68):
     high=h.GetBinCenter(h.GetNbinsX())
 
     ## FIXME FAST
-    #for ibin in range(0,h.GetNbinsX()):
-    #    for jbin in range(ibin+1,h.GetNbinsX()):
-    #        if h.Integral(ibin+1,jbin+1)> q *s:
-    #            if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
-    #                low = h.GetBinCenter(ibin+1)
-    #                high=h.GetBinCenter(jbin+1)
-    #            #break ## j -loop can end here
+    #if opts.full:
+    if True:
+        print "FULL"
+        for ibin in range(0,h.GetNbinsX()):
+            for jbin in range(ibin+1,h.GetNbinsX()):
+                if h.Integral(ibin+1,jbin+1)> q *s:
+                    if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
+                        low = h.GetBinCenter(ibin+1)
+                        high=h.GetBinCenter(jbin+1)
+                    #break ## j -loop can end here
 
     ## FWHM
     hm = h.GetMaximum()*0.5;

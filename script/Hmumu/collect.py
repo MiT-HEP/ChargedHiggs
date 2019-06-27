@@ -171,4 +171,5 @@ c.Update()
 raw_input("ok?")
 c.SaveAs("bias_"+cat+("_sub" if subtract else "")+".pdf")
 c.SaveAs("bias_"+cat+("_sub" if subtract else "")+".png")
+c.SaveAs("bias_"+cat+("_sub" if subtract else "")+".root")
 

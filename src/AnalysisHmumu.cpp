@@ -63,8 +63,7 @@ void HmumuAnalysis::SetJetCuts(Jet *j) {
     j->SetPuIdCut(100);
     // Noise hard cut on jets
     if (year==2017) j->SetEENoiseCut(true);
-    else 
-    j->SetEENoiseCut(false);
+    else j->SetEENoiseCut(false);
     // medium CSV
     j->SetBCut(-100); //L=0.5426 , M=  0.8484, T0.9535 
     j->SetDeepBCut(DEEP_B_MEDIUM); 
@@ -617,14 +616,15 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
     if (selectedJets.size() >=2)
     {
 //
-//#warning NOMJJ
+#warning NOMJJ
 //        //RAFFAELE
-//        vector<float> bound{-1.00001, -0.1, 0.25, 0.55, 1.00001};
+        //vector<float> bound{-1.00001, -0.1, 0.25, 0.55, 1.00001};
+        vector<float> bound{-1.00001, 0., 0.55, 0.81,.91, 1.00001}; // -> AN ?!?
         
         //29may NoMjj
         //vector<float> bound{-1.0001, -0.04,  0.26,   0.77,   0.91,   1.0001};
         //29may Mjj400
-        vector<float> bound{-1.0001, -0.66,  -0.34,  -0.03,  0.5,    1.0001};
+//        vector<float> bound{-1.0001, -0.66,  -0.34,  -0.03,  0.5,    1.0001};
 
         auto ib= std::lower_bound( bound.begin(),bound.end(),bdt[2] );
         if(ib==bound.end()){
@@ -639,9 +639,10 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
     else{
         //RAFFAELE
         //-1, 0, 0.4, 0.65, 1 --> raffaele
+        vector<float> bound{-1.00001, -0.1, 0.25, 0.55, 1.00001};
         //vector<float> bound{-1.00001, 0., 0.55, 0.81,.91, 1.00001}; // -> AN ?!?
         // 29th may. Dmitry
-        vector<float> bound{-1.00001, -0.58,  -0.02,  0.43,   1.00001};
+        //vector<float> bound{-1.00001, -0.58,  -0.02,  0.43,   1.00001};
         auto ib= std::lower_bound(bound.begin(),bound.end(),bdt[1]);
         if(ib==bound.end()){
             category="cat5"; // shouldn't happen
@@ -1658,8 +1659,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
         // enforce it for VBF Pisa
         ////if (jetVar_["mjj_1"] > 400) category="cat14";
-//#warning NOMJJ
-        if (jetVar_["mjj_lead"] > 400 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat14";
+#warning NOMJJ
+//        if (jetVar_["mjj_lead"] > 400 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat14";
     } 
     else if (catType ==4)
     {
@@ -2118,7 +2119,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     
 
     // Trigger
-    passAsymmPtCuts = (recoMuons and  mu0->Pt() >30 and mu1->Pt() >20 );
+    passAsymmPtCuts = (recoMuons and  mu0->Pt() >29 and mu1->Pt() >20 );
     if(year==2016 or year==2018) passAsymmPtCuts = (recoMuons and  mu0->Pt() >26 and mu1->Pt() >20 );
     if (multipd_) passAsymmPtCuts= (recoMuons and mu0->Pt() >26 and mu1->Pt() >20);
 
@@ -2138,15 +2139,18 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         else if (year==2017) passTrigger1 = (e->IsTriggered("HLT_IsoMu27_v",mu0) or e->IsTriggered("HLT_IsoTkMu27_v",mu0)) ;
         else if (year==2018) passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
 
-        if ( (mu1->Pt() > 30 and year==2017) or (mu1->Pt()>26 and (year== 2016 or year==2018) )) 
+        passTrigger1 = passTrigger1 and mu0->GetTightId();
+
+        if ( (mu1->Pt() > 29 and year==2017) or (mu1->Pt()>26 and (year== 2016 or year==2018) )) 
         {
             if (year==2016) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
             else if (year==2017) passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
             else if (year==2018) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
+            passTrigger2 = passTrigger2 and mu1->GetTightId();
         }
         passTrigger=passTrigger1 or passTrigger2;
-        //#warning DISABLING_TRIGGER_MATCHING_2016
-        //if (year==2016) passTrigger=passTrigger or passTriggerEvent;
+        #warning DISABLING_TRIGGER_MATCHING_2016
+        if (year==2016) passTrigger=passTrigger or passTriggerEvent;
 
         if (multipd_) // switch to HLT_IsoMu24. 
         {
@@ -2192,7 +2196,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
 
     Lepton *el= e->GetElectron(0);
-    if (mu0 != NULL and passTrigger and mu0->Pt() >30 and el != NULL and el->Pt() > 20)  // singleMuon trigger
+    if (mu0 != NULL and passTrigger and mu0->Pt() >29 and el != NULL and el->Pt() > 20)  // singleMuon trigger
     {
         Object Z; 
         Z.SetP4(zero); 
@@ -2207,7 +2211,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         }
     }
 
-    if (mu0 != NULL and passTrigger and mu0->Pt() >30 and el != NULL and el->Pt() > 20)  // singleMuon trigger
+    if (mu0 != NULL and passTrigger and mu0->Pt() >29 and el != NULL and el->Pt() > 20)  // singleMuon trigger
     { // emu selection 
         Object Hcache;Hcache.SetP4(Hmm.GetP4());//saveit
         Object Z; 

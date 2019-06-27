@@ -1,0 +1,3 @@
+include=dat/configHmumu.dat
+include=dat/catalog/2019.lhcp/year2017/doubleMuon.dat
+addConfig=HmumuAnalysis|SetMultiPrimaryDataset(),AddLabel("DoubleMuon"),AddLabel("SingleMuon")
