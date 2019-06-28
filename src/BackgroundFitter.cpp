@@ -375,8 +375,19 @@ RooAbsPdf* PdfModelBuilder::getDYBernstein(string prefix, int order,TH1D*dy){
 
 RooAbsPdf* PdfModelBuilder::getCorePdf(string prefix, int order)
 {
-    RooAbsPdf *bern= getBernstein(prefix+"_bern_",order);
-    RooAbsPdf *zmod= getZModExp("corepdf_bern",1); 
+    string extra="";
+    if (prefix.find("cat0") != string::npos) extra="_2j";
+    if (prefix.find("cat1") != string::npos) extra="_2j";
+    if (prefix.find("cat2") != string::npos) extra="_2j";
+    if (prefix.find("cat3") != string::npos) extra="_2j";
+    if (prefix.find("cat4") != string::npos) extra="_2j";
+    if (prefix.find("cat5") != string::npos) extra="_01j";
+    if (prefix.find("cat6") != string::npos) extra="_01j";
+    if (prefix.find("cat7") != string::npos) extra="_01j";
+    if (prefix.find("cat8") != string::npos) extra="_01j";
+
+    RooAbsPdf *bern= getBernstein(prefix+"_bern",order);
+    RooAbsPdf *zmod= getZModExp("corepdf_bern"+extra,1); 
     //RooAbsPdf *exp= getExponentialSingle("corepdf_exp",1); 
     // TODO multiply times bernstein
     //RooCategory cat("corepdfcat","");
@@ -384,7 +395,7 @@ RooAbsPdf* PdfModelBuilder::getCorePdf(string prefix, int order)
     //l.add(*zmod);
     //l.add(*exp);
     //RooMultiPdf *multi= new RooMultiPdf("corepdf"+prefix,"core pdf",cat,l);
-    RooProdPdf *core=new RooProdPdf((prefix+"_corepdf").c_str(),"corepdf",*zmod,*bern);
+    RooProdPdf *core=new RooProdPdf(prefix.c_str(),"corepdf",*zmod,*bern);
     return core;
     
 }

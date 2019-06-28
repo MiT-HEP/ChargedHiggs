@@ -12,14 +12,13 @@ void DYAnalysis::SetLeptonCuts(Lepton *l){
     l->SetMediumCut(true);
 }
 void DYAnalysis::SetJetCuts(Jet *j) { 
-    j->SetBCut(0.460);
+    j->SetBCut(-100);
     j->SetEtaCut(2.0); 
     j->SetEtaCutCentral(2.0);
     j->SetPtCut(30);
     j->SetPuIdCut(100);
     if (year==2017) j->SetEENoiseCut(true);
     else  j->SetEENoiseCut(false);
-    j->SetDeepBCut(-100);
     j->SetDeepBCut(DEEP_B_MEDIUM); 
 } 
 
@@ -31,12 +30,20 @@ void DYAnalysis::Init(){
 	    Book ("DYAnalysis/Vars/Ptmm_"+ l ,"Ptmm;p_{T}^{#mu#mu} [GeV];Events", 1000,0,1000);
 	    Book ("DYAnalysis/Vars/NJmm_"+ l ,"NJmm;N_{jets}^{#mu#mu};Events", 10,0,10);
 	    Book ("DYAnalysis/Vars/Npvmm_"+ l ,"Npvmm", 50,0,50);
-        vector<int> jbin{500,1000,1500,2000};
+        vector<int> jbin{500,1000,1500,2000,10000};
+        vector<string> flavours={"G","Q","O","U"};
         for (int i=0;i<jbin.size()-1;++i)
         {
 	        Book ( Form("DYAnalysis/Vars/axis2_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 100,0,10);
 	        Book ( Form("DYAnalysis/Vars/mult_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,500);
 	        Book ( Form("DYAnalysis/Vars/qgl_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,1);
+            for(auto fl : flavours)
+            {
+	            Book ( Form("DYAnalysis/Vars/qgl_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,1);
+	            Book ( Form("DYAnalysis/Vars/axis2_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 100,0,10);
+	            Book ( Form("DYAnalysis/Vars/mult_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,500);
+            }
+
         }
     }
 
@@ -150,15 +157,31 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
        	Fill("DYAnalysis/Vars/Npvmm_"+ label,systname, e->Npv(),e->weight()) ;
         Fill("DYAnalysis/Vars/NJmm_"+ label,systname, e->NcentralJets(),e->weight()) ;
 
-        if (j0 != NULL) {
+        if (j0 != NULL and j0->Pt() > 500) {
             vector<float> jbin{500,1000,1500,2000,10000};
-            auto ib=std::lower_bound(jbin.begin(),jbin.end(),j0->Pt());
+            //std::cout<<"[DEBUG] Considering jet with pt"<<j0->Pt()<<std::endl;
+            //first that is 'not less'
+            auto ib=std::lower_bound(jbin.begin(),jbin.end(),std::min(j0->Pt(),8000.F));
+            //std::cout<<"[DEBUG] -> found="<< (ib!=jbin.end()) <<" i="<<ib-jbin.begin()<<std::endl;
             if (ib != jbin.end())
             {
-                int i= ib-jbin.begin();
-                Fill(Form("DYAnalysis/Vars/axis2_jet%d_%d_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("axis2"),e->weight());
-                Fill(Form("DYAnalysis/Vars/mult_jet%d_%d_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
-                Fill(Form("DYAnalysis/Vars/qgl_jet%d_%d_",jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
+                int i= ib-jbin.begin()-1;
+                Fill(Form("DYAnalysis/Vars/axis2_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("axis2"),e->weight());
+                Fill(Form("DYAnalysis/Vars/mult_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
+                Fill(Form("DYAnalysis/Vars/qgl_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
+
+                string flavor=""; int fl=j0->Flavor();
+                if ( label != "Data" and fl ==21 ) flavor="G";
+                else if ( label != "Data" and abs(fl)<5 ) flavor="Q";
+                else if ( label != "Data" and abs(fl)!=0 ) flavor="O";
+                else if ( label != "Data" and abs(fl)==0 ) flavor="U";
+
+                if (label!="Data")
+                {
+                    Fill(Form("DYAnalysis/Vars/axis2_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("axis2"),e->weight());
+                    Fill(Form("DYAnalysis/Vars/mult_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
+                    Fill(Form("DYAnalysis/Vars/qgl_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
+                }
             }
         } // j0
     } // full selection on muons
