@@ -175,7 +175,10 @@ class Jet : virtual public Object, virtual public SmearableComplex
     /// @brief return variable (name) of qgl discriminator
     inline float QGLVar(std::string name) const {
             std::transform(name.begin(),name.end(),name.begin(),::tolower ) ;
-            return qglVars_.find(name)->second; // this will throw an exception if not found
+            bool doLog=false;
+            if (name.find("log:") != string::npos) { doLog=true; name=name.substr(4);}
+            if (not doLog)return qglVars_.find(name)->second; // this will throw an exception if not found
+            else return (qglVars_.find(name)->second >0 )?-TMath::Log( qglVars_.find(name)->second):0.;
             };
     // ---
     inline int IsObject() const override {return IsJet();}

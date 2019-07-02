@@ -166,7 +166,7 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
             if (ib != jbin.end())
             {
                 int i= ib-jbin.begin()-1;
-                Fill(Form("DYAnalysis/Vars/axis2_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("axis2"),e->weight());
+                Fill(Form("DYAnalysis/Vars/axis2_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("log:axis2"),e->weight());
                 Fill(Form("DYAnalysis/Vars/mult_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
                 Fill(Form("DYAnalysis/Vars/qgl_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
 
@@ -178,7 +178,7 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
 
                 if (label!="Data")
                 {
-                    Fill(Form("DYAnalysis/Vars/axis2_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("axis2"),e->weight());
+                    Fill(Form("DYAnalysis/Vars/axis2_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("log:axis2"),e->weight());
                     Fill(Form("DYAnalysis/Vars/mult_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
                     Fill(Form("DYAnalysis/Vars/qgl_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
                 }
