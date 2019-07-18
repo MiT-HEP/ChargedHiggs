@@ -212,20 +212,31 @@ if opts.status:
             condor_q= check_output("condor_q",shell=True) 
         else:
             condor_q=""
-        if opts.dir not in condor_q: 
+        if opts.dir not in condor_q and not opts.nocheck: 
 		    print " NOT RUNNING! (condor) ", opts.dir
 		    print " -------------------------------------"
-
-		#for iJob in run+pend:
-		#    #test/Hmumu/Hmumu_2017_04_05_Bdt/Job_76
-		#    if not re.search( re.sub('//','/','%s/Job_%d\s'%(opts.dir,int(iJob))),bjobs):notRunning.append( iJob)
-		#    #cmd = "bjobs -w | grep '%s/Job_%d\>'"%(opts.dir,int(iJob))
-		#    #status = call(cmd,shell=True)
-		#    #if status != 0: notRunning.append( iJob)
-		#if len(notRunning) >0 :
-		#    print " NOT RUNNING! ",PrintLine(notRunning)
-		#    print " -------------------------------------"
-
+        if not opts.nocheck: ## check size
+            ls = check_output("ls -l %s/*root | tr -s ' ' | cut -d ' ' -f 5,9 "%opts.dir, shell=True)
+            allfiles={}
+            maxsize=0
+            import ROOT
+            for line in ls.split('\n'):
+                if len(line.split() )< 2: continue
+                try:
+                    size = float(line.split()[0])
+                    f = line.split()[1]
+                    allfiles[f] = size
+                    maxsize= max(size,maxsize)
+                    fTry = ROOT.TFile.Open(f)
+                    if fTry == None or fTry.IsZombie() : print "file:", f ,"is corrupted"
+                    elif fTry.TestBit(ROOT.TFile.kRecovered): print "file:",f,"is recovered"
+                    fTry.Close()
+                except Exception as e:
+                    print e
+                    pass
+            #print "Max size is",maxsize
+            #for f in allfiles:
+            #    if allfiles[f] < 0.75*maxsize: print "file:",f,"is suspiciously small"
 	exit(0)
 
 if opts.resubmit:

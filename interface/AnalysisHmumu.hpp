@@ -38,7 +38,8 @@ class HmumuAnalysis: virtual public AnalysisBase
         //
 
         bool doSync{false};
-        int catType{0}; //0 = RunISync, 1=AutoCat, 2=Bdt
+        ///@brief 0 = RunISync, 2=UF,  3=as UCSD, 4 Mjj-400 Dimitry,5 NoMjjDimitry, 10 MIT, 11 MIT + Exclusive
+        int catType{0}; 
         bool doEvenOnly{false}; //signal only even events
         bool doOddOnly{false}; //signal only even events
         bool doSTXS{false};
@@ -122,6 +123,7 @@ class HmumuAnalysis: virtual public AnalysisBase
          ************/
         DataStore varValues_;
         vector<TMVA::Reader*> readers_;
+        map< pair<string,int>, int > mvavars_; //keep track of the variables added to the mva
 
         void InitTmva(int pos);
         void InitTmvaMIT(int pos);

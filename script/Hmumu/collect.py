@@ -10,11 +10,16 @@ cat="catAll"
 
 from array import array
 def GetRGB(color):
-        r=array('f',[0.])
-        g=array('f',[0.])
-        b=array('f',[0.])
-        ROOT.gROOT.GetColor(color).GetRGB(r,g,b);  
-        return ( r[0],g[0],b[0])
+        #r=array('f',[0.])
+        #g=array('f',[0.])
+        #b=array('f',[0.])
+        #ROOT.gROOT.GetColor(color).GetRGB(r,g,b);  
+        #return ( r[0],g[0],b[0])
+        r=ROOT.gROOT.GetColor(color).GetRed()
+        g=ROOT.gROOT.GetColor(color).GetGreen()
+        b=ROOT.gROOT.GetColor(color).GetBlue()
+        print "Returning color",color,ROOT.gROOT.GetColor(color).GetName(),"->",r,g,b
+        return ( r,g,b)
 
 def ChangePalette(num=0):
     white  = GetRGB(ROOT.kWhite);
@@ -76,6 +81,7 @@ c.SetRightMargin(0.15)
 c.SetBottomMargin(0.15)
 c.SetLeftMargin(0.15)
 ChangePalette(3)
+#ChangePalette(1)
 
 h=ROOT.TH2D("bias","bias " + cat,21,0,21,21,0,21)
 

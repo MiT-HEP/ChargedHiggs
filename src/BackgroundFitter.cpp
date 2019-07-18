@@ -386,7 +386,7 @@ RooAbsPdf* PdfModelBuilder::getCorePdf(string prefix, int order)
     if (prefix.find("cat7") != string::npos) extra="_01j";
     if (prefix.find("cat8") != string::npos) extra="_01j";
 
-    RooAbsPdf *bern= getBernstein(prefix+"_bern",order);
+    RooAbsPdf *bern= getBernstein(prefix+"_bern",order,false); // positive
     RooAbsPdf *zmod= getZModExp("corepdf_bern"+extra,1); 
     //RooAbsPdf *exp= getExponentialSingle("corepdf_exp",1); 
     // TODO multiply times bernstein
@@ -1118,36 +1118,63 @@ void BackgroundFitter::fit(){
         cout<<"*** Fitting DY Bernstein ***"<<endl;
         int dybernOrd;
         string mask= inputMasks[cat];
+        string mask_tt= inputMasks[cat];
         string toReplace="Data";
         //if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DY");
         if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DYJetsToLL_M-105To160");
-        cout<<"-> Getting DY from "<<mask<<endl;
+        if (mask_tt.find(toReplace) != string::npos) mask_tt.replace(mask_tt.find(toReplace), toReplace.length(),"TT");
+        cout<<"-> Getting DY from "<<mask<< "and TT from "<<mask_tt<<endl;
         TH1D *dy; 
+        TH1D *tt;
+
         if (fInput!=NULL){
             dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
+            tt = (TH1D*)fInput ->Get( mask_tt.c_str() ) ;
             if (dy==NULL) cout<<"  and hist (single file) doesn't exist"<<endl;
-            if ( inname.find("Hmm2016") !=string::npos)dy->Scale(35867); // lumi
-            else if ( inname.find("Hmm2017") !=string::npos)dy->Scale(41860); // lumi
-            else if ( inname.find("Hmm2018") !=string::npos)dy->Scale(59710); // lumi
+            if (tt==NULL) cout<<"  and TT hist (single file) doesn't exist"<<endl;
+            if ( inname.find("Hmm2016") !=string::npos)     {dy->Scale(35867); tt->Scale(35867); dy->SetTitle("scaled 2016");}
+            else if ( inname.find("Hmm2017") !=string::npos){dy->Scale(41860); tt->Scale(41860); dy->SetTitle("scaled 2017"); }
+            else if ( inname.find("Hmm2018") !=string::npos){dy->Scale(59710); tt->Scale(59710); dy->SetTitle("scaled 2018");}
+
+            dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));
         }
         else {
-            cout<<"-> Assuming 2016/2017/2018 lumis "<<""<<mask<<endl;
+            cout<<"-> Assuming 2016/2017/2018 lumis "<<mask<<" (and TT)"<<mask_tt<<endl;
             dy=(TH1D*)fAll[0] ->Get( mask.c_str() ) ;
+            tt=(TH1D*)fAll[0] ->Get( mask_tt.c_str() ) ;
             if (dy==NULL) cout<<"  and hist 2016 doesn't exist"<<endl;
+            if (tt==NULL) cout<<"  and tt hist 2016 doesn't exist"<<endl;
             dy->Scale(35867);
+            tt->Scale(35867);
+
             TH1D*tmp= (TH1D*)fAll[1] ->Get( mask.c_str() ) ; 
+            TH1D*tmp_tt= (TH1D*)fAll[1] ->Get( mask_tt.c_str() ) ; 
             if (tmp==NULL) cout<<"  and hist 2017 doesn't exist"<<endl;
+            if (tmp_tt==NULL) cout<<"  and TT hist 2017 doesn't exist"<<endl;
             tmp->Scale(41860); dy->Add(tmp);
+            tmp_tt->Scale(41860); tt->Add(tmp_tt);
+
             tmp= (TH1D*)fAll[2] ->Get( mask.c_str() ) ; 
+            tmp_tt= (TH1D*)fAll[2] ->Get( mask_tt.c_str() ) ; 
             if (tmp==NULL) cout<<"  and hist 2018 doesn't exist"<<endl;
+            if (tmp_tt==NULL) cout<<"  and hist TT 2018 doesn't exist"<<endl;
             tmp->Scale(59710); dy->Add(tmp);
+            tmp_tt->Scale(59710); tt->Add(tmp_tt);
+            dy->SetTitle("scaled by 2016/2017/2018");
+
+            dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));
         }
         RooAbsPdf* dybern = NULL;
         if (dy != NULL){
             dy->Rebin(10); // lumi
             //dy->Smooth(1); // lumi
-            dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
+            //dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
+            dybern = modelBuilder.getDYBernstein(Form("dybern_cat%d",cat), 0, dy);
+            dybern->SetTitle(dy->GetTitle()); // keep this info for safe
             //storedPdfs.add(*dybern);
+            w_ -> import (*dybern,RecycleConflictNodes());
+            RooRealVar pdf_norm(Form("dybern_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
+            w_ -> import (pdf_norm,RecycleConflictNodes());
         }
 
         cout<<"*** Fitting ZPHO ***"<<endl;

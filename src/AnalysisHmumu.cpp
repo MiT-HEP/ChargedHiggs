@@ -49,8 +49,8 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
     l->SetTightCut(false);
     l->SetLooseCut(false);
     l->SetMediumCut(true);
-    l->SetTrackerMuonCut(true);
-    l->SetGlobalMuonCut(true);
+    //l->SetTrackerMuonCut(true);
+    //l->SetGlobalMuonCut(true);
 }
 
 void HmumuAnalysis::SetJetCuts(Jet *j) { 
@@ -616,10 +616,13 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
     if (selectedJets.size() >=2)
     {
 //
-#warning NOMJJ
+        //#warning NOMJJ
 //        //RAFFAELE
-        //vector<float> bound{-1.00001, -0.1, 0.25, 0.55, 1.00001};
-        vector<float> bound{-1.00001, 0., 0.55, 0.81,.91, 1.00001}; // -> AN ?!?
+        //vector<float> bound{-1.00001, 0., 0.55, 0.81,.91, 1.00001}; // -> AN ?!?
+        vector<float> bound;
+        if (catType==3) bound = vector<float>({-1.00001, 0., 0.55, 0.81,.91, 1.00001});
+        if (catType==4) bound = vector<float>({-1.0001, -0.66,  -0.34,  -0.03,  0.5,    1.0001}); //Mjj400Dimitry
+        if (catType==5) bound = vector<float>({-1.0001, -0.04,  0.26,   0.77,   0.91,   1.0001}); //NoMjj Dimitry
         
         //29may NoMjj
         //vector<float> bound{-1.0001, -0.04,  0.26,   0.77,   0.91,   1.0001};
@@ -639,7 +642,9 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
     else{
         //RAFFAELE
         //-1, 0, 0.4, 0.65, 1 --> raffaele
-        vector<float> bound{-1.00001, -0.1, 0.25, 0.55, 1.00001};
+        std::vector<float>bound;
+        if (catType==3)bound=vector<float> ({-1.00001, -0.1, 0.25, 0.55, 1.00001});
+        if (catType==4 or catType==5)bound=vector<float> ({-1.00001, -0.58,  -0.02,  0.43,   1.00001});
         //vector<float> bound{-1.00001, 0., 0.55, 0.81,.91, 1.00001}; // -> AN ?!?
         // 29th may. Dmitry
         //vector<float> bound{-1.00001, -0.58,  -0.02,  0.43,   1.00001};
@@ -823,8 +828,25 @@ string HmumuAnalysis::CategoryBdt(Event *e){
 void HmumuAnalysis::AddVariable( string name, char type){ 
     Log(__FUNCTION__,"INFO","Adding variable '"+name+"'");
     varValues_.Add(name,type); 
-    if ( type == 'I') for(auto& r : readers_ ) r -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
-    else if ( type == 'F') for(auto&r : readers_) r -> AddVariable(name.c_str(),  (float*)varValues_.GetPointer(name));
+
+    if ( type == 'I') {
+        int ir=-1;
+        for(auto& r : readers_ ){ 
+        ++ir;
+        if (mvavars_.find(pair<string,int>(name,ir))!=mvavars_.end()) continue;
+        mvavars_[pair<string,int>(name,ir)] =1;
+        r -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
+    }}
+
+    else if ( type == 'F') {
+        int ir=-1;
+        for(auto&r : readers_) { 
+        ++ir;
+        if (mvavars_.find(pair<string,int>(name,ir))!=mvavars_.end()) continue;
+        mvavars_[pair<string,int>(name,ir)] =1;
+        r -> AddVariable(name.c_str(),  (float*)varValues_.GetPointer(name));
+    }}
+
     else { 
         Log(__FUNCTION__,"ERROR",string("type '") + type + "' not supported");
     }
@@ -1017,7 +1039,7 @@ void HmumuAnalysis::Init(){
         for (int i=0;i<30;++i) categories_.push_back(Form("cat%d",i));
         //if (catType<4){}
         InitTmva(0); InitTmvaUCSD(1,0);InitTmvaUCSD(2,2);
-        if (catType>=4)InitTmvaMIT(0); //outdated
+        if (catType>=10)InitTmvaMIT(0); //outdated
         if (doScikit)InitScikit();
     }
     else
@@ -1097,6 +1119,8 @@ void HmumuAnalysis::Init(){
         //USCD
 	    Book ("HmumuAnalysis/Vars/Bdt01jUCSDOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 	    Book ("HmumuAnalysis/Vars/Bdt2jUCSDOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+	    Book ("HmumuAnalysis/Vars/Bdt01jUCSDOnZ_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+	    Book ("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 
         // zpt reweight
 	    Book ("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
@@ -1303,10 +1327,12 @@ void HmumuAnalysis::Init(){
         Branch("hmm","Heta",'F');
         Branch("hmm","Hphi",'F');
         Branch("hmm","mjj_lead",'F');
+        Branch("hmm","dphijj_lead",'F');
         Branch("hmm","mjj_1",'F');
         Branch("hmm","mjj_2",'F');
         Branch("hmm","detajj_1",'F');
         Branch("hmm","detajj_2",'F');
+        // muo
         Branch("hmm","deltaphi",'F');
         Branch("hmm","deltaeta",'F');
         Branch("hmm","costhetastar",'F');
@@ -1629,6 +1655,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     }
     updateMjj();
 
+    if (e->eventNum() ==665380 )Log(__FUNCTION__,"DEBUG-SYNC", Form("SelectedJets:%d pt1=%f puid=%f puid2=%f",selectedJets.size(),selectedJets[0]->Pt(),selectedJets[0]->GetPuId(),selectedJets[1]->GetPuId()));
+
     ///
 
     // ------------------- DIRTY CATEGORIES for studies
@@ -1642,7 +1670,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     BdtUCSD(2,2);
 
     if (catType==2) category = CategoryBdt(e);
-    else if (catType==3) { 
+    else if (catType>=3 and catType <10) { 
         category = CategoryBdtUCSD(e); 
 
         string categoryExc = CategoryExclusive(e); 
@@ -1659,14 +1687,14 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
         // enforce it for VBF Pisa
         ////if (jetVar_["mjj_1"] > 400) category="cat14";
-#warning NOMJJ
-//        if (jetVar_["mjj_lead"] > 400 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat14";
+        //#warning NOMJJ
+        if (catType == 4 and jetVar_["mjj_lead"] > 400 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat14";
     } 
-    else if (catType ==4)
+    else if (catType ==10)
     {
         category = CategoryBdtMIT(e); 
     }
-    else if (catType ==5) // MIT + exclusive
+    else if (catType ==11) // MIT + exclusive
     {
         category = CategoryBdtMIT(e); 
         string categoryExc = CategoryExclusive(e); 
@@ -1689,7 +1717,6 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
     // --------------- DIRTY CATEGORIES -----------
     //string categoryDirty=""; // this may double count
-
 
     // ---------------------------------------------------------------
     //  ------------------- APPLY Muon SF --------------
@@ -2273,7 +2300,14 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 Fill("HmumuAnalysis/Vars/DeepBOnZ_"+flStr+"_"+ label,systname, jetVar_["maxDeepB"],e->weight()/btagsf);
             }
 
-            if(catType==2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
+            if(catType>=2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
+
+            if (catType>=2 and bdt.size() >2)
+            {
+                if (selectedJets.size()<2) Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnZ_"+label,systname,bdt[1],e->weight());
+                else Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_"+label,systname,bdt[2],e->weight());
+            }
+
             if (doScikit and catType==2){
                 for(size_t i=0;i<discr.size();++i)
                 {
@@ -2614,6 +2648,12 @@ void HmumuAnalysis::updateMjj(){
     jetVar_["mjj_lead"]= (selectedJets.size()>=2)? ( selectedJets[0]->InvMass( selectedJets[1] )): 0;
     jetVar_["detajj_lead"]= (selectedJets.size()>=2)? fabs(selectedJets[0]->Eta()-selectedJets[1]->Eta()): 0;
     jetVar_["dphijj_lead"]= (selectedJets.size()>=2)? fabs(selectedJets[0]->DeltaPhi(selectedJets[1])): 0;
+
+    //jetVar_["y*"] = (selectedJets.size()>=2) ? (Hmm.Eta() - (selectedJets[0]->Eta() + selectedJets[1]->Eta())/2.0 ) :-10;
+    //jetVar_["z*"] = (selectedJets.size()>=2) ? (jetVar_["y*"] /fabs(selectedJets[0]->Eta() - selectedJets[1]->Eta()) ):-10;
+
+    jetVar_["y*"] = (selectedJets.size()>=2) ? ( - Hmm.Rapidity() + (selectedJets[0]->Rapidity() + selectedJets[1]->Rapidity())/2.0 ) :-10;
+    jetVar_["z*"] = (selectedJets.size()>=2) ? (jetVar_["y*"] /fabs(selectedJets[0]->Rapidity() - selectedJets[1]->Rapidity()) ):-10;
 
     for(unsigned i=0;i<selectedJets.size() ;++i)
     {
@@ -3106,7 +3146,7 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
         SetTreeVar("detajj_lead" ,jetVar_["detajj_lead"]);
         SetTreeVar("dphijj_lead" ,jetVar_["dphijj_lead"]);
 
-        SetVariable("zepen", (selectedJets.size()>2) ? fabs(Hmm.Eta() - (selectedJets[0]->Eta() + selectedJets[1]->Eta())/2.0):-10);    
+        SetTreeVar("zepen", jetVar_["z*"]);    
 
         SetTreeVar("aveQGLCent" ,jetVar_["aveQGLcent"]);
         //SetTreeVar("aveCSV"     ,jetVar_["aveCSV"]);
@@ -3135,37 +3175,12 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
         //SetTreeVar("softHt10"   ,jetVar_["softHt10"]);
 
         SetTreeVar("mjj_lead"   ,jetVar_["mjj_lead"]);
+        SetTreeVar("dphijj_lead"   ,jetVar_["dphijj_lead"]);
+        SetTreeVar("detajj_lead"   ,jetVar_["detajj_lead"]);
         SetTreeVar("mjj_1"      ,jetVar_["mjj_1"]);
         SetTreeVar("mjj_2"      ,jetVar_["mjj_2"]);
         SetTreeVar("detajj_1"   ,jetVar_["detajj_1"]);
         SetTreeVar("detajj_2"   ,jetVar_["detajj_2"]);
-
-        //compute photons
-        /*
-        vector<Photon*> selectedPhotons;
-        for(int ipho=0;;++ipho)
-        {
-            Photon* p=e->GetPhoton(ipho);
-            if(p == NULL) break;
-            selectedPhotons.push_back(p);
-        }
-
-        SetTreeVar("npho",selectedPhotons.size());
-        for(int ipho=0;ipho<std::min(selectedPhotons.size(),size_t(20));++ipho)
-        {
-            SetTreeVar("pho_pt" ,ipho,selectedPhotons[ipho]->Pt());
-            SetTreeVar("pho_eta" ,ipho,selectedPhotons[ipho]->Eta());
-            if (mu0) {SetTreeVar("pho_dr1" ,ipho,selectedPhotons[ipho]->DeltaR(mu0));} else {SetTreeVar("pho_dr1" ,ipho,0.);}
-            if (mu1) {SetTreeVar("pho_dr2" ,ipho,selectedPhotons[ipho]->DeltaR(mu1));} else {SetTreeVar("pho_dr2" ,ipho,0.);}
-        }
-        for(int ipho=selectedPhotons.size();ipho<20 ;++ipho)
-        {
-            SetTreeVar("pho_pt" ,ipho,0.0);
-            SetTreeVar("pho_eta" ,ipho,0.0);
-            SetTreeVar("pho_dr1" ,ipho,0.0);
-            SetTreeVar("pho_dr2" ,ipho,0.0);
-        }
-        */
 
         // fill category
         int cat=-1;
@@ -3287,12 +3302,12 @@ float HmumuAnalysis::BdtUCSD(int pos,int nj)
 
     if (selectedJets.size() >=1)
     {
-        SetVariable("jet1pt",selectedJets[0]->Pt());    
-        SetVariable("jet1eta",selectedJets[0]->Eta());    
+        SetVariable("j1pt",selectedJets[0]->Pt());    
+        SetVariable("j1eta",selectedJets[0]->Eta());    
     }
     else{
-        SetVariable("jet1pt",0.);    
-        SetVariable("jet1eta",0.);    
+        SetVariable("j1pt",0.);    
+        SetVariable("j1eta",0.);    
     }
     float drmj=100.;
     for( auto j : selectedJets)
@@ -3310,7 +3325,7 @@ float HmumuAnalysis::BdtUCSD(int pos,int nj)
         SetVariable("dphijj",jetVar_["dphijj_lead"]);    
         SetVariable("mjj",jetVar_["mjj_lead"]);    
 
-        SetVariable("zepen", fabs(Hmm.Eta() - (selectedJets[0]->Eta() + selectedJets[1]->Eta())/2.0));    
+        SetVariable("zepen", jetVar_["z*"]);    
     }
     SetVariable("met",e->GetMet().Pt());    
     SetVariable("njets",selectedJets.size());    
@@ -3321,6 +3336,15 @@ float HmumuAnalysis::BdtUCSD(int pos,int nj)
     SetVariable("m2eta",mu1->Eta());    
 
     if (pos>=0) bdt[pos]=(readers_[pos]->EvaluateMVA("BDTG_default") );
+
+    if (e->eventNum() == 821623)
+    {
+        Log(__FUNCTION__,"DEBUG-SYNC",Form("evaluating bdt pos=%d nj=%d",pos,nj));
+        for (auto &v : vector<string>({"hmmpt","hmmrap","hmmthetacs","hmmphics","j1pt","j1eta","j2pt","mjj","detajj","dphijj","zepen","met","drmj","njets","m1ptOverMass","m2ptOverMass","m1eta","m2eta"}) )
+        Log(__FUNCTION__,"DEBUG-SYNC",Form(" %s=%f",v.c_str(),GetVariable<float>(v)));
+        Log(__FUNCTION__,"DEBUG-SYNC",Form("  mva value=%f",bdt[pos]));
+        Log(__FUNCTION__,"DEBUG-SYNC","------------------------");
+    }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Bdt");
     return bdt[pos];

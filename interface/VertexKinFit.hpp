@@ -15,7 +15,7 @@ class VertexKinfit : public CorrectorBase{
 class FSRRecovery : public CorrectorBase{
 	public:
         float maxpt{-1};
-        float maxrelpt{0.5};
+        float maxrelpt{-1};
         bool onlyiso{true};
 		int correct(Event *e) override ;
 		const string name() const override { return "FSRRecovery";}
