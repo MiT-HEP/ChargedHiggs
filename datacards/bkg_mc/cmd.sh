@@ -2,8 +2,14 @@
 ####### build ws
 python script/Hmumu/buildMCws.py -i /eos/user/a/amarini/Hmumu/fwk/2019_07_25_Hmm2016_BdtUCSD_Mjj400_JetPt25/2019_07_25_Hmm2016_BdtUCSD_Mjj400_JetPt25.root,/eos/user/a/amarini/Hmumu/fwk/2019_07_25_Hmm2017_BdtUCSD_Mjj400_JetPt25/2019_07_25_Hmm2017_BdtUCSD_Mjj400_JetPt25.root,/eos/user/a/amarini/Hmumu/fwk/2019_07_25_Hmm2018_BdtUCSD_Mjj400_JetPt25/2019_07_25_Hmm2018_BdtUCSD_Mjj400_JetPt25.root --binput Hmumu/2019_07_25_HmmAll_BdtUCSD_Mjj400_JetPt25/BackgroundModel.root -o Hmumu/2019_07_25_HmmAll_BdtUCSD_Mjj400_JetPt25/MCws.root --hmm hmmExCatMjj --fit --batch
 
-# 
+#  copy the ./mconly from cat0 to cat1..13
 for i in {1..13}; do cp -v cat0_mconly.txt  cat${i}_mconly.txt ; sed -i'' "s/cat0/cat${i}/g" cat${i}_mconly.txt ;done
+
+#  for the cat0 to 8, copy the datacards RunII and and the mc only ones
+#  also add the Asimov dataset: 
+#     * fit the data driven spectrum and build the asimov (with signal?)
+#     * convert the asimov into a RooDataHist
+#     * change the observation into the asimov dataset (Asimov datacard --> can be used to fit with MC observation;))
 
 for i in {0..8}; do 
     cp ../RunII/cat${i}.txt ./RunII_mc/cat${i}.tmp.txt
