@@ -16,7 +16,8 @@ addConfig=HmumuAnalysis|doOddOnly=0
 
 Correct=RochesterCorrections,FSRRecovery
 config=RochesterCorrections|year="2017",allow_reset=1
-config=FSRRecovery|allow_reset=0
+#config=FSRRecovery|allow_reset=0
+config=FSRRecovery|allow_reset=0,egmcorrections=1,year=2017
 
 #Final=true
 #EntryPerSecond=10

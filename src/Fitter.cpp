@@ -44,6 +44,7 @@ void Fitter::info(){
     //cout<<"Gaus*poln"<<endl;
     cout<<"xMin="<<xmin <<endl;
     cout<<"xMax="<<xmax <<endl;
+    cout<<"xName="<<xname <<endl;
     cout<<"Dataset M="<<datasetMask_ <<endl;
     if (doXsec) cout<<"XSEC M="<<xsecMask_ <<endl;
     cout<<"EA M="<<eaMask_ <<endl;
@@ -76,7 +77,7 @@ void Fitter::init(){
     if(w_==NULL) w_ = new RooWorkspace("w","workspace") ;
 
     if(mh_==NULL) mh_ = new RooRealVar("MH","MH",mhmin,mhmax);
-    if(x_==NULL) x_ = new RooRealVar("mmm","mmm",xmin,xmax);
+    if(x_==NULL) x_ = new RooRealVar(xname.c_str(),xname.c_str(),xmin,xmax);
     mh_->setConstant();
 
 

@@ -83,6 +83,7 @@ class Fitter : virtual public BaseFitter{
     bool doXsec {false}; // do xsec 
     bool saveFit{true};
 
+    string xname{"mmm"};
     float xmin;
     float xmax;
 

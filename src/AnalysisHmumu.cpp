@@ -56,7 +56,8 @@ void HmumuAnalysis::SetLeptonCuts(Lepton *l){
 void HmumuAnalysis::SetJetCuts(Jet *j) { 
     j->SetEtaCut(4.7); 
     j->SetEtaCutCentral(2.5); 
-    j->SetPtCut(30); 
+#warning 25GEV_JETS
+    j->SetPtCut(25); 
     //#warning NOPUID
     //j->SetPuIdCut(-999);
     //#warning PUID
@@ -1654,8 +1655,6 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         selectedJets.push_back(e->GetJet(i));
     }
     updateMjj();
-
-    if (e->eventNum() ==665380 )Log(__FUNCTION__,"DEBUG-SYNC", Form("SelectedJets:%d pt1=%f puid=%f puid2=%f",selectedJets.size(),selectedJets[0]->Pt(),selectedJets[0]->GetPuId(),selectedJets[1]->GetPuId()));
 
     ///
 
@@ -3336,7 +3335,8 @@ float HmumuAnalysis::BdtUCSD(int pos,int nj)
     SetVariable("m2eta",mu1->Eta());    
 
     if (pos>=0) bdt[pos]=(readers_[pos]->EvaluateMVA("BDTG_default") );
-
+    
+    /*
     if (e->eventNum() == 821623)
     {
         Log(__FUNCTION__,"DEBUG-SYNC",Form("evaluating bdt pos=%d nj=%d",pos,nj));
@@ -3345,6 +3345,7 @@ float HmumuAnalysis::BdtUCSD(int pos,int nj)
         Log(__FUNCTION__,"DEBUG-SYNC",Form("  mva value=%f",bdt[pos]));
         Log(__FUNCTION__,"DEBUG-SYNC","------------------------");
     }
+    */
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Bdt");
     return bdt[pos];

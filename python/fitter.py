@@ -24,6 +24,7 @@ while mypath != "" and mypath != "/":
     if "ChargedHiggs" in os.path.basename(mypath):
         basepath = os.path.abspath(mypath)
     mypath = os.path.dirname(mypath)
+print "My path is",mypath
 ################ IMPORT ROOT  ################
 if opts.verbose: print "-> Importing root",
 sys.argv=[]
@@ -34,12 +35,18 @@ if opts.verbose: print "DONE"
 ################ LOAD LIBRARY ###############
 if opts.verbose: print "-> Load Bare library" ## probably not needed
 r.gSystem.Load( "../NeroProducer/Core/bin/libBare.so")
+#r.gSystem.Load( mypath+"/../NeroProducer/Core/bin/libBare.so")
+
 if opts.verbose: print "-> Load ChargedHiggs library"
 r.gSystem.Load( "./bin/libChargedHiggs.so")
+#r.gSystem.Load( mypath+"/bin/libChargedHiggs.so")
+
 if opts.verbose: print "DONE",
 
 if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
     from hmm import *
+    if os.path.isfile("hmm2.py") :
+        from hmm2 import *
     config = eval(opts.hmm)
     config.Print()
 
@@ -100,6 +107,7 @@ if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
 if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
     fitter.xmin = config.xmin
     fitter.xmax = config.xmax
+    fitter.xname = config.xname
     if opts.plotdir != "":
         fitter.plotDir=opts.plotdir+"/"
 
@@ -187,11 +195,16 @@ if opts.classname== "BackgroundFitter":
     fitter.rebin=1
     ## Hmumu
     fitter.inputMasks.clear()
-    for catStr in config.categories:
-        if catStr =="":
-            fitter.inputMasks.push_back(config.dirname + config.varname+"_Data")
-        else:
-            fitter.inputMasks.push_back(config.dirname + config.varname+"_"+catStr+"_Data")
+    if not config.background_input_masks:
+        for catStr in config.categories:
+            if catStr =="":
+                fitter.inputMasks.push_back(config.dirname + config.varname+"_Data")
+            else:
+                fitter.inputMasks.push_back(config.dirname + config.varname+"_"+catStr+"_Data")
+    else:
+        for s in config.background_input_masks: 
+            fitter.inputMasks.push_back(s)
+
 
 ################ INIT FITTER ##########
 if opts.verbose: print "-> Init"

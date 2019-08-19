@@ -1,0 +1,38 @@
+Combination of cms_datacard_hmumu_cat15.txt
+imax * number of bins
+jmax * number of processes minus 1
+kmax * number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes *         cat8  $DIR/SignalModel.root w:pdf_sigmodel2017_$PROCESS_cat8
+shapes BKG       cat8  $DIR/BackgroundModel.root w:zmod_cat8_ord1
+shapes data_obs  cat8  $DIR/BackgroundModel.root w:dataObs_cat8
+shapes ggH       cat8  $DIR/SignalModel.root w:pdf_sigmodel2017_GluGlu_cat8
+shapes qqH       cat8  $DIR/SignalModel.root w:pdf_sigmodel2017_VBF_cat8
+----------------------------------------------------------------------------------------------------------------------------------
+bin          cat8
+observation  -1.0    
+----------------------------------------------------------------------------------------------------------------------------------
+bin                             cat8    cat8    cat8    cat8    cat8    cat8    cat8  
+process                         ZH          WPlusH      qqH         WMinusH     ttH         ggH         BKG       
+process                         -5          -4          -3          -2          -1          0           1         
+rate                            41530.0000  41530.0000  41530.0000  41530.0000  41530.0000  41530.0000  1.0000    
+#35920 41530 59740
+----------------------------------------------------------------------------------------------------------------------------------
+lumi_13TeV              lnN     1.025       1.025       1.025       1.025       1.025       1.025       -         
+smear_cat8_procGluGlu  param  0 1.
+scale_cat8_procGluGlu  param  0 1.
+hmm           rateParam cat8 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam cat8 qqH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat8 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam cat8 WMinusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat8 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam cat8 ZH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat8_bkg_norm  rateParam cat8 BKG $DIR/BackgroundModel.root:w  
+hmm           rateParam cat8 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam cat8 ggH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat8 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam cat8 WPlusH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat8 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam cat8 ttH $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+nuisance edit  freeze smear_cat8_procGluGlu
+nuisance edit  freeze scale_cat8_procGluGlu

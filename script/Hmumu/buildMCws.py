@@ -4,7 +4,7 @@ import re,math
 
 from optparse import OptionParser, OptionGroup
 parser=OptionParser()
-parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="Hmumu.root")
+parser.add_option("-i","--input",type='string',help="Input ROOT file. If comma separated 2016,2017,2018[%default]", default="Hmumu.root")
 parser.add_option("","--binput",type='string',help="Backgorund Model Input ROOT file. If none skip this part. [%default]", default="")
 parser.add_option("-o","--output",type='string',help="Output ROOT file. [%default]", default="MC.root")
 parser.add_option("-v","--var",dest='var',type="string",help="variable [%default]",default="Mmm")
@@ -44,14 +44,37 @@ def Import(w,obj):
 
 ## Global variables
 #MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ','EWK_LLJJ' ]
-MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','TT','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ' ]
+MonteCarlo=["DYJetsToLL_M-105To160","TT",'TTTT','TTW','TTZ','TTG','ST','WWW','WWZ','WZZ','ZZZ','WW','WZ','ZZ' ]
+MonteCarlo=["DYJetsToLL_M-105To160","TT",'ST']
 Systs=["JES","PU","ScaleRF:DY","ScaleR:DY","ScaleF:DY","ScaleR:TT","ScaleF:TT","ScaleRF:TT" ] #"Linear:0.2"]
+Systs=["Linear:0.2"]
 #Systs=["ScaleRF:DY"] 
 config= eval(opts.hmm)
 config.Print()
 w=ROOT.RooWorkspace("w","w")
 fIn=ROOT.TFile.Open(opts.input)
-if fIn==None: raise IOError("Input file '"+opts.input+"' does not exist")
+fInYears=[]
+lumis=[]
+c2 = HmmConfig() ## for lumi and years
+if fIn==None: 
+    if ',' in opts.input:
+        for f in opts.input.split(','):
+            fInYears.append(ROOT.TFile.Open(f))
+            if fInYears[-1] == None:
+                raise IOError("Input file '"+f+"' does not exist")
+            if '2016' in f: 
+                c2.year=2016
+                lumis.append(c2.lumi())
+            if '2017' in f: 
+                c2.year=2017
+                lumis.append(c2.lumi())
+            if '2018' in f: 
+                c2.year=2018
+                lumis.append(c2.lumi())
+    else:
+        raise IOError("Input file '"+opts.input+"' does not exist")
+
+print "lumis are:",lumis,len(fInYears)
 
 x=ROOT.RooRealVar("mmm","mmm",config.xmin,config.xmax)
 arglist_obs=ROOT.RooArgList(x)
@@ -68,8 +91,24 @@ def GetMC(cat,nuis="",match=""):
             if re.search(match,mc): useNuis = True
         nuis_str = ""
         if useNuis: nuis_str = nuis[:]
-        hTmp=fIn.Get("HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str)
-        #print "       Adding *","HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str
+
+        if fIn!=None:
+            hTmp=fIn.Get("HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str)
+            h.Scale(config.lumi())
+
+        else:
+            hTmp=fInYears[0].Get("HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str)
+            if hTmp==None:
+                print "Unable to find MC", "Mmm_"+cat+"_"+mc+nuis_str
+            else:
+                hTmp.Scale(lumis[0])
+                for ifile in range(1,len(fInYears)):
+                    hTmp2=fInYears[ifile].Get("HmumuAnalysis/Vars/Mmm_"+cat+"_"+mc+nuis_str)
+                    if hTmp2 != None:
+                        hTmp2.Scale(lumis[ifile])
+                        hTmp.Add(hTmp2)
+
+
         if hTmp == None:
             if idx>1: ## make sure that DY and TT are there
                 print "[WARNING]: Unable to get mc",mc,"for cat",cat
@@ -78,8 +117,8 @@ def GetMC(cat,nuis="",match=""):
                 raise IOError
 
         if h == None: h=hTmp.Clone("simulation_"+cat)
-        else: h.Add(hTmp)
-    h.Scale(config.lumi())
+        elif hTmp != None: h.Add(hTmp)
+
     bin0 = h.FindBin(config.xmin)
     bin1 = h.FindBin(config.xmax)
     for ib in range(0,bin0) + range(bin1+1,h.GetNbinsX()+2): ## excluded bin0, bin1
@@ -89,6 +128,7 @@ def GetMC(cat,nuis="",match=""):
     return h
 
 histos=[]
+statscaling={}
 for cat in config.categories:
     print "-> Producing MC targets (RooDataHist)"
     h=GetMC(cat)    
@@ -101,10 +141,14 @@ for cat in config.categories:
     ## devents S = sqrt( S * events) 
     ## I want that devents' = sqrt(events')
     S =  math.sqrt(events)/devents
+    statscaling[cat]=S
 
+    print "-> Stat scaling for Cat",cat, "is",S
     scale=ROOT.RooRealVar("S_"+cat,"stat scaling",S) ## this variable account for the statistics, should be constant. Statistical fluctuation will be put in the Likelihood
     scale.setConstant()
     Import(w,scale)
+
+    h.Scale(S) ##??
     roo_mc= ROOT.RooDataHist("mc_"+cat,"mc_"+cat,arglist_obs,h)
     Import(w,roo_mc)
     histos.append(h)
@@ -143,7 +187,8 @@ if opts.binput != "":
                 s= syst_str
                 match=""
             if s == "Linear": ## DEBUG
-                raise ValueError("Do you really want me?")
+                #raise ValueError("Do you really want me?")
+                print "Do you really want me?"
                 hup=h.Clone("LinearUp")
                 hdown=h.Clone("LinearDown")
                 alpha=float(match)
@@ -154,15 +199,19 @@ if opts.binput != "":
             else:
                 hup=GetMC(cat,"_"+s+"Up",match)    
                 hdown=GetMC(cat,"_"+s+"Down",match)    
-
+            
+            ############### changing to deltas
             hup.Add(h,-1)
             hdown.Add(h,-1)
 
             up=ROOT.std.vector('float')()
             dn=ROOT.std.vector('float')()
             for i in range (0,bin1-bin0):
-                up.push_back(hup.GetBinContent( bin0+i) / h.GetBinContent(bin0+i)  )
-                dn.push_back(- hdown.GetBinContent( bin0+i) / h.GetBinContent(bin0+i) )# - because is going to be multiplied by -1 at -1sigma
+                try: up.push_back(hup.GetBinContent( bin0+i) / h.GetBinContent(bin0+i)  )
+                except ZeroDivisionError: up.push_back(0.)
+                try: dn.push_back(- hdown.GetBinContent( bin0+i) / h.GetBinContent(bin0+i) )# - because is going to be multiplied by -1 at -1sigma
+                except ZeroDivisionError: dn.push_back(0.)
+
             if opts.smooth: 
                 sigma=100 
                 up2=ROOT.std.vector('float')()
@@ -283,8 +332,10 @@ if opts.binput != "":
                     hSystOrigUp=ROOT.TH1D("hSystOUp","hSystUp",up.size(),0,up.size())
                     hSystOrigDn=ROOT.TH1D("hSystODn","hSystDn",dn.size(),0,dn.size())
                     for ibin in range(0,up.size()):
-                        hSystOrigUp.SetBinContent(ibin+1,hup.GetBinContent( bin0+ibin) / h.GetBinContent(bin0+ibin) )
-                        hSystOrigDn.SetBinContent(ibin+1,-hdown.GetBinContent( bin0+ibin) / h.GetBinContent(bin0+ibin) )
+                        try:hSystOrigUp.SetBinContent(ibin+1,hup.GetBinContent( bin0+ibin) / h.GetBinContent(bin0+ibin) )
+                        except ZeroDivisionError: hSystOrigUp.SetBinContent(ibin+1,0)
+                        try: hSystOrigDn.SetBinContent(ibin+1,-hdown.GetBinContent( bin0+ibin) / h.GetBinContent(bin0+ibin) )
+                        except ZeroDivisionError: hSystOrigDn.SetBinContent(ibin+1,0)
                     hSystOrigUp.SetMarkerColor(ROOT.kRed)
                     hSystOrigDn.SetMarkerColor(ROOT.kBlue)
 
@@ -336,6 +387,11 @@ if opts.binput != "":
         Import(w,nuisRate)
         objs.append(nuisRateAL)
         objs.append(nuisRate)
+        
+        ## to have the tot rate uncorrelated. Not scale by S, because the statscale is in the datacard
+        #totRate=ROOT.RooRealVar("bkg_func_binned_"+cat+"_norm","rate",h.Integral()*statscaling[cat],0.5*h.Integral()*statscaling[cat],2*h.Integral()*statscaling[cat])
+        totRate=ROOT.RooRealVar("bkg_func_binned_"+cat+"_norm","rate",h.Integral(),0.5*h.Integral(),2*h.Integral())
+        Import(w,totRate)
 
 print "-> Writing"
 w.writeToFile(opts.output)

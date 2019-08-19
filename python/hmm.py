@@ -26,9 +26,11 @@ class HmmConfig():
         ### FIT ###
         self.xmin = 110
         self.xmax=150
+        self.xname="mmm"
         self.sig_mass_points=[120,125,130]
         self.processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
         self.sigfit_gaussians={}
+        self.background_input_masks=None
         #self.sigfit_gaussians[("Untag0_BB","GluGlu")] = 3
         #self.scale ={} #("cat","proc") = mean, sigma
 
@@ -218,10 +220,13 @@ class HmmConfig():
             raise ValueError
 
     def lumi(self):
-        if self.year==2016: return 35867 ## 2016
-        if self.year==2017: return 41860
-        #if self.year==2018: return 59970
-        if self.year==2018: return 59710 #https://hypernews.cern.ch/HyperNews/CMS/get/physics-announcements/5530/1/1.html
+        #if self.year==2016: return 35867 ## 2016
+        #https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiLUM (r125)
+        if self.year==2015: return 2260
+        if self.year==2016: return 35920
+        if self.year==2017: return 41530
+        if self.year==2018: return 59740 
+
         raise ValueError("Unknown year %d for lumi calculation"%self.year)
 
     #def readScaleUnc(self,f="Hmumu/syst/scale/scales.txt"):
@@ -370,6 +375,15 @@ if True:
     hmmExCatMjj2016.sigfit_gaussians[("cat7","ttH")] = 1
     hmmExCatMjj2016.sigfit_gaussians[("cat8","ttH")] = 1
     hmmExCatMjj2016.sigfit_gaussians[("cat11","ttH")] = 1
+
+if True:
+    hmmExCatMjj.bkg_functions=[]
+    hmmExCatMjj2016.bkg_functions=[]
+    hmmExCatMjj2018.bkg_functions=[]
+    for cat in range(0,20): ## all bwzredux
+        hmmExCatMjj.bkg_functions    .append("zmod_cat%d_ord1"%cat)
+        hmmExCatMjj2016.bkg_functions.append("zmod_cat%d_ord1"%cat)
+        hmmExCatMjj2018.bkg_functions.append("zmod_cat%d_ord1"%cat)
 
 class HHConfig(HmmConfig):
     def __init__(self):

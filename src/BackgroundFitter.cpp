@@ -972,6 +972,7 @@ void BackgroundFitter::info(){
     cout<<"----------- FITTER INFO -----------"<<endl;
     cout<<"xMin="<<xmin <<endl;
     cout<<"xMax="<<xmax <<endl;
+    cout<<"xName="<<xname <<endl;
     cout<<"Dataset M="<<datasetMask_ <<endl;
     cout<<"NORM M="<<normMask_ <<endl;
     cout<<"MODEL M="<<modelMask_ <<endl;
@@ -990,7 +991,7 @@ void BackgroundFitter::init(){
 
     if(w_==NULL) w_ = new RooWorkspace("w","workspace") ;
 
-    if(x_==NULL) x_ = new RooRealVar("mmm","mmm",xmin,xmax);
+    if(x_==NULL) x_ = new RooRealVar(xname.c_str(),xname.c_str(),xmin,xmax);
 
 }
 
@@ -1042,6 +1043,8 @@ void BackgroundFitter::fit(){
     for(int cat=0;cat < int(inputMasks.size()); ++cat)
     {
         cout<<"* Getting"<<inputMasks[cat]<<endl;
+        if (inputMasks[cat] == "NONE" ) continue; // --> just ignore them
+
         string name =  Form("dataHist_cat_%d",cat);
         
         if ( inputMasks[cat].find(":") == string::npos ) // no ws
@@ -1092,6 +1095,11 @@ void BackgroundFitter::fit(){
             RooWorkspace * w_local = (RooWorkspace*) fInput -> Get(  mask.substr(0, sep).c_str() );
             if (w_local==NULL)
                 Log(__FUNCTION__,"ERROR","Unable to find workspaces from: '"+inputMasks[cat]+"' -> w: '"+mask.substr(0, sep)+"'");
+            Log(__FUNCTION__,"INFO","Getting data " + mask.substr(sep+1, mask.size()));
+            if (w_local->data( mask.substr(sep+1, mask.size() ).c_str() ) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","Unable to find data "+mask.substr(sep+1, mask.size()) + " from ws " + mask.substr(0, sep) + " in file "+ inname );
+            }
             RooDataHist *dh_local=(RooDataHist*) w_local->data( mask.substr(sep+1, mask.size() ).c_str() )->Clone(name.c_str());
 
             if (dh_local==NULL)
@@ -1136,7 +1144,7 @@ void BackgroundFitter::fit(){
             else if ( inname.find("Hmm2017") !=string::npos){dy->Scale(41860); tt->Scale(41860); dy->SetTitle("scaled 2017"); }
             else if ( inname.find("Hmm2018") !=string::npos){dy->Scale(59710); tt->Scale(59710); dy->SetTitle("scaled 2018");}
 
-            dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));
+            if (dy !=NULL ) { dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));}
         }
         else {
             cout<<"-> Assuming 2016/2017/2018 lumis "<<mask<<" (and TT)"<<mask_tt<<endl;

@@ -136,6 +136,7 @@ class BackgroundFitter : virtual public BaseFitter{
 
     float xmin;
     float xmax;
+    string xname{"mmm"};
 
 
     // --- objects that can be called
