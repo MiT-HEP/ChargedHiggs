@@ -10,6 +10,10 @@ parser.add_option("-o","--output",type='string',help="Output ROOT file. [%defaul
 parser.add_option("-v","--var",dest='var',type="string",help="variable [%default]",default="Mmm")
 parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [%default]",default="hmm")
 parser.add_option("-s","--smooth",dest="smooth",action="store_true",help="Smooth systematic histograms [%default]",default=False)
+#
+parser.add_option("-n","--doNorm",dest="doNorm",action="store_true",help="Do Normalization terms [%default]",default=True)
+parser.add_option("-x","--noNorm",dest="doNorm",action="store_false",help="Do NOT Normalization terms")
+#
 parser.add_option("","--fit",dest="fit",action="store_true",help="Smooth systematic histograms [%default]",default=False)
 parser.add_option("","--plot",dest="plot",action="store_true",help="Produce plots [%default]",default=False)
 parser.add_option("","--batch",dest="batch",action="store_true",help="Force batch in plot mode [%default]",default=False)
@@ -140,7 +144,8 @@ for cat in config.categories:
     devents=devents_a[0]
     ## devents S = sqrt( S * events) 
     ## I want that devents' = sqrt(events')
-    S =  math.sqrt(events)/devents
+    #S =  math.sqrt(events)/devents
+    S =  events/(devents*devents)
     statscaling[cat]=S
 
     print "-> Stat scaling for Cat",cat, "is",S
@@ -390,8 +395,9 @@ if opts.binput != "":
         
         ## to have the tot rate uncorrelated. Not scale by S, because the statscale is in the datacard
         #totRate=ROOT.RooRealVar("bkg_func_binned_"+cat+"_norm","rate",h.Integral()*statscaling[cat],0.5*h.Integral()*statscaling[cat],2*h.Integral()*statscaling[cat])
-        totRate=ROOT.RooRealVar("bkg_func_binned_"+cat+"_norm","rate",h.Integral(),0.5*h.Integral(),2*h.Integral())
-        Import(w,totRate)
+        if opts.doNorm:
+            totRate=ROOT.RooRealVar("bkg_func_binned_"+cat+"_norm","rate",h.Integral(),0.5*h.Integral(),2*h.Integral())
+            Import(w,totRate)
 
 print "-> Writing"
 w.writeToFile(opts.output)

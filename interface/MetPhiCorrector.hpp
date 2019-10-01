@@ -13,18 +13,11 @@ class MetPhiCorrector : virtual public CorrectorBase
         const string name() const override final { return "MetPhiCorrector";}
         int correct (Event *e) override final;
 
-        string fileName = "aux/MetPhi.root";
+        //string fileName = "aux/MetPhi.root";
+        int year{2017};
     protected:
+        double MetPhiCorr(int Era, int npv, bool  runOnData, int metCoord);
 
-        TF1 *metPhiPxMC;
-        TF1 *metPhiPxDATA;
-        TF1 *metPhiPyMC;
-        TF1 *metPhiPyDATA;
-
-        bool isInit_=false;
-
-    private:
-        void getFunction(TFile*,TF1* &, const string &name);
 };
 
 #endif

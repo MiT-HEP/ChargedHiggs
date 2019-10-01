@@ -43,3 +43,22 @@ for dir in RunII_mc; do
     mv -v $dir/{higgs*,limit*} ${OUT}/$dir/
 done
 
+################## PARTIAL and NORM: mc is mc and data is asimov
+cd RunII_mc
+for cat in {0..13}; do
+    text2workspace.py --X-allow-no-signal --for-fits -m 125 -L /afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_9_4_1/src/ChargedHiggs/bin/libChargedHiggs.so cat${cat}_norm.Asimov.txt ;
+    combine -M AsymptoticLimits --cminDefaultMinimizerStrategy=0 --cminFallbackAlgo Minuit2,Migrad,0:0.1 -L `root-config --libdir`/libPyROOT.so -L /afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_9_4_1/src/ChargedHiggs/bin/libChargedHiggs.so -t 0 --rMin=0 --rMax=50 --expectSignal=0 cat${cat}_norm.Asimov.root -n cat${cat}_norm_Asimov -m 125;
+done
+combineCards.py -S cat{0..8}_norm.Asimov.txt > cms_datacard_hmumu_RunII.norm.Asimov.txt
+text2workspace.py --X-allow-no-background --for-fits -m 125 -L /afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_9_4_1/src/ChargedHiggs/bin/libChargedHiggs.so cms_datacard_hmumu_RunII.norm.Asimov.txt
+combine -M AsymptoticLimits --cminDefaultMinimizerStrategy=0 --cminFallbackAlgo Minuit2,Migrad,0:0.1 -L `root-config --libdir`/libPyROOT.so -L /afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_9_4_1/src/ChargedHiggs/bin/libChargedHiggs.so -t 0 --rMin=0 --rMax=10 --expectSignal=0 -n All_norm_Asimov -m 125 cms_datacard_hmumu_RunII.norm.Asimov.root
+python $BASE/../../test/makeCombinePlotByCat.py -a higgsCombinecat{0..8}_norm_Asimov.Asymptotic*mH125.root higgsCombineAll_norm_Asimov.AsymptoticLimits.mH125.root
+cd $BASE
+
+OUT=Mjj400_JetPt25_MCNormandAsimov
+mkdir $OUT
+for dir in RunII_mc; do
+    mkdir $OUT/$dir
+    mv -v $dir/{higgs*,limit*} ${OUT}/$dir/
+done
+

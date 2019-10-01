@@ -63,6 +63,21 @@ mu_id_2018 th2f  aux/mu/2018/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.ro
 prefire2017 th2f aux/l1prefire/L1prefiring_jetempt_2017BtoF.root:L1prefiring_jetempt_2017BtoF
 prefire2016 th2f aux/l1prefire/L1prefiring_jetempt_2016BtoH.root:L1prefiring_jetempt_2016BtoH
 
+###############
+## Jet PU ID ##
+###############
+
+#jetpuid2016 th2f aux/JetPUID_effcyandSF.root:SFrealjets_L_2016
+jetpuid_real_2016 th2f aux/JetPUID_effcyandSF.root effrealjets_data_L_2016 effrealjets_mc_L_2016
+jetpuid_pu_2016 th2f aux/JetPUID_effcyandSF.root effpujets_data_L_2016 effpujets_mc_L_2016
+
+jetpuid_real_2017 th2f aux/JetPUID_effcyandSF.root effrealjets_data_L_2017 effrealjets_mc_L_2017
+jetpuid_pu_2017 th2f aux/JetPUID_effcyandSF.root effpujets_data_L_2017 effpujets_mc_L_2017
+
+jetpuid_real_2018 th2f aux/JetPUID_effcyandSF.root effrealjets_data_L_2018 effrealjets_mc_L_2018
+jetpuid_pu_2018 th2f aux/JetPUID_effcyandSF.root effpujets_data_L_2018 effpujets_mc_L_2018
+
+
 ################
 ##   WG1 Unc  ##
 ################

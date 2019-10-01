@@ -280,6 +280,8 @@ class Event{
     double ApplyL1PreFire(int year=2017);
     ///@brief apply btagging scale factor to the event. Working points (wp) correspond to loose,medium and tight.
     double ApplyBTagSF(int wp=0,int year=2017);
+    ///@brief apply puid scale factor to the event. Working points (wp) correspond to loose,medium and tight.
+    double ApplyPuIdSF(int year=2017); // the wp is defined in the SF
     ///@brief apply sf for taus
     void ApplyTauSF(Tau*t,bool prongs=true,const string& extra="");
     ///@brief remove JEC from met in eta-2.5/3.0

@@ -1120,8 +1120,15 @@ void HmumuAnalysis::Init(){
         //USCD
 	    Book ("HmumuAnalysis/Vars/Bdt01jUCSDOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 	    Book ("HmumuAnalysis/Vars/Bdt2jUCSDOnH_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+        //
 	    Book ("HmumuAnalysis/Vars/Bdt01jUCSDOnZ_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 	    Book ("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+        //no puidsf
+	    Book ("HmumuAnalysis/Vars/Bdt01jUCSDOnH_nopuidsf_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+	    Book ("HmumuAnalysis/Vars/Bdt2jUCSDOnH_nopuidsf_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+        //
+	    Book ("HmumuAnalysis/Vars/Bdt01jUCSDOnZ_nopuidsf_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
+	    Book ("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_nopuidsf_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
 
         // zpt reweight
 	    Book ("HmumuAnalysis/Vars/BdtOnH_zptrwg_"+ l ,"Bdt On Hmm (110-150);Bdt;Events", 1000,-1,1);
@@ -1569,14 +1576,21 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             // classify, only stage1  30 GeV
             hc.stage1_cat_pTjet30GeV = HTXS::Stage1::UNKNOWN;
             hc.stage1_cat_pTjet30GeV = HTXS::getStage1Category( hc.prodMode,hc.higgs, jets,hc.V,quarkDecayed);
+            // Stage 1p1
+            hc2.stage1p1_cat= STXS::getStage1p1Category(hc2.prodMode, hc2.higgs, jets, hc2.V, quarkDecayed);
 
 
             SF_WG1* sf_wg1 = dynamic_cast<SF_WG1*> (e->GetWeight()->GetSF("wg1") ); 
             sf_wg1->SetNjets30(jets.size());
             sf_wg1->SetPTH(hc.higgs.Pt());
             sf_wg1->SetSTXS(hc.stage1_cat_pTjet30GeV);
+            sf_wg1->SetSTXS1p1(hc2.stage1p1_cat);
             
             e->ApplySF("wg1");
+            //else if (hc.prodMode == HTXS::VBF )  // QQ2HQQ hc.stage1_cat_pTjet30GeV ~200
+            //{
+            //    //tot   |  200  | Mjj60 | Mjj120 | Mjj350 | Mjj700 | Mjj1000 | Mjj1500 |   25   |  2jet 
+            //}
 
             if (hc.prodMode == HTXS::GGF)
             {
@@ -1593,7 +1607,6 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             }
             if (doSTXS)
             {
-                hc2.stage1p1_cat= STXS::getStage1p1Category(hc2.prodMode, hc2.higgs, jets, hc2.V, quarkDecayed);
                 labelSTXS=STXS::ENumToString(hc2.stage1p1_cat);
             }
         }
@@ -1642,6 +1655,12 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     {
         btagsf=e->ApplyBTagSF(3,year); //0 loose, 1 medium, 2 tight, 3 reshaping
         //Log(__FUNCTION__,"DEBUG",Form("BTag SF is %lf",btagsf));
+    }
+
+    double puidsf=1.;
+    if (true) 
+    {
+        puidsf=e->ApplyPuIdSF(year); //working point set in the sf configuration. Applying both pass and fails.
     }
     
     //Log(__FUNCTION__,"DEBUG",Form("BtagSF is %lf",btagsf)); 
@@ -2303,8 +2322,14 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
             if (catType>=2 and bdt.size() >2)
             {
-                if (selectedJets.size()<2) Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnZ_"+label,systname,bdt[1],e->weight());
-                else Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_"+label,systname,bdt[2],e->weight());
+                if (selectedJets.size()<2) {
+                    Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnZ_"+label,systname,bdt[1],e->weight());
+                    Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnZ_nopuidsf_"+label,systname,bdt[1],e->weight()/puidsf);
+                }
+                else {
+                    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_"+label,systname,bdt[2],e->weight());
+                    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_nopuidsf_"+label,systname,bdt[2],e->weight()/puidsf);
+                }
             }
 
             if (doScikit and catType==2){
@@ -2440,8 +2465,14 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             
             if (catType>=2 and bdt.size() >2)
             {
-                if (selectedJets.size()<2) Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnH_"+label,systname,bdt[1],e->weight());
-                else Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnH_"+label,systname,bdt[2],e->weight());
+                if (selectedJets.size()<2){
+                    Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnH_"+label,systname,bdt[1],e->weight());
+                    Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnH_nopuidsf_"+label,systname,bdt[1],e->weight()/puidsf);
+                }
+                else {
+                    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnH_"+label,systname,bdt[2],e->weight());
+                    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnH_nopuidsf_"+label,systname,bdt[2],e->weight()/puidsf);
+                }
             }
 
             if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());

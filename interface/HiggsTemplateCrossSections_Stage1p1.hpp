@@ -99,38 +99,32 @@ namespace STXS {
             UNKNOWN  = 0,
             // Gluon fusion -- As stage1
             GG2H_FWDH = 100,
-            GG2H_PTH_GE200 = 150,
-
-            GG2H_PTH_0_200_0J_PTH_0_10 = 102,
-            GG2H_PTH_0_200_0J_PTH_10_200 = 103,
-
-            GG2H_PTH_0_200_1J_PTH_0_60 = 111,
-            GG2H_PTH_0_200_1J_PTH_60_120 = 112,
-            GG2H_PTH_0_200_1J_PTH_120_200 = 113,
-
-            GG2H_PTH_0_200_GE2J_MJJ_0_350_PTH_0_60 = 121,
-            GG2H_PTH_0_200_GE2J_MJJ_0_350_PTH_60_120 = 122,
-            GG2H_PTH_0_200_GE2J_MJJ_0_350_PTH_120_200 = 123,
-
-            GG2H_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_0_25 = 131,
-            GG2H_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25 = 132,
-
-            GG2H_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25 = 141,
-            GG2H_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25 = 142,
+            GG2H_PTH_GT200 = 101,
+            GG2H_0J_PTH_0_10   = 102,
+            GG2H_0J_PTH_GT10   = 103,
+            GG2H_1J_PTH_0_60 = 104,
+            GG2H_1J_PTH_60_120 = 105,
+            GG2H_1J_PTH_120_200 = 106,
+            GG2H_GE2J_MJJ_0_350_PTH_0_60 = 107,
+            GG2H_GE2J_MJJ_0_350_PTH_60_120 = 108,
+            GG2H_GE2J_MJJ_0_350_PTH_120_200 = 109,
+            GG2H_GE2J_MJJ_350_700_PTH_0_200_PTHJJ_0_25 = 110,
+            GG2H_GE2J_MJJ_350_700_PTH_0_200_PTHJJ_GT25 = 111,
+            GG2H_GE2J_MJJ_GT700_PTH_0_200_PTHJJ_0_25 = 112,
+            GG2H_GE2J_MJJ_GT700_PTH_0_200_PTHJJ_GT25 = 113,
 
             // "VBF"
             QQ2HQQ_FWDH = 200,
-            QQ2HQQ_0J=201, QQ2HQQ_1J=202,
-            QQ2HQQ_GE2J_MJJ_0_60=211,
-            QQ2HQQ_GE2J_MJJ_60_120=212, // VH
-            QQ2HQQ_GE2J_MJJ_120_350=213,
-            QQ2HQQ_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_0_25=251,
-            QQ2HQQ_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_GE25=261,
-
-            QQ2HQQ_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25=252,
-            QQ2HQQ_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25=262,
-
-            QQ2HQQ_GE2J_MJJ_GE350_PTH_GE200=271,
+            QQ2HQQ_0J=201, 
+            QQ2HQQ_1J=202,
+            QQ2HQQ_GE2J_MJJ_0_60 = 203,
+            QQ2HQQ_GE2J_MJJ_60_120 = 204,
+            QQ2HQQ_GE2J_MJJ_120_350 = 205,
+            QQ2HQQ_GE2J_MJJ_GT350_PTH_GT200 = 206,
+            QQ2HQQ_GE2J_MJJ_350_700_PTH_0_200_PTHJJ_0_25 = 207,
+            QQ2HQQ_GE2J_MJJ_350_700_PTH_0_200_PTHJJ_GT25 = 208,
+            QQ2HQQ_GE2J_MJJ_GT700_PTH_0_200_PTHJJ_0_25 = 209,
+            QQ2HQQ_GE2J_MJJ_GT700_PTH_0_200_PTHJJ_GT25 = 210,
 
             // qq -> WH
             QQ2HLNU_FWDH = 300,
@@ -148,10 +142,11 @@ namespace STXS {
             QQ2HLL_PTV_GT250 = 405,
             // gg -> ZH
             GG2HLL_FWDH = 500,
-            GG2HLL_PTV_0_75 = 502,
-            GG2HLL_PTV_75_150 = 503,
-            GG2HLL_PTV_GT150_0J = 504,
-            GG2HLL_PTV_GT150_GE1J = 505,
+            GG2HLL_PTV_0_75 = 501,
+            GG2HLL_PTV_75_150 = 502,
+            GG2HLL_PTV_150_250_0J = 503,
+            GG2HLL_PTV_150_250_GE1J = 504,
+            GG2HLL_PTV_GT250 = 505,
             // ttH
             TTH_FWDH = 600, TTH = 601,
             // bbH
@@ -260,6 +255,7 @@ namespace STXS {
     
     extern std::map<int,std::string>  stxs_to_string;
     std::string ENumToString(STXS::Stage1p1::Category x);
+    int vbfTopology(const std::vector<TLorentzVector> &jets, const TLorentzVector &higgs);
 
 } // namespace STXS
 

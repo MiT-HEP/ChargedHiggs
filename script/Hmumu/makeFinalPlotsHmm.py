@@ -18,7 +18,8 @@ parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [
 parser.add_option("","--noRatio",dest='noRatio',action="store_true",help="don't plot ratio in bkg plots [%default]",default=False)
 parser.add_option("","--paper",dest="paper",default=False,action="store_true")
 parser.add_option("","--unblind",dest="blind",default=True,action="store_false",help="Unblinded plots")
-parser.add_option("","--full",dest="full",default=True,action="store_false",help="Do SigmaEff")
+parser.add_option("","--full",dest="full",default=True,action="store_true",help="Do SigmaEff")
+parser.add_option("","--fast",dest="full",action="store_false",help="Do SigmaEff")
 
 
 print "-> Looking for basepath"
@@ -86,7 +87,7 @@ def MpvAndSigmaEff(h, q=0.68):
 
     ## FIXME FAST
     #if opts.full:
-    if True:
+    if opts.full:
         print "FULL"
         for ibin in range(0,h.GetNbinsX()):
             for jbin in range(ibin+1,h.GetNbinsX()):

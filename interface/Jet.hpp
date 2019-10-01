@@ -48,14 +48,21 @@ class Jet : virtual public Object, virtual public SmearableComplex
     ///@brief return if it is a jet, except object cleaning
     int IsJetExceptValidity() const ;
 
+    int PassPuId() const ;
+    int PassEENoise() const;
+
     ///@brief set ee noise cut on
     void SetEENoiseCut(bool x){eenoise_ = x;}
     ///@brief set the pu id cut
     void SetPuIdCut(float x) {puidcut_=x;}
     ///@brief set the pt cut 
     void SetPtCut(float x){ptcut_= x;}
+    ///@brief set the pt cut 
+    float GetPtCut() const {return ptcut_;}
     ///@brief set the eta cut
     void SetEtaCut(float x){etacut_ = x;}
+    ///@brief get the eta cut
+    float GetEtaCut() const { return etacut_ ;}
     ///@brief set the the eta cut for the "central" region
     void SetEtaCutCentral( float x) {etacutcentral_=x;}
     ///@brief set the the csv cut (only one between standard and deep requirement can be set). To unset use -100.

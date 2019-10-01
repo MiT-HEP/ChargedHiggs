@@ -10,6 +10,7 @@ parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
 parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true")
 #parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="Hmumu.root")
 parser.add_option("-a","--all",action='store_true',help="All [%default]", default=False)
+parser.add_option("-l","--lumi",help="Luminosity [%default]", default="134")
 opts,args= parser.parse_args()
 
 ########### IMPORT ROOT #############
@@ -226,7 +227,7 @@ l.DrawLatex(xcms,ycms,"#bf{CMS} #scale[0.75]{#it{Preliminary}}")
 
 l.SetTextSize(0.03)
 l.SetTextAlign(31)
-l.DrawLatex(0.89+0.05,.91,"41.9 fb^{-1} (13 TeV)")
+l.DrawLatex(0.89+0.05,.91,opts.lumi+" fb^{-1} (13 TeV)")
 
 c.Modify()
 c.Update()

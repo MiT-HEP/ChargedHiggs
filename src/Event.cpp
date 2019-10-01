@@ -718,6 +718,83 @@ void Event::ApplyTauSF(Tau*t,bool prongs,const string& extra)
 
 }
 
+double Event::ApplyPuIdSF(int year)
+{
+    //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","---------- APPLY PU ID SF ----------" );
+    double sf=1.;
+    string real=string("jetpuid_real_")+Form("%d",year);
+    string pu=string("jetpuid_pu_")+Form("%d",year);
+
+    float eventsf = 1.;
+    bool changed=false;
+
+    for(int i=0;;++i)
+    {
+        Jet*j=GetBareJet(i); //
+        if(j==NULL) break;
+
+        // pt w/o systematics
+        float aeta= fabs(j->GetP4Dirty().Eta());
+        float pt = j->GetP4Dirty().Pt();
+        float genpt=0.;
+
+        //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("* Considering jet with pt=%f eta=%f",pt,aeta) );
+        
+        if (j->Pt() > 50 ) continue; // no pu-id
+        if (j->Pt() < j->GetPtCut() ) continue; // not selected
+        if ( aeta > j->GetEtaCut() ) continue;  // not a good jet
+        if (j->PassEENoise() == 0 ) continue;
+
+
+        for(int k=0;;++k)
+        {
+            GenJet *gj = GetGenJet(k);
+            if (gj==NULL) break;
+            //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("* Considering genjet. Genpt=%f DeltaR=%f",gj->Pt(),gj->DeltaR(j)) );
+            if (gj->DeltaR(j)<0.4) {genpt=gj->Pt(); break;}
+        }
+
+
+        bool ismatched=false;
+        if ( fabs(genpt/pt-1.) <0.5)ismatched=true;
+
+        //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("* Passed selection. Genpt=%f ismatched=%d",genpt,int(ismatched)) );
+
+        string name=(ismatched)?real:pu;
+       
+        //SetPtEtaSF(name,pt,aeta);
+        SetPtEtaSF(name,aeta,pt);//switched in th2?
+
+        if (j->PassPuId()){
+            //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("* Multiplying SF (passPUId) by %f",GetWeight()->GetSF(name)->get()) );
+            eventsf*=GetWeight()->GetSF(name)->get();
+        }
+        else
+        {
+            double dataeff=dynamic_cast<SF_PtEta_And_Eff*>(GetWeight()->GetSF(name))->getDataEff();
+            double mceff=dynamic_cast<SF_PtEta_And_Eff*>(GetWeight()->GetSF(name))->getMCEff();
+            //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("* Multiplying SF (failPUID) by %f",(1.-dataeff)/(1.-mceff)) );
+            if (mceff <1.) eventsf *= (1.-dataeff)/(1.-mceff);
+        }
+
+        changed=true;
+    }
+
+    if (changed){
+        //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Applying sf %f",eventsf ));
+        SF* dummy=GetWeight()->GetSF("dummy");
+        dummy->sf=eventsf;
+        dummy->syst=0;
+        dummy->err=0;
+
+        ApplySF("dummy");
+        return eventsf;
+    }
+
+    //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","---------- ----------" );
+    return 1.0;
+}
+
 #include "interface/MetNoJec.hpp"
 void Event::ApplyMetNoJEC(double eta0,double eta1)
 {
