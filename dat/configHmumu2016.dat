@@ -1,20 +1,23 @@
 include=dat/configHmumu.dat
 
 Files=
-include=dat/catalog/2019.lhcp/year2016/dy_amcatnlo.dat
-include=dat/catalog/2019.lhcp/year2016/tt.dat
-include=dat/catalog/2019.lhcp/year2016/st.dat
-#include=dat/catalog/2019.lhcp/year2016/rares.dat
+include=dat/catalog/2019.fall/year2016/dy_amcatnlo.dat
+include=dat/catalog/2019.fall/year2016/tt.dat
+include=dat/catalog/2019.fall/year2016/st.dat
+#include=dat/catalog/2019.fall/year2016/rares.dat
 
 
 ## Signal
-include=dat/catalog/2019.lhcp/year2016/hmm.dat
+include=dat/catalog/2019.fall/year2016/hmm.dat
 
 ### DATA
-include=dat/catalog/2019.lhcp/year2016/singleMuon.dat
+include=dat/catalog/2019.fall/year2016/singleMuon.dat
 
-MCDB=aux/mcdb.Hmumu.2019.year2016.dat
-pileup=aux/pileup.year2016.root
+#MCDB=aux/mcdb.Hmumu.2019.year2016.dat
+#pileup=aux/pileup.year2016.root
+
+MCDB=aux/mcdb.2019.v3.6.year2016.dat
+pileup=aux/pileup.v3.6.year2016.root
 
 #### NO CORRECTION ####
 #Correct=
@@ -31,7 +34,8 @@ pileup=aux/pileup.year2016.root
 #Correct=VertexKinfit,RochesterCorrections
 #config=RochesterCorrections|year="2016",allow_reset=0
 
-Correct=VertexKinfit,RochesterCorrections,FSRRecovery
+Correct=MetPhiCorrector,VertexKinfit,RochesterCorrections,FSRRecovery
+config=MetPhiCorrector|year=2016
 config=VertexKinfit|allow_reset=1
 config=RochesterCorrections|year="2016",allow_reset=0
 config=FSRRecovery|allow_reset=0

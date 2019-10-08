@@ -55,7 +55,7 @@ int FSRRecovery::correct(Event *e){
         TLorentzVector p4=lep->GetP4();
         TLorentzVector fsrP4=lep->GetFsrP4();
 
-        if (e->eventNum() == 3086640) Log(__FUNCTION__,"DEBUG-SYNC",Form("P4=%f fsr (uncorr)=%f",p4.Pt(),fsrP4.Pt()));
+        //if (e->eventNum() == 3086640) Log(__FUNCTION__,"DEBUG-SYNC",Form("P4=%f fsr (uncorr)=%f",p4.Pt(),fsrP4.Pt()));
 
         // - if (egmcorrections){
         // -     float pt= fsrP4.Pt();
@@ -79,6 +79,7 @@ int FSRRecovery::correct(Event *e){
     
 
         // correct only muons with pt> 20
+        lep->SetP4NoFSR(); // freeze no-fsr muons at this stage of corrections. Probably what we want
         if (fsrP4.Pt() >20 and (maxpt <0 or fsrP4.Pt() <maxpt) and (maxrelpt<0 or fsrP4.Pt()/p4.Pt()<maxrelpt )){
             if (not onlyiso)
             {

@@ -169,15 +169,17 @@ def PrintHadhoop(dir, doPrint = True):
 
 def write_condor_jdl(filename="condor.jdl"):
     ## write condor.jdl for batch submission and resubmission
-    if opts.queue == "1nd": queue = "tomorrow"
-    elif opts.queue == "1nh": queue = "microcentury"
-    elif opts.queue == "2nh": queue = "longlunch"
-    elif opts.queue == "8nh": queue = "workday"
-    elif opts.queue == "2nd": queue = "testmatch" ## actually 3nd
-    elif opts.queue == "1nw": queue = "nextweek"
+    if opts.queue == "1nd" or opts.queue == "tomorrow": queue = "tomorrow"
+    elif opts.queue == "1nh" or opts.queue == "microcentury": queue = "microcentury"
+    elif opts.queue == "2nh" or opts.queue == "longlunch": queue = "longlunch"
+    elif opts.queue == "8nh" or opts.queue == "workday": queue = "workday"
+    elif opts.queue == "2nd" or opts.queue == "testmatch": queue = "testmatch" ## actually 3nd
+    elif opts.queue == "1nw" or opts.queue == "nextweek": queue = "nextweek"
     else:  raise ValueError("Unknown queue:"+opts.queue)
     
     jdl = open(opts.dir +"/"+filename,"w")
+    #jdl.write('requirements = (OpSysAndVer =?= "CentOS7")\n')
+    jdl.write('requirements = (OpSysAndVer =?= "SLC6")\n')
     jdl.write("log = $(filename).log\n")
     jdl.write("output = $(filename).out\n")
     jdl.write("error = $(filename).err\n")

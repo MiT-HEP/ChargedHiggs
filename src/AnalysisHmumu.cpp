@@ -1452,13 +1452,13 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     e->ApplyTopReweight();
 
     /*
-     * NVTX
+     * NVTX: Removed. Done with MetPhiCorrector
      */
     
     float nvtxrwgt=1.0;
-    if (year==2016 and not e->IsRealData()) { e->SetPtEtaSF("nvtx2016",std::min(e->Npv(),60),0); e->ApplySF("nvtx2016");nvtxrwgt= e->GetWeight()->GetSF("nvtx2016")->get();}
-    if (year==2017 and not e->IsRealData()) { e->SetPtEtaSF("nvtx2017",std::min(e->Npv(),60),0); e->ApplySF("nvtx2017");nvtxrwgt=e->GetWeight()->GetSF("nvtx2017")->get(); }
-    if (year==2018 and not e->IsRealData()) { e->SetPtEtaSF("nvtx2018",std::min(e->Npv(),60),0); e->ApplySF("nvtx2018");nvtxrwgt=e->GetWeight()->GetSF("nvtx2018")->get();}
+    //if (year==2016 and not e->IsRealData()) { e->SetPtEtaSF("nvtx2016",std::min(e->Npv(),60),0); e->ApplySF("nvtx2016");nvtxrwgt= e->GetWeight()->GetSF("nvtx2016")->get();}
+    //if (year==2017 and not e->IsRealData()) { e->SetPtEtaSF("nvtx2017",std::min(e->Npv(),60),0); e->ApplySF("nvtx2017");nvtxrwgt=e->GetWeight()->GetSF("nvtx2017")->get(); }
+    //if (year==2018 and not e->IsRealData()) { e->SetPtEtaSF("nvtx2018",std::min(e->Npv(),60),0); e->ApplySF("nvtx2018");nvtxrwgt=e->GetWeight()->GetSF("nvtx2018")->get();}
 
     /*
      * L1 PreFiring Map
@@ -1706,7 +1706,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         // enforce it for VBF Pisa
         ////if (jetVar_["mjj_1"] > 400) category="cat14";
         //#warning NOMJJ
-        if (catType == 4 and jetVar_["mjj_lead"] > 400 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat14";
+        if (catType == 4 and jetVar_["mjj_lead"] > 400 and abs(jetVar_["detajj_lead"])>2.5 and selectedJets.size() >0 and selectedJets[0]->Pt()>35 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat14";
     } 
     else if (catType ==10)
     {
