@@ -95,9 +95,9 @@ features=[
         "(TMath::IsNaN(secondQGL)?-1:secondQGL)",
         #"thirdQGL",
         ## bjets variables
-        "nbjets","maxDeepB","leadDeepB", #,"maxCSV",
+        "nbjets","maxDeepB" #,"leadDeepB", #,"maxCSV",
         ## w/z variables
-        "mt1","mt2","met",
+        #"mt1","mt2","met",
         ## photons
         #"Alt$(pho_pt[0],0.)",
         #"Alt$(pho_eta[0],0.)",
@@ -169,12 +169,12 @@ if not multiclass:
                 );
 else:
     #default
-    #factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
-    #            ROOT.TString("!H:!V:NTrees=5000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
-    #            );
     factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
-                ROOT.TString("!H:!V:NTrees=4000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
+                ROOT.TString("!H:!V:NTrees=5000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
                 );
+    #factory . BookMethod(dataloader, ROOT.TMVA.Types.kBDT, ROOT.TString("BDTG"),
+    #            ROOT.TString("!H:!V:NTrees=4000:MinNodeSize=3%:BoostType=Grad:Shrinkage=0.10:nCuts=40:MaxDepth=5:NodePurityLimit=0.95:Pray")
+    #            );
 
 factory . TrainAllMethods();
 factory . TestAllMethods();

@@ -169,15 +169,17 @@ def PrintHadhoop(dir, doPrint = True):
 
 def write_condor_jdl(filename="condor.jdl"):
     ## write condor.jdl for batch submission and resubmission
-    if opts.queue == "1nd": queue = "tomorrow"
-    elif opts.queue == "1nh": queue = "microcentury"
-    elif opts.queue == "2nh": queue = "longlunch"
-    elif opts.queue == "8nh": queue = "workday"
-    elif opts.queue == "2nd": queue = "testmatch" ## actually 3nd
-    elif opts.queue == "1nw": queue = "nextweek"
+    if opts.queue == "1nd" or opts.queue == "tomorrow": queue = "tomorrow"
+    elif opts.queue == "1nh" or opts.queue == "microcentury": queue = "microcentury"
+    elif opts.queue == "2nh" or opts.queue == "longlunch": queue = "longlunch"
+    elif opts.queue == "8nh" or opts.queue == "workday": queue = "workday"
+    elif opts.queue == "2nd" or opts.queue == "testmatch": queue = "testmatch" ## actually 3nd
+    elif opts.queue == "1nw" or opts.queue == "nextweek": queue = "nextweek"
     else:  raise ValueError("Unknown queue:"+opts.queue)
     
     jdl = open(opts.dir +"/"+filename,"w")
+    #jdl.write('requirements = (OpSysAndVer =?= "CentOS7")\n')
+    jdl.write('requirements = (OpSysAndVer =?= "SLC6")\n')
     jdl.write("log = $(filename).log\n")
     jdl.write("output = $(filename).out\n")
     jdl.write("error = $(filename).err\n")
@@ -208,21 +210,35 @@ if opts.status:
 		#if opts.fullstatus:
 		notRunning=[]
 		#bjobs = re.sub('//','/',check_output("bjobs -w",shell=True))
-        condor_q= check_output("condor_q",shell=True) 
-        if opts.dir not in condor_q: 
+        if not opts.nocheck:
+            condor_q= check_output("condor_q",shell=True) 
+        else:
+            condor_q=""
+        if opts.dir not in condor_q and not opts.nocheck: 
 		    print " NOT RUNNING! (condor) ", opts.dir
 		    print " -------------------------------------"
-
-		#for iJob in run+pend:
-		#    #test/Hmumu/Hmumu_2017_04_05_Bdt/Job_76
-		#    if not re.search( re.sub('//','/','%s/Job_%d\s'%(opts.dir,int(iJob))),bjobs):notRunning.append( iJob)
-		#    #cmd = "bjobs -w | grep '%s/Job_%d\>'"%(opts.dir,int(iJob))
-		#    #status = call(cmd,shell=True)
-		#    #if status != 0: notRunning.append( iJob)
-		#if len(notRunning) >0 :
-		#    print " NOT RUNNING! ",PrintLine(notRunning)
-		#    print " -------------------------------------"
-
+        if not opts.nocheck: ## check size
+            ls = check_output("ls -l %s/*root | tr -s ' ' | cut -d ' ' -f 5,9 "%opts.dir, shell=True)
+            allfiles={}
+            maxsize=0
+            import ROOT
+            for line in ls.split('\n'):
+                if len(line.split() )< 2: continue
+                try:
+                    size = float(line.split()[0])
+                    f = line.split()[1]
+                    allfiles[f] = size
+                    maxsize= max(size,maxsize)
+                    fTry = ROOT.TFile.Open(f)
+                    if fTry == None or fTry.IsZombie() : print "file:", f ,"is corrupted"
+                    elif fTry.TestBit(ROOT.TFile.kRecovered): print "file:",f,"is recovered"
+                    fTry.Close()
+                except Exception as e:
+                    print e
+                    pass
+            #print "Max size is",maxsize
+            #for f in allfiles:
+            #    if allfiles[f] < 0.75*maxsize: print "file:",f,"is suspiciously small"
 	exit(0)
 
 if opts.resubmit:
@@ -280,9 +296,28 @@ if opts.resubmit:
         ## submit condor
         print "-> Submitting","%s/condor_resubmit.jdl"%opts.dir
         cmd = "condor_submit -batch-name %s %s/condor_resubmit.jdl"%(opts.dir,opts.dir)
-        print "   cmd=",cmd
-        if not opts.dryrun: 
+        if not opts.dryrun and '/eos/' in opts.dir: 
+                #'/eos/user/a/amarini'
+                user=os.environ['USER']
+                l = opts.dir.split('/') 
+                l2=l[l.index(user)+1:]
+                mydir='/'.join(l2)
+                print "->eos workaround: using local dir",mydir
+                call("mkdir -p %s"%mydir,shell=True)
+                call("cp  %s/*{sh,jdl} %s/"%(opts.dir,mydir),shell=True)
+                call("sed -i'' 's:/eos/user/"+user[0]+"/"+user+"/::g' %s/condor_resubmit.jdl"%mydir,shell=True)
+                cmd ="condor_submit -batch-name %s %s/condor_resubmit.jdl"%(opts.dir,mydir)
+                print "   cmd=",cmd
+                status = call(cmd,shell=True)
+                if status !=0:
+                    print "unable to submit,",cmd
+                else:
+                    print cmd
+        elif not opts.dryrun: 
+            print "   cmd=",cmd
             call(cmd, shell=True)
+        else:
+            print "   cmd=",cmd
     exit(0)
 
 if opts.hadd:
@@ -659,6 +694,22 @@ if not opts.hadoop:
             print "-> Submitting","%s/condor.jdl"%opts.dir
             cmd = "condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,opts.dir)
             print "   cmd=",cmd
-            if not opts.dryrun: 
+            if not opts.dryrun and '/eos/' in opts.dir: 
+                #'/eos/user/a/amarini'
+                user=os.environ['USER']
+                l = opts.dir.split('/') 
+                l2=l[l.index(user)+1:]
+                mydir='/'.join(l2)
+                print "->eos workaround: using local dir",mydir
+                call("mkdir -p %s"%mydir,shell=True)
+                call("cp  %s/*{sh,jdl} %s/"%(opts.dir,mydir),shell=True)
+                call("sed -i'' 's:/eos/user/"+user[0]+"/"+user+"/::g' %s/condor.jdl"%mydir,shell=True)
+                cmd ="condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,mydir)
+                status = call(cmd,shell=True)
+                if status !=0:
+                    print "unable to submit,",cmd
+                else:
+                    print cmd
+            elif not opts.dryrun: 
                 call(cmd, shell=True)
 ## END

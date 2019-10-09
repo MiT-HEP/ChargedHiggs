@@ -6,6 +6,7 @@
 #include "RooExponential.h"
 #include "RooFitResult.h"
 #include "RooHistPdf.h"
+#include "RooProdPdf.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooSpline1D.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooBernsteinFast.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooMultiPdf.h"
@@ -247,8 +248,9 @@ RooAbsPdf* PdfModelBuilder::getZModExp2(string prefix, int order){
         replace(old,Form("ord%d",order),"ord1");
         if (params.find(old) != params.end()) params[pname] -> setVal( params[old]->getVal());
         else cout <<"WARNING UNABLE TO FIND REPLACEMENT FROM "<<old<<" TO "<<pname<<endl;
-        if (order !=1) params[pname] -> setConstant();
+        //if (order !=1) params[pname] -> setConstant(); -> not setting them constant
     }
+
     //if (order ==1 )zmod = new RooGenericPdf((prefix).c_str(),(prefix).c_str(),"TMath::Exp(@2*@0/100. +(@0/100.)*(@0/100.)*@3 )/(TMath::Power((@0-91.2),@1)+TMath::Power(2.5/2.,@1)) * (1 + @5*TMath::Sin(TMath::Sqrt(@4+.2)*4.5*3.1415 ))",*plist);
 
 
@@ -370,6 +372,34 @@ RooAbsPdf* PdfModelBuilder::getDYBernstein(string prefix, int order,TH1D*dy){
     RooAddPdf *dybern = new RooAddPdf(prefix.c_str(),prefix.c_str(),RooArgList(*dypdf,*bern),RooArgList(*f),0 ) ;
     return dybern;
 } 
+
+RooAbsPdf* PdfModelBuilder::getCorePdf(string prefix, int order)
+{
+    string extra="";
+    if (prefix.find("cat0") != string::npos) extra="_2j";
+    if (prefix.find("cat1") != string::npos) extra="_2j";
+    if (prefix.find("cat2") != string::npos) extra="_2j";
+    if (prefix.find("cat3") != string::npos) extra="_2j";
+    if (prefix.find("cat4") != string::npos) extra="_2j";
+    if (prefix.find("cat5") != string::npos) extra="_01j";
+    if (prefix.find("cat6") != string::npos) extra="_01j";
+    if (prefix.find("cat7") != string::npos) extra="_01j";
+    if (prefix.find("cat8") != string::npos) extra="_01j";
+
+    RooAbsPdf *bern= getBernstein(prefix+"_bern",order,false); // positive
+    RooAbsPdf *zmod= getZModExp("corepdf_bern"+extra,1); 
+    //RooAbsPdf *exp= getExponentialSingle("corepdf_exp",1); 
+    // TODO multiply times bernstein
+    //RooCategory cat("corepdfcat","");
+    //RooArgList l;
+    //l.add(*zmod);
+    //l.add(*exp);
+    //RooMultiPdf *multi= new RooMultiPdf("corepdf"+prefix,"core pdf",cat,l);
+    RooProdPdf *core=new RooProdPdf(prefix.c_str(),"corepdf",*zmod,*bern);
+    return core;
+    
+}
+
 RooAbsPdf* PdfModelBuilder::getPolyTimesFewz(string prefix,int order,string fname="test/bias/FEWZ/h2mu-dsdm-13tev-xs-lux-1jet-nnlo-hp.dat")
 {
     //RooAbsPdf* basePdf = getPdf(prefix + "_base", 0 );
@@ -619,7 +649,10 @@ RooAbsPdf* PdfModelBuilder::getPdf(const string& prefix,int order )
     if (prefix.find("fewz_2j") != string::npos)
         return getPolyTimesFewz(prefix + Form("_ord%d",order),order,"aux/fewz/h2mu-dsdm-13tev-xs-lux-2jet-nnlo-hp.dat");
     if (prefix.find("fewz_full") != string::npos)
-        return getPolyTimesFewz(prefix + Form("_ord%d",order),order,"aux/fewz/h2mu-dsdm-13tev-xs-lux-full-nnlo-hp.dat");
+        //return getPolyTimesFewz(prefix + Form("_ord%d",order),order,"aux/fewz/h2mu-dsdm-13tev-xs-lux-full-nnlo-hp.dat");
+        return getPolyTimesFewz(prefix + Form("_ord%d",order),order,"aux/fewz/h2mu-dimitry-nnlo.dat");
+    if (prefix.find("corepdf") != string::npos)
+        return getCorePdf(prefix,order);
     cout <<"PdfModelBulider::getPdf::[ERROR] unknow prefix"<<endl;
     return NULL;
 }
@@ -939,6 +972,7 @@ void BackgroundFitter::info(){
     cout<<"----------- FITTER INFO -----------"<<endl;
     cout<<"xMin="<<xmin <<endl;
     cout<<"xMax="<<xmax <<endl;
+    cout<<"xName="<<xname <<endl;
     cout<<"Dataset M="<<datasetMask_ <<endl;
     cout<<"NORM M="<<normMask_ <<endl;
     cout<<"MODEL M="<<modelMask_ <<endl;
@@ -957,7 +991,7 @@ void BackgroundFitter::init(){
 
     if(w_==NULL) w_ = new RooWorkspace("w","workspace") ;
 
-    if(x_==NULL) x_ = new RooRealVar("mmm","mmm",xmin,xmax);
+    if(x_==NULL) x_ = new RooRealVar(xname.c_str(),xname.c_str(),xmin,xmax);
 
 }
 
@@ -975,10 +1009,28 @@ void BackgroundFitter::fit(){
     PdfModelBuilder modelBuilder;
     modelBuilder.setObsVar(x_);
 
-    TFile *fInput = TFile::Open(inname.c_str() );
-
-    if ( fInput == NULL ) 
-        Log(__FUNCTION__,"ERROR","No such file or directory: '"+ inname + "'");
+    TFile *fInput = NULL;//TFile::Open(inname.c_str() );
+    vector<TFile*>  fAll;
+    if ( inname.find(",") == string::npos){
+        fInput = TFile::Open(inname.c_str() );
+        if ( fInput == NULL ) 
+            Log(__FUNCTION__,"ERROR","No such file or directory: '"+ inname + "'");
+    }
+    else {
+        // split by files
+        vector<string> files;
+        istringstream ss (inname);
+        string token;
+        while (std::getline(ss, token, ',')){
+            if (token == "" ) continue;
+            files.push_back(token); 
+        } 
+        for (auto s : files){
+            fAll.push_back( TFile::Open(s.c_str()));
+            if (fAll[fAll.size()-1] == NULL)
+                Log(__FUNCTION__,"ERROR","No such file or directory: '"+ s + "'");
+        }
+    }
 
     if (plot ) {
             x_->setRange("unblindReg_1",xmin,120);
@@ -991,23 +1043,37 @@ void BackgroundFitter::fit(){
     for(int cat=0;cat < int(inputMasks.size()); ++cat)
     {
         cout<<"* Getting"<<inputMasks[cat]<<endl;
+        if (inputMasks[cat] == "NONE" ) continue; // --> just ignore them
+
         string name =  Form("dataHist_cat_%d",cat);
-
-        if ( inputMasks[cat].find(":") == string::npos )
+        
+        if ( inputMasks[cat].find(":") == string::npos ) // no ws
         {
-            TH1D *h = (TH1D*)fInput ->Get( inputMasks[cat].c_str() ) ;
-            h->Rebin(rebin);
+                
+                TH1D *h =NULL;
+                if (fInput != NULL) h=(TH1D*)fInput ->Get( inputMasks[cat].c_str() ) ;
+                else{
+                    h=(TH1D*)fAll[0] ->Get( inputMasks[cat].c_str() ) ;
+                    if (h == NULL) Log(__FUNCTION__,"ERROR","No such histogram is file 0: mask="+inputMasks[cat]);
+                    for (unsigned i=1;i< fAll.size() ;++i)
+                    {
+                        TH1D *tmp = (TH1D*)fAll[i] ->Get( inputMasks[cat].c_str() ) ;
+                        if (tmp == NULL) Log(__FUNCTION__,"ERROR","No such histogramin file i: mask="+inputMasks[cat]);
+                        h->Add(tmp);
+                    }
+                }
 
-            if (h == NULL) 
-                Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]);
+                h->Rebin(rebin);
 
-            // -- Construct RooDataHist
-            hist_ [ name ] = new RooDataHist(
-                    Form(datasetMask_.c_str(),cat),
-                    Form(datasetMask_.c_str(),cat),
-                    *x_,
-                    Import( *h ) 
-                    );
+                if (h == NULL) Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]);
+
+                // -- Construct RooDataHist
+                hist_ [ name ] = new RooDataHist(
+                        Form(datasetMask_.c_str(),cat),
+                        Form(datasetMask_.c_str(),cat),
+                        *x_,
+                        Import( *h ) 
+                        );
         }
         else { // it's already a RooDataHist
             string mask=  inputMasks[cat];
@@ -1029,6 +1095,11 @@ void BackgroundFitter::fit(){
             RooWorkspace * w_local = (RooWorkspace*) fInput -> Get(  mask.substr(0, sep).c_str() );
             if (w_local==NULL)
                 Log(__FUNCTION__,"ERROR","Unable to find workspaces from: '"+inputMasks[cat]+"' -> w: '"+mask.substr(0, sep)+"'");
+            Log(__FUNCTION__,"INFO","Getting data " + mask.substr(sep+1, mask.size()));
+            if (w_local->data( mask.substr(sep+1, mask.size() ).c_str() ) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","Unable to find data "+mask.substr(sep+1, mask.size()) + " from ws " + mask.substr(0, sep) + " in file "+ inname );
+            }
             RooDataHist *dh_local=(RooDataHist*) w_local->data( mask.substr(sep+1, mask.size() ).c_str() )->Clone(name.c_str());
 
             if (dh_local==NULL)
@@ -1055,18 +1126,63 @@ void BackgroundFitter::fit(){
         cout<<"*** Fitting DY Bernstein ***"<<endl;
         int dybernOrd;
         string mask= inputMasks[cat];
+        string mask_tt= inputMasks[cat];
         string toReplace="Data";
-        if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DY");
-        cout<<"-> Getting DY from "<<mask<<endl;
-        TH1D *dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
-        if (dy==NULL) cout<<"  and hist doesn't exist"<<endl;
+        //if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DY");
+        if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DYJetsToLL_M-105To160");
+        if (mask_tt.find(toReplace) != string::npos) mask_tt.replace(mask_tt.find(toReplace), toReplace.length(),"TT");
+        cout<<"-> Getting DY from "<<mask<< "and TT from "<<mask_tt<<endl;
+        TH1D *dy; 
+        TH1D *tt;
+
+        if (fInput!=NULL){
+            dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
+            tt = (TH1D*)fInput ->Get( mask_tt.c_str() ) ;
+            if (dy==NULL) cout<<"  and hist (single file) doesn't exist"<<endl;
+            if (tt==NULL) cout<<"  and TT hist (single file) doesn't exist"<<endl;
+            if ( inname.find("Hmm2016") !=string::npos)     {dy->Scale(35867); tt->Scale(35867); dy->SetTitle("scaled 2016");}
+            else if ( inname.find("Hmm2017") !=string::npos){dy->Scale(41860); tt->Scale(41860); dy->SetTitle("scaled 2017"); }
+            else if ( inname.find("Hmm2018") !=string::npos){dy->Scale(59710); tt->Scale(59710); dy->SetTitle("scaled 2018");}
+
+            if (dy !=NULL ) { dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));}
+        }
+        else {
+            cout<<"-> Assuming 2016/2017/2018 lumis "<<mask<<" (and TT)"<<mask_tt<<endl;
+            dy=(TH1D*)fAll[0] ->Get( mask.c_str() ) ;
+            tt=(TH1D*)fAll[0] ->Get( mask_tt.c_str() ) ;
+            if (dy==NULL) cout<<"  and hist 2016 doesn't exist"<<endl;
+            if (tt==NULL) cout<<"  and tt hist 2016 doesn't exist"<<endl;
+            dy->Scale(35867);
+            tt->Scale(35867);
+
+            TH1D*tmp= (TH1D*)fAll[1] ->Get( mask.c_str() ) ; 
+            TH1D*tmp_tt= (TH1D*)fAll[1] ->Get( mask_tt.c_str() ) ; 
+            if (tmp==NULL) cout<<"  and hist 2017 doesn't exist"<<endl;
+            if (tmp_tt==NULL) cout<<"  and TT hist 2017 doesn't exist"<<endl;
+            tmp->Scale(41860); dy->Add(tmp);
+            tmp_tt->Scale(41860); tt->Add(tmp_tt);
+
+            tmp= (TH1D*)fAll[2] ->Get( mask.c_str() ) ; 
+            tmp_tt= (TH1D*)fAll[2] ->Get( mask_tt.c_str() ) ; 
+            if (tmp==NULL) cout<<"  and hist 2018 doesn't exist"<<endl;
+            if (tmp_tt==NULL) cout<<"  and hist TT 2018 doesn't exist"<<endl;
+            tmp->Scale(59710); dy->Add(tmp);
+            tmp_tt->Scale(59710); tt->Add(tmp_tt);
+            dy->SetTitle("scaled by 2016/2017/2018");
+
+            dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));
+        }
         RooAbsPdf* dybern = NULL;
         if (dy != NULL){
-            dy->Scale(35867); // lumi
             dy->Rebin(10); // lumi
             //dy->Smooth(1); // lumi
-            dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
+            //dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
+            dybern = modelBuilder.getDYBernstein(Form("dybern_cat%d",cat), 0, dy);
+            dybern->SetTitle(dy->GetTitle()); // keep this info for safe
             //storedPdfs.add(*dybern);
+            w_ -> import (*dybern,RecycleConflictNodes());
+            RooRealVar pdf_norm(Form("dybern_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
+            w_ -> import (pdf_norm,RecycleConflictNodes());
         }
 
         cout<<"*** Fitting ZPHO ***"<<endl;
@@ -1195,6 +1311,7 @@ void BackgroundFitter::fit(){
 
             }
 
+
             if (plot){
                 TCanvas *c = new TCanvas();
                 TLegend *leg = new TLegend(0.6,0.65,0.89,0.89);
@@ -1248,6 +1365,8 @@ void BackgroundFitter::fit(){
             }
         }
 
+        cout<<"*** Fitting COREPDF ***"<<endl;
+        RooAbsPdf*corepdf=modelBuilder.getCorePdf(Form("corepdf_cat%d",cat),2);
 
         // construct final model
         cout<<" -> Constructing Final model for cat"<<cat<<endl;
@@ -1263,6 +1382,10 @@ void BackgroundFitter::fit(){
         w_ -> import (pdf_bkg,RecycleConflictNodes());  
         w_ -> import (pdf_norm,RecycleConflictNodes()); 
         w_ -> import (pdf_cat,RecycleConflictNodes()); 
+
+        RooRealVar corepdf_norm(Form("corepdf_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
+        w_ -> import (*corepdf,RecycleConflictNodes());
+        w_ -> import (corepdf_norm,RecycleConflictNodes());
 
         // -- Plot
         if (plot ) {

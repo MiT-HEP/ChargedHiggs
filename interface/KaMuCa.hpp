@@ -44,7 +44,7 @@ class KaMuCa : public CorrectorBase,
 		int correct(Event *e) override ;
 		const string name() const override { return "KaMuCa";}
 		void Init() override;
-        bool doResolution{true};
+        bool doResolution{false};
     private:
         //
 		std::unique_ptr<KalmanMuonCalibrator> correctorMC_;

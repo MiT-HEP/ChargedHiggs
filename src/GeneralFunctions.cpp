@@ -84,16 +84,69 @@ float ChargedHiggs::mt2( const TLorentzVector visa,  const TLorentzVector visb, 
 }
 
 #include "TLorentzVector.h"
+namespace{
+    double CosThetaCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS)
+    {
+        
+        TLorentzVector m1s =*v1;  
+        TLorentzVector m2s =*v2;  
+        TLorentzVector mm= (*v1)+(*v2);
+        m1s.Boost(-mm.BoostVector());
+        m2s.Boost(-mm.BoostVector());
+        double hmmthetas = m1s.CosTheta();
+        double hmmphics   = m1s.DeltaPhi(mm);
+        return hmmthetas;
+    }
+
+    double PhiCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS)
+    {
+        TLorentzVector m1s =*v1;  
+        TLorentzVector m2s =*v2;  
+        TLorentzVector mm= (*v1)+(*v2);
+        m1s.Boost(-mm.BoostVector());
+        m2s.Boost(-mm.BoostVector());
+        double hmmthetas = m1s.CosTheta();
+        double hmmphics   = m1s.DeltaPhi(mm);
+        return hmmphics;
+    }
+}
 
 double ChargedHiggs::CosThetaCS( const TLorentzVector *v1, const TLorentzVector *v2,float sqrtS){
 
+        TLorentzVector b1,b2,v;
+        b1.SetPx(0); b1.SetPy(0);
+        b2.SetPx(0); b2.SetPy(0);
+        double beamE = 500.*sqrtS; // 1/2 sqrtS in GeV
+        b1.SetPz( std::hypot(beamE,ChargedHiggs::pMass)); b1.SetE(beamE);
+        b2.SetPz(-std::hypot(beamE,ChargedHiggs::pMass)); b2.SetE(beamE);
+
+        v=*v1+*v2;
+        TVector3 boostToVFrame = -v.BoostVector();
+
+        // Boost to higgs frame
+        TLorentzVector refV_v1 = *v1; refV_v1.Boost(boostToVFrame);
+        TLorentzVector refV_b1 = b1; refV_b1.Boost(boostToVFrame);
+        TLorentzVector refV_b2 = b2; refV_b2.Boost(boostToVFrame);
+
+        // Getting beam 3-vector from 4-vectors
+        TVector3 refV_vb1_direction = refV_b1.Vect().Unit();
+        TVector3 refV_vb2_direction = refV_b2.Vect().Unit();
+
+        // Definition of zz directions
+        TVector3 direction_cs = (refV_vb1_direction - refV_vb2_direction).Unit(); // CS direction
+
+        return TMath::Cos(direction_cs.Angle(refV_v1.Vect()));
+
+    }
+
+double ChargedHiggs::PhiCS( const TLorentzVector *v1, const TLorentzVector *v2,float sqrtS){ // probably to debug more
     TLorentzVector b1,b2,v;
     b1.SetPx(0); b1.SetPy(0);
     b2.SetPx(0); b2.SetPy(0);
     double beamE = 500.*sqrtS; // 1/2 sqrtS in GeV
-    b1.SetPz( std::hypot(beamE,pMass)); b1.SetE(beamE);
-    b2.SetPz(-std::hypot(beamE,pMass)); b2.SetE(beamE);
-    
+    b1.SetPz( std::hypot(beamE,ChargedHiggs::pMass)); b1.SetE(beamE);
+    b2.SetPz(-std::hypot(beamE,ChargedHiggs::pMass)); b2.SetE(beamE);
+
     v=*v1+*v2;
     TVector3 boostToVFrame = -v.BoostVector();
 
@@ -108,39 +161,15 @@ double ChargedHiggs::CosThetaCS( const TLorentzVector *v1, const TLorentzVector 
 
     // Definition of zz directions
     TVector3 direction_cs = (refV_vb1_direction - refV_vb2_direction).Unit(); // CS direction
+    TVector3 xAxis_cs = (refV_vb1_direction + refV_vb2_direction).Unit(); // CS direction //??
+    TVector3 yAxis_cs = direction_cs.Cross(xAxis_cs);
 
-    return TMath::Cos(direction_cs.Angle(refV_v1.Vect()));
-}
+    double phi=std::atan2(refV_v1.Vect()*yAxis_cs , refV_v1.Vect() *xAxis_cs) ;  // domain is -pi,pi
 
-double ChargedHiggs::PhiCS( const TLorentzVector *v1, const TLorentzVector *v2,float sqrtS){
-    TLorentzVector b1,b2,v;
-    b1.SetPx(0); b1.SetPy(0);
-    b2.SetPx(0); b2.SetPy(0);
-    double beamE = 500.*sqrtS; // 1/2 sqrtS in GeV
-    b1.SetPz( std::hypot(beamE,pMass)); b1.SetE(beamE);
-    b2.SetPz(-std::hypot(beamE,pMass)); b2.SetE(beamE);
-    
-    v=*v1+*v2;
-    TVector3 boostToVFrame = -v.BoostVector();
-
-    // Boost to higgs frame
-    TLorentzVector refV_v1 = *v1; refV_v1.Boost(boostToVFrame);
-    TLorentzVector refV_b1 = b1; refV_b1.Boost(boostToVFrame);
-    TLorentzVector refV_b2 = b2; refV_b2.Boost(boostToVFrame);
-
-    // Getting beam 3-vector from 4-vectors
-    TVector3 refV_vb1_direction = refV_b1.Vect().Unit();
-    TVector3 refV_vb2_direction = refV_b2.Vect().Unit();
-    
-    // Definition of zz directions
-    TVector3 direction_cs = (refV_vb1_direction - refV_vb2_direction).Unit(); // CS direction
-    //return (xAxis,yAxis,CSAxis)
-    auto yAxis=(refV_b1.Vect().Unit()-refV_b2.Vect().Unit()).Unit();
-    auto xAxis=yAxis.Cross(direction_cs).Unit();
-    double phi=std::atan2(refV_v1.Vect()*yAxis , refV_v1.Vect() *xAxis) ; 
-    if(phi<0) return phi + 2*TMath::Pi();
+    //if(phi<0) return phi + 2*TMath::Pi(); // domain 0-pi
     return phi;
 }
+
 
 // this should be ~CosThetaStarCS in the center of mass
 double ChargedHiggs::CosThetaStar(const TLorentzVector*v1, const TLorentzVector*v2)
@@ -150,6 +179,16 @@ double ChargedHiggs::CosThetaStar(const TLorentzVector*v1, const TLorentzVector*
     const double M=v.M();
     const double Pt = v.Pt();
     return fabs(std::sinh(deta)) / std::sqrt( 1+ std::pow(Pt/M,2)) * 2 * v1->Pt() * v2->Pt() / std::pow(M,2);
+}
+
+#include "interface/Lepton.hpp"
+double ChargedHiggs::CosThetaCSPos(Lepton*a, Lepton*b){ 
+    if (a->Charge() < 0) return ChargedHiggs::CosThetaCS(&a->GetP4(),&b->GetP4()) ;
+    else return ChargedHiggs::CosThetaCS(&b->GetP4(),&a->GetP4());
+}
+double ChargedHiggs::PhiCSPos(Lepton*a, Lepton*b){ 
+    if (a->Charge() < 0) return ChargedHiggs::PhiCS(&a->GetP4(),&b->GetP4()) ; 
+    else return ChargedHiggs::PhiCS(&b->GetP4(),&a->GetP4());
 }
 
 

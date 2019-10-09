@@ -38,10 +38,11 @@ class HmumuAnalysis: virtual public AnalysisBase
         //
 
         bool doSync{false};
-        int catType{0}; //0 = RunISync, 1=AutoCat, 2=Bdt
+        ///@brief 0 = RunISync, 2=UF,  3=as UCSD, 4 Mjj-400 Dimitry,5 NoMjjDimitry, 10 MIT, 11 MIT + Exclusive
+        int catType{0}; 
         bool doEvenOnly{false}; //signal only even events
         bool doOddOnly{false}; //signal only even events
-
+        bool doSTXS{false};
 
     private:
         //cache event,run, lumi for filling
@@ -97,6 +98,10 @@ class HmumuAnalysis: virtual public AnalysisBase
         //string CategoryAutoCat(Lepton*mu0,Lepton*mu1, const vector<Jet*>& jets,float met,float metphi);
         string CategoryBdt(Event *e);
         string CategoryBdtMIT(Event *e);
+        string CategoryBdtUCSD(Event *e);
+
+        float BdtUCSD(int pos=0,int nj=0);
+        float BdtUF(int pos=0);
 
         enum CutFlow{ Total=0, 
             Leptons,
@@ -108,7 +113,9 @@ class HmumuAnalysis: virtual public AnalysisBase
         std::unique_ptr<TRandom> rnd_;
 
         float getZPtReweight(float Zpt);
+        float getZPtReweight2018(float Zpt);
         std::unique_ptr<TH1D> rzpt_;
+        std::unique_ptr<TH1D> rzpt2018_;
         std::unique_ptr<TF1> rzpt2_;
 
         /************
@@ -116,9 +123,11 @@ class HmumuAnalysis: virtual public AnalysisBase
          ************/
         DataStore varValues_;
         vector<TMVA::Reader*> readers_;
+        map< pair<string,int>, int > mvavars_; //keep track of the variables added to the mva
 
-        void InitTmva();
-        void InitTmvaMIT();
+        void InitTmva(int pos);
+        void InitTmvaMIT(int pos);
+        void InitTmvaUCSD(int pos,int nj=0);
 
         void FillSyncTree(const string& label, const string&systname ,const string& category);
         vector<float> bdt;

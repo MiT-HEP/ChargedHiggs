@@ -1,27 +1,29 @@
 include=dat/configHmumu.dat
 
 Files=
-include=dat/catalog/2019.moriond.year2018/dy_amcatnlo.dat
-include=dat/catalog/2019.moriond.year2018/tt.dat
-include=dat/catalog/2019.moriond.year2018/st.dat
-#include=dat/catalog/2019.moriond.year2018/rares.dat
+include=dat/catalog/2019.fall/year2018/dy_amcatnlo.dat
+include=dat/catalog/2019.fall/year2018/tt.dat
+include=dat/catalog/2019.fall/year2018/st.dat
+#include=dat/catalog/2019.fall/year2018/rares.dat
 
 
 ## Signal
-include=dat/catalog/2019.moriond.year2018/hmm.dat
+include=dat/catalog/2019.fall/year2018/hmm.dat
 
 ### DATA
-include=dat/catalog/2019.moriond.year2018/singleMuon.dat
+include=dat/catalog/2019.fall/year2018/singleMuon.dat
 
-MCDB=aux/mcdb.Hmumu.2019.year2018.dat
-pileup=aux/pileup.2018.root
+#MCDB=aux/mcdb.Hmumu.2019.year2018.dat
+#pileup=aux/pileup.2018.root
+MCDB=aux/mcdb.2019.v4.2.year2018.dat
+pileup=aux/pileup.v4.2.year2018.root
 
 #### NO CORRECTION ####
 #Correct=
 
 #### ROCHESTER ONLY
-Correct=RochesterCorrections
-config=RochesterCorrections|year="2018",allow_reset=1
+#Correct=RochesterCorrections
+#config=RochesterCorrections|year="2018",allow_reset=1
 
 ## KINETIC FIT ONLY
 #Correct=VertexKinfit
@@ -31,10 +33,20 @@ config=RochesterCorrections|year="2018",allow_reset=1
 #Correct=VertexKinfit,RochesterCorrections
 #config=RochesterCorrections|year="2018",allow_reset=0
 
+Correct=MetPhiCorrector,VertexKinfit,RochesterCorrections,FSRRecovery
+config=MetPhiCorrector|year=2018
+config=VertexKinfit|allow_reset=1
+config=RochesterCorrections|year="2018",allow_reset=0
+config=FSRRecovery|allow_reset=0
+
 ####
 addConfig=HmumuAnalysis|year=2018
 
 include=dat/json.2018.moriond.dat
 Analysis=MetFiltersAnalysis,HmumuAnalysis
 
-#config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON_v1.txt')
+addConfig=HmumuAnalysis|weights.clear()
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2018/TMVAClassification_BDTG.weights.01jet.xml')
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2018/TMVAClassification_BDTG.weights.2jet.xml')
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2018/TMVAClassification_BDTG.weights.2jet_bveto.xml')

@@ -271,7 +271,7 @@ def ReadMCDB(file):
 		   what=l.split(' ')[current]
 		   current+=1
 		   if 'PDFS' in what :
-		   	for i in range(0,100):## MC_MAX_PDFS
+		   	for i in range(0,30):## MC_MAX_PDFS
 				pdfs.append(float(l.split(' ')[current]))
 				current+=1
 		   elif 'SCALES' in what:

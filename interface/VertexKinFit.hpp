@@ -13,6 +13,24 @@ class VertexKinfit : public CorrectorBase{
 };
 
 
+#include "interface/EnergyScaleCorrection.hpp"
+
+class FSRRecovery : public CorrectorBase{
+	public:
+        float maxpt{-1};
+        float maxrelpt{-1};
+        bool onlyiso{true};
+		int correct(Event *e) override ;
+		const string name() const override { return "FSRRecovery";}
+		void Init() override;
+
+        bool egmcorrections{false};
+        int year{2017};
+    protected:
+		std::unique_ptr<EnergyScaleCorrection> corrector_;
+};
+
+
 #endif
 
 // Local Variables:

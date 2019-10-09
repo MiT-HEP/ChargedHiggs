@@ -1,0 +1,77 @@
+Combination of cms_datacard_hmumu_cat15.txt
+imax * number of bins
+jmax * number of processes minus 1
+kmax * number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes BKG       cat3  $DIRRunII/BackgroundModel.root w:zmod_cat3_ord1
+shapes data_obs  cat3  $DIRRunII/BackgroundModel.root w:dataObs_cat3
+shapes ggH_2016       cat3  $DIR2016/SignalModel.root w:pdf_sigmodel2016_GluGlu_cat3
+shapes qqH_2016       cat3  $DIR2016/SignalModel.root w:pdf_sigmodel2016_VBF_cat3
+shapes WPlusH_2016         cat3  $DIR2016/SignalModel.root w:pdf_sigmodel2016_WPlusH_cat3
+shapes WMinusH_2016         cat3  $DIR2016/SignalModel.root w:pdf_sigmodel2016_WMinusH_cat3
+shapes ttH_2016         cat3  $DIR2016/SignalModel.root w:pdf_sigmodel2016_ttH_cat3
+shapes ZH_2016         cat3  $DIR2016/SignalModel.root w:pdf_sigmodel2016_ZH_cat3
+shapes ggH_2017       cat3  $DIR2017/SignalModel.root w:pdf_sigmodel2017_GluGlu_cat3
+shapes qqH_2017       cat3  $DIR2017/SignalModel.root w:pdf_sigmodel2017_VBF_cat3
+shapes WPlusH_2017         cat3  $DIR2017/SignalModel.root w:pdf_sigmodel2017_WPlusH_cat3
+shapes WMinusH_2017         cat3  $DIR2017/SignalModel.root w:pdf_sigmodel2017_WMinusH_cat3
+shapes ttH_2017         cat3  $DIR2017/SignalModel.root w:pdf_sigmodel2017_ttH_cat3
+shapes ZH_2017         cat3  $DIR2017/SignalModel.root w:pdf_sigmodel2017_ZH_cat3
+shapes ggH_2018       cat3  $DIR2018/SignalModel.root w:pdf_sigmodel2018_GluGlu_cat3
+shapes qqH_2018       cat3  $DIR2018/SignalModel.root w:pdf_sigmodel2018_VBF_cat3
+shapes WPlusH_2018         cat3  $DIR2018/SignalModel.root w:pdf_sigmodel2018_WPlusH_cat3
+shapes WMinusH_2018         cat3  $DIR2018/SignalModel.root w:pdf_sigmodel2018_WMinusH_cat3
+shapes ttH_2018         cat3  $DIR2018/SignalModel.root w:pdf_sigmodel2018_ttH_cat3
+shapes ZH_2018         cat3  $DIR2018/SignalModel.root w:pdf_sigmodel2018_ZH_cat3
+----------------------------------------------------------------------------------------------------------------------------------
+bin          cat3
+observation  -1.0    
+----------------------------------------------------------------------------------------------------------------------------------
+bin                             cat3        cat3        cat3        cat3            cat3        cat3        cat3     cat3        cat3           cat3    cat3    cat3    cat3                           cat3    cat3    cat3    cat3    cat3    cat3                                                                  
+process                         ZH_2016     WPlusH_2016 qqH_2016    WMinusH_2016    ttH_2016    ggH_2016    BKG      ZH_2017     WPlusH_2017    qqH_2017    WMinusH_2017    ttH_2017    ggH_2017       ZH_2018          WPlusH_2018      qqH_2018         WMinusH_2018     ttH_2018         ggH_2018   
+process                         -5          -4          -3          -2              -1          0           1        -5          -4             -3          -2              -1          0              -5          -4          -3          -2          -1          0                                                 
+rate                            35920.0000  35920.0000  35920.0000  35920.0000      35920.0000  35920.0000  1.0000   41530.0000  41530.0000     41530.0000  41530.0000      41530.0000  41530.0000     59740.0000  59740.0000  59740.0000  59740.0000  59740.0000  59740.0000                                        
+#35920 41530 59740
+----------------------------------------------------------------------------------------------------------------------------------
+lumi_13TeV              lnN     1.025       1.025       1.025       1.025       1.025       1.025       -         1.025       1.025       1.025       1.025       1.025       1.025 1.025       1.025       1.025       1.025       1.025       1.025
+smear_cat3_procGluGlu  param  0 1.
+scale_cat3_procGluGlu  param  0 1.
+hmm           rateParam cat3 qqH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam cat3 qqH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 WMinusH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam cat3 WMinusH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 ZH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam cat3 ZH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 ggH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam cat3 ggH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 WPlusH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam cat3 WPlusH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 ttH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam cat3 ttH_2016 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 qqH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam cat3 qqH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 WMinusH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam cat3 WMinusH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 ZH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam cat3 ZH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 ggH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam cat3 ggH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 WPlusH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam cat3 WPlusH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 ttH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam cat3 ttH_2017 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 qqH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+vbfH_13TeV    rateParam cat3 qqH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 WMinusH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WminusH_13TeV  rateParam cat3 WMinusH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 ZH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ZH_13TeV      rateParam cat3 ZH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 ggH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ggH_13TeV     rateParam cat3 ggH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 WPlusH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+WplusH_13TeV  rateParam cat3 WPlusH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+hmm           rateParam cat3 ttH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br  
+ttH_13TeV     rateParam cat3 ttH_2018 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV  
+pdf_cat3_bkg_norm  rateParam cat3 BKG $DIRRunII/BackgroundModel.root:w  
+nuisance edit  freeze smear_cat3_procGluGlu
+nuisance edit  freeze scale_cat3_procGluGlu

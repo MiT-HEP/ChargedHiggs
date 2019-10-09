@@ -1,0 +1,8 @@
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.6
+sub=amariniUser|/eos/user/a/amarini/Nero/v3.6
+sub=amariniCms|/store/user/amarini/Nero/v3.6
+
+#addfiles=%(amariniHmm)s/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8
+addfiles=%(amariniHmm)s/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8
+addfiles=%(amariniHmm)s/DYJetsToLL_M-105To160_TuneCP5_PSweights_13TeV-amcatnloFXFX-pythia8
+

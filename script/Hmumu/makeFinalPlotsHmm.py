@@ -18,6 +18,8 @@ parser.add_option("","--hmm",dest="hmm",type="string",help="HmmConfig instance [
 parser.add_option("","--noRatio",dest='noRatio',action="store_true",help="don't plot ratio in bkg plots [%default]",default=False)
 parser.add_option("","--paper",dest="paper",default=False,action="store_true")
 parser.add_option("","--unblind",dest="blind",default=True,action="store_false",help="Unblinded plots")
+parser.add_option("","--full",dest="full",default=True,action="store_true",help="Do SigmaEff")
+parser.add_option("","--fast",dest="full",action="store_false",help="Do SigmaEff")
 
 
 print "-> Looking for basepath"
@@ -54,7 +56,7 @@ if opts.outdir != "":
 
 ############# definitions
 config= eval(opts.hmm)
-config.Print()
+#config.Print()
 categories=config.categories
 
 if opts.cat != "all" and opts.cat != "":
@@ -71,6 +73,7 @@ masses = [125,120,130]
 
 def MpvAndSigmaEff(h, q=0.68):
     ''' Return mpv and sigma eff and FWHM'''
+    if h== None: return (0., 0., 0., 0. )
     imax=-1
     valmax=0.0
     for ibin in range(0,h.GetNbinsX()):
@@ -83,13 +86,16 @@ def MpvAndSigmaEff(h, q=0.68):
     high=h.GetBinCenter(h.GetNbinsX())
 
     ## FIXME FAST
-    #for ibin in range(0,h.GetNbinsX()):
-    #    for jbin in range(ibin+1,h.GetNbinsX()):
-    #        if h.Integral(ibin+1,jbin+1)> q *s:
-    #            if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
-    #                low = h.GetBinCenter(ibin+1)
-    #                high=h.GetBinCenter(jbin+1)
-    #            #break ## j -loop can end here
+    #if opts.full:
+    if opts.full:
+        print "FULL"
+        for ibin in range(0,h.GetNbinsX()):
+            for jbin in range(ibin+1,h.GetNbinsX()):
+                if h.Integral(ibin+1,jbin+1)> q *s:
+                    if h.GetBinCenter(jbin+1)-h.GetBinCenter(ibin+1) < high -low:
+                        low = h.GetBinCenter(ibin+1)
+                        high=h.GetBinCenter(jbin+1)
+                    #break ## j -loop can end here
 
     ## FWHM
     hm = h.GetMaximum()*0.5;
@@ -126,6 +132,58 @@ def SoB(h,hdata,low,high,type=""):
 	#b= f.Integral(mean-low,mean+high)
 	return (s*br*lumi*xsec,b)
 
+def STXSSort(l):
+    #return sorted(l[:])
+    ld={}
+    for name,proc in l:
+        if proc not in ld: ld[proc]=[]
+        ld[proc].append( (name,proc) )
+    l2=[]
+    processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
+    for proc in processes: # I want them in the order above
+        if proc not in ld: continue
+        l2.extend(sorted(ld[proc]))
+    return l2
+
+stxsColors={} ## bin -> int, color
+def GetSTXSColor(name,proc):
+    global stxsColors
+    ci = ROOT.TColor.GetFreeColorIndex();
+    rf=array('f',[0.])
+    gf=array('f',[0.])
+    bf=array('f',[0.])
+    processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    ROOT.gROOT.GetColor( colors[processes.index(proc)] ) .GetRGB (rf,gf,bf)
+    r = rf[0]
+    g = gf[0]
+    b = bf[0]
+    print "DEBUG STXS color for proc", proc,"->",r,g,b, "RF",rf,
+    N=20.
+    if proc == "ttH": N=3
+    if 'last'+proc not in stxsColors:
+        stxsColors['last'+proc]=0
+    else:
+        if stxsColors['last'+proc] < N:
+            r += (1.-r)*stxsColors['last'+proc]/ N
+            g += (1.-g)*stxsColors['last'+proc]/ N
+            b += (1.-b)*stxsColors['last'+proc]/ N
+        else:
+            r -= r*(stxsColors['last'+proc]-N)/ N
+            g -= g*(stxsColors['last'+proc]-N)/ N
+            b -= b*(stxsColors['last'+proc]-N)/ N
+    stxsColors['last'+proc] +=1
+    #
+    if r> 1: r=1
+    if g> 1: g=1
+    if b> 1: b=1
+    if r< 0: r=0
+    if g< 0: g=0
+    if b< 0: b=0
+
+    color = ROOT.TColor(ci, r,g,b);
+    print "DEBUG STXS final for proc", proc,"and name",name,"->",r,g,b
+    stxsColors[(name,proc)]=(ci,color) ## don't destroy color
 
 ## get files
 fIn = ROOT.TFile.Open(opts.input,"READ")
@@ -137,8 +195,10 @@ canvases=[]
 garbage=[]
 
 doSig=not opts.noSig
+doSTXS=True
 sigYields={} ##(cat,proc) -> Nevents, for next sig composition plot
 eaStore={} ##(cat,proc,MH) -> ea
+stxsStore={}
 
 if doSig:
   yieldFile=open( opts.outdir + "/signal_yields.txt","w")
@@ -168,7 +228,7 @@ if doSig:
 
             proc =re.sub("_HToMuMu.*","",mc) 
             bin0 = h.FindBin(110)
-            bin1 = h.FindBin(150)
+            bin1 = h.FindBin(150-0.0001)
             ea = h.Integral(bin0,bin1)
             dea=array('d',[0.])
             #ea = h.Integral()
@@ -184,7 +244,7 @@ if doSig:
                 h.GetXaxis().SetTitleOffset(1.2)
                 h.GetYaxis().SetTitle("#varepsilon A")
                 h.GetYaxis().SetTitleOffset(1.2)
-                h.GetXaxis().SetRangeUser(100,150)
+                h.GetXaxis().SetRangeUser(100,150-0.0001)
                 #color=38
                 color=46
                 h.SetLineColor(color)
@@ -252,7 +312,206 @@ if doSig:
             pass
             c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".pdf")
             c.SaveAs(opts.outdir + "/" + cat + "_" + re.sub("_HToMuMu.*","",mc) + ".png")
+    #end mc loop
+  #end cat loop
   yieldFile.close()
+if doSig and doSTXS:
+  print "----------- STXS -----------"
+  yieldFileSTXS=open( opts.outdir + "/signal_yields_stxs.txt","w")
+  for cat in categories:
+        d=fIn.Get("HmumuAnalysis/Vars")    
+        for key in d.GetListOfKeys():
+            if re.match('^Mmm_%s_.*_STXS_125_.*'%cat,key.GetName()):
+                h=d.Get(key.GetName())
+                if h==None: print "<*> ERROR in STXS", key.GetName(),"not able to grab?"
+                mc= re.sub('_STXS.*','',re.sub('^.*%s_'%cat,'',key.GetName()))
+                proc= re.sub('_HToMuMu.*','',mc) # "proc_HToMuMu_M%d"
+                bin0 = h.FindBin(110)
+                bin1 = h.FindBin(150-0.0001)
+                ea = h.Integral(bin0,bin1)
+                dea=array('d',[0.])
+                h.IntegralAndError(bin0,bin1,dea)
+                #self.processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
+                #print "DEBUG proc is",proc, "name is",key.GetName()
+                y=ea*config.lumi() * config.xsec(proc) *config.br()
+                dy=dea[0] * config.lumi() * config.xsec(proc) *config.br()
+                name= re.sub('^.*_STXS_125_','',key.GetName())
+                ## the qqH is from VBF and VH, I don't know if we want to split them somehow or to merge as in STXS measurements
+                #if (cat,name) not in stxsStore: stxsStore[(cat,name)]= y
+                #else stxsStore[(cat,name)] += y
+                stxsStore[(cat,name,proc)] = y
+                print >>yieldFileSTXS ,cat,name,proc,y,dy
+  yieldFileSTXS.close()
+  print "----------- STXS DONE -----------"
+
+if doSig and doSTXS: ## signal composition plot
+  for cat in categories:
+    cSTXS=ROOT.TCanvas("c_"+cat+"_stxs","canvas",800,800)
+    cSTXS.Range(-14.67532,-1.75,11.2987,15.75);
+    cSTXS.SetFillColor(0);
+    cSTXS.SetBorderMode(0);
+    cSTXS.SetBorderSize(2);
+    cSTXS.SetTopMargin(0.16);
+    cSTXS.SetLeftMargin(0.15);
+    cSTXS.SetRightMargin(0.05);
+    cSTXS.SetFrameBorderMode(0);
+    cSTXS.SetFrameBorderMode(0);
+    cSTXS.Draw()
+    cSTXS.cd()
+
+    nCats=len(categories)
+    dummy = ROOT.TH2F("dummy","",10,0.,100.,nCats,1-0.5,nCats+0.5);
+    dummy.SetStats(0);
+    ci = ROOT.TColor.GetColor("#00ff00");
+    dummy.SetFillColor(ci);
+
+    for ic,cat in enumerate(categories):
+        dummy.GetYaxis().SetBinLabel(nCats-ic,"cat %d"%ic);
+
+    dummy.GetXaxis().SetTickLength(0.01);
+    dummy.GetYaxis().SetTickLength(0);
+    dummy.GetXaxis().SetTitle("Signal Fraction [%]");
+    dummy.GetXaxis().SetNdivisions(510);
+    dummy.GetXaxis().SetLabelFont(42);
+    dummy.GetXaxis().SetLabelSize(0.045);
+    dummy.GetXaxis().SetTitleSize(0.045);
+    dummy.GetXaxis().SetTitleOffset(0.95);
+    dummy.GetXaxis().SetTitleFont(42);
+    dummy.GetYaxis().SetNdivisions(510);
+    dummy.GetYaxis().SetLabelSize(0.035);
+    dummy.GetYaxis().SetTitleSize(0.045);
+    dummy.GetYaxis().SetTitleOffset(1.1);
+    dummy.GetYaxis().SetTitleFont(42);
+    dummy.GetZaxis().SetLabelFont(42);
+    dummy.GetZaxis().SetLabelSize(0.035);
+    dummy.GetZaxis().SetTitleSize(0.035);
+    dummy.GetZaxis().SetTitleFont(42);
+    dummy.Draw("");
+
+    ## normalized stacked fractions
+    ymin = 0.0
+    width = 0.34
+
+    stxsFrac = {}
+
+    for ic,cat in enumerate(categories):
+        S=0.0
+        stxsproclist=[]
+        for icat,name,proc in stxsStore:
+            if icat != cat : continue
+            S+=stxsStore[(cat,name,proc)]
+            stxsproclist.append( (name,proc) )
+        stxsproclist = STXSSort(stxsproclist)
+        for icat,name,proc in stxsStore:
+            if icat != cat : continue
+            try:
+                stxsFrac[(cat,name,proc)] = stxsStore[(cat,name,proc)]/S*100.; #sigYields becomes fractions here!
+            except ZeroDivisionError: 
+                stxsFrac[(cat,name,proc)] = 0.
+        print
+        sys.stdout.flush()
+        ybin = nCats-ic; ## 1-1 mapping
+        ybinmin = ybin-width;
+        ybinmax = ybin+width;
+        xbinmin = ymin;
+        xbinmax = ymin;
+        pavetext = ROOT.TPaveText(xbinmin+0.5,ybinmin,xbinmin+30.5,ybinmax);
+        pavetext.AddText("%.1f total expected signal"%S)
+        pavetext.SetTextColor(0);
+        pavetext.SetFillStyle(0);
+        pavetext.SetFillColor(0);
+        pavetext.SetLineColor(0);
+        pavetext.SetBorderSize(0);
+
+        for iproc, (name,proc) in enumerate(stxsproclist):
+            xbinmax += stxsFrac[(cat,name,proc)]
+            pave = ROOT.TPave(xbinmin,ybinmin,xbinmax,ybinmax);
+            if (name,proc) not in stxsColors: GetSTXSColor(name,proc)
+            pave.SetFillColor(stxsColors[(name,proc)][0]);
+            pave.Draw();
+            pave.SetBorderSize(0);
+            xbinmin +=stxsFrac[(cat,name,proc)]
+            garbage.append(pave)
+        pavetext.Draw()
+        garbage.append(pavetext)
+    ## legend
+    tex_m=ROOT.TLatex();
+    tex_m.SetNDC();
+    tex_m.SetTextAlign(12);
+    tex_m.SetTextSize(0.025);
+    tex_m.SetLineWidth(2);
+
+    ## Legend
+    processName=[]
+    for iproc, proc in enumerate(config.processes):
+       if proc == 'GluGlu': processName.append("ggH") 
+       elif proc=='VBF' : processName.append("qqH")
+       elif proc=='WMinusH' : processName.append("W^{-}H")
+       elif proc=='WPlusH' : processName.append("W^{+}H")
+       else: processName.append(proc)
+
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    starts=[0.28,0.4,0.52,.64,.76,.88]
+    for i in range(0,len(starts)):
+        pave=ROOT.TPave(starts[i],0.85,starts[i]+.03,0.85+0.03,0,"NDC");
+        pave.SetFillColor(colors[i]);
+        pave.Draw();
+        tex_m.DrawLatex(starts[i]+0.04,0.84+0.025,processName[i]);
+        garbage.append(pave)
+
+    cSTXS.Modify()
+    cSTXS.Update()
+    cSTXS.SaveAs(opts.outdir + "/signal_stxs.pdf")
+    cSTXS.SaveAs(opts.outdir + "/signal_stxs.png")
+
+    cSTXSL=ROOT.TCanvas("cSTXS_legend","cSTXS_legend",800,800)
+
+    tex_m=ROOT.TLatex();
+    tex_m.SetNDC();
+    tex_m.SetTextAlign(12);
+    tex_m.SetTextSize(0.025);
+    tex_m.SetLineWidth(2);
+
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    #starts=[0.28,0.4,0.52,.64,.76,.88]
+    starts=[0.10,0.25,0.40,.55,.70,.85]
+    processName=[]
+    for iproc, proc in enumerate(config.processes):
+       if proc == 'GluGlu': processName.append("ggH") 
+       elif proc=='VBF' : processName.append("qqH")
+       elif proc=='WMinusH' : processName.append("W^{-}H")
+       elif proc=='WPlusH' : processName.append("W^{+}H")
+       else: processName.append(proc)
+    for i in range(0,len(starts)):
+        pave=ROOT.TPave(starts[i],0.85,starts[i]+.03,0.85+0.03,0,"NDC");
+        pave.SetFillColor(colors[i]);
+        pave.Draw();
+        tex_m.DrawLatex(starts[i]+0.04,0.84+0.025,processName[i]);
+        garbage.append(pave)
+        
+    tex_m.SetTextSize(0.01);
+    tex_m.SetTextFont(42);
+    tex_m.SetTextAngle(-30);
+    procLast={}
+    l = ROOT.TLine(0,0.82,1,0.82)
+    l.Draw("L SAME")
+    for iproc, (name,proc) in enumerate(stxsproclist):
+        i=config.processes.index(proc)
+        if proc not in procLast: procLast[proc] =0.80
+        procLast[proc] -= 0.04;
+        y=procLast[proc]
+        pave = ROOT.TPave(starts[i],y,starts[i]+0.03,y+0.03);
+        if (name,proc) not in stxsColors: GetSTXSColor(name,proc)
+        tex_m.DrawLatex(starts[i]+0.04,y-0.01+0.025,name);
+        pave.SetFillColor(stxsColors[(name,proc)][0]);
+        pave.Draw();
+        pave.SetBorderSize(0);
+        garbage.append(pave)
+
+    cSTXSL.Modify()
+    cSTXSL.Update()
+    cSTXSL.SaveAs(opts.outdir + "/signal_stxs_leg.pdf")
+    cSTXSL.SaveAs(opts.outdir + "/signal_stxs_leg.png")
 
 if doSig: ## signal composition plot
     #colors = [ ROOT.kGreen+3, ROOT.kRed+2, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kBlue-4];
@@ -430,7 +689,10 @@ if doSig: ## signal composition plot
             else : htot.Add(h)
             #print "--> Htot",htot.Integral()
           mpv, low ,high,fwhm =  MpvAndSigmaEff(htot, 0.682689)
-          store[ic] = (fwhm,htot.Integral(),100,(high-low))
+          if htot==None:
+            store[ic] = (fwhm,0.,100,(high-low))
+          else:
+            store[ic] = (fwhm,htot.Integral(),100,(high-low))
 
           #print " ------------------ RECOMPUTED STORE  -------------------------"
           #print store
@@ -864,12 +1126,18 @@ if doBkg:
     #BkgMonteCarlos=["ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     if opts.noRatio:
         #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY",]
-        BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DYJetsToLL_M-105To160"]
-        BkgMonteCarlos2=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY"]
+        if 'OnH' in opts.var: #and config.year==2017:
+            BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DYJetsToLL_M-105To160"]
+        else:
+            BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY"]
     else:
         #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
-        BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DY"]
-        BkgMonteCarlos2=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DYJetsToLL_M-105To160"]
+        if 'OnH' in opts.var: # and config.year==2017:
+            print "-> Using 105-160"
+            BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DYJetsToLL_M-105To160"]
+        else:
+            print "-> Using Inclusive DY"
+            BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DY"]
 
     #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     mcAll=None
@@ -878,8 +1146,8 @@ if doBkg:
     bkg=Stack()
     bkg.SetName("bkgmc"+cat)
 
-    bkg2=Stack()
-    bkg2.SetName("bkgmc2"+cat)
+    #bkg2=Stack()
+    #bkg2.SetName("bkgmc2"+cat)
 
     b_systs_up=[ Stack() for x in systs]
     b_systs_down=[ Stack() for x in systs]
@@ -891,7 +1159,7 @@ if doBkg:
     sig=Stack()
     sig.SetName("sigmc"+cat)
 
-    garbage.extend([sig,bkg,bkg2,leg])
+    garbage.extend([sig,bkg,leg]) #bkg2,leg])
 
     ## BLIND 120-130
     blind=opts.blind
@@ -904,7 +1172,8 @@ if doBkg:
             hdata.SetBinContent(ibin,0)
             hdata.SetBinError(ibin,0)
 
-    for mc in list(set(BkgMonteCarlos + BkgMonteCarlos2)):
+    #for mc in list(set(BkgMonteCarlos + BkgMonteCarlos2)):
+    for mc in list(set(BkgMonteCarlos)):
         print "* Getting bkg","HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc
         h=fIn.Get("HmumuAnalysis/"+opts.dir+"/" + opts.var + cat +"_"+mc )
         if h==None:
@@ -934,10 +1203,11 @@ if doBkg:
             leg1.append( (h,"DY","F") )
             #leg.AddEntry(h,"DY","F")
         elif mc == "DYJetsToLL_M-105To160":
-            h.SetFillStyle(0)
-            h.SetFillColor(ROOT.kCyan)
-            h.SetLineColor(ROOT.kCyan)
-            h.SetLineWidth(3)
+            #h.SetFillStyle(0)
+            #h.SetFillColor(ROOT.kCyan)
+            #h.SetLineColor(ROOT.kCyan)
+            #h.SetLineWidth(3)
+            h.SetFillColor(ROOT.kBlue-10)
             leg1.append( (h,"DY (105-160)","F") )
         elif mc == 'TT':
             h.SetFillColor(ROOT.kRed-10)
@@ -982,11 +1252,11 @@ if doBkg:
                 mcAll=h.Clone("mcAll"+cat)
             else:
                 mcAll.Add(h)
-        if mc in BkgMonteCarlos2: 
-            # only draw top DY
-            if 'DY' in mc: draw = True
-            else: draw= False
-            bkg2.Add(h,draw)
+        #if mc in BkgMonteCarlos2: 
+        #    # only draw top DY
+        #    if 'DY' in mc: draw = True
+        #    else: draw= False
+        #    bkg2.Add(h,draw)
 
     ##end bkg loop
     for mc in reversed(sigMonteCarlos):
@@ -1070,7 +1340,7 @@ if doBkg:
         qm.SetBase(sig.GetHist() )
         sig.Remap(qm)
         bkg.Remap(qm)
-        bkg2.Remap(qm)
+        #bkg2.Remap(qm)
         for x in b_systs_up: x.Remap(qm)
         for x in b_systs_down: x.Remap(qm)
         hdata = qm.Apply(hdata)
@@ -1144,7 +1414,7 @@ if doBkg:
     dummy.GetXaxis().SetTitleSize(24)
 
     bkg.Draw("HIST SAME")
-    bkg2.Draw("HIST SAME")
+    #bkg2.Draw("HIST SAME")
     #color=38
     sig.Draw("HIST SAME")
     sig.Print()
@@ -1184,12 +1454,12 @@ if doBkg:
     errAll.SetFillColor(ROOT.kGray)
     errAll.SetMarkerColor(ROOT.kGray)
 
-    bkg2R = bkg2.GetHist().Clone("bkg2R")
+    #bkg2R = bkg2.GetHist().Clone("bkg2R")
     ## 
-    bkg2R.SetFillStyle(0)
-    bkg2R.SetFillColor(ROOT.kCyan)
-    bkg2R.SetLineColor(ROOT.kCyan)
-    bkg2R.SetLineWidth(3)
+    #bkg2R.SetFillStyle(0)
+    #bkg2R.SetFillColor(ROOT.kCyan)
+    #bkg2R.SetLineColor(ROOT.kCyan)
+    #bkg2R.SetLineWidth(3)
 
     leg.SetNColumns(2)
 
@@ -1217,7 +1487,7 @@ if doBkg:
 
         
         errAll.Divide(mcAll)
-        bkg2R.Divide(mcAll)
+        #bkg2R.Divide(mcAll)
 
         r.Divide(mcAll)
         r.Draw("AXIS")
@@ -1294,7 +1564,7 @@ if doBkg:
         
 
         errAll.Draw("E2 SAME")
-        bkg2R.Draw("HIST SAME")
+        #bkg2R.Draw("HIST SAME")
 
         #r.GetXaxis().SetTitle("m^{#mu#mu}[GeV]")
         r.GetXaxis().SetTitle(dummy.GetXaxis().GetTitle())
@@ -1339,7 +1609,8 @@ if doBkg:
 
         r.Draw("P E X0 SAME")
 
-        garbage.extend([g,r,bkg2R])
+        #garbage.extend([g,r,bkg2R])
+        garbage.extend([g,r])
 
     if opts.outdir=="":
         raw_input("ok?")

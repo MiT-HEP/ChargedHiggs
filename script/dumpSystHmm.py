@@ -16,9 +16,9 @@ print "-> Looking for basepath"
 basepath = ""
 mypath = os.path.abspath(os.getcwd())
 while mypath != "" and mypath != "/":
-	if "ChargedHiggs" in os.path.basename(mypath):
-		basepath = os.path.abspath(mypath)
-	mypath = os.path.dirname(mypath)
+    if "ChargedHiggs" in os.path.basename(mypath):
+        basepath = os.path.abspath(mypath)
+    mypath = os.path.dirname(mypath)
 print "-> Base Path is " + basepath
 sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
@@ -52,9 +52,11 @@ systsline=[opts.outname,"lnN"]
 
 def appendToLine(l,valDown,valUp):
     if abs(valDown-1) <0.01 and abs(valUp-1) <0.01:
-	    l.append("-")
+        l.append("-")
     else:
-	    l.append("%.3f/%.3f"%(valDown,valUp))
+        l.append("%.3f/%.3f"%(valDown,valUp))
+
+empty=ROOT.TH1D("empty","empty",1000,0,1000)
 
 for idx,cat in enumerate(categories):
    for pi,proc in enumerate(processes):
@@ -75,10 +77,11 @@ for idx,cat in enumerate(categories):
           continue
       elif h == None:
           print >> sys.stderr, "[ERROR] Hist", name, "doesn't exist"
-          if( cat =="cat16" and (proc =="VBF" or proc=="GluGlu")) : 
-                systsline .append( "-")
-                continue ## ok for this
-          raise IOError
+          systsline .append( "-")
+          continue
+          #if( cat =="cat16" and (proc =="VBF" or proc=="GluGlu")) : 
+          #      continue ## ok for this
+          #raise IOError
       elif opts.syst!= 'Scale' and opts.syst != 'Pdf':
           hUp=fIn.Get(name+"_"+opts.syst+"Up")
           hDown=fIn.Get(name+"_"+opts.syst+"Down")
@@ -100,6 +103,10 @@ for idx,cat in enumerate(categories):
             systsline .append( "-")
             continue
             #raise IOError
+          if h.Integral() == 0:
+            print>>sys.stderr, "[ERROR] Hist", name, "has zero integral"
+            systsline .append( "-")
+            continue
           appendToLine(systsline , hDown.Integral()/h.Integral(), hUp.Integral()/h.Integral())
       elif opts.syst=='Scale':
           #fully correlated

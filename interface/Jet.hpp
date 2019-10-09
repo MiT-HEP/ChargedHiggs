@@ -48,14 +48,21 @@ class Jet : virtual public Object, virtual public SmearableComplex
     ///@brief return if it is a jet, except object cleaning
     int IsJetExceptValidity() const ;
 
+    int PassPuId() const ;
+    int PassEENoise() const;
+
     ///@brief set ee noise cut on
     void SetEENoiseCut(bool x){eenoise_ = x;}
     ///@brief set the pu id cut
     void SetPuIdCut(float x) {puidcut_=x;}
     ///@brief set the pt cut 
     void SetPtCut(float x){ptcut_= x;}
+    ///@brief set the pt cut 
+    float GetPtCut() const {return ptcut_;}
     ///@brief set the eta cut
     void SetEtaCut(float x){etacut_ = x;}
+    ///@brief get the eta cut
+    float GetEtaCut() const { return etacut_ ;}
     ///@brief set the the eta cut for the "central" region
     void SetEtaCutCentral( float x) {etacutcentral_=x;}
     ///@brief set the the csv cut (only one between standard and deep requirement can be set). To unset use -100.
@@ -164,11 +171,21 @@ class Jet : virtual public Object, virtual public SmearableComplex
 
     /// @brief return qgl discriminator value
     inline float QGL() const { return qgl_; } 
+    inline float QGLcorrect() const { 
+        // pythia
+        if (fabs(Eta())> 2.0 ) return qgl_;
+        if (Flavor() == 21)  return -55.7067*TMath::Power(qgl_,7) + 113.218*TMath::Power(qgl_,6) -21.1421*TMath::Power(qgl_,5) -99.927*TMath::Power(qgl_,4) + 92.8668*TMath::Power(qgl_,3) -34.3663*qgl_*qgl_ + 6.27*qgl_ + 0.612992;
+        if (Flavor() !=0 and abs(Flavor())<5)return -0.666978*qgl_*qgl_*qgl_ + 0.929524*qgl_*qgl_ -0.255505*qgl_ + 0.981581;
+        return qgl_;
+    };
 
     /// @brief return variable (name) of qgl discriminator
     inline float QGLVar(std::string name) const {
             std::transform(name.begin(),name.end(),name.begin(),::tolower ) ;
-            return qglVars_.find(name)->second; // this will throw an exception if not found
+            bool doLog=false;
+            if (name.find("log:") != string::npos) { doLog=true; name=name.substr(4);}
+            if (not doLog)return qglVars_.find(name)->second; // this will throw an exception if not found
+            else return (qglVars_.find(name)->second >0 )?-TMath::Log( qglVars_.find(name)->second):0.;
             };
     // ---
     inline int IsObject() const override {return IsJet();}

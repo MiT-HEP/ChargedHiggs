@@ -3,6 +3,16 @@
 #include "interface/Handlers.hpp"
 #include <cmath>
 
+SmearJesSource::SmearJesSource(const string &fname, const string&n):
+    fname_(fname),
+    SmearBase()
+{   // apparently I can't delegate the constructor to the one below
+	name_ = "JES_"+n;
+	Log(__FUNCTION__,"INFO","Constructing smear function using definitions in: "+fname_ + " and section: "+n);
+	params_ . reset ( new JetCorrectorParameters(fname_,n) ) ;
+	jecUnc_ . reset ( new JetCorrectionUncertainty( *params_) );
+}
+
 SmearJesSource::SmearJesSource(const string &n) : SmearBase(){
 	name_ = "JES_"+n;
 	Log(__FUNCTION__,"INFO","Constructing smear function using definitions in: "+fname_ + " and section: "+n);

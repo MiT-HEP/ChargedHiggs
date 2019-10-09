@@ -12,7 +12,7 @@
 #include <iomanip>
 #include <fstream>
 #include <sstream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <algorithm>
 #include <cmath>
 #include <iterator>
@@ -63,9 +63,9 @@ JetCorrectorParameters::Definitions::Definitions(const std::string& fLine)
       else if (ss == "Correction")
         mIsResponse = false;
       else if (ss == "Resolution")
-	mIsResponse = false;
+	    mIsResponse = false;
       else if (ss.find("PAR")==0)
-	mIsResponse = false;
+	    mIsResponse = false;
       else
         {
           std::stringstream sserr;
@@ -89,13 +89,13 @@ JetCorrectorParameters::Record::Record(const std::string& fLine,unsigned fNvar) 
       if (tokens.size() < 3)
         {
           std::stringstream sserr;
-	  sserr<<"(line "<<fLine<<"): "<<"three tokens expected, "<<tokens.size()<<" provided.";
+	        sserr<<"(line "<<fLine<<"): "<<"three tokens expected, "<<tokens.size()<<" provided.";
           handleError("JetCorrectorParameters::Record",sserr.str());
         }
       for(unsigned i=0;i<mNvar;i++)
         {
-          mMin.push_back(getFloat(tokens[i*mNvar]));
-          mMax.push_back(getFloat(tokens[i*mNvar+1]));
+          mMin.push_back(getFloat(tokens[i*2]));
+          mMax.push_back(getFloat(tokens[i*2+1]));
         }
       unsigned nParam = getUnsigned(tokens[2*mNvar]);
       if (nParam != tokens.size()-(2*mNvar+1))
@@ -107,6 +107,16 @@ JetCorrectorParameters::Record::Record(const std::string& fLine,unsigned fNvar) 
       for (unsigned i = (2*mNvar+1); i < tokens.size(); ++i)
         mParameters.push_back(getFloat(tokens[i]));
     }
+}
+std::ostream& operator<<(std::ostream& out, const JetCorrectorParameters::Record& fBin)
+{
+  for(unsigned j=0;j<fBin.nVar();j++)
+    out<<fBin.xMin(j)<<" "<<fBin.xMax(j)<<" ";
+  out<<fBin.nParameters()<<" ";
+  for(unsigned j=0;j<fBin.nParameters();j++)
+    out<<fBin.parameter(j)<<" ";
+  out<<std::endl;
+  return out;
 }
 //------------------------------------------------------------------------
 //--- JetCorrectorParameters constructor ---------------------------------
@@ -159,7 +169,28 @@ JetCorrectorParameters::JetCorrectorParameters(const std::string& fFile, const s
     }
   std::sort(mRecords.begin(), mRecords.end());
   valid_ = true;
+
+  if(mDefinitions.nBinVar()<=MAX_SIZE_DIMENSIONALITY)
+    {
+      init();
+    }
+  else
+    {
+      std::stringstream sserr;
+      sserr<<"since the binned dimensionality is greater than "<<MAX_SIZE_DIMENSIONALITY
+           <<" the SimpleJetCorrector will default to using the legacy binIndex function!";
+      handleError("JetCorrectorParameters",sserr.str());
+    }
 }
+//------------------------------------------------------------------------
+//--- initializes the correct JetCorrectorParametersHelper ---------------
+//------------------------------------------------------------------------
+void JetCorrectorParameters::init()
+{
+  std::sort(mRecords.begin(), mRecords.end());
+  //helper = std::make_shared<JetCorrectorParametersHelper>();
+  //helper->init(mDefinitions,mRecords);
+} 
 //------------------------------------------------------------------------
 //--- returns the index of the record defined by fX ----------------------
 //------------------------------------------------------------------------
@@ -187,6 +218,21 @@ int JetCorrectorParameters::binIndex(const std::vector<float>& fX) const
         }
     }
   return result;
+}
+//------------------------------------------------------------------------
+//--- returns the index of the record defined by fX (non-linear search) --
+//------------------------------------------------------------------------
+int JetCorrectorParameters::binIndexN(const std::vector<float>& fX) const
+{
+  handleError("InvalidInput","helper not implemented" ) ;
+  //if(helper->size()>0)
+  //  {
+  //    return helper->binIndexN(fX,mRecords);
+  //  }
+  //else
+  //  { 
+  //    return -1;
+  //  }
 }
 //------------------------------------------------------------------------
 //--- returns the neighbouring bins of fIndex in the direction of fVar ---
@@ -418,7 +464,7 @@ JetCorrectorParametersCollection::findL7Parton( key_type k ){
     return l7Partons_[k / 1000 - 1];
 }
 
-void JetCorrectorParametersCollection::getSections( std::string inputFile,
+void JetCorrectorParametersCollection::getSections(std::string inputFile,
 						    std::vector<std::string> & outputs )
 {
   outputs.clear();

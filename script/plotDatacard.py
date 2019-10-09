@@ -14,6 +14,7 @@ parser.add_option("-w","--wsname",help="Ws name [%default]",default=None)
 parser.add_option("-m","--modelname",help="Model Name [%default]",default="model_s")
 parser.add_option("-x","--exclude",help="Exclude Regexp. can be specified multiple times.",action='append',default=[])
 parser.add_option("-v","--verbose",help="Verbosity [0-3] [%default]",type='int',default=1)
+parser.add_option("-L","--lib",action='append',help="Load libraries (specify more times) [%default]",default=[])
 #parser.add_option("-i","--input",help="Input File [%default]",default=None)
 opts,args=parser.parse_args()
 
@@ -21,6 +22,9 @@ import sys,os,re
 
 sys.argv=[]
 import ROOT
+for lib in opts.lib:
+    print "-> Loading library",lib
+    ROOT.gSystem.Load(lib)
 
 #################### UTILS & FUNCTIONS ##################33
 def Log(level, msg):

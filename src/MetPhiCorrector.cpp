@@ -4,72 +4,101 @@ using namespace std;
 
 #define VERBOSE 1
 
-void MetPhiCorrector::getFunction(TFile *f, TF1* &func, const string& name)
-{
-    func = (TF1*)f->Get(name.c_str()) -> Clone();
-    if (func == NULL ) cout <<"[MetPhiCorrector]::[getFunction]::[ERROR] Unable to get "<<name<<" from "<<fileName<<endl;
-    return;
+void MetPhiCorrector::Init(){
+    return ;
 }
 
-void MetPhiCorrector::Init(){
-    isInit_=false;
-    #ifdef VERBOSE
-    if (VERBOSE >0 )  cout <<"[MetPhiCorrector]::[Init]::[INFO] Opening file "<<fileName<<endl;
-    #endif 
-    TFile * f = TFile::Open(fileName.c_str()); 
+// 2016-2017-2018
+//The correction is applied by subtracting from the px or py value, 
+//respectively.
+//
+//For instance:
+//  xyCorrMet.SetPx(METsT1XYCor.px() - metXcorr);
+//  xyCorrMet.SetPy(METsT1XYCor.py() - metYcorr);
+double MetPhiCorrector::MetPhiCorr(int Era, int npv, bool  runOnData, int metCoord)
+{
+   double corr = 0.0;
 
-    if (f == NULL) cout<<"[MetPhiCorrector]::[Init]::[ERROR] Unable to open file "<<fileName<<endl;
+   if (Era == 2016 && runOnData == true && metCoord == 0)
+   {
+     corr = 1.01096e+00 + 1.42312e-01 * npv;
+   }
+   else if (Era == 2016 && runOnData == true && metCoord == 1)
+   {
+     corr = 2.89820e-01 + 4.64643e-02 * npv;
+   }
+   else if (Era == 2016 && runOnData == false && metCoord == 0)
+   {
+     corr = -1.11824e-01 - 2.19837e-01 * npv;
+   }
+   else if (Era == 2016 && runOnData == false && metCoord == 1)
+   {
+     corr = 8.03025e-01 - 3.89610e-02 * npv;
+   }
+   else if (Era == 2017 && runOnData == true && metCoord == 0)
+   {
+     corr = 3.15705e-01 - 1.77717e-01 * npv;
+   }
+   else if (Era == 2017 && runOnData == true && metCoord == 1)
+   {
+     corr = 4.48257e-01 + 2.36009e-01 * npv;
+   }
+   else if (Era == 2017 && runOnData == false && metCoord == 0)
+   {
+     corr = 3.61535e-01 - 2.30149e-01 * npv;
+   }
+   else if (Era == 2017 && runOnData == false && metCoord == 1)
+   {
+     corr = -1.96483e-01 + 1.81803e-01 * npv;
+   }
+   else if (Era == 2018 && runOnData == true && metCoord == 0)
+   {
+     corr = 1.09883e+00 + 4.23750e-01 * npv;
+   }
+   else if (Era == 2018 && runOnData == true && metCoord == 1)
+   {
+     corr = -1.14832e+00 + 1.14040e-01 * npv;
+   }
+   else if (Era == 2018 && runOnData == false && metCoord == 0)
+   {
+     corr = -1.60410e-01 + 3.41247e-01 * npv;
+   }
+   else if (Era == 2018 && runOnData == false && metCoord == 1)
+   {
+     corr = 2.05019e-01 + 1.37506e-01 * npv;
+   }
+   else
+   {
+     printf("WRONG CHOICE in METphiCorr!\n");
+   }
 
-    getFunction( f, metPhiPxMC , "fx_mc" ) ;
-    getFunction( f, metPhiPyMC , "fy_mc" ) ;
-    getFunction( f, metPhiPxDATA , "fx_data" ) ;
-    getFunction( f, metPhiPyDATA , "fy_data" ) ;
-
-    #ifdef VERBOSE
-    if (VERBOSE >0 )  cout <<"[MetPhiCorrector]::[Init]::[INFO]Closing file "<<endl;
-    #endif 
-    f->Close();
-   
-    if ( metPhiPxMC and metPhiPyMC and metPhiPxDATA and metPhiPyDATA) 
-        isInit_=true;
-
-    return ;
+   return corr;
 }
 
 int MetPhiCorrector::correct(Event *e)
 {
-    if (not isInit_) Init();
-
-    if( not isInit_ ) return 1;
-
     //GetMet(); // I need write access to met
+    
     float px = GetMet(e).GetP4().Px();
     float py = GetMet(e).GetP4().Py();
+
+    float corrx=0.,corry=0.;
     
-    if ( e->IsRealData() )
-    {
-        px -= metPhiPxDATA -> Eval( e->Npv() ) ;
-        py -= metPhiPyDATA -> Eval( e->Npv() ) ;
-    }
-    else {
-        px -= metPhiPxMC -> Eval( e->Npv() ) ;
-        py -= metPhiPyMC -> Eval( e->Npv() ) ;
-    }
-    TLorentzVector newmet(px,py,0,0);
-    //GetMet(e).GetP4().SetXYZT( px,py,0,0);
-    //
+    corrx= MetPhiCorr(year,e->Npv(),e->IsRealData(),0);
+    corry= MetPhiCorr(year,e->Npv(),e->IsRealData(),1);
+
 #ifdef DEBUG
     if(DEBUG>0)cout <<"[MetPhiCorrector]::[correct] Met was "<<e->GetMet().Pt() <<" UNCOR="<<e->GetMet().PtUncorr()<<endl;
 #endif
    
-    SetP4(GetMet(e), newmet);
+    SetPx(GetMet(e),px-corrx);
+    SetPy(GetMet(e),py-corry);
 
 #ifdef DEBUG
     if(DEBUG>0)cout <<"[MetPhiCorrector]::[correct] Met is "<<e->GetMet().Pt() <<" UNCOR="<<e->GetMet().PtUncorr()<<endl;
 #endif
     return 0;
 }
-
 
 // Local Variables:
 // mode:c++

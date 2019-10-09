@@ -22,7 +22,7 @@
 #include "interface/CutSelector.hpp"
 #include "interface/Davismt2.hpp"
 #include "interface/Dumper.hpp"
-#include "interface/EnergyScaleCorrection_class.hpp"
+#include "interface/EnergyScaleCorrection.hpp"
 #include "interface/Event.hpp"
 #include "interface/Fitter.hpp"
 #include "interface/BackgroundFitter.hpp"

@@ -21,6 +21,8 @@ addConfig=HmumuAnalysis|AddLabel('ZZ')
 
 addConfig=HmumuAnalysis|AddLabel('EWK_LLJJ')
 
+addConfig=HmumuAnalysis|AddLabel('GluGluToContinToZZ')
+
 ## need to add 125, in order to have different masses
 addConfig=HmumuAnalysis|AddLabel('GluGluH_HToMuMu_M125_13TeV_powheg_pythia8')
 addConfig=HmumuAnalysis|AddLabel('GluGlu_HToMuMu_M125_13TeV_powheg_pythia8')
@@ -87,9 +89,12 @@ addConfig=HmumuAnalysis|AddLabel('VBFHHTo2B2Mu_CV_1_C2V_1_C3_1')
 addConfig=HmumuAnalysis|AddLabel('GluGluToHHTo2B2M_node_4')
 
 addConfig=HmumuAnalysis|unblind=1
-#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
-#addConfig=HmumuAnalysis|catType=2
-addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_mit_2018_May26_v0.xml')
-addConfig=HmumuAnalysis|catType=4
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
+addConfig=HmumuAnalysis|catType=3
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_mit_2018_May26_v0.xml')
+#addConfig=HmumuAnalysis|catType=4
 addConfig=HmumuAnalysis|doScikit=0
+
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.01jet.xml')
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.2jet.xml')
 

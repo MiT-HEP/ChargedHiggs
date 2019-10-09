@@ -4,23 +4,30 @@
 ##### include=dat/config.txt
 ##### Files=....,....,...
 
-sub=tag|v1.4
-sub=amarini|/store/user/amarini/Nero
-sub=klute|/store/user/klute/Nero
-
-include=dat/config.dat
+include=dat/config.2018.moriond.dat
 
 ################
 ### DATASETS ###
 ################
 
 Files=
-include=dat/catalog/2015/dy.dat
-#addfiles=%(amarini)s/%(tag)s/SingleMuon
+#include=dat/catalog/2019.lhcp/year2017/dy_amcatnlo.dat
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.5
+addfiles=%(amariniHmm)s/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8
+### DATA
+include=dat/catalog/2019.lhcp/year2017/singleMuon.dat
 
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
 #
+
+EntryPerSecond=10
+MCDB=aux/mcdb.Hmumu.2019.dat
+pileup=aux/pileup.2017.ReReco.root
+
+Correct=RochesterCorrections
+config=RochesterCorrections|year="2017",allow_reset=1
+
 
 Output=DY.root
 ## Preselection:1,Preselection:2
@@ -31,8 +38,10 @@ Analysis=JsonAnalysis,DYAnalysis
 # Smearer
 #Smear=JER,JES,@SmearBase
 #Smear=NONE,JER,JES
-Smear=NONE
-Correct=NONE
+#Smear=NONE
+#Smear=NONE,@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1),*[0!50]SmearPdfs(%%d)
+Smear=NONE,@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1),*[0!15]SmearPdfs(%%d)
+#Correct=NONE
 #Correct=MetPhiCorrector
 
 #________________________________________________________________
@@ -45,12 +54,13 @@ Correct=NONE
 #############
 
 config=DYAnalysis|AddLabel('DY')
-addConfig=DYAnalysis|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('QCD'),AddLabel('WJets')
+#addConfig=DYAnalysis|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('QCD'),AddLabel('WJets')
+addConfig=DYAnalysis|year=2017
 
 ############
 ### JSON ###
 ############
 
-include=dat/json.dat
+#include=dat/json.dat
 
 

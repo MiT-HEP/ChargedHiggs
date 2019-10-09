@@ -1,5 +1,5 @@
 import ROOT
-import os,sys
+import os,sys,re
 from glob import glob
 
 ROOT.gStyle.SetOptStat(0)
@@ -10,11 +10,16 @@ cat="catAll"
 
 from array import array
 def GetRGB(color):
-        r=array('f',[0.])
-        g=array('f',[0.])
-        b=array('f',[0.])
-        ROOT.gROOT.GetColor(color).GetRGB(r,g,b);  
-        return ( r[0],g[0],b[0])
+        #r=array('f',[0.])
+        #g=array('f',[0.])
+        #b=array('f',[0.])
+        #ROOT.gROOT.GetColor(color).GetRGB(r,g,b);  
+        #return ( r[0],g[0],b[0])
+        r=ROOT.gROOT.GetColor(color).GetRed()
+        g=ROOT.gROOT.GetColor(color).GetGreen()
+        b=ROOT.gROOT.GetColor(color).GetBlue()
+        print "Returning color",color,ROOT.gROOT.GetColor(color).GetName(),"->",r,g,b
+        return ( r,g,b)
 
 def ChangePalette(num=0):
     white  = GetRGB(ROOT.kWhite);
@@ -56,31 +61,60 @@ def ChangePalette(num=0):
         ROOT.gStyle.SetNumberContours(99);
 
 
+usage='''Usage: 
+    %s catN [asimov] [sub] [plot=gen:xxx:fit:xxx] [fitrange:idx:idx] [genrange:idx:idx] 
+    '''%(sys.argv[0])
+
+for arg in sys.argv:
+    if 'help' in arg: 
+        print usage
+        sys.exit(0)
+
 if len(sys.argv)>1:
    cat=sys.argv[1]
 
 asimov=False
-if len(sys.argv)>2:
-    if sys.argv[2] == 'asimov':
+for arg in sys.argv:
+    if arg == 'asimov':
         asimov =True
         print "-> Setting asimov"
+
 subtract=False
-if len(sys.argv)>2:
-    if sys.argv[2] == 'sub':
+for arg in sys.argv:
+    if arg == 'sub':
         subtract =True
         print "-> Setting subtraction"
 
-c=ROOT.TCanvas("c","c",600,600)
-c.SetTopMargin(0.15)
-c.SetRightMargin(0.15)
-c.SetBottomMargin(0.15)
-c.SetLeftMargin(0.15)
-ChangePalette(3)
+trueMu=1
+for arg in sys.argv:
+    if 'mu=' in arg:
+        trueMu=float(re.sub('mu=','',arg))
+        print "-> Setting true mu=",trueMu
+fitmin=1
+fitmax=14
+for arg in sys.argv:
+    if 'fitrange=' in arg:
+        fitmin=int(re.sub('fitrange=','',arg).split(':')[0])
+        fitmax=int(re.sub('fitrange=','',arg).split(':')[1])+1
+
+genmin=1
+genmax=14
+for arg in sys.argv:
+    if 'genrange=' in arg:
+        genmin=int(re.sub('genrange=','',arg).split(':')[0])
+        genmax=int(re.sub('genrange=','',arg).split(':')[1])+1
+
+
+plot=[]
+for arg in sys.argv:
+    if arg.startswith("plot="): plot.extend(re.sub("plot=","",arg).split(','))
+
+#ChangePalette(1)
 
 h=ROOT.TH2D("bias","bias " + cat,21,0,21,21,0,21)
 
 labels= ["Bern.","BWZGamma","BWZRed","SExp","fewz_1j","fewz_2j","fewz_full","BWZR*pol4","BWZR*pol3","BWZ*pol2","BWZ*pol1",
-        "BWZ","13","14","15","16","17","18","19","Default","21"
+        "BWZ","DY","14","15","16","17","18","19","Default","21"
         ]
 for b in range(0,21):
     label = labels[b]
@@ -92,18 +126,14 @@ h.GetYaxis().SetTitle("gen")
 h.GetXaxis().SetTitleOffset(1.5)
 h.GetYaxis().SetTitleOffset(2.0)
 
-old=False
 prefix="fitDiagnostics"
 var="r"
-if old:
-    prefix="mlfits"
-    var ="mu"
 
-for gen in range(1,12):
+for gen in range(genmin,genmax):
 #for gen in range(0,3):
    #for fit in range(10,11):
-   fitmin=1
-   fitmax=12
+   #fitmin=1
+   #fitmax=14
    if asimov:
        fitmin=20
        fitmax=21
@@ -112,17 +142,32 @@ for gen in range(1,12):
       #print "using scheme '"+"*/"+cat+"/mlfit_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit)+"'"
       #higgsCombine_catAll_mu_1_gen_4_fit_default.MaxLikelihoodFit.mH125.123456.root 
       if fit !=20 :
-        files = glob("*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit))
-        print "* using scheme:","*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_%d.root"%(gen,fit)
+        files = glob("*/"+cat+"/"+prefix+"_" + cat + "_mu_%.0f_gen_%d_fit_%d*.root"%(trueMu,gen,fit))
+        print "* using scheme:","*/"+cat+"/"+prefix+"_" + cat + "_mu_%.0f_gen_%d_fit_%d*.root"%(trueMu,gen,fit)
       else:
-        files = glob("*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_default.root"%(gen))
-        print "* using scheme:","*/"+cat+"/"+prefix+"_" + cat + "_mu_1_gen_%d_fit_default.root"%(gen)
+        files = glob("*/"+cat+"/"+prefix+"_" + cat + "_mu_%.0f_gen_%d_fit_default.root"%(trueMu,gen))
+        print "* using scheme:","*/"+cat+"/"+prefix+"_" + cat + "_mu_%.0f_gen_%d_fit_default.root"%(trueMu,gen)
       nfiles=len(files)
       for f in files:
           #print "-> Adding file",f
           t.Add(f)
+      print "* Search for average error"
+      t.Draw( "("+var+"HiErr + " + var+"LoErr )/2." ,"fit_status==0 && "+var+"HiErr>0 && "+var+"LoErr>0","goff")
+      n=t.GetSelectedRows()
+      l=[]
+      for i in range(0,n):
+      	l.append(t.GetV1()[i])
+      l=[ x for x in sorted(l) if x>1e-3 and x<9. ] ## 20/2
+      n=len(l)
+      try:
+        mErr="%.3f"%l[n/2]
+      except:
+        mErr="1.0"
+      print "-> median error is ",mErr
+
       print "* Adding ",nfiles,"trees for gen=",gen,"fit=",fit
-      t.Draw("("+var+"-1)*2/("+var+"HiErr+"+var+"LoErr)","fit_status==0 && "+var+"HiErr>0 && "+var+"LoErr>0","goff")
+      #t.Draw("("+var+"-%f)*2/("%trueMu+var+"HiErr+"+var+"LoErr)","fit_status==0 && "+var+"HiErr>0 && "+var+"LoErr>0","goff")
+      t.Draw("("+var+"-%f)*2/"%trueMu+"(("+var+"HiErr+"+var+"LoErr)*( ("+var+"HiErr+"+var+"LoErr< 2*"+mErr+") && ("+var+"HiErr+"+var+"LoErr) > 0.5*"+mErr+") + "+mErr+" * ( ("+var+"HiErr+"+var+"LoErr) >= 2*"+mErr+" || ("+var+"HiErr+"+var+"LoErr) <= 0.5*"+mErr+"))", "fit_status==0 && "+var+"HiErr>0 && "+var+"LoErr>0","goff")
       #t.Draw("2*(mu-1)/(muHiErr+muLoErr)","","goff")
       n=t.GetSelectedRows()
       print "      nevents=",n
@@ -141,11 +186,33 @@ for gen in range(1,12):
       h.SetBinContent(fit+1,gen+1, l[n/2])
       print "gen=",gen,"fit=",fit,"median=",l[n/2],"n=",n
       #t.Delete()
+      if plot != []:
+          s="gen:%d:fit:%d"%(gen,fit)
+          #'gen:1:fit:1'
+          toplot=False
+          for x in plot:
+              if re.match(x,s):toplot=True
+          if toplot:
+            cplot=ROOT.TCanvas("cplot","cplot",600,600)
+            hTmp=ROOT.TH1D("hist","bias distribution",1000, -5,5)
+            for x in l: hTmp.Fill(x)
+            hTmp.Draw("HIST")
+            txt=ROOT.TLatex()
+            txt.SetNDC()
+            txt.SetTextAlign(13)
+            txt.SetTextFont(42)
+            txt.SetTextSize(0.03)
+            txt.DrawLatex(.12,.89,"Median=%.3f"%l[n/2])
+            txt.DrawLatex(.12,.89-0.04,"Mean=%.3f"%h.GetMean())
+            txt.DrawLatex(.12,.89-0.04*2,"RMS=%.3f"%h.GetRMS())
+            txt.DrawLatex(.12,.89-0.04*3,"N=%d n(in -20,20)=%d"%(oldN,n))
+            cplot.SaveAs("dist_gen%d_fit%d_"%(gen,fit)+cat+("_sub" if subtract else "")+".pdf")
 
 if subtract:
-    for i in range(1,12):
+    ### with fitmin and fitmax/genmin/genmax??
+    for i in range(1,14):
         d = h.GetBinContent(i+1,i+1)
-        for j in range(1,12):
+        for j in range(1,14):
             cx=h.GetBinContent(j+1,i+1)
             h.SetBinContent(j+1,i+1,cx-d)
 
@@ -157,12 +224,20 @@ for i in range(0,h.GetNbinsX()):
         if h.GetBinContent(i+1,j+1) >= 1:
             h2.SetBinContent(i+1,j+1,.99999)
 
+c=ROOT.TCanvas("c","c",600,600)
+c.SetTopMargin(0.15)
+c.SetRightMargin(0.15)
+c.SetBottomMargin(0.15)
+c.SetLeftMargin(0.15)
+ChangePalette(3)
+c.cd()
+
 h2.Draw("COLZ")
 h.Draw("TEXT SAME")
 h2.GetZaxis().SetRangeUser(-1,1)
 h.GetZaxis().SetRangeUser(-1,1)
-h2.GetXaxis().SetRangeUser(1,12)
-h2.GetYaxis().SetRangeUser(1,12)
+h2.GetXaxis().SetRangeUser(1,13)
+h2.GetYaxis().SetRangeUser(1,13)
 if asimov:
     h2.GetXaxis().SetRangeUser(20,21)
 h2.Draw("AXIS X+ Y+ SAME")
@@ -171,4 +246,5 @@ c.Update()
 raw_input("ok?")
 c.SaveAs("bias_"+cat+("_sub" if subtract else "")+".pdf")
 c.SaveAs("bias_"+cat+("_sub" if subtract else "")+".png")
+c.SaveAs("bias_"+cat+("_sub" if subtract else "")+".root")
 
