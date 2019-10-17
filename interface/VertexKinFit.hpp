@@ -13,7 +13,6 @@ class VertexKinfit : public CorrectorBase{
 };
 
 
-#include "interface/EnergyScaleCorrection.hpp"
 
 class FSRRecovery : public CorrectorBase{
 	public:
@@ -27,7 +26,6 @@ class FSRRecovery : public CorrectorBase{
         bool egmcorrections{false};
         int year{2017};
     protected:
-		std::unique_ptr<EnergyScaleCorrection> corrector_;
 };
 
 

@@ -1,5 +1,5 @@
 #include "interface/AnalysisChargedHiggsTopBottom.hpp"
-#include "Python.h"
+//#include "Python.h"
 
 #ifdef SCIKIT_TIMING
     #warning SCIKIT_TIMING dont use for submission
@@ -1003,21 +1003,21 @@ void ChargedHiggsTopBottom::InitTmva() {
 
 void ChargedHiggsTopBottom::InitScikit(){
 
-    py . reset(new TPython);
-    py -> Exec("import keras");
-    py -> Exec("import numpy as np");
-    py -> Exec("from sklearn.externals import joblib ");
-    if(do1lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_1l_keras_trained_model.h5')");
-    if(do2lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_2l_keras_trained_model.h5')");
+    //py . reset(new TPython);
+    //py -> Exec("import keras");
+    //py -> Exec("import numpy as np");
+    //py -> Exec("from sklearn.externals import joblib ");
+    //if(do1lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_1l_keras_trained_model.h5')");
+    //if(do2lAnalysis) py -> Exec("kmodel=keras.models.load_model('aux/tb_trainings/tb_2l_keras_trained_model.h5')");
 
-    py -> Exec("kmodel.summary()");
+    //py -> Exec("kmodel.summary()");
 
-    PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
-    PyObject* pymain = PyImport_ImportModule("__main__");
+    //PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
+    //PyObject* pymain = PyImport_ImportModule("__main__");
 
-    PyModule_AddObject(pymain, "x", pyx);
+    //PyModule_AddObject(pymain, "x", pyx);
 
-    Py_DECREF(pymain);
+    //Py_DECREF(pymain);
 
 }
 

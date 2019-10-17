@@ -1,7 +1,7 @@
 #include "interface/AnalysisHmumu.hpp"
 #include "TRandom3.h"
 #include "TStopwatch.h"
-#include "Python.h"
+#include "TPython.h"
 #include <algorithm>
 #include "interface/GeneralFunctions.hpp"
 
@@ -864,14 +864,15 @@ void HmumuAnalysis::AddSpectator( string name, char type){
 }//end add variable
 
 void HmumuAnalysis::InitScikit(){
-
+    Log(__FUNCTION__,"ERROR","Scikit unimplemented in CC7");
+    throw abortException(); // unimplemented in CC7
     //discr.push_back("BTDG");
     //discr.push_back("SGD");
     //discr.push_back("SVR");
     //discr.push_back("MLP");
-    discr.push_back("KERAS");
+    //discr.push_back("KERAS");
 
-    py . reset(new TPython);
+    //py . reset(new TPython);
     //py -> Exec("from sklearn.ensemble import RandomForestClassifier");
     //py -> Exec("from sklearn.svm import SVC");
     //py -> Exec("from sklearn.svm import SVR");
@@ -903,17 +904,17 @@ void HmumuAnalysis::InitScikit(){
     //py ->Exec("par=joblib.load('aux/hmm/PAR.pkl')");
     //py ->Exec("sgd=joblib.load('aux/hmm/SGD.pkl')");
     //py ->Exec("bdtg=joblib.load('aux/hmm/BDTG.pkl')");
-    py ->Exec("kmodel=keras.models.load_model('aux/hmm/keras.hd')");
+    //py ->Exec("kmodel=keras.models.load_model('aux/hmm/keras.hd')");
     //py ->Exec("ridge=joblib.load('aux/hmm/Ridge.pkl')");
     //py ->Exec("en=joblib.load('aux/hmm/EN.pkl')");
 
     // Make sure we can use x[...] inside
-    PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
-    PyObject* pymain = PyImport_ImportModule("__main__");
+    //PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
+    //PyObject* pymain = PyImport_ImportModule("__main__");
 
-    PyModule_AddObject(pymain, "x", pyx);
+    //PyModule_AddObject(pymain, "x", pyx);
 
-    Py_DECREF(pymain);
+    //Py_DECREF(pymain);
 }
 
 void HmumuAnalysis::InitTmva(int pos){

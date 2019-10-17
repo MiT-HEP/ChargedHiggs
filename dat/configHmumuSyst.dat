@@ -4,7 +4,7 @@ include=dat/configHmumu.dat
 Files=
 ## Signal
 #include=dat/catalog/2017.moriond/hmm.dat
-include=dat/catalog/2019.lhcp/year2017/hmm.dat
+include=dat/catalog/2019.fall/year2017/hmm.dat
 
 
 #Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag")

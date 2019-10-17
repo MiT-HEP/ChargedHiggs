@@ -123,6 +123,7 @@ int Jet::PassEENoise()const {
     return 1;
 }
 
+// HEM -3.0 < eta < -1.3, -1.57 < phi < -0.87) for Run2018C and D
 
 int Jet::IsJetExceptValidity() const { 
     if( std::isnan(Pt()) ) return 0; 

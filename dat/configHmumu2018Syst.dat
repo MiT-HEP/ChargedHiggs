@@ -1,0 +1,40 @@
+include=dat/configHmumu2018.dat
+
+#only signal!!!
+Files=
+## Signal
+#include=dat/catalog/2017.moriond/hmm.dat
+include=dat/catalog/2019.fall/year2018/hmm.dat
+
+
+#Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag")
+#Smear=NONE,JES,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag"),JER,@SmearPu
+
+#Smear=NONE,*[-133!0]SmearKaMuCa(%%d),*[1!135]SmearKaMuCa(%%d)
+#Smear=NONE,*[1!9]SmearWG1(%%d)
+
+### 2017
+#Smear=NONE,*[1!10]SmearWG1(%%d)
+
+##
+#Smear = NONE,*[1!9]SmearWG1(%%d),JER,PU
+#,@SmearBjets(1!0!"btag"),@SmearBjets(0!1!"btag")
+
+#Smear=NONE,@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1),*[0!50]SmearPdfs(%%d)
+#Smear=NONE,@SmearSF("muTRG_runGH"!"muTRG_runGH"),@SmearSF("muTRG_runBCDEF"!"muTRG_runBCDEF"),@SmearSF("muID_runBCDEF"!"muID_runBCDEF"),@SmearSF("muID_runGH"!"muID_runGH"),@SmearSF("muISO_runBCDEF"!"muISOloose_runBCDEF"),@SmearSF("muISO_runGH"!"muISOloose_runGH")
+#
+################## BJET #########
+#and THEORY
+#num of variation, csvformat, name, actually change jes
+#Smear=NONE,PU,*[1!10]SmearJesAndCSV(%%d!1!"bdeep2017"!0),JER,*[1!9]SmearWG1(%%d),@SmearScales("ScaleR"!1!0),@SmearScales("ScaleF"!0!1),@SmearScales("ScaleRF"!1!1)
+
+######################################## JES ###############################################
+Smear=NONE,@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"AbsoluteStat"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"AbsoluteScale"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"AbsoluteMPFBias"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"Fragmentation"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"SinglePionECAL"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"FlavorQCD"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"TimePtEta"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"RelativeJEREC1"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"RelativeJEREC2"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"RelativeJERHF"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"RelativePtBB"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"RelativePtEC1"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"RelativePtEC2"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"RelativePtHF"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"RelativeBal"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"RelativeFSR"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"PileUpDataMC"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"PileUpPtRef"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"PileUpPtBB"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"PileUpPtEC1"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"PileUpPtEC2"),@SmearJesSource("aux/JEC/Autumn18_V8_MC_UncertaintySources_AK8PFchs.txt"!"PileUpPtHF")
+
+#"AbsoluteStat" "AbsoluteScale" "AbsoluteMPFBias" "Fragmentation" "SinglePionECAL" "FlavorQCD" "TimePtEta" "RelativeJEREC1" "RelativeJEREC2" "RelativeJERHF" "RelativePtBB" "RelativePtEC1" "RelativePtEC2" "RelativePtHF" "RelativeBal" "RelativeFSR" "PileUpDataMC" "PileUpPtRef" "PileUpPtBB" "PileUpPtEC1" "PileUpPtEC2" "PileUpPtHF"
+#python script/dumpSystHmm.py  -i /eos/user/a/amarini/Hmumu/fwk/2019_06_05_Hmm2017_BdtUCSD_kinfit_fsrreco_opt29_Mjj400_JES/2019_06_05_Hmm2017_BdtUCSD_kinfit_fsrreco_opt29_Mjj400_JES.root --outname=cms_AbsoluteStat --hmm hmmExCatMjj --syst JES_AbsoluteStat
+#######################################################################################
+
+## be less peaky, given the n. of systs
+#Final=true
+EntryPerSecond=10

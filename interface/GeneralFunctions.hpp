@@ -36,7 +36,7 @@ namespace ChargedHiggs{
     template <typename T>
     inline float mt( const T& obj1, const T& obj2)
     {
-        float constexpr pi = float(std::acos(-1));
+        float constexpr pi = 3.141592653589793238462643383279502884197169399375105820974;
         const float m1 = obj1.M();
         const float pt1= obj1.Pt();
         const float m2 = obj2.M();

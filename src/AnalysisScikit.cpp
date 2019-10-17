@@ -1,7 +1,7 @@
 #include "interface/AnalysisScikit.hpp"
 #include "TROOT.h"
 #include "TRandom3.h"
-#include "Python.h"
+#include "TPython.h"
 
 void SciKitAnalysis::Init(){
     py . reset(new TPython);
@@ -16,16 +16,16 @@ void SciKitAnalysis::Init(){
     py -> Exec("clf=joblib.load('test/scikit/filename.pkl') ");
     py -> Exec("from array import array");
 
-    PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
+    //PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
 
-    PyObject* pymain = PyImport_ImportModule("__main__");
+    //PyObject* pymain = PyImport_ImportModule("__main__");
 
-    cout <<" pymain="<<long(pymain)<<endl;
-    cout <<" pyx="<<long(pyx)<<endl;
+    //cout <<" pymain="<<long(pymain)<<endl;
+    //cout <<" pyx="<<long(pyx)<<endl;
 
-    PyModule_AddObject(pymain, "x", pyx);
+    //PyModule_AddObject(pymain, "x", pyx);
 
-    Py_DECREF(pymain);
+    //Py_DECREF(pymain);
     //py ->Bind (x1,"x1");
     //py ->Bind (x2,"x2");
 }
