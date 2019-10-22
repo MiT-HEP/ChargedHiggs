@@ -34,11 +34,13 @@ pileup=aux/pileup.v3.6.year2016.root
 #Correct=VertexKinfit,RochesterCorrections
 #config=RochesterCorrections|year="2016",allow_reset=0
 
-Correct=MetPhiCorrector,VertexKinfit,RochesterCorrections,FSRRecovery
+#Correct=MetPhiCorrector,VertexKinfit,RochesterCorrections,FSRRecovery,GeoFit
+Correct=MetPhiCorrector,RochesterCorrections,FSRRecovery,GeoFit
 config=MetPhiCorrector|year=2016
-config=VertexKinfit|allow_reset=1
-config=RochesterCorrections|year="2016",allow_reset=0
+#config=VertexKinfit|allow_reset=1
+config=RochesterCorrections|year="2016",allow_reset=1
 config=FSRRecovery|allow_reset=0
+config=GeoFit|year=2016,allow_reset=0
 
 ####
 addConfig=HmumuAnalysis|year=2016

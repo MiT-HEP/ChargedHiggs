@@ -217,16 +217,16 @@ class SmearWG1 : virtual public SmearBase
                         if(type==SF_WG1::THU_2017) name_="WG1TopMass"; 
                         break;
                         }
-                case 10: name_="WG1_VBF_TOT";
-                case 11: name_="WG1_VBF_PTH200";
-                case 12: name_="WG1_VBF_MJJ60";
-                case 13: name_="WG1_VBF_MJJ120";
-                case 14: name_="WG1_VBF_MJJ350";
-                case 15: name_="WG1_VBF_MJJ700";
-                case 16: name_="WG1_VBF_MJJ1000";
-                case 17: name_="WG1_VBF_MJJ1500";
-                case 18: name_="WG1_VBF_25";
-                case 19: name_="WG1_VBF_JET01";
+                case 10: name_="WG1_VBF_TOT"; break;
+                case 11: name_="WG1_VBF_PTH200"; break;
+                case 12: name_="WG1_VBF_MJJ60"; break;
+                case 13: name_="WG1_VBF_MJJ120"; break;
+                case 14: name_="WG1_VBF_MJJ350"; break;
+                case 15: name_="WG1_VBF_MJJ700"; break;
+                case 16: name_="WG1_VBF_MJJ1000"; break;
+                case 17: name_="WG1_VBF_MJJ1500"; break;
+                case 18: name_="WG1_VBF_25"; break;
+                case 19: name_="WG1_VBF_JET01"; break;
                 default: name_="WG1NoSyst"; break; // only  7 uncertainties
             };
         }

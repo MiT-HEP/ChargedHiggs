@@ -124,6 +124,10 @@ int Jet::PassEENoise()const {
 }
 
 // HEM -3.0 < eta < -1.3, -1.57 < phi < -0.87) for Run2018C and D
+// 20 % for jets with -1.57 <phi< -0.87 and -2.5<eta<-1.3
+// 35 % for jets with -1.57 <phi< -0.87 and -3.0<eta<-2.5
+// (all jets with pt>15 GeV passing the tight ID -in order to reject 
+// muons/electrons-, and propagate this to the MET as well)
 
 int Jet::IsJetExceptValidity() const { 
     if( std::isnan(Pt()) ) return 0; 

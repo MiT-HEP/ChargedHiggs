@@ -71,6 +71,7 @@
 #include "interface/RooBinnedUncertainties.hpp"
 #include "interface/UnfirableFilter.hpp"
 #include "interface/HmmLikelihood.hpp"
+#include "interface/GeoFit.hpp"
 
 // put template stuff here, MyClass<T> myclass;
 //nampspace{

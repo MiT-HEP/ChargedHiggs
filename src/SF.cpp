@@ -561,7 +561,12 @@ double SF_WG1::get() {
    else if (nuisance <20){ // QQ2HQQ
        // 10 nuisances from 0-9. remove a 10 shift.
        if (STXS_Stage1p1 /100 != 2 ) return 1.; // non ggF
-        Log(__FUNCTION__,"DEBUG",Form("VBF UNCER",int(nuisance-10),syst,STXS_Stage1p1));
+
+       //{
+       //    Log(__FUNCTION__,"DEBUG",Form("VBF UNCER %d %d %d",int(nuisance-10),syst,STXS_Stage1p1));
+       //    Log(__FUNCTION__,"DEBUG",Form(" -> Value=%.3f",LHCHXSWG::vbf_uncert_stage_1_1(nuisance-10,STXS_Stage1p1,syst)));
+       //}
+
        return LHCHXSWG::vbf_uncert_stage_1_1(nuisance-10,STXS_Stage1p1,syst);
    }
 }
