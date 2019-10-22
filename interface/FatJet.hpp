@@ -95,7 +95,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float SDTau2() const { return sdtau2 ; }
     inline float SDTau3() const { return sdtau3 ; }
 
-    inline float SDMass() const { return (1+0.05*sdmasssyst)*softdropMass ; }
+    inline float SDMass() const { return (1+0.023*sdmasssyst)*softdropMass ; }
     //    inline float SDMass() const { return softdropMass ; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
 

@@ -34,6 +34,9 @@ public:
     void BookEnCorr(string l, string category, string phasespace);
     void Preselection();
 
+    float GetGenPtAK8(Event*e, FatJet* fjorg);
+    float GetGenPtAK4(Event*e, Jet* jorg);
+
     // function with various plots
     void jetPlot(Event*e, string label, string category, string systname, string jetname);
     void fatjetPlot(Event*e, string label, string category, string systname, string phasespace, bool Mirror);
@@ -100,6 +103,7 @@ private:
     bool doPileUp = 0;
     bool dotemp = 0;    //do fat_pT_nsub correlation
     bool dohadflavor = 0;
+    bool doTestAsy = 0;
 
     bool doHTlimit = 1;
 
@@ -142,6 +146,7 @@ private:
     int numFatA=0;
     int numFatB=0;
     int numtop=0;
+    double leadingFatPt = 0;
     FatJet* topJet=NULL;    //tb
     FatJet* wJet=NULL;      //wbb
     FatJet* wJetwbj=NULL;   //wbj

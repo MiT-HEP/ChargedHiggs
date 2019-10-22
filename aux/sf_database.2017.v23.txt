@@ -115,6 +115,15 @@ include aux/QCDHTtopRw.txt
 include aux/QCDHTWRw.txt
 ##include aux/QCDHTRw.txt
 
+
+######################
+## ttb 1.25/ttc 0.7 ##
+######################
+include aux/ttbScale.txt
+include aux/ttcScale.txt
+
+
+
 #######################
 ### top reweighting ###
 ### https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopSystematics#pt_top_Reweighting
