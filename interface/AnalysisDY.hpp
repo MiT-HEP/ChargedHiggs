@@ -13,21 +13,23 @@ class DYAnalysis: virtual public AnalysisBase
         void Init() override;
         int analyze(Event*,string systname) override;
         int analyzeMM(Event*,string systname);
-        int analyzeEE(Event*,string systname);
-        int analyzeEM(Event*,string systname);
-        int analyzeLLL(Event*,string systname);
+        //int analyzeEE(Event*,string systname);
+        //int analyzeEM(Event*,string systname);
+        //int analyzeLLL(Event*,string systname);
         const string name() const override {return "DYAnalysis";}
         void SetLeptonCuts(Lepton *l) override ; 
+        void SetJetCuts(Jet *j) override ; 
 
+
+        int year=2017; // master switch for year configuration
     private:
-        CutSelector cut;
 
-        enum CutFlow{ Total=0, 
-            Leptons,
-            Trigger,
-            Mass,
-            MaxCut // do not remove
-        };
+        void ApplyMuonSF(Event*,string);
+        Lepton*mu0 {NULL};
+        Lepton*mu1 {NULL};
+
+        Jet *j0 {NULL};
+        Jet *j1 {NULL};
 };
 
 

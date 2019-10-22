@@ -11,6 +11,8 @@
 #include <cmath>
 #include <TLorentzVector.h>
 //#include "interface/Davismt2.hpp"
+//
+class Lepton;
 
 namespace ChargedHiggs{
 
@@ -34,7 +36,7 @@ namespace ChargedHiggs{
     template <typename T>
     inline float mt( const T& obj1, const T& obj2)
     {
-        float constexpr pi = float(std::acos(-1));
+        float constexpr pi = 3.141592653589793238462643383279502884197169399375105820974;
         const float m1 = obj1.M();
         const float pt1= obj1.Pt();
         const float m2 = obj2.M();
@@ -51,6 +53,10 @@ namespace ChargedHiggs{
     double CosThetaCS(const TLorentzVector *v1, const TLorentzVector*v2, float sqrtS=13) ; // sqrtS is in TeV
     double PhiCS( const TLorentzVector *v1, const TLorentzVector *v2,float sqrtS=13);
     double CosThetaStar(const TLorentzVector *v1, const TLorentzVector*v2) ;
+
+    double CosThetaCSPos(Lepton*a, Lepton*b);//{ if (a->Charge() > 0) return CosThetaCS(&a->GetP4(),&b->GetP4()) ; else return CosThetaCS(&b->GetP4(),&a->GetP4());}
+    double PhiCSPos(Lepton*a, Lepton*b);//{ if (a->Charge() > 0) return PhiCS(&a->GetP4(),&b->GetP4()) ; else return PhiCS(&b->GetP4(),&a->GetP4());}
+
 
     constexpr float Mw = 80.385;
     constexpr float Mh = 125.;

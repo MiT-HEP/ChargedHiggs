@@ -63,6 +63,21 @@ mu_id_2018 th2f  aux/mu/2018/EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID.ro
 prefire2017 th2f aux/l1prefire/L1prefiring_jetempt_2017BtoF.root:L1prefiring_jetempt_2017BtoF
 prefire2016 th2f aux/l1prefire/L1prefiring_jetempt_2016BtoH.root:L1prefiring_jetempt_2016BtoH
 
+###############
+## Jet PU ID ##
+###############
+
+#jetpuid2016 th2f aux/JetPUID_effcyandSF.root:SFrealjets_L_2016
+jetpuid_real_2016 th2f aux/JetPUID_effcyandSF.root effrealjets_data_L_2016 effrealjets_mc_L_2016
+jetpuid_pu_2016 th2f aux/JetPUID_effcyandSF.root effpujets_data_L_2016 effpujets_mc_L_2016
+
+jetpuid_real_2017 th2f aux/JetPUID_effcyandSF.root effrealjets_data_L_2017 effrealjets_mc_L_2017
+jetpuid_pu_2017 th2f aux/JetPUID_effcyandSF.root effpujets_data_L_2017 effpujets_mc_L_2017
+
+jetpuid_real_2018 th2f aux/JetPUID_effcyandSF.root effrealjets_data_L_2018 effrealjets_mc_L_2018
+jetpuid_pu_2018 th2f aux/JetPUID_effcyandSF.root effpujets_data_L_2018 effpujets_mc_L_2018
+
+
 ################
 ##   WG1 Unc  ##
 ################
@@ -107,6 +122,15 @@ wreweight tf1 1 0
 ########################
 ## Tau Triggertrigger ##
 ########################
+
+####################
+## NVT REWEIGHT   ##
+####################
+
+# from 0-60
+nvtx2016 tf1 1.2085+0.0268937*x-0.00237406*x*x+1.98438e-06*x*x*x+1.15459e-06*TMath::Power(x,4)-5.92703e-09*TMath::Power(x,5) 0.
+nvtx2017 tf1 1.44456-0.148486*x+0.0119359*x*x-0.000387874*x*x*x+5.45264e-06*TMath::Power(x,4)-2.63655e-08*TMath::Power(x,5) 0.
+nvtx2018 tf1 0.812887+0.0136629*x-0.000938635*x*x+3.59058e-05*x*x*x-1.16732e-06*TMath::Power(x,4)+2.11019e-08*TMath::Power(x,5) 0.
 
 ##################################
 ## MET TAU TRIGGER EFFICIENCIES ## (DATA ONLY, MC = 1)

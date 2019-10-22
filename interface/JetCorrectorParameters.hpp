@@ -8,11 +8,15 @@
 #define JetCorrectorParameters_h
 
 //#include "CondFormats/Serialization/interface/Serializable.h"
+//#include "CondFormats/JetMETObjects/interface/Utilities.h"
 
 #include <string>
 #include <vector>
+#include <tuple>
 #include <algorithm>
+#include <functional>
 #include <iostream>
+#include <memory>
 //#include "FWCore/Utilities/interface/Exception.h"
 //#include "FWCore/MessageLogger/interface/MessageLogger.h"
 
@@ -60,13 +64,21 @@ class JetCorrectorParameters
         Record(unsigned fNvar, const std::vector<float>& fXMin, const std::vector<float>& fXMax, const std::vector<float>& fParameters) : mNvar(fNvar),mMin(fXMin),mMax(fXMax),mParameters(fParameters) {}
         Record(const std::string& fLine, unsigned fNvar);
         //-------- Member functions ----------
+        unsigned nVar()                     const {return mNvar;                      }
         float xMin(unsigned fVar)           const {return mMin[fVar];                 }
         float xMax(unsigned fVar)           const {return mMax[fVar];                 }
         float xMiddle(unsigned fVar)        const {return 0.5*(xMin(fVar)+xMax(fVar));}
         float parameter(unsigned fIndex)    const {return mParameters[fIndex];        }
         std::vector<float> parameters()     const {return mParameters;                }
         unsigned nParameters()              const {return mParameters.size();         }
-        int operator< (const Record& other) const {return xMin(0) < other.xMin(0);    }
+        bool operator< (const Record& other) const
+        {
+          if (xMin(0) < other.xMin(0)) return true;
+          if (xMin(0) > other.xMin(0)) return false;
+          if (xMin(1) < other.xMin(1)) return true;
+          if (xMin(1) > other.xMin(1)) return false;
+          return (xMin(2) < other.xMin(2));
+        }
       private:
         //-------- Member variables ----------
         unsigned           mNvar;
@@ -81,19 +93,23 @@ class JetCorrectorParameters
     JetCorrectorParameters() { valid_ = false;}
     JetCorrectorParameters(const std::string& fFile, const std::string& fSection = "");
     JetCorrectorParameters(const JetCorrectorParameters::Definitions& fDefinitions,
-			 const std::vector<JetCorrectorParameters::Record>& fRecords) 
-      : mDefinitions(fDefinitions),mRecords(fRecords) { valid_ = true;}
+                           const std::vector<JetCorrectorParameters::Record>& fRecords) 
+                           : mDefinitions(fDefinitions),mRecords(fRecords) { valid_ = true;}
     //-------- Member functions ----------
     const Record& record(unsigned fBin)                          const {return mRecords[fBin]; }
     const Definitions& definitions()                             const {return mDefinitions;   }
     unsigned size()                                              const {return mRecords.size();}
     unsigned size(unsigned fVar)                                 const;
     int binIndex(const std::vector<float>& fX)                   const;
+    int binIndexN(const std::vector<float>& fX)                  const;
     int neighbourBin(unsigned fIndex, unsigned fVar, bool fNext) const;
     std::vector<float> binCenters(unsigned fVar)                 const;
     void printScreen()                                           const;
     void printFile(const std::string& fFileName)                 const;
     bool isValid() const { return valid_; }
+    void init();
+
+    static const int        MAX_SIZE_DIMENSIONALITY = 3 ;
 
   private:
     //-------- Member variables ----------
@@ -102,8 +118,10 @@ class JetCorrectorParameters
     bool                                        valid_; /// is this a valid set?
 
   //COND_SERIALIZABLE;
+  //std::shared_ptr<JetCorrectorParametersHelper>                              helper ; 
 };
 
+std::ostream& operator<<(std::ostream& out, const JetCorrectorParameters::Record& fBin);
 
 
 class JetCorrectorParametersCollection {
@@ -214,8 +232,20 @@ class JetCorrectorParametersCollection {
   collection_type                        correctionsL5_;
   collection_type                        correctionsL7_;
 
+  collection_type&                       getCorrections()   {return corrections_;}
+  collection_type&                       getCorrectionsL5() {return correctionsL5_;}
+  collection_type&                       getCorrectionsL7() {return correctionsL7_;}
+
+  friend struct                          JetCorrectorParametersInitializeTransients;
 };
 
 
+struct JetCorrectorParametersInitializeTransients {
+  void operator()(JetCorrectorParametersCollection& jcpc) {
+    for (auto & ptype : jcpc.getCorrections())   {ptype.second.init();}
+    for (auto & ptype : jcpc.getCorrectionsL5()) {ptype.second.init();}
+    for (auto & ptype : jcpc.getCorrectionsL7()) {ptype.second.init();}
+  }
+};
 
 #endif

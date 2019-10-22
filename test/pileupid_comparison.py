@@ -4,7 +4,8 @@ import sys,os
 loose="Hmumu/2019_03_22_Hmm2017_LoosePUID/signal_yields.txt"
 medium="Hmumu/2019_03_22_Hmm2017_MediumPUID/signal_yields.txt"
 tight="Hmumu/2019_03_22_Hmm2017_TightPUID/signal_yields.txt"
-noiseveto="Hmumu/2019_03_22_Hmm2017_LoosePUID_EENoise/signal_yields.txt"
+#noiseveto="Hmumu/2019_03_22_Hmm2017_LoosePUID_EENoise/signal_yields.txt"
+noiseveto="Hmumu/2019_04_02_Hmm2017_EENoisePtRawfixed/signal_yields.txt"
 
 def readYields(fname):
     print "-> opening",fname

@@ -1,8 +1,10 @@
 #ifndef SCALE_AND_SMEAR_H
 #define SCALE_AND_SMEAR_H
 
+/*
 #include "interface/Corrector.hpp"
-#include "interface/EnergyScaleCorrection_class.hpp"
+//#include "interface/EnergyScaleCorrection_class.hpp"
+#include "interface/EnergyScaleCorrection.hpp"
 
 #include <memory>
 
@@ -13,9 +15,9 @@ class ScaleAndSmear : public CorrectorBase{
 		void Init() override;
     private:
         //
-		std::unique_ptr<EnergyScaleCorrection_class> corrector_;
+		std::unique_ptr<EnergyScaleCorrection> corrector_;
 };
-
+*/
 
 #endif
 

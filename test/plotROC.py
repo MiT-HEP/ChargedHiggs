@@ -172,13 +172,13 @@ for idx,s in enumerate(opts.file.split(',')):
             else : hBkg.Fill(val,t.weight)
     else:
         selstring="" if opts.selection=="" else " && "+opts.selection
-        t.Draw(v + ">>hSig","weight * (classID==1 %s)"%selstring,"goff") ## 0 = sig
+        t.Draw(v + ">>hSig","weight * xsec * (classID==1 %s)"%selstring,"goff") ## 0 = sig
         t.Draw(v + ">>hBkg","weight * (classID==0 %s)"%selstring,"goff") ## 1 = bkg
         if doLike:
             t0=fIn.Get("dataset/TrainTree")
             hSig0 = hSig.Clone("hSig0")
             hBkg0 = hBkg.Clone("hBkg0")
-            t0.Draw(v + ">>hSig0","weight * (classID==1 %s)"%selstring,"goff") ## 0 = sig
+            t0.Draw(v + ">>hSig0","weight * xsec * (classID==1 %s)"%selstring,"goff") ## 0 = sig
             t0.Draw(v + ">>hBkg0","weight * (classID==0 %s)"%selstring,"goff") ## 1 = bkg
             ## one Tree -> hSig0 = hSig
             ## rmap to a likelihood ratio s/s+b

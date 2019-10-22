@@ -43,7 +43,7 @@ int LoadNero::InitTree(){
         "BareMet",
         "BareTrigger",
         "BarePhotons",
-        "BareTrackJets",
+        //"BareTrackJets",
     };
     for (const string & c : classes)
     {
@@ -55,6 +55,7 @@ int LoadNero::InitTree(){
     // Set Extra: Extend, match ...
     bare_[ names_ ["BareTaus"] ] -> SetExtend();
     bare_[ names_ ["BarePhotons"] ] -> SetExtend();
+    bare_[ names_ ["BareMet"] ] -> SetExtend();
     //dynamic_cast<BareTaus*> (bare_[ names_ ["BareTaus"] ])  -> SetMatch();
     //dynamic_cast<BareFatJets*> (bare_[ names_ ["BareFatJets"] ])  -> cachedPrefix="AK8CHS";
 
@@ -82,7 +83,7 @@ int LoadNero::FillEvent(){
 
     FillJets();
     FillFatJets();
-    FillTrackJets();
+    //FillTrackJets();
     FillLeptons();
     FillPhotons();
     FillTaus();
@@ -239,7 +240,7 @@ void LoadNero::FillJets(){
 #ifdef VERBOSE
         if(VERBOSE>1)Log(__FUNCTION__,"DEBUG","-> RawPt");
 #endif
-        if (tree_->GetBranchStatus("jetrawPt") ) j->rawPt = bj->rawPt -> at(iJet);
+        if (tree_->GetBranchStatus("jetRawPt") ) j->rawPt = bj->rawPt -> at(iJet);
 
         
 #ifdef VERBOSE
@@ -437,10 +438,10 @@ void LoadNero::FillLeptons(){
         l-> SetLooseId ((bl->selBits ->at(iL) & BareLeptons::Selection::LepLoose));
         l-> SetTrackerMuon ((bl->selBits ->at(iL) & BareLeptons::Selection::MuTracker));
         l-> SetGlobalMuon ((bl->selBits ->at(iL) & BareLeptons::Selection::MuGlobal));
-        if (event_->IsRealData() and event_->runNum() <= 278801 and l->GetType() == 13) // B->F(HIP)
-        {
-            l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::MuMediumB2F) );
-        }
+        //if (event_->IsRealData() and event_->runNum() <= 278801 and l->GetType() == 13) // B->F(HIP)
+        //{
+        //    l-> SetMediumId ((bl->selBits ->at(iL) & BareLeptons::Selection::MuMediumB2F) );
+        //}
         //if (event_->IsRealData() and event_->runNum() >= 278802) // F->G (HIP_FIXED)
         //
         l-> SetPfPt  ( (*bl->lepPfPt) [iL]);
@@ -451,6 +452,11 @@ void LoadNero::FillLeptons(){
                 l-> SetNLayers( bl-> nLayers -> at(iL) );
         }
         else l->SetNLayers(-999);
+
+        if (  bl->fsrP4->GetEntries() >0 ){
+            TLorentzVector fsrP4= *(TLorentzVector*) ((*bl->fsrP4)[iL]);
+            l-> SetFsrP4( fsrP4 );
+        }
 
 #ifdef VERBOSE
         if(VERBOSE>1) cout<<"[LoadNero]::[FillLeps]::[DEBUG] Filling Lep Trigger"<<endl;
@@ -593,6 +599,7 @@ void LoadNero::FillMet(){
     // #endif
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     event_ -> met_ . SetRawMetP4( *met -> RawMet ) ;
+    event_ -> met_ . SetTrackMetP4( *met -> trackMet ) ;
     //event_ -> met_ . trackMet = *met -> trackMet ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
@@ -912,7 +919,7 @@ void LoadNero::NewFile(){
 
 }; // should take care of loading the trigger names
 
-void LoadNero::FillTrackJets(){
+/*void LoadNero::FillTrackJets(){
     //fill Jets
     #ifdef VERBOSE
     if(VERBOSE>1) Log(__FUNCTION__,"DEBUG","Filling TrackJets");
@@ -950,6 +957,7 @@ void LoadNero::FillTrackJets(){
 
     }
 }
+*/
 
 // ---------------------------END NERO ---------------------
 

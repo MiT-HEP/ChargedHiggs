@@ -85,6 +85,21 @@ def GetRN(phi,eta,itoy):
     if (mybin,itoy) not in rstore:
         rstore[(mybin,itoy)]=ROOT.gRandom.Gaus(0,1)
     return rstore[(mybin,itoy)]
+
+def GetNewPt(bias,err,pt,q):
+    ''' q/pt bias for each muon. I guess this numbers are in %.'''
+    if pt <200: pt = pt
+    else:
+        pt = pt/1000.
+        pt = q*abs(pt)
+        pt = 1./pt
+        pt = pt + bias
+        if abs(pt)< 0.14:
+            pt = err
+        pt = 1./pt
+        pt = abs(pt)
+        pt = pt*1000
+    return pt
     
 
 for ifile,f in enumerate(files):
@@ -150,14 +165,17 @@ for ifile,f in enumerate(files):
             recoA_n = recomuons[0]+recomuons[1]
             histos['nominal'].Fill( recoA_n.M())
             
-            recoA_m = recomuons[0]*(1.+b0/100.*pt0*q[0]) + (recomuons[1]*(1.+b1/100.*pt1*q[1]))
+            pt0_new= GetNewPt(b0,s0,pt0,q[0])
+            pt1_new= GetNewPt(b1,s1,pt1,q[1])
+            recoA_m = recomuons[0]*(pt0_new/pt0) + (recomuons[1]*(pt1_new/pt1))
             histos['mean'] . Fill( recoA_m.M())
             for itoy in range(0,ntoys):
                 #ROOT.gRandom.Gaus(b0,s0) /100. *recomuons[0].Pt()*q[0] if recomuons[0].Pt() >200 else 0.
-                sf0 = (GetRN(phi0,eta0,itoy)*s0+b0)/100. *pt0*q[0] 
-                #sf1 = ROOT.gRandom.Gaus(b1,s1) /100. *recomuons[1].Pt()*q[1] if recomuons[1].Pt() >200 else 0.
-                sf1 = (GetRN(phi1,eta1,itoy)*s1+b1)/100. *pt1*q[1] 
-                recoA_t = recomuons[0]*(1.+sf0) + (recomuons[1]*(1.+sf1))
+                b0_t=GetRN(phi0,eta0,itoy)*s0+b0
+                b1_t=GetRN(phi1,eta1,itoy)*s1+b1
+                pt0_new= GetNewPt(b0_t,s0,pt0,q[0])
+                pt1_new= GetNewPt(b1_t,s1,pt1,q[1])
+                recoA_t = recomuons[0]*(pt0_new/pt0) + (recomuons[1]*(pt1_new/pt1))
                 histos['toy%d'%itoy].Fill(recoA_t.M())
         print "-> Saving checkpoint"
         output.cd()

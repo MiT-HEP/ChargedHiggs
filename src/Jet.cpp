@@ -43,11 +43,7 @@ int Jet::IsBJetInvIso()const{
 
 }
 
-
-int Jet::IsJetExceptValidity() const { 
-    if( std::isnan(Pt()) ) return 0; 
-    if( Pt() < ptcut_ ) return 0; 
-    if( fabs(Eta()) >= etacut_) return 0;
+int Jet::PassPuId() const {
     if( puidcut_ > -100 and puidcut_ < 100 and puId < puidcut_ ) return 0; 
     if(puidcut_ == 100 ) { // Loose
         float aeta= abs(Eta());
@@ -109,13 +105,32 @@ int Jet::IsJetExceptValidity() const {
             if (pt >=10 and pt< 30 and puId <-0.21)  return 0;
         }
     }
+    return 1;
+}
 
+int Jet::PassEENoise()const {
     if (eenoise_) {
         float aeta= abs(Eta());
         // MET Recipe v2 for EE noise
+
         if (rawPt < 50 and aeta <3.139 and aeta > 2.65)
             return 0;
+        
+        // SMP recommendation
+        //if (rawPt < 50 and 2.7 < aeta and aeta < 3.0 and nemf_>0.55 )
+        //    return 0;
     }
+    return 1;
+}
+
+// HEM -3.0 < eta < -1.3, -1.57 < phi < -0.87) for Run2018C and D
+
+int Jet::IsJetExceptValidity() const { 
+    if( std::isnan(Pt()) ) return 0; 
+    if( Pt() < ptcut_ ) return 0; 
+    if( fabs(Eta()) >= etacut_) return 0;
+    if (PassPuId() == 0) return 0;
+    if (PassEENoise() ==0 ) return 0;
     return 1;
 }
 

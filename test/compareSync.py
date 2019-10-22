@@ -11,13 +11,27 @@ usage='''compareSync.py file1 file2
 	'''
 parser = OptionParser(usage=usage)
 parser.add_option("-k","--field",type="int",help="field to compare [%default]",default=-1) 
+parser.add_option("","--select",type="string",help="min,max in the first file field for plot[%default]",default="") 
 (opts,args) = parser.parse_args()
 
 
 def ReadFile(name,field=-1):
+    First=None
     R={}
     In=open(name)
     for line in In:
+        if line.startswith('#') and First==None and field >=0: 
+            l=re.sub('#\+','#',line)
+            l=l.split('#')[1]
+            l=re.sub(',',' ',l)
+            l=re.sub(':',' ',l)
+            l=re.sub('\|',' ',l)
+            l=re.sub('\n','',l)
+            l=re.sub('\ +',' ',l)
+            try:
+                print "-> try to First read line",l,l.split(), 2+field
+                First=l.split()[2+field]
+            except:pass
         l=line.split('#')[0]
         l=re.sub(',',' ',l)
         l=re.sub(':',' ',l)
@@ -34,7 +48,7 @@ def ReadFile(name,field=-1):
         except IndexError:
             print "Ignoring line: '"+line+"'"
             print "-> Requested field",field+2,"while available are only",len(l.split())
-    return R
+    return R,First
 
 def ReadFileOld(name):
 	R=set([])
@@ -58,8 +72,8 @@ def PrintSet(s):
         print ', '.join(key)
     return
 
-d1=ReadFile(args[0],opts.field)
-d2=ReadFile(args[1],opts.field)
+d1,f1=ReadFile(args[0],opts.field)
+d2,f2=ReadFile(args[1],opts.field)
 
 s1=set(d1.keys())
 s2=set(d2.keys())
@@ -88,11 +102,15 @@ if opts.field >=0:
         except ZeroDivisionError:
             pass
     import ROOT
-    delta=ROOT.TH1D("delta","delta",100,-maxDiff,maxDiff)
+    #delta=ROOT.TH1D("delta","delta",100,-maxDiff,maxDiff)
+    delta=ROOT.TH1D("delta","delta",1000,-1,1)
     for key in (s1&s2): 
         if d1[key] == 0 or d2[key]==0: continue
+        if opts.select !="" and (d1[key] < float(opts.select.split(',')[0]) or d1[key] > float(opts.select.split(',')[1])): continue
         delta.Fill(d1[key]-d2[key])
     delta.Draw("HIST")
+    print "Draw delta betewen", f1,f2
+    if f1 and f2: delta.GetXaxis().SetTitle(f1+"-"+f2)
     raw_input("ok?")
     print "-------------------"
 

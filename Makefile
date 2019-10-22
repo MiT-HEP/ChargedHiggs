@@ -2,7 +2,7 @@ GCC=g++
 CXXFLAGS=`root-config --libs --cflags` -O2 -fPIC -I../  -I./
 ## to use BareObjects
 RPATH= -Wl,-rpath=$(PWD)/../NeroProducer/Core/bin
-CXXFLAGS += -L$(PWD)/../NeroProducer/Core/bin -lBare  -ggdb -lTMVA -l RooFit -l RooFitCore  -l Physics
+CXXFLAGS += -L$(PWD)/../NeroProducer/Core/bin -lBare  -ggdb -lTMVA -l RooFit -l RooFitCore  -l Physics 
 SOFLAGS=-shared
 
 SRCDIR=src
@@ -44,7 +44,7 @@ COMBINELIBFILE = $(wildcard $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/libHiggsAnalysisComb
 COMBINELIB = HiggsAnalysisCombinedLimit
 COMBINELIBDIR = $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/
 CXXFLAGS += -I"/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/python/2.7.11-mlhled/include/python2.7"
-CXXFLAGS += -D HAVE_PYTHIA -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/219/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/219/lib  -lpythia8
+CXXFLAGS += -D HAVE_PYTHIA -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/230-gnimlf5/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/230-gnimlf5/lib  -lpythia8
 #-I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/clhep/2.2.0.4-kpegke/include
 #"-lpythia8 -lclhep "
 endif

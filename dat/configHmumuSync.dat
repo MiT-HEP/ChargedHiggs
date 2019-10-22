@@ -6,26 +6,31 @@ Files=
 #include=dat/catalog/2017.moriond/hmm.dat
 #
 
-addfiles=datasync/GluGluHToMuMu_M125_13TeV_amcatnloFXFX_pythia8/NeroNtuples_MCSync.root
-#addfiles=datasync/SingleMuon/Run2017B/NeroNtuples_DataSync.root
-
-#addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.3.alpha/SingleMuon/SingleMuon-Run2017B
+addfiles=datasync/GluGluHToMuMu_M125_13TeV_amcatnloFXFX_pythia8/v3.5/NeroNtuples_mc.root
+#addfiles=datasync/SingleMuon/Run2017B/v3.5/NeroNtuples_data.root
 
 Smear=NONE
 
 addConfig=HmumuAnalysis|doEvenOnly=0
 addConfig=HmumuAnalysis|doOddOnly=0
 
+Correct=RochesterCorrections,FSRRecovery
+config=RochesterCorrections|year="2017",allow_reset=1
+#config=FSRRecovery|allow_reset=0
+config=FSRRecovery|allow_reset=0,egmcorrections=1,year=2017
+
 #Final=true
 #EntryPerSecond=10
 #
-Output=HmmSync.root
+#Output=HmmSync.root
 #Analysis=JsonAnalysis,MetFiltersAnalysis,HmumuAnalysis
 Analysis=JsonAnalysis,HmumuAnalysis
 
+# faster
+SFDB=aux/sf_database.2018.moriond_only2017bsf.txt
+
 addConfig=HmumuAnalysis|doSync=1
 
-addConfig=HmumuAnalysis|catType=0
 Output=HmmSync_GGH_catType0.root
 #Output=HmmSync_Data_catType0.root
 

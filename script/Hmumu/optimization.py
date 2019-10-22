@@ -94,25 +94,34 @@ def GetSigAndBkg(histname):
                 for hname in histname.split(','):
                     if bkg_histo==None:
                         bkg_histo= fIn.Get(basedir+"/"+hname+"_"+mc)
-                        if bkg_histo == None: raise IOError("Unable to get: "+mc+":"+basedir+"/"+histname+"_"+mc)
+                        if bkg_histo == None: 
+                            print "Warning: Unable to get: "+mc+":"+basedir+"/"+histname+"_"+mc
+                            #raise IOError("Unable to get: "+mc+":"+basedir+"/"+histname+"_"+mc)
                     else:
                         tmp= fIn.Get(basedir+"/"+hname+"_"+mc)
-                        if tmp == None: raise IOError("Unable to get: "+mc+":"+basedir+"/"+histname+"_"+mc)
-                        bkg_histo.Add(tmp)
-            bkg_histo.Scale(lumi)
+                        if tmp == None: 
+                            print "Warning: Unable to get: "+mc+":"+basedir+"/"+histname+"_"+mc
+                            #raise IOError("Unable to get: "+mc+":"+basedir+"/"+histname+"_"+mc)
+                        if tmp != None: bkg_histo.Add(tmp)
+            if bkg_histo!=None: bkg_histo.Scale(lumi)
         else:
             tmp= fIn.Get(basedir+"/"+histname+"_"+mc)
             if tmp==None:
                 for hname in histname.split(','):
                     if tmp == None: 
                         tmp= fIn.Get(basedir+"/"+hname+"_"+mc)
-                        if tmp == None: raise IOError("Unable to get: "+mc+":"+basedir+"/"+histname+"_"+mc)
+                        if tmp == None: 
+                            print "Unable to get: "+mc+":"+basedir+"/"+histname+"_"+mc
+                            #raise IOError("Unable to get: "+mc+":"+basedir+"/"+histname+"_"+mc)
                     else:
                         tmp2= fIn.Get(basedir+"/"+hname+"_"+mc)
-                        if tmp2==None:raise IOError("Unable to get: "+mc + ":"+basedir+"/"+hname+"_"+mc)
-                        tmp.Add(tmp2)
-            tmp.Scale(lumi)
-            bkg_histo.Add(tmp)
+                        if tmp2==None:
+                            print "Unable to get: "+mc + ":"+basedir+"/"+hname+"_"+mc
+                            #raise IOError("Unable to get: "+mc + ":"+basedir+"/"+hname+"_"+mc)
+                        else: tmp.Add(tmp2)
+            if tmp!= None:
+                tmp.Scale(lumi)
+                bkg_histo.Add(tmp)
     data_histo= fIn.Get(basedir+"/"+histname+"_Data")
     if data_histo==None:
         for hname in histname.split(','):
@@ -265,7 +274,9 @@ def job(wdir,ibin):
             Import(w,dh)
             data_dh.append(dh)
             y0=y1+1
-            sOsb += px_s.Integral()**2 /  px_b.Integral()
+            try:
+                sOsb += px_s.Integral()**2 /  px_b.Integral()
+            except ZeroDivisionError: pass
         # fit sig
         gb=[]
         for ib,b in enumerate(bounds):
@@ -316,7 +327,7 @@ def job(wdir,ibin):
     #releasing lock
     # run combine
     cmd = "cd " + wdir + " && " 
-    cmd += "combine -M FitDiagnostics -t -1 --robustFit=1 -m 125 -S 0  --cminDefaultMinimizerType=Minuit --expectSignal=1  --rMax=50 --rMin=-2  datacard.txt 2>&1 >log_combine.txt"
+    cmd += "combine -M FitDiagnostics -t -1 --robustFit=1 -m 125 -S 0  --cminDefaultMinimizerType=Minuit2 --expectSignal=1  --rMax=50 --rMin=-2  datacard.txt 2>&1 >log_combine.txt"
 
     if opts.verbose: 
         print "-> Running combine:",cmd

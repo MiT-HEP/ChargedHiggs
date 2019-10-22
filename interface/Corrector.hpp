@@ -22,6 +22,8 @@ class CorrectorBase : public Named {
         inline void Scale( Object&o, float value) { o.Scale(value);}
         inline void Add(Object &o, TLorentzVector&v, float c){o.Add(v,c);}
         inline void SetP4(Object&o, TLorentzVector &v){o.p4 = v; o.Scale(1.) ; } // the last set is Correct
+        inline void SetPx(Object&o, float px){o.p4.SetPx(px); o.Scale(1.) ; } // the last set is Correct
+        inline void SetPy(Object&o, float py){o.p4.SetPy(py); o.Scale(1.) ; } // the last set is Correct
         inline void ResetUncorr(Object&o){if (allow_reset)o.ResetUncorr();}
 
 };

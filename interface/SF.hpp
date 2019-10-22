@@ -252,6 +252,7 @@ class SF_WG1: virtual public SF
         int Njets30{0};
         double pTH{0.};
         int STXS_Stage1{0};
+        int STXS_Stage1p1{0};
 
     public:
         enum TYPES { THU_WG1=0,THU_2017=1};
@@ -262,6 +263,7 @@ class SF_WG1: virtual public SF
         inline void SetNjets30(int n){Njets30=n;}
         inline void SetPTH(double pt){pTH=pt;}
         inline void SetSTXS(int i){STXS_Stage1=i;}
+        inline void SetSTXS1p1(int i){STXS_Stage1p1=i;}
 
         SF_WG1() : SF(){}
         const string name() const override {return "SF_WG1";}

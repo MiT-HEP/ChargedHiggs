@@ -1,0 +1,32 @@
+imax 1 number of bins
+jmax 0 number of processes minus 1
+kmax * number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes BKG          mc_cat12  $DIRRunII/MCws.root w:bkg_func_binned_cat12
+shapes data_obs     mc_cat12  $DIRRunII/MCws.root w:mc_cat12
+----------------------------------------------------------------------------------------------------------------------------------
+bin          mc_cat12
+observation  -1.0       
+----------------------------------------------------------------------------------------------------------------------------------
+bin                             mc_cat12
+process                         BKG        
+process                         1          
+rate                            1.0000     
+----------------------------------------------------------------------------------------------------------------------------------
+fake                    lnN     -          
+lumi_13TeV              lnN     1.025      
+Linear_0.2    param  0 0.1
+#JES           param  0 1
+#ScaleR_TT     param  0 1
+#ScaleRF_TT    param  0 1
+#ScaleF_TT     param  0 1
+#PU            param  0 1
+#ScaleF_DY     param  0 1
+#ScaleRF_DY    param  0 1
+#ScaleR_DY     param  0 1
+
+## this is the statistical factor. it should be constant
+S_cat12        rateParam mc_cat12 BKG $DIRRunII/MCws.root:w  
+## this is the normalization. it contains all the normalization and nuisances associated
+bkg_func_binned_norm_nuis_cat12  rateParam mc_cat12 BKG $DIRRunII/MCws.root:w  
+nuisance edit  freeze S_cat12

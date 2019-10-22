@@ -1,0 +1,5 @@
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v4.1
+sub=amariniUser|/eos/user/a/amarini/Nero/v4.1
+sub=amariniCms|/store/user/amarini/Nero/v4.1
+
+addfiles=%(amariniHmm)s/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8
