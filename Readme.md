@@ -35,7 +35,7 @@ cd $CMSSW_BASE/src
 cmsenv
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
 cd HiggsAnalysis/CombinedLimit
-git checkout v8.1 
+git checkout v8.0.1 
 scram b -j 16 
 ```
 
