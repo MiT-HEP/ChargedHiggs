@@ -1,0 +1,9 @@
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.6/year2016
+
+addfiles=%(amariniHmm)s/WZJJ_EWK_13TeV-madgraph-pythia8
+addfiles=%(amariniHmm)s/WZJJ_EWK_QCD_13TeV-madgraph-pythia8
+addfiles=%(amariniHmm)s/WmWmJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8
+addfiles=%(amariniHmm)s/WmWmJJ_EWK_TuneCUETP8M1_13TeV-vbfnlo-pythia8
+addfiles=%(amariniHmm)s/WpWpJJ_EWK-QCD_TuneCUETP8M1_13TeV-madgraph-pythia8
+addfiles=%(amariniHmm)s/WpWpJJ_EWK_TuneCUETP8M1_13TeV-madgraph-pythia8
+addfiles=%(amariniHmm)s/WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8

@@ -1,0 +1,39 @@
+################
+### DATASETS ###
+################
+
+Files=
+## Signal
+include=dat/catalog/2019.fall/year2016/vbshad.dat
+
+## BKGS
+include=dat/catalog/2019.fall/year2016/tt.dat
+#include=dat/catalog/2019.fall/year2016/st.dat
+#include=dat/catalog/2019.fall/year2016/rares.dat
+#include=dat/catalog/2019.fall/year2016/dy_amcatnlo.dat
+
+# add Label
+include=dat/vbshad.dat
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+Branches=dat/branches.txt
+Output=VBShadSignal.root
+
+Lumi=1
+Smear=NONE
+Correct=NONE
+Final=no
+
+
+## be less peaky, given the n. of systs
+EntryPerSecond=10
+
+SFDB=aux/aux/sf_VBShad.txt
+
+##SFDB=aux/sf_database.2018.moriond.txt
+MCDB=aux/mcdb.2019.v3.6.year2016.dat
+##pileup=aux/pileup.v3.6.year2016.root
+
+Analysis=VBShadAnalysis
