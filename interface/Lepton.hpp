@@ -52,6 +52,9 @@ class Lepton : virtual public Object,
         TLorentzVector p4NoFSR_;//  this keep track of the p4 when fsr is corrected
         bool isFSRCorrected{false};
 
+        float dxy_{0.};
+        float dz_{0.};
+
     public:
         inline void SetP4NoFSR(){p4NoFSR_=p4;isFSRCorrected=true;}
         double InvMassNoFSR(Lepton&o){
@@ -91,6 +94,8 @@ class Lepton : virtual public Object,
         inline void SetGlobalMuonCut(bool x=true){globalmuoncut_=x;}
         inline void SetKFP4(TLorentzVector&x){kfP4_=x;};
         inline void SetFsrP4(TLorentzVector&x){fsrP4_=x;};
+        inline void SetDxy(float dxy){dxy_=dxy;}
+        inline void SetDz(float dz){dz_=dz;}
 
         inline float GetIso()const {return iso;}
         inline bool GetMediumId() const {return mediumId;}
@@ -112,6 +117,8 @@ class Lepton : virtual public Object,
         inline bool GetGlobalMuon()const { return globalMuon;}
         inline TLorentzVector& GetKFP4(){return kfP4_;};
         inline TLorentzVector& GetFsrP4(){return fsrP4_;};
+        inline float GetDxy() const{return dxy_;}
+        inline float GetDz() const{return dz_;}
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;

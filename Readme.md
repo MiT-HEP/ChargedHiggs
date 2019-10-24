@@ -12,18 +12,20 @@
 
 
 ## Installation
-* Install Nero package and compile the Core (_not_ scram). Though CMSSW is not required latest full work recipe has been tested in CMSSW_7_6_5.
+* Install Nero package and compile the Core (_not_ scram). 
+Though CMSSW is not required latest full work recipe has been tested in CMSSW_10_2_13.
+
 ```
 BASE=$PWD [ $CMSSW_BASE/src ]
 cd $BASE
-git clone git@github.com:MiT-HEP/NeroProducer.git
+git clone git@github.com:MiT-HEP/NeroProducer.git -b CMSSW_92X
 cd NeroProducer/Core
 make -j 16
 ```
 * Install the package
 ```
 cd $BASE
-git clone git@github.com:MiT-HEP/ChargedHiggs.git ChargedHiggs
+git clone git@github.com:MiT-HEP/ChargedHiggs.git -b cmssw_94x ChargedHiggs
 cd ChargedHiggs
 make -j 16
 ```
@@ -33,7 +35,7 @@ cd $CMSSW_BASE/src
 cmsenv
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
 cd HiggsAnalysis/CombinedLimit
-git checkout v6.3.0 ##01bb477 ## (31cc693) ## ( 74x-root6 )
+git checkout v8.0.1 
 scram b -j 16 
 ```
 

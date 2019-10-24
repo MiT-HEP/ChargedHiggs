@@ -4,6 +4,7 @@ import os,sys
 from glob import glob
 from subprocess import call, check_output
 import re
+import tempfile
 
 from optparse import OptionParser, OptionGroup
 
@@ -48,6 +49,9 @@ parser.add_option_group(summary)
 
 #EOS='/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select'
 EOS='/usr/bin/eos'
+instance="root://eoscms/"
+if '/eos/user' in opts.dir: instance="root://eosuser/"
+EOS2=EOS+" " + instance + " "
 
 if 'CMSSW_BASE' not in os.environ:
 	print "-> Use a CMSSW environment: cmsenv"
@@ -178,8 +182,8 @@ def write_condor_jdl(filename="condor.jdl"):
     else:  raise ValueError("Unknown queue:"+opts.queue)
     
     jdl = open(opts.dir +"/"+filename,"w")
-    #jdl.write('requirements = (OpSysAndVer =?= "CentOS7")\n')
-    jdl.write('requirements = (OpSysAndVer =?= "SLC6")\n')
+    jdl.write('requirements = (OpSysAndVer =?= "CentOS7")\n')
+    #jdl.write('requirements = (OpSysAndVer =?= "SLC6")\n')
     jdl.write("log = $(filename).log\n")
     jdl.write("output = $(filename).out\n")
     jdl.write("error = $(filename).err\n")
@@ -370,7 +374,13 @@ for f in config['Files']: ds.add(f) ## w/o * expansion
 ds.end()
 
 call("[ -d %s ] && rm -r %s"%(opts.dir,opts.dir),shell=True)
-call("mkdir -p %s"%opts.dir,shell=True)
+
+if '/eos/' in opts.dir or '/store/' in opts.dir:
+    print "->> calling eos mkdir"
+    call("[ -d %s ] && %s rm -r %s"%(opts.dir,EOS2,opts.dir),shell=True)
+    call(EOS2+" mkdir %s"%opts.dir,shell=True)
+
+call("mkdir -p %s"%opts.dir,shell=True) ## try again
 cmdFile=open("%s/submit_cmd.txt"%opts.dir,"w")
 cmdFile.write("##Commands used to submit on batch. Automatic written by python/submit.py script\n")
 cmdFile.write("##"+' '.join(sys.argv)+"\n")
@@ -551,7 +561,8 @@ if not opts.hadoop:
         if basedir[0] != '/': basedir=os.environ['PWD'] + "/" + opts.dir
         
         sh.write('#!/bin/bash\n')
-        sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/" \n'%(os.environ['USER']))
+        #sh.write('[ "$WORKDIR" == "" ] && export WORKDIR="/tmp/%s/" \n'%(os.environ['USER']))
+        sh.write('[ "$WORKDIR" == "" ] && export WORKDIR=`mktemp -d` \n')
         sh.write('cd %s\n'%(os.getcwd() ) )
         sh.write('eval `scramv1 runtime -sh`\n') # cmsenv
         sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
@@ -613,9 +624,18 @@ if not opts.hadoop:
     
     
         if opts.compress:
-            compressString="2>&1 | gzip > %s/log%d.txt.gz"%(opts.dir,iJob)
+            if opts.local:
+                compressString="2>&1 | gzip > log%d.txt.gz"%(iJob)
+            else:
+                compressString="2>&1 | gzip > %s/log%d.txt.gz"%(opts.dir,iJob)
         else: compressString =""
     
+        if opts.tar:
+            ## trigger mountpoint for eos?
+            sh.write("cd %s\n"%opts.dir)
+            sh.write("touch trigger.mountpoint.tmp\n")
+            sh.write("cd $WORKDIR\n")
+
         sh.write('python python/Loop.py -v -d %s/input%d.dat %s\n'%(opts.dir,iJob,compressString))
     
         if opts.compress:
@@ -626,6 +646,7 @@ if not opts.hadoop:
         sh.write('rm %s/sub%d.run 2>&1 >/dev/null\n'%(basedir,iJob))
         sh.write('[ $EXITCODE == 0 ] && touch %s/sub%d.done\n'%(basedir,iJob))
         sh.write('[ $EXITCODE != 0 ] && echo $EXITCODE > %s/sub%d.fail\n'%(basedir,iJob))
+        sh.write('echo "Exit code is ${EXITCODE}"\n')
     
         if opts.mount:
             sh.write('%s -b fuse umount %s\n'% (EOS,mountpoint))
@@ -633,12 +654,21 @@ if not opts.hadoop:
         outname = re.sub('.root','_%d.root'%iJob,config['Output'])
     
         if opts.tar:
+            cp='mv -v'
+            dest=''
+            if '/store/' or '/eos' in basedir: 
+                cp=EOS + ' cp  '
+                dest=instance
             if opts.local:
-                sh.write("[ $EXITCODE == 0 ] && mv -v %s %s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(outname,basedir,basedir,iJob,basedir,iJob))
+                #sh.write("[ $EXITCODE == 0 ] && mv -v %s %s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(outname,basedir,basedir,iJob,basedir,iJob))
+                sh.write("[ $EXITCODE == 0 ] && "+cp+" %s %s%s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(outname,dest,basedir,basedir,iJob,basedir,iJob))
             elif basedir != opts.dir: 
-                sh.write("[ $EXITCODE == 0 ] && mv -v %s/%s %s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(opts.dir,outname,basedir,basedir,iJob,basedir,iJob))
+                sh.write("[ $EXITCODE == 0 ] && "+cp + " %s/%s %s%s/ || { echo TRANSFER > %s/sub%d.fail; rm %s/sub%d.done; }  \n"%(opts.dir,outname,dest,basedir,basedir,iJob,basedir,iJob))
             if opts.compress:
-                sh.write("mv %s/log%d.txt.gz %s/log%d.txt.gz\n"%(opts.dir,iJob,basedir,iJob) )
+                if opts.local:
+                    sh.write(cp +" log%d.txt.gz %s%s/log%d.txt.gz\n"%(iJob,dest,basedir,iJob) )
+                else:
+                    sh.write(cp +" %s/log%d.txt.gz %s%s/log%d.txt.gz\n"%(opts.dir,iJob,dest,basedir,iJob) )
 
 
         sh.write('echo "Finished At:"\n')
@@ -668,27 +698,6 @@ if not opts.hadoop:
             print "No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white
             continue
         ## submit
-        if opts.condor:
-            ## submit condor
-            #print "-> Submitting","%s/condor.jdl"%opts.dir
-            #cmd = "condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,opts.dir)
-            #print "   cmd=",cmd
-            #if not opts.dryrun: 
-            #    call(cmd, shell=True)
-            pass
-        else:
-            ## submit batch
-            ## if basedir.startswith("/eos"): 
-            ##     cmdline = "bsub -q " + opts.queue + " -o /dev/null" + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
-            ## else:
-            ##     cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
-            cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
-            print cmdline
-            cmdFile.write(cmdline+"\n")
-    
-            if not opts.dryrun: 
-                call(cmdline,shell=True)
-    #for iJob in range(0,opts.njobs) end for loop
     if opts.condor:
             ## submit condor
             print "-> Submitting","%s/condor.jdl"%opts.dir

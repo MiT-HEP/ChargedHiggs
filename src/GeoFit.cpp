@@ -1,40 +1,60 @@
 #include <math.h>
+#include "interface/GeoFit.hpp"
+using namespace std;
 
 namespace PtGeoCor{
 
-  float PtGeoFit(float d0, float pt, float eta, int year) { 
-    float pt_cor = 0.0;
-    if (year == 2016) {   // for 2016 it is applied to KaMu pt
-      if      (abs(eta) < 0.9) pt_cor = ( 1.116 * tanh(679.40*d0) + 171.84 * d0 - 0.2034 ) * pt * pt / 10000.0;
-      else if (abs(eta) < 1.7) pt_cor = ( 1.294 * tanh(646.23*d0) + 390.31 * d0 - 0.3462 ) * pt * pt / 10000.0;
-      else                     pt_cor = ( 0.851 * tanh(595.69*d0) + 925.38 * d0 - 0.7122 ) * pt * pt / 10000.0;
-    }
-    else if (year == 2017) {
-    }
-    else if (year == 2018) {  // for 2018 it is applied to Roch pt
-      if      (abs(eta) < 0.9) pt_cor = ( 1.036 * tanh(660.86*d0) + 275.22 * d0 - 0.1305 ) * pt * pt / 10000.0;
-      else if (abs(eta) < 1.7) pt_cor = ( 1.385 * tanh(520.61*d0) + 494.80 * d0 - 0.2535 ) * pt * pt / 10000.0;
-      else                     pt_cor = ( 0.784 * tanh(772.87*d0) + 1122.9 * d0 - 0.4349 ) * pt * pt / 10000.0;
-    }
-    return pt_cor;
-  } // end of float PtGeoFit(float d0, float pt, float eta, int year)
-
   float PtGeoFit_mod(float d0, float pt, float eta, int year) { 
-    float pt_cor = 0.0;
-    if (year == 2016) {  // for 2016 it is applied to KaMu pt
-      if      (abs(eta) < 0.9) pt_cor = ( 1.116 * tanh(679.40*d0) + 171.84 * d0 ) * pt * pt / 10000.0;
-      else if (abs(eta) < 1.7) pt_cor = ( 1.294 * tanh(646.23*d0) + 390.31 * d0 ) * pt * pt / 10000.0;
-      else                     pt_cor = ( 0.851 * tanh(595.69*d0) + 925.38 * d0 ) * pt * pt / 10000.0;
+    float pt_cor = 0.0F;
+    if (year == 2016) { 
+      if      (abs(eta) < 0.9F) pt_cor = ( 1.183F * tanh(606.21F*d0) + 163.53F * d0 ) * pt * pt / 10000.0F;
+      else if (abs(eta) < 1.7F) pt_cor = ( 2.226F * tanh(380.74F*d0) + 244.43F * d0 ) * pt * pt / 10000.0F;
+      else                      pt_cor = ( 3.688F * tanh(233.96F*d0) + 398.26F * d0 ) * pt * pt / 10000.0F;
     }
     else if (year == 2017) {
+      if      (abs(eta) < 0.9F) pt_cor = ( 0.705F * tanh(948.94F*d0) + 400.52F * d0 ) * pt * pt / 10000.0F;
+      else if (abs(eta) < 1.7F) pt_cor = ( 0.853F * tanh(733.68F*d0) + 685.24F * d0 ) * pt * pt / 10000.0F;
+      else                      pt_cor = ( 5.518F * tanh(260.07F*d0) + 282.20F * d0 ) * pt * pt / 10000.0F;
     }
-    else if (year == 2018) {  // for 2018 it is applied to Roch pt
-      if      (abs(eta) < 0.9) pt_cor = ( 1.036 * tanh(660.86*d0) + 275.22 * d0 ) * pt * pt / 10000.0;
-      else if (abs(eta) < 1.7) pt_cor = ( 1.385 * tanh(520.61*d0) + 494.80 * d0 ) * pt * pt / 10000.0;
-      else                     pt_cor = ( 0.784 * tanh(772.87*d0) + 1122.9 * d0 ) * pt * pt / 10000.0;
+    else if (year == 2018) {
+      if      (abs(eta) < 0.9F) pt_cor = ( 0.969F * tanh(690.73F*d0) + 294.48F * d0 ) * pt * pt / 10000.0F;
+      else if (abs(eta) < 1.7F) pt_cor = ( 1.466F * tanh(527.43F*d0) + 472.16F * d0 ) * pt * pt / 10000.0F;
+      else                      pt_cor = ( 1.024F * tanh(618.79F*d0) + 1025.5F * d0 ) * pt * pt / 10000.0F;
     }
-    return pt_cor;
+    return (pt - pt_cor);
   } // end of float PtGeoFit_mod(float d0, float pt, float eta, int year)
 
 } // end namespace PtGeoCor
+
+
+/// --- Corrector
+//
+void GeoFit::Init(){
+    Log(__FUNCTION__,"INFO","Init GeoFit");
+}
+
+int GeoFit::correct(Event *e){
+    for (auto & lep : GetLepVector(e))
+    {
+        if (not lep->IsMuonDirty() ) continue; // check only it's muon w/o any Id
+        // reset uncorrected value
+        ResetUncorr(*lep);
+
+        float pt=lep->Pt();
+        float pt_cor=PtGeoCor::PtGeoFit_mod(lep->GetDxy(), lep->Pt(), lep->Eta(), year) ;
+
+        //pt_new=pt -pt_cor
+        //sf=pt_new/pt = 1. -pt_cor/pt
+
+        //Log(__FUNCTION__,"DEBUG",Form("GeoFit changing muon pt from %f to %f",pt,pt_cor));
+        Scale(*lep,pt_cor/pt);
+        //Log(__FUNCTION__,"DEBUG",Form("         (Confirm pt)     ------>  %f",lep->Pt()));
+
+
+    }//end lepton
+
+    return 0;
+    // end correct
+}
+
 

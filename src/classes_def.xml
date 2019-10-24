@@ -51,4 +51,7 @@
     <class name="RooVoigtianShape"/>
     <class name="RooBinnedUncertainties"/>
     <class name="HmmLikelihood"/>
+
+    <!-- -->
+    <class name="GeoFit"/>
 </lcgdict>
