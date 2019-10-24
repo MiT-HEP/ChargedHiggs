@@ -34,7 +34,8 @@ pileup=aux/pileup.v4.2.year2018.root
 #config=RochesterCorrections|year="2018",allow_reset=0
 
 #Correct=MetPhiCorrector,VertexKinfit,RochesterCorrections,FSRRecovery,GeoFit
-Correct=MetPhiCorrector,RochesterCorrections,FSRRecovery,GeoFit
+Correct=HEMCorrector,MetPhiCorrector,RochesterCorrections,FSRRecovery,GeoFit
+config=HEMCorrector|allow_reset=1
 config=MetPhiCorrector|year=2018
 #config=VertexKinfit|allow_reset=1
 config=RochesterCorrections|year="2018",allow_reset=1

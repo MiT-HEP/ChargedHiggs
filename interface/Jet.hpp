@@ -137,7 +137,6 @@ class Jet : virtual public Object, virtual public SmearableComplex
             // --- cout<<"[Jet]::[Pt]::[DEBUG]"<<Form(" UncorrPt=%f",p4.Pt())<<endl;
             // --- if (syst>0) cout<<"[Jet]::[Pt]::[DEBUG]"<<Form(" NewPt=%f", ptUpSyst[type])<<endl;
             // --- if (syst<0) cout<<"[Jet]::[Pt]::[DEBUG]"<<Form(" NewPt=%f", ptDownSyst[type])<<endl;
-
             if (syst ==0) return p4.Pt(); 
             //return p4.Pt() *(1.0  + uncSyst[type]*syst );
             if (syst>0 ) return ptUpSyst[type];

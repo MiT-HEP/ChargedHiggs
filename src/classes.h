@@ -44,6 +44,7 @@
 #include "interface/Met.hpp"
 #include "interface/MetFilters.hpp"
 #include "interface/MetPhiCorrector.hpp"
+#include "interface/HEMCorrector.hpp"
 #include "interface/Named.hpp"
 #include "interface/Object.hpp"
 #include "interface/Output.hpp"
