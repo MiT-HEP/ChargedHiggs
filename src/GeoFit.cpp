@@ -41,7 +41,7 @@ int GeoFit::correct(Event *e){
         ResetUncorr(*lep);
 
         float pt=lep->Pt();
-        float pt_cor=PtGeoCor::PtGeoFit_mod(lep->GetDxy(), lep->Pt(), lep->Eta(), year) ;
+        float pt_cor=PtGeoCor::PtGeoFit_mod(lep->GetDxy()*lep->Charge(), lep->Pt(), lep->Eta(), year) ;
 
         //pt_new=pt -pt_cor
         //sf=pt_new/pt = 1. -pt_cor/pt
