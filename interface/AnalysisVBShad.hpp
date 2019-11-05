@@ -33,7 +33,7 @@ private:
     
     // selected Objects
     vector<Jet*> selectedJets;
-    vector<FatJet*> selectedFatjets;
+    vector<FatJet*> selectedFatJets;
     
     
 public:
