@@ -70,7 +70,7 @@ try:
             
             if pdgid==24:
                 BookAndFill("WpEta",100,-5,5,x.Eta(),w)
-                BookAndFill("WpPt",100,0,5000,x.Pt(),w)
+                BookAndFill("WpPt",500,0,5000,x.Pt(),w)
 
             if status==1 and abs(pdgid)<6:
                 BookAndFill("JetPt",100,0,5000,x.Pt(),w)
@@ -81,21 +81,27 @@ try:
                 if m1>0 and hepeup.IDUP[m1]==24 and m2==m1:
                     # from a W decay
                     minDR=5
-                    for j in range(i+1,hepeup.IDUP.size() ):
+                    noDoubleCounting=True
+                    #for j in range(i+1,hepeup.IDUP.size() ):
+                    for j in range(0,hepeup.IDUP.size() ): ## run on all to keep track of doubleCounting
+                        if i==j: continue
                         if (hepeup.MOTHUP[j][0]-1)==m1 and (hepeup.MOTHUP[j][1]-1)==m1 and hepeup.ISTUP[j]==1 and abs(hepeup.IDUP[j])<6:
                             # matched
                             y=ROOT.TLorentzVector()
                             y.SetPxPyPzE( hepeup.PUP[j][0],hepeup.PUP[j][1],hepeup.PUP[j][2],hepeup.PUP[j][3]) 
-                            BookAndFill("DeltaRFromWDecay",100,0,5,x.DeltaR(y),w)
-                            if m.Pt()>800: BookAndFill("DeltaRFromWDecay_ptW800",100,0,5,x.DeltaR(y),w)
-                            print "found a matching from W",j,i
+                            if i<j: BookAndFill("DeltaRFromWDecay",100,0,5,x.DeltaR(y),w)
+                            if i<j and m.Pt()>800: BookAndFill("DeltaRFromWDecay_ptW800",100,0,5,x.DeltaR(y),w)
+                            #print "found a matching from W",j,i
 
                         if hepeup.ISTUP[j]==1 and abs(hepeup.IDUP[j])<6 and (hepeup.MOTHUP[j][0]-1) != m1: # can catch the other W
                             z=ROOT.TLorentzVector()
                             z.SetPxPyPzE( hepeup.PUP[j][0],hepeup.PUP[j][1],hepeup.PUP[j][2],hepeup.PUP[j][3]) 
-                            minDR=min(minDR,z.DeltaR(x))
-                    BookAndFill("DeltaRWProductAndOther",100,0,5,minDR,w)
-                    if m.Pt()> 800: BookAndFill("DeltaRWProductAndOther_ptW800",100,0,5,minDR,w)
+                            if z.DeltaR(x)< minDR:
+                                minDR=min(minDR,z.DeltaR(x))
+                                noDoubleCounting = True if (i<j) else False
+
+                    if noDoubleCounting:BookAndFill("DeltaRWProductAndOther",100,0,5,minDR,w)
+                    if noDoubleCounting and m.Pt()> 800: BookAndFill("DeltaRWProductAndOther_ptW800",100,0,5,minDR,w)
                     
             #if hepeup.ISTUP[i] != 1: continue;
             #print " *)",i," pdgid=",hepeup.IDUP[i],"pt=",x.Pt(),"eta=",x.Eta(),"phi=",x.Phi(),"STATUS=",status, "mothers",hepeup.MOTHUP[i][0]-1,hepeup.MOTHUP[i][1]-1
