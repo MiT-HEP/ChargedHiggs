@@ -76,6 +76,8 @@ try:
                 BookAndFill("JetPt",100,0,5000,x.Pt(),w)
                 m1=hepeup.MOTHUP[i][0] -1 ## starts from 1
                 m2=hepeup.MOTHUP[i][1] -1
+                m=ROOT.TLorentzVector()
+                if m1>0:m.SetPxPyPzE( hepeup.PUP[m1][0],hepeup.PUP[m1][1],hepeup.PUP[m1][2],hepeup.PUP[m1][3])
                 if m1>0 and hepeup.IDUP[m1]==24 and m2==m1:
                     # from a W decay
                     minDR=5
@@ -85,6 +87,7 @@ try:
                             y=ROOT.TLorentzVector()
                             y.SetPxPyPzE( hepeup.PUP[j][0],hepeup.PUP[j][1],hepeup.PUP[j][2],hepeup.PUP[j][3]) 
                             BookAndFill("DeltaRFromWDecay",100,0,5,x.DeltaR(y),w)
+                            if m.Pt()>800: BookAndFill("DeltaRFromWDecay_ptW800",100,0,5,x.DeltaR(y),w)
                             print "found a matching from W",j,i
 
                         if hepeup.ISTUP[j]==1 and abs(hepeup.IDUP[j])<6 and (hepeup.MOTHUP[j][0]-1) != m1: # can catch the other W
@@ -92,6 +95,7 @@ try:
                             z.SetPxPyPzE( hepeup.PUP[j][0],hepeup.PUP[j][1],hepeup.PUP[j][2],hepeup.PUP[j][3]) 
                             minDR=min(minDR,z.DeltaR(x))
                     BookAndFill("DeltaRWProductAndOther",100,0,5,minDR,w)
+                    if m.Pt()> 800: BookAndFill("DeltaRWProductAndOther_ptW800",100,0,5,minDR,w)
                     
             #if hepeup.ISTUP[i] != 1: continue;
             #print " *)",i," pdgid=",hepeup.IDUP[i],"pt=",x.Pt(),"eta=",x.Eta(),"phi=",x.Phi(),"STATUS=",status, "mothers",hepeup.MOTHUP[i][0]-1,hepeup.MOTHUP[i][1]-1
