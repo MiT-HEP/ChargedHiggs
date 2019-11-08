@@ -2287,6 +2287,12 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     {
         if (VERBOSE)Log(__FUNCTION__,"DEBUG","event pass selection");
 
+        if (mass_ >= 70 and mass_<110){ // no zptrwgt
+            if (selectedJets.size()==0)Fill("HmumuAnalysis/Vars/PtOnZ0j_"+ label,systname, pt_ ,e->weight());
+            if (selectedJets.size()==1)Fill("HmumuAnalysis/Vars/PtOnZ1j_"+ label,systname, pt_ ,e->weight());
+            if (selectedJets.size()>=2)Fill("HmumuAnalysis/Vars/PtOnZ2j_"+ label,systname, pt_ ,e->weight());
+        }
+
         float zptrw = 1.;
         if (label == "DY" or label == "DYJetsToLL_M-105To160") 
         {
@@ -2313,9 +2319,6 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/TrackMetOnZ_"+ label,systname, e->GetMet().GetTrackMetP4().Pt(),e->weight());
             Fill("HmumuAnalysis/Vars/MetOnZ_rw_"+ label,systname, e->GetMet().Pt(),e->weight()*zptrw);
             Fill("HmumuAnalysis/Vars/PtOnZ_"+ label,systname, pt_ ,e->weight());
-            if (jetVar_["njets"]==0)Fill("HmumuAnalysis/Vars/PtOnZ0j_"+ label,systname, pt_ ,e->weight());
-            if (jetVar_["njets"]==1)Fill("HmumuAnalysis/Vars/PtOnZ1j_"+ label,systname, pt_ ,e->weight());
-            if (jetVar_["njets"]>=2)Fill("HmumuAnalysis/Vars/PtOnZ2j_"+ label,systname, pt_ ,e->weight());
             Fill("HmumuAnalysis/Vars/NpvOnZ_"+ label,systname, e->Npv() ,e->weight());
             Fill("HmumuAnalysis/Vars/NpvOnZ_norwgt_"+ label,systname, e->Npv() ,e->weight()/nvtxrwgt);
             Fill("HmumuAnalysis/Vars/RhoOnZ_"+ label,systname, e->Rho() ,e->weight());
