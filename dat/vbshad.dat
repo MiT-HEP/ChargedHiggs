@@ -5,6 +5,7 @@ addConfig=VBShadAnalysis|AddLabel('WmWmJJ_EWK_TuneCUETP8M1_13TeV-vbfnlo')
 addConfig=VBShadAnalysis|AddLabel('WpWpJJ_EWK-QCD_TuneCUETP8M1_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('WpWpJJ_EWK_TuneCUETP8M1_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg')
+addConfig=VBShadAnalysis|AddLabel('WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8')
 
 #addConfig=VBShadAnalysis|AddLabel('DYJetsToLL_M-105To160')
 #addConfig=VBShadAnalysis|AddLabel('DY')
