@@ -15,6 +15,7 @@ class TRandom;
 #include <memory>
 
 #include "interface/JetResolutionObject.hpp"
+#include "interface/zpt.hxx"
 
 class HmumuAnalysis: virtual public AnalysisBase
 {
@@ -111,12 +112,13 @@ class HmumuAnalysis: virtual public AnalysisBase
         };
 
         std::unique_ptr<TRandom> rnd_;
-
-        float getZPtReweight(float Zpt);
-        float getZPtReweight2018(float Zpt);
-        std::unique_ptr<TH1D> rzpt_;
-        std::unique_ptr<TH1D> rzpt2018_;
-        std::unique_ptr<TF1> rzpt2_;
+    
+        zptutils rzpt_;
+        //float getZPtReweight(float Zpt);
+        //float getZPtReweight2018(float Zpt);
+        //std::unique_ptr<TH1D> rzpt_;
+        //std::unique_ptr<TH1D> rzpt2018_;
+        //std::unique_ptr<TF1> rzpt2_;
 
         /************
          *   TMVA   *

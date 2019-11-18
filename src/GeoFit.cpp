@@ -24,6 +24,26 @@ namespace PtGeoCor{
     return (pt - pt_cor);
   } // end of float PtGeoFit_mod(float d0, float pt, float eta, int year)
 
+  float PtGeo_BS_Roch(float d0, float pt, float eta, int year) {
+    float pt_cor = 0.0;
+    if (year == 2016) {
+      if      (abs(eta) < 0.9) pt_cor = 411.34 * d0 * pt * pt / 10000.0;
+      else if (abs(eta) < 1.7) pt_cor = 673.40 * d0 * pt * pt / 10000.0;
+      else                     pt_cor = 1099.0 * d0 * pt * pt / 10000.0;
+    }
+    else if (year == 2017) {
+      if      (abs(eta) < 0.9) pt_cor = 582.32 * d0 * pt * pt / 10000.0;
+      else if (abs(eta) < 1.7) pt_cor = 974.05 * d0 * pt * pt / 10000.0;
+      else                     pt_cor = 1263.4 * d0 * pt * pt / 10000.0;
+    }
+    else if (year == 2018) {
+      if      (abs(eta) < 0.9) pt_cor = 650.84 * d0 * pt * pt / 10000.0;
+      else if (abs(eta) < 1.7) pt_cor = 988.37 * d0 * pt * pt / 10000.0;
+      else                     pt_cor = 1484.6 * d0 * pt * pt / 10000.0;
+    }
+    return (pt - pt_cor);
+  } // end of float PtGeo_BS_Roch(float d0, float pt, float eta, int year) 
+
 } // end namespace PtGeoCor
 
 
@@ -41,7 +61,15 @@ int GeoFit::correct(Event *e){
         ResetUncorr(*lep);
 
         float pt=lep->Pt();
-        float pt_cor=PtGeoCor::PtGeoFit_mod(lep->GetDxy()*lep->Charge(), lep->Pt(), lep->Eta(), year) ;
+        float pt_cor=pt;
+        if (useBS)
+        {
+            pt_cor=PtGeoCor::PtGeo_BS_Roch(lep->GetDxyBS()*lep->Charge(), lep->Pt(), lep->Eta(), year) ;
+        }
+        else
+        {
+            pt_cor=PtGeoCor::PtGeoFit_mod(lep->GetDxy()*lep->Charge(), lep->Pt(), lep->Eta(), year) ;
+        }
 
         //pt_new=pt -pt_cor
         //sf=pt_new/pt = 1. -pt_cor/pt

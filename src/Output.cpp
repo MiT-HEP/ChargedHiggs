@@ -44,6 +44,26 @@ void Output::Fill2D(string name, string syst , double valueX,double valueY, doub
     return;
 }
 
+void Output::Fill3D(string name, string syst , double valueX,double valueY,double valueZ, double weight)
+{
+    if (not PassFinal(name) ) return ;
+
+    string fullname = name + "_" + syst;
+    if ( syst == "" or syst == "NONE")
+        fullname = name;
+
+    if ( histos3D_.find(fullname) == histos3D_.end() )
+    {
+        if (prototypes3D_.find(name) == prototypes3D_.end() )
+            cout<<"[Output]::[Fill]::[ERROR] Histo 3D "<<name<<" not booked !"<<endl;
+        histos3D_[ fullname ]  = (TH3D*) prototypes3D_ [name] -> Clone(fullname.c_str());
+        histos3D_[ fullname ] -> Reset("ICESM");
+    }
+    histos3D_[fullname] ->Fill(valueX,valueY,valueZ,weight);
+
+    return;
+}
+
 void Output::Open(string name)
 { 
 #ifdef VERBOSE
@@ -127,6 +147,28 @@ void Output::Write(){
             m.second->Write( m.first.c_str()) ; 
         }
     }
+
+    for(auto m : histos3D_) 
+    {
+        if ( m.first.find("/") != string::npos) // there is a directory
+        {
+            size_t  last = m.first.rfind("/");
+            string dir = m.first.substr(0,last); // substr get len
+            string name = m.first.substr(last+1,string::npos);
+            //if (! file_ ->cd (dir.c_str()) )
+            if ( file_ -> Get(dir.c_str()) == NULL )
+            {
+                CreateDir(dir);
+            }
+            file_ ->cd (dir.c_str()) ;
+            m.second->Write( name.c_str()) ; 
+        }
+        else
+        {
+            file_->cd();
+            m.second->Write( m.first.c_str()) ; 
+        }
+    }
     for(auto m : trees_) 
     {
             file_->cd();
@@ -159,6 +201,22 @@ void Output::Book2D(string name, string title,int nBins, double xmin, double xma
             nBins2,ymin,ymax
             ); 
     prototypes2D_ [name] -> Sumw2();
+}
+
+void Output::Book3D(string name, string title,int nBins, double xmin, double xmax,int nBins2, double ymin,double ymax,int nBins3, double zmin,double zmax)
+{ 
+    if (not PassFinal(name) ) return ;
+
+    if ( Exists(name) )
+        cout <<"[Output]::[Book3D]::[ERROR] a TH1D/TH3D histo with the same name '"<<name<<"' already exist"<<endl;
+
+    prototypes3D_ [name] = new TH3D( (name+"_proto").c_str(),
+            title.c_str(), 
+            nBins,xmin,xmax,
+            nBins2,ymin,ymax,
+            nBins3,zmin,zmax
+            ); 
+    prototypes3D_ [name] -> Sumw2();
 }
 
 void Output::Book(string name, string title,int nBins, double *xbound)
@@ -204,9 +262,17 @@ TH2D* Output::Get2D(string name,string systname)
     return Get2D(name + "_" + systname);
 }
 
+TH3D* Output::Get3D(string name,string systname)
+{ 
+    if (systname == "" or systname == "NONE") 
+        return Get3D(name);
+    return Get3D(name + "_" + systname);
+}
+
 bool Output::Exists(string name){
     if ( histos2D_.find(name) != histos2D_.end() ) return true;
     if ( histos_.find(name) != histos_.end() ) return true;
+    if ( histos3D_.find(name) != histos3D_.end() ) return true;
     return false;
 }
 // ---------------------------- TREE -----------------
