@@ -1023,7 +1023,7 @@ void HmumuAnalysis::Init(){
         categories_.clear();
         for (int i=0;i<30;++i) categories_.push_back(Form("cat%d",i));
         //if (catType<4){}
-        InitTmva(0); InitTmvaUCSD(1,0);InitTmvaUCSD(2,2);
+        InitTmva(0); InitTmvaUCSD(1,0);//InitTmvaUCSD(2,2);
         if (catType>=10)InitTmvaMIT(0); //outdated
         if (doScikit)InitScikit();
     }
@@ -1674,29 +1674,29 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     string category;
 
     BdtUF(0);
-    BdtUCSD(1,0);
-    BdtUCSD(2,2);
+    BdtUCSD(1,0); // --> nonvbf
+    //BdtUCSD(2,2); --> vbf
 
     if (catType==2) category = CategoryBdt(e);
     else if (catType>=3 and catType <10) { 
-        category = CategoryBdtUCSD(e); 
+        category = CategoryBdtUCSD(e);  // 0-5
 
         string categoryExc = CategoryExclusive(e); 
         recoMuons = (mu0 != NULL and mu1 !=NULL);  // muons may have been recomputed here
         isExclusiveCat = ( categoryExc!="" and categoryExc!="ggHX");
         if (categoryExc == "ggHX" and category == "") isExclusiveCat=true;
 
-        if (categoryExc == "ttHHadr") category = "cat9";// 15
-        if (categoryExc == "ttHLep" ) category="cat10";  // 
-        if (categoryExc == "ZHLep" ) category="cat11";   // 
-        if (categoryExc == "WHLep" ) category="cat12";   // 
-        if (categoryExc == "VHHadr" ) category="cat13";   // 
+        if (categoryExc == "ttHHadr") category = "cat5";// 15
+        if (categoryExc == "ttHLep" ) category="cat6";  // 
+        if (categoryExc == "ZHLep" ) category="cat7";   // 
+        if (categoryExc == "WHLep" ) category="cat8";   // 
+        if (categoryExc == "VHHadr" ) category="cat9";   // 
         //if (categoryExc == "ggHX" and category == "" ) category="cat14";   
 
         // enforce it for VBF Pisa
         ////if (jetVar_["mjj_1"] > 400) category="cat14";
         //#warning NOMJJ
-        if (catType == 4 and jetVar_["mjj_lead"] > 400 and abs(jetVar_["detajj_lead"])>2.5 and selectedJets.size() >0 and selectedJets[0]->Pt()>35 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat14";
+        if (catType == 4 and jetVar_["mjj_lead"] > 400 and abs(jetVar_["detajj_lead"])>2.5 and selectedJets.size() >0 and selectedJets[0]->Pt()>35 and categoryExc != "ttHHadr" and categoryExc != "ttHLep") category="cat10";
     } 
     else if (catType ==10)
     {
@@ -2319,16 +2319,16 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
             if(catType>=2)Fill("HmumuAnalysis/Vars/BdtOnZ_"+ label,systname, bdt[0] ,e->weight());
 
-            if (catType>=2 and bdt.size() >2)
+            if (catType>=2 and bdt.size() >1)
             {
                 if (selectedJets.size()<2) {
                     Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnZ_"+label,systname,bdt[1],e->weight());
                     Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnZ_nopuidsf_"+label,systname,bdt[1],e->weight()/puidsf);
                 }
-                else if (jetVar_["mjj_lead"]<400 and jetVar_["nbjets"]==0 ) {
-                    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_"+label,systname,bdt[2],e->weight());
-                    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_nopuidsf_"+label,systname,bdt[2],e->weight()/puidsf);
-                }
+                //else if (jetVar_["mjj_lead"]<400 and jetVar_["nbjets"]==0 ) {
+                //    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_"+label,systname,bdt[2],e->weight());
+                //    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnZ_nopuidsf_"+label,systname,bdt[2],e->weight()/puidsf);
+                //}
             }
 
             if (doScikit and catType==2){
@@ -2462,16 +2462,16 @@ int HmumuAnalysis::analyze(Event *event, string systname)
             Fill("HmumuAnalysis/Vars/NBJetsOnH_"+ label,systname, e->Bjets(),e->weight());
             Fill("HmumuAnalysis/Vars/CosThetaCSOnH_"+ label,systname,  ChargedHiggs::CosThetaCSPos(mu0,mu1),e->weight());
             
-            if (catType>=2 and bdt.size() >2)
+            if (catType>=2 and bdt.size() >1)
             {
                 if (selectedJets.size()<2){
                     Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnH_"+label,systname,bdt[1],e->weight());
                     Fill("HmumuAnalysis/Vars/Bdt01jUCSDOnH_nopuidsf_"+label,systname,bdt[1],e->weight()/puidsf);
                 }
-                else if (jetVar_["mjj_lead"]<400 and jetVar_["nbjets"]==0 ) {
-                    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnH_"+label,systname,bdt[2],e->weight());
-                    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnH_nopuidsf_"+label,systname,bdt[2],e->weight()/puidsf);
-                }
+                //else if (jetVar_["mjj_lead"]<400 and jetVar_["nbjets"]==0 ) {
+                //    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnH_"+label,systname,bdt[2],e->weight());
+                //    Fill("HmumuAnalysis/Vars/Bdt2jUCSDOnH_nopuidsf_"+label,systname,bdt[2],e->weight()/puidsf);
+                //}
             }
 
             if(catType>=2 and bdt.size() >0 )Fill("HmumuAnalysis/Vars/BdtOnH_"+ label,systname, bdt[0] ,e->weight());
@@ -2578,7 +2578,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
 
             if (not processingSyst_ and catType>=2){ // don't need syst for this
                 if (selectedJets.size() <2)Fill2D("HmumuAnalysis/Vars/BdtMassFull_UCSD1_"+ label,systname,mass_,bdt[1],e->weight());
-                else Fill2D("HmumuAnalysis/Vars/BdtMassFull_UCSD2_"+ label,systname,mass_,bdt[2],e->weight());
+                //else Fill2D("HmumuAnalysis/Vars/BdtMassFull_UCSD2_"+ label,systname,mass_,bdt[2],e->weight());
             }
 
             if (not isExclusiveCat and not processingSyst_ and catType>=2){ // don't need syst for this
@@ -2587,12 +2587,12 @@ int HmumuAnalysis::analyze(Event *event, string systname)
                 
                 //Fill2D("HmumuAnalysis/Vars/BdtMass_UF_"+ label,systname,mass_,bdt[0],e->weight());
                 if (selectedJets.size() <2)Fill2D("HmumuAnalysis/Vars/BdtMass_UCSD1_"+ label,systname,mass_,bdt[1],e->weight());
-                else Fill2D("HmumuAnalysis/Vars/BdtMass_UCSD2_"+ label,systname,mass_,bdt[2],e->weight());
+                //else Fill2D("HmumuAnalysis/Vars/BdtMass_UCSD2_"+ label,systname,mass_,bdt[2],e->weight());
 
                 if (jetVar_["mjj_lead"]<400)
                 {
                     if (selectedJets.size() <2)Fill2D("HmumuAnalysis/Vars/BdtMassNonVbf_UCSD1_"+ label,systname,mass_,bdt[1],e->weight());
-                    else Fill2D("HmumuAnalysis/Vars/BdtMassNonVbf_UCSD2_"+ label,systname,mass_,bdt[2],e->weight());
+                    //else Fill2D("HmumuAnalysis/Vars/BdtMassNonVbf_UCSD2_"+ label,systname,mass_,bdt[2],e->weight());
                 }
             }
             
@@ -3140,7 +3140,7 @@ void HmumuAnalysis::FillSyncTree(const string& label, const string& systname, co
 
         SetTreeVar("bdt", (bdt.size()>0)?bdt[0]:-10);
         SetTreeVar("bdtUCSD01j", (bdt.size()>1)?bdt[1]:-10);
-        SetTreeVar("bdtUCSD2j", (bdt.size()>2)?bdt[2]:-10);
+        //SetTreeVar("bdtUCSD2j", (bdt.size()>2)?bdt[2]:-10);
     
 
         // basic jet info
@@ -3414,16 +3414,17 @@ void HmumuAnalysis::InitTmvaUCSD(int pos,int nj){
     if (nj==0) AddVariable("njets",'F');    
     if(nj==2) AddVariable("detammj",'F');
     AddVariable("dphimmj",'F');    
+    if(nj==0) AddVariable("detammj",'F');
 
     AddVariable("m1ptOverMass",'F');    
     AddVariable("m2ptOverMass",'F');    
     AddVariable("m1eta",'F');    
     AddVariable("m2eta",'F');    
-    if (nj==0) AddVariable("njets",'F');    
-    if (nj==0) AddVariable("nsajets2",'F');    
-    if (nj==0) AddVariable("sajetsht2",'F');    
-    if (nj==0) AddVariable("ptbalance",'F');    
-    if (nj==0) AddVariable("ptcentrality",'F');    
+    if (nj==2) AddVariable("njets",'F');    
+    if (nj==2) AddVariable("nsajets2",'F');    
+    if (nj==2) AddVariable("sajetsht2",'F');    
+    if (nj==2) AddVariable("ptbalance",'F');    
+    if (nj==2) AddVariable("ptcentrality",'F');    
   
     if (nj==0){ 
         AddSpectator("event",'F');SetVariable("event",1.);

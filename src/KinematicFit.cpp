@@ -399,7 +399,7 @@ void KinematicFit::print()
 }
 
 // ------------------------------------- KINEMATIC FIT 2 -------------------
-//
+// GSL has only simplex w/o gradient :(
 
 #ifdef KF2
 class info_kf2{
@@ -418,6 +418,8 @@ class info_kf2{
         static double mZ;
         static int doV;//0 = no, 1=Z, 2=W
 
+        static void * params;
+
 };
 
 double info_kf2::lambda_MET=1.;
@@ -426,9 +428,11 @@ double info_kf2::lambda_mqq=1000.;
 double info_kf2::mW=80.399;
 double info_kf2::mZ=91.1876;
 int info_kf2::doV=1;
+void *info_kf2::params=nullptr;
 
-double func_kf2 (const gsl_vector * a, void * params)
+double func_kf2 (const double * a)
 {
+    void *params=info_kf2::params;
     std::vector<info_kf2> *infos = (std::vector<info_kf2>*)params;
     int N=infos->size();
     double value=0;
@@ -440,7 +444,8 @@ double func_kf2 (const gsl_vector * a, void * params)
 
     for(unsigned i=0;i<N;++i)
     {
-        double ai= gsl_vector_get(a,i);
+        //double ai= gsl_vector_get(a,i);
+        double ai= a[i];
         double lai= std::log(ai);
         double si = infos->at(i).sigma;
 
@@ -454,18 +459,18 @@ double func_kf2 (const gsl_vector * a, void * params)
         }
     }
 
-    std::cout<<"Debug: iteration| stat: "<<value;
+    //std::cout<<"Debug: iteration| stat: "<<value;
     
     double lambda_MET=infos->at(0).lambda_MET;
     value += lambda_MET * std::pow(metx,2) + lambda_MET*std::pow(mety,2);
 
-    std::cout<<"| met: "<<metx<<" "<<mety<<" value="<<value;
+    //std::cout<<"| met: "<<metx<<" "<<mety<<" value="<<value;
 
     double lambda_V=infos->at(0).lambda_V;
     if (infos->at(0).doV==1) value += lambda_V*std::pow(V.M()-infos->at(0).mZ,2);
     if (infos->at(0).doV==2) value += lambda_V*std::pow(V.M()-infos->at(0).mW,2);
 
-    std::cout<<"|V value="<<value<<std::endl;
+    //std::cout<<"|V value="<<value<<std::endl;
     
     return value;
 } // function
@@ -477,8 +482,8 @@ double func_kf2 (const gsl_vector * a, void * params)
 #include "TRandom2.h"
 #include "TError.h"
 
-void KinematicFit2::run_single()
-{
+
+void KinematicFit2::run_single(){
     //prepare
         std::vector<info_kf2> myinfos;
         for(int i=0;i<p4.size();++i)
@@ -489,74 +494,41 @@ void KinematicFit2::run_single()
             a.isV=  (i==v1) or (i==v2);
             myinfos.push_back(a);
         }
+   info_kf2::params = &myinfos;
 
-    //run gsl
-        gsl_multimin_function F;
-        F.n = p4.size();
-        F.f = &func_kf2;
-        F.params = &myinfos;
-        
-        gsl_vector *x = gsl_vector_alloc (p4.size());
-        // init 
-        for(unsigned i=0;i<p4.size();++i) gsl_vector_set(x,i,1.);
+   ROOT::Math::Minimizer* min = ROOT::Math::Factory::CreateMinimizer("Minuit2", "Migrad");
+   min->SetMaxFunctionCalls(maxIteration); // for Minuit/Minuit2
+   min->SetMaxIterations(10000);  // for GSL
+   min->SetTolerance(0.001);
+   min->SetPrintLevel(1);
 
-        // minimizer
-        size_t iter = 0;
-        int status;
-        size_t size=0;
+   // create funciton wrapper for minmizer
+   // a IMultiGenFunction type
+   ROOT::Math::Functor f(&func_kf2,p4.size());
+    
+   //double step[p4.size()]; for(size_t i=0;i<p4.size();++i) step[i]=0.01;
+   //double a[p4.size()]; for(int i=0;i<p4.size();++i) a[i]=1.;
+   // starting point
 
-        // step size 10%
-        gsl_vector *ss =  gsl_vector_alloc (p4.size());
-        gsl_vector_set_all (ss, 1.e-4);
+   min->SetFunction(f);
 
-        const gsl_multimin_fminimizer_type *T;
-        gsl_multimin_fminimizer *s;
+   // Set the free variables to be minimized!
+   for(size_t i=0;i<p4.size();++i) min->SetVariable(i,Form("a%u",i),1., 0.01);
 
-        //T = gsl_multimin_fminimizer_nmsimplex2;
-        T = gsl_multimin_fminimizer_nmsimplex;
-        s = gsl_multimin_fminimizer_alloc (T, p4.size());
+   // do the minimization
+   min->Minimize();
 
-        gsl_multimin_fminimizer_set (s, &F, x, ss); // first step-size and tolerance = decrease parameter
+   const double *xs = min->X();
+   //std::cout << "Minimum: f(" << xs[0] << "," << xs[1] << "): "
+   //          << min->MinValue()  << std::endl;
 
-        do
-        {
-            iter++;
-            status = gsl_multimin_fminimizer_iterate (s);
+   alpha.clear();
+   for(size_t i=0;i<p4.size();++i)alpha.push_back(xs[i]);
+   value=min->MinValue();
 
-            if (status) break; // exit on error
 
-            size = gsl_multimin_fminimizer_size (s);
-            status = gsl_multimin_test_size (size, 1e-10);
-            if (status == GSL_SUCCESS)
-            {
-                //printf ("converged to minimum at\n");
-                break;
-            }
-        }
-        while (status == GSL_CONTINUE && iter < maxIteration);
-
-        if (status != GSL_SUCCESS) { std::cout<<"[WARNING] Unable to find minimum"<<std::endl; }
-
-        //copy back alpha vector
-        alpha.clear();
-        alpha.reserve(p4.size());
-        for(int i=0;i<p4.size();++i)
-        {
-            double ai= gsl_vector_get (s->x, i);
-            alpha.push_back(ai);
-            if (debug>1) std::cout<<"** setting ai to be: "<<ai<<std::endl;
-
-        }
-        if(VERBOSE)std::cout<<"-->KF Run Generic: F2"<<std::endl;
-        value= func_kf2 (s->x,&myinfos) ;
-        
-        //dealloc
-        gsl_multimin_fminimizer_free (s);
-        gsl_vector_free (x);
-        gsl_vector_free (ss);
-
-        return;
 }
+
 
 void KinematicFit2::run(){
     // reset

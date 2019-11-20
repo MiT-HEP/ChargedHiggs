@@ -73,6 +73,7 @@
 #include "interface/UnfirableFilter.hpp"
 #include "interface/HmmLikelihood.hpp"
 #include "interface/GeoFit.hpp"
+#include "interface/KinematicFit.hpp"
 
 // put template stuff here, MyClass<T> myclass;
 //nampspace{
