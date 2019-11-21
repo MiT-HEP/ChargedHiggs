@@ -28,14 +28,27 @@ public:
     void SetJetCuts(Jet *j) override ;
     void SetFatJetCuts(FatJet *f) override;
 
-    
+    double resolvedtagger(Event*e, double Mw, string label, string systname);
+    void genStudies(Event*e, GenParticle* &genWp, GenParticle* &genWp2);
+
 private:
     
     // selected Objects
     vector<Jet*> selectedJets;
     vector<FatJet*> selectedFatJets;
-    
-    
+
+    vector<Jet*> forwardJets;
+    vector<Jet*> bosonJets;
+
+    double evt_Mjj=-1;
+    double evt_Detajj=-1;
+    double evt_Dphijj=-1;
+    double evt_MVV=-1;
+    double evt_MVV_gen=-1;
+
+    double evt_zepVB=-1;
+    double evt_zepV2=-1;
+
 public:
     vector<string> weights;
     
