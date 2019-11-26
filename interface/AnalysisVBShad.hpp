@@ -29,10 +29,18 @@ public:
     void SetFatJetCuts(FatJet *f) override;
 
     double resolvedtagger(Event*e, double Mw, string label, string systname);
-    void genStudies(Event*e, GenParticle* &genWp, GenParticle* &genWp2);
+    void genStudies(Event*e, string label);
+    void getObjects(Event*e, string label, string systname);
+
+    bool doMETAnalysis=false;
+    bool doBAnalysis=false;
+    bool doHADAnalysis=false;
 
 private:
-    
+
+    GenParticle *genVp = NULL;
+    GenParticle *genVp2 = NULL;
+
     // selected Objects
     vector<Jet*> selectedJets;
     vector<FatJet*> selectedFatJets;

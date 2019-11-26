@@ -44,6 +44,10 @@ void VBShadAnalysis::SetFatJetCuts(FatJet *f){
 void VBShadAnalysis::Init(){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
 
+    Log(__FUNCTION__,"INFO",Form("doMETAnalysis=%d",doMETAnalysis));
+    Log(__FUNCTION__,"INFO",Form("doBAnalysis=%d",doBAnalysis));
+    Log(__FUNCTION__,"INFO",Form("doHADAnalysis=%d",doHADAnalysis));
+
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
 	    Book ("VBShadAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
@@ -64,12 +68,19 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/NJet_"+l, "NJet; FatJet; Events", 10,0,10);
         Book ("VBShadAnalysis/Baseline/pT_Jet_"+l, "pT_Jet; pT [GeV]; Events", 80,0,1600.);
 
+        Book ("VBShadAnalysis/Baseline/NBJet_"+l, "NBJet; NBJet; Events", 5,0,5);
+
+        //MET
+        Book ("VBShadAnalysis/Baseline/Met_"+l, "Met; Met [GeV]; Events", 100,0,1000);
+
         // resolved
         Book ("VBShadAnalysis/Baseline/ResBosonMass_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100,0,200.);
 
         Book ("VBShadAnalysis/ZepBosBVar_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj; Events", 250,0,2);
         Book ("VBShadAnalysis/ZepBosBVar_BB_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
         Book ("VBShadAnalysis/ZepBosBVar_RB_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
+        Book ("VBShadAnalysis/ZepBosBVar_BMET_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
+        Book ("VBShadAnalysis/ZepBosBVar_RMET_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
 
         // Search Variavle
         Book ("VBShadAnalysis/MVV_"+l, "MVV (unclassified); MVV [GeV]; Events", 250,0,2500);
@@ -78,9 +89,16 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/MVVres_BB_"+l, "MVVres (BB); ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100,-5.,5.);
         Book ("VBShadAnalysis/MVV_RB_"+l, "MVV (RB); MVV [GeV]; Events", 250,0,2500);
         Book ("VBShadAnalysis/MVVres_RB_"+l, "MVVres (RB); ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100,-5.,5.);
+
+        Book ("VBShadAnalysis/MVV_BMET_"+l, "MTVV (BMET) ; M_{T}(V,MET) [GeV]; Events", 250,0,2500);
+        Book ("VBShadAnalysis/MVVres_BMET_"+l, "MVMETres (BMET); ( M_{T}(V,MET) - MTVV_{gen} ) / MTVV_{gen}; Events", 100,-5.,5.);
+        Book ("VBShadAnalysis/MVV_RMET_"+l, "MVV (RMET); M_{T}(V,MET) [GeV]; Events", 250,0,2500);
+        Book ("VBShadAnalysis/MVVres_RMET_"+l, "MVVres (RMET); ( M_{T}(V,MET) - MVV_{gen} ) / MVV_{gen}; Events", 100,-5.,5.);
         //
         Book ("VBShadAnalysis/Mjj_BB_"+l, "Mjj (BB); Mjj [GeV]; Events", 250,0,2500.);
         Book ("VBShadAnalysis/Mjj_RB_"+l, "Mjj (RB); Mjj [GeV]; Events", 250,0,2500.);
+        Book ("VBShadAnalysis/Mjj_BMET_"+l, "Mjj (BMET); Mjj [GeV]; Events", 250,0,2500.);
+        Book ("VBShadAnalysis/Mjj_RMET_"+l, "Mjj (RMET); Mjj [GeV]; Events", 250,0,2500.);
         Book ("VBShadAnalysis/Mjj_"+l, "Mjj; Mjj [GeV]; Events", 250,0,2500.);
 
 
@@ -90,10 +108,12 @@ void VBShadAnalysis::Init(){
 
 }
 
-double VBShadAnalysis::resolvedtagger(Event*e, double Mw, string label, string systname) {
+double VBShadAnalysis::resolvedtagger(Event*e, double MV, string label, string systname) {
+
+    bosonJets.clear();
 
     float const norm = 1000*1000; // 1TeV^2
-    float const Mwres = 20*20; // 20 GeV
+    float const MVres = 20*20; // 20 GeV
 
     double Mij = 0; //Wjets
     double Mkl = 0; //forward jets
@@ -116,7 +136,7 @@ double VBShadAnalysis::resolvedtagger(Event*e, double Mw, string label, string s
 
                     Mkl = selectedJets[k]->InvMass(selectedJets[l]);
 
-                    double chi2 = norm / (Mkl*Mkl) + (Mij*Mij - Mw*Mw)/Mwres;
+                    double chi2 = norm / (Mkl*Mkl) + (Mij*Mij - MV*MV)/MVres;
                     if(chi2<chi2_) { chi2_=chi2; index_i=i; index_j=j; index_k= k; index_l=l; }
 
                 }
@@ -137,29 +157,47 @@ double VBShadAnalysis::resolvedtagger(Event*e, double Mw, string label, string s
 }
 
 
-void VBShadAnalysis::genStudies(Event*e, GenParticle* & genWp, GenParticle* & genWp2 )
+void VBShadAnalysis::genStudies(Event*e, string label )
 {
+
+    int pdgID1=24;
+    int pdgID2=24;
+
+    if((label.find("ZnnZhadJJ") !=string::npos )
+       || (label.find("ZbbZhadJJ")!=string::npos )) {
+        pdgID1=23;
+        pdgID2=23;
+    } else if (label.find("WPhadWPhadJJ") !=string::npos ) {
+        pdgID1=24;
+        pdgID2=24;
+    }
 
     for(Int_t i = 0; i < e->NGenPar(); i++){
 
         GenParticle *genpar = e->GetGenParticle(i);
 
-        if(genpar->GetPdgId() == 24) if(genWp==NULL) { genWp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
-        if(genpar->GetPdgId() == 24) if(genWp2==NULL and genpar!=genWp) { genWp2 = genpar; /*cout << "found W2 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
+        if(genpar->GetPdgId() == pdgID1) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
+        if(genpar->GetPdgId() == pdgID2) if(genVp2==NULL and genpar!=genVp) { genVp2 = genpar; /*cout << "found W2 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
 
     }
 
     int topology=0;
-    if(genWp!=NULL and genWp2!=NULL) {
-        if(genWp->Pt() > 200 and genWp2->Pt() > 200) topology=1;
-        if((genWp->Pt() > 200 and genWp2->Pt() < 200) || (genWp->Pt() < 200 and genWp2->Pt() > 200) ) topology=2;
+    if(genVp!=NULL and genVp2!=NULL) {
+        if(genVp->Pt() > 200 and genVp2->Pt() > 200) topology=1;
+        if((genVp->Pt() > 200 and genVp2->Pt() < 200) || (genVp->Pt() < 200 and genVp2->Pt() > 200) ) topology=2;
     }
 
     // at least one boosted
     //    if(genWp==NULL or genWp2==NULL) return EVENT_NOT_USED;
     //    if(genWp->Pt() < 200 and genWp2->Pt() < 200) return EVENT_NOT_USED;
 
-    evt_MVV_gen = (genWp->GetP4()+genWp2->GetP4()).M();
+    if(genVp!=NULL and genVp2!=NULL) {
+        if(doMETAnalysis) {
+            evt_MVV_gen = ChargedHiggs::mt(genVp->GetP4().Pt(),genVp2->GetP4().Pt(),genVp->GetP4().Phi(),genVp2->GetP4().Phi());
+        } else {
+            evt_MVV_gen = (genVp->GetP4()+genVp2->GetP4()).M();
+        }
+    }
 
     // Get Njets 30
     vector<TLorentzVector> genJets;
@@ -174,52 +212,13 @@ void VBShadAnalysis::genStudies(Event*e, GenParticle* & genWp, GenParticle* & ge
 
 }
 
-int VBShadAnalysis::analyze(Event *e, string systname)
+void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 {
 
-    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
-    string label = GetLabel(e);
-    if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
-
-
-    GenParticle *genWp = NULL;
-    GenParticle *genWp2 = NULL;
-
-    genStudies(e,genWp,genWp2);
 
     //$$$$$$$$$
     //$$$$$$$$$
-    //$$$$$$$$$ Build cutflow
-    //$$$$$$$$$
-    //$$$$$$$$$
-
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 0, e->weight() );
-
-    // TRIGGER STORY
-
-    bool passtrigger = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
-    //    if(!passtrigger) return EVENT_NOT_USED;
-
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 1, e->weight() );  //1--trigger
-
-    // kill Top/W/Z 
-    if ( e->Nleps() > 0 ) return EVENT_NOT_USED;
-
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 2, e->weight() );  //2--lep veto
-
-    // events with MET in another category
-    if ( e->GetMet().Pt() > 200 ) return EVENT_NOT_USED;
-
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 3, e->weight() );  //3--veto MET
-
-    // events with B in another category   
-    if ( e->Bjets() > 0 ) return EVENT_NOT_USED;
-
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 4, e->weight() );  //4--veto b
-
-    //$$$$$$$$$
-    //$$$$$$$$$
-    //$$$$$$$$$ Build fatJets and jets
+    //$$$$$$$$$ Build fatJets and boson/forward jets
     //$$$$$$$$$
     //$$$$$$$$$
 
@@ -230,10 +229,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         FatJet *f=e->GetFatJet(i);
 
         Double_t minDR=9999;
-        if(genWp!=NULL and genWp2!=NULL) {
-            Double_t delW = f->DeltaR(*genWp);
+        if(genVp!=NULL and genVp2!=NULL) {
+            Double_t delW = f->DeltaR(*genVp);
             if (delW < minDR){ minDR = delW;}
-            Double_t delW2 = f->DeltaR(*genWp2);
+            Double_t delW2 = f->DeltaR(*genVp2);
             if (delW2 < minDR){ minDR = delW2;}
         }
 
@@ -246,13 +245,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
         }
 
+        //        if(f->IsWJet() and ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().Phi())>0.8) selectedFatJets.push_back(f);
         if(f->IsWJet()) selectedFatJets.push_back(f);
 
     }
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
 
-    if(selectedFatJets.size()<1) return EVENT_NOT_USED;
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //NFatjet cut
 
@@ -264,15 +263,87 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         Fill("VBShadAnalysis/Baseline/pT_Jet_" +label, systname, j->Pt(), e->weight() );
 
-        if( j->DeltaR(selectedFatJets[0]) < 1.2 ) continue;
+        if(selectedFatJets.size()>0) {
+            if( j->DeltaR(selectedFatJets[0]) < 1.2 ) continue;
+        }
         if(selectedFatJets.size()>1) {
             if( j->DeltaR(selectedFatJets[1]) < 1.2 ) continue;
         }
+        /*
+        for (auto const& fat : selectedFatJets) {
+            if( j->DeltaR(fat) < 1.2 ) continue;
+        }
+        */
         //        if( j->DeltaR(genWp) < 1.2 ) continue;
         //        if( j->DeltaR(genWp2) < 1.2 ) continue;
 
         selectedJets.push_back(j);
+        //        if(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().Phi())>0.4) selectedJets.push_back(j);
+
     }
+
+}
+
+int VBShadAnalysis::analyze(Event *e, string systname)
+{
+
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
+    string label = GetLabel(e);
+    if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
+
+    genVp = NULL;
+    genVp2 = NULL;
+
+    genStudies(e, label );
+
+    //$$$$$$$$$
+    //$$$$$$$$$
+    //$$$$$$$$$ Build cutflow
+    //$$$$$$$$$
+    //$$$$$$$$$
+
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 0, e->weight() );
+
+    // TRIGGER STORY
+
+    bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
+    if(doMETAnalysis) {
+        bool passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
+        //    bool passtriggerMET = (e->IsTriggered("HLT_PFMET120_PFMHT120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
+        if(!passtriggerMET) return EVENT_NOT_USED;
+    }
+
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 1, e->weight() );  //1--trigger
+
+    // kill Top/W/Z
+    if ( e->Nleps() > 0 ) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 2, e->weight() );  //2--lep veto
+
+    // events with MET in separate category
+    if ( doMETAnalysis and e->GetMet().Pt() < 200 ) return EVENT_NOT_USED;
+    if ( !doMETAnalysis and e->GetMet().Pt() > 200 ) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/Met_" +label, systname, e->GetMet().Pt(), e->weight() );
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 3, e->weight() );  //3--veto MET
+
+    // events with B in another category
+    // withMET
+    // noMET with B
+    // noMET noB
+    if ( doHADAnalysis and e->Bjets() > 0 ) return EVENT_NOT_USED;
+    if ( doBAnalysis and e->Bjets() == 0 ) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/NBJet_" +label, systname, e->Bjets(), e->weight() );
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 4, e->weight() );  //4--veto b
+
+
+    //$$$$$$$$$
+    //$$$$$$$$$ Build fatJets and boson/forward jets
+    getObjects(e, label , systname);
+
+    if ( doMETAnalysis and selectedFatJets.size()<0 ) return EVENT_NOT_USED;
+    if ( !doMETAnalysis and selectedFatJets.size()<1 ) return EVENT_NOT_USED;
 
     //$$$$$$$$$
     //$$$$$$$$$
@@ -280,26 +351,55 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
     //$$$$$$$$$
 
-    forwardJets.clear();
 
     string category="";
-    if(selectedFatJets.size()>1 and selectedJets.size()>1) {
-        category="_BB";
-        evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
 
-        for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
-            forwardJets.push_back(selectedJets[iter]);
+    //    if(doMETAnalysis) BMET, RMET
+    //    if(!doMETAnalysis) BB, RB
+
+    if(!doMETAnalysis) {
+        forwardJets.clear();
+
+        if(selectedFatJets.size()>1 and selectedJets.size()>1) {
+            category="_BB";
+            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
+            for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
+                forwardJets.push_back(selectedJets[iter]);
+            }
+        }
+
+        double mBoson=80.;
+
+        if(selectedFatJets.size()==1 and selectedJets.size()>3) {
+            double MV = resolvedtagger(e, mBoson, label, systname);
+            if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1) {
+                category="_RB"; evt_MVV = ( selectedFatJets[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
+            }
         }
     }
 
-    bosonJets.clear();
-    if(selectedFatJets.size()==1 and selectedJets.size()>3) {
-        double MV = resolvedtagger(e, 80, label, systname);
-        if(MV>(80-20) and MV<(80+20) and bosonJets.size()>1) { category="_RB"; evt_MVV = ( selectedFatJets[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M(); }
+    if(doMETAnalysis) {
+        forwardJets.clear();
+
+        if(selectedFatJets.size()>0 and selectedJets.size()>1) {
+            category="_BMET";
+            evt_MVV = ChargedHiggs::mt(selectedFatJets[0]->Pt(), e->GetMet().Pt(), selectedFatJets[0]->Phi(), e->GetMet().Phi());
+            for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
+                forwardJets.push_back(selectedJets[iter]);
+            }
+        }
+        double mBoson=90.;
+        if(selectedFatJets.size()==0 and selectedJets.size()>3) {
+            double MV = resolvedtagger(e, mBoson, label, systname);
+            if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1) {
+                category="_RMET";
+                evt_MVV = ChargedHiggs::mt((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Pt(), e->GetMet().Pt(),
+                                           (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Phi(), e->GetMet().Phi());
+            }
+        }
     }
 
-    //$$$$$$$$$
-    //$$$$$$$$$
+
     //$$$$$$$$$
     //$$$$$$$$$
 
@@ -336,9 +436,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 10, e->weight() ); //InvMjet cut
 
-    evt_zepVB = (selectedFatJets[0]->Rapidity() - (forwardJets[0]->Eta()+forwardJets[1]->Eta())/2)/evt_Detajj;
-
-    Fill("VBShadAnalysis/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
+    if(selectedFatJets.size()>0) {
+        evt_zepVB = (selectedFatJets[0]->Rapidity() - (forwardJets[0]->Eta()+forwardJets[1]->Eta())/2)/evt_Detajj;
+        Fill("VBShadAnalysis/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
+    }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
     return 0;
