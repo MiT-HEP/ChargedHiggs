@@ -110,11 +110,42 @@ void VBShadAnalysis::Init(){
 
     } //end label loop
 
+    if(writeTree) {
+        // fill variables for miniTREE
+
+        InitTree("tree_vbs");
+
+        Branch("tree_vbs","run",'I');
+        Branch("tree_vbs","lumi",'I');
+        Branch("tree_vbs","evt",'I');
+        Branch("tree_vbs","npv",'I');
+        Branch("tree_vbs","weight",'D');
+        Branch("tree_vbs","isRealData",'I');
+        Branch("tree_vbs","xsec",'F');
+
+        Branch("tree_vbs","NJets",'I');
+        Branch("tree_vbs","NBJets",'I');
+        Branch("tree_vbs","met_pt",'F');
+        Branch("tree_vbs","met_phi",'F');
+
+        Branch("tree_vbs","mc",'I'); // to distinguish between the different mc
+        Branch("tree_vbs","ana_category",'I');
+
+        Branch("tree_vbs","varMjj",'F');
+        Branch("tree_vbs","varDetajj",'F');
+        Branch("tree_vbs","varDphijj",'F');
+
+        Branch("tree_vbs","varMVV",'F');
+        Branch("tree_vbs","varDetaVV",'F');
+        Branch("tree_vbs","varzepVB",'F');
+
+    }
+
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
 
 }
 
-double VBShadAnalysis::resolvedtagger(Event*e, double MV, string label, string systname) {
+float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string systname) {
 
     bosonJets.clear();
 
@@ -308,6 +339,51 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
 }
 
+void VBShadAnalysis::setTree(Event*e, string label, string category )
+{
+
+    SetTreeVar("run",e->runNum());
+    SetTreeVar("lumi",e->lumiNum());
+    SetTreeVar("evt",e->eventNum());
+    SetTreeVar("isRealData",e->IsRealData());
+
+    SetTreeVar("weight",e->weight());
+    SetTreeVar("xsec",e->GetWeight()->GetBareMCXsec());
+    SetTreeVar("npv",e->Npv());
+
+    SetTreeVar("NJets",e->Njets());
+    SetTreeVar("NBJets",e->Bjets());
+
+    SetTreeVar("met_pt",e->GetMet().Pt());
+    SetTreeVar("met_phi",e->GetMet().Phi());
+
+    //$$$$
+
+    if (category.find("BB")   !=string::npos) SetTreeVar("ana_category",1);
+    if (category.find("RB")   !=string::npos) SetTreeVar("ana_category",2);
+    if (category.find("BMET") !=string::npos) SetTreeVar("ana_category",3);
+    if (category.find("RMET") !=string::npos) SetTreeVar("ana_category",4);
+
+    int mc=0;
+    if(label.find("WPhadWPhadJJ") !=string::npos ) mc = 1 ;
+    if(label.find("ZbbZhadJJ") !=string::npos ) mc = 2 ;
+    if(label.find("ZnnZhadJJ") !=string::npos ) mc = 3 ;
+
+    if(label.find("QCD_HT") !=string::npos) mc =500 ;
+
+    SetTreeVar("mc",mc);
+
+    // $$$$ analysis variable
+    SetTreeVar("varMjj",evt_Mjj);
+    SetTreeVar("varDetajj",evt_Detajj);
+    SetTreeVar("varDphijj",evt_Dphijj);
+    SetTreeVar("varMVV",evt_MVV);
+    SetTreeVar("varDetaVV",evt_DetaVV);
+    SetTreeVar("varzepVB",evt_zepVB);
+
+}
+
+
 int VBShadAnalysis::analyze(Event *e, string systname)
 {
 
@@ -472,6 +548,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_zepVB = (selectedFatJets[0]->Rapidity() - (forwardJets[0]->Eta()+forwardJets[1]->Eta())/2)/evt_Detajj;
         Fill("VBShadAnalysis/BOSON/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
     }
+
+    //////
+    //$$$
+    //////
+
+    if(writeTree) setTree(e,label,category);
+    if(writeTree) FillTree("tree_vbs");
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
     return 0;

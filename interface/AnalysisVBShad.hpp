@@ -22,19 +22,21 @@ public:
     void Init() override;
     int analyze(Event*,string systname) override;
     void EndEvent() override;
-    
+    void setTree(Event*e, string label, string  category);
+
     const string name() const override {return "VBShadAnalysis";}
     void SetLeptonCuts(Lepton *l) override ; 
     void SetJetCuts(Jet *j) override ;
     void SetFatJetCuts(FatJet *f) override;
 
-    double resolvedtagger(Event*e, double Mw, string label, string systname);
+    float resolvedtagger(Event*e, float Mw, string label, string systname);
     void genStudies(Event*e, string label);
     void getObjects(Event*e, string label, string systname);
 
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
     bool doHADAnalysis=false;
+    bool writeTree = true;
 
 private:
 
@@ -48,15 +50,15 @@ private:
     vector<Jet*> forwardJets;
     vector<Jet*> bosonJets;
 
-    double evt_Mjj=-1;
-    double evt_Detajj=-1;
-    double evt_Dphijj=-1;
-    double evt_MVV=-1;
-    double evt_DetaVV=-1;
-    double evt_MVV_gen=-1;
+    float evt_Mjj=-1;
+    float evt_Detajj=-1;
+    float evt_Dphijj=-1;
+    float evt_MVV=-1;
+    float evt_DetaVV=-1;
+    float evt_MVV_gen=-1;
 
-    double evt_zepVB=-1;
-    double evt_zepV2=-1;
+    float evt_zepVB=-1;
+    float evt_zepV2=-1;
 
 public:
     vector<string> weights;
