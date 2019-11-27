@@ -52,6 +52,7 @@ private:
     double evt_Detajj=-1;
     double evt_Dphijj=-1;
     double evt_MVV=-1;
+    double evt_DetaVV=-1;
     double evt_MVV_gen=-1;
 
     double evt_zepVB=-1;

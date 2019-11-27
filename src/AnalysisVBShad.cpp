@@ -50,11 +50,9 @@ void VBShadAnalysis::Init(){
 
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
-	    Book ("VBShadAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 360,60,150);
-
         //cutflow
         Book ("VBShadAnalysis/Cutflow_"+l, "cutflow; bit; Events", 12,0,12);
-        
+
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
@@ -72,17 +70,19 @@ void VBShadAnalysis::Init(){
 
         //MET
         Book ("VBShadAnalysis/Baseline/Met_"+l, "Met; Met [GeV]; Events", 100,0,1000);
+        Book ("VBShadAnalysis/Baseline/DphiMETFat_"+l, "Dphi(Met,AK8); #Delta#Phi(Met,AK8) ; Events", 100,0,6.28);
+        Book ("VBShadAnalysis/Baseline/Dphimin_"+l, "Dphi(Met,AK4); #Delta#Phi(Met,AK4) ; Events", 100,0,6.28);
 
         // resolved
         Book ("VBShadAnalysis/Baseline/ResBosonMass_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100,0,200.);
 
-        Book ("VBShadAnalysis/ZepBosBVar_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj; Events", 250,0,2);
-        Book ("VBShadAnalysis/ZepBosBVar_BB_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
-        Book ("VBShadAnalysis/ZepBosBVar_RB_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
-        Book ("VBShadAnalysis/ZepBosBVar_BMET_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
-        Book ("VBShadAnalysis/ZepBosBVar_RMET_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
+        Book ("VBShadAnalysis/BOSON/ZepBosBVar_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj; Events", 250,0,2);
+        Book ("VBShadAnalysis/BOSON/ZepBosBVar_BB_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
+        Book ("VBShadAnalysis/BOSON/ZepBosBVar_RB_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
+        Book ("VBShadAnalysis/BOSON/ZepBosBVar_BMET_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
+        Book ("VBShadAnalysis/BOSON/ZepBosBVar_RMET_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
 
-        // Search Variavle
+        // Search Variable
         Book ("VBShadAnalysis/MVV_"+l, "MVV (unclassified); MVV [GeV]; Events", 250,0,2500);
         Book ("VBShadAnalysis/MVVres_"+l, "MVVres (unclassified); ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100,-5.,5.);
         Book ("VBShadAnalysis/MVV_BB_"+l, "MVV (BB) ; MVV [GeV]; Events", 250,0,2500);
@@ -94,13 +94,19 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/MVVres_BMET_"+l, "MVMETres (BMET); ( M_{T}(V,MET) - MTVV_{gen} ) / MTVV_{gen}; Events", 100,-5.,5.);
         Book ("VBShadAnalysis/MVV_RMET_"+l, "MVV (RMET); M_{T}(V,MET) [GeV]; Events", 250,0,2500);
         Book ("VBShadAnalysis/MVVres_RMET_"+l, "MVVres (RMET); ( M_{T}(V,MET) - MVV_{gen} ) / MVV_{gen}; Events", 100,-5.,5.);
-        //
-        Book ("VBShadAnalysis/Mjj_BB_"+l, "Mjj (BB); Mjj [GeV]; Events", 250,0,2500.);
-        Book ("VBShadAnalysis/Mjj_RB_"+l, "Mjj (RB); Mjj [GeV]; Events", 250,0,2500.);
-        Book ("VBShadAnalysis/Mjj_BMET_"+l, "Mjj (BMET); Mjj [GeV]; Events", 250,0,2500.);
-        Book ("VBShadAnalysis/Mjj_RMET_"+l, "Mjj (RMET); Mjj [GeV]; Events", 250,0,2500.);
-        Book ("VBShadAnalysis/Mjj_"+l, "Mjj; Mjj [GeV]; Events", 250,0,2500.);
 
+        //
+        Book ("VBShadAnalysis/FWJETS/Mjj_BB_"+l, "Mjj (BB); M(j,j) [GeV]; Events", 25,0,2500.);
+        Book ("VBShadAnalysis/FWJETS/Mjj_RB_"+l, "Mjj (RB); M(j,j) [GeV]; Events", 25,0,2500.);
+        Book ("VBShadAnalysis/FWJETS/Mjj_BMET_"+l, "Mjj (BMET); M(j,j) [GeV]; Events", 25,0,2500.);
+        Book ("VBShadAnalysis/FWJETS/Mjj_RMET_"+l, "Mjj (RMET); M(j,j) [GeV]; Events", 25,0,2500.);
+        Book ("VBShadAnalysis/FWJETS/Mjj_"+l, "Mjj; Mjj [GeV]; Events", 25,0,2500.);
+
+        Book ("VBShadAnalysis/FWJETS/Dphijj_"+l, "Dphi jj; #Delta#Phi(j,j) ; Events", 100,0,6.28);
+        Book ("VBShadAnalysis/FWJETS/Dphijj_BB_"+l, "Dphi jj (BB); #Delta#Phi(j,j) ; Events", 100,0,6.28);
+        Book ("VBShadAnalysis/FWJETS/Dphijj_RB_"+l, "Dphi jj (RB); #Delta#Phi(j,j) ; Events", 100,0,6.28);
+        Book ("VBShadAnalysis/FWJETS/Dphijj_BMET_"+l, "Dphi jj (BMET); #Delta#Phi(j,j) ; Events", 100,0,6.28);
+        Book ("VBShadAnalysis/FWJETS/Dphijj_RMET_"+l, "Dphi jj (RMET); #Delta#Phi(j,j) ; Events", 100,0,6.28);
 
     } //end label loop
 
@@ -242,12 +248,17 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             //            if(topology==1) Fill("VBShadAnalysis/Baseline/pT_FatJet_BB_" +label, systname, f->Pt(), e->weight() );
             //            if(topology==2) Fill("VBShadAnalysis/Baseline/pT_FatJet_RB_" +label, systname, f->Pt(), e->weight() );
             //            if(topology==0) Fill("VBShadAnalysis/Baseline/pT_FatJet_RR_" +label, systname, f->Pt(), e->weight() );
-            Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
         }
 
-        //        if(f->IsWJet() and ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().Phi())>0.8) selectedFatJets.push_back(f);
-        if(f->IsWJet()) selectedFatJets.push_back(f);
+        double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().Phi()));
 
+        Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
+
+        if(f->IsWJet()) {
+            if(doMETAnalysis and dPhiFatMet<0.2) continue;
+            selectedFatJets.push_back(f);
+            Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
+        }
     }
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
@@ -255,8 +266,13 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //NFatjet cut
 
+
+    double minDPhi=999;
+
     //AK4
     selectedJets.clear();
+
+    int counter=0;
     for(unsigned i=0;i<e->Njets() ; ++i)
     {
         Jet *j=e->GetJet(i);
@@ -269,6 +285,14 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(selectedFatJets.size()>1) {
             if( j->DeltaR(selectedFatJets[1]) < 1.2 ) continue;
         }
+
+        counter++;
+        double dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().Phi()));
+
+        if(dphi < minDPhi) minDPhi = dphi;
+
+        if(counter<5) Fill("VBShadAnalysis/Baseline/Dphimin_" +label, systname, dphi, e->weight() );
+
         /*
         for (auto const& fat : selectedFatJets) {
             if( j->DeltaR(fat) < 1.2 ) continue;
@@ -277,8 +301,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         //        if( j->DeltaR(genWp) < 1.2 ) continue;
         //        if( j->DeltaR(genWp2) < 1.2 ) continue;
 
+        if(doMETAnalysis and minDPhi<0.2 and counter<5) continue;
         selectedJets.push_back(j);
-        //        if(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().Phi())>0.4) selectedJets.push_back(j);
 
     }
 
@@ -363,6 +387,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(selectedFatJets.size()>1 and selectedJets.size()>1) {
             category="_BB";
             evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
+            evt_DetaVV = fabs(selectedFatJets[0]->DeltaEta(selectedFatJets[1]));
             for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
                 forwardJets.push_back(selectedJets[iter]);
             }
@@ -373,7 +398,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(selectedFatJets.size()==1 and selectedJets.size()>3) {
             double MV = resolvedtagger(e, mBoson, label, systname);
             if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1) {
-                category="_RB"; evt_MVV = ( selectedFatJets[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
+                category="_RB";
+                evt_MVV = ( selectedFatJets[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
+                evt_DetaVV = fabs(selectedFatJets[0]->GetP4().Eta() - (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta());
             }
         }
     }
@@ -403,10 +430,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
     //$$$$$$$$$
 
+    Fill("VBShadAnalysis/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
+
     // CHECK THIS ?? 1050 ?? move to 500 for now
+    // resolved likely all below M=500
     if( evt_MVV < 500 ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
     if(evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 6, e->weight() );  //InvMFatjet cut
@@ -429,16 +458,19 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 9, e->weight() );  //Jet separate cut
 
     evt_Mjj= forwardJets[0]->InvMass(forwardJets[1]);
+    evt_Dphijj = ChargedHiggs::deltaPhi(forwardJets[0]->Phi(), forwardJets[1]->Phi());
 
-    Fill("VBShadAnalysis/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
+    Fill("VBShadAnalysis/FWJETS/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
 
     if( evt_Mjj < 500 ) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/FWJETS/Dphijj" +category+"_"+label, systname, evt_Dphijj, e->weight() );
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 10, e->weight() ); //InvMjet cut
 
     if(selectedFatJets.size()>0) {
         evt_zepVB = (selectedFatJets[0]->Rapidity() - (forwardJets[0]->Eta()+forwardJets[1]->Eta())/2)/evt_Detajj;
-        Fill("VBShadAnalysis/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
+        Fill("VBShadAnalysis/BOSON/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
