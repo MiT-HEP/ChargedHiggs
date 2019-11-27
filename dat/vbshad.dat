@@ -9,6 +9,8 @@ addConfig=VBShadAnalysis|AddLabel('WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_mad
 addConfig=VBShadAnalysis|AddLabel('ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8')
 addConfig=VBShadAnalysis|AddLabel('ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8')
 
+addConfig=VBShadAnalysis|AddLabel('QCD')
+
 #addConfig=VBShadAnalysis|AddLabel('DYJetsToLL_M-105To160')
 #addConfig=VBShadAnalysis|AddLabel('DY')
 #addConfig=VBShadAnalysis|AddLabel('TTTT')

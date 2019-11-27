@@ -7,6 +7,7 @@ Files=
 include=dat/catalog/2019.fall/year2016/vbshad.dat
 
 ## BKGS
+include=dat/catalog/2019.fall/year2016/qcd.dat
 #include=dat/catalog/2019.fall/year2016/tt.dat
 #include=dat/catalog/2019.fall/year2016/st.dat
 #include=dat/catalog/2019.fall/year2016/rares.dat
