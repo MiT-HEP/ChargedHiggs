@@ -1,5 +1,5 @@
-sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.6/year2016
+sub=dalfonso|/store/group/phys_higgs/HiggsExo/dalfonso/Nero/v3.6/year2016
 
-addfiles=%(amariniHmm)s/WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8
-addfiles=%(amariniHmm)s/ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8
-addfiles=%(amariniHmm)s/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8
+addfiles=%(dalfonso)s/WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8
+addfiles=%(dalfonso)s/ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8
+addfiles=%(dalfonso)s/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8
