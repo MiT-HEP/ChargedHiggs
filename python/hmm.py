@@ -274,18 +274,6 @@ class HmmConfigWithTTH(HmmConfigAutoCat):
         self.sigfit_gaussians[("cat2","ttH")] = 2  ## 11
         self.sigfit_gaussians[("cat2","ttH")] = 3  ## 11
 
-        ## self.sigfit_replace [ ("cat15","GluGlu") ] = ("cat14","GluGlu") ## (cat,proc) -> (cat,proc)
-        ## self.sigfit_replace [ ("cat16","GluGlu") ] = ("cat14","GluGlu") ## (cat,proc) -> (cat,proc)
-        ## self.sigfit_replace [ ("cat15","VBF") ] = ("cat14","VBF") ## (cat,proc) -> (cat,proc)
-        ## self.sigfit_replace [ ("cat16","VBF") ] = ("cat14","VBF") ## (cat,proc) -> (cat,proc)
-        ## self.sigfit_replace [ ("cat15","WPlusH") ] = ("cat14","WPlusH") ## (cat,proc) -> (cat,proc)
-        ## self.sigfit_replace [ ("cat16","WPlusH") ] = ("cat14","WPlusH") ## (cat,proc) -> (cat,proc)
-        ## self.sigfit_replace [ ("cat15","WMinusH") ] = ("cat14","WMinusH") ## (cat,proc) -> (cat,proc)
-        ## self.sigfit_replace [ ("cat16","WMinusH") ] = ("cat14","WMinusH") ## (cat,proc) -> (cat,proc)
-        ## self.sigfit_replace [ ("cat15","ZH") ] = ("cat14","ZH") ## (cat,proc) -> (cat,proc)
-        ## self.sigfit_replace [ ("cat16","ZH") ] = ("cat14","ZH") ## (cat,proc) -> (cat,proc)
-
-        ## self.bkg_functions=["zmod2_cat0_ord5","zmod2_cat1_ord5","exp_cat2_ord3","zmod2_cat3_ord5","exp_cat4_ord3","zmod2_cat5_ord5","zmod_cat6_ord1","zmod2_cat7_ord5","zmod2_cat8_ord5","zmod2_cat9_ord5","zmod2_cat10_ord5","zmod_cat11_ord1","zmod_cat12_ord1","zmod2_cat13_ord5","zmod_cat14_ord1","bern2_cat15_ord4","bern2_cat16_ord5"]
         self.bkg_functions=["zmod2_cat0_ord5","zmod2_cat1_ord5","exp_cat2_ord3","zmod2_cat3_ord5","exp_cat4_ord3","zmod2_cat5_ord5","zmod_cat6_ord1","zmod2_cat7_ord5","zmod2_cat8_ord5","zmod2_cat9_ord5","zmod2_cat10_ord5","zmod_cat11_ord1","zmod_cat12_ord1","zmod2_cat13_ord5","zmod_cat14_ord1"]
         self.SimpleScaleAndSmear()
         self.computeVersioning()
@@ -308,8 +296,9 @@ class HmmConfigExCat(HmmConfigAutoCat):
 
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
-hmmExCat = HmmConfigExCat(14) ## 13+mjj
-hmmExCatMjj = HmmConfigExCat(15) ## 13+mjj
+hmmExCat = HmmConfigExCat(10) ## 13+mjj
+hmmExCatMjj = HmmConfigExCat(11) ## 13+mjj
+
 if True:
     hmmExCatMjj.sigfit_gaussians[("cat9","GluGlu")] = 2
     hmmExCatMjj.sigfit_gaussians[("cat10","GluGlu")] = 1
@@ -331,8 +320,8 @@ if True:
     hmmExCatMjj.sigfit_gaussians[("cat11","ttH")] = 1
 #hmmExCatBoost = HmmConfigExCat(22) ## 21 + mjj
 
-hmmExCat2018 = HmmConfigExCat(14,2018) ## 13 + mjj
-hmmExCatMjj2018 = HmmConfigExCat(15,2018) ## 13 + mjj
+hmmExCat2018 = HmmConfigExCat(10,2018) ## 13 + mjj
+hmmExCatMjj2018 = HmmConfigExCat(11,2018) ## 13 + mjj
 #hmmExCatBoost2018 = HmmConfigExCat(22,2018) ## 21 + mjj
 if True:
     hmmExCatMjj2018.sigfit_gaussians[("cat9","GluGlu")] = 2
@@ -354,8 +343,8 @@ if True:
     hmmExCatMjj2018.sigfit_gaussians[("cat8","ttH")] = 1
     hmmExCatMjj2018.sigfit_gaussians[("cat11","ttH")] = 1
 
-hmmExCat2016 = HmmConfigExCat(14,2016) ## 13 + mjj
-hmmExCatMjj2016 = HmmConfigExCat(15,2016) ## 13 + mjj
+hmmExCat2016 = HmmConfigExCat(10,2016) ## 13 + mjj
+hmmExCatMjj2016 = HmmConfigExCat(11,2016) ## 13 + mjj
 if True:
     hmmExCatMjj2016.sigfit_gaussians[("cat9","GluGlu")] = 2
     hmmExCatMjj2016.sigfit_gaussians[("cat10","GluGlu")] = 1

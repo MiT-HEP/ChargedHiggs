@@ -54,6 +54,8 @@ class Lepton : virtual public Object,
 
         float dxy_{0.};
         float dz_{0.};
+        float dxyBS_{0.};
+        float dzBS_{0.};
 
     public:
         inline void SetP4NoFSR(){p4NoFSR_=p4;isFSRCorrected=true;}
@@ -96,6 +98,8 @@ class Lepton : virtual public Object,
         inline void SetFsrP4(TLorentzVector&x){fsrP4_=x;};
         inline void SetDxy(float dxy){dxy_=dxy;}
         inline void SetDz(float dz){dz_=dz;}
+        inline void SetDxyBS(float dxy){dxyBS_=dxy;}
+        inline void SetDzBS(float dz){dzBS_=dz;}
 
         inline float GetIso()const {return iso;}
         inline bool GetMediumId() const {return mediumId;}
@@ -119,6 +123,8 @@ class Lepton : virtual public Object,
         inline TLorentzVector& GetFsrP4(){return fsrP4_;};
         inline float GetDxy() const{return dxy_;}
         inline float GetDz() const{return dz_;}
+        inline float GetDxyBS() const{return dxyBS_;}
+        inline float GetDzBS() const{return dzBS_;}
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;

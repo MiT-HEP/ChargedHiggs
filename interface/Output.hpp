@@ -4,6 +4,7 @@
 #include "TFile.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TH3D.h"
 #include "TTree.h"
 #include "TLorentzVector.h"
 
@@ -52,9 +53,11 @@ class Output{
         TFile *file_;
         map<string,TH1D*> prototypes_;
         map<string,TH2D*> prototypes2D_;
+        map<string,TH3D*> prototypes3D_;
 
         map<string,TH1D*> histos_;
         map<string,TH2D*> histos2D_;
+        map<string,TH3D*> histos3D_;
         
 
 
@@ -68,6 +71,11 @@ class Output{
             if ( histos2D_.find(name) != histos2D_.end() ) return histos2D_[name];
             else return prototypes2D_[name];
         }
+        inline TH3D* Get3D(string name){ 
+            if (not PassFinal(name) ) return dummy3D.get();
+            if ( histos3D_.find(name) != histos3D_.end() ) return histos3D_[name];
+            else return prototypes3D_[name];
+        }
 
         void CreateDir(string dir); // called by Write
 
@@ -80,9 +88,15 @@ class Output{
         // create a fake histogram for not final return pointers
         std::unique_ptr<TH1D> dummy;
         std::unique_ptr<TH2D> dummy2D;
+        std::unique_ptr<TH3D> dummy3D;
 
     public:
-        Output(){file_=NULL;dummy.reset(new TH1D("dummy","dummy",100,0,1));dummy2D.reset(new TH2D("dummy","dummy",10,0,10,10,0,10));}
+        Output(){
+            file_=NULL;
+            dummy.reset(new TH1D("dummy","dummy",100,0,1));
+            dummy2D.reset(new TH2D("dummy","dummy",10,0,10,10,0,10));
+            dummy3D.reset(new TH3D("dummy","dummy",10,0,10,10,0,10,10,0,10));
+        }
         ~Output(){}
         void Close();
         void Open(string name) ;
@@ -95,11 +109,15 @@ class Output{
 
         void Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2,double ymin,double ymax);
         void Book2D(string name, string title,int nBins, double *xbound,int nBins2,double*ybound);
+
+        void Book3D(string name, string title,int nBins, double xmin, double xmax,int nBins2,double ymin,double ymax,int nBins3,double zmin,double zmax);
         //
         virtual void Fill(string name, string syst , double value, double weight=1);
         virtual void Fill2D(string name, string syst , double valueX, double valueY, double weight=1);
+        virtual void Fill3D(string name, string syst , double valueX, double valueY, double valueZ,double weight=1);
         TH1D* Get(string name,string systname);
         TH2D* Get2D(string name,string systname);
+        TH3D* Get3D(string name,string systname);
 
         inline TFile * GetFile(){ return file_;} // TMVA wants the file pointer
 

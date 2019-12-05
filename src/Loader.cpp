@@ -449,6 +449,8 @@ void LoadNero::FillLeptons(){
         l-> SetEtaSC ( (*bl->etaSC) [iL]);
         l-> SetDxy ( (*bl->dxy) [iL]);
         l-> SetDz ( (*bl->dz) [iL]);
+        l-> SetDxyBS ( (*bl->dxybs) [iL]);
+        l-> SetDzBS ( (*bl->dzbs) [iL]);
 
         if (tree_ -> GetBranchStatus("lepNLayers") !=0 and bl-> nLayers  and bl-> nLayers ->size() >iL  ) {
                 l-> SetNLayers( bl-> nLayers -> at(iL) );

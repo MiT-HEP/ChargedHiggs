@@ -16,6 +16,11 @@ void AnalysisBase::Book2D(string name, string title, int nBins,double xmin,doubl
     output_ -> Book2D(name,title,nBins,xmin,xmax,nBins2,ymin,ymax);
 }
 
+void AnalysisBase::Book3D(string name, string title, int nBins,double xmin,double xmax,int nBins2,double ymin,double ymax,int nBins3,double zmin, double zmax)
+{
+    output_ -> Book3D(name,title,nBins,xmin,xmax,nBins2,ymin,ymax,nBins3,zmin,zmax);
+}
+
 void AnalysisBase::Book2D(string name, string title,int nBins, double*xbound,int nBins2, double*ybound)
 {
     output_ -> Book2D(name,title,nBins,xbound,nBins2,ybound);
@@ -33,6 +38,10 @@ void AnalysisBase::Fill(string name,string syst, double value, double weight){
 
 void AnalysisBase::Fill2D(string name,string syst, double valueX,double valueY, double weight){
     output_ -> Fill2D(name,syst,valueX,valueY,weight);
+}
+
+void AnalysisBase::Fill3D(string name,string syst, double valueX,double valueY, double valueZ,double weight){
+    output_ -> Fill3D(name,syst,valueX,valueY,weight);
 }
 
 TH1D* AnalysisBase::GetHisto(string name,string systname)

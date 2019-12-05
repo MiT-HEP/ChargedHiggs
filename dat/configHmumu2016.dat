@@ -39,8 +39,8 @@ Correct=MetPhiCorrector,RochesterCorrections,FSRRecovery,GeoFit
 config=MetPhiCorrector|year=2016
 #config=VertexKinfit|allow_reset=1
 config=RochesterCorrections|year="2016",allow_reset=1
-config=FSRRecovery|allow_reset=0
-config=GeoFit|year=2016,allow_reset=0
+config=FSRRecovery|allow_reset=0,maxpt=20.
+config=GeoFit|year=2016,allow_reset=0,useBS=1
 
 ####
 addConfig=HmumuAnalysis|year=2016
@@ -53,6 +53,10 @@ Analysis=MetFiltersAnalysis,HmumuAnalysis
 
 addConfig=HmumuAnalysis|weights.clear()
 addConfig=HmumuAnalysis|weights.push_back('aux/hmm/bdt_Apr05.xml')
-addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.01jet.xml')
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.01jet.xml')
 #addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.2jet.xml')
-addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.2jet_bveto.xml')
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.2jet_bveto.xml')
+#addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.2jet_lowmjj.xml')
+
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.nonvbf.xml')
+addConfig=HmumuAnalysis|weights.push_back('aux/hmm/ucsd/2016/TMVAClassification_BDTG.weights.2jet_vbf.xml')
