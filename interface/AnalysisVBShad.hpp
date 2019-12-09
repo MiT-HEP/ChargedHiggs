@@ -26,10 +26,12 @@ public:
 
     const string name() const override {return "VBShadAnalysis";}
     void SetLeptonCuts(Lepton *l) override ; 
+    void SetTauCuts(Tau*t) override;
     void SetJetCuts(Jet *j) override ;
     void SetFatJetCuts(FatJet *f) override;
 
-    float resolvedtagger(Event*e, float Mw, string label, string systname);
+    float resolvedtagger(Event*e, float MV, string label, string systname);
+    float jettagForBoosted(Event*e, string label, string systname);
     void genStudies(Event*e, string label);
     void getObjects(Event*e, string label, string systname);
 
@@ -50,15 +52,31 @@ private:
     vector<Jet*> forwardJets;
     vector<Jet*> bosonJets;
 
-    float evt_Mjj=-1;
-    float evt_Detajj=-1;
-    float evt_Dphijj=-1;
-    float evt_MVV=-1;
-    float evt_DetaVV=-1;
-    float evt_MVV_gen=-1;
+    TLorentzVector p4VV;
+    TLorentzVector p4VVjj;
 
-    float evt_zepVB=-1;
-    float evt_zepV2=-1;
+    float evt_Mjj=-100;
+    float evt_Detajj=-100;
+    float evt_Dphijj=-100;
+    float evt_Jet2Eta=-100;
+
+    float evt_MVV=-100;
+    float evt_DetaVV=-100;
+    float evt_MVV_gen=-100;
+    float evt_PTVV=0;
+    float evt_PTV1=0;
+    float evt_PTV2=0;
+    float evt_EtaMinV=-100;
+    float evt_EtaMaxV=-100;
+
+    float evt_normPTVVjj=0;
+
+    float evt_zepVB=-100;
+    float evt_zepV2=-100;
+    float evt_cen=-100;
+    float evt_zepVV=-100;
+    float evt_DRV1j1=-100;
+    float evt_FW2=-100;
 
 public:
     vector<string> weights;
