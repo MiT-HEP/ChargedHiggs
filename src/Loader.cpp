@@ -339,18 +339,21 @@ void LoadNero::FillFatJets(){
         FatJet *j =new FatJet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
 
-        /*
+
         j->tau1 = bj -> tau1 -> at(iJet);
         j->tau2 = bj -> tau2 -> at(iJet);
         j->tau3 = bj -> tau3 -> at(iJet);
+        /*
         if(tree_->GetBranchStatus("fatjetAK8CHSSDTau1"))  j->sdtau1 = bj -> sdtau1 -> at(iJet);
         if(tree_->GetBranchStatus("fatjetAK8CHSSDTau2")) j->sdtau2 = bj -> sdtau2 -> at(iJet);
         if(tree_->GetBranchStatus("fatjetAK8CHSSDTau3")) j->sdtau3 = bj -> sdtau3 -> at(iJet);
+        */
 
-        j->nSubjets = bj -> nSubjets -> at(iJet);
+        //        j->nSubjets = bj -> nSubjets -> at(iJet);
         j->softdropMass = bj -> softdropMass -> at(iJet);
-        j->CorrectedPrunedMass = bj -> corrprunedMass -> at(iJet);
+        //        j->CorrectedPrunedMass = bj -> corrprunedMass -> at(iJet);
 
+        /*
         int first = bj -> firstSubjet -> at(iJet);
         int Nsub = bj -> nSubjets -> at(iJet);
 
@@ -366,8 +369,8 @@ void LoadNero::FillFatJets(){
 
         j->hasSubJetBTag = nSubJetMedium;
         j->hasSubJetBTagLoose = nSubJetLoose;
-
         */
+
         // add it
         event_ -> fat_ . push_back(j);
 
