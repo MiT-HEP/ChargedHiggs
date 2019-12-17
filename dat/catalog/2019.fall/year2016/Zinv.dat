@@ -1,0 +1,9 @@
+sub=amariniHmmExt|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.6.1/year2016
+
+addfiles=%(amariniHmmExt)s/ZJetsToNuNu_HT-100To200_13TeV-madgraph
+addfiles=%(amariniHmmExt)s/ZJetsToNuNu_HT-200To400_13TeV-madgraph
+addfiles=%(amariniHmmExt)s/ZJetsToNuNu_HT-400To600_13TeV-madgraph
+addfiles=%(amariniHmmExt)s/ZJetsToNuNu_HT-600To800_13TeV-madgraph/ZJetsToNuNu_HT-600To800_13TeV-madgraph
+addfiles=%(amariniHmmExt)s/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/ZJetsToNuNu_HT-800To1200_13TeV-madgraph
+addfiles=%(amariniHmmExt)s/ZJetsToNuNu_HT-1200To2500_13TeV-madgraph
+addfiles=%(amariniHmmExt)s/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph
