@@ -22,13 +22,19 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float tau3cut_ ; // To Set
     float tau21cut_ ; // To Set
 
-    float corrprunedMasscut_ ;
-    float prunedMasscut_ ;
+    //    float corrprunedMasscut_ ;
+    //    float prunedMasscut_ ;
     float softdropMasscut_ ;
     float nSubjetscut_ ;
     float hbbcut_;
 
     float hadFlavor_;
+
+    float TvsQCDMDcut_;
+    float WvsQCDMDcut_;
+    float ZHbbvsQCDMDcut_;
+    float ZHccvsQCDMDcut_;
+
 
     // FIXME: add puppi
 
@@ -45,8 +51,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
 
     void SetTau21Cut(float x){tau21cut_ = x;}
 
-    void SetCorrPrunedMassCut(float x){corrprunedMasscut_ = x;}
-    void SetPrunedMassCut(float x){prunedMasscut_ = x;}
+    //    void SetCorrPrunedMassCut(float x){corrprunedMasscut_ = x;}
+    //    void SetPrunedMassCut(float x){prunedMasscut_ = x;}
     void SetSDMassCut(float x){softdropMasscut_ = x;}
     void SetSubjetsCut(float x){nSubjetscut_ = x;}
 
@@ -57,6 +63,11 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float tau1; //
     float tau2; //
     float tau3; //
+    float TvsQCDMD; //
+    float WvsQCDMD; //
+    float ZHbbvsQCDMD; //
+    float ZHccvsQCDMD; //
+
     float sdtau1;
     float sdtau2;
     float sdtau3;
@@ -79,6 +90,14 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float SDTau1() const { return sdtau1 ; }
     inline float SDTau2() const { return sdtau2 ; }
     inline float SDTau3() const { return sdtau3 ; }
+
+    inline float TvsQCD() const { return TvsQCDMD ; }
+    inline float WvsQCD() const { return WvsQCDMD ; }
+    inline float ZHbbvsQCD() const { return ZHbbvsQCDMD ; }
+    inline float ZHccvsQCD() const { return ZHccvsQCDMD ; }
+    //    inline float SDTau1() const { return sdtau1 ; }
+    //    inline float SDTau2() const { return sdtau2 ; }
+    //    inline float SDTau3() const { return sdtau3 ; }
 
     inline float SDMass() const { return softdropMass ; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }

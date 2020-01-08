@@ -23,18 +23,20 @@ photonP4
 photonSelBits
 photonIso
 ### FatJet
-fatjetAK8CHSP4
-fatjetAK8CHSTau1
-fatjetAK8CHSTau2
-fatjetAK8CHSTau3
-fatjetAK8CHSSDTau1
-fatjetAK8CHSSDTau2
-fatjetAK8CHSSDTau3
-fatjetAK8CHSnSubjets
-fatjetAK8CHSSoftdropMass
-fatjetAK8CHSCorrectedPrunedMass
-fatjetAK8CHSsubjet_btag
-fatjetAK8CHSfirstSubjet
+fatjetAK8WithDeepTagP4
+fatjetAK8WithDeepTagTau1
+fatjetAK8WithDeepTagTau2
+fatjetAK8WithDeepTagTau3
+fatjetAK8WithDeepTagnSubjets
+fatjetAK8WithDeepTagSoftdropMass
+fatjetAK8WithDeepTagTvsQCD
+fatjetAK8WithDeepTagWvsQCD
+fatjetAK8WithDeepTagZvsQCD
+fatjetAK8WithDeepTagZbbvsQCD
+fatjetAK8WithDeepTagTvsQCDMD
+fatjetAK8WithDeepTagWvsQCDMD
+fatjetAK8WithDeepTagZHbbvsQCDMD
+fatjetAK8WithDeepTagZHccvsQCDMD
 ### Leptons
 lepP4
 lepIso
