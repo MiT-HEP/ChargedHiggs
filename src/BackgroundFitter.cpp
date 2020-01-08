@@ -15,6 +15,7 @@
 #include <cstdlib>
 
 #include "HiggsAnalysis/CombinedLimit/interface/HGGRooPdfs.h"
+#include "HiggsAnalysis/CombinedLimit/interface/PdfDiagonalizer.h"
 
 #include "TArrow.h"
 
@@ -1272,46 +1273,6 @@ void BackgroundFitter::fit(){
             modelBuilder.runFit( zmod2_ord1 , hist_[name],&nll,&fitStatus,3);
             storedPdfs.add(*zmod2_ord1); //11
 
-            vector<RooAbsPdf*> bern2;
-            if (cat >=14){ // for 14 and 15 save all the bern 1 2 3 4
-                cout<<" --- Fitting BERN2 ORDER 1 ---"<<endl;
-                int order=1;
-                RooAbsPdf *bern_ord1=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
-                modelBuilder.runFit( bern_ord1 , hist_[name],&nll,&fitStatus,3);
-                storedPdfs.add(*bern_ord1); //12
-                bern2.push_back(bern_ord1);
-
-                cout<<" --- Fitting BERN2 ORDER 2 ---"<<endl;
-                order=2;
-                RooAbsPdf *bern_ord2=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
-                modelBuilder.runFit( bern_ord2 , hist_[name],&nll,&fitStatus,3);
-                storedPdfs.add(*bern_ord2); //13
-                bern2.push_back(bern_ord2);
-
-                cout<<" --- Fitting BERN2 ORDER 3 ---"<<endl;
-                order=3;
-                RooAbsPdf *bern_ord3=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
-                modelBuilder.runFit( bern_ord3 , hist_[name],&nll,&fitStatus,3);
-                storedPdfs.add(*bern_ord3); //14
-                bern2.push_back(bern_ord3);
-
-                cout<<" --- Fitting BERN2 ORDER 4 ---"<<endl;
-                order=4;
-                RooAbsPdf *bern_ord4=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
-                modelBuilder.runFit( bern_ord4 , hist_[name],&nll,&fitStatus,3);
-                storedPdfs.add(*bern_ord4); //15
-                bern2.push_back(bern_ord4);
-
-                cout<<" --- Fitting BERN2 ORDER 5 ---"<<endl;
-                order=5;
-                RooAbsPdf *bern_ord5=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
-                modelBuilder.runFit( bern_ord5 , hist_[name],&nll,&fitStatus,3);
-                storedPdfs.add(*bern_ord5); //16
-                bern2.push_back(bern_ord5);
-
-            }
-
-
             if (plot){
                 TCanvas *c = new TCanvas();
                 TLegend *leg = new TLegend(0.6,0.65,0.89,0.89);
@@ -1330,34 +1291,22 @@ void BackgroundFitter::fit(){
                 TObject *datLeg = p->getObject(int(p->numItems()-1));
                 leg->AddEntry(datLeg,Form("Data - cat%d",cat),"LEP");
 
-                if(cat <14){
+                if(true){
                     plotOnFrame( p, zmod2_ord5, kRed, kSolid,Form("zmod2 ord=%d chi2=%.2f",5,modelBuilder.getGoodnessOfFit(x_, zmod2_ord5, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
                     plotOnFrame( p, zmod2_ord4, kBlue, kSolid,Form("zmod2 ord=%d chi2=%.2f",4,modelBuilder.getGoodnessOfFit(x_, zmod2_ord4, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
                     plotOnFrame( p, zmod2_ord3, kGreen, kSolid,Form("zmod2 ord=%d chi2=%.2f",3,modelBuilder.getGoodnessOfFit(x_, zmod2_ord3, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
                     plotOnFrame( p, zmod2_ord2, kOrange, kSolid,Form("zmod2 ord=%d chi2=%.2f",2,modelBuilder.getGoodnessOfFit(x_, zmod2_ord2, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
                     plotOnFrame( p, zmod2_ord1, kCyan, kSolid,Form("zmod2 ord=%d chi2=%.2f",1,modelBuilder.getGoodnessOfFit(x_, zmod2_ord1, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
                 }
-                else{
-                    plotOnFrame( p, bern2[0], kRed, kSolid,Form("bern2 ord=%d chi2=%.2f",1,modelBuilder.getGoodnessOfFit(x_, bern2[0], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
-                    plotOnFrame( p, bern2[1], kBlue, kSolid,Form("bern2 ord=%d chi2=%.2f",2,modelBuilder.getGoodnessOfFit(x_, bern2[1], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
-                    plotOnFrame( p, bern2[2], kGreen, kSolid,Form("bern2 ord=%d chi2=%.2f",3,modelBuilder.getGoodnessOfFit(x_, bern2[2], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
-                    plotOnFrame( p, bern2[3], kOrange, kSolid,Form("bern2 ord=%d chi2=%.2f",4,modelBuilder.getGoodnessOfFit(x_, bern2[3], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
-                    plotOnFrame( p, bern2[4], kCyan, kSolid,Form("bern2 ord=%d chi2=%.2f",5,modelBuilder.getGoodnessOfFit(x_, bern2[4], hist_[name], plotDir +"/bern2/chosen",blind) ),leg);
-                }
 
     
                 p -> Draw();
                 leg->Draw("same");
 
-                if (cat<14){
+                if (true){
                     system(Form("mkdir -p %s/zmod2/",plotDir.c_str()));
                     c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.pdf",plotDir.c_str(),cat) );
                     c -> SaveAs( Form("%s/zmod2/zmod2_all_cat%d.png",plotDir.c_str(),cat) );
-                }
-                else{
-                    system(Form("mkdir -p %s/bern2/",plotDir.c_str()));
-                    c -> SaveAs( Form("%s/bern2/bern2_all_cat%d.pdf",plotDir.c_str(),cat) );
-                    c -> SaveAs( Form("%s/bern2/bern2_all_cat%d.png",plotDir.c_str(),cat) );
                 }
 
                 delete p;
@@ -1386,6 +1335,37 @@ void BackgroundFitter::fit(){
         RooRealVar corepdf_norm(Form("corepdf_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
         w_ -> import (*corepdf,RecycleConflictNodes());
         w_ -> import (corepdf_norm,RecycleConflictNodes());
+       
+
+        // diagonalize zmod and exp
+        if (true)
+        {
+            {
+            RooFitResult *result = zmod->fitTo(
+                    *hist_[name],
+                    RooFit::Save(1),
+                    RooFit::Minimizer("Minuit2","minimize")
+                    );
+            PdfDiagonalizer diago(Form("zmodeig_cat%d",cat), w_, *result);
+            RooAbsPdf *zmod_eig = diago.diagonalize(*zmod);
+            w_->import(*zmod_eig, RecycleConflictNodes()); // zmod_catX_ordY _eig
+            delete result;
+            }
+
+            {
+            RooFitResult *result = exp->fitTo(
+                    *hist_[name],
+                    RooFit::Save(1),
+                    RooFit::Minimizer("Minuit2","minimize")
+                    );
+            PdfDiagonalizer diago(Form("expeig_cat%d",cat), w_, *result);
+            RooAbsPdf *exp_eig = diago.diagonalize(*exp);
+            w_->import(*exp_eig, RecycleConflictNodes()); // exp_catX_ordY _eig
+            delete result;
+            }
+        }
+        
+
 
         // -- Plot
         if (plot ) {

@@ -109,17 +109,29 @@ int Jet::PassPuId() const {
 }
 
 int Jet::PassEENoise()const {
-    if (eenoise_) {
-        float aeta= abs(Eta());
-        // MET Recipe v2 for EE noise
+    // -- if (eenoise_) {
+    // --     float aeta= abs(Eta());
+    // --     float pt = p4.Pt(); // no syst
+    // --     // MET Recipe v2 for EE noise
 
-        if (rawPt < 50 and aeta <3.139 and aeta > 2.65)
-            return 0;
-        
-        // SMP recommendation
-        //if (rawPt < 50 and 2.7 < aeta and aeta < 3.0 and nemf_>0.55 )
-        //    return 0;
+    // --     if (rawPt < 50 and aeta <3.139 and aeta > 2.65)
+    // --         return 0;
+    // --     
+    // --     // SMP recommendation
+    // --     //if (rawPt < 50 and 2.7 < aeta and aeta < 3.0 and nemf_>0.55 )
+    // --     //    return 0;
+    // -- }
+    // in house Hmm: 2.6< aeta< 3.0 tight pileup id in 2017.
+    //
+    if (eenoise_){
+       float aeta= abs(Eta());
+       float pt = p4.Pt(); // no syst
+       if (2.6 <aeta and aeta <3.0){
+            if (pt >=30 and puId <-0.10)  return 0; // also above 50 GeV
+            if (pt >=10 and pt< 30 and puId <-0.35)  return 0;
+       }
     }
+
     return 1;
 }
 
