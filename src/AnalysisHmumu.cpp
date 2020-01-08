@@ -619,24 +619,24 @@ string HmumuAnalysis::CategoryBdtUCSD(Event *e){
         //-1, 0, 0.4, 0.65, 1 --> raffaele
         float v=bdt[1];
         if (year==2016){
-            if (v < -0.106) category="cat0"; 
-            else if (v < 0.156 ) category="cat1";
-            else if (v < 0.314 ) category="cat2";
-            else if (v < 0.467 ) category="cat3";
+            if (v < -0.125) category="cat0"; 
+            else if (v < 0.185 ) category="cat1";
+            else if (v < 0.309 ) category="cat2";
+            else if (v < 0.471 ) category="cat3";
             else category="cat4";
         }
         else if (year==2017){
-            if (v < -0.129) category="cat0"; 
-            else if (v < 0.130 ) category="cat1";
-            else if (v < 0.290 ) category="cat2";
-            else if (v < 0.468 ) category="cat3";
+            if (v < -0.113) category="cat0"; 
+            else if (v < 0.191 ) category="cat1";
+            else if (v < 0.315 ) category="cat2";
+            else if (v < 0.498 ) category="cat3";
             else category="cat4";
         }
         else if (year==2018){
-            if (v < -0.135) category="cat0"; 
-            else if (v < 0.126 ) category="cat1";
-            else if (v < 0.287 ) category="cat2";
-            else if (v < 0.465 ) category="cat3";
+            if (v < -0.115) category="cat0"; 
+            else if (v < 0.191 ) category="cat1";
+            else if (v < 0.312 ) category="cat2";
+            else if (v < 0.496 ) category="cat3";
             else category="cat4";
         }
 
@@ -1409,6 +1409,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     if ( label == "ttHToMuMu_M125") label = "ttH_HToMuMu_M125";
     if ( label == "ttHToMuMu_M130") label = "ttH_HToMuMu_M130";
 
+    if ( label == "bbHToMuMu_M-125") label = "bbH_HToMuMu_M125";
+
     //multiPD. No need to keep separate histograms, but save the flags
     if (label.find("SingleMuon") !=string::npos) {isSingleMuon=true; label="Data";} else { isSingleMuon=false;}
     if (label.find("DoubleMuon") !=string::npos) {isDoubleMuon=true; label="Data";} else {isDoubleMuon=false;}
@@ -2165,47 +2167,47 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     passTrigger1 = false; 
     passTrigger2 = false;
 
-    // -- if (recoMuons) 
-    // -- {
-    // --     //cout <<" DOING TRIGGER MATCHING "<<endl;
-    // --     bool passTriggerEvent = passTrigger;
-    // --     if (year==2016) passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
-    // --     else if (year==2017) passTrigger1 = (e->IsTriggered("HLT_IsoMu27_v",mu0) or e->IsTriggered("HLT_IsoTkMu27_v",mu0)) ;
-    // --     else if (year==2018) passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
+    if (recoMuons) 
+    {
+        //cout <<" DOING TRIGGER MATCHING "<<endl;
+        bool passTriggerEvent = passTrigger;
+        if (year==2016) passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
+        else if (year==2017) passTrigger1 = (e->IsTriggered("HLT_IsoMu27_v",mu0) or e->IsTriggered("HLT_IsoTkMu27_v",mu0)) ;
+        else if (year==2018) passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
 
-    // --     passTrigger1 = passTrigger1 and mu0->GetTightId();
+        //passTrigger1 = passTrigger1 and mu0->GetTightId();
 
-    // --     if ( (mu1->Pt() > 29 and year==2017) or (mu1->Pt()>26 and (year== 2016 or year==2018) )) 
-    // --     {
-    // --         if (year==2016) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
-    // --         else if (year==2017) passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
-    // --         else if (year==2018) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
-    // --         passTrigger2 = passTrigger2 and mu1->GetTightId();
-    // --     }
-    // --     passTrigger=passTrigger1 or passTrigger2;
-    // --     #warning DISABLING_TRIGGER_MATCHING_2016
-    // --     if (year==2016) passTrigger=passTrigger or passTriggerEvent;
+        if ( (mu1->Pt() > 29 and year==2017) or (mu1->Pt()>26 and (year== 2016 or year==2018) )) 
+        {
+            if (year==2016) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
+            else if (year==2017) passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
+            else if (year==2018) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
+            //passTrigger2 = passTrigger2 and mu1->GetTightId();
+        }
+        passTrigger=passTrigger1 or passTrigger2;
+        #warning DISABLING_TRIGGER_MATCHING_2016
+        if (year==2016) passTrigger=passTrigger or passTriggerEvent;
 
-    // --     if (multipd_) // switch to HLT_IsoMu24. 
-    // --     {
-    // --         // The or, is there for the prescale case. May change with sf and syst
-    // --         passTrigger1 = passTrigger1 || (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
-    // --         passTrigger2 = passTrigger2 || (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
-    // --         passTrigger=passTrigger1 or passTrigger2;
-    // --     }
-    // --     
-    // --     if (multipd_ and isDoubleMuon and passTrigger) return 0; // Single Muon has precedence over  DoubleMuon. Assume this event is already been analyzed
-    // --     if (multipd_ and isDoubleMuon and fabs(mu0->Eta())<2.1 and fabs(mu1->Eta())<2.1){
-    // --             // no trigger matching here.Check dimuon trigge
-    // --             passTrigger = e->IsTriggered("HLT_DoubleIsoMu20_eta2p1_v");
-    // --     }
+        if (multipd_) // switch to HLT_IsoMu24. 
+        {
+            // The or, is there for the prescale case. May change with sf and syst
+            passTrigger1 = passTrigger1 || (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
+            passTrigger2 = passTrigger2 || (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
+            passTrigger=passTrigger1 or passTrigger2;
+        }
+        
+        if (multipd_ and isDoubleMuon and passTrigger) return 0; // Single Muon has precedence over  DoubleMuon. Assume this event is already been analyzed
+        if (multipd_ and isDoubleMuon and fabs(mu0->Eta())<2.1 and fabs(mu1->Eta())<2.1){
+                // no trigger matching here.Check dimuon trigge
+                passTrigger = e->IsTriggered("HLT_DoubleIsoMu20_eta2p1_v");
+        }
 
-    // --     if (passTriggerEvent and not passTrigger) Log(__FUNCTION__,"INFO","Fail to trigger event due to trigger matching");
-    // --     if (not passTriggerEvent and passTrigger) Log(__FUNCTION__,"ERROR","Event triggered by object but not globally");
+        if (passTriggerEvent and not passTrigger) Log(__FUNCTION__,"INFO","Fail to trigger event due to trigger matching");
+        if (not passTriggerEvent and passTrigger) Log(__FUNCTION__,"ERROR","Event triggered by object but not globally");
 
-    // --     //if (SYNC_VERBOSE and not processingSyst_ and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
-    // --     //    Log(__FUNCTION__,"SYNC",Form("Trigger: passTrigger=%d passTrigger1=%d passTRigger2=%d",passTriggerEvent,passTrigger1,passTrigger2));
-    // -- }
+        //if (SYNC_VERBOSE and not processingSyst_ and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
+        //    Log(__FUNCTION__,"SYNC",Form("Trigger: passTrigger=%d passTrigger1=%d passTRigger2=%d",passTriggerEvent,passTrigger1,passTrigger2));
+    }
 
 
     passLeptonVeto= true;

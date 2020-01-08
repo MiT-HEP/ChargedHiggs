@@ -29,3 +29,5 @@ addfiles=%(amariniHmm)s/ZH_HToMuMu_ZToAll_M130_TuneCP5_PSweights_13TeV_powheg_py
 addfiles=%(amariniHmm)s/ttHToMuMu_M120_TuneCP5_PSweights_13TeV-powheg-pythia8
 addfiles=%(amariniHmm)s/ttHToMuMu_M125_TuneCP5_PSweights_13TeV-powheg-pythia8
 addfiles=%(amariniHmm)s/ttHToMuMu_M130_TuneCP5_PSweights_13TeV-powheg-pythia8
+
+addfiles=/store/group/phys_higgs/cmshmm/amarini/Nero/v3.6.1/year2016/bbHToMuMu_M-125_4FS_yb2_TuneCP5_13TeV-amcatnlo-pythia8
