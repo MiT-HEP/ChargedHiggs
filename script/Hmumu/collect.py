@@ -62,7 +62,7 @@ def ChangePalette(num=0):
 
 
 usage='''Usage: 
-    %s catN [asimov] [sub] [plot=gen:xxx:fit:xxx] [fitrange:idx:idx] [genrange:idx:idx] 
+    %s catN [asimov] [sub] [plot=gen:xxx:fit:xxx] [fitrange:idx:idx] [genrange:idx:idx] [mu=0]
     '''%(sys.argv[0])
 
 for arg in sys.argv:

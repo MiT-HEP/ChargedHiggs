@@ -2,7 +2,6 @@
 #define GEN_PARTICLE_H
 
 #include "interface/Object.hpp"
-#include "NeroProducer/Core/interface/BareMonteCarlo.hpp"
 
 class GenParticle : virtual public Object
 {
@@ -18,10 +17,10 @@ public:
     void SetPdgId(int pdg){pdgid_ = pdg;}
     unsigned GetFlag() const { return flags_;}
     void SetFlags(unsigned x) { flags_ = x;}
-    bool IsPromptFinalState() const { return flags_ & BareMonteCarlo::PromptFinalState ;}
-    bool IsPromptDecayed() const { return flags_ & BareMonteCarlo::PromptDecayed ;}
-    bool IsDirectPromptTauDecayProductFinalState() const { return flags_ & BareMonteCarlo::DirectPromptTauDecayProductFinalState ;}
-    bool IsDressed() const { return flags_ & BareMonteCarlo::Dressed;}
+    bool IsPromptFinalState() const ;//{ return flags_ & BareMonteCarlo::PromptFinalState ;}
+    bool IsPromptDecayed() const ;//{ return flags_ & BareMonteCarlo::PromptDecayed ;}
+    bool IsDirectPromptTauDecayProductFinalState() const;// { return flags_ & BareMonteCarlo::DirectPromptTauDecayProductFinalState ;}
+    bool IsDressed() const ;//{ return flags_ & BareMonteCarlo::Dressed;}
 
     int GetParentPdgId() const { return mopdgid_;}
     int GetParentIdx() const {return moidx_;}

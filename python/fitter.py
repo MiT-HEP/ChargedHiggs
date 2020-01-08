@@ -24,7 +24,7 @@ while mypath != "" and mypath != "/":
     if "ChargedHiggs" in os.path.basename(mypath):
         basepath = os.path.abspath(mypath)
     mypath = os.path.dirname(mypath)
-print "My path is",mypath
+print "My path is",mypath, "basepath is",basepath
 ################ IMPORT ROOT  ################
 if opts.verbose: print "-> Importing root",
 sys.argv=[]
@@ -34,12 +34,25 @@ if opts.verbose: print "DONE"
 
 ################ LOAD LIBRARY ###############
 if opts.verbose: print "-> Load Bare library" ## probably not needed
-r.gSystem.Load( "../NeroProducer/Core/bin/libBare.so")
+status=r.gSystem.Load( "../NeroProducer/Core/bin/libBare.so")
 #r.gSystem.Load( mypath+"/../NeroProducer/Core/bin/libBare.so")
 
+rpath=True
+if status < 0:
+	if opts.verbose: print "-> trying bin/bare"
+	status = r.gSystem.Load("bin/bare/libBare.so")
+	sys.path.insert(0,"bin/bare")
+	rpath=False
+	if status<0: print " Failed to load libBare.so"
+if status >= 0 and opts.verbose: print "DONE"
+
 if opts.verbose: print "-> Load ChargedHiggs library"
-r.gSystem.Load( "./bin/libChargedHiggs.so")
+#r.gSystem.Load( "./bin/libChargedHiggs.so")
 #r.gSystem.Load( mypath+"/bin/libChargedHiggs.so")
+if rpath:
+    r.gSystem.Load( "./bin/libChargedHiggs.so")
+else: ## it's likely that this will work
+    r.gSystem.Load("./bin/libChargedHiggs.0.so")
 
 if opts.verbose: print "DONE",
 
@@ -56,9 +69,12 @@ if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
 ###line= "fitter= "+ opts.classname+ "()"
 ###exec(line)
 if opts.classname== "Fitter":
+    print "Constructing Fitter",opts.classname
     fitter = r.__getattr__(opts.classname)("%d"%config.year)
 else:
+    print "Constructing Fitter",opts.classname
     fitter = r.__getattr__(opts.classname)()
+
 if opts.classname== "PurityFit" or opts.classname=="PurityFitAnalytic":
     fitter.outname= opts.outfile
     fitter.inname =opts.file

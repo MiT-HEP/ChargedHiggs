@@ -84,6 +84,10 @@ addConfig=HmumuAnalysis|AddLabel('ttHToMuMu_M120')
 addConfig=HmumuAnalysis|AddLabel('ttHToMuMu_M125')
 addConfig=HmumuAnalysis|AddLabel('ttHToMuMu_M130')
 
+## 
+addConfig=HmumuAnalysis|AddLabel('bbHToMuMu_M-125')
+addConfig=HmumuAnalysis|AddLabel('bbH_HToMuMu_M125')
+
 ## HH
 addConfig=HmumuAnalysis|AddLabel('VBFHHTo2B2Mu_CV_1_C2V_1_C3_1')
 addConfig=HmumuAnalysis|AddLabel('GluGluToHHTo2B2M_node_4')
