@@ -4,16 +4,17 @@
 
 Files=
 ## Signal
-include=dat/catalog/2019.fall/year2016/vbshad.dat
+include=dat/catalog/2020.moriond/year2016/vbshad.dat
+include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
 
 ## BKGS
-include=dat/catalog/2019.fall/year2016/qcd.dat
-include=dat/catalog/2019.fall/year2016/ewk.dat
-include=dat/catalog/2019.fall/year2016/Zinv.dat
-include=dat/catalog/2019.fall/year2016/ttvbs.dat
-include=dat/catalog/2019.fall/year2016/st.dat
-#include=dat/catalog/2019.fall/year2016/rares.dat
-#include=dat/catalog/2019.fall/year2016/dy_amcatnlo.dat
+include=dat/catalog/2020.moriond/year2016/qcd.dat
+include=dat/catalog/2020.moriond/year2016/ewk.dat
+include=dat/catalog/2020.moriond/year2016/Zinv.dat
+include=dat/catalog/2020.moriond/year2016/ttvbs.dat
+include=dat/catalog/2020.moriond/year2016/st.dat
+###include=dat/catalog/2020.moriond/year2016/rares.dat
+###include=dat/catalog/2020.moriond/year2016/dy_amcatnlo.dat
 
 # add Label
 include=dat/vbshad.dat
@@ -36,16 +37,16 @@ EntryPerSecond=10
 SFDB=aux/sf_VBShad.txt
 
 ##SFDB=aux/sf_database.2018.moriond.txt
-MCDB=aux/mcdb.2019.v3.6.year2016.dat
-pileup=aux/pileup.v3.6.year2016.root
+MCDB=aux/mcdb.2020.v3.7.year2016.dat
+pileup=aux/pileup.v3.7.year2016.root
 
 Analysis=VBShadAnalysis
 
 addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
 Output=VBShadSignal_MET.root
 
-##addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
-##Output=VBShadSignal.root
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
+#Output=VBShadSignal.root
 
 ##addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
 ##Output=VBShadSignal_B.root
