@@ -94,7 +94,7 @@ void Fitter::init(){
 
         for( float& m : mIn)
         {
-            //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 
+            if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125  bbH125
             //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
             if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
 
@@ -200,10 +200,10 @@ void Fitter::init(){
 
         RooAbsReal* eaSpline;
 
-        //if (proc == "ttH")//ttH125 
+        //if (proc == "ttH")//ttH125  bbH125
         //if (false)//ttH as all
         //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")
-        if (proc=="GluGluToHHTo2B2M_node_4")
+        if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH")
         {
             eaSpline = new RooRealVar(eaName.c_str(),eaName.c_str(),ea_y[0]);
             ((RooRealVar*)eaSpline)->setConstant();
@@ -261,7 +261,7 @@ void Fitter::fit(){
     pars[1].setRange(5,1000);
     pars[2].setRange(0,1000);
     pars[3].setRange(5,1000);
-    pars[4].setRange(0,100);
+    pars[4].setRange(0,1000);
     pars[5].setRange(5,1000);
     pars[6].setRange(0,1);
     pars[7].setRange(0,1);
@@ -318,7 +318,7 @@ void Fitter::fit(){
                 pos+=1;
             }
             // return if ttH !=125
-            //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125 
+            if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125  bbH125
             //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
             if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
             //mean and sigma
@@ -417,7 +417,7 @@ void Fitter::fit(){
 
             for( auto & m: mIn )
             {
-                //if (proc == "ttH" and fabs(m-125)> 0.1) continue;//ttH125
+                if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125 bbH125
                 //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
                 if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
                 cout <<" Considering proc='"<<proc<<"' and mass = "<< m<<endl;
@@ -432,7 +432,7 @@ void Fitter::fit(){
             string splname=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),proc.c_str(),cat,i);
             //#warning TTH125
             //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")//ttH125
-            if (proc=="GluGluToHHTo2B2M_node_4")//ttH125
+            if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH")//ttH125
             //if (false)//ttH all
             {
                 cout <<"DEBUG: Creating RooRealVar: "<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i) <<endl;
@@ -448,7 +448,9 @@ void Fitter::fit(){
                         );
                 par.setConstant();
                 RooFormulaVar *c =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0", par);
-                if (i==0) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0 +(@1-125)", RooArgList(par , *w_->var("MH"))); // just put a shift
+                if (i==0) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0 +(@1-125)", RooArgList(par , *w_->var("MH"))); // just put a shift // for ngaussians mean
+                if (i==2 and nGaussians[pair<int,string>(cat,proc)] >1) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0 +(@1-125)", RooArgList(par , *w_->var("MH"))); // just put a shift // for ngaussians mean
+                if (i==4 and nGaussians[pair<int,string>(cat,proc)] >2) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0 +(@1-125)", RooArgList(par , *w_->var("MH"))); // just put a shift // for ngaussians mean
                 cout <<"DEBUG importing in workspace:"<< splname <<endl;
                 w_->import(*c, RecycleConflictNodes());
             }

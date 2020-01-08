@@ -139,7 +139,7 @@ def STXSSort(l):
         if proc not in ld: ld[proc]=[]
         ld[proc].append( (name,proc) )
     l2=[]
-    processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
+    processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH","bbH"]
     for proc in processes: # I want them in the order above
         if proc not in ld: continue
         l2.extend(sorted(ld[proc]))
@@ -152,8 +152,8 @@ def GetSTXSColor(name,proc):
     rf=array('f',[0.])
     gf=array('f',[0.])
     bf=array('f',[0.])
-    processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
-    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH","bbH"]
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta,ROOT.kGreen];
     ROOT.gROOT.GetColor( colors[processes.index(proc)] ) .GetRGB (rf,gf,bf)
     r = rf[0]
     g = gf[0]
@@ -450,8 +450,10 @@ if doSig and doSTXS: ## signal composition plot
        elif proc=='WPlusH' : processName.append("W^{+}H")
        else: processName.append(proc)
 
-    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
-    starts=[0.28,0.4,0.52,.64,.76,.88]
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta,ROOT.kGreen-4];
+    starts=[0.28,0.4,0.52,.64,.76,.88,.95]
+    print "starts",starts
+    print "processName",processName
     for i in range(0,len(starts)):
         pave=ROOT.TPave(starts[i],0.85,starts[i]+.03,0.85+0.03,0,"NDC");
         pave.SetFillColor(colors[i]);
@@ -472,9 +474,9 @@ if doSig and doSTXS: ## signal composition plot
     tex_m.SetTextSize(0.025);
     tex_m.SetLineWidth(2);
 
-    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta,ROOT.kGreen-4];
     #starts=[0.28,0.4,0.52,.64,.76,.88]
-    starts=[0.10,0.25,0.40,.55,.70,.85]
+    starts=[0.10,0.25,0.40,.55,.70,.85,.92]
     processName=[]
     for iproc, proc in enumerate(config.processes):
        if proc == 'GluGlu': processName.append("ggH") 
@@ -515,7 +517,7 @@ if doSig and doSTXS: ## signal composition plot
 
 if doSig: ## signal composition plot
     #colors = [ ROOT.kGreen+3, ROOT.kRed+2, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kBlue-4];
-    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta];
+    colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta,ROOT.kGreen-4];
     c0=ROOT.TCanvas("c_"+cat+"_sig_composition","canvas",1600,800)
     ## old -> new
 
@@ -630,7 +632,7 @@ if doSig: ## signal composition plot
        elif proc=='WPlusH' : processName.append("W^{+}H")
        else: processName.append(proc)
 
-    starts=[0.28,0.4,0.52,.64,.76,.88]
+    starts=[0.28,0.4,0.52,.64,.76,.88,.95]
     
     for i in range(0,len(starts)):
         pave=ROOT.TPave(starts[i],0.85,starts[i]+.03,0.85+0.03,0,"NDC");
@@ -681,6 +683,8 @@ if doSig: ## signal composition plot
                 xsec=config.xsec("ZH")
             elif 'ttH' in mc:
                 xsec=config.xsec("ttH")
+            elif 'bbH' in mc:
+                xsec=config.xsec("bbH")
             h.Scale(config.lumi())
             h.Scale(xsec*config.br())
             if htot==None: 
@@ -1314,6 +1318,12 @@ if doBkg:
             #leg.AddEntry(h,"ttH","L")
             leg2.append((h,"ttH","L"))
             xsec=config.xsec("ttH")
+        elif 'bbH' in mc:
+            h.SetLineColor(ROOT.kGreen-4)
+            h.SetLineStyle(7)
+            #leg.AddEntry(h,"ttH","L")
+            leg2.append((h,"bbH","L"))
+            xsec=config.xsec("bbH")
 
         h.Scale(config.lumi())
         h.Scale(xsec*br)
