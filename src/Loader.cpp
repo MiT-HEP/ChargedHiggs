@@ -612,6 +612,7 @@ void LoadNero::FillMet(){
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     event_ -> met_ . SetRawMetP4( *met -> RawMet ) ;
     event_ -> met_ . SetTrackMetP4( *met -> trackMet ) ;
+    event_ -> met_ . SetPuppiMetP4( *met -> metPuppi ) ;
     //event_ -> met_ . trackMet = *met -> trackMet ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;
