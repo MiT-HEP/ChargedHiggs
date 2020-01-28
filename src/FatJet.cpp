@@ -10,13 +10,12 @@ FatJet::FatJet() :Object(){
   tau3cut_=0;
   tau21cut_=0;
   hadFlavor_=-1;
-  //  corrprunedMasscut_=0;
-  //  prunedMasscut_=0;
+  corrprunedMasscut_=0;
+  prunedMasscut_=0;
   softdropMasscut_=0;
   nSubjetscut_=0;
   hbbcut_=0;
-  TvsQCDMDcut_=-1;
-  WvsQCDMDcut_=-1;
-  ZHbbvsQCDMDcut_=-1;
-  ZHccvsQCDMDcut_=-1;
+  sdmasssyst_=0;
+  tau21syst_=0;
+  tau32syst_=0;
 }
