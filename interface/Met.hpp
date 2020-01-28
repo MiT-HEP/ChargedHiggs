@@ -12,9 +12,6 @@ class Met :
 {
 
         TLorentzVector pp4;
-        TLorentzVector rawMet;
-        TLorentzVector trackMet;
-        TLorentzVector puppiMet;
     protected:
         // filters:
         bool FullRecommendation{false};
@@ -22,8 +19,6 @@ class Met :
     public:
         Met() : Object(), SmearableComplex() {syst = 0 ;}
         float gen ;
-        bool filterbadPFMuon{false};
-        bool filterbadChHadrons{false};
 
         inline bool passFullRecommendation()const { return FullRecommendation;}
         inline void setFullRecommendation(bool value){ FullRecommendation=value;}
@@ -39,14 +34,6 @@ class Met :
             }
         }
         virtual inline float PtGen(){ return gen;} 
-        virtual void SetRawMetP4(TLorentzVector &x){rawMet=x;}
-        TLorentzVector& GetRawMetP4(){return rawMet;}
-
-        virtual void SetTrackMetP4(TLorentzVector &x){trackMet=x;}
-        TLorentzVector& GetTrackMetP4(){return trackMet;}
-
-        virtual void SetPuppiMetP4(TLorentzVector &x){puppiMet=x;}
-        TLorentzVector& GetPuppiMetP4(){return puppiMet;}
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;
