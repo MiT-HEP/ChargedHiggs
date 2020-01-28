@@ -14,6 +14,7 @@ class Met :
         TLorentzVector pp4;
         TLorentzVector rawMet;
         TLorentzVector trackMet;
+        TLorentzVector puppiMet;
     protected:
         // filters:
         bool FullRecommendation{false};
@@ -43,6 +44,9 @@ class Met :
 
         virtual void SetTrackMetP4(TLorentzVector &x){trackMet=x;}
         TLorentzVector& GetTrackMetP4(){return trackMet;}
+
+        virtual void SetPuppiMetP4(TLorentzVector &x){puppiMet=x;}
+        TLorentzVector& GetPuppiMetP4(){return puppiMet;}
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;
