@@ -6,6 +6,32 @@ addConfig=VBShadAnalysis|AddLabel('WpWpJJ_EWK-QCD_TuneCUETP8M1_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('WpWpJJ_EWK_TuneCUETP8M1_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg')
 addConfig=VBShadAnalysis|AddLabel('WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8')
+addConfig=VBShadAnalysis|AddLabel('ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8')
+addConfig=VBShadAnalysis|AddLabel('ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8')
+addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph')
+
+addConfig=VBShadAnalysis|AddLabel('WWjj_SS_ll')
+addConfig=VBShadAnalysis|AddLabel('WWjj_SS_lt')
+addConfig=VBShadAnalysis|AddLabel('WWjj_SS_tt')
+
+addConfig=VBShadAnalysis|AddLabel('QCD')
+
+## placeholder for all the di/triboson
+addConfig=VBShadAnalysis|AddLabel('MULTIBOSON')
+addConfig=VBShadAnalysis|AddLabel('TRIBOSON')
+addConfig=VBShadAnalysis|AddLabel('DIBOSON')
+addConfig=VBShadAnalysis|AddLabel('WWW')
+addConfig=VBShadAnalysis|AddLabel('WWZ')
+addConfig=VBShadAnalysis|AddLabel('WZZ')
+addConfig=VBShadAnalysis|AddLabel('ZZZ')
+addConfig=VBShadAnalysis|AddLabel('WWTo')
+addConfig=VBShadAnalysis|AddLabel('WZTo')
+addConfig=VBShadAnalysis|AddLabel('ZZTo')
+
+addConfig=VBShadAnalysis|AddLabel('ZJetsToNuNu')
+
+## placeholder for all the tt+X
+addConfig=VBShadAnalysis|AddLabel('TTX')
 
 #addConfig=VBShadAnalysis|AddLabel('DYJetsToLL_M-105To160')
 #addConfig=VBShadAnalysis|AddLabel('DY')
@@ -15,16 +41,9 @@ addConfig=VBShadAnalysis|AddLabel('WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_mad
 #addConfig=VBShadAnalysis|AddLabel('TTZ')
 #addConfig=VBShadAnalysis|AddLabel('TTG')
 
-#addConfig=VBShadAnalysis|AddLabel('TT')
-#addConfig=VBShadAnalysis|AddLabel('ST')
+addConfig=VBShadAnalysis|AddLabel('TT_TuneCUETP8M2T4')
+addConfig=VBShadAnalysis|AddLabel('ST')
+addConfig=VBShadAnalysis|AddLabel('ttZ')
 
-#addConfig=VBShadAnalysis|AddLabel('WWW')
-#addConfig=VBShadAnalysis|AddLabel('WWZ')
-#addConfig=VBShadAnalysis|AddLabel('WZZ')
-#addConfig=VBShadAnalysis|AddLabel('ZZZ')
-
-#addConfig=VBShadAnalysis|AddLabel('WW')
-#addConfig=VBShadAnalysis|AddLabel('WZ')
-#addConfig=VBShadAnalysis|AddLabel('ZZ')
 
 
