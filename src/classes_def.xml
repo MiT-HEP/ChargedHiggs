@@ -54,6 +54,7 @@
 
     <!-- -->
     <class name="GeoFit"/>
+    <class name="SDMasscorr"/>
 
     <class name="KinematicFit"/>
     <class name="KinematicFit2"/>

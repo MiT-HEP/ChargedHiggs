@@ -29,6 +29,7 @@ Branches=dat/branches.txt
 Lumi=1
 Smear=NONE
 Correct=NONE
+#Correct=SDMasscorr
 Final=no
 
 ## be less peaky, given the n. of systs
