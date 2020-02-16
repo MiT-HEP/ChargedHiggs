@@ -4,6 +4,7 @@ namespace PtGeoCor{
 
   //float PtGeoFit(float d0, float pt, float eta, int year) ;
   float PtGeoFit_mod(float d0, float pt, float eta, int year) ; // this one
+  float PtGeo_BS_Roch(float d0, float pt, float eta, int year) ;
 }
 
 #include "interface/Corrector.hpp"
@@ -15,6 +16,7 @@ class GeoFit : public CorrectorBase{
 		void Init() override;
 
         int year{2017};
+        int useBS{1};
     protected:
 };
 #endif

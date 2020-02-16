@@ -54,4 +54,8 @@
 
     <!-- -->
     <class name="GeoFit"/>
+
+    <class name="KinematicFit"/>
+    <class name="KinematicFit2"/>
+
 </lcgdict>

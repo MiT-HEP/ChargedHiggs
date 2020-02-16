@@ -47,10 +47,12 @@ class AnalysisBase : public Named
     // call output_->Book, but add something to name
     void Book(string name, string title,int nBins, double xmin, double xmax);
     void Book2D(string name, string title,int nBins, double xmin, double xmax,int nBins2,double ymin,double ymax);
+    void Book3D(string name, string title,int nBins, double xmin, double xmax,int nBins2,double ymin,double ymax,int nBins3,double zmin,double zmax);
     void Book(string name, string title,int nBins, double *xbound);
     void Book2D(string name, string title,int nBins, double*xbound,int nBins2, double*ybound);
     void Fill(string name, string syst , double value, double weight=1);
     void Fill2D(string name, string syst , double valueX,double valueY, double weight=1);
+    void Fill3D(string name, string syst , double valueX,double valueY, double valueZ,double weight=1);
     TH1D* GetHisto(string name, string systname);
     TH2D* GetHisto2D(string name, string systname);
     void AddFinalHisto(const string&name) {output_ -> AddFinalHisto(name); }

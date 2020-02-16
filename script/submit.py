@@ -310,6 +310,7 @@ if opts.resubmit:
                 call("mkdir -p %s"%mydir,shell=True)
                 call("cp  %s/*{sh,jdl} %s/"%(opts.dir,mydir),shell=True)
                 call("sed -i'' 's:/eos/user/"+user[0]+"/"+user+"/::g' %s/condor_resubmit.jdl"%mydir,shell=True)
+                call("sed -i'' 's:/eos/cms/store/user/"+user+"/::g' %s/condor_resubmit.jdl"%mydir,shell=True)
                 cmd ="condor_submit -batch-name %s %s/condor_resubmit.jdl"%(opts.dir,mydir)
                 print "   cmd=",cmd
                 status = call(cmd,shell=True)
@@ -713,6 +714,7 @@ if not opts.hadoop:
                 call("mkdir -p %s"%mydir,shell=True)
                 call("cp  %s/*{sh,jdl} %s/"%(opts.dir,mydir),shell=True)
                 call("sed -i'' 's:/eos/user/"+user[0]+"/"+user+"/::g' %s/condor.jdl"%mydir,shell=True)
+                call("sed -i'' 's:/eos/cms/store/user/"+user+"/::g' %s/condor.jdl"%mydir,shell=True)
                 cmd ="condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,mydir)
                 status = call(cmd,shell=True)
                 if status !=0:

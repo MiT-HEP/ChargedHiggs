@@ -18,6 +18,8 @@ class VBShadAnalysis: virtual public AnalysisBase
 public:
     VBShadAnalysis() : AnalysisBase () {}
     virtual ~VBShadAnalysis (){}
+
+    int year=2016; // master switch for year configuration
     
     void Init() override;
     int analyze(Event*,string systname) override;
@@ -30,15 +32,16 @@ public:
     void SetJetCuts(Jet *j) override ;
     void SetFatJetCuts(FatJet *f) override;
 
-    float resolvedtagger(Event*e, float MV, string label, string systname);
-    float jettagForBoosted(Event*e, string label, string systname);
+    float resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
+    float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
     void getObjects(Event*e, string label, string systname);
 
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
-    bool doHADAnalysis=true;
+    bool doHADAnalysis=false;
     bool writeTree = true;
+    bool usePuppi=false;
 
 private:
 
@@ -48,6 +51,7 @@ private:
     // selected Objects
     vector<Jet*> selectedJets;
     vector<FatJet*> selectedFatJets;
+    vector<FatJet*> selectedFatZbb;
 
     vector<Jet*> forwardJets;
     vector<Jet*> bosonJets;
@@ -59,8 +63,10 @@ private:
     float evt_Detajj=-100;
     float evt_Dphijj=-100;
     float evt_Jet2Eta=-100;
+    float evt_Jet2Pt=-100;
 
     float evt_MVV=-100;
+    float evt_PetaVV=-100;
     float evt_DetaVV=-100;
     float evt_MVV_gen=-100;
     float evt_PTVV=0;

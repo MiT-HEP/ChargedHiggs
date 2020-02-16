@@ -40,8 +40,8 @@ EntryPerSecond=10
 SFDB=aux/sf_VBShad.txt
 
 ##SFDB=aux/sf_database.2018.moriond.txt
-MCDB=aux/mcdb.2019.v3.6.year2016.dat
-pileup=aux/pileup.v3.6.year2016.root
+MCDB=aux/mcdb.2020.v3.7.year2016.dat
+pileup=aux/pileup.v3.7.year2016.root
 
 Analysis=VBShadAnalysis
 

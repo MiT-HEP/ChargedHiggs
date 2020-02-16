@@ -7,6 +7,7 @@ void HEMCorrector::Init()
 int HEMCorrector::correct(Event *e) {
 
     if (year!=2018) return 0;
+    if (e->IsRealData()) return 0;
 
     TLorentzVector sum;
 

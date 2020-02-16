@@ -30,21 +30,22 @@ void DYAnalysis::Init(){
 	    Book ("DYAnalysis/Vars/Ptmm_"+ l ,"Ptmm;p_{T}^{#mu#mu} [GeV];Events", 1000,0,1000);
 	    Book ("DYAnalysis/Vars/NJmm_"+ l ,"NJmm;N_{jets}^{#mu#mu};Events", 10,0,10);
 	    Book ("DYAnalysis/Vars/Npvmm_"+ l ,"Npvmm", 50,0,50);
-        vector<int> jbin{500,1000,1500,2000,10000};
-        vector<string> flavours={"G","Q","O","U"};
-        for (int i=0;i<jbin.size()-1;++i)
-        {
-	        Book ( Form("DYAnalysis/Vars/axis2_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 100,0,10);
-	        Book ( Form("DYAnalysis/Vars/mult_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,500);
-	        Book ( Form("DYAnalysis/Vars/qgl_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,1);
-            for(auto fl : flavours)
-            {
-	            Book ( Form("DYAnalysis/Vars/qgl_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,1);
-	            Book ( Form("DYAnalysis/Vars/axis2_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 100,0,10);
-	            Book ( Form("DYAnalysis/Vars/mult_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,500);
-            }
+	    Book3D ("DYAnalysis/Vars/MassPtRPtGen_"+ l ,"", 100,60,120,200,0,200,200,0,200);
+        //vector<int> jbin{500,1000,1500,2000,10000};
+        //vector<string> flavours={"G","Q","O","U"};
+        //for (int i=0;i<jbin.size()-1;++i)
+        //{
+	    //    Book ( Form("DYAnalysis/Vars/axis2_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 100,0,10);
+	    //    Book ( Form("DYAnalysis/Vars/mult_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,500);
+	    //    Book ( Form("DYAnalysis/Vars/qgl_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,1);
+        //    for(auto fl : flavours)
+        //    {
+	    //        Book ( Form("DYAnalysis/Vars/qgl_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,1);
+	    //        Book ( Form("DYAnalysis/Vars/axis2_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 100,0,10);
+	    //        Book ( Form("DYAnalysis/Vars/mult_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,500);
+        //    }
 
-        }
+        //}
     }
 
 }
@@ -78,11 +79,15 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
 
     bool isGen=false;
     bool isReco=false;
+    float ztruept=-1;
     if (genMuons) // no requirement on pT
     {
         Object Ztruth(*genmu0); 
         Ztruth += *genmu1;
-        if (Ztruth.M() > 60 and Ztruth.M()<120) isGen=true;
+        if (Ztruth.M() > 60 and Ztruth.M()<120){
+            isGen=true;
+            if(genmu0->Pt()>30 and genmu1->Pt()>20 and abs(genmu0->Eta())<2.4 and abs(genmu1->Eta())<2.4)ztruept=Ztruth.Pt();
+        }
     }
 
     bool recoMuons= mu0 != NULL and mu1 !=NULL; 
@@ -140,13 +145,22 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
     }
 
     Object Z;
+    float zrecopt=-1;
+    float zrecomass=-1;
     if (recoMuons)
     {
         TLorentzVector zero(0,0,0,0);
         Z.SetP4(zero); // make sure it is 0.
         Z += *mu0;
         Z += *mu1;
+        if(mu0->Pt()>30 and mu1->Pt()>20 and abs(mu0->Eta())<2.4 and abs(mu1->Eta())<2.4)
+        {
+            zrecopt=Z.Pt();
+            zrecomass=Z.M();
+        }
     }
+
+	Fill3D ("DYAnalysis/Vars/MassPtRPtGen_"+ label ,systname, zrecomass,zrecopt,ztruept,e->weight());
 
     // Full selection
     if ( recoMuons and passAsymmPtCuts and passTrigger and Z.M() >60 and Z.M()<120)
@@ -157,33 +171,33 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
        	Fill("DYAnalysis/Vars/Npvmm_"+ label,systname, e->Npv(),e->weight()) ;
         Fill("DYAnalysis/Vars/NJmm_"+ label,systname, e->NcentralJets(),e->weight()) ;
 
-        if (j0 != NULL and j0->Pt() > 500) {
-            vector<float> jbin{500,1000,1500,2000,10000};
-            //std::cout<<"[DEBUG] Considering jet with pt"<<j0->Pt()<<std::endl;
-            //first that is 'not less'
-            auto ib=std::lower_bound(jbin.begin(),jbin.end(),std::min(j0->Pt(),8000.F));
-            //std::cout<<"[DEBUG] -> found="<< (ib!=jbin.end()) <<" i="<<ib-jbin.begin()<<std::endl;
-            if (ib != jbin.end())
-            {
-                int i= ib-jbin.begin()-1;
-                Fill(Form("DYAnalysis/Vars/axis2_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("log:axis2"),e->weight());
-                Fill(Form("DYAnalysis/Vars/mult_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
-                Fill(Form("DYAnalysis/Vars/qgl_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
+        //if (j0 != NULL and j0->Pt() > 500) {
+        //    vector<float> jbin{500,1000,1500,2000,10000};
+        //    //std::cout<<"[DEBUG] Considering jet with pt"<<j0->Pt()<<std::endl;
+        //    //first that is 'not less'
+        //    auto ib=std::lower_bound(jbin.begin(),jbin.end(),std::min(j0->Pt(),8000.F));
+        //    //std::cout<<"[DEBUG] -> found="<< (ib!=jbin.end()) <<" i="<<ib-jbin.begin()<<std::endl;
+        //    if (ib != jbin.end())
+        //    {
+        //        int i= ib-jbin.begin()-1;
+        //        Fill(Form("DYAnalysis/Vars/axis2_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("log:axis2"),e->weight());
+        //        Fill(Form("DYAnalysis/Vars/mult_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
+        //        Fill(Form("DYAnalysis/Vars/qgl_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
 
-                string flavor=""; int fl=j0->Flavor();
-                if ( label != "Data" and fl ==21 ) flavor="G";
-                else if ( label != "Data" and abs(fl)<5 ) flavor="Q";
-                else if ( label != "Data" and abs(fl)!=0 ) flavor="O";
-                else if ( label != "Data" and abs(fl)==0 ) flavor="U";
+        //        string flavor=""; int fl=j0->Flavor();
+        //        if ( label != "Data" and fl ==21 ) flavor="G";
+        //        else if ( label != "Data" and abs(fl)<5 ) flavor="Q";
+        //        else if ( label != "Data" and abs(fl)!=0 ) flavor="O";
+        //        else if ( label != "Data" and abs(fl)==0 ) flavor="U";
 
-                if (label!="Data")
-                {
-                    Fill(Form("DYAnalysis/Vars/axis2_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("log:axis2"),e->weight());
-                    Fill(Form("DYAnalysis/Vars/mult_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
-                    Fill(Form("DYAnalysis/Vars/qgl_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
-                }
-            }
-        } // j0
+        //        if (label!="Data")
+        //        {
+        //            Fill(Form("DYAnalysis/Vars/axis2_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("log:axis2"),e->weight());
+        //            Fill(Form("DYAnalysis/Vars/mult_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
+        //            Fill(Form("DYAnalysis/Vars/qgl_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
+        //        }
+        //    }
+        //} // j0
     } // full selection on muons
 
 
