@@ -51,7 +51,7 @@ void VBShadAnalysis::SetTauCuts(Tau *t){
 
 void VBShadAnalysis::SetFatJetCuts(FatJet *f){
     f->SetEtaCut(2.5);
-    f->SetPtCut(200);
+    f->SetPtCut(250);
     f->SetSDMassCut(30);
 }
 
@@ -66,6 +66,17 @@ void VBShadAnalysis::Init(){
     for ( string l : AllLabel()  ) {
         //cutflow
         Book ("VBShadAnalysis/Cutflow_"+l, "cutflow; bit; Events", 12,0,12);
+
+        //Trigger
+        Book("VBShadAnalysis/Baseline/HT_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_PFHT900_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_AK8PFJet450_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_AK8PFHT700_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_AK8PFJet360_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_AK8DiPFJet300_200_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_PFHT650_Wide_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
 
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
@@ -194,6 +205,7 @@ void VBShadAnalysis::Init(){
 
 }
 
+/*
 float VBShadAnalysis::jettagForBoosted(Event*e, string label, string systname) {
 
     forwardJets.clear();
@@ -221,6 +233,23 @@ float VBShadAnalysis::jettagForBoosted(Event*e, string label, string systname) {
 
     return  Mkl;
 }
+*/
+
+float VBShadAnalysis::jettagForBoosted(Event*e, string label, string systname) {
+
+    forwardJets.clear();
+
+    double Mkl = 0; //forward jets
+
+    if(selectedJets.size() > 1){
+      Mkl = selectedJets[0]->InvMass(selectedJets[1]);
+      forwardJets.push_back(selectedJets[0]);
+      forwardJets.push_back(selectedJets[1]);
+    }
+
+    return  Mkl;
+}
+
 
 
 float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string systname) {
@@ -339,6 +368,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
     for(unsigned i=0;i<e->NFatJets() ; ++i)
     {
         FatJet *f=e->GetFatJet(i);
+
+        cout << i << ": get the fatjet" << endl; 
 
         Double_t minDR=9999;
         if(genVp!=NULL and genVp2!=NULL) {
@@ -525,6 +556,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(!passtriggerMET) return EVENT_NOT_USED;
     }
 
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+
+    //if(doHADAnalysis && !passtriggerHadOR) return EVENT_NOT_USED;
+ 
+
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 1, e->weight() );  //1--trigger
 
     // kill Top/W/Z
@@ -566,6 +608,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     string category="";
     // for forwardJets pick the one with the largest mass
 
+    // no MET no b
     if(!doMETAnalysis and !doBAnalysis) {
         forwardJets.clear();
         p4VV*=0;
@@ -573,6 +616,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_PTV1=0;
         evt_PTV2=0;
         evt_DetaVV=-100;
+
+        if(selectedFatJets[0]->GetP4().Pt() < 250) return EVENT_NOT_USED;
 
         if(selectedFatJets.size()>1 and selectedJets.size()>1) {
             category="_BB";
@@ -610,6 +655,31 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
     }
 
+    /*
+    //We firstly tried whether works to put triggers here but seems no?
+    if (!(category.find("BB")   !=string::npos)) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/HT_Base_" +label, systname, evt_MVV, e->weight() );
+
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+
+    if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/HT_PFHT900_" +label, systname, evt_MVV, e->weight() );     
+    if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/HT_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/HT_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/HT_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/HT_OR_" +label, systname, evt_MVV, e->weight() );
+
+    return EVENT_NOT_USED;
+    // end the test of triggers
+    */
 
     //////////
     // with B
@@ -734,6 +804,33 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
 
+    /*
+    //Let's see whether OK to put trigger after 2 forward jets selections
+    if (!(category.find("BB")   !=string::npos)) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/HT_Base_" +label, systname, evt_MVV, e->weight() );
+
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+
+    if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/HT_PFHT900_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/HT_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/HT_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/HT_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/HT_OR_" +label, systname, evt_MVV, e->weight() );
+
+    return EVENT_NOT_USED;
+
+    //Here ends the test of the triggers    
+    */
+
     evt_Jet2Eta=forwardJets[1]->Eta();
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 7, e->weight() );  //NJet cut
@@ -753,6 +850,33 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     evt_Dphijj = ChargedHiggs::deltaPhi(forwardJets[0]->Phi(), forwardJets[1]->Phi());
 
     if( evt_Mjj < 500 ) return EVENT_NOT_USED;
+
+    /*
+    //Let's see whether OK to put trigger after all VBS selections
+    if (!(category.find("BB")   !=string::npos)) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/HT_Base_" +label, systname, evt_MVV, e->weight() );
+
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+
+    if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/HT_PFHT900_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/HT_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/HT_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/HT_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/HT_OR_" +label, systname, evt_MVV, e->weight() );
+
+    return EVENT_NOT_USED;
+
+    //Here ends the test of the triggers 
+    */
 
     Fill("VBShadAnalysis/FWJETS/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
 

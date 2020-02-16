@@ -37,7 +37,7 @@ public:
 
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
-    bool doHADAnalysis=false;
+    bool doHADAnalysis=true;
     bool writeTree = true;
 
 private:

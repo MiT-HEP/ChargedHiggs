@@ -4,6 +4,7 @@
 
 Files=
 ## Signal
+#include=dat/catalog/2019.fall/year2016/chhiggs.dat
 include=dat/catalog/2019.fall/year2016/vbshad.dat
 
 ## BKGS
@@ -20,6 +21,9 @@ include=dat/vbshad.dat
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
 #
+
+
+#Files=root://eoscms///store/group/phys_higgs/HiggsExo/dalfonso/Nero/v3.6/year2016/WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/WPhadWPhadJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/191206_183850/0000/NeroNtuples_111.root 
 
 #Files=root://eoscms///store/group/phys_higgs/cmshmm/amarini/Nero/v3.6/year2016/WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/191010_094953/0000/NeroNtuples_44.root
 
