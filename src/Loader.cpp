@@ -342,7 +342,6 @@ void LoadNero::FillFatJets(){
         j->tau2 = bj -> tau2 -> at(iJet);
         j->tau3 = bj -> tau3 -> at(iJet);
 
-
         if(tree_->GetBranchStatus("fatjetAK8WithDeepTagTvsQCDMD"))  j->TvsQCDMD = bj -> TvsQCDMD -> at(iJet);
         if(tree_->GetBranchStatus("fatjetAK8WithDeepTagWvsQCDMD"))  j->WvsQCDMD = bj -> WvsQCDMD -> at(iJet);
         if(tree_->GetBranchStatus("fatjetAK8WithDeepTagZHbbvsQCDMD")) j->ZHbbvsQCDMD = bj -> ZHbbvsQCDMD -> at(iJet);
