@@ -416,9 +416,9 @@ if __name__=="__main__":
     #hmmAutoCat.Print()
     #hmmTTH.Print()
     hmmWithTTH.Print()
-    hmmExCatBoost.Print()
-    hmmExCat2018.Print()
-    hmmExCatBoost2018.Print()
+    #hmmExCatBoost.Print()
+    #hmmExCat2018.Print()
+    #hmmExCatBoost2018.Print()
 
 import ROOT
 from array import array

@@ -11,6 +11,7 @@ parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_tr
 #parser.add_option("-i","--input",type='string',help="Input ROOT file. [%default]", default="Hmumu.root")
 parser.add_option("-a","--all",action='store_true',help="All [%default]", default=False)
 parser.add_option("-l","--lumi",help="Luminosity [%default]", default="134")
+parser.add_option("-s","--significance",dest="significance",default=False,action="store_true")
 opts,args= parser.parse_args()
 
 ########### IMPORT ROOT #############
@@ -65,8 +66,8 @@ def GetLimitFromTree(inputFile,xsec=False):
 		l  = limitTree.limit
 		q  = limitTree.quantileExpected
 		type= 0
-	
-		## TODO OBS
+
+		#print 	"DEBUG",inputFile, mh, l,q
 		if abs(mh-125.) >0.01 : 
 		    print "Ignoring mh=",mh
 		    continue
@@ -100,8 +101,13 @@ def GetLimitFromTree(inputFile,xsec=False):
 	Down.sort()
 	Down2.sort()
 	data.sort()
+    
+	if not opts.significance:
+	    return  median[0][1], Up[0][1], Down[0][1], Up2[0][1],Down2[0][1],data[0][1]
+	else:
+        #only data
+	    return  data[0][1], None,None,None,None,data[0][1]
 
-	return  median[0][1], Up[0][1], Down[0][1], Up2[0][1],Down2[0][1],data[0][1]
 
 c=ROOT.TCanvas("c","canvas",800,800)
 
@@ -114,6 +120,9 @@ c.SetRightMargin(0.05);
 nCats=len(args)
 
 maxL=31.
+if opts.significance:
+    maxL=5
+
 dummy = ROOT.TH2F("dummy","Limits per Category",20,0.,maxL,nCats,1-0.5,nCats+0.5);
 dummy.SetStats(0);
 ci = ROOT.TColor.GetColor("#00ff00");
@@ -184,20 +193,21 @@ for ic,cat in enumerate(args):
         marker2.SetMarkerColor(ROOT.kBlack)
         marker2.SetPoint(0,obs,ybin)
     
-
-    pave1 = ROOT.TPave(down,ybinmin,min(up,maxL),ybinmax);
-    pave2 = ROOT.TPave(down2,ybinmin,min(up2,maxL),ybinmax);
-    pave2.SetFillColor(ROOT.kOrange)
-    pave1.SetFillColor(ROOT.kGreen)
+    if not opts.significance:
+        pave1 = ROOT.TPave(down,ybinmin,min(up,maxL),ybinmax);
+        pave2 = ROOT.TPave(down2,ybinmin,min(up2,maxL),ybinmax);
+        pave2.SetFillColor(ROOT.kOrange)
+        pave1.SetFillColor(ROOT.kGreen)
+        garbage.extend([pave1,pave2])
 
     txtmin,txtmax=0.001,10
     if opts.all and ic ==nCats-1:
         txtmin,txtmax=5,13
     pavetext = ROOT.TPaveText(txtmin,ybinmin,txtmax,ybinmax);
     if opts.unblind:
-        pavetext.AddText("%.1f (%.1f)"%(obs,exp))
+        pavetext.AddText("%.2f (%.2f)"%(obs,exp))
     else:
-        pavetext.AddText("median=%.1f"%exp)
+        pavetext.AddText("median=%.2f"%exp)
     pavetext.SetTextColor(ROOT.kBlack);
     pavetext.SetTextFont(43);
     pavetext.SetTextSize(18);
@@ -207,15 +217,16 @@ for ic,cat in enumerate(args):
     pavetext.SetLineColor(0);
     pavetext.SetBorderSize(0);
 
-    pave2.Draw("SAME")
-    pave1.Draw("SAME")
+    if not opts.significance:
+        pave2.Draw("SAME")
+        pave1.Draw("SAME")
     if opts.unblind:
         marker.Draw("PE SAME")
         marker2.Draw("P SAME")
     else:
         marker.Draw("P SAME")
     pavetext.Draw("SAME")
-    garbage.extend([marker,marker2,pave1,pave2,pavetext])
+    garbage.extend([marker,marker2,pavetext])
 
 l = ROOT.TLatex()
 l.SetNDC()
