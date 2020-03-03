@@ -45,8 +45,22 @@ public:
 
 private:
 
+    // for genStudies
     GenParticle *genVp = NULL;
     GenParticle *genVp2 = NULL;
+
+    GenParticle * dauV1a = NULL;
+    GenParticle * dauV1b = NULL;
+    GenParticle * dauV2a = NULL;
+    GenParticle * dauV2b = NULL;
+
+    double dauRatioV1=-1;
+    double dauRatioV2=-1;
+    double cosThetaV1=-10;
+    double cosThetaV2=-10;
+
+    bool V1isZbb=false;
+    bool V2isZbb=false;
 
     // selected Objects
     vector<Jet*> selectedJets;
