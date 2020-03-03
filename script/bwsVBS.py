@@ -92,7 +92,7 @@ class DatacardBuilder:
 
         txt.write('-'*50+'\n')
         #shapes declaration
-        txt.write('shape * * %(file)s $CHANNEL_$PROCESS $CHANNEL_$PROCESS_$SYSTEMATIC\n'%{'file':outroot})
+        txt.write('shapes * * %(file)s $CHANNEL_$PROCESS $CHANNEL_$PROCESS_$SYSTEMATIC\n'%{'file':outroot})
 
         txt.write('-'*50+'\n')
         #observation
@@ -165,6 +165,9 @@ class DatacardBuilder:
             d=self.categories[cat]
             # data
             data=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_%(suffix)s"%d,"%(cat)s_data_obs"%d)
+            if data==None: 
+                print "[WARNING] Creating fake data histogram for",cat
+                data=ROOT.TH1D("%(cat)s_data_obs"%d,"fake data histogram with 100 bins",100,0,100)
             self._write(data)
             # proc
             for proc in self.processes:
