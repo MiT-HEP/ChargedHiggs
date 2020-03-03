@@ -19,8 +19,10 @@ from DataFormats.FWLite import Handle, Events, Runs
 
 #root://eoscms// TO ADD
 #files=["/store/mc/RunIIFall17MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/50000/BAF0844D-E7D9-E711-8888-FA163E4F4F50.root"]
-files=["/eos/cms/store/user//amarini/Sync/5AC9148F-9842-E811-892B-3417EBE535DA.root"]
-files=['/tmp/amarini/E24C7443-5B83-E811-9AEB-FA163E0C18B7.root']
+#files=["/eos/cms/store/user//amarini/Sync/5AC9148F-9842-E811-892B-3417EBE535DA.root"]
+#files=['/tmp/amarini/E24C7443-5B83-E811-9AEB-FA163E0C18B7.root']
+files=['root://eoscms///store/group/phys_higgs/cmshmm/amarini/EWK_LLJJ_MLL_105-160_ptJ-0_SM_5f_LO_TuneEEC5_13TeV-madgraph-h7/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-MINIAODSIM/200122_095931/0000/step4_460.root']
+#files=['root://eoscms///store/group/phys_higgs/cmshmm/amarini/EWK_LLJJ_MLL_105-160_ptJ-0_SM_5f_LO_TuneEEC5_13TeV-madgraph-herwigpp/RunIISummer16MiniAODv3-94X_mcRun2_asymptotic_v3-MINIAODSIM/200124_090527/0002/step4_2991.root']
 h = ROOT.TH1D("ht","ht",1300,0,13000)
 h2 = ROOT.TH1D("htsec","ht",1300,0,13000)
 
@@ -52,7 +54,7 @@ try:
             for it in lheR.product():
                 print "T",it.replace('\n','') #, lheR.product()[it].tag()
                 #for l in lheR.product()[it].lines(): print "L",l
-            run.getByLabel(genRLabel,genR)
+            #run.getByLabel(genRLabel,genR)
             
         events = Events(f.split()[0])
         lhe,lheLabel = Handle("LHEEventProduct"),"externalLHEProducer"
@@ -60,7 +62,7 @@ try:
         #break
         for iev,event in enumerate(events):
             print "\nEvent %d: run %6d, lumi %4d, event %12d" % (iev,event.eventAuxiliary().run(), event.eventAuxiliary().luminosityBlock(),event.eventAuxiliary().event())
-            if iev > 10: break
+            if iev > 2: break
         
             try:
                 event.getByLabel(lheLabel, lhe)
@@ -68,15 +70,20 @@ try:
                 continue
             hepeup = lhe.product().hepeup()
             ht=0.0
-            #print "\n\n---------"
-            #for i in range(0,lhe.product().weights().size() ):
-            #     print "W[",i,"]=",lhe.product().weights()[i].wgt,lhe.product().weights()[i].id
+            print "\n\n---------"
+            for i in range(0,lhe.product().weights().size() ):
+                 print "W[",i,"]=",lhe.product().weights()[i].wgt,lhe.product().weights()[i].id
             try:
                 event.getByLabel(genLabel, gen)
             except:
                 continue
+
+            for i in range(0,gen.product().weights().size() ):
+                 print "G[",i,"]=",gen.product().weights()[i]
+
             print "\n\n---------"
-            print "G = ",gen.product().weights().size(), lhe.product().weights().size()
+            print "Weights Summary = ",gen.product().weights().size(), lhe.product().weights().size()
+            print "\n\n---------"
 except KeyboardInterrupt:
     pass
 

@@ -1131,17 +1131,18 @@ if doBkg:
     if opts.noRatio:
         #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY",]
         if 'OnH' in opts.var: #and config.year==2017:
-            BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DYJetsToLL_M-105To160"]
+            #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DYJetsToLL_M-105To160"]
+            BkgMonteCarlos=["TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DYJetsToLL_M-105To160"]
         else:
-            BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY"]
+            BkgMonteCarlos=["TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY"]
     else:
         #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
         if 'OnH' in opts.var: # and config.year==2017:
             print "-> Using 105-160"
-            BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DYJetsToLL_M-105To160"]
+            BkgMonteCarlos=["TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DYJetsToLL_M-105To160"]
         else:
             print "-> Using Inclusive DY"
-            BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DY"]
+            BkgMonteCarlos=["TTW","TTZ","TTG","TTTT","ZZ","WW","WZ","ST","TT","EWK_LLJJ","DY"]
 
     #BkgMonteCarlos=["ZZZ","WZZ","WWZ","WWW","TTTT","ZZ","WW","WZ","ST","TT","DY","EWK_LLJJ"]
     mcAll=None

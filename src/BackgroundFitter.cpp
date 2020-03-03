@@ -7,6 +7,8 @@
 #include "RooFitResult.h"
 #include "RooHistPdf.h"
 #include "RooProdPdf.h"
+#include "RooPolynomial.h"
+#include "RooBernstein.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooSpline1D.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooBernsteinFast.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooMultiPdf.h"
@@ -133,6 +135,7 @@ RooAbsPdf* PdfModelBuilder::getZModExp(string prefix, int order){
         pname = prefix + "_b";
         params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),.1,-2, 2 );
         plist->add(*params[pname]); // @2
+        params[pname]->setConstant(); // correlated with _c
 
         pname = prefix + "_c";
         params[pname] = new RooRealVar(pname.c_str(),pname.c_str(),-.1,-2, 2.0 );
@@ -247,6 +250,8 @@ RooAbsPdf* PdfModelBuilder::getZModExp2(string prefix, int order){
         string old = pname;
         replace(old,"zmod2","zmod");
         replace(old,Form("ord%d",order),"ord1");
+        replace(old,"corepdf_01j_","");
+        replace(old,"corepdf_2j_","");
         if (params.find(old) != params.end()) params[pname] -> setVal( params[old]->getVal());
         else cout <<"WARNING UNABLE TO FIND REPLACEMENT FROM "<<old<<" TO "<<pname<<endl;
         //if (order !=1) params[pname] -> setConstant(); -> not setting them constant
@@ -377,28 +382,62 @@ RooAbsPdf* PdfModelBuilder::getDYBernstein(string prefix, int order,TH1D*dy){
 RooAbsPdf* PdfModelBuilder::getCorePdf(string prefix, int order)
 {
     string extra="";
-    if (prefix.find("cat0") != string::npos) extra="_2j";
-    if (prefix.find("cat1") != string::npos) extra="_2j";
-    if (prefix.find("cat2") != string::npos) extra="_2j";
-    if (prefix.find("cat3") != string::npos) extra="_2j";
-    if (prefix.find("cat4") != string::npos) extra="_2j";
-    if (prefix.find("cat5") != string::npos) extra="_01j";
-    if (prefix.find("cat6") != string::npos) extra="_01j";
-    if (prefix.find("cat7") != string::npos) extra="_01j";
-    if (prefix.find("cat8") != string::npos) extra="_01j";
+    if (prefix.find("cat0") != string::npos) extra="_01j";
+    if (prefix.find("cat1") != string::npos) extra="_01j";
+    if (prefix.find("cat2") != string::npos) extra="_01j";
+    if (prefix.find("cat3") != string::npos) extra="_01j";
+    if (prefix.find("cat4") != string::npos) extra="_01j";
+    if (prefix.find("cat5") != string::npos) extra="_2j";
+    if (prefix.find("cat6") != string::npos) extra="_2j";
+    if (prefix.find("cat7") != string::npos) extra="_2j";
+    if (prefix.find("cat8") != string::npos) extra="_2j";
 
-    RooAbsPdf *bern= getBernstein(prefix+"_bern",order,false); // positive
-    RooAbsPdf *zmod= getZModExp("corepdf_bern"+extra,1); 
-    //RooAbsPdf *exp= getExponentialSingle("corepdf_exp",1); 
-    // TODO multiply times bernstein
-    //RooCategory cat("corepdfcat","");
-    //RooArgList l;
-    //l.add(*zmod);
-    //l.add(*exp);
-    //RooMultiPdf *multi= new RooMultiPdf("corepdf"+prefix,"core pdf",cat,l);
-    RooProdPdf *core=new RooProdPdf(prefix.c_str(),"corepdf",*zmod,*bern);
-    return core;
-    
+    /*
+     * BWZRedux, FEWZ × Bernstein, and S-exponential.
+     */
+    //RooAbsPdf *bern= getBernstein(prefix+"_bern",order,false); // positive
+    if( params.find("ONE")==params.end()) params["ONE"]=new RooRealVar("ONE","ONE",1.);
+
+    //separate poly to allow freeze disassociated?
+    RooRealVar *pol1_zmod=new RooRealVar((prefix+"_zmod_poly1").c_str(),"",0,-0.05,0.05); params[(prefix+"_zmod_poly1")] = pol1_zmod;
+    RooRealVar *pol2_zmod=new RooRealVar((prefix+"_zmod_poly2").c_str(),"",0,-0.05,0.05); params[(prefix+"_zmod_poly2")] = pol2_zmod;
+
+    //RooAbsPdf *poly_zmod= new RooPolynomial ( (prefix+"_poly_zmod").c_str(), "", *prods["obs_range"] , RooArgList(*params["ONE"],*pol1_zmod,*pol2_zmod), /*Int_t lowestOrder=*/0);
+    //RooAbsPdf *poly_zmod= new RooBernstein((prefix+"_poly_zmod").c_str(), "", *prods["obs_range"],RooArgList(*params["ONE"],*pol1_zmod,*pol2_zmod));
+    RooAbsPdf *poly_zmod = new RooGenericPdf((prefix+"_poly_zmod").c_str(), "(1+ @1*3*@0*@0 + @2*6*@0*(1-@0)+ (-@1-@2)*3*(1-@0)*(1-@0) )", RooArgList(*prods["obs_range"],*pol1_zmod,*pol2_zmod));
+
+    RooRealVar *pol1_exp=new RooRealVar((prefix+"_exp_poly1").c_str(),"",0,-0.05,0.05); params[(prefix+"_exp_poly1")] = pol1_exp;
+    RooRealVar *pol2_exp=new RooRealVar((prefix+"_exp_poly2").c_str(),"",0,-0.05,0.05); params[(prefix+"_exp_poly2")] = pol2_exp;
+
+    //RooAbsPdf *poly_exp= new RooPolynomial ( (prefix+"_poly_exp").c_str(), "", *prods["obs_range"] , RooArgList(*params["ONE"],*pol1_exp,*pol2_exp), /*Int_t lowestOrder=*/0);
+    //RooAbsPdf *poly_exp= new RooBernstein((prefix+"_poly_exp").c_str(), "", *prods["obs_range"],RooArgList(*params["ONE"],*pol1_exp,*pol2_exp));
+    RooAbsPdf *poly_exp = new RooGenericPdf((prefix+"_poly_exp").c_str(), "(1+ @1*3*@0*@0 + @2*6*@0*(1-@0)+ (-@1-@2)*3*(1-@0)*(1-@0) )", RooArgList(*prods["obs_range"],*pol1_exp,*pol2_exp));
+
+    RooRealVar *pol1_fewz=new RooRealVar((prefix+"_fewz_poly1").c_str(),"",0,-0.05,0.05); params[(prefix+"_fewz_poly1")] = pol1_fewz; // const already in  FEWZ
+    RooRealVar *pol2_fewz=new RooRealVar((prefix+"_fewz_poly2").c_str(),"",0,-0.05,0.05); params[(prefix+"_fewz_poly2")] = pol2_fewz;
+
+    //RooAbsPdf *poly_fewz= new RooPolynomial ( (prefix+"_poly_fewz").c_str(), "", *prods["obs_range"] , RooArgList(*params["ONE"],*pol1_fewz,*pol2_fewz), /*Int_t lowestOrder=*/0);
+    //RooAbsPdf *poly_fewz= new RooBernstein((prefix+"_poly_fewz").c_str(), "", *prods["obs_range"],RooArgList(*params["ONE"],*pol1_fewz,*pol2_fewz));
+    RooAbsPdf *poly_fewz = new RooGenericPdf((prefix+"_poly_fewz").c_str(), "(1+ @1*3*@0*@0 + @2*6*@0*(1-@0)+ (-@1-@2)*3*(1-@0)*(1-@0) )", RooArgList(*prods["obs_range"],*pol1_fewz,*pol2_fewz));
+
+    // core is not prefixed -> cat
+    RooAbsPdf *zmod= getZModExp("corepdf"+extra+"_zmod",1); 
+    RooAbsPdf *exp= getExponentialSingle("corepdf"+extra+"_exp",3);  // 1. single exponential, 3. double
+    RooAbsPdf *fewz=getPolyTimesFewz("corepdf"+extra+"_fewz_full",1,"aux/fewz/h2mu-dimitry-nnlo.dat");
+    //RooAbsPdf *fewz=getPolyTimesFewz("corepdf"+extra+"_fewz_full",0,"aux/fewz/h2mu-dimitry-nnlo.dat");
+
+    RooProdPdf *zmod_prod=new RooProdPdf((prefix+extra+"_zmod_prod").c_str(),"",*zmod,*poly_zmod);
+    RooProdPdf *exp_prod=new RooProdPdf((prefix+extra+"_exp_prod").c_str(),"",*exp,*poly_exp);
+    RooProdPdf *fewz_prod=new RooProdPdf((prefix+extra+"_fewz_prod").c_str(),"",*fewz,*poly_fewz);
+
+    RooCategory *cat =new RooCategory( ("corepdfindex"+extra).c_str(),"");
+    RooArgList l;
+    l.add(*zmod_prod);
+    l.add(*exp_prod);
+    l.add(*fewz_prod);
+
+    RooMultiPdf *multi= new RooMultiPdf(prefix.c_str(),"core pdf",*cat,l);
+    return multi;
 }
 
 RooAbsPdf* PdfModelBuilder::getPolyTimesFewz(string prefix,int order,string fname="test/bias/FEWZ/h2mu-dsdm-13tev-xs-lux-1jet-nnlo-hp.dat")
@@ -905,6 +944,16 @@ RooAbsPdf* PdfModelBuilder::getExponentialSingle(string prefix, int order){
     for (int i=1; i<=nfracs; i++){
       string name =  Form("%s_f%d",prefix.c_str(),i);
       params.insert(pair<string,RooRealVar*>(name, new RooRealVar(name.c_str(),name.c_str(),0.9-float(i-1)*1./nfracs,0.0001,0.9999)));
+
+      { // replace with old values if available
+        string pname=name; 
+        string old=pname;
+        replace(old,"corepdf_01j_exp", Form("exp_cat4_ord%d",order));
+        replace(old,"corepdf_2j_exp",Form("exp_cat8_ord%d",order));
+        if (params.find(old) != params.end()) params[pname] -> setVal( params[old]->getVal());
+        else cout <<"WARNING UNABLE TO FIND REPLACEMENT FROM "<<old<<" TO "<<pname<<endl;
+      }
+
       fracs->add(*params[name]);
     }
     for (int i=1; i<=nexps; i++){
@@ -913,6 +962,16 @@ RooAbsPdf* PdfModelBuilder::getExponentialSingle(string prefix, int order){
       params.insert(pair<string,RooRealVar*>(name, new RooRealVar(name.c_str(),name.c_str(),TMath::Max(-1.,-0.04*(i+1)),-1.,0.)));
       pdfs.insert(pair<string,RooAbsPdf*>(ename, new RooExponential(ename.c_str(),ename.c_str(),*obs_var,*params[name])));
       exps->add(*pdfs[ename]);
+    
+      { // replace with old values if available
+        string pname=name; 
+        string old=pname;
+        replace(old,"corepdf_01j_","");
+        replace(old,"corepdf_2j_","");
+        if (params.find(old) != params.end()) params[pname] -> setVal( params[old]->getVal());
+        else cout <<"WARNING UNABLE TO FIND REPLACEMENT FROM "<<old<<" TO "<<pname<<endl;
+      }
+
     }
 
     // reset parameters  to decent values
@@ -1333,6 +1392,8 @@ void BackgroundFitter::fit(){
         w_ -> import (pdf_cat,RecycleConflictNodes()); 
 
         RooRealVar corepdf_norm(Form("corepdf_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
+        cout<<"-> Importing Core PDF"<<endl;
+        corepdf->Print("V");
         w_ -> import (*corepdf,RecycleConflictNodes());
         w_ -> import (corepdf_norm,RecycleConflictNodes());
        

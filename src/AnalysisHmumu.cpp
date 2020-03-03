@@ -1373,6 +1373,8 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     mjj.clear();
     jetVar_.clear();
     bdt.clear();
+    mu0=nullptr;
+    mu1=nullptr;
 
     // cache to understand if the event as been processed when I arrived at the End() function
     // ----------------------------------------
@@ -1621,6 +1623,7 @@ int HmumuAnalysis::analyze(Event *event, string systname)
     //if (SYNC_VERBOSE and not processingSyst_ and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
     //    Log(__FUNCTION__,"SYNC",Form("Selected Muons are: mu0=%ld mu1=%ld pt=%f,%f",long(mu0),long(mu1),(mu0)?mu0->Pt():0,(mu1)?mu1->Pt():0));
 
+    Hmm.SetP4(zero); // make sure it is 0.
 
     if (recoMuons)
     {
@@ -1632,6 +1635,21 @@ int HmumuAnalysis::analyze(Event *event, string systname)
         Hmm += *mu1;
         mass_=Hmm.M();
         pt_ = Hmm.Pt();
+
+        TLorentzVector tmp0,tmp1,tmp;
+        tmp0.SetPtEtaPhiM(mu0->Pt(),mu0->Eta(),mu0->Phi(),0.105);
+        tmp1.SetPtEtaPhiM(mu1->Pt(),mu1->Eta(),mu1->Phi(),0.105);
+        tmp=tmp0+tmp1;
+        if (mass_<0 or fabs((tmp.M()-Hmm.M())/tmp.M() ) >0.01  ) // bug in TLorentzVector? numerical instability?
+        {
+            Hmm.SetP4(tmp);
+            mu0->SetP4(tmp0);
+            mu1->SetP4(tmp1);
+            Log(__FUNCTION__,"WARNING",Form("Resetting muon mass to 0.105, and hmm. (numerical instability of TLV?) event=%d/%d/%d",e->runNum(),e->lumiNum(),e->eventNum()));
+            Log(__FUNCTION__,"WARNING",Form("mu0 pt=%f, eta=%f, phi=%f, mass=%f, rap=%f",mu0->Pt(),mu0->Eta(),mu0->Phi(),mu0->M(),mu0->Rapidity()));
+            Log(__FUNCTION__,"WARNING",Form("mu1 pt=%f, eta=%f, phi=%f, mass=%f, rap=%f",mu1->Pt(),mu1->Eta(),mu1->Phi(),mu1->M(),mu1->Rapidity()));
+            Log(__FUNCTION__,"WARNING",Form("Hmm pt=%f, eta=%f, phi=%f, mass=%f, mass_=%f, mass3=%f, rap=%f",Hmm.Pt(),Hmm.Eta(),Hmm.Phi(),Hmm.M(),mass_,tmp.M(),Hmm.Rapidity()));
+        }
     }
 
     // ------------------------
@@ -2686,6 +2704,7 @@ void HmumuAnalysis::updateMjj(){
     jetVar_["y*"] = (selectedJets.size()>=2) ? ( - Hmm.Rapidity() + (selectedJets[0]->Rapidity() + selectedJets[1]->Rapidity())/2.0 ) :-10;
     jetVar_["z*"] = (selectedJets.size()>=2) ? (jetVar_["y*"] /fabs(selectedJets[0]->Rapidity() - selectedJets[1]->Rapidity()) ):-10;
 
+
     for(unsigned i=0;i<selectedJets.size() ;++i)
     {
         if ( abs(selectedJets[i]->Eta())<=2.4)
@@ -3364,6 +3383,14 @@ float HmumuAnalysis::BdtUCSD(int pos,int nj)
 
         SetVariable("zepen", jetVar_["z*"]);    
     }
+    else
+    {
+        SetVariable("j2pt",0.);    
+        SetVariable("detajj",0.);    
+        SetVariable("dphijj",0.);    
+        SetVariable("mjj",0.);    
+        SetVariable("zepen", 0.);    
+    }
     SetVariable("met",e->GetMet().Pt());    
     SetVariable("njets",selectedJets.size());    
     SetVariable("nbjets",jetVar_["nbjets"]);     // medium
@@ -3374,16 +3401,25 @@ float HmumuAnalysis::BdtUCSD(int pos,int nj)
 
     if (pos>=0) bdt[pos]=(readers_[pos]->EvaluateMVA("BDTG_default") );
     
-    /*
-    if (e->eventNum() == 821623)
+    
+    //if (e->eventNum() == 821623)
+    if (bdt[pos]<-.98)
     {
+        Log(__FUNCTION__,"DEBUG-SYNC",Form("mu0 pt=%f, eta=%f, phi=%f, mass=%f, rap=%f",mu0->Pt(),mu0->Eta(),mu0->Phi(),mu0->M(),mu0->Rapidity()));
+        Log(__FUNCTION__,"DEBUG-SYNC",Form("mu1 pt=%f, eta=%f, phi=%f, mass=%f, rap=%f",mu1->Pt(),mu1->Eta(),mu1->Phi(),mu1->M(),mu1->Rapidity()));
+        Log(__FUNCTION__,"DEBUG-SYNC",Form("Hmm pt=%f, eta=%f, phi=%f, mass=%f, mass_=%f, rap=%f",Hmm.Pt(),Hmm.Eta(),Hmm.Phi(),Hmm.M(),mass_,Hmm.Rapidity()));
+        Log(__FUNCTION__,"DEBUG-SYNC",Form("y*=%f, z*=%f, rap=%f, rap2=%f",jetVar_["y*"],jetVar_["z*"],Hmm.Rapidity(),(selectedJets[0]->Rapidity() + selectedJets[1]->Rapidity())/2.0));
+        Log(__FUNCTION__,"DEBUG-SYNC",Form("Jet0/1: Jet 1 pt=%f, eta=%f, phi=%f, y=%f Jet2 pt=%f, eta=%f, phi=%f, y=%f",selectedJets[0]->Pt(),selectedJets[0]->Eta(),selectedJets[0]->Phi(),selectedJets[0]->Rapidity(),selectedJets[1]->Pt(),selectedJets[1]->Eta(),selectedJets[1]->Phi(),selectedJets[1]->Rapidity()));
+
         Log(__FUNCTION__,"DEBUG-SYNC",Form("evaluating bdt pos=%d nj=%d",pos,nj));
-        for (auto &v : vector<string>({"hmmpt","hmmrap","hmmthetacs","hmmphics","j1pt","j1eta","j2pt","mjj","detajj","dphijj","zepen","met","drmj","njets","m1ptOverMass","m2ptOverMass","m1eta","m2eta"}) )
-        Log(__FUNCTION__,"DEBUG-SYNC",Form(" %s=%f",v.c_str(),GetVariable<float>(v)));
+        for (auto &v : vector<string>({"hmmpt","hmmrap","hmmthetacs","hmmphics","j1pt","j1eta","j2pt","mjj","detajj","dphijj","zepen","njets","detammj","dphimmj","m1ptOverMass","m2ptOverMass","m1eta","m2eta"}) )
+        {
+            Log(__FUNCTION__,"DEBUG-SYNC",Form(" %s=%f",v.c_str(),GetVariable<float>(v)));
+        }
         Log(__FUNCTION__,"DEBUG-SYNC",Form("  mva value=%f",bdt[pos]));
         Log(__FUNCTION__,"DEBUG-SYNC","------------------------");
     }
-    */
+    
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Bdt");
     return bdt[pos];
