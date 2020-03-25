@@ -35,6 +35,7 @@ int SmearJesAndCSV::smear(Event *e)
     jes->smear(e);
     SF_CSVReweight * sf= dynamic_cast<SF_CSVReweight*>(e->GetWeight()->GetSF("btag-reweight"));
 
+    sf->highPt=highPt;
     switch( num_ )
     {
     case Systematics::JESup :

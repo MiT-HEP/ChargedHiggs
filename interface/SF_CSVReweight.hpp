@@ -22,6 +22,7 @@ class SF_CSVReweight : public SF_Asymm
 
     public:
         Systematics::Type systType=Systematics::NA; // I'll use this one
+        int highPt{0};
 
         SF_CSVReweight(){}
         void print(){};
@@ -30,7 +31,7 @@ class SF_CSVReweight : public SF_Asymm
         void add_to_sf( float pt, float eta, float csv, int flavor);
         const string name() const override {return "SF_CSVReweight";}
         void clearEvent() override { pt_.clear(); eta_.clear(); csv_.clear(); flavor_.clear(); }
-        void clearSyst()override { syst=0; systType=Systematics::NA;} // reset systs. called in clearSyst
+        void clearSyst()override { syst=0; systType=Systematics::NA;highPt=0;} // reset systs. called in clearSyst
 
 };
 

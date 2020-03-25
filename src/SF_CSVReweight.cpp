@@ -22,6 +22,7 @@ void SF_CSVReweight::set(){
 
 void SF_CSVReweight::add_to_sf(float pt, float eta, float csv, int flavor)
 {
+    if (highPt and pt< 160 ) return; //MARIA_HIGHPT_HARDCODED
     pt_.push_back( pt );
     eta_.push_back( eta );
     csv_.push_back( csv );

@@ -22,8 +22,11 @@ public:
     ChargedHiggsTopBottom() : AnalysisBase () {}
     virtual ~ChargedHiggsTopBottom () {}
 
+    bool doJECSources = false;
+
     bool doSynch = false;
     bool doQCD = false;
+    bool doDY = false;
     bool doBDTSyst = true;
     bool doFinal = true; // true for final ; no need to compute fancy stuff
     bool writeTree = false; // false for final
@@ -67,6 +70,7 @@ public:
     void leptonPlot(Event*e, string label, string category, string systname, string phasespace);
     void eventShapePlot(Event*e, string label, string category, string systname, string phasespace);
     void classifyHF(Event*e, string label, string category, string systname, string jetname, string SR);
+    void classifyZHF(Event*e, string label, string category, string systname, string jetname, string SR);
     void leptonicHiggs(Event*e, string label, string systname, TLorentzVector b1, TLorentzVector b2, TLorentzVector p4W, string combination);
     void fillMoneyPlot(Event*e, string category, string systname,string SRlabel, string label);
 
@@ -189,8 +193,8 @@ private:
     //    float binMIN=-1.;
 
     // Keras
-    //    int nbinsBDT=200;
-    int nbinsBDT=1000;
+    int nbinsBDT=200;
+    //    int nbinsBDT=1000;
     float binMIN=0.;
     float binMAX=1.;
 

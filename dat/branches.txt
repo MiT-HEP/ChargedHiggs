@@ -71,6 +71,7 @@ r1f5
 r5f5
 pdfRwgt
 filterSelBits
+filter*
 ## TRIGGER
 triggerFired
 triggerTaus
@@ -85,6 +86,7 @@ genParent
 genFlags
 genTtbarId
 genjetP4
+nBHadrons
 ## JET
 jethadFlavour
 jetFlavour

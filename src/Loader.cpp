@@ -97,6 +97,8 @@ void LoadNero::FillEventInfo(){
     event_ -> rho_ = e->rho;
 
     event_ -> met_ . setFullRecommendation ( e->selBits & BareEvent::FullRecommendation );
+    event_ -> met_ . filterbadPFMuon = e->filterbadPFMuon;
+    event_ -> met_ . filterbadChHadrons = e->filterbadChCandidate;
 
     BareVertex *v = dynamic_cast<BareVertex*> ( bare_ [names_["BareVertex"] ] ) ; assert(v!=NULL);
     event_ -> npv_ = v->npv;
@@ -664,6 +666,12 @@ void LoadNero::FillMC(){
     BareMonteCarlo * mc = dynamic_cast<BareMonteCarlo*> ( bare_[ names_["BareMonteCarlo"]]);
 
     event_ -> GetWeight() -> SetMcWeight(  mc->mcWeight );
+
+    if (tree_->GetBranchStatus("nBHadrons") ) {
+        event_ -> SetnBHadrons( mc->nBHadrons );
+    } else {
+        event_ -> SetnBHadrons( -999 );
+    }
 
     if(tree_->GetBranchStatus("genTtbarId")) {
         event_ -> SetGenTtbarId( mc->genTtbarId );

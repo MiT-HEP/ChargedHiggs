@@ -57,6 +57,7 @@ class Event{
     int npv_;
 
     int genTtbarId_;
+    int nBHadrons_;
 
     vector<string> triggerNames_;
 
@@ -99,6 +100,11 @@ class Event{
     inline int GetGenTtbarId() const { return genTtbarId_; }
     ///@brief set gen id tag for ttbar
     inline void SetGenTtbarId (const int x){ genTtbarId_=x; }
+
+    ///@brief get nBhad id tag for DY
+    inline int GetnBHadrons() const { return nBHadrons_; }
+    ///@brief set nBhad id tag for DY
+    inline void SetnBHadrons (const int x){ nBHadrons_=x; }
 
     // ---
     
