@@ -36,6 +36,7 @@ public:
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
     void getObjects(Event*e, string label, string systname);
+    double genMtt(Event*e);
 
     bool doMETAnalysis=false;
     bool doBAnalysis=false;

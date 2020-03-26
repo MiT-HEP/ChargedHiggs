@@ -131,6 +131,16 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/BOSON/ZepBosVVar_RMET_"+l, " ; |Y_{V} - (eta_{j1} + eta_{j2})/2| / Detajj ; Events", 250,0,2);
 
         // Search Variable
+        Book ("VBShadAnalysis/BOSON/MVV_"+l, "MVV (unclassified); MVV [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/BOSON/MVV_BB_"+l, "MVV (BB) ; MVV [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/BOSON/MVV_RB_"+l, "MVV (RB); MVV [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/BOSON/MVV_BBtag_"+l, "MVV (BB) ; MVV [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/BOSON/MVV_RBtag_"+l, "MVV (RB); MVV [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/BOSON/MVV_BMET_"+l, "MTVV (BMET) ; M_{T}(V,MET) [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/BOSON/MVV_RMET_"+l, "MVV (RMET); M_{T}(V,MET) [GeV]; Events", 100,0,2500);
+
+        Book ("VBShadAnalysis/BOSON/Mtt_"+l, "Mtt (unclassified); Mtt [GeV]; Events", 100,0,2500);
+
         Book ("VBShadAnalysis/MVV_"+l, "MVV (unclassified); MVV [GeV]; Events", 100,0,2500);
         Book ("VBShadAnalysis/MVVres_"+l, "MVVres (unclassified); ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100,-5.,5.);
         Book ("VBShadAnalysis/MVV_BB_"+l, "MVV (BB) ; MVV [GeV]; Events", 100,0,2500);
@@ -164,6 +174,18 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/FWJETS/Dphijj_RBtag_"+l, "Dphi jj (RB); #Delta#Phi(j,j) ; Events", 100,0,6.28);
         Book ("VBShadAnalysis/FWJETS/Dphijj_BMET_"+l, "Dphi jj (BMET); #Delta#Phi(j,j) ; Events", 100,0,6.28);
         Book ("VBShadAnalysis/FWJETS/Dphijj_RMET_"+l, "Dphi jj (RMET); #Delta#Phi(j,j) ; Events", 100,0,6.28);
+
+        // RESONANT CASE
+
+        Book ("VBShadAnalysis/OUT1500/MVV_"+l, "MVV-OUT (unclassified); MVV [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/IN1500/MVV_"+l, "MVV-IN (unclassified); MVV [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/OUT1500/MVV_BB_"+l, "MVV-OUT (BB); MVV [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/IN1500/MVV_BB_"+l, "MVV-IN (BB); MVV [GeV]; Events", 100,0,2500);
+
+        Book ("VBShadAnalysis/OUT1500/Mjj_"+l, "Mjj-OUT (unclassified); Mjj [GeV]; Events", 100,0,3500);
+        Book ("VBShadAnalysis/IN1500/Mjj_"+l, "Mjj-IN (unclassified); Mjj [GeV]; Events", 100,0,3500);
+        Book ("VBShadAnalysis/OUT1500/Mjj_BB_"+l, "Mjj-OUT (BB); Mjj [GeV]; Events", 35,0,3500);
+        Book ("VBShadAnalysis/IN1500/Mjj_BB_"+l, "Mjj-IN (BB); Mjj [GeV]; Events", 35,0,3500);
 
     } //end label loop
 
@@ -321,6 +343,24 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
 }
 
 
+double VBShadAnalysis::genMtt(Event*e)
+{
+
+    GenParticle * genT = NULL;
+    GenParticle * genTbar = NULL;
+    for(Int_t i = 0; i < e->NGenPar(); i++){
+        GenParticle *genpar = e->GetGenParticle(i);
+        if(genpar->GetPdgId() == 6) if(genT==NULL) { genT = genpar; }
+        if(genpar->GetPdgId() == -6) if(genTbar==NULL) { genTbar = genpar; }
+    }
+
+    double Mtt= (genT->GetP4()+genTbar->GetP4()).M();
+
+    return Mtt;
+
+}
+
+
 void VBShadAnalysis::genStudies(Event*e, string label )
 {
 
@@ -337,7 +377,9 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WWjj_SS_tt") !=string::npos ||
                label.find("ST") !=string::npos ||
                label.find("TTX") !=string::npos ||
-               label.find("TT_TuneCUETP8M2T4") !=string::npos) {
+               label.find("TT_TuneCUETP8M2T4") !=string::npos ||
+               label.find("TT_Mtt") !=string::npos
+               ) {
         pdgID1=24;
         pdgID2=24;
     } else if (label.find("DIBOSON") !=string::npos ||
@@ -579,15 +621,22 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
 
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 11 ;
 
+    // multiboson
     if(label.find("MULTIBOSON") !=string::npos) mc = 100 ;
     if(label.find("TRIBOSON") !=string::npos) mc = 110 ;
     if(label.find("DIBOSON") !=string::npos) mc = 120 ;
+    // with Top
     if(label.find("TT_TuneCUETP8M2T4") !=string::npos) mc =200 ;
+    if(label.find("TT_Mtt") !=string::npos) mc =201 ;
+
     if(label.find("TTX") !=string::npos) mc =205 ;
     if(label.find("ST") !=string::npos) mc =210 ;
+    // V+jets
     if(label.find("ZJetsToNuNu") !=string::npos) mc = 300 ;
+    if(label.find("WJetsToLNu") !=string::npos) mc = 310 ;
 
-    if(label.find("QCD") !=string::npos) mc =500 ;
+    if(label.find("QCD_HT") !=string::npos) mc =500 ;
+    if(label.find("QCD_Inclusive") !=string::npos) mc =500 ;
 
     SetTreeVar("mc",mc);
 
@@ -633,7 +682,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
     /*
-    // redefine plots
+    // redefine labels
     if ( label == "WWW") label = "MULTIBOSON";
     if ( label == "WWZ") label = "MULTIBOSON";
     if ( label == "WZZ") label = "MULTIBOSON";
@@ -652,6 +701,26 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     //    if ( label == "ST") label = "TT";
     if ( label == "ttZ") label = "TTX";
+
+    //$$$$$$$$$
+    //$$$$$$$$$ Merge TTbar
+    //$$$$$$$$$
+
+    if((label.find("TT_TuneCUETP8M2T4") !=string::npos) or (label.find("TT_Mtt") !=string::npos) ) {
+        double Mtt = genMtt(e);
+        Fill("VBShadAnalysis/BOSON/Mtt_" +label, systname, Mtt, e->weight() );
+    }
+
+    if (not e->IsRealData()
+        and (label.find("TT_TuneCUETP8M2T4") != string::npos )
+        and not e->ApplyMttReweight()) return EVENT_NOT_USED;
+
+    if ( label == "TT_Mtt-1000toInf_TuneCUETP8M2T4" ) label = "TT_TuneCUETP8M2T4";
+    if ( label == "TT_Mtt-700to1000_TuneCUETP8M2T4" ) label = "TT_TuneCUETP8M2T4";
+
+    //$$$$$$$$$
+    //$$$$$$$$$ genStudies
+    //$$$$$$$$$
 
     genVp = NULL;
     genVp2 = NULL;
@@ -720,6 +789,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( doMETAnalysis and selectedFatJets.size()<0 ) return EVENT_NOT_USED;
     if ( doHADAnalysis and selectedFatJets.size()<1 ) return EVENT_NOT_USED;
     if ( doBAnalysis and selectedFatZbb.size()<1 ) return EVENT_NOT_USED;
+
 
     //$$$$$$$$$
     //$$$$$$$$$
@@ -915,17 +985,18 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
     //$$$$$$$$$
 
-    Fill("VBShadAnalysis/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
+    Fill("VBShadAnalysis/BOSON/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
     Fill("VBShadAnalysis/BOSON/BosonDecayRatio_" +label, systname, dauRatioV1, e->weight() );
     Fill("VBShadAnalysis/BOSON/BosonDecayRatio_" +label, systname, dauRatioV2, e->weight() );
     Fill("VBShadAnalysis/BOSON/CosThetaStar_" +label, systname, cosThetaV1, e->weight() );
     Fill("VBShadAnalysis/BOSON/CosThetaStar_" +label, systname, cosThetaV2, e->weight() );
 
-    double MVV_cut=500;
-    if(category.find("RBtag")   !=string::npos) MVV_cut=300;
+    //////
+    //$$$ CUT FLOW
+    //////
 
-    // CHECK THIS ?? 1050 ?? move to 500 for now
-    // resolved likely all below M=500
+    double MVV_cut=500;
+    // CHECK THIS
     if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
 
     if(evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
@@ -935,9 +1006,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/Baseline/NJet_" +label, systname, forwardJets.size(), e->weight() );
 
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
-
-    evt_Jet2Eta=forwardJets[1]->Eta();
-    evt_Jet2Pt=forwardJets[1]->Pt();
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 7, e->weight() );  //NJet cut
 
@@ -952,9 +1020,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 9, e->weight() );  //Delta Eta cut
 
-    evt_Mjj= forwardJets[0]->InvMass(forwardJets[1]);
-    evt_Dphijj = ChargedHiggs::deltaPhi(forwardJets[0]->Phi(), forwardJets[1]->Phi());
-
     bool centrality0 = (forwardJets[0]->Eta() <  evt_EtaMinV or forwardJets[0]->Eta() > evt_EtaMaxV);
     bool centrality1 = (forwardJets[1]->Eta() <  evt_EtaMinV or forwardJets[1]->Eta() > evt_EtaMaxV);
 
@@ -963,12 +1028,22 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 10, e->weight() ); //Centrality cut
 
+    evt_Mjj= forwardJets[0]->InvMass(forwardJets[1]);
+
+    Fill("VBShadAnalysis/FWJETS/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
+
     if( evt_Mjj < 500 ) return EVENT_NOT_USED;
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 11, e->weight() ); //InvMjet cut
 
-    Fill("VBShadAnalysis/FWJETS/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
+    //////
+    //$$$ VARIOUS plots below for tree
+    //////
 
+    evt_Jet2Eta=forwardJets[1]->Eta();
+    evt_Jet2Pt=forwardJets[1]->Pt();
+
+    evt_Dphijj = ChargedHiggs::deltaPhi(forwardJets[0]->Phi(), forwardJets[1]->Phi());
     Fill("VBShadAnalysis/FWJETS/Dphijj" +category+"_"+label, systname, evt_Dphijj, e->weight() );
 
     p4VVjj = p4VV + forwardJets[0]->GetP4() + forwardJets[1]->GetP4();
@@ -1002,8 +1077,22 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     evt_FW2 = ChargedHiggs::FW_momentum(oP4, 2);
 
     //////
-    //$$$
+    //$$$ MONEY plots below
     //////
+
+    Fill("VBShadAnalysis/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
+
+    if( !doBAnalysis and !doMETAnalysis and (category.find("BB")   !=string::npos) ) {
+
+        if( fabs(evt_MVV-1550) < 75 ) {
+            Fill("VBShadAnalysis/IN1500/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
+            Fill("VBShadAnalysis/IN1500/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
+        }
+        if( fabs(evt_MVV-1550) > 75 ) {
+            Fill("VBShadAnalysis/OUT1500/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
+            Fill("VBShadAnalysis/OUT1500/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
+        }
+    }
 
     if(writeTree) setTree(e,label,category);
     if(writeTree) FillTree("tree_vbs");

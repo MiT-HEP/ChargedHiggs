@@ -11,6 +11,7 @@ include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
 include=dat/catalog/2020.moriond/year2016/qcd.dat
 include=dat/catalog/2020.moriond/year2016/ewk.dat
 include=dat/catalog/2020.moriond/year2016/Zinv.dat
+include=dat/catalog/2020.moriond/year2016/Vjets.dat
 include=dat/catalog/2020.moriond/year2016/ttvbs.dat
 include=dat/catalog/2020.moriond/year2016/st.dat
 ###include=dat/catalog/2020.moriond/year2016/rares.dat

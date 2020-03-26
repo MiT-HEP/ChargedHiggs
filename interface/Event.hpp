@@ -275,6 +275,7 @@ class Event{
     // 
     ///@brief apply top pt reweighting to the event.
     void ApplyTopReweight();
+    bool ApplyMttReweight();
     ///@brief apply L1 prefire efficiencies to the event. 
     ///return the total reweight
     double ApplyL1PreFire(int year=2017);

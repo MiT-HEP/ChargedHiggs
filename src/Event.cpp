@@ -609,6 +609,51 @@ void Event::ApplyTopReweight(){
     }
 }
 
+
+bool Event::ApplyMttReweight(){
+
+    bool keepEvent=true;
+
+    if( GetWeight() -> GetMC() . find("TT_TuneCUETP8M2T4") == string::npos)
+        { // not ttbar sample
+            return keepEvent;
+        }
+
+    /*
+    if (not ExistSF("Mttreweight") )
+        {
+            Logger::getInstance().LogN("Event",__FUNCTION__,"WARNING","TOP SF DOES NOT EXIST",5);
+            return keepEvent;
+        }
+    */
+
+    TLorentzVector Top1;
+    TLorentzVector Top2;
+
+    double mass=0;
+    bool foundTop1=0;
+    bool foundTop2=0;
+
+    double pt1=-1,pt2=-1;
+
+    // look for gen particles
+    for(auto const &g : genparticles_)
+        {
+            if (g->GetPdgId() == 6 ) { Top1 = g->GetP4(); foundTop1=true; };
+            if (g->GetPdgId() == -6) { Top2 = g->GetP4(); foundTop2=true; };
+
+        }
+
+    if (foundTop1 and foundTop2) mass=(Top1+Top2).M();
+
+    if (mass>700) keepEvent=false;
+
+    return keepEvent;
+
+}
+
+
+
 double Event::ApplyL1PreFire(int year){
     //SF_TH2F *sf=(SF_TH2F*)GetWeight()->GetSF("prefire");
     if (IsRealData() ) return 1.;
