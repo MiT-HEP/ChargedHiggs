@@ -72,6 +72,7 @@ private:
     vector<Jet*> bosonJets;
 
     TLorentzVector p4VV;
+    TLorentzVector p4jj;
     TLorentzVector p4VVjj;
 
     float evt_Mjj=-100;
@@ -91,12 +92,13 @@ private:
     float evt_EtaMaxV=-100;
 
     float evt_normPTVVjj=0;
+    float evt_cenPTVVjj=0;
 
     float evt_zepVB=-100;
     float evt_zepV2=-100;
-    float evt_cen=-100;
+    float evt_cenEta=-100;
     float evt_zepVV=-100;
-    float evt_DRV1j1=-100;
+    float evt_DRV1j=-100;
     float evt_FW2=-100;
 
 public:

@@ -218,7 +218,7 @@ void VBShadAnalysis::Init(){
         Branch("tree_vbs","varJet2Pt",'F');
 
         // VV
-        Branch("tree_vbs","varMVVgen",'F');
+        Branch("tree_vbs","genMVV",'F');
         Branch("tree_vbs","varMVV",'F');
         Branch("tree_vbs","varPTVV",'F');
         Branch("tree_vbs","varPTV1",'F');
@@ -227,13 +227,14 @@ void VBShadAnalysis::Init(){
         Branch("tree_vbs","varPetaVV",'F');
         Branch("tree_vbs","varEtaMinV",'F');
         Branch("tree_vbs","varEtaMaxV",'F');
-        Branch("tree_vbs","varCen",'F');
 
         // MIX
+        Branch("tree_vbs","varCen",'F');
         Branch("tree_vbs","varzepVB",'F');
         Branch("tree_vbs","varzepVV",'F');
         Branch("tree_vbs","varDRVj",'F');
         Branch("tree_vbs","varnormPTVVjj",'F');
+        Branch("tree_vbs","varcenPTVVjj",'F');
         Branch("tree_vbs","varFW2j",'F');
 
         // bosonDECAY
@@ -377,6 +378,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WWjj_SS_tt") !=string::npos ||
                label.find("ST") !=string::npos ||
                label.find("TTX") !=string::npos ||
+               label.find("TTJets") !=string::npos ||
                label.find("TT_TuneCUETP8M2T4") !=string::npos ||
                label.find("TT_Mtt") !=string::npos
                ) {
@@ -510,11 +512,15 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
 
+        // ANTILOOSE
+        //        if(f->IsZbbJetMirror() and doBAnalysis) {
         if(f->IsZbbJet() and doBAnalysis) {
             selectedFatZbb.push_back(f);
             Fill("VBShadAnalysis/Baseline/pT_FatZbbJet_" +label, systname, f->Pt(), e->weight() );
         }
 
+        // ANTILOOSE
+        //        if(f->IsWJetMirror()) {
         if(f->IsWJet()) {
             if(doMETAnalysis and dPhiFatMet<0.4) continue;
             if(doBAnalysis and f->IsZbbJet()) continue;
@@ -628,6 +634,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     // with Top
     if(label.find("TT_TuneCUETP8M2T4") !=string::npos) mc =200 ;
     if(label.find("TT_Mtt") !=string::npos) mc =201 ;
+    if(label.find("TTJets") !=string::npos) mc =202 ;
 
     if(label.find("TTX") !=string::npos) mc =205 ;
     if(label.find("ST") !=string::npos) mc =210 ;
@@ -636,7 +643,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WJetsToLNu") !=string::npos) mc = 310 ;
 
     if(label.find("QCD_HT") !=string::npos) mc =500 ;
-    if(label.find("QCD_Inclusive") !=string::npos) mc =500 ;
+    if(label.find("QCD_Inclusive") !=string::npos) mc =501 ;
 
     SetTreeVar("mc",mc);
 
@@ -647,7 +654,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("varJet2Eta",evt_Jet2Eta);
     SetTreeVar("varJet2Pt",evt_Jet2Pt);
 
-    SetTreeVar("varMVVgen",evt_MVV_gen);
+    SetTreeVar("genMVV",evt_MVV_gen);
     SetTreeVar("varMVV",evt_MVV);
     SetTreeVar("varPTVV",evt_PTVV);
     SetTreeVar("varPTV1",evt_PTV1);
@@ -656,14 +663,14 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("varPetaVV",evt_PetaVV);
     SetTreeVar("varEtaMinV",evt_EtaMinV);
     SetTreeVar("varEtaMaxV",evt_EtaMaxV);
-    SetTreeVar("varCen",evt_cen);
     // Add varDphi VV
-    // Zep Var
 
+    SetTreeVar("varCen",evt_cenEta);
     SetTreeVar("varzepVB",evt_zepVB);
     SetTreeVar("varzepVV",evt_zepVV);
-    SetTreeVar("varDRVj",evt_DRV1j1);
+    SetTreeVar("varDRVj",evt_DRV1j);
     SetTreeVar("varnormPTVVjj",evt_normPTVVjj);
+    SetTreeVar("varcenPTVVjj",evt_cenPTVVjj);
     SetTreeVar("varFW2j",evt_FW2);
 
     // boson Decay
@@ -1028,7 +1035,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 10, e->weight() ); //Centrality cut
 
-    evt_Mjj= forwardJets[0]->InvMass(forwardJets[1]);
+    p4jj = forwardJets[0]->GetP4() + forwardJets[0]->GetP4();
+
+    evt_Mjj = p4jj.M();
 
     Fill("VBShadAnalysis/FWJETS/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
 
@@ -1046,16 +1055,19 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     evt_Dphijj = ChargedHiggs::deltaPhi(forwardJets[0]->Phi(), forwardJets[1]->Phi());
     Fill("VBShadAnalysis/FWJETS/Dphijj" +category+"_"+label, systname, evt_Dphijj, e->weight() );
 
-    p4VVjj = p4VV + forwardJets[0]->GetP4() + forwardJets[1]->GetP4();
+    p4VVjj = p4VV + p4jj;
 
     evt_normPTVVjj = fabs(p4VVjj.Pt())/(evt_PTV2 + evt_PTV1 + forwardJets[0]->GetP4().Pt() + forwardJets[1]->GetP4().Pt());
+    //    evt_normPTVVjj = fabs(p4VVjj.Pt())/(p4VV.Pt() + forwardJets[0]->GetP4().Pt() + forwardJets[1]->GetP4().Pt());
 
-    double averageJJeta=(forwardJets[0]->Eta()+forwardJets[1]->Eta())/2;
+    evt_cenPTVVjj = fabs( p4VV.Pt() - 0.5 * p4jj.Pt() ) / fabs(forwardJets[0]->GetP4().Pt() - forwardJets[1]->GetP4().Pt());
+
+    double averageJJeta= 0.5 * (forwardJets[0]->Eta()+forwardJets[1]->Eta());
 
     if(!doMETAnalysis) {
         evt_zepVV = fabs(p4VV.Eta() - averageJJeta)/fabs(evt_Detajj);
         Fill("VBShadAnalysis/BOSON/ZepBosVVar" +category+"_"+label, systname, evt_zepVV, e->weight() );
-        evt_cen = std::min(
+        evt_cenEta = std::min(
                            evt_EtaMinV - std::min(forwardJets[0]->Eta(),forwardJets[1]->Eta()),
                            std::max(forwardJets[0]->Eta(),forwardJets[1]->Eta()) - evt_EtaMaxV
                            ) ;
@@ -1066,7 +1078,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         //        evt_zepV2 = fabs(selectedFatJets[0]->Rapidity() - averageJJeta)/fabs(evt_Detajj);
         //        evt_zepVV = fabs(selectedFatJets[0]->Rapidity() - averageJJeta)/fabs(evt_Detajj);
         Fill("VBShadAnalysis/BOSON/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
-        evt_DRV1j1 = selectedFatJets[0]->DeltaR(forwardJets[0]);
+        evt_DRV1j = std::min(selectedFatJets[0]->DeltaR(forwardJets[0]), selectedFatJets[0]->DeltaR(forwardJets[1]));
     }
 
     std::vector<TLorentzVector> oP4;
