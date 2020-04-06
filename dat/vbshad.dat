@@ -46,6 +46,7 @@ addConfig=VBShadAnalysis|AddLabel('TTX')
 addConfig=VBShadAnalysis|AddLabel('TT_TuneCUETP8M2T4')
 addConfig=VBShadAnalysis|AddLabel('TT_Mtt-700to1000_TuneCUETP8M2T4')
 addConfig=VBShadAnalysis|AddLabel('TT_Mtt-1000toInf_TuneCUETP8M2T4')
+addConfig=VBShadAnalysis|AddLabel('TTJets')
 
 addConfig=VBShadAnalysis|AddLabel('ST')
 addConfig=VBShadAnalysis|AddLabel('ttZ')

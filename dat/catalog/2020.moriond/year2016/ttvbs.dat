@@ -4,6 +4,8 @@ addfiles=%(amariniHmm)s/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8
 addfiles=%(amariniHmm)s/TT_Mtt-700to1000_TuneCUETP8M2T4_13TeV-powheg-pythia8
 addfiles=%(amariniHmm)s/TT_Mtt-1000toInf_TuneCUETP8M2T4_13TeV-powheg-pythia8
 
+addfiles=%(amariniHmm)s/TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8
+
 addfiles=%(amariniHmm)s/TTTT_TuneCUETP8M2T4_13TeV-amcatnlo-pythia8
 addfiles=%(amariniHmm)s/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8
 addfiles=%(amariniHmm)s/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8
