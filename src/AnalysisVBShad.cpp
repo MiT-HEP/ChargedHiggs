@@ -69,6 +69,7 @@ void VBShadAnalysis::Init(){
     Log(__FUNCTION__,"INFO",Form("doMETAnalysis=%d",doMETAnalysis));
     Log(__FUNCTION__,"INFO",Form("doBAnalysis=%d",doBAnalysis));
     Log(__FUNCTION__,"INFO",Form("doHADAnalysis=%d",doHADAnalysis));
+    Log(__FUNCTION__,"INFO",Form("doHADAntiAnalysis=%d",doHADAntiAnalysis));
 
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
@@ -519,9 +520,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/pT_FatZbbJet_" +label, systname, f->Pt(), e->weight() );
         }
 
-        // ANTILOOSE
-        //        if(f->IsWJetMirror()) {
-        if(f->IsWJet()) {
+        bool isWJet=(doHADAntiAnalysis and f->IsWJetMirror())?true:(doHADAnalysis and f->IsWJet())?true:false;
+
+        if(isWJet) {
             if(doMETAnalysis and dPhiFatMet<0.4) continue;
             if(doBAnalysis and f->IsZbbJet()) continue;
             selectedFatJets.push_back(f);
@@ -782,7 +783,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     // withMET
     // noMET with B
     // noMET noB
-    if ( doHADAnalysis and e->Bjets() > 0 ) return EVENT_NOT_USED;
+    if ( ( doHADAnalysis or doHADAntiAnalysis ) and e->Bjets() > 0 ) return EVENT_NOT_USED;
     if ( doBAnalysis and (e->Bjets() == 0 or e->Bjets()>2) ) return EVENT_NOT_USED;
     if ( doMETAnalysis and e->Bjets()>2 ) return EVENT_NOT_USED;
 
@@ -794,7 +795,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     getObjects(e, label , systname);
 
     if ( doMETAnalysis and selectedFatJets.size()<0 ) return EVENT_NOT_USED;
-    if ( doHADAnalysis and selectedFatJets.size()<1 ) return EVENT_NOT_USED;
+    if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatJets.size()<1 ) return EVENT_NOT_USED;
     if ( doBAnalysis and selectedFatZbb.size()<1 ) return EVENT_NOT_USED;
 
 

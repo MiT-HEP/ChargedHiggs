@@ -50,5 +50,8 @@ Output=VBShadSignal_MET.root
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
 #Output=VBShadSignal.root
 
-##addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
-##Output=VBShadSignal_B.root
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1
+#Output=VBShadAntiSignal.root
+
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
+#Output=VBShadSignal_B.root
