@@ -520,7 +520,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/pT_FatZbbJet_" +label, systname, f->Pt(), e->weight() );
         }
 
-        bool isWJet=(doHADAntiAnalysis and f->IsWJetMirror())?true:(doHADAnalysis and f->IsWJet())?true:false;
+        bool isWJet=false;
+        if(!doHADAntiAnalysis and f->IsWJet()) isWJet=true;
+        if(doHADAntiAnalysis and f->IsWJetMirror()) isWJet=true;
 
         if(isWJet) {
             if(doMETAnalysis and dPhiFatMet<0.4) continue;
@@ -1036,7 +1038,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 10, e->weight() ); //Centrality cut
 
-    p4jj = forwardJets[0]->GetP4() + forwardJets[0]->GetP4();
+    p4jj = forwardJets[0]->GetP4() + forwardJets[1]->GetP4();
 
     evt_Mjj = p4jj.M();
 
