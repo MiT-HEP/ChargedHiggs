@@ -44,6 +44,7 @@ public:
     bool doBAnalysis=false;
     bool doHADAnalysis=false;
     bool doHADAntiAnalysis=false;
+    bool doMETAntiAnalysis=false;
     bool writeTree = true;
     bool usePuppi=false;
 

@@ -151,17 +151,18 @@ void VBShadAnalysis::InitTmva() {
         readers_ . push_back( new TMVA::Reader() );
 
     cout << "---------------------------------------------" << endl;
-    cout << " GOING TO BDT-adaBoost " << endl;
+    cout << " GOING TO BDTG " << endl;
 
     for (int i=0; i<1; i++) {
         AddVariable("varMjj",'F',i); //0
         AddVariable("varDetajj",'F',i); //1
-        AddVariable("abs(varDphijj)",'F',i); //2
-        AddVariable("abs(varJet2Eta)",'F',i); //3
+        //        AddVariable("abs(varDphijj)",'F',i); //2
+        //        AddVariable("abs(varJet2Eta)",'F',i); //3
         AddVariable("varJet2Pt",'F',i); //4
         AddVariable("varMVV",'F',i); //5
         AddVariable("varPTVV",'F',i); //6
-        AddVariable("varDetaVV",'F',i); //7
+        //        AddVariable("varDetaVV",'F',i); //7
+        AddVariable("varPetaVV",'F',i); //7
         AddVariable("varCen",'F',i); //8
         AddVariable("varnormPTVVjj",'F',i); //9
     }
@@ -185,6 +186,7 @@ void VBShadAnalysis::Init(){
     Log(__FUNCTION__,"INFO",Form("doBAnalysis=%d",doBAnalysis));
     Log(__FUNCTION__,"INFO",Form("doHADAnalysis=%d",doHADAnalysis));
     Log(__FUNCTION__,"INFO",Form("doHADAntiAnalysis=%d",doHADAntiAnalysis));
+    Log(__FUNCTION__,"INFO",Form("doMETAntiAnalysis=%d",doMETAntiAnalysis));
 
     InitTmva();
 
@@ -591,8 +593,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         }
 
         bool isWJet=false;
-        if(!doHADAntiAnalysis and f->IsWJet()) isWJet=true;
-        if(doHADAntiAnalysis and f->IsWJetMirror()) isWJet=true;
+        if(!doHADAntiAnalysis and !doMETAntiAnalysis and f->IsWJet()) isWJet=true;
+        if((doHADAntiAnalysis or doMETAntiAnalysis) and f->IsWJetMirror()) isWJet=true;
+        if(doMETAntiAnalysis)  doMETAnalysis=true;
 
         if(isWJet) {
             if(doMETAnalysis and dPhiFatMet<0.4) continue;
@@ -972,8 +975,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             evt_MVV = p4VV.M();
             evt_PTVV = p4VV.Pt();
-            evt_PTV1 = selectedFatJets[0]->GetP4().Pt();
-            evt_PTV2 = selectedFatZbb[0]->GetP4().Pt();
+            evt_PTV1 = selectedFatZbb[0]->GetP4().Pt();
+            evt_PTV2 = selectedFatJets[0]->GetP4().Pt();
 
             evt_DetaVV = fabs(selectedFatJets[0]->DeltaEta(selectedFatZbb[0]));
             evt_PetaVV = selectedFatJets[0]->GetP4().Eta() * selectedFatZbb[0]->GetP4().Eta();
@@ -1140,12 +1143,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 8, e->weight() );  //Jet seperate cut
 
-    bool centrality0 = (forwardJets[0]->Eta() <  evt_EtaMinV or forwardJets[0]->Eta() > evt_EtaMaxV);
-    bool centrality1 = (forwardJets[1]->Eta() <  evt_EtaMinV or forwardJets[1]->Eta() > evt_EtaMaxV);
+    if(!doMETAnalysis) {
+        bool centrality0 = (forwardJets[0]->Eta() <  evt_EtaMinV or forwardJets[0]->Eta() > evt_EtaMaxV);
+        bool centrality1 = (forwardJets[1]->Eta() <  evt_EtaMinV or forwardJets[1]->Eta() > evt_EtaMaxV);
 
-    // this is already applied when choosing resolved
-    if(!centrality0) return EVENT_NOT_USED;
-    if(!centrality1) return EVENT_NOT_USED;
+        // this is already applied when choosing resolved
+        if(!centrality0) return EVENT_NOT_USED;
+        if(!centrality1) return EVENT_NOT_USED;
+    }
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 9, e->weight() ); //Centrality cut
 
@@ -1200,6 +1205,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         Fill("VBShadAnalysis/BOSON/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
         evt_DRV1j = std::min(selectedFatJets[0]->DeltaR(forwardJets[0]), selectedFatJets[0]->DeltaR(forwardJets[1]));
     }
+
+    if((category.find("BMET")   !=string::npos) and
+       (evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
 
     std::vector<TLorentzVector> oP4;
     oP4.push_back(p4VV);
