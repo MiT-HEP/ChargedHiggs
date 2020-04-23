@@ -14,7 +14,8 @@ addConfig=VBShadAnalysis|AddLabel('WWjj_SS_ll')
 addConfig=VBShadAnalysis|AddLabel('WWjj_SS_lt')
 addConfig=VBShadAnalysis|AddLabel('WWjj_SS_tt')
 
-addConfig=VBShadAnalysis|AddLabel('QCD')
+addConfig=VBShadAnalysis|AddLabel('QCD_HT')
+addConfig=VBShadAnalysis|AddLabel('QCD_Inclusive')
 
 ## placeholder for all the di/triboson
 addConfig=VBShadAnalysis|AddLabel('MULTIBOSON')
@@ -29,6 +30,7 @@ addConfig=VBShadAnalysis|AddLabel('WZTo')
 addConfig=VBShadAnalysis|AddLabel('ZZTo')
 
 addConfig=VBShadAnalysis|AddLabel('ZJetsToNuNu')
+addConfig=VBShadAnalysis|AddLabel('WJetsToLNu')
 
 ## placeholder for all the tt+X
 addConfig=VBShadAnalysis|AddLabel('TTX')
@@ -42,8 +44,12 @@ addConfig=VBShadAnalysis|AddLabel('TTX')
 #addConfig=VBShadAnalysis|AddLabel('TTG')
 
 addConfig=VBShadAnalysis|AddLabel('TT_TuneCUETP8M2T4')
+addConfig=VBShadAnalysis|AddLabel('TT_Mtt-700to1000_TuneCUETP8M2T4')
+addConfig=VBShadAnalysis|AddLabel('TT_Mtt-1000toInf_TuneCUETP8M2T4')
+addConfig=VBShadAnalysis|AddLabel('TTJets')
+
 addConfig=VBShadAnalysis|AddLabel('ST')
 addConfig=VBShadAnalysis|AddLabel('ttZ')
 
-
+addConfig=VBShadAnalysis|weights.push_back("aux/bdt_BDT_VBSHad.weights.xml")
 
