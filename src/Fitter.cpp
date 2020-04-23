@@ -203,7 +203,7 @@ void Fitter::init(){
         //if (proc == "ttH")//ttH125  bbH125
         //if (false)//ttH as all
         //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")
-        if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH")
+        if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs")
         {
             eaSpline = new RooRealVar(eaName.c_str(),eaName.c_str(),ea_y[0]);
             ((RooRealVar*)eaSpline)->setConstant();
@@ -265,6 +265,16 @@ void Fitter::fit(){
     pars[5].setRange(5,1000);
     pars[6].setRange(0,1);
     pars[7].setRange(0,1);
+
+    if (mIn[0]>800) // DoublyChargedHiggs
+    {
+    pars[0].setRange(0,10000);
+    pars[1].setRange(10,1000);
+    pars[2].setRange(0,10000);
+    pars[3].setRange(5,1000);
+    pars[4].setRange(0,10000);
+    pars[5].setRange(10,1000);
+    }
     //G+G+E
     RooGaussian g1("g1","g1",*x_,pars[0],pars[1]);
     RooGaussian g2("g2","g2",*x_,pars[2],pars[3]);
@@ -309,6 +319,11 @@ void Fitter::fit(){
                 //mean and sigma
                 pars[pos+0].setRange(m-5*(ig+1),m+5*(ig+1));
                 pars[pos+1].setRange(0.5*(ig+1),10*(ig+1));
+                if (proc=="DoublyChargedHiggs")
+                {
+                    pars[pos+0].setRange(m-50*(ig+1),m+50*(ig+1));
+                    pars[pos+1].setRange(5*(ig+1),100*(ig+1));
+                }
                 pos+=2;
             }
             // fractions (last is the closing)
@@ -420,6 +435,8 @@ void Fitter::fit(){
                 if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125 bbH125
                 //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
                 if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
+                if (proc=="DoublyChargedHiggs" and fabs(m-1500)>0.1) continue;
+
                 cout <<" Considering proc='"<<proc<<"' and mass = "<< m<<endl;
 
                 string mass=Form(massMask_.c_str(),m);
@@ -432,7 +449,7 @@ void Fitter::fit(){
             string splname=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),proc.c_str(),cat,i);
             //#warning TTH125
             //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")//ttH125
-            if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH")//ttH125
+            if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs")//ttH125
             //if (false)//ttH all
             {
                 cout <<"DEBUG: Creating RooRealVar: "<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i) <<endl;
