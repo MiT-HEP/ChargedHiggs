@@ -127,12 +127,13 @@ void VBShadAnalysis::ReadTmva(){
 
     SetVariable("varMjj",evt_Mjj); //0
     SetVariable("varDetajj",evt_Detajj); //1
-    SetVariable("abs(varDphijj)",evt_Dphijj); //2
-    SetVariable("abs(varJet2Eta)",evt_Jet2Eta); //3
+    //    SetVariable("abs(varDphijj)",evt_Dphijj); //2
+    //    SetVariable("abs(varJet2Eta)",evt_Jet2Eta); //3
     SetVariable("varJet2Pt",evt_Jet2Pt); //4
     SetVariable("varMVV",evt_MVV); //5
     SetVariable("varPTVV",evt_PTVV); //6
-    SetVariable("varDetaVV",evt_DetaVV); //7
+    //    SetVariable("varDetaVV",evt_DetaVV); //7
+    SetVariable("varPetaVV",evt_PetaVV); //7
     SetVariable("varCen",evt_cenEta); //8
     SetVariable("varnormPTVVjj",evt_normPTVVjj); //9
 
@@ -1255,7 +1256,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if(doTMVA) ReadTmva();
 
-    BDTnoBnoMET = bdt[0];
+    if(doTMVA) BDTnoBnoMET = bdt[0];
 
     if(doTMVA and !doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
 
