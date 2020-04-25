@@ -13,10 +13,16 @@ addfiles=%(amariniHmm)s/WWTo4Q_4f_13TeV_amcatnloFXFX_madspin_pythia8
 
 addfiles=%(amariniHmm)s/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(amariniHmm)s/WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-addfiles=%(amariniHmm)s/WZToLNu2Q_13TeV_powheg_pythia8
+addfiles=%(amariniHmm)s/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(amariniHmm)s/WZTo2Q2Nu_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(amariniHmm)s/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8
 
 addfiles=%(amariniHmm)s/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
-addfiles=%(amariniHmm)s/ZZTo2Q2Nu_13TeV_powheg_pythia8
 addfiles=%(amariniHmm)s/ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8
+addfiles=%(amariniHmm)s/ZZTo2Q2Nu_13TeV_amcatnloFXFX_madspin_pythia8
+
+###
+##addfiles=%(amariniHmm)s/WZToLNu2Q_13TeV_powheg_pythia8
+##addfiles=%(amariniHmm)s/ZZTo2Q2Nu_13TeV_powheg_pythia8
+##addfiles=%(amariniHmm)s/WWToLNuQQ_13TeV-powheg
+##addfiles=%(amariniHmm)s/WWTo4Q_13TeV-powheg
