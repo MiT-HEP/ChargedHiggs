@@ -69,6 +69,8 @@ private:
     bool V1isZbb=false;
     bool V2isZbb=false;
 
+    double minDPhi=999.;
+
     // selected Objects
     vector<Jet*> selectedJets;
     vector<FatJet*> selectedFatJets;

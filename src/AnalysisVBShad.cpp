@@ -188,7 +188,9 @@ void VBShadAnalysis::Init(){
     Log(__FUNCTION__,"INFO",Form("doHADAntiAnalysis=%d",doHADAntiAnalysis));
     Log(__FUNCTION__,"INFO",Form("doMETAntiAnalysis=%d",doMETAntiAnalysis));
 
-    InitTmva();
+    if(doMETAnalysis or doBAnalysis) doTMVA=false;
+
+    if(doTMVA) InitTmva();
 
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
@@ -583,8 +585,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().Phi()));
         //        double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
 
-        Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
-
         // ANTILOOSE
         //        if(f->IsZbbJetMirror() and doBAnalysis) {
         if(f->IsZbbJet() and doBAnalysis) {
@@ -602,6 +602,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             if(doBAnalysis and f->IsZbbJet()) continue;
             selectedFatJets.push_back(f);
             Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
+
         }
     }
 
@@ -609,7 +611,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //NFatjet cut
 
-    double minDPhi=999;
+    minDPhi=999;
 
     //AK4
     selectedJets.clear();
@@ -626,7 +628,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(selectedFatJets.size()>0) {
             if( j->DeltaR(selectedFatJets[0]) < 1.2 ) continue;
         }
-        if(selectedFatJets.size()>1) {
+        // the secondFatJet needed only for the BB
+        if((doHADAnalysis or doHADAntiAnalysis) and selectedFatJets.size()>1) {
             if( j->DeltaR(selectedFatJets[1]) < 1.2 ) continue;
         }
         if(doBAnalysis and selectedFatZbb.size()>0) {
@@ -640,9 +643,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         double dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().Phi()));
         //        double dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
 
-        if(dphi < minDPhi) minDPhi = dphi;
-
-        if(counter<5) Fill("VBShadAnalysis/Baseline/Dphimin_" +label, systname, dphi, e->weight() );
+        // first 2,4 jets in the BMET,RMET
+        if(selectedFatJets.size()>0 and counter<3 and (dphi < minDPhi)) minDPhi = dphi;
+        if(selectedFatJets.size()==0 and counter<5 and (dphi < minDPhi)) minDPhi = dphi;
 
         /*
         for (auto const& fat : selectedFatJets) {
@@ -652,13 +655,11 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         //        if( j->DeltaR(genWp) < 1.2 ) continue;
         //        if( j->DeltaR(genWp2) < 1.2 ) continue;
 
-        // counter should be 4,2 for the RMET,BMET
-        if(doMETAnalysis and minDPhi<0.2 and selectedFatJets.size()>0 and counter<3) continue;
-        if(doMETAnalysis and minDPhi<0.2 and selectedFatJets.size()==0 and counter<5) continue;
         selectedJets.push_back(j);
 
     }
 
+    Fill("VBShadAnalysis/Baseline/Dphimin_" +label, systname, minDPhi, e->weight() );
 }
 
 void VBShadAnalysis::setTree(Event*e, string label, string category )
@@ -861,6 +862,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     // withMET
     // noMET with B
     // noMET noB
+
+    // note: e->Bjets() contains the pt>20: can raise at pt>30 for category with MET and B
     if ( ( doHADAnalysis or doHADAntiAnalysis ) and e->Bjets() > 0 ) return EVENT_NOT_USED;
     if ( doBAnalysis and (e->Bjets() == 0 or e->Bjets()>2) ) return EVENT_NOT_USED;
     if ( doMETAnalysis and e->Bjets()>2 ) return EVENT_NOT_USED;
@@ -871,6 +874,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
     //$$$$$$$$$ Build fatJets and boson/forward jets
     getObjects(e, label , systname);
+
+    if ( doMETAnalysis and minDPhi<0.4) return EVENT_NOT_USED;;
+    if ( doMETAnalysis and TMath::Pi()-minDPhi<0.4) return EVENT_NOT_USED;;
 
     if ( doMETAnalysis and selectedFatJets.size()<0 ) return EVENT_NOT_USED;
     if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatJets.size()<1 ) return EVENT_NOT_USED;
@@ -963,7 +969,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_PetaVV=-100;
 
         category="";
-        if(selectedFatZbb.size()==1 and selectedFatJets.size()==1 and selectedJets.size()>1) {
+        if(selectedFatZbb.size()==1 and selectedFatJets.size()>0 and selectedJets.size()>1) {
             category="_BBtag";
             // add cases with two Zbb Zbb most pures
             signalLabel="";
@@ -1116,7 +1122,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //////
 
     double MVV_cut=500;
-    // CHECK THIS
+    // CHECK THIS: adjust with trigger turn ones especially on BB and Btag
     if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
 
 
