@@ -31,6 +31,7 @@ void VBShadAnalysis::SetLeptonCuts(Lepton *l){
 void VBShadAnalysis::SetJetCuts(Jet *j) { 
     j->SetBCut(-100); //L=0.5426 , M=  0.8484, T0.9535
     //    j->SetDeepBCut(DEEP_B_LOOSE);
+    // might want to switch to the loose for the noBnoMET
     j->SetDeepBCut(DEEP_B_MEDIUM);
     //    j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535
     //    j->SetBCut(0.5426); //L=0.5426 , M=  0.8484, T0.9535
@@ -214,6 +215,7 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/WvsQCD_FatJetFake_"+l, "WvsQCD_FatJetFake; WvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/TvsQCD_FatJet_"+l, "TvsQCD_FatJet; TvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/TvsQCD_FatJetFake_"+l, "TvsQCD_FatJetFake; TvsQCD; Events", 50,0,1.0);
+        Book ("VBShadAnalysis/Baseline/WvsT_FatJet_"+l, "WvsT_FatJet; WvsT; Events", 50,0,2.0);
         Book ("VBShadAnalysis/Baseline/ZHccvsQCD_FatJet_"+l, "ZHccvsQCD_FatJet; ZHccvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_"+l, "ZHccvsQCD_FatJetFake; ZHccvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
@@ -251,7 +253,6 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/IN1500/Mjj_"+l, "Mjj-IN (unclassified); Mjj [GeV]; Events", 100,0,3500);
         Book ("VBShadAnalysis/OUT1500/Mjj_BB_"+l, "Mjj-OUT (BB); Mjj [GeV]; Events", 35,0,3500);
         Book ("VBShadAnalysis/IN1500/Mjj_BB_"+l, "Mjj-IN (BB); Mjj [GeV]; Events", 35,0,3500);
-
 
         BookHisto(l, "", "");
         BookHisto(l, "_BB", "");
@@ -316,6 +317,14 @@ void VBShadAnalysis::Init(){
         Branch("tree_vbs","dauRatioV2",'F');
         Branch("tree_vbs","cosThetaV1",'F');
         Branch("tree_vbs","cosThetaV2",'F');
+
+        // bosonProperties
+        Branch("tree_vbs","bosV1mass",'F');
+        Branch("tree_vbs","bosV1discr",'F');
+        Branch("tree_vbs","bosV1tdiscr",'F');
+        Branch("tree_vbs","bosV2mass",'F');
+        Branch("tree_vbs","bosV2discr",'F');
+        Branch("tree_vbs","bosV2tdiscr",'F');
 
         //MVA
         Branch("tree_vbs","BDTnoBnoMET",'F');
@@ -394,7 +403,8 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
                     if( selectedJets[k]->Pt()<50 ) continue;
                     if( selectedJets[l]->Pt()<50 ) continue;
 
-                    if( selectedJets[k]->Eta() * selectedJets[l]->Eta() >=0 ) continue;
+                    // remove and cut later to reduce combinatorics
+                    //                    if( selectedJets[k]->Eta() * selectedJets[l]->Eta() >=0 ) continue;
 
                     if( selectedJets[k]->Eta() <  minEtaV or selectedJets[k]->Eta() > maxEtaV ) {
                         if( selectedJets[l]->Eta() <  minEtaV or selectedJets[l]->Eta() > maxEtaV ) {
@@ -415,7 +425,10 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
         if(iter==index_l) forwardJets.push_back(selectedJets[index_l]);
     }
 
-    return  Mij;
+    //    return  Mij;
+    if(bosonJets.size()>1) return  (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
+    else return 0;
+
 }
 
 
@@ -565,6 +578,11 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/SDMass_FatJet_" +label, systname, f->SDMass(), e->weight() );
             Fill("VBShadAnalysis/Baseline/Tau21_FatJet_" +label, systname, f->Tau2()/f->Tau1(), e->weight() );
             Fill("VBShadAnalysis/Baseline/WvsQCD_FatJet_" +label, systname, f->WvsQCD(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/TvsQCD_FatJet_" +label, systname, f->TvsQCD(), e->weight() );
+            if(f->WvsQCD()>0 and f->TvsQCD()>0){
+                double WvsT = f->WvsQCD()/ (f->WvsQCD() + f->TvsQCD());
+                Fill("VBShadAnalysis/Baseline/WvsT_FatJet_" +label, systname, WvsT, e->weight() );
+            }
             //            if(topology==1) Fill("VBShadAnalysis/Baseline/pT_FatJet_BB_" +label, systname, f->Pt(), e->weight() );
             //            if(topology==2) Fill("VBShadAnalysis/Baseline/pT_FatJet_RB_" +label, systname, f->Pt(), e->weight() );
             //            if(topology==0) Fill("VBShadAnalysis/Baseline/pT_FatJet_RR_" +label, systname, f->Pt(), e->weight() );
@@ -590,6 +608,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         //        if(f->IsZbbJetMirror() and doBAnalysis) {
         if(f->IsZbbJet() and doBAnalysis) {
             selectedFatZbb.push_back(f);
+            bosonBBDiscr.push_back(f->ZHbbvsQCD());
+            bosonBBMass.push_back(f->SDMass());
             Fill("VBShadAnalysis/Baseline/pT_FatZbbJet_" +label, systname, f->Pt(), e->weight() );
         }
 
@@ -602,6 +622,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             if(doMETAnalysis and dPhiFatMet<0.4) continue;
             if(doBAnalysis and f->IsZbbJet()) continue;
             selectedFatJets.push_back(f);
+            bosonVDiscr.push_back(f->WvsQCD());
+            bosonTDiscr.push_back(f->TvsQCD());
+            bosonMass.push_back(f->SDMass());
             Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
             Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
 
@@ -757,6 +780,14 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("cosThetaV1",cosThetaV1);
     SetTreeVar("cosThetaV2",cosThetaV2);
 
+    // boson Properties
+    SetTreeVar("bosV1mass",evt_bosV1mass);
+    SetTreeVar("bosV1discr",evt_bosV1discr);
+    SetTreeVar("bosV1tdiscr",evt_bosV1tdiscr);
+    SetTreeVar("bosV2mass",evt_bosV2mass);
+    SetTreeVar("bosV2discr",evt_bosV2discr);
+    SetTreeVar("bosV2tdiscr",evt_bosV2tdiscr);
+
     // MVA
     SetTreeVar("BDTnoBnoMET",BDTnoBnoMET);
 
@@ -907,6 +938,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             category="_BB";
             signalLabel="";
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
+            evt_bosV1discr = bosonVDiscr[0];
+            evt_bosV1tdiscr = bosonTDiscr[0];
+            evt_bosV1mass = bosonMass[0];
+            evt_bosV2discr = bosonVDiscr[1];
+            evt_bosV2tdiscr = bosonTDiscr[1];
+            evt_bosV2mass = bosonMass[1];
+
             p4VV = (selectedFatJets[0]->GetP4()+selectedFatJets[1]->GetP4());
             evt_MVV = p4VV.M();
             evt_PTVV = p4VV.Pt();
@@ -937,6 +975,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1) {
                 category="_RB";
                 signalLabel="";
+                evt_bosV1discr = bosonVDiscr[0];
+                evt_bosV1tdiscr = bosonTDiscr[0];
+                evt_bosV1mass = bosonMass[0];
+                evt_bosV2mass = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
                 p4VV = ( selectedFatJets[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4() );
                 evt_MVV = p4VV.M();
                 evt_PTVV = p4VV.Pt();
@@ -984,7 +1026,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             evt_PTVV = p4VV.Pt();
             evt_PTV1 = selectedFatZbb[0]->GetP4().Pt();
             evt_PTV2 = selectedFatJets[0]->GetP4().Pt();
-
+            evt_bosV1discr = bosonBBDiscr[0];
+            evt_bosV1mass = bosonBBMass[0];
+            evt_bosV2discr = bosonVDiscr[0];
+            evt_bosV2tdiscr = bosonTDiscr[0];
+            evt_bosV2mass = bosonMass[0];
             evt_DetaVV = fabs(selectedFatJets[0]->DeltaEta(selectedFatZbb[0]));
             evt_PetaVV = selectedFatJets[0]->GetP4().Eta() * selectedFatZbb[0]->GetP4().Eta();
             evt_EtaMinV = std::min(selectedFatJets[0]->Eta(),selectedFatZbb[0]->Eta());
@@ -1019,6 +1065,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 evt_PTVV = p4VV.Pt();
                 evt_PTV1 = selectedFatZbb[0]->GetP4().Pt();
                 evt_PTV2 = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Pt();
+                evt_bosV1discr = bosonBBDiscr[0];
+                evt_bosV1mass = bosonBBMass[0];
+                evt_bosV2mass = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
                 evt_EtaMinV = std::min(selectedFatZbb[0]->Eta(),float((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Eta()));
                 evt_EtaMaxV = std::max(selectedFatZbb[0]->Eta(),float((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Eta()));
                 evt_DetaVV = fabs(selectedFatZbb[0]->GetP4().Eta() - (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta());
@@ -1067,6 +1116,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             }
             evt_PTVV = p4VV.Pt();
             evt_PTV2 = selectedFatJets[0]->GetP4().Pt();
+            evt_bosV2discr = bosonVDiscr[0];
+            evt_bosV2tdiscr = bosonTDiscr[0];
+            evt_bosV2mass = bosonMass[0];
             //            float Mjj=jettagForBoosted(e, label, systname, selectedFatJets[0]->Eta(),selectedFatJets[0]->Eta());
             for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
                 if(selectedJets[iter]->Pt()<50 ) continue;
@@ -1105,6 +1157,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 }
                 evt_PTVV = p4VV.Pt();
                 evt_PTV2 = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Pt();
+                evt_bosV2mass = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
             }
         }
     }
@@ -1213,7 +1266,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_DRV1j = std::min(selectedFatJets[0]->DeltaR(forwardJets[0]), selectedFatJets[0]->DeltaR(forwardJets[1]));
     }
 
-    if((category.find("BMET")   !=string::npos) and
+    if((
+        (category.find("BMET")   !=string::npos )
+        or (category.find("RMET")   !=string::npos )
+        ) and
        (evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
 
     std::vector<TLorentzVector> oP4;

@@ -76,6 +76,12 @@ private:
     vector<FatJet*> selectedFatJets;
     vector<FatJet*> selectedFatZbb;
 
+    vector<float> bosonVDiscr;
+    vector<float> bosonTDiscr;
+    vector<float> bosonMass;
+    vector<float> bosonBBDiscr;
+    vector<float> bosonBBMass;
+
     vector<Jet*> forwardJets;
     vector<Jet*> bosonJets;
 
@@ -108,6 +114,13 @@ private:
     float evt_zepVV=-100;
     float evt_DRV1j=-100;
     float evt_FW2=-100;
+
+    float evt_bosV1mass=-1;
+    float evt_bosV1discr=-1;
+    float evt_bosV1tdiscr=-1;
+    float evt_bosV2mass=-1;
+    float evt_bosV2discr=-1;
+    float evt_bosV2tdiscr=-1;
 
     float BDTnoBnoMET = -100;
 
