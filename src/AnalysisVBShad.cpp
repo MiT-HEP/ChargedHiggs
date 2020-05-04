@@ -381,6 +381,8 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
     float const norm = 500*500; // 0.5TeV^2
     float const MVres = 20*20; // 20 GeV
 
+    double DRij = 0; //Wjets
+    double PTij = 0; //Wjets
     double Mij = 0; //Wjets
     double Mkl = 0; //forward jets
     double chi2_ = 999999.;
@@ -394,6 +396,9 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
         for(unsigned j=0; j<i; ++j) {
 
             Mij = selectedJets[i]->InvMass(selectedJets[j]);
+            DRij = selectedJets[i]->DeltaR(selectedJets[j]);
+            PTij = (selectedJets[i]->GetP4()+selectedJets[j]->GetP4()).Pt();
+
             float minEtaV = std::min(etaV1,(float)(selectedJets[i]->GetP4() + selectedJets[j]->GetP4()).Eta());
             float maxEtaV = std::max(etaV1,(float)(selectedJets[i]->GetP4() + selectedJets[j]->GetP4()).Eta());
 
@@ -409,7 +414,9 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
                     if( selectedJets[k]->Eta() <  minEtaV or selectedJets[k]->Eta() > maxEtaV ) {
                         if( selectedJets[l]->Eta() <  minEtaV or selectedJets[l]->Eta() > maxEtaV ) {
                             Mkl = selectedJets[k]->InvMass(selectedJets[l]);
-                            double chi2 = (norm / (Mkl*Mkl)) + (Mij*Mij - MV*MV)/MVres;
+                            //                            double chi2 = (norm / (Mkl*Mkl)) + (Mij*Mij - MV*MV)/MVres;
+                            // DR ~ 2M/PT
+                            double chi2 = (norm / (Mkl*Mkl)) + ((0.5*DRij*PTij)*(0.5*DRij*PTij) - MV*MV)/MVres;
                             if(chi2<chi2_) { chi2_=chi2; index_i=i; index_j=j; index_k=k; index_l=l; }
                         }
                     }
@@ -528,6 +535,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         if(doMETAnalysis) {
             //            evt_MVV_gen = ChargedHiggs::mt(genVp->GetP4().Pt(),genVp2->GetP4().Pt(),genVp->GetP4().Phi(),genVp2->GetP4().Phi());
             evt_MVV_gen = ChargedHiggs::mtMassive(genVp->GetP4(),genVp2->GetP4());
+            //            evt_MVV_gen = (genVp->GetP4()+genVp2->GetP4()).Mt();
         } else {
             evt_MVV_gen = (genVp->GetP4()+genVp2->GetP4()).M();
         }
@@ -727,6 +735,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WWjj_SS_tt") !=string::npos ) mc = 10 ;
 
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 11 ;
+    if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 20 ;
 
     // multiboson
     if(label.find("MULTIBOSON") !=string::npos) mc = 100 ;
@@ -1097,6 +1106,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             category="_BMET";
             signalLabel="";
 
+            //        Current: (ET1+ET2)^2 - (PT1+PT2)^2    (also as shown in the current ch-higgs code you sent to me)
+            //        New:      m^2 + PT2                                 (In code this is very easy to obtained: directly take      (p1+p2).Mt()     )
+
             TLorentzVector jetP4;
             jetP4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->SDMass());
             if(usePuppi) {
@@ -1105,6 +1117,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 TLorentzVector metP4;
                 metP4.SetPtEtaPhiM(e->GetMet().GetPuppiMetP4().Pt(),0.,e->GetMet().GetPuppiMetP4().Phi(),91);
                 evt_MVV = ChargedHiggs::mtMassive(jetP4,metP4);
+                //                evt_MVV = (jetP4+metP4).Mt();
                 //                evt_MVV = ChargedHiggs::mt(selectedFatJets[0]->Pt(), e->GetMet().GetPuppiMetP4().Pt(), selectedFatJets[0]->Phi(), e->GetMet().GetPuppiMetP4().Phi());
             } else {
                 p4VV = (e->GetMet().GetP4() + selectedFatJets[0]->GetP4());
@@ -1112,6 +1125,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 TLorentzVector metP4;
                 metP4.SetPtEtaPhiM(e->GetMet().GetP4().Pt(),0.,e->GetMet().GetP4().Phi(),91);
                 evt_MVV = ChargedHiggs::mtMassive(jetP4,metP4);
+                //                evt_MVV = (jetP4+metP4).Mt();
                 //                evt_MVV = ChargedHiggs::mt(selectedFatJets[0]->Pt(), e->GetMet().Pt(), selectedFatJets[0]->Phi(), e->GetMet().Phi());
             }
             evt_PTVV = p4VV.Pt();
@@ -1143,6 +1157,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                     TLorentzVector metP4;
                     metP4.SetPtEtaPhiM(e->GetMet().GetPuppiMetP4().Pt(),0.,e->GetMet().GetPuppiMetP4().Phi(),91);
                     evt_MVV = ChargedHiggs::mtMassive(bosonJets[0]->GetP4() + bosonJets[1]->GetP4(), metP4);
+                    //                    evt_MVV = (bosonJets[0]->GetP4()+metP4).Mt();
                     //                    evt_MVV = ChargedHiggs::mt((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Pt(), e->GetMet().GetPuppiMetP4().Pt(),
                     //                                               (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Phi(), e->GetMet().GetPuppiMetP4().Phi());
 
@@ -1152,6 +1167,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                     TLorentzVector metP4;
                     metP4.SetPtEtaPhiM(e->GetMet().GetP4().Pt(),0.,e->GetMet().GetP4().Phi(),91);
                     evt_MVV = ChargedHiggs::mtMassive(bosonJets[0]->GetP4() + bosonJets[1]->GetP4(), metP4);
+                    //                    evt_MVV = (bosonJets[0]->GetP4()+metP4).Mt();
                     //                    evt_MVV = ChargedHiggs::mt((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()), e->GetMet().Pt(),
                     //                                               (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Phi(), e->GetMet().Phi());
                 }
