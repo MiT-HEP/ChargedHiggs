@@ -6,6 +6,7 @@ Files=
 ## Signal
 include=dat/catalog/2020.moriond/year2016/vbshad.dat
 include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
+include=dat/catalog/2020.moriond/year2016/vbsAQGC.dat
 
 ## BKGS
 include=dat/catalog/2020.moriond/year2016/qcd.dat
