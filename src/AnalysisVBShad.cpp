@@ -240,7 +240,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/BOSON/Mtt_"+l, "Mtt (unclassified); Mtt [GeV]; Events", 100,0,2500);
 
         // resolved
-        Book ("VBShadAnalysis/Baseline/ResBosonMass_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/ResBosonMass_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResBosonChi2_"+l, "ResBosonChi2; Chi2 [GeV]; Events", 100, 0, 1000.);
 
         // RESONANT CASE
 
@@ -325,6 +326,7 @@ void VBShadAnalysis::Init(){
         Branch("tree_vbs","bosV2mass",'F');
         Branch("tree_vbs","bosV2discr",'F');
         Branch("tree_vbs","bosV2tdiscr",'F');
+        Branch("tree_vbs","bosV2chi2",'F');
 
         //MVA
         Branch("tree_vbs","BDTnoBnoMET",'F');
@@ -378,14 +380,14 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
     bosonJets.clear();
     forwardJets.clear();
 
-    float const norm = 500*500; // 0.5TeV^2
+    float const norm = 1000*1000; // 0.5TeV^2
     float const MVres = 20*20; // 20 GeV
 
     double DRij = 0; //Wjets
     double PTij = 0; //Wjets
     double Mij = 0; //Wjets
     double Mkl = 0; //forward jets
-    double chi2_ = 999999.;
+    evt_chi2_ = 999999;
 
     int index_i=-1;
     int index_j=-1;
@@ -416,8 +418,8 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
                             Mkl = selectedJets[k]->InvMass(selectedJets[l]);
                             //                            double chi2 = (norm / (Mkl*Mkl)) + (Mij*Mij - MV*MV)/MVres;
                             // DR ~ 2M/PT
-                            double chi2 = (norm / (Mkl*Mkl)) + ((0.5*DRij*PTij)*(0.5*DRij*PTij) - MV*MV)/MVres;
-                            if(chi2<chi2_) { chi2_=chi2; index_i=i; index_j=j; index_k=k; index_l=l; }
+                            double chi2 = (norm / (Mkl*Mkl)) + (0.5*DRij*PTij - MV) * (0.5*DRij*PTij - MV) / MVres;
+                            if(chi2<evt_chi2_) { evt_chi2_=chi2; index_i=i; index_j=j; index_k=k; index_l=l; }
                         }
                     }
                 }
@@ -796,6 +798,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("bosV2mass",evt_bosV2mass);
     SetTreeVar("bosV2discr",evt_bosV2discr);
     SetTreeVar("bosV2tdiscr",evt_bosV2tdiscr);
+    SetTreeVar("bosV2chi2",evt_chi2_);
 
     // MVA
     SetTreeVar("BDTnoBnoMET",BDTnoBnoMET);
@@ -981,7 +984,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             double mBoson=80.;
             double MV = resolvedtagger(e, mBoson, label, systname, selectedFatJets[0]->Eta());
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
-            if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1) {
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, evt_chi2_, e->weight() );
+            if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1 and evt_chi2_<10.) {
                 category="_RB";
                 signalLabel="";
                 evt_bosV1discr = bosonVDiscr[0];
@@ -1065,7 +1069,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             double mBoson=90.;
             double MV = resolvedtagger(e, mBoson, label, systname, selectedFatZbb[0]->Eta());
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
-            if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1) {
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, evt_chi2_, e->weight() );
+            if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1 and evt_chi2_<10.) {
                 category="_RBtag";
                 signalLabel="";
 
@@ -1147,7 +1152,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             // MARIA: dummy use of the centrality for now
             double MV = resolvedtagger(e, mBoson, label, systname, 0.);
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
-            if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1) {
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, evt_chi2_, e->weight() );
+            if(MV>(mBoson-20) and MV<(mBoson+20) and bosonJets.size()>1 and evt_chi2_<10.) {
                 category="_RMET";
                 signalLabel="";
 
@@ -1193,8 +1199,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     double MVV_cut=500;
     // CHECK THIS: adjust with trigger turn ones especially on BB and Btag
-    if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
+    if((category.find("RBtag")   !=string::npos ) or (category.find("RMET")   !=string::npos )) MVV_cut=400;
 
+    if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
 
     if(label.find("ZnnZhadJJ") !=string::npos  ||
        label.find("ZbbZhadJJ")!=string::npos  ||

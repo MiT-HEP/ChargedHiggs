@@ -121,6 +121,7 @@ private:
     float evt_bosV2mass=-1;
     float evt_bosV2discr=-1;
     float evt_bosV2tdiscr=-1;
+    float evt_chi2_= -1;
 
     float BDTnoBnoMET = -100;
 
