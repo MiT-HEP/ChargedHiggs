@@ -52,5 +52,7 @@ addConfig=VBShadAnalysis|AddLabel('TTJets')
 addConfig=VBShadAnalysis|AddLabel('ST')
 addConfig=VBShadAnalysis|AddLabel('ttZ')
 
+addConfig=VBShadAnalysis|SetMultiPrimaryDataset(),AddLabel("MET"),AddLabel("JetHT")
+
 addConfig=VBShadAnalysis|weights.push_back("aux/bdt_BDT_VBSHad.weights.xml")
 

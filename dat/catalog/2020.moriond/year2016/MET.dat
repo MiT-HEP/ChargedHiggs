@@ -1,0 +1,3 @@
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.7/year2016
+
+addfiles=%(amariniHmm)s/MET
