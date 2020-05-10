@@ -2,8 +2,12 @@
 //#include "utils.C"
 
 TString fileHAD = "HAD.root";
-TString fileBHAD = "BHAD.root";
 TString fileMET = "MET.root";
+//TString fileHAD = "HADanti.root";
+TString fileBHAD = "BHAD.root";
+//TString fileMET = "METanti.root";
+//TString fileMET = "MET_norm0resolved.root";
+//TString fileMET = "APR28rmet.root";
 
 void compareSRCR(TString histoName="", TString dirName="") {
 
@@ -146,9 +150,6 @@ void drawOnePlot(TString histoName="", TString dirName="", TString sampleName=""
 
 void drawPlot(TString histoName="", TString dirName="", TString categoryName="", int signal=0) {
 
-  double lumi=137;
-  //  bool doNorm=true;
-
   TString sampleName=histoName;
   TCanvas * c1 = new TCanvas(histoName, histoName,800,800);
 
@@ -186,9 +187,13 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
 
   if(histoName.Contains("WvsQCD") || histoName.Contains("ZHbbvsQCD")) pad1->SetLogy(0);
 
+  int lumi=137;
+  //  bool doNorm=true;
+  if(fileName.Contains("anti")) lumi=36;
+
   sampleName="";
 
-  TLegend* this_leg = new TLegend(0.65,0.65,0.9,0.9);
+  TLegend* this_leg = new TLegend(0.65,0.55,0.9,0.9);
   this_leg->SetFillColor(0);
   this_leg->SetBorderSize(0);
   this_leg->SetTextSize(0.035);
@@ -203,7 +208,7 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
     pad1->SetLogy(0);
   }
   if(histoName.Contains("MVV")) { 
-    rebin=10;
+    //    rebin=10;
   }
 
   if(histoName.Contains("BDTnoBnoMET")) { 
@@ -211,13 +216,13 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
     pad1->SetLogy(0);
   }
 
-  TString sigName="_WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8";  
-  if(categoryName.Contains("BMET") || categoryName.Contains("RMET")) sigName="_ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8";
-  if(categoryName.Contains("tag") || signal==3) sigName="_ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8";
+  TString sigName="_WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM";
+  if(categoryName.Contains("BMET") || categoryName.Contains("RMET")) sigName="_ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM";
+  if(categoryName.Contains("tag") || signal==3) sigName="_ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM";
 
-  cout << " fileName = " << fileName << " dirName = " << dirName << " histoName " << histoName << " categoryName " << categoryName << " sampleName " << sigName<< endl;
+  cout << " ---fileName = " << fileName << " dirName = " << dirName << " histoName " << histoName << " categoryName " << categoryName << " sampleName " << sigName<< endl;
 
-  TH1 * hSig=getHisto (fileName, dirName, histoName+categoryName+sigName, kBlack, 1,rebin);
+  TH1 * hSig=getHisto(fileName, dirName, histoName+categoryName+sigName, kBlack, 1,rebin);
   cout << "hSig->Integral()" <<  hSig->Integral() << endl;
 
   if(hSig) {
@@ -226,11 +231,18 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
     //    if(!sigName.Contains("SDMass"))  hSig->Rebin(rebin);
   }
 
-  TH1 * hSig2=getHisto (fileName, dirName, histoName+categoryName+"_DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph", kBlack, 1,rebin);
+  TH1 * hSig2=getHisto(fileName, dirName, histoName+categoryName+"_DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph", kBlack, 1,rebin);
 
   if(hSig2) {
     hSig2->Scale(lumi*1000);
     //    hSig2->Rebin(rebin);
+  }
+
+  TH1 * hData;
+
+  if(fileName.Contains("anti")) {
+    if(categoryName.Contains("MET")) hData = getHisto(fileName, dirName, histoName+categoryName+"_MET", kBlack, 1,rebin);
+    else hData = getHisto(fileName, dirName, histoName+categoryName+"_JetHT", kBlack, 1,rebin);
   }
 
   TString sampleLabel="";
@@ -266,10 +278,20 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
 
   pad1->cd();
 
-  if(hSig && histoName.Contains("BDT") ) hSig->Scale(100);
+  // scale up signal
+  if(hSig && categoryName.Contains("_BB") ) hSig->Scale(10);
+  if(hSig && categoryName.Contains("_RB") ) hSig->Scale(10);
+  if(hSig && categoryName.Contains("_BBtag") ) hSig->Scale(5);
+  if(hSig && categoryName.Contains("_RBtag") ) hSig->Scale(5);
+  if(hSig && categoryName.Contains("_BMET") ) hSig->Scale(5);
+  if(hSig && categoryName.Contains("_RMET") ) hSig->Scale(5);
+  //  if(hSig && histoName.Contains("BDT") ) hSig->Scale(10);
+  //
   if(hSig) hSig->GetYaxis()->SetTitleOffset(1.5);
-  if(hSig && !histoName.Contains("BDT") ) hSig->SetMaximum(10000000);
-  if(hSig && histoName.Contains("BDT") ) hSig->SetMaximum(1000);
+  if(hSig && !histoName.Contains("BDT") && !histoName.Contains("Anti") ) hSig->SetMaximum(1000000);
+  if(hSig && histoName.Contains("Anti") ) hSig->SetMaximum(10000000);
+  if(hSig && histoName.Contains("BDT") ) hSig->SetMaximum(500);
+  if(hSig) hSig->SetTitle(Form("%s%s",histoName.Data(),categoryName.Data()));
   if(hSig) hSig->SetMinimum(0.1);
   if(hSig) hSig->SetLineWidth(3);
   if(hSig) hSig->Draw("hist");
@@ -278,6 +300,9 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
   if(hSig2) hSig2->SetLineColor(kGray);
   if(hSig2) hSig2->SetLineWidth(6);
   //  if(hSig2) hSig2->Draw("hist same ");
+  if(hData) hData->SetMarkerStyle(25);
+  if(fileName.Contains("anti") and hData) hData->Draw("p e same");
+  if(fileName.Contains("anti") and hData) this_leg->AddEntry(hData,"data");
 
   if(histoName.Contains("SDMass") || histoName.Contains("pT_FatJet") || histoName.Contains("pT_BJet") || histoName.Contains("WvsQCD") || histoName.Contains("ZHbbvsQCD")) {
     TH1F *mcTOT = new TH1F(*((TH1F *)(hs->GetStack()->Last())));
@@ -297,11 +322,11 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
 
   if(hSig) {
     if(categoryName.Contains("BMET") || categoryName.Contains("RMET") ) { 
-      this_leg->AddEntry(hSig,"Z#nu#nu Zqq VBF","l"); }
-    else if (categoryName.Contains("tag") || signal==3) { this_leg->AddEntry(hSig,"Zbb Zqq VBF","l"); }
+      this_leg->AddEntry(hSig,"5 x Z#nu#nu Zqq VBF","l"); }
+    else if (categoryName.Contains("tag") || signal==3) { this_leg->AddEntry(hSig,"5 x Zbb Zqq VBF","l"); }
     else { 
-      if(histoName.Contains("BDT"))  this_leg->AddEntry(hSig,"100 x W^{+/-} W^{+/-} VBF","l");
-      if(!histoName.Contains("BDT"))  this_leg->AddEntry(hSig,"W^{+/-} W^{+/-} VBF","l");
+      if(histoName.Contains("BDT"))  this_leg->AddEntry(hSig,"10 x W^{+/-} W^{+/-} VBF","l");
+      if(!histoName.Contains("BDT"))  this_leg->AddEntry(hSig,"10 x W^{+/-} W^{+/-} VBF","l");
     }
   }
 
@@ -325,7 +350,7 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
   latexLabel.SetTextColor(1);
   latexLabel.SetTextFont(42);
   latexLabel.SetTextAlign(33);
-  latexLabel.DrawLatex(0.9, 0.98, "137 fb^{-1}  (13 TeV)");
+  latexLabel.DrawLatex(0.9, 0.98, Form("%d fb^{-1}  (13 TeV)",lumi));
   latexLabel.SetTextFont(62);
   latexLabel.DrawLatex(0.22, 0.88, "CMS");
   latexLabel.SetTextSize(0.04);
@@ -335,29 +360,31 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
   gPad->RedrawAxis();
   c1->Update();
 
-  //  pad2->cd();
-  /*
-  TH1 *mcTOT = ((TH1 *)(hs->GetStack()->Last())); // the "SUM"   
-  TH1F *ratio = (TH1F *) hdata->Clone("dataratio");   
-  ratio->Divide(mcTOT);
-  //  ratio->GetXaxis()->SetLog(1);
-  ratio->GetYaxis()->SetNdivisions(-502);
-  ratio->GetYaxis()->SetTitle("data/MC");
-  ratio->GetYaxis()->SetRangeUser(0.5,1.5);
-  //
-  ratio->GetXaxis()->SetTitleSize(0.15);
-  ratio->GetXaxis()->SetLabelSize(0.15);
+  if(fileName.Contains("anti")) {
+    pad2->cd();
 
-  ratio->GetYaxis()->SetTitleOffset(0.3);
-  ratio->GetYaxis()->SetTitleSize(0.15);
-  ratio->GetYaxis()->SetLabelSize(0.1);
-  //
-  ratio->Draw("pe");
+    TH1 *mcTOT = ((TH1 *)(hs->GetStack()->Last())); // the "SUM"
+    TH1F *ratio = (TH1F *) hData->Clone("dataratio");
+    ratio->Divide(mcTOT);
+    //  ratio->GetXaxis()->SetLog(1);
+    ratio->GetYaxis()->SetNdivisions(-502);
+    ratio->GetYaxis()->SetTitle("data/MC");
+    ratio->GetYaxis()->SetRangeUser(0.5,1.5);
+    //
+    ratio->GetXaxis()->SetTitleSize(0.15);
+    ratio->GetXaxis()->SetLabelSize(0.15);
 
-  TLine *lineZero = new TLine(mcTOT->GetXaxis()->GetXmin(), 1.,  mcTOT->GetXaxis()->GetXmax(), 1.);
-  lineZero->SetLineColor(11);
-  lineZero->Draw("same");
-  */
+    ratio->GetYaxis()->SetTitleOffset(0.3);
+    ratio->GetYaxis()->SetTitleSize(0.15);
+    ratio->GetYaxis()->SetLabelSize(0.1);
+    //
+    ratio->Draw("pe");
+
+    TLine *lineZero = new TLine(mcTOT->GetXaxis()->GetXmin(), 1.,  mcTOT->GetXaxis()->GetXmax(), 1.);
+    lineZero->SetLineColor(11);
+    lineZero->Draw("same");
+
+  }
 
   if(fileName.Contains("anti")) {
     c1->SaveAs(Form("SUMPLOT/shapeAnti_%s_%s.png",histoName.Data(),categoryName.Data()));
@@ -373,8 +400,8 @@ void drawPlot(TString histoName="", TString dirName="", TString categoryName="",
     if(signal==1) c1->SaveAs(Form("SUMPLOT/shape_%s_%s_WW.png",histoName.Data(),categoryName.Data()));
     if(signal==1) c1->SaveAs(Form("SUMPLOT/shape_%s_%s_WW.pdf",histoName.Data(),categoryName.Data()));
   } else {
-    c1->SaveAs(Form("SUMPLOT/shape_%s_%s.png",histoName.Data(),categoryName.Data()));
-    c1->SaveAs(Form("SUMPLOT/shape_%s_%s.pdf",histoName.Data(),categoryName.Data()));
+    //    c1->SaveAs(Form("SUMPLOT/shape_%s_%s.png",histoName.Data(),categoryName.Data()));
+    //    c1->SaveAs(Form("SUMPLOT/shape_%s_%s.pdf",histoName.Data(),categoryName.Data()));
   }
 
 }
@@ -393,9 +420,9 @@ void compareRes() {
 
   TString histoName="MVVres";
 
-  TString sigName="_WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8";  
-  TString sigName2="_ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8";
-  TString sigName3="_ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8";
+  TString sigName="_WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM";
+  TString sigName2="_ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM";
+  TString sigName3="_ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM";
 
   TH1 * hSigBB=getHisto (fileName, dirName, histoName+"_BB"+sigName, kBlack, 1,1);
   TH1 * hSigRB=getHisto (fileName, dirName, histoName+"_RB"+sigName, kRed, 1,1);
@@ -440,6 +467,9 @@ void drawVBS() {
   gStyle->SetTextSize(0.5);
   gStyle->SetPaintTextFormat("4.0f");
 
+  //  compareRes();
+  //  return;
+
   /*
   comparePlot("SDMass_FatJet_", "VBShadAnalysis/Baseline");
   //  comparePlot("WvsQCD_FatJet_", "VBShadAnalysis/Baseline");
@@ -454,8 +484,6 @@ void drawVBS() {
 
   //  return;
 
-  //  compareRes();
-  //  return;
 
   /*
   //  drawPlot("SDMass_FatJet","VBShadAnalysis/Baseline","",1);
@@ -474,6 +502,9 @@ void drawVBS() {
 
   //  return;
   */
+
+  //  drawPlot("Dphimin","VBShadAnalysis/Baseline","");
+  //  drawPlot("DphiMETFat","VBShadAnalysis/Baseline","");
 
   drawPlot("Mjj","VBShadAnalysis/FWJETS","_BB");
   drawPlot("Mjj","VBShadAnalysis/FWJETS","_RB");
@@ -499,8 +530,8 @@ void drawVBS() {
   */
 
   /*
-  drawOnePlot("SDMass_FatJet_", "VBShadAnalysis/Baseline","WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8");
-  drawOnePlot("ResBosonMass_", "VBShadAnalysis/Baseline","WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8");
+  drawOnePlot("SDMass_FatJet_", "VBShadAnalysis/Baseline","WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM");
+  drawOnePlot("ResBosonMass_", "VBShadAnalysis/Baseline","WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM");
   */
 
 }
