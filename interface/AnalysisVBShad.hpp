@@ -124,6 +124,7 @@ private:
     float evt_chi2_= -1;
 
     float BDTnoBnoMET = -100;
+    int counterExtrabToVeto_=0;
 
     /************
      *   TMVA   *

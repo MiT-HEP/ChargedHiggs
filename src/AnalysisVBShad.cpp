@@ -650,10 +650,28 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
     //AK4
     selectedJets.clear();
 
+    counterExtrabToVeto_=0;
+    for(unsigned i=0;i<e->Njets() ; ++i)
+    {
+        Jet *j=e->GetJet(i);
+
+        // COUNT additional b-veto (20 GeV-Medium)
+        if (j->GetDeepB() > DEEP_B_MEDIUM) {
+            if(doBAnalysis and selectedFatZbb.size()>0) {
+                if( j->DeltaR(selectedFatZbb[0]) < 1.2 ) continue;
+            }
+            if(doBAnalysis and selectedFatZbb.size()>1) {
+                if( j->DeltaR(selectedFatZbb[1]) < 1.2 ) continue;
+            }
+            counterExtrabToVeto_++;
+        }
+    }
+
     int counter=0;
     for(unsigned i=0;i<e->Njets() ; ++i)
     {
         Jet *j=e->GetJet(i);
+        // COUNT additional jets candidate for forward or resolved
         if (j->GetDeepB() > DEEP_B_MEDIUM) continue;
         if ( j->Pt()<30 ) continue;
 
@@ -871,8 +889,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 0, e->weight() );
 
     // TRIGGER STORY
+    //    bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
+    if (doHADAnalysis or doHADAntiAnalysis) {
+        bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") ||
+                               e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v") ||
+                               e->IsTriggered("HLT_AK8PFJet450_v") ||
+                               e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") ||
+                               e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v"));
 
-    bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
+        if(!passtriggerHAD) return EVENT_NOT_USED;
+    }
     if(doMETAnalysis) {
         bool passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
         //    bool passtriggerMET = (e->IsTriggered("HLT_PFMET120_PFMHT120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
@@ -902,28 +928,32 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 3, e->weight() );  //3--veto MET
 
+    //$$$$$$$$$
+    //$$$$$$$$$ Build fatJets and boson/forward jets
+    getObjects(e, label , systname);
+
+    //$$$$$$$$$
     // events with B in another category
     // withMET
     // noMET with B
     // noMET noB
 
     // note: e->Bjets() contains the pt>20: can raise at pt>30 for category with MET and B
-    if ( ( doHADAnalysis or doHADAntiAnalysis ) and e->Bjets() > 0 ) return EVENT_NOT_USED;
-    if ( doBAnalysis and (e->Bjets() == 0 or e->Bjets()>2) ) return EVENT_NOT_USED;
+    //    if ( ( doHADAnalysis or doHADAntiAnalysis ) and e->Bjets() > 0 ) return EVENT_NOT_USED;
+    //    if ( doBAnalysis and (e->Bjets() == 0 or e->Bjets()>2) ) return EVENT_NOT_USED;
     if ( doMETAnalysis and e->Bjets()>2 ) return EVENT_NOT_USED;
+    if ( (doHADAnalysis or doHADAntiAnalysis or doBAnalysis) and counterExtrabToVeto_>0) return EVENT_NOT_USED;
 
     Fill("VBShadAnalysis/Baseline/NBJet_" +label, systname, e->Bjets(), e->weight() );
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 4, e->weight() );  //4--veto b
 
-    //$$$$$$$$$
-    //$$$$$$$$$ Build fatJets and boson/forward jets
-    getObjects(e, label , systname);
 
     if ( doMETAnalysis and minDPhi<0.4) return EVENT_NOT_USED;;
     if ( doMETAnalysis and TMath::Pi()-minDPhi<0.4) return EVENT_NOT_USED;;
 
     if ( doMETAnalysis and selectedFatJets.size()<0 ) return EVENT_NOT_USED;
     if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatJets.size()<1 ) return EVENT_NOT_USED;
+    if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatZbb.size()>0 ) return EVENT_NOT_USED;
     if ( doBAnalysis and selectedFatZbb.size()<1 ) return EVENT_NOT_USED;
 
 
@@ -1018,14 +1048,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(doBAnalysis) {
         forwardJets.clear();
         p4VV*=0;
-        evt_MVV=0;
-        evt_PTV1=0;
-        evt_PTV2=0;
+        evt_MVV=-100;
+        evt_PTV1=-100;
+        evt_PTV2=-100;
         evt_DetaVV=-100;
         evt_PetaVV=-100;
 
         category="";
-        if(selectedFatZbb.size()==1 and selectedFatJets.size()>0 and selectedJets.size()>1) {
+        if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1) {
             category="_BBtag";
             // add cases with two Zbb Zbb most pures
             signalLabel="";
@@ -1062,7 +1092,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         }
 
-        if(selectedFatZbb.size()==1 and selectedFatJets.size()==0 and selectedJets.size()>3) {
+        if(selectedFatZbb.size()>0 and selectedFatJets.size()==0 and selectedJets.size()>3) {
             category="";
 
             // target the ZbbZqq + ZbbWqq
