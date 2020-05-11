@@ -69,10 +69,18 @@ private:
     bool V1isZbb=false;
     bool V2isZbb=false;
 
+    double minDPhi=999.;
+
     // selected Objects
     vector<Jet*> selectedJets;
     vector<FatJet*> selectedFatJets;
     vector<FatJet*> selectedFatZbb;
+
+    vector<float> bosonVDiscr;
+    vector<float> bosonTDiscr;
+    vector<float> bosonMass;
+    vector<float> bosonBBDiscr;
+    vector<float> bosonBBMass;
 
     vector<Jet*> forwardJets;
     vector<Jet*> bosonJets;
@@ -107,7 +115,16 @@ private:
     float evt_DRV1j=-100;
     float evt_FW2=-100;
 
+    float evt_bosV1mass=-1;
+    float evt_bosV1discr=-1;
+    float evt_bosV1tdiscr=-1;
+    float evt_bosV2mass=-1;
+    float evt_bosV2discr=-1;
+    float evt_bosV2tdiscr=-1;
+    float evt_chi2_= -1;
+
     float BDTnoBnoMET = -100;
+    int counterExtrabToVeto_=0;
 
     /************
      *   TMVA   *

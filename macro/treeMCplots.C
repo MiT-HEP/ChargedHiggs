@@ -9,6 +9,7 @@
 TString fileHAD = "HAD.root"; 
 //TString fileHAD = "HADanti.root";
 TString fileMET = "MET.root"; 
+//TString fileMET = "MET_norm0resolved.root";
 TString fileBHAD = "BHAD.root"; 
 
 bool doOnlySignal=false;
@@ -23,7 +24,7 @@ void draw2D(int myCategory, int nbin, float min, float max, float minY, float ma
   if(myCategory==1 || myCategory==2) filename=fileHAD;
   if(myCategory==5 || myCategory==6) filename=fileBHAD;
   //  filename="HAD_signal.root";
-  filename="HAD3.root";
+  filename="HAD.root";
   cout << "reading " << filename.Data() << endl;
   TFile *f = new TFile(filename.Data());
   TTree *t1 = (TTree*)f->Get("tree_vbs");
@@ -76,10 +77,10 @@ void draw2D(int myCategory, int nbin, float min, float max, float minY, float ma
     if(mc==110 || mc==120) h_ewk->Fill(varMVV,varMjj,weight); 
     */
 
-    if(mc==1) h_sig->Fill(BDTnoBnoMET,varMjj,weight);
-    if(mc==500) h_qcd->Fill(BDTnoBnoMET,varMjj,weight);
-    if(mc==200 || mc==210) h_TT->Fill(BDTnoBnoMET,varMjj,weight);
-    if(mc==110 || mc==120) h_ewk->Fill(BDTnoBnoMET,varMjj,weight); 
+    if(mc==1) h_sig->Fill(BDTnoBnoMET,varMVV,weight);
+    if(mc==500) h_qcd->Fill(BDTnoBnoMET,varMVV,weight);
+    if(mc==200 || mc==210) h_TT->Fill(BDTnoBnoMET,varMVV,weight);
+    if(mc==110 || mc==120) h_ewk->Fill(BDTnoBnoMET,varMVV,weight);
 
     if(mc==8) h_sig8->Fill(dauRatioV1,dauRatioV2,weight); h_sig8_1d->Fill(dauRatioV1,weight); h_sig8_1d->Fill(dauRatioV2,weight);
     if(mc==9) h_sig9->Fill(dauRatioV1,dauRatioV2,weight); h_sig9_1d->Fill(dauRatioV1,weight); h_sig9_1d->Fill(dauRatioV2,weight);
@@ -88,8 +89,8 @@ void draw2D(int myCategory, int nbin, float min, float max, float minY, float ma
   }
 
   if(h_sig) h_sig->GetXaxis()->SetTitle("BDTnoBnoMET");
-  //  if(h_sig) h_sig->GetXaxis()->SetTitle("MVV");
-  if(h_sig) h_sig->GetYaxis()->SetTitle("Mjj");
+  if(h_sig) h_sig->GetYaxis()->SetTitle("MVV");
+  //  if(h_sig) h_sig->GetYaxis()->SetTitle("Mjj");
   if(h_sig) h_sig->GetYaxis()->SetTitleOffset(1.);
   if(h_sig) h_sig->SetFillColor(kBlack);
 
@@ -98,8 +99,8 @@ void draw2D(int myCategory, int nbin, float min, float max, float minY, float ma
   h_ewk->SetFillColor(kGreen+1);
   h_TT->SetFillColor(kBlue);
   //  h_TT->DrawNormalized("box same");
-  //  h_qcd->DrawNormalized("box same");
-  h_ewk->DrawNormalized("box same");
+  h_qcd->DrawNormalized("box same");
+  //  h_ewk->DrawNormalized("box same");
   //  if(h_sig) h_sig->DrawNormalized("box same");
 
   /*
@@ -287,7 +288,7 @@ void treeMC( TString var , int myCategory, int nbin, float min, float max, TStri
 
     //    if(varMjjCut < 3000) continue;
 
-    //    cout << "HELLO " << "myCategory" << myCategory << " ana_category" << ana_category  << endl;
+    //    cout << "HELLO " << "myCategory" << myCategory << " ana_category" << ana_category  << " var " << var.Data() << endl;
     if(myCategory!=ana_category) continue;
 
     //    if(var.Contains("Mjj")) cout << varMjjCut << " " << variable << endl;
@@ -330,6 +331,7 @@ void treeMC( TString var , int myCategory, int nbin, float min, float max, TStri
 
   TCanvas * c1 = new TCanvas("", "",800,800);
   c1->cd();
+  //  gPad->SetLogy(1);
   
   TString label="";
   if(myCategory==1) label="BB";
@@ -492,7 +494,7 @@ void makeROCS(int myCategory){
   mg->Add(varnormPTVVjj,"lp");
   mg->Add(varcenPTVVjj,"lp");
 
-  mg->Add(grBDT,"lp");
+  if(myCategory==1) mg->Add(grBDT,"lp");
 
   if(myCategory==5) mg->SetTitle("BBtag; signal efficiency; background rejection");
   if(myCategory==3) mg->SetTitle("BMET; signal efficiency; background rejection");
@@ -512,16 +514,61 @@ void makeROCS(int myCategory){
 
 void treeMCplots(){
 
+  treeMC("bosV2chi2" , 2, 22 , -2., 20.,"V2chi2 (Resolved)");
+  treeMC("bosV2chi2" , 4, 22 , -2., 20.,"V2chi2 (Resolved)");
+  treeMC("bosV2chi2" , 6, 22 , -2., 20.,"V2chi2 (Resolved)");
+
+  treeMC("bosV2mass" , 2, 15 , 50., 125.,"V2mass (Resolved)");
+  treeMC("bosV2mass" , 4, 15 , 50., 125.,"V2mass (Resolved)");
+  treeMC("bosV2mass" , 6, 15 , 50., 125.,"V2mass (Resolved)");
+
+  //
+  treeMC("bosV1mass" , 1, 15 , 50., 125.,"V1mass(Boosted)");
+  treeMC("bosV2mass" , 1, 15 , 50., 125.,"V2mass(Boosted)");
+  treeMC("bosV1discr" , 1, 10 , 0., 1.,"V1discr(Boosted)");
+  treeMC("bosV2discr" , 1, 10 , 0., 1.,"V2discr(Boosted)");
+
+  //  treeMC("bosV2mass" , 2, 15 , 50., 125.,"V2mass (Resolved)");
+  //  treeMC("bosV2chi2" , 2, 22 , -2., 20.,"V2chi2 (Resolved)");
+
+  //MET only infos on v2
+  //  treeMC("bosV1mass" , 3, 10 , 0., 1000.,"V1mass");
+  //  treeMC("bosV1discr" , 3, 10 , 0., 1.,"V1discr");
+  treeMC("bosV2mass" , 3, 15 , 50., 125.,"V2mass (Boosted)");
+  treeMC("bosV2discr" , 3, 10 , 0., 1.,"V2discr (Boosted)");
+  treeMC("bosV2tdiscr" , 3, 10 , 0., 1.,"V2discr top (Boosted)");
+  //  treeMC("bosV1mass" , 4, 10 , 0., 1000.,"V1mass");
+  //  treeMC("bosV1discr" , 4, 10 , 0., 1.,"V1discr");
+  //  treeMC("bosV2mass" , 4, 15 , 50., 125.,"V2mass (Resolved)");
+  //  treeMC("bosV2discr" , 4, 10 , 0., 1.,"V2discr (Resolved)");
+  //  treeMC("bosV2chi2" , 4, 22 , -2., 20.,"V2chi2 (Resolved)");
+
+  //tag
+  treeMC("bosV1mass" , 5, 15 , 50., 125.,"V1mass (doubleB)");
+  treeMC("bosV1discr" , 5, 10 , 0., 1.,"V1discr (doubleB)");
+  treeMC("bosV2mass" , 5, 15 , 50., 125.,"V2mass (Boosted)");
+  treeMC("bosV2discr" , 5, 10 , 0., 1.,"V2discr (Boosted)");
+  treeMC("bosV2discr" , 5, 10 , 0., 1.,"V2discr top (Boosted)");
+
+  treeMC("bosV1mass" , 6, 15 , 50., 125.,"V1mass (doubleB)");
+  treeMC("bosV1discr" , 6, 10 , 0., 1.,"V1discr (doubleB)");
+  treeMC("bosV1tdiscr" , 6, 10 , 0., 1.,"V1discr top (doubleB)");
+  //  treeMC("bosV2mass" , 6, 15 , 50., 125.,"V2mass (Resolved)");
+  //  treeMC("bosV2discr" , 6, 10 , 0., 1.,"V2discr (Resolved)");
+  //  treeMC("bosV2chi2" , 6, 22 , -2., 20.,"V2chi2 (Resolved)");
+
+  //  return;
+
   //  draw2D(1, 20 , 0., 1.);
   //  return;
   // for the mass
   //  draw2D(1, 20 , 0., 4000., 0., 4000.);
   // for the BDT
-  //  draw2D(1, 20 , -1., 1., 0., 4000.);
+  //  draw2D(1, 20 , -1., 1., 0., 3000.);
   //  return;
 
-
   // BB
+
   treeMC("varMjj" , 1, 10 , 0., 4000.,"M(j,j)");
   treeMC("varDetajj" , 1, 10 , 0., 10.,"#Delta#eta(j,j)");
   treeMC("varDphijj" , 1, 8 , 0., 3.2,"#Delta#Phi(j,j)");
@@ -549,7 +596,6 @@ void treeMCplots(){
 
   treeMC("BDTnoBnoMET" , 1, 20 , -1., 1.,"BDT");
 
-  return;
 
   // RB
   treeMC("varMjj" , 2, 10 , 0., 4000.,"M(j,j)");
@@ -670,6 +716,5 @@ void treeMCplots(){
   treeMC("varFW2j" , 6, 10 , 0., 1.,"FW2");
 
   treeMC("varPetaVV" , 6, 20 , -10, 10.,"#etaV_{1} x #etaV_{2}");
-
 
 }
