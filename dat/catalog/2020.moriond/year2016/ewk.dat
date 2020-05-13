@@ -21,6 +21,10 @@ addfiles=%(amariniHmm)s/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(amariniHmm)s/ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8
 addfiles=%(amariniHmm)s/ZZTo2Q2Nu_13TeV_amcatnloFXFX_madspin_pythia8
 
+addfiles=%(amariniHmm)s/EWKZ2Jets_ZToNuNu_13TeV-madgraph-pythia8
+addfiles=%(amariniHmm)s/EWK_LLJJ_MLL-50_MJJ-120_13TeV-madgraph-pythia8
+addfiles=%(amariniHmm)s/EWK_LNuJJ_MJJ-120_13TeV-madgraph-pythia8
+
 ###
 ##addfiles=%(amariniHmm)s/WZToLNu2Q_13TeV_powheg_pythia8
 ##addfiles=%(amariniHmm)s/ZZTo2Q2Nu_13TeV_powheg_pythia8
