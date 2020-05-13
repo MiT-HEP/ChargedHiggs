@@ -485,7 +485,9 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         pdgID2=24;
     } else if (label.find("DIBOSON") !=string::npos ||
                label.find("TRIBOSON") !=string::npos ||
-               label.find("MULTIBOSON") !=string::npos
+               label.find("MULTIBOSON") !=string::npos ||
+               label.find("ZNuNuWPMJJjj_EWK")!=string::npos ||
+               label.find("ZNuNuWPMJJjj_QCD")!=string::npos
                ) {
         pdgID1=23;
         pdgID2=24;
@@ -751,7 +753,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ZbbZhadJJ_EWK") !=string::npos ) mc = 2 ;
     if(label.find("ZnnZhadJJ_EWK") !=string::npos ) mc = 3 ;
     if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) mc = 4 ;
-    if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) mc = 4 ;
+    if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) mc = 5 ;
 
     if(label.find("WWjj_SS_ll") !=string::npos ) mc = 8 ;
     if(label.find("WWjj_SS_lt") !=string::npos ) mc = 9 ;
@@ -860,7 +862,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if ( label == "EWKZ2Jets_ZToNuNu") label = "ZJetsToNuNu";
     if ( label == "EWK_LNuJJ_MJJ-120") label = "WJetsToLNu";
-    if ( label == "EWK_LLJJ_MLL-50_MJJ-120") label = "DY";
+    //    if ( label == "EWK_LLJJ_MLL-50_MJJ-120") label = "DY";
 
     //$$$$$$$$$
     //$$$$$$$$$ Merge TTbar
@@ -1247,6 +1249,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(label.find("ZnnZhadJJ_EWK") !=string::npos  ||
        label.find("ZbbZhadJJ_EWK")!=string::npos  ||
        label.find("WPhadWPhadJJ_EWK") !=string::npos ||
+       label.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
+       label.find("ZNuNuWPMJJjj_QCD") !=string::npos ||
        label.find("WWjj_SS_ll") !=string::npos ||
        label.find("WWjj_SS_lt") !=string::npos ||
        label.find("WWjj_SS_tt") !=string::npos ||
