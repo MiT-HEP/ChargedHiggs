@@ -76,9 +76,9 @@ void VBShadAnalysis::BookHisto(string l, string category, string signalLabel)
 
     Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "BDT noBnoMET ; BDT noBnoMET [GeV]; Events", 200,-1.,1.);
 
-    if(l.find("ZnnZhadJJ") !=string::npos  ||
-       l.find("ZbbZhadJJ")!=string::npos  ||
-       l.find("WPhadWPhadJJ") !=string::npos ||
+    if(l.find("ZnnZhadJJ_EWK") !=string::npos  ||
+       l.find("ZbbZhadJJ_EWK")!=string::npos  ||
+       l.find("WPhadWPhadJJ_EWK") !=string::npos ||
        l.find("WWjj_SS_ll") !=string::npos ||
        l.find("WWjj_SS_lt") !=string::npos ||
        l.find("WWjj_SS_tt") !=string::npos ||
@@ -88,8 +88,9 @@ void VBShadAnalysis::BookHisto(string l, string category, string signalLabel)
         Book ("VBShadAnalysis/MVVres"+category+"_"+l, "MVVres ; ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100, -5., 5.);
     }
 
-    Book ("VBShadAnalysis/FWJETS/Mjj"+category+"_"+l, "Mjj (BB); M(j,j) [GeV]; Events", 35,0,3500.);
-    Book ("VBShadAnalysis/FWJETS/Dphijj"+category+"_"+l, "Dphi jj (BB); #Delta#Phi(j,j) ; Events", 100,0,6.28);
+    Book ("VBShadAnalysis/FWJETS/Mjj"+category+"_"+l, "Mjj ; M(j,j) [GeV]; Events", 35,0,3500.);
+    Book ("VBShadAnalysis/FWJETS/Dphijj"+category+"_"+l, "Dphi jj ; #Delta#Phi(j,j) ; Events", 100,0,6.28);
+    Book ("VBShadAnalysis/Detajj"+category+"_"+l, "Deta jj ; #Delta#eta(j,j) ; Events", 100,0,10.);
 
 }
 
@@ -465,11 +466,11 @@ void VBShadAnalysis::genStudies(Event*e, string label )
     int pdgID1=24;
     int pdgID2=24;
 
-    if((label.find("ZnnZhadJJ") !=string::npos )
-       || (label.find("ZbbZhadJJ")!=string::npos )) {
+    if((label.find("ZnnZhadJJ_EWK") !=string::npos )
+       || (label.find("ZbbZhadJJ_EWK")!=string::npos )) {
         pdgID1=23;
         pdgID2=23;
-    } else if (label.find("WPhadWPhadJJ") !=string::npos ||
+    } else if (label.find("WPhadWPhadJJ_EWK") !=string::npos ||
                label.find("WWjj_SS_ll") !=string::npos ||
                label.find("WWjj_SS_lt") !=string::npos ||
                label.find("WWjj_SS_tt") !=string::npos ||
@@ -746,9 +747,11 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if (category.find("RBtag")   !=string::npos) SetTreeVar("ana_category",6);
 
     int mc=0;
-    if(label.find("WPhadWPhadJJ") !=string::npos ) mc = 1 ;
-    if(label.find("ZbbZhadJJ") !=string::npos ) mc = 2 ;
-    if(label.find("ZnnZhadJJ") !=string::npos ) mc = 3 ;
+    if(label.find("WPhadWPhadJJ_EWK") !=string::npos ) mc = 1 ;
+    if(label.find("ZbbZhadJJ_EWK") !=string::npos ) mc = 2 ;
+    if(label.find("ZnnZhadJJ_EWK") !=string::npos ) mc = 3 ;
+    if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) mc = 4 ;
+    if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) mc = 4 ;
 
     if(label.find("WWjj_SS_ll") !=string::npos ) mc = 8 ;
     if(label.find("WWjj_SS_lt") !=string::npos ) mc = 9 ;
@@ -850,6 +853,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     //    if ( label == "ST") label = "TT";
     if ( label == "ttZ") label = "TTX";
+    if ( label == "TTTT") label = "TTX";
+    if ( label == "TTW") label = "TTX";
+    if ( label == "TTG") label = "TTX";
+    if ( label == "ttH") label = "TTX";
+
+    if ( label == "EWKZ2Jets_ZToNuNu") label = "ZJetsToNuNu";
+    if ( label == "EWK_LNuJJ_MJJ-120") label = "WJetsToLNu";
+    if ( label == "EWK_LLJJ_MLL-50_MJJ-120") label = "DY";
 
     //$$$$$$$$$
     //$$$$$$$$$ Merge TTbar
@@ -1233,9 +1244,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
 
-    if(label.find("ZnnZhadJJ") !=string::npos  ||
-       label.find("ZbbZhadJJ")!=string::npos  ||
-       label.find("WPhadWPhadJJ") !=string::npos ||
+    if(label.find("ZnnZhadJJ_EWK") !=string::npos  ||
+       label.find("ZbbZhadJJ_EWK")!=string::npos  ||
+       label.find("WPhadWPhadJJ_EWK") !=string::npos ||
        label.find("WWjj_SS_ll") !=string::npos ||
        label.find("WWjj_SS_lt") !=string::npos ||
        label.find("WWjj_SS_tt") !=string::npos ||
@@ -1337,10 +1348,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //////
 
     Fill("VBShadAnalysis/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
+    Fill("VBShadAnalysis/Detajj" +category+"_"+label, systname, evt_Detajj, e->weight() );
 
-    if(label.find("ZnnZhadJJ") !=string::npos  ||
-       label.find("ZbbZhadJJ")!=string::npos  ||
-       label.find("WPhadWPhadJJ") !=string::npos ||
+    if(label.find("ZnnZhadJJ_EWK") !=string::npos  ||
+       label.find("ZbbZhadJJ_EWK")!=string::npos  ||
+       label.find("WPhadWPhadJJ_EWK") !=string::npos ||
        label.find("WWjj_SS_ll") !=string::npos ||
        label.find("WWjj_SS_lt") !=string::npos ||
        label.find("WWjj_SS_tt") !=string::npos ||

@@ -5,9 +5,11 @@ addConfig=VBShadAnalysis|AddLabel('WmWmJJ_EWK_TuneCUETP8M1_13TeV-vbfnlo')
 addConfig=VBShadAnalysis|AddLabel('WpWpJJ_EWK-QCD_TuneCUETP8M1_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('WpWpJJ_EWK_TuneCUETP8M1_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg')
-addConfig=VBShadAnalysis|AddLabel('WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM')
-addConfig=VBShadAnalysis|AddLabel('ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM')
-addConfig=VBShadAnalysis|AddLabel('ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM')
+addConfig=VBShadAnalysis|AddLabel('WPhadWPhadJJ_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZnnZhadJJ_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZbbZhadJJ_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('aQGC_ZJJZJJjj')
 
@@ -33,16 +35,12 @@ addConfig=VBShadAnalysis|AddLabel('ZZTo')
 addConfig=VBShadAnalysis|AddLabel('ZJetsToNuNu')
 addConfig=VBShadAnalysis|AddLabel('WJetsToLNu')
 
-## placeholder for all the tt+X
-addConfig=VBShadAnalysis|AddLabel('TTX')
+addConfig=VBShadAnalysis|AddLabel('EWKZ2Jets_ZToNuNu')
+addConfig=VBShadAnalysis|AddLabel('EWK_LNuJJ_MJJ-120_13TeV')
+addConfig=VBShadAnalysis|AddLabel('EWK_LLJJ_MLL-50_MJJ-120')
 
 #addConfig=VBShadAnalysis|AddLabel('DYJetsToLL_M-105To160')
 #addConfig=VBShadAnalysis|AddLabel('DY')
-#addConfig=VBShadAnalysis|AddLabel('TTTT')
-
-#addConfig=VBShadAnalysis|AddLabel('TTW')
-#addConfig=VBShadAnalysis|AddLabel('TTZ')
-#addConfig=VBShadAnalysis|AddLabel('TTG')
 
 addConfig=VBShadAnalysis|AddLabel('TT_TuneCUETP8M2T4')
 addConfig=VBShadAnalysis|AddLabel('TT_Mtt-700to1000_TuneCUETP8M2T4')
@@ -50,7 +48,14 @@ addConfig=VBShadAnalysis|AddLabel('TT_Mtt-1000toInf_TuneCUETP8M2T4')
 addConfig=VBShadAnalysis|AddLabel('TTJets')
 
 addConfig=VBShadAnalysis|AddLabel('ST')
+
+## placeholder for all the tt+X
+addConfig=VBShadAnalysis|AddLabel('TTX')
 addConfig=VBShadAnalysis|AddLabel('ttZ')
+addConfig=VBShadAnalysis|AddLabel('TTTT')
+addConfig=VBShadAnalysis|AddLabel('TTW')
+#addConfig=VBShadAnalysis|AddLabel('TTZ')
+#addConfig=VBShadAnalysis|AddLabel('TTG')
 
 addConfig=VBShadAnalysis|SetMultiPrimaryDataset(),AddLabel("MET"),AddLabel("JetHT")
 
