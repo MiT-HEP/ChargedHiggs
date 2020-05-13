@@ -79,6 +79,8 @@ void VBShadAnalysis::BookHisto(string l, string category, string signalLabel)
     if(l.find("ZnnZhadJJ_EWK") !=string::npos  ||
        l.find("ZbbZhadJJ_EWK")!=string::npos  ||
        l.find("WPhadWPhadJJ_EWK") !=string::npos ||
+       l.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
+       l.find("ZNuNuWPMJJjj_QCD") !=string::npos ||
        l.find("WWjj_SS_ll") !=string::npos ||
        l.find("WWjj_SS_lt") !=string::npos ||
        l.find("WWjj_SS_tt") !=string::npos ||
