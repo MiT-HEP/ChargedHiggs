@@ -41,7 +41,7 @@ public:
     bool doBAnalysis=false;
     bool doHADAnalysis=false;
     bool writeTree = true;
-    bool usePuppi=true;
+    bool usePuppi=false;
 
 private:
 

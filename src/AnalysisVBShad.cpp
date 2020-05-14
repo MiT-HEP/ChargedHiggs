@@ -75,6 +75,30 @@ void VBShadAnalysis::Init(){
         //cutflow
         Book ("VBShadAnalysis/Cutflow_"+l, "cutflow; bit; Events", 12,0,12);
 
+        //Trigger
+        Book("VBShadAnalysis/Baseline/HT_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
+        Book("VBShadAnalysis/Baseline/HT_PFHT900_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_AK8PFJet450_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_AK8PFHT700_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_AK8PFJet360_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_AK8DiPFJet300_200_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_PFHT650_Wide_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_had_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
+
+        Book("VBShadAnalysis/Baseline/HT_C100_DoubleBTagCSV_p014_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_C100_DoubleBTagCSV_p026_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_QuadPFJet_BTagCSV_Mqq200_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_btag_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
+        Book("VBShadAnalysis/Baseline/HT_PFMETNoMu120_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_PFMETNoMu120_NoiseCleaned_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_PFMET120_PFHT60_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_PFMETNoMu120_PFHT60_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/HT_met_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
+
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
@@ -430,6 +454,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
 
+
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //NFatjet cut
 
 
@@ -607,11 +632,24 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     // TRIGGER STORY
 
     bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
-    if(doMETAnalysis) {
-        bool passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
+//    if(doMETAnalysis) {
+//        bool passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
         //    bool passtriggerMET = (e->IsTriggered("HLT_PFMET120_PFMHT120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
-        if(!passtriggerMET) return EVENT_NOT_USED;
-    }
+//        if(!passtriggerMET) return EVENT_NOT_USED;
+//    }
+
+    /*
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+
+    //if(doHADAnalysis && !passtriggerHadOR) return EVENT_NOT_USED;
+    */ 
+
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 1, e->weight() );  //1--trigger
 
@@ -659,6 +697,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
     //$$$$$$$$$
 
+
+
+
     string category="";
     // for forwardJets pick the one with the largest mass
 
@@ -670,6 +711,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_PTV2=0;
         evt_DetaVV=-100;
         evt_PetaVV=-100;
+        //if(selectedFatJets[0]->GetP4().Pt() < 250) return EVENT_NOT_USED;
 
         if(selectedFatJets.size()>1 and selectedJets.size()>1) {
             category="_BB";
@@ -710,6 +752,31 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
     }
 
+    /*
+    //We firstly tried whether works to put triggers here but seems no?
+    if (!(category.find("BB")   !=string::npos)) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/HT_Base_" +label, systname, evt_MVV, e->weight() );
+
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+
+    if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/HT_PFHT900_" +label, systname, evt_MVV, e->weight() );     
+    if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/HT_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/HT_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/HT_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/HT_OR_" +label, systname, evt_MVV, e->weight() );
+
+    return EVENT_NOT_USED;
+    // end the test of triggers
+    */
 
     //////////
     // with B
@@ -775,6 +842,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
     }
 
+
     //////////
     // with MET
 
@@ -833,6 +901,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
     }
 
+
+
+
     //$$$$$$$$$
     //$$$$$$$$$
 
@@ -845,6 +916,33 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     // resolved likely all below M=500
     if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
 
+
+    if (!(category.find("RMET")   !=string::npos) && !(category.find("BMET")   !=string::npos)) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/HT_Base_" +label, systname, evt_MVV, e->weight() );
+
+
+    bool passtriggermet1 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+    bool passtriggermet2 = e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight");
+    bool passtriggermet3 = e->IsTriggered("HLT_PFMET120_PFMHT120_IDTight_PFHT60_v");
+    bool passtriggermet4 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v");
+
+    bool passtriggermetOR = passtriggermet1 || passtriggermet2 || passtriggermet3 || passtriggermet4;
+
+    if(passtriggermet1) Fill("VBShadAnalysis/Baseline/HT_PFMETNoMu120_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggermet2) Fill("VBShadAnalysis/Baseline/HT_PFMETNoMu120_NoiseCleaned_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggermet3) Fill("VBShadAnalysis/Baseline/HT_PFMET120_PFHT60_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggermet4) Fill("VBShadAnalysis/Baseline/HT_PFMETNoMu120_PFHT60_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggermetOR) Fill("VBShadAnalysis/Baseline/HT_met_OR_" +label, systname, evt_MVV, e->weight() );
+
+
+    return EVENT_NOT_USED;
+
+
+
+
+
+
     if(evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 6, e->weight() );  //InvMFatjet cut
@@ -852,6 +950,62 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/Baseline/NJet_" +label, systname, forwardJets.size(), e->weight() );
 
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
+
+    /*
+    
+    if (!(category.find("RBtag")   !=string::npos) && !(category.find("BBtag")   !=string::npos)) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/HT_Base_" +label, systname, evt_MVV, e->weight() );
+
+    bool passtriggerbtag1 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6_v");
+    bool passtriggerbtag2 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160_v");
+    bool passtriggerbtag3 = e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v");
+
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+
+
+    bool passtriggerbtagOR = passtriggerbtag1 || passtriggerbtag2 || passtriggerbtag3 || passtriggerHadOR;
+
+    if(passtriggerbtag1) Fill("VBShadAnalysis/Baseline/HT_C100_DoubleBTagCSV_p014_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerbtag2) Fill("VBShadAnalysis/Baseline/HT_C100_DoubleBTagCSV_p026_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerbtag3) Fill("VBShadAnalysis/Baseline/HT_QuadPFJet_BTagCSV_Mqq200_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/HT_had_OR_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerbtagOR) Fill("VBShadAnalysis/Baseline/HT_btag_OR_" +label, systname, evt_MVV, e->weight() );
+
+    return EVENT_NOT_USED;
+
+    
+    //Let's see whether OK to put trigger after 2 forward jets selections
+    if (!(category.find("BB")   !=string::npos)) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/HT_Base_" +label, systname, evt_MVV, e->weight() );
+
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+
+    if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/HT_PFHT900_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/HT_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/HT_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/HT_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/HT_OR_" +label, systname, evt_MVV, e->weight() );
+
+    return EVENT_NOT_USED;
+
+    //Here ends the test of the triggers    
+    */
 
     evt_Jet2Eta=forwardJets[1]->Eta();
     evt_Jet2Pt=forwardJets[1]->Pt();
@@ -917,6 +1071,63 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     oP4.push_back(forwardJets[1]->GetP4());
 
     evt_FW2 = ChargedHiggs::FW_momentum(oP4, 2);
+
+
+/*
+    //Let's see whether OK to put trigger after all VBS selections
+ 
+    if (!(category.find("BBtag")   !=string::npos)) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/HT_Base_" +label, systname, evt_MVV, e->weight() );
+
+    bool passtriggerbtag1 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6_v");
+    bool passtriggerbtag2 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160_v");
+    bool passtriggerbtag3 = e->IsTriggered("HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v");
+    bool passtriggerbtag4 = e->IsTriggered("HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v");
+    bool passtriggerbtag5 = e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq460_v");
+    bool passtriggerbtag6 = e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v");
+
+
+    bool passtriggerbtagOR = passtriggerbtag1 || passtriggerbtag2 || passtriggerbtag3 || passtriggerbtag4 || passtriggerbtag5 || passtriggerbtag6;
+
+
+    if(passtriggerbtag1) Fill("VBShadAnalysis/Baseline/HT_C100_DoubleBTagCSV_p014_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerbtag2) Fill("VBShadAnalysis/Baseline/HT_C100_DoubleBTagCSV_p026_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerbtag3) Fill("VBShadAnalysis/Baseline/HT_C112_DoubleBTagCSV_p014_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerbtag4) Fill("VBShadAnalysis/Baseline/HT_C112_DoubleBTagCSV_p026_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerbtag5) Fill("VBShadAnalysis/Baseline/HT_QuadPFJet_BTagCSV_Mqq460_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerbtag6) Fill("VBShadAnalysis/Baseline/HT_QuadPFJet_BTagCSV_Mqq200_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerbtagOR) Fill("VBShadAnalysis/Baseline/HT_btag_OR_" +label, systname, evt_MVV, e->weight() );
+
+    return EVENT_NOT_USED;
+
+
+    
+    //Let's see whether OK to put trigger after all VBS selections
+    if (!(category.find("BB")   !=string::npos)) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Baseline/HT_Base_" +label, systname, evt_MVV, e->weight() );
+
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+
+    if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/HT_PFHT900_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/HT_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/HT_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/HT_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/HT_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
+    if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/HT_had_OR_" +label, systname, evt_MVV, e->weight() );
+
+    return EVENT_NOT_USED;
+
+    //Here ends the test of the triggers 
+    */
 
     //////
     //$$$
