@@ -1,0 +1,11 @@
+[
+    {"name":"MET",
+        "file":"/eos/user/d/dalfonso/VBS_BDT/MARCH9/MET.root",
+        "tree":"tree_vbs",
+        "features":["varMjj","varDetajj","varDphijj","varJet2Pt","varJet2Eta","varMVV","varPTVV","varPTV1","varPTV2","varEtaMinV","varEtaMaxV","varCen","varzepVB","varzepVV","varDRVj","varnormPTVVjj","varFW2j"],
+        "sel":"@ana_category==0",
+        "targets":["@mc<5","@mc>10"],
+        "_comment":"@weight*@xsec",
+        "weight":"~1" 
+    }
+]

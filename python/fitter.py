@@ -60,6 +60,9 @@ if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
     from hmm import *
     if os.path.isfile("hmm2.py") :
         from hmm2 import *
+    if os.path.isfile("python/vbshadr.py") :
+        print "loading vbshadr.py"
+        from vbshadr import *
     config = eval(opts.hmm)
     config.Print()
 

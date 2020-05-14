@@ -13,7 +13,8 @@ do
     #export DIR=Hmumu/2019_06_24_Hmm${year}_BdtUCSD_asRaffaCat2
     #export DIR=Hmumu/2019_07_10_Hmm${year}_BdtUCSD_Mjj400
     #export DIR=Hmumu/2019_07_25_Hmm${year}_BdtUCSD_Mjj400_JetPt25
-    export DIR=Hmumu/2019_11_19_Hmm${year}_BdtNov19_GeoFitBS_FsrPt20
+    #export DIR=Hmumu/2019_11_19_Hmm${year}_BdtNov19_GeoFitBS_FsrPt20
+    export DIR=Hmumu/2020_01_08_Hmm${year}_Jan2020_NewCatFixBDT
     for cat in {0..4}; do 
         text2workspace.py -m 125  cat${cat}.txt
         combine -M AsymptoticLimits -t -1 --rMin=0 --rMax=50 --expectSignal=0 cat${cat}.root -n cat${cat} -m 125 ;
@@ -52,10 +53,10 @@ cd $BASE
 #export DIR2018=Hmumu/2019_07_25_Hmm2018_BdtUCSD_Mjj400_JetPt25
 #export DIRRunII=Hmumu/2019_07_25_HmmAll_BdtUCSD_Mjj400_JetPt25
 
-export DIR2016=Hmumu/2019_11_19_Hmm2016_BdtNov19_GeoFitBS_FsrPt20
-export DIR2017=Hmumu/2019_11_19_Hmm2017_BdtNov19_GeoFitBS_FsrPt20
-export DIR2018=Hmumu/2019_11_19_Hmm2018_BdtNov19_GeoFitBS_FsrPt20
-export DIRRunII=Hmumu/2019_11_19_HmmAll_BdtNov19_GeoFitBS_FsrPt20
+export DIR2016=Hmumu/2020_01_08_Hmm2016_Jan2020_NewCatFixBDT
+export DIR2017=Hmumu/2020_01_08_Hmm2017_Jan2020_NewCatFixBDT
+export DIR2018=Hmumu/2020_01_08_Hmm2018_Jan2020_NewCatFixBDT
+export DIRRunII=Hmumu/2020_01_08_HmmAll_Jan2020_NewCatFixBDT
 
 cd RunII
 for cat in {0..4}; do 
@@ -65,10 +66,10 @@ done
 combineCards.py -S cat{0..4}.txt > cms_datacard_hmumu_RunII.txt
 text2workspace.py -m 125 cms_datacard_hmumu_RunII.txt
 combine -M AsymptoticLimits -t -1 --rMin=0 --rMax=10 --expectSignal=0 -n All -m 125 cms_datacard_hmumu_RunII.root
-python $BASE/../test/makeCombinePlotByCat.py -a higgsCombinecat{0..13}.Asymptotic*mH125.root higgsCombineAll.AsymptoticLimits.mH125.root
+python $BASE/../test/makeCombinePlotByCat.py -a higgsCombinecat{0..4}.Asymptotic*mH125.root higgsCombineAll.AsymptoticLimits.mH125.root
 cd $BASE
 
-OUT=BdtNov19_GeoFitBS_FsrPt20
+OUT=Jan2020_NewCatFixBDT
 mkdir $OUT
 for dir in 2016 2017 2018 RunII; do
     mkdir $OUT/$dir

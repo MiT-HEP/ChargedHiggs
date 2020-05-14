@@ -68,7 +68,7 @@ class HmmConfig():
 
     def SimpleScaleAndSmear(self):
         cat0=0
-        proc0='GluGlu'
+        proc0='GluGlu' if 'GluGlu' in self.processes else self.processes[0]
         for cat in range(0,len(self.categories)):
             for proc in self.processes:
                 if cat==cat0 and proc==proc0:
@@ -416,9 +416,9 @@ if __name__=="__main__":
     #hmmAutoCat.Print()
     #hmmTTH.Print()
     hmmWithTTH.Print()
-    hmmExCatBoost.Print()
-    hmmExCat2018.Print()
-    hmmExCatBoost2018.Print()
+    #hmmExCatBoost.Print()
+    #hmmExCat2018.Print()
+    #hmmExCatBoost2018.Print()
 
 import ROOT
 from array import array
