@@ -5,26 +5,24 @@
 Files=
 ## Signal
 include=dat/catalog/2020.moriond/year2016/vbshad.dat
-#include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
-#
-### BKGS
-#include=dat/catalog/2020.moriond/year2016/qcd.dat
-#include=dat/catalog/2020.moriond/year2016/ewk.dat
-#include=dat/catalog/2020.moriond/year2016/Zinv.dat
-#include=dat/catalog/2020.moriond/year2016/ttvbs.dat
-#include=dat/catalog/2020.moriond/year2016/st.dat
-####include=dat/catalog/2020.moriond/year2016/rares.dat
-####include=dat/catalog/2020.moriond/year2016/dy_amcatnlo.dat
+include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
+include=dat/catalog/2020.moriond/year2016/vbsAQGC.dat
 
+## BKGS
+include=dat/catalog/2020.moriond/year2016/qcd.dat
+include=dat/catalog/2020.moriond/year2016/ewk.dat
+include=dat/catalog/2020.moriond/year2016/Zinv.dat
+include=dat/catalog/2020.moriond/year2016/Vjets.dat
+include=dat/catalog/2020.moriond/year2016/ttvbs.dat
+include=dat/catalog/2020.moriond/year2016/st.dat
+###include=dat/catalog/2020.moriond/year2016/rares.dat
+###include=dat/catalog/2020.moriond/year2016/dy_amcatnlo.dat
 
 # add Label
 include=dat/vbshad.dat
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
 #
-
-
-#Files=root://eoscms///store/group/phys_higgs/cmshmm/amarini/Nero/v3.7/year2016/WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/WPhadWPhadJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/191221_145919/0000/NeroNtuples_111.root
 
 #Files=root://eoscms///store/group/phys_higgs/cmshmm/amarini/Nero/v3.6/year2016/WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/191010_094953/0000/NeroNtuples_44.root
 
@@ -33,6 +31,7 @@ Branches=dat/branches.txt
 Lumi=1
 Smear=NONE
 Correct=NONE
+#Correct=SDMasscorr
 Final=no
 
 ## be less peaky, given the n. of systs
@@ -46,11 +45,22 @@ pileup=aux/pileup.v3.7.year2016.root
 
 Analysis=VBShadAnalysis
 
-addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
-Output=VBShadSignal_MET.root
+#addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+#Output=VBShadSignal_MET.root
 
-##addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
-##Output=VBShadSignal.root
+addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
+Output=VBShadSignal.root
 
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
-#Output=VBShadSignal_AllBtag_after2jets.root
+#Output=VBShadSignal_B.root
+
+###
+
+#include=dat/catalog/2020.moriond/year2016/jetHT.dat
+#include=dat/catalog/2020.moriond/year2016/MET.dat
+
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doMETAntiAnalysis=1
+#Output=VBSmetAntiSignal.root
+
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1
+#Output=VBShadAntiSignal.root
