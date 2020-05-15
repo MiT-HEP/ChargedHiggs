@@ -47,6 +47,7 @@ public:
     bool doMETAntiAnalysis=false;
     bool writeTree = true;
     bool usePuppi=false;
+    bool doTrigger=true;
 
     bool doTMVA=true;
 
