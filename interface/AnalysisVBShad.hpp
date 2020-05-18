@@ -38,6 +38,7 @@ public:
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
     void getObjects(Event*e, string label, string systname);
+    void studyTriggers(Event*e, string category, string label, string systname);
     double genMtt(Event*e);
 
     bool doMETAnalysis=false;
@@ -47,7 +48,7 @@ public:
     bool doMETAntiAnalysis=false;
     bool writeTree = true;
     bool usePuppi=false;
-    bool doTrigger=true;
+    bool doTrigger=false;
 
     bool doTMVA=true;
 
