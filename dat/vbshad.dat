@@ -59,5 +59,8 @@ addConfig=VBShadAnalysis|AddLabel('TTW')
 
 addConfig=VBShadAnalysis|SetMultiPrimaryDataset(),AddLabel("MET"),AddLabel("JetHT")
 
-addConfig=VBShadAnalysis|weights.push_back("aux/bdt_BDT_VBSHad.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross1.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross2.weights.xml")
 
