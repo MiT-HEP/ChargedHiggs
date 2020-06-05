@@ -110,6 +110,8 @@ private:
     float evt_normPTVVjj=0;
     float evt_cenPTVVjj=0;
 
+    float evt_mtop=0;
+
     float evt_zepVB=-100;
     float evt_zepV2=-100;
     float evt_cenEta=-100;
