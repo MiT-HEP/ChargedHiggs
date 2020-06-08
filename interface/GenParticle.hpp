@@ -21,6 +21,7 @@ public:
     bool IsPromptDecayed() const ;//{ return flags_ & BareMonteCarlo::PromptDecayed ;}
     bool IsDirectPromptTauDecayProductFinalState() const;// { return flags_ & BareMonteCarlo::DirectPromptTauDecayProductFinalState ;}
     bool IsDressed() const ;//{ return flags_ & BareMonteCarlo::Dressed;}
+    bool IsLHE() const ;//{ return flags_ & BareMonteCarlo::LHE;}
 
     int GetParentPdgId() const { return mopdgid_;}
     int GetParentIdx() const {return moidx_;}
