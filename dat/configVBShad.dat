@@ -5,16 +5,16 @@
 Files=
 ## Signal
 include=dat/catalog/2020.moriond/year2016/vbshad.dat
-include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
-include=dat/catalog/2020.moriond/year2016/vbsAQGC.dat
+#include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
+#include=dat/catalog/2020.moriond/year2016/vbsAQGC.dat
 
 ## BKGS
-include=dat/catalog/2020.moriond/year2016/qcd.dat
-include=dat/catalog/2020.moriond/year2016/ewk.dat
-include=dat/catalog/2020.moriond/year2016/Zinv.dat
-include=dat/catalog/2020.moriond/year2016/Vjets.dat
-include=dat/catalog/2020.moriond/year2016/ttvbs.dat
-include=dat/catalog/2020.moriond/year2016/st.dat
+#include=dat/catalog/2020.moriond/year2016/qcd.dat
+#include=dat/catalog/2020.moriond/year2016/ewk.dat
+#include=dat/catalog/2020.moriond/year2016/Zinv.dat
+#include=dat/catalog/2020.moriond/year2016/Vjets.dat
+#include=dat/catalog/2020.moriond/year2016/ttvbs.dat
+#include=dat/catalog/2020.moriond/year2016/st.dat
 ###include=dat/catalog/2020.moriond/year2016/rares.dat
 include=dat/catalog/2020.moriond/year2016/dy_amcatnlo.dat
 
@@ -24,7 +24,8 @@ include=dat/vbshad.dat
 #____________________ COMMON SETTINGS _____________________________
 #
 
-#Files=root://eoscms///store/group/phys_higgs/cmshmm/amarini/Nero/v3.6/year2016/WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/191010_094953/0000/NeroNtuples_44.root
+#Files=root://eoscms///store/group/phys_higgs/cmshmm/amarini/Nero/v3.7/year2016/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/200403_084241/0000/NeroNtuples_99.root
+
 
 Branches=dat/branches.txt
 
@@ -45,14 +46,14 @@ pileup=aux/pileup.v3.7.year2016.root
 
 Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
 
-#addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
-#Output=VBShadSignal_MET.root
+addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+Output=VBShadSignal_MET_rel_evtunc3_orgMR.root
 
-addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
-Output=VBShadSignal.root
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
+#Output=VBShadSignal_newtrigger_BB_after2j.root
 
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
-#Output=VBShadSignal_B.root
+#Output=VBShadSignal_newtrigger_BBtag_after2j.root
 
 ###
 
