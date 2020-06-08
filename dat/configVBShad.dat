@@ -16,7 +16,7 @@ include=dat/catalog/2020.moriond/year2016/vbshad.dat
 #include=dat/catalog/2020.moriond/year2016/ttvbs.dat
 #include=dat/catalog/2020.moriond/year2016/st.dat
 ###include=dat/catalog/2020.moriond/year2016/rares.dat
-###include=dat/catalog/2020.moriond/year2016/dy_amcatnlo.dat
+include=dat/catalog/2020.moriond/year2016/dy_amcatnlo.dat
 
 # add Label
 include=dat/vbshad.dat
@@ -44,7 +44,7 @@ SFDB=aux/sf_VBShad.txt
 MCDB=aux/mcdb.2020.v3.7.year2016.dat
 pileup=aux/pileup.v3.7.year2016.root
 
-Analysis=VBShadAnalysis
+Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
 
 addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
 Output=VBShadSignal_MET_rel_evtunc3_orgMR.root
@@ -57,11 +57,10 @@ Output=VBShadSignal_MET_rel_evtunc3_orgMR.root
 
 ###
 
-#include=dat/catalog/2020.moriond/year2016/jetHT.dat
 #include=dat/catalog/2020.moriond/year2016/MET.dat
-
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doMETAntiAnalysis=1
 #Output=VBSmetAntiSignal.root
 
+#include=dat/catalog/2020.moriond/year2016/jetHT.dat
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1
 #Output=VBShadAntiSignal.root
