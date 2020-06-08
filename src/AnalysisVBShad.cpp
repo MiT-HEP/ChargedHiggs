@@ -1530,42 +1530,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     evt_FW2 = ChargedHiggs::FW_momentum(oP4, 2);
 
-
-    if(doTrigger){
-
-      bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
-      bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
-      bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
-      bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
-      bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
-      bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
-      bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
-
-
-      if(category.find("RB")   !=string::npos){
-        Fill("VBShadAnalysis/Baseline/mVV_RB_Base_" +label, systname, evt_MVV, e->weight() );
-
-        if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/mVV_RB_PFHT900_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/mVV_RB_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/mVV_RB_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/mVV_RB_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/mVV_RB_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/mVV_RB_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV_RB_had_OR_" +label, systname, evt_MVV, e->weight() );
-      }
-
-      if(category.find("BB")   !=string::npos){
-        Fill("VBShadAnalysis/Baseline/mVV_BB_Base_" +label, systname, evt_MVV, e->weight() );
-
-        if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/mVV_BB_PFHT900_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/mVV_BB_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/mVV_BB_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/mVV_BB_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/mVV_BB_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/mVV_BB_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV_BB_had_OR_" +label, systname, evt_MVV, e->weight() );
-      }
-    }
     //////
     //$$$ STUDY triggers
     //////
