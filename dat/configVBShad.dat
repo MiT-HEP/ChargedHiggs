@@ -5,16 +5,16 @@
 Files=
 ## Signal
 include=dat/catalog/2020.moriond/year2016/vbshad.dat
-#include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
-#include=dat/catalog/2020.moriond/year2016/vbsAQGC.dat
+include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
+include=dat/catalog/2020.moriond/year2016/vbsAQGC.dat
 
 ## BKGS
-#include=dat/catalog/2020.moriond/year2016/qcd.dat
-#include=dat/catalog/2020.moriond/year2016/ewk.dat
-#include=dat/catalog/2020.moriond/year2016/Zinv.dat
-#include=dat/catalog/2020.moriond/year2016/Vjets.dat
-#include=dat/catalog/2020.moriond/year2016/ttvbs.dat
-#include=dat/catalog/2020.moriond/year2016/st.dat
+include=dat/catalog/2020.moriond/year2016/qcd.dat
+include=dat/catalog/2020.moriond/year2016/ewk.dat
+include=dat/catalog/2020.moriond/year2016/Zinv.dat
+include=dat/catalog/2020.moriond/year2016/Vjets.dat
+include=dat/catalog/2020.moriond/year2016/ttvbs.dat
+include=dat/catalog/2020.moriond/year2016/st.dat
 ###include=dat/catalog/2020.moriond/year2016/rares.dat
 include=dat/catalog/2020.moriond/year2016/dy_amcatnlo.dat
 
@@ -46,14 +46,14 @@ pileup=aux/pileup.v3.7.year2016.root
 
 Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
 
-addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
-Output=VBShadSignal_MET_rel_evtunc3_orgMR.root
+#addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+#Output=VBShadSignal_MET.root
 
-#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
-#Output=VBShadSignal_newtrigger_BB_after2j.root
+addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
+Output=VBShadSignal.root
 
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
-#Output=VBShadSignal_newtrigger_BBtag_after2j.root
+#Output=VBShadSignal_B.root
 
 ###
 

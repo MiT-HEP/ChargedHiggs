@@ -54,7 +54,7 @@ public:
     bool usePuppi=false;
     bool doTrigger=false;
 
-    bool doTMVA=false;
+    bool doTMVA=true;
 
 private:
 

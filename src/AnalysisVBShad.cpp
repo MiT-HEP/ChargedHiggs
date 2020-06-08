@@ -782,6 +782,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
     for(Int_t i = 0; i < e->NGenPar(); i++){
 
         GenParticle *genpar = e->GetGenParticle(i);
+        if( ! genpar->IsLHE()) continue;
 
         // ** BOSON
         if(fabs(genpar->GetPdgId()) == pdgID1) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
