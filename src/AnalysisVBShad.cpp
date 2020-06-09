@@ -473,7 +473,7 @@ void VBShadAnalysis::Init(){
         Branch("tree_vbs","bosV2tdiscr",'F');
         Branch("tree_vbs","bosV2chi2",'F');
 
-        Branch("tree_vbs","bosGen",'O');
+        Branch("tree_vbs","bosGen",'I');
         Branch("tree_vbs","bosV1Unc",'F');
         Branch("tree_vbs","bosV2Unc",'F');
 
@@ -564,7 +564,7 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
     double V_term = 0;
 
     evt_chi2_ = 999999;
-    evt_bosV1unc = 0;
+    evt_bosV2unc = 0;
 
 
     int index_i=-1;
@@ -618,7 +618,7 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
                     // DR ~ 2M/PT
                     double chi2 = (norm / (Mkl*Mkl)) + V_term;
                     //double chi2 = (norm / (Mkl*Mkl)) + (0.5*DRij*PTij - MV) * (0.5*DRij*PTij - MV) / MVres;
-                    if(chi2<evt_chi2_) { evt_bosV1unc = sqrt(Unc_i+Unc_j); evt_chi2_=chi2; index_i=i; index_j=j; index_k=k; index_l=l; }
+                    if(chi2<evt_chi2_) { evt_bosV2unc = sqrt(Unc_i+Unc_j); evt_chi2_=chi2; index_i=i; index_j=j; index_k=k; index_l=l; }
                 }
             }
         }
@@ -636,7 +636,6 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
     else return 0;
 
 }
-
 
 double VBShadAnalysis::genMtt(Event*e)
 {
@@ -1187,7 +1186,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("bosV2Unc", evt_bosV2unc);
     SetTreeVar("bosV2chi2",evt_chi2_);
 
-    SetTreeVar("bosGen",evt_genmatch);
+    SetTreeVar("bosGen",int(evt_genmatch));
 
     // MVA
     SetTreeVar("BDTnoBnoMET",BDTnoBnoMET);
@@ -1496,12 +1495,53 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             category="";
 
             // target the ZbbZqq + ZbbWqq
-            double mBoson=90.;
+
+            ///////$$$$$$$
+            ///////$$$$$$$
+
+            string genmatch = "wrong_";
+            string genWmat = "wrong_";
+            string genZmat = "wrong_";
+            double mBoson_W=80.;
+            double mBoson_Z=90.;
             double mWidth=20.;
             double chi2Cut=6.;
-            double MV = resolvedtagger(e, mBoson, label, systname, selectedFatZbb[0]->Eta());
+
+            // MARIA: dummy use of the centrality for now
+            double MV_W = resolvedtagger(e, mBoson_W, label, systname, 0.); float mW_chi2 = evt_chi2_; if(genMatchResolved(e,systname,label)) genWmat = "right_";
+            if(bosonJets.size()>1){
+                Fill2D("VBShadAnalysis/Baseline/ResWMassChi2_"+label, systname, MV_W, mW_chi2, e->weight() );
+                Fill("VBShadAnalysis/Baseline/ResWMass_"+genWmat+label, systname, MV_W, e->weight() );
+            }
+            double MV_Z = resolvedtagger(e, mBoson_Z, label, systname, 0.); float mZ_chi2 = evt_chi2_; if(genMatchResolved(e,systname,label)) genZmat = "right_";
+            if(bosonJets.size()>1){
+                Fill2D("VBShadAnalysis/Baseline/ResZMassChi2_"+label, systname, MV_Z, mZ_chi2, e->weight() );
+                Fill("VBShadAnalysis/Baseline/ResZMass_"+genZmat+label, systname, MV_Z, e->weight() );
+            }
+
+            double mBoson = 90.;
+            double MV = MV_Z;
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2Diff_W_"+genWmat+label, systname, mW_chi2-mZ_chi2, e->weight() );
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_"+genZmat+label, systname, mZ_chi2-mW_chi2, e->weight() );
+            if(mW_chi2 < mZ_chi2){
+                mBoson = 80.;
+                MV = resolvedtagger(e, mBoson, label, systname, 0.);
+            }
+            if(genMatchResolved(e,systname,label)) genmatch = "right_";
+
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+genmatch+label, systname, MV, e->weight() );
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, evt_chi2_, e->weight() );
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+genmatch+label, systname, evt_chi2_, e->weight() );
+
+            if(bosonJets.size()>1 && evt_chi2_<chi2Cut){
+                Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+label, systname, MV, e->weight() );
+                Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+genmatch+label, systname, MV, e->weight() );
+            }
+
+            ///////$$$$$
+            ///////$$$$$
+
             if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and evt_chi2_<chi2Cut) {
                 category="_RBtag";
                 signalLabel="";
