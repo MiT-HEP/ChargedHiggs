@@ -64,7 +64,7 @@ void VBShadAnalysis::SetFatJetCuts(FatJet *f){
     f->SetSDMassCut(30);
 }
 
-void VBShadAnalysis::BookHisto(string l, string category, string signalLabel)
+void VBShadAnalysis::BookHisto(string l, string category)
 {
 
     Book ("VBShadAnalysis/BOSON/ZepBosBVar"+category+"_"+l, " ; |#eta_{V} - (#eta_{j1} + #eta_{j2})/2| / #Delta #eta(jj) ; Events", 250,0,2);
@@ -86,8 +86,6 @@ void VBShadAnalysis::BookHisto(string l, string category, string signalLabel)
        l.find("WWjj_SS_lt") !=string::npos ||
        l.find("WWjj_SS_tt") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) {
-        Book ("VBShadAnalysis/MVV"+category+"_good_"+l, "MVV (good) ; MVV_{reco}; Events", 100, 0, 2500);
-        Book ("VBShadAnalysis/MVV"+category+"_bad_"+l, "MVV (bad) ; MVV_{reco}; Events", 100, 0, 2500);
         Book ("VBShadAnalysis/MVVres"+category+"_"+l, "MVVres ; ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100, -5., 5.);
     }
 
@@ -394,13 +392,13 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/OUT1500/Mjj_BB_"+l, "Mjj-OUT (BB); Mjj [GeV]; Events", 35,0,3500);
         Book ("VBShadAnalysis/IN1500/Mjj_BB_"+l, "Mjj-IN (BB); Mjj [GeV]; Events", 35,0,3500);
 
-        BookHisto(l, "", "");
-        BookHisto(l, "_BB", "");
-        BookHisto(l, "_RB", "");
-        BookHisto(l, "_BMET", "");
-        BookHisto(l, "_RMET", "");
-        BookHisto(l, "_BBtag", "");
-        BookHisto(l, "_RBtag", "");
+        BookHisto(l, "");
+        BookHisto(l, "_BB");
+        BookHisto(l, "_RB");
+        BookHisto(l, "_BMET");
+        BookHisto(l, "_RMET");
+        BookHisto(l, "_BBtag");
+        BookHisto(l, "_RBtag");
 
     } //end label loop
 
@@ -1361,7 +1359,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
 
     string category="";
-    string signalLabel="";
     // for forwardJets pick the one with the largest mass
 
     if(!doMETAnalysis and !doBAnalysis) {
@@ -1375,7 +1372,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(selectedFatJets.size()>1 and selectedJets.size()>1) {
             category="_BB";
-            signalLabel="";
+            evt_genmatch = false;
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
             evt_bosV1discr = bosonVDiscr[0];
             evt_bosV1tdiscr = bosonTDiscr[0];
@@ -1399,10 +1396,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 forwardJets.push_back(selectedJets[iter]);
             }
 
-            if(genVp==NULL or genVp2==NULL) signalLabel="_bad";
+            if(genVp==NULL or genVp2==NULL) evt_genmatch = false;
             if(genVp!=NULL and genVp2!=NULL) {
-                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[1]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
-                if(selectedFatJets[1]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
+                bool match1 = false;
+                bool match2 = false;
+                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[1]->DeltaR(*genVp2) < 0.2 ) match1 = true;
+                if(selectedFatJets[1]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) match2 = true;
+                if(match1 and match2) evt_genmatch = true;
             }
         }
 
@@ -1416,7 +1416,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, evt_chi2_, e->weight() );
             if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and evt_chi2_<chi2Cut) {
                 category="_RB";
-                signalLabel="";
                 evt_bosV1discr = bosonVDiscr[0];
                 evt_bosV1tdiscr = bosonTDiscr[0];
                 evt_bosV1mass = bosonMass[0];
@@ -1431,11 +1430,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 evt_DetaVV = fabs(selectedFatJets[0]->GetP4().Eta() - (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta());
                 evt_PetaVV = selectedFatJets[0]->GetP4().Eta() * (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta();
 
-                if(genVp==NULL or genVp2==NULL) signalLabel="_bad";
-                if(genVp!=NULL and genVp2!=NULL) {
-                    if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).DeltaR(genVp2->GetP4()) < 0.2 ) signalLabel="_good";
-                    if((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).DeltaR(genVp->GetP4()) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
-                }
             }
         }
     }
@@ -1457,7 +1451,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1) {
             category="_BBtag";
             // add cases with two Zbb Zbb most pures
-            signalLabel="";
+            evt_genmatch = false;
 
             Fill("VBShadAnalysis/Baseline/pT_BJet_"+label, systname, selectedFatZbb[0]->GetP4().Pt(), e->weight() );
 
@@ -1483,12 +1477,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 forwardJets.push_back(selectedJets[iter]);
             }
 
-            if(genVp==NULL or genVp2==NULL) signalLabel="_bad";
+            if(genVp==NULL or genVp2==NULL) evt_genmatch = false;
             if(genVp!=NULL and genVp2!=NULL) {
-                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatZbb[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
-                if(selectedFatZbb[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
+                bool match1 = false;
+                bool match2 = false;
+                if(selectedFatZbb[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) match1 = true;
+                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatZbb[0]->DeltaR(*genVp2) < 0.2 ) match2 = true;
+                if(match1 and match2) evt_genmatch = true;
             }
-
         }
 
         if(selectedFatZbb.size()>0 and selectedFatJets.size()==0 and selectedJets.size()>3) {
@@ -1544,7 +1540,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and evt_chi2_<chi2Cut) {
                 category="_RBtag";
-                signalLabel="";
 
                 p4VV = ( selectedFatZbb[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
                 evt_MVV = p4VV.M();
@@ -1559,11 +1554,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 evt_DetaVV = fabs(selectedFatZbb[0]->GetP4().Eta() - (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta());
                 evt_PetaVV = selectedFatZbb[0]->GetP4().Eta() * (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta();
 
-                if(genVp==NULL or genVp2==NULL) signalLabel="_bad";
-                if(genVp!=NULL and genVp2!=NULL) {
-                    if((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).DeltaR(genVp->GetP4()) < 0.2 and selectedFatZbb[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
-                    if(selectedFatZbb[0]->DeltaR(*genVp) < 0.2 and (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).DeltaR(genVp2->GetP4()) < 0.2 ) signalLabel="_good";
-                }
             }
         }
     }
@@ -1581,7 +1571,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(selectedFatJets.size()>0 and selectedJets.size()>1) {
             category="_BMET";
-            signalLabel="";
 
             //        Current: (ET1+ET2)^2 - (PT1+PT2)^2    (also as shown in the current ch-higgs code you sent to me)
             //        New:      m^2 + PT2                                 (In code this is very easy to obtained: directly take      (p1+p2).Mt()     )
@@ -1664,7 +1653,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and evt_chi2_<chi2Cut) {
                 category="_RMET";
-                signalLabel="";
 
                 if(usePuppi) {
                     p4VV = (e->GetMet().GetPuppiMetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
@@ -1890,16 +1878,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     }
 
     if(doMETAnalysis) Fill("VBShadAnalysis/Met" +category+"_"+label, systname, evt_PTV1, e->weight() );
-
-    if(label.find("ZnnZhadJJ_EWK") !=string::npos  ||
-       label.find("ZbbZhadJJ_EWK")!=string::npos  ||
-       label.find("WPhadWPhadJJ_EWK") !=string::npos ||
-       label.find("WWjj_SS_ll") !=string::npos ||
-       label.find("WWjj_SS_lt") !=string::npos ||
-       label.find("WWjj_SS_tt") !=string::npos ||
-       label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos) {
-        Fill("VBShadAnalysis/MVV" +category+signalLabel+"_"+label, systname, evt_MVV, e->weight() );
-    }
 
     if(evt_Detajj < 5.) Fill("VBShadAnalysis/MVV" +category+"_low_"+label, systname, evt_MVV, e->weight() );
     if(evt_Detajj >= 5.) Fill("VBShadAnalysis/MVV" +category+"_high_"+label, systname, evt_MVV, e->weight() );

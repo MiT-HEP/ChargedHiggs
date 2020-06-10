@@ -28,7 +28,7 @@ public:
     void EndEvent() override;
     void setTree(Event*e, string label, string  category);
 
-    void BookHisto(string l, string category, string signalLabel);
+    void BookHisto(string l, string category);
 
     const string name() const override {return "VBShadAnalysis";}
     void SetLeptonCuts(Lepton *l) override ; 
