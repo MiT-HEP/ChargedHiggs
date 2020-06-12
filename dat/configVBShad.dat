@@ -24,7 +24,8 @@ include=dat/vbshad.dat
 #____________________ COMMON SETTINGS _____________________________
 #
 
-#Files=root://eoscms///store/group/phys_higgs/cmshmm/amarini/Nero/v3.6/year2016/WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/WpWpJJ_EWK_TuneCUETP8M1_13TeV-powheg-pythia8/191010_094953/0000/NeroNtuples_44.root
+#Files=root://eoscms///store/group/phys_higgs/cmshmm/amarini/Nero/v3.7/year2016/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/200403_084241/0000/NeroNtuples_99.root
+
 
 Branches=dat/branches.txt
 

@@ -64,7 +64,7 @@ void VBShadAnalysis::SetFatJetCuts(FatJet *f){
     f->SetSDMassCut(30);
 }
 
-void VBShadAnalysis::BookHisto(string l, string category, string signalLabel)
+void VBShadAnalysis::BookHisto(string l, string category)
 {
 
     Book ("VBShadAnalysis/BOSON/ZepBosBVar"+category+"_"+l, " ; |#eta_{V} - (#eta_{j1} + #eta_{j2})/2| / #Delta #eta(jj) ; Events", 250,0,2);
@@ -86,8 +86,6 @@ void VBShadAnalysis::BookHisto(string l, string category, string signalLabel)
        l.find("WWjj_SS_lt") !=string::npos ||
        l.find("WWjj_SS_tt") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) {
-        Book ("VBShadAnalysis/MVV"+category+"_good_"+l, "MVV (good) ; MVV_{reco}; Events", 100, 0, 2500);
-        Book ("VBShadAnalysis/MVV"+category+"_bad_"+l, "MVV (bad) ; MVV_{reco}; Events", 100, 0, 2500);
         Book ("VBShadAnalysis/MVVres"+category+"_"+l, "MVVres ; ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100, -5., 5.);
     }
 
@@ -242,6 +240,14 @@ void VBShadAnalysis::Init(){
     Log(__FUNCTION__,"INFO",Form("doHADAntiAnalysis=%d",doHADAntiAnalysis));
     Log(__FUNCTION__,"INFO",Form("doMETAntiAnalysis=%d",doMETAntiAnalysis));
 
+
+    if (not jet_resolution)
+    { // init jet resolution
+        Log(__FUNCTION__,"INFO","Init JER");
+        jet_resolution.reset( new JME::JetResolutionObject("aux/jer/Summer16_25nsV1/Summer16_25nsV1_MC_PtResolution_AK4PFchs.txt") ) ;
+    }
+
+
     if(doBAnalysis) doTMVA=false;
 
     if(doTMVA) InitTmva();
@@ -338,7 +344,42 @@ void VBShadAnalysis::Init(){
 
         // resolved
         Book ("VBShadAnalysis/Baseline/ResBosonMass_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResBosonMass_right_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResBosonMass_wrong_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResBosonMassClean_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResBosonMassClean_right_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResBosonMassClean_wrong_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResZMass_right_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResZMass_wrong_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResWMass_right_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+        Book ("VBShadAnalysis/Baseline/ResWMass_wrong_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+
+        Book2D ("VBShadAnalysis/Baseline/ResWMassChi2_"+l, "ResBosonMass; V(i,j) [GeV]; Chi2", 100, 0, 200, 100, 0, 100);
+        Book2D ("VBShadAnalysis/Baseline/ResZMassChi2_"+l, "ResBosonMass; V(i,j) [GeV]; Chi2", 100, 0, 200, 100, 0, 100);
+
         Book ("VBShadAnalysis/Baseline/ResBosonChi2_"+l, "ResBosonChi2; Chi2 [GeV]; Events", 100, 0, 1000.);
+        Book ("VBShadAnalysis/Baseline/ResBosonChi2_right_"+l, "ResBosonChi2; Chi2; Events", 100, 0, 1000.);
+        Book ("VBShadAnalysis/Baseline/ResBosonChi2_wrong_"+l, "ResBosonChi2; Chi2; Events", 100, 0, 1000.);
+        Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_W_"+l, "ResBosonChi2Diff_W; Chi2; Events", 100, -25, 25.);
+        Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_"+l, "ResBosonChi2Diff_Z; Chi2; Events", 100, -25, 25.);
+        Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_W_right_"+l, "ResBosonChi2Diff_W; Chi2; Events", 100, -25, 25.);
+        Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_right_"+l, "ResBosonChi2Diff_Z; Chi2; Events", 100, -25, 25.);
+        Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_W_wrong_"+l, "ResBosonChi2Diff_W; Chi2; Events", 100, -25, 25.);
+        Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_wrong_"+l, "ResBosonChi2Diff_Z; Chi2; Events", 100, -25, 25.);
+
+
+        Book ("VBShadAnalysis/Baseline/DR_genVj1_"+l, "DeltaR(gen,j1); DeltaR(gen,j1); Events", 100, 0, 4.);
+        Book ("VBShadAnalysis/Baseline/DR_genVj2_"+l, "DeltaR(gen,j2); DeltaR(gen,j2); Events", 100, 0, 4.);
+        Book ("VBShadAnalysis/Baseline/Eta_genLHEW_"+l, "Eta_V; eta; Events", 120, -3., 3.);
+        Book ("VBShadAnalysis/Baseline/Eta_genLHEZ_"+l, "Eta_V; eta; Events", 120, -3., 3.);
+        Book ("VBShadAnalysis/Baseline/JetUnc_right_"+l, "unc; jesUnc; Events", 500, 0., 0.25);
+        Book ("VBShadAnalysis/Baseline/JetUnc_wrong_"+l, "unc; jesUnc; Events", 500, 0., 0.25);
+        Book ("VBShadAnalysis/Baseline/JetRes_right_"+l, "res; jerUnc; Events", 500, 0., 0.25);
+        Book ("VBShadAnalysis/Baseline/JetRes_wrong_"+l, "res; jerUnc; Events", 500, 0., 0.25);
+
+        Book ("VBShadAnalysis/Baseline/ResBosonGenMass_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+
+
 
         // RESONANT CASE
         Book ("VBShadAnalysis/OUT1500/MVV_"+l, "MVV-OUT (unclassified); MVV [GeV]; Events", 100,0,2500);
@@ -351,13 +392,13 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/OUT1500/Mjj_BB_"+l, "Mjj-OUT (BB); Mjj [GeV]; Events", 35,0,3500);
         Book ("VBShadAnalysis/IN1500/Mjj_BB_"+l, "Mjj-IN (BB); Mjj [GeV]; Events", 35,0,3500);
 
-        BookHisto(l, "", "");
-        BookHisto(l, "_BB", "");
-        BookHisto(l, "_RB", "");
-        BookHisto(l, "_BMET", "");
-        BookHisto(l, "_RMET", "");
-        BookHisto(l, "_BBtag", "");
-        BookHisto(l, "_RBtag", "");
+        BookHisto(l, "");
+        BookHisto(l, "_BB");
+        BookHisto(l, "_RB");
+        BookHisto(l, "_BMET");
+        BookHisto(l, "_RMET");
+        BookHisto(l, "_BBtag");
+        BookHisto(l, "_RBtag");
 
     } //end label loop
 
@@ -388,6 +429,9 @@ void VBShadAnalysis::Init(){
         Branch("tree_vbs","varDphijj",'F');
         Branch("tree_vbs","varJet2Eta",'F');
         Branch("tree_vbs","varJet2Pt",'F');
+
+        Branch("tree_vbs","j1Unc",'F');
+        Branch("tree_vbs","j2Unc",'F');
 
         // VV
         Branch("tree_vbs","genMVV",'F');
@@ -427,6 +471,11 @@ void VBShadAnalysis::Init(){
         Branch("tree_vbs","bosV2tdiscr",'F');
         Branch("tree_vbs","bosV2chi2",'F');
 
+        Branch("tree_vbs","bosGen",'I');
+        Branch("tree_vbs","bosV1Unc",'F');
+        Branch("tree_vbs","bosV2Unc",'F');
+
+
         //MVA
         Branch("tree_vbs","BDTnoBnoMET",'F');
         Branch("tree_vbs","BDTwithMET",'F');
@@ -436,6 +485,25 @@ void VBShadAnalysis::Init(){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
 
 }
+
+
+
+float VBShadAnalysis::Getjetres(Jet* ajet) {
+
+    JME::JetParameters bins1,vars1;
+    vars1.setJetPt( ajet->GetP4().Pt() );
+    bins1.setJetEta( ajet->GetP4().Eta() );
+    bins1.setRho( std::min(e->Rho(),float(40.)) ); // corrections up to rho 40.
+
+    float sigma1=1.0;
+
+    if ( jet_resolution->getRecord(bins1)==NULL){ sigma1=1.0;}
+    else{ sigma1 = jet_resolution->evaluateFormula( *jet_resolution->getRecord(bins1),vars1); }
+
+    return sigma1/(ajet->GetP4().Pt());
+}
+
+
 
 float VBShadAnalysis::jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV) {
 
@@ -487,7 +555,15 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
     double PTij = 0; //Wjets
     double Mij = 0; //Wjets
     double Mkl = 0; //forward jets
+    double DPhiij = 0;
+    double MRij = 0;
+    double Unc_i = 0;
+    double Unc_j = 0;
+    double V_term = 0;
+
     evt_chi2_ = 999999;
+    evt_bosV2unc = 0;
+
 
     int index_i=-1;
     int index_j=-1;
@@ -500,9 +576,25 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
             Mij = selectedJets[i]->InvMass(selectedJets[j]);
             DRij = selectedJets[i]->DeltaR(selectedJets[j]);
             PTij = (selectedJets[i]->GetP4()+selectedJets[j]->GetP4()).Pt();
+            DPhiij = fabs(ChargedHiggs::deltaPhi(selectedJets[i]->GetP4().Phi(), selectedJets[j]->GetP4().Phi()));
+            //MRij = sqrt( 2 * (selectedJets[i]->GetP4().Pt()) * (selectedJets[j]->GetP4().Pt()) * cos(DPhiij) );
+            MRij = 0.5*DRij*PTij;
+
 
             float minEtaV = std::min(etaV1,(float)(selectedJets[i]->GetP4() + selectedJets[j]->GetP4()).Eta());
             float maxEtaV = std::max(etaV1,(float)(selectedJets[i]->GetP4() + selectedJets[j]->GetP4()).Eta());
+
+
+            float bosjer1=Getjetres(selectedJets[i]);
+            float bosjer2=Getjetres(selectedJets[j]);
+
+
+            Unc_i = (selectedJets[i]->GetJESUnc())*(selectedJets[i]->GetJESUnc()) + bosjer1 * bosjer1;
+            Unc_j = (selectedJets[j]->GetJESUnc())*(selectedJets[j]->GetJESUnc()) + bosjer2 * bosjer2;
+            //V_term = (MRij - MV) * (MRij - MV)  / ( MRij*MRij * ( sqrt(Unc_i+Unc_j+2.5*2.5/(MV*MV)) ) ); 
+            //V_term = (MRij - MV) * (MRij - MV)  / MVres * (1+sqrt(Unc_i+Unc_j+2.5*2.5/(MV*MV)));
+            V_term = (MRij - MV) * (MRij - MV)  / MVres * (Unc_i+Unc_j+2.5*2.5/(MV*MV));
+
 
             for(unsigned k=0; k<selectedJets.size(); ++k) {
                 if(k == i || k == j) continue;
@@ -522,8 +614,9 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
                     Mkl = selectedJets[k]->InvMass(selectedJets[l]);
                     //                            double chi2 = (norm / (Mkl*Mkl)) + (Mij*Mij - MV*MV)/MVres;
                     // DR ~ 2M/PT
-                    double chi2 = (norm / (Mkl*Mkl)) + (0.5*DRij*PTij - MV) * (0.5*DRij*PTij - MV) / MVres;
-                    if(chi2<evt_chi2_) { evt_chi2_=chi2; index_i=i; index_j=j; index_k=k; index_l=l; }
+                    double chi2 = (norm / (Mkl*Mkl)) + V_term;
+                    //double chi2 = (norm / (Mkl*Mkl)) + (0.5*DRij*PTij - MV) * (0.5*DRij*PTij - MV) / MVres;
+                    if(chi2<evt_chi2_) { evt_bosV2unc = sqrt(Unc_i+Unc_j); evt_chi2_=chi2; index_i=i; index_j=j; index_k=k; index_l=l; }
                 }
             }
         }
@@ -542,7 +635,6 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
 
 }
 
-
 double VBShadAnalysis::genMtt(Event*e)
 {
 
@@ -559,6 +651,96 @@ double VBShadAnalysis::genMtt(Event*e)
     return Mtt;
 
 }
+
+
+bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
+
+    if(bosonJets.size()<2) return false;
+
+    bool match_1 = false;
+    bool match_2 = false;
+
+    evt_genmatch = 0;
+
+    float bosjer1=Getjetres(bosonJets[0]);
+    float bosjer2=Getjetres(bosonJets[1]);
+
+
+    for(Int_t i = 0; i < e->NGenPar(); i++){
+
+        GenParticle *genpar = e->GetGenParticle(i);
+
+        //cout <<  "debug LHE: " << genpar->IsLHE() << "pa id: " <<  genpar->GetParentPdgId() << endl;
+
+        if( ! genpar->IsLHE()) continue;
+
+        Fill("VBShadAnalysis/Baseline/DR_genVj1_"+label, systname, (bosonJets[0]->GetP4()).DeltaR(genpar->GetP4()), e->weight() );
+        Fill("VBShadAnalysis/Baseline/DR_genVj2_"+label, systname, (bosonJets[1]->GetP4()).DeltaR(genpar->GetP4()), e->weight() );
+
+        //if( fabs(genpar->GetParentPdgId())!= 23 && fabs(genpar->GetParentPdgId())!= 24 ) continue;
+
+        if(fabs(genpar->GetPdgId()) == 23) Fill("VBShadAnalysis/Baseline/Eta_genLHEZ_"+label, systname, genpar->Eta(), e->weight() );
+        if(fabs(genpar->GetPdgId()) == 24) Fill("VBShadAnalysis/Baseline/Eta_genLHEW_"+label, systname, genpar->Eta(), e->weight() );
+
+        if( (bosonJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+        if( (bosonJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+
+    }
+
+    evt_genmatch = match_1 && match_2;
+
+    if(match_1){
+        Fill("VBShadAnalysis/Baseline/JetUnc_right_"+label, systname, bosonJets[0]->GetJESUnc(), e->weight() );
+        Fill("VBShadAnalysis/Baseline/JetRes_right_"+label, systname, bosjer1, e->weight() );
+    }else{
+        Fill("VBShadAnalysis/Baseline/JetUnc_wrong_"+label, systname, bosonJets[0]->GetJESUnc(), e->weight() );
+        Fill("VBShadAnalysis/Baseline/JetRes_wrong_"+label, systname, bosjer1, e->weight() );
+    }
+
+    if(match_2){
+        Fill("VBShadAnalysis/Baseline/JetUnc_right_"+label, systname, bosonJets[1]->GetJESUnc(), e->weight() );
+        Fill("VBShadAnalysis/Baseline/JetRes_right_"+label, systname, bosjer2, e->weight() );
+    }else{
+        Fill("VBShadAnalysis/Baseline/JetUnc_wrong_"+label, systname, bosonJets[1]->GetJESUnc(), e->weight() );
+        Fill("VBShadAnalysis/Baseline/JetRes_wrong_"+label, systname, bosjer2, e->weight() );
+    }
+
+
+
+    if(!match_1 || !match_2){
+
+        Jet* gjet1 = NULL;
+        Jet* gjet2 = NULL;
+
+        for(unsigned i=0; i<selectedJets.size(); ++i) {
+
+            if( selectedJets[i] == forwardJets[0] || selectedJets[i] == forwardJets[1]) continue;
+
+            for(Int_t j = 0; j < e->NGenPar(); j++){
+
+                GenParticle *genpar = e->GetGenParticle(j);
+
+                if( ! genpar->IsLHE()) continue;
+                if( (selectedJets[i]->GetP4()).DeltaR(genpar->GetP4()) > 0.2 ) continue;
+
+                if( !match_1 && match_2 && selectedJets[i] != bosonJets[1] ) {gjet1 = selectedJets[i]; gjet2 = bosonJets[1];}
+                if( match_1 && !match_2 && selectedJets[i] != bosonJets[0] ) {gjet1 = bosonJets[0]; gjet2 = selectedJets[i];}
+                if( !match_1 && !match_2) { if(gjet1 == NULL) gjet1 = selectedJets[i]; else gjet2 = selectedJets[i];}
+
+            }
+        }
+
+        if(gjet1 != NULL && gjet2 != NULL){
+            Fill("VBShadAnalysis/Baseline/ResBosonGenMass_"+label, systname, (gjet1->GetP4() + gjet2->GetP4()).M(), e->weight() );
+            //double new_chi2 = (1000*1000 / (*Mkl)) + (0.5*DRij*PTij - MV) * (0.5*DRij*PTij - MV) / MVres;
+        }
+    }
+
+    return (match_1 && match_2);
+
+}
+
+
 
 
 void VBShadAnalysis::genStudies(Event*e, string label )
@@ -597,6 +779,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
     for(Int_t i = 0; i < e->NGenPar(); i++){
 
         GenParticle *genpar = e->GetGenParticle(i);
+        if( ! genpar->IsLHE()) continue;
 
         // ** BOSON
         if(fabs(genpar->GetPdgId()) == pdgID1) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
@@ -958,6 +1141,9 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("varDphijj",evt_Dphijj);
     SetTreeVar("varJet2Eta",evt_Jet2Eta);
     SetTreeVar("varJet2Pt",evt_Jet2Pt);
+    SetTreeVar("j1Unc",evt_j1unc);
+    SetTreeVar("j2Unc",evt_j2unc);
+
 
     SetTreeVar("genMVV",evt_MVV_gen);
     SetTreeVar("varMVV",evt_MVV);
@@ -991,10 +1177,14 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("bosV1mass",evt_bosV1mass);
     SetTreeVar("bosV1discr",evt_bosV1discr);
     SetTreeVar("bosV1tdiscr",evt_bosV1tdiscr);
+    SetTreeVar("bosV1Unc", evt_bosV1unc);
     SetTreeVar("bosV2mass",evt_bosV2mass);
     SetTreeVar("bosV2discr",evt_bosV2discr);
     SetTreeVar("bosV2tdiscr",evt_bosV2tdiscr);
+    SetTreeVar("bosV2Unc", evt_bosV2unc);
     SetTreeVar("bosV2chi2",evt_chi2_);
+
+    SetTreeVar("bosGen",int(evt_genmatch));
 
     // MVA
     SetTreeVar("BDTnoBnoMET",BDTnoBnoMET);
@@ -1169,7 +1359,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
 
     string category="";
-    string signalLabel="";
     // for forwardJets pick the one with the largest mass
 
     if(!doMETAnalysis and !doBAnalysis) {
@@ -1183,7 +1372,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(selectedFatJets.size()>1 and selectedJets.size()>1) {
             category="_BB";
-            signalLabel="";
+            evt_genmatch = false;
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
             evt_bosV1discr = bosonVDiscr[0];
             evt_bosV1tdiscr = bosonTDiscr[0];
@@ -1207,10 +1396,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 forwardJets.push_back(selectedJets[iter]);
             }
 
-            if(genVp==NULL or genVp2==NULL) signalLabel="_bad";
+            if(genVp==NULL or genVp2==NULL) evt_genmatch = false;
             if(genVp!=NULL and genVp2!=NULL) {
-                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[1]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
-                if(selectedFatJets[1]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
+                bool match1 = false;
+                bool match2 = false;
+                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[1]->DeltaR(*genVp2) < 0.2 ) match1 = true;
+                if(selectedFatJets[1]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) match2 = true;
+                if(match1 and match2) evt_genmatch = true;
             }
         }
 
@@ -1224,7 +1416,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, evt_chi2_, e->weight() );
             if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and evt_chi2_<chi2Cut) {
                 category="_RB";
-                signalLabel="";
                 evt_bosV1discr = bosonVDiscr[0];
                 evt_bosV1tdiscr = bosonTDiscr[0];
                 evt_bosV1mass = bosonMass[0];
@@ -1239,11 +1430,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 evt_DetaVV = fabs(selectedFatJets[0]->GetP4().Eta() - (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta());
                 evt_PetaVV = selectedFatJets[0]->GetP4().Eta() * (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta();
 
-                if(genVp==NULL or genVp2==NULL) signalLabel="_bad";
-                if(genVp!=NULL and genVp2!=NULL) {
-                    if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).DeltaR(genVp2->GetP4()) < 0.2 ) signalLabel="_good";
-                    if((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).DeltaR(genVp->GetP4()) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
-                }
             }
         }
     }
@@ -1265,7 +1451,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1) {
             category="_BBtag";
             // add cases with two Zbb Zbb most pures
-            signalLabel="";
+            evt_genmatch = false;
 
             Fill("VBShadAnalysis/Baseline/pT_BJet_"+label, systname, selectedFatZbb[0]->GetP4().Pt(), e->weight() );
 
@@ -1291,27 +1477,69 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 forwardJets.push_back(selectedJets[iter]);
             }
 
-            if(genVp==NULL or genVp2==NULL) signalLabel="_bad";
+            if(genVp==NULL or genVp2==NULL) evt_genmatch = false;
             if(genVp!=NULL and genVp2!=NULL) {
-                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatZbb[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
-                if(selectedFatZbb[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
+                bool match1 = false;
+                bool match2 = false;
+                if(selectedFatZbb[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) match1 = true;
+                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatZbb[0]->DeltaR(*genVp2) < 0.2 ) match2 = true;
+                if(match1 and match2) evt_genmatch = true;
             }
-
         }
 
         if(selectedFatZbb.size()>0 and selectedFatJets.size()==0 and selectedJets.size()>3) {
             category="";
 
             // target the ZbbZqq + ZbbWqq
-            double mBoson=90.;
+
+            ///////$$$$$$$
+            ///////$$$$$$$
+
+            string genmatch = "wrong_";
+            string genWmat = "wrong_";
+            string genZmat = "wrong_";
+            double mBoson_W=80.;
+            double mBoson_Z=90.;
             double mWidth=20.;
             double chi2Cut=6.;
-            double MV = resolvedtagger(e, mBoson, label, systname, selectedFatZbb[0]->Eta());
+
+            // MARIA: dummy use of the centrality for now
+            double MV_W = resolvedtagger(e, mBoson_W, label, systname, 0.); float mW_chi2 = evt_chi2_; if(genMatchResolved(e,systname,label)) genWmat = "right_";
+            if(bosonJets.size()>1){
+                Fill2D("VBShadAnalysis/Baseline/ResWMassChi2_"+label, systname, MV_W, mW_chi2, e->weight() );
+                Fill("VBShadAnalysis/Baseline/ResWMass_"+genWmat+label, systname, MV_W, e->weight() );
+            }
+            double MV_Z = resolvedtagger(e, mBoson_Z, label, systname, 0.); float mZ_chi2 = evt_chi2_; if(genMatchResolved(e,systname,label)) genZmat = "right_";
+            if(bosonJets.size()>1){
+                Fill2D("VBShadAnalysis/Baseline/ResZMassChi2_"+label, systname, MV_Z, mZ_chi2, e->weight() );
+                Fill("VBShadAnalysis/Baseline/ResZMass_"+genZmat+label, systname, MV_Z, e->weight() );
+            }
+
+            double mBoson = 90.;
+            double MV = MV_Z;
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2Diff_W_"+genWmat+label, systname, mW_chi2-mZ_chi2, e->weight() );
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_"+genZmat+label, systname, mZ_chi2-mW_chi2, e->weight() );
+            if(mW_chi2 < mZ_chi2){
+                mBoson = 80.;
+                MV = resolvedtagger(e, mBoson, label, systname, 0.);
+            }
+            if(genMatchResolved(e,systname,label)) genmatch = "right_";
+
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+genmatch+label, systname, MV, e->weight() );
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, evt_chi2_, e->weight() );
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+genmatch+label, systname, evt_chi2_, e->weight() );
+
+            if(bosonJets.size()>1 && evt_chi2_<chi2Cut){
+                Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+label, systname, MV, e->weight() );
+                Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+genmatch+label, systname, MV, e->weight() );
+            }
+
+            ///////$$$$$
+            ///////$$$$$
+
             if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and evt_chi2_<chi2Cut) {
                 category="_RBtag";
-                signalLabel="";
 
                 p4VV = ( selectedFatZbb[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
                 evt_MVV = p4VV.M();
@@ -1326,11 +1554,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 evt_DetaVV = fabs(selectedFatZbb[0]->GetP4().Eta() - (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta());
                 evt_PetaVV = selectedFatZbb[0]->GetP4().Eta() * (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta();
 
-                if(genVp==NULL or genVp2==NULL) signalLabel="_bad";
-                if(genVp!=NULL and genVp2!=NULL) {
-                    if((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).DeltaR(genVp->GetP4()) < 0.2 and selectedFatZbb[0]->DeltaR(*genVp2) < 0.2 ) signalLabel="_good";
-                    if(selectedFatZbb[0]->DeltaR(*genVp) < 0.2 and (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).DeltaR(genVp2->GetP4()) < 0.2 ) signalLabel="_good";
-                }
             }
         }
     }
@@ -1348,7 +1571,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(selectedFatJets.size()>0 and selectedJets.size()>1) {
             category="_BMET";
-            signalLabel="";
 
             //        Current: (ET1+ET2)^2 - (PT1+PT2)^2    (also as shown in the current ch-higgs code you sent to me)
             //        New:      m^2 + PT2                                 (In code this is very easy to obtained: directly take      (p1+p2).Mt()     )
@@ -1388,16 +1610,49 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         // target the ZnnZqq + ZnnWqq
         if(selectedFatJets.size()==0 and selectedJets.size()>3) {
             category="";
-            double mBoson=90.;
+
+            string genmatch = "wrong_";
+            string genWmat = "wrong_";
+            string genZmat = "wrong_";
+            double mBoson_W=80.;
+            double mBoson_Z=90.; 
+
             double mWidth=20.;
             double chi2Cut=6.;
             // MARIA: dummy use of the centrality for now
-            double MV = resolvedtagger(e, mBoson, label, systname, 0.);
+            double MV_W = resolvedtagger(e, mBoson_W, label, systname, 0.); float mW_chi2 = evt_chi2_; if(genMatchResolved(e,systname,label)) genWmat = "right_";
+            if(bosonJets.size()>1){
+              Fill2D("VBShadAnalysis/Baseline/ResWMassChi2_"+label, systname, MV_W, mW_chi2, e->weight() );
+              Fill("VBShadAnalysis/Baseline/ResWMass_"+genWmat+label, systname, MV_W, e->weight() );
+            }
+            double MV_Z = resolvedtagger(e, mBoson_Z, label, systname, 0.); float mZ_chi2 = evt_chi2_; if(genMatchResolved(e,systname,label)) genZmat = "right_";
+            if(bosonJets.size()>1){
+              Fill2D("VBShadAnalysis/Baseline/ResZMassChi2_"+label, systname, MV_Z, mZ_chi2, e->weight() );
+              Fill("VBShadAnalysis/Baseline/ResZMass_"+genZmat+label, systname, MV_Z, e->weight() );
+            }
+
+            double mBoson = 90.;
+            double MV = MV_Z;
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2Diff_W_"+genWmat+label, systname, mW_chi2-mZ_chi2, e->weight() );
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_"+genZmat+label, systname, mZ_chi2-mW_chi2, e->weight() );
+            if(mW_chi2 < mZ_chi2){
+              mBoson = 80.;
+              MV = resolvedtagger(e, mBoson, label, systname, 0.);
+            }
+            if(genMatchResolved(e,systname,label)) genmatch = "right_";
+
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+genmatch+label, systname, MV, e->weight() );
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, evt_chi2_, e->weight() );
+            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+genmatch+label, systname, evt_chi2_, e->weight() );
+
+            if(bosonJets.size()>1 && evt_chi2_<chi2Cut){
+              Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+label, systname, MV, e->weight() );
+              Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+genmatch+label, systname, MV, e->weight() );
+            }
+
             if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and evt_chi2_<chi2Cut) {
                 category="_RMET";
-                signalLabel="";
 
                 if(usePuppi) {
                     p4VV = (e->GetMet().GetPuppiMetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
@@ -1514,6 +1769,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ VARIOUS plots below for tree
     //////
 
+    evt_j1unc = sqrt((forwardJets[0]->GetJESUnc())*(forwardJets[0]->GetJESUnc()) + Getjetres(forwardJets[0]) * Getjetres(forwardJets[0]));
+    evt_j2unc = sqrt((forwardJets[1]->GetJESUnc())*(forwardJets[1]->GetJESUnc()) + Getjetres(forwardJets[1]) * Getjetres(forwardJets[1]));
+
     evt_Jet2Eta=forwardJets[1]->Eta();
     evt_Jet2Pt=forwardJets[1]->Pt();
 
@@ -1620,16 +1878,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     }
 
     if(doMETAnalysis) Fill("VBShadAnalysis/Met" +category+"_"+label, systname, evt_PTV1, e->weight() );
-
-    if(label.find("ZnnZhadJJ_EWK") !=string::npos  ||
-       label.find("ZbbZhadJJ_EWK")!=string::npos  ||
-       label.find("WPhadWPhadJJ_EWK") !=string::npos ||
-       label.find("WWjj_SS_ll") !=string::npos ||
-       label.find("WWjj_SS_lt") !=string::npos ||
-       label.find("WWjj_SS_tt") !=string::npos ||
-       label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos) {
-        Fill("VBShadAnalysis/MVV" +category+signalLabel+"_"+label, systname, evt_MVV, e->weight() );
-    }
 
     if(evt_Detajj < 5.) Fill("VBShadAnalysis/MVV" +category+"_low_"+label, systname, evt_MVV, e->weight() );
     if(evt_Detajj >= 5.) Fill("VBShadAnalysis/MVV" +category+"_high_"+label, systname, evt_MVV, e->weight() );

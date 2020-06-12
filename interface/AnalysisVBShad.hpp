@@ -13,6 +13,8 @@ class TRandom;
 #include "TPython.h"
 #include <memory>
 
+#include "interface/JetResolutionObject.hpp"
+
 class VBShadAnalysis: virtual public AnalysisBase
 {
 public:
@@ -26,7 +28,7 @@ public:
     void EndEvent() override;
     void setTree(Event*e, string label, string  category);
 
-    void BookHisto(string l, string category, string signalLabel);
+    void BookHisto(string l, string category);
 
     const string name() const override {return "VBShadAnalysis";}
     void SetLeptonCuts(Lepton *l) override ; 
@@ -34,12 +36,14 @@ public:
     void SetJetCuts(Jet *j) override ;
     void SetFatJetCuts(FatJet *f) override;
 
+    float Getjetres(Jet* ajet);
     float resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
     void getObjects(Event*e, string label, string systname);
     void studyTriggers(Event*e, string category, string label, string systname);
     double genMtt(Event*e);
+    bool genMatchResolved(Event*e, string systname, string label);
 
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
@@ -122,10 +126,16 @@ private:
     float evt_bosV1mass=-1;
     float evt_bosV1discr=-1;
     float evt_bosV1tdiscr=-1;
+    float evt_bosV1unc = 0;
     float evt_bosV2mass=-1;
     float evt_bosV2discr=-1;
     float evt_bosV2tdiscr=-1;
+    float evt_bosV2unc = 0;
     float evt_chi2_= -1;
+
+    bool evt_genmatch = 0;
+    float evt_j1unc = 0;
+    float evt_j2unc = 0;
 
     float BDTnoBnoMET = -100;
     float BDTwithMET = -100;
@@ -149,9 +159,11 @@ public:
     void AddSpectator( string name, char type, int r);
 
     vector<string> weights;
-    
+   
 protected:
     
+
+    std::unique_ptr<JME::JetResolutionObject> jet_resolution;
 };
 
 
