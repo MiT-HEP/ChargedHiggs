@@ -48,8 +48,10 @@ public:
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
     bool doHADAnalysis=false;
-    bool doHADAntiAnalysis=false;
     bool doMETAntiAnalysis=false;
+    bool doBAntiAnalysis=false;
+    bool doHADAntiAnalysis=false;
+
     bool writeTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
@@ -87,6 +89,7 @@ private:
     vector<float> bosonMass;
     vector<float> bosonBBDiscr;
     vector<float> bosonBBMass;
+    vector<float> bosonBBTDiscr;
 
     vector<Jet*> forwardJets;
     vector<Jet*> bosonJets;

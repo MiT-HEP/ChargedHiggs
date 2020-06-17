@@ -58,9 +58,13 @@ Output=VBShadSignal.root
 ###
 
 #include=dat/catalog/2020.moriond/year2016/MET.dat
-#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doMETAntiAnalysis=1
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doMETAntiAnalysis=1,doBAntiAnalysis=0
 #Output=VBSmetAntiSignal.root
 
 #include=dat/catalog/2020.moriond/year2016/jetHT.dat
-#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1,doBAntiAnalysis=0
 #Output=VBShadAntiSignal.root
+
+#include=dat/catalog/2020.moriond/year2016/jetHT.dat
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=0,doBAntiAnalysis=1
+#Output=VBShadAntiSignal_B.root
