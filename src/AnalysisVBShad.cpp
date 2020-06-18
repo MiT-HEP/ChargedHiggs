@@ -167,7 +167,7 @@ void VBShadAnalysis::ReadTmva(){
     //    if(doHADAnalysis or doHADAntiAnalysis) SetVariable("varPetaVV",evt_PetaVV);
 
     if(doHADAnalysis or doHADAntiAnalysis) SetVariable("varCen",evt_cenEta);
-    if(doMETAnalysis or doMETAntiAnalysis) SetVariable("varzepVB",evt_normPTVVjj);
+    if(doMETAnalysis or doMETAntiAnalysis) SetVariable("varzepVB",evt_zepVB);
 
     //    vector<float> bdt;
     for(unsigned i =0 ;i< readers_.size() ; ++i) {
@@ -1358,7 +1358,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatJets.size()<1 ) return EVENT_NOT_USED;
     if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatZbb.size()>0 ) return EVENT_NOT_USED;
     if ( doBAnalysis and selectedFatZbb.size()<1 ) return EVENT_NOT_USED;
-    if ( doMETAnalysis and selectedFatJets.size()<0 and selectedFatZbb.size()<0) return EVENT_NOT_USED;
+
+    // THIS IS NOT OK FOR THE RMET analysis
+    //    if ( doMETAnalysis and selectedFatJets.size()<0 and selectedFatZbb.size()<0) return EVENT_NOT_USED;
 
 
     //$$$$$$$$$
@@ -1825,14 +1827,21 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if( evt_cenEta < 0. ) return EVENT_NOT_USED;
     }
 
-    if(selectedFatJets.size()>0) {
+    if(selectedFatZbb.size()>0) {
+        evt_zepVB = fabs(selectedFatZbb[0]->Eta() - averageJJeta)/fabs(evt_Detajj);
+        evt_DRV1j = std::min(selectedFatZbb[0]->DeltaR(forwardJets[0]), selectedFatZbb[0]->DeltaR(forwardJets[1]));
+    } else if (selectedFatJets.size()>0) {
         evt_zepVB = fabs(selectedFatJets[0]->Eta() - averageJJeta)/fabs(evt_Detajj);
+        evt_DRV1j = std::min(selectedFatJets[0]->DeltaR(forwardJets[0]), selectedFatJets[0]->DeltaR(forwardJets[1]));
+    } else if (bosonJets.size()>1 ) {
+        TLorentzVector vP4 = bosonJets[0]->GetP4() + bosonJets[1]->GetP4();
+        evt_zepVB = fabs(vP4->Eta() - averageJJeta)/fabs(evt_Detajj);
+        evt_DRV1j = std::min(vP4->DeltaR(forwardJets[0]), vP4->DeltaR(forwardJets[1]));
         //        evt_zepV2 = fabs(selectedFatJets[0]->Rapidity() - averageJJeta)/fabs(evt_Detajj);
         //        evt_zepVV = fabs(selectedFatJets[0]->Rapidity() - averageJJeta)/fabs(evt_Detajj);
-        Fill("VBShadAnalysis/BOSON/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
-        evt_DRV1j = std::min(selectedFatJets[0]->DeltaR(forwardJets[0]), selectedFatJets[0]->DeltaR(forwardJets[1]));
     }
 
+    Fill("VBShadAnalysis/BOSON/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
     Fill("VBShadAnalysis/normPTVVjj" +category+"_"+label, systname, evt_normPTVVjj, e->weight() );
     Fill("VBShadAnalysis/Dphimin" +category+"_"+label, systname, minDPhi, e->weight() );
 
