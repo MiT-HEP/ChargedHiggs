@@ -1413,7 +1413,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 bool match2 = false;
                 if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[1]->DeltaR(*genVp2) < 0.2 ) match1 = true;
                 if(selectedFatJets[1]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) match2 = true;
-                if(match1 and match2) evt_genmatch = true;
+                if(match1 or match2) evt_genmatch = true;
             }
         }
 
@@ -1494,7 +1494,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 bool match2 = false;
                 if(selectedFatZbb[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) match1 = true;
                 if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatZbb[0]->DeltaR(*genVp2) < 0.2 ) match2 = true;
-                if(match1 and match2) evt_genmatch = true;
+                if(match1 or match2) evt_genmatch = true;
             }
         }
 
@@ -1835,8 +1835,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_DRV1j = std::min(selectedFatJets[0]->DeltaR(forwardJets[0]), selectedFatJets[0]->DeltaR(forwardJets[1]));
     } else if (bosonJets.size()>1 ) {
         TLorentzVector vP4 = bosonJets[0]->GetP4() + bosonJets[1]->GetP4();
-        evt_zepVB = fabs(vP4->Eta() - averageJJeta)/fabs(evt_Detajj);
-        evt_DRV1j = std::min(vP4->DeltaR(forwardJets[0]), vP4->DeltaR(forwardJets[1]));
+        evt_zepVB = fabs(vP4.Eta() - averageJJeta)/fabs(evt_Detajj);
+        evt_DRV1j = std::min(vP4.DeltaR(forwardJets[0]->GetP4()), vP4.DeltaR(forwardJets[1]->GetP4()));
         //        evt_zepV2 = fabs(selectedFatJets[0]->Rapidity() - averageJJeta)/fabs(evt_Detajj);
         //        evt_zepVV = fabs(selectedFatJets[0]->Rapidity() - averageJJeta)/fabs(evt_Detajj);
     }
