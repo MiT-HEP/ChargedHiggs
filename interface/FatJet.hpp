@@ -123,12 +123,16 @@ class FatJet : virtual public Object, virtual public SmearableBase
     // for VBS
     //    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.6 and IsFatJet() )   return 1; return 0;}
     //    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.45 and IsFatJet() )   return 1; return 0;}
+
+    // 0.828 is the 0.5% mistag, 0.258 is 5% mistag
     inline int IsWJet() const { if( Pt() > 200. and SDMass() > 65. and SDMass() < 105. and WvsQCDMD > 0.828 and IsFatJet() )   return 1; return 0;}
+    //    inline int IsWJet() const { if( Pt() > 200. and SDMass() > 65. and SDMass() < 105. and WvsQCDMD > 0.258 and IsFatJet() )   return 1; return 0;}
+
     // ZHbbvsQCDMD > 0.3 is roughly 10% mistag
     //    inline int IsZbbJet() const { if( Pt() > 200. and softdropMass > 75. and softdropMass < 105. and ZHbbvsQCDMD > 0.3 and IsFatJet() )   return 1; return 0;}
     //    inline int IsZbbJet() const { if( Pt() > 200. and softdropMass > 75. and softdropMass < 105. and ZHbbvsQCDMD > 0.6 and IsFatJet() )   return 1; return 0;}
     inline int IsZbbJet() const { if( Pt() > 200. and SDMass() > 75. and SDMass() < 105. and ZHbbvsQCDMD > 0.8945 and IsFatJet() )   return 1; return 0;}
-    inline int IsWJetMirror() const { if( Pt() > 200. and SDMass() > 65. and SDMass() < 105. and WvsQCDMD > 0. and WvsQCDMD < 0.828  and IsFatJet())   return 1; return 0;}
+    inline int IsWJetMirror() const { if( Pt() > 200. and fabs(SDMass()-80) < 30. and WvsQCDMD > 0. and WvsQCDMD < 0.828  and IsFatJet())   return 1; return 0;}
     inline int IsZbbJetMirror() const { if( Pt() > 200. and SDMass() > 75. and SDMass() < 105. and ZHbbvsQCDMD > 0. and ZHbbvsQCDMD < 0.8945 and IsFatJet() )   return 1; return 0;}
 
     /* // for ChargedHiggs
