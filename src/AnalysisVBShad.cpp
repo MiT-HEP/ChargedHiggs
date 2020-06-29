@@ -1475,9 +1475,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             evt_PTV2 = selectedFatJets[0]->GetP4().Pt();
             evt_bosV1discr = bosonBBDiscr[0];
             evt_bosV1mass = bosonBBMass[0];
+            evt_bosV1unc = -1;
+            evt_bosV1tdiscr = -1;
             evt_bosV2discr = bosonVDiscr[0];
             evt_bosV2tdiscr = bosonTDiscr[0];
             evt_bosV2mass = bosonMass[0];
+            evt_bosV2unc = 0;
             evt_DetaVV = fabs(selectedFatJets[0]->DeltaEta(selectedFatZbb[0]));
             evt_PetaVV = selectedFatJets[0]->GetP4().Eta() * selectedFatZbb[0]->GetP4().Eta();
             evt_EtaMinV = std::min(selectedFatJets[0]->Eta(),selectedFatZbb[0]->Eta());
@@ -1559,7 +1562,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 evt_PTV2 = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Pt();
                 evt_bosV1discr = bosonBBDiscr[0];
                 evt_bosV1mass = bosonBBMass[0];
+                evt_bosV1tdiscr = bosonBBTDiscr[0];
+                evt_bosV1unc = 0;
                 evt_bosV2mass = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
+                evt_bosV2discr = -1;
+                evt_bosV2tdiscr = -1;
+                evt_bosV2unc = 0;
                 evt_EtaMinV = std::min(selectedFatZbb[0]->Eta(),float((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Eta()));
                 evt_EtaMaxV = std::max(selectedFatZbb[0]->Eta(),float((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Eta()));
                 evt_DetaVV = fabs(selectedFatZbb[0]->GetP4().Eta() - (bosonJets[1]->GetP4() + bosonJets[0]->GetP4()).Eta());
@@ -1579,6 +1587,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_PTV1=0;
         evt_PTV2=0;
         evt_DetaVV=-100;
+
+        evt_bosV1mass=-1;
+        evt_bosV1discr=-1;
+        evt_bosV1tdiscr=-1;
+        evt_bosV1unc = 0;
 
         if((selectedFatJets.size()>0 or selectedFatZbb.size()>0) and selectedJets.size()>1) {
             category="_BMET";
@@ -1612,11 +1625,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             evt_PTVV = p4VV.Pt();
             evt_PTV2 = jetP4.Pt();
 
+            evt_bosV2unc = 0;
+
             if(selectedFatZbb.size()>0) { evt_bosV2discr = bosonBBDiscr[0]; evt_bosV2mass = bosonBBMass[0]; evt_bosV2tdiscr = bosonBBTDiscr[0]; }
             else {
-                evt_bosV2discr = bosonVDiscr[0];
-                evt_bosV2tdiscr = bosonTDiscr[0];
-                evt_bosV2mass = bosonMass[0];
+                evt_bosV2discr = bosonVDiscr[0]; evt_bosV2tdiscr = bosonTDiscr[0]; evt_bosV2mass = bosonMass[0];
             }
             //            float Mjj=jettagForBoosted(e, label, systname, jetP4.Eta(),jetP4.Eta());
             for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
@@ -1695,6 +1708,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 evt_PTVV = p4VV.Pt();
                 evt_PTV2 = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Pt();
                 evt_bosV2mass = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
+                evt_bosV2discr = -1;
+                evt_bosV2tdiscr = -1;
+                evt_bosV2unc = 0;
             }
         }
     }
