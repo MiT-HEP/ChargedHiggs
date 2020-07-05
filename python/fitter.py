@@ -133,6 +133,9 @@ if opts.classname== "BackgroundFitter" or opts.classname == "Fitter":
 if opts.classname== "Fitter":
     fitter.outname= opts.outfile
     fitter.inname =opts.file
+    if config.background_fitstrategy==1: 
+        fitter.mhmin=50
+        fitter.mhmax=5000
     ## Hmumu
     for m in config.sig_mass_points:
         fitter.mIn.push_back(m)
@@ -212,6 +215,8 @@ if opts.classname== "BackgroundFitter":
     fitter.outname= opts.outfile
     fitter.inname =opts.file
     fitter.rebin=1
+    fitter.fitStrategy=config.background_fitstrategy
+    if config.background_fitstrategy==1: fitter.blind=0
     ## Hmumu
     fitter.inputMasks.clear()
     if not config.background_input_masks:
