@@ -169,10 +169,26 @@ void VBShadAnalysis::ReadTmva(){
     if(doHADAnalysis or doHADAntiAnalysis) SetVariable("varCen",evt_cenEta);
     if(doMETAnalysis or doMETAntiAnalysis) SetVariable("varzepVB",evt_zepVB);
 
+    if(doVVFrame && doHADAnalysis or doHADAntiAnalysis){
+
+        SetVariable("varDphijj", evt_Dphijj);
+        SetVariable("varJet2Eta", evt_Jet2Eta);
+        SetVariable("j1Unc", evt_j1Unc);
+        SetVariable("j2Unc", evt_j2Unc);
+        SetVariable("varPTV1", evt_PTV1);
+        SetVariable("varPTV2", evt_PTV2);
+        SetVariable("varCen", evt_CenPTVVjj);
+        SetVariable("varzepVV", evt_zepVV);
+        SetVariable("varzepVB", evt_zepVB);
+        SetVariable("varDRVj", evt_DRVj);
+
+    }
+
     //    vector<float> bdt;
     for(unsigned i =0 ;i< readers_.size() ; ++i) {
         if(i==0 || i==1 || i==2) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSHad") );
         if(i==3 || i==4 || i==5) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSMet") );
+        if(i==6 or i==7 or i==8) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSHad_VV") );
     }
 
 }
@@ -218,6 +234,27 @@ void VBShadAnalysis::InitTmva() {
 
     }
 
+    for (int i=6; i<9; i++) {
+        AddVariable("varMjj",'F',i); 
+        AddVariable("varDetajj",'F',i); 
+        AddVariable("varDphijj",'F',i); 
+        AddVariable("varJet2Pt",'F',i);
+        AddVariable("varJet2Eta",'F',i);
+        AddVariable("j1Unc",'F',i);
+        AddVariable("j2Unc",'F',i);
+        AddVariable("varMVV",'F',i); 
+        AddVariable("varPTV1",'F',i);
+        AddVariable("varPTV2",'F',i);
+        AddVariable("varCen",'F',i);
+        AddVariable("varzepVV",'F',i);
+        AddVariable("varzepVB",'F',i); 
+        AddVariable("varDRVj",'F',i);
+        AddVariable("varnormPTVVjj",'F',i);
+
+    }
+
+
+
     cout << " GOING loop over weights" << weights.size() << endl;
 
     // load weights
@@ -226,6 +263,7 @@ void VBShadAnalysis::InitTmva() {
             cout <<"[TmvaAnalysis]::[Init]::[INFO] Loading weights idx="<<i<<": '"<< weights[i]<<"'"<<endl;
             if(i==0 or i==1 or i==2) readers_[i]->BookMVA("BDT_VBSHad",weights[i].c_str());
             if(i==3 or i==4 or i==5) readers_[i]->BookMVA("BDT_VBSMet",weights[i].c_str());
+            if(i==6 or i==7 or i==8) readers_[i]->BookMVA("BDT_VBSHad_VV",weights[i].c_str());
         }
     cout <<"[TmvaAnalysis]::[Init]::[INFO] Done"<<endl;
 
@@ -1337,6 +1375,63 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$ After this point doMETAntiAnalysis is set if doMETAnalysis
     getObjects(e, label , systname);
 
+    // if change frame
+    if(doVVFrame){
+        boostVV*=0;
+        TVector3 basezero(0.,0.,0.);
+
+        //BB
+        if (doHADAnalysis or doHADAntiAnalysis)
+            if(selectedFatJets.size()>1) boostVV = (selectedFatJets[0]->GetP4()+selectedFatJets[1]->GetP4()).BoostVector();    
+            //{  // To keep consistency, use reco VV uniformly.
+            //if( (label.find("_EWK_") !=string::npos ) && genVp!=NULL and genVp2!=NULL) boostVV = (genVp->GetP4() + genVp2->GetP4()).BoostVector();        
+            //else boostVV = (selectedFatJets[0]->GetP4()+selectedFatJets[1]->GetP4()).BoostVector();
+            //}
+        //BBtag
+        if (doBAnalysis)
+            if(selectedFatZbb.size()>0 and selectedFatJets.size()>0) boostVV = (selectedFatJets[0]->GetP4()+selectedFatZbb[0]->GetP4()).BoostVector();
+
+        //BMET
+        if (doMETAnalysis or doMETAntiAnalysis)
+            if(selectedFatJets.size()>0 or selectedFatZbb.size()>0) {
+              if(usePuppi) {
+                if(selectedFatZbb.size()>0) boostVV = (e->GetMet().GetPuppiMetP4() + selectedFatZbb[0]->GetP4()).BoostVector();
+                else if(selectedFatJets.size()>0) boostVV = (e->GetMet().GetPuppiMetP4() + selectedFatJets[0]->GetP4()).BoostVector();
+              } else {
+                if(selectedFatZbb.size()>0) boostVV = (e->GetMet().GetP4() + selectedFatZbb[0]->GetP4()).BoostVector();
+                else if(selectedFatJets.size()>0) boostVV = (e->GetMet().GetP4() + selectedFatJets[0]->GetP4()).BoostVector();
+              }
+            }    
+
+
+        if(boostVV != basezero){
+        
+            boostVV = -boostVV;
+
+            if(usePuppi) (e->GetMet().GetPuppiMetP4()).Boost(boostVV);
+
+            for(unsigned i = 0; i < e->NGenPar(); i++){
+                
+                (e->GetGenParticle(i).GetP4()).Boost(boostVV);
+
+            }
+
+            for(unsigned i=0; i<selectedJets.size(); ++i){
+
+                (selectedJets[i]->GetP4()).Boost(boostVV);
+
+            }
+
+            for(unsigned i=0; i<selectedFatJets.size(); ++i){
+
+                (selectedFatJets[i]->GetP4()).Boost(boostVV);
+            
+            }
+        } 
+            
+    }
+
+
     //$$$$$$$$$
     // events with B in another category
     // withMET
@@ -1728,7 +1823,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ CUT FLOW
     //////
 
-    double MVV_cut=500;
+    double MVV_cut= (doVVFrame == false) ? 500 : 100;
     // CHECK THIS: adjust with trigger turn ones especially on BB and Btag
     if((category.find("RBtag")   !=string::npos ) or (category.find("RMET")   !=string::npos )) MVV_cut=400;
 
@@ -1865,7 +1960,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         (category.find("BMET")   !=string::npos )
         or (category.find("RMET")   !=string::npos )
         ) and
-       (evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
+       (evt_normPTVVjj > 0.25) and !doVVFrame ) return EVENT_NOT_USED;
 
     std::vector<TLorentzVector> oP4;
     oP4.push_back(p4VV);

@@ -55,6 +55,7 @@ public:
     bool writeTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
+    bool doVVFrame=false;
 
     bool doTMVA=true;
 
@@ -94,6 +95,7 @@ private:
     vector<Jet*> forwardJets;
     vector<Jet*> bosonJets;
 
+    TVector3 boostVV;
     TLorentzVector p4VV;
     TLorentzVector p4jj;
     TLorentzVector p4VVjj;
