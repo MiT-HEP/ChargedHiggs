@@ -34,13 +34,13 @@ void VBSRBtag(
   factory = new TMVA::Factory("bdt", output_file, factoryOptions);
   TMVA::DataLoader *dataloader=new TMVA::DataLoader("MitRBtagAnalysis");
   
-    TCut cutTrainSignal = "ana_category == 6 && (mc == 2 && bosGen == 1)  && evt % 3 != 1";
-    TCut cutTrainBkg    = "ana_category == 6 && (mc > 100 && mc != 200 && mc != 201 && mc != 202 && mc != 330 && mc < 500) && evt % 3 != 1";
-    TCut cutTestSignal  = "ana_category == 6 && (mc == 2 && bosGen == 1) && evt % 3 == 1";
-    TCut cutTestBkg     = "ana_category == 6 && (mc > 100 && mc != 200 && mc != 201 && mc != 202 && mc != 330 && mc < 500) && evt % 3 == 1";
+    TCut cutTrainSignal = "ana_category == 6 && (mc == 2 && bosGen == 1)  && evt % 2 != 0";
+    TCut cutTrainBkg    = "ana_category == 6 && (mc > 50 && mc != 200 && mc != 201 && mc != 202 && mc != 330 && mc < 500) && evt % 2 != 0";
+    TCut cutTestSignal  = "ana_category == 6 && (mc == 2 && bosGen == 1) && evt % 2 == 0";
+    TCut cutTestBkg     = "ana_category == 6 && (mc > 50 && mc != 200 && mc != 201 && mc != 202 && mc != 330 && mc < 500) && evt % 2 == 0";
     
-    TCut cutTrainCRBkg   = "ana_category == 6 && (mc == 500 || mc == 200)  && evt % 3 != 1";
-    TCut cutTestCRBkg    = "ana_category == 6 && (mc == 500 || mc == 200) && evt % 3 == 1";
+    TCut cutTrainCRBkg   = "ana_category == 6 && (mc == 500 || mc == 200)  && evt % 2 != 0";
+    TCut cutTestCRBkg    = "ana_category == 6 && (mc == 500 || mc == 200) && evt % 2 == 0";
     
     dataloader->AddTree(mvaTree1, "Background", 1.0, cutTrainBkg   , "train");
     dataloader->AddTree(mvaTree1, "Signal"    , 1.0, cutTrainSignal, "train");
@@ -62,7 +62,7 @@ void VBSRBtag(
     //dataloader->AddVariable("varPTVV"    ,"varPTVV"    , "", 'F');
     //dataloader->AddVariable("varPTV1"    ,"varPTV1"    , "", 'F');
     dataloader->AddVariable("varPTV2"    ,"varPTV2"    , "", 'F');
-    dataloader->AddVariable("varDetaVV"    ,"varDetaVV"    , "", 'F');
+    //dataloader->AddVariable("varDetaVV"    ,"varDetaVV"    , "", 'F');
     //dataloader->AddVariable("varPetaVV"    ,"varPetaVV"    , "", 'F');
     //dataloader->AddVariable("varEtaMinV"    ,"varEtaMinV"    , "", 'F');
     //dataloader->AddVariable("varEtaMaxV"    ,"varEtaMaxV"    , "", 'F');
@@ -86,6 +86,7 @@ void VBSRBtag(
     dataloader->AddVariable("bosV2chi2"    ,"bosV2chi2"    , "", 'F');
 
     dataloader->AddSpectator("mc");
+    dataloader->AddSpectator("weight");
     dataloader->AddSpectator("ana_category");
     dataloader->AddSpectator("bosGen");
     dataloader->AddSpectator("evt");
