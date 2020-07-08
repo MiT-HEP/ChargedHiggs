@@ -144,6 +144,8 @@ private:
 
     float BDTnoBnoMET = -100;
     float BDTwithMET = -100;
+    float VVBDTnoBnoMET = -100;
+    float MultiBDTnoBnoMET = -100;
     int counterExtrabToVeto_=0;
 
     /************
@@ -151,8 +153,10 @@ private:
      ************/
 
     vector<float> bdt;  // score
+    vector<float> bdt_multi;
     DataStore varValues_;
     vector<TMVA::Reader*> readers_;
+    vector<TMVA::Reader*> readers_multi_;
     void InitTmva();
     void ReadTmva();
 
@@ -160,11 +164,12 @@ public:
     // Variables for MVA
     template<class T>
     void SetVariable( string name, T value){ varValues_.Set(name, value); }
-    void AddVariable( string name, char type, int r);
+    void AddVariable( string name, char type, TMVA::Reader* i_readers);
     void AddSpectator( string name, char type, int r);
 
     vector<string> weights;
-   
+    vector<string> weights_multi;
+
 protected:
     
 

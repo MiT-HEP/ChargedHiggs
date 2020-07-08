@@ -82,4 +82,9 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross2.wei
 ## BB - MC w/o QCDmirror (adjust preselection)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_VV_x1.weights.xml")
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_VV_x2.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_VV_x3.weights.xml") 
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_VV_x3.weights.xml")
+
+## Multicalss - MC
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_BDTG.weights.xml")
+
+ 
