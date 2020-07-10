@@ -13,11 +13,11 @@ class VBSHadr(HmmConfig):
         #MVV_BBtag_DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph
         self.sigspec="DoublyChargedHiggsGMmodel_HWW_M%.0f_13TeV-madgraph"
         #self.categories=["BBtag","RBTag"]
-        self.categories=["BBtag"]
+        self.categories=["BB"]
         self.year=2016
 
         ### FIT ###
-        self.xmin = 1000
+        self.xmin = 800
         self.xmax = 3000
         self.xname="mvv" ## -output roo rela var
 
@@ -31,11 +31,15 @@ class VBSHadr(HmmConfig):
         self.sigfit_smear_unc = {}
 
         ## n. gaus
-        self.sigfit_gaussians[('BBtag','DoublyChargedHiggs')]=2
+        self.sigfit_gaussians[('BB','DoublyChargedHiggs')]=3
         #self.sigfit_gaussians[('RBtag','DoublyChargedHiggs')]=1
         ## signal fit: dirname + varname + _ signspec
         self.SimpleScaleAndSmear()
         self.computeVersioning()
+
+        ##tmp configuration for background on MC
+        self.background_input_masks=['MVV_BB_AsimovB']
+        self.background_fitstrategy=1
 
 
 #create instance

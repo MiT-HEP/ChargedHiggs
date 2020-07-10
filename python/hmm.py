@@ -31,6 +31,7 @@ class HmmConfig():
         self.processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
         self.sigfit_gaussians={}
         self.background_input_masks=None
+        self.background_fitstrategy=0
         #self.sigfit_gaussians[("Untag0_BB","GluGlu")] = 3
         #self.scale ={} #("cat","proc") = mean, sigma
 

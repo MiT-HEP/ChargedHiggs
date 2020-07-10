@@ -121,6 +121,8 @@ class BackgroundFitter : virtual public BaseFitter{
     string normMask_;
     string modelMask_;
 
+    int fitStrategy{0}; // 0 hmm, 1 vbs -> for selecting functions
+
     void info();
 
     bool writeDatasets_ ; // write the RooDatasets into the ws

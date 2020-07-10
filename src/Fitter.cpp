@@ -452,22 +452,24 @@ void Fitter::fit(){
             if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs")//ttH125
             //if (false)//ttH all
             {
-                cout <<"DEBUG: Creating RooRealVar: "<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i) <<endl;
-                cout <<"DEBUG: par name="<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i)<<endl;
-                cout <<"DEBUG: par value = "<<fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i)]<<endl;
+                string massexp = "125"; if (proc=="DoublyChargedHiggs") massexp="1500";
+
+                cout <<"DEBUG: Creating RooRealVar: "<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i) <<endl;
+                cout <<"DEBUG: par name="<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i)<<endl;
+                cout <<"DEBUG: par value = "<<fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i)]<<endl;
                 if (w_->var("MH") == NULL ) w_->import(*mh_) ;
 
                 cout <<"DEBUG: MH = "<< w_->var("MH")<<endl;
 
-                RooRealVar par( Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i),
-                                Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i),
-                                fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,"125",i)]
+                RooRealVar par( Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i),
+                                Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i),
+                                fitParameters_[Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i)]
                         );
                 par.setConstant();
                 RooFormulaVar *c =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0", par);
-                if (i==0) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0 +(@1-125)", RooArgList(par , *w_->var("MH"))); // just put a shift // for ngaussians mean
-                if (i==2 and nGaussians[pair<int,string>(cat,proc)] >1) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0 +(@1-125)", RooArgList(par , *w_->var("MH"))); // just put a shift // for ngaussians mean
-                if (i==4 and nGaussians[pair<int,string>(cat,proc)] >2) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(),"@0 +(@1-125)", RooArgList(par , *w_->var("MH"))); // just put a shift // for ngaussians mean
+                if (i==0) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(), ("@0 +(@1-"+massexp+")").c_str(), RooArgList(par , *w_->var("MH"))); // just put a shift // for ngaussians mean
+                if (i==2 and nGaussians[pair<int,string>(cat,proc)] >1) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(), ("@0 +(@1-"+massexp+")").c_str(), RooArgList(par , *w_->var("MH"))); // just put a shift // for ngaussians mean
+                if (i==4 and nGaussians[pair<int,string>(cat,proc)] >2) c  =new RooFormulaVar ( splname.c_str(),splname.c_str(), ("@0 +(@1-"+massexp+")").c_str(), RooArgList(par , *w_->var("MH"))); // just put a shift // for ngaussians mean
                 cout <<"DEBUG importing in workspace:"<< splname <<endl;
                 w_->import(*c, RecycleConflictNodes());
             }

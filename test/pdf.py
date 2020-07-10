@@ -22,6 +22,9 @@ from DataFormats.FWLite import Handle, Events, Runs
 #files=["/eos/cms/store/user//amarini/Sync/5AC9148F-9842-E811-892B-3417EBE535DA.root"]
 #files=['/tmp/amarini/E24C7443-5B83-E811-9AEB-FA163E0C18B7.root']
 files=['root://eoscms///store/group/phys_higgs/cmshmm/amarini/EWK_LLJJ_MLL_105-160_ptJ-0_SM_5f_LO_TuneEEC5_13TeV-madgraph-h7/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-MINIAODSIM/200122_095931/0000/step4_460.root']
+files=['file:///eos/user/a/azecchin/public/sherpaSIM/SMP-RunIISummer15GS-00289.root']
+files=['root://xrootd-cms.infn.it///store/user/salbrech/privateMCProduction/aQGC_ZJJZJJjj_EWK_LO_NPle1_mjj100_pTj10_13TeV_madgraphMLM_pythia8/FullSim_94X-MINIAODSIM/200424_094238/0000/step4_79.root']
+files=['root://xrootd-cms.infn.it///store/user/salbrech/privateMCProduction/aQGC_ZJJZJJjj_EWK_LO_NPle1_mjj100_pTj10_13TeV_madgraphMLM_pythia8/FullSim_94X-MINIAODSIM/200424_094238/0000/step4_874.root']
 #files=['root://eoscms///store/group/phys_higgs/cmshmm/amarini/EWK_LLJJ_MLL_105-160_ptJ-0_SM_5f_LO_TuneEEC5_13TeV-madgraph-herwigpp/RunIISummer16MiniAODv3-94X_mcRun2_asymptotic_v3-MINIAODSIM/200124_090527/0002/step4_2991.root']
 h = ROOT.TH1D("ht","ht",1300,0,13000)
 h2 = ROOT.TH1D("htsec","ht",1300,0,13000)

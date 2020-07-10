@@ -1178,130 +1178,144 @@ void BackgroundFitter::fit(){
 
         // F-Test
         //
-        cout<<"*** Fitting Bernstein ***"<<endl;
         int bernOrd;
-        RooAbsPdf* bern = modelBuilder.fTest(Form("bern_cat%d",cat) ,hist_[name],&bernOrd,plotDir + "/bern");
-        storedPdfs.add(*bern); // 0
-
-        cout<<"*** Fitting DY Bernstein ***"<<endl;
-        int dybernOrd;
-        string mask= inputMasks[cat];
-        string mask_tt= inputMasks[cat];
-        string toReplace="Data";
-        //if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DY");
-        if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DYJetsToLL_M-105To160");
-        if (mask_tt.find(toReplace) != string::npos) mask_tt.replace(mask_tt.find(toReplace), toReplace.length(),"TT");
-        cout<<"-> Getting DY from "<<mask<< "and TT from "<<mask_tt<<endl;
-        TH1D *dy; 
-        TH1D *tt;
-
-        if (fInput!=NULL){
-            dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
-            tt = (TH1D*)fInput ->Get( mask_tt.c_str() ) ;
-            if (dy==NULL) cout<<"  and hist (single file) doesn't exist"<<endl;
-            if (tt==NULL) cout<<"  and TT hist (single file) doesn't exist"<<endl;
-            if ( inname.find("Hmm2016") !=string::npos)     {dy->Scale(35867); tt->Scale(35867); dy->SetTitle("scaled 2016");}
-            else if ( inname.find("Hmm2017") !=string::npos){dy->Scale(41860); tt->Scale(41860); dy->SetTitle("scaled 2017"); }
-            else if ( inname.find("Hmm2018") !=string::npos){dy->Scale(59710); tt->Scale(59710); dy->SetTitle("scaled 2018");}
-
-            if (dy !=NULL ) { dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));}
-        }
-        else {
-            cout<<"-> Assuming 2016/2017/2018 lumis "<<mask<<" (and TT)"<<mask_tt<<endl;
-            dy=(TH1D*)fAll[0] ->Get( mask.c_str() ) ;
-            tt=(TH1D*)fAll[0] ->Get( mask_tt.c_str() ) ;
-            if (dy==NULL) cout<<"  and hist 2016 doesn't exist"<<endl;
-            if (tt==NULL) cout<<"  and tt hist 2016 doesn't exist"<<endl;
-            dy->Scale(35867);
-            tt->Scale(35867);
-
-            TH1D*tmp= (TH1D*)fAll[1] ->Get( mask.c_str() ) ; 
-            TH1D*tmp_tt= (TH1D*)fAll[1] ->Get( mask_tt.c_str() ) ; 
-            if (tmp==NULL) cout<<"  and hist 2017 doesn't exist"<<endl;
-            if (tmp_tt==NULL) cout<<"  and TT hist 2017 doesn't exist"<<endl;
-            tmp->Scale(41860); dy->Add(tmp);
-            tmp_tt->Scale(41860); tt->Add(tmp_tt);
-
-            tmp= (TH1D*)fAll[2] ->Get( mask.c_str() ) ; 
-            tmp_tt= (TH1D*)fAll[2] ->Get( mask_tt.c_str() ) ; 
-            if (tmp==NULL) cout<<"  and hist 2018 doesn't exist"<<endl;
-            if (tmp_tt==NULL) cout<<"  and hist TT 2018 doesn't exist"<<endl;
-            tmp->Scale(59710); dy->Add(tmp);
-            tmp_tt->Scale(59710); tt->Add(tmp_tt);
-            dy->SetTitle("scaled by 2016/2017/2018");
-
-            dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));
-        }
-        RooAbsPdf* dybern = NULL;
-        if (dy != NULL){
-            dy->Rebin(10); // lumi
-            //dy->Smooth(1); // lumi
-            //dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
-            dybern = modelBuilder.getDYBernstein(Form("dybern_cat%d",cat), 0, dy);
-            dybern->SetTitle(dy->GetTitle()); // keep this info for safe
-            //storedPdfs.add(*dybern);
-            w_ -> import (*dybern,RecycleConflictNodes());
-            RooRealVar pdf_norm(Form("dybern_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
-            w_ -> import (pdf_norm,RecycleConflictNodes());
+        RooAbsPdf* bern = NULL;
+        if (fitStrategy == 0 or fitStrategy==1) 
+        {
+            cout<<"*** Fitting Bernstein ***"<<endl;
+            bern=modelBuilder.fTest(Form("bern_cat%d",cat) ,hist_[name],&bernOrd,plotDir + "/bern");
+            storedPdfs.add(*bern); // 0
         }
 
-        cout<<"*** Fitting ZPHO ***"<<endl;
+        if (fitStrategy ==0 ){
+            cout<<"*** Fitting DY Bernstein ***"<<endl;
+            int dybernOrd;
+            string mask= inputMasks[cat];
+            string mask_tt= inputMasks[cat];
+            string toReplace="Data";
+            //if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DY");
+            if (mask.find(toReplace) != string::npos) mask.replace(mask.find(toReplace), toReplace.length(),"DYJetsToLL_M-105To160");
+            if (mask_tt.find(toReplace) != string::npos) mask_tt.replace(mask_tt.find(toReplace), toReplace.length(),"TT");
+            cout<<"-> Getting DY from "<<mask<< "and TT from "<<mask_tt<<endl;
+            TH1D *dy; 
+            TH1D *tt;
+
+            if (fInput!=NULL){
+                dy = (TH1D*)fInput ->Get( mask.c_str() ) ;
+                tt = (TH1D*)fInput ->Get( mask_tt.c_str() ) ;
+                if (dy==NULL) cout<<"  and hist (single file) doesn't exist"<<endl;
+                if (tt==NULL) cout<<"  and TT hist (single file) doesn't exist"<<endl;
+                if ( inname.find("Hmm2016") !=string::npos)     {dy->Scale(35867); tt->Scale(35867); dy->SetTitle("scaled 2016");}
+                else if ( inname.find("Hmm2017") !=string::npos){dy->Scale(41860); tt->Scale(41860); dy->SetTitle("scaled 2017"); }
+                else if ( inname.find("Hmm2018") !=string::npos){dy->Scale(59710); tt->Scale(59710); dy->SetTitle("scaled 2018");}
+
+                if (dy !=NULL ) { dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));}
+            }
+            else {
+                cout<<"-> Assuming 2016/2017/2018 lumis "<<mask<<" (and TT)"<<mask_tt<<endl;
+                dy=(TH1D*)fAll[0] ->Get( mask.c_str() ) ;
+                tt=(TH1D*)fAll[0] ->Get( mask_tt.c_str() ) ;
+                if (dy==NULL) cout<<"  and hist 2016 doesn't exist"<<endl;
+                if (tt==NULL) cout<<"  and tt hist 2016 doesn't exist"<<endl;
+                dy->Scale(35867);
+                tt->Scale(35867);
+
+                TH1D*tmp= (TH1D*)fAll[1] ->Get( mask.c_str() ) ; 
+                TH1D*tmp_tt= (TH1D*)fAll[1] ->Get( mask_tt.c_str() ) ; 
+                if (tmp==NULL) cout<<"  and hist 2017 doesn't exist"<<endl;
+                if (tmp_tt==NULL) cout<<"  and TT hist 2017 doesn't exist"<<endl;
+                tmp->Scale(41860); dy->Add(tmp);
+                tmp_tt->Scale(41860); tt->Add(tmp_tt);
+
+                tmp= (TH1D*)fAll[2] ->Get( mask.c_str() ) ; 
+                tmp_tt= (TH1D*)fAll[2] ->Get( mask_tt.c_str() ) ; 
+                if (tmp==NULL) cout<<"  and hist 2018 doesn't exist"<<endl;
+                if (tmp_tt==NULL) cout<<"  and hist TT 2018 doesn't exist"<<endl;
+                tmp->Scale(59710); dy->Add(tmp);
+                tmp_tt->Scale(59710); tt->Add(tmp_tt);
+                dy->SetTitle("scaled by 2016/2017/2018");
+
+                dy->Add(tt); dy->SetTitle(Form("%s %s",dy->GetTitle()," and tt"));
+            }
+            RooAbsPdf* dybern = NULL;
+            if (dy != NULL){
+                dy->Rebin(10); // lumi
+                //dy->Smooth(1); // lumi
+                //dybern = modelBuilder.fTest(Form("dybern_cat%d",cat) ,hist_[name],&dybernOrd,plotDir + "/dybern",dy);
+                dybern = modelBuilder.getDYBernstein(Form("dybern_cat%d",cat), 0, dy);
+                dybern->SetTitle(dy->GetTitle()); // keep this info for safe
+                //storedPdfs.add(*dybern);
+                w_ -> import (*dybern,RecycleConflictNodes());
+                RooRealVar pdf_norm(Form("dybern_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
+                w_ -> import (pdf_norm,RecycleConflictNodes());
+            }
+        } // fitStrategy==0
+
         int zphoOrd;
-        RooAbsPdf* zpho = modelBuilder.fTest(Form("zpho_cat%d",cat) ,hist_[name],&zphoOrd,plotDir + "/zpho");
-        storedPdfs.add(*zpho); //1
+        RooAbsPdf* zpho = NULL;
+        if (fitStrategy==0){
+            cout<<"*** Fitting ZPHO ***"<<endl;
+            zpho=modelBuilder.fTest(Form("zpho_cat%d",cat) ,hist_[name],&zphoOrd,plotDir + "/zpho");
+            storedPdfs.add(*zpho); //1
+        }
 
-        cout<<"*** Fitting ZMOD ***"<<endl;
         int zmodOrd;
-        RooAbsPdf* zmod = modelBuilder.fTest(Form("zmod_cat%d",cat) ,hist_[name],&zmodOrd,plotDir + "/zmod");
-        storedPdfs.add(*zmod);//2
+        RooAbsPdf* zmod = NULL;
+        if (fitStrategy==0){
+            cout<<"*** Fitting ZMOD ***"<<endl;
+            zmod=modelBuilder.fTest(Form("zmod_cat%d",cat) ,hist_[name],&zmodOrd,plotDir + "/zmod");
+            storedPdfs.add(*zmod);//2
+        }
 
-        cout<<"*** Fitting ZRED ***"<<endl;
         int bwzOrd;
-        RooAbsPdf* bwz = modelBuilder.fTest(Form("bwz_cat%d",cat) ,hist_[name],&bwzOrd,plotDir + "/bwz");
+        RooAbsPdf* bwz = NULL;
+        if (fitStrategy==0){
+            cout<<"*** Fitting ZRED ***"<<endl;
+            bwz=modelBuilder.fTest(Form("bwz_cat%d",cat) ,hist_[name],&bwzOrd,plotDir + "/bwz");
+        }
         //storedPdfs.add(*bwz);
 
-        cout<<"*** Fitting MOD BERN ***"<<endl;
         int modbernOrd;
-        RooAbsPdf* modbern = modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
+        RooAbsPdf* modbern = NULL;
+        if (fitStrategy==0){
+            cout<<"*** Fitting MOD BERN ***"<<endl;
+            modbern=modelBuilder.fTest(Form("modbern_cat%d",cat) ,hist_[name],&modbernOrd,plotDir + "/modbern");
+        }
         //storedPdfs.add(*modbern);
-
-        //cout<<"*** Fitting POWLAW ***"<<endl;
-        //int powlawOrd;
-        //RooAbsPdf* powlaw = modelBuilder.fTest(Form("powlaw_cat%d",cat) ,hist_[name],&powlawOrd, plotDir+"/powlaw");
-        //storedPdfs.add(*powlaw);
 
         cout<<"*** Fitting EXP ***"<<endl;
         int expOrd;
         RooAbsPdf* exp = modelBuilder.fTest(Form("exp_cat%d",cat) ,hist_[name],&expOrd,plotDir+"/exp");
         storedPdfs.add(*exp); // 3
 
-        //cout<<"*** Fitting LAU ***"<<endl;
-        //int lauOrd;
-        //RooAbsPdf* lau = modelBuilder.fTest(Form("lau_cat%d",cat) ,hist_[name],&lauOrd,plotDir+"/lau");
-        //storedPdfs.add(*lau);
-        //
-        //
-        cout<<"*** Fitting fewz_1j ***"<<endl;
         int fewz_1jOrd;
-        RooAbsPdf* fewz_1j = modelBuilder.fTest(Form("fewz_1j_cat%d",cat) ,hist_[name],&fewz_1jOrd,plotDir + "/fewz_1j");
-        storedPdfs.add(*fewz_1j); //4
+        RooAbsPdf* fewz_1j = NULL ;
+        if (fitStrategy==0){
+            cout<<"*** Fitting fewz_1j ***"<<endl;
+            fewz_1j=modelBuilder.fTest(Form("fewz_1j_cat%d",cat) ,hist_[name],&fewz_1jOrd,plotDir + "/fewz_1j");
+            storedPdfs.add(*fewz_1j); //4
+        }
 
-        cout<<"*** Fitting fewz_2j ***"<<endl;
         int fewz_2jOrd;
-        RooAbsPdf* fewz_2j = modelBuilder.fTest(Form("fewz_2j_cat%d",cat) ,hist_[name],&fewz_2jOrd,plotDir + "/fewz_2j");
-        storedPdfs.add(*fewz_2j); //5
+        RooAbsPdf* fewz_2j = NULL;
+        if (fitStrategy==0){
+            cout<<"*** Fitting fewz_2j ***"<<endl;
+            fewz_2j=modelBuilder.fTest(Form("fewz_2j_cat%d",cat) ,hist_[name],&fewz_2jOrd,plotDir + "/fewz_2j");
+            storedPdfs.add(*fewz_2j); //5
+        }
 
-        cout<<"*** Fitting fewz_full ***"<<endl;
         int fewz_fullOrd;
-        RooAbsPdf* fewz_full = modelBuilder.fTest(Form("fewz_full_cat%d",cat) ,hist_[name],&fewz_fullOrd,plotDir + "/fewz_full");
-        storedPdfs.add(*fewz_full);//6
+        RooAbsPdf* fewz_full = NULL;
+        if (fitStrategy==0){
+            cout<<"*** Fitting fewz_full ***"<<endl;
+            fewz_full=modelBuilder.fTest(Form("fewz_full_cat%d",cat) ,hist_[name],&fewz_fullOrd,plotDir + "/fewz_full");
+            storedPdfs.add(*fewz_full);//6
+        }
 
-        cout<<"*** Fitting ZMOD2 ***"<<endl;
-        //int zmod2Ord;
-        //RooAbsPdf* zmod2 = modelBuilder.fTest(Form("zmod2_cat%d",cat) ,hist_[name],&zmod2Ord,plotDir + "/zmod2");
-        //storedPdfs.add(*zmod2); //7
-
+        
+        if (fitStrategy==0)
         {
+            cout<<"*** Fitting ZMOD2 ***"<<endl;
             cout<<" --- Fitting ZMOD2 ORDER 5 ---"<<endl;
             int order=5; double nll; int fitStatus;
             RooAbsPdf *zmod2_ord5=modelBuilder.getZModExp2(Form("zmod2_cat%d_ord%d",cat,order),order);
@@ -1373,8 +1387,15 @@ void BackgroundFitter::fit(){
             }
         }
 
-        cout<<"*** Fitting COREPDF ***"<<endl;
-        RooAbsPdf*corepdf=modelBuilder.getCorePdf(Form("corepdf_cat%d",cat),2);
+        if (fitStrategy==0){
+            cout<<"*** Fitting COREPDF ***"<<endl;
+            RooAbsPdf*corepdf=modelBuilder.getCorePdf(Form("corepdf_cat%d",cat),2);
+            RooRealVar corepdf_norm(Form("corepdf_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
+            cout<<"-> Importing Core PDF"<<endl;
+            corepdf->Print("V");
+            w_ -> import (*corepdf,RecycleConflictNodes());
+            w_ -> import (corepdf_norm,RecycleConflictNodes());
+        }
 
         // construct final model
         cout<<" -> Constructing Final model for cat"<<cat<<endl;
@@ -1391,14 +1412,10 @@ void BackgroundFitter::fit(){
         w_ -> import (pdf_norm,RecycleConflictNodes()); 
         w_ -> import (pdf_cat,RecycleConflictNodes()); 
 
-        RooRealVar corepdf_norm(Form("corepdf_cat%d_norm",cat),"norm", hist_[name]->sumEntries(), hist_[name]->sumEntries()/2.,hist_[name]->sumEntries()*2.) ;
-        cout<<"-> Importing Core PDF"<<endl;
-        corepdf->Print("V");
-        w_ -> import (*corepdf,RecycleConflictNodes());
-        w_ -> import (corepdf_norm,RecycleConflictNodes());
        
 
         // diagonalize zmod and exp
+        /*
         if (true)
         {
             {
@@ -1424,7 +1441,7 @@ void BackgroundFitter::fit(){
             w_->import(*exp_eig, RecycleConflictNodes()); // exp_catX_ordY _eig
             delete result;
             }
-        }
+        }*/
         
 
 
@@ -1433,6 +1450,7 @@ void BackgroundFitter::fit(){
             //x_->setRange("unblindReg_1",xmin,120);
             //x_->setRange("unblindReg_2",130,xmax);
             //x_->setRange("tot",xmin,xmax);
+            //
             TCanvas *c = new TCanvas();
             TLegend *leg = new TLegend(0.6,0.65,0.89,0.89);
             leg->SetFillColor(0);
@@ -1454,16 +1472,16 @@ void BackgroundFitter::fit(){
             plotOnFrame( p, bern, kBlue, kSolid,Form("bern ord=%d chi2=%.2f",bernOrd, modelBuilder.getGoodnessOfFit(x_, bern, hist_[name], plotDir +"/bern/chosen",blind) ),leg);
             //if (dybern != NULL)
             //    plotOnFrame( p, dybern, kGray+2, kDashed,Form("dybern ord=%d chi2=%.2f",dybernOrd,modelBuilder.getGoodnessOfFit(x_, dybern, hist_[name], plotDir +"/dybern/chosen",blind) ),leg);
-            plotOnFrame( p, zpho, kOrange, kSolid,Form("zpho ord=%d chi2=%.2f",zphoOrd,modelBuilder.getGoodnessOfFit(x_, zpho, hist_[name], plotDir +"/zpho/chosen",blind) ),leg);
-            plotOnFrame( p, zmod, kRed+2, kDashed,Form("zmod ord=%d chi2=%.2f",zmodOrd,modelBuilder.getGoodnessOfFit(x_, zmod, hist_[name], plotDir +"/zmod/chosen",blind) ),leg);
+            if (fitStrategy==0)plotOnFrame( p, zpho, kOrange, kSolid,Form("zpho ord=%d chi2=%.2f",zphoOrd,modelBuilder.getGoodnessOfFit(x_, zpho, hist_[name], plotDir +"/zpho/chosen",blind) ),leg);
+            if (fitStrategy==0)plotOnFrame( p, zmod, kRed+2, kDashed,Form("zmod ord=%d chi2=%.2f",zmodOrd,modelBuilder.getGoodnessOfFit(x_, zmod, hist_[name], plotDir +"/zmod/chosen",blind) ),leg);
             //plotOnFrame( p, zmod2, kRed, kSolid,Form("zmod2 ord=%d chi2=%.2f",zmod2Ord,modelBuilder.getGoodnessOfFit(x_, zmod2, hist_[name], plotDir +"/zmod2/chosen",blind) ),leg);
-            plotOnFrame( p, bwz, kCyan, kSolid,Form("bwz ord=%d chi2=%.2f",bwzOrd,modelBuilder.getGoodnessOfFit(x_, bwz, hist_[name], plotDir +"/bwz/chosen",blind) ),leg);
+            if (fitStrategy==0)plotOnFrame( p, bwz, kCyan, kSolid,Form("bwz ord=%d chi2=%.2f",bwzOrd,modelBuilder.getGoodnessOfFit(x_, bwz, hist_[name], plotDir +"/bwz/chosen",blind) ),leg);
             //plotOnFrame( p, powlaw, kRed, kSolid,Form("powlaw ord=%d chi2=%.2f",powlawOrd,modelBuilder.getGoodnessOfFit(x_, powlaw, hist_[name], plotDir +"/powlaw/chosen",blind) ),leg);
             plotOnFrame( p, exp, kGreen, kSolid,Form("exp ord=%d chi2=%.2f",expOrd,modelBuilder.getGoodnessOfFit(x_, exp, hist_[name], plotDir +"/exp/chosen",blind) ),leg);
             //plotOnFrame( p, lau, kMagenta, kSolid,Form("lau ord=%d chi2=%.2f",lauOrd,modelBuilder.getGoodnessOfFit(x_, lau, hist_[name], plotDir +"/lau/chosen",blind) ),leg);
-            plotOnFrame( p, fewz_1j, kGreen+2, kSolid,Form("fewz_1j ord=%d chi2=%.2f",fewz_1jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_1j, hist_[name], plotDir +"/fewz_1j/chosen",blind) ),leg);
-            plotOnFrame( p, fewz_2j, kMagenta+2, kDashed,Form("fewz_2j ord=%d chi2=%.2f",fewz_2jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_2j, hist_[name], plotDir +"/fewz_2j/chosen",blind) ),leg);
-            plotOnFrame( p, fewz_full, kCyan+2, kSolid,Form("fewz_full ord=%d chi2=%.2f",fewz_fullOrd, modelBuilder.getGoodnessOfFit(x_, fewz_full, hist_[name], plotDir +"/fewz_full/chosen",blind) ),leg);
+            if (fitStrategy==0)plotOnFrame( p, fewz_1j, kGreen+2, kSolid,Form("fewz_1j ord=%d chi2=%.2f",fewz_1jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_1j, hist_[name], plotDir +"/fewz_1j/chosen",blind) ),leg);
+            if (fitStrategy==0)plotOnFrame( p, fewz_2j, kMagenta+2, kDashed,Form("fewz_2j ord=%d chi2=%.2f",fewz_2jOrd, modelBuilder.getGoodnessOfFit(x_, fewz_2j, hist_[name], plotDir +"/fewz_2j/chosen",blind) ),leg);
+            if (fitStrategy==0)plotOnFrame( p, fewz_full, kCyan+2, kSolid,Form("fewz_full ord=%d chi2=%.2f",fewz_fullOrd, modelBuilder.getGoodnessOfFit(x_, fewz_full, hist_[name], plotDir +"/fewz_full/chosen",blind) ),leg);
 
     
             p -> Draw();
