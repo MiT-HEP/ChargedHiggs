@@ -70,12 +70,14 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/BOSON/ZepBosBVar"+category+"_"+l, " ; |#eta_{V} - (#eta_{j1} + #eta_{j2})/2| / #Delta #eta(jj) ; Events", 250,0,2);
     Book ("VBShadAnalysis/BOSON/ZepBosVVar"+category+"_"+l, " ; |#eta_{VV} - (#eta_{j1} + #eta_{j2})/2| / #Delta #eta(jj) ; Events", 250,0,2);
     Book ("VBShadAnalysis/BOSON/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 100,0,2500);
+
+    AddFinalHisto("VBShadAnalysis/MVV"+category+"_"+l);
     Book ("VBShadAnalysis/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 100,0,2500);
     Book ("VBShadAnalysis/MVV"+category+"_low_"+l, "MVV (low Deta JJ) ; MVV_{reco}; Events", 100, 0, 2500);
     Book ("VBShadAnalysis/MVV"+category+"_high_"+l, "MVV (high Deta JJ) ; MVV_{reco}; Events", 100, 0, 2500);
 
-    Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "BDT noBnoMET ; BDT noBnoMET [GeV]; Events", 200,-1.,1.);
-    Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "BDT withMET ; BDT withMET [GeV]; Events", 200,-1.,1.);
+    Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "BDT noBnoMET ; BDT noBnoMET; Events", 200,-1.,1.);
+    Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "BDT withMET ; BDT withMET; Events", 200,-1.,1.);
 
     if(l.find("ZnnZhadJJ_EWK") !=string::npos  ||
        l.find("ZbbZhadJJ_EWK")!=string::npos  ||
@@ -89,6 +91,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
         Book ("VBShadAnalysis/MVVres"+category+"_"+l, "MVVres ; ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100, -5., 5.);
     }
 
+    AddFinalHisto("VBShadAnalysis/FWJETS/Mjj"+category+"_"+l);
     Book ("VBShadAnalysis/FWJETS/Mjj"+category+"_"+l, "Mjj ; M(j,j) [GeV]; Events", 35,0,3500.);
     Book ("VBShadAnalysis/FWJETS/Dphijj"+category+"_"+l, "Dphi jj ; #Delta#Phi(j,j) ; Events", 100,0,6.28);
 
@@ -231,6 +234,87 @@ void VBShadAnalysis::InitTmva() {
 
 }
 
+
+void VBShadAnalysis::writeTree(string name){
+
+        // fill variables for miniTREE
+    InitTree(name);
+
+    Branch(name,"run",'I');
+    Branch(name,"lumi",'I');
+    Branch(name,"evt",'I');
+    Branch(name,"npv",'I');
+    Branch(name,"weight",'D');
+    Branch(name,"isRealData",'I');
+    Branch(name,"xsec",'F');
+
+    Branch(name,"NJets",'I');
+    Branch(name,"NBJets",'I');
+    Branch(name,"met_pt",'F');
+    Branch(name,"met_phi",'F');
+
+    Branch(name,"mc",'I'); // to distinguish between the different mc
+    Branch(name,"ana_category",'I');
+
+    // JJ
+    Branch(name,"varMjj",'F');
+    Branch(name,"varDetajj",'F');
+    Branch(name,"varDphijj",'F');
+    Branch(name,"varJet2Eta",'F');
+    Branch(name,"varJet2Pt",'F');
+
+    Branch(name,"j1Unc",'F');
+    Branch(name,"j2Unc",'F');
+
+    // VV
+    Branch(name,"genMVV",'F');
+    Branch(name,"varMVV",'F');
+    Branch(name,"varPTVV",'F');
+    Branch(name,"varPTV1",'F');
+    Branch(name,"varPTV2",'F');
+    Branch(name,"varDetaVV",'F');
+    Branch(name,"varPetaVV",'F');
+    Branch(name,"varEtaMinV",'F');
+    Branch(name,"varEtaMaxV",'F');
+
+    // MIX
+    Branch(name,"varCen",'F');
+    Branch(name,"varzepVB",'F');
+    Branch(name,"varzepVV",'F');
+    Branch(name,"varDRVj",'F');
+    Branch(name,"varnormPTVVjj",'F');
+    Branch(name,"varcenPTVVjj",'F');
+    Branch(name,"varFW2j",'F');
+
+    // BKG
+    Branch(name,"varmtop",'F');
+
+    // bosonDECAY
+    Branch(name,"dauRatioV1",'F');
+    Branch(name,"dauRatioV2",'F');
+    Branch(name,"cosThetaV1",'F');
+    Branch(name,"cosThetaV2",'F');
+
+    // bosonProperties
+    Branch(name,"bosV1mass",'F');
+    Branch(name,"bosV1discr",'F');
+    Branch(name,"bosV1tdiscr",'F');
+    Branch(name,"bosV2mass",'F');
+    Branch(name,"bosV2discr",'F');
+    Branch(name,"bosV2tdiscr",'F');
+    Branch(name,"bosV2chi2",'F');
+
+    Branch(name,"bosGen",'I');
+    Branch(name,"bosV1Unc",'F');
+    Branch(name,"bosV2Unc",'F');
+
+    //MVA
+    Branch(name,"BDTnoBnoMET",'F');
+    Branch(name,"BDTwithMET",'F');
+
+}
+
+
 void VBShadAnalysis::Init(){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
 
@@ -282,8 +366,6 @@ void VBShadAnalysis::Init(){
         Book("VBShadAnalysis/Baseline/mVV_BB_PFHT650_Wide_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
         Book("VBShadAnalysis/Baseline/mVV_BB_had_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-
-
         Book("VBShadAnalysis/Baseline/mVV_RBtag_C100_DoubleBTagCSV_p014_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
         Book("VBShadAnalysis/Baseline/mVV_RBtag_C100_DoubleBTagCSV_p026_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
         Book("VBShadAnalysis/Baseline/mVV_RBtag_QuadPFJet_BTagCSV_Mqq200_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
@@ -302,7 +384,6 @@ void VBShadAnalysis::Init(){
         Book("VBShadAnalysis/Baseline/mVV_PFMET120_PFHT60_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
         Book("VBShadAnalysis/Baseline/mVV_PFMETNoMu120_PFHT60_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
         Book("VBShadAnalysis/Baseline/mVV_met_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-
 
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
@@ -369,7 +450,6 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_W_wrong_"+l, "ResBosonChi2Diff_W; Chi2; Events", 100, -25, 25.);
         Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_wrong_"+l, "ResBosonChi2Diff_Z; Chi2; Events", 100, -25, 25.);
 
-
         Book ("VBShadAnalysis/Baseline/DR_genVj1_"+l, "DeltaR(gen,j1); DeltaR(gen,j1); Events", 100, 0, 4.);
         Book ("VBShadAnalysis/Baseline/DR_genVj2_"+l, "DeltaR(gen,j2); DeltaR(gen,j2); Events", 100, 0, 4.);
         Book ("VBShadAnalysis/Baseline/Eta_genLHEW_"+l, "Eta_V; eta; Events", 120, -3., 3.);
@@ -380,8 +460,6 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/JetRes_wrong_"+l, "res; jerUnc; Events", 500, 0., 0.25);
 
         Book ("VBShadAnalysis/Baseline/ResBosonGenMass_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
-
-
 
         // RESONANT CASE
         Book ("VBShadAnalysis/OUT1500/MVV_"+l, "MVV-OUT (unclassified); MVV [GeV]; Events", 100,0,2500);
@@ -404,85 +482,7 @@ void VBShadAnalysis::Init(){
 
     } //end label loop
 
-    if(writeTree) {
-        // fill variables for miniTREE
-
-        InitTree("tree_vbs");
-
-        Branch("tree_vbs","run",'I');
-        Branch("tree_vbs","lumi",'I');
-        Branch("tree_vbs","evt",'I');
-        Branch("tree_vbs","npv",'I');
-        Branch("tree_vbs","weight",'D');
-        Branch("tree_vbs","isRealData",'I');
-        Branch("tree_vbs","xsec",'F');
-
-        Branch("tree_vbs","NJets",'I');
-        Branch("tree_vbs","NBJets",'I');
-        Branch("tree_vbs","met_pt",'F');
-        Branch("tree_vbs","met_phi",'F');
-
-        Branch("tree_vbs","mc",'I'); // to distinguish between the different mc
-        Branch("tree_vbs","ana_category",'I');
-
-        // JJ
-        Branch("tree_vbs","varMjj",'F');
-        Branch("tree_vbs","varDetajj",'F');
-        Branch("tree_vbs","varDphijj",'F');
-        Branch("tree_vbs","varJet2Eta",'F');
-        Branch("tree_vbs","varJet2Pt",'F');
-
-        Branch("tree_vbs","j1Unc",'F');
-        Branch("tree_vbs","j2Unc",'F');
-
-        // VV
-        Branch("tree_vbs","genMVV",'F');
-        Branch("tree_vbs","varMVV",'F');
-        Branch("tree_vbs","varPTVV",'F');
-        Branch("tree_vbs","varPTV1",'F');
-        Branch("tree_vbs","varPTV2",'F');
-        Branch("tree_vbs","varDetaVV",'F');
-        Branch("tree_vbs","varPetaVV",'F');
-        Branch("tree_vbs","varEtaMinV",'F');
-        Branch("tree_vbs","varEtaMaxV",'F');
-
-        // MIX
-        Branch("tree_vbs","varCen",'F');
-        Branch("tree_vbs","varzepVB",'F');
-        Branch("tree_vbs","varzepVV",'F');
-        Branch("tree_vbs","varDRVj",'F');
-        Branch("tree_vbs","varnormPTVVjj",'F');
-        Branch("tree_vbs","varcenPTVVjj",'F');
-        Branch("tree_vbs","varFW2j",'F');
-
-        // BKG
-        Branch("tree_vbs","varmtop",'F');
-
-        // bosonDECAY
-        Branch("tree_vbs","dauRatioV1",'F');
-        Branch("tree_vbs","dauRatioV2",'F');
-        Branch("tree_vbs","cosThetaV1",'F');
-        Branch("tree_vbs","cosThetaV2",'F');
-
-        // bosonProperties
-        Branch("tree_vbs","bosV1mass",'F');
-        Branch("tree_vbs","bosV1discr",'F');
-        Branch("tree_vbs","bosV1tdiscr",'F');
-        Branch("tree_vbs","bosV2mass",'F');
-        Branch("tree_vbs","bosV2discr",'F');
-        Branch("tree_vbs","bosV2tdiscr",'F');
-        Branch("tree_vbs","bosV2chi2",'F');
-
-        Branch("tree_vbs","bosGen",'I');
-        Branch("tree_vbs","bosV1Unc",'F');
-        Branch("tree_vbs","bosV2Unc",'F');
-
-
-        //MVA
-        Branch("tree_vbs","BDTnoBnoMET",'F');
-        Branch("tree_vbs","BDTwithMET",'F');
-
-    }
+    if(doWriteTree) { writeTree("tree_vbs"); writeTree("tree_vbs_JESUp"); writeTree("tree_vbs_JESDown"); }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
 
@@ -1141,6 +1141,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
 
     if(label.find("QCD_HT") !=string::npos) mc =500 ;
     if(label.find("QCD_Inclusive") !=string::npos) mc =501 ;
+    if(label.find("QCD_Pt") !=string::npos) mc =502 ;
 
     SetTreeVar("mc",mc);
 
@@ -1945,8 +1946,23 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(doTMVA and !doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
     if(doTMVA and doMETAnalysis) Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );
 
-    if(writeTree) setTree(e,label,category);
-    if(writeTree) FillTree("tree_vbs");
+    if(doWriteTree) {
+
+        if (systname.find("NONE")    !=string::npos) {
+            setTree(e,label,category);
+            FillTree("tree_vbs");
+        }
+
+        if (systname.find("JESUp")    !=string::npos) {
+            setTree(e,label,category);
+            FillTree("tree_vbs_JESUp");
+        }
+
+        if (systname.find("JESDown")    !=string::npos) {
+            setTree(e,label,category);
+            FillTree("tree_vbs_JESDown");
+        }
+    }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
     return 0;

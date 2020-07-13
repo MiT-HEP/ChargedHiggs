@@ -22,11 +22,13 @@ public:
     virtual ~VBShadAnalysis (){}
 
     int year=2016; // master switch for year configuration
-    
+    bool doFinal = false;
+
     void Init() override;
     int analyze(Event*,string systname) override;
     void EndEvent() override;
     void setTree(Event*e, string label, string  category);
+    void writeTree(string name);
 
     void BookHisto(string l, string category);
 
@@ -52,7 +54,7 @@ public:
     bool doBAntiAnalysis=false;
     bool doHADAntiAnalysis=false;
 
-    bool writeTree = true;
+    bool doWriteTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
 
