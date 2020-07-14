@@ -1152,7 +1152,7 @@ void BackgroundFitter::fit(){
             }
 
             size_t sep= mask.find(":") ;
-            RooWorkspace * w_local = (RooWorkspace*) fInput -> Get(  mask.substr(0, sep).c_str() );
+            RooWorkspace * w_local = (RooWorkspace*) fLocal -> Get(  mask.substr(0, sep).c_str() );
             if (w_local==NULL)
                 Log(__FUNCTION__,"ERROR","Unable to find workspaces from: '"+inputMasks[cat]+"' -> w: '"+mask.substr(0, sep)+"'");
             Log(__FUNCTION__,"INFO","Getting data " + mask.substr(sep+1, mask.size()));
