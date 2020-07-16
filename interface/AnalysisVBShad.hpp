@@ -144,6 +144,7 @@ private:
 
     float BDTnoBnoMET = -100;
     float BDTwithMET = -100;
+    float BDTbtag = -100;
     int counterExtrabToVeto_=0;
 
     /************
