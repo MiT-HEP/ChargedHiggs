@@ -39,12 +39,12 @@ public:
     void SetFatJetCuts(FatJet *f) override;
 
     float Getjetres(Jet* ajet);
-    float resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
+    std::pair<float, float> resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
     void getObjects(Event*e, string label, string systname);
     void studyTriggers(Event*e, string category, string label, string systname);
-    double genMtt(Event*e);
+    float genMtt(Event*e);
     bool genMatchResolved(Event*e, string systname, string label);
 
     bool doMETAnalysis=false;
@@ -79,7 +79,7 @@ private:
     bool V1isZbb=false;
     bool V2isZbb=false;
 
-    double minDPhi=999.;
+    float minDPhi=999.;
 
     // selected Objects
     vector<Jet*> selectedJets;
