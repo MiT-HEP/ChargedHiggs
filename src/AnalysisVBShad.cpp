@@ -76,8 +76,8 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
     Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "BDT noBnoMET ; BDT noBnoMET [GeV]; Events", 200,-1.,1.);
     Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "BDT withMET ; BDT withMET [GeV]; Events", 200,-1.,1.);
-    Book ("VBShadAnalysis/VVBDTnoBnoMET"+category+"_"+l, "BDT VV noBnoMET ; BDT VV noBnoMET [GeV]; Events", 200,-1.,1.);
-    Book ("VBShadAnalysis/MultiBDTwithMET"+category+"_"+l, "BDT Multi withMET ; BDT Multi withMET [GeV]; Events", 200,-1.,1.);
+    Book ("VBShadAnalysis/BDTVVnoBnoMET"+category+"_"+l, "BDT VV noBnoMET ; BDT VV noBnoMET [GeV]; Events", 200,-1.,1.);
+    Book ("VBShadAnalysis/BDTMultiwithMET"+category+"_"+l, "BDT Multi withMET ; BDT Multi withMET [GeV]; Events", 200,-1.,1.);
 
     if(l.find("ZnnZhadJJ_EWK") !=string::npos  ||
        l.find("ZbbZhadJJ_EWK")!=string::npos  ||
@@ -138,7 +138,7 @@ void VBShadAnalysis::AddSpectator( string name, char type, int r){
 void VBShadAnalysis::AddVariable( string name, char type, TMVA::Reader* i_readers){
     cout<<"[TmvaAnalysis]::[AddVariable]::[INFO] Adding variable: '"<<name<<"'"<<endl;
     varValues_.Add(name,type);
-    cout<<"[TmvaAnalysis]::[DEBUG] AddVariables of type F to reader "<<r <<" and name "<<name<<endl;
+    cout<<"[TmvaAnalysis]::[DEBUG] AddVariables of type F to reader "<<i_readers <<" and name "<<name<<endl;
     //    if ( type == 'I') for(auto& r : readers_ ) r -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
     //    else if ( type == 'F') for(auto&r : readers_) r -> AddVariable(name.c_str(),  (float*)varValues_.GetPointer(name));
     if ( type == 'I') i_readers -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
@@ -153,37 +153,44 @@ void VBShadAnalysis::ReadTmva(){
     bdt.clear();
     bdt_multi.clear();
 
-    SetVariable("varMjj",evt_Mjj); //0
-    SetVariable("varDetajj",evt_Detajj); //1
-    SetVariable("varJet2Pt",evt_Jet2Pt); //4
-    SetVariable("varMVV",evt_MVV); //5
-    SetVariable("varnormPTVVjj",evt_normPTVVjj); //9
+    if(!doVVFrame ){
+      SetVariable("varMjj",evt_Mjj); //0
+      SetVariable("varDetajj",evt_Detajj); //1
+      SetVariable("varJet2Pt",evt_Jet2Pt); //4
+      SetVariable("varMVV",evt_MVV); //5
+      SetVariable("varnormPTVVjj",evt_normPTVVjj); //9
 
-    if(doMETAnalysis) SetVariable("varPTVV",evt_PTVV); //6
-    if(doHADAnalysis or doHADAntiAnalysis) SetVariable("varPTV2",evt_PTV2); //10
-    //    SetVariable("varDetaVV",evt_DetaVV); //7
-    //    SetVariable("varPetaVV",evt_PetaVV); //7
-    //    SetVariable("varCen",evt_cenEta); //8
-    //    SetVariable("abs(varDphijj)",evt_Dphijj); //2
-    //    SetVariable("abs(varJet2Eta)",evt_Jet2Eta); //3
-    //    if(doHADAnalysis or doHADAntiAnalysis) SetVariable("varPetaVV",evt_PetaVV);
+      if(doMETAnalysis) SetVariable("varPTVV",evt_PTVV); //6
+      if(doHADAnalysis or doHADAntiAnalysis) SetVariable("varPTV2",evt_PTV2); //10
+      //    SetVariable("varDetaVV",evt_DetaVV); //7
+      //    SetVariable("varPetaVV",evt_PetaVV); //7
+      //    SetVariable("varCen",evt_cenEta); //8
+      //    SetVariable("abs(varDphijj)",evt_Dphijj); //2
+      //    SetVariable("abs(varJet2Eta)",evt_Jet2Eta); //3
+      //    if(doHADAnalysis or doHADAntiAnalysis) SetVariable("varPetaVV",evt_PetaVV);
 
-    if(doHADAnalysis or doHADAntiAnalysis) SetVariable("varCen",evt_cenEta);
-    if(doMETAnalysis or doMETAntiAnalysis) SetVariable("varzepVB",evt_zepVB);
-
+      if(doHADAnalysis or doHADAntiAnalysis) SetVariable("varCen",evt_cenEta);
+      if(doMETAnalysis or doMETAntiAnalysis) SetVariable("varzepVB",evt_zepVB);
+    }
 
     if(doVVFrame && doHADAnalysis or doHADAntiAnalysis){
 
+
+        SetVariable("varMjj",evt_Mjj);
+        SetVariable("varDetajj",evt_Detajj);
         SetVariable("varDphijj", evt_Dphijj);
         SetVariable("varJet2Eta", evt_Jet2Eta);
-        SetVariable("j1Unc", evt_j1Unc);
-        SetVariable("j2Unc", evt_j2Unc);
+        SetVariable("varJet2Pt",evt_Jet2Pt);
+        SetVariable("j1Unc", evt_j1unc);
+        SetVariable("j2Unc", evt_j2unc);
+        SetVariable("varMVV",evt_MVV);
         SetVariable("varPTV1", evt_PTV1);
         SetVariable("varPTV2", evt_PTV2);
-        SetVariable("varCen", evt_CenPTVVjj);
-        SetVariable("varzepVV", evt_zepVV);
+        SetVariable("varCen", evt_cenPTVVjj);
         SetVariable("varzepVB", evt_zepVB);
-        SetVariable("varDRVj", evt_DRVj);
+        SetVariable("varzepVV", evt_zepVV);
+        SetVariable("varDRVj", evt_DRV1j);
+        SetVariable("varnormPTVVjj",evt_normPTVVjj);
 
     }
 
@@ -195,7 +202,7 @@ void VBShadAnalysis::ReadTmva(){
     }
 
     for(unsigned i =0 ;i< readers_multi_.size() ; ++i) {
-      bdt_multi.push_back(readers_multi_[i]->EvaluateMulticlass("BDT_VBSHad_Multiclass") );
+      bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDT_VBSHad_Multiclass"))[multiNcls]);
     }
 }
 
@@ -248,16 +255,16 @@ void VBShadAnalysis::InitTmva() {
         AddVariable("varMjj",'F',readers_[i]); 
         AddVariable("varDetajj",'F',readers_[i]); 
         AddVariable("varDphijj",'F',readers_[i]); 
-        AddVariable("varJet2Pt",'F',readers_[i]);
         AddVariable("varJet2Eta",'F',readers_[i]);
+        AddVariable("varJet2Pt",'F',readers_[i]);
         AddVariable("j1Unc",'F',readers_[i]);
         AddVariable("j2Unc",'F',readers_[i]);
         AddVariable("varMVV",'F',readers_[i]); 
         AddVariable("varPTV1",'F',readers_[i]);
         AddVariable("varPTV2",'F',readers_[i]);
         AddVariable("varCen",'F',readers_[i]);
-        AddVariable("varzepVV",'F',readers_[i]);
-        AddVariable("varzepVB",'F',readers_[i]); 
+        AddVariable("varzepVB",'F',readers_[i]);
+        AddVariable("varzepVV",'F',readers_[i]); 
         AddVariable("varDRVj",'F',readers_[i]);
         AddVariable("varnormPTVVjj",'F',readers_[i]);
 
@@ -661,8 +668,8 @@ float VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string sys
             Unc_i = (selectedJets[i]->GetJESUnc())*(selectedJets[i]->GetJESUnc()) + bosjer1 * bosjer1;
             Unc_j = (selectedJets[j]->GetJESUnc())*(selectedJets[j]->GetJESUnc()) + bosjer2 * bosjer2;
             //V_term = (MRij - MV) * (MRij - MV)  / ( MRij*MRij * ( sqrt(Unc_i+Unc_j+2.5*2.5/(MV*MV)) ) ); 
-            //V_term = (MRij - MV) * (MRij - MV)  / MVres * (1+sqrt(Unc_i+Unc_j+2.5*2.5/(MV*MV)));
-            V_term = (MRij - MV) * (MRij - MV)  / MVres * (Unc_i+Unc_j+2.5*2.5/(MV*MV));
+            V_term = (MRij - MV) * (MRij - MV)  / MVres * (1+sqrt(Unc_i+Unc_j+2.5*2.5/(MV*MV)));
+            //V_term = (MRij - MV) * (MRij - MV)  / MVres * (Unc_i+Unc_j+2.5*2.5/(MV*MV));
 
 
             for(unsigned k=0; k<selectedJets.size(); ++k) {
@@ -1466,7 +1473,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             for(unsigned i = 0; i < e->NGenPar(); i++){
 
-                (e->GetGenParticle(i).GetP4()).Boost(boostVV);
+                (e->GetGenParticle(i)->GetP4()).Boost(boostVV);
 
             }
 

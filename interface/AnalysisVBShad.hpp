@@ -145,7 +145,7 @@ private:
     float BDTnoBnoMET = -100;
     float BDTwithMET = -100;
     float VVBDTnoBnoMET = -100;
-    float MultiBDTnoBnoMET = -100;
+    float MultiBDTwithMET = -100;
     int counterExtrabToVeto_=0;
 
     /************
@@ -154,6 +154,7 @@ private:
 
     vector<float> bdt;  // score
     vector<float> bdt_multi;
+    int multiNcls = 0;
     DataStore varValues_;
     vector<TMVA::Reader*> readers_;
     vector<TMVA::Reader*> readers_multi_;
