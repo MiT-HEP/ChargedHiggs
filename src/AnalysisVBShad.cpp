@@ -159,26 +159,37 @@ void VBShadAnalysis::ReadTmva(){
 
     SetVariable("varMjj",evt_Mjj); //0
     SetVariable("varDetajj",evt_Detajj); //1
-    SetVariable("varJet2Pt",evt_Jet2Pt); //4
-    SetVariable("varMVV",evt_MVV); //5
-    SetVariable("varnormPTVVjj",evt_normPTVVjj); //9
+    SetVariable("varJet2Pt",evt_Jet2Pt); //2
+    SetVariable("varMVV",evt_MVV); //3
+    SetVariable("varnormPTVVjj",evt_normPTVVjj); //4
 
-    SetVariable("varPTVV",evt_PTVV); //6
-    SetVariable("varPTV2",evt_PTV2); //10
+    SetVariable("varPTVV",evt_PTVV); //5
+    SetVariable("varPTV2",evt_PTV2); //6
 
-    SetVariable("varCen",evt_cenEta);
-    SetVariable("varzepVB",evt_zepVB);
-    SetVariable("bosV2chi2",evt_chi2_);
-    SetVariable("bosV2mass",evt_bosV2mass);
-    SetVariable("varFW2j",evt_FW2);
-    SetVariable("varmtop",evt_mtop);
+    SetVariable("varCen",evt_cenEta); //7
+    SetVariable("varzepVB",evt_zepVB); //8
+    SetVariable("bosV2chi2",evt_chi2_); //9
+    SetVariable("bosV2mass",evt_bosV2mass); //10
+    SetVariable("varFW2j",evt_FW2); //11
+    SetVariable("varmtop",evt_mtop); //12
+
+    /*
+    // from Julio only
+    SetVariable("abs(varDphijj)",fabs(evt_Dphijj)); //1
+    SetVariable("varPTV1",evt_PTV1); //10
+    SetVariable("varEtaMaxV",evt_EtaMaxV); //10
+    SetVariable("varcenPTVVjj",evt_cenPTVVjj); //9
+    SetVariable("bosV1mass",evt_bosV1mass); //9
+    SetVariable("bosV1discr",evt_bosV1discr); //9
+    */
 
     //    vector<float> bdt;
     for(unsigned i =0 ;i< readers_.size() ; ++i) {
         if(i==0 || i==1 || i==2) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSHad") );
         if(i==3 || i==4 || i==5) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSMet") );
-        if(i==6 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRMET") );
-        if(i==7 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRBtag") );
+        if(i==6 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRBtag") );
+        if(i==7 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRMET") );
+        //        if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
 
     }
 
@@ -217,7 +228,25 @@ void VBShadAnalysis::InitTmva() {
         AddVariable("varnormPTVVjj",'F',i); //6
     }
 
+    // RBTAG
     for (int i=6; i<7; i++) {
+        AddVariable("varMjj",'F',i); //0
+        AddVariable("varJet2Pt",'F',i); //2
+        //        AddVariable("varDetajj",'F',i); //1
+        //        AddVariable("varMVV",'F',i); //3
+        AddVariable("varPTV2",'F',i); //4
+        AddVariable("varCen",'F',i); //5
+        //        AddVariable("varzepVB",'F',i); //6
+        AddVariable("varnormPTVVjj",'F',i); //7
+        AddVariable("varmtop",'F',i); //8
+        AddVariable("bosV2mass",'F',i); //9
+        AddVariable("bosV2chi2",'F',i); //10
+
+        AddSpectator("mc",'F',i); AddSpectator("weight",'F',i); AddSpectator("ana_category",'F',i); AddSpectator("bosGen",'F',i); AddSpectator("evt",'F',i);
+    }
+
+    // RMET
+    for (int i=7; i<8; i++) {
         AddVariable("varMjj",'F',i); //0
         AddVariable("varDetajj",'F',i); //1
         AddVariable("varJet2Pt",'F',i); //2
@@ -230,20 +259,25 @@ void VBShadAnalysis::InitTmva() {
         AddVariable("varFW2j",'F',i); //9
     }
 
-
-    for (int i=7; i<8; i++) {
+    /*
+    // BBtag
+    for (int i=8; i<9; i++) {
         AddVariable("varMjj",'F',i); //0
-        AddVariable("varDetajj",'F',i); //1
+        AddVariable("abs(varDphijj)",'F',i); //1
         AddVariable("varJet2Pt",'F',i); //2
-        AddVariable("varMVV",'F',i); //3
-        AddVariable("varPTV2",'F',i); //4
-        AddVariable("varCen",'F',i); //5
-        AddVariable("varzepVB",'F',i); //6
-        AddVariable("varnormPTVVjj",'F',i); //7
-        AddVariable("varmtop",'F',i); //8
-        AddVariable("bosV2mass",'F',i); //9
-        AddVariable("bosV2chi2",'F',i); //10
+        AddVariable("varPTV1",'F',i); //4
+        AddVariable("varEtaMaxV",'F',i); //4
+        AddVariable("varCen",'F',i); //4
+        AddVariable("varcenPTVVjj",'F',i); //6
+        AddVariable("varnormPTVVjj",'F',i); //6
+        AddVariable("varFW2j",'F',i); //9
+        //        AddVariable("varDetajj",'F',i); //1
+        //        AddVariable("varMVV",'F',i); //3
+        //        AddVariable("varzepVB",'F',i); //5
+        AddVariable("bosV1mass",'F',i); //7
+        AddVariable("bosV1discr",'F',i); //8
     }
+    */
 
     cout << " GOING loop over weights" << weights.size() << endl;
 
@@ -253,8 +287,9 @@ void VBShadAnalysis::InitTmva() {
             cout <<"[TmvaAnalysis]::[Init]::[INFO] Loading weights idx="<<i<<": '"<< weights[i]<<"'"<<endl;
             if(i==0 or i==1 or i==2) readers_[i]->BookMVA("BDT_VBSHad",weights[i].c_str());
             if(i==3 or i==4 or i==5) readers_[i]->BookMVA("BDT_VBSMet",weights[i].c_str());
-            if(i==6 ) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
-            if(i==7 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
+            if(i==6 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
+            if(i==7 ) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
+            //            if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
         }
     cout <<"[TmvaAnalysis]::[Init]::[INFO] Done"<<endl;
 
@@ -1452,9 +1487,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(selectedFatJets.size()==1 and selectedJets.size()>3) {
             category="";
-            double mBoson=80.;
-            double mWidth=20.;
-            double chi2Cut=6.;
+            double mBoson = 80.;
+            double chi2Cut = 6.;
+            float mWidth = 20.;
 
             // MARIA: RB
             float MV, chi2;
@@ -1462,7 +1497,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, chi2, e->weight() );
-            if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and chi2<chi2Cut) {
+            if( fabs(MV-mBoson) < mWidth and bosonJets.size()>1 and chi2<chi2Cut) {
                 category="_RB";
                 evt_bosV1discr = bosonVDiscr[0];
                 evt_bosV1tdiscr = bosonTDiscr[0];
@@ -1556,7 +1591,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             float MV_W, mW_chi2;
             std::tie(MV_W,mW_chi2) = resolvedtagger(e, mBoson_W, label, systname, selectedFatZbb[0]->Eta()); if(genMatchResolved(e,systname,label)) genWmat = "right_";
-
             if(bosonJets.size()>1){
                 Fill2D("VBShadAnalysis/Baseline/ResWMassChi2_"+label, systname, MV_W, mW_chi2, e->weight() );
                 Fill("VBShadAnalysis/Baseline/ResWMass_"+genWmat+label, systname, MV_W, e->weight() );
@@ -1574,19 +1608,18 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //// decide
 
-            double mWidth=20.;
             double chi2Cut=6.;
             string genmatch = "wrong_";
+            float mBoson = mBoson_Z;
+            float mWidth = 20.;
 
             double MV = MV_Z;
-            double mBoson = mBoson_Z;
             double chi2 = mZ_chi2;
             genmatch = genZmat;
 
             if(mW_chi2 < mZ_chi2){
                 mBoson = mBoson_W;
                 genmatch = genWmat;
-                float MV_W, mW_chi2;
                 std::tie(MV,chi2) = resolvedtagger(e, mBoson_W, label, systname, selectedFatZbb[0]->Eta());
                 if(genMatchResolved(e,systname,label)) genWmat = "right_";
                 // need to redo since due to  the jet assignement
@@ -1605,7 +1638,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             ///////$$$$$
             ///////$$$$$
 
-            if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and chi2<chi2Cut) {
+            if( fabs(MV-mBoson) < mWidth and bosonJets.size()>1 and chi2<chi2Cut) {
                 category="_RBtag";
                 p4VV = ( selectedFatZbb[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
                 evt_chi2_ = chi2;
@@ -1696,7 +1729,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(selectedFatJets.size()==0 and selectedFatZbb.size()==0 and selectedJets.size()>3) {
             category="";
 
-
             string genWmat = "wrong_";
             string genZmat = "wrong_";
             double mBoson_W=80.;
@@ -1722,19 +1754,18 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //// decide
 
-            double mWidth=20.;
             double chi2Cut=6.;
             string genmatch = "wrong_";
+            float mBoson = mBoson_Z;
+            float mWidth = 20;
 
             double MV = MV_Z;
-            double mBoson = mBoson_Z;
             double chi2 = mZ_chi2;
             genmatch = genZmat;
 
             if(mW_chi2 < mZ_chi2){
-                mBoson = mBoson_W;
                 genmatch = genWmat;
-                float MV_W, mW_chi2;
+                mBoson = mBoson_W;
                 std::tie(MV,chi2) = resolvedtagger(e, mBoson_W, label, systname, 0.);
                 if(genMatchResolved(e,systname,label)) genWmat = "right_";
                 // need to redo since due to  the jet assignement
@@ -1750,7 +1781,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+genmatch+label, systname, MV, e->weight() );
             }
 
-            if(fabs(MV-mBoson)<mWidth and bosonJets.size()>1 and chi2<chi2Cut) {
+            if( fabs(MV-mBoson) < mWidth and bosonJets.size()>1 and chi2<chi2Cut) {
                 category="_RMET";
 
                 if(usePuppi) {
@@ -2012,8 +2043,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if(doTMVA and (doHADAnalysis or doHADAntiAnalysis)) BDTnoBnoMET = bdt[0];
     if(doTMVA and doMETAnalysis and (category.find("BMET")   !=string::npos)) BDTwithMET = bdt[3];
-    if(doTMVA and doMETAnalysis and (category.find("RMET")   !=string::npos) ) BDTwithMET = bdt[6];
-    if(doTMVA and doBAnalysis and (category.find("RBtag")   !=string::npos) ) BDTbtag = bdt[7];
+    if(doTMVA and doMETAnalysis and (category.find("RMET")   !=string::npos) ) BDTwithMET = bdt[7];
+    if(doTMVA and doBAnalysis and (category.find("RBtag")   !=string::npos) ) BDTbtag = bdt[6];
+    //    if(doTMVA and doBAnalysis and (category.find("BBtag")   !=string::npos) ) BDTbtag = bdt[8];
 
     if(doTMVA and !doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
     if(doTMVA and doMETAnalysis) Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );

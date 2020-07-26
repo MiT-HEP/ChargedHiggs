@@ -65,23 +65,26 @@ addConfig=VBShadAnalysis|AddLabel('TTW')
 
 addConfig=VBShadAnalysis|SetMultiPrimaryDataset(),AddLabel("MET"),AddLabel("JetHT")
 
-## BB - MC w/ QCDmirror
+## BB - MC w/ QCDmirror (0,1,2)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross0.weights.xml")
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross1.weights.xml")
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross2.weights.xml")
 
-## BB - data w/ QCDmirror
+## BB - data w/ QCDmirror (0,1,2)
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross0_data.weights.xml")
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross1_data.weights.xml")
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross2_data.weights.xml")
 
-## BMET - MC
+## BMET - MC (3,4,5)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross0.weights.xml")
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross1.weights.xml")
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross2.weights.xml")
 
-## RMET - MC
+## RBtag - MC (6)
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRBtag.weights.xml")
+
+## RMET - MC (7)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRMET.weights.xml")
 
-## RBtag - MC
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRBtag.weights.xml")
+## BBtag - MC (8)
+#addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSBBTag.weights.xml")

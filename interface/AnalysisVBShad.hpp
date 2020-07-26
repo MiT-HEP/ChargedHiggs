@@ -107,6 +107,7 @@ private:
     float evt_Jet2Pt=-100;
 
     float evt_MVV=-100;
+    float evt_DRV2=-100;
     float evt_PetaVV=-100;
     float evt_DetaVV=-100;
     float evt_MVV_gen=-100;
