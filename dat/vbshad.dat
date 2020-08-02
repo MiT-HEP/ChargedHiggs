@@ -76,7 +76,8 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross2.wei
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross2_data.weights.xml")
 
 ## BMET - MC (3,4,5)
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet.weights.xml")
+#addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross0.weights.xml")
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross1.weights.xml")
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross2.weights.xml")
 

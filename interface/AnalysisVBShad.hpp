@@ -95,6 +95,7 @@ private:
 
     vector<Jet*> forwardJets;
     vector<Jet*> bosonJets;
+    vector<Jet*> vetoJets;
 
     TLorentzVector p4VV;
     TLorentzVector p4jj;
@@ -105,6 +106,9 @@ private:
     float evt_Dphijj=-100;
     float evt_Jet2Eta=-100;
     float evt_Jet2Pt=-100;
+
+    float bosV2j2Pt=-100;
+    float bosV2j1Pt=-100;
 
     float evt_MVV=-100;
     float evt_DRV2=-100;

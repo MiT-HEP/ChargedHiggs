@@ -218,7 +218,19 @@ void VBShadAnalysis::InitTmva() {
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO BDTG - MET " << endl;
 
-    for (int i=3; i<6; i++) {
+    for (int i=3; i<4; i++) {
+        AddVariable("varMjj",'F',i); //0
+        AddVariable("varDetajj",'F',i); //1
+        AddVariable("varJet2Pt",'F',i); //2
+        AddVariable("varPTV1",'F',i); //4
+        //        AddVariable("varMVV",'F',i); //3
+        //        AddVariable("varPTVV",'F',i); //4
+        AddVariable("varzepVB",'F',i); //5
+        AddVariable("varnormPTVVjj",'F',i); //6
+    }
+
+    // old training with the top included
+    for (int i=4; i<6; i++) {
         AddVariable("varMjj",'F',i); //0
         AddVariable("varDetajj",'F',i); //1
         AddVariable("varJet2Pt",'F',i); //2
@@ -311,6 +323,7 @@ void VBShadAnalysis::writeTree(string name){
 
     Branch(name,"NJets",'I');
     Branch(name,"NBJets",'I');
+    Branch(name,"NVetoJets",'I');
     Branch(name,"met_pt",'F');
     Branch(name,"met_phi",'F');
 
@@ -355,6 +368,9 @@ void VBShadAnalysis::writeTree(string name){
     Branch(name,"dauRatioV2",'F');
     Branch(name,"cosThetaV1",'F');
     Branch(name,"cosThetaV2",'F');
+
+    Branch(name,"bosV2j1Pt",'F');
+    Branch(name,"bosV2j2Pt",'F');
 
     // bosonProperties
     Branch(name,"bosV1mass",'F');
@@ -610,10 +626,12 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
 
     bosonJets.clear();
     forwardJets.clear();
+    vetoJets.clear();
 
     //    float const norm = 1000*1000; // 0.5TeV^2
     float const norm = 500*500; // 0.5TeV^2
-    float const MVres = 20*20; // 20 GeV
+    //    float const MVres = 20*20; // 20 GeV
+    float const MVres = 10*10; // 20 GeV
 
     double DRij = 0; //Wjets
     double PTij = 0; //Wjets
@@ -694,8 +712,17 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
         if(iter==index_l and selectedJets[index_l]->Pt()>50) forwardJets.push_back(selectedJets[index_l]);
     }
 
+    if(bosonJets.size()>1 and forwardJets.size()>1) {
 
-    if(bosonJets.size()>1) {
+        for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
+            if(iter!=index_i and iter!=index_j and iter!=index_k and iter!=index_l) {
+                //                if(selectedJets[iter]->Pt()< std::min(bosonJets[0]->Pt(),bosonJets[1]->Pt())) continue;
+                if((selectedJets[iter]->Eta() < std::max(selectedJets[index_k]->Eta(),selectedJets[index_l]->Eta())) and
+                   (selectedJets[iter]->Eta() > std::min(selectedJets[index_k]->Eta(),selectedJets[index_l]->Eta())))
+                    vetoJets.push_back(selectedJets[iter]);
+            }
+        }
+
         std::pair<float, float> pairResolved = std::make_pair((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M() , bestChi2_);
         return pairResolved;
     } else {
@@ -1156,6 +1183,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
 
     SetTreeVar("NJets",e->Njets());
     SetTreeVar("NBJets",e->Bjets());
+    SetTreeVar("NVetoJets",vetoJets.size());
 
     if(usePuppi) {
         SetTreeVar("met_pt",e->GetMet().GetPuppiMetP4().Pt());
@@ -1248,6 +1276,9 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("dauRatioV2",dauRatioV2);
     SetTreeVar("cosThetaV1",cosThetaV1);
     SetTreeVar("cosThetaV2",cosThetaV2);
+
+    if(bosonJets.size()>1) SetTreeVar("bosV2j1Pt",bosonJets[0]->Pt());
+    if(bosonJets.size()>1) SetTreeVar("bosV2j2Pt",bosonJets[1]->Pt());
 
     // boson Properties
     SetTreeVar("bosV1mass",evt_bosV1mass);
@@ -1448,6 +1479,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_PTV2=0;
         evt_DetaVV=-100;
         evt_PetaVV=-100;
+        // reset resolved
+        evt_chi2_= -1;
+        bosonJets.clear();
+        forwardJets.clear();
+        vetoJets.clear();
 
         if(selectedFatJets.size()>1 and selectedJets.size()>1) {
             category="_BB";
@@ -1531,6 +1567,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_PTV2=-100;
         evt_DetaVV=-100;
         evt_PetaVV=-100;
+        //reset the resolved
+        evt_chi2_= -1;
+        bosonJets.clear();
+        forwardJets.clear();
+        vetoJets.clear();
 
         category="";
         if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1) {
@@ -1674,11 +1715,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_PTV1=0;
         evt_PTV2=0;
         evt_DetaVV=-100;
-
+        // reset the first boson (now it's MET)
         evt_bosV1mass=-1;
         evt_bosV1discr=-1;
         evt_bosV1tdiscr=-1;
         evt_bosV1unc = 0;
+        // reset resolved
+        evt_chi2_= -1;
+        bosonJets.clear();
+        forwardJets.clear();
+        vetoJets.clear();
 
         if((selectedFatJets.size()>0 or selectedFatZbb.size()>0) and selectedJets.size()>1) {
             category="_BMET";
