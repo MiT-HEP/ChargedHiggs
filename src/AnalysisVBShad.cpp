@@ -82,6 +82,10 @@ void VBShadAnalysis::BookHisto(string l, string category)
     if(doTMVA and doMETAnalysis) Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "BDT withMET ; BDT withMET; Events", 200,-1.,1.);
     if(doTMVA and doBAnalysis) Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "BDT with Btag ; BDT with Btag; Events", 200,-1.,1.);
 
+    if(doTMVA and doMETAnalysis) Book ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+l, "BDT Multi withMET (response for ZZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+    if(doTMVA and doMETAnalysis) Book ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+l, "BDT Multi withMET (response for WZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+    if(doTMVA and doMETAnalysis) Book ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+l, "BDT Multi withMET (response for BKG); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+
     if(l.find("ZnnZhadJJ_EWK") !=string::npos  ||
        l.find("ZbbZhadJJ_EWK")!=string::npos  ||
        l.find("WPhadWPhadJJ_EWK") !=string::npos ||
@@ -139,14 +143,14 @@ void VBShadAnalysis::AddSpectator( string name, char type, int r){
 
 }
 
-void VBShadAnalysis::AddVariable( string name, char type, int r){
+void VBShadAnalysis::AddVariable( string name, char type, TMVA::Reader* i_readers){
     cout<<"[TmvaAnalysis]::[AddVariable]::[INFO] Adding variable: '"<<name<<"'"<<endl;
     varValues_.Add(name,type);
-    cout<<"[TmvaAnalysis]::[DEBUG] AddVariables of type F to reader "<<r <<" and name "<<name<<endl;
+    cout<<"[TmvaAnalysis]::[DEBUG] AddVariables of type F to reader "<< i_readers <<" and name "<<name<<endl;
     //    if ( type == 'I') for(auto& r : readers_ ) r -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
     //    else if ( type == 'F') for(auto&r : readers_) r -> AddVariable(name.c_str(),  (float*)varValues_.GetPointer(name));
-    if ( type == 'I') readers_[r] -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
-    else if ( type == 'F') readers_[r] -> AddVariable(name.c_str(),  (float*)varValues_.GetPointer(name));
+    if ( type == 'I') i_readers -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
+    else if ( type == 'F') i_readers -> AddVariable(name.c_str(),  (float*)varValues_.GetPointer(name));
     //else if ( type == 'D') for(auto &r : readers_) r -> AddVariable(name.c_str(),  (double*)varValues_.GetPointer(name));
     else {
         cout <<"[TmvaAnalysis]::[AddVariable]::[ERROR] type '"<<type<<"' not supported"<<endl;
@@ -156,6 +160,7 @@ void VBShadAnalysis::AddVariable( string name, char type, int r){
 void VBShadAnalysis::ReadTmva(){
 
     bdt.clear();
+    bdt_multi.clear();
 
     SetVariable("varMjj",evt_Mjj); //0
     SetVariable("varDetajj",evt_Detajj); //1
@@ -165,18 +170,18 @@ void VBShadAnalysis::ReadTmva(){
 
     SetVariable("varPTVV",evt_PTVV); //5
     SetVariable("varPTV2",evt_PTV2); //6
+    SetVariable("varPTV1",evt_PTV1); //7
 
-    SetVariable("varCen",evt_cenEta); //7
-    SetVariable("varzepVB",evt_zepVB); //8
-    SetVariable("bosV2chi2",evt_chi2_); //9
-    SetVariable("bosV2mass",evt_bosV2mass); //10
-    SetVariable("varFW2j",evt_FW2); //11
-    SetVariable("varmtop",evt_mtop); //12
+    SetVariable("varCen",evt_cenEta); //8
+    SetVariable("varzepVB",evt_zepVB); //9
+    SetVariable("bosV2chi2",evt_chi2_); //10
+    SetVariable("bosV2mass",evt_bosV2mass); //11
+    SetVariable("varFW2j",evt_FW2); //12
+    SetVariable("varmtop",evt_mtop); //13
 
     /*
     // from Julio only
     SetVariable("abs(varDphijj)",fabs(evt_Dphijj)); //1
-    SetVariable("varPTV1",evt_PTV1); //10
     SetVariable("varEtaMaxV",evt_EtaMaxV); //10
     SetVariable("varcenPTVVjj",evt_cenPTVVjj); //9
     SetVariable("bosV1mass",evt_bosV1mass); //9
@@ -190,7 +195,10 @@ void VBShadAnalysis::ReadTmva(){
         if(i==6 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRBtag") );
         if(i==7 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRMET") );
         //        if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
+    }
 
+    for(unsigned i =0 ;i< readers_multi_.size() ; ++i) {
+        bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[multiNcls]);
     }
 
 }
@@ -202,73 +210,76 @@ void VBShadAnalysis::InitTmva() {
     for( size_t i=0;i<weights.size() ;++i)
         readers_ . push_back( new TMVA::Reader() );
 
+    for( size_t i=0;i<weights_multi.size() ;++i)
+        readers_multi_ . push_back( new TMVA::Reader() );
+
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO BDTG - HAD " << endl;
 
     for (int i=0; i<3; i++) {
-        AddVariable("varMjj",'F',i); //0
-        AddVariable("varDetajj",'F',i); //1
-        AddVariable("varJet2Pt",'F',i); //2
-        AddVariable("varMVV",'F',i); //3
-        AddVariable("varPTV2",'F',i); //4
-        AddVariable("varCen",'F',i); //6
-        AddVariable("varnormPTVVjj",'F',i); //7
+        AddVariable("varMjj",'F',readers_[i]); //0
+        AddVariable("varDetajj",'F',readers_[i]); //1
+        AddVariable("varJet2Pt",'F',readers_[i]); //2
+        AddVariable("varMVV",'F',readers_[i]); //3
+        AddVariable("varPTV2",'F',readers_[i]); //4
+        AddVariable("varCen",'F',readers_[i]); //6
+        AddVariable("varnormPTVVjj",'F',readers_[i]); //7
     }
 
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO BDTG - MET " << endl;
 
     for (int i=3; i<4; i++) {
-        AddVariable("varMjj",'F',i); //0
-        AddVariable("varDetajj",'F',i); //1
-        AddVariable("varJet2Pt",'F',i); //2
-        AddVariable("varPTV1",'F',i); //4
+        AddVariable("varMjj",'F',readers_[i]); //0
+        AddVariable("varDetajj",'F',readers_[i]); //1
+        AddVariable("varJet2Pt",'F',readers_[i]); //2
+        AddVariable("varPTV1",'F',readers_[i]); //4
         //        AddVariable("varMVV",'F',i); //3
         //        AddVariable("varPTVV",'F',i); //4
-        AddVariable("varzepVB",'F',i); //5
-        AddVariable("varnormPTVVjj",'F',i); //6
+        AddVariable("varzepVB",'F',readers_[i]); //5
+        AddVariable("varnormPTVVjj",'F',readers_[i]); //6
     }
 
     // old training with the top included
     for (int i=4; i<6; i++) {
-        AddVariable("varMjj",'F',i); //0
-        AddVariable("varDetajj",'F',i); //1
-        AddVariable("varJet2Pt",'F',i); //2
-        AddVariable("varMVV",'F',i); //3
-        AddVariable("varPTVV",'F',i); //4
-        AddVariable("varzepVB",'F',i); //5
-        AddVariable("varnormPTVVjj",'F',i); //6
+        AddVariable("varMjj",'F',readers_[i]); //0
+        AddVariable("varDetajj",'F',readers_[i]); //1
+        AddVariable("varJet2Pt",'F',readers_[i]); //2
+        AddVariable("varMVV",'F',readers_[i]); //3
+        AddVariable("varPTVV",'F',readers_[i]); //4
+        AddVariable("varzepVB",'F',readers_[i]); //5
+        AddVariable("varnormPTVVjj",'F',readers_[i]); //6
     }
 
     // RBTAG
     for (int i=6; i<7; i++) {
-        AddVariable("varMjj",'F',i); //0
-        AddVariable("varJet2Pt",'F',i); //2
+        AddVariable("varMjj",'F',readers_[i]); //0
+        AddVariable("varJet2Pt",'F',readers_[i]); //2
         //        AddVariable("varDetajj",'F',i); //1
         //        AddVariable("varMVV",'F',i); //3
-        AddVariable("varPTV2",'F',i); //4
-        AddVariable("varCen",'F',i); //5
+        AddVariable("varPTV2",'F',readers_[i]); //4
+        AddVariable("varCen",'F',readers_[i]); //5
         //        AddVariable("varzepVB",'F',i); //6
-        AddVariable("varnormPTVVjj",'F',i); //7
-        AddVariable("varmtop",'F',i); //8
-        AddVariable("bosV2mass",'F',i); //9
-        AddVariable("bosV2chi2",'F',i); //10
+        AddVariable("varnormPTVVjj",'F',readers_[i]); //7
+        AddVariable("varmtop",'F',readers_[i]); //8
+        AddVariable("bosV2mass",'F',readers_[i]); //9
+        AddVariable("bosV2chi2",'F',readers_[i]); //10
 
         AddSpectator("mc",'F',i); AddSpectator("weight",'F',i); AddSpectator("ana_category",'F',i); AddSpectator("bosGen",'F',i); AddSpectator("evt",'F',i);
     }
 
     // RMET
     for (int i=7; i<8; i++) {
-        AddVariable("varMjj",'F',i); //0
-        AddVariable("varDetajj",'F',i); //1
-        AddVariable("varJet2Pt",'F',i); //2
-        AddVariable("varMVV",'F',i); //3
-        AddVariable("varPTV2",'F',i); //4
-        AddVariable("varzepVB",'F',i); //5
-        AddVariable("varnormPTVVjj",'F',i); //6
-        AddVariable("bosV2chi2",'F',i); //7
-        AddVariable("bosV2mass",'F',i); //8
-        AddVariable("varFW2j",'F',i); //9
+        AddVariable("varMjj",'F',readers_[i]); //0
+        AddVariable("varDetajj",'F',readers_[i]); //1
+        AddVariable("varJet2Pt",'F',readers_[i]); //2
+        AddVariable("varMVV",'F',readers_[i]); //3
+        AddVariable("varPTV2",'F',readers_[i]); //4
+        AddVariable("varzepVB",'F',readers_[i]); //5
+        AddVariable("varnormPTVVjj",'F',readers_[i]); //6
+        AddVariable("bosV2chi2",'F',readers_[i]); //7
+        AddVariable("bosV2mass",'F',readers_[i]); //8
+        AddVariable("varFW2j",'F',readers_[i]); //9
     }
 
     /*
@@ -291,18 +302,37 @@ void VBShadAnalysis::InitTmva() {
     }
     */
 
+
+    //multiclass RMET
+    for (int i=0; i<1; i++) {
+        AddVariable("varMjj",'F',readers_multi_[i]); //0
+        AddVariable("varDetajj",'F',readers_multi_[i]); //1
+        AddVariable("varJet2Pt",'F',readers_multi_[i]); //2
+        AddVariable("varMVV",'F',readers_multi_[i]); //3
+        AddVariable("varPTV2",'F',readers_multi_[i]); //4
+        AddVariable("varzepVB",'F',readers_multi_[i]); //5
+        AddVariable("varnormPTVVjj",'F',readers_multi_[i]); //6
+        AddVariable("varFW2j",'F',readers_multi_[i]); //7
+        AddVariable("bosV2mass",'F',readers_multi_[i]); //8
+        AddVariable("bosV2chi2",'F',readers_multi_[i]); //9
+    }
+
     cout << " GOING loop over weights" << weights.size() << endl;
 
     // load weights
-    for( size_t i=0;i<weights.size() ;++i)
-        {
-            cout <<"[TmvaAnalysis]::[Init]::[INFO] Loading weights idx="<<i<<": '"<< weights[i]<<"'"<<endl;
-            if(i==0 or i==1 or i==2) readers_[i]->BookMVA("BDT_VBSHad",weights[i].c_str());
-            if(i==3 or i==4 or i==5) readers_[i]->BookMVA("BDT_VBSMet",weights[i].c_str());
-            if(i==6 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
-            if(i==7 ) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
-            //            if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
-        }
+    for( size_t i=0;i<weights.size() ;++i) {
+        cout <<"[TmvaAnalysis]::[Init]::[INFO] Loading weights idx="<<i<<": '"<< weights[i]<<"'"<<endl;
+        if(i==0 or i==1 or i==2) readers_[i]->BookMVA("BDT_VBSHad",weights[i].c_str());
+        if(i==3 or i==4 or i==5) readers_[i]->BookMVA("BDT_VBSMet",weights[i].c_str());
+        if(i==6 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
+        if(i==7 ) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
+        //            if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
+    }
+
+    for( size_t i=0;i<weights_multi.size() ;++i) {
+        if(i==0) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
+    }
+
     cout <<"[TmvaAnalysis]::[Init]::[INFO] Done"<<endl;
 
 }
@@ -390,6 +420,10 @@ void VBShadAnalysis::writeTree(string name){
     Branch(name,"BDTnoBnoMET",'F');
     Branch(name,"BDTwithMET",'F');
     Branch(name,"BDTbtag",'F');
+
+    Branch(name,"BDTMultiwithMETzz",'F');
+    Branch(name,"BDTMultiwithMETwz",'F');
+    Branch(name,"BDTMultiwithMETbkg",'F');
 
 }
 
@@ -1298,7 +1332,13 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("BDTnoBnoMET",BDTnoBnoMET);
     SetTreeVar("BDTwithMET",BDTwithMET);
     SetTreeVar("BDTbtag",BDTbtag);
+
+    SetTreeVar("BDTMultiwithMETzz",bdt_multi[0]);
+    SetTreeVar("BDTMultiwithMETwz",bdt_multi[1]);
+    SetTreeVar("BDTMultiwithMETbkg",bdt_multi[2]);
+
 }
+
 
 int VBShadAnalysis::analyze(Event *e, string systname)
 {
@@ -2089,12 +2129,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if(doTMVA and (doHADAnalysis or doHADAntiAnalysis)) BDTnoBnoMET = bdt[0];
     if(doTMVA and doMETAnalysis and (category.find("BMET")   !=string::npos)) BDTwithMET = bdt[3];
-    if(doTMVA and doMETAnalysis and (category.find("RMET")   !=string::npos) ) BDTwithMET = bdt[7];
-    if(doTMVA and doBAnalysis and (category.find("RBtag")   !=string::npos) ) BDTbtag = bdt[6];
+    if(doTMVA and doMETAnalysis and (category.find("RMET")   !=string::npos)) BDTwithMET = bdt[7];
+    if(doTMVA and doBAnalysis and (category.find("RBtag")   !=string::npos)) BDTbtag = bdt[6];
     //    if(doTMVA and doBAnalysis and (category.find("BBtag")   !=string::npos) ) BDTbtag = bdt[8];
 
     if(doTMVA and !doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
-    if(doTMVA and doMETAnalysis) Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );
+    if(doTMVA and doMETAnalysis) {
+        Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );
+        Fill ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+label, systname, bdt_multi[0], e->weight() );
+        Fill ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+label, systname, bdt_multi[1], e->weight() );
+        Fill ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+label, systname, bdt_multi[2], e->weight() );
+    }
     if(doTMVA and doBAnalysis) Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );
 
     if(doWriteTree) {

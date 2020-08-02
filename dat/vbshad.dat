@@ -89,3 +89,6 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRMET.weights.x
 
 ## BBtag - MC (8)
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSBBTag.weights.xml")
+
+# Multicalss - RMET
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_RMET_BDTG.weights.xml")
