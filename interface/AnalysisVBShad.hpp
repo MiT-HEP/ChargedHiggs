@@ -162,11 +162,6 @@ private:
     DataStore varValues_;
     vector<TMVA::Reader*> readers_;
     vector<TMVA::Reader*> readers_multi_;
-    int multiNcls = 3;
-    //    <Classes NClass="3">
-    //    <Class Name="ZZ" Index="0"/>
-    //    <Class Name="WZ" Index="1"/>
-    //    <Class Name="bkg" Index="2"/>
 
     void InitTmva();
     void ReadTmva();

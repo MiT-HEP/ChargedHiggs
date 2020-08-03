@@ -79,12 +79,12 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/MVV"+category+"_high_"+l, "MVV (high Deta JJ) ; MVV_{reco}; Events", 100, 0, 2500);
 
     if(doTMVA and !doBAnalysis and !doMETAnalysis) Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "BDT noBnoMET ; BDT noBnoMET; Events", 200,-1.,1.);
-    if(doTMVA and doMETAnalysis) Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "BDT withMET ; BDT withMET; Events", 200,-1.,1.);
-    if(doTMVA and doBAnalysis) Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "BDT with Btag ; BDT with Btag; Events", 200,-1.,1.);
+    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "BDT withMET ; BDT withMET; Events", 200,-1.,1.);
+    if(doTMVA and (doBAnalysis or doBAntiAnalysis)) Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "BDT with Btag ; BDT with Btag; Events", 200,-1.,1.);
 
-    if(doTMVA and doMETAnalysis) Book ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+l, "BDT Multi withMET (response for ZZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
-    if(doTMVA and doMETAnalysis) Book ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+l, "BDT Multi withMET (response for WZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
-    if(doTMVA and doMETAnalysis) Book ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+l, "BDT Multi withMET (response for BKG); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) Book ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+l, "BDT Multi withMET (response for ZZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) Book ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+l, "BDT Multi withMET (response for WZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) Book ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+l, "BDT Multi withMET (response for BKG); BDT Multi withMET [GeV]; Events", 200,0.,1.);
 
     if(l.find("ZnnZhadJJ_EWK") !=string::npos  ||
        l.find("ZbbZhadJJ_EWK")!=string::npos  ||
@@ -188,8 +188,11 @@ void VBShadAnalysis::ReadTmva(){
         if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
     }
 
+    int NClass=3;
     for(unsigned i =0 ;i< readers_multi_.size() ; ++i) {
-        bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[multiNcls]);
+        for(unsigned j =0 ;j< NClass ; ++j) {
+            bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[j]);
+        }
     }
 
 }
@@ -2116,8 +2119,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(doTMVA and doBAnalysis and (category.find("BBtag")   !=string::npos) ) BDTbtag = bdt[8];
 
     if(doTMVA and !doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
-    if(doTMVA and doBAnalysis) Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );
-    if(doTMVA and doMETAnalysis) {
+    if(doTMVA and (doBAnalysis or doBAntiAnalysis)) Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );
+    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) {
         Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );
         Fill ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+label, systname, bdt_multi[0], e->weight() );
         Fill ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+label, systname, bdt_multi[1], e->weight() );
