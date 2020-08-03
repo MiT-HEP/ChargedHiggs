@@ -179,22 +179,13 @@ void VBShadAnalysis::ReadTmva(){
     SetVariable("varFW2j",evt_FW2); //12
     SetVariable("varmtop",evt_mtop); //13
 
-    /*
-    // from Julio only
-    SetVariable("abs(varDphijj)",fabs(evt_Dphijj)); //1
-    SetVariable("varEtaMaxV",evt_EtaMaxV); //10
-    SetVariable("varcenPTVVjj",evt_cenPTVVjj); //9
-    SetVariable("bosV1mass",evt_bosV1mass); //9
-    SetVariable("bosV1discr",evt_bosV1discr); //9
-    */
-
     //    vector<float> bdt;
     for(unsigned i =0 ;i< readers_.size() ; ++i) {
         if(i==0 || i==1 || i==2) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSHad") );
         if(i==3 || i==4 || i==5) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSMet") );
         if(i==6 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRBtag") );
         if(i==7 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRMET") );
-        //        if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
+        if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
     }
 
     for(unsigned i =0 ;i< readers_multi_.size() ; ++i) {
@@ -282,25 +273,16 @@ void VBShadAnalysis::InitTmva() {
         AddVariable("varFW2j",'F',readers_[i]); //9
     }
 
-    /*
     // BBtag
     for (int i=8; i<9; i++) {
-        AddVariable("varMjj",'F',i); //0
-        AddVariable("abs(varDphijj)",'F',i); //1
-        AddVariable("varJet2Pt",'F',i); //2
-        AddVariable("varPTV1",'F',i); //4
-        AddVariable("varEtaMaxV",'F',i); //4
-        AddVariable("varCen",'F',i); //4
-        AddVariable("varcenPTVVjj",'F',i); //6
-        AddVariable("varnormPTVVjj",'F',i); //6
-        AddVariable("varFW2j",'F',i); //9
-        //        AddVariable("varDetajj",'F',i); //1
-        //        AddVariable("varMVV",'F',i); //3
-        //        AddVariable("varzepVB",'F',i); //5
-        AddVariable("bosV1mass",'F',i); //7
-        AddVariable("bosV1discr",'F',i); //8
+        AddVariable("varMjj",'F',readers_[i]); //0
+        AddVariable("varJet2Pt",'F',readers_[i]); //1
+        AddVariable("varPTV2",'F',readers_[i]); //2
+        AddVariable("varCen",'F',readers_[i]); //3
+        AddVariable("varnormPTVVjj",'F',readers_[i]); //4
+        AddVariable("bosV2mass",'F',readers_[i]); //5
+        AddVariable("varmtop",'F',readers_[i]); //6
     }
-    */
 
 
     //multiclass RMET
@@ -326,7 +308,7 @@ void VBShadAnalysis::InitTmva() {
         if(i==3 or i==4 or i==5) readers_[i]->BookMVA("BDT_VBSMet",weights[i].c_str());
         if(i==6 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
         if(i==7 ) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
-        //            if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
+        if(i==8 ) readers_[i]->BookMVA("BDT_VBSBHad",weights[i].c_str());
     }
 
     for( size_t i=0;i<weights_multi.size() ;++i) {
@@ -2131,16 +2113,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(doTMVA and doMETAnalysis and (category.find("BMET")   !=string::npos)) BDTwithMET = bdt[3];
     if(doTMVA and doMETAnalysis and (category.find("RMET")   !=string::npos)) BDTwithMET = bdt[7];
     if(doTMVA and doBAnalysis and (category.find("RBtag")   !=string::npos)) BDTbtag = bdt[6];
-    //    if(doTMVA and doBAnalysis and (category.find("BBtag")   !=string::npos) ) BDTbtag = bdt[8];
+    if(doTMVA and doBAnalysis and (category.find("BBtag")   !=string::npos) ) BDTbtag = bdt[8];
 
     if(doTMVA and !doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
+    if(doTMVA and doBAnalysis) Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );
     if(doTMVA and doMETAnalysis) {
         Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );
         Fill ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+label, systname, bdt_multi[0], e->weight() );
         Fill ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+label, systname, bdt_multi[1], e->weight() );
         Fill ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+label, systname, bdt_multi[2], e->weight() );
     }
-    if(doTMVA and doBAnalysis) Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );
 
     if(doWriteTree) {
 
