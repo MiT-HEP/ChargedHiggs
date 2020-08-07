@@ -68,8 +68,8 @@ void VBShadAnalysis::BookHisto(string l, string category)
 {
 
     Book ("VBShadAnalysis/DRV1j"+category+"_"+l, " ; #Delta #R (V,jet) ; Events", 125,0,6.28);
-    Book ("VBShadAnalysis/ZepBosBVar"+category+"_"+l, " ; |#eta_{V} - (#eta_{j1} + #eta_{j2})/2| / #Delta #eta(jj) ; Events", 250,0,2);
-    Book ("VBShadAnalysis/BOSON/ZepBosVVar"+category+"_"+l, " ; |#eta_{VV} - (#eta_{j1} + #eta_{j2})/2| / #Delta #eta(jj) ; Events", 250,0,2);
+    Book ("VBShadAnalysis/ZepBosBVar"+category+"_"+l, " ; |#eta_{V} - 0.5*(#eta_{j1} + #eta_{j2})| / #Delta #eta(jj) ; Events", 250,0,2);
+    Book ("VBShadAnalysis/BOSON/ZepBosVVar"+category+"_"+l, " ; |#eta_{VV} - 0.5*(#eta_{j1} + #eta_{j2})| / #Delta #eta(jj) ; Events", 250,0,2);
     Book ("VBShadAnalysis/BOSON/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 100,0,2500);
     Book ("VBShadAnalysis/FW2"+category+"_"+l, " ; FW2 ; Events", 100,0,1.);
 
@@ -91,10 +91,14 @@ void VBShadAnalysis::BookHisto(string l, string category)
        l.find("WPhadWPhadJJ_EWK") !=string::npos ||
        l.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
        l.find("ZNuNuWPMJJjj_QCD") !=string::npos ||
+       l.find("ZbbWPMJJjj_EWK") !=string::npos ||
+       l.find("ZbbWPMJJjj_QCD") !=string::npos ||
        l.find("WWjj_SS_ll") !=string::npos ||
        l.find("WWjj_SS_lt") !=string::npos ||
        l.find("WWjj_SS_tt") !=string::npos ||
-       l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) {
+       l.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) {
         Book ("VBShadAnalysis/MVVres"+category+"_"+l, "MVVres ; ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100, -5., 5.);
     }
 
@@ -871,7 +875,9 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WWjj_SS_ll") !=string::npos ||
                label.find("WWjj_SS_lt") !=string::npos ||
                label.find("WWjj_SS_tt") !=string::npos ||
+               label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
+               label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
                label.find("ST") !=string::npos ||
                label.find("TTX") !=string::npos ||
                label.find("TTJets") !=string::npos ||
@@ -884,7 +890,9 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("TRIBOSON") !=string::npos ||
                label.find("MULTIBOSON") !=string::npos ||
                label.find("ZNuNuWPMJJjj_EWK")!=string::npos ||
-               label.find("ZNuNuWPMJJjj_QCD")!=string::npos
+               label.find("ZNuNuWPMJJjj_QCD")!=string::npos ||
+               label.find("ZbbWPMJJjj_EWK")!=string::npos ||
+               label.find("ZbbWPMJJjj_QCD")!=string::npos
                ) {
         pdgID1=23;
         pdgID2=24;
@@ -1226,12 +1234,16 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ZnnZhadJJ_EWK") !=string::npos ) mc = 3 ;
     if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) mc = 4 ;
     if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) mc = 5 ;
+    if(label.find("ZbbWPMJJjj_EWK") !=string::npos ) mc = 6 ;
+    if(label.find("ZbbWPMJJjj_QCD") !=string::npos ) mc = 7 ;
 
     if(label.find("WWjj_SS_ll") !=string::npos ) mc = 8 ;
     if(label.find("WWjj_SS_lt") !=string::npos ) mc = 9 ;
     if(label.find("WWjj_SS_tt") !=string::npos ) mc = 10 ;
 
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 11 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 12 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) mc = 13 ;
     if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 20 ;
 
     // multiboson
@@ -1911,10 +1923,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        label.find("WPhadWPhadJJ_EWK") !=string::npos ||
        label.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
        label.find("ZNuNuWPMJJjj_QCD") !=string::npos ||
+       label.find("ZbbWPMJJjj_EWK") !=string::npos ||
+       label.find("ZbbWPMJJjj_QCD") !=string::npos ||
        label.find("WWjj_SS_ll") !=string::npos ||
        label.find("WWjj_SS_lt") !=string::npos ||
        label.find("WWjj_SS_tt") !=string::npos ||
-       label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos) {
+       label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
+       label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
+       label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos) {
         if(evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
     }
 
