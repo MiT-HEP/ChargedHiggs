@@ -91,8 +91,8 @@ void VBShadAnalysis::BookHisto(string l, string category)
        l.find("WPhadWPhadJJ_EWK") !=string::npos ||
        l.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
        l.find("ZNuNuWPMJJjj_QCD") !=string::npos ||
-       l.find("ZbbWPMJJjj_EWK") !=string::npos ||
-       l.find("ZbbWPMJJjj_QCD") !=string::npos ||
+       l.find("ZbbWpmJJ_EWK") !=string::npos ||
+       l.find("ZbbWpmJJ_QCD") !=string::npos ||
        l.find("WWjj_SS_ll") !=string::npos ||
        l.find("WWjj_SS_lt") !=string::npos ||
        l.find("WWjj_SS_tt") !=string::npos ||
@@ -891,8 +891,8 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("MULTIBOSON") !=string::npos ||
                label.find("ZNuNuWPMJJjj_EWK")!=string::npos ||
                label.find("ZNuNuWPMJJjj_QCD")!=string::npos ||
-               label.find("ZbbWPMJJjj_EWK")!=string::npos ||
-               label.find("ZbbWPMJJjj_QCD")!=string::npos
+               label.find("ZbbWpmJJ_EWK")!=string::npos ||
+               label.find("ZbbWpmJJ_QCD")!=string::npos
                ) {
         pdgID1=23;
         pdgID2=24;
@@ -1234,8 +1234,8 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ZnnZhadJJ_EWK") !=string::npos ) mc = 3 ;
     if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) mc = 4 ;
     if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) mc = 5 ;
-    if(label.find("ZbbWPMJJjj_EWK") !=string::npos ) mc = 6 ;
-    if(label.find("ZbbWPMJJjj_QCD") !=string::npos ) mc = 7 ;
+    if(label.find("ZbbWpmJJ_EWK") !=string::npos ) mc = 6 ;
+    if(label.find("ZbbWpmJJ_QCD") !=string::npos ) mc = 7 ;
 
     if(label.find("WWjj_SS_ll") !=string::npos ) mc = 8 ;
     if(label.find("WWjj_SS_lt") !=string::npos ) mc = 9 ;
@@ -1923,8 +1923,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        label.find("WPhadWPhadJJ_EWK") !=string::npos ||
        label.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
        label.find("ZNuNuWPMJJjj_QCD") !=string::npos ||
-       label.find("ZbbWPMJJjj_EWK") !=string::npos ||
-       label.find("ZbbWPMJJjj_QCD") !=string::npos ||
+       label.find("ZbbWpmJJ_EWK") !=string::npos ||
+       label.find("ZbbWpmJJ_QCD") !=string::npos ||
        label.find("WWjj_SS_ll") !=string::npos ||
        label.find("WWjj_SS_lt") !=string::npos ||
        label.find("WWjj_SS_tt") !=string::npos ||
