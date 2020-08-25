@@ -22,11 +22,13 @@ public:
     virtual ~VBShadAnalysis (){}
 
     int year=2016; // master switch for year configuration
-    
+    bool doFinal = false;
+
     void Init() override;
     int analyze(Event*,string systname) override;
     void EndEvent() override;
     void setTree(Event*e, string label, string  category);
+    void writeTree(string name);
 
     void BookHisto(string l, string category);
 
@@ -37,12 +39,12 @@ public:
     void SetFatJetCuts(FatJet *f) override;
 
     float Getjetres(Jet* ajet);
-    float resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
+    std::pair<float, float> resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
     void getObjects(Event*e, string label, string systname);
     void studyTriggers(Event*e, string category, string label, string systname);
-    double genMtt(Event*e);
+    float genMtt(Event*e);
     bool genMatchResolved(Event*e, string systname, string label);
 
     bool doMETAnalysis=false;
@@ -52,7 +54,7 @@ public:
     bool doBAntiAnalysis=false;
     bool doHADAntiAnalysis=false;
 
-    bool writeTree = true;
+    bool doWriteTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
 
@@ -77,7 +79,7 @@ private:
     bool V1isZbb=false;
     bool V2isZbb=false;
 
-    double minDPhi=999.;
+    float minDPhi=999.;
 
     // selected Objects
     vector<Jet*> selectedJets;
@@ -93,6 +95,7 @@ private:
 
     vector<Jet*> forwardJets;
     vector<Jet*> bosonJets;
+    vector<Jet*> vetoJets;
 
     TLorentzVector p4VV;
     TLorentzVector p4jj;
@@ -104,7 +107,11 @@ private:
     float evt_Jet2Eta=-100;
     float evt_Jet2Pt=-100;
 
+    float bosV2j2Pt=-100;
+    float bosV2j1Pt=-100;
+
     float evt_MVV=-100;
+    float evt_DRV2=-100;
     float evt_PetaVV=-100;
     float evt_DetaVV=-100;
     float evt_MVV_gen=-100;
@@ -142,6 +149,8 @@ private:
 
     float BDTnoBnoMET = -100;
     float BDTwithMET = -100;
+    float BDTbtag = -100;
+    float MultiBDTwithMET = -100;
     int counterExtrabToVeto_=0;
 
     /************
@@ -149,8 +158,11 @@ private:
      ************/
 
     vector<float> bdt;  // score
+    vector<float> bdt_multi;
     DataStore varValues_;
     vector<TMVA::Reader*> readers_;
+    vector<TMVA::Reader*> readers_multi_;
+
     void InitTmva();
     void ReadTmva();
 
@@ -158,10 +170,11 @@ public:
     // Variables for MVA
     template<class T>
     void SetVariable( string name, T value){ varValues_.Set(name, value); }
-    void AddVariable( string name, char type, int r);
+    void AddVariable( string name, char type, TMVA::Reader* i_readers);
     void AddSpectator( string name, char type, int r);
 
     vector<string> weights;
+    vector<string> weights_multi;
    
 protected:
     

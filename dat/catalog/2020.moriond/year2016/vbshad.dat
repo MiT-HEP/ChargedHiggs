@@ -7,6 +7,9 @@ addfiles=%(amariniHmm)s/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythi
 addfiles=%(amariniHmm)s/ZNuNuWPMJJjj_QCD_LO
 addfiles=%(amariniHmm)s/ZNuNuWPMJJjj_EWK_LO
 
+addfiles=%(amariniHmm)s/ZbbWpmJJ_EWK_LO_SM_13TeV_madgraphMLM_pythia8
+addfiles=%(amariniHmm)s/ZbbWpmJJ_QCD_LO_SM_13TeV_madgraphMLM_pythia8
+
 addfiles=%(amariniHmm)s/WWjj_SS_lt_hadronic
 addfiles=%(amariniHmm)s/WWjj_SS_tt_hadronic
 addfiles=%(amariniHmm)s/WWjj_SS_ll_hadronic
