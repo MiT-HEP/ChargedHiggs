@@ -379,6 +379,11 @@ void VBShadAnalysis::writeTree(string name){
     Branch(name,"varcenPTVVjj",'F');
     Branch(name,"varFW2j",'F');
 
+    //VV-rest Frame
+    Branch(name,"varVVCen",'F');
+    Branch(name,"varVVDRVj",'F');
+    Branch(name,"varVVnormPTVVjj",'F');
+
     // BKG
     Branch(name,"varmtop",'F');
 
@@ -1198,6 +1203,96 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
     Fill("VBShadAnalysis/Baseline/Dphimin_" +label, systname, minDPhi, e->weight() );
 }
 
+
+void VBShadAnalysis::VVRestObj(Event*e){
+
+    evt_VVcenEta = -100;
+    evt_VVDRV1j = -100;
+    evt_VVnormPTVVjj = 0;
+
+
+    boostVV*=0;
+    TVector3 basezero(0.,0.,0.);
+
+    TLorentzVector P4V1_VV, P4V2_VV, P4j1_VV, P4j2_VV;
+    P4V1_VV*=0; P4V2_VV*=0; P4j1_VV*=0; P4j2_VV*=0;
+    TLorentzVector basezero4(0.,0.,0.,0.);
+
+    //BB
+    if (doHADAnalysis or doHADAntiAnalysis){
+        if(selectedFatJets.size()>1){
+            boostVV = (selectedFatJets[0]->GetP4()+selectedFatJets[1]->GetP4()).BoostVector();
+            //{  // To keep consistency, use reco VV uniformly.
+            //if( (label.find("_EWK_") !=string::npos ) && genVp!=NULL and genVp2!=NULL) boostVV = (genVp->GetP4() + genVp2->GetP4()).BoostVector();        
+            //else boostVV = (selectedFatJets[0]->GetP4()+selectedFatJets[1]->GetP4()).BoostVector();
+            //}
+            P4V1_VV = selectedFatJets[0]->GetP4();
+            P4V2_VV = selectedFatJets[1]->GetP4();
+            //evt_EtaMinV = std::min(selectedFatJets[0]->Eta(),selectedFatJets[1]->Eta());
+            //evt_EtaMaxV = std::max(selectedFatJets[0]->Eta(),selectedFatJets[1]->Eta());
+            //            float Mjj=jettagForBoosted(e, label, systname, evt_EtaMinV, evt_EtaMaxV);
+
+        }
+    }
+    //BBtag
+    if (doBAnalysis){
+        if(selectedFatZbb.size()>0 and selectedFatJets.size()>0){
+            boostVV = (selectedFatJets[0]->GetP4()+selectedFatZbb[0]->GetP4()).BoostVector();
+                   
+            P4V1_VV = selectedFatZbb[0]->GetP4();
+            P4V2_VV = selectedFatJets[0]->GetP4();
+        }
+    }
+
+    //BMET
+    if (doMETAnalysis or doMETAntiAnalysis){
+        if(selectedFatJets.size()>0 or selectedFatZbb.size()>0) {
+            if(usePuppi) {
+                if(selectedFatZbb.size()>0) boostVV = (e->GetMet().GetPuppiMetP4() + selectedFatZbb[0]->GetP4()).BoostVector();
+                else if(selectedFatJets.size()>0) boostVV = (e->GetMet().GetPuppiMetP4() + selectedFatJets[0]->GetP4()).BoostVector();
+                P4V1_VV = e->GetMet().GetPuppiMetP4();
+                P4V2_VV = selectedFatZbb[0]->GetP4();
+            } else {
+                if(selectedFatZbb.size()>0) boostVV = (e->GetMet().GetP4() + selectedFatZbb[0]->GetP4()).BoostVector();
+                else if(selectedFatJets.size()>0) boostVV = (e->GetMet().GetP4() + selectedFatJets[0]->GetP4()).BoostVector();
+                P4V1_VV = e->GetMet().GetP4();
+                P4V2_VV = selectedFatZbb[0]->GetP4();
+            } 
+
+        } 
+    }
+
+    if(forwardJets.size()>1){
+        P4j1_VV = forwardJets[0]->GetP4();
+        P4j2_VV = forwardJets[1]->GetP4();
+    }
+
+
+    if(boostVV != basezero && P4V1_VV != basezero4 && P4V2_VV != basezero4 && P4j1_VV != basezero4 && P4j2_VV != basezero4){
+
+        boostVV = -boostVV;
+
+        P4V1_VV.Boost(boostVV);
+        P4V2_VV.Boost(boostVV);
+        P4j1_VV.Boost(boostVV);
+        P4j2_VV.Boost(boostVV);        
+
+        float VV_EtaMinV = std::min(P4V1_VV.Eta(),P4V2_VV.Eta());
+        float VV_EtaMaxV = std::max(P4V1_VV.Eta(),P4V2_VV.Eta());
+
+        evt_VVcenEta = std::min(
+                           VV_EtaMinV - std::min(P4j1_VV.Eta(),P4j2_VV.Eta()),
+                           std::max(P4j1_VV.Eta(),P4j2_VV.Eta()) - VV_EtaMaxV
+                           ) ;
+        evt_VVDRV1j = std::min(P4V1_VV.DeltaR(P4j1_VV), P4V1_VV.DeltaR(P4j2_VV));
+
+        evt_VVnormPTVVjj = fabs((P4V1_VV+P4V2_VV+P4j1_VV+P4j2_VV).Pt())/(P4V1_VV.Pt() + P4V2_VV.Pt() + P4j1_VV.Pt() + P4j2_VV.Pt());
+
+    }   
+        
+}
+
+
 void VBShadAnalysis::setTree(Event*e, string label, string category )
 {
 
@@ -1300,6 +1395,12 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("varnormPTVVjj",evt_normPTVVjj);
     SetTreeVar("varcenPTVVjj",evt_cenPTVVjj);
     SetTreeVar("varFW2j",evt_FW2);
+
+    //VV -rest Frame
+    SetTreeVar("varVVCen",evt_VVcenEta);
+    SetTreeVar("varVVDRVj",evt_VVDRV1j);
+    SetTreeVar("varVVnormPTVVjj",evt_VVnormPTVVjj);
+
 
     // BKG
     SetTreeVar("varmtop",evt_mtop);
@@ -1909,6 +2010,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/BOSON/BosonDecayRatio_" +label, systname, dauRatioV2, e->weight() );
     Fill("VBShadAnalysis/BOSON/CosThetaStar_" +label, systname, cosThetaV1, e->weight() );
     Fill("VBShadAnalysis/BOSON/CosThetaStar_" +label, systname, cosThetaV2, e->weight() );
+
+
+    ////// Fill VV-rest frame variables
+    VVRestObj(e);
+    ///////////////////////////////////
+
+
 
     //////
     //$$$ CUT FLOW

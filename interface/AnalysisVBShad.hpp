@@ -43,6 +43,7 @@ public:
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
     void getObjects(Event*e, string label, string systname);
+    void VVRestObj(Event*e);
     void studyTriggers(Event*e, string category, string label, string systname);
     float genMtt(Event*e);
     bool genMatchResolved(Event*e, string systname, string label);
@@ -146,6 +147,14 @@ private:
     bool evt_genmatch = 0;
     float evt_j1unc = 0;
     float evt_j2unc = 0;
+
+    //VV-rest Frame
+    float evt_VVcenEta = -100;
+    float evt_VVDRV1j = -100;
+    float evt_VVnormPTVVjj = 0;
+
+    TVector3 boostVV;
+
 
     float BDTnoBnoMET = -100;
     float BDTwithMET = -100;
