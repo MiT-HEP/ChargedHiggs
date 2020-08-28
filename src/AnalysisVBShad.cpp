@@ -702,7 +702,9 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
             //V_term = (MRij - MV) * (MRij - MV)  / MVres * (1+sqrt(Unc_i+Unc_j+2.5*2.5/(MV*MV)));
             //            V_term = (MRij - MV) * (MRij - MV)  / MVres * (Unc_i+Unc_j+2.5*2.5/(MV*MV));
 
-            V_term = (MRij - MV) * (MRij - MV)  / MVres ;
+            //V_term = (MRij - MV) * (MRij - MV)  / MVres ;
+            //optimized chi2
+            V_term = (MRij - MV) * (MRij - MV)  / MVres * (1 + 100*(PTij>0?(DRij/PTij):0))  + (Mij - MV) * (Mij - MV) / MVres;
 
 
             for(unsigned k=0; k<selectedJets.size(); ++k) {
