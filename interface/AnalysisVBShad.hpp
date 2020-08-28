@@ -5,6 +5,7 @@
 #include "interface/CutSelector.hpp"
 #include "interface/SF_CSVReweight.hpp" // REMOVEME AFTER MERGE OF MR PR
 #include "interface/Output.hpp" // DataStore
+#include "interface/KinematicFit.hpp"
 
 #include "TMVA/Reader.h"
 #include "TMVA/Tools.h"
@@ -28,7 +29,7 @@ public:
     int analyze(Event*,string systname) override;
     void EndEvent() override;
     void setTree(Event*e, string label, string  category);
-    void writeTree(string name);
+    void writeTree(string name, int purp);
 
     void BookHisto(string l, string category);
 
@@ -39,6 +40,7 @@ public:
     void SetFatJetCuts(FatJet *f) override;
 
     float Getjetres(Jet* ajet);
+    void resolvedDNN(Event*e, string label, string systname);
     std::pair<float, float> resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
@@ -60,6 +62,8 @@ public:
     bool doTrigger=false;
 
     bool doTMVA=true;
+    bool doResTagKeras = false;
+    bool doResTagTMVA = true;
 
 private:
 
@@ -143,6 +147,9 @@ private:
     float evt_bosV2tdiscr=-1;
     float evt_bosV2unc = 0;
     float evt_chi2_= -1;
+    float evt_maxDnn = 0.;
+    float evt_maxkeras = -999.;
+
 
     bool evt_genmatch = 0;
     float evt_j1unc = 0;
@@ -171,9 +178,21 @@ private:
     DataStore varValues_;
     vector<TMVA::Reader*> readers_;
     vector<TMVA::Reader*> readers_multi_;
+    vector<TMVA::Reader*> readers_dnn_;
 
     void InitTmva();
     void ReadTmva();
+
+    /**********************************
+     *          SCIKIT                *
+     **********************************/
+
+    std::unique_ptr<TPython> py;
+    vector<float> x;
+
+    void InitScikit();
+    //void ReadScikit(Event*e);
+
 
 public:
     // Variables for MVA
@@ -184,11 +203,12 @@ public:
 
     vector<string> weights;
     vector<string> weights_multi;
-   
+    vector<string> weights_dnn;   
 protected:
     
 
     std::unique_ptr<JME::JetResolutionObject> jet_resolution;
+    //std::unique_ptr<KinematicFit2> kf; 
 };
 
 

@@ -211,6 +211,9 @@ void VBShadAnalysis::InitTmva() {
     for( size_t i=0;i<weights_multi.size() ;++i)
         readers_multi_ . push_back( new TMVA::Reader() );
 
+    for( size_t i=0;i<weights_dnn.size() ;++i)
+        readers_dnn_ . push_back( new TMVA::Reader() );
+
     cout << "---------------------------------------------" << endl;
     cout << " GOING TO BDTG - HAD " << endl;
 
@@ -306,6 +309,43 @@ void VBShadAnalysis::InitTmva() {
         AddVariable("bosV2chi2",'F',readers_multi_[i]); //9
     }
 
+
+    //resTagger TMVA
+    for (int i=0; i<1; i++) {
+
+        AddVariable("j1_pT", 'F',readers_dnn_[i]);
+        AddVariable("abs(j1_Eta)",'F',readers_dnn_[i]);
+        AddVariable("j1_M",'F',readers_dnn_[i]);
+        AddVariable("j1_Unc",'F',readers_dnn_[i]);
+        AddVariable("j1_axis2", 'F',readers_dnn_[i]);
+        AddVariable("j1_mult",'F',readers_dnn_[i]);
+        AddVariable("j1_ptD", 'F',readers_dnn_[i]);
+
+        AddVariable("j2_pT", 'F',readers_dnn_[i]);
+        AddVariable("abs(j2_Eta)", 'F',readers_dnn_[i]);
+        AddVariable("j2_M",'F',readers_dnn_[i]);
+        AddVariable("j2_Unc", 'F',readers_dnn_[i]);
+        AddVariable("j2_axis2", 'F',readers_dnn_[i]);
+        AddVariable("j2_ptD",'F',readers_dnn_[i]);
+
+        AddVariable("j3_pT", 'F',readers_dnn_[i]);
+        AddVariable("abs(j3_Eta)", 'F',readers_dnn_[i]);
+        AddVariable("j3_Unc", 'F',readers_dnn_[i]);
+        AddVariable("j3_axis2", 'F',readers_dnn_[i]);
+        AddVariable("j3_ptD", 'F',readers_dnn_[i]);
+
+
+        AddVariable("j4_pT", 'F',readers_dnn_[i]);
+        AddVariable("abs(j4_Eta)", 'F',readers_dnn_[i]);
+        AddVariable("j4_Unc", 'F',readers_dnn_[i]);
+        AddVariable("j4_axis2", 'F',readers_dnn_[i]);
+        //AddVariable("j4_ptD", 'F',readers_dnn_[i]);
+
+
+    }
+
+
+
     cout << " GOING loop over weights" << weights.size() << endl;
 
     // load weights
@@ -322,16 +362,49 @@ void VBShadAnalysis::InitTmva() {
         if(i==0) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
     }
 
+    for( size_t i=0;i<weights_dnn.size() ;++i) {
+        if(i==0) readers_dnn_[i]->BookMVA("DNN_ResTag",weights_dnn[i].c_str());
+    }
     cout <<"[TmvaAnalysis]::[Init]::[INFO] Done"<<endl;
 
 }
 
 
-void VBShadAnalysis::writeTree(string name){
+void VBShadAnalysis::InitScikit(){
+
+
+    py . reset(new TPython);
+
+
+    py -> Exec("import keras");
+    py -> Exec("import numpy as np");
+    //
+    py -> Exec("from sklearn.ensemble import RandomForestClassifier");
+    py -> Exec("from sklearn.calibration import CalibratedClassifierCV");
+    py -> Exec("from sklearn.metrics import log_loss");
+    //
+    py -> Exec("from sklearn.externals import joblib ");
+    py -> Exec("kmodel=keras.models.load_model('aux/BDTvbs/model_ResTag.hd')");
+
+    py -> Exec("kmodel.summary()");
+
+    PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
+
+    //PyObject* pymain = PyImport_ImportModule("__main__");
+
+    //PyModule_AddObject(pymain, "x", pyx);
+
+    //Py_DECREF(pymain);
+
+}
+
+
+void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp = 1: restag
 
         // fill variables for miniTREE
     InitTree(name);
 
+    if(purp == 0){
     Branch(name,"run",'I');
     Branch(name,"lumi",'I');
     Branch(name,"evt",'I');
@@ -418,6 +491,60 @@ void VBShadAnalysis::writeTree(string name){
     Branch(name,"BDTMultiwithMETzz",'F');
     Branch(name,"BDTMultiwithMETwz",'F');
     Branch(name,"BDTMultiwithMETbkg",'F');
+    }
+
+    else if (purp == 1){
+
+
+        Branch(name,"j1_pT",'F');
+        Branch(name,"j1_Eta",'F');
+        Branch(name,"j1_Phi",'F');
+        Branch(name,"j1_M",'F');
+        Branch(name,"j1_Unc",'F');
+        Branch(name,"j1_QGL",'F');
+        Branch(name,"j1_mult",'F');
+        Branch(name,"j1_ptD",'F');
+        Branch(name,"j1_axis2",'F');
+
+        Branch(name,"j2_pT",'F');
+        Branch(name,"j2_Eta",'F');
+        Branch(name,"j2_Phi",'F');
+        Branch(name,"j2_M",'F');
+        Branch(name,"j2_Unc",'F');
+        Branch(name,"j2_QGL",'F');
+        Branch(name,"j2_mult",'F');
+        Branch(name,"j2_ptD",'F');
+        Branch(name,"j2_axis2",'F');
+
+
+        Branch(name,"j3_pT",'F');
+        Branch(name,"j3_Eta",'F');
+        Branch(name,"j3_Phi",'F');
+        Branch(name,"j3_M",'F');
+        Branch(name,"j3_Unc",'F');
+        Branch(name,"j3_QGL",'F');
+        Branch(name,"j3_mult",'F');
+        Branch(name,"j3_ptD",'F');
+        Branch(name,"j3_axis2",'F');
+
+
+        Branch(name,"j4_pT",'F');
+        Branch(name,"j4_Eta",'F');
+        Branch(name,"j4_Phi",'F');
+        Branch(name,"j4_M",'F');
+        Branch(name,"j4_Unc",'F');
+        Branch(name,"j4_QGL",'F');
+        Branch(name,"j4_mult",'F');
+        Branch(name,"j4_ptD",'F');
+        Branch(name,"j4_axis2",'F');
+
+        Branch(name,"Vmatch",'I');
+        Branch(name,"EvtNum",'I');
+        Branch(name,"Weights",'D');
+
+
+    }
+
 
 }
 
@@ -587,7 +714,7 @@ void VBShadAnalysis::Init(){
 
     } //end label loop
 
-    if(doWriteTree) { writeTree("tree_vbs"); writeTree("tree_vbs_JESUp"); writeTree("tree_vbs_JESDown"); }
+    if(doWriteTree) { writeTree("tree_vbs",0); writeTree("tree_vbs_JESUp",0); writeTree("tree_vbs_JESDown",0); writeTree("tree_resTag",1);}
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
 
@@ -648,6 +775,237 @@ float VBShadAnalysis::jettagForBoosted(Event*e, string label, string systname, f
 
     return  Mkl;
 }
+
+
+
+void VBShadAnalysis::resolvedDNN(Event*e, string label, string systname){
+
+    bosonJets.clear();
+    forwardJets.clear();
+
+    evt_maxDnn = 0.;
+    int index_i=-1;
+    int index_j=-1;
+    int index_k=-1;
+    int index_l=-1;
+
+
+    for(unsigned i=0; i<selectedJets.size(); ++i) {
+        for(unsigned j=0; j<i; ++j) {
+            for(unsigned k=0; k<j; ++k) {
+                for(unsigned l=0; l<k; ++l) {
+
+                    bool matchi = false;
+                    bool matchj = false;
+                    bool matchk = false;
+                    bool matchl = false;
+
+                    for(Int_t g = 0; g < e->NGenPar(); g++){
+
+                        GenParticle *genpar = e->GetGenParticle(g);
+
+                        if( ! genpar->IsLHE()) continue;
+
+                        //cout <<  "debug LHE: " << "pa id: " <<  genpar->GetParentPdgId() << endl;
+
+                        if( fabs(genpar->GetParentPdgId()) == 5 ) continue;
+
+                        if( (selectedJets[i]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchi = true;
+                        if( (selectedJets[j]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchj = true;
+                        if( (selectedJets[k]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchk = true;
+                        if( (selectedJets[l]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchl = true;
+                    }
+
+                    bool match_all = matchi && matchj && matchk && matchl;
+
+                    int fi  = -1;
+                    int fj  = -1;
+                    int vk  = -1;
+                    int vl  = -1;
+
+
+                    double Mij = fabs(selectedJets[i]->InvMass(selectedJets[j]) - 90.);
+                    double Mjk = fabs(selectedJets[j]->InvMass(selectedJets[k]) - 90.);
+                    double Mkl = fabs(selectedJets[k]->InvMass(selectedJets[l]) - 90.);
+                    double Mik = fabs(selectedJets[i]->InvMass(selectedJets[k]) - 90.);
+                    double Mil = fabs(selectedJets[i]->InvMass(selectedJets[l]) - 90.);
+                    double Mjl = fabs(selectedJets[l]->InvMass(selectedJets[j]) - 90.);
+
+                    double minM = std::min({Mij, Mjk, Mkl, Mik, Mil, Mjl});
+
+                    if(minM == Mij) {fi = k; fj = l; vk = i; vl = j;}
+                    else if(minM == Mjk) {fi = i; fj = l; vk = j; vl = k; }
+                    else if(minM == Mkl) {fi = i; fj = j; vk = k; vl = l; }
+                    else if(minM == Mik) {fi = j; fj = l; vk = i; vl = k; }
+                    else if(minM == Mil) {fi = j; fj = k; vk = i; vl = l; }
+                    else if(minM == Mjl) {fi = i; fj = k; vk = j; vl = l; }
+
+
+                    if(fi>=0 && fj>=0 && vk>=0 && vl>=0){
+
+
+                    if(doResTagTMVA){
+                    SetVariable("j1_pT",  selectedJets[fi]->GetP4().Pt());
+                    SetVariable("abs(j1_Eta)", fabs(selectedJets[fi]->Eta()));
+                    SetVariable("j1_M",   selectedJets[fi]->M());
+                    SetVariable("j1_Unc",   sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
+                    SetVariable("j1_axis2",  selectedJets[fi]->QGLVar("axis2"));
+                    SetVariable("j1_mult",  selectedJets[fi]->QGLVar("mult"));
+                    SetVariable("j1_ptD",  selectedJets[fi]->QGLVar("ptD"));
+
+
+                    SetVariable("j2_pT",  selectedJets[fj]->GetP4().Pt());
+                    SetVariable("abs(j2_Eta)", fabs(selectedJets[fj]->Eta()));
+                    SetVariable("j2_M",   selectedJets[fj]->M());
+                    SetVariable("j2_Unc",   sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
+                    SetVariable("j2_axis2",  selectedJets[fj]->QGLVar("axis2"));
+                    SetVariable("j2_ptD",  selectedJets[fj]->QGLVar("ptD"));
+
+
+                    SetVariable("j3_pT",  selectedJets[vk]->GetP4().Pt());
+                    SetVariable("abs(j3_Eta)", fabs(selectedJets[vk]->Eta()));
+                    SetVariable("j3_Unc",   sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
+                    SetVariable("j3_axis2",  selectedJets[vk]->QGLVar("axis2"));
+                    SetVariable("j3_ptD",  selectedJets[vk]->QGLVar("ptD"));
+
+
+                    SetVariable("j4_pT",  selectedJets[vl]->GetP4().Pt());
+                    SetVariable("abs(j4_Eta)", fabs(selectedJets[vl]->Eta()));
+                    SetVariable("j4_Unc",   sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
+                    SetVariable("j4_axis2",  selectedJets[vl]->QGLVar("axis2"));
+                    //SetVariable("j4_ptD",  selectedJets[vl]->QGLVar("ptD"));
+
+
+                    float dnn = (float)readers_dnn_[0]->EvaluateMVA("DNN_ResTag");
+                    if(dnn > evt_maxDnn){
+
+                        evt_maxDnn = dnn;
+                        index_i=vk;
+                        index_j=vl;
+                        index_k=fi;
+                        index_l=fj;
+
+                    }
+                    }//end TMVA
+
+                    if(doResTagKeras){
+                    x.clear();
+                    x.push_back(selectedJets[fi]->GetP4().Pt());
+                    x.push_back(selectedJets[fi]->Eta());
+                    x.push_back(selectedJets[fi]->Phi());
+                    x.push_back(selectedJets[fi]->M());
+                    x.push_back(sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
+                    x.push_back(selectedJets[fi]->QGLVar("axis2"));
+                    x.push_back(selectedJets[fi]->QGLVar("mult"));
+                    x.push_back(selectedJets[fi]->QGLVar("ptD"));
+
+
+                    x.push_back(selectedJets[fj]->GetP4().Pt());
+                    x.push_back(selectedJets[fj]->Eta());
+                    x.push_back(selectedJets[fj]->Phi());
+                    x.push_back(selectedJets[fj]->M());
+                    x.push_back(sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
+                    x.push_back(selectedJets[fj]->QGLVar("axis2"));
+                    x.push_back(selectedJets[fj]->QGLVar("mult"));
+                    x.push_back(selectedJets[fj]->QGLVar("ptD"));
+
+
+                    x.push_back(selectedJets[vk]->GetP4().Pt());
+                    x.push_back(selectedJets[vk]->Eta());
+                    x.push_back(selectedJets[vk]->Phi());
+                    x.push_back(selectedJets[vk]->M());
+                    x.push_back(sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
+                    x.push_back(selectedJets[vk]->QGLVar("axis2"));
+                    x.push_back(selectedJets[vk]->QGLVar("mult"));
+                    x.push_back(selectedJets[vk]->QGLVar("ptD"));
+
+
+                    x.push_back(selectedJets[vl]->GetP4().Pt());
+                    x.push_back(selectedJets[vl]->Eta());
+                    x.push_back(selectedJets[vl]->Phi());
+                    x.push_back(selectedJets[vl]->M());
+                    x.push_back(sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
+                    x.push_back(selectedJets[vl]->QGLVar("axis2"));
+                    x.push_back(selectedJets[vl]->QGLVar("mult"));
+                    x.push_back(selectedJets[vl]->QGLVar("ptD"));
+
+                    float kerasDiscr = py->Eval("kmodel.predict(np.array([ x ] ))[0][0]");
+                    //float kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22],x[23],x[24],x[25],x[26],x[27],x[28],x[29],x[30],x[31] ] ] ))[0][0]");
+
+                    if(kerasDiscr > evt_maxkeras){
+                        evt_maxkeras = kerasDiscr;
+                        index_i=vk;
+                        index_j=vl;
+                        index_k=fi;
+                        index_l=fj;
+
+                    }
+
+                    }//end keras
+
+
+                    SetTreeVar("j1_pT",  selectedJets[fi]->GetP4().Pt());
+                    SetTreeVar("j1_Eta", selectedJets[fi]->Eta());
+                    SetTreeVar("j1_Phi", selectedJets[fi]->Phi());
+                    SetTreeVar("j1_M",   selectedJets[fi]->M());
+                    SetTreeVar("j1_Unc",   sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
+                    SetTreeVar("j1_QGL",  selectedJets[fi]->QGL());
+                    SetTreeVar("j1_mult",  selectedJets[fi]->QGLVar("mult"));
+                    SetTreeVar("j1_ptD",  selectedJets[fi]->QGLVar("ptD"));
+                    SetTreeVar("j1_axis2",  selectedJets[fi]->QGLVar("axis2"));
+
+                    SetTreeVar("j2_pT",  selectedJets[fj]->GetP4().Pt());
+                    SetTreeVar("j2_Eta", selectedJets[fj]->Eta());
+                    SetTreeVar("j2_Phi", selectedJets[fj]->Phi());
+                    SetTreeVar("j2_M",   selectedJets[fj]->M());
+                    SetTreeVar("j2_Unc",   sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
+                    SetTreeVar("j2_QGL",  selectedJets[fj]->QGL());
+                    SetTreeVar("j2_mult",  selectedJets[fj]->QGLVar("mult"));
+                    SetTreeVar("j2_ptD",  selectedJets[fj]->QGLVar("ptD"));
+                    SetTreeVar("j2_axis2",  selectedJets[fj]->QGLVar("axis2"));
+
+                    SetTreeVar("j3_pT",  selectedJets[vk]->GetP4().Pt());
+                    SetTreeVar("j3_Eta", selectedJets[vk]->Eta());
+                    SetTreeVar("j3_Phi", selectedJets[vk]->Phi());
+                    SetTreeVar("j3_M",   selectedJets[vk]->M());
+                    SetTreeVar("j3_Unc",   sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
+                    SetTreeVar("j3_QGL",  selectedJets[vk]->QGL());
+                    SetTreeVar("j3_mult",  selectedJets[vk]->QGLVar("mult"));
+                    SetTreeVar("j3_ptD",  selectedJets[vk]->QGLVar("ptD"));
+                    SetTreeVar("j3_axis2",  selectedJets[vk]->QGLVar("axis2"));
+
+                    SetTreeVar("j4_pT",  selectedJets[vl]->GetP4().Pt());
+                    SetTreeVar("j4_Eta", selectedJets[vl]->Eta());
+                    SetTreeVar("j4_Phi", selectedJets[vl]->Phi());
+                    SetTreeVar("j4_M",   selectedJets[vl]->M());
+                    SetTreeVar("j4_Unc",   sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
+                    SetTreeVar("j4_QGL",  selectedJets[vl]->QGL());
+                    SetTreeVar("j4_mult",  selectedJets[vl]->QGLVar("mult"));
+                    SetTreeVar("j4_ptD",  selectedJets[vl]->QGLVar("ptD"));
+                    SetTreeVar("j4_axis2",  selectedJets[vl]->QGLVar("axis2"));
+
+                    SetTreeVar("Vmatch",(int)match_all);
+                    SetTreeVar("EvtNum",e->eventNum());
+                    SetTreeVar("Weights",e->weight());
+                    }
+
+
+                }//l
+            }//k
+        }//j
+    }//i
+
+    if(index_i>=0 && index_j>=0 && index_k>=0 && index_l>=0){
+      bosonJets.push_back(selectedJets[index_i]);
+      bosonJets.push_back(selectedJets[index_j]);
+      forwardJets.push_back(selectedJets[index_k]);
+      forwardJets.push_back(selectedJets[index_l]);
+    }
+
+
+}
+
+
 
 
 std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string systname, float etaV1) {
@@ -1790,6 +2148,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             //// decide
 
             double chi2Cut=6.;
+            float tmvacut = 0.6;
+            float kerascut = 1.0;
             string genmatch = "wrong_";
             float mBoson = mBoson_Z;
             float mWidth = 20.;
@@ -1806,12 +2166,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 // need to redo since due to  the jet assignement
             }
 
+            if(doResTagKeras or doResTagTMVA){
+              resolvedDNN(e,label, systname);
+              if(bosonJets.size()>1) MV = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
+            }    
+
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+genmatch+label, systname, MV, e->weight() );
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, chi2, e->weight() );
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+genmatch+label, systname, chi2, e->weight() );
 
-            if(bosonJets.size()>1 && chi2<chi2Cut){
+            if(bosonJets.size()>1 && (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut))){
                 Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+label, systname, MV, e->weight() );
                 Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+genmatch+label, systname, MV, e->weight() );
             }
@@ -1819,7 +2184,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             ///////$$$$$
             ///////$$$$$
 
-            if( fabs(MV-mBoson) < mWidth and bosonJets.size()>1 and chi2<chi2Cut) {
+            if( fabs(MV-mBoson) < mWidth and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RBtag";
                 p4VV = ( selectedFatZbb[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
                 evt_chi2_ = chi2;
@@ -2258,6 +2623,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if (systname.find("NONE")    !=string::npos) {
             setTree(e,label,category);
             FillTree("tree_vbs");
+            FillTree("tree_resTag");
         }
 
         if (systname.find("JESUp")    !=string::npos) {
@@ -2269,6 +2635,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             setTree(e,label,category);
             FillTree("tree_vbs_JESDown");
         }
+
+        
+
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","end Analyze");
