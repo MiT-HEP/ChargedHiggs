@@ -569,6 +569,7 @@ void VBShadAnalysis::Init(){
 
 
     if(doTMVA) InitTmva();
+    if(doResTagKeras) InitScikit();
 
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
