@@ -62,7 +62,7 @@ int LoadNero::InitTree(){
     for (auto b : bare_ )
     {
         if (dynamic_cast<BareFatJets*>(b) !=NULL)  
-            dynamic_cast<BareFatJets*>(b)->setBranchAddresses(tree_,"AK8CHS");
+            dynamic_cast<BareFatJets*>(b)->setBranchAddresses(tree_,"AK8WithDeepTag");
         else
             b->setBranchAddresses(tree_);
     }
@@ -294,7 +294,7 @@ void LoadNero::FillFatJets(){
 
     BareFatJets *bj = dynamic_cast<BareFatJets*> ( bare_ [ names_[ "BareFatJets" ] ] ); assert (bj !=NULL);
 
-    if ( tree_ ->GetBranchStatus("fatjetAK8CHSP4") == 0 ){
+    if ( tree_ ->GetBranchStatus("fatAK8WithDeepTagP4") == 0 ){
 
     }
 
@@ -306,15 +306,13 @@ void LoadNero::FillFatJets(){
 #ifdef VERBOSE
     if(VERBOSE>1)
         cout <<"[LoadNero]::[FillJets]::[DEBUG] Jets length:"<<endl;
-    cout <<"\t * tau1: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau1") << " : "<< bj->tau1->size()<<endl;
-    cout <<"\t * tau2: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau2") << " : "<< bj->tau2->size()<<endl;
-    cout <<"\t * tau3: "	<< tree_->GetBranchStatus("fatjetAK8CHSTau3") << " : "<< bj->tau3->size()<<endl;
-    cout <<"\t * sdtau1: "    << tree_->GetBranchStatus("fatjetAK8CHSSDTau1") << " : "<< bj -> sdtau1 ->size()<<endl;
-    cout <<"\t * nFirst: "	<< tree_->GetBranchStatus("fatjetAK8CHSfirstSubjet") << " : "<< bj->firstSubjet->size()<<endl;
-    cout <<"\t * nSubjets: "	<< tree_->GetBranchStatus("fatjetAK8CHSnSubjets") << " : "<< bj->nSubjets->size()<<endl;
-    cout <<"\t * subjet_btag: "	<< tree_->GetBranchStatus("fatjetAK8CHSsubjet_btag") << " : "<< bj->subjet_btag->size()<<endl;
-    cout <<"\t * softdropMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSSoftdropMass") << " : "<< bj->softdropMass->size()<<endl;
-    cout <<"\t * CorrectedPrunedMass: "	<< tree_->GetBranchStatus("fatjetAK8CHSCorrectedPrunedMass") << " : "<< bj->corrprunedMass->size()<<endl;
+    cout <<"\t * tau1: "	<< tree_->GetBranchStatus("fatjetAK8WithDeepTagTau1") << " : "<< bj->tau1->size()<<endl;
+    cout <<"\t * tau2: "	<< tree_->GetBranchStatus("fatjetAK8WithDeepTagTau2") << " : "<< bj->tau2->size()<<endl;
+    cout <<"\t * tau3: "	<< tree_->GetBranchStatus("fatjetAK8WithDeepTagTau3") << " : "<< bj->tau3->size()<<endl;
+    cout <<"\t * nFirst: "	<< tree_->GetBranchStatus("fatjetAK8WithDeepTagfirstSubjet") << " : "<< bj->firstSubjet->size()<<endl;
+    cout <<"\t * nSubjets: "	<< tree_->GetBranchStatus("fatjetAK8WithDeepTagCHSnSubjets") << " : "<< bj->nSubjets->size()<<endl;
+    cout <<"\t * subjet_btag: "	<< tree_->GetBranchStatus("fatjetAK8WithDeepTagsubjet_btag") << " : "<< bj->subjet_btag->size()<<endl;
+    cout <<"\t * softdropMass: "	<< tree_->GetBranchStatus("fatjetAK8WithDeepTagSoftdropMass") << " : "<< bj->softdropMass->size()<<endl;
 #endif
 
 
@@ -339,18 +337,28 @@ void LoadNero::FillFatJets(){
         FatJet *j =new FatJet();
         j->SetP4( *(TLorentzVector*) ((*bj->p4)[iJet]) );
 
-        /*
+
         j->tau1 = bj -> tau1 -> at(iJet);
         j->tau2 = bj -> tau2 -> at(iJet);
         j->tau3 = bj -> tau3 -> at(iJet);
-        if(tree_->GetBranchStatus("fatjetAK8CHSSDTau1"))  j->sdtau1 = bj -> sdtau1 -> at(iJet);
-        if(tree_->GetBranchStatus("fatjetAK8CHSSDTau2")) j->sdtau2 = bj -> sdtau2 -> at(iJet);
-        if(tree_->GetBranchStatus("fatjetAK8CHSSDTau3")) j->sdtau3 = bj -> sdtau3 -> at(iJet);
 
-        j->nSubjets = bj -> nSubjets -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8WithDeepTagTvsQCDMD"))  j->TvsQCDMD = bj -> TvsQCDMD -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8WithDeepTagWvsQCDMD"))  j->WvsQCDMD = bj -> WvsQCDMD -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8WithDeepTagZHbbvsQCDMD")) j->ZHbbvsQCDMD = bj -> ZHbbvsQCDMD -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8WithDeepTagZHccvsQCDMD")) j->ZHccvsQCDMD = bj -> ZHccvsQCDMD -> at(iJet);
+
+        /*
+        if(tree_->GetBranchStatus("fatjetAK8WithDeepTagTvsQCD"))  j->TvsQCDMD = bj -> TvsQCDMD -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8WithDeepTagWvsQCD"))  j->WvsQCDMD = bj -> WvsQCDMD -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8WithDeepTagZbbvsQCD")) j->ZHbbvsQCDMD = bj -> ZbbvsQCD -> at(iJet);
+        if(tree_->GetBranchStatus("fatjetAK8WithDeepTagZvsQCD")) j->ZHccvsQCDMD = bj -> ZvsQCD -> at(iJet);
+        */
+
+        //        j->nSubjets = bj -> nSubjets -> at(iJet);
         j->softdropMass = bj -> softdropMass -> at(iJet);
-        j->CorrectedPrunedMass = bj -> corrprunedMass -> at(iJet);
+        //        j->CorrectedPrunedMass = bj -> corrprunedMass -> at(iJet);
 
+        /*
         int first = bj -> firstSubjet -> at(iJet);
         int Nsub = bj -> nSubjets -> at(iJet);
 
@@ -366,8 +374,8 @@ void LoadNero::FillFatJets(){
 
         j->hasSubJetBTag = nSubJetMedium;
         j->hasSubJetBTagLoose = nSubJetLoose;
-
         */
+
         // add it
         event_ -> fat_ . push_back(j);
 
@@ -604,6 +612,7 @@ void LoadNero::FillMet(){
     event_ -> met_ . SetP4 ( *(TLorentzVector*)(*met -> p4) [0]) ;
     event_ -> met_ . SetRawMetP4( *met -> RawMet ) ;
     event_ -> met_ . SetTrackMetP4( *met -> trackMet ) ;
+    event_ -> met_ . SetPuppiMetP4( *met -> metPuppi ) ;
     //event_ -> met_ . trackMet = *met -> trackMet ;
     //event_ -> met_ . SetP4 ( * met -> metPuppi ) ;
     //event_ -> met_ . SetP4 ( * met -> metNoHF ) ;

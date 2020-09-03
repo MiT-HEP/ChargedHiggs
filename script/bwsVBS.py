@@ -11,6 +11,9 @@ if __name__=="__main__":
     opts,args=parser.parse_args()
 
 
+lumis=[]
+lumis.append(137)
+
 class DatacardBuilder:
     def __init__(self,verbose=0):
         self.categories={}  # bin_name -> file, path, 
@@ -134,14 +137,27 @@ class DatacardBuilder:
                     ]))
             txt.write("\n")
 
+        ### Add autoMCStats
+        txt.write("* autoMCStats 0")
+
+    def _manipulate_histo(self,htmp,corr ):
+        htmp.Scale(lumis[0] * 1000 * corr)
+        htmp.Rebin(5); ## REBIN --
+        return htmp
+
     def _get_histo(self,fname,hname,rename=""):
         if self.verbose >2: print "DEBUG","opening file:",fname
+        normalization = 1.
+        if ("_BB_QCD_HT" in hname):
+            fname="/eos/user/d/dalfonso/VBS_BDT/MARCH26/HADanti.root"
+            normalization = 0.0042
         fIn=ROOT.TFile.Open(fname)
         if self.fOut!=None: self.fOut.cd()
         if self.verbose >2: print "DEBUG","getting histo",hname,"->",rename
         htmp=fIn.Get(hname)
         if htmp==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",fname
         if htmp==None: return None ## WARNING
+        htmp = self._manipulate_histo(htmp,normalization)
         h=htmp.Clone(rename)
         fIn.Close()
         return h
@@ -211,28 +227,64 @@ class DatacardBuilder:
 
 
 if __name__=="__main__":
+
+    ######################################
+    ###            nonRES              ###
+    ######################################
+
     db=DatacardBuilder(opts.verbose)
     #def add_category(self,x,path, basename,obs_suffix,fname=opts.fname):
-    db.add_category("met",'/eos/user/d/dalfonso/VBS_BDT/FEB17','VBShadAnalysis/MVV_BMET','Data','MET.root')
+    db.add_category("metB",'/eos/user/d/dalfonso/VBS_BDT/MARCH26','VBShadAnalysis/MVV_BMET','Data','MET.root')
+    db.add_category("metR",'/eos/user/d/dalfonso/VBS_BDT/MARCH26','VBShadAnalysis/MVV_RMET','Data','MET.root')
+    db.add_category("hadBB",'/eos/user/d/dalfonso/VBS_BDT/MARCH26','VBShadAnalysis/MVV_BB','Data','HAD.root')
+    db.add_category("hadRB",'/eos/user/d/dalfonso/VBS_BDT/MARCH26','VBShadAnalysis/MVV_RB','Data','HAD.root')
+    db.add_category("tagBB",'/eos/user/d/dalfonso/VBS_BDT/MARCH26','VBShadAnalysis/MVV_BBtag','Data','BHAD.root')
+    db.add_category("tagRB",'/eos/user/d/dalfonso/VBS_BDT/MARCH26','VBShadAnalysis/MVV_RBtag','Data','BHAD.root')
 
     #add_process(self,x,issig,suffix=[],cat=[]):
-    db.add_process('ttbar',False,['ST','TTX'],['met'])
-    db.add_process('VVV',False,['TRIBOSON'],['met'])
-    db.add_process('VV',False,['DIBOSON'],['met'])
-    db.add_process('QCD',False,['QCD'],['met'])
-    db.add_process('WWjj_SS_ll',True,['WWjj_SS_ll'],['met'])
-    db.add_process('WWjj_SS_lt',True,['WWjj_SS_lt'],['met'])
-    db.add_process('WWjj_SS_tt',True,['WWjj_SS_tt'],['met'])
+    db.add_process('ttbar',False,['TT_TuneCUETP8M2T4','ST','TTX'],['metB','metR','hadBB','hadRB','tagBB','tagRB'])
+    db.add_process('VVV',False,['TRIBOSON'],['metB','metR','hadBB','hadRB','tagBB','tagRB'])
+    db.add_process('VV',False,['DIBOSON'],['metB','metR','hadBB','hadRB','tagBB','tagRB'])
+    db.add_process('QCD',False,['QCD_HT'],['metB','metR','hadBB','hadRB','tagBB','tagRB'])
+    db.add_process('Zinv',False,['ZJetsToNuNu'],['metB','metR','hadBB','hadRB','tagBB','tagRB'])
+    db.add_process('WPhadWPhad',True,['WPhadWPhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8'],['met','metR','hadBB','hadRB','tagBB','tagRB'])
+    db.add_process('ZnnZhad',True,['ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8'],['met','metR','hadBB','hadRB','tagBB','tagRB'])
+    db.add_process('ZbbZhad',True,['ZbbZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8'],['met','metR','hadBB','hadRB','tagBB','tagRB'])
+#    db.add_process('WWjj_SS_ll',True,['WWjj_SS_ll'],['met'])
+#    db.add_process('WWjj_SS_lt',True,['WWjj_SS_lt'],['met'])
+#    db.add_process('WWjj_SS_tt',True,['WWjj_SS_tt'],['met'])
     db.add_systematics('lumi','','lnN',('.*','.*'),1.025)
     db.add_systematics('QCDScale_ttbar','','lnN',('.*','ttbar'),1.05)
 
-    #BHAD.root  HAD.root  MET.root
-    #BHAD.root  HAD.root  MET.root
-    
+
+    ######################################
+    ###            RES                 ###
+    ######################################
+
+    dbRES=DatacardBuilder(opts.verbose)
+    #def add_category(self,x,path, basename,obs_suffix,fname=opts.fname):
+    dbRES.add_category("hadBBRES",'/eos/user/d/dalfonso/AnalysisVBS/MARCH26/HAD','VBShadAnalysis/MVV_BB','Data','HAD.root')
+#    dbRES.add_category("hadBBRES",'/eos/user/d/dalfonso/AnalysisVBS/MARCH22/HAD','VBShadAnalysis/IN1500/MVV_BB','Data','HAD.root')
+#    dbRES.add_category("hadBBRES",'/eos/user/d/dalfonso/AnalysisVBS/MARCH22/HAD','VBShadAnalysis/IN1500/Mjj_BB','Data','HAD.root')
+
+    #add_process(self,x,issig,suffix=[],cat=[]):
+    dbRES.add_process('ttbar',False,['TT_TuneCUETP8M2T4','ST','TTX'],['hadBBRES'])
+#    dbRES.add_process('VVV',False,['TRIBOSON'],['hadBBRES'])
+#    dbRES.add_process('VV',False,['DIBOSON'],['hadBBRES'])
+    dbRES.add_process('QCD',False,['QCD_HT'],['hadBBRES'])
+    dbRES.add_process('HWW',True,['DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph'],['hadBBRES'])
+
+    dbRES.add_systematics('lumi','','lnN',('.*','.*'),1.025)
+    dbRES.add_systematics('QCDScale_ttbar','','lnN',('.*','ttbar'),1.05)
+
     ######################################
     ###            WRITE               ###
     ######################################
-    db.write_cards('cms_vbs_hadr.txt')
-    db.write_inputs('cms_vbs_hadr.txt')
+
+#    db.write_cards('cms_vbs_hadr.txt')
+#    db.write_inputs('cms_vbs_hadr.txt')
+
+    dbRES.write_cards('cms_vbsRES_hadr.txt')
+    dbRES.write_inputs('cms_vbsRES_hadr.txt')
 
 

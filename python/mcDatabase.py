@@ -89,6 +89,8 @@ if opts.dat != "":
 		if idx <0: label = re.sub('.*/','',f)
 		
 		if label == 'Tau': continue # exclude data
+		if label == 'MET': continue # exclude data
+		if label == 'JetHT': continue # exclude data
 		if label == 'SingleMuon': continue # exclude data
 		if label == 'SingleElectron': continue # exclude data
 		if label == 'DoubleMuon': continue # exclude data
@@ -264,7 +266,7 @@ else:
 	elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=6.65621
 	elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.60809
 	elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.038914
-	elif 'WJets' in opts.label: xsec=61526.7
+##	elif 'WJets' in opts.label: xsec=61526.7
 	elif 'W0' in opts.label: xsec=34273.632815
 	elif 'W1' in opts.label: xsec=18455.979619
 	elif 'W2' in opts.label: xsec=6035.904629

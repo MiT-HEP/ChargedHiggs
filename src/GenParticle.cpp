@@ -6,6 +6,7 @@ bool GenParticle::IsPromptFinalState() const { return flags_ & BareMonteCarlo::P
 bool GenParticle::IsPromptDecayed() const { return flags_ & BareMonteCarlo::PromptDecayed ;}
 bool GenParticle::IsDirectPromptTauDecayProductFinalState() const { return flags_ & BareMonteCarlo::DirectPromptTauDecayProductFinalState ;}
 bool GenParticle::IsDressed() const { return flags_ & BareMonteCarlo::Dressed;}
+bool GenParticle::IsLHE() const { return flags_ & BareMonteCarlo::LHE;}
 
 // Local Variables:
 // mode:c++

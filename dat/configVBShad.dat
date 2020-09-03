@@ -1,0 +1,70 @@
+################
+### DATASETS ###
+################
+
+Files=
+## Signal
+include=dat/catalog/2020.moriond/year2016/vbshad.dat
+include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
+include=dat/catalog/2020.moriond/year2016/vbsAQGC.dat
+
+## BKGS
+include=dat/catalog/2020.moriond/year2016/qcd.dat
+include=dat/catalog/2020.moriond/year2016/ewk.dat
+include=dat/catalog/2020.moriond/year2016/Zinv.dat
+include=dat/catalog/2020.moriond/year2016/Vjets.dat
+include=dat/catalog/2020.moriond/year2016/ttvbs.dat
+include=dat/catalog/2020.moriond/year2016/st.dat
+###include=dat/catalog/2020.moriond/year2016/rares.dat
+include=dat/catalog/2020.moriond/year2016/dy_amcatnlo.dat
+
+# add Label
+include=dat/vbshad.dat
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+#Files=root://eoscms///store/group/phys_higgs/cmshmm/amarini/Nero/v3.7/year2016/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/200403_084241/0000/NeroNtuples_99.root
+
+
+Branches=dat/branches.txt
+
+Lumi=1
+Smear=NONE
+Correct=NONE
+#Correct=SDMasscorr
+Final=no
+
+## be less peaky, given the n. of systs
+EntryPerSecond=10
+
+SFDB=aux/sf_VBShad.txt
+
+##SFDB=aux/sf_database.2018.moriond.txt
+MCDB=aux/mcdb.2020.v3.7.year2016.dat
+pileup=aux/pileup.v3.7.year2016.root
+
+Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
+
+#addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+#Output=VBShadSignal_MET.root
+
+addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
+Output=VBShadSignal.root
+
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
+#Output=VBShadSignal_B.root
+
+###
+
+#include=dat/catalog/2020.moriond/year2016/MET.dat
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doMETAntiAnalysis=1,doBAntiAnalysis=0
+#Output=VBSmetAntiSignal.root
+
+#include=dat/catalog/2020.moriond/year2016/jetHT.dat
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1,doBAntiAnalysis=0
+#Output=VBShadAntiSignal.root
+
+#include=dat/catalog/2020.moriond/year2016/jetHT.dat
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=0,doBAntiAnalysis=1
+#Output=VBShadAntiSignal_B.root
