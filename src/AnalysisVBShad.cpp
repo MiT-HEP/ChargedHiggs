@@ -665,6 +665,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/ResBosonMassClean_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
         Book ("VBShadAnalysis/Baseline/ResBosonMassClean_right_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
         Book ("VBShadAnalysis/Baseline/ResBosonMassClean_wrong_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
+
+
         Book ("VBShadAnalysis/Baseline/ResZMass_right_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
         Book ("VBShadAnalysis/Baseline/ResZMass_wrong_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
         Book ("VBShadAnalysis/Baseline/ResWMass_right_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
@@ -682,6 +684,13 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_right_"+l, "ResBosonChi2Diff_Z; Chi2; Events", 100, -25, 25.);
         Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_W_wrong_"+l, "ResBosonChi2Diff_W; Chi2; Events", 100, -25, 25.);
         Book ("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_wrong_"+l, "ResBosonChi2Diff_Z; Chi2; Events", 100, -25, 25.);
+        Book ("VBShadAnalysis/Baseline/ResBosonKeras_"+l, "ResBosonKeras; Keras; Events", 100, 0, 1.);
+        Book ("VBShadAnalysis/Baseline/ResBosonKeras_right_"+l, "ResBosonKeras; Keras; Events", 100, 0, 1.);
+        Book ("VBShadAnalysis/Baseline/ResBosonKeras_wrong_"+l, "ResBosonKeras; Keras; Events", 100, 0, 1.);
+        Book ("VBShadAnalysis/Baseline/ResBosonTMVA_"+l, "ResBosonTMVA; TMVA; Events", 100, 0, 1.);
+        Book ("VBShadAnalysis/Baseline/ResBosonTMVA_right_"+l, "ResBosonTMVA; TMVA; Events", 100, 0, 1.);
+        Book ("VBShadAnalysis/Baseline/ResBosonTMVA_wrong_"+l, "ResBosonTMVA; TMVA; Events", 100, 0, 1.);
+
 
         Book ("VBShadAnalysis/Baseline/DR_genVj1_"+l, "DeltaR(gen,j1); DeltaR(gen,j1); Events", 100, 0, 4.);
         Book ("VBShadAnalysis/Baseline/DR_genVj2_"+l, "DeltaR(gen,j2); DeltaR(gen,j2); Events", 100, 0, 4.);
@@ -779,12 +788,13 @@ float VBShadAnalysis::jettagForBoosted(Event*e, string label, string systname, f
 
 
 
-void VBShadAnalysis::resolvedDNN(Event*e, string label, string systname){
+void VBShadAnalysis::resolvedDNN(Event*e, float MV, string label, string systname){
 
     bosonJets.clear();
     forwardJets.clear();
 
     evt_maxDnn = 0.;
+    evt_maxkeras = -999.;
     int index_i=-1;
     int index_j=-1;
     int index_k=-1;
@@ -825,12 +835,12 @@ void VBShadAnalysis::resolvedDNN(Event*e, string label, string systname){
                     int vl  = -1;
 
 
-                    double Mij = fabs(selectedJets[i]->InvMass(selectedJets[j]) - 90.);
-                    double Mjk = fabs(selectedJets[j]->InvMass(selectedJets[k]) - 90.);
-                    double Mkl = fabs(selectedJets[k]->InvMass(selectedJets[l]) - 90.);
-                    double Mik = fabs(selectedJets[i]->InvMass(selectedJets[k]) - 90.);
-                    double Mil = fabs(selectedJets[i]->InvMass(selectedJets[l]) - 90.);
-                    double Mjl = fabs(selectedJets[l]->InvMass(selectedJets[j]) - 90.);
+                    double Mij = fabs(selectedJets[i]->InvMass(selectedJets[j]) - MV);
+                    double Mjk = fabs(selectedJets[j]->InvMass(selectedJets[k]) - MV);
+                    double Mkl = fabs(selectedJets[k]->InvMass(selectedJets[l]) - MV);
+                    double Mik = fabs(selectedJets[i]->InvMass(selectedJets[k]) - MV);
+                    double Mil = fabs(selectedJets[i]->InvMass(selectedJets[l]) - MV);
+                    double Mjl = fabs(selectedJets[l]->InvMass(selectedJets[j]) - MV);
 
                     double minM = std::min({Mij, Mjk, Mkl, Mik, Mil, Mjl});
 
@@ -1066,9 +1076,9 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
             //V_term = (MRij - MV) * (MRij - MV)  / MVres * (1+sqrt(Unc_i+Unc_j+2.5*2.5/(MV*MV)));
             //            V_term = (MRij - MV) * (MRij - MV)  / MVres * (Unc_i+Unc_j+2.5*2.5/(MV*MV));
 
-            //V_term = (MRij - MV) * (MRij - MV)  / MVres ;
-            //optimized chi2
-            V_term = (MRij - MV) * (MRij - MV)  / MVres * (1 + 100*(PTij>0?(DRij/PTij):0))  + (Mij - MV) * (Mij - MV) / MVres;
+            V_term = (MRij - MV) * (MRij - MV)  / MVres ;
+            //optimized chi2 --- fancy one, overtunning, not a good baseline
+            //V_term = (MRij - MV) * (MRij - MV)  / MVres * (1 + 100*(PTij>0?(DRij/PTij):0))  + (Mij - MV) * (Mij - MV) / MVres;
 
 
             for(unsigned k=0; k<selectedJets.size(); ++k) {
@@ -1094,11 +1104,14 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
         }
     }
 
+    float VjPtCut = (MV > 85) ? VjPtCut_Z : VjPtCut_W;
+
+
     for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
-        if(iter==index_i) bosonJets.push_back(selectedJets[index_i]);
-        if(iter==index_j) bosonJets.push_back(selectedJets[index_j]);
-        if(iter==index_k and selectedJets[index_k]->Pt()>50) forwardJets.push_back(selectedJets[index_k]);
-        if(iter==index_l and selectedJets[index_l]->Pt()>50) forwardJets.push_back(selectedJets[index_l]);
+        if(iter==index_i and selectedJets[index_i]->Pt()>VjPtCut) bosonJets.push_back(selectedJets[index_i]);
+        if(iter==index_j and selectedJets[index_j]->Pt()>VjPtCut) bosonJets.push_back(selectedJets[index_j]);
+        if(iter==index_k and selectedJets[index_k]->Pt()>fjPtCut) forwardJets.push_back(selectedJets[index_k]);
+        if(iter==index_l and selectedJets[index_l]->Pt()>fjPtCut) forwardJets.push_back(selectedJets[index_l]);
     }
 
     if(bosonJets.size()>1 and forwardJets.size()>1) {
@@ -1140,9 +1153,13 @@ float VBShadAnalysis::genMtt(Event*e)
 
 bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
     if(bosonJets.size()<2) return false;
+    //if(forwardJets.size()<2) return false;   //optional 2 or 4
 
     bool match_1 = false;
     bool match_2 = false;
+    // for the forward jets, optional
+    bool match_3 = false;
+    bool match_4 = false;
 
     evt_genmatch = 0;
 
@@ -1169,9 +1186,15 @@ bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
         if( (bosonJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
         if( (bosonJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
 
+        //forward jets
+        if( (forwardJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_3 = true;
+        if( (forwardJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_4 = true;
+
     }
 
     evt_genmatch = match_1 && match_2;
+    //evt_genmatch = match_1 && match_2 && match_3 && match_4;
+
 
     if(match_1){
         Fill("VBShadAnalysis/Baseline/JetUnc_right_"+label, systname, bosonJets[0]->GetJESUnc(), e->weight() );
@@ -2147,41 +2170,51 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2Diff_Z_"+genZmat+label, systname, mZ_chi2-mW_chi2, e->weight() );
 
             //// decide
-
+            //********cut********//
+            float mWidth = 20.;
             double chi2Cut=6.;
             float tmvacut = 0.6;
             float kerascut = 1.0;
-            string genmatch = "wrong_";
-            float mBoson = mBoson_Z;
-            float mWidth = 20.;
+            //******************//
 
+            float mBoson = mBoson_Z;
             double MV = MV_Z;
             double chi2 = mZ_chi2;
-            genmatch = genZmat;
 
             if(mW_chi2 < mZ_chi2){
                 mBoson = mBoson_W;
-                genmatch = genWmat;
                 std::tie(MV,chi2) = resolvedtagger(e, mBoson_W, label, systname, selectedFatZbb[0]->Eta());
-                if(genMatchResolved(e,systname,label)) genWmat = "right_";
-                // need to redo since due to  the jet assignement
             }
 
             if(doResTagKeras or doResTagTMVA){
-              resolvedDNN(e,label, systname);
+              resolvedDNN(e,mBoson_Z,label, systname);
               if(bosonJets.size()>1) MV = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
-            }    
-
-            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
-            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonMass_"+genmatch+label, systname, MV, e->weight() );
-            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, chi2, e->weight() );
-            if(bosonJets.size()>1) Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+genmatch+label, systname, chi2, e->weight() );
-
-            if(bosonJets.size()>1 && (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut))){
-                Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+label, systname, MV, e->weight() );
-                Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+genmatch+label, systname, MV, e->weight() );
             }
 
+            string genmatch = "wrong_";
+            if(genMatchResolved(e,systname,label)) genmatch = "right_"; // need to redo since due to  the jet assignement
+
+    
+            if( (bosonJets.size()>1) && (forwardJets.size() > 1)  && ( forwardJets[0]->Eta() * forwardJets[1]->Eta() <0 ) && (fabs(forwardJets[0]->DeltaEta(forwardJets[1])) > 3.) && ((forwardJets[0]->GetP4() + forwardJets[1]->GetP4()).M() > 500) ){
+                Fill("VBShadAnalysis/Baseline/ResBosonMass_"+label, systname, MV, e->weight() );
+                Fill("VBShadAnalysis/Baseline/ResBosonMass_"+genmatch+label, systname, MV, e->weight() );
+
+                if((chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut))){
+                  Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+label, systname, MV, e->weight() );
+                  Fill("VBShadAnalysis/Baseline/ResBosonMassClean_"+genmatch+label, systname, MV, e->weight() );
+                }
+
+                if(doResTagKeras){
+                    Fill("VBShadAnalysis/Baseline/ResBosonKeras_"+label, systname, evt_maxkeras, e->weight() );
+                    Fill("VBShadAnalysis/Baseline/ResBosonKeras_"+genmatch+label, systname, evt_maxkeras, e->weight() );
+                }else if(doResTagTMVA){
+                    Fill("VBShadAnalysis/Baseline/ResBosonTMVA_"+label, systname, evt_maxDnn, e->weight() );
+                    Fill("VBShadAnalysis/Baseline/ResBosonTMVA_"+genmatch+label, systname, evt_maxDnn, e->weight() );
+                }else{
+                    Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, chi2, e->weight() );
+                    Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+genmatch+label, systname, chi2, e->weight() );
+                }
+            }
             ///////$$$$$
             ///////$$$$$
 
