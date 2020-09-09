@@ -19,7 +19,7 @@ class SciKitAnalysis : virtual public AnalysisBase
 
     protected:
         std::unique_ptr<TPython> py;
-        vector<float> x;
+        vector<float> *x;
 
 
 

@@ -1187,6 +1187,19 @@ void BackgroundFitter::fit(){
             storedPdfs.add(*bern); // 0
         }
 
+        if (fitStrategy==0)
+        {
+            cout<<"*** Fitting BERN2 ***"<<endl;
+            cout<<" --- Fitting BERN2 ORDER 1 ---"<<endl;
+            for( int order=1; order <=4 ;order++)
+            {
+            double nll; int fitStatus;
+            RooAbsPdf *mybern=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
+            modelBuilder.runFit( mybern , hist_[name],&nll,&fitStatus,3);
+            w_ -> import (*mybern,RecycleConflictNodes());
+            }
+        }
+
         if (fitStrategy ==0 ){
             cout<<"*** Fitting DY Bernstein ***"<<endl;
             int dybernOrd;

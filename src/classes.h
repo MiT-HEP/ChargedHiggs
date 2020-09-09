@@ -9,6 +9,7 @@
 #include "interface/AnalysisChargedHiggsTopBottom.hpp"
 #include "interface/AnalysisChargedHiggsZW.hpp"
 #include "interface/AnalysisChargedHiggsTBfullHad.hpp"
+#include "interface/AnalysisHbbg.hpp"
 #include "interface/AnalysisVBShad.hpp"
 #include "interface/AnalysisEfficiencies.hpp"
 #include "interface/AnalysisDY.hpp"
