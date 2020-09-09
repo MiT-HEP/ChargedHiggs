@@ -203,6 +203,17 @@ def FindEOS(name,mount=""):
 
 	return fileList
 
+def FindDataset(name,mount=""): 
+    DASclient = "dasgoclient -query '%(query)s'"
+    cmd= DASclient%{'query':'file dataset=%s'}
+    if mount =="":
+        fileList=[ 'root://eoscms//'+x for x in check_output(cmd,shell=True).split() ]
+    elif mount == "aaa" or mount == "AAA":
+        fileList=[] ## use AAA
+    else:
+        fileList=[ mount+x for x in check_output(cmd,shell=True).split() ]
+    return fileList
+
 def PrintDat(config):
 	''' Print configuration'''
 

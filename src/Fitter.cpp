@@ -95,6 +95,7 @@ void Fitter::init(){
         for( float& m : mIn)
         {
             if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125  bbH125
+            if ( inputMasks[cat].find("HiggsZG_Zbb") != string::npos and fabs(m-125)> 0.1) continue;
             //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
             if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
 
@@ -203,7 +204,9 @@ void Fitter::init(){
         //if (proc == "ttH")//ttH125  bbH125
         //if (false)//ttH as all
         //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")
-        if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs")
+        if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs" or 
+             (inputMasks[cat].find("HiggsZG_Zbb") != string::npos)
+                )
         {
             eaSpline = new RooRealVar(eaName.c_str(),eaName.c_str(),ea_y[0]);
             ((RooRealVar*)eaSpline)->setConstant();
@@ -336,6 +339,7 @@ void Fitter::fit(){
             if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125  bbH125
             //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
             if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
+            if ( inputMasks[cat].find("HiggsZG_Zbb") != string::npos and fabs(m-125)> 0.1) continue;
             //mean and sigma
            // pars[pos+0].setRange(0,125);
 
@@ -436,6 +440,7 @@ void Fitter::fit(){
                 //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
                 if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
                 if (proc=="DoublyChargedHiggs" and fabs(m-1500)>0.1) continue;
+                if ( inputMasks[cat].find("HiggsZG_Zbb") != string::npos and fabs(m-125)> 0.1) continue;
 
                 cout <<" Considering proc='"<<proc<<"' and mass = "<< m<<endl;
 
@@ -449,7 +454,9 @@ void Fitter::fit(){
             string splname=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),proc.c_str(),cat,i);
             //#warning TTH125
             //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")//ttH125
-            if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs")//ttH125
+            if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs" or
+                    ( inputMasks[cat].find("HiggsZG_Zbb") != string::npos )
+                    )//ttH125
             //if (false)//ttH all
             {
                 string massexp = "125"; if (proc=="DoublyChargedHiggs") massexp="1500";

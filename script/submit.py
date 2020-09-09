@@ -450,6 +450,8 @@ if True:
 				list =  FindEOS(f, "%%MOUNTPOINT%%/eos")
 			else:
 				list =  FindEOS(f)
+		elif 'NANOAOD' in f:
+				list =  FindDataset(f)
 		else :
 			list=glob(f)
 			if list == []: ### maybe remote ?
