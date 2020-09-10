@@ -1152,7 +1152,7 @@ void BackgroundFitter::fit(){
             }
 
             size_t sep= mask.find(":") ;
-            RooWorkspace * w_local = (RooWorkspace*) fInput -> Get(  mask.substr(0, sep).c_str() );
+            RooWorkspace * w_local = (RooWorkspace*) fLocal -> Get(  mask.substr(0, sep).c_str() );
             if (w_local==NULL)
                 Log(__FUNCTION__,"ERROR","Unable to find workspaces from: '"+inputMasks[cat]+"' -> w: '"+mask.substr(0, sep)+"'");
             Log(__FUNCTION__,"INFO","Getting data " + mask.substr(sep+1, mask.size()));
@@ -1185,6 +1185,19 @@ void BackgroundFitter::fit(){
             cout<<"*** Fitting Bernstein ***"<<endl;
             bern=modelBuilder.fTest(Form("bern_cat%d",cat) ,hist_[name],&bernOrd,plotDir + "/bern");
             storedPdfs.add(*bern); // 0
+        }
+
+        if (fitStrategy==0)
+        {
+            cout<<"*** Fitting BERN2 ***"<<endl;
+            cout<<" --- Fitting BERN2 ORDER 1 ---"<<endl;
+            for( int order=1; order <=4 ;order++)
+            {
+            double nll; int fitStatus;
+            RooAbsPdf *mybern=modelBuilder.getBernstein(Form("bern2_cat%d_ord%d",cat,order),order);
+            modelBuilder.runFit( mybern , hist_[name],&nll,&fitStatus,3);
+            w_ -> import (*mybern,RecycleConflictNodes());
+            }
         }
 
         if (fitStrategy ==0 ){

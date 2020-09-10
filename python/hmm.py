@@ -223,6 +223,7 @@ class HmmConfig():
     def lumi(self):
         #if self.year==2016: return 35867 ## 2016
         #https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiLUM (r125)
+        if self.year==2012: return 19800 # don use it
         if self.year==2015: return 2260
         if self.year==2016: return 35920
         if self.year==2017: return 41530
@@ -294,12 +295,70 @@ class HmmConfigExCat(HmmConfigAutoCat):
         self.computeVersioning()
         self.year=year
 
+import re
+class HmmConfigRunI(HmmConfigAutoCat):
+    def __init__(self,year=2012):
+        #self.dirname="HmumuAnalysis/Vars/" 
+        #self.varname="Mmm"
+        HmmConfigAutoCat.__init__(self)
+
+
+        #self.procCategories= [ "VBF0","OneB","GF","VBF1","Untag0","Untag1"]
+        self.procCategories= [ "VBF0","GF","VBF1","Untag0","Untag1"]
+        
+        self.year=year
+        ### FIT ###
+        self.xmin = 115
+        self.xmax=140
+        #self.xmin = 110
+        #self.xmax=160
+        self.xname="dimuonMass_CMShmm"
+        self.sig_mass_points=[120,125,130]
+        self.processes=["GluGlu","VBF","ZH","WPlusH","WMinusH","ttH"]
+        self.sigfit_gaussians={}
+        self.background_input_masks=[
+            'RP/Jet2CutsFailVBFGF_7TeV_125.0.root|Jet2CutsFailVBFGF7TeV:data_obs_Jet2CutsFailVBFGF7TeV_CMShmm' ,
+            'RP/Jet2CutsFailVBFGF_8TeV_125.0.root|Jet2CutsFailVBFGF8TeV:data_obs_Jet2CutsFailVBFGF8TeV_CMShmm',
+            'RP/Jet2CutsGFPass_7TeV_125.0.root|Jet2CutsGFPass7TeV:data_obs_Jet2CutsGFPass7TeV_CMShmm',
+            'RP/Jet2CutsGFPass_8TeV_125.0.root|Jet2CutsGFPass8TeV:data_obs_Jet2CutsGFPass8TeV_CMShmm',
+            'RP/Jet2CutsVBFPass_7TeV_125.0.root|Jet2CutsVBFPass7TeV:data_obs_Jet2CutsVBFPass7TeV_CMShmm',
+            'RP/Jet2CutsVBFPass_8TeV_125.0.root|Jet2CutsVBFPass8TeV:data_obs_Jet2CutsVBFPass8TeV_CMShmm',
+            'RP/Jets01FailPtG10BB_7TeV_125.0.root|Jets01FailPtG10BB7TeV:data_obs_Jets01FailPtG10BB7TeV_CMShmm',
+            'RP/Jets01FailPtG10BB_8TeV_125.0.root|Jets01FailPtG10BB8TeV:data_obs_Jets01FailPtG10BB8TeV_CMShmm',
+            'RP/Jets01FailPtG10BE_7TeV_125.0.root|Jets01FailPtG10BE7TeV:data_obs_Jets01FailPtG10BE7TeV_CMShmm',
+            'RP/Jets01FailPtG10BE_8TeV_125.0.root|Jets01FailPtG10BE8TeV:data_obs_Jets01FailPtG10BE8TeV_CMShmm',
+            'RP/Jets01FailPtG10BO_7TeV_125.0.root|Jets01FailPtG10BO7TeV:data_obs_Jets01FailPtG10BO7TeV_CMShmm',
+            'RP/Jets01FailPtG10BO_8TeV_125.0.root|Jets01FailPtG10BO8TeV:data_obs_Jets01FailPtG10BO8TeV_CMShmm',
+            'RP/Jets01FailPtG10EE_7TeV_125.0.root|Jets01FailPtG10EE7TeV:data_obs_Jets01FailPtG10EE7TeV_CMShmm',
+            'RP/Jets01FailPtG10EE_8TeV_125.0.root|Jets01FailPtG10EE8TeV:data_obs_Jets01FailPtG10EE8TeV_CMShmm',
+            'RP/Jets01FailPtG10OE_7TeV_125.0.root|Jets01FailPtG10OE7TeV:data_obs_Jets01FailPtG10OE7TeV_CMShmm',
+            'RP/Jets01FailPtG10OE_8TeV_125.0.root|Jets01FailPtG10OE8TeV:data_obs_Jets01FailPtG10OE8TeV_CMShmm',
+            'RP/Jets01FailPtG10OO_7TeV_125.0.root|Jets01FailPtG10OO7TeV:data_obs_Jets01FailPtG10OO7TeV_CMShmm',
+            'RP/Jets01FailPtG10OO_8TeV_125.0.root|Jets01FailPtG10OO8TeV:data_obs_Jets01FailPtG10OO8TeV_CMShmm',
+            'RP/Jets01PassPtG10BB_7TeV_125.0.root|Jets01PassPtG10BB7TeV:data_obs_Jets01PassPtG10BB7TeV_CMShmm',
+            'RP/Jets01PassPtG10BB_8TeV_125.0.root|Jets01PassPtG10BB8TeV:data_obs_Jets01PassPtG10BB8TeV_CMShmm',
+            'RP/Jets01PassPtG10BE_7TeV_125.0.root|Jets01PassPtG10BE7TeV:data_obs_Jets01PassPtG10BE7TeV_CMShmm',
+            'RP/Jets01PassPtG10BE_8TeV_125.0.root|Jets01PassPtG10BE8TeV:data_obs_Jets01PassPtG10BE8TeV_CMShmm',
+            'RP/Jets01PassPtG10BO_7TeV_125.0.root|Jets01PassPtG10BO7TeV:data_obs_Jets01PassPtG10BO7TeV_CMShmm',
+            'RP/Jets01PassPtG10BO_8TeV_125.0.root|Jets01PassPtG10BO8TeV:data_obs_Jets01PassPtG10BO8TeV_CMShmm',
+            'RP/Jets01PassPtG10EE_7TeV_125.0.root|Jets01PassPtG10EE7TeV:data_obs_Jets01PassPtG10EE7TeV_CMShmm',
+            'RP/Jets01PassPtG10EE_8TeV_125.0.root|Jets01PassPtG10EE8TeV:data_obs_Jets01PassPtG10EE8TeV_CMShmm',
+            'RP/Jets01PassPtG10OE_7TeV_125.0.root|Jets01PassPtG10OE7TeV:data_obs_Jets01PassPtG10OE7TeV_CMShmm',
+            'RP/Jets01PassPtG10OE_8TeV_125.0.root|Jets01PassPtG10OE8TeV:data_obs_Jets01PassPtG10OE8TeV_CMShmm',
+            'RP/Jets01PassPtG10OO_7TeV_125.0.root|Jets01PassPtG10OO7TeV:data_obs_Jets01PassPtG10OO7TeV_CMShmm',
+            'RP/Jets01PassPtG10OO_8TeV_125.0.root|Jets01PassPtG10OO8TeV:data_obs_Jets01PassPtG10OO8TeV_CMShmm',
+            ]
+        self.categories=[
+                re.sub('125.*','',re.sub('RP/','',x) )for x in self.background_input_masks
+                ]
+
 
 hmmTTH =HmmConfigTTH()
 hmmWithTTH =HmmConfigWithTTH()
 hmmExCat = HmmConfigExCat(10) ## 13+mjj
 hmmExCatMjj = HmmConfigExCat(11) ## 13+mjj
 hmmExCatMjj.processes.append("bbH")
+hmmRunI=HmmConfigRunI()
 
 if True:
     hmmExCatMjj.sigfit_gaussians[("cat9","GluGlu")] = 2
@@ -624,3 +683,49 @@ class StringToCpp():
 
 
 
+class HbbgConfig(HmmConfig):
+    def __init__(self):
+        HmmConfig.__init__(self)
+        self.dirname="Final/" 
+        self.varname="mass"
+        self.sigspec="%s_HiggsZG_Zbb_M%.0f"
+        self.categories=[""]
+        self.year=2016
+
+        ### FIT ###
+        self.xmin = 110
+        self.xmax = 150
+        self.xname="mbbg" ## -output roo rela var
+
+        self.sig_mass_points=[125]
+        self.processes=["GluGlu","VBF"]
+        self.sigfit_gaussians={}
+        self.background_input_masks=None
+
+        self.sigfit_scale_unc = {} ## cat, proc -> value or (cat,proc)
+        self.sigfit_replace = {} ## (cat,proc) -> (cat,proc)
+        self.sigfit_smear_unc = {}
+
+        ## n. gaus
+        self.sigfit_gaussians[('BB','DoublyChargedHiggs')]=3
+        #self.sigfit_gaussians[('RBtag','DoublyChargedHiggs')]=1
+        ## signal fit: dirname + varname + _ signspec
+        self.SimpleScaleAndSmear()
+        self.computeVersioning()
+
+        ##tmp configuration for background on MC
+        #self.background_input_masks=['MVV_BB_AsimovB']
+        self.background_input_masks=None
+        self.background_fitstrategy=1
+
+    def lumi(self):
+        #if self.year==2016: return 35867 ## 2016
+        print ("FIXME: Using Prescale lumi")
+        if self.year==2012: return 19800 # don use it
+        if self.year==2015: return 2260/1.42857142857
+        if self.year==2016: return 35920/1.42857142857
+        if self.year==2017: return 41530/1.42857142857
+        if self.year==2018: return 59740/1.42857142857
+        return 0.
+
+hbbg=HbbgConfig()
