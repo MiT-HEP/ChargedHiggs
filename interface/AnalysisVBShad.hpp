@@ -62,7 +62,7 @@ public:
     bool doTrigger=false;
 
     bool doTMVA=true;
-    bool doResTagKeras = false;
+    bool doResTagKeras = true;
     bool doResTagTMVA = false;
 
 private:
@@ -192,7 +192,7 @@ private:
      **********************************/
 
     std::unique_ptr<TPython> py;
-    vector<float> x;
+    vector<float> *x;
 
     void InitScikit();
     //void ReadScikit(Event*e);

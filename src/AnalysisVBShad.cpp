@@ -375,26 +375,32 @@ void VBShadAnalysis::InitScikit(){
 
     py . reset(new TPython);
 
-
-    py -> Exec("import keras");
     py -> Exec("import numpy as np");
+    py -> Exec("import keras");
     //
-    py -> Exec("from sklearn.ensemble import RandomForestClassifier");
-    py -> Exec("from sklearn.calibration import CalibratedClassifierCV");
-    py -> Exec("from sklearn.metrics import log_loss");
+    //py -> Exec("from sklearn.ensemble import RandomForestClassifier");
+    //py -> Exec("from sklearn.calibration import CalibratedClassifierCV");
+    //py -> Exec("from sklearn.metrics import log_loss");
     //
-    py -> Exec("from sklearn.externals import joblib ");
+    //py -> Exec("from sklearn.externals import joblib ");
     py -> Exec("kmodel=keras.models.load_model('aux/BDTvbs/model_ResTag.hd')");
 
     py -> Exec("kmodel.summary()");
 
-    PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
+
+    py -> Exec("x = ROOT.vector(float)()");
+
+    x = (std::vector<float>*) py->Eval("x");
+
+    /* no longer used as TPython not Python
+    //PyObject* pyx = py->ObjectProxy_FromVoidPtr(&x, "std::vector<float>");
 
     //PyObject* pymain = PyImport_ImportModule("__main__");
 
     //PyModule_AddObject(pymain, "x", pyx);
 
     //Py_DECREF(pymain);
+    */
 
 }
 
@@ -900,48 +906,48 @@ void VBShadAnalysis::resolvedDNN(Event*e, float MV, string label, string systnam
                     }//end TMVA
 
                     if(doResTagKeras){
-                    x.clear();
-                    x.push_back(selectedJets[fi]->GetP4().Pt());
-                    x.push_back(selectedJets[fi]->Eta());
-                    x.push_back(selectedJets[fi]->Phi());
-                    x.push_back(selectedJets[fi]->M());
-                    x.push_back(sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
-                    x.push_back(selectedJets[fi]->QGLVar("axis2"));
-                    x.push_back(selectedJets[fi]->QGLVar("mult"));
-                    x.push_back(selectedJets[fi]->QGLVar("ptD"));
+                    (*x).clear();
+                    (*x).push_back(selectedJets[fi]->GetP4().Pt());
+                    (*x).push_back(selectedJets[fi]->Eta());
+                    (*x).push_back(selectedJets[fi]->Phi());
+                    (*x).push_back(selectedJets[fi]->M());
+                    (*x).push_back(sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
+                    (*x).push_back(selectedJets[fi]->QGLVar("axis2"));
+                    (*x).push_back(selectedJets[fi]->QGLVar("mult"));
+                    (*x).push_back(selectedJets[fi]->QGLVar("ptD"));
 
 
-                    x.push_back(selectedJets[fj]->GetP4().Pt());
-                    x.push_back(selectedJets[fj]->Eta());
-                    x.push_back(selectedJets[fj]->Phi());
-                    x.push_back(selectedJets[fj]->M());
-                    x.push_back(sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
-                    x.push_back(selectedJets[fj]->QGLVar("axis2"));
-                    x.push_back(selectedJets[fj]->QGLVar("mult"));
-                    x.push_back(selectedJets[fj]->QGLVar("ptD"));
+                    (*x).push_back(selectedJets[fj]->GetP4().Pt());
+                    (*x).push_back(selectedJets[fj]->Eta());
+                    (*x).push_back(selectedJets[fj]->Phi());
+                    (*x).push_back(selectedJets[fj]->M());
+                    (*x).push_back(sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
+                    (*x).push_back(selectedJets[fj]->QGLVar("axis2"));
+                    (*x).push_back(selectedJets[fj]->QGLVar("mult"));
+                    (*x).push_back(selectedJets[fj]->QGLVar("ptD"));
 
 
-                    x.push_back(selectedJets[vk]->GetP4().Pt());
-                    x.push_back(selectedJets[vk]->Eta());
-                    x.push_back(selectedJets[vk]->Phi());
-                    x.push_back(selectedJets[vk]->M());
-                    x.push_back(sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
-                    x.push_back(selectedJets[vk]->QGLVar("axis2"));
-                    x.push_back(selectedJets[vk]->QGLVar("mult"));
-                    x.push_back(selectedJets[vk]->QGLVar("ptD"));
+                    (*x).push_back(selectedJets[vk]->GetP4().Pt());
+                    (*x).push_back(selectedJets[vk]->Eta());
+                    (*x).push_back(selectedJets[vk]->Phi());
+                    (*x).push_back(selectedJets[vk]->M());
+                    (*x).push_back(sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
+                    (*x).push_back(selectedJets[vk]->QGLVar("axis2"));
+                    (*x).push_back(selectedJets[vk]->QGLVar("mult"));
+                    (*x).push_back(selectedJets[vk]->QGLVar("ptD"));
 
 
-                    x.push_back(selectedJets[vl]->GetP4().Pt());
-                    x.push_back(selectedJets[vl]->Eta());
-                    x.push_back(selectedJets[vl]->Phi());
-                    x.push_back(selectedJets[vl]->M());
-                    x.push_back(sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
-                    x.push_back(selectedJets[vl]->QGLVar("axis2"));
-                    x.push_back(selectedJets[vl]->QGLVar("mult"));
-                    x.push_back(selectedJets[vl]->QGLVar("ptD"));
+                    (*x).push_back(selectedJets[vl]->GetP4().Pt());
+                    (*x).push_back(selectedJets[vl]->Eta());
+                    (*x).push_back(selectedJets[vl]->Phi());
+                    (*x).push_back(selectedJets[vl]->M());
+                    (*x).push_back(sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
+                    (*x).push_back(selectedJets[vl]->QGLVar("axis2"));
+                    (*x).push_back(selectedJets[vl]->QGLVar("mult"));
+                    (*x).push_back(selectedJets[vl]->QGLVar("ptD"));
 
-                    float kerasDiscr = py->Eval("kmodel.predict(np.array([ x ] ))[0][0]");
-                    //float kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22],x[23],x[24],x[25],x[26],x[27],x[28],x[29],x[30],x[31] ] ] ))[0][0]");
+                    //float kerasDiscr = py->Eval("kmodel.predict(np.array([ x ] ))[0][0]");
+                    float kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22],x[23],x[24],x[25],x[26],x[27],x[28],x[29],x[30],x[31] ] ] ))[0][0]");
 
                     if(kerasDiscr > evt_maxkeras){
                         evt_maxkeras = kerasDiscr;
@@ -1186,9 +1192,9 @@ bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
         if( (bosonJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
         if( (bosonJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
 
-        //forward jets
-        if( (forwardJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_3 = true;
-        if( (forwardJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_4 = true;
+        //forward jets optional 2 or 4
+        //if( (forwardJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_3 = true;
+        //if( (forwardJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_4 = true;
 
     }
 

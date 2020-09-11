@@ -96,3 +96,6 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSBHad.weights.x
 
 # Multicalss - RMET
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_RMET_BDTG.weights.xml")
+
+##Res DNN tagger
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_DNN.weights.xml")
