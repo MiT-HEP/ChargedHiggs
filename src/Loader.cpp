@@ -816,6 +816,8 @@ void LoadNero::FillMC(){
         if (  (apdg == 24 or apdg ==23 or apdg ==37) )  keep=true; // keep W/Z/chHiggs
         if (  (apdg == 5 or apdg ==6 ) ) keep=true; // keep top bottom
         if (  (apdg == 25) )  keep=true; // keep W/Z/chHiggs
+        if ( mc->flags->at(iGP) & ( BareMonteCarlo::LHE)) keep=true;  //keep all LHE particle
+        if (  (apdg == 22 ) ) keep=true; // keep top bottom
 
         //if ( ((TLorentzVector*) ((*mc->p4)[iGP]) )->Pt() < 0.01) keep = false;
 
