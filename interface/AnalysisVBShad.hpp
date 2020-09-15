@@ -40,7 +40,7 @@ public:
     void SetFatJetCuts(FatJet *f) override;
 
     float Getjetres(Jet* ajet);
-    void resolvedDNN(Event*e, float MV, string label, string systname);
+    void resolvedDNN(Event*e, string label, string systname);
     std::pair<float, float> resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
@@ -62,8 +62,8 @@ public:
     bool doTrigger=false;
 
     bool doTMVA=true;
-    bool doResTagKeras = true;
-    bool doResTagTMVA = false;
+    bool doResTagKeras = false;
+    bool doResTagTMVA = true;
 
 private:
 
@@ -93,6 +93,7 @@ private:
     // selected Objects
     vector<Jet*> selectedJets;
     vector<FatJet*> selectedFatJets;
+    vector<FatJet*> selectedMirrorFatJets;
     vector<FatJet*> selectedFatZbb;
 
     vector<float> bosonVDiscr;
