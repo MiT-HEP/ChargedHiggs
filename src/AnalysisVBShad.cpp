@@ -409,7 +409,6 @@ void VBShadAnalysis::InitScikit(){
 
 }
 
-
 void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp = 1: restag
 
         // fill variables for miniTREE
@@ -817,28 +816,7 @@ void VBShadAnalysis::resolvedDNN(Event*e, string label, string systname){
             for(unsigned k=0; k<j; ++k) {
                 for(unsigned l=0; l<k; ++l) {
 
-                    bool matchi = false;
-                    bool matchj = false;
-                    bool matchk = false;
-                    bool matchl = false;
 
-                    for(Int_t g = 0; g < e->NGenPar(); g++){
-
-                        GenParticle *genpar = e->GetGenParticle(g);
-
-                        if( ! genpar->IsLHE()) continue;
-
-                        //cout <<  "debug LHE: " << "pa id: " <<  genpar->GetParentPdgId() << endl;
-
-                        if( fabs(genpar->GetParentPdgId()) == 5 ) continue;
-
-                        if( (selectedJets[i]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchi = true;
-                        if( (selectedJets[j]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchj = true;
-                        if( (selectedJets[k]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchk = true;
-                        if( (selectedJets[l]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchl = true;
-                    }
-
-                    bool match_all = matchi && matchj && matchk && matchl;
 
                     int fi  = -1;
                     int fj  = -1;
@@ -972,63 +950,13 @@ void VBShadAnalysis::resolvedDNN(Event*e, string label, string systname){
                     }
                     }//end keras
 
-                    SetTreeVar("j1_pT",  selectedJets[fi]->GetP4().Pt());
-                    SetTreeVar("j1_Eta", selectedJets[fi]->Eta());
-                    SetTreeVar("j1_Phi", selectedJets[fi]->Phi());
-                    SetTreeVar("j1_M",   selectedJets[fi]->M());
-                    SetTreeVar("j1_Unc",   sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
-                    SetTreeVar("j1_QGL",  selectedJets[fi]->QGL());
-                    SetTreeVar("j1_mult",  selectedJets[fi]->QGLVar("mult"));
-                    SetTreeVar("j1_ptD",  selectedJets[fi]->QGLVar("ptD"));
-                    SetTreeVar("j1_axis2",  selectedJets[fi]->QGLVar("axis2"));
 
-                    SetTreeVar("j2_pT",  selectedJets[fj]->GetP4().Pt());
-                    SetTreeVar("j2_Eta", selectedJets[fj]->Eta());
-                    SetTreeVar("j2_Phi", selectedJets[fj]->Phi());
-                    SetTreeVar("j2_M",   selectedJets[fj]->M());
-                    SetTreeVar("j2_Unc",   sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
-                    SetTreeVar("j2_QGL",  selectedJets[fj]->QGL());
-                    SetTreeVar("j2_mult",  selectedJets[fj]->QGLVar("mult"));
-                    SetTreeVar("j2_ptD",  selectedJets[fj]->QGLVar("ptD"));
-                    SetTreeVar("j2_axis2",  selectedJets[fj]->QGLVar("axis2"));
+                    if(writeKerasTree) {
+                        setTrainingTree(e,label, fi, fj, vk,vl);
+                        FillTree("tree_resTag");
+                    } // end writeKerasTree
 
-                    SetTreeVar("j3_pT",  selectedJets[vk]->GetP4().Pt());
-                    SetTreeVar("j3_Eta", selectedJets[vk]->Eta());
-                    SetTreeVar("j3_Phi", selectedJets[vk]->Phi());
-                    SetTreeVar("j3_M",   selectedJets[vk]->M());
-                    SetTreeVar("j3_Unc",   sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
-                    SetTreeVar("j3_QGL",  selectedJets[vk]->QGL());
-                    SetTreeVar("j3_mult",  selectedJets[vk]->QGLVar("mult"));
-                    SetTreeVar("j3_ptD",  selectedJets[vk]->QGLVar("ptD"));
-                    SetTreeVar("j3_axis2",  selectedJets[vk]->QGLVar("axis2"));
-
-                    SetTreeVar("j4_pT",  selectedJets[vl]->GetP4().Pt());
-                    SetTreeVar("j4_Eta", selectedJets[vl]->Eta());
-                    SetTreeVar("j4_Phi", selectedJets[vl]->Phi());
-                    SetTreeVar("j4_M",   selectedJets[vl]->M());
-                    SetTreeVar("j4_Unc",   sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
-                    SetTreeVar("j4_QGL",  selectedJets[vl]->QGL());
-                    SetTreeVar("j4_mult",  selectedJets[vl]->QGLVar("mult"));
-                    SetTreeVar("j4_ptD",  selectedJets[vl]->QGLVar("ptD"));
-                    SetTreeVar("j4_axis2",  selectedJets[vl]->QGLVar("axis2"));
-
-                    SetTreeVar("Vmatch",(int)match_all);
-                    SetTreeVar("EvtNum",e->eventNum());
-                    SetTreeVar("Weights",e->weight());
-                    int sigmc=0;
-                    if(label.find("WPhadWPhadJJ_EWK") !=string::npos ) sigmc = 1 ;
-                    if(label.find("ZbbZhadJJ_EWK") !=string::npos ) sigmc = 2 ;
-                    if(label.find("ZnnZhadJJ_EWK") !=string::npos ) sigmc = 3 ;
-                    if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) sigmc = 4 ;
-                    if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) sigmc = 5 ;
-                    if(label.find("ZbbWpmJJ_EWK") !=string::npos ) sigmc = 6 ;
-                    if(label.find("ZbbWpmJJ_QCD") !=string::npos ) sigmc = 7 ;
-                    SetTreeVar("MC",sigmc);
-
-
-                    FillTree("tree_resTag");
                     }
-
 
                 }//l
             }//k
@@ -1036,16 +964,13 @@ void VBShadAnalysis::resolvedDNN(Event*e, string label, string systname){
     }//i
 
     if(index_i>=0 && index_j>=0 && index_k>=0 && index_l>=0){
-      bosonJets.push_back(selectedJets[index_i]);
-      bosonJets.push_back(selectedJets[index_j]);
-      forwardJets.push_back(selectedJets[index_k]);
-      forwardJets.push_back(selectedJets[index_l]);
+        bosonJets.push_back(selectedJets[index_i]);
+        bosonJets.push_back(selectedJets[index_j]);
+        forwardJets.push_back(selectedJets[index_k]);
+        forwardJets.push_back(selectedJets[index_l]);
     }
 
-
 }
-
-
 
 
 std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string label, string systname, float etaV1) {
@@ -1169,6 +1094,7 @@ float VBShadAnalysis::genMtt(Event*e)
     GenParticle * genTbar = NULL;
     for(Int_t i = 0; i < e->NGenPar(); i++){
         GenParticle *genpar = e->GetGenParticle(i);
+        if( ! genpar->IsLHE()) continue;
         if(genpar->GetPdgId() == 6) if(genT==NULL) { genT = genpar; }
         if(genpar->GetPdgId() == -6) if(genTbar==NULL) { genTbar = genpar; }
     }
@@ -1712,6 +1638,100 @@ void VBShadAnalysis::VVRestObj(Event*e){
 
     }   
         
+}
+
+void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int vk, int vl) {
+
+    SetTreeVar("j1_pT",  selectedJets[fi]->GetP4().Pt());
+    SetTreeVar("j1_Eta", selectedJets[fi]->Eta());
+    SetTreeVar("j1_Phi", selectedJets[fi]->Phi());
+    SetTreeVar("j1_M",   selectedJets[fi]->M());
+    SetTreeVar("j1_Unc",   sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
+    SetTreeVar("j1_QGL",  selectedJets[fi]->QGL());
+    SetTreeVar("j1_mult",  selectedJets[fi]->QGLVar("mult"));
+    SetTreeVar("j1_ptD",  selectedJets[fi]->QGLVar("ptD"));
+    SetTreeVar("j1_axis2",  selectedJets[fi]->QGLVar("axis2"));
+
+    SetTreeVar("j2_pT",  selectedJets[fj]->GetP4().Pt());
+    SetTreeVar("j2_Eta", selectedJets[fj]->Eta());
+    SetTreeVar("j2_Phi", selectedJets[fj]->Phi());
+    SetTreeVar("j2_M",   selectedJets[fj]->M());
+    SetTreeVar("j2_Unc",   sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
+    SetTreeVar("j2_QGL",  selectedJets[fj]->QGL());
+    SetTreeVar("j2_mult",  selectedJets[fj]->QGLVar("mult"));
+    SetTreeVar("j2_ptD",  selectedJets[fj]->QGLVar("ptD"));
+    SetTreeVar("j2_axis2",  selectedJets[fj]->QGLVar("axis2"));
+
+    SetTreeVar("j3_pT",  selectedJets[vk]->GetP4().Pt());
+    SetTreeVar("j3_Eta", selectedJets[vk]->Eta());
+    SetTreeVar("j3_Phi", selectedJets[vk]->Phi());
+    SetTreeVar("j3_M",   selectedJets[vk]->M());
+    SetTreeVar("j3_Unc",   sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
+    SetTreeVar("j3_QGL",  selectedJets[vk]->QGL());
+    SetTreeVar("j3_mult",  selectedJets[vk]->QGLVar("mult"));
+    SetTreeVar("j3_ptD",  selectedJets[vk]->QGLVar("ptD"));
+    SetTreeVar("j3_axis2",  selectedJets[vk]->QGLVar("axis2"));
+
+    SetTreeVar("j4_pT",  selectedJets[vl]->GetP4().Pt());
+    SetTreeVar("j4_Eta", selectedJets[vl]->Eta());
+    SetTreeVar("j4_Phi", selectedJets[vl]->Phi());
+    SetTreeVar("j4_M",   selectedJets[vl]->M());
+    SetTreeVar("j4_Unc",   sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
+    SetTreeVar("j4_QGL",  selectedJets[vl]->QGL());
+    SetTreeVar("j4_mult",  selectedJets[vl]->QGLVar("mult"));
+    SetTreeVar("j4_ptD",  selectedJets[vl]->QGLVar("ptD"));
+    SetTreeVar("j4_axis2",  selectedJets[vl]->QGLVar("axis2"));
+
+    SetTreeVar("EvtNum",e->eventNum());
+    SetTreeVar("Weights",e->weight());
+
+
+    bool match_all = false;
+
+    if((label.find("WPhadWPhadJJ_EWK") !=string::npos ) ||
+       (label.find("ZbbZhadJJ_EWK") !=string::npos ) ||
+       (label.find("ZnnZhadJJ_EWK") !=string::npos ) ||
+       (label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) ||
+       (label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) ||
+       (label.find("ZbbWpmJJ_EWK") !=string::npos ) ||
+       (label.find("ZbbWpmJJ_QCD") !=string::npos )) {
+
+        bool matchi = false;
+        bool matchj = false;
+        bool matchk = false;
+        bool matchl = false;
+
+        for(Int_t g = 0; g < e->NGenPar(); g++){
+
+            GenParticle *genpar = e->GetGenParticle(g);
+
+            if( ! genpar->IsLHE()) continue;
+
+            //cout <<  "debug LHE: " << "pa id: " <<  genpar->GetParentPdgId() << endl;
+
+            if( fabs(genpar->GetParentPdgId()) == 5 ) continue;
+
+            if( (selectedJets[fi]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchi = true;
+            if( (selectedJets[fj]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchj = true;
+            if( (selectedJets[vk]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchk = true;
+            if( (selectedJets[vl]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) matchl = true;
+        }
+
+        match_all = matchi && matchj && matchk && matchl;
+    }
+
+    SetTreeVar("Vmatch",(int)match_all);
+
+    int sigmc=0;
+    if(label.find("WPhadWPhadJJ_EWK") !=string::npos ) sigmc = 1 ;
+    if(label.find("ZbbZhadJJ_EWK") !=string::npos ) sigmc = 2 ;
+    if(label.find("ZnnZhadJJ_EWK") !=string::npos ) sigmc = 3 ;
+    if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) sigmc = 4 ;
+    if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) sigmc = 5 ;
+    if(label.find("ZbbWpmJJ_EWK") !=string::npos ) sigmc = 6 ;
+    if(label.find("ZbbWpmJJ_QCD") !=string::npos ) sigmc = 7 ;
+    SetTreeVar("MC",sigmc);
+
 }
 
 

@@ -29,6 +29,8 @@ public:
     int analyze(Event*,string systname) override;
     void EndEvent() override;
     void setTree(Event*e, string label, string  category);
+    void setTrainingTree(Event*e, string label, int fi, int fj, int vk, int vl);
+
     void writeTree(string name, int purp);
 
     void BookHisto(string l, string category);
@@ -60,10 +62,11 @@ public:
     bool doWriteTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
+    bool writeKerasTree=false;
 
     bool doTMVA=true;
     bool doResTagKeras = false;
-    bool doResTagTMVA = true;
+    bool doResTagTMVA = false;
 
 private:
 
