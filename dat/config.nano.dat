@@ -36,5 +36,5 @@ Final=no
 
 ## Analysis configurationfor testing
 
-Analysis=JsonAnalysis,HbbgAnalysis
+Analysis=JsonAnalysis,HmmAnalysis
 

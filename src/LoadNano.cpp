@@ -2,6 +2,8 @@
 #include "interface/Event.hpp"
 #include "interface/nano.hpp"
 
+#include "TLeaf.h"
+
 // flags enum
 #include "NeroProducer/Core/interface/BareMonteCarlo.hpp"
 
@@ -260,8 +262,30 @@ int LoadNano::FillEvent(){
    }
 
    //Fill Trigger and TriggerObjects
+   {
+       event_ -> triggerFired_ . clear();
+       //event_ -> triggerNames_ . clear();
 
-   //TODO Gen
+       event_-> triggerFired_.push_back(nano->HLT_IsoMu24);
+
+       //*((bool*)Events->GetLeaf("HLT_PFHT1050")->GetValuePointer () )
+       for(const auto & s : event_->triggerNames_)
+       {
+           TLeaf *l = tree_->GetLeaf(s.c_str());
+           if ( l == nullptr) {
+               event_->triggerFired_.push_back(0);
+            LogN(__FUNCTION__,"WARNING","Trigger ("+s+") Not FILLED",10);
+           }
+           else {
+               event_->triggerFired_.push_back( *((bool*)l->GetValuePointer () ) );
+           }
+
+       }
+
+
+   }
+
+   //Gen
    {
        // nano: genWeight ; Generator_weight ; LHEWeight_originalXWGTUP
        event_ -> GetWeight() -> SetMcWeight( nano->Generator_weight);
@@ -323,8 +347,13 @@ int LoadNano::FillEvent(){
 
 void LoadNano::NewFile(){
     // read some how the triggers -> this is for Nero, probably not necessary.
-    //TNamed * tn=  (TNamed*)tree_->GetFile()->Get("nero/triggerNames");
-    //string fname = tree_->GetFile()->GetName();
+    
+    event_->triggerNames_.clear(); // possibly also not necessary by file
+    event_->triggerNames_.push_back("HLT_IsoMu24");
+    event_->triggerNames_.push_back("HLT_IsoMu27");
+    event_->triggerNames_.push_back("HLT_PFHT1050");
+    event_->triggerNames_.push_back("HLT_PFHT900");
+
     return;
 }
 
