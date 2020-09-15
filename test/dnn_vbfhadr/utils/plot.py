@@ -9,7 +9,7 @@ def plot(history,output="training.pdf"):
     # Plot training & validation accuracy values
     for key in history.history:
         print "valid keys are",key
-    plt.plot(history.history['accuracy'],label="Train")
+    plt.plot(history.history['acc'],label="Train")
     #plt.plot(history.history['val_accuracy'])
     plt.title('Model accuracy')
     plt.ylabel('Accuracy')
@@ -17,7 +17,7 @@ def plot(history,output="training.pdf"):
     #plt.legend(['Train', 'Test'], loc='upper left')
     plt.legend(loc='upper left')
     plt.savefig(pp, format='pdf')
-    plt.show()
+    plt.show(block=False)
 
     # Plot training & validation loss values
     plt.plot(history.history['loss'],label="Train")
@@ -27,5 +27,5 @@ def plot(history,output="training.pdf"):
     plt.xlabel('Epoch')
     plt.legend(loc='upper left')
     plt.savefig(pp, format='pdf')
-    plt.show()
+    plt.show(block=False)
     pp .close()
