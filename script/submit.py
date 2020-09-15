@@ -443,7 +443,7 @@ if True:
 	fileList=[]
 	for f in config['Files']:
 		list=[]
-		if '/store/' or '/eos/user' in f:
+		if '/store/' in f or '/eos/user' in f:
 			if opts.hadoop:
 				list = FindHadoop( f ) 
 			elif opts.mount:

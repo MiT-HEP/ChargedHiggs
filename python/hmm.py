@@ -686,7 +686,7 @@ class StringToCpp():
 class HbbgConfig(HmmConfig):
     def __init__(self):
         HmmConfig.__init__(self)
-        self.dirname="Final/" 
+        self.dirname="HbbgAnalysis/Final/" 
         self.varname="mass"
         self.sigspec="%s_HiggsZG_Zbb_M%.0f"
         self.categories=[""]
@@ -727,5 +727,9 @@ class HbbgConfig(HmmConfig):
         if self.year==2017: return 41530/1.42857142857
         if self.year==2018: return 59740/1.42857142857
         return 0.
+
+    def br(self,mass=125):
+        print "FIXME: make mass dep"
+        return 0.00156509*0.15 #H->Zg * Z->bb
 
 hbbg=HbbgConfig()
