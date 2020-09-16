@@ -1,0 +1,66 @@
+################
+### DATASETS ###
+################
+include=dat/config.nano.dat
+SFDB=aux/sf_database.2018.moriond.txt
+
+Files=
+## Signal
+#
+addfiles=/ZNuNuWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+#addfiles=/ZNuNuWPMJJjj_EWK_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+
+addfiles=/WPMJJWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+addfiles=/WPMJJWPMJJjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+
+addfiles=/ZJJZJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+addfiles=/ZJJZJJjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+
+addfiles=/WPJJWMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+addfiles=/WPJJWMJJjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+#addfiles=/WPJJWMJJjj_EWK_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+
+addfiles=/ZBBWPMJJjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+#addfiles=/ZBBWPMJJjj_EWK_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+
+addfiles=/WPJJWMJJjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
+
+#include=dat/catalog/2020.moriond/year2016/vbshad.dat
+#include=dat/catalog/2020.moriond/year2016/vbsDoublyCH.dat
+#include=dat/catalog/2020.moriond/year2016/vbsAQGC.dat
+#
+### BKGS
+#include=dat/catalog/2020.moriond/year2016/qcd.dat
+#include=dat/catalog/2020.moriond/year2016/ewk.dat
+#include=dat/catalog/2020.moriond/year2016/Zinv.dat
+#include=dat/catalog/2020.moriond/year2016/Vjets.dat
+#include=dat/catalog/2020.moriond/year2016/ttvbs.dat
+#include=dat/catalog/2020.moriond/year2016/st.dat
+####include=dat/catalog/2020.moriond/year2016/rares.dat
+#include=dat/catalog/2020.moriond/year2016/dy_amcatnlo.dat
+
+# add Label
+include=dat/vbshad.dat
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+#Files=root://eoscms///store/group/phys_higgs/cmshmm/amarini/Nero/v3.7/year2016/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/ZnnZhadJJ_EWK_LO_SM_mjj100_pTj10_13TeV_madgraphMLM_pythia8/200403_084241/0000/NeroNtuples_99.root
+
+
+Smear=NONE
+Correct=NONE
+#Correct=SDMasscorr
+Final=no
+
+## be less peaky, given the n. of systs
+EntryPerSecond=10
+
+SFDB=aux/sf_VBShad.txt
+
+Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
+
+addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
+addConfig=VBShadAnalysis|year=2017
+Output=VBShadSignal.root
+

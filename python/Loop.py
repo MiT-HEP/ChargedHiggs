@@ -95,7 +95,14 @@ loop.InitLoader(cfg['Loader']);
 ### configurable
 
 for file in cfg['Files']:
-    for f in FindDataset(file) if 'NANOAOD' in file else FindEOS(file):
+    list=[]
+    if 'NANOAOD' in file and '.root' not in file:
+        list=FindDataset(file)
+    elif 'root://'  in file:
+        list = [file] ##already parsed
+    else:
+        list=FindEOS(file)
+    for f in list:
         if f == '': continue
         if opts.verbose: print "Adding file: '"+f+"'"
         loop.AddToChain(f)

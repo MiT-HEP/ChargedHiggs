@@ -440,28 +440,30 @@ if opts.tar:
 
 ## expand *
 if True:
-	fileList=[]
-	for f in config['Files']:
-		list=[]
-		if '/store/' in f or '/eos/user' in f:
-			if opts.hadoop:
-				list = FindHadoop( f ) 
-			elif opts.mount:
-				list =  FindEOS(f, "%%MOUNTPOINT%%/eos")
-			else:
-				list =  FindEOS(f)
-		elif 'NANOAOD' in f:
-				list =  FindDataset(f)
-		else :
-			list=glob(f)
-			if list == []: ### maybe remote ?
-				list=f
-		if len(list)==0:
-			print "<*> Error in File list from",f,"-- No File Found"
-			raise IOError
-		fileList.extend(list)
-	config['Files']=fileList
-	splittedInput=chunkIt(config['Files'],opts.njobs )
+    fileList=[]
+    for f in config['Files']:
+        if f== "": continue
+        list=[]
+        if '/store/' in f or '/eos/user' in f:
+            if opts.hadoop:
+                list = FindHadoop( f ) 
+            elif opts.mount:
+                list =  FindEOS(f, "%%MOUNTPOINT%%/eos")
+            else:
+                list =  FindEOS(f)
+        elif 'NANOAOD' in f:
+                print "DEBUG-submit,Using dataset for",f
+                list =  FindDataset(f)
+        else :
+            list=glob(f)
+            if list == []: ### maybe remote ?
+                list=f
+        if len(list)==0:
+            print "<*> Error in File list from",f,"-- No File Found"
+            raise IOError
+        fileList.extend(list)
+    config['Files']=fileList
+    splittedInput=chunkIt(config['Files'],opts.njobs )
 
 if opts.hadoop: ### T3 MIT
    if len(fileList) ==0:

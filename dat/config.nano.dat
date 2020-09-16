@@ -4,7 +4,6 @@
 
 #### BKG ###
 ## remove previous
-Branches=
 Loader=LoadNano
 Files=
 #addfiles=/store/mc/RunIIFall17NanoAOD/DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v2_ext1-v1/20000/6E899A4D-04FB-E711-AE53-001E67F8FA42.root
