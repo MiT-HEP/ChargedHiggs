@@ -264,11 +264,10 @@ int LoadNano::FillEvent(){
    //Fill Trigger and TriggerObjects
    {
        event_ -> triggerFired_ . clear();
+
        //event_ -> triggerNames_ . clear();
+       //event_-> triggerFired_.push_back(nano->HLT_IsoMu24);
 
-       event_-> triggerFired_.push_back(nano->HLT_IsoMu24);
-
-       //*((bool*)Events->GetLeaf("HLT_PFHT1050")->GetValuePointer () )
        for(const auto & s : event_->triggerNames_)
        {
            TLeaf *l = tree_->GetLeaf(s.c_str());
@@ -347,12 +346,31 @@ int LoadNano::FillEvent(){
 
 void LoadNano::NewFile(){
     // read some how the triggers -> this is for Nero, probably not necessary.
+    // grep -r IsTriggered src/AnalysisChargedHiggsTauNu.cpp |  tr '>' '\n' | grep IsTriggered | sed 's/).*//' | sed 's/,.*//' | sed 's/.*(//' | sort  | uniq
     
     event_->triggerNames_.clear(); // possibly also not necessary by file
+
+    event_->triggerNames_.push_back("HLT_AK8DiPFJet300_200_TrimMass30");
+    event_->triggerNames_.push_back("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50");
+    event_->triggerNames_.push_back("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
+    event_->triggerNames_.push_back("HLT_AK8PFJet360_TrimMass30");
+    event_->triggerNames_.push_back("HLT_AK8PFJet450");
+    event_->triggerNames_.push_back("HLT_DoubleIsoMu20_eta2p1");
+    event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6");
+    event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160");
     event_->triggerNames_.push_back("HLT_IsoMu24");
     event_->triggerNames_.push_back("HLT_IsoMu27");
-    event_->triggerNames_.push_back("HLT_PFHT1050");
+    event_->triggerNames_.push_back("HLT_IsoTkMu24");
+    event_->triggerNames_.push_back("HLT_IsoTkMu27");
+    event_->triggerNames_.push_back("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
     event_->triggerNames_.push_back("HLT_PFHT900");
+    event_->triggerNames_.push_back("HLT_PFHT_800");
+    event_->triggerNames_.push_back("HLT_PFMET120_PFMHT120_IDTight_PFHT60");
+    event_->triggerNames_.push_back("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight");
+    event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+    event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
+    event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
+    event_->triggerNames_.push_back("HLT_PFHT1050");
 
     return;
 }
