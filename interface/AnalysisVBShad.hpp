@@ -65,8 +65,8 @@ public:
     bool writeKerasTree=false;
 
     bool doTMVA=true;
-    bool doResTagKeras = true;
-    bool doResTagTMVA = false;
+    bool doResTagKeras = false;
+    bool doResTagTMVA = true;
 
 private:
 

@@ -205,170 +205,174 @@ void VBShadAnalysis::InitTmva() {
 
     TMVA::Tools::Instance();
     cout <<"[TmvaAnalysis]::[Init]::[INFO] Init Reader: " << weights.size() <<endl;
-    for( size_t i=0;i<weights.size() ;++i)
-        readers_ . push_back( new TMVA::Reader() );
-
-    for( size_t i=0;i<weights_multi.size() ;++i)
-        readers_multi_ . push_back( new TMVA::Reader() );
-
-    for( size_t i=0;i<weights_dnn.size() ;++i)
-        readers_dnn_ . push_back( new TMVA::Reader() );
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO BDTG - HAD " << endl;
-
-    for (int i=0; i<3; i++) {
-        AddVariable("varMjj",'F',readers_[i]); //0
-        AddVariable("varDetajj",'F',readers_[i]); //1
-        AddVariable("varJet2Pt",'F',readers_[i]); //2
-        AddVariable("varMVV",'F',readers_[i]); //3
-        AddVariable("varPTV2",'F',readers_[i]); //4
-        AddVariable("varCen",'F',readers_[i]); //6
-        AddVariable("varnormPTVVjj",'F',readers_[i]); //7
-    }
-
-    cout << "---------------------------------------------" << endl;
-    cout << " GOING TO BDTG - MET " << endl;
-
-    for (int i=3; i<4; i++) {
-        AddVariable("varMjj",'F',readers_[i]); //0
-        AddVariable("varDetajj",'F',readers_[i]); //1
-        AddVariable("varJet2Pt",'F',readers_[i]); //2
-        AddVariable("varPTV1",'F',readers_[i]); //4
-        //        AddVariable("varMVV",'F',i); //3
-        //        AddVariable("varPTVV",'F',i); //4
-        AddVariable("varzepVB",'F',readers_[i]); //5
-        AddVariable("varnormPTVVjj",'F',readers_[i]); //6
-    }
-
-    // old training with the top included
-    for (int i=4; i<6; i++) {
-        AddVariable("varMjj",'F',readers_[i]); //0
-        AddVariable("varDetajj",'F',readers_[i]); //1
-        AddVariable("varJet2Pt",'F',readers_[i]); //2
-        AddVariable("varMVV",'F',readers_[i]); //3
-        AddVariable("varPTVV",'F',readers_[i]); //4
-        AddVariable("varzepVB",'F',readers_[i]); //5
-        AddVariable("varnormPTVVjj",'F',readers_[i]); //6
-    }
-
-    // RBTAG
-    for (int i=6; i<7; i++) {
-        AddVariable("varMjj",'F',readers_[i]); //0
-        AddVariable("varJet2Pt",'F',readers_[i]); //2
-        //        AddVariable("varDetajj",'F',i); //1
-        //        AddVariable("varMVV",'F',i); //3
-        AddVariable("varPTV2",'F',readers_[i]); //4
-        AddVariable("varCen",'F',readers_[i]); //5
-        //        AddVariable("varzepVB",'F',i); //6
-        AddVariable("varnormPTVVjj",'F',readers_[i]); //7
-        AddVariable("varmtop",'F',readers_[i]); //8
-        AddVariable("bosV2mass",'F',readers_[i]); //9
-        AddVariable("bosV2chi2",'F',readers_[i]); //10
-
-        AddSpectator("mc",'F',i); AddSpectator("weight",'F',i); AddSpectator("ana_category",'F',i); AddSpectator("bosGen",'F',i); AddSpectator("evt",'F',i);
-    }
-
-    // RMET
-    for (int i=7; i<8; i++) {
-        AddVariable("varMjj",'F',readers_[i]); //0
-        AddVariable("varDetajj",'F',readers_[i]); //1
-        AddVariable("varJet2Pt",'F',readers_[i]); //2
-        AddVariable("varMVV",'F',readers_[i]); //3
-        AddVariable("varPTV2",'F',readers_[i]); //4
-        AddVariable("varzepVB",'F',readers_[i]); //5
-        AddVariable("varnormPTVVjj",'F',readers_[i]); //6
-        AddVariable("bosV2chi2",'F',readers_[i]); //7
-        AddVariable("bosV2mass",'F',readers_[i]); //8
-        AddVariable("varFW2j",'F',readers_[i]); //9
-    }
-
-    // BBtag
-    for (int i=8; i<9; i++) {
-        AddVariable("varMjj",'F',readers_[i]); //0
-        AddVariable("varJet2Pt",'F',readers_[i]); //1
-        AddVariable("varPTV2",'F',readers_[i]); //2
-        AddVariable("varCen",'F',readers_[i]); //3
-        AddVariable("varnormPTVVjj",'F',readers_[i]); //4
-        AddVariable("bosV2mass",'F',readers_[i]); //5
-        AddVariable("varmtop",'F',readers_[i]); //6
-    }
 
 
-    //multiclass RMET
-    for (int i=0; i<1; i++) {
-        AddVariable("varMjj",'F',readers_multi_[i]); //0
-        AddVariable("varDetajj",'F',readers_multi_[i]); //1
-        AddVariable("varJet2Pt",'F',readers_multi_[i]); //2
-        AddVariable("varMVV",'F',readers_multi_[i]); //3
-        AddVariable("varPTV2",'F',readers_multi_[i]); //4
-        AddVariable("varzepVB",'F',readers_multi_[i]); //5
-        AddVariable("varnormPTVVjj",'F',readers_multi_[i]); //6
-        AddVariable("varFW2j",'F',readers_multi_[i]); //7
-        AddVariable("bosV2mass",'F',readers_multi_[i]); //8
-        AddVariable("bosV2chi2",'F',readers_multi_[i]); //9
-    }
+    if(doTMVA) {
 
+        for( size_t i=0;i<weights.size() ;++i)
+            readers_ . push_back( new TMVA::Reader() );
 
-    //resTagger TMVA
-    for (int i=0; i<2; i++) {
+        for( size_t i=0;i<weights_multi.size() ;++i)
+            readers_multi_ . push_back( new TMVA::Reader() );
 
-        AddVariable("j1_pT", 'F',readers_dnn_[i]);
-        AddVariable("abs(j1_Eta)",'F',readers_dnn_[i]);
-        AddVariable("j1_M",'F',readers_dnn_[i]);
-        AddVariable("j1_Unc",'F',readers_dnn_[i]);
-        AddVariable("j1_axis2", 'F',readers_dnn_[i]);
-        //AddVariable("j1_mult",'F',readers_dnn_[i]);
-        AddVariable("j1_ptD", 'F',readers_dnn_[i]);
+        for( size_t i=0;i<weights_dnn.size() ;++i)
+            readers_dnn_ . push_back( new TMVA::Reader() );
 
-        AddVariable("j2_pT", 'F',readers_dnn_[i]);
-        //AddVariable("abs(j2_Eta)", 'F',readers_dnn_[i]);
-        AddVariable("j2_M",'F',readers_dnn_[i]);
-        AddVariable("j2_Unc", 'F',readers_dnn_[i]);
-        AddVariable("j2_axis2", 'F',readers_dnn_[i]);
-        if(i == 0) AddVariable("j2_mult",'F',readers_dnn_[i]);
-        AddVariable("j2_ptD",'F',readers_dnn_[i]);
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO BDTG - HAD " << endl;
 
-        AddVariable("j3_pT", 'F',readers_dnn_[i]);
-        AddVariable("abs(j3_Eta)", 'F',readers_dnn_[i]);
-        AddVariable("j3_Unc", 'F',readers_dnn_[i]);
-        AddVariable("j3_axis2", 'F',readers_dnn_[i]);
-        AddVariable("j3_mult",'F',readers_dnn_[i]);
-        AddVariable("j3_ptD", 'F',readers_dnn_[i]);
+        for (int i=0; i<3; i++) {
+            AddVariable("varMjj",'F',readers_[i]); //0
+            AddVariable("varDetajj",'F',readers_[i]); //1
+            AddVariable("varJet2Pt",'F',readers_[i]); //2
+            AddVariable("varMVV",'F',readers_[i]); //3
+            AddVariable("varPTV2",'F',readers_[i]); //4
+            AddVariable("varCen",'F',readers_[i]); //6
+            AddVariable("varnormPTVVjj",'F',readers_[i]); //7
+        }
 
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO BDTG - MET " << endl;
 
-        AddVariable("j4_pT", 'F',readers_dnn_[i]);
-        AddVariable("abs(j4_Eta)", 'F',readers_dnn_[i]);
-        AddVariable("j4_Unc", 'F',readers_dnn_[i]);
-        AddVariable("j4_axis2", 'F',readers_dnn_[i]);
-        AddVariable("j4_ptD", 'F',readers_dnn_[i]);
+        for (int i=3; i<4; i++) {
+            AddVariable("varMjj",'F',readers_[i]); //0
+            AddVariable("varDetajj",'F',readers_[i]); //1
+            AddVariable("varJet2Pt",'F',readers_[i]); //2
+            AddVariable("varPTV1",'F',readers_[i]); //4
+            //        AddVariable("varMVV",'F',i); //3
+            //        AddVariable("varPTVV",'F',i); //4
+            AddVariable("varzepVB",'F',readers_[i]); //5
+            AddVariable("varnormPTVVjj",'F',readers_[i]); //6
+        }
 
+        // old training with the top included
+        for (int i=4; i<6; i++) {
+            AddVariable("varMjj",'F',readers_[i]); //0
+            AddVariable("varDetajj",'F',readers_[i]); //1
+            AddVariable("varJet2Pt",'F',readers_[i]); //2
+            AddVariable("varMVV",'F',readers_[i]); //3
+            AddVariable("varPTVV",'F',readers_[i]); //4
+            AddVariable("varzepVB",'F',readers_[i]); //5
+            AddVariable("varnormPTVVjj",'F',readers_[i]); //6
+        }
+
+        // RBTAG
+        for (int i=6; i<7; i++) {
+            AddVariable("varMjj",'F',readers_[i]); //0
+            AddVariable("varJet2Pt",'F',readers_[i]); //2
+            //        AddVariable("varDetajj",'F',i); //1
+            //        AddVariable("varMVV",'F',i); //3
+            AddVariable("varPTV2",'F',readers_[i]); //4
+            AddVariable("varCen",'F',readers_[i]); //5
+            //        AddVariable("varzepVB",'F',i); //6
+            AddVariable("varnormPTVVjj",'F',readers_[i]); //7
+            AddVariable("varmtop",'F',readers_[i]); //8
+            AddVariable("bosV2mass",'F',readers_[i]); //9
+            AddVariable("bosV2chi2",'F',readers_[i]); //10
+
+            AddSpectator("mc",'F',i); AddSpectator("weight",'F',i); AddSpectator("ana_category",'F',i); AddSpectator("bosGen",'F',i); AddSpectator("evt",'F',i);
+        }
+
+        // RMET
+        for (int i=7; i<8; i++) {
+            AddVariable("varMjj",'F',readers_[i]); //0
+            AddVariable("varDetajj",'F',readers_[i]); //1
+            AddVariable("varJet2Pt",'F',readers_[i]); //2
+            AddVariable("varMVV",'F',readers_[i]); //3
+            AddVariable("varPTV2",'F',readers_[i]); //4
+            AddVariable("varzepVB",'F',readers_[i]); //5
+            AddVariable("varnormPTVVjj",'F',readers_[i]); //6
+            AddVariable("bosV2chi2",'F',readers_[i]); //7
+            AddVariable("bosV2mass",'F',readers_[i]); //8
+            AddVariable("varFW2j",'F',readers_[i]); //9
+        }
+
+        // BBtag
+        for (int i=8; i<9; i++) {
+            AddVariable("varMjj",'F',readers_[i]); //0
+            AddVariable("varJet2Pt",'F',readers_[i]); //1
+            AddVariable("varPTV2",'F',readers_[i]); //2
+            AddVariable("varCen",'F',readers_[i]); //3
+            AddVariable("varnormPTVVjj",'F',readers_[i]); //4
+            AddVariable("bosV2mass",'F',readers_[i]); //5
+            AddVariable("varmtop",'F',readers_[i]); //6
+        }
+
+        //multiclass RMET
+        for (int i=0; i<1; i++) {
+            AddVariable("varMjj",'F',readers_multi_[i]); //0
+            AddVariable("varDetajj",'F',readers_multi_[i]); //1
+            AddVariable("varJet2Pt",'F',readers_multi_[i]); //2
+            AddVariable("varMVV",'F',readers_multi_[i]); //3
+            AddVariable("varPTV2",'F',readers_multi_[i]); //4
+            AddVariable("varzepVB",'F',readers_multi_[i]); //5
+            AddVariable("varnormPTVVjj",'F',readers_multi_[i]); //6
+            AddVariable("varFW2j",'F',readers_multi_[i]); //7
+            AddVariable("bosV2mass",'F',readers_multi_[i]); //8
+            AddVariable("bosV2chi2",'F',readers_multi_[i]); //9
+        }
+
+        cout << " GOING loop over weights" << weights.size() << endl;
+
+        // load weights
+        for( size_t i=0;i<weights.size() ;++i) {
+            cout <<"[TmvaAnalysis]::[Init]::[INFO] Loading weights idx="<<i<<": '"<< weights[i]<<"'"<<endl;
+            if(i==0 or i==1 or i==2) readers_[i]->BookMVA("BDT_VBSHad",weights[i].c_str());
+            if(i==3 or i==4 or i==5) readers_[i]->BookMVA("BDT_VBSMet",weights[i].c_str());
+            if(i==6 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
+            if(i==7 ) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
+            if(i==8 ) readers_[i]->BookMVA("BDT_VBSBHad",weights[i].c_str());
+        }
+
+        for( size_t i=0;i<weights_multi.size() ;++i) {
+            if(i==0) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
+        }
 
     }
 
+    if(doResTagTMVA) {
 
+        //resTagger TMVA
+        for (int i=0; i<2; i++) {
 
-    cout << " GOING loop over weights" << weights.size() << endl;
+            AddVariable("j1_pT", 'F',readers_dnn_[i]);
+            AddVariable("abs(j1_Eta)",'F',readers_dnn_[i]);
+            AddVariable("j1_M",'F',readers_dnn_[i]);
+            AddVariable("j1_Unc",'F',readers_dnn_[i]);
+            AddVariable("j1_axis2", 'F',readers_dnn_[i]);
+            //AddVariable("j1_mult",'F',readers_dnn_[i]);
+            AddVariable("j1_ptD", 'F',readers_dnn_[i]);
 
-    // load weights
-    for( size_t i=0;i<weights.size() ;++i) {
-        cout <<"[TmvaAnalysis]::[Init]::[INFO] Loading weights idx="<<i<<": '"<< weights[i]<<"'"<<endl;
-        if(i==0 or i==1 or i==2) readers_[i]->BookMVA("BDT_VBSHad",weights[i].c_str());
-        if(i==3 or i==4 or i==5) readers_[i]->BookMVA("BDT_VBSMet",weights[i].c_str());
-        if(i==6 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
-        if(i==7 ) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
-        if(i==8 ) readers_[i]->BookMVA("BDT_VBSBHad",weights[i].c_str());
+            AddVariable("j2_pT", 'F',readers_dnn_[i]);
+            //AddVariable("abs(j2_Eta)", 'F',readers_dnn_[i]);
+            AddVariable("j2_M",'F',readers_dnn_[i]);
+            AddVariable("j2_Unc", 'F',readers_dnn_[i]);
+            AddVariable("j2_axis2", 'F',readers_dnn_[i]);
+            if(i == 0) AddVariable("j2_mult",'F',readers_dnn_[i]);
+            AddVariable("j2_ptD",'F',readers_dnn_[i]);
+
+            AddVariable("j3_pT", 'F',readers_dnn_[i]);
+            AddVariable("abs(j3_Eta)", 'F',readers_dnn_[i]);
+            AddVariable("j3_Unc", 'F',readers_dnn_[i]);
+            AddVariable("j3_axis2", 'F',readers_dnn_[i]);
+            AddVariable("j3_mult",'F',readers_dnn_[i]);
+            AddVariable("j3_ptD", 'F',readers_dnn_[i]);
+
+            AddVariable("j4_pT", 'F',readers_dnn_[i]);
+            AddVariable("abs(j4_Eta)", 'F',readers_dnn_[i]);
+            AddVariable("j4_Unc", 'F',readers_dnn_[i]);
+            AddVariable("j4_axis2", 'F',readers_dnn_[i]);
+            AddVariable("j4_ptD", 'F',readers_dnn_[i]);
+
     }
 
-    for( size_t i=0;i<weights_multi.size() ;++i) {
-        if(i==0) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
+        for( size_t i=0;i<weights_dnn.size() ;++i) {
+            // so far WZ+ZZ Comb
+            if(i==0) readers_dnn_[i]->BookMVA("DNN_ResTag_RBTA",weights_dnn[i].c_str());
+            if(i==1) readers_dnn_[i]->BookMVA("DNN_ResTag_RMET",weights_dnn[i].c_str());
+        }
     }
 
-    for( size_t i=0;i<weights_dnn.size() ;++i) {
-        // so far WZ+ZZ Comb
-        if(i==0) readers_dnn_[i]->BookMVA("DNN_ResTag_RBTA",weights_dnn[i].c_str());
-        if(i==1) readers_dnn_[i]->BookMVA("DNN_ResTag_RMET",weights_dnn[i].c_str());
-    }
     cout <<"[TmvaAnalysis]::[Init]::[INFO] Done"<<endl;
 
 }
@@ -578,7 +582,7 @@ void VBShadAnalysis::Init(){
     }
 
 
-    if(doTMVA) InitTmva();
+    if(doTMVA or doResTagTMVA) InitTmva();
     if(doResTagKeras) InitScikit();
 
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
@@ -889,62 +893,58 @@ float VBShadAnalysis::resolvedDNN(Event*e, string label, string systname){
                     }//end TMVA
 
                     if(doResTagKeras){
-                    (*x).clear();
-                    (*x).push_back(selectedJets[fi]->GetP4().Pt());
-                    (*x).push_back(selectedJets[fi]->Eta());
-                    //(*x).push_back(selectedJets[fi]->Phi());
-                    (*x).push_back(selectedJets[fi]->M());
-                    (*x).push_back(sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
-                    (*x).push_back(selectedJets[fi]->QGLVar("axis2"));
-                    //(*x).push_back(selectedJets[fi]->QGLVar("mult"));
-                    (*x).push_back(selectedJets[fi]->QGLVar("ptD"));
+                        (*x).clear();
+                        (*x).push_back(selectedJets[fi]->GetP4().Pt());
+                        (*x).push_back(selectedJets[fi]->Eta());
+                        //(*x).push_back(selectedJets[fi]->Phi());
+                        (*x).push_back(selectedJets[fi]->M());
+                        (*x).push_back(sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
+                        (*x).push_back(selectedJets[fi]->QGLVar("axis2"));
+                        //(*x).push_back(selectedJets[fi]->QGLVar("mult"));
+                        (*x).push_back(selectedJets[fi]->QGLVar("ptD"));
 
+                        (*x).push_back(selectedJets[fj]->GetP4().Pt());
+                        //(*x).push_back(selectedJets[fj]->Eta());
+                        //(*x).push_back(selectedJets[fj]->Phi());
+                        (*x).push_back(selectedJets[fj]->M());
+                        (*x).push_back(sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
+                        (*x).push_back(selectedJets[fj]->QGLVar("axis2"));
+                        if(doBAnalysis) (*x).push_back(selectedJets[fj]->QGLVar("mult"));
+                        (*x).push_back(selectedJets[fj]->QGLVar("ptD"));
 
-                    (*x).push_back(selectedJets[fj]->GetP4().Pt());
-                    //(*x).push_back(selectedJets[fj]->Eta());
-                    //(*x).push_back(selectedJets[fj]->Phi());
-                    (*x).push_back(selectedJets[fj]->M());
-                    (*x).push_back(sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
-                    (*x).push_back(selectedJets[fj]->QGLVar("axis2"));
-                    if(doBAnalysis) (*x).push_back(selectedJets[fj]->QGLVar("mult"));
-                    (*x).push_back(selectedJets[fj]->QGLVar("ptD"));
+                        (*x).push_back(selectedJets[vk]->GetP4().Pt());
+                        (*x).push_back(selectedJets[vk]->Eta());
+                        //(*x).push_back(selectedJets[vk]->Phi());
+                        //(*x).push_back(selectedJets[vk]->M());
+                        (*x).push_back(sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
+                        (*x).push_back(selectedJets[vk]->QGLVar("axis2"));
+                        (*x).push_back(selectedJets[vk]->QGLVar("mult"));
+                        (*x).push_back(selectedJets[vk]->QGLVar("ptD"));
 
+                        (*x).push_back(selectedJets[vl]->GetP4().Pt());
+                        (*x).push_back(selectedJets[vl]->Eta());
+                        //(*x).push_back(selectedJets[vl]->Phi());
+                        //(*x).push_back(selectedJets[vl]->M());
+                        (*x).push_back(sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
+                        (*x).push_back(selectedJets[vl]->QGLVar("axis2"));
+                        //(*x).push_back(selectedJets[vl]->QGLVar("mult"));
+                        (*x).push_back(selectedJets[vl]->QGLVar("ptD"));
 
-                    (*x).push_back(selectedJets[vk]->GetP4().Pt());
-                    (*x).push_back(selectedJets[vk]->Eta());
-                    //(*x).push_back(selectedJets[vk]->Phi());
-                    //(*x).push_back(selectedJets[vk]->M());
-                    (*x).push_back(sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
-                    (*x).push_back(selectedJets[vk]->QGLVar("axis2"));
-                    (*x).push_back(selectedJets[vk]->QGLVar("mult"));
-                    (*x).push_back(selectedJets[vk]->QGLVar("ptD"));
-
-
-                    (*x).push_back(selectedJets[vl]->GetP4().Pt());
-                    (*x).push_back(selectedJets[vl]->Eta());
-                    //(*x).push_back(selectedJets[vl]->Phi());
-                    //(*x).push_back(selectedJets[vl]->M());
-                    (*x).push_back(sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
-                    (*x).push_back(selectedJets[vl]->QGLVar("axis2"));
-                    //(*x).push_back(selectedJets[vl]->QGLVar("mult"));
-                    (*x).push_back(selectedJets[vl]->QGLVar("ptD"));
-
-                    //float kerasDiscr = py->Eval("kmodel.predict(np.array([ x ] ))[0][0]");
-                    float kerasDiscr = 0.;
-                    if(doBAnalysis) kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22] ] ] ))[0][0]");
-                    if(doMETAnalysis)   kerasDiscr  = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21] ] ] ))[0][0]");
+                        //float kerasDiscr = py->Eval("kmodel.predict(np.array([ x ] ))[0][0]");
+                        float kerasDiscr = 0.;
+                        if(doBAnalysis) kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22] ] ] ))[0][0]");
+                        if(doMETAnalysis)   kerasDiscr  = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21] ] ] ))[0][0]");
                     //float kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22],x[23],x[24],x[25],x[26],x[27],x[28],x[29],x[30],x[31] ] ] ))[0][0]");
 
-                    if(kerasDiscr > evt_maxkeras){
-                        evt_maxkeras = kerasDiscr;
-                        index_i=vk;
-                        index_j=vl;
-                        index_k=fi;
-                        index_l=fj;
-
-                    }
+                        if(kerasDiscr > evt_maxkeras){
+                            //                            std::cout << "kerasDiscr " << kerasDiscr << std::endl;
+                            evt_maxkeras = kerasDiscr;
+                            index_i=vk;
+                            index_j=vl;
+                            index_k=fi;
+                            index_l=fj;
+                        }
                     }//end keras
-
 
                     if(writeKerasTree) {
                         setTrainingTree(e,label, fi, fj, vk,vl);
