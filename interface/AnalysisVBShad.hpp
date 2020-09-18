@@ -29,6 +29,8 @@ public:
     int analyze(Event*,string systname) override;
     void EndEvent() override;
     void setTree(Event*e, string label, string  category);
+    void setTrainingTree(Event*e, string label, int fi, int fj, int vk, int vl);
+
     void writeTree(string name, int purp);
 
     void BookHisto(string l, string category);
@@ -40,7 +42,7 @@ public:
     void SetFatJetCuts(FatJet *f) override;
 
     float Getjetres(Jet* ajet);
-    void resolvedDNN(Event*e, string label, string systname);
+    float resolvedDNN(Event*e, string label, string systname);
     std::pair<float, float> resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
@@ -60,6 +62,7 @@ public:
     bool doWriteTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
+    bool writeKerasTree=false;
 
     bool doTMVA=true;
     bool doResTagKeras = false;
