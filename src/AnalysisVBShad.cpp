@@ -2306,9 +2306,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //******************//
 
-            if(doResTagKeras or doResTagTMVA) std::tie(MV,mBoson_ind) = resolvedDNN(e,label, systname);
-            if(mBoson_ind == 0) {mBoson = mBoson_W;} else if(mBoson_ind == 1) {mBoson = mBoson_Z;}
-
+            if(doResTagKeras or doResTagTMVA){
+                std::tie(MV,mBoson_ind) = resolvedDNN(e,label, systname);
+                if(mBoson_ind == 0) {mBoson = mBoson_W;} else if(mBoson_ind == 1) {mBoson = mBoson_Z;}
+            }
             //******************//
 
             string genmatch = "wrong_";
@@ -2484,9 +2485,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //********cut********//
 
-            if(doResTagKeras or doResTagTMVA) std::tie(MV,mBoson_ind) = resolvedDNN(e,label, systname);
-            if(mBoson_ind == 0) {mBoson = mBoson_W;} else if(mBoson_ind == 1) {mBoson = mBoson_Z;}
-
+            if(doResTagKeras or doResTagTMVA){
+                std::tie(MV,mBoson_ind) = resolvedDNN(e,label, systname);
+                if(mBoson_ind == 0) {mBoson = mBoson_W;} else if(mBoson_ind == 1) {mBoson = mBoson_Z;}
+            }
             //******************//
 
             string genmatch = "wrong_";
