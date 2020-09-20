@@ -99,5 +99,7 @@ addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_RMET
 
 ##Res DNN tagger
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RBT_ZZ_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RBTA_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RMET_DNN.weights.xml")
+#addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RBTA_DNN.weights.xml")
+#addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RMET_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l5_AllGoodVBad_RBTA_ActFuncTRS_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l5_AllGoodVBad_RMET_ActFuncTRS_DNN.weights.xml")

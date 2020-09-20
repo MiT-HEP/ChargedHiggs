@@ -42,7 +42,7 @@ public:
     void SetFatJetCuts(FatJet *f) override;
 
     float Getjetres(Jet* ajet);
-    float resolvedDNN(Event*e, string label, string systname);
+    std::pair<float, int> resolvedDNN(Event*e, string label, string systname);
     std::pair<float, float> resolvedtagger(Event*e, float MV, string label, string systname, float etaV1);
     float jettagForBoosted(Event*e, string label, string systname, float minEtaV, float maxEtaV);
     void genStudies(Event*e, string label);
@@ -62,7 +62,7 @@ public:
     bool doWriteTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
-    bool writeKerasTree=false;
+    bool writeTrainTree=true;
 
     bool doTMVA=true;
     bool doResTagKeras = false;
