@@ -21,6 +21,8 @@ class HbbgAnalysis: virtual public AnalysisBase
         int year=2016; // master switch for year configuration
         int debug=0; // activate debug log
         int doTree=0; // save minitree
+        bool doEvenOnly{false}; //signal only even events
+        bool doOddOnly{false}; //signal only even events
 
         HbbgAnalysis() : AnalysisBase () {}
         virtual ~HbbgAnalysis (){}
@@ -75,12 +77,23 @@ class HbbgAnalysis: virtual public AnalysisBase
 
         std::unique_ptr<KinematicFit2> kf;
 
-        // MVA reader
-        //DataStore varValues;
-        //vector<TMVA::Reader*> readers_;
-        //map< pair<string,int>, int > mvavars_; //keep track of the variables added to the mva
+        /************
+         *   TMVA   *
+         ************/
+        DataStore varValues_;
+        vector<TMVA::Reader*> readers_;
+        void InitTmva();
+        vector<float> bdt;
+        template<class T>
+            void SetTmvaVariable( string name, T value){ varValues_.Set(name, value); }
 
+        void AddTmvaVariable( string name, char type);
+        void AddTmvaSpectator( string name, char type);
+
+        void updateTmva();
     public:
+        vector<string> weights;
+        bool doTMVA=true;
 
     protected:
 };

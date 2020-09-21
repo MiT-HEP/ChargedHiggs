@@ -63,4 +63,5 @@ addConfig=HbbgAnalysis|AddLabel('VBF_HiggsZG_Zbb_M125')
 addConfig=HbbgAnalysis|AddLabel('TT')
 addConfig=HbbgAnalysis|AddLabel('QCD')
 addConfig=HbbgAnalysis|year=2016
+addConfig=HbbgAnalysis|weights.push_back('aux/bdt_hbbg_v1.xml')
 

@@ -18,6 +18,7 @@
 
 #define SYNC_VERBOSE 1
 
+
 void HbbgAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
     l->SetPtCut(10); 
@@ -99,8 +100,12 @@ void HbbgAnalysis::Init(){
 	        Book ("HbbgAnalysis/"+s+"/bjet1_eta_"+ l+suff,"Mbbg;m^{bb#gamma} [GeV];Events", 200,-5,5);
 	        Book ("HbbgAnalysis/"+s+"/bjet2_pt_"+ l+suff,"Mbbg;m^{bb#gamma} [GeV];Events", 200,0,2000);
 	        Book ("HbbgAnalysis/"+s+"/bjet2_eta_"+ l+suff,"Mbbg;m^{bb#gamma} [GeV];Events", 200,-5,5);
+	        Book ("HbbgAnalysis/"+s+"/bdt_"+ l+suff,"Mjj;m^{qq} [GeV];Events", 200,0,2000);
         }// suffix
         } // selection tag
+
+        for (int icat=0; icat <10 ;++icat)
+	    Book (Form("HbbgAnalysis/Categories/mass_cat%d_",icat)+ l,"Mbbg;m^{bb#gamma} [GeV];Events", 2000,60,160);
 
 
     } //end label loop
@@ -153,8 +158,11 @@ void HbbgAnalysis::Init(){
         Branch("hbbg","y_",'F');
     }
 
+    if (doTMVA){InitTmva();}
+
     if (debug)Log(__FUNCTION__,"DEBUG","End Init");
 }
+
 void HbbgAnalysis::updateTreeVar(){
         SetTreeVar("eventNum",e->eventNum());
         SetTreeVar("runNum",e->runNum());
@@ -201,6 +209,27 @@ void HbbgAnalysis::updateTreeVar(){
         if (label == "Data") mc =0;
         SetTreeVar("mc",mc);
 
+}
+
+void HbbgAnalysis::updateTmva(){
+    // Set Variables
+    for (const string & s : {"pt","dphijj","detajj","y_","ht","drbb","dphibb","dphibbg","detabbg","ptb1","ptb2","etab1","etab2"}){
+            SetTmvaVariable(s,eventVar_[s]);
+    }
+    SetTmvaVariable("jet_pt[0]",selectedJets[0]->Pt());
+    SetTmvaVariable("jet_pt[1]",selectedJets[1]->Pt());
+    SetTmvaVariable("jet_eta[0]",selectedJets[0]->Eta());
+    SetTmvaVariable("jet_eta[1]",selectedJets[1]->Eta());
+    SetTmvaVariable("Alt$(jet_eta[2],-10)",(selectedJets.size()>1)?selectedJets[2]->Eta():-10.);
+    SetTmvaVariable("ptpho",pho->Pt());
+    SetTmvaVariable("etapho",pho->Eta());
+    
+    // EvaluateBDT
+    bdt.clear();
+    for(unsigned i =0 ;i< readers_.size() ; ++i)
+    {
+         bdt.push_back(readers_[i]->EvaluateMVA("BDTG") );
+    }
 }
 
 void HbbgAnalysis::updateEventVar( )
@@ -457,6 +486,8 @@ void HbbgAnalysis::fillHists(const string & s, const string &l, const string & s
     Fill ("HbbgAnalysis/"+s+"/bjet2_pt_"+ l ,syst,selectedBJets[1]->Pt(),e->weight());
     Fill ("HbbgAnalysis/"+s+"/bjet2_eta_"+ l ,syst,selectedBJets[1]->Eta(),e->weight());
 
+    if (doTMVA and bdt.size()>0) Fill ("HbbgAnalysis/"+s+"/bdt_"+ l ,syst,bdt[0],e->weight());
+
     if (isSignal and genMatching.size() >0 )
     {
     // gen Matching contains: b b g - q q - H Z
@@ -502,6 +533,7 @@ void HbbgAnalysis::reset() // reset private memebers
     genMatching .clear();
     isSignal=false;
     kf->clear();
+    bdt.clear();
 }
 
 int HbbgAnalysis::analyze(Event *event, string systname)
@@ -519,6 +551,26 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
     if (label.find("HiggsZG_Zbb") != string::npos) isSignal=true;
+
+    /*
+     * only odd or event events for signal
+     */
+    if (doEvenOnly){
+        if ( isSignal )
+        {
+            if (  (e->eventNum()&1 ) == 0 ) e->ApplySF("double");
+            else {
+                return 0;
+            }
+        }
+    }
+
+    if (doOddOnly and not doEvenOnly){
+        if (  (e->eventNum()&1 ) == 1 ) e->ApplySF("double");
+        else {
+            return 0;
+        }
+    }
 
     /*
      * TOP PT REWEIGHT
@@ -785,6 +837,7 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         fillHists(selection,label,systname);
 
         if ( doTree and (systname == "" or systname =="NONE")) FillTree("hbbg");
+        if (doTMVA) updateTmva();
 
         if (passTrigger) {
             selection="Preselection";
@@ -796,6 +849,10 @@ int HbbgAnalysis::analyze(Event *event, string systname)
             {
                 selection="Final";
                 fillHists(selection,label,systname);
+
+                if (bdt[0]> 0.85) Fill("HbbgAnalysis/Categories/mass_cat0_"+label,systname,mass_, e->weight());
+                else if (bdt[0]> 0.5) Fill("HbbgAnalysis/Categories/mass_cat1_"+label,systname,mass_, e->weight());
+                else Fill("HbbgAnalysis/Categories/mass_cat2_"+label,systname,mass_, e->weight());
             }
         } //Preselection
     }
@@ -807,6 +864,71 @@ int HbbgAnalysis::analyze(Event *event, string systname)
 
 void HbbgAnalysis::EndEvent(){}
 
+void HbbgAnalysis::InitTmva(){
+    Log(__FUNCTION__,"INFO","Init Reader");
+    TMVA::Tools::Instance();
+    for(size_t pos = 0; pos <weights.size() ;++pos)
+    {
+        readers_ . push_back( new TMVA::Reader() );
+        // Variables
+        AddTmvaVariable("pt",'F');
+        AddTmvaVariable("dphijj",'F');
+        AddTmvaVariable("detajj",'F');
+        AddTmvaVariable("jet_pt[0]",'F');
+        AddTmvaVariable("jet_pt[1]",'F');
+        AddTmvaVariable("jet_eta[0]",'F');
+        AddTmvaVariable("jet_eta[1]",'F');
+        AddTmvaVariable("Alt$(jet_eta[2],-10)",'F');
+        AddTmvaVariable("y_",'F');
+        AddTmvaVariable("ht",'F');
+        AddTmvaVariable("drbb",'F');
+        AddTmvaVariable("dphibb",'F');
+        AddTmvaVariable("dphibbg",'F');
+        AddTmvaVariable("detabbg",'F');
+        AddTmvaVariable("ptb1",'F');
+        AddTmvaVariable("ptb2",'F');
+        AddTmvaVariable("etab1",'F');
+        AddTmvaVariable("etab2",'F');
+        AddTmvaVariable("ptpho",'F');
+        AddTmvaVariable("etapho",'F');
+
+        AddTmvaSpectator("mass",'F');SetTmvaVariable("mass",125.);
+        Log(__FUNCTION__,"INFO",Form("Loading weights idx=%d: ",pos)+weights[pos]);
+        readers_[pos]->BookMVA("BDTG",weights[pos].c_str());
+    }
+}
+
+void HbbgAnalysis::AddTmvaVariable( string name, char type){ 
+    Log(__FUNCTION__,"INFO","Adding variable '"+name+"'");
+    varValues_.Add(name,type); 
+    if ( type == 'I') {
+        int ir=-1;
+        for(auto& r : readers_ ){ 
+            ++ir;
+            r -> AddVariable(name.c_str(),  (int*)varValues_.GetPointer(name));
+        }
+    }
+    else if ( type == 'F') {
+        int ir=-1;
+        for(auto&r : readers_) { 
+            ++ir;
+            r -> AddVariable(name.c_str(),  (float*)varValues_.GetPointer(name));
+        }}
+    else { 
+        Log(__FUNCTION__,"ERROR",string("type '") + type + "' not supported");
+    }
+    return;
+} //end add variable
+
+void HbbgAnalysis::AddTmvaSpectator( string name, char type){ 
+    Log(__FUNCTION__,"INFO","Adding spectator '"+name+"'");
+    varValues_.Add(name,type); 
+    if ( type == 'I') for(auto& r : readers_ ) r -> AddSpectator(name.c_str(),  (int*)varValues_.GetPointer(name));
+    else if ( type == 'F') for(auto&r : readers_) r -> AddSpectator(name.c_str(),  (float*)varValues_.GetPointer(name));
+    else { 
+        Log(__FUNCTION__,"ERROR",string("type '") + type + "' not supported");
+    }
+}//end add spectator
 
 
 
