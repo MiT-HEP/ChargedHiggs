@@ -113,17 +113,44 @@ void HbbgAnalysis::Init(){
         Branch("hbbg","runNum",'I');
         Branch("hbbg","lumiNum",'I');
         Branch("hbbg","weight",'D');
+        Branch("hbbg","mc",'I');
+        // Higgs System
         Branch("hbbg","pt",'D');
         Branch("hbbg","mass",'D');
+        Branch("hbbg","dphibbg",'F');
+        Branch("hbbg","detabbg",'F');
+        Branch("hbbg","drbb",'F');
+        Branch("hbbg","dphibb",'F');
+
+        Branch("hbbg","ptb1",'F');
+        Branch("hbbg","ptb2",'F');
+        Branch("hbbg","ptpho",'F');
+        Branch("hbbg","etab1",'F');
+        Branch("hbbg","etab2",'F');
+        Branch("hbbg","etapho",'F');
+        Branch("hbbg","phib1",'F');
+        Branch("hbbg","phib2",'F');
+        Branch("hbbg","phipho",'F');
+
+        Branch("hbbg","chi2",'F'); // b-kinematic fit
+
+        //dijet system
+        Branch("hbbg","detajj",'F');
+        Branch("hbbg","dphijj",'F');
+        // associated jets
         Branch("hbbg","njets",'I');
         Branch("hbbg","jet_pt",'d',20,"njets");
         Branch("hbbg","jet_eta",'d',20,"njets");
         Branch("hbbg","jet_phi",'d',20,"njets");
-        Branch("hbbg","detajj_lead",'F');
-        Branch("hbbg","dphijj_lead",'F');
-        Branch("hbbg","z*",'F');
-        Branch("hbbg","y*",'F');
-        Branch("hbbg","mc",'I');
+
+        Branch("hbbg","nbjets",'I');
+        Branch("hbbg","nbjets_loose",'I');
+        Branch("hbbg","ht",'F');
+        Branch("hbbg","ht_cent",'F');
+        Branch("hbbg","ht_jj",'F');
+        // Higgs and  dijet system
+        Branch("hbbg","z_",'F');
+        Branch("hbbg","y_",'F');
     }
 
     if (debug)Log(__FUNCTION__,"DEBUG","End Init");
@@ -133,7 +160,7 @@ void HbbgAnalysis::updateTreeVar(){
         SetTreeVar("runNum",e->runNum());
         SetTreeVar("lumiNum",e->lumiNum());
         //SetTreeVar("cat",cat);
-        for (const string & s : {"pt","massa","njets","detajj","dphijj","z*","y*","njets"}){
+        for (const string & s : {"pt","mass","njets","detajj","dphijj","z_","y_","njets","dphibbg","detabbg","nbjets","nbjets_loose","ht","ht_cent","ht_jj","ptb1","ptb2","etab1","etab2","phib1","phib2","chi2","drbb","dphibb"}){
             SetTreeVar(s,eventVar_[s]);
         }
         SetTreeVar("weight",e->weight());
@@ -151,11 +178,18 @@ void HbbgAnalysis::updateTreeVar(){
             SetTreeVar("jet_eta",ijet,0.0);
             SetTreeVar("jet_phi",ijet,0.0);
         }
-        // basic bjet info
+        // Higgs System        
+        SetTreeVar("ptpho",pho->Pt());
+        SetTreeVar("etapho",pho->Eta());
+        SetTreeVar("phipho",pho->Phi());
 
-        int mc=0;
-        if (label.find( "GluGlu_HToZG") != string::npos) mc =-10;
-        if (label.find( "VBF_HToZG") != string::npos) mc =-20;
+
+        // truth
+        // VBF_HiggsZG_Zbb_M125
+
+        int mc=100;
+        if (label.find( "GluGlu_HiggsZG_Zbb_M125") != string::npos) mc =-10;
+        if (label.find( "VBF_HiggsZG_Zbb_M125") != string::npos) mc =-20;
         if (label == "DY") mc =10;
         if (label == "TT") mc =20;
         if (label == "ST") mc =21;
@@ -163,6 +197,9 @@ void HbbgAnalysis::updateTreeVar(){
         if (label == "WZ") mc =31;
         if (label == "ZZ") mc =32;
         if (label == "QCD") mc = 50;
+        if (label == "Other") mc = 100;
+        if (label == "Data") mc =0;
+        SetTreeVar("mc",mc);
 
 }
 
@@ -199,8 +236,11 @@ void HbbgAnalysis::updateEventVar( )
 
     // -------------- KF ---------------------
     if (kf->p4.size() >0 and kf->alpha_out.size()>1 and kf->value_out < 1.e9){ // filled and ok
-        Zbb_kf += (selectedBJets[0]->GetP4()*selectedBJets[0]->GetBCorrection() *kf->alpha_out[0]) ;
-        Zbb_kf += (selectedBJets[1]->GetP4()*selectedBJets[1]->GetBCorrection() * kf->alpha_out[1]) ;
+        TLorentzVector b1_kf = (selectedBJets[0]->GetP4()*selectedBJets[0]->GetBCorrection() *kf->alpha_out[0]);
+        TLorentzVector b2_kf = (selectedBJets[1]->GetP4()*selectedBJets[1]->GetBCorrection() * kf->alpha_out[1]);
+
+        Zbb_kf += b1_kf ;
+        Zbb_kf += b2_kf ;
 
         Hbbg_kf +=  Zbb_kf;
         Hbbg_kf += (pho->GetP4());
@@ -213,6 +253,16 @@ void HbbgAnalysis::updateEventVar( )
 
         eventVar_["mass"] = Hbbg_kf.M();
         eventVar_["pt"] = Hbbg_kf.Pt();
+
+        eventVar_["ptb1"] = b1_kf.Pt();
+        eventVar_["ptb2"] = b2_kf.Pt();
+        eventVar_["etab1"] = b1_kf.Eta();
+        eventVar_["etab2"] = b2_kf.Eta();
+        eventVar_["phib1"] = b1_kf.Phi();
+        eventVar_["phib2"] = b2_kf.Phi();
+
+        eventVar_["chi2"] = kf->value_out;
+
         haveKF=true;
     }
     // -----------------------------------
@@ -230,6 +280,7 @@ void HbbgAnalysis::updateEventVar( )
     eventVar_["etabb"] = Zbb.Eta();
     eventVar_["detabb"] = fabs(selectedBJets[0]->Eta() - selectedBJets[1]->Eta());
     eventVar_["dphibb"] = fabs(selectedBJets[0]->DeltaPhi(selectedBJets[1]) );
+    eventVar_["drbb"] = fabs(selectedBJets[0]->DeltaR(selectedBJets[1]) );
 
     eventVar_["mbb_u"] = Zbb_u.M();
     eventVar_["ptbb_u"] = Zbb_u.Pt();
@@ -239,21 +290,34 @@ void HbbgAnalysis::updateEventVar( )
     eventVar_["njets"] = selectedJets.size();
 
     if (haveKF){ // use kf for these ones
-        eventVar_["y*"] = (selectedJets.size()>=2) ? ( - Hbbg_kf.Rapidity() + (selectedJets[0]->Rapidity() + selectedJets[1]->Rapidity())/2.0 ) :-10;
-        eventVar_["z*"] = (selectedJets.size()>=2) ? (eventVar_["y*"] /fabs(selectedJets[0]->Rapidity() - selectedJets[1]->Rapidity()) ):-10;
-    
+        eventVar_["y_"] = (selectedJets.size()>=2) ? ( - Hbbg_kf.Rapidity() + (selectedJets[0]->Rapidity() + selectedJets[1]->Rapidity())/2.0 ) :-10;
+        eventVar_["z_"] = (selectedJets.size()>=2) ? (eventVar_["y_"] /fabs(selectedJets[0]->Rapidity() - selectedJets[1]->Rapidity()) ):-10;
+
+        eventVar_["dphibbg"] = fabs(Zbb_kf.DeltaPhi(pho->GetP4()));
+        eventVar_["detabbg"] = fabs(Zbb_kf.Eta() - pho->Eta());
+
     } // end haveKF
+    
   
     // additional bjets 
     eventVar_["nbjets"]=0; 
     eventVar_["nbjets_loose"]=0; 
+    eventVar_["ht"]=0.; 
+    eventVar_["ht_cent"]=0.; 
+    eventVar_["ht_jj"]=0.;  // between the two mjj jets
     for(unsigned i=0;i<selectedJets.size() ;++i)
     {
+        eventVar_["ht"] += selectedJets[i]->Pt(); 
         if ( abs(selectedJets[i]->Eta())<=2.4) // TO CHECK
         {
             if (selectedJets[i]->GetDeepB() > DEEP_B_MEDIUM) eventVar_["nbjets"]+=1;
-            if (selectedJets[i]->GetDeepB() > DEEP_B_LOOSE) eventVar_["nbjets"]+=1;
+            if (selectedJets[i]->GetDeepB() > DEEP_B_LOOSE) eventVar_["nbjets_loose"]+=1;
+            eventVar_["ht_cent"] += selectedJets[i]->Pt(); 
         }
+
+        if (( i>=2 and selectedJets[0]->Eta()<selectedJets[i]->Eta() and selectedJets[i]->Eta() <selectedJets[1]->Eta()) or
+            ( i>=2 and selectedJets[1]->Eta()<selectedJets[i]->Eta() and selectedJets[i]->Eta() <selectedJets[0]->Eta())
+            ) eventVar_["ht_jj"] += selectedJets[i]->Pt();
     }
 
     // central HT
@@ -635,13 +699,12 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     // select jets
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetJets: ");
 
-    selectedJets.clear();
-    for(unsigned i=0;i<e->Njets() ; ++i)
-    {
-        Jet *j=e->GetJet(i);
-        if (selectedJets.size() == 0 and j->Pt() <30) continue;
-        selectedJets.push_back(j);
-    }
+    //for(unsigned i=0;i<e->Njets() ; ++i)
+    //{
+    //    Jet *j=e->GetJet(i);
+    //    if (selectedJets.size() == 0 and j->Pt() <30) continue;
+    //    selectedJets.push_back(j);
+    //}
 
 
     // TRIGGER SF. TODO 
@@ -664,6 +727,7 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     if (selectedBJets[0] == nullptr or selectedBJets[1] == nullptr) return 1;
 
     // Selection: jets
+    selectedJets.clear();
     for(int i=0;; ++i){
         Jet *j = e->GetJet(i); 
         if (j==nullptr) break;
