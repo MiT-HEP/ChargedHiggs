@@ -18,6 +18,7 @@ parser.add_option("-q","--queue" ,dest='queue',type='string',help="Queue",defaul
 
 job_opts= OptionGroup(parser,"Job options:","these options modify the job specific")
 job_opts.add_option("-t","--no-tar" ,dest='tar',action='store_false',help="Do not Make Tar",default=True)
+job_opts.add_option("-p","--proxy" ,dest='proxy',action='store_true',help="Transfer Proxy",default=False)
 job_opts.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do not Submit",default=False)
 job_opts.add_option("","--no-compress" ,dest='compress',action='store_false',help="Don't compress",default=True)
 job_opts.add_option("","--compress"    ,dest='compress',action='store_true',help="Compress stdout/err")
@@ -424,6 +425,8 @@ if opts.tar:
 	cmd.extend( glob("test/*.so") )
 	cmd.extend( glob("test/*.exe") )
 	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
+	#/tmp/x509up_u45059
+	if opts.proxy: cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
 	tarCmdline = " ".join(cmd)
 	print tarCmdline
 	call(cmd)
@@ -585,6 +588,7 @@ if not opts.hadoop:
             sh.write("tar -xzf %s/package.tar.gz\n"%(basedir ))
             sh.write("mkdir -p %s\n"%opts.dir)
             sh.write("cp %s/*dat %s/\n"%(basedir,opts.dir))
+            if opts.proxy: sh.write("export X509_USER_PROXY=/tmp/x509up_u%d\n"%os.getuid())
     
         touch = "touch " + basedir + "/sub%d.pend"%iJob
         call(touch,shell=True)
