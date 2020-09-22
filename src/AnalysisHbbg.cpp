@@ -100,7 +100,7 @@ void HbbgAnalysis::Init(){
 	        Book ("HbbgAnalysis/"+s+"/bjet1_eta_"+ l+suff,"Mbbg;m^{bb#gamma} [GeV];Events", 200,-5,5);
 	        Book ("HbbgAnalysis/"+s+"/bjet2_pt_"+ l+suff,"Mbbg;m^{bb#gamma} [GeV];Events", 200,0,2000);
 	        Book ("HbbgAnalysis/"+s+"/bjet2_eta_"+ l+suff,"Mbbg;m^{bb#gamma} [GeV];Events", 200,-5,5);
-	        Book ("HbbgAnalysis/"+s+"/bdt_"+ l+suff,"Mjj;m^{qq} [GeV];Events", 200,0,2000);
+	        Book ("HbbgAnalysis/"+s+"/bdt_"+ l+suff,"Mjj;m^{qq} [GeV];Events", 200,0,1.);
         }// suffix
         } // selection tag
 
@@ -120,8 +120,8 @@ void HbbgAnalysis::Init(){
         Branch("hbbg","weight",'D');
         Branch("hbbg","mc",'I');
         // Higgs System
-        Branch("hbbg","pt",'D');
         Branch("hbbg","mass",'D');
+        Branch("hbbg","pt",'F');
         Branch("hbbg","dphibbg",'F');
         Branch("hbbg","detabbg",'F');
         Branch("hbbg","drbb",'F');
@@ -138,6 +138,9 @@ void HbbgAnalysis::Init(){
         Branch("hbbg","phipho",'F');
 
         Branch("hbbg","chi2",'F'); // b-kinematic fit
+        Branch("hbbg","mbb",'F');
+        Branch("hbbg","ptbb",'F');
+        Branch("hbbg","etabb",'F');
 
         //dijet system
         Branch("hbbg","detajj",'F');
@@ -168,7 +171,7 @@ void HbbgAnalysis::updateTreeVar(){
         SetTreeVar("runNum",e->runNum());
         SetTreeVar("lumiNum",e->lumiNum());
         //SetTreeVar("cat",cat);
-        for (const string & s : {"pt","mass","njets","detajj","dphijj","z_","y_","njets","dphibbg","detabbg","nbjets","nbjets_loose","ht","ht_cent","ht_jj","ptb1","ptb2","etab1","etab2","phib1","phib2","chi2","drbb","dphibb"}){
+        for (const string & s : {"pt","mass","njets","detajj","dphijj","z_","y_","njets","dphibbg","detabbg","nbjets","nbjets_loose","ht","ht_cent","ht_jj","ptb1","ptb2","etab1","etab2","phib1","phib2","chi2","drbb","dphibb","mbb","ptbb","etabb"}){
             SetTreeVar(s,eventVar_[s]);
         }
         SetTreeVar("weight",e->weight());
@@ -213,16 +216,18 @@ void HbbgAnalysis::updateTreeVar(){
 
 void HbbgAnalysis::updateTmva(){
     // Set Variables
-    for (const string & s : {"pt","dphijj","detajj","y_","ht","drbb","dphibb","dphibbg","detabbg","ptb1","ptb2","etab1","etab2"}){
+    for (const string & s : {"pt","dphijj","detajj","y_","ht","drbb","dphibb","dphibbg","detabbg","etab1","etab2"}){
             SetTmvaVariable(s,eventVar_[s]);
     }
     SetTmvaVariable("jet_pt[0]",selectedJets[0]->Pt());
     SetTmvaVariable("jet_pt[1]",selectedJets[1]->Pt());
     SetTmvaVariable("jet_eta[0]",selectedJets[0]->Eta());
     SetTmvaVariable("jet_eta[1]",selectedJets[1]->Eta());
-    SetTmvaVariable("Alt$(jet_eta[2],-10)",(selectedJets.size()>1)?selectedJets[2]->Eta():-10.);
-    SetTmvaVariable("ptpho",pho->Pt());
+    SetTmvaVariable("Alt$(jet_eta[2],-10)",(selectedJets.size()>2)?selectedJets[2]->Eta():-10.);
+    SetTmvaVariable("ptpho/mass",pho->Pt()/mass_);
     SetTmvaVariable("etapho",pho->Eta());
+    SetTmvaVariable("ptb1/mass",eventVar_["ptb1"]/mass_);
+    SetTmvaVariable("ptb2/mass",eventVar_["ptb2"]/mass_);
     
     // EvaluateBDT
     bdt.clear();
@@ -304,15 +309,16 @@ void HbbgAnalysis::updateEventVar( )
     eventVar_["pt_uncorr"] = Hbbg_u.Pt();
 
     eventVar_["mjj"] = selectedJets[0]->InvMass(selectedJets[1]);
-    eventVar_["mbb"] = Zbb.M(); // breg, no kf
+    eventVar_["mbb"] = Zbb.M(); 
     eventVar_["ptbb"] = Zbb.Pt();
     eventVar_["etabb"] = Zbb.Eta();
     eventVar_["detabb"] = fabs(selectedBJets[0]->Eta() - selectedBJets[1]->Eta());
     eventVar_["dphibb"] = fabs(selectedBJets[0]->DeltaPhi(selectedBJets[1]) );
     eventVar_["drbb"] = fabs(selectedBJets[0]->DeltaR(selectedBJets[1]) );
 
-    eventVar_["mbb_u"] = Zbb_u.M();
+    eventVar_["mbb_u"] = Zbb_u.M(); //no kf
     eventVar_["ptbb_u"] = Zbb_u.Pt();
+    eventVar_["etabb_u"] = Zbb_u.Pt();
 
     eventVar_["detajj"] = fabs(selectedJets[0]->Eta() - selectedJets[1]->Eta());
     eventVar_["dphijj"] = fabs(selectedJets[0]->DeltaPhi(selectedJets[1]) );
@@ -324,6 +330,10 @@ void HbbgAnalysis::updateEventVar( )
 
         eventVar_["dphibbg"] = fabs(Zbb_kf.DeltaPhi(pho->GetP4()));
         eventVar_["detabbg"] = fabs(Zbb_kf.Eta() - pho->Eta());
+
+        eventVar_["mbb"] = Zbb_kf.M(); 
+        eventVar_["ptbb"] = Zbb_kf.Pt();
+        eventVar_["etabb"] = Zbb_kf.Eta();
 
     } // end haveKF
     
@@ -790,8 +800,8 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     
     if (selectedJets.size() <2) return 1;
     // ------------
-    //
-    updateEventVar();
+    
+    updateEventVar(); // preselect with mbb ...
 
     // -------------------------------------------------------
     //
@@ -842,18 +852,22 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         if (passTrigger) {
             selection="Preselection";
             fillHists(selection,label,systname);
+
+            // FINAL
             if ( fabs(eventVar_["mbb"]-91 )<30 and  //Z
                     eventVar_["mjj"]> 250  // VBF
                     // and eventVar_["detajj"]> 2. // VBF
+                    and eventVar_["chi2"] <10  // b correctly identified
+                    and abs(pho->Eta() > 1.44) // barrel
                )
             {
                 selection="Final";
                 fillHists(selection,label,systname);
 
-                if (bdt[0]> 0.85) Fill("HbbgAnalysis/Categories/mass_cat0_"+label,systname,mass_, e->weight());
-                else if (bdt[0]> 0.5) Fill("HbbgAnalysis/Categories/mass_cat1_"+label,systname,mass_, e->weight());
+                if (bdt[0] > 0.85) Fill("HbbgAnalysis/Categories/mass_cat0_"+label,systname,mass_, e->weight());
+                else if (bdt[0] > 0.) Fill("HbbgAnalysis/Categories/mass_cat1_"+label,systname,mass_, e->weight());
                 else Fill("HbbgAnalysis/Categories/mass_cat2_"+label,systname,mass_, e->weight());
-            }
+            } // final selection
         } //Preselection
     }
 
@@ -885,14 +899,16 @@ void HbbgAnalysis::InitTmva(){
         AddTmvaVariable("dphibb",'F');
         AddTmvaVariable("dphibbg",'F');
         AddTmvaVariable("detabbg",'F');
-        AddTmvaVariable("ptb1",'F');
-        AddTmvaVariable("ptb2",'F');
+        AddTmvaVariable("ptb1/mass",'F');
+        AddTmvaVariable("ptb2/mass",'F');
         AddTmvaVariable("etab1",'F');
         AddTmvaVariable("etab2",'F');
-        AddTmvaVariable("ptpho",'F');
+        AddTmvaVariable("ptpho/mass",'F');
         AddTmvaVariable("etapho",'F');
 
         AddTmvaSpectator("mass",'F');SetTmvaVariable("mass",125.);
+        AddTmvaSpectator("weight*((mc<=-10&&mc>=-19)*48.58+(mc<=-20&&mc>=-29)*3.782)",'F');SetTmvaVariable("weight*((mc<=-10&&mc>=-19)*48.58+(mc<=-20&&mc>=-29)*3.782)",10.);
+        //xsec = "(mc <= -10 && mc >=-19 )*48.58 + (mc<= -20 && mc >= -29)*3.782"
         Log(__FUNCTION__,"INFO",Form("Loading weights idx=%d: ",pos)+weights[pos]);
         readers_[pos]->BookMVA("BDTG",weights[pos].c_str());
     }
