@@ -90,6 +90,7 @@ def ParseDat(name):
 		key = l.split('=')[0]
 		value = ''
 		if '=' in l : value = '='.join(l.split('=')[1:])
+		value=re.sub('~',' ',value)
 		######### BOOL  ###########
 		if key == "Dump" or key=="Final":
 			config[key]=BoolKey(value)

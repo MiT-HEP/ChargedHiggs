@@ -1,0 +1,49 @@
+include=dat/config.nano.dat
+
+SFDB=aux/sf_database.2018.moriond.txt
+include=dat/json.2016.dat
+
+################
+### DATASETS ###
+################
+
+Files=
+addfiles=/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/amarini-NANOAODSIMv7_2016-07f11a9f6612f8436de459459102e3f2/USER~instance=prod/phys03
+addfiles=/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/amarini-NANOAODSIMv7_2016-07f11a9f6612f8436de459459102e3f2/USER~instance=prod/phys03
+
+## Signal
+
+### DATA
+
+
+############ RUN WITH DOUBLE MUONS ####################
+#addConfig=HmumuAnalysis|SetMultiPrimaryDataset(),AddLabel("DoubleMuon"),AddLabel("SingleMuon")
+#include=dat/catalog/2018.moriond/doubleMuon.dat
+######################################################
+
+Smear=NONE
+## be less peaky, given the n. of systs
+EntryPerSecond=10
+Final=no
+
+
+#MCDB=aux/mcdb.2020.v3.7.year2016.dat
+#pileup=aux/pileup.v3.7.year2016.root
+
+MCDB=aux/mcdb.nano.year2016.txt
+pileup=aux/pileup.nano.year2016.root
+
+Correct=MetPhiCorrector
+config=MetPhiCorrector|year=2016
+
+
+Analysis=JsonAnalysis,MetFiltersAnalysis,HbbgAnalysis
+
+config=HbbgAnalysis|AddLabel('DY')
+addConfig=HbbgAnalysis|AddLabel('GluGlu_HiggsZG_Zbb_M125')
+addConfig=HbbgAnalysis|AddLabel('VBF_HiggsZG_Zbb_M125')
+addConfig=HbbgAnalysis|AddLabel('TT')
+addConfig=HbbgAnalysis|AddLabel('QCD')
+addConfig=HbbgAnalysis|year=2016
+addConfig=HbbgAnalysis|weights.push_back('aux/bdt_hbbg_v1.xml')
+

@@ -67,7 +67,7 @@ if opts.dat != "":
         if label == 'DoubleElectron': continue # exclude data
         if label == 'BTagCSV': continue # exclude data
 
-        cmd = "python %s -d %s -x %f -l '%s' -f %s -p %s"%(sys.argv[0],f,opts.xsec,label,cfg['MCDB'],cfg['pileup'])
+        cmd = "python %s -d '%s' -x %f -l '%s' -f %s -p %s"%(sys.argv[0],f,opts.xsec,label,cfg['MCDB'],cfg['pileup'])
 
         if label in mcdb:
             print "* label", "'"+label+"'", "already parsed in mcdb ("+cfg['MCDB']+"). Cmd was:"
