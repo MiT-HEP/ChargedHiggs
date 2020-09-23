@@ -96,12 +96,13 @@ loop.InitLoader(cfg['Loader']);
 
 for file in cfg['Files']:
     list=[]
-    if 'NANOAOD' in file and '.root' not in file:
+    if file.split('/')[-1] in ['NANOAODSIM','NANOAOD'] and '.root' not in file:
         list=FindDataset(file)
     elif 'root://'  in file:
         list = [file] ##already parsed
     else:
         list=FindEOS(file)
+
     for f in list:
         if f == '': continue
         if opts.verbose: print "Adding file: '"+f+"'"

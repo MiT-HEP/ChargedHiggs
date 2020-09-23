@@ -7,6 +7,12 @@
 // flags enum
 #include "NeroProducer/Core/interface/BareMonteCarlo.hpp"
 
+void LoadNano::SetYear(int y)
+{
+    Loader::SetYear(y); 
+    nano->year=y;
+}
+
 int LoadNano::InitTree(){
 
     //tree_->SetBranchAddress("run",&run);
@@ -32,34 +38,96 @@ int LoadNano::FillEvent(){
 #warning Check met filter recommendation
         //event_->met_->filterbadPFMuon =  // now everything in full recommendation
         //event_->met_->filterbadChHadrons = 
+        if (year == 2016){
         event_->met_. setFullRecommendation(
                     nano->Flag_HBHENoiseFilter and
                     nano->Flag_HBHENoiseIsoFilter and
-                    nano->Flag_CSCTightHaloFilter and
-                    nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
-                    nano->Flag_CSCTightHalo2015Filter and
-                    nano->Flag_globalTightHalo2016Filter and
+                    //nano->Flag_CSCTightHaloFilter and
+                    //nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
+                    //nano->Flag_CSCTightHalo2015Filter and
+                    //nano->Flag_globalTightHalo2016Filter and
                     nano->Flag_globalSuperTightHalo2016Filter and
-                    nano->Flag_HcalStripHaloFilter and
-                    nano->Flag_hcalLaserEventFilter and
+                    //nano->Flag_HcalStripHaloFilter and
+                    //nano->Flag_hcalLaserEventFilter and
                     nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
-                    nano->Flag_EcalDeadCellBoundaryEnergyFilter and
+                    //nano->Flag_EcalDeadCellBoundaryEnergyFilter and
+                    //nano->Flag_ecalBadCalibFilter and
+                    nano->Flag_goodVertices and
+                    //nano->Flag_eeBadScFilter and
+                    //nano->Flag_ecalLaserCorrFilter and
+                    //nano->Flag_trkPOGFilters and
+                    //nano->Flag_chargedHadronTrackResolutionFilter and
+                    //nano->Flag_muonBadTrackFilter and
+                    //nano->Flag_BadChargedCandidateFilter and
+                    nano->Flag_BadPFMuonFilter 
+                    //nano->Flag_BadChargedCandidateSummer16Filter and
+                    //nano->Flag_BadPFMuonSummer16Filter and
+                    //nano->Flag_trkPOG_manystripclus53X and
+                    //nano->Flag_trkPOG_toomanystripclus53X and
+                    //nano->Flag_trkPOG_logErrorTooManyClusters and
+                    //nano->Flag_METFilters
+                );
+        }
+        if (year == 2017){
+        event_->met_. setFullRecommendation(
+                    nano->Flag_HBHENoiseFilter and
+                    nano->Flag_HBHENoiseIsoFilter and
+                    //nano->Flag_CSCTightHaloFilter and
+                    //nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
+                    //nano->Flag_CSCTightHalo2015Filter and
+                    //nano->Flag_globalTightHalo2016Filter and
+                    nano->Flag_globalSuperTightHalo2016Filter and
+                    //nano->Flag_HcalStripHaloFilter and
+                    //nano->Flag_hcalLaserEventFilter and
+                    nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
+                    //nano->Flag_EcalDeadCellBoundaryEnergyFilter and
                     nano->Flag_ecalBadCalibFilter and
                     nano->Flag_goodVertices and
-                    nano->Flag_eeBadScFilter and
-                    nano->Flag_ecalLaserCorrFilter and
-                    nano->Flag_trkPOGFilters and
-                    nano->Flag_chargedHadronTrackResolutionFilter and
-                    nano->Flag_muonBadTrackFilter and
-                    nano->Flag_BadChargedCandidateFilter and
-                    nano->Flag_BadPFMuonFilter and
-                    nano->Flag_BadChargedCandidateSummer16Filter and
-                    nano->Flag_BadPFMuonSummer16Filter and
-                    nano->Flag_trkPOG_manystripclus53X and
-                    nano->Flag_trkPOG_toomanystripclus53X and
-                    nano->Flag_trkPOG_logErrorTooManyClusters and
-                    nano->Flag_METFilters
+                    //nano->Flag_eeBadScFilter and
+                    //nano->Flag_ecalLaserCorrFilter and
+                    //nano->Flag_trkPOGFilters and
+                    //nano->Flag_chargedHadronTrackResolutionFilter and
+                    //nano->Flag_muonBadTrackFilter and
+                    //nano->Flag_BadChargedCandidateFilter and
+                    nano->Flag_BadPFMuonFilter 
+                    //nano->Flag_BadChargedCandidateSummer16Filter and
+                    //nano->Flag_BadPFMuonSummer16Filter and
+                    //nano->Flag_trkPOG_manystripclus53X and
+                    //nano->Flag_trkPOG_toomanystripclus53X and
+                    //nano->Flag_trkPOG_logErrorTooManyClusters and
+                    //nano->Flag_METFilters
                 );
+        }
+        if (year == 2018){
+        event_->met_. setFullRecommendation(
+                    nano->Flag_HBHENoiseFilter and
+                    nano->Flag_HBHENoiseIsoFilter and
+                    //nano->Flag_CSCTightHaloFilter and
+                    //nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
+                    //nano->Flag_CSCTightHalo2015Filter and
+                    //nano->Flag_globalTightHalo2016Filter and
+                    nano->Flag_globalSuperTightHalo2016Filter and
+                    //nano->Flag_HcalStripHaloFilter and
+                    //nano->Flag_hcalLaserEventFilter and
+                    nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
+                    //nano->Flag_EcalDeadCellBoundaryEnergyFilter and
+                    nano->Flag_ecalBadCalibFilter and
+                    nano->Flag_goodVertices and
+                    //nano->Flag_eeBadScFilter and
+                    //nano->Flag_ecalLaserCorrFilter and
+                    //nano->Flag_trkPOGFilters and
+                    //nano->Flag_chargedHadronTrackResolutionFilter and
+                    //nano->Flag_muonBadTrackFilter and
+                    //nano->Flag_BadChargedCandidateFilter and
+                    nano->Flag_BadPFMuonFilter 
+                    //nano->Flag_BadChargedCandidateSummer16Filter and
+                    //nano->Flag_BadPFMuonSummer16Filter and
+                    //nano->Flag_trkPOG_manystripclus53X and
+                    //nano->Flag_trkPOG_toomanystripclus53X and
+                    //nano->Flag_trkPOG_logErrorTooManyClusters and
+                    //nano->Flag_METFilters
+                );
+        }
     }
 
     // puppi met
@@ -154,6 +222,8 @@ int LoadNano::FillEvent(){
         TLorentzVector p4;
         p4.SetPtEtaPhiM(nano->Jet_pt[i],nano->Jet_eta[i],nano->Jet_phi[i],nano->Jet_mass[i]);
 
+        j->SetP4(p4);
+
         j->SetNEMF(nano->Jet_neEmEF[i] );
         j->SetCEMF(nano->Jet_chEmEF[i] );
 
@@ -194,6 +264,7 @@ int LoadNano::FillEvent(){
        FatJet *j = new FatJet() ;
        TLorentzVector p4;
        p4.SetPtEtaPhiM(nano->FatJet_pt[i],nano->FatJet_eta[i],nano->FatJet_phi[i],nano->FatJet_mass[i]);
+       j->SetP4(p4);
 
        j->tau1 = nano->FatJet_tau1[i];
        j->tau2 = nano->FatJet_tau2[i];
@@ -347,30 +418,50 @@ int LoadNano::FillEvent(){
 void LoadNano::NewFile(){
     // read some how the triggers -> this is for Nero, probably not necessary.
     // grep -r IsTriggered src/AnalysisChargedHiggsTauNu.cpp |  tr '>' '\n' | grep IsTriggered | sed 's/).*//' | sed 's/,.*//' | sed 's/.*(//' | sort  | uniq
+    string fname = tree_->GetFile()->GetName();
+
+    int year=2016;
+
+    if (fname.find("mc2016") != string::npos) {year=2016;} // prefer string like mcYYYY
+    else if (fname.find("mc2017") != string::npos) {year=2017;}
+    else if (fname.find("mc2018") != string::npos) {year=2018;}
+    else if (fname.find("2016") != string::npos) {year=2016;} // fall back to YYYY
+    else if (fname.find("2017") != string::npos) {year=2017;}
+    else if (fname.find("2018") != string::npos) {year=2018;}
+    else Log(__FUNCTION__,"WARNING","Unable to identify year. Using 2016 as default");
+    
+    // Figure out year
+    SetYear(year);
     
     event_->triggerNames_.clear(); // possibly also not necessary by file
-
-    event_->triggerNames_.push_back("HLT_AK8DiPFJet300_200_TrimMass30");
-    event_->triggerNames_.push_back("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50");
-    event_->triggerNames_.push_back("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
-    event_->triggerNames_.push_back("HLT_AK8PFJet360_TrimMass30");
-    event_->triggerNames_.push_back("HLT_AK8PFJet450");
-    event_->triggerNames_.push_back("HLT_DoubleIsoMu20_eta2p1");
-    event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6");
-    event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160");
-    event_->triggerNames_.push_back("HLT_IsoMu24");
-    event_->triggerNames_.push_back("HLT_IsoMu27");
-    event_->triggerNames_.push_back("HLT_IsoTkMu24");
-    event_->triggerNames_.push_back("HLT_IsoTkMu27");
-    event_->triggerNames_.push_back("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
-    event_->triggerNames_.push_back("HLT_PFHT900");
-    event_->triggerNames_.push_back("HLT_PFHT_800");
-    event_->triggerNames_.push_back("HLT_PFMET120_PFMHT120_IDTight_PFHT60");
-    event_->triggerNames_.push_back("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight");
-    event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
-    event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
-    event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
-    event_->triggerNames_.push_back("HLT_PFHT1050");
+    
+    if (year==2016){
+        event_->triggerNames_.push_back("HLT_PFHT900");
+        event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
+        event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240");
+    }else if (year==2017){
+        event_->triggerNames_.push_back("HLT_AK8DiPFJet300_200_TrimMass30");
+        event_->triggerNames_.push_back("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50");
+        event_->triggerNames_.push_back("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
+        event_->triggerNames_.push_back("HLT_AK8PFJet360_TrimMass30");
+        event_->triggerNames_.push_back("HLT_AK8PFJet450");
+        event_->triggerNames_.push_back("HLT_DoubleIsoMu20_eta2p1");
+        event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6");
+        event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160");
+        event_->triggerNames_.push_back("HLT_IsoMu24");
+        event_->triggerNames_.push_back("HLT_IsoMu27");
+        event_->triggerNames_.push_back("HLT_IsoTkMu24");
+        event_->triggerNames_.push_back("HLT_IsoTkMu27");
+        event_->triggerNames_.push_back("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
+        event_->triggerNames_.push_back("HLT_PFHT900");
+        event_->triggerNames_.push_back("HLT_PFHT_800");
+        event_->triggerNames_.push_back("HLT_PFMET120_PFMHT120_IDTight_PFHT60");
+        event_->triggerNames_.push_back("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight");
+        event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+        event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
+        event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
+        event_->triggerNames_.push_back("HLT_PFHT1050");
+    } else if (year==2018){}
 
     return;
 }

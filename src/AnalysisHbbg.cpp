@@ -67,7 +67,6 @@ void HbbgAnalysis::SetPhotonCuts(Photon *p){ // Already selecting Medium ided ph
     p->SetEtaCut(2.5);
 }
 
-
 void HbbgAnalysis::Init(){
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
 
@@ -759,7 +758,6 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     }
     
     // select jets
-    if (VERBOSE)Log(__FUNCTION__,"DEBUG","GetJets: ");
 
     //for(unsigned i=0;i<e->Njets() ; ++i)
     //{
@@ -772,8 +770,10 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     // TRIGGER SF. TODO 
 
 
-    if (year==2016) {passTrigger=e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v"); }
+    //if (year==2016) {passTrigger=e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v"); }
+    if (year==2016) {passTrigger=e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200"); } // nano
 
+    if (debug)Log(__FUNCTION__,"DEBUG",Form("* PassTrigger %d",int(passTrigger)));
     // Objects : 4 jets, 1 photon
    
     // ***************************
@@ -781,12 +781,28 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     // ***************************
     
     pho = e->GetPhoton(0);
-    if (pho == nullptr) return 1;
+    if (pho == nullptr) {
+        if (debug)Log(__FUNCTION__,"DEBUG","* No PHOTONS");
+        return 1;
+    }
+
+    if (debug) { //nano
+        Log(__FUNCTION__,"DEBUG","* Available jets (isJ, pt,eta,btag,isB)");
+        for(int i=0;; ++i){
+            Jet *j = e->GetBareJet(i); 
+            if (j==nullptr) break;
+        Log(__FUNCTION__,"DEBUG",Form("%d) %d %f %f %f %d",i,j->IsJet(),j->Pt(),j->Eta(),j->GetDeepB(),j->IsBJet()));
+        }
+
+    }
 
     // Selection: bJets
     selectedBJets.push_back( e->GetBjet(0) ) ;
     selectedBJets.push_back( e->GetBjet(1) ) ;
-    if (selectedBJets[0] == nullptr or selectedBJets[1] == nullptr) return 1;
+    if (selectedBJets[0] == nullptr or selectedBJets[1] == nullptr) {
+        if (debug)Log(__FUNCTION__,"DEBUG",Form("* No Bjets %p %p",selectedBJets[0],selectedBJets[1]));
+        return 1;
+    }
 
     // Selection: jets
     selectedJets.clear();
@@ -798,15 +814,20 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         selectedJets.push_back(j);
     }
     
-    if (selectedJets.size() <2) return 1;
+    if (selectedJets.size() <2) {
+        if (debug)Log(__FUNCTION__,"DEBUG",Form("* No Other jets %d",int(selectedJets.size())));
+        return 1;
+    }
     // ------------
     
+    if (debug)Log(__FUNCTION__,"DEBUG","* Objects selection ok");
     updateEventVar(); // preselect with mbb ...
 
     // -------------------------------------------------------
     //
     //
     if (fabs(eventVar_["mbb"]-91 )<30){
+        if (debug)Log(__FUNCTION__,"DEBUG","* Running KF");
         kf->lambda_MET=1.; 
         kf->lambda_V=10.; 
         kf->cutWidth=31.;  // the Z value is more precise
@@ -835,6 +856,7 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         //if (kf->alpha_out > 1.e9) return 1;// outside of 30GeV window for mbb
     }
     updateEventVar(); // update Variables with KF info. mbb and mass is with kf now
+
     if (doTree) updateTreeVar();
 
     if (isSignal)matchToGen();
@@ -843,6 +865,8 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     // 1 photon, 2b mbb in Z, 2j, mjj >250 
     if (pho->Pt() > 15 and fabs(pho->Eta())<=2.5 and fabs(eventVar_["mbb"]-91 )<30 and eventVar_["mjj"]>  250)
     {
+        if (debug)Log(__FUNCTION__,"DEBUG","* Passing Basic selection");
+
         selection="PreTrigger"; // to study trigger turn on
         fillHists(selection,label,systname);
 
@@ -850,6 +874,7 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         if (doTMVA) updateTmva();
 
         if (passTrigger) {
+            if (debug)Log(__FUNCTION__,"DEBUG","* Pass trigger (Preselection)");
             selection="Preselection";
             fillHists(selection,label,systname);
 
@@ -861,6 +886,8 @@ int HbbgAnalysis::analyze(Event *event, string systname)
                     and abs(pho->Eta() > 1.44) // barrel
                )
             {
+                if (debug)Log(__FUNCTION__,"DEBUG","* Pass Final selection");
+
                 selection="Final";
                 fillHists(selection,label,systname);
 

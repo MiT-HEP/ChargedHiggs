@@ -18,6 +18,7 @@
 class Nano {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
+   int year=2016;
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
    // Declaration of leaf types
@@ -520,6 +521,8 @@ public :
    Int_t           Tau_genPartIdx[4];   //[nTau]
    UChar_t         Tau_genPartFlav[4];   //[nTau]
    Bool_t          L1simulation_step;
+
+   /*
    Bool_t          HLTriggerFirstPath;
    Bool_t          HLT_AK8PFJet360_TrimMass30;
    Bool_t          HLT_AK8PFJet380_TrimMass30;
@@ -1091,6 +1094,7 @@ public :
    Bool_t          HLT_Diphoton30_18_PVrealAND_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55;
    Bool_t          HLT_Diphoton30_18_PVrealAND_R9Id_AND_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55;
    Bool_t          HLTriggerFinalPath;
+   */
    Bool_t          Flag_HBHENoiseFilter;
    Bool_t          Flag_HBHENoiseIsoFilter;
    Bool_t          Flag_CSCTightHaloFilter;
@@ -1117,6 +1121,7 @@ public :
    Bool_t          Flag_trkPOG_toomanystripclus53X;
    Bool_t          Flag_trkPOG_logErrorTooManyClusters;
    Bool_t          Flag_METFilters;
+   /*
    Bool_t          L1Reco_step;
    Bool_t          L1_AlwaysTrue;
    Bool_t          L1_BPTX_AND_Ref1_VME;
@@ -1560,6 +1565,7 @@ public :
    Bool_t          L1_ZeroBias;
    Bool_t          L1_ZeroBias_copy;
    Bool_t          L1_UnprefireableEvent;
+   */
 
    // List of branches
    TBranch        *b_run;   //!
@@ -2061,6 +2067,8 @@ public :
    TBranch        *b_Tau_genPartIdx;   //!
    TBranch        *b_Tau_genPartFlav;   //!
    TBranch        *b_L1simulation_step;   //!
+
+   /*
    TBranch        *b_HLTriggerFirstPath;   //!
    TBranch        *b_HLT_AK8PFJet360_TrimMass30;   //!
    TBranch        *b_HLT_AK8PFJet380_TrimMass30;   //!
@@ -2632,6 +2640,8 @@ public :
    TBranch        *b_HLT_Diphoton30_18_PVrealAND_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55;   //!
    TBranch        *b_HLT_Diphoton30_18_PVrealAND_R9Id_AND_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55;   //!
    TBranch        *b_HLTriggerFinalPath;   //!
+   */
+
    TBranch        *b_Flag_HBHENoiseFilter;   //!
    TBranch        *b_Flag_HBHENoiseIsoFilter;   //!
    TBranch        *b_Flag_CSCTightHaloFilter;   //!
@@ -2658,6 +2668,8 @@ public :
    TBranch        *b_Flag_trkPOG_toomanystripclus53X;   //!
    TBranch        *b_Flag_trkPOG_logErrorTooManyClusters;   //!
    TBranch        *b_Flag_METFilters;   //!
+
+   /*
    TBranch        *b_L1Reco_step;   //!
    TBranch        *b_L1_AlwaysTrue;   //!
    TBranch        *b_L1_BPTX_AND_Ref1_VME;   //!
@@ -3101,6 +3113,7 @@ public :
    TBranch        *b_L1_ZeroBias;   //!
    TBranch        *b_L1_ZeroBias_copy;   //!
    TBranch        *b_L1_UnprefireableEvent;   //!
+   */
 
    Nano(TChain *tree=0);
    virtual ~Nano();

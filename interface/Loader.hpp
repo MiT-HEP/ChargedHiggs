@@ -19,6 +19,7 @@ class Loader : public Named {
     protected:
         TChain *tree_{0}; // not opened but set, NOT OWNED
         Event *event_{NULL}; // not owned
+        int year=2016; // ?? for NanoAOD
     public:
         Loader(){};
         ~Loader(){ }
@@ -31,6 +32,8 @@ class Loader : public Named {
         virtual void FillEventInfo() = 0 ; // pre new file check: fill isReal data
         virtual void NewFile() = 0 ;
         virtual void Clear() {};
+
+        virtual void SetYear(int y) {year=y;}
         
 };
 

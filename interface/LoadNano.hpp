@@ -25,6 +25,8 @@ class LoadNano : public Loader
     void FillEventInfo() override  ; // pre new file check: fill isReal data
     void NewFile() override ;
     void Clear() override;
+
+    void SetYear(int y) override ;
 };
 
 #endif

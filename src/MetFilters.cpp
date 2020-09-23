@@ -3,8 +3,6 @@
 #define MET_EVENT_FAIL 1
 #define MET_EVENT_PASS 0
 
-#define VERBOSE 0
-
 
 void MetFiltersAnalysis::Init() 
 {
@@ -18,11 +16,11 @@ int MetFiltersAnalysis::analyze(Event *e,string systname)
 
     if (e->GetMet() . passFullRecommendation()) { 
     //if (e->GetMet() . passFullRecommendation() and ( not e->IsRealData() or (e->GetMet() . filterbadPFMuon  and e->GetMet() . filterbadChHadrons ))) { 
-        if(VERBOSE>0)Log(__FUNCTION__,"INFO",Form("Event (%d,%d,%u) PASS met filters",e->runNum(),e->lumiNum(),e->eventNum()));
+        if(debug>0)Log(__FUNCTION__,"INFO",Form("Event (%d,%d,%u) PASS met filters",e->runNum(),e->lumiNum(),e->eventNum()));
         if (e->IsRealData() ) Fill("MetFilters/CutFlow/CutFlow_Data",systname,1,1);
         return MET_EVENT_PASS;
     }
-    if(VERBOSE>0)Log(__FUNCTION__,"INFO",Form("Event (%d,%d,%u) have been rejected by met filters",e->runNum(),e->lumiNum(),e->eventNum()));
+    if(debug>0)Log(__FUNCTION__,"INFO",Form("Event (%d,%d,%u) have been rejected by met filters",e->runNum(),e->lumiNum(),e->eventNum()));
 
     return MET_EVENT_FAIL;
 }
