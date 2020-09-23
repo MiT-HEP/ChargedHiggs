@@ -41,18 +41,28 @@ if opts.dat != "":
         print "DEBUG, parsing file",f
         if '.root' in f : continue
 
-        if '/store/' in f: 
-            dirs=f.split('/')
-            ### this is a nanoaod path
+        dirs=f.split('/')
+
+        if '/store/mc' in f: 
+            ### this is a nanoaod path central
             label=dirs[3] ## store mc RunII DY 
+        elif '/store/user' in f:
+            ###
+            for x in dirs:
+                if 'powheg' in x or \
+                   'madgraph' in x or \
+                   '13TeV' in x or \
+                   'herwig' in x or \
+                   'pythia' in x : label=x
+        elif '/store/' in f:
+            label=dirs[4] # default ?
+            raise ValueError("to check label finding")
         elif '/eos/user/' in f: 
-            dirs=f.split('/')
             ### this is a nanoaod path
             label=dirs[3] ## store mc RunII DY 
             raise ValueError("to check label finding")
-        if 'NANOAOD' in f: 
+        if 'NANOAOD' in f and (dirs[-1] == 'NANOAODSIM' or dirs[-1] == 'NANOAOD'): 
             ## this is a dataset
-            dirs=f.split('/')
             label=dirs[1]
 
         print "DEBUG, label is",label
