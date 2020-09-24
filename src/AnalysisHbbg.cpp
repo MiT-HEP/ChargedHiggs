@@ -99,7 +99,7 @@ void HbbgAnalysis::Init(){
 	        Book ("HbbgAnalysis/"+s+"/bjet1_eta_"+ l+suff,"Mbbg;m^{bb#gamma} [GeV];Events", 200,-5,5);
 	        Book ("HbbgAnalysis/"+s+"/bjet2_pt_"+ l+suff,"Mbbg;m^{bb#gamma} [GeV];Events", 200,0,2000);
 	        Book ("HbbgAnalysis/"+s+"/bjet2_eta_"+ l+suff,"Mbbg;m^{bb#gamma} [GeV];Events", 200,-5,5);
-	        Book ("HbbgAnalysis/"+s+"/bdt_"+ l+suff,"Mjj;m^{qq} [GeV];Events", 200,0,1.);
+	        Book ("HbbgAnalysis/"+s+"/bdt_"+ l+suff,"Mjj;m^{qq} [GeV];Events", 200,-1.,1.);
         }// suffix
         } // selection tag
 
@@ -771,7 +771,10 @@ int HbbgAnalysis::analyze(Event *event, string systname)
 
 
     //if (year==2016) {passTrigger=e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v"); }
-    if (year==2016) {passTrigger=e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200"); } // nano
+    if (year==2016) {
+        passTrigger=e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200") or  // nano vs nero
+                    e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v") ; // FIXME somehow in a better way
+    } // nano
 
     if (debug)Log(__FUNCTION__,"DEBUG",Form("* PassTrigger %d",int(passTrigger)));
     // Objects : 4 jets, 1 photon

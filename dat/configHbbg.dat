@@ -10,6 +10,10 @@ include=dat/json.2016.dat
 Files=
 
 sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.7/year2016
+
+####################
+###  BACKGROUND  ###
+####################
 ##QCD
 #addfiles=%(amariniHmm)s/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 addfiles=%(amariniHmm)s/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
@@ -25,14 +29,20 @@ addfiles=%(amariniHmm)s/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8
 ## Drell-Yan
 addfiles=%(amariniHmm)s/DYJetsToQQ_HT180_13TeV-madgraphMLM-pythia8
 
+##############
+###  DATA  ###
+##############
 #addfiles=%(amariniHmm)s/JetHT
 addfiles=%(amariniHmm)s/BTagCSV
 
+################
+###  SIGNAL  ###
+################
 ## Signal
+Files=
 addfiles=%(amariniHmm)s/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8
 addfiles=%(amariniHmm)s/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8
 
-### DATA
 
 
 ############ RUN WITH DOUBLE MUONS ####################
