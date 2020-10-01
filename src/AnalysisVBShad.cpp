@@ -835,8 +835,11 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
     int index_l=-1;
     int VTarget = -1; //0 -- W; 1 -- Z
 
+    int NjetsToUse = selectedJets.size();
+    if(!writeTrainTree and selectedJets.size()>4 and doMETAnalysis) NjetsToUse=4;
+    if(!writeTrainTree and selectedJets.size()>5 and doBAnalysis) NjetsToUse = 5;
 
-    for(unsigned i=0; i<selectedJets.size(); ++i) {
+    for(unsigned i=0; i<NjetsToUse; ++i) {
         for(unsigned j=0; j<i; ++j) {
             for(unsigned k=0; k<j; ++k) {
                 for(unsigned l=0; l<k; ++l) {
@@ -848,11 +851,11 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                     int tmpTar = -1; //0 -- W; 1 -- Z
 
                     double Mij[2] = {fabs(selectedJets[i]->InvMass(selectedJets[j]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[j]) - 91.)/91.};
-                    double Mjk[2] = {fabs(selectedJets[j]->InvMass(selectedJets[k]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[j]) - 91.)/91.};
-                    double Mkl[2] = {fabs(selectedJets[k]->InvMass(selectedJets[l]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[j]) - 91.)/91.};
-                    double Mik[2] = {fabs(selectedJets[i]->InvMass(selectedJets[k]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[j]) - 91.)/91.};
-                    double Mil[2] = {fabs(selectedJets[i]->InvMass(selectedJets[l]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[j]) - 91.)/91.};
-                    double Mjl[2] = {fabs(selectedJets[l]->InvMass(selectedJets[j]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[j]) - 91.)/91.};
+                    double Mjk[2] = {fabs(selectedJets[j]->InvMass(selectedJets[k]) - 80.)/80. , fabs(selectedJets[j]->InvMass(selectedJets[k]) - 91.)/91.};
+                    double Mkl[2] = {fabs(selectedJets[k]->InvMass(selectedJets[l]) - 80.)/80. , fabs(selectedJets[k]->InvMass(selectedJets[l]) - 91.)/91.};
+                    double Mik[2] = {fabs(selectedJets[i]->InvMass(selectedJets[k]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[k]) - 91.)/91.};
+                    double Mil[2] = {fabs(selectedJets[i]->InvMass(selectedJets[l]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[l]) - 91.)/91.};
+                    double Mjl[2] = {fabs(selectedJets[l]->InvMass(selectedJets[j]) - 80.)/80. , fabs(selectedJets[l]->InvMass(selectedJets[j]) - 91.)/91.};
 
                     double minM_W = std::min({Mij[0], Mjk[0], Mkl[0], Mik[0], Mil[0], Mjl[0]});
                     double minM_Z = std::min({Mij[1], Mjk[1], Mkl[1], Mik[1], Mil[1], Mjl[1]});
@@ -869,7 +872,6 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                     else if(minM == Mjl[tmpTar]) {fi = i; fj = k; vk = j; vl = l; }
 
                     if(fi>=0 && fj>=0 && vk>=0 && vl>=0){
-
 
                     if(doResTagTMVA){
                     SetVariable("j1_pT",  selectedJets[fi]->GetP4().Pt());
@@ -889,14 +891,12 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                     //if(doBAnalysis) SetVariable("j2_mult",  selectedJets[fj]->QGLVar("mult"));
                     if(doMETAnalysis) SetVariable("j2_ptD",  selectedJets[fj]->QGLVar("ptD"));
 
-
                     SetVariable("j3_pT",  selectedJets[vk]->GetP4().Pt());
                     SetVariable("j3_Eta", selectedJets[vk]->Eta());
                     SetVariable("j3_Unc",   sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
                     SetVariable("j3_axis2",  selectedJets[vk]->QGLVar("axis2"));
                     //SetVariable("j3_mult",  selectedJets[vk]->QGLVar("mult"));
                     SetVariable("j3_ptD",  selectedJets[vk]->QGLVar("ptD"));
-
 
                     SetVariable("j4_pT",  selectedJets[vl]->GetP4().Pt());
                     //SetVariable("j4_Eta", selectedJets[vl]->Eta());
@@ -905,7 +905,6 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                     if(doBAnalysis) SetVariable("j4_mult",  selectedJets[vl]->QGLVar("mult"));
                     SetVariable("j4_ptD",  selectedJets[vl]->QGLVar("ptD"));
 
-
                     SetVariable("DEta_f12", selectedJets[fi]->DeltaEta(selectedJets[fj]));
                     SetVariable("DEta_v34", selectedJets[vk]->DeltaEta(selectedJets[vl]));
                     SetVariable("DPhi_f12", ChargedHiggs::deltaPhi(selectedJets[fi]->Phi(), selectedJets[fj]->Phi()));
@@ -913,8 +912,6 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                     SetVariable("DR_v34", selectedJets[vk]->DeltaR(selectedJets[vl]));
                     SetVariable("M_f12",  selectedJets[fi]->InvMass(selectedJets[fj]));
                     SetVariable("M_v34",  selectedJets[vk]->InvMass(selectedJets[vl]));
-
-
 
                     float dnn = 0;
                     if(doBAnalysis)     dnn = (float)readers_dnn_[0]->EvaluateMVA("DNN_ResTag_RBTA");
@@ -1044,7 +1041,11 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
     int index_k=-1;
     int index_l=-1;
 
-    for(unsigned i=0; i<selectedJets.size(); ++i) {
+    int NjetsToUse = selectedJets.size();
+    if(!writeTrainTree and selectedJets.size()>4 and doMETAnalysis) NjetsToUse=4;
+    if(!writeTrainTree and selectedJets.size()>5 and doBAnalysis) NjetsToUse = 5;
+
+    for(unsigned i=0; i<NjetsToUse; ++i) {
         for(unsigned j=0; j<i; ++j) {
 
             if( fabs(selectedJets[i]->Eta())>2.4 ) continue;
@@ -2188,7 +2189,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             double chi2Cut = 6.;
             float mWidth = 20.;
 
-            // MARIA: RB
             float MV, chi2;
             std::tie(MV,chi2) = resolvedtagger(e, mBoson, label, systname, selectedFatJets[0]->Eta());
 
