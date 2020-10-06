@@ -350,7 +350,7 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("j2_Unc", 'F',readers_dnn_[i]);
             AddVariable("j2_axis2", 'F',readers_dnn_[i]);
             //if(i == 0) AddVariable("j2_mult",'F',readers_dnn_[i]);
-            if(i == 1) AddVariable("j2_ptD",'F',readers_dnn_[i]);
+            AddVariable("j2_ptD",'F',readers_dnn_[i]);
 
             AddVariable("j3_pT", 'F',readers_dnn_[i]);
             AddVariable("j3_Eta", 'F',readers_dnn_[i]);
@@ -363,7 +363,7 @@ void VBShadAnalysis::InitTmva() {
             //AddVariable("j4_Eta", 'F',readers_dnn_[i]);
             AddVariable("j4_Unc", 'F',readers_dnn_[i]);
             AddVariable("j4_axis2", 'F',readers_dnn_[i]);
-            if(i == 0) AddVariable("j4_mult", 'F',readers_dnn_[i]);
+            //            if(i == 0) AddVariable("j4_mult", 'F',readers_dnn_[i]);
             AddVariable("j4_ptD", 'F',readers_dnn_[i]);
 
             AddVariable("DEta_f12", 'F',readers_dnn_[i]);
@@ -371,7 +371,7 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("DPhi_f12", 'F',readers_dnn_[i]);
             AddVariable("DPhi_v34", 'F',readers_dnn_[i]);
             AddVariable("DR_v34",   'F',readers_dnn_[i]);
-            AddVariable("M_f12",    'F',readers_dnn_[i]);
+            //            AddVariable("M_f12",    'F',readers_dnn_[i]);
             AddVariable("M_v34",    'F',readers_dnn_[i]);
 
     }
@@ -1022,6 +1022,7 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
 
     //    float const norm = 1000*1000; // 0.5TeV^2
     float const norm = 500*500; // 0.5TeV^2
+    //    float const norm = 0.; // temporary remove the Mjj terms
     //    float const MVres = 20*20; // 20 GeV
     float const MVres = 10*10; // 20 GeV
 
@@ -1080,7 +1081,7 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
             //V_term = (MRij - MV) * (MRij - MV)  / MVres * (1 + 100*(PTij>0?(DRij/PTij):0))  + (Mij - MV) * (Mij - MV) / MVres;
 
 
-            for(unsigned k=0; k<selectedJets.size(); ++k) {
+            for(unsigned k=0; k<NjetsToUse; ++k) {
                 if(k == i || k == j) continue;
                 for(unsigned l=0; l<k; ++l) {
                     if(l == i || l == j) continue;
@@ -1106,7 +1107,7 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
     float VjPtCut = (MV > 85) ? VjPtCut_Z : VjPtCut_W;
 
 
-    for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
+    for(unsigned iter=0; iter<NjetsToUse; ++iter) {
         if(iter==index_i and selectedJets[index_i]->Pt()>VjPtCut) bosonJets.push_back(selectedJets[index_i]);
         if(iter==index_j and selectedJets[index_j]->Pt()>VjPtCut) bosonJets.push_back(selectedJets[index_j]);
         if(iter==index_k and selectedJets[index_k]->Pt()>fjPtCut) forwardJets.push_back(selectedJets[index_k]);
@@ -2319,8 +2320,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             //// decide
             //********cut********//
             float mWidth = 20.;
+            float mWidthL = 10.;
+            float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.6;
+            float tmvacut = 0.8; // 80% signal
             float kerascut = 0.5;
             //******************//
 
@@ -2345,8 +2348,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 }
             }
 
-
-            if( fabs(MV-mBoson) < mWidth and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
+            bool massWindow = (fabs(MV-mBoson) < mWidth);
+            //            bool massWindow = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
+            if( massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RBtag";
                 p4VV = ( selectedFatZbb[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
                 evt_chi2_ = chi2;
@@ -2496,9 +2500,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //// decide
             //********cut********//
-            float mWidth = 20;
+            float mWidth = 20.;
+            float mWidthL = 10.;
+            float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.6;
+            float tmvacut = 0.6; // 80% cut
             float kerascut = 0.5;
             //******************//
 
@@ -2524,7 +2530,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             }
 
-            if( fabs(MV-mBoson) < mWidth and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
+            bool massWindow = (fabs(MV-mBoson) < mWidth);
+            //            bool massWindow = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
+            if(massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RMET";
 
                 if(usePuppi) {
