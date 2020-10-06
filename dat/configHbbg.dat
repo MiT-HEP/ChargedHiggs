@@ -24,6 +24,17 @@ addfiles=%(amariniHmm)s/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 addfiles=%(amariniHmm)s/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 addfiles=%(amariniHmm)s/QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 addfiles=%(amariniHmm)s/QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+
+## QCD B-Enriched
+addfiles=%(amariniHmm)s/QCD_HT200to300_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT1000to1500_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT700to1000_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT300to500_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT500to700_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT1500to2000_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT2000toInf_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+
+
 ## TT
 addfiles=%(amariniHmm)s/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8
 ## Drell-Yan
@@ -39,7 +50,7 @@ addfiles=%(amariniHmm)s/BTagCSV
 ###  SIGNAL  ###
 ################
 ## Signal
-Files=
+#Files=
 addfiles=%(amariniHmm)s/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8
 addfiles=%(amariniHmm)s/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8
 
@@ -71,6 +82,7 @@ config=HbbgAnalysis|AddLabel('DY')
 addConfig=HbbgAnalysis|AddLabel('GluGlu_HiggsZG_Zbb_M125')
 addConfig=HbbgAnalysis|AddLabel('VBF_HiggsZG_Zbb_M125')
 addConfig=HbbgAnalysis|AddLabel('TT')
+addConfig=HbbgAnalysis|AddLabel('BGenFilter')
 addConfig=HbbgAnalysis|AddLabel('QCD')
 addConfig=HbbgAnalysis|year=2016
 addConfig=HbbgAnalysis|weights.push_back('aux/bdt_hbbg_v1.xml')

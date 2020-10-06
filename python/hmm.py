@@ -684,12 +684,13 @@ class StringToCpp():
 
 
 class HbbgConfig(HmmConfig):
-    def __init__(self):
+    def __init__(self,ncat=0):
         HmmConfig.__init__(self)
-        self.dirname="HbbgAnalysis/Final/" 
+        self.dirname="HbbgAnalysis/Final/"  if ncat==0 else "HbbgAnalysis/Categories/"
         self.varname="mass"
         self.sigspec="%s_HiggsZG_Zbb_M%.0f"
         self.categories=[""]
+        if ncat >0 : self.categories = [ "cat%d"%i for i in range(0,ncat)]
         self.year=2016
 
         ### FIT ###
@@ -733,3 +734,5 @@ class HbbgConfig(HmmConfig):
         return 0.00156509*0.15 #H->Zg * Z->bb
 
 hbbg=HbbgConfig()
+hbbgCat = HbbgConfig(3)
+

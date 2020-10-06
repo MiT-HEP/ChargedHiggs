@@ -94,6 +94,7 @@ class HbbgAnalysis: virtual public AnalysisBase
     public:
         vector<string> weights;
         bool doTMVA=true;
+        bool doQCDCR=false; //revert bjets selection.
 
     protected:
 };

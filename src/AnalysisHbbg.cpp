@@ -207,6 +207,7 @@ void HbbgAnalysis::updateTreeVar(){
         if (label == "WZ") mc =31;
         if (label == "ZZ") mc =32;
         if (label == "QCD") mc = 50;
+        if (label == "BGenFilter") mc = 51;
         if (label == "Other") mc = 100;
         if (label == "Data") mc =0;
         SetTreeVar("mc",mc);
@@ -800,11 +801,29 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     }
 
     // Selection: bJets
-    selectedBJets.push_back( e->GetBjet(0) ) ;
-    selectedBJets.push_back( e->GetBjet(1) ) ;
-    if (selectedBJets[0] == nullptr or selectedBJets[1] == nullptr) {
-        if (debug)Log(__FUNCTION__,"DEBUG",Form("* No Bjets %p %p",selectedBJets[0],selectedBJets[1]));
-        return 1;
+    if (not doQCDCR) {
+        selectedBJets.push_back( e->GetBjet(0) ) ;
+        selectedBJets.push_back( e->GetBjet(1) ) ;
+        if (selectedBJets[0] == nullptr or selectedBJets[1] == nullptr) {
+            if (debug)Log(__FUNCTION__,"DEBUG",Form("* No Bjets %p %p",selectedBJets[0],selectedBJets[1]));
+            return 1;
+        }
+    }
+
+    if (doQCDCR) {
+        //if (not e->IsRealData() ) return 1; // do not process MC ?
+
+        for(int i=0;; ++i){
+            Jet *j = e->GetJet(i); 
+            if (j==nullptr) break;
+            if (j->GetDeepB() > DEEP_B_LOOSE and j->GetDeepB() < DEEP_B_MEDIUM)  selectedBJets.push_back(j);
+            if (selectedBJets.size() >=2) break;
+        }
+        if (selectedBJets.size() <2 or selectedBJets[0] == nullptr or selectedBJets[1] == nullptr) {
+            if (debug)Log(__FUNCTION__,"DEBUG",Form("* No CR Bjets %p %p",selectedBJets[0],selectedBJets[1]));
+            return 1;
+        }
+
     }
 
     // Selection: jets
@@ -882,21 +901,23 @@ int HbbgAnalysis::analyze(Event *event, string systname)
             fillHists(selection,label,systname);
 
             // FINAL
-            if ( fabs(eventVar_["mbb"]-91 )<30 and  //Z
+            if ( fabs(eventVar_["mbb"]-91 )<5 and  //Z this is after kf
                     eventVar_["mjj"]> 250  // VBF
                     // and eventVar_["detajj"]> 2. // VBF
                     and eventVar_["chi2"] <10  // b correctly identified
-                    and abs(pho->Eta() > 1.44) // barrel
+                    and abs(pho->Eta()) < 1.44 // barrel
                )
             {
                 if (debug)Log(__FUNCTION__,"DEBUG","* Pass Final selection");
 
                 selection="Final";
                 fillHists(selection,label,systname);
-
-                if (bdt[0] > 0.85) Fill("HbbgAnalysis/Categories/mass_cat0_"+label,systname,mass_, e->weight());
-                else if (bdt[0] > 0.) Fill("HbbgAnalysis/Categories/mass_cat1_"+label,systname,mass_, e->weight());
-                else Fill("HbbgAnalysis/Categories/mass_cat2_"+label,systname,mass_, e->weight());
+                
+                if (doTMVA){
+                    if (bdt[0] > 0.85) Fill("HbbgAnalysis/Categories/mass_cat0_"+label,systname,mass_, e->weight());
+                    else if (bdt[0] > 0.5) Fill("HbbgAnalysis/Categories/mass_cat1_"+label,systname,mass_, e->weight());
+                    else Fill("HbbgAnalysis/Categories/mass_cat2_"+label,systname,mass_, e->weight());
+                }
             } // final selection
         } //Preselection
     }
