@@ -96,6 +96,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
        l.find("WWjj_SS_ll") !=string::npos ||
        l.find("WWjj_SS_lt") !=string::npos ||
        l.find("WWjj_SS_tt") !=string::npos ||
+       l.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) {
@@ -1265,6 +1266,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WWjj_SS_ll") !=string::npos ||
                label.find("WWjj_SS_lt") !=string::npos ||
                label.find("WWjj_SS_tt") !=string::npos ||
+               label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
@@ -1842,6 +1844,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 11 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 12 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) mc = 13 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ) mc = 15 ;
     if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 20 ;
 
     // multiboson
@@ -2602,6 +2605,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        label.find("WWjj_SS_ll") !=string::npos ||
        label.find("WWjj_SS_lt") !=string::npos ||
        label.find("WWjj_SS_tt") !=string::npos ||
+       label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
        label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
        label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
        label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos) {

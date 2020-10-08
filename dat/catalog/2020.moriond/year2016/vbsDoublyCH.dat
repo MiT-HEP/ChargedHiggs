@@ -3,3 +3,4 @@ sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.7/year2016
 addfiles=%(amariniHmm)s/DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph
 addfiles=%(amariniHmm)s/DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph
 addfiles=%(amariniHmm)s/DoublyChargedHiggsGMmodel_HWW_M2000_13TeV-madgraph
+addfiles=%(amariniHmm)s/SinglyChargedHiggsGMmodel_HWZ_M1500_13TeV-madgraph

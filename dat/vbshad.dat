@@ -15,6 +15,7 @@ addConfig=VBShadAnalysis|AddLabel('ZbbWpmJJ_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M2000_13TeV-madgraph')
+addConfig=VBShadAnalysis|AddLabel('SinglyChargedHiggsGMmodel_HWZ_M1500_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('aQGC_ZJJZJJjj')
 
 addConfig=VBShadAnalysis|AddLabel('WWjj_SS_ll')
