@@ -106,3 +106,7 @@ addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_RMET
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l5_AllGoodVBad_RMET_ActFuncTRS_DNN.weights.xml")
 addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l1_AllGood1Bad_RBTA_corrLHE_DNN.weights.xml")
 addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l1_AllGood1Bad_RMET_corrLHE_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_DNN_multi_RBTA_CorrLHE_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_DNN_multi_RMET_CorrLHE_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_V2_l1reg_RBTA_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_V2_l1reg_RMET_DNN.weights.xml")
