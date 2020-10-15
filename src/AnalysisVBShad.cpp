@@ -96,6 +96,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
        l.find("WWjj_SS_ll") !=string::npos ||
        l.find("WWjj_SS_lt") !=string::npos ||
        l.find("WWjj_SS_tt") !=string::npos ||
+       l.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
        l.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
@@ -1360,6 +1361,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WWjj_SS_ll") !=string::npos ||
                label.find("WWjj_SS_lt") !=string::npos ||
                label.find("WWjj_SS_tt") !=string::npos ||
+               label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
                label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
@@ -2022,6 +2024,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 12 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) mc = 13 ;
     if(label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ) mc = 15 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 16 ;
     if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 20 ;
 
     // multiboson
@@ -2311,7 +2314,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         forwardJets.clear();
         vetoJets.clear();
 
-        if(selectedFatJets.size()>1 and selectedJets.size()>1) {
+        if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1) {
             category="_BB";
             evt_genmatch = false;
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
@@ -2353,7 +2356,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             double chi2Cut = 6.;
             float mWidth = 20.;
 
-            // MARIA: RB
             float MV, chi2;
             std::tie(MV,chi2) = resolvedtagger(e, mBoson, label, systname, selectedFatJets[0]->Eta());
 
@@ -2582,7 +2584,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         forwardJets.clear();
         vetoJets.clear();
 
-        if((selectedFatJets.size()>0 or selectedFatZbb.size()>0) and selectedJets.size()>1) {
+        if((selectedFatJets.size()>0 or (!doResonant and selectedFatZbb.size()>0)) and selectedJets.size()>1) {
             category="_BMET";
 
             //        Current: (ET1+ET2)^2 - (PT1+PT2)^2    (also as shown in the current ch-higgs code you sent to me)
@@ -2789,6 +2791,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        label.find("WWjj_SS_lt") !=string::npos ||
        label.find("WWjj_SS_tt") !=string::npos ||
        label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
+       label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
        label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
        label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
        label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos) {
@@ -2833,7 +2836,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     evt_Detajj = fabs(forwardJets[0]->DeltaEta(forwardJets[1]));
 
-    if( evt_Detajj < 3. ) return EVENT_NOT_USED;
+    float dEtaCut = 3.;
+    if(doResonant) dEtaCut = 4.;
+
+    if( evt_Detajj < dEtaCut ) return EVENT_NOT_USED;
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 9, e->weight() );  //Delta Eta cut
 
