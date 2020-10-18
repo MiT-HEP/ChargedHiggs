@@ -648,7 +648,7 @@ void VBShadAnalysis::Init(){
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
         //cutflow
-        Book ("VBShadAnalysis/Cutflow_"+l, "cutflow; bit; Events", 12,0,12);
+        Book ("VBShadAnalysis/Cutflow_"+l, "cutflow; bit; Events", 15,0,15);
 
         //Trigger
         Book("VBShadAnalysis/Baseline/mVV_MET_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
@@ -1620,7 +1620,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //NFatjet cut
 
     minDPhi=999;
 
@@ -2287,6 +2286,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatZbb.size()>0 ) return EVENT_NOT_USED;
     if ( doBAnalysis and selectedFatZbb.size()<1 ) return EVENT_NOT_USED;
 
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //NFatjet cut
+
     // THIS IS NOT OK FOR THE RMET analysis
     //    if ( doMETAnalysis and selectedFatJets.size()<0 and selectedFatZbb.size()<0) return EVENT_NOT_USED;
 
@@ -2880,9 +2881,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         bool centrality1 = (forwardJets[1]->Eta() <  evt_EtaMinV or forwardJets[1]->Eta() > evt_EtaMaxV);
 
         // this is already applied when choosing resolved
-        if(!centrality0) return EVENT_NOT_USED;
-        if(!centrality1) return EVENT_NOT_USED;
+        if(!doResonant and !centrality0) return EVENT_NOT_USED;
+        if(!doResonant and !centrality1) return EVENT_NOT_USED;
     }
+
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 11, e->weight() ); //centrality
 
     if(!doMETAnalysis) {
 
@@ -2894,8 +2897,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                            std::max(forwardJets[0]->Eta(),forwardJets[1]->Eta()) - evt_EtaMaxV
                            ) ;
         // why this is not taken from previous condition ?
-        if( evt_cenEta < 0. ) return EVENT_NOT_USED;
+        if( !doResonant and evt_cenEta < 0. ) return EVENT_NOT_USED;
     }
+
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 12, e->weight() ); //centrality2
 
     if(selectedFatZbb.size()>0) {
         evt_zepVB = fabs(selectedFatZbb[0]->Eta() - averageJJeta)/fabs(evt_Detajj);
@@ -2920,7 +2925,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         (category.find("BMET")   !=string::npos )
         or (category.find("RMET")   !=string::npos )
         ) and
-       (evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
+       (!doResonant and evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 13, e->weight() ); //normPtVV
 
     std::vector<TLorentzVector> oP4;
     oP4.push_back(p4VV);
