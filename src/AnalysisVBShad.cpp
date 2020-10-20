@@ -96,6 +96,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
        l.find("WWjj_SS_ll") !=string::npos ||
        l.find("WWjj_SS_lt") !=string::npos ||
        l.find("WWjj_SS_tt") !=string::npos ||
+       l.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
        l.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
@@ -647,7 +648,7 @@ void VBShadAnalysis::Init(){
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
         //cutflow
-        Book ("VBShadAnalysis/Cutflow_"+l, "cutflow; bit; Events", 12,0,12);
+        Book ("VBShadAnalysis/Cutflow_"+l, "cutflow; bit; Events", 15,0,15);
 
         //Trigger
         Book("VBShadAnalysis/Baseline/mVV_MET_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
@@ -1360,6 +1361,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WWjj_SS_ll") !=string::npos ||
                label.find("WWjj_SS_lt") !=string::npos ||
                label.find("WWjj_SS_tt") !=string::npos ||
+               label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
                label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
@@ -1618,7 +1620,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //NFatjet cut
 
     minDPhi=999;
 
@@ -2022,6 +2023,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 12 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) mc = 13 ;
     if(label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ) mc = 15 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 16 ;
     if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 20 ;
 
     // multiboson
@@ -2284,6 +2286,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatZbb.size()>0 ) return EVENT_NOT_USED;
     if ( doBAnalysis and selectedFatZbb.size()<1 ) return EVENT_NOT_USED;
 
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //NFatjet cut
+
     // THIS IS NOT OK FOR THE RMET analysis
     //    if ( doMETAnalysis and selectedFatJets.size()<0 and selectedFatZbb.size()<0) return EVENT_NOT_USED;
 
@@ -2311,7 +2315,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         forwardJets.clear();
         vetoJets.clear();
 
-        if(selectedFatJets.size()>1 and selectedJets.size()>1) {
+        if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1) {
             category="_BB";
             evt_genmatch = false;
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
@@ -2353,7 +2357,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             double chi2Cut = 6.;
             float mWidth = 20.;
 
-            // MARIA: RB
             float MV, chi2;
             std::tie(MV,chi2) = resolvedtagger(e, mBoson, label, systname, selectedFatJets[0]->Eta());
 
@@ -2582,7 +2585,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         forwardJets.clear();
         vetoJets.clear();
 
-        if((selectedFatJets.size()>0 or selectedFatZbb.size()>0) and selectedJets.size()>1) {
+        if((selectedFatJets.size()>0 or (!doResonant and selectedFatZbb.size()>0)) and selectedJets.size()>1) {
             category="_BMET";
 
             //        Current: (ET1+ET2)^2 - (PT1+PT2)^2    (also as shown in the current ch-higgs code you sent to me)
@@ -2789,6 +2792,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        label.find("WWjj_SS_lt") !=string::npos ||
        label.find("WWjj_SS_tt") !=string::npos ||
        label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
+       label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
        label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
        label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
        label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos) {
@@ -2833,7 +2837,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     evt_Detajj = fabs(forwardJets[0]->DeltaEta(forwardJets[1]));
 
-    if( evt_Detajj < 3. ) return EVENT_NOT_USED;
+    float dEtaCut = 3.;
+    if(doResonant) dEtaCut = 4.;
+
+    if( evt_Detajj < dEtaCut ) return EVENT_NOT_USED;
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 9, e->weight() );  //Delta Eta cut
 
@@ -2874,9 +2881,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         bool centrality1 = (forwardJets[1]->Eta() <  evt_EtaMinV or forwardJets[1]->Eta() > evt_EtaMaxV);
 
         // this is already applied when choosing resolved
-        if(!centrality0) return EVENT_NOT_USED;
-        if(!centrality1) return EVENT_NOT_USED;
+        if(!doResonant and !centrality0) return EVENT_NOT_USED;
+        if(!doResonant and !centrality1) return EVENT_NOT_USED;
     }
+
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 11, e->weight() ); //centrality
 
     if(!doMETAnalysis) {
 
@@ -2888,8 +2897,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                            std::max(forwardJets[0]->Eta(),forwardJets[1]->Eta()) - evt_EtaMaxV
                            ) ;
         // why this is not taken from previous condition ?
-        if( evt_cenEta < 0. ) return EVENT_NOT_USED;
+        if( !doResonant and evt_cenEta < 0. ) return EVENT_NOT_USED;
     }
+
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 12, e->weight() ); //centrality2
 
     if(selectedFatZbb.size()>0) {
         evt_zepVB = fabs(selectedFatZbb[0]->Eta() - averageJJeta)/fabs(evt_Detajj);
@@ -2914,7 +2925,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         (category.find("BMET")   !=string::npos )
         or (category.find("RMET")   !=string::npos )
         ) and
-       (evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
+       (!doResonant and evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
+
+    Fill("VBShadAnalysis/Cutflow_" +label, systname, 13, e->weight() ); //normPtVV
 
     std::vector<TLorentzVector> oP4;
     oP4.push_back(p4VV);
