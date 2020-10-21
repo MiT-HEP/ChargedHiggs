@@ -190,6 +190,8 @@ def write_condor_jdl(filename="condor.jdl"):
     jdl.write("error = $(filename).err\n")
     jdl.write("executable = $(filename)\n")
     jdl.write("+JobFlavour = \"%s\"\n"%queue)
+    if os.environ['USER']=='amarini' : jdl.write('+AccountingGroup = "group_u_CMST3.all"\n')
+
     #jdl.write("transfer_input_files = %(dir)s/package.tar.gz,%(input)s\n"%{"dir":subdir,"input": ",".join(inputLs)})
     #jdl.write("queue filename matching (%s/sub*sh)\n"%opts.dir)
     #jdl.close()
