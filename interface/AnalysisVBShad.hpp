@@ -60,14 +60,19 @@ public:
     bool doBAntiAnalysis=false;
     bool doHADAntiAnalysis=false;
 
+    bool doResonant = false;
+
     bool doWriteTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
-    bool writeTrainTree=true;
+    bool writeTrainTree=false;
 
     bool doTMVA=true;
     bool doResTagKeras = false;
     bool doResTagTMVA = true;
+    // those two below are to prune the combination
+    bool doMultiTagger = false;
+    bool do2DNN = false;
 
 private:
 
@@ -158,6 +163,10 @@ private:
     float evt_chi2_= -1;
     float evt_maxDnn = 0.;
     float evt_maxkeras = -999.;
+    int    index_f1 = -1;
+    int    index_f2 = -1;
+    int    index_v1 = -1;
+    int    index_v2 = -1;
 
 
     bool evt_genmatch = 0;
