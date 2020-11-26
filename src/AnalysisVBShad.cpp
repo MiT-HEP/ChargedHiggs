@@ -90,6 +90,10 @@ void VBShadAnalysis::BookHisto(string l, string category)
     if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) Book ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l, "BDT Multi withMET (response for WZ qcd); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
     if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) Book ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l, "BDT Multi withMET (response for BKG ); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
 
+    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) Book ("VBShadAnalysis/BDTMultiEWKchi2DNN"+category+"_"+l, "DNN Multi withMET (response for WZ ewk); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) Book ("VBShadAnalysis/BDTMultiQCDchi2DNN"+category+"_"+l, "DNN Multi withMET (response for WZ qcd); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) Book ("VBShadAnalysis/BDTMultiBKGchi2DNN"+category+"_"+l, "DNN Multi withMET (response for BKG ); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+
     if(l.find("ZnnZhadJJ_EWK") !=string::npos  ||
        l.find("ZbbZhadJJ_EWK")!=string::npos  ||
        l.find("WPhadWPhadJJ_EWK") !=string::npos ||
@@ -209,7 +213,7 @@ void VBShadAnalysis::ReadTmva(){
                 if(i==0) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[ j]); //W vs Z (old chi2)
                 if(i==1 || i==2 || i==3) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[ j]); // EWK vs QCD (new chi2)
                 //                std::cout << " EvaluateMulticlass i = " << i << " j = " << j << " index = " << bdt_multi[NClass*i + j] << std::endl;
-
+                if(i==4) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("DNN"))[ j]); //W vs Z (DNN)
             }
         }
     }
@@ -329,7 +333,7 @@ void VBShadAnalysis::InitTmva() {
         for( size_t i=0;i<weights_multi.size() ;++i)
             readers_multi_ . push_back( new TMVA::Reader() );
 
-        //multiclass RMET
+        //multiclass RMET - BDT
         for (int i=0; i<1; i++) {
             AddVariable("varMjj",'F',readers_multi_[i]); //0
             AddVariable("varDetajj",'F',readers_multi_[i]); //1
@@ -369,9 +373,25 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("bosV2discr",'F',readers_multi_[i]); //8
             AddVariable("NJets",'F',readers_multi_[i]); //9
         }
+        //multiclass RMET - DNN
+        for (int i=4; i<5; i++) {
+            AddVariable("varMjj",'F',readers_multi_[i]); //0
+            AddVariable("varDetajj",'F',readers_multi_[i]); //1
+            AddVariable("varJet2Eta",'F',readers_multi_[i]); //2
+            AddVariable("varPTV2",'F',readers_multi_[i]); //4
+            AddVariable("varzepVB",'F',readers_multi_[i]); //5
+            AddVariable("varnormPTVVjj",'F',readers_multi_[i]); //6
+            AddVariable("varFW2j",'F',readers_multi_[i]); //7
+            AddVariable("bosV2mass",'F',readers_multi_[i]); //8
+            AddVariable("bosV2chi2",'F',readers_multi_[i]); //9
+            AddVariable("NJets",'F',readers_multi_[i]); //9
+        }
+
+
         for( size_t i=0;i<weights_multi.size() ;++i) {
             if(i==0) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
             if(i==1 || i==2 || i==3) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
+            if(i==4) readers_multi_[i]->BookMVA("DNN",weights_multi[i].c_str());
         }
 
     }
@@ -614,6 +634,10 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
     Branch(name,"BDTMultiEWKdnnM",'F');
     Branch(name,"BDTMultiQCDdnnM",'F');
     Branch(name,"BDTMultiBKGdnnM",'F');
+
+    Branch(name,"BDTMultiEWKchi2DNN",'F');
+    Branch(name,"BDTMultiQCDchi2DNN",'F');
+    Branch(name,"BDTMultiBKGchi2DNN",'F');
 
     }
 
@@ -2202,6 +2226,10 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
         SetTreeVar("BDTMultiEWKdnnM",bdt_multi[9]);
         SetTreeVar("BDTMultiQCDdnnM",bdt_multi[10]);
         SetTreeVar("BDTMultiBKGdnnM",bdt_multi[11]);
+
+        SetTreeVar("BDTMultiEWKchi2DNN",bdt_multi[12]);
+        SetTreeVar("BDTMultiQCDchi2DNN",bdt_multi[13]);
+        SetTreeVar("BDTMultiBKGchi2DNN",bdt_multi[14]);
     }
 
 }
@@ -3113,6 +3141,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         Fill ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+label, systname, bdt_multi[3], e->weight() );
         Fill ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+label, systname, bdt_multi[4], e->weight() );
         Fill ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+label, systname, bdt_multi[5], e->weight() );
+
+        Fill ("VBShadAnalysis/BDTMultiEWKchi2DNN"+category+"_"+label, systname, bdt_multi[12], e->weight() );
+        Fill ("VBShadAnalysis/BDTMultiQCDchi2DNN"+category+"_"+label, systname, bdt_multi[13], e->weight() );
+        Fill ("VBShadAnalysis/BDTMultiBKGchi2DNN"+category+"_"+label, systname, bdt_multi[14], e->weight() );
     }
 
     if(doWriteTree) {
