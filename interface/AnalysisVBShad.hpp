@@ -24,6 +24,7 @@ public:
 
     int year=2016; // master switch for year configuration
     bool doFinal = false;
+    int VERBOSE=false;
 
     void Init() override;
     int analyze(Event*,string systname) override;

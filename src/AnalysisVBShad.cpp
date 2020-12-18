@@ -5,8 +5,6 @@
 #include <algorithm>
 #include "interface/GeneralFunctions.hpp"
 
-#define VERBOSE 0
-
 //#warning Hmumu ANALYSIS NON ISO
 
 #define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1522:0.1241)
@@ -2304,6 +2302,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label == "TT_Mtt-1000toInf_TuneCUETP8M2T4" ) label = "TT_TuneCUETP8M2T4";
     if ( label == "TT_Mtt-700to1000_TuneCUETP8M2T4" ) label = "TT_TuneCUETP8M2T4";
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Final label is: " + label);
     //$$$$$$$$$
     //$$$$$$$$$ genStudies
     //$$$$$$$$$
@@ -2317,6 +2316,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     genStudies(e, label );
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","GenStudies. Done " );
     //$$$$$$$$$
     //$$$$$$$$$
     //$$$$$$$$$ Build cutflow
@@ -2328,12 +2328,21 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     // TRIGGER STORY
  
-    bool passtriggerHad = e->IsTriggered("HLT_PFHT900_v")
+    bool passtriggerHad = false;
+    if (year==2016  ) passtriggerHad = e->IsTriggered("HLT_PFHT900_v")
                         || e->IsTriggered("HLT_AK8PFJet450_v")
                         || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")
                         || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v")
                         || e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v")
                         || e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+
+    if (year==2017  ) passtriggerHad =  true; 
+                        //e->IsTriggered("HLT_PFHT1050")  
+                        //or e->IsTriggered("HLT_AK8PFJet450g")
+                        //or e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50g")
+                        //or e->IsTriggered("HLT_AK8PFJet360_TrimMass30g")
+                        //or e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30g")
+                        //or e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5g");
 
     bool passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
 
@@ -2341,6 +2350,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     bool passtriggerBtag = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6_v")
                         || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160_v")
                         || e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v") || passtriggerHad;   
+
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Before tirgger" );
     if(!doTrigger){
       //    bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
       if (doHADAnalysis or doHADAntiAnalysis) {
@@ -2356,12 +2367,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(!passtriggerBtag) return EVENT_NOT_USED;
       }
     }
+
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","After tirgger" );
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 1, e->weight() );  //1--trigger
     Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 1, 1 );
 
     // kill Top/W/Z
     if ( e->Nleps() > 0 ) return EVENT_NOT_USED;
     if ( e->Ntaus() > 0 ) return EVENT_NOT_USED;
+
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Lepton and taus veto" );
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 2, e->weight() );  //2--lep veto
     Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 2, 1 );
@@ -2379,6 +2394,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if ( (!doMETAnalysis and !doMETAntiAnalysis) and e->GetMet().Pt() > 200 ) return EVENT_NOT_USED;
     }
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("Met Veto %f",e->GetMet().Pt()) );
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 3, e->weight() );  //3--veto MET
     Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 3, 1 );
 
@@ -2399,17 +2415,23 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( doMETAnalysis and e->Bjets()>2 ) return EVENT_NOT_USED;
     if ( !doBAntiAnalysis and counterExtrabToVeto_>0) return EVENT_NOT_USED;
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","b veto" );
     Fill("VBShadAnalysis/Baseline/NBJet_" +label, systname, e->Bjets(), e->weight() );
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 4, e->weight() );  //4--veto b
     Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 4, 1 );
 
+    if (VERBOSE and doMETAnalysis)Log(__FUNCTION__,"DEBUG",Form("MinDphi %f (0.4-2.74)",minDPhi ));
+
     if ( doMETAnalysis and minDPhi<0.4) return EVENT_NOT_USED;
     if ( doMETAnalysis and TMath::Pi()-minDPhi<0.4) return EVENT_NOT_USED;
+
+    if (VERBOSE and doHADAnalysis)Log(__FUNCTION__,"DEBUG",Form("I have %d fatjets (>=1) and %d ZbbFat (0)",selectedFatJets.size(),selectedFatZbb.size()) );
 
     if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatJets.size()<1 ) return EVENT_NOT_USED;
     if ( (doHADAnalysis or doHADAntiAnalysis) and selectedFatZbb.size()>0 ) return EVENT_NOT_USED;
     if ( doBAnalysis and selectedFatZbb.size()<1 ) return EVENT_NOT_USED;
 
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG","FatJet Selection" );
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //NFatjet cut
     Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 5, 1 );
 

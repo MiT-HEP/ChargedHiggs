@@ -226,6 +226,11 @@ void Looper::ClearEvent(){
 void Looper::NewFile()
 {
 	fNumber = tree_->GetTreeNumber();
+    // check that file is correctly opened. xrootd. 
+    if  (tree_->GetFile() == nullptr)  {
+		Log(__FUNCTION__,"ERROR","Unable to open file or directory. (Xrootd?)");	
+        throw abortException();
+    }
 	// check name and weight TODO
 	string fname = tree_->GetFile()->GetName();
 	event_ -> fName_ = fname;

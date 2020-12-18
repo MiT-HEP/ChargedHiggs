@@ -18,6 +18,7 @@ parser.add_option("-q","--queue" ,dest='queue',type='string',help="Queue",defaul
 
 job_opts= OptionGroup(parser,"Job options:","these options modify the job specific")
 job_opts.add_option("-t","--no-tar" ,dest='tar',action='store_false',help="Do not Make Tar",default=True)
+job_opts.add_option("-p","--proxy" ,dest='proxy',action='store_true',help="Transfer Proxy",default=False)
 job_opts.add_option("","--dryrun" ,dest='dryrun',action='store_true',help="Do not Submit",default=False)
 job_opts.add_option("","--no-compress" ,dest='compress',action='store_false',help="Don't compress",default=True)
 job_opts.add_option("","--compress"    ,dest='compress',action='store_true',help="Compress stdout/err")
@@ -189,6 +190,8 @@ def write_condor_jdl(filename="condor.jdl"):
     jdl.write("error = $(filename).err\n")
     jdl.write("executable = $(filename)\n")
     jdl.write("+JobFlavour = \"%s\"\n"%queue)
+    if os.environ['USER']=='amarini' : jdl.write('+AccountingGroup = "group_u_CMST3.all"\n')
+
     #jdl.write("transfer_input_files = %(dir)s/package.tar.gz,%(input)s\n"%{"dir":subdir,"input": ",".join(inputLs)})
     #jdl.write("queue filename matching (%s/sub*sh)\n"%opts.dir)
     #jdl.close()
@@ -424,6 +427,8 @@ if opts.tar:
 	cmd.extend( glob("test/*.so") )
 	cmd.extend( glob("test/*.exe") )
 	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
+	#/tmp/x509up_u45059
+	if opts.proxy: cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
 	tarCmdline = " ".join(cmd)
 	print tarCmdline
 	call(cmd)
@@ -440,28 +445,30 @@ if opts.tar:
 
 ## expand *
 if True:
-	fileList=[]
-	for f in config['Files']:
-		list=[]
-		if '/store/' or '/eos/user' in f:
-			if opts.hadoop:
-				list = FindHadoop( f ) 
-			elif opts.mount:
-				list =  FindEOS(f, "%%MOUNTPOINT%%/eos")
-			else:
-				list =  FindEOS(f)
-		elif 'NANOAOD' in f:
-				list =  FindDataset(f)
-		else :
-			list=glob(f)
-			if list == []: ### maybe remote ?
-				list=f
-		if len(list)==0:
-			print "<*> Error in File list from",f,"-- No File Found"
-			raise IOError
-		fileList.extend(list)
-	config['Files']=fileList
-	splittedInput=chunkIt(config['Files'],opts.njobs )
+    fileList=[]
+    for f in config['Files']:
+        if f== "": continue
+        list=[]
+        if '/store/' in f or '/eos/user' in f:
+            if opts.hadoop:
+                list = FindHadoop( f ) 
+            elif opts.mount:
+                list =  FindEOS(f, "%%MOUNTPOINT%%/eos")
+            else:
+                list =  FindEOS(f)
+        elif f.split('/')[-1] in ['NANOAODSIM','NANOAOD']:
+                print "DEBUG-submit,Using dataset for",f
+                list =  FindDataset(f)
+        else :
+            list=glob(f)
+            if list == []: ### maybe remote ?
+                list=f
+        if len(list)==0:
+            print "<*> Error in File list from",f,"-- No File Found"
+            raise IOError
+        fileList.extend(list)
+    config['Files']=fileList
+    splittedInput=chunkIt(config['Files'],opts.njobs )
 
 if opts.hadoop: ### T3 MIT
    if len(fileList) ==0:
@@ -583,6 +590,7 @@ if not opts.hadoop:
             sh.write("tar -xzf %s/package.tar.gz\n"%(basedir ))
             sh.write("mkdir -p %s\n"%opts.dir)
             sh.write("cp %s/*dat %s/\n"%(basedir,opts.dir))
+            if opts.proxy: sh.write("export X509_USER_PROXY=/tmp/x509up_u%d\n"%os.getuid())
     
         touch = "touch " + basedir + "/sub%d.pend"%iJob
         call(touch,shell=True)

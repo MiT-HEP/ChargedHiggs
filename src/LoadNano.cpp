@@ -1,77 +1,210 @@
 #include "interface/LoadNano.hpp"
 #include "interface/Event.hpp"
+#include "interface/nano.hpp"
+
+#include "TLeaf.h"
+
+// flags enum
+#include "NeroProducer/Core/interface/BareMonteCarlo.hpp"
+
+void LoadNano::SetYear(int y)
+{
+    Loader::SetYear(y); 
+    nano->year=y;
+}
 
 int LoadNano::InitTree(){
 
-    tree_->SetBranchAddress("run",&run);
-    tree_->SetBranchAddress("luminosityBlock",&lumi);
-    tree_->SetBranchAddress("event",&event);
-    tree_->SetBranchAddress("fixedGridRhoFasdGridRhoFastjetAll",&rho);
-    tree_->SetBranchAddress("PV_npvs",&npv);
-    //
-    tree_->SetBranchAddress("MET_pt",&met_pt);
-    tree_->SetBranchAddress("MET_phi",&met_phi);
-    // muon
-    tree_->SetBranchAddress("nMuon",&nMuon);
-    tree_->SetBranchAddress("Muon_eta",&Muon_eta);
-    tree_->SetBranchAddress("Muon_pt",&Muon_pt);
-    tree_->SetBranchAddress("Muon_phi",&Muon_phi);
-    tree_->SetBranchAddress("Muon_mass",&Muon_mass);
-    tree_->SetBranchAddress("Muon_charge",&Muon_charge);
-    tree_->SetBranchAddress("Muon_nTrackerLayers",&Muon_nTrackerLayers);
-    tree_->SetBranchAddress("Muon_miniPFRelIso_all",&Muon_miniPFRelIso_all);
-    tree_->SetBranchAddress("Muon_pfRelIso04_all",&Muon_pfRelIso04_all);
-    tree_->SetBranchAddress("Muon_mediumId",&Muon_mediumId);
-    tree_->SetBranchAddress("Muon_tightId",&Muon_tightId);
-    tree_->SetBranchAddress("Muon_isPFcand",&Muon_isPFcand);
-
-
-    //
-    tree_->SetBranchAddress("nJet",&nJet);
-    tree_->SetBranchAddress("Jet_pt",&Jet_pt);
-    tree_->SetBranchAddress("Jet_eta",&Jet_eta);
-    tree_->SetBranchAddress("Jet_phi",&Jet_phi);
-    tree_->SetBranchAddress("Jet_mass",&Jet_mass);
-    tree_->SetBranchAddress("Jet_chEmEF",&Jet_chEmEF);
-    tree_->SetBranchAddress("Jet_chHEF",&Jet_chHEF);
-    tree_->SetBranchAddress("Jet_neEmEF",&Jet_neEmEF);
-    tree_->SetBranchAddress("Jet_neHEF",&Jet_neHEF);
-    tree_->SetBranchAddress("Jet_qgl",&Jet_qgl);
-    tree_->SetBranchAddress("Jet_bReg",&Jet_bReg);
-    tree_->SetBranchAddress("Jet_puId",&Jet_puId);
-    tree_->SetBranchAddress("Jet_jetId",&Jet_jetId);
-    tree_->SetBranchAddress("Jet_btagDeepB",&Jet_btagDeepB);
-    tree_->SetBranchAddress("Jet_btagCSVV2",&Jet_btagCSVV2);
-
+    //tree_->SetBranchAddress("run",&run);
+    nano.reset(new Nano(tree_)); // call nano::Init -> SetBranchAddress
 }
 
 int LoadNano::FillEvent(){
 
    // Fill Met
-   TLorentzVector met; met.SetPtEtaPhiM(met_pt,0,met_phi,0);
-   event_ -> met_ .SetP4(met);
+    {
+        TLorentzVector met; met.SetPtEtaPhiM(nano->MET_pt,0,nano->MET_phi,0);
+        event_ -> met_ .SetP4(met);
+        event_->met_.SetSignificance(nano->MET_significance);
+
+        TLorentzVector met_delta; met_delta.SetXYZT(nano->MET_MetUnclustEnUpDeltaX,nano->MET_MetUnclustEnUpDeltaY,0,0);
+        event_ -> met_ . SetValueUp  (Smearer::UNCLUSTER , (met+met_delta).Pt() );
+        event_ -> met_ . SetValueDown(Smearer::UNCLUSTER , (met-met_delta).Pt() );
+        event_-> met_ . SetFilled(Smearer::UNCLUSTER);
+
+        event_->met_.SetGenPt(nano->MET_pt);
+        event_->met_.SetGenPhi(nano->MET_phi);
+
+#warning Check met filter recommendation
+        //event_->met_->filterbadPFMuon =  // now everything in full recommendation
+        //event_->met_->filterbadChHadrons = 
+        if (year == 2016){
+        event_->met_. setFullRecommendation(
+                    nano->Flag_HBHENoiseFilter and
+                    nano->Flag_HBHENoiseIsoFilter and
+                    //nano->Flag_CSCTightHaloFilter and
+                    //nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
+                    //nano->Flag_CSCTightHalo2015Filter and
+                    //nano->Flag_globalTightHalo2016Filter and
+                    nano->Flag_globalSuperTightHalo2016Filter and
+                    //nano->Flag_HcalStripHaloFilter and
+                    //nano->Flag_hcalLaserEventFilter and
+                    nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
+                    //nano->Flag_EcalDeadCellBoundaryEnergyFilter and
+                    //nano->Flag_ecalBadCalibFilter and
+                    nano->Flag_goodVertices and
+                    //nano->Flag_eeBadScFilter and
+                    //nano->Flag_ecalLaserCorrFilter and
+                    //nano->Flag_trkPOGFilters and
+                    //nano->Flag_chargedHadronTrackResolutionFilter and
+                    //nano->Flag_muonBadTrackFilter and
+                    //nano->Flag_BadChargedCandidateFilter and
+                    nano->Flag_BadPFMuonFilter 
+                    //nano->Flag_BadChargedCandidateSummer16Filter and
+                    //nano->Flag_BadPFMuonSummer16Filter and
+                    //nano->Flag_trkPOG_manystripclus53X and
+                    //nano->Flag_trkPOG_toomanystripclus53X and
+                    //nano->Flag_trkPOG_logErrorTooManyClusters and
+                    //nano->Flag_METFilters
+                );
+        }
+        if (year == 2017){
+        event_->met_. setFullRecommendation(
+                    nano->Flag_HBHENoiseFilter and
+                    nano->Flag_HBHENoiseIsoFilter and
+                    //nano->Flag_CSCTightHaloFilter and
+                    //nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
+                    //nano->Flag_CSCTightHalo2015Filter and
+                    //nano->Flag_globalTightHalo2016Filter and
+                    nano->Flag_globalSuperTightHalo2016Filter and
+                    //nano->Flag_HcalStripHaloFilter and
+                    //nano->Flag_hcalLaserEventFilter and
+                    nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
+                    //nano->Flag_EcalDeadCellBoundaryEnergyFilter and
+                    nano->Flag_ecalBadCalibFilter and
+                    nano->Flag_goodVertices and
+                    //nano->Flag_eeBadScFilter and
+                    //nano->Flag_ecalLaserCorrFilter and
+                    //nano->Flag_trkPOGFilters and
+                    //nano->Flag_chargedHadronTrackResolutionFilter and
+                    //nano->Flag_muonBadTrackFilter and
+                    //nano->Flag_BadChargedCandidateFilter and
+                    nano->Flag_BadPFMuonFilter 
+                    //nano->Flag_BadChargedCandidateSummer16Filter and
+                    //nano->Flag_BadPFMuonSummer16Filter and
+                    //nano->Flag_trkPOG_manystripclus53X and
+                    //nano->Flag_trkPOG_toomanystripclus53X and
+                    //nano->Flag_trkPOG_logErrorTooManyClusters and
+                    //nano->Flag_METFilters
+                );
+        }
+        if (year == 2018){
+        event_->met_. setFullRecommendation(
+                    nano->Flag_HBHENoiseFilter and
+                    nano->Flag_HBHENoiseIsoFilter and
+                    //nano->Flag_CSCTightHaloFilter and
+                    //nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
+                    //nano->Flag_CSCTightHalo2015Filter and
+                    //nano->Flag_globalTightHalo2016Filter and
+                    nano->Flag_globalSuperTightHalo2016Filter and
+                    //nano->Flag_HcalStripHaloFilter and
+                    //nano->Flag_hcalLaserEventFilter and
+                    nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
+                    //nano->Flag_EcalDeadCellBoundaryEnergyFilter and
+                    nano->Flag_ecalBadCalibFilter and
+                    nano->Flag_goodVertices and
+                    //nano->Flag_eeBadScFilter and
+                    //nano->Flag_ecalLaserCorrFilter and
+                    //nano->Flag_trkPOGFilters and
+                    //nano->Flag_chargedHadronTrackResolutionFilter and
+                    //nano->Flag_muonBadTrackFilter and
+                    //nano->Flag_BadChargedCandidateFilter and
+                    nano->Flag_BadPFMuonFilter 
+                    //nano->Flag_BadChargedCandidateSummer16Filter and
+                    //nano->Flag_BadPFMuonSummer16Filter and
+                    //nano->Flag_trkPOG_manystripclus53X and
+                    //nano->Flag_trkPOG_toomanystripclus53X and
+                    //nano->Flag_trkPOG_logErrorTooManyClusters and
+                    //nano->Flag_METFilters
+                );
+        }
+    }
+
+    // puppi met
+    {
+        TLorentzVector puppimet; puppimet.SetPtEtaPhiM(nano->PuppiMET_pt,0,nano->PuppiMET_phi,0);
+        event_->met_ . SetPuppiMetP4(puppimet);
+    }
+
+    // raw met
+    {
+        TLorentzVector rawmet; rawmet.SetPtEtaPhiM(nano->RawMET_pt,0,nano->RawMET_phi,0);
+        event_->met_ . SetRawMetP4(rawmet);
+    }
+
+    // track met
+    {
+        TLorentzVector trackmet; trackmet.SetPtEtaPhiM(nano->TkMET_pt,0,nano->TkMET_phi,0);
+        event_->met_ . SetTrackMetP4(trackmet);
+    }
 
    // Fill Muon
-   for(int i=0;i<nMuon;++i)
+   for(int i=0;i<nano->nMuon;++i)
    {
         //if (not Muon_isPFcand[i] ) continue; // loose
         Lepton *l =new Lepton();
         TLorentzVector p4;
-        p4.SetPtEtaPhiM(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass[i]);
+        p4.SetPtEtaPhiM(nano->Muon_pt[i],nano->Muon_eta[i],nano->Muon_phi[i],nano->Muon_mass[i]);
         l->SetP4(p4);
         l->SetType(13);
-        l->SetMiniIso(Muon_miniPFRelIso_all[i]);
-        l->SetIso(Muon_pfRelIso04_all[i]);
-        l->SetCharge( Muon_charge[i]);
-        l->SetMediumId( Muon_mediumId[i]);
-        l->SetLooseId( Muon_isPFcand[i]);
-        l->SetNLayers(Muon_nTrackerLayers[i]);
+        l->SetCharge(nano->Muon_charge[i]);
+        l->SetMiniIso(nano->Muon_miniPFRelIso_all[i]);
+        l->SetIso(nano->Muon_pfRelIso04_all[i]);
+        l->SetCharge( nano->Muon_charge[i]);
+        l->SetTightId( nano->Muon_tightId[i]);
+        l->SetMediumId( nano->Muon_mediumId[i]);
+        l->SetLooseId( nano->Muon_isPFcand[i]);
+        l->SetNLayers( nano->Muon_nTrackerLayers[i]);
+        l->SetDxy(nano->Muon_dxy[i]);
+
+        TLorentzVector fsrP4(0,0,0,0);
+        for(int k=0;k<=nano->nFsrPhoton;++k)
+        {
+            if ( i!=nano->FsrPhoton_muonIdx[k]) continue; //not this muon
+            double fsrDrEt2Cut = 0.012;
+            double fsrIsoCut = 1.8;
+
+            if( nano->FsrPhoton_dROverEt2[k] >=fsrDrEt2Cut) continue;
+            if( nano->FsrPhoton_relIso03[k] >=fsrIsoCut) continue;
+            fsrP4.SetPtEtaPhiM(nano->FsrPhoton_pt[k],nano->FsrPhoton_eta[k],nano->FsrPhoton_phi[k],0.);
+            l-> SetFsrP4( fsrP4 ); // assume 1 per muon
+        }
 
         // REMEMBER TO CLEN THE LEPTONS IFF NOT USED
         event_ -> leps_ . push_back(l);
    }
-   // Fill Electrons. TODO
-   // sort leptons
+   // Fill Electrons.
+   for(int i=0;i<nano->nElectron;++i)
+   {
+        Lepton *l =new Lepton();
+        TLorentzVector p4;
+        p4.SetPtEtaPhiM(nano->Electron_pt[i],nano->Electron_eta[i],nano->Electron_phi[i],nano->Electron_mass[i]);
+        l->SetP4(p4);
+        l->SetType(11);
+        l->SetCharge(nano->Electron_charge[i]);
+        l->SetDxy(nano->Electron_dxy[i]);
+
+        l->SetMiniIso(nano->Electron_miniPFRelIso_all[i]);
+        l->SetIso(nano->Electron_pfRelIso03_all[i]);
+        l->SetCharge( nano->Electron_charge[i]);
+        l->SetTightId( nano->Electron_mvaFall17V1noIso_WP80[i]);
+        l->SetMediumId( nano->Electron_mvaFall17V1noIso_WP90[i]);
+        l->SetLooseId( nano->Electron_mvaFall17V1Iso_WPL[i]); 
+
+        l->SetR9(nano->Electron_r9[i]);
+        l->SetSieie(nano->Electron_sieie[i]);
+   }
+   // re-sort leptons
    sort(event_ -> leps_.begin(),event_ -> leps_.end(),[](Lepton*l1, Lepton*l2){ 
            if (l1->GetP4().Pt() > l2->GetP4().Pt()) return true;  // sorting by grt Pt
            if (l1->GetP4().Pt() < l2->GetP4().Pt()) return false;
@@ -79,17 +212,20 @@ int LoadNano::FillEvent(){
            if (l1->GetP4().Eta() < l2->GetP4().Eta()) return false;
            return l1->GetP4().Phi() > l2->GetP4().Phi(); // if pt, eta, phi are identical, then they are the same object
            } );
+
    // Fill Jets
-   for(int i=0;i<nJet;++i)
+   for(int i=0;i<nano->nJet;++i)
    {
-        bool id =  Jet_jetId[i];
+        bool id =  nano->Jet_jetId[i];
         if (not id) continue;
         Jet *j = new Jet() ;
         TLorentzVector p4;
-        p4.SetPtEtaPhiM(Jet_pt[i],Jet_eta[i],Jet_phi[i],Jet_mass[i]);
+        p4.SetPtEtaPhiM(nano->Jet_pt[i],nano->Jet_eta[i],nano->Jet_phi[i],nano->Jet_mass[i]);
 
-        j->SetNEMF(Jet_neEmEF[i] );
-        j->SetCEMF(Jet_chEmEF[i] );
+        j->SetP4(p4);
+
+        j->SetNEMF(nano->Jet_neEmEF[i] );
+        j->SetCEMF(nano->Jet_chEmEF[i] );
 
         // TODO-- JES
         //j->SetValueUp  (Smearer::JES , (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
@@ -97,44 +233,255 @@ int LoadNano::FillEvent(){
         //j->SetFilled(Smearer::JES);
         //
         //TODO -- JER
-        j->bdiscr = Jet_btagCSVV2[i];
-        j->SetDeepB ( Jet_btagDeepB[i] );
-        j->SetQGL(Jet_qgl[i]);
-        j->SetPuId(Jet_puId[i]);
-#warning MISSING NANO_JET INFO
-        j->SetBCorrection(Jet_bReg[i], 0.1); //TODO FIXME
-        j->pdgId = 0 ; //FIXME
-        j->motherPdgId = 0; // FIXME
-        j->grMotherPdgId =  0 ;// FIXME
-        j->SetHadFlavor(0); //FIXME
-        event_ -> jets_ . push_back(j);
+        j->bdiscr = nano->Jet_btagCSVV2[i];
+        j->SetDeepB ( nano->Jet_btagDeepB[i] );
+        j->SetQGL(nano->Jet_qgl[i]);
+        j->SetPuId(nano->Jet_puId[i]);
+        j->SetBCorrection(nano->Jet_bRegCorr[i], nano->Jet_bRegRes[i]); 
+        j->SetHadFlavor(nano->Jet_hadronFlavour[i]); 
+        j->pdgId = nano->Jet_partonFlavour[i] ;
 
+#warning MISSING NANO_JET INFO
+        j->motherPdgId = 0; // FIXME do we use them?
+        j->grMotherPdgId =  0 ;// FIXME
+        //Jet_genJetIdx
+
+        event_ -> jets_ . push_back(j);
+   }
+#warning CHECK_MASKS
+   //UChar_t         Electron_cleanmask[6];   //[nElectron]
+   //UChar_t         Jet_cleanmask[25];   //[nJet]
+   //UChar_t         Muon_cleanmask[7];   //[nMuon]
+   //UChar_t         Photon_cleanmask[8];   //[nPhoton]
+   //UChar_t         Tau_cleanmask[4];   //[nTau]
+   
+   //Fill Fatjets
+   for(int i=0;i<nano->nFatJet;++i)
+   {
+       bool id =  nano->FatJet_jetId[i];
+       if (not id) continue;
+
+       FatJet *j = new FatJet() ;
+       TLorentzVector p4;
+       p4.SetPtEtaPhiM(nano->FatJet_pt[i],nano->FatJet_eta[i],nano->FatJet_phi[i],nano->FatJet_mass[i]);
+       j->SetP4(p4);
+
+       j->tau1 = nano->FatJet_tau1[i];
+       j->tau2 = nano->FatJet_tau2[i];
+       j->tau3 = nano->FatJet_tau3[i];
+
+       // sf mass
+       j->softdropMass = nano->FatJet_msoftdrop[i];
+       //
+       j->TvsQCDMD =nano->FatJet_deepTagMD_TvsQCD[i];
+       j->WvsQCDMD =nano->FatJet_deepTagMD_WvsQCD[i];
+       j->ZHbbvsQCDMD =nano->FatJet_deepTagMD_ZHbbvsQCD[i];
+       j->ZHccvsQCDMD =nano->FatJet_deepTagMD_ZHccvsQCD[i];
+
+       j->nSubjets=0;
+       // Subjets
+       int idx=nano->FatJet_subJetIdx1[i];
+       if (idx >=0 and idx < nano->nSubJet){
+           j->nSubjets+=1;
+           j->subjet_btag= nano->SubJet_btagCSVV2[idx];
+           j->subjet_btagdeep= nano->SubJet_btagDeepB[idx];
+       }
+
+       idx=nano->FatJet_subJetIdx2[i];
+       if (idx >=0 and idx < nano->nSubJet){
+           j->nSubjets+=1;
+           j->subjet_btag= std::max(nano->SubJet_btagCSVV2[idx],j->subjet_btag);
+           j->subjet_btagdeep= std::max(nano->SubJet_btagDeepB[idx],j->subjet_btagdeep);
+       }
+
+       event_ -> fat_ . push_back(j);
+   }
+
+   //FILL Tau
+   for (int i=0;i<nano->nTau;++i)
+   {
+       Tau *t =new Tau();
+       TLorentzVector p4; p4.SetPtEtaPhiM(nano->Tau_pt[i],nano->Tau_eta[i],nano->Tau_phi[i],nano->Tau_mass[i]) ;
+       t -> SetP4( p4);
+       t -> SetType( 15 );
+       t -> SetCharge( nano->Tau_charge[i] );
+       t -> SetId ( nano->Tau_idDecayModeNewDMs[i]) ;
+        // probably not DB corrected: TOCHECK
+       t -> SetIso2( nano->Tau_chargedIso[i]+nano->Tau_neutralIso[i]);
+       t -> SetIdEle (nano->Tau_idAntiEle[i]); //2018? FIXME
+       t -> SetIdMu (nano->Tau_idAntiMu[i]); // 2018 FIXME
+       //decay mode
+   }
+
+   //Fill Photons
+   for (int i=0;i<=nano->nPhoton;++i)
+   {
+        // electron veto
+        if (not nano->Photon_electronVeto[i]) continue;
+
+        Photon *p = new Photon();
+        TLorentzVector p4; p4.SetPtEtaPhiM(nano->Photon_pt[i],nano->Photon_eta[i],nano->Photon_phi[i],0.);
+        p -> SetP4(p4);
+
+        p -> SetIso(nano->Photon_pfRelIso03_all[i]) ;
+        p -> SetId (nano->Photon_mvaID_WP80[i] ) ;
+        p -> SetR9 ( nano->Photon_r9[i]) ;
+        p -> SetSieie ( nano->Photon_sieie[i]) ;
+
+        event_ -> phos_ . push_back(p);
+   
+   }
+
+   //Fill Trigger and TriggerObjects
+   {
+       event_ -> triggerFired_ . clear();
+
+       //event_ -> triggerNames_ . clear();
+       //event_-> triggerFired_.push_back(nano->HLT_IsoMu24);
+
+       for(const auto & s : event_->triggerNames_)
+       {
+           TLeaf *l = tree_->GetLeaf(s.c_str());
+           if ( l == nullptr) {
+               event_->triggerFired_.push_back(0);
+            LogN(__FUNCTION__,"WARNING","Trigger ("+s+") Not FILLED",10);
+           }
+           else {
+               event_->triggerFired_.push_back( *((bool*)l->GetValuePointer () ) );
+           }
+
+       }
+
+
+   }
+
+   //Gen
+   {
+       // nano: genWeight ; Generator_weight ; LHEWeight_originalXWGTUP
+       event_ -> GetWeight() -> SetMcWeight( nano->Generator_weight);
+       event_ -> GetWeight() -> SetPU( nano->Pileup_nTrueInt ,  event_ -> runNum_);
+       event_->SetGenTtbarId(nano-> genTtbarId) ;
+
+#warning NO_SCALE AND PDF VARIATIONS
+
+       event_ -> SetPdfId(1,nano->Generator_id1);
+       event_ -> SetPdfId(2,nano->Generator_id2);
+       //Float_t         Generator_scalePDF;
+       //Float_t         Generator_weight;
+       //Float_t         Generator_x1;
+       //Float_t         Generator_x2;
+       //Float_t         Generator_xpdf1;
+       //Float_t         Generator_xpdf2;
+       //Int_t           Generator_id1;
+       //Int_t           Generator_id2;
+       for(int i=0;i<nano->nGenJet;++i){
+            GenJet *g =new GenJet();
+            TLorentzVector p4; p4.SetPtEtaPhiM(nano->GenJet_pt[i],nano->GenJet_eta[i],nano->GenJet_phi[i],nano->GenJet_mass[i]);
+            g->SetP4( p4 );
+            event_ -> genjets_ . push_back(g);
+       }
+
+       for(int i=0;i< nano->nGenPart ; ++i){
+            GenParticle *g =new GenParticle();
+            TLorentzVector p4; p4.SetPtEtaPhiM(nano->GenPart_pt[i],nano->GenPart_eta[i],nano->GenPart_phi[i],nano->GenPart_mass[i]);
+            g->SetP4( p4 );
+            g->SetPdgId( nano->GenPart_pdgId[i]);
+            
+            g->SetParentIdx(nano->GenPart_genPartIdxMother[i]);
+            if (nano->GenPart_genPartIdxMother[i]>=0 and nano->GenPart_genPartIdxMother[i] < nano->nGenPart )
+            {
+                g->SetParentPdgId( nano->GenPart_pdgId[ nano->GenPart_genPartIdxMother[i]] ); 
+            }
+            else { g->SetParentPdgId(0);}
+            int flags=0;
+            //g->SetFlags( mc ->flags ->at(iGP) ); // rematch flags
+            //Int_t           GenPart_status[126];   //[nGenPart]
+            //Int_t           GenPart_statusFlags[126];   //[nGenPart]
+            event_ -> genparticles_ . push_back(g);
+       }
+
+       for (int i=0;i<nano->nLHEPart;++i){
+            GenParticle *g =new GenParticle();
+            TLorentzVector p4; p4.SetPtEtaPhiM(nano->LHEPart_pt[i],nano->LHEPart_eta[i],nano->LHEPart_phi[i],nano->LHEPart_mass[i]);
+            g->SetP4( p4 );
+            g->SetPdgId( nano->LHEPart_pdgId[i]);
+            int flags=0; 
+            flags |= BareMonteCarlo::LHE;
+            g->SetFlags(flags);
+            // no navigation saved for LHE part
+            event_ -> genparticles_ . push_back(g);
+       }
    }
 
 }
 
 void LoadNano::NewFile(){
     // read some how the triggers -> this is for Nero, probably not necessary.
-    //TNamed * tn=  (TNamed*)tree_->GetFile()->Get("nero/triggerNames");
-    //string fname = tree_->GetFile()->GetName();
+    // grep -r IsTriggered src/AnalysisChargedHiggsTauNu.cpp |  tr '>' '\n' | grep IsTriggered | sed 's/).*//' | sed 's/,.*//' | sed 's/.*(//' | sort  | uniq
+    string fname = tree_->GetFile()->GetName();
+
+    int year=2016;
+
+    if (fname.find("mc2016") != string::npos) {year=2016;} // prefer string like mcYYYY
+    else if (fname.find("mc2017") != string::npos) {year=2017;}
+    else if (fname.find("mc2018") != string::npos) {year=2018;}
+    else if (fname.find("2016") != string::npos) {year=2016;} // fall back to YYYY
+    else if (fname.find("2017") != string::npos) {year=2017;}
+    else if (fname.find("2018") != string::npos) {year=2018;}
+    else Log(__FUNCTION__,"WARNING","Unable to identify year. Using 2016 as default");
+    
+    // Figure out year
+    SetYear(year);
+    
+    event_->triggerNames_.clear(); // possibly also not necessary by file
+    
+    if (year==2016){
+        event_->triggerNames_.push_back("HLT_PFHT900");
+        event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
+        event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240");
+    }else if (year==2017){
+        event_->triggerNames_.push_back("HLT_AK8DiPFJet300_200_TrimMass30");
+        event_->triggerNames_.push_back("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50");
+        event_->triggerNames_.push_back("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
+        event_->triggerNames_.push_back("HLT_AK8PFJet360_TrimMass30");
+        event_->triggerNames_.push_back("HLT_AK8PFJet450");
+        event_->triggerNames_.push_back("HLT_DoubleIsoMu20_eta2p1");
+        event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6");
+        event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160");
+        event_->triggerNames_.push_back("HLT_IsoMu24");
+        event_->triggerNames_.push_back("HLT_IsoMu27");
+        event_->triggerNames_.push_back("HLT_IsoTkMu24");
+        event_->triggerNames_.push_back("HLT_IsoTkMu27");
+        event_->triggerNames_.push_back("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
+        event_->triggerNames_.push_back("HLT_PFHT900");
+        event_->triggerNames_.push_back("HLT_PFHT_800");
+        event_->triggerNames_.push_back("HLT_PFMET120_PFMHT120_IDTight_PFHT60");
+        event_->triggerNames_.push_back("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight");
+        event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+        event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
+        event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
+        event_->triggerNames_.push_back("HLT_PFHT1050");
+    } else if (year==2018){}
+
     return;
 }
 
 void LoadNano::FillEventInfo(){
-   event_->runNum_ = run ;
-   event_->lumiNum_ = lumi;
-   event_->eventNum_ = event;
+   event_->runNum_ = nano->run ;
+   event_->lumiNum_ = nano->luminosityBlock;
+   event_->eventNum_ = nano->event;
 
-   event_->isRealData_ = (run >10); //FIXME
-   event_->rho_ = rho;
-   event_->npv_ = npv;
+   event_->isRealData_ = (nano->run >10); //FIXME
+   event_->rho_ = nano->fixedGridRhoFastjetAll;
+   event_->npv_ = nano->PV_npvsGood;
 }
 
 
 void LoadNano::Clear(){
-    run=-1;
-    lumi=-1;
-    event=-1;
+    // TODO
+    //run=-1;
+    //lumi=-1;
+    //event=-1;
 }
 
 REGISTER(LoadNano);

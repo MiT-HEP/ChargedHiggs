@@ -12,6 +12,13 @@ class Photon : virtual public Object,
         float etacut_ {-1}; // ** eta cut on the accepted photons
         float ptcut_;
         float isorelcut_{-1};
+
+
+        float iso; // isolation 
+        int id; // 
+        float r9{0.};
+        float sieie{0.};
+        float hoe{0.};
     public:
         inline void SetEtaCut(float x) {etacut_ = x;}
         inline void SetPtCut(float x) {ptcut_ = x;}
@@ -20,8 +27,12 @@ class Photon : virtual public Object,
         inline float GetIsoRelCut() const { return isorelcut_;}
         Photon() ; // in the cpp
 
-        float iso; // isolation 
-        int id; // 
+
+        inline void SetId(int x){id=x;}
+        inline void SetIso(float x){iso=x;}
+        inline void SetR9(float x){r9=x;}
+        inline void SetHoE(float x){hoe=x;}
+        inline void SetSieie(float x){sieie=x;}
 
         virtual inline int IsPho() const { 
             if (not id ) return 0; // medium

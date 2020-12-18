@@ -95,6 +95,7 @@ if opts.dat != "":
 		if label == 'SingleElectron': continue # exclude data
 		if label == 'DoubleMuon': continue # exclude data
 		if label == 'DoubleElectron': continue # exclude data
+		if label == 'BTagCSV': continue # exclude data
 		if re.match('Run201[5,6,7]',label): continue
 
 		cmd = "python %s -e %s -x %f -l '%s' -f %s"%(sys.argv[0],f,opts.xsec,label,opts.file)
@@ -222,6 +223,7 @@ else:
 	elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=1
 	### H-> mumu
 	elif 'HToMuMu' in opts.label: xsec=1
+	elif 'HToZG' in opts.label: xsec=1
 	##TTX
 	elif 'TTZToQQ' in opts.label: xsec=0.5297
 	elif 'TTZToLLNuNu' in opts.label: xsec=0.2529

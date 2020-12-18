@@ -4,12 +4,11 @@
 
 #### BKG ###
 ## remove previous
-Branches=
 Loader=LoadNano
 Files=
 #addfiles=/store/mc/RunIIFall17NanoAOD/DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v2_ext1-v1/20000/6E899A4D-04FB-E711-AE53-001E67F8FA42.root
 
-addfiles=/store/mc/RunIISummer19UL17NanoAOD/ZNuNuWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/106X_mc2017_realistic_v6-v1/120000/896370DF-D4A4-D746-B0E0-BEB1A94EAA83.root
+#addfiles=/store/mc/RunIISummer19UL17NanoAOD/ZNuNuWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/106X_mc2017_realistic_v6-v1/120000/896370DF-D4A4-D746-B0E0-BEB1A94EAA83.root
 addfiles=/ZNuNuWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM
 #instance=prod/phys03
 
@@ -22,9 +21,10 @@ include=dat/hmumu.dat
 #include=dat/taunu.dat
 #include=dat/tmva.dat
 
+Branches=dat/branches.nano.dat
 Output=Nano.root
-MCDB=aux/mcdb.Hmumu.2018.dat
-pileup=aux/pileup.2018.moriond.Prompt.root
+MCDB=aux/mcdb.nano.txt
+pileup=aux/pileup.nano.year2017.root
 SFDB=aux/sf_database.2018.moriond.txt
 
 Lumi=1
