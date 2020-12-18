@@ -439,6 +439,15 @@ void LoadNano::NewFile(){
         event_->triggerNames_.push_back("HLT_PFHT900");
         event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
         event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240");
+        //event_->triggerNames_.push_back("");
+        event_->triggerNames_.push_back("HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p20");
+        event_->triggerNames_.push_back("HLT_Photon90_CaloIdL_PFHT600");
+        event_->triggerNames_.push_back("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
+        event_->triggerNames_.push_back("HLT_PFJet450");
+        event_->triggerNames_.push_back("HLT_AK8PFJet360_TrimMass30");
+        event_->triggerNames_.push_back("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
+        event_->triggerNames_.push_back("HLT_PFHT650_WideJetMJJ950DEtaJJ1p5");
+
     }else if (year==2017){
         event_->triggerNames_.push_back("HLT_AK8DiPFJet300_200_TrimMass30");
         event_->triggerNames_.push_back("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50");

@@ -15,13 +15,19 @@
 #define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4941:0.4148)
 #define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?.8001:.7527)
 
+#define FAT_ZHBB_MEDIUM 0.8945
+//#define FAT_TAU32 0.81
+#define FAT_TAU32 0.61
+#define MZ 91.1876
+#define MH 125.38
+
 
 #define SYNC_VERBOSE 1
 
 
 void HbbgAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
-    l->SetPtCut(10); 
+    l->SetPtCut(20); 
     l->SetIsoRelCut(0.25);
     l->SetEtaCut(2.4);
     //l->SetTightCut(true);
@@ -65,6 +71,13 @@ void HbbgAnalysis::SetPhotonCuts(Photon *p){ // Already selecting Medium ided ph
     p->SetIsoRelCut(0.15); 
     p->SetPtCut(15);
     p->SetEtaCut(2.5);
+    // TODO CHeck for nano: electronVeto (ok) and medium ID
+}
+
+void HbbgAnalysis::SetFatJetCuts(FatJet *f){
+    f->SetEtaCut(2.5);
+    f->SetPtCut(250);
+    f->SetSDMassCut(30);
 }
 
 void HbbgAnalysis::Init(){
@@ -82,7 +95,7 @@ void HbbgAnalysis::Init(){
 
 	Log(__FUNCTION__,"INFO","Booking Histograms");
     for ( string l : AllLabel()  ) {
-        for (string s : {"PreTrigger","Preselection","Final"} )
+        for (string s : {"VBF/PreTrigger","VBF/Preselection","VBF/Final"} )
         {
         for (string suff : {"","_RIGHT","_WRONG"})
         {
@@ -103,8 +116,33 @@ void HbbgAnalysis::Init(){
         }// suffix
         } // selection tag
 
+        for (string s : {
+                "GGH/PreTrigger","GGH/Preselection","GGH/Final",
+                "GGH_merged/PreTrigger","GGH_merged/Preselection","GGH_merged/Final"
+                } 
+                )
+        {
+	        Book ("HbbgAnalysis/"+s+"/mass_"+ l,"Mbbg;m^{bb#gamma} [GeV];Events", 2000,60,160);
+	        Book ("HbbgAnalysis/"+s+"/pt_"+ l,"pTg;p_{T}^{#gamma} [GeV];Events", 200,0,2000);
+	        Book ("HbbgAnalysis/"+s+"/pho_pt_"+ l,"pTg;p_{T}^{#gamma} [GeV];Events", 200,0,2000);
+	        Book ("HbbgAnalysis/"+s+"/pho_eta_"+ l,"etag;#eta^{#gamma} [GeV];Events", 200,-5,5);
+	        Book ("HbbgAnalysis/"+s+"/fatjet_pt_"+ l,"Fatjet PT;p_{T}^{j ak8} [GeV];Events", 200,0,2000);
+	        Book ("HbbgAnalysis/"+s+"/fatjet_eta_"+ l,"Fatjet eta;#eta^{j ak8} ;Events", 200,-5,5);
+	        Book ("HbbgAnalysis/"+s+"/fatjet_mass_"+ l,"Fatjet SD mass;m^{j ak8} [GeV];Events", 200,60,150);
+	        Book ("HbbgAnalysis/"+s+"/fatjet_tau21_"+ l,"Mbbg;#tau_{21} ;Events", 200,0.,1.000001);
+	        Book ("HbbgAnalysis/"+s+"/fatjet_tau32_"+ l,"Mbbg;#tau_{32} ;Events", 200,0.,1.000001);
+
+	        Book ("HbbgAnalysis/"+s+"/ht_"+ l,"HT;H_{T} [GeV];Events", 200,0,2000);
+	        Book ("HbbgAnalysis/"+s+"/drbbg_"+ l,"DR fatjet photon;#Delta R(j,#gamma);Events", 200,0,5);
+	        Book ("HbbgAnalysis/"+s+"/dphibbg_"+ l,"DPHI fatjet photon;#Delta#phi(j,#gamma);Events", 200,0,3.1416);
+	        Book ("HbbgAnalysis/"+s+"/njets_"+ l,"NJets;N_{jets};Events", 10,0,10);
+	        Book ("HbbgAnalysis/"+s+"/dphiHrecoil_"+ l,"DPHI Higgs Recoil;#Delta#phi(H,jjjj);Events", 200,0,3.1416);
+        }
+
         for (int icat=0; icat <10 ;++icat)
-	    Book (Form("HbbgAnalysis/Categories/mass_cat%d_",icat)+ l,"Mbbg;m^{bb#gamma} [GeV];Events", 2000,60,160);
+        {
+	        Book (Form("HbbgAnalysis/Categories/mass_cat%d_",icat)+ l,"Mbbg;m^{bb#gamma} [GeV];Events", 2000,60,160);
+        }
 
 
     } //end label loop
@@ -150,6 +188,21 @@ void HbbgAnalysis::Init(){
         Branch("hbbg","jet_eta",'d',20,"njets");
         Branch("hbbg","jet_phi",'d',20,"njets");
 
+        // fatjets
+        Branch("hbbg","fatjet_pt"   ,'F');
+        Branch("hbbg","fatjet_eta"  ,'F');
+        Branch("hbbg","fatjet_phi"  ,'F');
+        Branch("hbbg","fatjet_mass" ,'F');
+        Branch("hbbg","fatjet_tau21",'F');
+        Branch("hbbg","fatjet_tau32",'F');
+
+        // preselections
+        Branch("hbbg","isVBF",'I');
+        Branch("hbbg","isGGH",'I');
+        Branch("hbbg","isGGH_bbgmerged",'I');
+        Branch("hbbg","isGGH_bbmerged",'I');
+
+        // additional
         Branch("hbbg","nbjets",'I');
         Branch("hbbg","nbjets_loose",'I');
         Branch("hbbg","ht",'F');
@@ -193,6 +246,28 @@ void HbbgAnalysis::updateTreeVar(){
         SetTreeVar("etapho",pho->Eta());
         SetTreeVar("phipho",pho->Phi());
 
+        // FatJets
+        if (selectedFatJets.size()>0){
+            SetTreeVar("fatjet_pt" ,selectedFatJets[0]->Pt());
+            SetTreeVar("fatjet_eta",selectedFatJets[0]->Eta());
+            SetTreeVar("fatjet_phi",selectedFatJets[0]->Phi());
+            SetTreeVar("fatjet_mass",selectedFatJets[0]->SDMass());
+            SetTreeVar("fatjet_tau21",eventVar_["fatjet_tau21"]);
+            SetTreeVar("fatjet_tau32",eventVar_["fatjet_tau32"]);
+        }
+        else{
+            SetTreeVar("fatjet_pt"   ,0.);
+            SetTreeVar("fatjet_eta"  ,0.);
+            SetTreeVar("fatjet_phi"  ,0.);
+            SetTreeVar("fatjet_mass" ,0.);
+            SetTreeVar("fatjet_tau21",0.);
+            SetTreeVar("fatjet_tau32",0.);
+        }
+        
+        SetTreeVar("isVBF",int(isVBF));
+        SetTreeVar("isGGH",int(isGGH));
+        SetTreeVar("isGGH_bbgmerged",int(eventVar_["ggh_bbgmerged"]));
+        SetTreeVar("isGGH_bbmerged",int(eventVar_["ggh_bbmerged"]));
 
         // truth
         // VBF_HiggsZG_Zbb_M125
@@ -240,36 +315,82 @@ void HbbgAnalysis::updateTmva(){
 void HbbgAnalysis::updateEventVar( )
 {
     eventVar_ . clear();
+    mass_=0.;
+    pt_=0.;
     
     //b1->GetBCorrection()
     // -----------------------------------
     TLorentzVector Zbb,Hbbg;
 
-    Zbb += (selectedBJets[0]->GetP4() * selectedBJets[0]->GetBCorrection());
-    Zbb += (selectedBJets[1]->GetP4() * selectedBJets[1]->GetBCorrection());
+    if (isVBF){ // selectedBJets.size()>=2  and selectedJets.size() >=2
 
-    Hbbg +=  Zbb;
-    Hbbg += (pho->GetP4());
+        Zbb += (selectedBJets[0]->GetP4() * selectedBJets[0]->GetBCorrection());
+        Zbb += (selectedBJets[1]->GetP4() * selectedBJets[1]->GetBCorrection());
 
-    eventVar_["mass"] = Hbbg.M(); //override with kf later if available
-    eventVar_["pt"] = Hbbg.Pt();
-    mass_= Hbbg.M(); // Use this one!
-    pt_= Hbbg.Pt();
+        Hbbg +=  Zbb;
+        Hbbg += (pho->GetP4());
+
+        eventVar_["mass"] = Hbbg.M(); //override with kf later if available
+        eventVar_["pt"] = Hbbg.Pt();
+
+        mass_= Hbbg.M(); // Use this one!
+        pt_= Hbbg.Pt();
+
+    }
+
+    TLorentzVector Zbb_boost,Hbbg_boost;
+    if (not isVBF and isGGH)
+    {
+        FatJet *f = selectedFatJets[0];
+        Zbb_boost.SetPtEtaPhiM(f ->Pt(),f->Eta(),f->Phi(),f->SDMass() ) ;
+        Hbbg_boost.SetPtEtaPhiM(f ->Pt(),f->Eta(),f->Phi(),f->SDMass() ) ;
+        //else{ // threat it as multiplicative correction to PT. Probably incorrect if calibrated
+        //    float alpha = f->SDMass() / f->M();
+        //    Zbb.SetPtEtaPhiM(f ->Pt() * alpha,f->Eta(),f->Phi(),f->SDMass() ) ;
+        //    Hbbg.SetPtEtaPhiM(f ->Pt() *alpha,f->Eta(),f->Phi(),f->SDMass() ) ;
+        //}
+       
+        eventVar_["ggh_bbgmerged"]=0.;
+        eventVar_["ggh_bbmerged"]=0.;
+        // bb -merged 
+        if (fabs( f ->SDMass() - MZ) <15. and pho->DeltaR(f)>0.8) 
+        {
+            Hbbg_boost += pho->GetP4();
+            eventVar_["ggh_bbmerged"]=1.;
+        } 
+        // bbg merged
+        if ( fabs( f ->SDMass() - MH) <15. and pho->DeltaR(f) <0.8 )
+        {
+            //nothing to be done. Mass probably already in fatjet one
+            eventVar_["ggh_bbgmerged"]=1.;
+        }
+
+        eventVar_["fatjet_tau32"]=(f->Tau2()>0) ?f->Tau3()/f->Tau2():0.;
+        eventVar_["fatjet_tau21"]=(f->Tau1()>0)? f->Tau2()/f->Tau1():0.;
+
+        eventVar_["mass"] = Hbbg_boost.M(); 
+        eventVar_["pt"] = Hbbg_boost.Pt();
+        pt_ = Hbbg_boost.Pt();
+        mass_ = Hbbg_boost.M();
+    }
 
     // -----------------------------------
     TLorentzVector Zbb_u,Hbbg_u; // uncorrected b
-    Zbb_u += (selectedBJets[0]->GetP4() );
-    Zbb_u += (selectedBJets[1]->GetP4() );
+    if (isVBF){
+        Zbb_u += (selectedBJets[0]->GetP4() );
+        Zbb_u += (selectedBJets[1]->GetP4() );
 
-    Hbbg_u +=  Zbb_u;
-    Hbbg_u += (pho->GetP4());
+        Hbbg_u +=  Zbb_u;
+        Hbbg_u += (pho->GetP4());
+    }
 
 
     TLorentzVector Zbb_kf,Hbbg_kf; 
     bool haveKF=false;
 
-    // -------------- KF ---------------------
-    if (kf->p4.size() >0 and kf->alpha_out.size()>1 and kf->value_out < 1.e9){ // filled and ok
+    // -------------- KF --------------------- 
+    // vbf is resolved!
+    if (isVBF and kf->p4.size() >0 and kf->alpha_out.size()>1 and kf->value_out < 1.e9){ // filled and ok
         TLorentzVector b1_kf = (selectedBJets[0]->GetP4()*selectedBJets[0]->GetBCorrection() *kf->alpha_out[0]);
         TLorentzVector b2_kf = (selectedBJets[1]->GetP4()*selectedBJets[1]->GetBCorrection() * kf->alpha_out[1]);
 
@@ -307,21 +428,21 @@ void HbbgAnalysis::updateEventVar( )
 
     eventVar_["mass_uncorr"] = Hbbg_u.M();
     eventVar_["pt_uncorr"] = Hbbg_u.Pt();
-
-    eventVar_["mjj"] = selectedJets[0]->InvMass(selectedJets[1]);
+    
+    eventVar_["mjj"] = (selectedJets.size()>=2)?selectedJets[0]->InvMass(selectedJets[1]) : 0.;
     eventVar_["mbb"] = Zbb.M(); 
     eventVar_["ptbb"] = Zbb.Pt();
     eventVar_["etabb"] = Zbb.Eta();
-    eventVar_["detabb"] = fabs(selectedBJets[0]->Eta() - selectedBJets[1]->Eta());
-    eventVar_["dphibb"] = fabs(selectedBJets[0]->DeltaPhi(selectedBJets[1]) );
-    eventVar_["drbb"] = fabs(selectedBJets[0]->DeltaR(selectedBJets[1]) );
+    eventVar_["detabb"] = (isVBF) ? fabs(selectedBJets[0]->Eta() - selectedBJets[1]->Eta()) : 0.;
+    eventVar_["dphibb"] = (isVBF) ?fabs(selectedBJets[0]->DeltaPhi(selectedBJets[1]) ) :0.;
+    eventVar_["drbb"] = (isVBF)? fabs(selectedBJets[0]->DeltaR(selectedBJets[1]) ) :0.;
 
     eventVar_["mbb_u"] = Zbb_u.M(); //no kf
     eventVar_["ptbb_u"] = Zbb_u.Pt();
     eventVar_["etabb_u"] = Zbb_u.Pt();
 
-    eventVar_["detajj"] = fabs(selectedJets[0]->Eta() - selectedJets[1]->Eta());
-    eventVar_["dphijj"] = fabs(selectedJets[0]->DeltaPhi(selectedJets[1]) );
+    eventVar_["detajj"] = (selectedJets.size()>=2) ? fabs(selectedJets[0]->Eta() - selectedJets[1]->Eta()) : 0.;
+    eventVar_["dphijj"] = (selectedJets.size()>=2) ? fabs(selectedJets[0]->DeltaPhi(selectedJets[1]) ): 0.;
     eventVar_["njets"] = selectedJets.size();
 
     if (haveKF){ // use kf for these ones
@@ -330,13 +451,19 @@ void HbbgAnalysis::updateEventVar( )
 
         eventVar_["dphibbg"] = fabs(Zbb_kf.DeltaPhi(pho->GetP4()));
         eventVar_["detabbg"] = fabs(Zbb_kf.Eta() - pho->Eta());
+        eventVar_["drbbg"] = fabs(Zbb_kf.DeltaR(pho->GetP4()));
 
         eventVar_["mbb"] = Zbb_kf.M(); 
         eventVar_["ptbb"] = Zbb_kf.Pt();
         eventVar_["etabb"] = Zbb_kf.Eta();
 
     } // end haveKF
-    
+
+    if (not isVBF and isGGH) {
+        eventVar_["dphibbg"] = fabs(selectedFatJets[0]->DeltaPhi(pho));
+        eventVar_["detabbg"] = fabs(selectedFatJets[0]->DeltaEta(pho));
+        eventVar_["drbbg"] = fabs(selectedFatJets[0]->DeltaR(pho));
+    } 
   
     // additional bjets 
     eventVar_["nbjets"]=0; 
@@ -344,8 +471,12 @@ void HbbgAnalysis::updateEventVar( )
     eventVar_["ht"]=0.; 
     eventVar_["ht_cent"]=0.; 
     eventVar_["ht_jj"]=0.;  // between the two mjj jets
+
+    TLorentzVector recoil;
     for(unsigned i=0;i<selectedJets.size() ;++i)
     {
+        recoil += selectedJets[i]->GetP4();
+
         eventVar_["ht"] += selectedJets[i]->Pt(); 
         if ( abs(selectedJets[i]->Eta())<=2.4) // TO CHECK
         {
@@ -353,13 +484,27 @@ void HbbgAnalysis::updateEventVar( )
             if (selectedJets[i]->GetDeepB() > DEEP_B_LOOSE) eventVar_["nbjets_loose"]+=1;
             eventVar_["ht_cent"] += selectedJets[i]->Pt(); 
         }
-
+        
+        // i >=2 protects that size is at least 2
         if (( i>=2 and selectedJets[0]->Eta()<selectedJets[i]->Eta() and selectedJets[i]->Eta() <selectedJets[1]->Eta()) or
             ( i>=2 and selectedJets[1]->Eta()<selectedJets[i]->Eta() and selectedJets[i]->Eta() <selectedJets[0]->Eta())
             ) eventVar_["ht_jj"] += selectedJets[i]->Pt();
     }
 
-    // central HT
+    eventVar_["pt_recoil"] = recoil.Pt();
+    eventVar_["eta_recoil"] = recoil.Eta();
+    eventVar_["phi_recoil"] = recoil.Phi();
+    
+    if (isVBF) 
+    {
+        if (haveKF) 
+            eventVar_["dphiHrecoil"] = fabs(recoil.DeltaPhi(Hbbg_kf)); // with KF
+        else 
+            eventVar_["dphiHrecoil"] = fabs(recoil.DeltaPhi(Hbbg)); // with B regression
+    }
+    if (isGGH and not isVBF){
+        eventVar_["dphiHrecoil"] = fabs(recoil.DeltaPhi(Hbbg_boost)); // with respect to the boosted Higgs
+    }
 }
 
 void HbbgAnalysis::matchToGen()
@@ -374,12 +519,12 @@ void HbbgAnalysis::matchToGen()
         if (g==NULL) break;
         if ( abs(g->GetPdgId()) == 5 and g->GetParentPdgId() == 23 and e->GenParticleDecayedFrom(ig,25) ) 
         {
-            if (selectedBJets.size() >0 and selectedBJets[0]->DeltaR(g) <0.4) 
+            if (selectedBJets.size() >0 and selectedBJets[0] != nullptr and selectedBJets[0]->DeltaR(g) <0.4) 
                     {
                     if (genMatching[0] != nullptr) Log(__FUNCTION__,"WARNING","Double association for B0");
                     genMatching[0] = g;
                     }
-            if (selectedBJets.size() >1 and selectedBJets[1]->DeltaR(g) <0.4) 
+            if (selectedBJets.size() >1 and selectedBJets[1] != nullptr and selectedBJets[1]->DeltaR(g) <0.4) 
                     {
                     if (genMatching[1] != nullptr) Log(__FUNCTION__,"WARNING","Double association for B0");
                     genMatching[1] = g;
@@ -389,7 +534,7 @@ void HbbgAnalysis::matchToGen()
         if (abs(g->GetPdgId()) == 23 and g->GetParentPdgId() == 25) genMatching[6]=g;
         if (abs(g->GetPdgId()) == 22 and g->GetParentPdgId() == 25) genMatching[2]=g;
         if (abs(g->GetPdgId()) < 5 and g->IsLHE() and g->Pt() >0.1 and selectedJets.size()>0 and selectedJets[0]->DeltaR(g)<0.4) genMatching[3] = g;  
-        if (abs(g->GetPdgId()) < 5 and g->IsLHE() and g->Pt() >0.1 and selectedJets.size()>0 and selectedJets[1]->DeltaR(g)<0.4) genMatching[4] = g;  
+        if (abs(g->GetPdgId()) < 5 and g->IsLHE() and g->Pt() >0.1 and selectedJets.size()>1 and selectedJets[1]->DeltaR(g)<0.4) genMatching[4] = g;  
 
 
     }
@@ -481,7 +626,7 @@ void HbbgAnalysis::printDebugInfo(){
     Log(__FUNCTION__,"DEBUG",Form("mbb (kf) %f",eventVar_["mbb_kf"]));
 }
 
-void HbbgAnalysis::fillHists(const string & s, const string &l, const string & syst){
+void HbbgAnalysis::fillHistsVBF(const string & s, const string &l, const string & syst){
     Fill ("HbbgAnalysis/"+s+"/mass_"+ l,syst ,mass_,e->weight());
     Fill ("HbbgAnalysis/"+s+"/pho_pt_"+ l,syst ,pho->Pt(),e->weight());
     Fill ("HbbgAnalysis/"+s+"/pho_eta_"+ l,syst ,pho->Eta(),e->weight());
@@ -527,6 +672,25 @@ void HbbgAnalysis::fillHists(const string & s, const string &l, const string & s
     }
 }
 
+void HbbgAnalysis::fillHistsGGH(const string & s, const string &label, const string & systname){
+    FatJet *f = selectedFatJets[0];
+    Fill ("HbbgAnalysis/"+s+"/mass_"+ label,systname,mass_,e->weight());
+    Fill ("HbbgAnalysis/"+s+"/pt_"+ label,systname,mass_,e->weight());
+    Fill ("HbbgAnalysis/"+s+"/pho_pt_"+ label, systname, pho->Pt(), e->weight());
+    Fill ("HbbgAnalysis/"+s+"/pho_eta_"+ label, systname,pho->Eta(),e->weight());
+    Fill ("HbbgAnalysis/"+s+"/fatjet_pt_"+ label,systname,f->Pt(), e->weight());
+    Fill ("HbbgAnalysis/"+s+"/fatjet_eta_"+ label,systname,f->Eta(), e->weight());
+    Fill ("HbbgAnalysis/"+s+"/fatjet_mass_"+ label,systname,f->SDMass(),e->weight());
+    Fill ("HbbgAnalysis/"+s+"/fatjet_tau21_"+ label,systname,eventVar_["fatjet_tau21"],e->weight());
+    Fill ("HbbgAnalysis/"+s+"/fatjet_tau32_"+ label,systname,eventVar_["fatjet_tau32"],e->weight());
+
+    Fill ("HbbgAnalysis/"+s+"/ht_"+ label, systname, eventVar_["ht"], e->weight());
+    Fill ("HbbgAnalysis/"+s+"/drbbg_"+ label, systname, eventVar_["drbbg"], e->weight());
+    Fill ("HbbgAnalysis/"+s+"/dphibbg_"+ label, systname, eventVar_["dphibbg"], e->weight());
+    Fill ("HbbgAnalysis/"+s+"/njets_"+ label, systname, eventVar_["njets"], e->weight());
+    Fill ("HbbgAnalysis/"+s+"/dphiHrecoil_"+ label, systname, eventVar_["dphiHrecoil"], e->weight());
+}
+
 void HbbgAnalysis::reset() // reset private memebers
 {
     eventNum=0;
@@ -536,6 +700,7 @@ void HbbgAnalysis::reset() // reset private memebers
     pt_=0.;
     pho=nullptr;
     selectedJets . clear();
+    selectedFatJets . clear();
     selectedBJets . clear();
     passTrigger=false;
     categories_ . clear();
@@ -544,12 +709,14 @@ void HbbgAnalysis::reset() // reset private memebers
     isSignal=false;
     kf->clear();
     bdt.clear();
+    isGGH=true;
+    isVBF=true;
 }
 
 int HbbgAnalysis::analyze(Event *event, string systname)
 {
     if (debug)Log(__FUNCTION__,"DEBUG",Form("Analyze event %ld:%ld:%ld",e->runNum(),e->lumiNum(),e->eventNum()));
-    
+
     //** reset 
     reset();
 
@@ -768,29 +935,25 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     //}
 
 
-    // TRIGGER SF. TODO 
 
-
-    //if (year==2016) {passTrigger=e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v"); }
-    if (year==2016) {
-        passTrigger=e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200") or  // nano vs nero
-                    e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v") ; // FIXME somehow in a better way
-    } // nano
-
-    if (debug)Log(__FUNCTION__,"DEBUG",Form("* PassTrigger %d",int(passTrigger)));
     // Objects : 4 jets, 1 photon
    
     // ***************************
     // **       preselection    **
     // ***************************
-    
+  
+    isVBF = true; // selection switch
+    isGGH = true; 
+
+    // getphoton  
     pho = e->GetPhoton(0);
     if (pho == nullptr) {
         if (debug)Log(__FUNCTION__,"DEBUG","* No PHOTONS");
-        return 1;
+        isVBF = false; isGGH = false;
+        return 1; //fastexit
     }
 
-    if (debug) { //nano
+    if (debug) { //nano debug
         Log(__FUNCTION__,"DEBUG","* Available jets (isJ, pt,eta,btag,isB)");
         for(int i=0;; ++i){
             Jet *j = e->GetBareJet(i); 
@@ -806,7 +969,8 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         selectedBJets.push_back( e->GetBjet(1) ) ;
         if (selectedBJets[0] == nullptr or selectedBJets[1] == nullptr) {
             if (debug)Log(__FUNCTION__,"DEBUG",Form("* No Bjets %p %p",selectedBJets[0],selectedBJets[1]));
-            return 1;
+            //return 1;
+            isVBF=false;
         }
     }
 
@@ -821,35 +985,107 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         }
         if (selectedBJets.size() <2 or selectedBJets[0] == nullptr or selectedBJets[1] == nullptr) {
             if (debug)Log(__FUNCTION__,"DEBUG",Form("* No CR Bjets %p %p",selectedBJets[0],selectedBJets[1]));
-            return 1;
+            //return 1;
+            isVBF=false;
         }
 
     }
+
+    // fatjet selection
+    for(unsigned i=0;i<e->NFatJets() ; ++i)
+    {
+        FatJet *f=e->GetFatJet(i);
+        if (f == nullptr) break;
+        if ( f->Pt()> 200. and f->ZHbbvsQCD() > FAT_ZHBB_MEDIUM ) {
+            selectedFatJets.push_back(f);
+        }
+    }
+    if (selectedFatJets.size()<1) isGGH=false;
 
     // Selection: jets
     selectedJets.clear();
     for(int i=0;; ++i){
         Jet *j = e->GetJet(i); 
         if (j==nullptr) break;
-        if (j==selectedBJets[0] or j==selectedBJets[1]) continue;
+        if (isVBF and (j==selectedBJets[0] or j==selectedBJets[1])) continue; // isVBF ensures that the two b are ok
         if (j->DeltaR(pho) < 0.4) continue; // make sure. probably cleaning already done
+        if (not isVBF and isGGH and j->DeltaR(selectedFatJets[0]) <0.8) continue; // clean against fatjets if it is not vbf.
         selectedJets.push_back(j);
     }
     
-    if (selectedJets.size() <2) {
+    if (selectedJets.size() <2) { // VBF SELECTION
         if (debug)Log(__FUNCTION__,"DEBUG",Form("* No Other jets %d",int(selectedJets.size())));
-        return 1;
+        isVBF=false;
+        //return 1;
     }
-    // ------------
+
+
+    // ------------ LEPTON VETO
+    if ( e->GetMuon(0) != nullptr)  { isVBF=false; isGGH= false; return 1;}
+    if ( e->GetElectron(0) != nullptr)  { isVBF=false; isGGH= false; return 1;}
+
     
     if (debug)Log(__FUNCTION__,"DEBUG","* Objects selection ok");
-    updateEventVar(); // preselect with mbb ...
+    updateEventVar(); // preselect with mbb bare ...
+    
+    // -------------------------------------
+    // TRIGGER SF. TODO 
+    if (debug)Log(__FUNCTION__,"DEBUG","* Doing trigger");
+
+    bool passBTagCSV {false}, passJetHT {false}, passSinglePhoton{false};
+    passTrigger= false;
+
+    if (isVBF){
+
+        if (year==2016) {
+
+            passBTagCSV = passBTagCSV or e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240") ;  // Unprescaled
+            if (multipd_ and e->IsRealData() and passBTagCSV and pd_ != BTagCSV ) return 1;
+
+            passJetHT = passJetHT or e->IsTriggered("HLT_PFHT900");
+            passJetHT = passJetHT or e->IsTriggered("HLT_PFJet450");
+            passJetHT = passJetHT or e->IsTriggered("HLT_AK8PFJet360_TrimMass30");
+
+            if (multipd_ and e->IsRealData() and passJetHT and pd_ != JetHT ) return 1;
+
+            //passTrigger = passTrigger or e->IsTriggered("HLT_Mu17_Photon30_CaloIdL_L1ISO"); // TODO Check if muon is inside bjets ??
+
+            passSinglePhoton = passSinglePhoton or e->IsTriggered("HLT_Photon50_R9Id90_HE10_Iso40_EBOnly_VBF"); //What is VBF ??
+            passSinglePhoton = passSinglePhoton or e->IsTriggered("HLT_Photon90_CaloIdL_PFHT600") ;  // 
+
+            if (multipd_ and e->IsRealData() and passSinglePhoton and pd_ != SinglePhoton ) return 1;
+
+            passTrigger = passBTagCSV or passJetHT or passSinglePhoton;
+
+            // NERO I have this in v3.7. Nero is with _v
+            passTrigger |= e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v") ; // FIXME somehow in a better way
+        } // nano
+    }
+
+    if (not isVBF and isGGH ){
+        if (year==2016) {
+            passJetHT = passJetHT or e->IsTriggered("HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p20");
+            passJetHT = passJetHT or e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
+            passJetHT = passJetHT or e->IsTriggered("HLT_PFHT900");
+            passJetHT = passJetHT or e->IsTriggered("HLT_PFJet450");
+            passJetHT = passJetHT or e->IsTriggered("HLT_AK8PFJet360_TrimMass30");
+
+            if (multipd_ and e->IsRealData() and passJetHT and pd_ != JetHT ) return 1;
+
+            passSinglePhoton = passSinglePhoton or e->IsTriggered("HLT_Photon90_CaloIdL_PFHT600");
+
+            if (multipd_ and e->IsRealData() and passSinglePhoton and pd_ != SinglePhoton ) return 1;
+
+            passTrigger=passSinglePhoton or passJetHT;
+        } // nano
+    }
+
+    if (debug)Log(__FUNCTION__,"DEBUG",Form("* PassTrigger %d",int(passTrigger)));
 
     // -------------------------------------------------------
-    //
-    //
-    if (fabs(eventVar_["mbb"]-91 )<30){
-        if (debug)Log(__FUNCTION__,"DEBUG","* Running KF");
+    // VBF kinematic fit
+    if (isVBF and fabs(eventVar_["mbb"]-91 )<30){
+        if (debug)Log(__FUNCTION__,"DEBUG","* Running KF VBF");
         kf->lambda_MET=1.; 
         kf->lambda_V=10.; 
         kf->cutWidth=31.;  // the Z value is more precise
@@ -876,29 +1112,34 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         kf->run();
         //kf->print();
         //if (kf->alpha_out > 1.e9) return 1;// outside of 30GeV window for mbb
+        
+        updateEventVar(); // update Variables with KF info. mbb and mass is with kf now
     }
-    updateEventVar(); // update Variables with KF info. mbb and mass is with kf now
+
+    // -------------------------------------------------------
+
 
     if (doTree) updateTreeVar();
 
     if (isSignal)matchToGen();
     if (isSignal and debug) printDebugInfo();
 
+    // VBF ANALYSIS
     // 1 photon, 2b mbb in Z, 2j, mjj >250 
-    if (pho->Pt() > 15 and fabs(pho->Eta())<=2.5 and fabs(eventVar_["mbb"]-91 )<30 and eventVar_["mjj"]>  250)
+    if (isVBF and pho->Pt() > 15 and fabs(pho->Eta())<=2.5 and fabs(eventVar_["mbb"]-91 )<30 and eventVar_["mjj"]>  250)
     {
-        if (debug)Log(__FUNCTION__,"DEBUG","* Passing Basic selection");
+        if (debug)Log(__FUNCTION__,"DEBUG","* Passing Basic selection VBF");
 
-        selection="PreTrigger"; // to study trigger turn on
-        fillHists(selection,label,systname);
+        selection="VBF/PreTrigger"; // to study trigger turn on
+        fillHistsVBF(selection,label,systname);
 
         if ( doTree and (systname == "" or systname =="NONE")) FillTree("hbbg");
         if (doTMVA) updateTmva();
 
         if (passTrigger) {
             if (debug)Log(__FUNCTION__,"DEBUG","* Pass trigger (Preselection)");
-            selection="Preselection";
-            fillHists(selection,label,systname);
+            selection="VBF/Preselection";
+            fillHistsVBF(selection,label,systname);
 
             // FINAL
             if ( fabs(eventVar_["mbb"]-91 )<5 and  //Z this is after kf
@@ -910,8 +1151,8 @@ int HbbgAnalysis::analyze(Event *event, string systname)
             {
                 if (debug)Log(__FUNCTION__,"DEBUG","* Pass Final selection");
 
-                selection="Final";
-                fillHists(selection,label,systname);
+                selection="VBF/Final";
+                fillHistsVBF(selection,label,systname);
                 
                 if (doTMVA){
                     if (bdt[0] > 0.85) Fill("HbbgAnalysis/Categories/mass_cat0_"+label,systname,mass_, e->weight());
@@ -922,6 +1163,51 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         } //Preselection
     }
 
+    // fatjets selection
+
+    // ggH boosted selection
+    if (isGGH and not doQCDCR and pho->Pt() > 15 and fabs(pho->Eta())<=2.5 and selectedFatJets[0]->Pt()>200)
+    {
+        FatJet *f =  selectedFatJets[0];
+        // create a TLorentzVector with mass
+
+        // to study
+        //eventVar_["ht"]
+        //eventVar_["drbbg"]
+        //eventVar_["dphibbg"]
+        //eventVar_["njets"]
+
+        // bb merged : fabs( f ->SDMass() - MZ) <15. and pho->DeltaR(f)>0.8)
+        if ( int(eventVar_["ggh_bbmerged"]))
+        {
+            string s="GGH/PreTrigger";
+            fillHistsGGH(s,label,systname);
+
+            if (passTrigger){
+                s="GGH/Preselection";
+                fillHistsGGH(s,label,systname);
+                //string s="GGH/Final";
+                Fill("HbbgAnalysis/Categories/mass_cat3_"+label,systname,mass_, e->weight());
+            }
+        
+        }
+        // bbg merged. 
+        // These cuts are also in the updateEventvar
+        //  --> Added T32
+        if ( int(eventVar_["ggh_bbgmerged"]) and eventVar_["fatjet_tau32"] > FAT_TAU32 )
+        {
+            string s="GGH_merged/PreTrigger";
+            fillHistsGGH(s, label,systname);
+            if (passTrigger){
+                s="GGH_merged/Preselection";
+                fillHistsGGH(s, label,systname);
+                //string s="GGH_merged/Final";
+                Fill("HbbgAnalysis/Categories/mass_cat4_"+label,systname,mass_, e->weight());
+            }
+
+        
+        }
+    }
     
     if (debug)Log(__FUNCTION__,"DEBUG","end Analyze");
     return 0;
