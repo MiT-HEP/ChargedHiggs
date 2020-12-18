@@ -97,10 +97,15 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRMET.weights.x
 ## BBtag - MC (8)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSBHad.weights.xml")
 
-# Multicalss - RMET
+# Multicalss - RMET (WvsZ)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_RMET_BDTG.weights.xml")
 
-##Res DNN tagger
+# Multicalss - RMET (EWK vs QCD WZ)
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlassChi2_BDTG.weights.xml")
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnncut_BDTG.weights.xml")
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnnmulticlass_BDTG.weights.xml")
+
+## Res DNN tagger
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RBT_ZZ_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RBTA_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RMET_DNN.weights.xml")
