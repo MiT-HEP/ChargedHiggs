@@ -659,6 +659,7 @@ bool Event::ApplyMttReweight(){
 double Event::ApplyL1PreFire(int year){
     //SF_TH2F *sf=(SF_TH2F*)GetWeight()->GetSF("prefire");
     if (IsRealData() ) return 1.;
+    if (GetWeight().l1_ ) return 1.; // applied by weight using nanoaod
     
     string name = "prefire";
     if (year==2016) name="prefire2016";
