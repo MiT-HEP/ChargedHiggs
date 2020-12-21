@@ -51,6 +51,21 @@ class SmearJes : virtual public SmearBase
         int smear(Event*e) override;	
 };
 
+class SmearJesPuppiMet : virtual public SmearBase
+{
+    public:
+        SmearJesPuppiMet() : SmearBase(){ name_ = "JESPUPPIMET";}
+        int smear(Event*e) override;	
+};
+
+class SmearJerPuppiMet : virtual public SmearBase
+{
+    public:
+        SmearJerPuppiMet() : SmearBase(){ name_ = "JERPUPPIMET";}
+        int smear(Event*e) override;	
+};
+
+
 class SmearJesAndCSV : virtual public SmearBase
 {
     // constructor: num -> 1,2,3,4,5 for simplicity
