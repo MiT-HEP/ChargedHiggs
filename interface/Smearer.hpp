@@ -65,6 +65,13 @@ class SmearJerPuppiMet : virtual public SmearBase
         int smear(Event*e) override;	
 };
 
+class SmearUnclusteredPuppiMet : virtual public SmearBase
+{
+    public:
+        SmearUnclusteredPuppiMet() : SmearBase(){ name_ = "UNCLUSTEREDPUPPIMET";}
+        int smear(Event*e) override;	
+};
+
 
 class SmearJesAndCSV : virtual public SmearBase
 {

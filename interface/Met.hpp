@@ -39,7 +39,7 @@ private:
 
         virtual inline int IsMet() const { return 1; }
         inline int IsObject()const override { return IsMet(); }
-        inline void  clearSyst() override { Object::clearSyst(); syst = 0; type=Smearer::NONE; puppiMetSyst.syst=0; puppiMetSyst.type=Smearer::NONE;}; // reset smearing
+        inline void  clearSyst() override { Object::clearSyst(); syst = 0; type=Smearer::NONE; puppiMetSyst.syst=0; puppiMetSyst.SetSmearType(Smearer::NONE);}; // reset smearing
         inline float Pt() const override { if ( syst == 0 ) return p4.Pt();
             else 
             {
