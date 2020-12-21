@@ -36,6 +36,7 @@ void Event::ClearEvent(){
     tracks_ . clear();
 
     weight_ -> clearSF( );
+    weight_ -> clearL1();
 
     //Log(__FUNCTION__,"DEBUG","End ClearEvent");
     //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","End Clear EVENT ----------" );
@@ -56,6 +57,7 @@ void Event::clearSyst(){
     weight_ -> resetSystSF();
     weight_ -> clearSystPU();
     weight_ -> SetSyst( MC::none ) ;
+    weight_ -> SetSystL1( 0 ) ;
 }
 
 float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton

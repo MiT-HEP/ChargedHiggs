@@ -19,6 +19,7 @@ void Weight::PrintInfo() {
     Log(__FUNCTION__,"INFO",Form("syst=%d",int(syst) ) );
     Log(__FUNCTION__,"INFO",Form("systPdf=%d",int(systPdf) ) );
     Log(__FUNCTION__,"INFO",Form("pu=%lf", pu_.GetPUWeight(mcName_,puInt_,runNum_) ) );
+    Log(__FUNCTION__,"INFO",Form("doL1=%d l1(nom)=%lf l1(down)=%lf l1(up)=%lf systL1=%d",l1_,l1prefiring_[L1Nom],l1prefiring_[L1Down],l1prefiring_[L1Up],int(systL1)));
     Log(__FUNCTION__,"INFO",Form("weight=%le", doWeight() ) );
     
     if (syst == MC::none and systPdf <0 ) 
