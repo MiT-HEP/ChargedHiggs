@@ -24,6 +24,7 @@ public:
 
     int year=2016; // master switch for year configuration
     bool doFinal = false;
+    int VERBOSE=false;
 
     void Init() override;
     int analyze(Event*,string systname) override;
@@ -59,15 +60,18 @@ public:
     bool doBAntiAnalysis=false;
     bool doHADAntiAnalysis=false;
 
+    bool doResonant = false;
+
     bool doWriteTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
-    bool writeTrainTree=true;
+    bool writeTrainTree=false;
 
     bool doTMVA=true;
     bool doResTagKeras = false;
     bool doResTagTMVA = true;
-    bool doMultiTagger = true;
+    // those two below are to prune the combination
+    bool doMultiTagger = false;
     bool do2DNN = false;
 
 private:

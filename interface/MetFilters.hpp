@@ -16,6 +16,8 @@ class MetFiltersAnalysis : virtual public AnalysisBase
         const string name() const override {return "MetFilterAnalysis";}
         void Init() override ;
 
+        int debug=0;
+
 };
 
 #endif

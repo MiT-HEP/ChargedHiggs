@@ -501,8 +501,8 @@ void LoadNero::FillPhotons(){
         Photon *p = new Photon();
         p->SetP4( *(TLorentzVector*) ((*b->p4)[i]) );
         //p->iso = b->chIso->at(i);
-        p->iso = b->iso->at(i);
-        p->id = (b->selBits->at(i) & BarePhotons::Selection::PhoMedium);
+        p->SetIso( b->iso->at(i));
+        p->SetId( (b->selBits->at(i) & BarePhotons::Selection::PhoMedium) );
         event_ -> phos_ . push_back(p);
     }
     return;
@@ -717,8 +717,8 @@ void LoadNero::FillMet(){
 #endif
 
     // FILL GEN MET
-    if ( event_->IsRealData() ) event_ -> met_ . gen = 0;
-    else event_ -> met_ . gen =( (TLorentzVector*)(*met->genP4)[0] )->Pt();
+    if ( event_->IsRealData() ) event_ -> met_ . SetGenPt(0.);
+    else event_ -> met_ . SetGenPt ( ( (TLorentzVector*)(*met->genP4)[0] )->Pt() );
 
 #ifdef VERBOSE
     if (VERBOSE>1) cout<<"[LoadNero]::[FillMet]::[DEBUG] Grace Exit "<<endl;
@@ -816,6 +816,8 @@ void LoadNero::FillMC(){
         if (  (apdg == 24 or apdg ==23 or apdg ==37) )  keep=true; // keep W/Z/chHiggs
         if (  (apdg == 5 or apdg ==6 ) ) keep=true; // keep top bottom
         if (  (apdg == 25) )  keep=true; // keep W/Z/chHiggs
+        if ( mc->flags->at(iGP) & ( BareMonteCarlo::LHE)) keep=true;  //keep all LHE particle
+        if (  (apdg == 22 ) ) keep=true; // keep top bottom
 
         //if ( ((TLorentzVector*) ((*mc->p4)[iGP]) )->Pt() < 0.01) keep = false;
 

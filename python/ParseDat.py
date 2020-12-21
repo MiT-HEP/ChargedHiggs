@@ -90,6 +90,7 @@ def ParseDat(name):
 		key = l.split('=')[0]
 		value = ''
 		if '=' in l : value = '='.join(l.split('=')[1:])
+		value=re.sub('~',' ',value)
 		######### BOOL  ###########
 		if key == "Dump" or key=="Final":
 			config[key]=BoolKey(value)
@@ -205,11 +206,16 @@ def FindEOS(name,mount=""):
 
 def FindDataset(name,mount=""): 
     DASclient = "dasgoclient -query '%(query)s'"
-    cmd= DASclient%{'query':'file dataset=%s'}
+    cmd= DASclient%{'query':'file dataset=%s'%name}
     if mount =="":
-        fileList=[ 'root://eoscms//'+x for x in check_output(cmd,shell=True).split() ]
+        o=check_output(cmd,shell=True).split()
+        fileList=[ 'root://eoscms//'+x for x in o ]
+        if fileList == []: return
+        ## try to open file0 -> Dynamically moving to AAA
+        f0= ROOT.TFile.Open(fileList[0])
+        if f0== None: fileList=[ 'root://xrootd-cms.infn.it//'+x for x in o]
     elif mount == "aaa" or mount == "AAA":
-        fileList=[] ## use AAA
+        fileList=[ 'root://xrootd-cms.infn.it//'+x for x in check_output(cmd,shell=True).split() ]
     else:
         fileList=[ mount+x for x in check_output(cmd,shell=True).split() ]
     return fileList

@@ -73,10 +73,10 @@ class FatJet : virtual public Object, virtual public SmearableBase
     float sdtau3;
     float softdropMass;
     float CorrectedPrunedMass;
+
     int nSubjets;
-    float subjet_btag;
-    int hasSubJetBTag{0};
-    int hasSubJetBTagLoose{0};
+    float subjet_btag; // max
+    float subjet_btagdeep;//max
 
     int isValid;
     //Gen-level info
@@ -102,8 +102,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float SDMass() const { return softdropMass ; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
 
-    inline int IsSubjetBTag() const { return hasSubJetBTag ; }
-    inline int IsSubjetBTagLoose() const { return hasSubJetBTagLoose ; }
+    inline int IsSubjetBTag() const { return 0 ; } // FIXME
+    inline int IsSubjetBTagLoose() const { return 0 ; }
 
     inline int hadFlavor() const { return hadFlavor_;}
 

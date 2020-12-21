@@ -15,13 +15,17 @@ class Met :
         TLorentzVector rawMet;
         TLorentzVector trackMet;
         TLorentzVector puppiMet;
+
+        float gen;
+        float gen_phi;
+        float significance;
+
     protected:
         // filters:
         bool FullRecommendation{false};
 
     public:
         Met() : Object(), SmearableComplex() {syst = 0 ;}
-        float gen ;
         bool filterbadPFMuon{false};
         bool filterbadChHadrons{false};
 
@@ -38,7 +42,10 @@ class Met :
             else return ptDownSyst[type] ;
             }
         }
-        virtual inline float PtGen(){ return gen;} 
+        virtual inline float PtGen() const { return gen;} 
+        virtual inline void SetGenPt(float pt) {gen=pt;}
+        virtual inline void SetGenPhi(float phi) {gen_phi=phi;}
+        virtual inline void SetSignificance(float s) {significance=s;}
         virtual void SetRawMetP4(TLorentzVector &x){rawMet=x;}
         TLorentzVector& GetRawMetP4(){return rawMet;}
 

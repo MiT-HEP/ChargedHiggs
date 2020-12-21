@@ -30,6 +30,7 @@ class Lepton : virtual public Object,
         // ele specific
         float pfPt_{0}; // w/o scale and smears for ele, pf pt for muons
         float r9_{0};
+        float sieie_{0};
         float etaSC_{0};
 
         //  these are the cut we want to apply
@@ -67,6 +68,7 @@ class Lepton : virtual public Object,
                 }
 
         inline void SetR9(float x) { r9_=x;}
+        inline void SetSieie(float x) { sieie_=x;}
         inline void SetEtaSC(float x) { etaSC_=x;}
         inline void SetPfPt(float x) { pfPt_=x;}
         inline void SetIsoCut(float x){isocut_=x;}

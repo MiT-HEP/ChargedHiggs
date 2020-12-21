@@ -12,10 +12,24 @@ addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('ZbbWpmJJ_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZbbWpmJJ_QCD_LO')
+### for nano
+addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZJJWPMJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZJJWPMJJjj_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('WPMJJWPMJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('WPMJJWPMJJjj_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_QCD_LO')
+###
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M2000_13TeV-madgraph')
 addConfig=VBShadAnalysis|AddLabel('SinglyChargedHiggsGMmodel_HWZ_M1500_13TeV-madgraph')
+addConfig=VBShadAnalysis|AddLabel('SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500_13TeV-madgraph')
+
 addConfig=VBShadAnalysis|AddLabel('aQGC_ZJJZJJjj')
 
 addConfig=VBShadAnalysis|AddLabel('WWjj_SS_ll')
@@ -95,10 +109,15 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRMET.weights.x
 ## BBtag - MC (8)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSBHad.weights.xml")
 
-# Multicalss - RMET
+# Multicalss - RMET (WvsZ)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_RMET_BDTG.weights.xml")
 
-##Res DNN tagger
+# Multicalss - RMET (EWK vs QCD WZ)
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlassChi2_BDTG.weights.xml")
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnncut_BDTG.weights.xml")
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnnmulticlass_BDTG.weights.xml")
+
+## Res DNN tagger
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RBT_ZZ_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RBTA_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RMET_DNN.weights.xml")

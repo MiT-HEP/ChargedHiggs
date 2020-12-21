@@ -1,0 +1,89 @@
+include=dat/config.2018.moriond.dat
+
+SFDB=aux/sf_database.2018.moriond.txt
+include=dat/json.2016.dat
+
+################
+### DATASETS ###
+################
+
+Files=
+
+sub=amariniHmm|/store/group/phys_higgs/cmshmm/amarini/Nero/v3.7/year2016
+
+####################
+###  BACKGROUND  ###
+####################
+##QCD
+#addfiles=%(amariniHmm)s/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+
+## QCD B-Enriched
+addfiles=%(amariniHmm)s/QCD_HT200to300_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT1000to1500_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT700to1000_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT300to500_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT500to700_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT1500to2000_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+addfiles=%(amariniHmm)s/QCD_HT2000toInf_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+
+
+## TT
+addfiles=%(amariniHmm)s/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8
+## Drell-Yan
+addfiles=%(amariniHmm)s/DYJetsToQQ_HT180_13TeV-madgraphMLM-pythia8
+
+##############
+###  DATA  ###
+##############
+#addfiles=%(amariniHmm)s/JetHT
+addfiles=%(amariniHmm)s/BTagCSV
+
+################
+###  SIGNAL  ###
+################
+## Signal
+#Files=
+addfiles=%(amariniHmm)s/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8
+addfiles=%(amariniHmm)s/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8
+
+
+
+############ RUN WITH DOUBLE MUONS ####################
+#addConfig=HmumuAnalysis|SetMultiPrimaryDataset(),AddLabel("DoubleMuon"),AddLabel("SingleMuon")
+#include=dat/catalog/2018.moriond/doubleMuon.dat
+######################################################
+
+Smear=NONE
+## be less peaky, given the n. of systs
+EntryPerSecond=10
+Final=no
+
+
+#MCDB=aux/mcdb.Hmumu.2019.dat
+#pileup=aux/pileup.2017.ReReco.root
+MCDB=aux/mcdb.2020.v3.7.year2016.dat
+pileup=aux/pileup.v3.7.year2016.root
+
+Correct=MetPhiCorrector
+config=MetPhiCorrector|year=2016
+
+
+Analysis=JsonAnalysis,MetFiltersAnalysis,HbbgAnalysis
+
+config=HbbgAnalysis|AddLabel('DY')
+addConfig=HbbgAnalysis|AddLabel('GluGlu_HiggsZG_Zbb_M125')
+addConfig=HbbgAnalysis|AddLabel('VBF_HiggsZG_Zbb_M125')
+addConfig=HbbgAnalysis|AddLabel('TT')
+addConfig=HbbgAnalysis|AddLabel('BGenFilter')
+addConfig=HbbgAnalysis|AddLabel('QCD')
+addConfig=HbbgAnalysis|year=2016
+addConfig=HbbgAnalysis|weights.push_back('aux/bdt_hbbg_v1.xml')
+

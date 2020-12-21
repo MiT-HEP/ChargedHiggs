@@ -1,0 +1,2 @@
+GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8 /store/user/amarini/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/NANOAODSIMv7_2016 411003.0 1
+VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8 /store/user/amarini/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/NANOAODSIMv7_2016 1347661.23914 1
