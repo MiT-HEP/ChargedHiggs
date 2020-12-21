@@ -97,7 +97,7 @@ elif 'NANOAOD' in opts.dataset:
     print "DEBUG, Calling FindDataset"
     fileList =  FindDataset(opts.dataset)
 else:
-    raise ValueError("not supported nano spec")
+    raise ValueError("not supported nano spec: "+opts.dataset)
 
 print "DEBUG, DATASET is",opts.dataset,"FILE LIST",fileList 
 
