@@ -6,20 +6,25 @@
 
 // flags enum
 #include "NeroProducer/Core/interface/BareMonteCarlo.hpp"
+//#define VERBOSE 1
 
 void LoadNano::SetYear(int y)
 {
     Loader::SetYear(y); 
-    nano->year=y;
+    if(nano) nano->year=y;
 }
 
 int LoadNano::InitTree(){
 
     //tree_->SetBranchAddress("run",&run);
-    nano.reset(new nanov8(tree_)); // call nano::Init -> SetBranchAddress
+    nano.reset(new nanov8(tree_,year)); // call nano::Init -> SetBranchAddress
 }
 
 int LoadNano::FillEvent(){
+
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Begin");
+#endif
 
    // Fill Met
     {
@@ -204,6 +209,7 @@ int LoadNano::FillEvent(){
         // REMEMBER TO CLEN THE LEPTONS IFF NOT USED
         event_ -> leps_ . push_back(l);
    }
+
    // Fill Electrons.
    for(int i=0;i<nano->nElectron;++i)
    {
@@ -270,6 +276,7 @@ int LoadNano::FillEvent(){
 
         event_ -> jets_ . push_back(j);
    }
+
 #warning CHECK_MASKS
    //UChar_t         Electron_cleanmask[6];   //[nElectron]
    //UChar_t         Jet_cleanmask[25];   //[nJet]
@@ -354,6 +361,7 @@ int LoadNano::FillEvent(){
    
    }
 
+
    //Fill Trigger and TriggerObjects
    {
        event_ -> triggerFired_ . clear();
@@ -376,6 +384,7 @@ int LoadNano::FillEvent(){
 
 
    }
+
 
    //Gen
    {
@@ -411,7 +420,7 @@ int LoadNano::FillEvent(){
     //
         for (unsigned i=0 ; i< nano->nLHEPdfWeight;++i){
             event_->GetWeight()->SetPdfWeight( nano->LHEPdfWeight[i] * nano->Generator_weight, i);
-}
+        }
 
        event_ -> SetPdfId(1,nano->Generator_id1);
        event_ -> SetPdfId(2,nano->Generator_id2);

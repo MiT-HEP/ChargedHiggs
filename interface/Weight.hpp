@@ -51,9 +51,9 @@ class Weight : virtual public SmearableBase {
     void PrintInfo();
     //const string name() const override{ return "Weight";};
 
-    inline void SetMcWeight(double w){mcWeight_= w; scales_=false; pdfs_=false;}
-    inline void SetScaleWeight(double w, MC::SCALES pos){scalesWeights_[pos]=w; scales_=true;}
-    inline void SetPdfWeight(double w, unsigned pos){pdfsWeights_[pos]=w; pdfs_=true;}
+    void SetMcWeight(double w);
+    void SetScaleWeight(double w, MC::SCALES pos);
+    void SetPdfWeight(double w, unsigned pos);
     inline void SetSyst( MC::SCALES val) { syst = val;}
     inline void SetSystPdf( int val=-1) { systPdf = val;}
 
@@ -99,8 +99,8 @@ class Weight : virtual public SmearableBase {
     void AddTF2SF(string label, string formula,string errFormula);
 
     //Log(__FUNCTION__,"DEBUG", string("clear SF of:") + s.first);
-    void clearSF( ){ sf_ =1.0; 
-        for(auto& s :sf_db) {s.second->clearEvent();} }
+    void clearSF( );
+
     void clearL1(){
         l1_=false;
         l1prefiring_[L1Nom]=1.;

@@ -1,8 +1,7 @@
-#define nanov8_cxx
 #include "interface/nanov8.hpp"
-#ifdef nanov8_cxx
-nanov8::nanov8(TChain *tree) : fChain(0) 
+nanov8::nanov8(TChain *tree,int y) : fChain(0) 
 {
+   year=y;
    Init(tree);
 }
 
@@ -305,9 +304,11 @@ void nanov8::Init(TChain *tree)
    fChain->SetBranchAddress("Jet_nElectrons", Jet_nElectrons, &b_Jet_nElectrons);
    fChain->SetBranchAddress("Jet_nMuons", Jet_nMuons, &b_Jet_nMuons);
    fChain->SetBranchAddress("Jet_puId", Jet_puId, &b_Jet_puId);
-   fChain->SetBranchAddress("L1PreFiringWeight_Dn", &L1PreFiringWeight_Dn, &b_L1PreFiringWeight_Dn);
-   fChain->SetBranchAddress("L1PreFiringWeight_Nom", &L1PreFiringWeight_Nom, &b_L1PreFiringWeight_Nom);
-   fChain->SetBranchAddress("L1PreFiringWeight_Up", &L1PreFiringWeight_Up, &b_L1PreFiringWeight_Up);
+   if (year==2016 or year==2017){
+       fChain->SetBranchAddress("L1PreFiringWeight_Dn", &L1PreFiringWeight_Dn, &b_L1PreFiringWeight_Dn);
+       fChain->SetBranchAddress("L1PreFiringWeight_Nom", &L1PreFiringWeight_Nom, &b_L1PreFiringWeight_Nom);
+       fChain->SetBranchAddress("L1PreFiringWeight_Up", &L1PreFiringWeight_Up, &b_L1PreFiringWeight_Up);
+   }
    fChain->SetBranchAddress("LHE_HT", &LHE_HT, &b_LHE_HT);
    fChain->SetBranchAddress("LHE_HTIncoming", &LHE_HTIncoming, &b_LHE_HTIncoming);
    fChain->SetBranchAddress("LHE_Vpt", &LHE_Vpt, &b_LHE_Vpt);
@@ -1504,4 +1505,3 @@ Bool_t nanov8::Notify()
    return kTRUE;
 }
 
-#endif // #ifdef nanov8_cxx

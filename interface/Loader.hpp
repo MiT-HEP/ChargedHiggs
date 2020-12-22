@@ -33,7 +33,10 @@ class Loader : public Named {
         virtual void NewFile() = 0 ;
         virtual void Clear() {};
 
-        virtual void SetYear(int y) {year=y;}
+        virtual void SetYear(int y) {
+            //Log(__FUNCTION__,"DEBUG",Form("year=%d",y));
+            year=y;
+        }
         
 };
 

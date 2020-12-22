@@ -141,14 +141,14 @@ void Looper::Loop()
 			for(auto s : systs_)
 			{
 #ifdef VERBOSE
-				if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing syst "<< s -> name() <<endl;
+				if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing syst loop"<< s -> name() <<endl;
 #endif
 				for(int i=-1; i<=1 ;++i)
 				{
 					if ( s->name().find("NONE") != string::npos and i!=0) continue;
 					if ( s->name().find("NONE") == string::npos and i==0) continue; // for the 
 #ifdef VERBOSE
-					if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing syst "<< s -> name() <<" : (Up,Down)"<<i <<endl;
+					if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing syst variation "<< s -> name() <<" : (Up,Down) "<<i <<endl;
 #endif
 					//reset 	
 					event_->clearSyst();

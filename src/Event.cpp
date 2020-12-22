@@ -44,6 +44,9 @@ void Event::ClearEvent(){
 }
 
 void Event::clearSyst(){
+#ifdef VERBOSE
+	if (VERBOSE > 1) Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG", string("Clear Syst. "));
+#endif
     for ( auto o: jets_) o->clearSyst();
     for ( auto o: tracks_) o->clearSyst();
     for ( auto o: fat_) o->clearSyst();
