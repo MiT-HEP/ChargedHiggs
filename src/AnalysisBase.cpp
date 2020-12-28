@@ -76,6 +76,17 @@ string AnalysisBase::GetLabel(Event *e){
             if (e->GetName().find(s) != string::npos ) 
             {
                 label=s;
+                
+                // automatize
+                if (label == "SingleMuon") pd_ = SingleMuon;
+                else if (label == "SingleElectron") pd_ = SingleElectron;
+                else if (label == "SinglePhoton") pd_ = SinglePhoton;
+                else if (label == "BTagCSV") pd_ = BTagCSV;
+                else if (label == "JetHT") pd_ = JetHT;
+                else if (label == "DoubleMuon") pd_ = DoubleMuon;
+                else if (label == "DoubleElectron") pd_ = DoubleElectron;
+                else pd_ = None;
+
                 break; // match the first
             }
         }

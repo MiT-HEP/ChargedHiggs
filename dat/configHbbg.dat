@@ -40,10 +40,13 @@ addfiles=%(amariniHmm)s/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8
 ## Drell-Yan
 addfiles=%(amariniHmm)s/DYJetsToQQ_HT180_13TeV-madgraphMLM-pythia8
 
+## Higgs
+addfiles=%(amariniHmm)s/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8
+
 ##############
 ###  DATA  ###
 ##############
-#addfiles=%(amariniHmm)s/JetHT
+addfiles=%(amariniHmm)s/JetHT
 addfiles=%(amariniHmm)s/BTagCSV
 
 ################
@@ -84,6 +87,10 @@ addConfig=HbbgAnalysis|AddLabel('VBF_HiggsZG_Zbb_M125')
 addConfig=HbbgAnalysis|AddLabel('TT')
 addConfig=HbbgAnalysis|AddLabel('BGenFilter')
 addConfig=HbbgAnalysis|AddLabel('QCD')
+addConfig=HbbgAnalysis|AddLabel('GluGluHToBB_M125')
 addConfig=HbbgAnalysis|year=2016
 addConfig=HbbgAnalysis|weights.push_back('aux/bdt_hbbg_v1.xml')
+
+############ configure MultiPrimary Dataset
+addConfig=HbbgAnalysis|SetMultiPrimaryDataset(),AddLabel("BTagCSV"),AddLabel("JetHT"),AddLabel("SinglePhoton")
 

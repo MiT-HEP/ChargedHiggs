@@ -97,7 +97,7 @@ elif 'NANOAOD' in opts.dataset:
     print "DEBUG, Calling FindDataset"
     fileList =  FindDataset(opts.dataset)
 else:
-    raise ValueError("not supported nano spec")
+    raise ValueError("not supported nano spec: "+opts.dataset)
 
 print "DEBUG, DATASET is",opts.dataset,"FILE LIST",fileList 
 
@@ -111,10 +111,26 @@ myTmp= r.TFile.Open("/tmp/" + os.environ["USER"] + "/mytmp.root","RECREATE")
 myTmp.cd()
 sum=r.TH1D("SumWeights","Sum of mcWeights",1,0,2)
 sum2=r.TH1D("SumWeights","Sum of mcWeights^2",1,0,2)
+scales=r.TH1D("SumWeights_Scales","Sum of mcWeights",10,0,10)
+nPdfs=100
+pdfs=r.TH1D("SumWeights_Pdfs","Sum of mcWeights",nPdfs,0,nPdfs)
 
 #nano->Generator_weight
 #nano->Pileup_nTrueInt
 ## PU
+
+# Runs Tree
+#*Br    0 :run       : run/i                                                  *
+#*Br    1 :genEventCount : Long64_t event count                               *
+#*Br    2 :genEventSumw : Double_t sum of gen weights                         *
+#*Br    3 :genEventSumw2 : Double_t sum of gen (weight^2)                     *
+#*Br    4 :nLHEScaleSumw : UInt_t Number of entries in LHEScaleSumw           *
+#*Br    5 :LHEScaleSumw :                                                     *
+#*         | Double_t Sum of genEventWeight * LHEScaleWeight[i], divided by genEventSumw*
+#*Br    6 :nLHEPdfSumw : UInt_t Number of entries in LHEPdfSumw               *
+#*Br    7 :LHEPdfSumw :                                                       *
+#*         | Double_t Sum of genEventWeight * LHEPdfWeight[i], divided by genEventSumw*
+##
 
 fOutput=r.TFile.Open(opts.pu,"UPDATE")
 
@@ -140,6 +156,7 @@ else:
         if  h != None: print "Overwriting",name
         puHist.append(  r.TH1F(name,"RD PU Distribution of %s"%opts.label,nBins,xMin,xMax)  )
 
+useRunTree=True
 
 for idx,fName in enumerate(fileList):
     print "processing file:",idx,"/",len(fileList)," : ", fName
@@ -149,14 +166,29 @@ for idx,fName in enumerate(fileList):
         fROOT = r.TFile.Open(re.sub('eoscms','xrootd-cms.infn.it',fName))
 
     t = fROOT.Get("Events")
+    runs= fROOT.Get("Runs")
+    runs.GetEntry(0)
+    if (runs.nLHEPdfSumw != nPdfs) : 
+        print "[WARNING] ",runs.nLHEPdfSumw,"in the NANOAOD. Using only",nPdfs, "(must be <)"
 
-    mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)
-    t.Draw("1>>mysum","Generator_weight") ##>>+ doesn't work
-    sum.Add(mysum)
+    if not useRunTree:
+        mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)
+        t.Draw("1>>mysum","Generator_weight","goff") ##>>+ doesn't work
+        sum.Add(mysum)
 
-    mysum2=r.TH1D("mysum2","Sum of mcWeights^2",1,0,2)
-    t.Draw("1>>mysum2","Generator_weight*Generator_weight") ##>>+ doesn't work
-    sum2.Add(mysum2)
+        mysum2=r.TH1D("mysum2","Sum of mcWeights^2",1,0,2)
+        t.Draw("1>>mysum2","Generator_weight*Generator_weight","goff") ##>>+ doesn't work
+        sum2.Add(mysum2)
+    else:
+        sum.Fill(1,runs.genEventSumw)
+        sum2.Fill(1,runs.genEventSumw2)
+
+        ## scales
+        for i in range(0,9):
+            scales.Fill(i, runs.LHEScaleSumw[i] * runs.genEventSumw)
+        ##pdfs
+        for i in range(0,nPdfs):
+            pdfs.Fill(i, runs.LHEPdfSumw[i] * runs.genEventSumw)
 
     n += t.GetEntries()
 
@@ -277,6 +309,23 @@ else:
     #elif '' in opts.label: xsec=
     ## INTERNAL
     print>>f,  xsec,
+
+    ## 
+    if scales.GetBinContent(1) > 0:
+    	print>>f, "SCALES", #r1f2=0,r1f5,r2f1,r2f2,r5f1,r5f5
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(5 + 1)  , ## offset by one in filling
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(3 + 1)  ,
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(7 + 1)  ,
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(8 + 1)  ,
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(1 + 1)  ,
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(0 + 1)  ,
+    	#for i in range(0,6):
+    	#	print>>f, sum.GetBinContent(1)/hScales.GetBinContent(i+1),
+    
+    if pdfs.GetBinContent(1) > 0:
+    	print>>f, "PDFS",
+    	for i in range(0,100):
+    		print>>f, sum.GetBinContent(1)/pdfs.GetBinContent(i+1), 
 
     ## INTERNAL
     print >>f

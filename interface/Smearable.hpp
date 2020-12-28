@@ -41,6 +41,27 @@ class SmearableComplex: virtual public SmearableBase{
 
 
 };
+
+#include "TLorentzVector.h"
+class SmearableComplexP4: virtual public SmearableBase{
+    public: 
+        bool filled[Smearer::NONE]; // warn if the syst shifts are not filled correctly
+        TLorentzVector p4UpSyst[Smearer::NONE];
+        TLorentzVector p4DownSyst[Smearer::NONE];
+        Smearer::smearType type{Smearer::NONE};
+
+        SmearableComplexP4():SmearableBase(){}
+        ~SmearableComplexP4(){}
+        void SetSmearType(Smearer::smearType x){ type= x;}
+        bool IsFilled() const { return filled[type] ; }
+
+        inline void SetFilled(Smearer::smearType x,bool value=true){filled[x]=value;}
+        inline void SetValueUp(Smearer::smearType x,TLorentzVector value){p4UpSyst[x]=value;}
+        inline void SetValueDown(Smearer::smearType x,TLorentzVector value){p4DownSyst[x]=value;}
+        
+        inline Smearer::smearType GetType() const {return type;}
+
+};
 #endif
 // Local Variables:
 // mode:c++

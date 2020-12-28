@@ -12,8 +12,11 @@ Files=
 #addfiles=/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/amarini-NANOAODSIMv7_2016-07f11a9f6612f8436de459459102e3f2/USER~instance=prod/phys03
 
 #No publication?
-addfiles=/store/user/amarini/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/NANOAODSIMv7_2016
-addfiles=/store/user/amarini/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/NANOAODSIMv7_2016
+#addfiles=/store/user/amarini/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/NANOAODSIMv7_2016
+#addfiles=/store/user/amarini/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/NANOAODSIMv7_2016
+
+#Loader=LoadNano|2016
+#Files=/store/mc/RunIISummer20UL18NanoAODv2/GluGluHToZZTo4L_M130_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8
 
 ## Signal
 

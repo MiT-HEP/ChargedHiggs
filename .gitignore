@@ -46,3 +46,7 @@ test/crabTest/*dat
 
 # emacs
 *~
+
+## MCDB and PILEUP
+aux/mcdb*dat
+aux/pileup*root

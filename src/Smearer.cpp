@@ -23,6 +23,48 @@ int SmearJes::smear(Event *e)
     return SMEAR_OK;
 }
 
+int SmearJesPuppiMet::smear(Event *e)
+{
+    // only on MC
+    if( e->IsRealData() ) return SMEAR_NA;
+    // this is not const like in e->GetMet()
+    //#warning NO MET IN JES
+    GetMet(e) . puppiMetSyst . syst = syst_;
+    GetMet(e) . puppiMetSyst . SetSmearType(Smearer::JES);
+    
+    if ( not GetMet(e) . puppiMetSyst . IsFilled() ) Log(__FUNCTION__,"WARNING","JES Smearing not filled in puppi MetMET");
+
+    return SMEAR_OK;
+}
+
+int SmearJerPuppiMet::smear(Event *e)
+{
+    // only on MC
+    if( e->IsRealData() ) return SMEAR_NA;
+    // this is not const like in e->GetMet()
+    //#warning NO MET IN JES
+    GetMet(e) . puppiMetSyst . syst = syst_;
+    GetMet(e) . puppiMetSyst . SetSmearType(Smearer::JER);
+    
+    if ( not GetMet(e) . puppiMetSyst . IsFilled() ) Log(__FUNCTION__,"WARNING","JER Smearing not filled in puppi MetMET");
+
+    return SMEAR_OK;
+}
+
+int SmearUnclusteredPuppiMet::smear(Event *e)
+{
+    // only on MC
+    if( e->IsRealData() ) return SMEAR_NA;
+    // this is not const like in e->GetMet()
+    //#warning NO MET IN JES
+    GetMet(e) . puppiMetSyst . syst = syst_;
+    GetMet(e) . puppiMetSyst . SetSmearType(Smearer::UNCLUSTER);
+    
+    if ( not GetMet(e) . puppiMetSyst . IsFilled() ) Log(__FUNCTION__,"WARNING","JES Smearing not filled in puppi MetMET");
+
+    return SMEAR_OK;
+}
+
 int SmearJesAndCSV::smear(Event *e)
 {
     // right correlations with jes, if wanted
