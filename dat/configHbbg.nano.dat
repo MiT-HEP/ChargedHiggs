@@ -44,7 +44,7 @@ Correct=MetPhiCorrector
 config=MetPhiCorrector|year=2016
 
 
-Analysis=JsonAnalysis,MetFiltersAnalysis,HbbgAnalysis
+Analysis=OneAnalysis,JsonAnalysis,MetFiltersAnalysis,HbbgAnalysis
 
 config=HbbgAnalysis|AddLabel('DY')
 addConfig=HbbgAnalysis|AddLabel('GluGlu_HiggsZG_Zbb_M125')
