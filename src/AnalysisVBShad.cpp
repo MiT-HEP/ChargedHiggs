@@ -1,4 +1,4 @@
-#include "interface/AnalysisVBShad.hpp"
+1;95;0c#include "interface/AnalysisVBShad.hpp"
 #include "TRandom3.h"
 #include "TStopwatch.h"
 #include "TPython.h"
@@ -62,6 +62,49 @@ void VBShadAnalysis::SetFatJetCuts(FatJet *f){
     f->SetSDMassCut(30);
 }
 
+bool VBShadAnalysis::checkSignalLabel(string l) {
+
+    if(//NANOV8
+       l.find("ZNuNuWPMJJjj_EWK") !=string::npos  ||
+       l.find("ZNuNuWPMJJjj_QCD") !=string::npos  ||
+       l.find("ZNuNuWPMJJjj_EWK_QCD") !=string::npos  ||
+       l.find("ZBBWPMJJjj_EWK") !=string::npos  ||
+       l.find("ZBBWPMJJjj_QCD") !=string::npos  ||
+       l.find("ZBBWPMJJjj_EWK_QCD") !=string::npos  ||
+       l.find("ZJJWPMJJjj_EWK") !=string::npos  ||
+       l.find("ZJJWPMJJjj_QCD") !=string::npos  ||
+       l.find("ZJJWPMJJjj_EWK_QCD") !=string::npos  ||
+       l.find("WPMJJWPMJJjj_EWK") !=string::npos  ||
+       l.find("WPMJJWPMJJjj_QCD") !=string::npos  ||
+       l.find("WPMJJWPMJJjj_EWK_QCD") !=string::npos  ||
+       l.find("WPJJWMJJjj_EWK") !=string::npos  ||
+       l.find("WPJJWMJJjj_QCD") !=string::npos  ||
+       l.find("WPJJWMJJjj_EWK_QCD") !=string::npos  ||
+       // OLD labels
+       l.find("ZnnZhadJJ_EWK") !=string::npos  ||
+       l.find("ZbbZhadJJ_EWK")!=string::npos  ||
+       l.find("WPhadWPhadJJ_EWK") !=string::npos ||
+       l.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
+       l.find("ZNuNuWPMJJjj_QCD") !=string::npos ||
+       l.find("ZbbWpmJJ_EWK") !=string::npos ||
+       l.find("ZbbWpmJJ_QCD") !=string::npos ||
+       l.find("WWjj_SS_ll") !=string::npos ||
+       l.find("WWjj_SS_lt") !=string::npos ||
+       l.find("WWjj_SS_tt") !=string::npos ||
+       //
+       l.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000") !=string::npos ||
+       l.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
+       l.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000") !=string::npos ||
+       l.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ||
+       l.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ||
+       l.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M2000") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) {
+        return true;
+    } return false;
+}
+
 void VBShadAnalysis::BookHisto(string l, string category)
 {
 
@@ -103,23 +146,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
     }
 
-    if(l.find("ZnnZhadJJ_EWK") !=string::npos  ||
-       l.find("ZbbZhadJJ_EWK")!=string::npos  ||
-       l.find("WPhadWPhadJJ_EWK") !=string::npos ||
-       l.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
-       l.find("ZNuNuWPMJJjj_QCD") !=string::npos ||
-       l.find("ZbbWpmJJ_EWK") !=string::npos ||
-       l.find("ZbbWpmJJ_QCD") !=string::npos ||
-       l.find("WWjj_SS_ll") !=string::npos ||
-       l.find("WWjj_SS_lt") !=string::npos ||
-       l.find("WWjj_SS_tt") !=string::npos ||
-       l.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
-       l.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
-       l.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
-       l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
-       l.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) {
-        Book ("VBShadAnalysis/MVVres"+category+"_"+l, "MVVres ; ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100, -5., 5.);
-    }
+    if(checkSignalLabel(l)) Book ("VBShadAnalysis/MVVres"+category+"_"+l, "MVVres ; ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100, -5., 5.);
 
     AddFinalHisto("VBShadAnalysis/FWJETS/Mjj"+category+"_"+l);
     Book ("VBShadAnalysis/FWJETS/Mjj"+category+"_"+l, "Mjj ; M(j,j) [GeV]; Events", 35,0,3500.);
@@ -1459,15 +1486,15 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WWjj_SS_ll") !=string::npos ||
                label.find("WWjj_SS_lt") !=string::npos ||
                label.find("WWjj_SS_tt") !=string::npos ||
-               label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
-               label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
                label.find("ST") !=string::npos ||
                label.find("TTX") !=string::npos ||
-               label.find("TTJets") !=string::npos ||
-               label.find("TT_TuneCUETP8M2T4") !=string::npos ||
+               //               label.find("TTTo2L2Nu") !=string::npos ||
+               label.find("TTToSemiLeptonic") !=string::npos ||
+               label.find("TTToHadronic") !=string::npos ||
+               label.find("TTJets_TuneCP5") !=string::npos ||
                label.find("TT_Mtt") !=string::npos
                ) {
         pdgID1=24;
@@ -1475,6 +1502,12 @@ void VBShadAnalysis::genStudies(Event*e, string label )
     } else if (label.find("DIBOSON") !=string::npos ||
                label.find("TRIBOSON") !=string::npos ||
                label.find("MULTIBOSON") !=string::npos ||
+               label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000") !=string::npos ||
+               label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
+               label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000") !=string::npos ||
+               label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ||
+               label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ||
+               label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M2000") !=string::npos ||
                label.find("ZNuNuWPMJJjj_EWK")!=string::npos ||
                label.find("ZNuNuWPMJJjj_QCD")!=string::npos ||
                label.find("ZbbWpmJJ_EWK")!=string::npos ||
@@ -1936,19 +1969,11 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     SetTreeVar("EvtNum",e->eventNum());
     SetTreeVar("Weights",e->weight());
 
-
     bool match_all = false;
     bool match_V = false;
     bool match_f = false;
 
-
-    if((label.find("WPhadWPhadJJ_EWK") !=string::npos ) ||
-       (label.find("ZbbZhadJJ_EWK") !=string::npos ) ||
-       (label.find("ZnnZhadJJ_EWK") !=string::npos ) ||
-       (label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) ||
-       (label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) ||
-       (label.find("ZbbWpmJJ_EWK") !=string::npos ) ||
-       (label.find("ZbbWpmJJ_QCD") !=string::npos )) {
+    if(checkSignalLabel(label)) {
 
         bool matchi = false;
         bool matchj = false;
@@ -2051,15 +2076,15 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
 
     }
 
-
     SetTreeVar("fmatch",(int)match_f);
     SetTreeVar("Vmatch",(int)match_V); 
     SetTreeVar("Allmatch",(int)match_all);
-    
 
     //cout << "Vmatch" << match_V << "Allmatch" << match_all << endl;
 
     int sigmc=0;
+    /*
+    // OLD FOR NERO
     if(label.find("WPhadWPhadJJ_EWK") !=string::npos ) sigmc = 1 ;
     if(label.find("ZbbZhadJJ_EWK") !=string::npos ) sigmc = 2 ;
     if(label.find("ZnnZhadJJ_EWK") !=string::npos ) sigmc = 3 ;
@@ -2067,6 +2092,22 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) sigmc = 5 ;
     if(label.find("ZbbWpmJJ_EWK") !=string::npos ) sigmc = 6 ;
     if(label.find("ZbbWpmJJ_QCD") !=string::npos ) sigmc = 7 ;
+    */
+    if(label.find("WPMJJWPMJJjj_EWK") !=string::npos ) sigmc = 1 ;
+    if(label.find("WPMJJWPMJJjj_QCD") !=string::npos ) sigmc = 2 ;
+    if(label.find("WPMJJWPMJJjj_EWK_QCD") !=string::npos ) sigmc = 3 ;
+    if(label.find("WPJJWMJJjj_EWK") !=string::npos ) sigmc = 4 ;
+    if(label.find("WPJJWMJJjj_QCD") !=string::npos ) sigmc = 5 ;
+    if(label.find("WPJJWMJJjj_EWK_QCD") !=string::npos ) sigmc = 6 ;
+    if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) sigmc = 7 ;
+    if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) sigmc = 8 ;
+    if(label.find("ZNuNuWPMJJjj_EWK_QCD") !=string::npos ) sigmc = 9 ;
+    if(label.find("ZBBWPMJJjj_EWK") !=string::npos ) sigmc = 10 ;
+    if(label.find("ZBBWPMJJjj_QCD") !=string::npos ) sigmc = 11 ;
+    if(label.find("ZBBWPMJJjj_EWK_QCD") !=string::npos ) sigmc = 12 ;
+    if(label.find("ZJJWPMJJjj_EWK") !=string::npos ) sigmc = 13 ;
+    if(label.find("ZJJWPMJJjj_QCD") !=string::npos ) sigmc = 14 ;
+    if(label.find("ZJJWPMJJjj_EWK_QCD") !=string::npos ) sigmc = 15 ;
     SetTreeVar("MC",sigmc);
 
 }
@@ -2106,6 +2147,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if (category.find("RBtag")   !=string::npos) SetTreeVar("ana_category",6);
 
     int mc=0;
+    /* // OLD LABEL
     if(label.find("WPhadWPhadJJ_EWK") !=string::npos ) mc = 1 ;
     if(label.find("ZbbZhadJJ_EWK") !=string::npos ) mc = 2 ;
     if(label.find("ZnnZhadJJ_EWK") !=string::npos ) mc = 3 ;
@@ -2117,22 +2159,47 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WWjj_SS_ll") !=string::npos ) mc = 8 ;
     if(label.find("WWjj_SS_lt") !=string::npos ) mc = 9 ;
     if(label.find("WWjj_SS_tt") !=string::npos ) mc = 10 ;
+    */
 
-    if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 11 ;
-    if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 12 ;
-    if(label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) mc = 13 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ) mc = 15 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 16 ;
-    if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 20 ;
+
+    if(label.find("WPMJJWPMJJjj_EWK") !=string::npos ) mc = 1 ;
+    if(label.find("WPMJJWPMJJjj_QCD") !=string::npos ) mc = 2 ;
+    if(label.find("WPMJJWPMJJjj_EWK_QCD") !=string::npos ) mc = 3 ;
+    if(label.find("WPJJWMJJjj_EWK") !=string::npos ) mc = 4 ;
+    if(label.find("WPJJWMJJjj_QCD") !=string::npos ) mc = 5 ;
+    if(label.find("WPJJWMJJjj_EWK_QCD") !=string::npos ) mc = 6 ;
+    if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) mc = 7 ;
+    if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) mc = 8 ;
+    if(label.find("ZNuNuWPMJJjj_EWK_QCD") !=string::npos ) mc = 9 ;
+    if(label.find("ZBBWPMJJjj_EWK") !=string::npos ) mc = 10 ;
+    if(label.find("ZBBWPMJJjj_QCD") !=string::npos ) mc = 11 ;
+    if(label.find("ZBBWPMJJjj_EWK_QCD") !=string::npos ) mc = 12 ;
+    if(label.find("ZJJWPMJJjj_EWK") !=string::npos ) mc = 13 ;
+    if(label.find("ZJJWPMJJjj_QCD") !=string::npos ) mc = 14 ;
+    if(label.find("ZJJWPMJJjj_EWK_QCD") !=string::npos ) mc = 15 ;
+    //
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 21 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 22 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) mc = 23 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ) mc = 24 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ) mc = 25 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znu_M2000") !=string::npos ) mc = 26 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000") !=string::npos ) mc = 27 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 28 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000") !=string::npos ) mc = 29 ;
+    //
+    if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 30 ;
 
     // multiboson
     if(label.find("MULTIBOSON") !=string::npos) mc = 100 ;
     if(label.find("TRIBOSON") !=string::npos) mc = 110 ;
     if(label.find("DIBOSON") !=string::npos) mc = 120 ;
     // with Top
-    if(label.find("TT_TuneCUETP8M2T4") !=string::npos) mc =200 ;
-    if(label.find("TT_Mtt") !=string::npos) mc =201 ;
-    if(label.find("TTJets") !=string::npos) mc =202 ;
+    //    if(label.find("TTTo2L2Nu") !=string::npos) mc =200 ; //powheg
+    if(label.find("TTToHadronic") !=string::npos) mc =200 ;  //powheg
+    if(label.find("TTToSemiLeptonic") !=string::npos) mc =200 ; //powheg 
+    if(label.find("TT_Mtt") !=string::npos) mc =201 ; // powheg
+    if(label.find("TTJets") !=string::npos) mc =202 ;  // amcatnloFXFX
 
     if(label.find("TTX") !=string::npos) mc =205 ;
     if(label.find("ST") !=string::npos) mc =210 ;
@@ -2287,20 +2354,30 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //    if(label.find("WJetsToQQ") !=string::npos) label = "WJetsToLNu"; ;
 
     //$$$$$$$$$
-    //$$$$$$$$$ Merge TTbar
+    //$$$$$$$$$ Merge and redefine TTbar
     //$$$$$$$$$
 
-    if((label.find("TT_TuneCUETP8M2T4") !=string::npos) or (label.find("TT_Mtt") !=string::npos) ) {
+    if((label.find("TTTo2L2Nu") !=string::npos) 
+       or (label.find("TTToSemiLeptonic") !=string::npos)
+       or (label.find("TTToHadronic") !=string::npos)
+       or (label.find("TT_Mtt") !=string::npos) ) {
         float Mtt = genMtt(e);
         Fill("VBShadAnalysis/BOSON/Mtt_" +label, systname, Mtt, e->weight() );
     }
 
     if (not e->IsRealData()
-        and (label.find("TT_TuneCUETP8M2T4") != string::npos )
+        and (label.find("TTTo2L2Nu") !=string::npos)
+        and (label.find("TTToSemiLeptonic") !=string::npos)
+        and (label.find("TTToHadronic") !=string::npos)
         and not e->ApplyMttReweight()) return EVENT_NOT_USED;
 
-    if ( label == "TT_Mtt-1000toInf_TuneCUETP8M2T4" ) label = "TT_TuneCUETP8M2T4";
-    if ( label == "TT_Mtt-700to1000_TuneCUETP8M2T4" ) label = "TT_TuneCUETP8M2T4";
+    if ( label == "TT_Mtt-1000toInf_TuneCP5" ) label = "TT_TuneCP5";
+    if ( label == "TT_Mtt-700to1000_TuneCP5" ) label = "TT_TuneCP5";
+
+    if ( label == "TTTo2L2Nu" ) label = "TT_TuneCP5";
+    if ( label == "TTToSemiLeptonic" ) label = "TT_TuneCP5";
+    if ( label == "TTToHadronic" ) label = "TT_TuneCP5";
+
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Final label is: " + label);
     //$$$$$$$$$
@@ -2329,29 +2406,55 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     // TRIGGER STORY
  
     bool passtriggerHad = false;
-    if (year==2016  ) passtriggerHad = e->IsTriggered("HLT_PFHT900_v")
+    if (year==2016) passtriggerHad = e->IsTriggered("HLT_PFHT900_v")
                         || e->IsTriggered("HLT_AK8PFJet450_v")
                         || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")
                         || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v")
                         || e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v")
                         || e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    
+    if (year==2017) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
+                        || e->IsTriggered("HLT_AK8PFJet500") 
+                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
+                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
+                        || e->IsTriggered("HLT_AK8PFJetFwd450")
+                        || e->IsTriggered("HLT_PFJetFwd450");
+    
+    
+    if (year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
+                        || e->IsTriggered("HLT_AK8PFJet500")
+                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
+                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30") 
+                        || e->IsTriggered("HLT_AK8PFJetFwd200")
+                        || e->IsTriggered("HLT_PFJetFwd200");
 
-    if (year==2017  ) passtriggerHad =  true; 
-                        //e->IsTriggered("HLT_PFHT1050")  
-                        //or e->IsTriggered("HLT_AK8PFJet450g")
-                        //or e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50g")
-                        //or e->IsTriggered("HLT_AK8PFJet360_TrimMass30g")
-                        //or e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30g")
-                        //or e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5g");
+    /*
+      2017 - JetHT 
+      HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2
+      HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2
+      HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5
+      HLT_DiPFJetAve160_HFJEC
+      HLT_DiPFJetAve300_HFJEC 
+
+      2018 - JetHT
+      HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2_v2
+      HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4_v2
+      HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02_v3
+      HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1
+      HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2_v8
+    */
 
     bool passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
 
-
-    bool passtriggerBtag = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6_v")
+    bool passtriggerBtag = false;
+    if (year==2016 ) { passtriggerBtag = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6_v")
                         || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160_v")
                         || e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v") || passtriggerHad;   
+    }
+    if (year==2017  ) passtriggerBtag =  true;
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Before tirgger" );
+
     if(!doTrigger){
       //    bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
       if (doHADAnalysis or doHADAntiAnalysis) {
@@ -2359,14 +2462,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
       }
 
       if(doMETAnalysis or doMETAntiAnalysis) {
-        //    bool passtriggerMET = (e->IsTriggered("HLT_PFMET120_PFMHT120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
-        if(!passtriggerMET) return EVENT_NOT_USED;
+      //    bool passtriggerMET = (e->IsTriggered("HLT_PFMET120_PFMHT120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
+          if(!passtriggerMET) return EVENT_NOT_USED;
       }
 
       if(doBAnalysis) {
         if(!passtriggerBtag) return EVENT_NOT_USED;
       }
     }
+
+    //$$$$$$$$$$$
+    //$$$$$$$$$$$
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","After tirgger" );
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 1, e->weight() );  //1--trigger
@@ -2927,23 +3033,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
 
-    if(label.find("ZnnZhadJJ_EWK") !=string::npos  ||
-       label.find("ZbbZhadJJ_EWK")!=string::npos  ||
-       label.find("WPhadWPhadJJ_EWK") !=string::npos ||
-       label.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
-       label.find("ZNuNuWPMJJjj_QCD") !=string::npos ||
-       label.find("ZbbWpmJJ_EWK") !=string::npos ||
-       label.find("ZbbWpmJJ_QCD") !=string::npos ||
-       label.find("WWjj_SS_ll") !=string::npos ||
-       label.find("WWjj_SS_lt") !=string::npos ||
-       label.find("WWjj_SS_tt") !=string::npos ||
-       label.find("SinglyChargedHiggsGMmodel_HWZ_M1500") !=string::npos ||
-       label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ||
-       label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
-       label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
-       label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos) {
-        if(evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
-    }
+    if(checkSignalLabel(label) and evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
 
     Fill("VBShadAnalysis/Cutflow_" +label, systname, 6, e->weight() );  //InvMFatjet cut
     Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 6, 1 );
@@ -3103,7 +3193,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ STUDY triggers
     //////
 
-    if(doTrigger) studyTriggers(e, category, label, systname);
+    //    if(doTrigger) studyTriggers(e, category, label, systname);
 
     //////
     //$$$ MONEY plots below
