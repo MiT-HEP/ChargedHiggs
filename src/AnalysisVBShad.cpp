@@ -1,4 +1,4 @@
-1;95;0c#include "interface/AnalysisVBShad.hpp"
+#include "interface/AnalysisVBShad.hpp"
 #include "TRandom3.h"
 #include "TStopwatch.h"
 #include "TPython.h"
@@ -2444,7 +2444,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
       HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2_v8
     */
 
-    bool passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
+    bool passtriggerMET = false;
+    if  (year==2016 ) passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
+    if  (year==2017 or year==2018) passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60"));
 
     bool passtriggerBtag = false;
     if (year==2016 ) { passtriggerBtag = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6_v")

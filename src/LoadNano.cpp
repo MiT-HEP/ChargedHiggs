@@ -514,6 +514,7 @@ void LoadNano::NewFile(){
 	event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
     }else if (year==2017){
       //    https://dmytro.web.cern.ch/dmytro/trigger/2017/triggerEvolution_all.html
+      /*
         event_->triggerNames_.push_back("HLT_AK8DiPFJet300_200_TrimMass30");
         event_->triggerNames_.push_back("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50");
         event_->triggerNames_.push_back("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
@@ -529,11 +530,11 @@ void LoadNano::NewFile(){
         event_->triggerNames_.push_back("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
         event_->triggerNames_.push_back("HLT_PFHT900");
         event_->triggerNames_.push_back("HLT_PFHT_800");
+      */
         event_->triggerNames_.push_back("HLT_PFMET120_PFMHT120_IDTight_PFHT60");
-        event_->triggerNames_.push_back("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight");
         event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
         event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
-        event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
+//        event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
         event_->triggerNames_.push_back("HLT_PFHT1050");
 	event_->triggerNames_.push_back("HLT_AK8PFHT800_TrimMass50");
 	event_->triggerNames_.push_back("HLT_AK8PFJet500");
@@ -549,7 +550,6 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_AK8PFJetFwd200");
       event_->triggerNames_.push_back("HLT_PFJetFwd200");
       event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight"); 
-      event_->triggerNames_.push_back("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight");
       event_->triggerNames_.push_back("HLT_PFMET120_PFMHT120_IDTight_PFHT60");
       event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
       event_->triggerNames_.push_back("HLT_IsoMu27");
