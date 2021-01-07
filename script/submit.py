@@ -430,7 +430,7 @@ if opts.tar:
 	#/tmp/x509up_u45059
 	if opts.proxy: 
 		if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
-            pass
+			pass
 		else:
 			cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
 	tarCmdline = " ".join(cmd)
@@ -595,7 +595,7 @@ if not opts.hadoop:
             sh.write("mkdir -p %s\n"%opts.dir)
             sh.write("cp %s/*dat %s/\n"%(basedir,opts.dir))
             if opts.proxy: 
-		        if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
+                if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
                     sh.write("export X509_USER_PROXY=%s\n"%os.environ['X509_USER_PROXY'])
                 else:
                     sh.write("export X509_USER_PROXY=/tmp/x509up_u%d\n"%os.getuid())
