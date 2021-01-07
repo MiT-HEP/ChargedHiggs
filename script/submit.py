@@ -428,7 +428,11 @@ if opts.tar:
 	cmd.extend( glob("test/*.exe") )
 	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
 	#/tmp/x509up_u45059
-	if opts.proxy: cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
+	if opts.proxy: 
+		if 'X509_USER_PROXY' in os.environ:
+			cmd.extend( os.environ['X509_USER_PROXY']) ## export X509_USER_PROXY=x509up_u$(id -u)
+		else:
+			cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
 	tarCmdline = " ".join(cmd)
 	print tarCmdline
 	call(cmd)
