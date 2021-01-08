@@ -54,9 +54,9 @@ if opts.dat != "":
                    '13TeV' in x or \
                    'herwig' in x or \
                    'pythia' in x : label=x
-        elif '/store/' in f:
-            label=dirs[4] # default ?
-            raise ValueError("to check label finding")
+        elif '/store/group/phys_higgs/cmshmm/amarini' in f:
+            label=dirs[6] # default ?
+#            raise ValueError("to check label finding")
         elif '/eos/user/' in f: 
             ### this is a nanoaod path
             label=dirs[3] ## store mc RunII DY 
@@ -250,6 +250,29 @@ else:
     elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-500' in opts.label: xsec=1
     elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-220' in opts.label: xsec=1
     elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=1
+    ## SIG VBS
+    elif 'ZNuNuWPMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZNuNuWPMJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'ZNuNuWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'ZBBWPMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZBBWPMJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'ZBBWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'ZJJZJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZJJZJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'ZJJZJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPMJJWPMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPMJJWPMJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPMJJWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'WPJJWMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPJJWMJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPJJWMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    ## SIG ChargedHiggsToBoson
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1000_13TeV-madgraph' in opts.label: xsec=1
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1500_13TeV-madgraph' in opts.label: xsec=1
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M2000_13TeV-madgraph' in opts.label: xsec=1
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000_13TeV-madgraph' in opts.label: xsec=1
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500_13TeV-madgraph' in opts.label: xsec=1
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000_13TeV-madgraph' in opts.label: xsec=1
     ### H-> mumu
     elif 'HToMuMu' in opts.label: xsec=1
     elif 'HToZG' in opts.label: xsec=1
@@ -262,6 +285,8 @@ else:
     elif 'TTTT' in opts.label:xsec=0.009103
     ### TT
     elif 'TTTo2L2Nu' in opts.label: xsec=88.20
+    elif 'TTToSemiLeptonic' in opts.label: xsec=365.3452
+    elif 'TTToHadronic' in opts.label: xsec=377.9607
     elif 'TT' in opts.label: xsec=831
     ## ST
     elif 'ST_s-channel_4f_InclusiveDecays' in opts.label: xsec=10.32
