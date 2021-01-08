@@ -71,9 +71,9 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
        l.find("ZBBWPMJJjj_EWK") !=string::npos  ||
        l.find("ZBBWPMJJjj_QCD") !=string::npos  ||
        l.find("ZBBWPMJJjj_EWK_QCD") !=string::npos  ||
-       l.find("ZJJWPMJJjj_EWK") !=string::npos  ||
-       l.find("ZJJWPMJJjj_QCD") !=string::npos  ||
-       l.find("ZJJWPMJJjj_EWK_QCD") !=string::npos  ||
+       l.find("ZJJZJJjj_EWK_LO") !=string::npos  ||
+       l.find("ZJJZJJjj_EWK_QCD_LO") !=string::npos  ||
+       l.find("ZJJZJJjj_QCD_LO") !=string::npos  ||
        l.find("WPMJJWPMJJjj_EWK") !=string::npos  ||
        l.find("WPMJJWPMJJjj_QCD") !=string::npos  ||
        l.find("WPMJJWPMJJjj_EWK_QCD") !=string::npos  ||
@@ -771,6 +771,7 @@ void VBShadAnalysis::Init(){
 
 	Log(__FUNCTION__,"INFO","Booking Histo Mass");
     for ( string l : AllLabel()  ) {
+
         //cutflow
         Book ("VBShadAnalysis/Cutflow_"+l, "cutflow; bit; Events", 15,0,15);
         Book ("VBShadAnalysis/CutflowNoW_"+l, "cutflow, no weights; bit; Events", 15,0,15);
@@ -1356,6 +1357,8 @@ std::pair<float, float> VBShadAnalysis::resolvedtagger(Event*e, float MV, string
 float VBShadAnalysis::genMtt(Event*e)
 {
 
+    float Mtt=-1;
+
     GenParticle * genT = NULL;
     GenParticle * genTbar = NULL;
     for(Int_t i = 0; i < e->NGenPar(); i++){
@@ -1365,7 +1368,8 @@ float VBShadAnalysis::genMtt(Event*e)
         if(genpar->GetPdgId() == -6) if(genTbar==NULL) { genTbar = genpar; }
     }
 
-    float Mtt= (genT->GetP4()+genTbar->GetP4()).M();
+
+    if(genT!=NULL and genTbar!=NULL) Mtt= (genT->GetP4()+genTbar->GetP4()).M();
 
     return Mtt;
 
@@ -2105,9 +2109,9 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("ZBBWPMJJjj_EWK") !=string::npos ) sigmc = 10 ;
     if(label.find("ZBBWPMJJjj_QCD") !=string::npos ) sigmc = 11 ;
     if(label.find("ZBBWPMJJjj_EWK_QCD") !=string::npos ) sigmc = 12 ;
-    if(label.find("ZJJWPMJJjj_EWK") !=string::npos ) sigmc = 13 ;
-    if(label.find("ZJJWPMJJjj_QCD") !=string::npos ) sigmc = 14 ;
-    if(label.find("ZJJWPMJJjj_EWK_QCD") !=string::npos ) sigmc = 15 ;
+    if(label.find("ZJJZJJjj_EWK") !=string::npos ) sigmc = 13 ;
+    if(label.find("ZJJZJJjj_QCD") !=string::npos ) sigmc = 14 ;
+    if(label.find("ZJJZJJjj_EWK_QCD") !=string::npos ) sigmc = 15 ;
     SetTreeVar("MC",sigmc);
 
 }
@@ -2174,9 +2178,9 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ZBBWPMJJjj_EWK") !=string::npos ) mc = 10 ;
     if(label.find("ZBBWPMJJjj_QCD") !=string::npos ) mc = 11 ;
     if(label.find("ZBBWPMJJjj_EWK_QCD") !=string::npos ) mc = 12 ;
-    if(label.find("ZJJWPMJJjj_EWK") !=string::npos ) mc = 13 ;
-    if(label.find("ZJJWPMJJjj_QCD") !=string::npos ) mc = 14 ;
-    if(label.find("ZJJWPMJJjj_EWK_QCD") !=string::npos ) mc = 15 ;
+    if(label.find("ZJJZJJjj_EWK") !=string::npos ) mc = 13 ;
+    if(label.find("ZJJZJJjj_QCD") !=string::npos ) mc = 14 ;
+    if(label.find("ZJJZJJjj_EWK_QCD") !=string::npos ) mc = 15 ;
     //
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 21 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 22 ;
