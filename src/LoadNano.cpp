@@ -2,6 +2,7 @@
 #include "interface/Event.hpp"
 #include "interface/nanov8.hpp"
 
+#include "TTreeCache.h"
 #include "TLeaf.h"
 
 // flags enum
@@ -15,10 +16,13 @@ void LoadNano::SetYear(int y)
 }
 
 int LoadNano::InitTree(){
-
     //tree_->SetBranchAddress("run",&run);
     nano.reset(new nanov8(tree_,year)); // call nano::Init -> SetBranchAddress
-
+    
+    // cache settings for AAA opening    
+    unsigned long cachesize = 3145728U ;   //30 MBytes
+    TTreeCache::SetLearnEntries(5);  //<<< we can take the decision after 5 entry
+    tree_->SetCacheSize(cachesize);
     tree_->AddBranchToCache("*", true);
     tree_->AddBranchToCache("L1_*", false);
 }

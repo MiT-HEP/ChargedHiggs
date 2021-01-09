@@ -216,7 +216,7 @@ void Looper::Loop()
 	Close();
     
     //check that all trees have been processed
-    if (fNumber != tree_->GetNtrees()) 
+    if (fNumber != tree_->GetNtrees()-1) 
     {
 		Log(__FUNCTION__,"ERROR","Empty file found. Aborting processing.  (Xrootd?)");	
         throw abortException();
@@ -233,9 +233,12 @@ void Looper::ClearEvent(){
 
 void Looper::NewFile()
 {
+	string fname = tree_->GetFile()->GetName();
+
     if (fNumber != tree_->GetTreeNumber() -1) 
     {
 		Log(__FUNCTION__,"ERROR","Empty file found. Aborting processing.  (Xrootd?)");	
+		Log(__FUNCTION__,"ERROR",string("Current fNami is (check previous):") + fname);	
         throw abortException();
     }
 
@@ -246,7 +249,6 @@ void Looper::NewFile()
         throw abortException();
     }
 	// check name and weight TODO
-	string fname = tree_->GetFile()->GetName();
 	event_ -> fName_ = fname;
 
 	Log(__FUNCTION__,"INFO","Openining new file: '"+ fname +"'");
