@@ -267,12 +267,18 @@ else:
     elif 'WPJJWMJJjj_QCD_LO' in opts.label: xsec=1
     elif 'WPJJWMJJjj_EWK_QCD_LO' in opts.label: xsec=1
     ## SIG ChargedHiggsToBoson
-    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1000_13TeV-madgraph' in opts.label: xsec=1
-    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1500_13TeV-madgraph' in opts.label: xsec=1
-    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M2000_13TeV-madgraph' in opts.label: xsec=1
-    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000_13TeV-madgraph' in opts.label: xsec=1
-    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500_13TeV-madgraph' in opts.label: xsec=1
-    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000_13TeV-madgraph' in opts.label: xsec=1
+    ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(WW->jjjj) 45
+    elif 'DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph' in opts.label: xsec=0.225
+    elif 'DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph' in opts.label: xsec=0.225
+    elif 'DoublyChargedHiggsGMmodel_HWW_M2000_13TeV-madgraph' in opts.label: xsec=0.225
+    ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(Z->nn Wjj) 13.4
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1000_13TeV-madgraph' in opts.label: xsec=0.067
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1500_13TeV-madgraph' in opts.label: xsec=0.067
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M2000_13TeV-madgraph' in opts.label: xsec=0.067
+    ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(Z->bb Wjj) 10.
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000_13TeV-madgraph' in opts.label: xsec=0.05
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500_13TeV-madgraph' in opts.label: xsec=0.05
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000_13TeV-madgraph' in opts.label: xsec=0.05
     ### H-> mumu
     elif 'HToMuMu' in opts.label: xsec=1
     elif 'HToZG' in opts.label: xsec=1
