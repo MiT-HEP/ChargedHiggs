@@ -1,0 +1,7 @@
+addfiles=/SingleMuon/Run2017B-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD
+addfiles=/SingleMuon/Run2017D-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD
+addfiles=/SingleMuon/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD
+##addfiles=/SingleMuon/Run2017F-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD
+addfiles=/SingleMuon/Run2017F-UL2017_MiniAODv1_NanoAODv2-v2/NANOAOD
+addfiles=/SingleMuon/Run2017G-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD
+addfiles=/SingleMuon/Run2017H-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD
