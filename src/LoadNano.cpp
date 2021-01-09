@@ -18,6 +18,9 @@ int LoadNano::InitTree(){
 
     //tree_->SetBranchAddress("run",&run);
     nano.reset(new nanov8(tree_,year)); // call nano::Init -> SetBranchAddress
+
+    tree_->AddBranchToCache("*", true);
+    tree_->AddBranchToCache("L1_*", false);
 }
 
 int LoadNano::FillEvent(){

@@ -428,7 +428,11 @@ if opts.tar:
 	cmd.extend( glob("test/*.exe") )
 	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
 	#/tmp/x509up_u45059
-	if opts.proxy: cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
+	if opts.proxy: 
+		if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
+			pass
+		else:
+			cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
 	tarCmdline = " ".join(cmd)
 	print tarCmdline
 	call(cmd)
@@ -590,7 +594,11 @@ if not opts.hadoop:
             sh.write("tar -xzf %s/package.tar.gz\n"%(basedir ))
             sh.write("mkdir -p %s\n"%opts.dir)
             sh.write("cp %s/*dat %s/\n"%(basedir,opts.dir))
-            if opts.proxy: sh.write("export X509_USER_PROXY=/tmp/x509up_u%d\n"%os.getuid())
+            if opts.proxy: 
+                if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
+                    sh.write("export X509_USER_PROXY=%s\n"%os.environ['X509_USER_PROXY'])
+                else:
+                    sh.write("export X509_USER_PROXY=/tmp/x509up_u%d\n"%os.getuid())
     
         touch = "touch " + basedir + "/sub%d.pend"%iJob
         call(touch,shell=True)

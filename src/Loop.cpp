@@ -214,6 +214,14 @@ void Looper::Loop()
 	dump_->Close();
 	Write();
 	Close();
+    
+    //check that all trees have been processed
+    if (fNumber != tree_->GetNtrees()) 
+    {
+		Log(__FUNCTION__,"ERROR","Empty file found. Aborting processing.  (Xrootd?)");	
+        throw abortException();
+    }
+
 	return;	
 }
 
@@ -225,6 +233,12 @@ void Looper::ClearEvent(){
 
 void Looper::NewFile()
 {
+    if (fNumber != tree_->GetTreeNumber() -1) 
+    {
+		Log(__FUNCTION__,"ERROR","Empty file found. Aborting processing.  (Xrootd?)");	
+        throw abortException();
+    }
+
 	fNumber = tree_->GetTreeNumber();
     // check that file is correctly opened. xrootd. 
     if  (tree_->GetFile() == nullptr)  {

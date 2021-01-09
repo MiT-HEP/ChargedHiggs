@@ -50,6 +50,7 @@
 #include "interface/Named.hpp"
 #include "interface/Object.hpp"
 #include "interface/Output.hpp"
+#include "interface/One.hpp"
 #include "interface/Photon.hpp"
 #include "interface/PreselectionAnalysis.hpp"
 #include "interface/PU.hpp"
