@@ -34,7 +34,7 @@ class Looper{
 
     private:
         TChain *tree_; 
-        int fNumber;
+        int fNumber{-1};
         long fEntry;
 
         //
