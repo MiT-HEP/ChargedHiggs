@@ -19,4 +19,6 @@ FatJet::FatJet() :Object(){
   WvsQCDMDcut_=-1;
   ZHbbvsQCDMDcut_=-1;
   ZHccvsQCDMDcut_=-1;
+  ZbbvsQCDMDcut_=-1;
+  ZvsQCDMDcut_=-1;
 }
