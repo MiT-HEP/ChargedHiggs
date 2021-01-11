@@ -575,7 +575,7 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_AK8PFHT800_TrimMass50");
       event_->triggerNames_.push_back("HLT_AK8PFJet400_TrimMass30");
       event_->triggerNames_.push_back("HLT_AK8PFJetFwd200");
-      event_->triggerNames_.push_back("HLT_PFJetFwd200");
+      event_->triggerNames_.push_back("HLT_PFJetFwd140");
       event_->triggerNames_.push_back("HLT_PFJet500");
       event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight"); 
       event_->triggerNames_.push_back("HLT_PFMET120_PFMHT120_IDTight_PFHT60");
@@ -585,6 +585,12 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2");
       event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
       event_->triggerNames_.push_back("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
+      event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2");
+      event_->triggerNames_.push_back("HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV");
+      event_->triggerNames_.push_back("HLT_DoublePFJets200_CaloBTagDeepCSV_p71");
+      event_->triggerNames_.push_back("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5");
+      event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02");
+      event_->triggerNames_.push_back("HLT_DiPFJetAve80");
     }
 
     return;
