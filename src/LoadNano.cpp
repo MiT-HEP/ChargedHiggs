@@ -192,11 +192,11 @@ int LoadNano::FillEvent(){
         l->SetType(13);
         l->SetCharge(nano->Muon_charge[i]);
         l->SetMiniIso(nano->Muon_miniPFRelIso_all[i]);
-        l->SetIso(nano->Muon_pfRelIso04_all[i]);
+        l->SetIso(nano->Muon_pfRelIso04_all[i]*nano->Muon_pt[i]);
         l->SetCharge( nano->Muon_charge[i]);
         l->SetTightId( nano->Muon_tightId[i]);
         l->SetMediumId( nano->Muon_mediumId[i]);
-        l->SetLooseId( nano->Muon_isPFcand[i]);
+        l->SetLooseId( nano->Muon_looseId[i]);
         l->SetNLayers( nano->Muon_nTrackerLayers[i]);
         l->SetDxy(nano->Muon_dxy[i]);
 
@@ -229,7 +229,7 @@ int LoadNano::FillEvent(){
         l->SetDxy(nano->Electron_dxy[i]);
 
         l->SetMiniIso(nano->Electron_miniPFRelIso_all[i]);
-        l->SetIso(nano->Electron_pfRelIso03_all[i]);
+        l->SetIso(nano->Electron_pfRelIso03_all[i]*nano->Electron_pt[i]);
         l->SetCharge( nano->Electron_charge[i]);
         l->SetTightId( nano->Electron_mvaFall17V1noIso_WP80[i]);
         l->SetMediumId( nano->Electron_mvaFall17V1noIso_WP90[i]);
@@ -237,7 +237,11 @@ int LoadNano::FillEvent(){
 
         l->SetR9(nano->Electron_r9[i]);
         l->SetSieie(nano->Electron_sieie[i]);
+
+	// REMEMBER TO CLEN THE LEPTONS IFF NOT USED
+	event_ -> leps_ . push_back(l);
    }
+
    // re-sort leptons
    sort(event_ -> leps_.begin(),event_ -> leps_.end(),[](Lepton*l1, Lepton*l2){ 
            if (l1->GetP4().Pt() > l2->GetP4().Pt()) return true;  // sorting by grt Pt
