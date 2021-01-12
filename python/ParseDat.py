@@ -214,6 +214,14 @@ def FindDataset(name,mount=""):
         ## try to open file0 -> Dynamically moving to AAA
         f0= ROOT.TFile.Open(fileList[0])
         if f0== None: fileList=[ 'root://xrootd-cms.infn.it//'+x for x in o]
+    elif mount =="full-check":
+        o=check_output(cmd,shell=True).split()
+        fileList=[ 'root://eoscms//'+x for x in o ]
+        if fileList == []: return
+        ## try to open all files -> Dynamically moving to AAA
+        for i in range(0,len(o)):
+            f0= ROOT.TFile.Open(fileList[i])
+            if f0== None: fileList[i]='root://xrootd-cms.infn.it//'+o[i]
     elif mount == "aaa" or mount == "AAA":
         fileList=[ 'root://xrootd-cms.infn.it//'+x for x in check_output(cmd,shell=True).split() ]
     else:
