@@ -1618,12 +1618,12 @@ void VBShadAnalysis::studyTriggers(Event* e, string category, string label, stri
     bool passtriggerbtag2 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160_v");
     bool passtriggerbtag3 = e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v");
 
-    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900_v");
-    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450_v");
-    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v");
-    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v");
-    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v");
-    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v");
+    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900");
+    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450");
+    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
+    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30");
+    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30");
+    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
     bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
 
     bool passtriggerbtagOR = passtriggerbtag1 || passtriggerbtag2 || passtriggerbtag3 || passtriggerHadOR;
@@ -2122,21 +2122,21 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("ZbbWpmJJ_EWK") !=string::npos ) sigmc = 6 ;
     if(label.find("ZbbWpmJJ_QCD") !=string::npos ) sigmc = 7 ;
     */
-    if(label.find("WPMJJWPMJJjj_EWK") !=string::npos ) sigmc = 1 ;
-    if(label.find("WPMJJWPMJJjj_QCD") !=string::npos ) sigmc = 2 ;
-    if(label.find("WPMJJWPMJJjj_EWK_QCD") !=string::npos ) sigmc = 3 ;
-    if(label.find("WPJJWMJJjj_EWK") !=string::npos ) sigmc = 4 ;
-    if(label.find("WPJJWMJJjj_QCD") !=string::npos ) sigmc = 5 ;
-    if(label.find("WPJJWMJJjj_EWK_QCD") !=string::npos ) sigmc = 6 ;
-    if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) sigmc = 7 ;
-    if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) sigmc = 8 ;
-    if(label.find("ZNuNuWPMJJjj_EWK_QCD") !=string::npos ) sigmc = 9 ;
-    if(label.find("ZBBWPMJJjj_EWK") !=string::npos ) sigmc = 10 ;
-    if(label.find("ZBBWPMJJjj_QCD") !=string::npos ) sigmc = 11 ;
-    if(label.find("ZBBWPMJJjj_EWK_QCD") !=string::npos ) sigmc = 12 ;
-    if(label.find("ZJJZJJjj_EWK") !=string::npos ) sigmc = 13 ;
-    if(label.find("ZJJZJJjj_QCD") !=string::npos ) sigmc = 14 ;
-    if(label.find("ZJJZJJjj_EWK_QCD") !=string::npos ) sigmc = 15 ;
+    if(label.find("WPMJJWPMJJjj_EWK_LO") !=string::npos ) sigmc = 1 ;
+    if(label.find("WPMJJWPMJJjj_QCD_LO") !=string::npos ) sigmc = 2 ;
+    if(label.find("WPMJJWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 3 ;
+    if(label.find("WPJJWMJJjj_EWK_LO") !=string::npos ) sigmc = 4 ;
+    if(label.find("WPJJWMJJjj_QCD_LO") !=string::npos ) sigmc = 5 ;
+    if(label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 6 ;
+    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) sigmc = 7 ;
+    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) sigmc = 8 ;
+    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 9 ;
+    if(label.find("ZBBWPMJJjj_EWK_LO") !=string::npos ) sigmc = 10 ;
+    if(label.find("ZBBWPMJJjj_QCD_LO") !=string::npos ) sigmc = 11 ;
+    if(label.find("ZBBWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 12 ;
+    if(label.find("ZJJZJJjj_EWK_LO") !=string::npos ) sigmc = 13 ;
+    if(label.find("ZJJZJJjj_QCD_LO") !=string::npos ) sigmc = 14 ;
+    if(label.find("ZJJZJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 15 ;
     SetTreeVar("MC",sigmc);
 
 }
@@ -2191,21 +2191,21 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     */
 
 
-    if(label.find("WPMJJWPMJJjj_EWK") !=string::npos ) mc = 1 ;
-    if(label.find("WPMJJWPMJJjj_QCD") !=string::npos ) mc = 2 ;
-    if(label.find("WPMJJWPMJJjj_EWK_QCD") !=string::npos ) mc = 3 ;
-    if(label.find("WPJJWMJJjj_EWK") !=string::npos ) mc = 4 ;
-    if(label.find("WPJJWMJJjj_QCD") !=string::npos ) mc = 5 ;
-    if(label.find("WPJJWMJJjj_EWK_QCD") !=string::npos ) mc = 6 ;
-    if(label.find("ZNuNuWPMJJjj_EWK") !=string::npos ) mc = 7 ;
-    if(label.find("ZNuNuWPMJJjj_QCD") !=string::npos ) mc = 8 ;
-    if(label.find("ZNuNuWPMJJjj_EWK_QCD") !=string::npos ) mc = 9 ;
-    if(label.find("ZBBWPMJJjj_EWK") !=string::npos ) mc = 10 ;
-    if(label.find("ZBBWPMJJjj_QCD") !=string::npos ) mc = 11 ;
-    if(label.find("ZBBWPMJJjj_EWK_QCD") !=string::npos ) mc = 12 ;
-    if(label.find("ZJJZJJjj_EWK") !=string::npos ) mc = 13 ;
-    if(label.find("ZJJZJJjj_QCD") !=string::npos ) mc = 14 ;
-    if(label.find("ZJJZJJjj_EWK_QCD") !=string::npos ) mc = 15 ;
+    if(label.find("WPMJJWPMJJjj_EWK_LO") !=string::npos ) mc = 1 ;
+    if(label.find("WPMJJWPMJJjj_QCD_LO") !=string::npos ) mc = 2 ;
+    if(label.find("WPMJJWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 3 ;
+    if(label.find("WPJJWMJJjj_EWK_LO") !=string::npos ) mc = 4 ;
+    if(label.find("WPJJWMJJjj_QCD_LO") !=string::npos ) mc = 5 ;
+    if(label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ) mc = 6 ;
+    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) mc = 7 ;
+    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) mc = 8 ;
+    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 9 ;
+    if(label.find("ZBBWPMJJjj_EWK_LO") !=string::npos ) mc = 10 ;
+    if(label.find("ZBBWPMJJjj_QCD_LO") !=string::npos ) mc = 11 ;
+    if(label.find("ZBBWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 12 ;
+    if(label.find("ZJJZJJjj_EWK_LO") !=string::npos ) mc = 13 ;
+    if(label.find("ZJJZJJjj_QCD_LO") !=string::npos ) mc = 14 ;
+    if(label.find("ZJJZJJjj_EWK_QCD_LO") !=string::npos ) mc = 15 ;
     //
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 21 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 22 ;
@@ -2435,16 +2435,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     // TRIGGER STORY
 
     bool passtriggerMET = false;
-    if  (year==2016 ) passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight"));
+    if  (year==2016 ) passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight"));
     if  (year==2017 or year==2018) passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60"));
  
     bool passtriggerHad = false;
-    if (year==2016) passtriggerHad = e->IsTriggered("HLT_PFHT900_v")
-                        || e->IsTriggered("HLT_AK8PFJet450_v")
-                        || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v")
-                        || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v")
-                        || e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30_v")
-                        || e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v")
+    if (year==2016) passtriggerHad = e->IsTriggered("HLT_PFHT900")
+                        || e->IsTriggered("HLT_AK8PFJet450")
+                        || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50")
+                        || e->IsTriggered("HLT_AK8PFJet360_TrimMass30")
+                        || e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30")
+                        || e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5")
                         || e->IsTriggered("HLT_PFJet450");
 
     if (year==2017) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
@@ -2476,20 +2476,21 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     */
 
     bool passtriggerBtag = false;
-    if (year==2016 ) { passtriggerBtag = passtriggerHad
-                        || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6")
-                        || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160")
-                        || e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
-    }
-    if (year==2017 or year==2018) passtriggerBtag = passtriggerHad
-                                      || e->IsTriggered("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2")
-                                      || e->IsTriggered("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02")
-                                      || e->IsTriggered("HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV")
-                                      || e->IsTriggered("HLT_DoublePFJets200_CaloBTagDeepCSV_p71")
-                                      || e->IsTriggered("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5")
-                                      || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2")
-                                      || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2")
-                                      || e->IsTriggered("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
+    if (year==2016 ) passtriggerBtag = passtriggerHad
+                         || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6")
+                         || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160")
+                         || e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
+
+    if (year==2017) passtriggerBtag = passtriggerHad
+                        || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2")
+                        || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2")
+                        || e->IsTriggered("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
+
+    if (year==2018) passtriggerBtag = passtriggerHad
+                        || e->IsTriggered("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2")
+                        || e->IsTriggered("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02")
+                        || e->IsTriggered("HLT_DoublePFJets200_CaloBTagDeepCSV_p71")
+                        || e->IsTriggered("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5");
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Before tirgger" );
 
