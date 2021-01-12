@@ -15,6 +15,7 @@ parser.add_option("-d","--dir" ,dest='dir',type='string',help="Directory where t
 parser.add_option("-v","--debug" ,dest='debug',type='int',help="Debug Verbosity. From 0-3. Default=%default",default=0)
 parser.add_option("-n","--njobs" ,dest='njobs',type='int',help="Number of Job to submit",default=50)
 parser.add_option("-q","--queue" ,dest='queue',type='string',help="Queue",default="1nh")
+parser.add_option("","--aaa" ,dest='aaa',action='store_true',help="Always use AAA for datasets",default=False)
 
 job_opts= OptionGroup(parser,"Job options:","these options modify the job specific")
 job_opts.add_option("-t","--no-tar" ,dest='tar',action='store_false',help="Do not Make Tar",default=True)
@@ -461,8 +462,8 @@ if True:
             else:
                 list =  FindEOS(f)
         elif f.split('/')[-1] in ['NANOAODSIM','NANOAOD']:
-                print "DEBUG-submit,Using dataset for",f
-                list =  FindDataset(f)
+                print "DEBUG-submit,Using dataset for",f, "forcing aaa" if opts.aaa else ""
+                list =  FindDataset(f,"aaa" if opts.aaa else "")
         else :
             list=glob(f)
             if list == []: ### maybe remote ?
