@@ -473,6 +473,7 @@ int LoadNano::FillEvent(){
 
        for (int i=0;i<nano->nLHEPart;++i){
             GenParticle *g =new GenParticle();
+            if (nano->LHEPart_status[i] != 1) continue; // incoming partons have status = -1
             TLorentzVector p4; p4.SetPtEtaPhiM(nano->LHEPart_pt[i],nano->LHEPart_eta[i],nano->LHEPart_phi[i],nano->LHEPart_mass[i]);
             g->SetP4( p4 );
             g->SetPdgId( nano->LHEPart_pdgId[i]);
