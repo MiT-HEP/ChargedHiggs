@@ -539,7 +539,10 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_AK8PFJet400_TrimMass30");
       event_->triggerNames_.push_back("HLT_AK8PFJetFwd400");
       event_->triggerNames_.push_back("HLT_PFJet500");
-      event_->triggerNames_.push_back("HLT_PFJetFwd450");
+      //HLT_CaloJet500_NoJetID
+      //HLT_DiPFJetAve160_HFJEC_v13
+      //HLT_DiPFJetAve60_HFJEC_v13
+      event_->triggerNames_.push_back("HLT_PFJetFwd400");
       event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2");
       event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
       event_->triggerNames_.push_back("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
