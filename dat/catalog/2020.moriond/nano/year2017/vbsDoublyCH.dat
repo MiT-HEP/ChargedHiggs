@@ -1,4 +1,4 @@
-sub=amarini|/store/group/phys_higgs/cmshmm/amarini/
+sub=amarini|/store/group/phys_higgs/cmshmm/amarini
 
 addfiles=%(amarini)s/DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph/UL2017-NANOAODSIMv8
 addfiles=%(amarini)s/DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph/UL2017-NANOAODSIMv8
