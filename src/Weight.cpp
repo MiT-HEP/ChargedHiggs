@@ -19,6 +19,7 @@ void Weight::PrintInfo() {
     Log(__FUNCTION__,"INFO",Form("syst=%d",int(syst) ) );
     Log(__FUNCTION__,"INFO",Form("systPdf=%d",int(systPdf) ) );
     Log(__FUNCTION__,"INFO",Form("pu=%lf", pu_.GetPUWeight(mcName_,puInt_,runNum_) ) );
+    Log(__FUNCTION__,"INFO",Form("doL1=%d l1(nom)=%lf l1(down)=%lf l1(up)=%lf systL1=%d",l1_,l1prefiring_[L1Nom],l1prefiring_[L1Down],l1prefiring_[L1Up],int(systL1)));
     Log(__FUNCTION__,"INFO",Form("weight=%le", doWeight() ) );
     
     if (syst == MC::none and systPdf <0 ) 
@@ -59,6 +60,25 @@ void Weight::PrintInfo() {
     }
     Log(__FUNCTION__,"INFO","-------------------------------------");
 }
+
+void Weight::SetMcWeight(double w){
+    mcWeight_= w; scales_=false; pdfs_=false;
+}
+void Weight::SetScaleWeight(double w, MC::SCALES pos){
+    if (pos>=MC_MAX_SCALES){
+        Log(__FUNCTION__,"ERROR",Form("requested scale pos %d, max is %d",pos,MC_MAX_SCALES));
+        throw abortException();
+    }
+    scalesWeights_[pos]=w; scales_=true;
+}
+void Weight::SetPdfWeight(double w, unsigned pos){
+    if (pos>=MC_MAX_PDFS){
+        Log(__FUNCTION__,"ERROR",Form("requested scale pos %d, max is %d",pos,MC_MAX_PDFS));
+        throw abortException();
+    }
+    pdfsWeights_[pos]=w; pdfs_=true;
+}
+
 
 
 void Weight::AddMC( string label, string dir, double xsec, double nevents)
@@ -274,6 +294,25 @@ void Weight::resetSystSF(){
     for (auto o : sf_db)
         o.second->clearSyst();
     //o.second->syst = 0;
+}
+
+void Weight::clearSF( ){ 
+#ifdef VERBOSE
+    Log(__FUNCTION__,"DEBUG", string("clearing SF. ")+ Form("size=%d is empty? %d",sf_db.size(),sf_db.empty()));
+#endif
+    sf_ =1.0; 
+    if (sf_db.size()>0){ // there is a BUG somewhere that makes this non-empty with size 0
+    for(auto& s :sf_db) {
+#ifdef VERBOSE
+        Log(__FUNCTION__,"DEBUG", string("inside the loop.") + Form("size=%d is empty? %d",sf_db.size(),sf_db.empty()));
+        Log(__FUNCTION__,"DEBUG", string("clear SF of:") + s.first);
+#endif
+        s.second->clearEvent();
+    } 
+    }
+#ifdef VERBOSE
+    Log(__FUNCTION__,"DEBUG", "Done");
+#endif 
 }
 
 void Weight::SetPtEtaSF(const string& label,double pt, double eta)

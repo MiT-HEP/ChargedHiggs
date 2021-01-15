@@ -15,6 +15,8 @@ parser.add_option("-d","--dir" ,dest='dir',type='string',help="Directory where t
 parser.add_option("-v","--debug" ,dest='debug',type='int',help="Debug Verbosity. From 0-3. Default=%default",default=0)
 parser.add_option("-n","--njobs" ,dest='njobs',type='int',help="Number of Job to submit",default=50)
 parser.add_option("-q","--queue" ,dest='queue',type='string',help="Queue",default="1nh")
+parser.add_option("","--aaa" ,dest='aaa',action='store_true',help="Always use AAA for datasets",default=False)
+parser.add_option("","--full-check" ,dest='fullcheck',action='store_true',help="Check every file for aaa vs eos",default=False)
 
 job_opts= OptionGroup(parser,"Job options:","these options modify the job specific")
 job_opts.add_option("-t","--no-tar" ,dest='tar',action='store_false',help="Do not Make Tar",default=True)
@@ -428,7 +430,11 @@ if opts.tar:
 	cmd.extend( glob("test/*.exe") )
 	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
 	#/tmp/x509up_u45059
-	if opts.proxy: cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
+	if opts.proxy: 
+		if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
+			pass
+		else:
+			cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
 	tarCmdline = " ".join(cmd)
 	print tarCmdline
 	call(cmd)
@@ -457,8 +463,13 @@ if True:
             else:
                 list =  FindEOS(f)
         elif f.split('/')[-1] in ['NANOAODSIM','NANOAOD']:
-                print "DEBUG-submit,Using dataset for",f
-                list =  FindDataset(f)
+                print "DEBUG-submit,Using dataset for",f, "forcing aaa" if opts.aaa else ""
+                if opts.aaa:
+                    list =  FindDataset(f,"aaa" )
+                elif opts.fullcheck:
+                    list =  FindDataset(f,"full-check")
+                else:
+                    list =  FindDataset(f)
         else :
             list=glob(f)
             if list == []: ### maybe remote ?
@@ -590,7 +601,11 @@ if not opts.hadoop:
             sh.write("tar -xzf %s/package.tar.gz\n"%(basedir ))
             sh.write("mkdir -p %s\n"%opts.dir)
             sh.write("cp %s/*dat %s/\n"%(basedir,opts.dir))
-            if opts.proxy: sh.write("export X509_USER_PROXY=/tmp/x509up_u%d\n"%os.getuid())
+            if opts.proxy: 
+                if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
+                    sh.write("export X509_USER_PROXY=%s\n"%os.environ['X509_USER_PROXY'])
+                else:
+                    sh.write("export X509_USER_PROXY=/tmp/x509up_u%d\n"%os.getuid())
     
         touch = "touch " + basedir + "/sub%d.pend"%iJob
         call(touch,shell=True)

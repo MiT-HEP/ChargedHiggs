@@ -1,0 +1,49 @@
+################
+### DATASETS ###
+################
+
+include=dat/config.nano.dat
+Loader=LoadNano|2018
+
+Files=
+## Signal
+include=dat/catalog/2020.moriond/nano/year2018/vbshad.dat
+#include=dat/catalog/2020.moriond/nano/year2018/vbsDoublyCH.dat
+##
+### BKGS
+#include=dat/catalog/2020.moriond/nano/year2018/QCD.dat
+#include=dat/catalog/2020.moriond/nano/year2018/ttvbs.dat
+
+# add Label
+include=dat/vbshad.dat
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+SFDB=aux/sf_VBShad.txt
+MCDB=aux/mcdb.nano.2018.txt
+include=dat/json.2018.moriond.dat
+pileup=aux/pileup.nano.year2018.root
+
+Smear=NONE
+Correct=NONE
+#Correct=SDMasscorr
+Final=no
+
+## be less peaky, given the n. of systs
+EntryPerSecond=5
+
+Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
+
+addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
+addConfig=VBShadAnalysis|year=2018
+Output=VBShadSignal_HAD.root
+
+#addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+#addConfig=VBShadAnalysis|year=2018
+#Output=VBShadSignal_MET.root
+
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
+#addConfig=VBShadAnalysis|year=2018
+#Output=VBShadSignal_B.root
+

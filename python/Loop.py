@@ -91,7 +91,11 @@ if 'EntryPerSecond' in cfg:loop.SetEntryPerSecond( cfg['EntryPerSecond'])
 
 ################ Loader ####
 if opts.verbose: print "-> Init Loader:",cfg['Loader']
-loop.InitLoader(cfg['Loader']);
+if len(cfg['Loader'].split('|'))>1:
+    if opts.verbose: print "--> ",cfg['Loader'].split('|')[0],"year=",int(cfg['Loader'].split('|')[1])
+    loop.InitLoader(cfg['Loader'].split('|')[0],int(cfg['Loader'].split('|')[1]));
+else:
+    loop.InitLoader(cfg['Loader']);
 ### configurable
 
 for file in cfg['Files']:

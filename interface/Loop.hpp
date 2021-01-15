@@ -34,7 +34,7 @@ class Looper{
 
     private:
         TChain *tree_; 
-        int fNumber;
+        int fNumber{-1};
         long fEntry;
 
         //
@@ -87,9 +87,10 @@ class Looper{
 
         /// @brief Init Looperi with loader 'name'
         /// @param name loader name
-        inline void InitLoader(string name){ 
+        inline void InitLoader(string name,int year=2016){ 
                     loader_ = LoaderFactory::get().create(name); 
                     tree_=new TChain(loader_->chain().c_str());
+                    loader_->SetYear(year);
         }
 
         /// @brief Add file to chain, Loader need to be init

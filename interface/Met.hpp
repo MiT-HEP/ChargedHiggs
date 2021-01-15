@@ -14,7 +14,11 @@ class Met :
         TLorentzVector pp4;
         TLorentzVector rawMet;
         TLorentzVector trackMet;
+
         TLorentzVector puppiMet;
+public:
+        SmearableComplexP4 puppiMetSyst; // make Private and make calls
+private:
 
         float gen;
         float gen_phi;
@@ -25,6 +29,7 @@ class Met :
         bool FullRecommendation{false};
 
     public:
+
         Met() : Object(), SmearableComplex() {syst = 0 ;}
         bool filterbadPFMuon{false};
         bool filterbadChHadrons{false};
@@ -34,7 +39,7 @@ class Met :
 
         virtual inline int IsMet() const { return 1; }
         inline int IsObject()const override { return IsMet(); }
-        inline void  clearSyst() override { Object::clearSyst(); syst = 0; type=Smearer::NONE;}; // reset smearing
+        inline void  clearSyst() override { Object::clearSyst(); syst = 0; type=Smearer::NONE; puppiMetSyst.syst=0; puppiMetSyst.SetSmearType(Smearer::NONE);}; // reset smearing
         inline float Pt() const override { if ( syst == 0 ) return p4.Pt();
             else 
             {
@@ -53,7 +58,18 @@ class Met :
         TLorentzVector& GetTrackMetP4(){return trackMet;}
 
         virtual void SetPuppiMetP4(TLorentzVector &x){puppiMet=x;}
-        TLorentzVector& GetPuppiMetP4(){return puppiMet;}
+        TLorentzVector& GetBarePuppiMetP4(){return puppiMet;}
+
+        TLorentzVector& GetPuppiMetP4(){
+            if (puppiMetSyst.syst ==0) return puppiMet;
+            else if (puppiMetSyst.syst >0){
+                return puppiMetSyst.p4UpSyst[puppiMetSyst.type];
+            }
+            else if (puppiMetSyst.syst<0){
+                return puppiMetSyst.p4DownSyst[puppiMetSyst.type];
+            }
+            return puppiMet;
+        }
 
         inline TLorentzVector & GetP4() override {
             if (syst == 0) return p4;

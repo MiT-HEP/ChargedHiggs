@@ -31,6 +31,9 @@
 	<class name="SmearBjets"/>
 	<class name="SmearKaMuCa"/>
 	<class name="SmearJesSource"/>
+	<class name="SmearJesPuppiMet"/>
+	<class name="SmearJerPuppiMet"/>
+	<class name="SmearUnclusteredPuppiMet"/>
 	
 	<!-- Looper -->
 	<class name="Weight"/>

@@ -54,9 +54,9 @@ if opts.dat != "":
                    '13TeV' in x or \
                    'herwig' in x or \
                    'pythia' in x : label=x
-        elif '/store/' in f:
-            label=dirs[4] # default ?
-            raise ValueError("to check label finding")
+        elif '/store/group/phys_higgs/cmshmm/amarini' in f:
+            label=dirs[6] # default ?
+#            raise ValueError("to check label finding")
         elif '/eos/user/' in f: 
             ### this is a nanoaod path
             label=dirs[3] ## store mc RunII DY 
@@ -97,7 +97,7 @@ elif 'NANOAOD' in opts.dataset:
     print "DEBUG, Calling FindDataset"
     fileList =  FindDataset(opts.dataset)
 else:
-    raise ValueError("not supported nano spec")
+    raise ValueError("not supported nano spec: "+opts.dataset)
 
 print "DEBUG, DATASET is",opts.dataset,"FILE LIST",fileList 
 
@@ -111,10 +111,26 @@ myTmp= r.TFile.Open("/tmp/" + os.environ["USER"] + "/mytmp.root","RECREATE")
 myTmp.cd()
 sum=r.TH1D("SumWeights","Sum of mcWeights",1,0,2)
 sum2=r.TH1D("SumWeights","Sum of mcWeights^2",1,0,2)
+scales=r.TH1D("SumWeights_Scales","Sum of mcWeights",10,0,10)
+nPdfs=100
+pdfs=r.TH1D("SumWeights_Pdfs","Sum of mcWeights",nPdfs,0,nPdfs)
 
 #nano->Generator_weight
 #nano->Pileup_nTrueInt
 ## PU
+
+# Runs Tree
+#*Br    0 :run       : run/i                                                  *
+#*Br    1 :genEventCount : Long64_t event count                               *
+#*Br    2 :genEventSumw : Double_t sum of gen weights                         *
+#*Br    3 :genEventSumw2 : Double_t sum of gen (weight^2)                     *
+#*Br    4 :nLHEScaleSumw : UInt_t Number of entries in LHEScaleSumw           *
+#*Br    5 :LHEScaleSumw :                                                     *
+#*         | Double_t Sum of genEventWeight * LHEScaleWeight[i], divided by genEventSumw*
+#*Br    6 :nLHEPdfSumw : UInt_t Number of entries in LHEPdfSumw               *
+#*Br    7 :LHEPdfSumw :                                                       *
+#*         | Double_t Sum of genEventWeight * LHEPdfWeight[i], divided by genEventSumw*
+##
 
 fOutput=r.TFile.Open(opts.pu,"UPDATE")
 
@@ -140,6 +156,7 @@ else:
         if  h != None: print "Overwriting",name
         puHist.append(  r.TH1F(name,"RD PU Distribution of %s"%opts.label,nBins,xMin,xMax)  )
 
+useRunTree=True
 
 for idx,fName in enumerate(fileList):
     print "processing file:",idx,"/",len(fileList)," : ", fName
@@ -149,14 +166,29 @@ for idx,fName in enumerate(fileList):
         fROOT = r.TFile.Open(re.sub('eoscms','xrootd-cms.infn.it',fName))
 
     t = fROOT.Get("Events")
+    runs= fROOT.Get("Runs")
+    runs.GetEntry(0)
+    if (runs.nLHEPdfSumw != nPdfs) : 
+        print "[WARNING] ",runs.nLHEPdfSumw,"in the NANOAOD. Using only",nPdfs, "(must be <)"
 
-    mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)
-    t.Draw("1>>mysum","Generator_weight") ##>>+ doesn't work
-    sum.Add(mysum)
+    if not useRunTree:
+        mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)
+        t.Draw("1>>mysum","Generator_weight","goff") ##>>+ doesn't work
+        sum.Add(mysum)
 
-    mysum2=r.TH1D("mysum2","Sum of mcWeights^2",1,0,2)
-    t.Draw("1>>mysum2","Generator_weight*Generator_weight") ##>>+ doesn't work
-    sum2.Add(mysum2)
+        mysum2=r.TH1D("mysum2","Sum of mcWeights^2",1,0,2)
+        t.Draw("1>>mysum2","Generator_weight*Generator_weight","goff") ##>>+ doesn't work
+        sum2.Add(mysum2)
+    else:
+        sum.Fill(1,runs.genEventSumw)
+        sum2.Fill(1,runs.genEventSumw2)
+
+        ## scales
+        for i in range(0,9):
+            scales.Fill(i, runs.LHEScaleSumw[i] * runs.genEventSumw)
+        ##pdfs
+        for i in range(0,nPdfs):
+            pdfs.Fill(i, runs.LHEPdfSumw[i] * runs.genEventSumw)
 
     n += t.GetEntries()
 
@@ -218,6 +250,35 @@ else:
     elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-500' in opts.label: xsec=1
     elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-220' in opts.label: xsec=1
     elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=1
+    ## SIG VBS
+    elif 'ZNuNuWPMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZNuNuWPMJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'ZNuNuWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'ZBBWPMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZBBWPMJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'ZBBWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'ZJJZJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZJJZJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'ZJJZJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPMJJWPMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPMJJWPMJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPMJJWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'WPJJWMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPJJWMJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPJJWMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    ## SIG ChargedHiggsToBoson
+    ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(WW->jjjj) 45
+    elif 'DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph' in opts.label: xsec=0.225
+    elif 'DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph' in opts.label: xsec=0.225
+    elif 'DoublyChargedHiggsGMmodel_HWW_M2000_13TeV-madgraph' in opts.label: xsec=0.225
+    ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(Z->nn Wjj) 13.4
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1000_13TeV-madgraph' in opts.label: xsec=0.067
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1500_13TeV-madgraph' in opts.label: xsec=0.067
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M2000_13TeV-madgraph' in opts.label: xsec=0.067
+    ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(Z->bb Wjj) 10.
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000_13TeV-madgraph' in opts.label: xsec=0.05
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500_13TeV-madgraph' in opts.label: xsec=0.05
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000_13TeV-madgraph' in opts.label: xsec=0.05
     ### H-> mumu
     elif 'HToMuMu' in opts.label: xsec=1
     elif 'HToZG' in opts.label: xsec=1
@@ -230,6 +291,8 @@ else:
     elif 'TTTT' in opts.label:xsec=0.009103
     ### TT
     elif 'TTTo2L2Nu' in opts.label: xsec=88.20
+    elif 'TTToSemiLeptonic' in opts.label: xsec=365.3452
+    elif 'TTToHadronic' in opts.label: xsec=377.9607
     elif 'TT' in opts.label: xsec=831
     ## ST
     elif 'ST_s-channel_4f_InclusiveDecays' in opts.label: xsec=10.32
@@ -277,6 +340,23 @@ else:
     #elif '' in opts.label: xsec=
     ## INTERNAL
     print>>f,  xsec,
+
+    ## 
+    if scales.GetBinContent(1) > 0:
+    	print>>f, "SCALES", #r1f2=0,r1f5,r2f1,r2f2,r5f1,r5f5
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(5 + 1)  , ## offset by one in filling
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(3 + 1)  ,
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(7 + 1)  ,
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(8 + 1)  ,
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(1 + 1)  ,
+        print>>f, sum.GetBinContent(1)/scales.GetBinContent(0 + 1)  ,
+    	#for i in range(0,6):
+    	#	print>>f, sum.GetBinContent(1)/hScales.GetBinContent(i+1),
+    
+    if pdfs.GetBinContent(1) > 0:
+    	print>>f, "PDFS",
+    	for i in range(0,100):
+    		print>>f, sum.GetBinContent(1)/pdfs.GetBinContent(i+1), 
 
     ## INTERNAL
     print >>f

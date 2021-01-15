@@ -3,7 +3,7 @@
 
 #define MC_MAX_SCALES 6
 //#define MC_MAX_PDFS 100
-#define MC_MAX_PDFS 30
+#define MC_MAX_PDFS 120
 
 #include "interface/Named.hpp"
 

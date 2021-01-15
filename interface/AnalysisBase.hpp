@@ -15,8 +15,11 @@ class AnalysisBase : public Named
     Output *output_; // set automatically
 
     protected:
+    enum PrimaryDataset {None,SingleMuon,SingleElectron,SinglePhoton,BTagCSV,JetHT,DoubleMuon,DoubleElectron};
 
     bool multipd_{false};
+    PrimaryDataset pd_ {None};
+
     Event *e{NULL};
     // --- this are the default values. override these functions
     virtual inline void SetLeptonCuts(Lepton *l){ l->SetIsoCut(-1); l->SetPtCut(10);l->SetIsoRelCut(0.15);l->SetEtaCut(2.4); l->SetTightCut(false);l->SetVetoCut();}

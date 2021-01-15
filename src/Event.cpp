@@ -36,6 +36,7 @@ void Event::ClearEvent(){
     tracks_ . clear();
 
     weight_ -> clearSF( );
+    weight_ -> clearL1();
 
     //Log(__FUNCTION__,"DEBUG","End ClearEvent");
     //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","End Clear EVENT ----------" );
@@ -43,6 +44,9 @@ void Event::ClearEvent(){
 }
 
 void Event::clearSyst(){
+#ifdef VERBOSE
+	if (VERBOSE > 1) Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG", string("Clear Syst. "));
+#endif
     for ( auto o: jets_) o->clearSyst();
     for ( auto o: tracks_) o->clearSyst();
     for ( auto o: fat_) o->clearSyst();
@@ -56,6 +60,7 @@ void Event::clearSyst(){
     weight_ -> resetSystSF();
     weight_ -> clearSystPU();
     weight_ -> SetSyst( MC::none ) ;
+    weight_ -> SetSystL1( 0 ) ;
 }
 
 float Event::Mt(MtType type)  {  // 0 tau, 1 muon, 2 electron, 3 lepton
@@ -657,6 +662,7 @@ bool Event::ApplyMttReweight(){
 double Event::ApplyL1PreFire(int year){
     //SF_TH2F *sf=(SF_TH2F*)GetWeight()->GetSF("prefire");
     if (IsRealData() ) return 1.;
+    if (GetWeight()->l1_ ) return 1.; // applied by weight using nanoaod
     
     string name = "prefire";
     if (year==2016) name="prefire2016";

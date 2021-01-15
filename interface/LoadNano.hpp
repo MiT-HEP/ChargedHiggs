@@ -5,16 +5,15 @@
 #include <map>
 #include <string>
 
-#define MAX_MUON 10
-#define MAX_JET 20
 
-class Nano;
+//class Nano;
+class nanov8;
 #include <memory>
 
 class LoadNano : public Loader
 {
     protected:
-        std::unique_ptr<Nano> nano; 
+        std::unique_ptr<nanov8> nano; 
         
     public:
     const string name() const override { return "LoadNano" ;} 

@@ -36,6 +36,8 @@ public:
 
     void BookHisto(string l, string category);
 
+    bool checkSignalLabel(string l);
+
     const string name() const override {return "VBShadAnalysis";}
     void SetLeptonCuts(Lepton *l) override ; 
     void SetTauCuts(Tau*t) override;
@@ -67,9 +69,9 @@ public:
     bool doTrigger=false;
     bool writeTrainTree=false;
 
-    bool doTMVA=true;
+    bool doTMVA=false;
     bool doResTagKeras = false;
-    bool doResTagTMVA = true;
+    bool doResTagTMVA = false;
     // those two below are to prune the combination
     bool doMultiTagger = false;
     bool do2DNN = false;

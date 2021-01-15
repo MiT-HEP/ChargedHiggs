@@ -11,6 +11,7 @@ class SmearBase;
 class Event;
 
 class Weight : virtual public SmearableBase {
+    enum L1PREFIRING{L1Nom=0,L1Down=1,L1Up=2};
     friend class Event;
     friend class SmearBase;
 
@@ -31,6 +32,9 @@ class Weight : virtual public SmearableBase {
     // syst here will have the values of MC::SCALES
     int systPdf {-1}; // 0 ... MAX_MC_MAX_PDFS
 
+    double l1prefiring_[3] {1.,1.,1.}; // NOM, down, up // L1PREFIRING
+    bool l1_ {false};
+    int systL1{0}; // 0: nom, -1 down, 1 up
 
     protected:
 
@@ -47,11 +51,13 @@ class Weight : virtual public SmearableBase {
     void PrintInfo();
     //const string name() const override{ return "Weight";};
 
-    inline void SetMcWeight(double w){mcWeight_= w; scales_=false; pdfs_=false;}
-    inline void SetScaleWeight(double w, MC::SCALES pos){scalesWeights_[pos]=w; scales_=true;}
-    inline void SetPdfWeight(double w, unsigned pos){pdfsWeights_[pos]=w; pdfs_=true;}
+    void SetMcWeight(double w);
+    void SetScaleWeight(double w, MC::SCALES pos);
+    void SetPdfWeight(double w, unsigned pos);
     inline void SetSyst( MC::SCALES val) { syst = val;}
     inline void SetSystPdf( int val=-1) { systPdf = val;}
+
+    void SetL1Prefiring(double x, int sys=0){ l1prefiring_[(sys==-1)?L1Down:((sys==1)?L1Up:L1Nom)] =x; l1_=true;};
 
     void clear(){ mcName_= "";
         mcXsec_ = 1.0; 
@@ -61,6 +67,11 @@ class Weight : virtual public SmearableBase {
         sf_ = 1.0;
         syst = MC::none;
         systPdf = -1;
+        l1_=false;
+        l1prefiring_[L1Nom]=1.;
+        l1prefiring_[L1Down]=1.;
+        l1prefiring_[L1Up]=1.;
+        systL1=0;
     }
     //
     string GetMC(){ return mcName_; }
@@ -88,11 +99,19 @@ class Weight : virtual public SmearableBase {
     void AddTF2SF(string label, string formula,string errFormula);
 
     //Log(__FUNCTION__,"DEBUG", string("clear SF of:") + s.first);
-    void clearSF( ){ sf_ =1.0; 
-        for(auto& s :sf_db) {s.second->clearEvent();} }
+    void clearSF( );
+
+    void clearL1(){
+        l1_=false;
+        l1prefiring_[L1Nom]=1.;
+        l1prefiring_[L1Down]=1.;
+        l1prefiring_[L1Up]=1.;
+        systL1=0;
+    }
     void clearPU( ){ pu_ . clearTarget() ;};
     void SetPUTarget(const string& name) { pu_ . SetTarget( name ) ; } 
     void SetSystSF(const string& label, int s );// { sf_db[label] -> syst = s;}
+    void SetSystL1(int sys){systL1=sys;}
     void resetSystSF( ) ;
     void SetPtEtaSF(const string& label,double pt , double eta);
     void SetWPSF(const string& label, int wp);
@@ -127,17 +146,18 @@ class Weight : virtual public SmearableBase {
 
     // ---  check what happen with data, TODO CHECK LUMI
     inline double doWeight() { 
+        double l1=1.; if (l1_) l1=l1prefiring_[(systL1==0)?L1Nom:(systL1<0)?L1Down:L1Up];
         //Log(__FUNCTION__,"DEBUG",Form("Weight: Mc=%lf mcXsec=%lf sf=%lf pu=%lf nevents=%lf",mcWeight_, mcXsec_ ,sf_,pu_.GetPUWeight(mcName_,puInt_,runNum_), nEvents_));
         if (syst == MC::none and systPdf <0)
-        return mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        return l1*mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
         else if (systPdf<0) 
         { // SCALES
         if (not scales_) {Log(__FUNCTION__,"ERROR","Scales reweighting uncorrect!!!");PrintInfo();}
-        return scalesWeights_[syst] * scalesNeventReweight_[syst] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        return l1*scalesWeights_[syst] * scalesNeventReweight_[syst] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
         }
         else { // pdfs
         if (not pdfs_) {Log(__FUNCTION__,"ERROR","Pdfs reweighting uncorrect!!!"); PrintInfo();}
-        return pdfsWeights_[systPdf] * pdfsNeventReweight_[systPdf] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        return l1* pdfsWeights_[systPdf] * pdfsNeventReweight_[systPdf] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
         }
     }
     double weight(){

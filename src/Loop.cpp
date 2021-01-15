@@ -141,14 +141,14 @@ void Looper::Loop()
 			for(auto s : systs_)
 			{
 #ifdef VERBOSE
-				if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing syst "<< s -> name() <<endl;
+				if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing syst loop"<< s -> name() <<endl;
 #endif
 				for(int i=-1; i<=1 ;++i)
 				{
 					if ( s->name().find("NONE") != string::npos and i!=0) continue;
 					if ( s->name().find("NONE") == string::npos and i==0) continue; // for the 
 #ifdef VERBOSE
-					if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing syst "<< s -> name() <<" : (Up,Down)"<<i <<endl;
+					if (VERBOSE > 1) cout <<"[Looper]::[Loop] Doing syst variation "<< s -> name() <<" : (Up,Down) "<<i <<endl;
 #endif
 					//reset 	
 					event_->clearSyst();
@@ -214,6 +214,14 @@ void Looper::Loop()
 	dump_->Close();
 	Write();
 	Close();
+    
+    //check that all trees have been processed
+    if (fNumber != tree_->GetNtrees()-1) 
+    {
+		Log(__FUNCTION__,"ERROR","Empty file found. Aborting processing.  (Xrootd?)");	
+        throw abortException();
+    }
+
 	return;	
 }
 
@@ -225,6 +233,15 @@ void Looper::ClearEvent(){
 
 void Looper::NewFile()
 {
+	string fname = tree_->GetFile()->GetName();
+
+    if (fNumber != tree_->GetTreeNumber() -1) 
+    {
+		Log(__FUNCTION__,"ERROR","Empty file found. Aborting processing.  (Xrootd?)");	
+		Log(__FUNCTION__,"ERROR",string("Current fNami is (check previous):") + fname);	
+        throw abortException();
+    }
+
 	fNumber = tree_->GetTreeNumber();
     // check that file is correctly opened. xrootd. 
     if  (tree_->GetFile() == nullptr)  {
@@ -232,7 +249,6 @@ void Looper::NewFile()
         throw abortException();
     }
 	// check name and weight TODO
-	string fname = tree_->GetFile()->GetName();
 	event_ -> fName_ = fname;
 
 	Log(__FUNCTION__,"INFO","Openining new file: '"+ fname +"'");
