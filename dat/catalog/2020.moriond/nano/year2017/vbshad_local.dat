@@ -1,0 +1,7 @@
+sub=dalfonso|/store/group/phys_higgs/HiggsExo/dalfonso/NANOV8/UL17
+
+addfiles=%(dalfonso)s/ZNuNuWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
+addfiles=%(dalfonso)s/ZBBWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
+addfiles=%(dalfonso)s/ZJJZJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
+addfiles=%(dalfonso)s/WPMJJWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
+addfiles=%(dalfonso)s/WPJJWMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8

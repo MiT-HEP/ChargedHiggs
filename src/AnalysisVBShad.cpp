@@ -44,7 +44,7 @@ void VBShadAnalysis::SetJetCuts(Jet *j) {
 
 void VBShadAnalysis::SetTauCuts(Tau *t){
     // these are used for the Veto
-    t->SetPtCut(20);
+    t->SetPtCut(18); // as in nanoAOD
     t->SetEtaCut(2.3);
     t->SetMuRej(false);
     t->SetEleRej(false);
@@ -2548,7 +2548,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$ Build fatJets and boson/forward jets
     //$$$$$$$$$ After this point doMETAntiAnalysis is set if doMETAnalysis
     getObjects(e, label , systname);
-
 
     if (VERBOSE and doHADAnalysis)Log(__FUNCTION__,"DEBUG",Form("I have %d fatjets (>=1) and %d ZbbFat (0)",selectedFatJets.size(),selectedFatZbb.size()) );
 
