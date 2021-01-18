@@ -57,6 +57,9 @@ if opts.dat != "":
         elif '/store/group/phys_higgs/cmshmm/amarini' in f:
             label=dirs[6] # default ?
 #            raise ValueError("to check label finding")
+        elif '/store/group/phys_higgs/HiggsExo/dalfonso/NANOV8' in f:
+            label=dirs[8] # default ?
+#            raise ValueError("to check label finding")
         elif '/eos/user/' in f: 
             ### this is a nanoaod path
             label=dirs[3] ## store mc RunII DY 
