@@ -405,6 +405,7 @@ int LoadNano::FillEvent(){
        event_ -> GetWeight() -> SetMcWeight( nano->Generator_weight);
        event_ -> GetWeight() -> SetPU( nano->Pileup_nTrueInt ,  event_ -> runNum_);
        event_->SetGenTtbarId(nano-> genTtbarId) ;
+       event_->SetLHEHT(nano-> LHE_HT) ;
 
        // l1 prefiring incorporated in weights
        if (year==2016 or year==2017){
