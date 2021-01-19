@@ -64,6 +64,7 @@ class Event{
     int genTtbarId_;
     int pdf1Id_;
     int pdf2Id_;
+    int lheHT_;
 
     vector<string> triggerNames_;
 
@@ -110,6 +111,10 @@ class Event{
     inline int GetGenTtbarId() const { return genTtbarId_; }
     ///@brief set gen id tag for ttbar
     inline void SetGenTtbarId (const int x){ genTtbarId_=x; }
+    ///@brief get lh ht 
+    inline int GetLHEHT() const { return lheHT_; }
+    ///@brief set lhe ht from nano
+    inline void SetLHEHT (const int x){ lheHT_=x; }
     ///@brief set pdf id tags (n=1,2)
     inline void SetPdfId (const unsigned n,const int x){ if (n==1) pdf1Id_=x; else  pdf2Id_=x; }
     ///@brief get pdf id tags (n=1,2)
