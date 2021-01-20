@@ -275,7 +275,8 @@ int LoadNano::FillEvent(){
         j->bdiscr = nano->Jet_btagCSVV2[i];
         j->SetDeepB ( nano->Jet_btagDeepB[i] );
         j->SetQGL(nano->Jet_qgl[i]);
-        j->SetPuId(nano->Jet_puId[i]);
+        //j->SetPuId(nano->Jet_puId[i]); //80X flags
+        j->SetPuId(nano->Jet_puIdDisc[i]);//91x discr
         j->SetBCorrection(nano->Jet_bRegCorr[i], nano->Jet_bRegRes[i]); 
         j->SetHadFlavor(nano->Jet_hadronFlavour[i]); 
         j->pdgId = nano->Jet_partonFlavour[i] ;
@@ -338,6 +339,16 @@ int LoadNano::FillEvent(){
 
        event_ -> fat_ . push_back(j);
    }
+
+   // TrackJets -- Soft Activity
+   for(int i =0 ;i<nano->nSoftActivityJet;++i){
+        TrackJet *j =new TrackJet();
+        TLorentzVector p4; p4.SetPtEtaPhiM(nano->SoftActivityJet_pt[i],nano->SoftActivityJet_eta[i],nano->SoftActivityJet_phi[i],0.) ;
+        j->SetP4(p4);
+        event_ -> tracks_ . push_back(j);
+   
+   }
+   
 
    //FILL Tau
    for (int i=0;i<nano->nTau;++i)
