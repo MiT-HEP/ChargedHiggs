@@ -872,7 +872,7 @@ bool Event::GenParticleDecayedFrom( int iGenPar, int apdgid ,int& idx){
 }
 
 
-pair<int,float> Event::softVariables(Object *j1, Object *j2, float cut,float dR)
+pair<int,float> Event::softVariables(Object *j1, Object *j2, float cut,float dR,const vector<Object*>& exclude)
 {
     int NJets=0;
     float HT=0.;
@@ -893,6 +893,13 @@ pair<int,float> Event::softVariables(Object *j1, Object *j2, float cut,float dR)
             if (j->DeltaR(l) < dR) islep=true;
         }
         if (islep) continue;
+        bool isobj=false;
+        for (Object*o : exclude)
+        {
+            if (o->DeltaR(j)<dR) isobj=true;
+        }
+        if(isobj)continue;
+
         HT+=j->Pt();
         NJets+=1;
     }

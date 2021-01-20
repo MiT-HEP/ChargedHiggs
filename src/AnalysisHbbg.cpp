@@ -1194,7 +1194,7 @@ int HbbgAnalysis::analyze(Event *event, string systname)
         // bbg merged. 
         // These cuts are also in the updateEventvar
         //  --> Added T32
-        if ( int(eventVar_["ggh_bbgmerged"]) and eventVar_["fatjet_tau32"] > FAT_TAU32 )
+        if ( int(eventVar_["ggh_bbgmerged"]) and eventVar_["fatjet_tau32"] < FAT_TAU32 )
         {
             string s="GGH_merged/PreTrigger";
             fillHistsGGH(s, label,systname);
