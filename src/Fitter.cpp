@@ -4,6 +4,16 @@
 
 #include "HiggsAnalysis/CombinedLimit/interface/RooSpline1D.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooBernsteinFast.h"
+#include "HiggsAnalysis/CombinedLimit/interface/RooDoubleCBFast.h"
+/*
+              RooAbsReal& _x,
+              RooAbsReal& _mean,
+              RooAbsReal& _width,
+              RooAbsReal& _alpha1,
+              RooAbsReal& _n1,
+              RooAbsReal& _alpha2,
+              RooAbsReal& _n2
+ */
 #include "RooGenericPdf.h"
 #include "RooExponential.h"
 #include "interface/Handlers.hpp" // abortException
@@ -199,6 +209,12 @@ void Fitter::init(){
                     //initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .1;
                 }
             }
+            if (useDCB){
+                initPars_[Form("c8_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 1.;
+                initPars_[Form("c9_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 1.;
+                initPars_[Form("c10_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 1.;
+                initPars_[Form("c11_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 1.;
+            }
 
 
             if (writeDatasets_)w_ -> import( *hist_[ name ] ); // write datasets in the workspace
@@ -316,6 +332,11 @@ void Fitter::fit(){
     pars[6].setRange(0,1);
     pars[7].setRange(0,1);
 
+    pars[8].setRange(.5,3); //  alpha
+    pars[9].setRange(0.01,5); // n -> powerlaw
+    pars[10].setRange(.5,3); // alpha2
+    pars[11].setRange(0.01,5);
+
     if (xname == "mvv" or xname =="mt") // DoublyChargedHiggs
     {
         pars[0].setRange(0,10000);
@@ -330,11 +351,19 @@ void Fitter::fit(){
     RooGaussian g2("g2","g2",*x_,pars[2],pars[3]);
     RooGaussian g3("g3","g3",*x_,pars[4],pars[5]);
 
+    RooDoubleCBFast cb1("cb1","cb1",*x_,pars[0],pars[1],pars[8],pars[9],pars[10],pars[11]);
+
     //RooGenericPdf  fitModel("model","TMath::Exp(-TMath::Power((@0-@1)/@2,2))*(1+@3*@0+@4*@0*@0)",RooArgList(*x_,mean,sigma,c1,c2));
     //RooGenericPdf  fitModel("model","TMath::Exp(-TMath::Power((@0-@1)/@2,2))+@4*TMath::Exp(-@0*@3)",RooArgList(*x_,mean,sigma,c1,c2,c3));
     // RooAddPdf fitModel("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ;
     std::unique_ptr<RooAbsPdf>fitModel;
-    fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+    
+    if (useDCB){ // is this used?
+        fitModel.reset( new RooAddPdf("model","model",RooArgList(cb1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+    }
+    else{
+        fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+    }
 
 
     // -- Fit Model to MC
@@ -344,13 +373,26 @@ void Fitter::fit(){
     {
         cout<<"-> Doing cat"<<cat<<" proc"<<proc<< " nG="<<nGaussians[pair<int,string>(cat,proc)]<<endl;
 
+        if (useDCB){
+            if (nGaussians[pair<int,string>(cat,proc)]==1)
+            {
+                fitModel.reset( new RooDoubleCBFast("cb1","cb1",*x_,pars[0],pars[1],pars[8],pars[9],pars[10],pars[11]) );
+            }
+            else if (nGaussians[pair<int,string>(cat,proc)]==2){
+                fitModel.reset( new RooAddPdf("model","model",RooArgList(cb1,g2),RooArgList(pars[4]), kTRUE ) ) ; 
+            }
+            else if (nGaussians[pair<int,string>(cat,proc)]==3){
+                fitModel.reset( new RooAddPdf("model","model",RooArgList(cb1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+            }
 
-        if (nGaussians[pair<int,string>(cat,proc)]==1)
-            fitModel.reset( new RooGaussian("g1","g1",*x_,pars[0],pars[1]) ) ; 
-        else if (nGaussians[pair<int,string>(cat,proc)]==2)
-            fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2),RooArgList(pars[4]), kTRUE ) ) ; 
-        else if (nGaussians[pair<int,string>(cat,proc)]==3)
-            fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+        }else{
+            if (nGaussians[pair<int,string>(cat,proc)]==1){
+                fitModel.reset( new RooGaussian("g1","g1",*x_,pars[0],pars[1]) ) ; }
+            else if (nGaussians[pair<int,string>(cat,proc)]==2){
+                fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2),RooArgList(pars[4]), kTRUE ) ) ; }
+            else if (nGaussians[pair<int,string>(cat,proc)]==3){
+                fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; }
+        }
 
 
         for(int i=0;i<pars.size() ;++i) pars[i].setConstant(kFALSE);
@@ -397,6 +439,7 @@ void Fitter::fit(){
                 pars[pos].setRange(0,1);
                 pos+=1;
             }
+
             // return if ttH !=125
             if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125  bbH125
             //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
@@ -461,11 +504,17 @@ void Fitter::fit(){
 
                 if (nGaussians[pair<int,string>(cat,proc)] >=2)
                 {
-                    fitModel->plotOn(p,Components(g1),LineStyle(kDashed),LineColor(kRed+2)); 
+                    if (useDCB)
+                        fitModel->plotOn(p,Components(cb1),LineStyle(kDashed),LineColor(kRed+2)); 
+                    else
+                        fitModel->plotOn(p,Components(g1),LineStyle(kDashed),LineColor(kRed+2)); 
+
                     fitModel->plotOn(p,Components(g2),LineStyle(kDashed),LineColor(kGreen+2)); 
                 }
                 if (nGaussians[pair<int,string>(cat,proc)] >=3)
+                {
                     fitModel->plotOn(p,Components(g3),LineStyle(kDashed),LineColor(kMagenta)); 
+                }
 
 
 
@@ -485,13 +534,22 @@ void Fitter::fit(){
             // -- Save coefficients vs mh
             //
             //for(int i=0;i<pars.size();++i)
-            for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1;++i)
-             fitParameters_[ Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,mass.c_str(),i) ] =  pars[i].getVal();
+            //for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1 + (useDCB)?4:0 ;++i)
+            vector<int> params_to_interpolate;
+            for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1;++i) params_to_interpolate.push_back(i);
+            if (useDCB) for(int i=8;i<=11;++i) params_to_interpolate.push_back(i);
+            for(const int& i : params_to_interpolate)
+                fitParameters_[ Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,mass.c_str(),i) ] =  pars[i].getVal();
+
         } // end mass
 
         // -- Interpolate coefficients
         cout<<"Interpolate ---- "<<endl;
-        for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1;++i)
+        vector<int> params_to_interpolate;
+        for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1;++i) params_to_interpolate.push_back(i);
+        if (useDCB) for(int i=8;i<=11;++i) params_to_interpolate.push_back(i);
+        //for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1 ;++i)
+        for(const int& i : params_to_interpolate)
         {
             vector<float> mpoints;
             vector<float> c;
@@ -581,9 +639,8 @@ void Fitter::end(){
         // construct gaussians
 
         //RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat))));
-        RooGaussian *g1 = new RooGaussian(Form("g1%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
-
-        RooGaussian *g2{NULL},*g3{NULL};
+        //RooGaussian *g1 = new RooGaussian(Form("g1%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
+        RooAbsPdf *g1{NULL},*g2{NULL},*g3{NULL};
 
         string repl_proc = proc;
         int repl_cat=cat;
@@ -591,6 +648,40 @@ void Fitter::end(){
             repl_proc = replace[ pair<int,string>(cat,proc) ] .second;
             repl_cat = replace[ pair<int,string>(cat,proc) ] .first;
             cout<<" [Fitter]::[for coeff] found replacement for cat: "<<cat<<", proc"<<proc<<" with -> "<<repl_cat<<", "<<repl_proc<<endl;
+        }
+        string splname8=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,8);
+        string splname9=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,9);
+        string splname10=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,10);
+        string splname11=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,11);
+        
+        if (useDCB){
+
+            if (w_->function(splname8.c_str()) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","No such function in the ws:" + splname8);
+                w_->Print();
+            }
+            if (w_->function(splname9.c_str()) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","No such function in the ws:" + splname8);
+                w_->Print();
+            }
+            if (w_->function(splname10.c_str()) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","No such function in the ws:" + splname8);
+                w_->Print();
+            }
+            if (w_->function(splname11.c_str()) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","No such function in the ws:" + splname8);
+                w_->Print();
+            }
+
+            //8 9 10 11
+            g1 = new RooDoubleCBFast(Form("cb1%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"cb1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) , *(w_->function(splname8.c_str())) , *(w_->function(splname9.c_str())),*(w_->function(splname10.c_str())),*(w_->function(splname11.c_str())) );
+
+        } else{
+            g1 = new RooGaussian(Form("g1%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
         }
 
         //if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
@@ -601,8 +692,15 @@ void Fitter::end(){
         std::unique_ptr<RooAbsPdf> sigModel;
        
         if (nGaussians[pair<int,string>(cat,proc)] ==1) {
-            sigModel.reset( new RooGaussian(name.c_str(),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) )
+            if (useDCB){
+                sigModel.reset( new RooDoubleCBFast(name.c_str(),"cb1",*x_, *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0),
+                        *(w_->function(splname8.c_str())) , *(w_->function(splname9.c_str())),*(w_->function(splname10.c_str())),*(w_->function(splname11.c_str()))
+                        ));
+            }
+            else{
+                sigModel.reset( new RooGaussian(name.c_str(),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) )
                     );
+            }
             //sigModel.reset(new RooGaussian(name.c_str(),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat)))) ) ;
         }
         else if (nGaussians[pair<int,string>(cat,proc)] ==2) 

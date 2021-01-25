@@ -82,6 +82,7 @@ class Fitter : virtual public BaseFitter{
     bool verbose;
     bool doXsec {false}; // do xsec 
     bool saveFit{true};
+    bool useDCB{false}; //use a DBCB as first pdf
 
     string xname{"mmm"};
     float xmin;

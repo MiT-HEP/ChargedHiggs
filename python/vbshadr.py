@@ -17,9 +17,10 @@ class VBSHadr(HmmConfig):
         HmmConfig.__init__(self)
         self.dirname="VBShadAnalysis/" 
         self.varname="MVV"
+        self.sigfit_gaussians={}
         if target == 'had':
             self.sigspec="DoublyChargedHiggsGMmodel_HWW_M%.0f"
-            self.categories=["BB","RB"]
+            self.categories=["BB"]
             #self.categories=["BB_high","BB_low","RB_high","RB_low"]
             self.processes=["DoublyChargedHiggs"]
             self.xmin = 800
@@ -28,7 +29,7 @@ class VBSHadr(HmmConfig):
         elif target =='bhad':
             self.sigspec="SinglyChargedHiggsGMmodel_HWZ_Zbb_M%.0f"
             #self.categories=["RBtag_high","RBtag_low"]
-            self.categories=["RBtag"]
+            self.categories=["BBtag"]
             self.processes=["SinglyChargedHiggs"]
             self.xmin = 800
             self.xmax = 3000
@@ -37,10 +38,12 @@ class VBSHadr(HmmConfig):
             self.sigspec="SinglyChargedHiggsGMmodel_HWZ_Znn_M%.0f"
             self.processes=["SinglyChargedHiggs"]
             #self.categories=["BMET_high","BMET_low","RMET_high","RMET_low"]
-            self.categories=["BMET","RMET"]
+            self.categories=["BMET"]
             self.xmin = 200
             self.xmax = 3000
             self.xname="mt" ## -output roorelvar
+            self.dcb=True
+            #self.sigfit_gaussians[('BMET','SinglyChargedHiggs')]=2
 
         #self.categories=["BBtag","RBTag"]
         self.year=year
@@ -49,7 +52,6 @@ class VBSHadr(HmmConfig):
 
         #self.sig_mass_points=[1000,1500,2000]
         self.sig_mass_points=[1000,1500,2000]
-        self.sigfit_gaussians={}
         self.background_input_masks=None
 
         self.sigfit_scale_unc = {} ## cat, proc -> value or (cat,proc)
