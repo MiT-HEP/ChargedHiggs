@@ -6,6 +6,7 @@
 #include "HiggsAnalysis/CombinedLimit/interface/RooBernsteinFast.h"
 #include "RooGenericPdf.h"
 #include "RooExponential.h"
+#include "interface/Handlers.hpp" // abortException
 #include <cstdio>
 #include <cstdlib>
 
@@ -100,8 +101,35 @@ void Fitter::init(){
             if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
 
             string mass = Form(massMask_.c_str() ,m);
-            TH1D *h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
-            if (h==NULL and proc=="WH")
+            TH1D *h = NULL;
+            if (fInput==NULL and inname.find(",") == string::npos ){
+                // sum over files. 
+                // split by files
+                vector<string> files;
+                istringstream ss (inname);
+                string token;
+                while (std::getline(ss, token, ',')){
+                    if (token == "" ) continue;
+                    files.push_back(token); 
+                }
+                for (auto s : files){
+                    fInput = TFile::Open(s.c_str() );
+                    if (h== NULL)
+                        h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ->Clone();
+                        if (h==NULL){Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]+ Form("mass=%.1f proc=%s",m,proc.c_str()) + " file="+s ); throw abortException(); }
+                    else {
+                        TH1D *hTmp =  (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
+                        if (hTmp==NULL){Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]+ Form("mass=%.1f proc=%s",m,proc.c_str()) + " file="+s ); throw abortException(); }
+                        h->Add(hTmp);
+                    }
+                    fInput ->Close();
+                } 
+            }
+            else{ // default
+                h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
+            }
+
+            if (h==NULL and proc=="WH") // sum W+ and w- for wh
             {
                 h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),"WPlusH", m) ) ;
                 TH1D * hTmp=(TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),"WMinusH", m) ) ;
@@ -134,23 +162,42 @@ void Fitter::init(){
                 nGaussians[pair<int,string>(cat,proc)] = 3; // default
             }
 
+            if (xname == "mt"){ // mt is much looser 
+                initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetBinCenter(h->GetMaximumBin());
+                initPars_[Form("c1_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*.5;
 
-            initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetBinCenter(h->GetMaximumBin());
-            //if (initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] <120) initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)]= h->GetMean();
-            //initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)]= m;
-            initPars_[Form("c1_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*.5;
-            initPars_[Form("c2_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.95;
-            initPars_[Form("c3_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS();
-            initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.9;
-            initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*2;
+                initPars_[Form("c2_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.7;
+                initPars_[Form("c3_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*2;
 
-            initPars_[Form("c6_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .6;
-            initPars_[Form("c7_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .2;
+                initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.5;
+                initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*4;
 
-            if (nGaussians[pair<int,string>(cat,proc)] ==2)
-            {
-                initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .9;
-                //initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .1;
+                initPars_[Form("c6_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .6;
+                initPars_[Form("c7_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .2;
+
+                if (nGaussians[pair<int,string>(cat,proc)] ==2)
+                {
+                    initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .9;
+                }
+            }
+            else{
+                initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetBinCenter(h->GetMaximumBin());
+                //if (initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] <120) initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)]= h->GetMean();
+                //initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)]= m;
+                initPars_[Form("c1_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*.5;
+                initPars_[Form("c2_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.95;
+                initPars_[Form("c3_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS();
+                initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.9;
+                initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*2;
+
+                initPars_[Form("c6_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .6;
+                initPars_[Form("c7_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .2;
+
+                if (nGaussians[pair<int,string>(cat,proc)] ==2)
+                {
+                    initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .9;
+                    //initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .1;
+                }
             }
 
 
@@ -204,7 +251,7 @@ void Fitter::init(){
         //if (proc == "ttH")//ttH125  bbH125
         //if (false)//ttH as all
         //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")
-        if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs" or 
+        if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or 
              (inputMasks[cat].find("HiggsZG_Zbb") != string::npos)
                 )
         {
@@ -269,14 +316,14 @@ void Fitter::fit(){
     pars[6].setRange(0,1);
     pars[7].setRange(0,1);
 
-    if (mIn[0]>800) // DoublyChargedHiggs
+    if (xname == "mvv" or xname =="mt") // DoublyChargedHiggs
     {
-    pars[0].setRange(0,10000);
-    pars[1].setRange(10,1000);
-    pars[2].setRange(0,10000);
-    pars[3].setRange(5,1000);
-    pars[4].setRange(0,10000);
-    pars[5].setRange(10,1000);
+        pars[0].setRange(0,10000);
+        pars[1].setRange(10,1000);
+        pars[2].setRange(0,10000);
+        pars[3].setRange(5,1000);
+        pars[4].setRange(0,10000);
+        pars[5].setRange(10,1000);
     }
     //G+G+E
     RooGaussian g1("g1","g1",*x_,pars[0],pars[1]);
@@ -309,7 +356,8 @@ void Fitter::fit(){
         for(int i=0;i<pars.size() ;++i) pars[i].setConstant(kFALSE);
 
         vector<float> mInPlusOne{mIn};
-        mInPlusOne. push_back(mIn[0]);
+        //mInPlusOne. push_back(mIn[0]);
+        mInPlusOne. push_back(mIn[mIn.size()/2]);
 
         // reset last mass for ttH
         lastMass=-1;
@@ -322,10 +370,24 @@ void Fitter::fit(){
                 //mean and sigma
                 pars[pos+0].setRange(m-5*(ig+1),m+5*(ig+1));
                 pars[pos+1].setRange(0.5*(ig+1),10*(ig+1));
-                if (proc=="DoublyChargedHiggs")
+
+                if (proc=="DoublyChargedHiggs" or (proc=="SinglyChargedHiggs" and xname == "mvv"))
                 {
                     pars[pos+0].setRange(m-50*(ig+1),m+50*(ig+1));
-                    pars[pos+1].setRange(5*(ig+1),100*(ig+1));
+                    pars[pos+1].setRange(50*(ig+1),500*(ig+1));
+                    if (ig==2){ // third gaussian
+                        pars[pos+0].setRange(m-500,m+500);
+                    }
+                }
+
+                if (proc=="SinglyChargedHiggs" and xname == "mt")
+                {
+                    pars[pos+0].setRange(m-100*(ig+1),m+100*(ig+1));
+                    pars[pos+1].setRange(100*(ig+1),800*(ig+1));
+
+                    if (ig==2){ // third gaussian
+                        pars[pos+0].setRange(m-500,m+500);
+                    }
                 }
                 pos+=2;
             }
@@ -439,7 +501,7 @@ void Fitter::fit(){
                 if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125 bbH125
                 //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
                 if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
-                if (proc=="DoublyChargedHiggs" and fabs(m-1500)>0.1) continue;
+                //if (proc=="DoublyChargedHiggs" and fabs(m-1500)>0.1) continue;
                 if ( inputMasks[cat].find("HiggsZG_Zbb") != string::npos and fabs(m-125)> 0.1) continue;
 
                 cout <<" Considering proc='"<<proc<<"' and mass = "<< m<<endl;
@@ -454,12 +516,12 @@ void Fitter::fit(){
             string splname=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),proc.c_str(),cat,i);
             //#warning TTH125
             //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")//ttH125
-            if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs" or
+            if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or
                     ( inputMasks[cat].find("HiggsZG_Zbb") != string::npos )
                     )//ttH125
             //if (false)//ttH all
             {
-                string massexp = "125"; if (proc=="DoublyChargedHiggs") massexp="1500";
+                string massexp = "125"; //if (proc=="DoublyChargedHiggs") massexp="1500";
 
                 cout <<"DEBUG: Creating RooRealVar: "<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i) <<endl;
                 cout <<"DEBUG: par name="<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i)<<endl;
@@ -564,7 +626,10 @@ void Fitter::end(){
         if (plot ) {
             TCanvas *c = new TCanvas();
             RooPlot *p = x_ -> frame();
-            for(float mh=120;mh<130;mh+= 1)
+            float deltamh=1;
+            if (xname == "mvv" or xname =="mt") deltamh = 100;
+
+            for(float mh=mhmin;mh<mhmax; mh+= deltamh)
             {
                 cout <<"Interpolating at MH="<<mh<<endl;
                 mh_ -> setVal(mh);
