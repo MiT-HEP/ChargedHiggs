@@ -77,6 +77,8 @@ addConfig=VBShadAnalysis|AddLabel('EWKWPlus2Jets')
 addConfig=VBShadAnalysis|AddLabel('DY')
 
 ####addConfig=VBShadAnalysis|AddLabel('TT_TuneCUETP8M2T4')
+# TT_TuneCP5 is a generic label for powheg stitching
+addConfig=VBShadAnalysis|AddLabel('TT_TuneCP5')
 addConfig=VBShadAnalysis|AddLabel('TT_Mtt-700to1000_TuneCP5')
 addConfig=VBShadAnalysis|AddLabel('TT_Mtt-1000toInf_TuneCP5')
 addConfig=VBShadAnalysis|AddLabel('TTJets_TuneCP5')
