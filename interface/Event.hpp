@@ -211,7 +211,7 @@ class Event{
     inline int NGenPar() const {return genparticles_.size();}
 
     ///@brief compute soft variables. Njets and HT in the eta gap between j1 and j2 excluded with dR. Exclude all good leptons (e/mu) as well.
-    pair<int,float> softVariables(Object *j1, Object *j2, float cut=10, float dR=0.1) ;
+    pair<int,float> softVariables(Object *j1, Object *j2, float cut=10, float dR=0.1,const vector<Object*>& exclude={}) ;
     ///@brief soft activity variable. Number of jets in the eta gap between j1 and j2 excluded with dR. Exclude all good leptons (e/mu) as well.
     inline int softNJets(Object *j1, Object *j2, float cut=10, float dR=0.1){ return softVariables(j1,j2,cut,dR).first;}
     ///@brief soft activity variable. HT in the eta gap between j1 and j2 excluded with dR. Exclude all good leptons (e/mu) as well.
