@@ -33,6 +33,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float deepbcut_ {-100};
 
     float deepC;
+    float deepccut_ {-100};
 
     float nemf_,cemf_;
     float area_;
@@ -72,6 +73,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     void SetBCut(float x) {bcut_=x;}
     ///@brief set the deep b csv tagger (deep b+bb). only one between std and deep can be set. To unset use -100
     void SetDeepBCut(float x) {deepbcut_=x;}
+    ///@brief set the deep c csv tagger . only one between std and deep can be set. To unset use -100
+    void SetDeepCCut(float x) {deepccut_=x;}
     ///@brief set the B Regressions and unc
     void SetBCorrection(float x, float unc){bcorr_=x;bcorrunc_=unc;}
     ///@brief set the QGL discriminator
