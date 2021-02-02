@@ -282,6 +282,16 @@ else:
     elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000_13TeV-madgraph' in opts.label: xsec=0.05
     elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500_13TeV-madgraph' in opts.label: xsec=0.05
     elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000_13TeV-madgraph' in opts.label: xsec=0.05
+    ### QCD from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'QCD_HT50to100_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'    in opts.label: xsec = 185300000.0
+    elif 'QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'   in opts.label: xsec = 23590000.0
+    elif 'QCD_HT200to300_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'   in opts.label: xsec = 1551000.0
+    elif 'QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'   in opts.label: xsec = 323400.0
+    elif 'QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'   in opts.label: xsec = 30140.0
+    elif 'QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'  in opts.label: xsec = 6344.0
+    elif 'QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia'  in opts.label: xsec = 1092.0
+    elif 'QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8' in opts.label: xsec = 99.76
+    elif 'QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'  in opts.label: xsec = 20.35
     ### H-> mumu
     elif 'HToMuMu' in opts.label: xsec=1
     elif 'HToZG' in opts.label: xsec=1
@@ -296,6 +306,8 @@ else:
     elif 'TTTo2L2Nu' in opts.label: xsec=88.20
     elif 'TTToSemiLeptonic' in opts.label: xsec=365.3452
     elif 'TTToHadronic' in opts.label: xsec=377.9607
+    elif 'TT_Mtt-700to1000_TuneCP5' in opts.label: xsec=80.85
+    elif 'TT_Mtt-1000toInf_TuneCP5' in opts.label: xsec=19.81
     elif 'TT' in opts.label: xsec=831
     ## ST
     elif 'ST_s-channel_4f_InclusiveDecays' in opts.label: xsec=10.32
