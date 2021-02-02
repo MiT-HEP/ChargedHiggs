@@ -264,7 +264,7 @@ int LoadNano::FillEvent(){
 
         j->SetNEMF(nano->Jet_neEmEF[i] );
         j->SetCEMF(nano->Jet_chEmEF[i] );
-
+	j->SetArea(nano->Jet_area[i]);
 #warning MISSING NANO JES JER
         // TODO-- JES
         //j->SetValueUp  (Smearer::JES , (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
@@ -274,6 +274,7 @@ int LoadNano::FillEvent(){
         //TODO -- JER
         j->bdiscr = nano->Jet_btagCSVV2[i];
         j->SetDeepB ( nano->Jet_btagDeepB[i] );
+        j->SetDeepC ( nano->Jet_btagDeepC[i] );
         j->SetQGL(nano->Jet_qgl[i]);
         //j->SetPuId(nano->Jet_puId[i]); //80X flags
         j->SetPuId(nano->Jet_puIdDisc[i]);//91x discr
@@ -518,6 +519,7 @@ void LoadNano::NewFile(){
     SetYear(year);
     
     event_->triggerNames_.clear(); // possibly also not necessary by file
+
     
     if (year==2016){
       //https://dmytro.web.cern.ch/dmytro/trigger/2016/triggerEvolution_all.html

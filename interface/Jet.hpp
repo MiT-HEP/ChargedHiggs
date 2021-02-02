@@ -32,7 +32,10 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float deepB; // ** deep btag discriminator (B+BB)
     float deepbcut_ {-100};
 
+    float deepC;
+
     float nemf_,cemf_;
+    float area_;
 
     float bcorr_{1.}, bcorrunc_{1.};
 
@@ -94,6 +97,10 @@ class Jet : virtual public Object, virtual public SmearableComplex
     /// @brief set the deep B discri (B+BB)
     void SetDeepB(const float& x) {deepB=x;}
 
+    //@set and obtain deep C tag
+    void SetDeepC(const float& x) {deepC=x;}
+    inline float GetDeepC() const { return deepC;}
+
     ///@brief get bregression
     inline float GetBCorrection() const{return bcorr_;}
     inline float GetBCorrectionUncertainty() const{return bcorrunc_;}
@@ -103,6 +110,10 @@ class Jet : virtual public Object, virtual public SmearableComplex
     void SetCEMF(const float x) {cemf_=x;}
     inline float GetNEMF()const {return nemf_;}
     inline float GetCEMF()const {return cemf_;}
+
+    //Set and obtain jet area
+    void SetArea(const float x) {area_=x;}
+    inline float GetArea() const {return area_;}
 
     /// @brief constructor
     Jet() ; 
