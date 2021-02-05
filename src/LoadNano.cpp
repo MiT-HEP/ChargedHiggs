@@ -587,6 +587,8 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_IsoMu27");
       event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2");
       event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02");
+      event_->triggerNames_.push_back("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");
+      event_->triggerNames_.push_back("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
       event_->triggerNames_.push_back("HLT_DoublePFJets200_CaloBTagDeepCSV_p71");
       event_->triggerNames_.push_back("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5");
       event_->triggerNames_.push_back("HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1");
