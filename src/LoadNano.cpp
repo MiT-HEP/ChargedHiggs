@@ -411,6 +411,7 @@ int LoadNano::FillEvent(){
 
 
    //Gen
+   if ( tree_ ->GetBranchStatus("Generator_weight") == 0 ){  
    {
        // nano: genWeight ; Generator_weight ; LHEWeight_originalXWGTUP
        event_ -> GetWeight() -> SetMcWeight( nano->Generator_weight);
@@ -443,8 +444,10 @@ int LoadNano::FillEvent(){
         event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[1]*nano->Generator_weight , MC::r5f1 ) ;
         event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[0]*nano->Generator_weight , MC::r5f5 ) ;
     //
-        for (unsigned i=0 ; i< nano->nLHEPdfWeight;++i){
-            event_->GetWeight()->SetPdfWeight( nano->LHEPdfWeight[i] * nano->Generator_weight, i);
+        if ( tree_ ->GetBranchStatus("nLHEPdfWeight") != 0 ){  
+            for (unsigned i=0 ; i< nano->nLHEPdfWeight;++i){
+                event_->GetWeight()->SetPdfWeight( nano->LHEPdfWeight[i] * nano->Generator_weight, i);
+            }
         }
 
        event_ -> SetPdfId(1,nano->Generator_id1);
