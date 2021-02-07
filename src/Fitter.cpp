@@ -4,8 +4,19 @@
 
 #include "HiggsAnalysis/CombinedLimit/interface/RooSpline1D.h"
 #include "HiggsAnalysis/CombinedLimit/interface/RooBernsteinFast.h"
+#include "HiggsAnalysis/CombinedLimit/interface/RooDoubleCBFast.h"
+/*
+              RooAbsReal& _x,
+              RooAbsReal& _mean,
+              RooAbsReal& _width,
+              RooAbsReal& _alpha1,
+              RooAbsReal& _n1,
+              RooAbsReal& _alpha2,
+              RooAbsReal& _n2
+ */
 #include "RooGenericPdf.h"
 #include "RooExponential.h"
+#include "interface/Handlers.hpp" // abortException
 #include <cstdio>
 #include <cstdlib>
 
@@ -100,8 +111,35 @@ void Fitter::init(){
             if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
 
             string mass = Form(massMask_.c_str() ,m);
-            TH1D *h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
-            if (h==NULL and proc=="WH")
+            TH1D *h = NULL;
+            if (fInput==NULL and inname.find(",") == string::npos ){
+                // sum over files. 
+                // split by files
+                vector<string> files;
+                istringstream ss (inname);
+                string token;
+                while (std::getline(ss, token, ',')){
+                    if (token == "" ) continue;
+                    files.push_back(token); 
+                }
+                for (auto s : files){
+                    fInput = TFile::Open(s.c_str() );
+                    if (h== NULL)
+                        h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ->Clone();
+                        if (h==NULL){Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]+ Form("mass=%.1f proc=%s",m,proc.c_str()) + " file="+s ); throw abortException(); }
+                    else {
+                        TH1D *hTmp =  (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
+                        if (hTmp==NULL){Log(__FUNCTION__,"ERROR","No such histogram: mask="+inputMasks[cat]+ Form("mass=%.1f proc=%s",m,proc.c_str()) + " file="+s ); throw abortException(); }
+                        h->Add(hTmp);
+                    }
+                    fInput ->Close();
+                } 
+            }
+            else{ // default
+                h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),proc.c_str(), m) ) ;
+            }
+
+            if (h==NULL and proc=="WH") // sum W+ and w- for wh
             {
                 h = (TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),"WPlusH", m) ) ;
                 TH1D * hTmp=(TH1D*)fInput ->Get( Form(inputMasks[cat].c_str(),"WMinusH", m) ) ;
@@ -134,23 +172,48 @@ void Fitter::init(){
                 nGaussians[pair<int,string>(cat,proc)] = 3; // default
             }
 
+            if (xname == "mt"){ // mt is much looser 
+                initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetBinCenter(h->GetMaximumBin());
+                initPars_[Form("c1_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*.5;
 
-            initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetBinCenter(h->GetMaximumBin());
-            //if (initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] <120) initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)]= h->GetMean();
-            //initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)]= m;
-            initPars_[Form("c1_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*.5;
-            initPars_[Form("c2_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.95;
-            initPars_[Form("c3_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS();
-            initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.9;
-            initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*2;
+                initPars_[Form("c2_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.7;
+                initPars_[Form("c3_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*2;
 
-            initPars_[Form("c6_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .6;
-            initPars_[Form("c7_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .2;
+                initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.5;
+                initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*4;
 
-            if (nGaussians[pair<int,string>(cat,proc)] ==2)
-            {
-                initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .9;
-                //initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .1;
+                initPars_[Form("c6_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .6;
+                initPars_[Form("c7_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .2;
+
+                if (nGaussians[pair<int,string>(cat,proc)] ==2)
+                {
+                    initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .9;
+                }
+            }
+            else{
+                initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetBinCenter(h->GetMaximumBin());
+                //if (initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)] <120) initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)]= h->GetMean();
+                //initPars_[Form("c0_%s_cat%d_%.0f",proc.c_str(),cat,m)]= m;
+                initPars_[Form("c1_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*.5;
+                initPars_[Form("c2_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.95;
+                initPars_[Form("c3_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS();
+                initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetMean()*.9;
+                initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = h->GetRMS()*2;
+
+                initPars_[Form("c6_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .6;
+                initPars_[Form("c7_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .2;
+
+                if (nGaussians[pair<int,string>(cat,proc)] ==2)
+                {
+                    initPars_[Form("c4_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .9;
+                    //initPars_[Form("c5_%s_cat%d_%.0f",proc.c_str(),cat,m)] = .1;
+                }
+            }
+            if (useDCB){
+                initPars_[Form("c8_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 1.;
+                initPars_[Form("c9_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 1.;
+                initPars_[Form("c10_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 1.;
+                initPars_[Form("c11_%s_cat%d_%.0f",proc.c_str(),cat,m)] = 1.;
             }
 
 
@@ -204,7 +267,7 @@ void Fitter::init(){
         //if (proc == "ttH")//ttH125  bbH125
         //if (false)//ttH as all
         //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")
-        if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs" or 
+        if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or 
              (inputMasks[cat].find("HiggsZG_Zbb") != string::npos)
                 )
         {
@@ -269,25 +332,38 @@ void Fitter::fit(){
     pars[6].setRange(0,1);
     pars[7].setRange(0,1);
 
-    if (mIn[0]>800) // DoublyChargedHiggs
+    pars[8].setRange(.5,3); //  alpha
+    pars[9].setRange(0.01,5); // n -> powerlaw
+    pars[10].setRange(.5,3); // alpha2
+    pars[11].setRange(0.01,5);
+
+    if (xname == "mvv" or xname =="mt") // DoublyChargedHiggs
     {
-    pars[0].setRange(0,10000);
-    pars[1].setRange(10,1000);
-    pars[2].setRange(0,10000);
-    pars[3].setRange(5,1000);
-    pars[4].setRange(0,10000);
-    pars[5].setRange(10,1000);
+        pars[0].setRange(0,10000);
+        pars[1].setRange(10,1000);
+        pars[2].setRange(0,10000);
+        pars[3].setRange(5,1000);
+        pars[4].setRange(0,10000);
+        pars[5].setRange(10,1000);
     }
     //G+G+E
     RooGaussian g1("g1","g1",*x_,pars[0],pars[1]);
     RooGaussian g2("g2","g2",*x_,pars[2],pars[3]);
     RooGaussian g3("g3","g3",*x_,pars[4],pars[5]);
 
+    RooDoubleCBFast cb1("cb1","cb1",*x_,pars[0],pars[1],pars[8],pars[9],pars[10],pars[11]);
+
     //RooGenericPdf  fitModel("model","TMath::Exp(-TMath::Power((@0-@1)/@2,2))*(1+@3*@0+@4*@0*@0)",RooArgList(*x_,mean,sigma,c1,c2));
     //RooGenericPdf  fitModel("model","TMath::Exp(-TMath::Power((@0-@1)/@2,2))+@4*TMath::Exp(-@0*@3)",RooArgList(*x_,mean,sigma,c1,c2,c3));
     // RooAddPdf fitModel("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ;
     std::unique_ptr<RooAbsPdf>fitModel;
-    fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+    
+    if (useDCB){ // is this used?
+        fitModel.reset( new RooAddPdf("model","model",RooArgList(cb1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+    }
+    else{
+        fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+    }
 
 
     // -- Fit Model to MC
@@ -297,19 +373,33 @@ void Fitter::fit(){
     {
         cout<<"-> Doing cat"<<cat<<" proc"<<proc<< " nG="<<nGaussians[pair<int,string>(cat,proc)]<<endl;
 
+        if (useDCB){
+            if (nGaussians[pair<int,string>(cat,proc)]==1)
+            {
+                fitModel.reset( new RooDoubleCBFast("cb1","cb1",*x_,pars[0],pars[1],pars[8],pars[9],pars[10],pars[11]) );
+            }
+            else if (nGaussians[pair<int,string>(cat,proc)]==2){
+                fitModel.reset( new RooAddPdf("model","model",RooArgList(cb1,g2),RooArgList(pars[4]), kTRUE ) ) ; 
+            }
+            else if (nGaussians[pair<int,string>(cat,proc)]==3){
+                fitModel.reset( new RooAddPdf("model","model",RooArgList(cb1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+            }
 
-        if (nGaussians[pair<int,string>(cat,proc)]==1)
-            fitModel.reset( new RooGaussian("g1","g1",*x_,pars[0],pars[1]) ) ; 
-        else if (nGaussians[pair<int,string>(cat,proc)]==2)
-            fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2),RooArgList(pars[4]), kTRUE ) ) ; 
-        else if (nGaussians[pair<int,string>(cat,proc)]==3)
-            fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; 
+        }else{
+            if (nGaussians[pair<int,string>(cat,proc)]==1){
+                fitModel.reset( new RooGaussian("g1","g1",*x_,pars[0],pars[1]) ) ; }
+            else if (nGaussians[pair<int,string>(cat,proc)]==2){
+                fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2),RooArgList(pars[4]), kTRUE ) ) ; }
+            else if (nGaussians[pair<int,string>(cat,proc)]==3){
+                fitModel.reset( new RooAddPdf("model","model",RooArgList(g1,g2,g3),RooArgList(pars[6],pars[7]), kTRUE ) ) ; }
+        }
 
 
         for(int i=0;i<pars.size() ;++i) pars[i].setConstant(kFALSE);
 
         vector<float> mInPlusOne{mIn};
-        mInPlusOne. push_back(mIn[0]);
+        //mInPlusOne. push_back(mIn[0]);
+        mInPlusOne. push_back(mIn[mIn.size()/2]);
 
         // reset last mass for ttH
         lastMass=-1;
@@ -322,10 +412,24 @@ void Fitter::fit(){
                 //mean and sigma
                 pars[pos+0].setRange(m-5*(ig+1),m+5*(ig+1));
                 pars[pos+1].setRange(0.5*(ig+1),10*(ig+1));
-                if (proc=="DoublyChargedHiggs")
+
+                if (proc=="DoublyChargedHiggs" or (proc=="SinglyChargedHiggs" and xname == "mvv"))
                 {
                     pars[pos+0].setRange(m-50*(ig+1),m+50*(ig+1));
-                    pars[pos+1].setRange(5*(ig+1),100*(ig+1));
+                    pars[pos+1].setRange(50*(ig+1),500*(ig+1));
+                    if (ig==2){ // third gaussian
+                        pars[pos+0].setRange(m-500,m+500);
+                    }
+                }
+
+                if (proc=="SinglyChargedHiggs" and xname == "mt")
+                {
+                    pars[pos+0].setRange(m-100*(ig+1),m+100*(ig+1));
+                    pars[pos+1].setRange(100*(ig+1),800*(ig+1));
+
+                    if (ig==2){ // third gaussian
+                        pars[pos+0].setRange(m-500,m+500);
+                    }
                 }
                 pos+=2;
             }
@@ -335,6 +439,7 @@ void Fitter::fit(){
                 pars[pos].setRange(0,1);
                 pos+=1;
             }
+
             // return if ttH !=125
             if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125  bbH125
             //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
@@ -399,11 +504,17 @@ void Fitter::fit(){
 
                 if (nGaussians[pair<int,string>(cat,proc)] >=2)
                 {
-                    fitModel->plotOn(p,Components(g1),LineStyle(kDashed),LineColor(kRed+2)); 
+                    if (useDCB)
+                        fitModel->plotOn(p,Components(cb1),LineStyle(kDashed),LineColor(kRed+2)); 
+                    else
+                        fitModel->plotOn(p,Components(g1),LineStyle(kDashed),LineColor(kRed+2)); 
+
                     fitModel->plotOn(p,Components(g2),LineStyle(kDashed),LineColor(kGreen+2)); 
                 }
                 if (nGaussians[pair<int,string>(cat,proc)] >=3)
+                {
                     fitModel->plotOn(p,Components(g3),LineStyle(kDashed),LineColor(kMagenta)); 
+                }
 
 
 
@@ -423,13 +534,22 @@ void Fitter::fit(){
             // -- Save coefficients vs mh
             //
             //for(int i=0;i<pars.size();++i)
-            for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1;++i)
-             fitParameters_[ Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,mass.c_str(),i) ] =  pars[i].getVal();
+            //for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1 + (useDCB)?4:0 ;++i)
+            vector<int> params_to_interpolate;
+            for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1;++i) params_to_interpolate.push_back(i);
+            if (useDCB) for(int i=8;i<=11;++i) params_to_interpolate.push_back(i);
+            for(const int& i : params_to_interpolate)
+                fitParameters_[ Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,mass.c_str(),i) ] =  pars[i].getVal();
+
         } // end mass
 
         // -- Interpolate coefficients
         cout<<"Interpolate ---- "<<endl;
-        for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1;++i)
+        vector<int> params_to_interpolate;
+        for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1;++i) params_to_interpolate.push_back(i);
+        if (useDCB) for(int i=8;i<=11;++i) params_to_interpolate.push_back(i);
+        //for(int i=0;i<3*nGaussians[pair<int,string>(cat,proc)]-1 ;++i)
+        for(const int& i : params_to_interpolate)
         {
             vector<float> mpoints;
             vector<float> c;
@@ -439,7 +559,7 @@ void Fitter::fit(){
                 if (proc == "bbH" and fabs(m-125)> 0.1) continue;//ttH125 bbH125
                 //if ((proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
                 if (( proc=="GluGluToHHTo2B2M_node_4") and fabs(m-125)> 0.1) continue;
-                if (proc=="DoublyChargedHiggs" and fabs(m-1500)>0.1) continue;
+                //if (proc=="DoublyChargedHiggs" and fabs(m-1500)>0.1) continue;
                 if ( inputMasks[cat].find("HiggsZG_Zbb") != string::npos and fabs(m-125)> 0.1) continue;
 
                 cout <<" Considering proc='"<<proc<<"' and mass = "<< m<<endl;
@@ -454,12 +574,12 @@ void Fitter::fit(){
             string splname=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),proc.c_str(),cat,i);
             //#warning TTH125
             //if (proc == "ttH" or proc=="WMinusH" or proc=="WPlusH" or proc=="ZH" or proc=="GluGluToHHTo2B2M_node_4")//ttH125
-            if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or proc=="DoublyChargedHiggs" or
+            if (proc=="GluGluToHHTo2B2M_node_4" or proc=="bbH" or
                     ( inputMasks[cat].find("HiggsZG_Zbb") != string::npos )
                     )//ttH125
             //if (false)//ttH all
             {
-                string massexp = "125"; if (proc=="DoublyChargedHiggs") massexp="1500";
+                string massexp = "125"; //if (proc=="DoublyChargedHiggs") massexp="1500";
 
                 cout <<"DEBUG: Creating RooRealVar: "<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i) <<endl;
                 cout <<"DEBUG: par name="<<Form("fit_%s_cat%d_mass_%s_c%d",proc.c_str(),cat,massexp.c_str(),i)<<endl;
@@ -519,9 +639,8 @@ void Fitter::end(){
         // construct gaussians
 
         //RooGaussian *g1 = new RooGaussian(Form("g1_%s_cat%d",proc.c_str(),cat),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat))));
-        RooGaussian *g1 = new RooGaussian(Form("g1%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
-
-        RooGaussian *g2{NULL},*g3{NULL};
+        //RooGaussian *g1 = new RooGaussian(Form("g1%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
+        RooAbsPdf *g1{NULL},*g2{NULL},*g3{NULL};
 
         string repl_proc = proc;
         int repl_cat=cat;
@@ -529,6 +648,40 @@ void Fitter::end(){
             repl_proc = replace[ pair<int,string>(cat,proc) ] .second;
             repl_cat = replace[ pair<int,string>(cat,proc) ] .first;
             cout<<" [Fitter]::[for coeff] found replacement for cat: "<<cat<<", proc"<<proc<<" with -> "<<repl_cat<<", "<<repl_proc<<endl;
+        }
+        string splname8=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,8);
+        string splname9=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,9);
+        string splname10=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,10);
+        string splname11=Form("sigmodel%s_%s_cat%d_c%d",uniq_.c_str(),repl_proc.c_str(),repl_cat,11);
+        
+        if (useDCB){
+
+            if (w_->function(splname8.c_str()) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","No such function in the ws:" + splname8);
+                w_->Print();
+            }
+            if (w_->function(splname9.c_str()) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","No such function in the ws:" + splname8);
+                w_->Print();
+            }
+            if (w_->function(splname10.c_str()) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","No such function in the ws:" + splname8);
+                w_->Print();
+            }
+            if (w_->function(splname11.c_str()) == NULL)
+            {
+                Log(__FUNCTION__,"ERROR","No such function in the ws:" + splname8);
+                w_->Print();
+            }
+
+            //8 9 10 11
+            g1 = new RooDoubleCBFast(Form("cb1%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"cb1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) , *(w_->function(splname8.c_str())) , *(w_->function(splname9.c_str())),*(w_->function(splname10.c_str())),*(w_->function(splname11.c_str())) );
+
+        } else{
+            g1 = new RooGaussian(Form("g1%s_%s_cat%d",uniq_.c_str(),proc.c_str(),cat),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) );
         }
 
         //if (nGaussians[pair<int,string>(cat,proc)] >= 2 )g2=new RooGaussian(Form("g2_%s_cat%d",proc.c_str(),cat),"g2",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c2",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c3",proc.c_str(),cat))));
@@ -539,8 +692,15 @@ void Fitter::end(){
         std::unique_ptr<RooAbsPdf> sigModel;
        
         if (nGaussians[pair<int,string>(cat,proc)] ==1) {
-            sigModel.reset( new RooGaussian(name.c_str(),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) )
+            if (useDCB){
+                sigModel.reset( new RooDoubleCBFast(name.c_str(),"cb1",*x_, *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0),
+                        *(w_->function(splname8.c_str())) , *(w_->function(splname9.c_str())),*(w_->function(splname10.c_str())),*(w_->function(splname11.c_str()))
+                        ));
+            }
+            else{
+                sigModel.reset( new RooGaussian(name.c_str(),"g1",*x_,  *getMeanWithSyst(cat,proc,0), *getSigmaWithSyst(cat,proc,0) )
                     );
+            }
             //sigModel.reset(new RooGaussian(name.c_str(),"g1",*x_,  * (w_->function(Form("sigmodel_%s_cat%d_c0",proc.c_str(),cat))), *(w_->function(Form("sigmodel_%s_cat%d_c1",proc.c_str(),cat)))) ) ;
         }
         else if (nGaussians[pair<int,string>(cat,proc)] ==2) 
@@ -564,7 +724,10 @@ void Fitter::end(){
         if (plot ) {
             TCanvas *c = new TCanvas();
             RooPlot *p = x_ -> frame();
-            for(float mh=120;mh<130;mh+= 1)
+            float deltamh=1;
+            if (xname == "mvv" or xname =="mt") deltamh = 100;
+
+            for(float mh=mhmin;mh<mhmax; mh+= deltamh)
             {
                 cout <<"Interpolating at MH="<<mh<<endl;
                 mh_ -> setVal(mh);

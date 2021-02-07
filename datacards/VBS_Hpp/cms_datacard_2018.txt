@@ -1,0 +1,19 @@
+imax *
+jmax *
+kmax *
+--------------
+shapes BKG       cat0  BackgroundModel_had_2018.root w:exp_cat0_ord1
+shapes data_obs  cat0  BackgroundModel_had_2018.root w:dataObs_cat0
+shapes DoublyChargedHiggs       cat0  SignalModel_had_2018.root w:pdf_sigmodel2018_DoublyChargedHiggs_cat0
+-------------
+bin cat0
+observation -1
+---------------
+bin cat0 cat0
+process BKG DoublyChargedHiggs
+process 1 0
+rate    1 59740
+---------------
+lumi lnN - 1.025
+pdf_cat0_bkg_norm rateParam cat0 BKG BackgroundModel_had_2018.root:w
+

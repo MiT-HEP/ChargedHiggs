@@ -134,8 +134,10 @@ if opts.classname== "Fitter":
     fitter.outname= opts.outfile
     fitter.inname =opts.file
     if config.background_fitstrategy==1: 
-        fitter.mhmin=50
-        fitter.mhmax=5000
+        fitter.mhmin=1000
+        fitter.mhmax=2000
+    if config.dcb:
+        fitter.useDCB = True
     ## Hmumu
     for m in config.sig_mass_points:
         fitter.mIn.push_back(m)

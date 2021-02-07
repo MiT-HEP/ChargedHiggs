@@ -11,6 +11,7 @@ class HmmConfig():
     '''
     def __init__(self):
         ## CATEGORIES and MAP ##
+        self.dcb=False # use double sided CB as first function
         self.dirname="HmumuAnalysis/Vars/" 
         self.varname="Mmm"
         self.sigspec="%s_HToMuMu_M%.0f" ## the %s is for the process substitution
