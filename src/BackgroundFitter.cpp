@@ -1111,7 +1111,10 @@ void BackgroundFitter::fit(){
         {
                 
                 TH1D *h =NULL;
-                if (fInput != NULL) h=(TH1D*)fInput ->Get( inputMasks[cat].c_str() ) ;
+                if (fInput != NULL) { 
+                    h=(TH1D*)fInput ->Get( inputMasks[cat].c_str() ) ;
+                    if (h == NULL) Log(__FUNCTION__,"ERROR","No such histogram in file: " +inname+ " mask="+inputMasks[cat]);
+                }
                 else{
                     h=(TH1D*)fAll[0] ->Get( inputMasks[cat].c_str() ) ;
                     if (h == NULL) Log(__FUNCTION__,"ERROR","No such histogram is file 0: mask="+inputMasks[cat]);

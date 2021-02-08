@@ -65,7 +65,12 @@ class VBSHadr(HmmConfig):
         self.computeVersioning()
 
         ##tmp configuration for background on MC
-        self.background_input_masks=['MVV_BB_AsimovB']
+        if target == 'had':
+            self.background_input_masks=['MVV_BB_AsimovB']
+        if target == 'bhad':
+            self.background_input_masks=['MVV_BBtag_AsimovB']
+        if target == 'met':
+            self.background_input_masks=['MVV_MET_AsimovB']
         self.background_fitstrategy=1
 
 
