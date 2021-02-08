@@ -1,0 +1,1 @@
+config=JsonAnalysis|@applyJson($OBJ!'aux/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON_v1.txt')

@@ -54,6 +54,7 @@ public:
     void studyTriggers(Event*e, string category, string label, string systname);
     float genMtt(Event*e);
     bool genMatchResolved(Event*e, string systname, string label);
+    bool genMatchResonant(Event*e, string label, string category);
 
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
@@ -67,11 +68,11 @@ public:
     bool doWriteTree = true;
     bool usePuppi=false;
     bool doTrigger=false;
-    bool writeTrainTree=true;
+    bool writeTrainTree=false;
 
-    bool doTMVA=true;
+    bool doTMVA=false;
     bool doResTagKeras = false;
-    bool doResTagTMVA = true;
+    bool doResTagTMVA = false;
     // those two below are to prune the combination
     bool doMultiTagger = false;
     bool do2DNN = false;

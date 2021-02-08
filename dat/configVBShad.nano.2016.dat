@@ -22,7 +22,7 @@ include=dat/vbshad.dat
 
 SFDB=aux/sf_VBShad.txt
 MCDB=aux/mcdb.nano.2016.txt
-include=dat/json.2016.moriond.dat
+include=dat/json.nano.year2016.dat
 pileup=aux/pileup.nano.year2016.root
 
 Smear=NONE
@@ -46,4 +46,16 @@ Output=VBShadSignal_HAD.root
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
 #addConfig=VBShadAnalysis|year=2016
 #Output=VBShadSignal_B.root
+
+##
+
+#include=dat/catalog/2020.moriond/nano/year2016/jetHT.dat
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1,doBAntiAnalysis=0
+#addConfig=VBShadAnalysis|year=2016
+#Output=VBShadAntiSignal_HAD.root
+
+#include=dat/catalog/2020.moriond/nano/year2016/jetHT.dat
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=0,doBAntiAnalysis=1
+#addConfig=VBShadAnalysis|year=2016
+#Output=VBShadAntiSignal_B.root
 

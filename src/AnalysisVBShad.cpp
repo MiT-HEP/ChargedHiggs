@@ -5,11 +5,15 @@
 #include <algorithm>
 #include "interface/GeneralFunctions.hpp"
 
-//#warning Hmumu ANALYSIS NON ISO
+//2018  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18#Supported_Algorithms_and_Operati
+//2017  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17#Supported_Algorithms_and_Operati
+#define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1355:0.1208)
+#define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4506:0.4148)
+#define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?0.7738:.7665)
 
-#define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1522:0.1241)
-#define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4941:0.4148)
-#define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?.8001:.7527)
+#define DEEP_C_LOOSE ((year==2016)?1.:(year==2017)?0.04:0.064)
+#define DEEP_C_MEDIUM ((year==2016)?1.:(year==2017)?0.144:0.153)
+#define DEEP_C_TIGHT ((year==2016)?1.:(year==2017)?0.73:0.405)
 
 void VBShadAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
@@ -39,7 +43,7 @@ void VBShadAnalysis::SetJetCuts(Jet *j) {
     //#warning NOPUID
     //j->SetPuIdCut(-999);
     //#warning PUID
-    j->SetPuIdCut(100);
+    j->SetPuIdCut(100); // 100=loose
 }
 
 void VBShadAnalysis::SetTauCuts(Tau *t){
@@ -59,7 +63,7 @@ void VBShadAnalysis::SetTauCuts(Tau *t){
 void VBShadAnalysis::SetFatJetCuts(FatJet *f){
     f->SetEtaCut(2.5);
     f->SetPtCut(250);
-    f->SetSDMassCut(30);
+    f->SetSDMassCut(50);
 }
 
 bool VBShadAnalysis::checkSignalLabel(string l) {
@@ -116,6 +120,13 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
     AddFinalHisto("VBShadAnalysis/MVV"+category+"_"+l);
     Book ("VBShadAnalysis/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 125,0,3000);
+
+    if(checkSignalLabel(l)) {
+        Book ("VBShadAnalysis/MVV"+category+"_match_"+l, "MVV (match) ; MVV [GeV]; Events", 125,0,3000);
+        Book ("VBShadAnalysis/MVV"+category+"_unMatch_"+l, "MVV (unmatch) ; MVV [GeV]; Events", 125,0,3000);
+        Book ("VBShadAnalysis/MVV"+category+"_central_"+l, "MVV (central) ; MVV [GeV]; Events", 125,0,3000);
+        Book ("VBShadAnalysis/MVV"+category+"_CE_EE_"+l, "MVV (CE+EE) ; MVV [GeV]; Events", 125,0,3000);
+    }
     Book ("VBShadAnalysis/MVV"+category+"_low_"+l, "MVV (low Deta JJ) ; MVV_{reco}; Events", 100, 0, 2500);
     Book ("VBShadAnalysis/MVV"+category+"_high_"+l, "MVV (high Deta JJ) ; MVV_{reco}; Events", 100, 0, 2500);
 
@@ -810,60 +821,64 @@ void VBShadAnalysis::Init(){
     for ( string l : AllLabel()  ) {
 
         //cutflow
-        Book ("VBShadAnalysis/Cutflow_"+l, "cutflow; bit; Events", 15,0,15);
-        Book ("VBShadAnalysis/CutflowNoW_"+l, "cutflow, no weights; bit; Events", 15,0,15);
+        Book ("VBShadAnalysis/GENERAL/Cutflow_"+l, "cutflow; bit; Events", 15,0,15);
+        Book ("VBShadAnalysis/GENERAL/CutflowNoW_"+l, "cutflow, no weights; bit; Events", 15,0,15);
+        Book ("VBShadAnalysis/GENERAL/Mtt_"+l, "Mtt (unclassified); Mtt [GeV]; Events", 100,0,2500);
+        Book ("VBShadAnalysis/GENERAL/LHEht_"+l, "LHE; LHEht", 500,0,5000);
 
         //Trigger
-        Book("VBShadAnalysis/Baseline/mVV_MET_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        if(doTrigger) {
+            Book("VBShadAnalysis/Baseline/mVV_MET_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMetOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+            Book("VBShadAnalysis/Baseline/mVV_MET_triggerMetOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        }
 
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
@@ -905,8 +920,6 @@ void VBShadAnalysis::Init(){
         // OTHERS
         Book ("VBShadAnalysis/BOSON/BosonDecayRatio_"+l, " ; J2/J1; Events", 200,0,1);
         Book ("VBShadAnalysis/BOSON/CosThetaStar_"+l, " ; CosThetaStar; Events", 200,-1,1);
-
-        Book ("VBShadAnalysis/BOSON/Mtt_"+l, "Mtt (unclassified); Mtt [GeV]; Events", 100,0,2500);
 
         // resolved
         Book ("VBShadAnalysis/Baseline/ResBosonMassChi2_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
@@ -980,7 +993,8 @@ void VBShadAnalysis::Init(){
 
     } //end label loop
 
-    if(doWriteTree) { writeTree("tree_vbs",0); writeTree("tree_vbs_JESUp",0); writeTree("tree_vbs_JESDown",0); writeTree("tree_resTag",1);}
+    if(doWriteTree) { writeTree("tree_vbs",0); writeTree("tree_vbs_JESUp",0); writeTree("tree_vbs_JESDown",0); }
+    if(writeTrainTree) writeTree("tree_resTag",1);
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
 
@@ -1531,8 +1545,56 @@ bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
 
 }
 
+bool VBShadAnalysis::genMatchResonant(Event*e, string label, string category){
 
+    if(!checkSignalLabel(label)) return false;
 
+    /*
+    if(genVp==NULL or genVp2==NULL) evt_genmatch = false;
+    if(genVp!=NULL and genVp2!=NULL) {
+        bool match1 = false;
+        bool match2 = false;
+        if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[1]->DeltaR(*genVp2) < 0.2 ) match1 = true;
+        if(selectedFatJets[1]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) match2 = true;
+        if(match1 or match2) evt_genmatch = true;
+    }
+    */
+
+    bool match_1 = false;
+    bool match_2 = false;
+    evt_genmatch = 0;
+
+    for(Int_t i = 0; i < e->NGenPar(); i++){
+
+        GenParticle *genpar = e->GetGenParticle(i);
+        if((fabs(genpar->GetPdgId()) != 23) and  (fabs(genpar->GetPdgId()) != 24) ) continue;
+
+        // target WjjZbb
+        if( category.find("BBtag")   !=string::npos ) {
+            if( (fabs(genpar->GetPdgId()) == 23) and ((selectedFatZbb[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2)) match_1 = true;
+            if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+        } else if ( category.find("BB")   !=string::npos ) {
+            // target WjjWjj
+            if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+            if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+        } else if( category.find("BMET")   !=string::npos ) {
+            // target WjjZnn
+            if( usePuppi ) {
+                if((fabs(genpar->GetPdgId()) == 23) and (e->GetMet().GetPuppiMetP4()).DeltaPhi(genpar->GetP4()) < 0.2 ) match_1 = true;
+            } else {
+                if((fabs(genpar->GetPdgId()) == 23) and (e->GetMet().GetP4()).DeltaPhi(genpar->GetP4()) < 0.2 ) match_1 = true;
+            }
+            if(selectedFatZbb.size()>0) {
+                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatZbb[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+            } else {
+                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+            }
+        }
+    }
+
+    evt_genmatch = match_1 && match_2;
+    return evt_genmatch;
+}
 
 void VBShadAnalysis::genStudies(Event*e, string label )
 {
@@ -1861,7 +1923,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJet_" +label, systname, f->ZHccvsQCD(), e->weight() );
         }
 
-        double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().Phi()));
+        double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetP4().Phi()));
         if(usePuppi) dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
 
         bool isZbbJet=false;
@@ -1957,7 +2019,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         }
 
         counter++;
-        float dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().Phi()));
+        float dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().GetP4().Phi()));
         if(usePuppi) dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
 
         // first 2,4 jets in the BMET,RMET
@@ -2262,6 +2324,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("lumi",e->lumiNum());
     SetTreeVar("evt",e->eventNum());
     SetTreeVar("isRealData",e->IsRealData());
+    SetTreeVar("year",year);
 
     SetTreeVar("weight",e->weight());
     SetTreeVar("xsec",e->GetWeight()->GetBareMCXsec());
@@ -2462,6 +2525,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     string label = GetLabel(e);
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
+    if( label == "QCD_HT" ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
+
     /*
     // redefine labels
     if ( label == "WWW") label = "MULTIBOSON";
@@ -2505,7 +2570,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        or (label.find("TTToHadronic") !=string::npos)
        or (label.find("TT_Mtt") !=string::npos) ) {
         float Mtt = genMtt(e);
-        Fill("VBShadAnalysis/BOSON/Mtt_" +label, systname, Mtt, e->weight() );
+        Fill("VBShadAnalysis/GENERAL/Mtt_" +label, systname, Mtt, e->weight() );
     }
 
     if (not e->IsRealData()
@@ -2543,8 +2608,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
     //$$$$$$$$$
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 0, e->weight() );  //0--ALL
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 0, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 0, e->weight() );  //0--ALL
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 0, 1 );
 
     // TRIGGER STORY
 
@@ -2640,8 +2705,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$$$
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","After tirgger" );
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 1, e->weight() );  //1--trigger
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 1, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 1, e->weight() );  //1--trigger
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 1, 1 );
 
     // kill Top/W/Z
     if ( e->Nleps() > 0 ) return EVENT_NOT_USED;
@@ -2649,10 +2714,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Lepton and taus veto" );
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 2, e->weight() );  //2--lepVeto
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 2, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 2, e->weight() );  //2--lepVeto
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 2, 1 );
 
-    Fill("VBShadAnalysis/Baseline/Met_" +label, systname, e->GetMet().Pt(), e->weight() );
+    Fill("VBShadAnalysis/Baseline/Met_" +label, systname, e->GetMet().GetP4().Pt(), e->weight() );
     Fill("VBShadAnalysis/Baseline/PuppiMet_" +label, systname, e->GetMet().GetPuppiMetP4().Pt(), e->weight() );
 
     if(usePuppi) {
@@ -2661,13 +2726,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if ( (!doMETAnalysis and !doMETAntiAnalysis) and e->GetMet().GetPuppiMetP4().Pt() > 200 ) return EVENT_NOT_USED;
     } else {
         // events with MET in separate category
-        if ( (doMETAnalysis or doMETAntiAnalysis) and e->GetMet().Pt() < 250 ) return EVENT_NOT_USED;
-        if ( (!doMETAnalysis and !doMETAntiAnalysis) and e->GetMet().Pt() > 200 ) return EVENT_NOT_USED;
+        if ( (doMETAnalysis or doMETAntiAnalysis) and e->GetMet().GetP4().Pt() < 250 ) return EVENT_NOT_USED;
+        if ( (!doMETAnalysis and !doMETAntiAnalysis) and e->GetMet().GetP4().Pt() > 200 ) return EVENT_NOT_USED;
     }
 
-    if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("Met Veto %f",e->GetMet().Pt()) );
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 3, e->weight() );  //3--vetoMET
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 3, 1 );
+    if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("Met Veto %f",e->GetMet().GetP4().Pt()) );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 3, e->weight() );  //3--vetoMET
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 3, 1 );
 
     //$$$$$$$$$
     //$$$$$$$$$ Build fatJets and boson/forward jets
@@ -2681,8 +2746,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( doBAnalysis and selectedFatZbb.size()<1 ) return EVENT_NOT_USED;
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","FatJet Selection" );
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 4, e->weight() );  //4--NFatjet cut
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 4, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 4, e->weight() );  //4--NFatjet cut
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 4, 1 );
 
     // THIS IS NOT OK FOR THE RMET analysis
     //    if ( doMETAnalysis and selectedFatJets.size()<0 and selectedFatZbb.size()<0) return EVENT_NOT_USED;
@@ -2707,8 +2772,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( doMETAnalysis and minDPhi<0.4) return EVENT_NOT_USED;
     if ( doMETAnalysis and minDPhi!=999 and TMath::Pi()-minDPhi<0.4) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 5, e->weight() );  //5--vetoB+dPhiMET
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 5, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 5, e->weight() );  //5--vetoB+dPhiMET
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 5, 1 );
 
     //$$$$$$$$$
     //$$$$$$$$$
@@ -2759,14 +2824,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 forwardJets.push_back(selectedJets[iter]);
             }
 
-            if(genVp==NULL or genVp2==NULL) evt_genmatch = false;
-            if(genVp!=NULL and genVp2!=NULL) {
-                bool match1 = false;
-                bool match2 = false;
-                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[1]->DeltaR(*genVp2) < 0.2 ) match1 = true;
-                if(selectedFatJets[1]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) match2 = true;
-                if(match1 or match2) evt_genmatch = true;
-            }
+            evt_genmatch = genMatchResonant(e, label, category);
         }
 
         if(selectedFatJets.size()==1 and selectedJets.size()>3) {
@@ -2852,14 +2910,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 forwardJets.push_back(selectedJets[iter]);
             }
 
-            if(genVp==NULL or genVp2==NULL) evt_genmatch = false;
-            if(genVp!=NULL and genVp2!=NULL) {
-                bool match1 = false;
-                bool match2 = false;
-                if(selectedFatZbb[0]->DeltaR(*genVp) < 0.2 and selectedFatJets[0]->DeltaR(*genVp2) < 0.2 ) match1 = true;
-                if(selectedFatJets[0]->DeltaR(*genVp) < 0.2 and selectedFatZbb[0]->DeltaR(*genVp2) < 0.2 ) match2 = true;
-                if(match1 or match2) evt_genmatch = true;
-            }
+            evt_genmatch = genMatchResonant(e, label, category);
         }
 
         // target the ZbbZqq + ZbbWqq resolved
@@ -3048,6 +3099,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 if(selectedJets[iter]->Pt()<50 ) continue;
                 forwardJets.push_back(selectedJets[iter]);
             }
+            evt_genmatch = genMatchResonant(e, label, category);
+
         }
 
         // target the ZnnZqq + ZnnWqq resolved
@@ -3159,7 +3212,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
                 } else {
                     p4VV = (e->GetMet().GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
-                    evt_PTV1 = e->GetMet().Pt();
+                    evt_PTV1 = e->GetMet().GetP4().Pt();
                     TLorentzVector metP4;
                     metP4.SetPtEtaPhiM(e->GetMet().GetP4().Pt(),0.,e->GetMet().GetP4().Phi(),91);
                     evt_MVV = ChargedHiggs::mtMassive(bosonJets[0]->GetP4() + bosonJets[1]->GetP4(), metP4);
@@ -3206,24 +3259,22 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if(checkSignalLabel(label) and evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 6, e->weight() );  //6--InvMFatjet cut
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 6, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 6, e->weight() );  //6--InvMFatjet cut
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 6, 1 );
 
     Fill("VBShadAnalysis/Baseline/NJet_" +label, systname, forwardJets.size(), e->weight() );
-
-
 
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
 
     //    if(doTrigger) studyTriggers(e, category, label, systname);
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 7, e->weight() );  //7--NJet cut
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 7, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 7, e->weight() );  //7--NJet cut
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 7, 1 );
 
     if( forwardJets[0]->Eta() * forwardJets[1]->Eta() >=0 ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 8, e->weight() );  //8--JetOpposite
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 8, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 8, e->weight() );  //8--JetOpposite
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 8, 1 );
 
     evt_Detajj = fabs(forwardJets[0]->DeltaEta(forwardJets[1]));
 
@@ -3232,8 +3283,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( evt_Detajj < dEtaCut ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 9, e->weight() );  //9--DeltaEta cut
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 9, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 9, e->weight() );  //9--DeltaEta cut
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 9, 1 );
 
     p4jj = forwardJets[0]->GetP4() + forwardJets[1]->GetP4();
 
@@ -3243,8 +3294,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( evt_Mjj < 500 ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 10, e->weight() ); //10--InvMjet cut
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 10, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--InvMjet cut
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 10, 1 );
 
     //////
     //$$$ VARIOUS plots below for tree
@@ -3277,8 +3328,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(!doResonant and !centrality1) return EVENT_NOT_USED;
     }
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 11, e->weight() ); //11--centrality
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 11, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 11, e->weight() ); //11--centrality
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 11, 1 );
 
     if(!doMETAnalysis) {
 
@@ -3293,8 +3344,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if( !doResonant and evt_cenEta < 0. ) return EVENT_NOT_USED;
     }
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 12, e->weight() ); //12--centrality
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 12, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--centrality
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
 
     if(selectedFatZbb.size()>0) {
         evt_zepVB = fabs(selectedFatZbb[0]->Eta() - averageJJeta)/fabs(evt_Detajj);
@@ -3321,8 +3372,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         ) and
        (!doResonant and evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/Cutflow_" +label, systname, 13, e->weight() ); //13--normPtVV
-    Fill("VBShadAnalysis/CutflowNoW_" +label, systname, 13, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 13, e->weight() ); //13--normPtVV
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 13, 1 );
 
     std::vector<TLorentzVector> oP4;
     oP4.push_back(p4VV);
@@ -3354,6 +3405,22 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
     Fill("VBShadAnalysis/PTVV" +category+"_"+label, systname, evt_PTVV, e->weight() );
     Fill("VBShadAnalysis/Detajj" +category+"_"+label, systname, evt_Detajj, e->weight() );
+
+    if(checkSignalLabel(label)) {
+        if(evt_genmatch) Fill("VBShadAnalysis/MVV" + category+"_match_"+label, systname, evt_MVV, e->weight() );
+        if(!evt_genmatch) Fill("VBShadAnalysis/MVV" + category+"_unMatch_"+label, systname, evt_MVV, e->weight() );
+
+        if((category.find("BBtag") !=string::npos)) {
+            bool isCC = (fabs(selectedFatZbb[0]->Eta())<1.4) and (fabs(selectedFatJets[0]->Eta())<1.4);
+            if(isCC) Fill("VBShadAnalysis/MVV" + category+"_central_"+label, systname, evt_MVV, e->weight() );
+            if(!isCC) Fill("VBShadAnalysis/MVV" + category+"_CE_EE_"+label, systname, evt_MVV, e->weight() );
+        } else if((category.find("BB") !=string::npos)) {
+            bool isCC = (fabs(selectedFatJets[0]->Eta())<1.4) and (fabs(selectedFatJets[1]->Eta())<1.4);
+            if(isCC) Fill("VBShadAnalysis/MVV" + category+"_central_"+label, systname, evt_MVV, e->weight() );
+            if(!isCC) Fill("VBShadAnalysis/MVV" + category+"_CE_EE_"+label, systname, evt_MVV, e->weight() );
+        }
+    }
+
 
     /* // COMMENT MANY VALIDATION FOR NOW
     Fill("VBShadAnalysis/pT1_Jet" +category+"_"+label, systname, forwardJets[0]->GetP4().Pt(), e->weight() );

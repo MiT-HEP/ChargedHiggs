@@ -412,8 +412,7 @@ int LoadNano::FillEvent(){
 
 
    //Gen
-   if ( tree_ ->GetBranchStatus("Generator_weight") == 0 ){  
-   {
+   if ( tree_ ->GetBranchStatus("Generator_weight") != 0 ){
        // nano: genWeight ; Generator_weight ; LHEWeight_originalXWGTUP
        event_ -> GetWeight() -> SetMcWeight( nano->Generator_weight);
        event_ -> GetWeight() -> SetPU( nano->Pileup_nTrueInt ,  event_ -> runNum_);
