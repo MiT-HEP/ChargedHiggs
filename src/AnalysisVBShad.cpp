@@ -240,13 +240,16 @@ void VBShadAnalysis::ReadTmva(){
     SetVariable("varFW2j",evt_FW2); //12
     SetVariable("varmtop",evt_mtop); //13
 
-    //    vector<float> bdt;
+    SetVariable("varDetaVV",evt_DetaVV);//14 
+    SetVariable("varDRVj",evt_DRV1j);//15
+   //    vector<float> bdt;
     for(unsigned i =0 ;i< readers_.size() ; ++i) {
         if(i==0 || i==1 || i==2) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSHad") );
         if(i==3 || i==4 || i==5) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSMet") );
-        if(i==6 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRBtag") );
-        if(i==7 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRMET") );
-        if(i==8 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
+        if(i==6 || i==7 || i==8) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBBtag") );
+        if(i==9 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRBtag") );
+        if(i==10 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRMET") );
+        if(i==11 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
     }
 
     if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) {
@@ -313,8 +316,24 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("varnormPTVVjj",'F',readers_[i]); //6
         }
 
+
+        //BBtag-Nano
+        for (int i=6; i<9; i++) {
+            AddVariable("varMjj",'F',readers_[i]); //0
+            AddVariable("varDetajj",'F',readers_[i]); //1
+            AddVariable("varJet2Pt",'F',readers_[i]); //2
+            AddVariable("varMVV",'F',readers_[i]); //3
+            AddVariable("varDetaVV",'F',readers_[i]); //14
+            AddVariable("varzepVB",'F',readers_[i]); //5
+            AddVariable("varDRVj",'F',readers_[i]); //15
+            AddVariable("varnormPTVVjj",'F',readers_[i]); //6
+            //AddVariable("bosV2mass",'F',readers_[i]); //8
+            AddVariable("varFW2j",'F',readers_[i]); //9
+        }
+
+
         // RBTAG
-        for (int i=6; i<7; i++) {
+        for (int i=9; i<10; i++) {
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varJet2Pt",'F',readers_[i]); //2
             //        AddVariable("varDetajj",'F',i); //1
@@ -331,7 +350,7 @@ void VBShadAnalysis::InitTmva() {
         }
 
         // RMET
-        for (int i=7; i<8; i++) {
+        for (int i=10; i<11; i++) {
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varDetajj",'F',readers_[i]); //1
             AddVariable("varJet2Pt",'F',readers_[i]); //2
@@ -345,7 +364,7 @@ void VBShadAnalysis::InitTmva() {
         }
 
         // BBtag
-        for (int i=8; i<9; i++) {
+        for (int i=11; i<12; i++) {
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varJet2Pt",'F',readers_[i]); //1
             AddVariable("varPTV2",'F',readers_[i]); //2
@@ -362,9 +381,10 @@ void VBShadAnalysis::InitTmva() {
             cout <<"[TmvaAnalysis]::[Init]::[INFO] Loading weights idx="<<i<<": '"<< weights[i]<<"'"<<endl;
             if(i==0 or i==1 or i==2) readers_[i]->BookMVA("BDT_VBSHad",weights[i].c_str());
             if(i==3 or i==4 or i==5) readers_[i]->BookMVA("BDT_VBSMet",weights[i].c_str());
-            if(i==6 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
-            if(i==7 ) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
-            if(i==8 ) readers_[i]->BookMVA("BDT_VBSBHad",weights[i].c_str());
+            if(i==6 or i==7 or i==8) readers_[i]->BookMVA("BDT_VBSBBtag",weights[i].c_str());
+            if(i==9 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
+            if(i==10 ) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
+            if(i==11 ) readers_[i]->BookMVA("BDT_VBSBHad",weights[i].c_str());
         }
     }
 
@@ -451,67 +471,62 @@ void VBShadAnalysis::InitTmva() {
             readers_dnn_ . push_back( new TMVA::Reader() );
 
         //resTagger TMVA
-        for (int i=0; i<4; i++) {
+        //4 jet comb binary 
+        for (int i=0; i<2; i++) {
 
             AddVariable("j1_pT", 'F',readers_dnn_[i]);
-            AddVariable("j1_Eta",'F',readers_dnn_[i]);
+            //AddVariable("j1_Eta",'F',readers_dnn_[i]);
+            //AddVariable("abs(j1_Phi)",'F',readers_dnn_[i]);
             //AddVariable("j1_M",'F',readers_dnn_[i]);
-            AddVariable("j1_Unc",'F',readers_dnn_[i]);
-            AddVariable("j1_axis2", 'F',readers_dnn_[i]);
-            //AddVariable("j1_mult",'F',readers_dnn_[i]);
-            AddVariable("j1_ptD", 'F',readers_dnn_[i]);
+            //AddVariable("j1_Unc",'F',readers_dnn_[i]);
+            AddVariable("j1_QGL",'F',readers_dnn_[i]);
 
             AddVariable("j2_pT", 'F',readers_dnn_[i]);
-            //AddVariable("abs(j2_Eta)", 'F',readers_dnn_[i]);
+            AddVariable("j2_Eta", 'F',readers_dnn_[i]);
+            //AddVariable("abs(j2_Phi)",'F',readers_dnn_[i]);
             //AddVariable("j2_M",'F',readers_dnn_[i]);
-            AddVariable("j2_Unc", 'F',readers_dnn_[i]);
-            AddVariable("j2_axis2", 'F',readers_dnn_[i]);
-            //if(i == 0) AddVariable("j2_mult",'F',readers_dnn_[i]);
-            AddVariable("j2_ptD",'F',readers_dnn_[i]);
+            //AddVariable("j2_Unc", 'F',readers_dnn_[i]);
+            AddVariable("j2_QGL",'F',readers_dnn_[i]);
+            AddVariable("j2_PUDiscr",'F',readers_dnn_[i]);
 
             AddVariable("j3_pT", 'F',readers_dnn_[i]);
             AddVariable("j3_Eta", 'F',readers_dnn_[i]);
-            AddVariable("j3_Unc", 'F',readers_dnn_[i]);
-            AddVariable("j3_axis2", 'F',readers_dnn_[i]);
-            //AddVariable("j3_mult",'F',readers_dnn_[i]);
-            AddVariable("j3_ptD", 'F',readers_dnn_[i]);
+            //AddVariable("abs(j3_Phi)",'F',readers_dnn_[i]);
+            //AddVariable("j3_Unc", 'F',readers_dnn_[i]);
+            AddVariable("j3_QGL",'F',readers_dnn_[i]);
 
             AddVariable("j4_pT", 'F',readers_dnn_[i]);
-            //AddVariable("j4_Eta", 'F',readers_dnn_[i]);
-            AddVariable("j4_Unc", 'F',readers_dnn_[i]);
-            AddVariable("j4_axis2", 'F',readers_dnn_[i]);
-       //     if(i == 0) AddVariable("j4_mult", 'F',readers_dnn_[i]);
-            AddVariable("j4_ptD", 'F',readers_dnn_[i]);
+            AddVariable("j4_Eta", 'F',readers_dnn_[i]);
+            //AddVariable("j4_Phi",'F',readers_dnn_[i]);
+            //AddVariable("j4_Unc", 'F',readers_dnn_[i]);
+            AddVariable("j4_QGL",'F',readers_dnn_[i]);
 
-            AddVariable("DEta_f12", 'F',readers_dnn_[i]);
-            AddVariable("DEta_v34", 'F',readers_dnn_[i]); 
-            AddVariable("DPhi_f12", 'F',readers_dnn_[i]);
-            AddVariable("DPhi_v34", 'F',readers_dnn_[i]);
+
+            //AddVariable("DEta_f12", 'F',readers_dnn_[i]);
+            //AddVariable("DEta_v34", 'F',readers_dnn_[i]); 
+            //AddVariable("DPhi_f12", 'F',readers_dnn_[i]);
+            //AddVariable("DPhi_v34", 'F',readers_dnn_[i]);
+            AddVariable("DR_f12",   'F',readers_dnn_[i]);
             AddVariable("DR_v34",   'F',readers_dnn_[i]);
-            //if(i == 1) AddVariable("M_f12",    'F',readers_dnn_[i]);
+            AddVariable("M_f12",    'F',readers_dnn_[i]);
             AddVariable("M_v34",    'F',readers_dnn_[i]);
 
         }
 
- 
+        //2 V jet comb, binary
         for (int i=4; i<6; i++) {
 
 
             AddVariable("j3_pT", 'F',readers_dnn_[i]);
             AddVariable("j3_Eta", 'F',readers_dnn_[i]);
-            AddVariable("j3_Unc", 'F',readers_dnn_[i]);
-            AddVariable("j3_axis2", 'F',readers_dnn_[i]);
-            AddVariable("j3_ptD", 'F',readers_dnn_[i]);
+            AddVariable("j3_QGL", 'F',readers_dnn_[i]);
 
             AddVariable("j4_pT", 'F',readers_dnn_[i]);
             AddVariable("j4_Eta", 'F',readers_dnn_[i]);
-            AddVariable("j4_Unc", 'F',readers_dnn_[i]);
-            AddVariable("j4_axis2", 'F',readers_dnn_[i]);
-            AddVariable("j4_ptD", 'F',readers_dnn_[i]);
+            AddVariable("j4_QGL", 'F',readers_dnn_[i]);
 
-            AddVariable("DEta_v34", 'F',readers_dnn_[i]);
-            AddVariable("DPhi_v34", 'F',readers_dnn_[i]);
             AddVariable("DR_v34",   'F',readers_dnn_[i]);
+            AddVariable("M_v34",    'F',readers_dnn_[i]);
 
         }
        
@@ -520,8 +535,8 @@ void VBShadAnalysis::InitTmva() {
             // so far WZ+ZZ Comb
             if(i==0) readers_dnn_[i]->BookMVA("DNN_ResTag_RBTA",weights_dnn[i].c_str());
             if(i==1) readers_dnn_[i]->BookMVA("DNN_ResTag_RMET",weights_dnn[i].c_str());
-            if(i==2) readers_dnn_[i]->BookMVA("DNN_ResTag_RBTA_ml",weights_dnn[i].c_str());
-            if(i==3) readers_dnn_[i]->BookMVA("DNN_ResTag_RMET_ml",weights_dnn[i].c_str());
+            //if(i==2) readers_dnn_[i]->BookMVA("DNN_ResTag_RBTA_ml",weights_dnn[i].c_str());
+            //if(i==3) readers_dnn_[i]->BookMVA("DNN_ResTag_RMET_ml",weights_dnn[i].c_str());
 
             if(i==4) readers_dnn_[i]->BookMVA("DNN_VTag_RBTA",weights_dnn[i].c_str());
             if(i==5) readers_dnn_[i]->BookMVA("DNN_VTag_RMET",weights_dnn[i].c_str());
@@ -695,9 +710,13 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
         Branch(name,"j1_M",'F');
         Branch(name,"j1_Unc",'F');
         Branch(name,"j1_QGL",'F');
-        Branch(name,"j1_mult",'F');
-        Branch(name,"j1_ptD",'F');
-        Branch(name,"j1_axis2",'F');
+        Branch(name,"j1_DeepB",'F');
+        Branch(name,"j1_DeepC",'F');
+        Branch(name,"j1_PUDiscr",'F');
+        Branch(name,"j1_Area",'F');
+        Branch(name,"j1_NEMF",'F');
+        Branch(name,"j1_CEMF",'F');
+
 
         Branch(name,"j2_pT",'F');
         Branch(name,"j2_Eta",'F');
@@ -705,9 +724,12 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
         Branch(name,"j2_M",'F');
         Branch(name,"j2_Unc",'F');
         Branch(name,"j2_QGL",'F');
-        Branch(name,"j2_mult",'F');
-        Branch(name,"j2_ptD",'F');
-        Branch(name,"j2_axis2",'F');
+        Branch(name,"j2_DeepB",'F');
+        Branch(name,"j2_DeepC",'F');
+        Branch(name,"j2_PUDiscr",'F');
+        Branch(name,"j2_Area",'F');
+        Branch(name,"j2_NEMF",'F');
+        Branch(name,"j2_CEMF",'F');
 
 
         Branch(name,"j3_pT",'F');
@@ -716,9 +738,12 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
         Branch(name,"j3_M",'F');
         Branch(name,"j3_Unc",'F');
         Branch(name,"j3_QGL",'F');
-        Branch(name,"j3_mult",'F');
-        Branch(name,"j3_ptD",'F');
-        Branch(name,"j3_axis2",'F');
+        Branch(name,"j3_DeepB",'F');
+        Branch(name,"j3_DeepC",'F');
+        Branch(name,"j3_PUDiscr",'F');
+        Branch(name,"j3_Area",'F');
+        Branch(name,"j3_NEMF",'F');
+        Branch(name,"j3_CEMF",'F');
 
 
         Branch(name,"j4_pT",'F');
@@ -727,9 +752,12 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
         Branch(name,"j4_M",'F');
         Branch(name,"j4_Unc",'F');
         Branch(name,"j4_QGL",'F');
-        Branch(name,"j4_mult",'F');
-        Branch(name,"j4_ptD",'F');
-        Branch(name,"j4_axis2",'F');
+        Branch(name,"j4_DeepB",'F');
+        Branch(name,"j4_DeepC",'F');
+        Branch(name,"j4_PUDiscr",'F');
+        Branch(name,"j4_Area",'F');
+        Branch(name,"j4_NEMF",'F');
+        Branch(name,"j4_CEMF",'F');
 
 
         Branch(name,"DEta_f12",'F');
@@ -740,6 +768,8 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
         Branch(name,"DR_v34",'F');
         Branch(name,"M_f12", 'F');
         Branch(name,"M_v34", 'F');
+        Branch(name,"pT_f12", 'F');
+        Branch(name,"pT_v34", 'F');
 
 
         Branch(name,"fmatch",'I');
@@ -790,39 +820,50 @@ void VBShadAnalysis::Init(){
         Book("VBShadAnalysis/Baseline/mVV_RB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
         Book("VBShadAnalysis/Baseline/mVV_BB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_RB_PFHT900_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_AK8PFJet450_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_AK8PFHT700_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_AK8PFJet360_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_AK8DiPFJet300_200_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_PFHT650_Wide_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RB_had_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_BB_PFHT900_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_AK8PFJet450_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_AK8PFHT700_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_AK8PFJet360_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_AK8DiPFJet300_200_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_PFHT650_Wide_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BB_had_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_C100_DoubleBTagCSV_p014_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_C100_DoubleBTagCSV_p026_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_QuadPFJet_BTagCSV_Mqq200_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_had_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_RBtag_btag_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_C100_DoubleBTagCSV_p014_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_C100_DoubleBTagCSV_p026_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_QuadPFJet_BTagCSV_Mqq200_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_had_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_BBtag_btag_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-        Book("VBShadAnalysis/Baseline/mVV_PFMETNoMu120_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_PFMETNoMu120_NoiseCleaned_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_PFMET120_PFHT60_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_PFMETNoMu120_PFHT60_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-        Book("VBShadAnalysis/Baseline/mVV_met_OR_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMetOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
@@ -903,6 +944,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/ResBosonTMVA_"+l, "ResBosonTMVA; TMVA; Events", 100, 0, 1.);
         Book ("VBShadAnalysis/Baseline/ResBosonTMVA_right_"+l, "ResBosonTMVA; TMVA; Events", 100, 0, 1.);
         Book ("VBShadAnalysis/Baseline/ResBosonTMVA_wrong_"+l, "ResBosonTMVA; TMVA; Events", 100, 0, 1.);
+        Book ("VBShadAnalysis/Baseline/ResBosonTMVA2V_right_"+l, "ResBosonTMVA; TMVA; Events", 50, 0.5, 1.);
+        Book ("VBShadAnalysis/Baseline/ResBosonTMVA2V_wrong_"+l, "ResBosonTMVA; TMVA; Events", 50, 0.5, 1.);
 
 
         Book ("VBShadAnalysis/Baseline/DR_genVj1_"+l, "DeltaR(gen,j1); DeltaR(gen,j1); Events", 100, 0, 4.);
@@ -1008,12 +1051,13 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
 
     evt_maxDnn = 0.;
     evt_maxkeras = -999.;
+
+    evt_v_score = 0;
     int index_i=-1;
     int index_j=-1;
     int index_k=-1;
     int index_l=-1;
     int VTarget = -1; //0 -- W; 1 -- Z
-    float v_score = 0;
 
 
     index_f1 = -1;
@@ -1027,16 +1071,28 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
 
 
     for(unsigned i=0; i<NjetsToUse; ++i) {
+
+        if(selectedJets[i]->QGL()<0) continue;
+
         for(unsigned j=0; j<i; ++j) {
+
+            if(selectedJets[j]->QGL()<0) continue;
+
             for(unsigned k=0; k<j; ++k) {
+
+                if(selectedJets[k]->QGL()<0) continue;
+
                 for(unsigned l=0; l<k; ++l) {
+
+                    if(selectedJets[l]->QGL()<0) continue;
 
                     int fi  = -1;
                     int fj  = -1;
                     int vk  = -1;
                     int vl  = -1;
-                    int tmpTar = -1; //0 -- W; 1 -- Z
-
+                    //int tmpTar = -1; //0 -- W; 1 -- Z
+                    int tmpTar = 0;
+                    /*
                     double Mij[2] = {fabs(selectedJets[i]->InvMass(selectedJets[j]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[j]) - 91.)/91.};
                     double Mjk[2] = {fabs(selectedJets[j]->InvMass(selectedJets[k]) - 80.)/80. , fabs(selectedJets[j]->InvMass(selectedJets[k]) - 91.)/91.};
                     double Mkl[2] = {fabs(selectedJets[k]->InvMass(selectedJets[l]) - 80.)/80. , fabs(selectedJets[k]->InvMass(selectedJets[l]) - 91.)/91.};
@@ -1059,163 +1115,160 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                     else if(minM == Mjl[tmpTar]) {fi = i; fj = k; vk = j; vl = l; }
 
                     if(fi<0 || fj<0 || vk<0 || vl<0) continue;
+                    */
+
+                    //// new assignment in training and application
+                    vector<vector<unsigned> > assign{ { l, k, j, i }, 
+                                                    { j, i, l, k }, 
+                                                    { l, j, k, i },
+                                                    { k, i, l, j },
+                                                    { l, i, k, j },
+                                                    { k, j, l, i } }; 
+            
+                    for(int comb = 0; comb < 6; comb++){
+
+                        fi = assign[comb][0];  fj = assign[comb][1]; vk = assign[comb][2]; vl = assign[comb][3];
+
+                        if(fi<0 || fj<0 || vk<0 || vl<0) continue;
+
+                        if(writeTrainTree) {
+                            setTrainingTree(e,label, fi, fj, vk,vl);
+                            FillTree("tree_resTag");
+                        } // end traintree
+
+                        if(doResTagTMVA){
 
 
-                    if(doResTagTMVA){
+                            SetVariable("j1_pT",  selectedJets[fi]->GetP4().Pt());
+                            //SetVariable("j1_Eta", selectedJets[fi]->Eta());
+                            //SetVariable("abs(j1_Phi)", fabs(selectedJets[fi]->Phi()));
+                            //SetVariable("j1_Unc",   sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
+                            SetVariable("j1_QGL", selectedJets[fi]->QGL()<0?0:selectedJets[fi]->QGL()); 
 
 
-                    SetVariable("j1_pT",  selectedJets[fi]->GetP4().Pt());
-                    SetVariable("j1_Eta", selectedJets[fi]->Eta());
-                    //SetVariable("j1_M",   selectedJets[fi]->M());
-                    SetVariable("j1_Unc",   sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
-                    SetVariable("j1_axis2",  selectedJets[fi]->QGLVar("axis2"));
-                    //SetVariable("j1_mult",  selectedJets[fi]->QGLVar("mult"));
-                    SetVariable("j1_ptD",  selectedJets[fi]->QGLVar("ptD"));
+                            SetVariable("j2_pT",  selectedJets[fj]->GetP4().Pt());
+                            SetVariable("j2_Eta", selectedJets[fj]->Eta());
+                            //SetVariable("abs(j2_Phi)", fabs(selectedJets[fj]->Phi()));
+                            //SetVariable("j2_Unc",   sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
+                            SetVariable("j2_QGL", selectedJets[fj]->QGL()<0?0:selectedJets[fj]->QGL());
+                            SetVariable("j2_PUDiscr",selectedJets[fj]->GetPuId());
+
+                            SetVariable("j3_pT",  selectedJets[vk]->GetP4().Pt());
+                            SetVariable("j3_Eta", selectedJets[vk]->Eta());
+                            //SetVariable("abs(j3_Phi)", fabs(selectedJets[vk]->Phi()));
+                            //SetVariable("j3_Unc",   sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
+                            SetVariable("j3_QGL", selectedJets[vk]->QGL()<0?0:selectedJets[vk]->QGL());
 
 
-                    SetVariable("j2_pT",  selectedJets[fj]->GetP4().Pt());
-                    //SetVariable("abs(j2_Eta)", fabs(selectedJets[fj]->Eta()));
-                    //SetVariable("j2_M",   selectedJets[fj]->M());
-                    SetVariable("j2_Unc",   sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
-                    SetVariable("j2_axis2",  selectedJets[fj]->QGLVar("axis2"));
-                    //if(doBAnalysis) SetVariable("j2_mult",  selectedJets[fj]->QGLVar("mult"));
-                    SetVariable("j2_ptD",  selectedJets[fj]->QGLVar("ptD"));
+                            SetVariable("j4_pT",  selectedJets[vl]->GetP4().Pt());
+                            SetVariable("j4_Eta", selectedJets[vl]->Eta());
+                            //SetVariable("j4_Phi", fabs(selectedJets[vl]->Phi()));
+                            //SetVariable("j4_Unc",   sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
+                            SetVariable("j4_QGL", selectedJets[vl]->QGL()<0?0:selectedJets[vl]->QGL());
 
 
-                    SetVariable("j3_pT",  selectedJets[vk]->GetP4().Pt());
-                    SetVariable("j3_Eta", selectedJets[vk]->Eta());
-                    SetVariable("j3_Unc",   sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
-                    SetVariable("j3_axis2",  selectedJets[vk]->QGLVar("axis2"));
-                    //SetVariable("j3_mult",  selectedJets[vk]->QGLVar("mult"));
-                    SetVariable("j3_ptD",  selectedJets[vk]->QGLVar("ptD"));
+                            //SetVariable("DEta_f12", selectedJets[fi]->DeltaEta(selectedJets[fj]));
+                            //SetVariable("DEta_v34", selectedJets[vk]->DeltaEta(selectedJets[vl]));
+                            //SetVariable("DPhi_f12", ChargedHiggs::deltaPhi(selectedJets[fi]->Phi(), selectedJets[fj]->Phi()));
+                            //SetVariable("DPhi_v34", ChargedHiggs::deltaPhi(selectedJets[vk]->Phi(), selectedJets[vl]->Phi()));
+                            SetVariable("DR_f12", selectedJets[fi]->DeltaR(selectedJets[fj]));
+                            SetVariable("DR_v34", selectedJets[vk]->DeltaR(selectedJets[vl]));
+                            SetVariable("M_f12",  selectedJets[fi]->InvMass(selectedJets[fj]));
+                            SetVariable("M_v34",  selectedJets[vk]->InvMass(selectedJets[vl]));
 
 
-                    SetVariable("j4_pT",  selectedJets[vl]->GetP4().Pt());
-                    //SetVariable("j4_Eta", selectedJets[vl]->Eta());
-                    SetVariable("j4_Unc",   sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
-                    SetVariable("j4_axis2",  selectedJets[vl]->QGLVar("axis2"));
-                    //if(doBAnalysis) SetVariable("j4_mult",  selectedJets[vl]->QGLVar("mult"));
-                    SetVariable("j4_ptD",  selectedJets[vl]->QGLVar("ptD"));
+                            float dnn = 0;
 
+                            float dnn_ml_0 = 0;
+                            float dnn_ml_2 = 0;   //F yes V not
+                            float dnn_ml_3 = 0;   // both not
+                            float V_dnn = 0;
+                            float V_cut = 0;
+                            if(doBAnalysis){
+                                dnn = (float)readers_dnn_[0]->EvaluateMVA("DNN_ResTag_RBTA");
+                                //dnn_ml_0 = (float)readers_dnn_[2]->EvaluateMulticlass("DNN_ResTag_RBTA_ml")[0];
+                                //dnn_ml_2 = (float)readers_dnn_[2]->EvaluateMulticlass("DNN_ResTag_RBTA_ml")[2];
+                                //dnn_ml_3 = (float)readers_dnn_[2]->EvaluateMulticlass("DNN_ResTag_RBTA_ml")[3];
+                                // for 4 + 2 (2DNN)
+                                V_dnn = (float)readers_dnn_[4]->EvaluateMVA("DNN_VTag_RBTA");
+                                V_cut = 0.75;
+                            }
+                            if(doMETAnalysis){
+                                dnn = (float)readers_dnn_[1]->EvaluateMVA("DNN_ResTag_RMET");
+                                //dnn_ml_0 = (float)readers_dnn_[3]->EvaluateMulticlass("DNN_ResTag_RMET_ml")[0];
+                                //dnn_ml_2 = (float)readers_dnn_[3]->EvaluateMulticlass("DNN_ResTag_RMET_ml")[2];
+                                //dnn_ml_3 = (float)readers_dnn_[3]->EvaluateMulticlass("DNN_ResTag_RMET_ml")[3];
+                                // for 4 + 2 (2DNN)
+                                V_dnn = (float)readers_dnn_[5]->EvaluateMVA("DNN_VTag_RMET");
+                                V_cut = 0.7;
+                            }
 
-                    SetVariable("DEta_f12", selectedJets[fi]->DeltaEta(selectedJets[fj]));
-                    SetVariable("DEta_v34", selectedJets[vk]->DeltaEta(selectedJets[vl]));
-                    SetVariable("DPhi_f12", ChargedHiggs::deltaPhi(selectedJets[fi]->Phi(), selectedJets[fj]->Phi()));
-                    SetVariable("DPhi_v34", ChargedHiggs::deltaPhi(selectedJets[vk]->Phi(), selectedJets[vl]->Phi()));
-                    SetVariable("DR_v34", selectedJets[vk]->DeltaR(selectedJets[vl]));
-                    //if(doMETAnalysis) SetVariable("M_f12",  selectedJets[fi]->InvMass(selectedJets[fj]));
-                    SetVariable("M_v34",  selectedJets[vk]->InvMass(selectedJets[vl]));
+                            if(doMultiTagger){
+                                dnn = dnn_ml_0;
+                                if(dnn_ml_2 > 0.4) continue;
+                                if(dnn_ml_3 > 0.2 ) continue;
+                            }else if(do2DNN){
+                                if(V_dnn < V_cut) continue;
+                            }
 
+                            if(dnn > evt_maxDnn){
 
-                    float dnn = 0;
-
-                    float dnn_ml_0 = 0;
-                    float dnn_ml_2 = 0;   //F yes V not
-                    float dnn_ml_3 = 0;   // both not
-                    float V_dnn = 0;
-                    float V_cut = 0;
-                    if(doBAnalysis){
-                        dnn = (float)readers_dnn_[0]->EvaluateMVA("DNN_ResTag_RBTA");
-                        dnn_ml_0 = (float)readers_dnn_[2]->EvaluateMulticlass("DNN_ResTag_RBTA_ml")[0];
-                        dnn_ml_2 = (float)readers_dnn_[2]->EvaluateMulticlass("DNN_ResTag_RBTA_ml")[2];
-                        dnn_ml_3 = (float)readers_dnn_[2]->EvaluateMulticlass("DNN_ResTag_RBTA_ml")[3];
-                        // for 4 + 2 (2DNN)
-                        V_dnn = (float)readers_dnn_[4]->EvaluateMVA("DNN_VTag_RBTA");
-                        V_cut = 0.4;
-                    }
-                    if(doMETAnalysis){
-                        dnn = (float)readers_dnn_[1]->EvaluateMVA("DNN_ResTag_RMET");
-                        dnn_ml_0 = (float)readers_dnn_[3]->EvaluateMulticlass("DNN_ResTag_RMET_ml")[0];
-                        dnn_ml_2 = (float)readers_dnn_[3]->EvaluateMulticlass("DNN_ResTag_RMET_ml")[2];
-                        dnn_ml_3 = (float)readers_dnn_[3]->EvaluateMulticlass("DNN_ResTag_RMET_ml")[3];
-                        // for 4 + 2 (2DNN)
-                        V_dnn = (float)readers_dnn_[5]->EvaluateMVA("DNN_VTag_RMET");
-                        V_cut = 0.5;
-                    }
-
-                    if(doMultiTagger){
-                        dnn = dnn_ml_0;
-                        if(dnn_ml_2 > 0.4) continue;
-                        if(dnn_ml_3 > 0.2 ) continue;
-                    }else if(do2DNN){
-                        if(V_dnn < V_cut) continue;
-                    }
-
-                    if(dnn > evt_maxDnn){
-
-                        evt_maxDnn = dnn;
-                        index_i=vk;
-                        index_j=vl;
-                        index_k=fi;
-                        index_l=fj;
-                        VTarget = tmpTar;
-                        v_score = V_dnn;
-                    }
-                    }//end TMVA
+                                evt_maxDnn = dnn;
+                                index_i=vk;
+                                index_j=vl;
+                                index_k=fi;
+                                index_l=fj;
+                                VTarget = tmpTar;
+                                evt_v_score = V_dnn;
+                            }
+                        }//end TMVA
 
                     
 
-                    if(doResTagKeras){
-                        (*x).clear();
-                        (*x).push_back(selectedJets[fi]->GetP4().Pt());
-                        (*x).push_back(selectedJets[fi]->Eta());
-                        //(*x).push_back(selectedJets[fi]->Phi());
-                        (*x).push_back(selectedJets[fi]->M());
-                        (*x).push_back(sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
-                        (*x).push_back(selectedJets[fi]->QGLVar("axis2"));
-                        //(*x).push_back(selectedJets[fi]->QGLVar("mult"));
-                        (*x).push_back(selectedJets[fi]->QGLVar("ptD"));
+                        if(doResTagKeras){
+                            (*x).clear();
+                            (*x).push_back(selectedJets[fi]->GetP4().Pt());
+                            (*x).push_back(selectedJets[fi]->Eta());
+                            //(*x).push_back(selectedJets[fi]->Phi());
+                            (*x).push_back(selectedJets[fi]->M());
+                            (*x).push_back(sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
 
-                        (*x).push_back(selectedJets[fj]->GetP4().Pt());
-                        //(*x).push_back(selectedJets[fj]->Eta());
-                        //(*x).push_back(selectedJets[fj]->Phi());
-                        (*x).push_back(selectedJets[fj]->M());
-                        (*x).push_back(sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
-                        (*x).push_back(selectedJets[fj]->QGLVar("axis2"));
-                        if(doBAnalysis) (*x).push_back(selectedJets[fj]->QGLVar("mult"));
-                        (*x).push_back(selectedJets[fj]->QGLVar("ptD"));
+                            (*x).push_back(selectedJets[fj]->GetP4().Pt());
+                            //(*x).push_back(selectedJets[fj]->Eta());
+                            //(*x).push_back(selectedJets[fj]->Phi());
+                            (*x).push_back(selectedJets[fj]->M());
+                            (*x).push_back(sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
 
-                        (*x).push_back(selectedJets[vk]->GetP4().Pt());
-                        (*x).push_back(selectedJets[vk]->Eta());
-                        //(*x).push_back(selectedJets[vk]->Phi());
-                        //(*x).push_back(selectedJets[vk]->M());
-                        (*x).push_back(sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
-                        (*x).push_back(selectedJets[vk]->QGLVar("axis2"));
-                        (*x).push_back(selectedJets[vk]->QGLVar("mult"));
-                        (*x).push_back(selectedJets[vk]->QGLVar("ptD"));
+                            (*x).push_back(selectedJets[vk]->GetP4().Pt());
+                            (*x).push_back(selectedJets[vk]->Eta());
+                            //(*x).push_back(selectedJets[vk]->Phi());
+                            //(*x).push_back(selectedJets[vk]->M());
+                            (*x).push_back(sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
 
-                        (*x).push_back(selectedJets[vl]->GetP4().Pt());
-                        (*x).push_back(selectedJets[vl]->Eta());
-                        //(*x).push_back(selectedJets[vl]->Phi());
-                        //(*x).push_back(selectedJets[vl]->M());
-                        (*x).push_back(sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
-                        (*x).push_back(selectedJets[vl]->QGLVar("axis2"));
-                        //(*x).push_back(selectedJets[vl]->QGLVar("mult"));
-                        (*x).push_back(selectedJets[vl]->QGLVar("ptD"));
+                            (*x).push_back(selectedJets[vl]->GetP4().Pt());
+                            (*x).push_back(selectedJets[vl]->Eta());
+                            //(*x).push_back(selectedJets[vl]->Phi());
+                            //(*x).push_back(selectedJets[vl]->M());
+                            (*x).push_back(sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
 
-                        //float kerasDiscr = py->Eval("kmodel.predict(np.array([ x ] ))[0][0]");
-                        float kerasDiscr = 0.;
-                        if(doBAnalysis) kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22] ] ] ))[0][0]");
-                        if(doMETAnalysis)   kerasDiscr  = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21] ] ] ))[0][0]");
-                    //float kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22],x[23],x[24],x[25],x[26],x[27],x[28],x[29],x[30],x[31] ] ] ))[0][0]");
+                            //float kerasDiscr = py->Eval("kmodel.predict(np.array([ x ] ))[0][0]");
+                            float kerasDiscr = 0.;
+                            if(doBAnalysis) kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22] ] ] ))[0][0]");
+                            if(doMETAnalysis)   kerasDiscr  = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21] ] ] ))[0][0]");
+                        //float kerasDiscr = py->Eval("kmodel.predict(np.array([ [ x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19],x[20],x[21],x[22],x[23],x[24],x[25],x[26],x[27],x[28],x[29],x[30],x[31] ] ] ))[0][0]");
 
-                        if(kerasDiscr > evt_maxkeras){
+                            if(kerasDiscr > evt_maxkeras){
                             //                            std::cout << "kerasDiscr " << kerasDiscr << std::endl;
-                            evt_maxkeras = kerasDiscr;
-                            index_i=vk;
-                            index_j=vl;
-                            index_k=fi;
-                            index_l=fj;
-                            VTarget = tmpTar;
-                        }
-                    }//end keras
+                                evt_maxkeras = kerasDiscr;
+                                index_i=vk;
+                                index_j=vl;
+                                index_k=fi;
+                                index_l=fj;
+                                VTarget = tmpTar;
+                            }
+                        }//end keras
 
-
-                    if(writeTrainTree) {
-                        setTrainingTree(e,label, fi, fj, vk,vl);
-                        FillTree("tree_resTag");
-                    } // end traintree
-
+                    } // end assignment
 
                 }//l
             }//k
@@ -1398,12 +1451,12 @@ bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
     float bosjer1=Getjetres(bosonJets[0]);
     float bosjer2=Getjetres(bosonJets[1]);
 
-    for(Int_t i = 0; i < e->NGenPar(); i++){
+    for(Int_t i = e->NGenPar()-1; i >= 0; i--){
 
         GenParticle *genpar = e->GetGenParticle(i);
 
         //cout <<  "debug LHE: " << genpar->IsLHE() << "pa id: " <<  genpar->GetParentPdgId() << endl;
-        //        if( ! genpar->IsLHE()) continue;
+        if( ! genpar->IsLHE()) continue;
 
         Fill("VBShadAnalysis/Baseline/DR_genVj1_"+label, systname, (bosonJets[0]->GetP4()).DeltaR(genpar->GetP4()), e->weight() );
         Fill("VBShadAnalysis/Baseline/DR_genVj2_"+label, systname, (bosonJets[1]->GetP4()).DeltaR(genpar->GetP4()), e->weight() );
@@ -1413,8 +1466,8 @@ bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
         if(fabs(genpar->GetPdgId()) == 23) Fill("VBShadAnalysis/Baseline/Eta_genLHEZ_"+label, systname, genpar->Eta(), e->weight() );
         if(fabs(genpar->GetPdgId()) == 24) Fill("VBShadAnalysis/Baseline/Eta_genLHEW_"+label, systname, genpar->Eta(), e->weight() );
 
-        if( (bosonJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
-        if( (bosonJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+        if( (i == e->NGenPar()-3 or i == e->NGenPar()-4) and (bosonJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.3 ) match_1 = true;
+        if( (i == e->NGenPar()-3 or i == e->NGenPar()-4) and (bosonJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.3 ) match_2 = true;
 
         //forward jets optional 2 or 4
         //if( (forwardJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_3 = true;
@@ -1457,7 +1510,7 @@ bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
 
                 GenParticle *genpar = e->GetGenParticle(j);
 
-                //                if( ! genpar->IsLHE()) continue;
+                if( ! genpar->IsLHE()) continue;
                 if( (selectedJets[i]->GetP4()).DeltaR(genpar->GetP4()) > 0.2 ) continue;
 
                 if( !match_1 && match_2 && selectedJets[i] != bosonJets[1] ) {gjet1 = selectedJets[i]; gjet2 = bosonJets[1];}
@@ -1612,68 +1665,141 @@ void VBShadAnalysis::genStudies(Event*e, string label )
 
 void VBShadAnalysis::studyTriggers(Event* e, string category, string label, string systname )
 {
+    //init
+    bool passtriggerbtag1 = false;
+    bool passtriggerbtag2 = false;
+    bool passtriggerbtag3 = false;
+    bool passtriggerbtag4 = false;
+    bool passtriggerbtag5 = false;
+    bool passtriggerbtag6 = false;
+    bool passtriggerbtag7 = false;
+    bool passtriggerbtag8 = false;
 
-    bool passtriggerbtag1 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6_v");
-    bool passtriggerbtag2 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160_v");
-    bool passtriggerbtag3 = e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v");
 
-    bool passtriggerHad1 = e->IsTriggered("HLT_PFHT900");
-    bool passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450");
-    bool passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
-    bool passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30");
-    bool passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30");
-    bool passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
-    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6;
+    bool passtriggerHad1 = false;
+    bool passtriggerHad2 = false;
+    bool passtriggerHad3 = false;
+    bool passtriggerHad4 = false;
+    bool passtriggerHad5 = false;
+    bool passtriggerHad6 = false;
+    bool passtriggerHad7 = false;
 
-    bool passtriggerbtagOR = passtriggerbtag1 || passtriggerbtag2 || passtriggerbtag3 || passtriggerHadOR;
 
-    if(category.find("RBtag")   !=string::npos){
+    bool passtriggermet1 = false;
+    bool passtriggermet2 = false;
 
-        Fill("VBShadAnalysis/Baseline/mVV_RBtag_Base_" +label, systname, evt_MVV, e->weight() );
 
-        if(passtriggerbtag1) Fill("VBShadAnalysis/Baseline/mVV_RBtag_C100_DoubleBTagCSV_p014_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag2) Fill("VBShadAnalysis/Baseline/mVV_RBtag_C100_DoubleBTagCSV_p026_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag3) Fill("VBShadAnalysis/Baseline/mVV_RBtag_QuadPFJet_BTagCSV_Mqq200_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV_RBtag_had_OR_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtagOR) Fill("VBShadAnalysis/Baseline/mVV_RBtag_btag_OR_" +label, systname, evt_MVV, e->weight() );
+    switch(year){
+        case 2016:  passtriggerHad1 = e->IsTriggered("HLT_PFHT900");
+                    passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450");
+                    passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
+                    passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30");
+                    passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30");
+                    passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
+                    passtriggerHad7 = e->IsTriggered("HLT_PFJet450");
+                    passtriggerbtag1 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6");
+                    passtriggerbtag2 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160");
+                    passtriggerbtag3 = e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240");
+                    passtriggerbtag4 = e->IsTriggered("HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p087");           
+                    passtriggerbtag5 = e->IsTriggered("HLT_PFHT450_SixJet40_BTagCSV_p056");
+                    passtriggerbtag6 = e->IsTriggered("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056");
+                    passtriggermet1 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+                    break;
+
+        case 2017:  passtriggerHad1 = e->IsTriggered("HLT_PFHT1050"); 
+                    passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet500");
+                    passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT800_TrimMass50");
+                    passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet400_TrimMass30");
+                    passtriggerHad5 = e->IsTriggered("HLT_AK8PFJetFwd400");
+                    passtriggerHad6 = e->IsTriggered("HLT_PFJet500");
+                    passtriggerHad7 = e->IsTriggered("HLT_PFJetFwd400");
+                    passtriggerbtag1 = e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2"); 
+                    passtriggerbtag2 = e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
+                    passtriggerbtag3 = e->IsTriggered("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
+                    passtriggerbtag4 = e->IsTriggered("HLT_QuadPFJet98_83_71_15_BTagCSV_p013_VBF2");
+                    passtriggerbtag5 = e->IsTriggered("HLT_QuadPFJet98_83_71_15_DoubleBTagCSV_p013_p08_VBF1");
+                    passtriggermet1 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+                    passtriggermet2 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
+                    break;
+
+        case 2018:  passtriggerHad1 = e->IsTriggered("HLT_PFHT1050");
+                    passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet500");
+                    passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT800_TrimMass50");
+                    passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet400_TrimMass30");
+                    passtriggerHad5 = e->IsTriggered("HLT_PFJet500");
+                    passtriggerHad6 = e->IsTriggered("HLT_AK8PFJetFwd200");
+                    passtriggerHad7 = e->IsTriggered("HLT_PFJetFwd140");
+                    passtriggerbtag1 = e->IsTriggered("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2");
+                    passtriggerbtag2 = e->IsTriggered("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02");
+                    passtriggerbtag3 = e->IsTriggered("HLT_DoublePFJets200_CaloBTagDeepCSV_p71");
+                    //passtriggerbtag4 = e->IsTriggered("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5");
+                    //passtriggerbtag4 = e->IsTriggered("HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV_p71");
+                    passtriggerbtag4 = e->IsTriggered("HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1");
+                    passtriggerbtag5 = e->IsTriggered("HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2");
+                    passtriggerbtag6 = e->IsTriggered("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");
+                    passtriggerbtag7 = e->IsTriggered("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
+                    passtriggermet1 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+                    passtriggermet2 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
+                    break;
+
+        default:    cout << "year incorrect!" << endl;
+                    break;
     }
 
-    if(category.find("BBtag")   !=string::npos){
+    bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6 || passtriggerHad7;
 
-        Fill("VBShadAnalysis/Baseline/mVV_BBtag_Base_" +label, systname, evt_MVV, e->weight() );
+    bool passtriggerbtagOR = passtriggerbtag1 || passtriggerbtag2 || passtriggerbtag3 || passtriggerbtag4 || passtriggerbtag5 || passtriggerbtag6 || passtriggerbtag7 || passtriggerbtag8 || passtriggerHadOR;
 
-        if(passtriggerbtag1) Fill("VBShadAnalysis/Baseline/mVV_BBtag_C100_DoubleBTagCSV_p014_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag2) Fill("VBShadAnalysis/Baseline/mVV_BBtag_C100_DoubleBTagCSV_p026_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag3) Fill("VBShadAnalysis/Baseline/mVV_BBtag_QuadPFJet_BTagCSV_Mqq200_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV_BBtag_had_OR_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtagOR) Fill("VBShadAnalysis/Baseline/mVV_BBtag_btag_OR_" +label, systname, evt_MVV, e->weight() );
+    bool passtriggermetOR = passtriggermet1 || passtriggermet2;
+
+
+    //Fill the histos
+    //btag
+
+    if(category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos){
+
+        Fill("VBShadAnalysis/Baseline/mVV"+category+"_Base_" +label, systname, evt_MVV, e->weight() );
+
+        if(passtriggerbtag1) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag1_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerbtag2) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag2_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerbtag3) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag3_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerbtag4) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag4_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerbtag5) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag5_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerbtag6) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag6_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerbtag7) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag7_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerbtagOR) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtagOr_" +label, systname, evt_MVV, e->weight() );
     }
+
 
     // - HAD
 
-    if(category.find("RB")   !=string::npos){
-        Fill("VBShadAnalysis/Baseline/mVV_RB_Base_" +label, systname, evt_MVV, e->weight() );
+    if( (category.find("BB")   !=string::npos or category.find("RB")   !=string::npos) and not (category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos) ){
 
-        if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/mVV_RB_PFHT900_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/mVV_RB_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/mVV_RB_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/mVV_RB_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/mVV_RB_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/mVV_RB_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV_RB_had_OR_" +label, systname, evt_MVV, e->weight() );
+        Fill("VBShadAnalysis/Baseline/mVV"+category+"_Base_" +label, systname, evt_MVV, e->weight() );
+
+        if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad1_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad2_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad3_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad4_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad5_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad6_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerHad7) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad7_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, e->weight() );
     }
 
-    if(category.find("BB")   !=string::npos){
-        Fill("VBShadAnalysis/Baseline/mVV_BB_Base_" +label, systname, evt_MVV, e->weight() );
+    //met
+    if ((category.find("RMET")   !=string::npos) || (category.find("BMET")   !=string::npos)){
 
-        if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/mVV_BB_PFHT900_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/mVV_BB_AK8PFJet450_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/mVV_BB_AK8PFHT700_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/mVV_BB_AK8PFJet360_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/mVV_BB_AK8DiPFJet300_200_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/mVV_BB_PFHT650_Wide_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV_BB_had_OR_" +label, systname, evt_MVV, e->weight() );
+        Fill("VBShadAnalysis/Baseline/mVV_MET_Base_" +label, systname, evt_MVV, e->weight() );
+
+        if(passtriggermet1) Fill("VBShadAnalysis/Baseline/mVV_MET_triggerMet1_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggermet2) Fill("VBShadAnalysis/Baseline/mVV_MET_triggerMet2_" +label, systname, evt_MVV, e->weight() );
+        //if(passtriggermet3) Fill("VBShadAnalysis/Baseline/mVV_PFMET120_PFHT60_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggermetOR) Fill("VBShadAnalysis/Baseline/mVV_MET_triggerMetOr_" +label, systname, evt_MVV, e->weight() );
     }
+
+
 }
 
 void VBShadAnalysis::getObjects(Event* e, string label, string systname )
@@ -1951,9 +2077,12 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     SetTreeVar("j1_M",   selectedJets[fi]->M());
     SetTreeVar("j1_Unc",   sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
     SetTreeVar("j1_QGL",  selectedJets[fi]->QGL());
-    SetTreeVar("j1_mult",  selectedJets[fi]->QGLVar("mult"));
-    SetTreeVar("j1_ptD",  selectedJets[fi]->QGLVar("ptD"));
-    SetTreeVar("j1_axis2",  selectedJets[fi]->QGLVar("axis2"));
+    SetTreeVar("j1_DeepB", selectedJets[fi]->GetDeepB());
+    SetTreeVar("j1_DeepC", selectedJets[fi]->GetDeepC());
+    SetTreeVar("j1_PUDiscr", selectedJets[fi]->GetPuId());
+    SetTreeVar("j1_Area", selectedJets[fi]->GetArea());
+    SetTreeVar("j1_NEMF", selectedJets[fi]->GetNEMF());
+    SetTreeVar("j1_CEMF", selectedJets[fi]->GetCEMF());
 
     SetTreeVar("j2_pT",  selectedJets[fj]->GetP4().Pt());
     SetTreeVar("j2_Eta", selectedJets[fj]->Eta());
@@ -1961,9 +2090,13 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     SetTreeVar("j2_M",   selectedJets[fj]->M());
     SetTreeVar("j2_Unc",   sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
     SetTreeVar("j2_QGL",  selectedJets[fj]->QGL());
-    SetTreeVar("j2_mult",  selectedJets[fj]->QGLVar("mult"));
-    SetTreeVar("j2_ptD",  selectedJets[fj]->QGLVar("ptD"));
-    SetTreeVar("j2_axis2",  selectedJets[fj]->QGLVar("axis2"));
+    SetTreeVar("j2_DeepB", selectedJets[fj]->GetDeepB());
+    SetTreeVar("j2_DeepC", selectedJets[fj]->GetDeepC());
+    SetTreeVar("j2_PUDiscr", selectedJets[fj]->GetPuId());
+    SetTreeVar("j2_Area", selectedJets[fj]->GetArea());
+    SetTreeVar("j2_NEMF", selectedJets[fj]->GetNEMF());
+    SetTreeVar("j2_CEMF", selectedJets[fj]->GetCEMF());
+
 
     SetTreeVar("j3_pT",  selectedJets[vk]->GetP4().Pt());
     SetTreeVar("j3_Eta", selectedJets[vk]->Eta());
@@ -1971,9 +2104,13 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     SetTreeVar("j3_M",   selectedJets[vk]->M());
     SetTreeVar("j3_Unc",   sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
     SetTreeVar("j3_QGL",  selectedJets[vk]->QGL());
-    SetTreeVar("j3_mult",  selectedJets[vk]->QGLVar("mult"));
-    SetTreeVar("j3_ptD",  selectedJets[vk]->QGLVar("ptD"));
-    SetTreeVar("j3_axis2",  selectedJets[vk]->QGLVar("axis2"));
+    SetTreeVar("j3_DeepB", selectedJets[vk]->GetDeepB());
+    SetTreeVar("j3_DeepC", selectedJets[vk]->GetDeepC());
+    SetTreeVar("j3_PUDiscr", selectedJets[vk]->GetPuId());
+    SetTreeVar("j3_Area", selectedJets[vk]->GetArea());
+    SetTreeVar("j3_NEMF", selectedJets[vk]->GetNEMF());
+    SetTreeVar("j3_CEMF", selectedJets[vk]->GetCEMF());
+
 
     SetTreeVar("j4_pT",  selectedJets[vl]->GetP4().Pt());
     SetTreeVar("j4_Eta", selectedJets[vl]->Eta());
@@ -1981,9 +2118,12 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     SetTreeVar("j4_M",   selectedJets[vl]->M());
     SetTreeVar("j4_Unc",   sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
     SetTreeVar("j4_QGL",  selectedJets[vl]->QGL());
-    SetTreeVar("j4_mult",  selectedJets[vl]->QGLVar("mult"));
-    SetTreeVar("j4_ptD",  selectedJets[vl]->QGLVar("ptD"));
-    SetTreeVar("j4_axis2",  selectedJets[vl]->QGLVar("axis2"));
+    SetTreeVar("j4_DeepB", selectedJets[vl]->GetDeepB());
+    SetTreeVar("j4_DeepC", selectedJets[vl]->GetDeepC());
+    SetTreeVar("j4_PUDiscr", selectedJets[vl]->GetPuId());
+    SetTreeVar("j4_Area", selectedJets[vl]->GetArea());
+    SetTreeVar("j4_NEMF", selectedJets[vl]->GetNEMF());
+    SetTreeVar("j4_CEMF", selectedJets[vl]->GetCEMF());
 
     SetTreeVar("DEta_f12", selectedJets[fi]->DeltaEta(selectedJets[fj]));
     SetTreeVar("DEta_v34", selectedJets[vk]->DeltaEta(selectedJets[vl]));
@@ -1993,6 +2133,9 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     SetTreeVar("DR_v34", selectedJets[vk]->DeltaR(selectedJets[vl]));
     SetTreeVar("M_f12",  selectedJets[fi]->InvMass(selectedJets[fj]));
     SetTreeVar("M_v34",  selectedJets[vk]->InvMass(selectedJets[vl]));
+    SetTreeVar("pT_f12", (selectedJets[fi]->GetP4()+selectedJets[fj]->GetP4()).Pt());
+    SetTreeVar("pT_v34", (selectedJets[vk]->GetP4()+selectedJets[vl]->GetP4()).Pt());
+
 
 
     SetTreeVar("EvtNum",e->eventNum());
@@ -2014,90 +2157,60 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
         int ind_k = -1;
         int ind_l = -1;
 
-
-        if(doBAnalysis){
-            if (label.find("ZbbWpmJJ_EWK") !=string::npos ){
-
-                if(fabs(e->GetGenParticle(3)->GetPdgId()) < 5 && fabs(e->GetGenParticle(4)->GetPdgId()) < 5){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(3)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(3)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchl = true;
-                }else if(fabs(e->GetGenParticle(5)->GetPdgId()) < 5 && fabs(e->GetGenParticle(4)->GetPdgId()) < 5){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(5)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(5)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchl = true;
-                }else if(fabs(e->GetGenParticle(6)->GetPdgId()) < 5 && fabs(e->GetGenParticle(7)->GetPdgId()) < 5){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(6)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(7)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(6)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(7)->GetP4()) < 0.2) matchl = true;
-                }else{
-                    cout << "NOT this Order! " << endl;
-                } 
-
-
-                if(fabs(e->GetGenParticle(8)->GetPdgId()) < 10 && fabs(e->GetGenParticle(9)->GetPdgId()) < 10){                
-                    if( (selectedJets[fi]->GetP4()).DeltaR(e->GetGenParticle(8)->GetP4()) < 0.2 || (selectedJets[fi]->GetP4()).DeltaR(e->GetGenParticle(9)->GetP4()) < 0.2) matchi = true;
-                    if( (selectedJets[fj]->GetP4()).DeltaR(e->GetGenParticle(8)->GetP4()) < 0.2 || (selectedJets[fj]->GetP4()).DeltaR(e->GetGenParticle(9)->GetP4()) < 0.2) matchj = true;
-                }   
-
-
-            }
-
-            if (label.find("ZbbZhadJJ_EWK") !=string::npos ){
-                if(fabs(e->GetGenParticle(3)->GetPdgId() + e->GetGenParticle(4)->GetPdgId()) == 0 && fabs(e->GetGenParticle(3)->GetPdgId()) != 5){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(3)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(3)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchl = true;
-                }else if(fabs(e->GetGenParticle(5)->GetPdgId() + e->GetGenParticle(4)->GetPdgId()) == 0 && fabs(e->GetGenParticle(5)->GetPdgId()) !=5){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(5)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(5)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchl = true;
-                }else if(fabs(e->GetGenParticle(6)->GetPdgId() + e->GetGenParticle(7)->GetPdgId()) == 0 && fabs(e->GetGenParticle(6)->GetPdgId()) !=5){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(6)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(7)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(6)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(7)->GetP4()) < 0.2) matchl = true;
-                }else{
-                    cout << "Wrong Order! " << endl;
-                }
-
-                if(fabs(e->GetGenParticle(8)->GetPdgId()) < 10 && fabs(e->GetGenParticle(9)->GetPdgId()) < 10){
-                    if( (selectedJets[fi]->GetP4()).DeltaR(e->GetGenParticle(8)->GetP4()) < 0.2 || (selectedJets[fi]->GetP4()).DeltaR(e->GetGenParticle(9)->GetP4()) < 0.2) matchi = true;
-                    if( (selectedJets[fj]->GetP4()).DeltaR(e->GetGenParticle(8)->GetP4()) < 0.2 || (selectedJets[fj]->GetP4()).DeltaR(e->GetGenParticle(9)->GetP4()) < 0.2) matchj = true;
-                }
+        GenParticle *V1j = NULL;
+        GenParticle *V2j = NULL;
         
+        //cout << "new event !!! " << e->NGenPar() << endl;
+
+        for(Int_t g = 0; g < e->NGenPar(); g++){
+
+            GenParticle *genpar = e->GetGenParticle(g);
+
+
+            //if( fabs(genpar->GetPdgId()) > 6) continue;
+            //if( fabs(genpar->GetParentPdgId()) != 24 ) continue;
+            /*
+            if(g<8){
+                if(genpar->GetParentPdgId() != 0 and genpar->GetPdgId() < 6){    
+                cout << g << ": " << genpar->GetPdgId() << endl;
+                cout << "par: " << genpar->GetParentPdgId() << endl;
+                cout << "pT: " << genpar->Pt() << ", " << genpar->Eta() << endl;
+                }
             }
+                        
+    
+            if(fabs(genpar->GetPdgId()) < 6 and fabs(genpar->GetParentPdgId()) == 24){
+                cout << "from W: " << endl;
+                cout << g << ": " << genpar->GetPdgId() << endl;
+                cout << "par: " << genpar->GetParentPdgId() << endl;
+                cout << "pT: " << genpar->Pt() << ", " << genpar->Eta() << endl;
+                if(V1j == NULL) V1j = genpar;
+                else if(V2j == NULL) V2j = genpar;
+            }
+            */   
+
+            if( ! genpar->IsLHE()) continue;
+
+            if( (g == e->NGenPar() - 4 or g == e->NGenPar() - 3) and selectedJets[vk]->GetP4().DeltaR(genpar->GetP4()) < 0.3  ) matchk = true;
+            if( (g == e->NGenPar() - 4 or g == e->NGenPar() - 3) and selectedJets[vl]->GetP4().DeltaR(genpar->GetP4()) < 0.3  ) matchl = true;
+
+            if( (g == e->NGenPar() - 2 or g == e->NGenPar() - 1) and selectedJets[fi]->GetP4().DeltaR(genpar->GetP4()) < 0.2  ) matchi = true;
+            if( (g == e->NGenPar() - 2 or g == e->NGenPar() - 1) and selectedJets[fj]->GetP4().DeltaR(genpar->GetP4()) < 0.2  ) matchj = true;    
 
 
+            /*
+            cout <<  "debug LHE: " << endl;
+            cout << g << ": " << genpar->GetPdgId() << endl;
+            cout << "par: " << genpar->GetParentPdgId() << endl;
+            cout << "pT: " << genpar->Pt() << ", " << genpar->Eta() << endl;
+            //cout << "v1j: " << genpar->GetP4().DeltaR(V1j->GetP4()) << endl;
+            //cout << "v2j: " << genpar->GetP4().DeltaR(V2j->GetP4()) << endl;
+            //if(g == e->NGenPar() - 4 && genpar->GetP4().DeltaR(V1j->GetP4()) > 0.3) cout << "WRONG ORDER 1" << endl; 
+            //if(g == e->NGenPar() - 3 && genpar->GetP4().DeltaR(V2j->GetP4()) > 0.3) cout << "WRONG ORDER 2" << endl;
+            */
         }
-        if(doMETAnalysis){
-            if (label.find("ZNuNuWPMJJjj_EWK") !=string::npos ){
-                if(fabs(e->GetGenParticle(3)->GetPdgId()) < 5 && fabs(e->GetGenParticle(4)->GetPdgId()) < 5){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(3)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(3)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchl = true;
-                }else if(fabs(e->GetGenParticle(5)->GetPdgId()) < 5 && fabs(e->GetGenParticle(4)->GetPdgId()) < 5){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(5)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(5)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchl = true;
-                }else{
-                    cout << "Wrong order! " << endl;
-                }
+    
 
-                if(fabs(e->GetGenParticle(6)->GetPdgId()) < 10 && fabs(e->GetGenParticle(7)->GetPdgId()) < 10){                
-                    if( (selectedJets[fi]->GetP4()).DeltaR(e->GetGenParticle(6)->GetP4()) < 0.2 || (selectedJets[fi]->GetP4()).DeltaR(e->GetGenParticle(7)->GetP4()) < 0.2) matchi = true;
-                    if( (selectedJets[fj]->GetP4()).DeltaR(e->GetGenParticle(6)->GetP4()) < 0.2 || (selectedJets[fj]->GetP4()).DeltaR(e->GetGenParticle(7)->GetP4()) < 0.2) matchj = true;
-                }
-            }
-
-            if(label.find("ZnnZhadJJ_EWK") !=string::npos ){
-                if(fabs(e->GetGenParticle(3)->GetPdgId() + e->GetGenParticle(4)->GetPdgId()) == 0){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(3)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(3)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchl = true;
-                }else if(fabs(e->GetGenParticle(5)->GetPdgId() + e->GetGenParticle(4)->GetPdgId()) == 0){
-                    if( (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(5)->GetP4()) < 0.2 || (selectedJets[vk]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchk = true;
-                    if( (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(5)->GetP4()) < 0.2 || (selectedJets[vl]->GetP4()).DeltaR(e->GetGenParticle(4)->GetP4()) < 0.2) matchl = true;
-                }else{
-                    cout << "Wrong order! " << endl;
-                }
-
-                if(fabs(e->GetGenParticle(6)->GetPdgId()) < 10 && fabs(e->GetGenParticle(7)->GetPdgId()) < 10){
-                    if( (selectedJets[fi]->GetP4()).DeltaR(e->GetGenParticle(6)->GetP4()) < 0.2 || (selectedJets[fi]->GetP4()).DeltaR(e->GetGenParticle(7)->GetP4()) < 0.2) matchi = true;
-                    if( (selectedJets[fj]->GetP4()).DeltaR(e->GetGenParticle(6)->GetP4()) < 0.2 || (selectedJets[fj]->GetP4()).DeltaR(e->GetGenParticle(7)->GetP4()) < 0.2) matchj = true;
-                }
-            }
-        }
 
         match_all = matchi && matchj && matchk && matchl;
         match_V   = matchk && matchl;
@@ -2437,9 +2550,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     bool passtriggerMET = false;
     if  (year==2016 ) passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight"));
-    if  (year==2017 or year==2018) passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60"));
+    if  (year==2017 or year==2018) passtriggerMET = ( e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60"));
  
     bool passtriggerHad = false;
+    
     if (year==2016) passtriggerHad = e->IsTriggered("HLT_PFHT900")
                         || e->IsTriggered("HLT_AK8PFJet450")
                         || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50")
@@ -2452,19 +2566,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_AK8PFJet500") 
                         || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
                         || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
-                        || e->IsTriggered("HLT_AK8PFJetFwd400")
-                        || e->IsTriggered("HLT_PFJet500")
-                        || e->IsTriggered("HLT_PFJetFwd400");
+                        || e->IsTriggered("HLT_PFJet500");
 
     if (year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
                         || e->IsTriggered("HLT_AK8PFJet500")
                         || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
                         || e->IsTriggered("HLT_AK8PFJet400_TrimMass30") 
-                        || e->IsTriggered("HLT_PFJet500")
-                        || e->IsTriggered("HLT_AK8PFJetFwd200")
-                        || e->IsTriggered("HLT_PFJetFwd140");
+                        || e->IsTriggered("HLT_PFJet500");
+
 
     /*
+    
       2017 - JetHT 
       HLT_DiPFJetAve160_HFJEC
       HLT_DiPFJetAve300_HFJEC 
@@ -2477,24 +2589,36 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     */
 
     bool passtriggerBtag = false;
+    
     if (year==2016 ) passtriggerBtag = passtriggerHad
                          || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6")
                          || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160")
-                         || e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200");
+                         || e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240")
+                         || e->IsTriggered("HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p087")
+                         || e->IsTriggered("HLT_PFHT450_SixJet40_BTagCSV_p056")
+                         || e->IsTriggered("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056");
 
     if (year==2017) passtriggerBtag = passtriggerHad
                         || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2")
                         || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2")
-                        || e->IsTriggered("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
+                        || e->IsTriggered("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5")
+                        || e->IsTriggered("HLT_QuadPFJet98_83_71_15_BTagCSV_p013_VBF2")
+                        || e->IsTriggered("HLT_QuadPFJet98_83_71_15_DoubleBTagCSV_p013_p08_VBF1");
 
     if (year==2018) passtriggerBtag = passtriggerHad
                         || e->IsTriggered("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2")
                         || e->IsTriggered("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02")
                         || e->IsTriggered("HLT_DoublePFJets200_CaloBTagDeepCSV_p71")
-                        || e->IsTriggered("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5");
+                        || e->IsTriggered("HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1")
+                        || e->IsTriggered("HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2")
+                        || e->IsTriggered("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94")
+                        || e->IsTriggered("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
+
+
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Before tirgger" );
-
+    
+    
     if(!doTrigger){
       //    bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
       if (doHADAnalysis or doHADAntiAnalysis) {
@@ -2510,6 +2634,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(!passtriggerBtag) return EVENT_NOT_USED;
       }
     }
+    
 
     //$$$$$$$$$$$
     //$$$$$$$$$$$
@@ -2760,11 +2885,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
                 float MV_W, mW_chi2;
                 std::tie(MV_W,mW_chi2) = resolvedtagger(e, mBoson_W, label, systname, selectedFatZbb[0]->Eta()); if(genMatchResolved(e,systname,label)) genWmat = "right_";
-                if(bosonJets.size()>1){
+
+                if( (bosonJets.size()>1) && (forwardJets.size() > 1)  && ( forwardJets[0]->Eta() * forwardJets[1]->Eta() <0 ) && (fabs(forwardJets[0]->DeltaEta(forwardJets[1])) > 3.) && ((forwardJets[0]->GetP4() + forwardJets[1]->GetP4()).M() > 500) ){
+                //if(bosonJets.size()>1){
                     Fill2D("VBShadAnalysis/Baseline/ResWMassChi2_"+label, systname, MV_W, mW_chi2, e->weight() );
                     Fill("VBShadAnalysis/Baseline/ResWMass_"+genWmat+label, systname, MV_W, e->weight() );
                 }
-
+                  
                 float MV_Z, mZ_chi2;
                 std::tie(MV_Z,mZ_chi2) = resolvedtagger(e, mBoson_Z, label, systname, selectedFatZbb[0]->Eta()); if(genMatchResolved(e,systname,label)) genZmat = "right_";
                 if(bosonJets.size()>1){
@@ -2783,7 +2910,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                     mBoson = mBoson_W;
                     std::tie(MV,chi2) = resolvedtagger(e, mBoson_W, label, systname, selectedFatZbb[0]->Eta());
                 }
-
+                
             }
             //******************//
 
@@ -2803,7 +2930,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 10.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.8; // 80% signal
+            float tmvacut = 0.7; // 80% signal
             float kerascut = 0.5;
             //******************//
 
@@ -2822,6 +2949,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 }else if(doResTagTMVA){
                     Fill("VBShadAnalysis/Baseline/ResBosonTMVA_"+label, systname, evt_maxDnn, e->weight() );
                     Fill("VBShadAnalysis/Baseline/ResBosonTMVA_"+genmatch+label, systname, evt_maxDnn, e->weight() );
+                    Fill("VBShadAnalysis/Baseline/ResBosonTMVA2V_"+genmatch+label, systname, evt_v_score, e->weight() );
                 }else{
                     Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, chi2, e->weight() );
                     Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+genmatch+label, systname, chi2, e->weight() );
@@ -2942,11 +3070,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 float MV_W, mW_chi2;
                 std::tie(MV_W,mW_chi2) = resolvedtagger(e, mBoson_W, label, systname, 0.); if(genMatchResolved(e,systname,label)) genWmat = "right_";
 
-                if(bosonJets.size()>1){
+                //if(bosonJets.size()>1){
+                if( (bosonJets.size()>1) && (forwardJets.size() > 1)  && ( forwardJets[0]->Eta() * forwardJets[1]->Eta() <0 ) && (fabs(forwardJets[0]->DeltaEta(forwardJets[1])) > 3.) && ((forwardJets[0]->GetP4() + forwardJets[1]->GetP4()).M() > 500) ){
                     Fill2D("VBShadAnalysis/Baseline/ResWMassChi2_"+label, systname, MV_W, mW_chi2, e->weight() );
                     Fill("VBShadAnalysis/Baseline/ResWMass_"+genWmat+label, systname, MV_W, e->weight() );
                 }
-
+                  
                 float MV_Z, mZ_chi2;
                 std::tie(MV_Z,mZ_chi2) = resolvedtagger(e, mBoson_Z, label, systname, 0.); if(genMatchResolved(e,systname,label)) genZmat = "right_";
                 if(bosonJets.size()>1){
@@ -2965,6 +3094,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                     mBoson = mBoson_W;
                     std::tie(MV,chi2) = resolvedtagger(e, mBoson_W, label, systname, 0.);
                 }
+                
             }
 
             //********cut********//
@@ -2984,7 +3114,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 10.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.6; // 80% cut
+            float tmvacut = 0.7; // 80% cut
             float kerascut = 0.5;
             //******************//
 
@@ -3003,6 +3133,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 }else if(doResTagTMVA){
                     Fill("VBShadAnalysis/Baseline/ResBosonTMVA_"+label, systname, evt_maxDnn, e->weight() );
                     Fill("VBShadAnalysis/Baseline/ResBosonTMVA_"+genmatch+label, systname, evt_maxDnn, e->weight() );
+                    Fill("VBShadAnalysis/Baseline/ResBosonTMVA2V_"+genmatch+label, systname, evt_v_score, e->weight() );
                 }else{
                     Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+label, systname, chi2, e->weight() );
                     Fill("VBShadAnalysis/Baseline/ResBosonChi2_"+genmatch+label, systname, chi2, e->weight() );
@@ -3080,26 +3211,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/Baseline/NJet_" +label, systname, forwardJets.size(), e->weight() );
 
-
-    if(doTrigger){
-      if ((category.find("RMET")   !=string::npos) || (category.find("BMET")   !=string::npos)){
-
-        Fill("VBShadAnalysis/Baseline/mVV_MET_Base_" +label, systname, evt_MVV, e->weight() );
-
-        bool passtriggermet1 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
-        bool passtriggermet2 = e->IsTriggered("HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight");
-        bool passtriggermet3 = e->IsTriggered("HLT_PFMET120_PFMHT120_IDTight_PFHT60_v");
-        bool passtriggermet4 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v");
-
-        bool passtriggermetOR = passtriggermet1 || passtriggermet2 || passtriggermet3 || passtriggermet4;
-
-        if(passtriggermet1) Fill("VBShadAnalysis/Baseline/mVV_PFMETNoMu120_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggermet2) Fill("VBShadAnalysis/Baseline/mVV_PFMETNoMu120_NoiseCleaned_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggermet3) Fill("VBShadAnalysis/Baseline/mVV_PFMET120_PFHT60_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggermet4) Fill("VBShadAnalysis/Baseline/mVV_PFMETNoMu120_PFHT60_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggermetOR) Fill("VBShadAnalysis/Baseline/mVV_met_OR_" +label, systname, evt_MVV, e->weight() );
-      }
-    }
 
 
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
@@ -3233,7 +3344,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ STUDY triggers
     //////
 
-    //    if(doTrigger) studyTriggers(e, category, label, systname);
+    if(doTrigger) studyTriggers(e, category, label, systname);
 
     //////
     //$$$ MONEY plots below
@@ -3293,9 +3404,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(doHADAnalysis or doHADAntiAnalysis) BDTnoBnoMET = bdt[0];
         if(doMETAnalysis and (category.find("BMET")   !=string::npos)) BDTwithMET = bdt[3];
-        if(doMETAnalysis and (category.find("RMET")   !=string::npos)) BDTwithMET = bdt[7];
-        if(doBAnalysis and (category.find("RBtag")   !=string::npos)) BDTbtag = bdt[6];
-        if(doBAnalysis and (category.find("BBtag")   !=string::npos)) BDTbtag = bdt[8];
+        if(doMETAnalysis and (category.find("RMET")   !=string::npos)) BDTwithMET = bdt[10];
+        if(doBAnalysis and (category.find("RBtag")   !=string::npos)) BDTbtag = bdt[9];
+        if(doBAnalysis and (category.find("BBtag")   !=string::npos)) BDTbtag = bdt[6];
 
         if(!doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
         if(doBAnalysis or doBAntiAnalysis) Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );

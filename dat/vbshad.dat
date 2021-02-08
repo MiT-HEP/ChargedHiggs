@@ -99,9 +99,14 @@ addConfig=VBShadAnalysis|AddLabel('TTW')
 addConfig=VBShadAnalysis|SetMultiPrimaryDataset(),AddLabel("MET"),AddLabel("JetHT")
 
 ## BB - MC w/ QCDmirror (0,1,2)
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross0.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross1.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross2.weights.xml")
+##addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross0.weights.xml")
+##addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross1.weights.xml")
+##addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross2.weights.xml")
+### new nano
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BB_ewk_x0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BB_ewk_x0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BB_ewk_x0.weights.xml")
+
 
 ## BB - data w/ QCDmirror (0,1,2)
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross0_data.weights.xml")
@@ -114,13 +119,19 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet.weights.xm
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross1.weights.xml")
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSMet_cross2.weights.xml")
 
-## RBtag - MC (6)
+## BBTag  -MC (678)
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BBtag_ewk_x0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BBtag_ewk_x1.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BBtag_ewk_x2.weights.xml")
+
+
+## RBtag - MC (9)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRBtag.weights.xml")
 
-## RMET - MC (7)
+## RMET - MC (10)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRMET.weights.xml")
 
-## BBtag - MC (8)
+## BBtag - MC (11 OLD)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSBHad.weights.xml")
 
 # Multicalss - RMET (WvsZ)
@@ -132,14 +143,15 @@ addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnnc
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnnmulticlass_BDTG.weights.xml")
 
 ## Res DNN tagger
-#addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RBT_ZZ_DNN.weights.xml")
-#addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RBTA_DNN.weights.xml")
-#addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_RMET_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l5_AllGoodVBad_RBTA_ActFuncTRS_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l5_AllGoodVBad_RMET_ActFuncTRS_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l1_AllGood1Bad_RBTA_corrLHE_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l1_AllGood1Bad_RMET_corrLHE_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_nanoV2newAssgn_RBTA_All_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_nanoV2newAssgn_RMET_All_DNN.weights.xml")
+##addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l1_AllGood1Bad_RBTA_corrLHE_DNN.weights.xml")
+##addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l1_AllGood1Bad_RMET_corrLHE_DNN.weights.xml")
 addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_DNN_multi_RBTA_CorrLHE_DNN.weights.xml")
 addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_DNN_multi_RMET_CorrLHE_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_V2_l1reg_RBTA_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_V2_l1reg_RMET_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_nanoV2_V2j_RBTA_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_nanoV2_V2j_RBTA_DNN.weights.xml")
+#addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_V2_l1reg_RBTA_DNN.weights.xml")
+#addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_V2_l1reg_RMET_DNN.weights.xml")
