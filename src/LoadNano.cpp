@@ -264,7 +264,7 @@ int LoadNano::FillEvent(){
 
         j->SetNEMF(nano->Jet_neEmEF[i] );
         j->SetCEMF(nano->Jet_chEmEF[i] );
-
+	j->SetArea(nano->Jet_area[i]);
 #warning MISSING NANO JES JER
         // TODO-- JES
         //j->SetValueUp  (Smearer::JES , (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
@@ -274,6 +274,7 @@ int LoadNano::FillEvent(){
         //TODO -- JER
         j->bdiscr = nano->Jet_btagCSVV2[i];
         j->SetDeepB ( nano->Jet_btagDeepB[i] );
+        j->SetDeepC ( nano->Jet_btagDeepC[i] );
         j->SetQGL(nano->Jet_qgl[i]);
         //j->SetPuId(nano->Jet_puId[i]); //80X flags
         j->SetPuId(nano->Jet_puIdDisc[i]);//91x discr
@@ -518,6 +519,8 @@ void LoadNano::NewFile(){
     SetYear(year);
     
     event_->triggerNames_.clear(); // possibly also not necessary by file
+
+    cout << "FROMNANOLOAD: " << year << endl;
     
     if (year==2016){
       //https://dmytro.web.cern.ch/dmytro/trigger/2016/triggerEvolution_all.html
@@ -525,6 +528,9 @@ void LoadNano::NewFile(){
         event_->triggerNames_.push_back("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240");
         event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6");
         event_->triggerNames_.push_back("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160");
+	event_->triggerNames_.push_back("HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p087");
+	event_->triggerNames_.push_back("HLT_PFHT450_SixJet40_BTagCSV_p056");
+	event_->triggerNames_.push_back("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056");
         //event_->triggerNames_.push_back("");
         event_->triggerNames_.push_back("HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p20");
         event_->triggerNames_.push_back("HLT_Photon90_CaloIdL_PFHT600");
@@ -585,6 +591,12 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5");
       event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02");
       event_->triggerNames_.push_back("HLT_DiPFJetAve80");
+      event_->triggerNames_.push_back("HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV_p71");
+      event_->triggerNames_.push_back("HLT_PFHT400_FivePFJet_120_120_60_30_30_DoublePFBTagDeepCSV_4p5");
+      event_->triggerNames_.push_back("HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1");
+      event_->triggerNames_.push_back("HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2");
+      event_->triggerNames_.push_back("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");
+      event_->triggerNames_.push_back("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
     }
 
     return;

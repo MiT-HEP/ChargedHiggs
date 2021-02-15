@@ -66,8 +66,8 @@ public:
 
     bool doWriteTree = true;
     bool usePuppi=false;
-    bool doTrigger=false;
-    bool writeTrainTree=false;
+    bool doTrigger=true;
+    bool writeTrainTree=true;
 
     bool doTMVA=false;
     bool doResTagKeras = false;
@@ -164,6 +164,7 @@ private:
     float evt_bosV2unc = 0;
     float evt_chi2_= -1;
     float evt_maxDnn = 0.;
+    float evt_v_score = 0.;
     float evt_maxkeras = -999.;
     int    index_f1 = -1;
     int    index_f2 = -1;
