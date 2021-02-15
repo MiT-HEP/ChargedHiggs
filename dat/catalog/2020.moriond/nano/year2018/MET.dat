@@ -1,3 +1,4 @@
 addfiles=/MET/Run2018A-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD
 addfiles=/MET/Run2018C-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD
-
+addfiles=/MET/Run2018C-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD
+#missing D
