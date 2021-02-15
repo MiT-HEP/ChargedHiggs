@@ -19,6 +19,7 @@ include=dat/vbshad.dat
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
 #
+#Files=root://eoscms///store/group/phys_higgs/HiggsExo/dalfonso/NANOV8/UL18/ZNuNuWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/507F95DC-EE31-F54F-9990-31B285412536.root
 
 SFDB=aux/sf_VBShad.txt
 MCDB=aux/mcdb.nano.2018.txt
@@ -35,13 +36,13 @@ EntryPerSecond=5
 
 Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
 
-addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
-addConfig=VBShadAnalysis|year=2018
-Output=VBShadSignal_HAD.root
-
-#addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
 #addConfig=VBShadAnalysis|year=2018
-#Output=VBShadSignal_MET.root
+#Output=VBShadSignal_HAD.root
+
+addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+addConfig=VBShadAnalysis|year=2018
+Output=VBShadSignal_MET.root
 
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
 #addConfig=VBShadAnalysis|year=2018
