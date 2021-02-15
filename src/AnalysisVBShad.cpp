@@ -828,56 +828,201 @@ void VBShadAnalysis::Init(){
 
         //Trigger
         if(doTrigger) {
-            Book("VBShadAnalysis/Baseline/mVV_MET_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_MET_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_Base_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_Base_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_Base_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RB_Base_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BB_Base_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
 
-            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RB_Base_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RB_Base_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BB_Base_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BB_Base_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_Base_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_Base_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_Base_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_Base_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
 
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
 
-            Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
-            Book("VBShadAnalysis/Baseline/mVV_MET_triggerMetOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
+        Book("VBShadAnalysis/Baseline/pTV1_RB_triggerHad1_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RB_triggerHad2_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RB_triggerHad3_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RB_triggerHad4_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RB_triggerHad5_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RB_triggerHad6_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RB_triggerHad7_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RB_triggerHadOr_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RB_triggerHad1_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RB_triggerHad2_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RB_triggerHad3_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RB_triggerHad4_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RB_triggerHad5_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RB_triggerHad6_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RB_triggerHad7_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RB_triggerHadOr_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RB_triggerHad1_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RB_triggerHad2_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RB_triggerHad3_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RB_triggerHad4_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RB_triggerHad5_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RB_triggerHad6_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RB_triggerHad7_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RB_triggerHadOr_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+
+
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHad7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BB_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
+
+        Book("VBShadAnalysis/Baseline/pTV1_BB_triggerHad1_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BB_triggerHad2_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BB_triggerHad3_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BB_triggerHad4_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BB_triggerHad5_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BB_triggerHad6_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BB_triggerHad7_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BB_triggerHadOr_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BB_triggerHad1_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BB_triggerHad2_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BB_triggerHad3_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BB_triggerHad4_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BB_triggerHad5_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BB_triggerHad6_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BB_triggerHad7_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BB_triggerHadOr_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BB_triggerHad1_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BB_triggerHad2_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BB_triggerHad3_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BB_triggerHad4_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BB_triggerHad5_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BB_triggerHad6_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BB_triggerHad7_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BB_triggerHadOr_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+
+
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_RBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerBtag1_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerBtag2_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerBtag3_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerBtag4_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerBtag5_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerBtag6_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerBtag7_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerBtag8_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerBtagOr_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_RBtag_triggerHadOr_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerBtag1_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerBtag2_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerBtag3_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerBtag4_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerBtag5_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerBtag6_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerBtag7_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerBtag8_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerBtagOr_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_RBtag_triggerHadOr_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+
+
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_RBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+
+
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_BBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerBtag1_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerBtag2_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerBtag3_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerBtag4_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerBtag5_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerBtag6_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerBtag7_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerBtag8_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerBtagOr_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+        Book("VBShadAnalysis/Baseline/pTV1_BBtag_triggerHadOr_" +l, "pTV1; pTV1 [GeV]; Events", 160,0,1600);
+
+
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerBtag1_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerBtag2_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerBtag3_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerBtag4_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerBtag5_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerBtag6_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerBtag7_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerBtag8_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerBtagOr_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+        Book2D("VBShadAnalysis/Baseline/pTV2V1_BBtag_triggerHadOr_" +l, "pTV1; pTV1 [GeV]; pTV2 [GeV]", 160,0,1600,160,0,1600);
+
+
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerBtag1_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerBtag2_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerBtag3_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerBtag4_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerBtag5_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerBtag6_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerBtag7_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerBtag8_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerBtagOr_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+        Book2D("VBShadAnalysis/Baseline/mJJvsmVV_BBtag_triggerHadOr_" +l, "mVV; mVV [GeV]; mjj [GeV]", 250,0,2500,300,0,3000);
+
+
+        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet1_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet2_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMet3_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
+        Book("VBShadAnalysis/Baseline/mVV_MET_triggerMetOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
         }
 
         //FatJet
@@ -1821,16 +1966,47 @@ void VBShadAnalysis::studyTriggers(Event* e, string category, string label, stri
     if(category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos){
 
         Fill("VBShadAnalysis/Baseline/mVV"+category+"_Base_" +label, systname, evt_MVV, e->weight() );
+        Fill("VBShadAnalysis/Baseline/pTV1"+category+"_Base_" +label, systname, evt_PTV1, e->weight() );
+        Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_Base_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+        Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_Base_" +label, systname, evt_MVV, evt_Mjj, e->weight() ); 
 
-        if(passtriggerbtag1) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag1_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag2) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag2_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag3) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag3_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag4) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag4_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag5) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag5_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag6) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag6_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtag7) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag7_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerbtagOR) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtagOr_" +label, systname, evt_MVV, e->weight() );
+
+        if(passtriggerbtag1){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag1_" +label, systname, evt_MVV, e->weight() );
+                              Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag1_" +label, systname, evt_PTV1, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag1_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag1_" +label, systname, evt_MVV, evt_Mjj, e->weight() );} 
+        if(passtriggerbtag2){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag2_" +label, systname, evt_MVV, e->weight() );
+                              Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag2_" +label, systname, evt_PTV1, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag2_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag2_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerbtag3){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag3_" +label, systname, evt_MVV, e->weight() );
+                              Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag3_" +label, systname, evt_PTV1, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag3_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag3_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerbtag4){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag4_" +label, systname, evt_MVV, e->weight() );
+                              Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag4_" +label, systname, evt_PTV1, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag4_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag4_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerbtag5){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag5_" +label, systname, evt_MVV, e->weight() );
+                              Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag5_" +label, systname, evt_PTV1, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag5_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag5_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerbtag6){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag6_" +label, systname, evt_MVV, e->weight() );
+                              Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag6_" +label, systname, evt_PTV1, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag6_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag6_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerbtag7){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag7_" +label, systname, evt_MVV, e->weight() );
+                              Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag7_" +label, systname, evt_PTV1, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag7_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag7_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerHadOR){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, e->weight() );
+                              Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHadOr_" +label, systname, evt_PTV1, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHadOr_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerbtagOR){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtagOr_" +label, systname, evt_MVV, e->weight() );
+                               Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtagOr_" +label, systname, evt_PTV1, e->weight() );
+                               Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtagOr_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                               Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtagOr_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
     }
 
 
@@ -1839,15 +2015,42 @@ void VBShadAnalysis::studyTriggers(Event* e, string category, string label, stri
     if( (category.find("BB")   !=string::npos or category.find("RB")   !=string::npos) and not (category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos) ){
 
         Fill("VBShadAnalysis/Baseline/mVV"+category+"_Base_" +label, systname, evt_MVV, e->weight() );
+        Fill("VBShadAnalysis/Baseline/pTV1"+category+"_Base_" +label, systname, evt_PTV1, e->weight() );
+        Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_Base_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+        Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_Base_" +label, systname, evt_MVV, evt_Mjj, e->weight() );
 
-        if(passtriggerHad1) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad1_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad2) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad2_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad3) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad3_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad4) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad4_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad5) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad5_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad6) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad6_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHad7) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad7_" +label, systname, evt_MVV, e->weight() );
-        if(passtriggerHadOR) Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, e->weight() );
+        if(passtriggerHad1){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad1_" +label, systname, evt_MVV, e->weight() );
+                             Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHad1_" +label, systname, evt_PTV1, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHad1_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHad1_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerHad2){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad2_" +label, systname, evt_MVV, e->weight() );
+                             Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHad2_" +label, systname, evt_PTV1, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHad2_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHad2_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerHad3){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad3_" +label, systname, evt_MVV, e->weight() );
+                             Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHad3_" +label, systname, evt_PTV1, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHad3_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHad3_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerHad4){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad4_" +label, systname, evt_MVV, e->weight() );
+                             Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHad4_" +label, systname, evt_PTV1, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHad4_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHad4_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerHad5){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad5_" +label, systname, evt_MVV, e->weight() );
+                             Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHad5_" +label, systname, evt_PTV1, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHad5_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHad5_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerHad6){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad6_" +label, systname, evt_MVV, e->weight() );
+                             Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHad6_" +label, systname, evt_PTV1, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHad6_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHad6_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerHad7){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHad7_" +label, systname, evt_MVV, e->weight() );
+                             Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHad7_" +label, systname, evt_PTV1, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHad7_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                             Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHad7_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
+        if(passtriggerHadOR){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, e->weight() );
+                              Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHadOr_" +label, systname, evt_PTV1, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHadOr_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
+                              Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
     }
 
     //met
@@ -2680,7 +2883,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
 
 
-
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Before tirgger" );
     
     
@@ -3264,6 +3466,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/Baseline/NJet_" +label, systname, forwardJets.size(), e->weight() );
 
+
+
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
 
     //    if(doTrigger) studyTriggers(e, category, label, systname);
@@ -3469,11 +3673,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(doTMVA) {
         ReadTmva();
 
-        if(doHADAnalysis or doHADAntiAnalysis) BDTnoBnoMET = bdt[0];
-        if(doMETAnalysis and (category.find("BMET")   !=string::npos)) BDTwithMET = bdt[3];
+        int xset = (e->eventNum()) % 3;
+
+        if(doHADAnalysis or doHADAntiAnalysis) BDTnoBnoMET = bdt[xset];
+        if(doMETAnalysis and (category.find("BMET")   !=string::npos)) BDTwithMET = bdt[xset+3];
         if(doMETAnalysis and (category.find("RMET")   !=string::npos)) BDTwithMET = bdt[10];
         if(doBAnalysis and (category.find("RBtag")   !=string::npos)) BDTbtag = bdt[9];
-        if(doBAnalysis and (category.find("BBtag")   !=string::npos)) BDTbtag = bdt[6];
+        if(doBAnalysis and (category.find("BBtag")   !=string::npos)) BDTbtag = bdt[xset+6];
 
         if(!doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
         if(doBAnalysis or doBAntiAnalysis) Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );
