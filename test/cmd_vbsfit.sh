@@ -1,25 +1,23 @@
 #!/bin/bash
 
-#had
-#BASEDIR=/eos/user/d/dalfonso/VBS-CH/FEB2
-
-#bhad
-BASEDIR=/eos/user/d/dalfonso/VBS-CH/FEB7/
 OUTPUT=VBSFit
-WWW=~/www/cms-private/VBSHadronic/2021_02_05_AntiRegion/
+WWW=~/www/cms-private/VBSHadronic/2021_02_15_AntiRegion/
+#doHighLow=true
+doHighLow=false
+
 rm -r $OUTPUT $WWW
 mkdir $OUTPUT
 
 #################################################
 ##                 SIGNAL MODEL                ##
 #################################################
-#/eos/user/d/dalfonso/VBS-CH/FEB2
 
 #for target in met had bhad; do
 /bin/true && {
-for target in bhad; do
+for target in had bhad; do
   for year in 2016 2017 2018 ; do
     CONFIG=vbshadr_${target}_${year}
+    [ $doHighLow = true ] && CONFIG=vbshadr_highlow_${target}_${year}
     
     # construct input
     ULTAG=""
@@ -31,9 +29,15 @@ for target in bhad; do
     esac
     FILE=""
     case $target in
-        bhad) FILE="BHAD_sig_res.root" ;;
-        had) FILE="HAD_sig_res.root" ;;
-        met) FILE="MET_sig_res.root" ;;
+        bhad) 
+            BASEDIR="/eos/user/d/dalfonso/VBS-CH/FEB7" ;
+            FILE="BHAD_sig_res.root" ;;
+        had) 
+            BASEDIR="/eos/user/d/dalfonso/VBS-CH/FEB12" ;
+            FILE="HAD_sig_res.root" ;;
+        met) 
+            BASEDIR="XXX" ;
+            FILE="MET_sig_res.root" ;;
         *) FILE="XXX.root" ; echo "target not found '${target}'" ;;
     esac
 
@@ -50,9 +54,10 @@ done
 
 /bin/true && {
 #for target in had bhad; do
-for target in bhad ; do
+for target in had bhad ; do
 for year in 2016 2017 2018 ; do
     CONFIG=vbshadr_${target}_${year}
+    [ $doHighLow = true ] && CONFIG=vbshadr_highlow_${target}_${year}
     
     # construct input
     ULTAG=""
@@ -78,15 +83,21 @@ for year in 2016 2017 2018 ; do
 
     FILE=""
     case $target in
-        bhad) FILE="BHAD_sig_res.root" 
+        bhad) 
+            BASEDIR="/eos/user/d/dalfonso/VBS-CH/FEB7" ;
+            FILE="BHAD_sig_res.root" 
             INPUT=${BASEDIR}/${ULTAG}/BHADanti_qcd_res.root
             CAT="BBtag"
             ;;
-        had) FILE="HAD_sig_res.root" ;
+        had) 
+            BASEDIR="/eos/user/d/dalfonso/VBS-CH/FEB12" ;
+            FILE="HAD_sig_res.root" ;
             INPUT=${BASEDIR}/${ULTAG}/HADanti_qcd_res.root
             CAT="BB"
             ;;
-        met) FILE="MET_sig_res.root" 
+        met) 
+            BASEDIR="XXX" ;
+            FILE="MET_sig_res.root" 
             INPUT=${BASEDIR}/${ULTAG}/METanti_qcd_res.root
             CAT="XXX"
             ;;
@@ -94,7 +105,17 @@ for year in 2016 2017 2018 ; do
     esac
 
     #INPUT=${BASEDIR}/${ULTAG}/${FILE}
-    python script/preprocessmc.py -l $(echo "${HADTF}*${LUMI}" | bc -l) -i $INPUT -o $OUTPUT/Asimov_${target}_${year}.root -n MVV_${CAT}_AsimovB  VBShadAnalysis/MVV_${CAT}_QCD_HT # VBShadAnalysis/MVV_BB_TT_TuneCUETP8M2T4
+    [ $doHighLow = false ] && {
+        python script/preprocessmc.py -l $(echo "${HADTF}*${LUMI}" | bc -l) -i $INPUT -o $OUTPUT/Asimov_${target}_${year}.root -n MVV_${CAT}_AsimovB  VBShadAnalysis/MVV_${CAT}_QCD_HT # VBShadAnalysis/MVV_BB_TT_TuneCUETP8M2T4
+    }
+
+    [ $doHighLow = true ] && {    
+        for x in high low ; do 
+            python script/preprocessmc.py -l $(echo "${HADTF}*${LUMI}" | bc -l) -i $INPUT -o $OUTPUT/Asimov_${target}_${year}_tmp_${x}.root -n MVV_${CAT}_${x}_AsimovB  VBShadAnalysis/MVV_${CAT}_${x}_QCD_HT # VBShadAnalysis/MVV_${CAT}_${x}_TT_TuneCUETP8M2T4
+        done
+        hadd $OUTPUT/Asimov_${target}_${year}.root $OUTPUT/Asimov_${target}_${year}_tmp_*.root
+        rm $OUTPUT/Asimov_${target}_${year}_tmp_*.root
+    }
 
     python python/fitter.py -c BackgroundFitter -f $OUTPUT/Asimov_${target}_${year}.root -o ${OUTPUT}/BackgroundModel_${target}_${year}.root -p ${OUTPUT}/bkgfit_${target}_${year} --hmm=${CONFIG}  2>&1 | tee /tmp/amarini/log_bkg.txt 
 done

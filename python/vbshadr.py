@@ -10,7 +10,7 @@ from hmm import *
 #SinglyChargedHiggsGMmodel_HWZ_Zbb_M... in BHAD_ch.root
 
 class VBSHadr(HmmConfig):
-    def __init__(self,target="",year=2016):
+    def __init__(self,target="",year=2016,highandlow=False):
         if target =="":
             print "Allowed targets are: bhad met had"
             raise ValueError()
@@ -22,6 +22,7 @@ class VBSHadr(HmmConfig):
             self.sigspec="DoublyChargedHiggsGMmodel_HWW_M%.0f"
             self.categories=["BB"]
             #self.categories=["BB_high","BB_low","RB_high","RB_low"]
+            if highandlow: self.categories=["BB_high","BB_low"]
             self.processes=["DoublyChargedHiggs"]
             self.xmin = 800
             self.xmax = 3000
@@ -30,6 +31,7 @@ class VBSHadr(HmmConfig):
             self.sigspec="SinglyChargedHiggsGMmodel_HWZ_Zbb_M%.0f"
             #self.categories=["RBtag_high","RBtag_low"]
             self.categories=["BBtag"]
+            if highandlow: self.categories=["BBtag_high","BBtag_low"]
             self.processes=["SinglyChargedHiggs"]
             self.xmin = 800
             self.xmax = 3000
@@ -39,6 +41,7 @@ class VBSHadr(HmmConfig):
             self.processes=["SinglyChargedHiggs"]
             #self.categories=["BMET_high","BMET_low","RMET_high","RMET_low"]
             self.categories=["BMET"]
+            if highandlow: self.categories=["BMET_high","BMET_low"]
             self.xmin = 200
             self.xmax = 3000
             self.xname="mt" ## -output roorelvar
@@ -71,6 +74,8 @@ class VBSHadr(HmmConfig):
             self.background_input_masks=['MVV_BBtag_AsimovB']
         if target == 'met':
             self.background_input_masks=['MVV_MET_AsimovB']
+        # this could substitute the lines above as well, will reconsider when purging them
+        if highandlow:  self.background_input_masks=['MVV_'+x+'_AsimovB' for x in self.categories]
         self.background_fitstrategy=1
 
 
@@ -81,3 +86,9 @@ for year in [2016,2017,2018]:
     for target in ["had","bhad","met"]:
         exec("vbshadr_"+target+"_%d"%year+"=VBSHadr(\""+target+"\",%d)"%year)
         exec("g.append("+ "vbshadr_"+target+"_%d"%year + ")")
+
+# create categorization configuration
+for year in [2016,2017,2018]:
+    for target in ["had","bhad","met"]:
+        exec("vbshadr_highlow_"+target+"_%d"%year+"=VBSHadr(\""+target+"\",%d,True)"%year)
+        exec("g.append("+ "vbshadr_highlow_"+target+"_%d"%year + ")")
