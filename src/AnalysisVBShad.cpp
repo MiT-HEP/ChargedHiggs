@@ -672,6 +672,7 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
     Branch(name,"bosV2mass",'F');
     Branch(name,"bosV2discr",'F');
     Branch(name,"bosV2tdiscr",'F');
+    Branch(name,"bosV2discr2nd",'F');
     Branch(name,"bosV2chi2",'F');
     Branch(name,"bosV2dR",'F');
 
@@ -1209,6 +1210,7 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
     forwardJets.clear();
 
     evt_maxDnn = 0.;
+    evt_2ndmaxDnn = 0;
     evt_maxkeras = -999.;
 
     evt_v_score = 0;
@@ -1372,6 +1374,7 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
 
                             if(dnn > evt_maxDnn){
 
+                                evt_2ndmaxDnn = evt_maxDnn;
                                 evt_maxDnn = dnn;
                                 index_i=vk;
                                 index_j=vl;
@@ -1380,6 +1383,8 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                                 VTarget = tmpTar;
                                 evt_v_score = V_dnn;
                             }
+                            if(dnn > evt_2ndmaxDnn and dnn < evt_maxDnn) evt_2ndmaxDnn = dnn;
+
                         }//end TMVA
 
                     
@@ -2680,6 +2685,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("bosV2mass",evt_bosV2mass);
     SetTreeVar("bosV2discr",evt_bosV2discr);
     SetTreeVar("bosV2tdiscr",evt_bosV2tdiscr);
+    SetTreeVar("bosV2discr2nd",evt_bosV2discr2nd);
     SetTreeVar("bosV2Unc", evt_bosV2unc);
     SetTreeVar("bosV2chi2",evt_chi2_);
     SetTreeVar("bosV2dR",evt_DRV2);
@@ -3009,6 +3015,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             evt_bosV1mass = bosonMass[0];
             evt_bosV2discr = bosonVDiscr[1];
             evt_bosV2tdiscr = bosonTDiscr[1];
+            evt_bosV2discr2nd = -1.;
             evt_bosV2mass = bosonMass[1];
 
             p4VV = (selectedFatJets[0]->GetP4()+selectedFatJets[1]->GetP4());
@@ -3100,6 +3107,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             evt_bosV1tdiscr = -1;
             evt_bosV2discr = bosonVDiscr[0];
             evt_bosV2tdiscr = bosonTDiscr[0];
+            evt_bosV2discr2nd = -1.;
             evt_bosV2mass = bosonMass[0];
             evt_bosV2unc = 0;
             evt_DetaVV = fabs(selectedFatJets[0]->DeltaEta(selectedFatZbb[0]));
@@ -3227,6 +3235,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 evt_bosV2mass = (bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M();
                 evt_bosV2discr = (doResTagKeras) ? evt_maxkeras: (doResTagTMVA) ? evt_maxDnn: -1;
                 evt_bosV2tdiscr = -1;
+                evt_bosV2discr2nd = evt_2ndmaxDnn;
                 evt_bosV2unc = 0;
                 evt_EtaMinV = std::min(selectedFatZbb[0]->Eta(),float((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Eta()));
                 evt_EtaMaxV = std::max(selectedFatZbb[0]->Eta(),float((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).Eta()));
@@ -3291,6 +3300,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             evt_PTV2 = jetP4.Pt();
 
             evt_bosV2unc = 0;
+            evt_bosV2discr2nd = -1.;
 
             if(selectedFatZbb.size()>0) { evt_bosV2discr = bosonBBDiscr[0]; evt_bosV2mass = bosonBBMass[0]; evt_bosV2tdiscr = bosonBBTDiscr[0]; }
             else {
@@ -3428,6 +3438,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 evt_DRV2 = bosonJets[0]->DeltaR(bosonJets[1]);
                 evt_bosV2discr = (doResTagKeras) ? evt_maxkeras: (doResTagTMVA) ? evt_maxDnn: -1;
                 evt_bosV2tdiscr = -1;
+                evt_bosV2discr2nd = evt_2ndmaxDnn;
                 evt_bosV2unc = 0;
                 evt_chi2_ = chi2;
             }
