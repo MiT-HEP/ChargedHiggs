@@ -35,13 +35,13 @@ EntryPerSecond=5
 
 Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
 
-addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
-addConfig=VBShadAnalysis|year=2016
-Output=VBShadSignal_HAD.root
-
-#addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
 #addConfig=VBShadAnalysis|year=2016
-#Output=VBShadSignal_MET.root
+#Output=VBShadSignal_HAD.root
+
+addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+addConfig=VBShadAnalysis|year=2016
+Output=VBShadSignal_MET.root
 
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
 #addConfig=VBShadAnalysis|year=2016

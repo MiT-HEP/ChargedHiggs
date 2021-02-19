@@ -72,7 +72,7 @@ public:
 
     bool doTMVA=false;
     bool doResTagKeras = false;
-    bool doResTagTMVA = false;
+    bool doResTagTMVA = true;
     // those two below are to prune the combination
     bool doMultiTagger = false;
     bool do2DNN = false;
@@ -162,9 +162,11 @@ private:
     float evt_bosV2mass=-1;
     float evt_bosV2discr=-1;
     float evt_bosV2tdiscr=-1;
+    float evt_bosV2discr2nd=-1;
     float evt_bosV2unc = 0;
     float evt_chi2_= -1;
     float evt_maxDnn = 0.;
+    float evt_2ndmaxDnn = 0.;
     float evt_v_score = 0.;
     float evt_maxkeras = -999.;
     int    index_f1 = -1;
