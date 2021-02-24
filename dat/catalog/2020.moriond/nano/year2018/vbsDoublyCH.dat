@@ -3,6 +3,7 @@ sub=amarini|/store/group/phys_higgs/cmshmm/amarini
 addfiles=%(amarini)s/DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph/UL2018-NANOAODSIMv8
 addfiles=%(amarini)s/DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph/UL2018-NANOAODSIMv8
 addfiles=%(amarini)s/DoublyChargedHiggsGMmodel_HWW_M2000_13TeV-madgraph/UL2018-NANOAODSIMv8
+addfiles=%(amarini)s/DoublyChargedHiggsGMmodel_HWW_M3000_13TeV-madgraph/UL2018-NANOAODSIMv8
 
 addfiles=%(amarini)s/SinglyChargedHiggsGMmodel_HWZ_Znn_M1000_13TeV-madgraph/UL2018-NANOAODSIMv8
 addfiles=%(amarini)s/SinglyChargedHiggsGMmodel_HWZ_Znn_M1500_13TeV-madgraph/UL2018-NANOAODSIMv8
