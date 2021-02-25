@@ -60,3 +60,8 @@ Output=VBShadSignal_MET.root
 #addConfig=VBShadAnalysis|year=2016
 #Output=VBShadAntiSignal_B.root
 
+#include=dat/catalog/2020.moriond/nano/year2016/MET.dat
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doMETAntiAnalysis=1,doBAntiAnalysis=0
+#addConfig=VBShadAnalysis|year=2016
+#Output=VBShadAntiSignal_MET.root
+

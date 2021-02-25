@@ -39,9 +39,9 @@ EntryPerSecond=10
 
 Analysis=OneAnalysis,JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
 
-#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
-#addConfig=VBShadAnalysis|year=2017
-#Output=VBShadSignal_HAD.root
+addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
+addConfig=VBShadAnalysis|year=2017
+Output=VBShadSignal_HAD.root
 
 #addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
 #addConfig=VBShadAnalysis|year=2017
@@ -54,11 +54,16 @@ Analysis=OneAnalysis,JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
 ##
 
 #include=dat/catalog/2020.moriond/nano/year2017/jetHT.dat
-addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1,doBAntiAnalysis=0
-addConfig=VBShadAnalysis|year=2017
-Output=VBShadAntiSignal_HAD.root
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1,doBAntiAnalysis=0
+#addConfig=VBShadAnalysis|year=2017
+#Output=VBShadAntiSignal_HAD.root
 
 #include=dat/catalog/2020.moriond/nano/year2017/jetHT.dat
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=0,doBAntiAnalysis=1
 #addConfig=VBShadAnalysis|year=2017
 #Output=VBShadAntiSignal_B.root
+
+#include=dat/catalog/2020.moriond/nano/year2017/MET.dat
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doMETAntiAnalysis=1,doBAntiAnalysis=0
+#addConfig=VBShadAnalysis|year=2017
+#Output=VBShadAntiSignal_MET.root
