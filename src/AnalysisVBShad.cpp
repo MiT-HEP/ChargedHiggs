@@ -808,6 +808,8 @@ void VBShadAnalysis::Init(){
     Log(__FUNCTION__,"INFO",Form("doBAntiAnalysis=%d",doBAntiAnalysis));
     Log(__FUNCTION__,"INFO",Form("doHADAntiAnalysis=%d",doHADAntiAnalysis));
 
+    if(doResonant) doTMVA=false;
+
     if (not jet_resolution)
     { // init jet resolution
         // FIXME: if we want to use these we need to have those for the UL and specific for 17-18-16
@@ -1118,16 +1120,17 @@ void VBShadAnalysis::Init(){
 
         Book ("VBShadAnalysis/Baseline/ResBosonGenMass_"+l, "ResBosonMass; V(i,j) [GeV]; Events", 100, 0, 200.);
 
-        // RESONANT CASE
-        Book ("VBShadAnalysis/OUT1500/MVV_"+l, "MVV-OUT (unclassified); MVV [GeV]; Events", 100,0,2500);
-        Book ("VBShadAnalysis/IN1500/MVV_"+l, "MVV-IN (unclassified); MVV [GeV]; Events", 100,0,2500);
-        Book ("VBShadAnalysis/OUT1500/MVV_BB_"+l, "MVV-OUT (BB); MVV [GeV]; Events", 100,0,2500);
-        Book ("VBShadAnalysis/IN1500/MVV_BB_"+l, "MVV-IN (BB); MVV [GeV]; Events", 100,0,2500);
+        if(doResonant) {
+            Book ("VBShadAnalysis/OUT1500/MVV_"+l, "MVV-OUT (unclassified); MVV [GeV]; Events", 100,0,2500);
+            Book ("VBShadAnalysis/IN1500/MVV_"+l, "MVV-IN (unclassified); MVV [GeV]; Events", 100,0,2500);
+            Book ("VBShadAnalysis/OUT1500/MVV_BB_"+l, "MVV-OUT (BB); MVV [GeV]; Events", 100,0,2500);
+            Book ("VBShadAnalysis/IN1500/MVV_BB_"+l, "MVV-IN (BB); MVV [GeV]; Events", 100,0,2500);
 
-        Book ("VBShadAnalysis/OUT1500/Mjj_"+l, "Mjj-OUT (unclassified); Mjj [GeV]; Events", 100,0,3500);
-        Book ("VBShadAnalysis/IN1500/Mjj_"+l, "Mjj-IN (unclassified); Mjj [GeV]; Events", 100,0,3500);
-        Book ("VBShadAnalysis/OUT1500/Mjj_BB_"+l, "Mjj-OUT (BB); Mjj [GeV]; Events", 35,0,3500);
-        Book ("VBShadAnalysis/IN1500/Mjj_BB_"+l, "Mjj-IN (BB); Mjj [GeV]; Events", 35,0,3500);
+            Book ("VBShadAnalysis/OUT1500/Mjj_"+l, "Mjj-OUT (unclassified); Mjj [GeV]; Events", 100,0,3500);
+            Book ("VBShadAnalysis/IN1500/Mjj_"+l, "Mjj-IN (unclassified); Mjj [GeV]; Events", 100,0,3500);
+            Book ("VBShadAnalysis/OUT1500/Mjj_BB_"+l, "Mjj-OUT (BB); Mjj [GeV]; Events", 35,0,3500);
+            Book ("VBShadAnalysis/IN1500/Mjj_BB_"+l, "Mjj-IN (BB); Mjj [GeV]; Events", 35,0,3500);
+        }
 
         BookHisto(l, "");
         BookHisto(l, "_BB");
@@ -1842,16 +1845,6 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         }
     }
 
-    int topology=0;
-    if(genVp!=NULL and genVp2!=NULL) {
-        if(genVp->Pt() > 200 and genVp2->Pt() > 200) topology=1;
-        if((genVp->Pt() > 200 and genVp2->Pt() < 200) || (genVp->Pt() < 200 and genVp2->Pt() > 200) ) topology=2;
-    }
-
-    // at least one boosted
-    //    if(genWp==NULL or genWp2==NULL) return EVENT_NOT_USED;
-    //    if(genWp->Pt() < 200 and genWp2->Pt() < 200) return EVENT_NOT_USED;
-
     if(genVp!=NULL and genVp2!=NULL) {
         if(doMETAnalysis) {
             //            evt_MVV_gen = ChargedHiggs::mt(genVp->GetP4().Pt(),genVp2->GetP4().Pt(),genVp->GetP4().Phi(),genVp2->GetP4().Phi());
@@ -1861,6 +1854,18 @@ void VBShadAnalysis::genStudies(Event*e, string label )
             evt_MVV_gen = (genVp->GetP4()+genVp2->GetP4()).M();
         }
     }
+
+    return;
+
+    int topology=0;
+    if(genVp!=NULL and genVp2!=NULL) {
+        if(genVp->Pt() > 200 and genVp2->Pt() > 200) topology=1;
+        if((genVp->Pt() > 200 and genVp2->Pt() < 200) || (genVp->Pt() < 200 and genVp2->Pt() > 200) ) topology=2;
+    }
+
+    // at least one boosted
+    //    if(genWp==NULL or genWp2==NULL) return EVENT_NOT_USED;
+    //    if(genWp->Pt() < 200 and genWp2->Pt() < 200) return EVENT_NOT_USED;
 
     // Get Njets 30
     vector<TLorentzVector> genJets;
@@ -2148,10 +2153,15 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         bool isWJet=false;
         bool isWJetMirror=false;
-        if(!doHADAntiAnalysis and !doMETAntiAnalysis and !doBAntiAnalysis
-           and (f->IsWJet() or (!doResonant and f->IsZJet()))) isWJet=true;
-        if((doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) and f->IsWJetMirror()) isWJet=true;
-        if(f->IsWJetMirror()) isWJetMirror=true;
+        if(!doHADAntiAnalysis and !doMETAntiAnalysis and !doBAntiAnalysis) {
+            if (f->IsWJet() or (!doResonant and f->IsZJet())) isWJet=true;
+            if (f->IsWJetMirror()) isWJetMirror=true;
+        }
+
+        if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
+                if ( f->IsWJetMirror()) isWJet=true;
+                if ( f->IsWJet() or (!doResonant and f->IsZJet()) ) isWJetMirror=true;
+        }
 
         if(doMETAntiAnalysis)  doMETAnalysis=true;
         if(doBAntiAnalysis) doBAnalysis=true;
@@ -3669,15 +3679,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(evt_Detajj < 5.) Fill("VBShadAnalysis/MVV" +category+"_low_"+label, systname, evt_MVV, e->weight() );
     if(evt_Detajj >= 5.) Fill("VBShadAnalysis/MVV" +category+"_high_"+label, systname, evt_MVV, e->weight() );
 
-    if( !doBAnalysis and !doMETAnalysis and (category.find("BB")   !=string::npos) ) {
+    if(doResonant) {
+        if( !doBAnalysis and !doMETAnalysis and (category.find("BB")   !=string::npos) ) {
 
-        if( fabs(evt_MVV-1550) < 75 ) {
-            Fill("VBShadAnalysis/IN1500/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
-            Fill("VBShadAnalysis/IN1500/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
-        }
-        if( fabs(evt_MVV-1550) > 75 ) {
-            Fill("VBShadAnalysis/OUT1500/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
-            Fill("VBShadAnalysis/OUT1500/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
+            if( fabs(evt_MVV-1550) < 75 ) {
+                Fill("VBShadAnalysis/IN1500/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
+                Fill("VBShadAnalysis/IN1500/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
+            }
+            if( fabs(evt_MVV-1550) > 75 ) {
+                Fill("VBShadAnalysis/OUT1500/MVV" +category+"_"+label, systname, evt_MVV, e->weight() );
+                Fill("VBShadAnalysis/OUT1500/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
+            }
         }
     }
 

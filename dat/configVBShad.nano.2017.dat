@@ -7,10 +7,11 @@ Loader=LoadNano|2017
 
 Files=
 ## Signal
-include=dat/catalog/2020.moriond/nano/year2017/vbshad.dat
+#include=dat/catalog/2020.moriond/nano/year2017/vbshad.dat
 #include=dat/catalog/2020.moriond/nano/year2017/vbsDoublyCH.dat
 ##
 ### BKGS
+#include=dat/catalog/2020.moriond/nano/year2017/QCD_local.dat
 #include=dat/catalog/2020.moriond/nano/year2017/QCD.dat
 #include=dat/catalog/2020.moriond/nano/year2017/ttvbs.dat
 
@@ -19,6 +20,8 @@ include=dat/vbshad.dat
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
 #
+
+Files=root://xrootd-cms.infn.it//store/data/Run2017C/JetHT/NANOAOD/UL2017_MiniAODv1_NanoAODv2-v1/270000/A5AEE3D4-5003-714D-8980-EE403CF3E8B7.root
 
 ###SFDB=aux/sf_database.2017.moriond.txt
 SFDB=aux/sf_VBShad.txt
@@ -32,13 +35,13 @@ Correct=NONE
 Final=no
 
 ## be less peaky, given the n. of systs
-EntryPerSecond=5
+EntryPerSecond=10
 
-Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
+Analysis=OneAnalysis,JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
 
-addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
-addConfig=VBShadAnalysis|year=2017
-Output=VBShadSignal_HAD.root
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
+#addConfig=VBShadAnalysis|year=2017
+#Output=VBShadSignal_HAD.root
 
 #addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
 #addConfig=VBShadAnalysis|year=2017
@@ -51,9 +54,9 @@ Output=VBShadSignal_HAD.root
 ##
 
 #include=dat/catalog/2020.moriond/nano/year2017/jetHT.dat
-#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1,doBAntiAnalysis=0
-#addConfig=VBShadAnalysis|year=2017
-#Output=VBShadAntiSignal_HAD.root
+addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1,doBAntiAnalysis=0
+addConfig=VBShadAnalysis|year=2017
+Output=VBShadAntiSignal_HAD.root
 
 #include=dat/catalog/2020.moriond/nano/year2017/jetHT.dat
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=0,doBAntiAnalysis=1
