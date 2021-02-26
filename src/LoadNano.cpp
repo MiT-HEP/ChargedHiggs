@@ -15,9 +15,18 @@ void LoadNano::SetYear(int y)
     if(nano) nano->year=y;
 }
 
+void LoadNano::SetData(bool x)
+{
+    Loader::SetData(x); 
+    if(nano) nano->data=x;
+}
+
 int LoadNano::InitTree(){
+    if (tree_ == nullptr) {
+        return 0;
+    }
     //tree_->SetBranchAddress("run",&run);
-    nano.reset(new nanov8(tree_,year)); // call nano::Init -> SetBranchAddress
+    nano.reset(new nanov8(tree_,year,isData)); // call nano::Init -> SetBranchAddress
     
     // cache settings for AAA opening    
     unsigned long cachesize = 3145728U ;   //30 MBytes
@@ -25,6 +34,7 @@ int LoadNano::InitTree(){
     tree_->SetCacheSize(cachesize);
     tree_->AddBranchToCache("*", true);
     tree_->AddBranchToCache("L1_*", false);
+    return 0;
 }
 
 int LoadNano::FillEvent(){
@@ -505,9 +515,17 @@ int LoadNano::FillEvent(){
 void LoadNano::NewFile(){
     // read some how the triggers -> this is for Nero, probably not necessary.
     // grep -r IsTriggered src/AnalysisChargedHiggsTauNu.cpp |  tr '>' '\n' | grep IsTriggered | sed 's/).*//' | sed 's/,.*//' | sed 's/.*(//' | sort  | uniq
-    string fname = tree_->GetFile()->GetName();
+    //string fname = tree_->GetFile()->GetName();
+
+    //current tree start from N
+#ifndef NO_TCHAIN
+    int fNumber = (isTreeActive_) ? tree_ -> GetTreeNumber(): -1;
+    string fname = tree_->GetListOfFiles()->At(fNumber+1)->GetTitle(); 
+#endif
+    Log(__FUNCTION__,"DEBUG-NTC",string("Loading file")+fname);
 
     int year=2016;
+    isData=false;
 
     if (fname.find("mc2016") != string::npos) {year=2016;} // prefer string like mcYYYY
     else if (fname.find("mc2017") != string::npos) {year=2017;}
@@ -515,10 +533,20 @@ void LoadNano::NewFile(){
     else if (fname.find("2016") != string::npos) {year=2016;} // fall back to YYYY
     else if (fname.find("2017") != string::npos) {year=2017;}
     else if (fname.find("2018") != string::npos) {year=2018;}
+    else if (fname.find("UL16") != string::npos) {year=2016;} // fall back to YYYY
+    else if (fname.find("UL17") != string::npos) {year=2017;}
+    else if (fname.find("UL18") != string::npos) {year=2018;}
     else Log(__FUNCTION__,"WARNING","Unable to identify year. Using 2016 as default");
     
+    if (fname.find("Run2016") != string::npos) {isData=true;} 
+    else if (fname.find("Run2017") != string::npos) {isData=true;} 
+    else if (fname.find("Run2018") != string::npos) {isData=true;} 
+
     // Figure out year
     SetYear(year);
+    SetData(isData);
+    
+    InitTree();
     
     event_->triggerNames_.clear(); // possibly also not necessary by file
 

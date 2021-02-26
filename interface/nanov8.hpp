@@ -18,6 +18,7 @@
 class nanov8 {
 public :
    int year=2016;
+   int data=false;
 
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
 
@@ -2955,12 +2956,12 @@ public :
    TBranch        *b_L1simulation_step;   //!
 */
 
-   nanov8(TChain *tree=0,int y=2016);
+   nanov8(TTree *tree=0,int y=2016,bool isData=false);
    virtual ~nanov8();
    //virtual Int_t    Cut(Long64_t entry);
    //virtual Int_t    GetEntry(Long64_t entry);
    //virtual Long64_t LoadTree(Long64_t entry);
-   virtual void     Init(TChain *tree);
+   virtual void     Init(TTree *tree);
    //virtual void     Loop();
    virtual Bool_t   Notify();
    //virtual void     Show(Long64_t entry = -1);

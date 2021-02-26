@@ -165,14 +165,14 @@ for idx,fName in enumerate(fileList):
     print "processing file:",idx,"/",len(fileList)," : ", fName
     fROOT = r.TFile.Open( fName )
     if fROOT == None:
-        print "Unable to open, trying AAA"
+        print "Unable to open, trying AAA: ",re.sub('eoscms','xrootd-cms.infn.it',fName)
         fROOT = r.TFile.Open(re.sub('eoscms','xrootd-cms.infn.it',fName))
 
     t = fROOT.Get("Events")
     runs= fROOT.Get("Runs")
     runs.GetEntry(0)
     if (runs.nLHEPdfSumw != nPdfs) : 
-        print "[WARNING] ",runs.nLHEPdfSumw,"in the NANOAOD. Using only",nPdfs, "(must be <)"
+        print "[WARNING] ",runs.nLHEPdfSumw," pdf weights in the NANOAOD. Using only",nPdfs, "(must be <)"
 
     if not useRunTree:
         mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)

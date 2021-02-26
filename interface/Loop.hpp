@@ -24,6 +24,9 @@
 #include "interface/Logger.hpp"
 
 #include <sstream>
+#include <string>
+
+#define NO_TCHAIN
 
 /*!
  * @brief Loop class, called by python/Loop.py
@@ -33,7 +36,13 @@
 class Looper{
 
     private:
+#ifdef NO_TCHAIN
+        vector<std::string> file_list_;
+        vector<std::string> branch_list_;
+        TTree *tree_{nullptr}; 
+#else
         TChain *tree_; 
+#endif
         int fNumber{-1};
         long fEntry;
 
@@ -89,12 +98,16 @@ class Looper{
         /// @param name loader name
         inline void InitLoader(string name,int year=2016){ 
                     loader_ = LoaderFactory::get().create(name); 
-                    tree_=new TChain(loader_->chain().c_str());
                     loader_->SetYear(year);
+#ifdef NO_TCHAIN
+                    tree_=nullptr;
+#else
+                    tree_=new TChain(loader_->chain().c_str());
+#endif
         }
 
         /// @brief Add file to chain, Loader need to be init
-        inline int AddToChain( string name ){ return tree_ -> Add( name.c_str() ) ; }
+        int AddToChain( string name );
 
         /// @brief Add analysis to chain
         inline int AddAnalysis( AnalysisBase* a ) {analysis_ . push_back(a); return 0;}
@@ -118,7 +131,14 @@ class Looper{
         int InitTree () ;
         /// @brief Activate branch bname
         /// @param bname branch to set status to 1
-        inline void ActivateBranch(string bname){ tree_ -> SetBranchStatus(bname.c_str(),1); return; }
+        inline void ActivateBranch(string bname){ 
+#ifdef NO_TCHAIN
+            branch_list_.push_back( bname);
+#else
+            tree_ -> SetBranchStatus(bname.c_str(),1); 
+#endif
+            return; 
+        }
         /// @brief add some standard smear .Obsolete don't use
         int InitSmear() ;
         /// @brief call init on all correctors

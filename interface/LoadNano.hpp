@@ -26,6 +26,7 @@ class LoadNano : public Loader
     void Clear() override;
 
     void SetYear(int y) override ;
+    void SetData(bool x) override ;
 };
 
 #endif

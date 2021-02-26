@@ -19,7 +19,7 @@
 
 #include <sstream>
 
-//#define VERBOSE 2
+//#define VERBOSE 1
 
 Looper::Looper(){
 	output_=new Output(); 
@@ -36,6 +36,15 @@ int Looper::InitSmear(){
 	R+=AddSmear("JER");
 	R+=AddSmear("PU");
 	return R;
+}
+
+int Looper::AddToChain(string name){
+#ifdef NO_TCHAIN
+            file_list_.push_back(name);
+            return 0;
+#else
+            return tree_ -> Add( name.c_str() ) ; 
+#endif
 }
 
 int Looper::InitCorrector(){
@@ -82,24 +91,63 @@ int Looper::InitTree()
 #ifdef VERBOSE
 	if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","Init Tree");
 #endif
+    if (tree_==nullptr) return 0;
 	loader_->SetTree(tree_);
 	loader_->SetEventPtr(event_);
 
-	loader_->InitTree();
+#ifndef NO_TCHAIN
+	loader_->InitTree(); // SetBranchAddresses
+#endif
+
+#ifdef NO_TCHAIN
+    string fname =file_list_[fNumber];
+    loader_->SetFileName(fname);
+    if (branch_list_.size() >0)
+    {
+    tree_->SetBranchStatus("*",0);
+    for(const auto& bname: branch_list_) tree_->SetBranchStatus(bname.c_str(),1);
+    }
+#endif
 
 	return 0;
 }
 
 void Looper::Loop()
 {
-	unsigned long nEntries = tree_->GetEntries();
 
 	//ostringstream os; os<<"Running on "<<nEntries<<" entries" ;
-	Log(__FUNCTION__,"INFO", Form("Running on %d entries",nEntries) );
 
 	sw_. Reset();
 
 	try{	
+
+#ifdef NO_TCHAIN
+		for(fNumber=0; fNumber< file_list_.size();++fNumber)
+        {
+        string fname =file_list_[fNumber];
+        Log(__FUNCTION__,"DEBUG_NTC",string("Opening file: ")+fname);
+
+        TFile *f=TFile::Open(fname.c_str());
+        if (f==nullptr){
+	        Log(__FUNCTION__,"ERROR", string("Unable to open file: ")+fname );
+            throw abortException();
+        }
+        tree_ = (TTree*)f->Get(loader_->chain().c_str());
+        if (tree_==nullptr){
+	        Log(__FUNCTION__,"ERROR", string("Unable to find tree: ")+ loader_->chain() + " in file: "+fname );
+            throw abortException();
+        }
+        output_->Cd();
+
+        InitTree(); // propagate pointers, filename and branch status
+	    loader_->NewFile(); //parse filename, and call loader::InitTree -> SetBranchAddresses 
+        //InitTree();  // propagate it to Loader TODO. Mix with next line
+        tree_->GetEntry(0); // need to have runNum for ugly isData
+        NewFile();
+#else
+#endif
+	unsigned long nEntries = tree_->GetEntries();
+	Log(__FUNCTION__,"INFO", Form("Running on %d entries",nEntries) );
 		for(unsigned long iEntry = 0 ;iEntry< nEntries ;++iEntry)
 		{
 			if(iEntry %10000 == 0 ) {
@@ -131,8 +179,46 @@ void Looper::Loop()
 			if (VERBOSE > 1) cout <<"[Looper]::[Loop] Getting Entry "<<iEntry << " of "<<nEntries<<endl;
 #endif
 			ClearEvent();
+
+#ifndef NO_TCHAIN
+            // find out if entry is in the current tree before loadig it
+            bool isNew=false;
+            {
+                // https://root.cern.ch/doc/master/TChain_8cxx_source.html#l01307
+                // if ((fTreeNumber == -1) || (entry < fTreeOffset[fTreeNumber]) || (entry >= fTreeOffset[fTreeNumber+1]) || (entry==TTree::kMaxEntries-1)) {
+                // get local tree entry 
+                if ((fNumber < 0) || (iEntry < tree_->GetTreeOffset()[fNumber]) || (iEntry >= tree_->GetTreeOffset()[fNumber+1]) ) isNew = true;
+            }
+
+	        //if ( tree_ -> GetTreeNumber() != fNumber)
+            if ( isNew )
+            {
+	            loader_->NewFile();
+            }
+#endif
 			// load tree
 			tree_ -> GetEntry(iEntry);
+
+#ifndef NO_TCHAIN
+            loader_->SetTreeAsActive(); // to be able to guess the tree number correctly
+            if (isNew) {
+                NewFile(); // loadMC weights
+                if (fNumber != tree_->GetTreeNumber() -1) 
+                {
+                    Log(__FUNCTION__,"ERROR","Empty file found. Aborting processing.  (Xrootd?)");	
+                    Log(__FUNCTION__,"ERROR",string("Current fNami is (check previous):") + event_->fName_);	
+                    throw abortException();
+                }
+
+                fNumber = tree_->GetTreeNumber();
+                // check that file is correctly opened. xrootd. 
+                if  (tree_->GetFile() == nullptr)  {
+                    Log(__FUNCTION__,"ERROR","Unable to open file or directory. (Xrootd?)");	
+                    throw abortException();
+                }
+            }
+
+#endif
             fEntry=iEntry;
 
 			//move content into the event
@@ -197,6 +283,11 @@ void Looper::Loop()
                 a->EndEvent(); 
             }
 		}// loop over entries
+#ifdef NO_TCHAIN
+        Log(__FUNCTION__,"DEBUG_NTC",string("Close file: ")+fname);
+        f->Close();
+        } // loop over files
+#endif
 	} // try
 	catch( sigint_exception &e)
 	{
@@ -214,13 +305,15 @@ void Looper::Loop()
 	dump_->Close();
 	Write();
 	Close();
-    
+   
+#ifndef NO_TCHAIN 
     //check that all trees have been processed
     if (fNumber != tree_->GetNtrees()-1) 
     {
 		Log(__FUNCTION__,"ERROR","Empty file found. Aborting processing.  (Xrootd?)");	
         throw abortException();
     }
+#endif
 
 	return;	
 }
@@ -233,22 +326,15 @@ void Looper::ClearEvent(){
 
 void Looper::NewFile()
 {
+#ifdef NO_TCHAIN
+    string fname =file_list_[fNumber];
+#else
 	string fname = tree_->GetFile()->GetName();
+#endif
+    
+    //string fname = tree_->GetListOfFilse()[fNumber+1]->GetTitle(); 
 
-    if (fNumber != tree_->GetTreeNumber() -1) 
-    {
-		Log(__FUNCTION__,"ERROR","Empty file found. Aborting processing.  (Xrootd?)");	
-		Log(__FUNCTION__,"ERROR",string("Current fNami is (check previous):") + fname);	
-        throw abortException();
-    }
-
-	fNumber = tree_->GetTreeNumber();
-    // check that file is correctly opened. xrootd. 
-    if  (tree_->GetFile() == nullptr)  {
-		Log(__FUNCTION__,"ERROR","Unable to open file or directory. (Xrootd?)");	
-        throw abortException();
-    }
-	// check name and weight TODO
+	// check name and weight
 	event_ -> fName_ = fname;
 
 	Log(__FUNCTION__,"INFO","Openining new file: '"+ fname +"'");
@@ -281,7 +367,8 @@ void Looper::NewFile()
 		} 
 	}// scope loop
 
-	if ( event_->IsRealData() ) {  
+	//if ( event_->IsRealData() ) {  
+	if ( event_->runNum() >10 ) {   // ugly fix
 		cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<endl;;
 		event_ -> GetWeight() -> LoadMC("data"); 
 	}
@@ -326,8 +413,6 @@ void Looper::NewFile()
 
 	} // end MC
 
-	loader_->NewFile();
-
 	// Dumper
 	dump_ -> NewFile( event_-> GetWeight() -> GetMC() ) ;
 	dump_ -> TriggerNames(event_->triggerNames_);
@@ -345,12 +430,12 @@ void Looper::FillEvent(){
 
 	loader_->FillEventInfo();
 
-	if ( tree_ -> GetTreeNumber() != fNumber)
-	{
-		NewFile();
-        // Bad fix for partially reprocessed trees  -- I loose one entry// FIXME
-        tree_->GetEntry(fEntry);
-	}
+	//if ( tree_ -> GetTreeNumber() != fNumber)
+	//{
+	//	NewFile();
+    //    // Bad fix for partially reprocessed trees  -- I loose one entry// FIXME
+    //    tree_->GetEntry(fEntry);
+	//}
 
 	loader_->FillEvent();
 
