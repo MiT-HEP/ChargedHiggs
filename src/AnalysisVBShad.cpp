@@ -1613,7 +1613,7 @@ bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
     bool match_3 = false;
     bool match_4 = false;
 
-    evt_genmatch = 0;
+    evt_genmatch = false;
 
     float bosjer1=Getjetres(bosonJets[0]);
     float bosjer2=Getjetres(bosonJets[1]);
@@ -1715,7 +1715,7 @@ bool VBShadAnalysis::genMatchResonant(Event*e, string label, string category){
 
     bool match_1 = false;
     bool match_2 = false;
-    evt_genmatch = 0;
+    evt_genmatch = false;
 
     for(Int_t i = 0; i < e->NGenPar(); i++){
 
@@ -2086,9 +2086,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
     //$$$$$$$$$
 
     //AK8 jet
-    selectedFatJets.clear();
-    selectedMirrorFatJets.clear();
-    selectedFatZbb.clear();
     for(unsigned i=0;i<e->NFatJets() ; ++i)
     {
 
@@ -2187,13 +2184,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
 
-
-    minDPhi=999.f;
-
     //AK4
-    selectedJets.clear();
-
-    counterExtrabToVeto_=0;
     for(unsigned i=0;i<e->Njets() ; ++i)
     {
         Jet *j=e->GetJet(i);
@@ -2737,8 +2728,114 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
 }
 
 
+void VBShadAnalysis::reset() // reset private members
+{
+    selectedJets.clear();
+    selectedFatJets.clear();
+    selectedMirrorFatJets.clear();
+    selectedFatZbb.clear();
+
+    counterExtrabToVeto_=0;
+    minDPhi=999.f;
+
+    genVp = NULL;
+    genVp2 = NULL;
+    dauV1a = NULL;
+    dauV1b = NULL;
+    dauV2a = NULL;
+    dauV2b = NULL;
+
+    /// MISSED BLOCK
+    bosonVDiscr.clear();
+    bosonTDiscr.clear();
+    bosonMass.clear();
+    bosonBBDiscr.clear();
+    bosonBBMass.clear();
+    bosonBBTDiscr.clear();
+
+    V1isZbb=false;
+    V2isZbb=false;
+    evt_MVV_gen=-100;
+    // END MISSED BLOCK
+
+    bosonJets.clear();
+    forwardJets.clear();
+    vetoJets.clear();
+
+    p4VV*=0;
+    p4jj*=0;
+    p4VVjj*=0;
+
+
+    // below variables for the ntuples (REDUNDANT ??)
+
+    evt_Mjj=-100;
+    evt_Detajj=-100;
+    evt_Dphijj=-100;
+    evt_Jet2Eta=-100;
+    evt_Jet2Pt=-100;
+
+    evt_MVV=-100;
+    evt_DRV2=-100;
+    evt_PetaVV=-100;
+    evt_DetaVV=-100;
+    evt_MVV_gen=-100;
+    evt_PTVV=0;
+    evt_PTV1=0;
+    evt_PTV2=0;
+    evt_EtaMinV=-100;
+    evt_EtaMaxV=-100;
+
+    evt_normPTVVjj=0;
+    evt_cenPTVVjj=0;
+
+    evt_mtop=0;
+
+    evt_zepVB=-100;
+    evt_zepV2=-100;
+    evt_cenEta=-100;
+    evt_zepVV=-100;
+    evt_DRV1j=-100;
+    evt_FW2=-100;
+
+    evt_bosV1mass=-1;
+    evt_bosV1discr=-1;
+    evt_bosV1tdiscr=-1;
+    evt_bosV1unc = 0;
+    evt_bosV2mass=-1;
+    evt_bosV2discr=-1;
+    evt_bosV2tdiscr=-1;
+    evt_bosV2discr2nd=-1;
+    evt_bosV2unc = 0;
+    evt_chi2_= -1;
+    evt_maxDnn = 0.;
+    evt_2ndmaxDnn = 0.;
+    evt_v_score = 0.;
+    evt_maxkeras = -999.;
+
+    evt_j1unc = 0;
+    evt_j2unc = 0;
+
+    bosV2j2Pt=-100;
+    bosV2j1Pt=-100;
+    index_f1 = -1;
+    index_f2 = -1;
+    index_v1 = -1;
+    index_v2 = -1;
+
+    BDTnoBnoMET = -100;
+    BDTwithMET = -100;
+    BDTbtag = -100;
+    MultiBDTwithMET = -100;
+
+}
+
+
 int VBShadAnalysis::analyze(Event *e, string systname)
 {
+
+    //** reset
+    reset();
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Start analyze: " +systname);
     string label = GetLabel(e);
@@ -2810,13 +2907,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
     //$$$$$$$$$ genStudies
     //$$$$$$$$$
-
-    genVp = NULL;
-    genVp2 = NULL;
-    dauV1a = NULL;
-    dauV1b = NULL;
-    dauV2a = NULL;
-    dauV2b = NULL;
 
     genStudies(e, label );
 
@@ -3003,7 +3093,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     // for forwardJets pick the one with the largest mass
 
     if(!doMETAnalysis and !doBAnalysis) {
-        forwardJets.clear();
         p4VV*=0;
         evt_MVV=0;
         evt_PTV1=0;
@@ -3018,7 +3107,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1) {
             category="_BB";
-            evt_genmatch = false;
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
             evt_bosV1discr = bosonVDiscr[0];
             evt_bosV1tdiscr = bosonTDiscr[0];
@@ -3100,7 +3188,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1) {
             category="_BBtag";
             // add cases with two Zbb Zbb most pures only for nonresonant
-            evt_genmatch = false;
 
             Fill("VBShadAnalysis/Baseline/pT_BJet_"+label, systname, selectedFatZbb[0]->GetP4().Pt(), e->weight() );
 
@@ -3260,7 +3347,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     // with MET
 
     if(doMETAnalysis) {
-        forwardJets.clear();
         p4VV*=0;
         evt_MVV=0;
         evt_PTV1=0;
@@ -3486,7 +3572,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 6, 1 );
 
     Fill("VBShadAnalysis/Baseline/NJet_" +label, systname, forwardJets.size(), e->weight() );
-
 
 
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
