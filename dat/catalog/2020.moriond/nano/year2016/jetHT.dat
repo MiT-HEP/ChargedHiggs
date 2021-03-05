@@ -5,7 +5,9 @@ addfiles=/JetHT/Run2016D-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD
 addfiles=/JetHT/Run2016E-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD
 addfiles=/JetHT/Run2016F-HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD
 ####addfiles=/JetHT/Run2016F-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD (it's duplicate)
+addfiles=/JetHT/Run2016F-UL2016_MiniAODv1_NanoAODv2-v2/NANOAOD
 addfiles=/JetHT/Run2016G-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD
 addfiles=/JetHT/Run2016H-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD
 
 # this is ALL B-H (35.9 /fb)
+#dasgoclient --query "run dataset=/JetHT/Run2016F-UL2016_MiniAODv1_NanoAODv2-v2/NANOAOD"
