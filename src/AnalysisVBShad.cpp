@@ -2889,19 +2889,21 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         Fill("VBShadAnalysis/GENERAL/Mtt_" +label, systname, Mtt, e->weight() );
     }
 
-    if (not e->IsRealData()
-        and (label.find("TTTo2L2Nu") !=string::npos)
-        and (label.find("TTToSemiLeptonic") !=string::npos)
-        and (label.find("TTToHadronic") !=string::npos)
+    /* // comment for now; need to evaluate the final sample statistics 
+
+    if (not e->IsRealData() and (
+        (label.find("TTTo2L2Nu") !=string::npos) or
+        (label.find("TTToSemiLeptonic") !=string::npos) or
+        (label.find("TTToHadronic") !=string::npos))
         and not e->ApplyMttReweight()) return EVENT_NOT_USED;
 
-    if ( label == "TT_Mtt-1000toInf_TuneCP5" ) label = "TT_TuneCP5";
-    if ( label == "TT_Mtt-700to1000_TuneCP5" ) label = "TT_TuneCP5";
+    if ( label.find("TT_Mtt-1000toInf_TuneCP5") !=string::npos) label = "TT_TuneCP5";
+    if ( label.find("TT_Mtt-700to1000_TuneCP5") !=string::npos) label = "TT_TuneCP5";
 
-    if ( label == "TTTo2L2Nu" ) label = "TT_TuneCP5";
-    if ( label == "TTToSemiLeptonic" ) label = "TT_TuneCP5";
-    if ( label == "TTToHadronic" ) label = "TT_TuneCP5";
-
+    if ( label.find("TTTo2L2Nu") !=string::npos) label = "TT_TuneCP5";
+    if ( label.find("TTToSemiLeptonic") !=string::npos) label = "TT_TuneCP5";
+    if ( label.find("TTToHadronic") !=string::npos) label = "TT_TuneCP5";
+    */
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Final label is: " + label);
     //$$$$$$$$$
