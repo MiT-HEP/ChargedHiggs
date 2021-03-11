@@ -11,6 +11,7 @@ include=dat/catalog/2020.moriond/nano/year2018/vbshad.dat
 #include=dat/catalog/2020.moriond/nano/year2018/vbsDoublyCH.dat
 ##
 ### BKGS
+#include=dat/catalog/2020.moriond/nano/year2018/QCD_local.dat
 #include=dat/catalog/2020.moriond/nano/year2018/QCD.dat
 #include=dat/catalog/2020.moriond/nano/year2018/ttvbs.dat
 
@@ -34,7 +35,7 @@ Final=no
 ## be less peaky, given the n. of systs
 EntryPerSecond=5
 
-Analysis=JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
+Analysis=OneAnalysis,JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
 
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
 #addConfig=VBShadAnalysis|year=2018
@@ -59,3 +60,8 @@ Output=VBShadSignal_MET.root
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=0,doBAntiAnalysis=1
 #addConfig=VBShadAnalysis|year=2018
 #Output=VBShadAntiSignal_B.root
+
+#include=dat/catalog/2020.moriond/nano/year2018/MET.dat
+#addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doMETAntiAnalysis=1,doBAntiAnalysis=0
+#addConfig=VBShadAnalysis|year=2018
+#Output=VBShadAntiSignal_MET.root
