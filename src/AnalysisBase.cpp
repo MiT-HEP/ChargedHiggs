@@ -2,6 +2,12 @@
 #include <iostream>
 
 //#define VERBOSE 2
+int AnalysisBase::doAnalyze(Event*event,string systname){ 
+        e=event;
+        SetCuts(e); 
+        e->validate(); 
+        return analyze(e,systname);
+    }
 
 void AnalysisBase::Book(string name, string title, int nBins,double xmin,double xmax)
 {

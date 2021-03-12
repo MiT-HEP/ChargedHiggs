@@ -15,9 +15,18 @@ void LoadNano::SetYear(int y)
     if(nano) nano->year=y;
 }
 
+void LoadNano::SetData(bool x)
+{
+    Loader::SetData(x); 
+    if(nano) nano->data=x;
+}
+
 int LoadNano::InitTree(){
+    if (tree_ == nullptr) {
+        return 0;
+    }
     //tree_->SetBranchAddress("run",&run);
-    nano.reset(new nanov8(tree_,year)); // call nano::Init -> SetBranchAddress
+    nano.reset(new nanov8(tree_,year,isData)); // call nano::Init -> SetBranchAddress
     
     // cache settings for AAA opening    
     unsigned long cachesize = 3145728U ;   //30 MBytes
@@ -25,6 +34,7 @@ int LoadNano::InitTree(){
     tree_->SetCacheSize(cachesize);
     tree_->AddBranchToCache("*", true);
     tree_->AddBranchToCache("L1_*", false);
+    return 0;
 }
 
 int LoadNano::FillEvent(){
@@ -35,6 +45,9 @@ int LoadNano::FillEvent(){
 
    // Fill Met
     {
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Met");
+#endif
         TLorentzVector met; met.SetPtEtaPhiM(nano->MET_pt,0,nano->MET_phi,0);
         event_ -> met_ .SetP4(met);
         event_->met_.SetSignificance(nano->MET_significance);
@@ -145,6 +158,9 @@ int LoadNano::FillEvent(){
 
     // puppi met
     {
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Puppi Met");
+#endif
         TLorentzVector puppimet; puppimet.SetPtEtaPhiM(nano->PuppiMET_pt,0,nano->PuppiMET_phi,0);
         event_->met_ . SetPuppiMetP4(puppimet);
 
@@ -171,17 +187,26 @@ int LoadNano::FillEvent(){
 
     // raw met
     {
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Raw");
+#endif
         TLorentzVector rawmet; rawmet.SetPtEtaPhiM(nano->RawMET_pt,0,nano->RawMET_phi,0);
         event_->met_ . SetRawMetP4(rawmet);
     }
 
     // track met
     {
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Track Met");
+#endif
         TLorentzVector trackmet; trackmet.SetPtEtaPhiM(nano->TkMET_pt,0,nano->TkMET_phi,0);
         event_->met_ . SetTrackMetP4(trackmet);
     }
 
    // Fill Muon
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Track Muon");
+#endif
    for(int i=0;i<nano->nMuon;++i)
    {
         //if (not Muon_isPFcand[i] ) continue; // loose
@@ -217,6 +242,9 @@ int LoadNano::FillEvent(){
         event_ -> leps_ . push_back(l);
    }
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Track Electron");
+#endif
    // Fill Electrons.
    for(int i=0;i<nano->nElectron;++i)
    {
@@ -251,6 +279,9 @@ int LoadNano::FillEvent(){
            return l1->GetP4().Phi() > l2->GetP4().Phi(); // if pt, eta, phi are identical, then they are the same object
            } );
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Jets");
+#endif
    // Fill Jets
    for(int i=0;i<nano->nJet;++i)
    {
@@ -297,6 +328,9 @@ int LoadNano::FillEvent(){
    //UChar_t         Photon_cleanmask[8];   //[nPhoton]
    //UChar_t         Tau_cleanmask[4];   //[nTau]
    
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling FatJets");
+#endif
    //Fill Fatjets
    for(int i=0;i<nano->nFatJet;++i)
    {
@@ -341,6 +375,9 @@ int LoadNano::FillEvent(){
        event_ -> fat_ . push_back(j);
    }
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling TrackJets");
+#endif
    // TrackJets -- Soft Activity
    for(int i =0 ;i<nano->nSoftActivityJet;++i){
         TrackJet *j =new TrackJet();
@@ -351,6 +388,9 @@ int LoadNano::FillEvent(){
    }
    
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Taus");
+#endif
    //FILL Tau
    for (int i=0;i<nano->nTau;++i)
    {
@@ -367,6 +407,9 @@ int LoadNano::FillEvent(){
        //decay mode
    }
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Photons");
+#endif
    //Fill Photons
    for (int i=0;i<=nano->nPhoton;++i)
    {
@@ -387,6 +430,9 @@ int LoadNano::FillEvent(){
    }
 
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Trigger");
+#endif
    //Fill Trigger and TriggerObjects
    {
        event_ -> triggerFired_ . clear();
@@ -411,6 +457,9 @@ int LoadNano::FillEvent(){
    }
 
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Gen");
+#endif
    //Gen
    if ( tree_ ->GetBranchStatus("Generator_weight") != 0 ){
        // nano: genWeight ; Generator_weight ; LHEWeight_originalXWGTUP
@@ -499,15 +548,26 @@ int LoadNano::FillEvent(){
             event_ -> genparticles_ . push_back(g);
        }
    }
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","End");
+#endif
 
 }
 
 void LoadNano::NewFile(){
     // read some how the triggers -> this is for Nero, probably not necessary.
     // grep -r IsTriggered src/AnalysisChargedHiggsTauNu.cpp |  tr '>' '\n' | grep IsTriggered | sed 's/).*//' | sed 's/,.*//' | sed 's/.*(//' | sort  | uniq
-    string fname = tree_->GetFile()->GetName();
+    //string fname = tree_->GetFile()->GetName();
+
+    //current tree start from N
+#ifndef NO_TCHAIN
+    int fNumber = (isTreeActive_) ? tree_ -> GetTreeNumber(): -1;
+    string fname = tree_->GetListOfFiles()->At(fNumber+1)->GetTitle(); 
+#endif
+    Log(__FUNCTION__,"DEBUG-NTC",string("Loading file")+fname);
 
     int year=2016;
+    isData=false;
 
     if (fname.find("mc2016") != string::npos) {year=2016;} // prefer string like mcYYYY
     else if (fname.find("mc2017") != string::npos) {year=2017;}
@@ -515,10 +575,20 @@ void LoadNano::NewFile(){
     else if (fname.find("2016") != string::npos) {year=2016;} // fall back to YYYY
     else if (fname.find("2017") != string::npos) {year=2017;}
     else if (fname.find("2018") != string::npos) {year=2018;}
+    else if (fname.find("UL16") != string::npos) {year=2016;} // fall back to YYYY
+    else if (fname.find("UL17") != string::npos) {year=2017;}
+    else if (fname.find("UL18") != string::npos) {year=2018;}
     else Log(__FUNCTION__,"WARNING","Unable to identify year. Using 2016 as default");
     
+    if (fname.find("Run2016") != string::npos) {isData=true;} 
+    else if (fname.find("Run2017") != string::npos) {isData=true;} 
+    else if (fname.find("Run2018") != string::npos) {isData=true;} 
+
     // Figure out year
     SetYear(year);
+    SetData(isData);
+    
+    InitTree();
     
     event_->triggerNames_.clear(); // possibly also not necessary by file
 

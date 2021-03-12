@@ -1,4 +1,4 @@
-sub=amarini|/store/group/phys_higgs/cmshmm/amarini/nano/2018
+sub=amarini|/store/group/phys_higgs/cmshmm/amarini/nano/2016
 
 ##addfiles=%(amarini)s/QCD_HT50to100_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8
 ##addfiles=%(amarini)s/QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8

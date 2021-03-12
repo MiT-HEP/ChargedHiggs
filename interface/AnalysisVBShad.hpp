@@ -29,6 +29,7 @@ public:
     void Init() override;
     int analyze(Event*,string systname) override;
     void EndEvent() override;
+    void reset();
     void setTree(Event*e, string label, string  category);
     void setTrainingTree(Event*e, string label, int fi, int fj, int vk, int vl);
 

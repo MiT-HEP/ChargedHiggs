@@ -1,9 +1,8 @@
 #include "interface/One.hpp"
 
-#define VERBOSE 0
+//#define VERBOSE 1
 
 void OneAnalysis::Init(){
-    if (VERBOSE)Log(__FUNCTION__,"DEBUG","Init");
 
 	Log(__FUNCTION__,"INFO","Booking Histograms");
     for ( string l : AllLabel()  ) {

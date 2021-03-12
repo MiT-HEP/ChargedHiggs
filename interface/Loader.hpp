@@ -13,17 +13,36 @@
 #include <map>
 #include <iostream>
 
+#define NO_TCHAIN
+
 class Event;
 
 class Loader : public Named {
     protected:
-        TChain *tree_{0}; // not opened but set, NOT OWNED
         Event *event_{NULL}; // not owned
         int year=2016; // ?? for NanoAOD
+        bool isData=false; // for NanoAOD
+#ifdef NO_TCHAIN
+        TTree *tree_{0}; // not opened but set, NOT OWNED
+        string fname;
+#else
+        TChain *tree_{0}; // not opened but set, NOT OWNED
+        int isTreeActive_{false}; // keep track if tree is active
+#endif
     public:
         Loader(){};
         ~Loader(){ }
-        inline void SetTree(TChain *t) { tree_=t; } // this are called by Loop::InitTree, before init the tree
+#ifdef NO_TCHAIN
+        inline void SetFileName(const string& name){fname=name;}
+        inline void SetTree(TTree *t) { 
+            tree_=t; 
+        }
+#else
+        inline void SetTree(TChain *t) { 
+            tree_=t; 
+            isTreeActive_ = false;
+        }
+#endif
         inline void SetEventPtr(Event*e) { event_=e; }
         const string name() const override { return "Loader" ;} 
         virtual const string chain() const = 0; // name of the tree in the file
@@ -34,9 +53,17 @@ class Loader : public Named {
         virtual void Clear() {};
 
         virtual void SetYear(int y) {
-            //Log(__FUNCTION__,"DEBUG",Form("year=%d",y));
+            Log(__FUNCTION__,"DEBUG",Form("year=%d",y));
             year=y;
         }
+
+        virtual void SetData(bool d) {
+            Log(__FUNCTION__,"DEBUG",Form("isdata=%d",int(d)));
+            isData=d;
+        }
+#ifndef NO_TCHAIN
+        inline void SetTreeAsActive(bool x=true){isTreeActive_=x;}
+#endif
         
 };
 

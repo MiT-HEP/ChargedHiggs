@@ -1,0 +1,6 @@
+sub=amarini|/store/group/phys_higgs/cmshmm/amarini/nano/2018
+
+addfiles=%(amarini)s/JetHT/crab_JetHT_2018_Run2018A-
+addfiles=%(amarini)s/JetHT/crab_JetHT_2018_Run2018B-
+addfiles=%(amarini)s/JetHT/crab_JetHT_2018_Run2018C-
+addfiles=%(amarini)s/JetHT/crab_JetHT_2018_Run2018D-

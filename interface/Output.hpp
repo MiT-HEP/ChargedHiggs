@@ -101,6 +101,7 @@ class Output{
         void Close();
         void Open(string name) ;
         void Write();
+        inline void Cd(){file_->cd();}
         // -- Book Histo
         bool Exists(string name);
 

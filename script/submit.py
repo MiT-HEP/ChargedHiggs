@@ -292,6 +292,8 @@ if opts.resubmit:
             call(cmd,shell=True)
             cmd = "rm " + basedir + "/QCDPurity_%d.root"%iJob + " 2>&1 >/dev/null"
             call(cmd,shell=True)
+            cmd = "rm " + basedir + "/VBShad*_%d.root"%iJob + " 2>&1 >/dev/null"
+            call(cmd,shell=True)
 
             if opts.condor:
                 jdl.write("filename=%s/sub%d.sh\n"%(opts.dir,iJob))

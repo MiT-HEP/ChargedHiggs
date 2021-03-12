@@ -894,19 +894,34 @@ void LoadNero::FillTrigger(){
 
 } // end fill trigger
 void LoadNero::NewFile(){
+    throw abortException(); //need to reimplement the new file logic for Nano. We will need to have a getEntry before this
     // LOAD TRIGGER NAMES
+#ifdef NO_TCHAIN
+    TNamed * tn= nullptr;
+#else
     TNamed * tn=  (TNamed*)tree_->GetFile()->Get("nero/triggerNames");
+#endif
 
     if (tn == NULL ) 
     {
+#ifdef NO_TCHAIN
+#else
         string fname = tree_->GetFile()->GetName();
+#endif
         Log(__FUNCTION__,"ERROR","No Trigger Information in file" + fname );
     }
 
+#ifdef NO_TCHAIN
+    TNamed * vn=  nullptr;
+#else
     TNamed * vn=  (TNamed*)tree_->GetFile()->Get("nero/tag");
+#endif
     if (vn == NULL ) 
     {
+#ifdef NO_TCHAIN
+#else
         string fname = tree_->GetFile()->GetName();
+#endif
         Log(__FUNCTION__,"ERROR","No Versioning  Information in file" + fname );
         event_ -> tag_ = "";
     }
