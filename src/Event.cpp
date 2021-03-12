@@ -638,7 +638,7 @@ bool Event::ApplyMttReweight(){
 
     bool keepEvent=true;
 
-    if( GetWeight() -> GetMC() . find("TT_TuneCUETP8M2T4") == string::npos)
+    if( GetWeight() -> GetMC() . find("TTTo") == string::npos)
         { // not ttbar sample
             return keepEvent;
         }
