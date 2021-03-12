@@ -19,7 +19,7 @@
 
 #include <sstream>
 
-//#define VERBOSE 1
+//#define VERBOSE 3
 
 Looper::Looper(){
 	output_=new Output(); 
@@ -367,6 +367,7 @@ void Looper::NewFile()
 		} 
 	}// scope loop
 
+	//Log(__FUNCTION__,"DEBUG",Form("RunNumber is %ld (using >10 to determine MC/data)",event_->runNum()) );	
 	//if ( event_->IsRealData() ) {  
 	if ( event_->runNum() >10 ) {   // ugly fix
 		cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<endl;;

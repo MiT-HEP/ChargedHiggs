@@ -32,29 +32,38 @@ bool JsonAnalysis::CheckLumi(long run, int lumi){
     return false;
 }
 
-#define SYNC_VERBOSE 1
+//#define VERBOSE 1
 int JsonAnalysis::analyze(Event* e,string systname)
 {
+#ifdef VERBOSE
+    if (VERBOSE>0) Log(__FUNCTION__,"DEBUG","Start");
+#endif
+
     // if not Init, return true
     if(goodLumis_.empty() ) return JSON_EVENT_PASS;      
 
+#ifdef VERBOSE
+    if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","Lumi Empty");
+#endif
     // -- all MC event should pass
     if (not e->IsRealData() ) return JSON_EVENT_PASS;
 
+#ifdef VERBOSE
+    if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","is Real Data");
+#endif
     Fill("Json/CutFlow/CutFlow_Data",systname,0,1);
-
-    if (SYNC_VERBOSE and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
-        Log(__FUNCTION__,"SYNC",Form("Analyze event %ld:%ld:%ld",e->runNum(),e->lumiNum(),e->eventNum()));
 
     if ( CheckLumi(e->runNum(), e->lumiNum()  )){
         Fill("Json/CutFlow/CutFlow_Data",systname,1,1); // pass
-        if (SYNC_VERBOSE and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
-            Log(__FUNCTION__,"SYNC","Pass");
+#ifdef VERBOSE
+        if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","Event in Json");
+#endif
         return JSON_EVENT_PASS;
     }
 
-    if (SYNC_VERBOSE and e->runNum()==297722 and e->lumiNum()==47 and e->eventNum()==12105464)
-        Log(__FUNCTION__,"SYNC","Fail");
+#ifdef VERBOSE
+    if(VERBOSE>0)Log(__FUNCTION__,"DEBUG","Fail");
+#endif
 
     return JSON_EVENT_FAIL;
 

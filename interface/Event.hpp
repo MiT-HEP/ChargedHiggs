@@ -55,7 +55,7 @@ class Event{
     vector<bool>    triggerFinalOR_; // bx=-2, -1, 0, 1 ,2
     vector<bool>    triggerFired_;
     int isRealData_;
-    int runNum_;
+    unsigned long int runNum_;
     int lumiNum_;
     unsigned eventNum_;
     float rho_;
@@ -81,7 +81,7 @@ class Event{
     Weight *GetWeight(){ return weight_;} 
 
     ///@brief run number
-    inline int runNum(){return runNum_; }
+    inline unsigned long int runNum(){return runNum_; }
     ///@brief luminosity block number
     inline int lumiNum(){return lumiNum_; }
     ///@brief event number

@@ -218,40 +218,59 @@ double Event::weight(bool safe){
     return weight_ -> weight();
 }
 
+//#define VERBOSE 1
 void Event::validate(){
+    //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","Begin Validate");
     //reject all the jets that are identified as : lepton or tau
     //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","---------- VALIDATE EVENT ----------" );
     for ( auto j : jets_ )
     {
         //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Compute Validity of jet pt=%f, eta=%f vs Tau",j->Pt(),j->Eta()) );
+        //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Considering Jet pt=%f eta=%f",j->Pt(),j->Eta()));
 
         j-> resetValidity();
         for(auto l : leps_)
-            if(l->IsLep() )j-> computeValidity(l);
+        {
+            if(l->IsLep() ){
+                //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Considering against lepton pt=%f eta=%f",l->Pt(),l->Eta()));
+                j-> computeValidity(l);
+            }
+        }
 
         for(auto t: taus_)
         {
             if(t->IsTau() ) { 
-                //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("--- aganinst Tau of pt=%f, eta=%f DR=",t->Pt(),t->Eta(), t->DeltaR(*j)) );
+                //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Considering against tau pt=%f eta=%f",t->Pt(),t->Eta()));
                 j-> computeValidity(t);
-                //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("--- Jet for the moment is=%d ",j->isValid) );
             }
-            if(t->IsTauInvIso() )j-> computeValidity(t,0.4,true);
+
+            if(t->IsTauInvIso() ){
+                //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Considering against tau inv iso pt=%f eta=%f",t->Pt(),t->Eta()));
+                j-> computeValidity(t,0.4,true);
+            }
         }
 
         for(auto p: phos_)
         {
-            if(p->IsPho() )j-> computeValidity(p);
+            if(p->IsPho() ){
+                //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Considering against photon pt=%f eta=%f",p->Pt(),p->Eta()));
+                j-> computeValidity(p);
+            }
         }
 
     }
     /// only against leptons, 
     // against jet we will need to see in the variables
+    //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","Track Jets");
     for ( auto j : tracks_ )
     {
+        //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Considering Track Jet pt=%f eta=%f",j->Pt(),j->Eta()));
         j-> resetValidity();
         for(auto l : leps_)
-            if(l->IsLep() )j-> computeValidity(l);
+            if(l->IsLep() ){
+                //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Considering against lepton pt=%f eta=%f",l->Pt(),l->Eta()));
+                j-> computeValidity(l);
+            }
     }
     return ;
 }

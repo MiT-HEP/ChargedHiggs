@@ -45,6 +45,9 @@ int LoadNano::FillEvent(){
 
    // Fill Met
     {
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Met");
+#endif
         TLorentzVector met; met.SetPtEtaPhiM(nano->MET_pt,0,nano->MET_phi,0);
         event_ -> met_ .SetP4(met);
         event_->met_.SetSignificance(nano->MET_significance);
@@ -155,6 +158,9 @@ int LoadNano::FillEvent(){
 
     // puppi met
     {
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Puppi Met");
+#endif
         TLorentzVector puppimet; puppimet.SetPtEtaPhiM(nano->PuppiMET_pt,0,nano->PuppiMET_phi,0);
         event_->met_ . SetPuppiMetP4(puppimet);
 
@@ -181,17 +187,26 @@ int LoadNano::FillEvent(){
 
     // raw met
     {
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Raw");
+#endif
         TLorentzVector rawmet; rawmet.SetPtEtaPhiM(nano->RawMET_pt,0,nano->RawMET_phi,0);
         event_->met_ . SetRawMetP4(rawmet);
     }
 
     // track met
     {
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Track Met");
+#endif
         TLorentzVector trackmet; trackmet.SetPtEtaPhiM(nano->TkMET_pt,0,nano->TkMET_phi,0);
         event_->met_ . SetTrackMetP4(trackmet);
     }
 
    // Fill Muon
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Track Muon");
+#endif
    for(int i=0;i<nano->nMuon;++i)
    {
         //if (not Muon_isPFcand[i] ) continue; // loose
@@ -227,6 +242,9 @@ int LoadNano::FillEvent(){
         event_ -> leps_ . push_back(l);
    }
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Track Electron");
+#endif
    // Fill Electrons.
    for(int i=0;i<nano->nElectron;++i)
    {
@@ -261,6 +279,9 @@ int LoadNano::FillEvent(){
            return l1->GetP4().Phi() > l2->GetP4().Phi(); // if pt, eta, phi are identical, then they are the same object
            } );
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Jets");
+#endif
    // Fill Jets
    for(int i=0;i<nano->nJet;++i)
    {
@@ -307,6 +328,9 @@ int LoadNano::FillEvent(){
    //UChar_t         Photon_cleanmask[8];   //[nPhoton]
    //UChar_t         Tau_cleanmask[4];   //[nTau]
    
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling FatJets");
+#endif
    //Fill Fatjets
    for(int i=0;i<nano->nFatJet;++i)
    {
@@ -351,6 +375,9 @@ int LoadNano::FillEvent(){
        event_ -> fat_ . push_back(j);
    }
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling TrackJets");
+#endif
    // TrackJets -- Soft Activity
    for(int i =0 ;i<nano->nSoftActivityJet;++i){
         TrackJet *j =new TrackJet();
@@ -361,6 +388,9 @@ int LoadNano::FillEvent(){
    }
    
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Taus");
+#endif
    //FILL Tau
    for (int i=0;i<nano->nTau;++i)
    {
@@ -377,6 +407,9 @@ int LoadNano::FillEvent(){
        //decay mode
    }
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Photons");
+#endif
    //Fill Photons
    for (int i=0;i<=nano->nPhoton;++i)
    {
@@ -397,6 +430,9 @@ int LoadNano::FillEvent(){
    }
 
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Trigger");
+#endif
    //Fill Trigger and TriggerObjects
    {
        event_ -> triggerFired_ . clear();
@@ -421,6 +457,9 @@ int LoadNano::FillEvent(){
    }
 
 
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Gen");
+#endif
    //Gen
    if ( tree_ ->GetBranchStatus("Generator_weight") != 0 ){
        // nano: genWeight ; Generator_weight ; LHEWeight_originalXWGTUP
@@ -509,6 +548,9 @@ int LoadNano::FillEvent(){
             event_ -> genparticles_ . push_back(g);
        }
    }
+#ifdef VERBOSE
+	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","End");
+#endif
 
 }
 

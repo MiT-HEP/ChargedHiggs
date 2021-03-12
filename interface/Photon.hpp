@@ -36,6 +36,7 @@ class Photon : virtual public Object,
 
         virtual inline int IsPho() const { 
             if (not id ) return 0; // medium
+            if ( std::isnan(Pt()) ) return 0; // put pt before eta
             if ( isocut_ > 0 and iso > isocut_) return 0;
             if ( ptcut_ > 0 and Pt() < ptcut_ ) return 0;
             if ( etacut_ > 0 and std::abs(Eta()) > etacut_ ) return 0;
