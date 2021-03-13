@@ -327,8 +327,10 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("varnormPTVVjj",'F',readers_[i]); //6
         }
 
-
         //BBtag-Nano
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO BBtag-Nano   " << endl;
+
         for (int i=6; i<9; i++) {
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varDetajj",'F',readers_[i]); //1
@@ -344,6 +346,10 @@ void VBShadAnalysis::InitTmva() {
 
 
         // RBTAG
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO RBtag   " << endl;
+        //old training
+
         for (int i=9; i<10; i++) {
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varJet2Pt",'F',readers_[i]); //2
@@ -361,6 +367,10 @@ void VBShadAnalysis::InitTmva() {
         }
 
         // RMET
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO RMET-Nano   " << endl;
+        //old training
+
         for (int i=10; i<11; i++) {
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varDetajj",'F',readers_[i]); //1
@@ -373,6 +383,9 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("bosV2mass",'F',readers_[i]); //8
             AddVariable("varFW2j",'F',readers_[i]); //9
         }
+
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO BBtag (old)  " << endl;
 
         // BBtag
         for (int i=11; i<12; i++) {
@@ -407,6 +420,9 @@ void VBShadAnalysis::InitTmva() {
 
         for( size_t i=0;i<weights_multi.size() ;++i)
             readers_multi_ . push_back( new TMVA::Reader() );
+
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO RMet multiclass final " << endl;
 
         //multiclass RMET - BDT
         for (int i=0; i<1; i++) {
@@ -449,6 +465,8 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("bosV2discr",'F',readers_multi_[i]); //8
             AddVariable("NJets",'F',readers_multi_[i]); //9
         }
+
+        /*
         //multiclass RMET - DNN
         for (int i=4; i<5; i++) {
             AddVariable("varMjj",'F',readers_multi_[i]); //0
@@ -462,12 +480,12 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("bosV2chi2",'F',readers_multi_[i]); //9
             AddVariable("NJets",'F',readers_multi_[i]); //9
         }
-
+        */
 
         for( size_t i=0;i<weights_multi.size() ;++i) {
             if(i==0) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
             if(i==1 || i==2 || i==3) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
-            if(i==4) readers_multi_[i]->BookMVA("DNN",weights_multi[i].c_str());
+            //            if(i==4) readers_multi_[i]->BookMVA("DNN",weights_multi[i].c_str());
         }
 
     }
@@ -477,6 +495,9 @@ void VBShadAnalysis::InitTmva() {
     //$$$$$$$$$
 
     if(doResTagTMVA) {
+
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO Resolve Tagger multiclass final " << endl;
 
         for( size_t i=0;i<weights_dnn.size() ;++i)
             readers_dnn_ . push_back( new TMVA::Reader() );
