@@ -140,8 +140,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
     //    inline int IsZbbJet() const { if( Pt() > 200. and softdropMass > 75. and softdropMass < 105. and ZHbbvsQCDMD > 0.3 and IsFatJet() )   return 1; return 0;}
     //    inline int IsZbbJet() const { if( Pt() > 200. and softdropMass > 75. and softdropMass < 105. and ZHbbvsQCDMD > 0.6 and IsFatJet() )   return 1; return 0;}
     inline int IsZbbJet() const { if( Pt() > 200. and fabs(SDMass()-90) < 15. and ZHbbvsQCDMD > 0.8945 and IsFatJet() )   return 1; return 0;}
-    inline int IsWJetMirror() const { if( Pt() > 200. and fabs(SDMass()-80) < 30. and WvsQCDMD > 0. and WvsQCDMD < 0.828  and IsFatJet())   return 1; return 0;}
-    inline int IsZbbJetMirror() const { if( Pt() > 200. and fabs(SDMass()-90) < 30. and ZHbbvsQCDMD > 0. and ZHbbvsQCDMD < 0.8945 and IsFatJet() )   return 1; return 0;}
+    inline int IsWJetMirror() const { if( Pt() > 200. and fabs(SDMass()-80) < 15. and WvsQCDMD > 0. and WvsQCDMD < 0.828  and IsFatJet())   return 1; return 0;}
+    ////    inline int IsZbbJetMirror() const { if( Pt() > 200. and fabs(SDMass()-90) < 15. and ZHbbvsQCDMD > 0. and ZHbbvsQCDMD < 0.8945 and IsFatJet() )   return 1; return 0;}
 
     /* // for ChargedHiggs
     // tipically 250 GeV
