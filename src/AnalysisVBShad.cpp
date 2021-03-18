@@ -112,7 +112,10 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
        l.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M2000") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
-       l.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) {
+       l.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_M3000") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_semilep_M1000") !=string::npos
+       ) {
         return true;
     } return false;
 }
@@ -1805,6 +1808,8 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
+               label.find("DoublyChargedHiggsGMmodel_HWW_M3000") !=string::npos ||
+               label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M1000") !=string::npos ||
                label.find("ST") !=string::npos ||
                label.find("TTX") !=string::npos ||
                //
@@ -2624,12 +2629,14 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 21 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 22 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) mc = 23 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ) mc = 24 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ) mc = 25 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znu_M2000") !=string::npos ) mc = 26 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000") !=string::npos ) mc = 27 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 28 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000") !=string::npos ) mc = 29 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_M3000") !=string::npos ) mc = 24 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M1000") !=string::npos ) mc = 25 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ) mc = 26 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ) mc = 27 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znu_M2000") !=string::npos ) mc = 28 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000") !=string::npos ) mc = 29 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 30 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000") !=string::npos ) mc = 31 ;
     //
     if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 30 ;
 
