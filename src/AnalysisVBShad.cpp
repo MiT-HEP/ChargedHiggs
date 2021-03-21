@@ -16,12 +16,14 @@
 #define DEEP_C_TIGHT ((year==2016)?1.:(year==2017)?0.73:0.405)
 
 //https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAK8Tagging2018WPsSFs#Working_Points
+#define DEEP_AK8_W_MD_50 ((year==2016)?0.274:(year==2017)?0.258:0.245)
 #define DEEP_AK8_W_MD_25 ((year==2016)?0.506:(year==2017)?0.506:0.479)
 #define DEEP_AK8_W_MD_1 ((year==2016)?0.731:(year==2017)?0.739:0.704)
 #define DEEP_AK8_W_MD_05 ((year==2016)?0.828:(year==2017)?0.838:0.806)
 
-//where this one come from
-#define DEEP_AK8_ZHbb_MD 0.8945
+//slide4 of https://indico.cern.ch/event/853828/contributions/3723593/attachments/1977626/3292045/lg-btv-deepak8v2-sf-20200127.pdf
+#define DEEP_AK8_ZHbb_MD_50 ((year==2016)?0.6795:(year==2017)?0.5845:0.5165)
+#define DEEP_AK8_ZHbb_MD_25 ((year==2016)?0.8945:(year==2017)?0.8695:0.8365)
 
 void VBShadAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
@@ -558,7 +560,6 @@ void VBShadAnalysis::InitTmva() {
 
         //2 V jet comb, binary
         for (int i=4; i<6; i++) {
-
 
             AddVariable("j3_pT", 'F',readers_dnn_[i]);
             AddVariable("j3_Eta", 'F',readers_dnn_[i]);
@@ -2171,7 +2172,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(usePuppi) dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
 
         bool isZbbJet=false;
-        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD)) isZbbJet=true;
+        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
         //        if(doBAntiAnalysis and f->IsZbbJet()) isZbbJet=true;
 
         if(isZbbJet) {
@@ -2185,13 +2186,13 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         bool isWJet=false;
         bool isWJetMirror=false;
         if(!doHADAntiAnalysis and !doMETAntiAnalysis and !doBAntiAnalysis) {
-            if (f->IsWJet( DEEP_AK8_W_MD_05 ) or (!doResonant and f->IsZJet(DEEP_AK8_W_MD_05)) ) isWJet=true;
-            if (f->IsWJetMirror( DEEP_AK8_W_MD_05 )) isWJetMirror=true;
+            if (f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJet(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJet=true;
+            if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJetMirror=true;
         }
 
         if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
-                if ( f->IsWJetMirror( DEEP_AK8_W_MD_05 )) isWJet=true;
-                if ( f->IsWJet( DEEP_AK8_W_MD_05 ) or (!doResonant and f->IsZJet( DEEP_AK8_W_MD_05 )) ) isWJetMirror=true;
+            if ( f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJet=true;
+            if ( f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) ) isWJetMirror=true;
         }
 
         if(doMETAntiAnalysis)  doMETAnalysis=true;
@@ -2199,7 +2200,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if(isWJet) {
             if(doMETAnalysis and dPhiFatMet<0.4) continue;
-            if(!doMETAnalysis and !doResonant and f->IsZbbJet(DEEP_AK8_ZHbb_MD)) continue; //avoid selectedFatZbb except MET resonant
+            if(!doMETAnalysis and !doResonant and isZbbJet) continue; //avoid selectedFatZbb except MET resonant
             selectedFatJets.push_back(f);
             bosonVDiscr.push_back(f->WvsQCD());
             bosonTDiscr.push_back(f->TvsQCD());
@@ -2211,7 +2212,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if(isWJetMirror){
             if(doMETAnalysis and dPhiFatMet<0.4) continue;
-            if(f->IsZbbJet(DEEP_AK8_ZHbb_MD)) continue;
+            if(isZbbJet) continue;
             selectedMirrorFatJets.push_back(f);
         }
     }
@@ -3143,6 +3144,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         forwardJets.clear();
         vetoJets.clear();
 
+        // Add Mirror ?
         if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1) {
             category="_BB";
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
