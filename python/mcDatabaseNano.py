@@ -278,6 +278,7 @@ else:
     elif 'DoublyChargedHiggsGMmodel_HWW_M3000_13TeV-madgraph' in opts.label: xsec=0.225
     ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(WW->jj e/mu/t) 22
     elif 'DoublyChargedHiggsGMmodel_HWW_semilep_M1000_13TeV-madgraph' in opts.label: xsec=0.11
+    elif 'DoublyChargedHiggsGMmodel_HWW_semilep_M2000_13TeV-madgraph' in opts.label: xsec=0.11
     ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(Z->nn Wjj) 13.4
     elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1000_13TeV-madgraph' in opts.label: xsec=0.067
     elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1500_13TeV-madgraph' in opts.label: xsec=0.067

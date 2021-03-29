@@ -116,6 +116,7 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
        l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M3000") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_semilep_M2000") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_semilep_M1000") !=string::npos
        ) {
         return true;
@@ -1635,7 +1636,6 @@ float VBShadAnalysis::genMtt(Event*e)
 
 }
 
-
 bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
     if(bosonJets.size()<2) return false;
     if(forwardJets.size()<2) return false;   //optional 2 or 4
@@ -1811,6 +1811,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M3000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M1000") !=string::npos ||
+               label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M2000") !=string::npos ||
                label.find("ST") !=string::npos ||
                label.find("TTX") !=string::npos ||
                //
@@ -2632,12 +2633,13 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) mc = 23 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M3000") !=string::npos ) mc = 24 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M1000") !=string::npos ) mc = 25 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ) mc = 26 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ) mc = 27 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znu_M2000") !=string::npos ) mc = 28 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000") !=string::npos ) mc = 29 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 30 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000") !=string::npos ) mc = 31 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M2000") !=string::npos ) mc = 26 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ) mc = 30 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ) mc = 31 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znu_M2000") !=string::npos ) mc = 32 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000") !=string::npos ) mc = 25 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 36 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000") !=string::npos ) mc = 37 ;
     //
     if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 30 ;
 
@@ -2948,6 +2950,18 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
 
     genStudies(e, label );
+
+    // REMOVE TOP FOR THE OS - EWK
+    bool foundTop = false;
+    if(checkSignalLabel(label)) {
+        for(Int_t i = 0; i < e->NGenPar(); i++){
+            GenParticle *genpar = e->GetGenParticle(i);
+            //        if( ! genpar->IsLHE()) continue;
+            if(abs(genpar->GetPdgId() == 6)) foundTop = true;
+        }
+
+        if (foundTop) return EVENT_NOT_USED;
+    }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GenStudies. Done " );
     //$$$$$$$$$
