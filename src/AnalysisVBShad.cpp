@@ -15,6 +15,16 @@
 #define DEEP_C_MEDIUM ((year==2016)?1.:(year==2017)?0.144:0.153)
 #define DEEP_C_TIGHT ((year==2016)?1.:(year==2017)?0.73:0.405)
 
+//https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAK8Tagging2018WPsSFs#Working_Points
+#define DEEP_AK8_W_MD_50 ((year==2016)?0.274:(year==2017)?0.258:0.245)
+#define DEEP_AK8_W_MD_25 ((year==2016)?0.506:(year==2017)?0.506:0.479)
+#define DEEP_AK8_W_MD_1 ((year==2016)?0.731:(year==2017)?0.739:0.704)
+#define DEEP_AK8_W_MD_05 ((year==2016)?0.828:(year==2017)?0.838:0.806)
+
+//slide4 of https://indico.cern.ch/event/853828/contributions/3723593/attachments/1977626/3292045/lg-btv-deepak8v2-sf-20200127.pdf
+#define DEEP_AK8_ZHbb_MD_50 ((year==2016)?0.6795:(year==2017)?0.5845:0.5165)
+#define DEEP_AK8_ZHbb_MD_25 ((year==2016)?0.8945:(year==2017)?0.8695:0.8365)
+
 void VBShadAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
     l->SetPtCut(10); 
@@ -104,7 +114,11 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
        l.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M2000") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
        l.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
-       l.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) {
+       l.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_M3000") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_semilep_M2000") !=string::npos ||
+       l.find("DoublyChargedHiggsGMmodel_HWW_semilep_M1000") !=string::npos
+       ) {
         return true;
     } return false;
 }
@@ -327,8 +341,10 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("varnormPTVVjj",'F',readers_[i]); //6
         }
 
-
         //BBtag-Nano
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO BBtag-Nano   " << endl;
+
         for (int i=6; i<9; i++) {
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varDetajj",'F',readers_[i]); //1
@@ -344,6 +360,10 @@ void VBShadAnalysis::InitTmva() {
 
 
         // RBTAG
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO RBtag   " << endl;
+        //old training
+
         for (int i=9; i<10; i++) {
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varJet2Pt",'F',readers_[i]); //2
@@ -361,6 +381,10 @@ void VBShadAnalysis::InitTmva() {
         }
 
         // RMET
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO RMET-Nano   " << endl;
+        //old training
+
         for (int i=10; i<11; i++) {
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varDetajj",'F',readers_[i]); //1
@@ -373,6 +397,9 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("bosV2mass",'F',readers_[i]); //8
             AddVariable("varFW2j",'F',readers_[i]); //9
         }
+
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO BBtag (old)  " << endl;
 
         // BBtag
         for (int i=11; i<12; i++) {
@@ -407,6 +434,9 @@ void VBShadAnalysis::InitTmva() {
 
         for( size_t i=0;i<weights_multi.size() ;++i)
             readers_multi_ . push_back( new TMVA::Reader() );
+
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO RMet multiclass final " << endl;
 
         //multiclass RMET - BDT
         for (int i=0; i<1; i++) {
@@ -449,6 +479,8 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("bosV2discr",'F',readers_multi_[i]); //8
             AddVariable("NJets",'F',readers_multi_[i]); //9
         }
+
+        /*
         //multiclass RMET - DNN
         for (int i=4; i<5; i++) {
             AddVariable("varMjj",'F',readers_multi_[i]); //0
@@ -462,12 +494,12 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("bosV2chi2",'F',readers_multi_[i]); //9
             AddVariable("NJets",'F',readers_multi_[i]); //9
         }
-
+        */
 
         for( size_t i=0;i<weights_multi.size() ;++i) {
             if(i==0) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
             if(i==1 || i==2 || i==3) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
-            if(i==4) readers_multi_[i]->BookMVA("DNN",weights_multi[i].c_str());
+            //            if(i==4) readers_multi_[i]->BookMVA("DNN",weights_multi[i].c_str());
         }
 
     }
@@ -477,6 +509,9 @@ void VBShadAnalysis::InitTmva() {
     //$$$$$$$$$
 
     if(doResTagTMVA) {
+
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO Resolve Tagger multiclass final " << endl;
 
         for( size_t i=0;i<weights_dnn.size() ;++i)
             readers_dnn_ . push_back( new TMVA::Reader() );
@@ -526,7 +561,6 @@ void VBShadAnalysis::InitTmva() {
 
         //2 V jet comb, binary
         for (int i=4; i<6; i++) {
-
 
             AddVariable("j3_pT", 'F',readers_dnn_[i]);
             AddVariable("j3_Eta", 'F',readers_dnn_[i]);
@@ -1602,7 +1636,6 @@ float VBShadAnalysis::genMtt(Event*e)
 
 }
 
-
 bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
     if(bosonJets.size()<2) return false;
     if(forwardJets.size()<2) return false;   //optional 2 or 4
@@ -1776,6 +1809,9 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
+               label.find("DoublyChargedHiggsGMmodel_HWW_M3000") !=string::npos ||
+               label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M1000") !=string::npos ||
+               label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M2000") !=string::npos ||
                label.find("ST") !=string::npos ||
                label.find("TTX") !=string::npos ||
                //
@@ -2137,7 +2173,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(usePuppi) dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
 
         bool isZbbJet=false;
-        if(f->IsZbbJet()) isZbbJet=true;
+        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
         //        if(doBAntiAnalysis and f->IsZbbJet()) isZbbJet=true;
 
         if(isZbbJet) {
@@ -2151,13 +2187,13 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         bool isWJet=false;
         bool isWJetMirror=false;
         if(!doHADAntiAnalysis and !doMETAntiAnalysis and !doBAntiAnalysis) {
-            if (f->IsWJet() or (!doResonant and f->IsZJet())) isWJet=true;
-            if (f->IsWJetMirror()) isWJetMirror=true;
+            if (f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJet(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJet=true;
+            if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJetMirror=true;
         }
 
         if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
-                if ( f->IsWJetMirror()) isWJet=true;
-                if ( f->IsWJet() or (!doResonant and f->IsZJet()) ) isWJetMirror=true;
+            if ( f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJet=true;
+            if ( f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) ) isWJetMirror=true;
         }
 
         if(doMETAntiAnalysis)  doMETAnalysis=true;
@@ -2165,7 +2201,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if(isWJet) {
             if(doMETAnalysis and dPhiFatMet<0.4) continue;
-            if(!doMETAnalysis and !doResonant and f->IsZbbJet()) continue; //avoid selectedFatZbb except MET resonant
+            if(!doMETAnalysis and !doResonant and isZbbJet) continue; //avoid selectedFatZbb except MET resonant
             selectedFatJets.push_back(f);
             bosonVDiscr.push_back(f->WvsQCD());
             bosonTDiscr.push_back(f->TvsQCD());
@@ -2177,7 +2213,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if(isWJetMirror){
             if(doMETAnalysis and dPhiFatMet<0.4) continue;
-            if(f->IsZbbJet()) continue;
+            if(isZbbJet) continue;
             selectedMirrorFatJets.push_back(f);
         }
     }
@@ -2595,12 +2631,15 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 21 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 22 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ) mc = 23 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ) mc = 24 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ) mc = 25 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znu_M2000") !=string::npos ) mc = 26 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000") !=string::npos ) mc = 27 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 28 ;
-    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000") !=string::npos ) mc = 29 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_M3000") !=string::npos ) mc = 24 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M1000") !=string::npos ) mc = 25 ;
+    if(label.find("DoublyChargedHiggsGMmodel_HWW_semilep_M2000") !=string::npos ) mc = 26 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ) mc = 30 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ) mc = 31 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Znu_M2000") !=string::npos ) mc = 32 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000") !=string::npos ) mc = 25 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500") !=string::npos ) mc = 36 ;
+    if(label.find("SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000") !=string::npos ) mc = 37 ;
     //
     if(label.find("aQGC_ZJJZJJjj") !=string::npos ) mc = 30 ;
 
@@ -2912,6 +2951,18 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     genStudies(e, label );
 
+    // REMOVE TOP FOR THE OS - EWK
+    bool foundTop = false;
+    if(checkSignalLabel(label)) {
+        for(Int_t i = 0; i < e->NGenPar(); i++){
+            GenParticle *genpar = e->GetGenParticle(i);
+            //        if( ! genpar->IsLHE()) continue;
+            if(abs(genpar->GetPdgId() == 6)) foundTop = true;
+        }
+
+        if (foundTop) return EVENT_NOT_USED;
+    }
+
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GenStudies. Done " );
     //$$$$$$$$$
     //$$$$$$$$$
@@ -3107,6 +3158,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         forwardJets.clear();
         vetoJets.clear();
 
+        // Add Mirror ?
         if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1) {
             category="_BB";
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);

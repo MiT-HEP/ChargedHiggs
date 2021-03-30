@@ -130,25 +130,23 @@ class FatJet : virtual public Object, virtual public SmearableBase
     //    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.6 and IsFatJet() )   return 1; return 0;}
     //    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.45 and IsFatJet() )   return 1; return 0;}
 
-    // 0.828 is the 0.5% mistag, 0.258 is 5% mistag
-    inline int IsWJet() const { if( Pt() > 200. and fabs(SDMass()-80) < 15. and WvsQCDMD > 0.828 and IsFatJet() )   return 1; return 0;}
-    inline int IsZJet() const { if( Pt() > 200. and fabs(SDMass()-90) < 15. and ZvsQCDMD > 0.828 and IsFatJet() )   return 1; return 0;}
+    // cut1_ is the 0.5% mistag, cut_2 is 1% mistag, cut_3 is 2.5% mistag
+    inline int IsWJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(SDMass()-80) < 15. and WvsQCDMD > ((Pt()<500)?cut1_:cut3_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(SDMass()-90) < 15. and ZvsQCDMD > ((Pt()<500)?cut1_:cut3_) and IsFatJet() )   return 1; return 0;}
 
     //    inline int IsWJet() const { if( Pt() > 200. and SDMass() > 65. and SDMass() < 105. and WvsQCDMD > 0.258 and IsFatJet() )   return 1; return 0;}
 
-    // ZHbbvsQCDMD > 0.3 is roughly 10% mistag
-    //    inline int IsZbbJet() const { if( Pt() > 200. and softdropMass > 75. and softdropMass < 105. and ZHbbvsQCDMD > 0.3 and IsFatJet() )   return 1; return 0;}
-    //    inline int IsZbbJet() const { if( Pt() > 200. and softdropMass > 75. and softdropMass < 105. and ZHbbvsQCDMD > 0.6 and IsFatJet() )   return 1; return 0;}
-    inline int IsZbbJet() const { if( Pt() > 200. and fabs(SDMass()-90) < 15. and ZHbbvsQCDMD > 0.8945 and IsFatJet() )   return 1; return 0;}
-    inline int IsWJetMirror() const { if( Pt() > 200. and fabs(SDMass()-80) < 30. and WvsQCDMD > 0. and WvsQCDMD < 0.828  and IsFatJet())   return 1; return 0;}
-    inline int IsZbbJetMirror() const { if( Pt() > 200. and fabs(SDMass()-90) < 30. and ZHbbvsQCDMD > 0. and ZHbbvsQCDMD < 0.8945 and IsFatJet() )   return 1; return 0;}
+    // ZHbbvsQCDMD > 0.3 is roughly 10% mistag (0.3 0.6  0.8945)
+    inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(SDMass()-90) < 15. and ZHbbvsQCDMD > ((Pt()<500)?cut1_:cut2_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(SDMass()-80) < 15. and WvsQCDMD > 0. and WvsQCDMD < ((Pt()<500)?cut1_:cut3_)  and IsFatJet())   return 1; return 0;}
 
-    /* // for ChargedHiggs
+    // $$$$$$$$$$$$$$$$$$$$$$$$$$
+    // $$$$$ for ChargedHiggs
+
     // tipically 250 GeV
-//    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105.  and tau2 < tau1*0.6  and IsJet() )   return 1; return 0;}
-//    inline int IsWJetMirror() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105.  and tau2 > tau1*0.6  and IsJet() )   return 1; return 0;}
+    //    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105.  and tau2 < tau1*0.6  and IsJet() )   return 1; return 0;}
+    inline int IsWJetMirror() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105.  and tau2 > tau1*0.6  and IsFatJet() )   return 1; return 0;}
     inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.6  and IsFatJet() and IsSubjetBTagLoose() == 0 )   return 1; return 0;}
-    */
     // tipically 400 GeV
 //    inline int IsTopJet() const { if( softdropMass > 105. and softdropMass < 220. and tau3 < tau2*0.81  and IsFatJet() and IsSubjetBTag()>0)   return 1; return 0;}
     inline int IsTopJet() const { if( Pt() > 400. and SDMass() > 105. and SDMass() < 220. and tau3 > 0 and tau2 > 0 and tau3 < tau2*0.81  and IsFatJet() ) return 1; return 0;}

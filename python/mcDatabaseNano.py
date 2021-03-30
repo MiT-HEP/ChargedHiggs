@@ -171,6 +171,7 @@ for idx,fName in enumerate(fileList):
     t = fROOT.Get("Events")
     runs= fROOT.Get("Runs")
     runs.GetEntry(0)
+
     if (runs.nLHEPdfSumw != nPdfs) : 
         print "[WARNING] ",runs.nLHEPdfSumw," pdf weights in the NANOAOD. Using only",nPdfs, "(must be <)"
 
@@ -274,14 +275,20 @@ else:
     elif 'DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph' in opts.label: xsec=0.225
     elif 'DoublyChargedHiggsGMmodel_HWW_M1500_13TeV-madgraph' in opts.label: xsec=0.225
     elif 'DoublyChargedHiggsGMmodel_HWW_M2000_13TeV-madgraph' in opts.label: xsec=0.225
+    elif 'DoublyChargedHiggsGMmodel_HWW_M3000_13TeV-madgraph' in opts.label: xsec=0.225
+    ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(WW->jj e/mu/t) 22
+    elif 'DoublyChargedHiggsGMmodel_HWW_semilep_M1000_13TeV-madgraph' in opts.label: xsec=0.11
+    elif 'DoublyChargedHiggsGMmodel_HWW_semilep_M2000_13TeV-madgraph' in opts.label: xsec=0.11
     ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(Z->nn Wjj) 13.4
     elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1000_13TeV-madgraph' in opts.label: xsec=0.067
     elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M1500_13TeV-madgraph' in opts.label: xsec=0.067
     elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M2000_13TeV-madgraph' in opts.label: xsec=0.067
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Znn_M3000_13TeV-madgraph' in opts.label: xsec=0.067
     ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(Z->bb Wjj) 10.
     elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1000_13TeV-madgraph' in opts.label: xsec=0.05
     elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M1500_13TeV-madgraph' in opts.label: xsec=0.05
     elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M2000_13TeV-madgraph' in opts.label: xsec=0.05
+    elif 'SinglyChargedHiggsGMmodel_HWZ_Zbb_M3000_13TeV-madgraph' in opts.label: xsec=0.05
     ### QCD from https://cms-gen-dev.cern.ch/xsdb/
     elif 'QCD_HT50to100_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'    in opts.label: xsec = 185300000.0
     elif 'QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'   in opts.label: xsec = 23590000.0
