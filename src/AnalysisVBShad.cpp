@@ -24,6 +24,12 @@
 //slide4 of https://indico.cern.ch/event/853828/contributions/3723593/attachments/1977626/3292045/lg-btv-deepak8v2-sf-20200127.pdf
 #define DEEP_AK8_ZHbb_MD_50 ((year==2016)?0.6795:(year==2017)?0.5845:0.5165)
 #define DEEP_AK8_ZHbb_MD_25 ((year==2016)?0.8945:(year==2017)?0.8695:0.8365)
+#define DEEP_AK8_ZHbb_MD_1 0.97
+
+// from Loukas
+#define ParticleNet_AK8_ZHbb_MD_loose 0.90
+#define ParticleNet_AK8_ZHbb_MD_medium 0.94
+#define ParticleNet_AK8_ZHbb_MD_tight 0.985
 
 void VBShadAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
@@ -151,23 +157,36 @@ void VBShadAnalysis::BookHisto(string l, string category)
         AddFinalHisto("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l);
         AddFinalHisto("VBShadAnalysis/BDTwithMET"+category+"_"+l);
         if(!doBAnalysis and !doMETAnalysis) Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "BDT noBnoMET ; BDT noBnoMET; Events", 200,-1.,1.);
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "BDT withMET ; BDT withMET; Events", 200,-1.,1.);
-        if(doBAnalysis or doBAntiAnalysis) Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "BDT with Btag ; BDT with Btag; Events", 200,-1.,1.);
 
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+l, "BDT Multi withMET (response for ZZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+l, "BDT Multi withMET (response for WZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+l, "BDT Multi withMET (response for BKG); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+        if(doBAnalysis or doBAntiAnalysis) {
+            Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "BDT with Btag ; BDT with Btag; Events", 200,-1.,1.);
+            if(category.find("RBtag")   !=string::npos ) {
+                Book ("VBShadAnalysis/BDTMultiRBtagzz"+category+"_"+l, "DNN MultiClass RBtag (response for ZZ); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
+                Book ("VBShadAnalysis/BDTMultiRBtagwz"+category+"_"+l, "DNN MultiClass RBtag (response for WZ); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
+                Book ("VBShadAnalysis/BDTMultiRBtagbkg"+category+"_"+l, "DNN MultiClass RBtag (response for BKG); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
+            }
+        }
+
+        if(doMETAnalysis or doMETAntiAnalysis) {
+            Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "BDT withMET ; BDT withMET; Events", 200,-1.,1.);
+
+            Book ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+l, "BDT Multi withMET (response for ZZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+            Book ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+l, "BDT Multi withMET (response for WZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+            Book ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+l, "BDT Multi withMET (response for BKG); BDT Multi withMET [GeV]; Events", 200,0.,1.);
+
+            Book ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l, "BDT Multi withMET (response for WZ ewk); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            Book ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l, "BDT Multi withMET (response for WZ qcd); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            Book ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l, "BDT Multi withMET (response for BKG ); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+
+            Book ("VBShadAnalysis/BDTMultiEWKchi2DNN"+category+"_"+l, "DNN Multi withMET (response for WZ ewk); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            Book ("VBShadAnalysis/BDTMultiQCDchi2DNN"+category+"_"+l, "DNN Multi withMET (response for WZ qcd); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            Book ("VBShadAnalysis/BDTMultiBKGchi2DNN"+category+"_"+l, "DNN Multi withMET (response for BKG ); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+
+        }
 
         AddFinalHisto("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l);
         AddFinalHisto("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l);
         AddFinalHisto("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l);
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l, "BDT Multi withMET (response for WZ ewk); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l, "BDT Multi withMET (response for WZ qcd); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l, "BDT Multi withMET (response for BKG ); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
-
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTMultiEWKchi2DNN"+category+"_"+l, "DNN Multi withMET (response for WZ ewk); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTMultiQCDchi2DNN"+category+"_"+l, "DNN Multi withMET (response for WZ qcd); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
-        if(doMETAnalysis or doMETAntiAnalysis) Book ("VBShadAnalysis/BDTMultiBKGchi2DNN"+category+"_"+l, "DNN Multi withMET (response for BKG ); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
 
     }
 
@@ -277,18 +296,26 @@ void VBShadAnalysis::ReadTmva(){
         if(i==11 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBHad") );
     }
 
-    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) {
+
+    if(doTMVA) {
 
         int NClass=3;
         for(unsigned i =0 ;i< readers_multi_.size() ; ++i) {
             for(unsigned j =0 ;j< NClass ; ++j) {
-                if(i==0) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[ j]); //W vs Z (old chi2)
-                if(i==1 || i==2 || i==3) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[ j]); // EWK vs QCD (new chi2)
-                //                std::cout << " EvaluateMulticlass i = " << i << " j = " << j << " index = " << bdt_multi[NClass*i + j] << std::endl;
-                if(i==4) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("DNN"))[ j]); //W vs Z (DNN)
-            }
-        }
-    }
+
+                if(doMETAnalysis or doMETAntiAnalysis) {
+                    if(i==0) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[ j]); //W vs Z (old chi2)
+                    if(i==1 || i==2 || i==3) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[ j]); // EWK vs QCD (new chi2)
+                    //                std::cout << " EvaluateMulticlass i = " << i << " j = " << j << " index = " << bdt_multi[NClass*i + j] << std::endl;
+                    if(i==4) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("DNN"))[ j]); //W vs Z (DNN) RMET
+                }
+
+                if(doBAnalysis or doBAntiAnalysis) {
+                    if(i==5) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("DNN"))[ j]); //W vs Z (DNN) RBTAG
+                }
+            } // loop nClass
+        } //loop readers multi
+    }// doTMVA
 
 }
 
@@ -438,7 +465,7 @@ void VBShadAnalysis::InitTmva() {
         cout << "---------------------------------------------" << endl;
         cout << " GOING TO RMet multiclass final " << endl;
 
-        //multiclass RMET - BDT
+        //multiclass RMET - BDT - (WvsZ)
         for (int i=0; i<1; i++) {
             AddVariable("varMjj",'F',readers_multi_[i]); //0
             AddVariable("varDetajj",'F',readers_multi_[i]); //1
@@ -496,13 +523,38 @@ void VBShadAnalysis::InitTmva() {
         }
         */
 
+
         for( size_t i=0;i<weights_multi.size() ;++i) {
             if(i==0) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
             if(i==1 || i==2 || i==3) readers_multi_[i]->BookMVA("BDTG",weights_multi[i].c_str());
             //            if(i==4) readers_multi_[i]->BookMVA("DNN",weights_multi[i].c_str());
         }
-
     }
+
+
+    if(doTMVA and (doBAnalysis or doBAntiAnalysis)) {
+
+        for( size_t i=0;i<weights_multi.size() ;++i)
+            readers_multi_ . push_back( new TMVA::Reader() );
+
+        cout << "---------------------------------------------" << endl;
+        cout << " GOING TO RBtag multiclass final " << endl;
+
+        //multiclass RBtag - DNN
+        for (int i=4; i<5; i++) {
+            AddVariable("varzepVV",'F',readers_multi_[i]); //0
+            AddVariable("varnormPTVVjj",'F',readers_multi_[i]); //1
+            AddVariable("bosV1discr",'F',readers_multi_[i]); //2
+            AddVariable("bosV1tdiscr",'F',readers_multi_[i]); //3
+            AddVariable("bosV2discr",'F',readers_multi_[i]); //4
+            AddVariable("NBJets",'F',readers_multi_[i]); //5
+        }
+
+        for( size_t i=0;i<weights_multi.size() ;++i) {
+            if(i==4) readers_multi_[i]->BookMVA("DNN",weights_multi[i].c_str());
+        }
+    }
+
 
     //$$$$$$$$$
     //$$$$$$$$$ ResolvedTagger
@@ -2742,7 +2794,13 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("BDTwithMET",BDTwithMET);
     SetTreeVar("BDTbtag",BDTbtag);
 
-    if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) {
+    if(doTMVA and (doBAnalysis or doBAntiAnalysis)) {
+        SetTreeVar("BDTMultiRBtagzz",bdt_multi[0]);
+        SetTreeVar("BDTMultiRBtagwz",bdt_multi[1]);
+        SetTreeVar("BDTMultiRBtagbkg",bdt_multi[2]);
+    }
+
+   if(doTMVA and (doMETAnalysis or doMETAntiAnalysis)) {
         SetTreeVar("BDTMultiwithMETzz",bdt_multi[0]); // this crash ?? in BHAD and BMET
         SetTreeVar("BDTMultiwithMETwz",bdt_multi[1]);
         SetTreeVar("BDTMultiwithMETbkg",bdt_multi[2]);
@@ -2952,7 +3010,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     genStudies(e, label );
 
     // REMOVE TOP FOR THE OS - EWK
+
     bool foundTop = false;
+
     if(checkSignalLabel(label)) {
         for(Int_t i = 0; i < e->NGenPar(); i++){
             GenParticle *genpar = e->GetGenParticle(i);
@@ -3840,11 +3900,20 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(doHADAnalysis or doHADAntiAnalysis) BDTnoBnoMET = bdt[xset];
         if(doMETAnalysis and (category.find("BMET")   !=string::npos)) BDTwithMET = bdt[xset+3];
         if(doMETAnalysis and (category.find("RMET")   !=string::npos)) BDTwithMET = bdt[10];
-        if(doBAnalysis and (category.find("RBtag")   !=string::npos)) BDTbtag = bdt[9];
-        if(doBAnalysis and (category.find("BBtag")   !=string::npos)) BDTbtag = bdt[xset+6];
+        if(doBAnalysis and (category.find("RBtag")   !=string::npos)) BDTbtag = bdt[9]; // from Will
+        if(doBAnalysis and (category.find("BBtag")   !=string::npos)) BDTbtag = bdt[xset+6]; // from Miao
 
         if(!doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
-        if(doBAnalysis or doBAntiAnalysis) Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );
+        if(doBAnalysis or doBAntiAnalysis) {
+            Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );
+            if((category.find("RBtag")   !=string::npos)) {
+                Fill ("VBShadAnalysis/BDTMultiRBtagzz"+category+"_"+label, systname, bdt_multi[0], e->weight() ); // from Ava
+                Fill ("VBShadAnalysis/BDTMultiRBtagwz"+category+"_"+label, systname, bdt_multi[1], e->weight() ); // from Ava
+                Fill ("VBShadAnalysis/BDTMultiRBtagbkg"+category+"_"+label, systname, bdt_multi[2], e->weight() );// from Ava
+            }
+
+        }
+
         if(doMETAnalysis or doMETAntiAnalysis) {
             Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );
 
