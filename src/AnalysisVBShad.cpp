@@ -307,11 +307,11 @@ void VBShadAnalysis::ReadTmva(){
                     if(i==0) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[ j]); //W vs Z (old chi2)
                     if(i==1 || i==2 || i==3) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("BDTG"))[ j]); // EWK vs QCD (new chi2)
                     //                std::cout << " EvaluateMulticlass i = " << i << " j = " << j << " index = " << bdt_multi[NClass*i + j] << std::endl;
-                    if(i==4) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("DNN"))[ j]); //W vs Z (DNN) RMET
+                    //                    if(i==4) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("DNN"))[ j]); //W vs Z (DNN) RMET
                 }
 
                 if(doBAnalysis or doBAntiAnalysis) {
-                    if(i==5) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("DNN"))[ j]); //W vs Z (DNN) RBTAG
+                    if(i==4) bdt_multi.push_back( (readers_multi_[i]->EvaluateMulticlass("DNN"))[ j]); //W vs Z (DNN) RBTAG
                 }
             } // loop nClass
         } //loop readers multi
