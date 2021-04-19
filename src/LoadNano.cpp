@@ -306,7 +306,9 @@ int LoadNano::FillEvent(){
         j->bdiscr = nano->Jet_btagCSVV2[i];
         j->SetDeepB ( nano->Jet_btagDeepB[i] );
         j->SetDeepC ( nano->Jet_btagDeepC[i] );
-        j->SetQGL(nano->Jet_qgl[i]);
+	// temporary, there are many nan in v8
+	j->SetQGL(std::isnan(nano->Jet_qgl[i])? 0.8 : nano->Jet_qgl[i]);
+
         //j->SetPuId(nano->Jet_puId[i]); //80X flags
         j->SetPuId(nano->Jet_puIdDisc[i]);//91x discr
         j->SetBCorrection(nano->Jet_bRegCorr[i], nano->Jet_bRegRes[i]); 
