@@ -71,7 +71,7 @@ public:
     bool doTrigger=false;
     bool writeTrainTree=false;
 
-    bool doTMVA=false;
+    bool doTMVA=true;
     bool doResTagKeras = false;
     bool doResTagTMVA = true;
     // those two below are to prune the combination
@@ -102,6 +102,7 @@ private:
     bool V2isZbb=false;
 
     float minDPhi=999.;
+    bool badHFjetVeto = false;
 
     // selected Objects
     vector<Jet*> selectedJets;

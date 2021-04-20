@@ -309,6 +309,11 @@ int LoadNano::FillEvent(){
 	// temporary, there are many nan in v8
 	j->SetQGL(std::isnan(nano->Jet_qgl[i])? 0.8 : nano->Jet_qgl[i]);
 
+	j->SetHFaEtaEtaStripSize(nano->Jet_hfadjacentEtaStripsSize[i]);
+	j->SetHFcEtaEtaStripSize(nano->Jet_hfcentralEtaStripSize[i]);
+	j->SetHFsigmaEtaEta(nano->Jet_hfsigmaEtaEta[i]);
+	j->SetHFsigmaPhiPhi(nano->Jet_hfsigmaPhiPhi[i]);
+
         //j->SetPuId(nano->Jet_puId[i]); //80X flags
         j->SetPuId(nano->Jet_puIdDisc[i]);//91x discr
         j->SetBCorrection(nano->Jet_bRegCorr[i], nano->Jet_bRegRes[i]); 

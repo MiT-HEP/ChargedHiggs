@@ -2325,6 +2325,20 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(selectedFatJets.size()>0 and counter<3 and (dphi < minDPhi)) minDPhi = dphi;
         if(selectedFatJets.size()==0 and counter<5 and (dphi < minDPhi)) minDPhi = dphi;
 
+        // do we want to do this for all jets or for the first 2 or 4 ?
+        // HFjets event veto (anti aligned with MET)
+        if( (TMath::Pi() - dphi) < 0.4 and fabs(j->Eta()) > 3) {
+            //https://lathomas.web.cern.ch/lathomas/JetMETStuff/HFNoiseStudy/HFNoise_VBFHinv_Laurent.pdf
+            //slide3
+            if(j->hfcEtaEtaStripSize()>2) badHFjetVeto = true;
+
+            if(fabs(j->Eta()) < 4) {
+                //slide4 y = x - 0.02
+                if(j->HFsigmaPhiPhi() < (j->HFsigmaEtaEta() - 0.02)) badHFjetVeto = true;
+                if(j->HFsigmaPhiPhi() < 0.02 or j->HFsigmaEtaEta() < 0.02) badHFjetVeto = true;
+            }
+        }
+
         /*
         for (auto const& fat : selectedFatJets) {
             if( j->DeltaR(fat) < 1.2 ) continue;
@@ -2836,6 +2850,7 @@ void VBShadAnalysis::reset() // reset private members
 
     counterExtrabToVeto_=0;
     minDPhi=999.f;
+    badHFjetVeto = false;
 
     genVp = NULL;
     genVp2 = NULL;
@@ -3194,7 +3209,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if (VERBOSE and doMETAnalysis)Log(__FUNCTION__,"DEBUG",Form("MinDphi %f (0.4-2.74)",minDPhi ));
 
     if ( doMETAnalysis and minDPhi<0.4) return EVENT_NOT_USED;
-    if ( doMETAnalysis and minDPhi!=999 and TMath::Pi()-minDPhi<0.4) return EVENT_NOT_USED;
+    // to check if this anti-aligned is still needed for the generic jet, probably not on the resonant
+    if ( doMETAnalysis and minDPhi!=999 and (TMath::Pi()-minDPhi)<0.4) return EVENT_NOT_USED;
+    if ( doMETAnalysis and badHFjetVeto) return EVENT_NOT_USED;
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 5, e->weight() );  //5--vetoB+dPhiMET
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 5, 1 );
