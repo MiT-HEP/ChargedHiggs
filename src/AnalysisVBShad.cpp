@@ -3222,7 +3222,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         vetoJets.clear();
 
         // Add Mirror ?
-        if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1) {
+        if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1 and (doHADAntiAnalysis?selectedMirrorFatJets.size()<2:1)) {
             category="_BB";
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
             evt_bosV1discr = bosonVDiscr[0];
@@ -3302,7 +3302,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         vetoJets.clear();
 
         category="";
-        if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1) {
+        if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1 and (doBAntiAnalysis?selectedMirrorFatJets.size()==0:1)) {
             category="_BBtag";
             // add cases with two Zbb Zbb most pures only for nonresonant
 
@@ -3480,7 +3480,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         forwardJets.clear();
         vetoJets.clear();
 
-        if((selectedFatJets.size()>0 or (!doResonant and selectedFatZbb.size()>0)) and selectedJets.size()>1) {
+        if((selectedFatJets.size()>0 or (!doResonant and selectedFatZbb.size()>0)) and selectedJets.size()>1 and (doMETAntiAnalysis?selectedMirrorFatJets.size()==0:1)) {
             category="_BMET";
 
             //        Current: (ET1+ET2)^2 - (PT1+PT2)^2    (also as shown in the current ch-higgs code you sent to me)
