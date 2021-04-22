@@ -15,9 +15,12 @@ parser.add_option("-d","--dataset",dest="dataset",type="string",help="dataset sp
 parser.add_option("-l","--label",dest="label",type="string",help="MC label",default="DYamcatnlo");
 parser.add_option("-f","--file",dest="file",type="string",help="mc_database file name",default="dat/mc_database.txt");
 parser.add_option("-p","--pileup",dest="pu",type="string",help="Pileup File. All together! Keep them together.")
+parser.add_option("","--precise",action='store_true',help="Use Kahan accumulator (requires combine).",default=False)
+parser.add_option("","--no_run_tree",dest='run_tree',action='store_false',help="Use run tree",default=True)
 
 (opts,args)=parser.parse_args()
 from ParseDat import *
+useRunTree=opts.run_tree
 
 #EOS = "/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select"
 #EOS = "/usr/bin/eos"
@@ -108,6 +111,10 @@ sys.argv=[]
 import ROOT as r
 r.gROOT.SetBatch()
 
+if opts.precise:
+    print "-> Loading combine library for accumulators"
+    r.gSystem.Load("libHiggsAnalysisCombinedLimit.so")
+
 ## TODO count mcWeights, nEntries
 n=0
 myTmp= r.TFile.Open("/tmp/" + os.environ["USER"] + "/mytmp.root","RECREATE")
@@ -118,22 +125,8 @@ scales=r.TH1D("SumWeights_Scales","Sum of mcWeights",10,0,10)
 nPdfs=100
 pdfs=r.TH1D("SumWeights_Pdfs","Sum of mcWeights",nPdfs,0,nPdfs)
 
-#nano->Generator_weight
-#nano->Pileup_nTrueInt
-## PU
-
-# Runs Tree
-#*Br    0 :run       : run/i                                                  *
-#*Br    1 :genEventCount : Long64_t event count                               *
-#*Br    2 :genEventSumw : Double_t sum of gen weights                         *
-#*Br    3 :genEventSumw2 : Double_t sum of gen (weight^2)                     *
-#*Br    4 :nLHEScaleSumw : UInt_t Number of entries in LHEScaleSumw           *
-#*Br    5 :LHEScaleSumw :                                                     *
-#*         | Double_t Sum of genEventWeight * LHEScaleWeight[i], divided by genEventSumw*
-#*Br    6 :nLHEPdfSumw : UInt_t Number of entries in LHEPdfSumw               *
-#*Br    7 :LHEPdfSumw :                                                       *
-#*         | Double_t Sum of genEventWeight * LHEPdfWeight[i], divided by genEventSumw*
-##
+if opts.precise:
+    sum=r.KahanAccumulator(double)(0.)
 
 fOutput=r.TFile.Open(opts.pu,"UPDATE")
 
@@ -159,7 +152,8 @@ else:
         if  h != None: print "Overwriting",name
         puHist.append(  r.TH1F(name,"RD PU Distribution of %s"%opts.label,nBins,xMin,xMax)  )
 
-useRunTree=True
+if opts.precise and useRunTree:
+    raise ValueError("Cannot be precise with run tree")
 
 for idx,fName in enumerate(fileList):
     print "processing file:",idx,"/",len(fileList)," : ", fName
@@ -176,9 +170,14 @@ for idx,fName in enumerate(fileList):
         print "[WARNING] ",runs.nLHEPdfSumw," pdf weights in the NANOAOD. Using only",nPdfs, "(must be <)"
 
     if not useRunTree:
-        mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)
-        t.Draw("1>>mysum","Generator_weight","goff") ##>>+ doesn't work
-        sum.Add(mysum)
+        if opts.precise:
+            t.Draw("Generator_weight","","goff") ##>>+ doesn't work
+            for i in range(0,t.GetSelectedRows()) :
+                sum += t.GetV1()[i]
+        else:
+            mysum=r.TH1D("mysum","Sum of mcWeights",1,0,2)
+            t.Draw("1>>mysum","Generator_weight","goff") ##>>+ doesn't work
+            sum.Add(mysum)
 
         mysum2=r.TH1D("mysum2","Sum of mcWeights^2",1,0,2)
         t.Draw("1>>mysum2","Generator_weight*Generator_weight","goff") ##>>+ doesn't work
@@ -212,15 +211,18 @@ for idx,fName in enumerate(fileList):
 
 
 print "---------------------------------------------"
-print "SumWeights = ", sum.GetBinContent(1)
+print "SumWeights = ", sum.GetBinContent(1) if not opts.precise else sum()
 print "Tot Entries = ", n
 print "SumWeights2 = ", sum2.GetBinContent(1)
-print "Effective Events = ", (sum.GetBinContent(1))**2 / sum2.GetBinContent(1), "Ratio=",(sum.GetBinContent(1))**2 / sum2.GetBinContent(1) /n
+if opts.precise:
+    print "Effective Events = ", sum()**2 / sum2.GetBinContent(1), "Ratio=",(sum())**2 / sum2.GetBinContent(1) /n
+else:
+    print "Effective Events = ", (sum.GetBinContent(1))**2 / sum2.GetBinContent(1), "Ratio=",(sum.GetBinContent(1))**2 / sum2.GetBinContent(1) /n
 print "---------------------------------------------"
 
 ### LABEL dir Entries xSec
 f = open (opts.file,"a")
-print>>f, opts.label,opts.dataset, sum.GetBinContent(1),
+print>>f, opts.label,opts.dataset, sum.GetBinContent(1) if not opts.precise else sum() ,
 
 if opts.xsec >0 : 
     print>>f, opts.xsec,
