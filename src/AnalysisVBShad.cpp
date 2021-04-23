@@ -2239,23 +2239,43 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         }
 
         bool isWJet=false;
+        bool isWJetWide=false;
+        bool isWJetOut=false;
         bool isWJetMirror=false;
         if(!doHADAntiAnalysis and !doMETAntiAnalysis and !doBAntiAnalysis) {
             if (f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJet(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJet=true;
+            if (f->IsWJetOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetOut(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25))) isWJetOut = true;
+            if (f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetWide(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJetWide = true;
             if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJetMirror=true;
         }
 
         if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
             if ( f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJet=true;
-            if ( f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) ) isWJetMirror=true;
+            if ( f->IsWJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJetOut=true;
+            if (isWJet or isWJetOut) isWJetWide = true;
+            //Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
+            if ( f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) ) isWJetMirror=true;
         }
+
+        //////comments for above////////////////////////////////////        ////////////////////////////////////////////////////
+        //// for SR-(like), i.e. discr > wp, in+out != wide ////////        //// for Anti, i.e. discr < wp, in+out == wide /////
+        //// 50---------65------105---------155---  ////////////////        //// 50---------65------105---------155--- /////////
+        ////  |-------------wide-------------|----  ////////////////        ////  |-------------wide-------------|---- /////////
+        ////  |---out---|---in---|---out----------  ////////////////        ////  |---out---|---in---|---out-----|---- /////////
+        //// i.e. wide cuts at 155 for sideband, out goes to inf////        //// while for Anti, no need to go to inf //////////
+        //// out used solely for resolved regions to veto all fats//        //// so both cut at 155                   //////////
+        ////////////////////////////////////////////////////////////        ////////////////////////////////////////////////////
+
 
         if(doMETAntiAnalysis)  doMETAnalysis=true;
         if(doBAntiAnalysis) doBAnalysis=true;
 
-        if(isWJet) {
-            if(doMETAnalysis and dPhiFatMet<0.4) continue;
-            if(!doMETAnalysis and !doResonant and isZbbJet) continue; //avoid selectedFatZbb except MET resonant
+        if(doMETAnalysis and dPhiFatMet<0.4) continue;
+
+        if( (!doSideBand and isWJet) or (doSideBand and isWJetWide) ) {
+            //if(!doMETAnalysis and !doResonant and isZbbJet) continue;  //avoid selectedFatZbb except resonant; 
+            //remove exceptions, as later in the category selection, already consider separately when Zbb>0 or fat>0, no need to count Zbb in fat TODO: to be condirmed with the resonant case 
+            if(isZbbJet) continue;
             selectedFatJets.push_back(f);
             bosonVDiscr.push_back(f->WvsQCD());
             bosonTDiscr.push_back(f->TvsQCD());
@@ -2265,11 +2285,10 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         }
 
-        if(isWJetMirror){
-            if(doMETAnalysis and dPhiFatMet<0.4) continue;
-            if(isZbbJet) continue;
-            selectedMirrorFatJets.push_back(f);
-        }
+        if(isWJetWide and not isZbbJet) selectedFatJetsWide.push_back(f);
+        if(isWJet and not isZbbJet) selectedFatJetsIn.push_back(f);
+        if(isWJetOut and not isZbbJet) selectedFatJetsOut.push_back(f);
+        if(isWJetMirror and not isZbbJet) selectedMirrorFatJets.push_back(f);
     }
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
@@ -2831,6 +2850,9 @@ void VBShadAnalysis::reset() // reset private members
 {
     selectedJets.clear();
     selectedFatJets.clear();
+    selectedFatJetsWide.clear();
+    selectedFatJetsIn.clear();
+    selectedFatJetsOut.clear();
     selectedMirrorFatJets.clear();
     selectedFatZbb.clear();
 
@@ -3221,8 +3243,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         forwardJets.clear();
         vetoJets.clear();
 
-        // Add Mirror ?
-        if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1 and (doHADAntiAnalysis?selectedMirrorFatJets.size()<2:1)) {
+
+        //////////////////////////////////
+        //50|---D---|---B---|---D---|155//
+        //50|---C---|---A---|---C---|155//
+        //////////////////////////////////
+
+        bool condition1_AvsC = doSideBand ? selectedFatJetsIn.size()<2 : selectedFatJetsIn.size()>1;
+        bool condition2_AvsB = doHADAntiAnalysis ? selectedMirrorFatJets.size()<2 : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, < 2 to be inclusive with SR
+
+        if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
             category="_BB";
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
             evt_bosV1discr = bosonVDiscr[0];
@@ -3302,7 +3332,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         vetoJets.clear();
 
         category="";
-        if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1 and (doBAntiAnalysis?selectedMirrorFatJets.size()==0:1)) {
+
+        //////////////////////////////////
+        //50|---D---|---B---|---D---|155//
+        //50|---C---|---A---|---C---|155//
+        //50|--Cres-|--Ares-|--Cres-|155//
+        //////////////////////////////////
+
+        bool condition1_AvsC = doSideBand ? selectedFatJetsIn.size()==0 : selectedFatJetsIn.size()>0;
+        bool condition2_AvsB = doBAntiAnalysis ? selectedMirrorFatJets.size()==0 : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
+
+        if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
             category="_BBtag";
             // add cases with two Zbb Zbb most pures only for nonresonant
 
@@ -3338,7 +3378,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         // target the ZbbZqq + ZbbWqq resolved
-        if(selectedFatZbb.size()>0 and selectedFatJets.size()==0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
+        if(selectedFatZbb.size()>0 and selectedFatJets.size()==0 and selectedFatJetsOut.size() == 0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
             category="";
 
             ///////$$$$$$$
@@ -3431,7 +3471,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 }
             }
 
-            bool massWindow = (fabs(MV-mBoson) < mWidth);
+            bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
             //            bool massWindow = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
             if( massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RBtag";
@@ -3480,7 +3520,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         forwardJets.clear();
         vetoJets.clear();
 
-        if((selectedFatJets.size()>0 or (!doResonant and selectedFatZbb.size()>0)) and selectedJets.size()>1 and (doMETAntiAnalysis?selectedMirrorFatJets.size()==0:1)) {
+
+        //////////////////////////////////
+        //50|---D---|---B---|---D---|155//
+        //50|---C---|---A---|---C---|155//
+        //50|--Cres-|--Ares-|--Cres-|155//
+        //////////////////////////////////
+
+        bool condition1_AvsC = doSideBand ? (selectedFatJetsIn.size()==0 and selectedFatZbb.size()==0) : 1;
+        bool condition2_AvsB = doMETAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbb.size()==0) : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
+
+        if((selectedFatJets.size()>0 or (!doResonant and selectedFatZbb.size()>0)) and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
             category="_BMET";
 
             //        Current: (ET1+ET2)^2 - (PT1+PT2)^2    (also as shown in the current ch-higgs code you sent to me)
@@ -3529,7 +3579,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         // target the ZnnZqq + ZnnWqq resolved
-        if(selectedFatJets.size()==0 and selectedFatZbb.size()==0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
+        if(selectedFatJets.size()==0 and selectedFatJetsOut.size()==0 and selectedFatZbb.size()==0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
             category="";
 
             double MV = 0.;
@@ -3619,8 +3669,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             }
 
-
-            bool massWindow = (fabs(MV-mBoson) < mWidth);
+            bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
             //            bool massWindow = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
             if(massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RMET";
