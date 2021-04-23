@@ -207,6 +207,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/Met"+category+"_"+l, "Met; Met [GeV]; Events", 100,0,1000);
     Book ("VBShadAnalysis/MetPhi"+category+"_"+l, "Met #phi; Met #phi; Events", 100,-TMath::Pi(),TMath::Pi());
     Book ("VBShadAnalysis/PTVV"+category+"_"+l, "PTVV; PTVV [GeV]; Events", 100,0,1000);
+    Book ("VBShadAnalysis/Centrality"+category+"_"+l, "Centrality; Centrality; Events", 100,0,5);
 
     // fwd jets
     Book ("VBShadAnalysis/pT1_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (leading); Events", 80,0,1600);
@@ -218,6 +219,10 @@ void VBShadAnalysis::BookHisto(string l, string category)
     // boosted jets
     Book ("VBShadAnalysis/pTV1_Jet"+category+"_"+l, "pT_V1_Jet; p_{T} [GeV] (leading); Events", 80,0,1600);
     Book ("VBShadAnalysis/pTV2_Jet"+category+"_"+l, "pT_V2_Jet; p_{T} [GeV] (subleading) ; Events", 80,0,1600);
+
+    Book ("VBShadAnalysis/massV1"+category+"_"+l, "VMass_leading; MassV [GeV]; Events", 200,0,200);
+    Book ("VBShadAnalysis/massV2"+category+"_"+l, "VMass_trailing; MassV [GeV]; Events", 200,0,200);
+
     /*
     Book ("VBShadAnalysis/etaV1_Jet"+category+"_"+l, "eta_V1_Jet; #eta (leading); Events", 100,0.,5.);
     Book ("VBShadAnalysis/etaV2_Jet"+category+"_"+l, "eta_V2_Jet; #eta (subleading) ; Events", 100,0.,5.);
@@ -3840,6 +3845,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
     Fill("VBShadAnalysis/normPTVVjj" +category+"_"+label, systname, evt_normPTVVjj, e->weight() );
     Fill("VBShadAnalysis/Dphimin" +category+"_"+label, systname, minDPhi, e->weight() );
+    Fill("VBShadAnalysis/Centrality" +category+"_"+label, systname, evt_cenEta, e->weight() );
 
     if((
         (category.find("BMET")   !=string::npos )
@@ -3906,6 +3912,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/pTV1_Jet" +category+"_"+label, systname, evt_PTV1, e->weight() );
     Fill("VBShadAnalysis/pTV2_Jet" +category+"_"+label, systname, evt_PTV2, e->weight() );
 
+    Fill("VBShadAnalysis/massV1" +category+"_"+label, systname, evt_bosV1mass, e->weight() );
+    Fill("VBShadAnalysis/massV2" +category+"_"+label, systname, evt_bosV2mass, e->weight() );
+
+    
     Fill("VBShadAnalysis/Met" +category+"_"+label, systname, evt_PTV1, e->weight() );
     Fill("VBShadAnalysis/MetPhi_" +label, systname, e->GetMet().GetP4().Phi(), e->weight() );
 
@@ -3923,7 +3933,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(selectedFatJets.size()>0) Fill("VBShadAnalysis/pT_FatJet" +category+"_"+label, systname, selectedFatJets[0]->GetP4().Pt(), e->weight() );
         if(selectedFatZbb.size()>0) Fill("VBShadAnalysis/pT_FatJet" +category+"_"+label, systname, selectedFatZbb[0]->GetP4().Pt(), e->weight() );
         Fill("VBShadAnalysis/WvsQCD_FatJet" +category+"_"+label, systname, evt_bosV2discr, e->weight() );
-        Fill("VBShadAnalysis/SDMass_FatJet" +category+"_"+label, systname, evt_bosV2mass, e->weight() );
     }
     */
 
