@@ -6,3 +6,9 @@
 nvtx2016 tf1 1.2085+0.0268937*x-0.00237406*x*x+1.98438e-06*x*x*x+1.15459e-06*TMath::Power(x,4)-5.92703e-09*TMath::Power(x,5) 0.
 nvtx2017 tf1 1.44456-0.148486*x+0.0119359*x*x-0.000387874*x*x*x+5.45264e-06*TMath::Power(x,4)-2.63655e-08*TMath::Power(x,5) 0.
 nvtx2018 tf1 0.812887+0.0136629*x-0.000938635*x*x+3.59058e-05*x*x*x-1.16732e-06*TMath::Power(x,4)+2.11019e-08*TMath::Power(x,5) 0.
+
+####################
+####  MVV Rew   ####
+####################
+include aux/QCDNonclosureBB.txt
+include aux/QCDNonclosureBBtag.txt

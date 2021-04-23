@@ -3737,6 +3737,24 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
 
+
+    //unc on mvv, use 'Smear=@SmearSF("QCDNonclosure_CAT"!"QCD_MVV_CAT_Nonclosure")' to run, where CAT = BB or BBtag
+    //
+    if( not e->IsRealData() and (label.find("QCD_HT")!=string::npos)){
+        string sfname="";
+        if(doHADAnalysis or doHADAntiAnalysis)  sfname="QCD_MVV_BB_Nonclosure";
+        else if(doBAnalysis or doBAntiAnalysis) sfname="QCD_MVV_BBtag_Nonclosure";
+
+        if( not e->ExistSF(sfname) ){
+            LogN(__FUNCTION__,"WARNING","QCD MVV SF does not exist, check category",10);
+            return EVENT_NOT_USED;
+        }
+
+        e->SetPtEtaSF(sfname,evt_MVV,0);
+        e->ApplySF(sfname);
+    }
+
+
     if(checkSignalLabel(label) and evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 6, e->weight() );  //6--InvMFatjet cut
