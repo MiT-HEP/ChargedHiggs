@@ -165,6 +165,7 @@ class Looper{
         inline void AddMC( string label, string dir, double xsec, double nevents){event_ -> GetWeight() -> AddMC(label,dir,xsec,nevents); }
         inline void AddMCScale(string label, int x, double rw){ event_->GetWeight()->AddMCScale(label, MC::SCALES(x), rw);}
         inline void AddMCPdf(string label, int x, double rw){ event_->GetWeight()->AddMCPdf(label, x, rw);}
+        inline void AddMCAQGC(string label, const string& name, double rw){ event_->GetWeight()->AddMCAQGC(label, name, rw);}
 
         /// @brief add sf with label value and error
         inline void AddSF( string label, double sf, double err){ event_->GetWeight() -> AddSF(label,sf,err);}

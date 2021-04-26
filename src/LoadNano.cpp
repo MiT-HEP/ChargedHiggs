@@ -501,6 +501,14 @@ int LoadNano::FillEvent(){
             }
         }
 
+        if (tree_->GetLeaf(MC::aqgc_names[0].c_str()) != nullptr){ // aQGC
+           for (const auto& name : MC::aqgc_names) {
+               event_->GetWeight()->SetAQGCWeight(
+                       *(double*)tree_->GetLeaf(name.c_str())->GetValuePointer()
+                       , name);
+           }
+        }
+
        event_ -> SetPdfId(1,nano->Generator_id1);
        event_ -> SetPdfId(2,nano->Generator_id2);
        //Float_t         Generator_scalePDF;

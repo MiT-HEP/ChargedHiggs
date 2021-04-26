@@ -62,7 +62,7 @@ void Weight::PrintInfo() {
 }
 
 void Weight::SetMcWeight(double w){
-    mcWeight_= w; scales_=false; pdfs_=false;
+    mcWeight_= w; scales_=false; pdfs_=false; aqgcs_=false; //
 }
 void Weight::SetScaleWeight(double w, MC::SCALES pos){
     if (pos>=MC_MAX_SCALES){
@@ -79,7 +79,15 @@ void Weight::SetPdfWeight(double w, unsigned pos){
     pdfsWeights_[pos]=w; pdfs_=true;
 }
 
-
+void Weight::SetAQGCWeight(double w, const string & name)
+{
+    if (std::find (MC::aqgc_names.begin(),MC::aqgc_names.end(), name) == MC::aqgc_names.end() ){
+        Log(__FUNCTION__,"ERROR",Form("Requested aqgc name '%s' not in the known lists of names MC::aqgc_names",name.c_str()));
+        throw abortException();
+    }
+    aqgcWeights_[name] = w;
+    aqgcs_=true;
+}
 
 void Weight::AddMC( string label, string dir, double xsec, double nevents)
 {
@@ -371,11 +379,15 @@ string Weight::LoadMC( string label)
         for (int i=0; i<MC_MAX_SCALES;++i) scalesNeventReweight_[i] =1.0;
         for (int i=0; i<MC_MAX_PDFS;++i) pdfsWeights_[i] =1.0;
         for (int i=0; i<MC_MAX_PDFS;++i) pdfsNeventReweight_[i] =1.0;
+        currentMC_=nullptr;
         return "data";
     }
 
     if( mc_db.find(label) == mc_db.end() )
+    {
+        currentMC_=nullptr;
         return "";
+    }
     mcName_ = label; 
     mcXsec_= mc_db[label]->xsec; 
     nEvents_ = mc_db[label] -> nevents; 
@@ -384,6 +396,8 @@ string Weight::LoadMC( string label)
     auto iter = mc_db.find(label);
     for (int i=0; i<MC_MAX_SCALES;++i) scalesNeventReweight_[i] = iter->second->scalesNeventsReweight[i];
     for (int i=0; i<MC_MAX_PDFS;++i) pdfsNeventReweight_[i] = iter->second->pdfsNeventsReweight[i];
+
+    currentMC_=mc_db[label];
 
     cout<<"[Weight]::[LoadMC]::[INFO] Loaded MC with weigths:"<<mcName_<<"| xSec "<<mcXsec_ <<" | SumW "<<nEvents_<<" | sf"<<sf_<<" | lumi "<<lumi_<<endl;
     return mc_db[label]->dir;

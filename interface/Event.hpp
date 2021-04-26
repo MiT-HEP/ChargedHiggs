@@ -262,6 +262,8 @@ class Event{
     virtual void clearSyst(); // call clearSyst in all object it posses
     ///@brief return the weight for the event. the safe guard forces 1 for data.
     double weight(bool safe=true); // safe will return 1 for data, ALWAYS
+    double weight_aqgc(const string&name);  // try a different approach, since probably smearer are too slow ... 1500 weights
+
     // update objects that can be invalid (jets)
     virtual void validate();
     bool IsTriggered(string name, Trigger *trigger = NULL, bool isNone=false); // the None do not check if it is the L3 or LF -- only for taus and matching

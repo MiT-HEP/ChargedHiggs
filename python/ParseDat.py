@@ -3,6 +3,9 @@ import math
 from subprocess import call,check_output
 import ROOT
 
+# make sure they are the same and same order of MC::aqgc_names -- python/ParseDat
+aqgc_names= ['fs0_0p00', 'fs0_5p00', 'fs0_10p00', 'fs0_15p00', 'fs0_20p00', 'fs0_25p00', 'fs0_30p00', 'fs0_35p00', 'fs0_40p00', 'fs0_45p00', 'fs0_50p00', 'fs0_55p00', 'fs0_60p00', 'fs0_65p00', 'fs0_70p00',]
+
 
 def FindBasePath(verbose=False):
      if verbose: print "-> Looking for basepath"
@@ -275,39 +278,46 @@ def PrintUsage():
 	print 'config = AnalysisBase|a=1,b=2,c(3)'
 
 def ReadMCDB(file):
-	'''read and parse the MCDB file:
-	    \t\t### LABEL dir Entries xSec
-	'''
-	R={}
-	f = open(file)
-	for line in f:
-		l = line.split('#')[0]
-		l = re.sub('\n','',l)
-		if l == "": continue
-		l=re.sub('^ *','',l)
-		label= l.split(' ')[0]
-		dir= l.split(' ')[1]
-		entries = l.split(' ')[2]
-		xsec = l.split(' ')[3]
-		scales=[]
-		pdfs=[]
-		current=4
-		while len(l.split(' ') )>current:
-		   what=l.split(' ')[current]
-		   current+=1
-		   if 'PDFS' in what :
-		   	for i in range(0,30):## MC_MAX_PDFS
-				pdfs.append(float(l.split(' ')[current]))
-				current+=1
-		   elif 'SCALES' in what:
-		   	for i in range(0,6): ## MC_MAX_SCALESS
-				scales.append(float(l.split(' ')[current]))
-				current+=1
-		  
-		if label in R :
-			print "WARNING: Duplicate label",label
-		R[label] = (dir,entries,xsec,scales,pdfs)
-	return R
+    '''read and parse the MCDB file:
+        \t\t### LABEL dir Entries xSec
+    '''
+    R={}
+    f = open(file)
+    for line in f:
+        l = line.split('#')[0]
+        l = re.sub('\n','',l)
+        if l == "": continue
+        l=re.sub('^ *','',l)
+        label= l.split(' ')[0]
+        dir= l.split(' ')[1]
+        entries = l.split(' ')[2]
+        xsec = l.split(' ')[3]
+        scales=[]
+        pdfs=[]
+        aqgc=[]
+        current=4
+        while len(l.split(' ') )>current:
+            what=l.split(' ')[current]
+            current+=1
+            if 'PDFS' in what :
+                for i in range(0,100):## MC_MAX_PDFS
+                    pdfs.append(float(l.split(' ')[current]))
+                    current+=1
+            elif 'SCALES' in what:
+                for i in range(0,6): ## MC_MAX_SCALESS
+                    scales.append(float(l.split(' ')[current]))
+                    current+=1
+            elif 'AQGC' in what:
+                for i in range(0,len(aqgc_names)): ## MC_MAX_SCALESS
+                    aqgc.append(float(l.split(' ')[current]))
+                    current+=1
+            else:
+             print "WARNING","ignoring field '"+what+"' in MCDB line"
+          
+        if label in R :
+            print "WARNING: Duplicate label",label
+        R[label] = (dir,entries,xsec,scales,pdfs,aqgc)
+    return R
 
 import json
 def ReadSFDB(file,verbose=False):
