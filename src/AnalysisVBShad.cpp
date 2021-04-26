@@ -34,7 +34,7 @@
 void VBShadAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
     l->SetPtCut(10); 
-    l->SetIsoRelCut(0.25);
+    l->SetIsoRelCut(0.25); // check the 0.25-->0.4 as done for chargedHIggs
     l->SetEtaCut(2.4);
     //l->SetTightCut(true);
     //l->SetMediumCut(false);
@@ -72,7 +72,7 @@ void VBShadAnalysis::SetTauCuts(Tau *t){
     t->SetIsoRelCut(-1); // NOW byVLooseIsolationMVArun2v1DBoldDMwLT, BEFORE LooseCombinedIsolationDeltaBetaCorr3Hits
     t->SetIsoCut(-1);
     t->SetProngsCut(-1); // all Prong
-    t->SetDecayMode(1);  // 0=TauDecayModeFindingNewDMs 1=TauDecayModeFinding
+    t->SetDecayMode(0);
 }
 
 
@@ -2224,10 +2224,11 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetP4().Phi()));
         if(usePuppi) dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
+        // dPhiFatMet in principle only for the final V candidates
 
         bool isZbbJet=false;
-        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
-        //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_1, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
+        //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
+        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_1, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
         //        if(doBAntiAnalysis and f->IsZbbJet()) isZbbJet=true;
 
         if(isZbbJet) {
@@ -2321,7 +2322,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         float dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().GetP4().Phi()));
         if(usePuppi) dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
 
-        // first 2,4 jets in the BMET,RMET
+        // first 2,4 jets in the BMET,RMET for met-jets aligned
         if(selectedFatJets.size()>0 and counter<3 and (dphi < minDPhi)) minDPhi = dphi;
         if(selectedFatJets.size()==0 and counter<5 and (dphi < minDPhi)) minDPhi = dphi;
 
@@ -3066,21 +3067,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5")
                         || e->IsTriggered("HLT_PFJet450");
 
-    if (year==2017) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
-                        || e->IsTriggered("HLT_AK8PFJet500") 
-                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
-                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
-                        || e->IsTriggered("HLT_PFJet500");
-
-    if (year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
-                        || e->IsTriggered("HLT_AK8PFJet500")
-                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
-                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30") 
-                        || e->IsTriggered("HLT_PFJet500");
-
-
+    if (year==2017 or year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
+                                      || e->IsTriggered("HLT_AK8PFJet500")
+                                      || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
+                                      || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
+                                      || e->IsTriggered("HLT_PFJet500");
     /*
-    
       2017 - JetHT 
       HLT_DiPFJetAve160_HFJEC
       HLT_DiPFJetAve300_HFJEC 
@@ -3210,7 +3202,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if ( doMETAnalysis and minDPhi<0.4) return EVENT_NOT_USED;
     // to check if this anti-aligned is still needed for the generic jet, probably not on the resonant
-    if ( doMETAnalysis and minDPhi!=999 and (TMath::Pi()-minDPhi)<0.4) return EVENT_NOT_USED;
+    //    if ( doMETAnalysis and minDPhi!=999 and (TMath::Pi()-minDPhi)<0.4) return EVENT_NOT_USED;
     if ( doMETAnalysis and badHFjetVeto) return EVENT_NOT_USED;
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 5, e->weight() );  //5--vetoB+dPhiMET
@@ -3688,7 +3680,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     ////// Fill VV-rest frame variables
     VVRestObj(e);
     ///////////////////////////////////
-
 
     //////
     //$$$ CUT FLOW
