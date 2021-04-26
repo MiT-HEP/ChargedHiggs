@@ -259,9 +259,9 @@ int LoadNano::FillEvent(){
         l->SetMiniIso(nano->Electron_miniPFRelIso_all[i]);
         l->SetIso(nano->Electron_pfRelIso03_all[i]*nano->Electron_pt[i]);
         l->SetCharge( nano->Electron_charge[i]);
-        l->SetTightId( nano->Electron_mvaFall17V1noIso_WP80[i]);
-        l->SetMediumId( nano->Electron_mvaFall17V1noIso_WP90[i]);
-        l->SetLooseId( nano->Electron_mvaFall17V1Iso_WPL[i]); 
+        l->SetTightId( nano->Electron_mvaFall17V2noIso_WP80[i]);
+        l->SetMediumId( nano->Electron_mvaFall17V2noIso_WP90[i]);
+        l->SetLooseId( nano->Electron_mvaFall17V2noIso_WPL[i]);
 
         l->SetR9(nano->Electron_r9[i]);
         l->SetSieie(nano->Electron_sieie[i]);
@@ -406,7 +406,7 @@ int LoadNano::FillEvent(){
        t -> SetP4( p4);
        t -> SetType( 15 );
        t -> SetCharge( nano->Tau_charge[i] );
-       t -> SetId ( nano->Tau_idDecayModeNewDMs[i]) ;
+       t -> SetId ( nano->Tau_idDeepTau2017v2p1VSjet[i] ) ; // this is in the or with DecayModeNewDMs
         // probably not DB corrected: TOCHECK
        t -> SetIso2( nano->Tau_chargedIso[i]+nano->Tau_neutralIso[i]);
        t -> SetIdEle (nano->Tau_idAntiEle[i]); //2018? FIXME
