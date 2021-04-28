@@ -3845,6 +3845,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--centrality
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
 
+
+    if(doHADAnalysis or doHADAntiAnalysis) { if(evt_PTV1<350 && evt_PTV2<300) return EVENT_NOT_USED; }
+    else if(category.find("RBtag")   !=string::npos) { if(evt_PTV1<300) return EVENT_NOT_USED; }
+
+
     if(selectedFatZbb.size()>0) {
         evt_zepVB = fabs(selectedFatZbb[0]->Eta() - averageJJeta)/fabs(evt_Detajj);
         evt_DRV1j = std::min(selectedFatZbb[0]->DeltaR(forwardJets[0]), selectedFatZbb[0]->DeltaR(forwardJets[1]));
