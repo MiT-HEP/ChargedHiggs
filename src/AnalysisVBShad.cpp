@@ -3850,6 +3850,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     else if(category.find("RBtag")   !=string::npos) { if(evt_PTV1<300) return EVENT_NOT_USED; }
 
 
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 13, e->weight() ); //13--V pt
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 13, 1 );
+
+
     if(selectedFatZbb.size()>0) {
         evt_zepVB = fabs(selectedFatZbb[0]->Eta() - averageJJeta)/fabs(evt_Detajj);
         evt_DRV1j = std::min(selectedFatZbb[0]->DeltaR(forwardJets[0]), selectedFatZbb[0]->DeltaR(forwardJets[1]));
@@ -3876,8 +3880,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         ) and
        (!doResonant and evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 13, e->weight() ); //13--normPtVV
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 13, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 14, e->weight() ); //14--normPtVV
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 14, 1 );
 
     std::vector<TLorentzVector> oP4;
     oP4.push_back(p4VV);
