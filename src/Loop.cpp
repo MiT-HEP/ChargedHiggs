@@ -143,6 +143,7 @@ void Looper::Loop()
 	    loader_->NewFile(); //parse filename, and call loader::InitTree -> SetBranchAddresses 
         //InitTree();  // propagate it to Loader TODO. Mix with next line
         tree_->GetEntry(0); // need to have runNum for ugly isData
+        loader_->FillEventInfo(); // propagate Run num to event, ugly fix
         NewFile();
 #else
 #endif
@@ -370,7 +371,7 @@ void Looper::NewFile()
 	//Log(__FUNCTION__,"DEBUG",Form("RunNumber is %ld (using >10 to determine MC/data)",event_->runNum()) );	
 	//if ( event_->IsRealData() ) {  
 	if ( event_->runNum() >10 ) {   // ugly fix
-		cout<<"[Looper]::[NewFile]::[INFO] Data file found"<<endl;;
+		cout<<"[Looper]::[NewFile]::[INFO] Data file found: run="<<event_->runNum()<<endl;;
 		event_ -> GetWeight() -> LoadMC("data"); 
 	}
 	// -- Load current MC --
