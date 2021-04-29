@@ -62,6 +62,7 @@ class Weight : virtual public SmearableBase {
     inline void SetSyst( MC::SCALES val) { syst = val;}
     inline void SetSystPdf( int val=-1) { systPdf = val;}
     inline void SetSystAQGC( const string& val="") { systAQGC = val;}
+    inline bool HasAQGC() const { return aqgcs_;}
 
     void SetL1Prefiring(double x, int sys=0){ l1prefiring_[(sys==-1)?L1Down:((sys==1)?L1Up:L1Nom)] =x; l1_=true;};
 

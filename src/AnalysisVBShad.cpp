@@ -3831,6 +3831,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
     Fill("VBShadAnalysis/PTVV" +category+"_"+label, systname, evt_PTVV, e->weight() );
     Fill("VBShadAnalysis/Detajj" +category+"_"+label, systname, evt_Detajj, e->weight() );
+    
+    if ( (systname=="" or systname=="NONE") and (e->GetWeight()->HasAQGC())) // AQGC
+    { // only on the money plots, when no other syst, and for MC with aqgc weights
+        // prepare weights
+        for (const auto & name : MC::aqgc_names)
+        {
+            double w=e->weight_aqgc(name);
+            Fill("VBShadAnalysis/MVV" +category+"_"+label, string("AQGC_")+name, evt_MVV, w );
+        }
+    }
 
     if(checkSignalLabel(label)) {
         if(evt_genmatch) Fill("VBShadAnalysis/MVV" + category+"_match_"+label, systname, evt_MVV, e->weight() );

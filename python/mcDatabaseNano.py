@@ -414,7 +414,7 @@ else:
             print>>f, sum.GetBinContent(1)/pdfs.GetBinContent(i+1), 
 
     if aqgc.GetBinContent(1) >0:
-        print >>f,"AQGC"
+        print >>f,"AQGC",
         ##aqgc
         for i in range(0,nAQGCs):
             print>>f, sum.GetBinContent(1)/aqgc.GetBinContent(i+1), 
