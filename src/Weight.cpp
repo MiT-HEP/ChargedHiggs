@@ -21,6 +21,33 @@ void Weight::PrintInfo() {
     Log(__FUNCTION__,"INFO",Form("pu=%lf", pu_.GetPUWeight(mcName_,puInt_,runNum_) ) );
     Log(__FUNCTION__,"INFO",Form("doL1=%d l1(nom)=%lf l1(down)=%lf l1(up)=%lf systL1=%d",l1_,l1prefiring_[L1Nom],l1prefiring_[L1Down],l1prefiring_[L1Up],int(systL1)));
     Log(__FUNCTION__,"INFO",Form("weight=%le", doWeight() ) );
+
+    //PRINT INFO ON THE DO WEIGTS PATH
+    {
+        if (syst == MC::none and systPdf <0 and systAQGC=="") 
+        {
+            Log(__FUNCTION__,"INFO","Scheme: Nominal");
+        }
+        else if (syst!=MC::none) {
+            Log(__FUNCTION__,"INFO","Scheme: Scales");
+            if (not scales_)
+                Log(__FUNCTION__,"ERROR","w/o scale weights");
+        }
+        else if (systPdf>=0) {
+            Log(__FUNCTION__,"INFO","Scheme: Pdf");
+            if (not pdfs_)
+                Log(__FUNCTION__,"ERROR","w/o pdf weights");
+        }
+        else if (systAQGC!="") 
+        {
+            Log(__FUNCTION__,"INFO","Scheme: AQGC");
+            if (not aqgcs_)
+                Log(__FUNCTION__,"INFO","w/o aqgc weights?");
+        }
+        else{
+            Log(__FUNCTION__,"ERROR","Scheme: UNKOWN");
+        }
+    }
     
     if (syst == MC::none and systPdf <0 ) 
     {
@@ -57,6 +84,14 @@ void Weight::PrintInfo() {
         Log(__FUNCTION__,"INFO"," --- PDFS ---");
         for(int i=0;i< MC_MAX_PDFS ;++i)  
             Log(__FUNCTION__,"INFO",Form("   pdf %d: w=%lf NeventRwgt=%lf",i,pdfsWeights_[i],pdfsNeventReweight_[i]));
+    }
+
+    if (aqgcs_ and systAQGC!="") {
+        Log(__FUNCTION__,"INFO"," --- AQGC ---");
+        Log(__FUNCTION__,"INFO","name="+systAQGC);
+        Log(__FUNCTION__,"INFO",Form("w=%lf",aqgcWeights_[systAQGC]));
+        Log(__FUNCTION__,"INFO",Form("NeventRwgt=%lf",currentMC_->aQGCNeventsReweight[systAQGC]));
+    
     }
     Log(__FUNCTION__,"INFO","-------------------------------------");
 }
