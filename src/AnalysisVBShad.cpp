@@ -3027,11 +3027,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     genStudies(e, label );
 
-    // REMOVE TOP FOR THE OS - EWK
+    // REMOVE TOP FOR THE OSWW or ZW - EWK
 
     bool foundTop = false;
 
-    if(label.find("WPJJWMJJjj_EWK") !=string::npos)
+    if(label.find("WPJJWMJJjj_EWK") !=string::npos ||
+       label.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
+       label.find("ZBBWPMJJjj_EWK") !=string::npos ) {
 
         for(Int_t i = 0; i < e->NGenPar(); i++){
             GenParticle *genpar = e->GetGenParticle(i);
@@ -3700,16 +3702,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/Baseline/NJet_" +label, systname, forwardJets.size(), e->weight() );
 
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
+    if( forwardJets[0]->Eta() * forwardJets[1]->Eta() >=0 ) return EVENT_NOT_USED;
 
     //    if(doTrigger) studyTriggers(e, category, label, systname);
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 7, e->weight() );  //7--NJet cut
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 7, e->weight() );  //7--NJet cut opposite side
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 7, 1 );
-
-    if( forwardJets[0]->Eta() * forwardJets[1]->Eta() >=0 ) return EVENT_NOT_USED;
-
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 8, e->weight() );  //8--JetOpposite
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 8, 1 );
 
     evt_Detajj = fabs(forwardJets[0]->DeltaEta(forwardJets[1]));
 
@@ -3718,8 +3716,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( evt_Detajj < dEtaCut ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 9, e->weight() );  //9--DeltaEta cut
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 9, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 8, e->weight() );  //8--DeltaEta cut
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 8, 1 );
 
     p4jj = forwardJets[0]->GetP4() + forwardJets[1]->GetP4();
 
@@ -3729,8 +3727,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( evt_Mjj < 500 ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--InvMjet cut
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 10, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 9, e->weight() ); //9--InvMjet cut
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 9, 1 );
 
     //////
     //$$$ VARIOUS plots below for tree
@@ -3763,8 +3761,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(!doResonant and !centrality1) return EVENT_NOT_USED;
     }
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 11, e->weight() ); //11--centrality
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 11, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--centrality
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 10, 1 );
 
     if(!doMETAnalysis) {
 
@@ -3779,8 +3777,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if( !doResonant and evt_cenEta < 0. ) return EVENT_NOT_USED;
     }
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--centrality
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 11, e->weight() ); //11--centrality
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 11, 1 );
 
     if(selectedFatZbb.size()>0) {
         evt_zepVB = fabs(selectedFatZbb[0]->Eta() - averageJJeta)/fabs(evt_Detajj);
@@ -3807,8 +3805,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         ) and
        (!doResonant and evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 13, e->weight() ); //13--normPtVV
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 13, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--normPtVV
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
 
     std::vector<TLorentzVector> oP4;
     oP4.push_back(p4VV);
