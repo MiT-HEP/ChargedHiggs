@@ -3031,7 +3031,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     bool foundTop = false;
 
-    if(checkSignalLabel(label)) {
+    if(label.find("WPJJWMJJjj_EWK") !=string::npos)
+
         for(Int_t i = 0; i < e->NGenPar(); i++){
             GenParticle *genpar = e->GetGenParticle(i);
             //        if( ! genpar->IsLHE()) continue;
