@@ -305,6 +305,10 @@ else:
     elif 'WPJJWMJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJWMJJjj_QCD_LO' in opts.label: xsec=1
     elif 'WPJJWMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPJJZJJjj_EWK_QCD_LO' in opts.label: xsec=1
+
     ## SIG ChargedHiggsToBoson
     ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(WW->jjjj) 45
     elif 'DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph' in opts.label: xsec=0.225
