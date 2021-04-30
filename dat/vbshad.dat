@@ -29,6 +29,11 @@ addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_QCD_LO')
 ###
+addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO_TuneCP5_dipole')
+addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_QCD_LO_TuneCP5_dipole')
+addConfig=VBShadAnalysis|AddLabel('ZJJZJJjj_EWK_LO_TuneCP5_dipole')
+addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_QCD_LO_TuneCP5_dipole')
+###
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M1000')
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M1500')
 addConfig=VBShadAnalysis|AddLabel('DoublyChargedHiggsGMmodel_HWW_M2000')

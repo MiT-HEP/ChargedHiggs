@@ -1,7 +1,12 @@
-sub=dalfonso|/store/group/phys_higgs/HiggsExo/dalfonso/NANOV8/2018
+#sub=dalfonso|/store/group/phys_higgs/HiggsExo/dalfonso/NANOV8/2018
 
 addfiles=%(dalfonso)s/ZNuNuWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 addfiles=%(dalfonso)s/ZBBWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 addfiles=%(dalfonso)s/ZJJZJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 addfiles=%(dalfonso)s/WPMJJWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 addfiles=%(dalfonso)s/WPJJWMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
+
+sub=amarini|/store/group/phys_higgs/cmshmm/amarini
+addfiles=%(amarini)s/ZBBWPMJJjj_QCD_LO_TuneCP5_dipole_13TeV-madgraph-pythia8/UL2018-NANOAODSIMv8
+addfiles=%(amarini)s/ZNuNuWPMJJjj_QCD_LO_TuneCP5_dipole_13TeV-madgraph-pythia8/UL2018-NANOAODSIMv8
+

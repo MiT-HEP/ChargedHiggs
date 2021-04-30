@@ -5,3 +5,7 @@ addfiles=%(dalfonso)s/ZBBWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 addfiles=%(dalfonso)s/ZJJZJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 addfiles=%(dalfonso)s/WPMJJWPMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 addfiles=%(dalfonso)s/WPJJWMJJjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
+
+sub=amarini|/store/group/phys_higgs/cmshmm/amarini
+addfiles=%(amarini)s/WPJJWMJJjj_EWK_LO_TuneCP5_dipole_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv8
+addfiles=%(amarini)s/ZJJZJJjj_EWK_LO_TuneCP5_dipole_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv8
