@@ -192,11 +192,26 @@ class Weight : virtual public SmearableBase {
         }
 
     double weight_aqgc(const string&name){
-        //TODO
-        if (systPdf >=0 or syst!=MC::none) return 0; // possible? do we need extras?
+        if (systPdf >=0 or syst!=MC::none or systAQGC!="") return 0.; // possible? do we need extras?
         systAQGC=name;
         double R=doWeight();
         systAQGC="";
+        return R;
+    }
+
+    double weight_pdf(int idx){ // alternative way wrt to the smearer. Probably speed up things. TODO: check zeros?
+        if (systPdf >=0 or syst!=MC::none or systAQGC!="") return 0.; // possible? do we need extras?
+        systPdf=idx;
+        double R=doWeight();
+        systPdf=-1;
+        return R;
+    }
+
+    double weight_scale(MC::SCALES val){ // alternative way wrt to the smearer. Probably speed up things. TODO: check zeros?
+        if (systPdf >=0 or syst!=MC::none or systAQGC!="") return 0.; // possible? do we need extras?
+        syst=val;
+        double R=doWeight();
+        syst=MC::none;
         return R;
     }
 

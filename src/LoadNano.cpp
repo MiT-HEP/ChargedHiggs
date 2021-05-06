@@ -509,6 +509,15 @@ int LoadNano::FillEvent(){
            }
         }
 
+        // DEBUG AQGC
+        //if (fname.find("aQGC") != string::npos) { // AQGC MC
+        //    if (tree_->GetLeaf(MC::aqgc_names[0].c_str()) == nullptr)
+        //    {Log(__FUNCTION__,"ERROR",string("file ")+ fname +" is aQGC but has no AQGC weight "+MC::aqgc_names[0]);}
+        //    if (not event_->GetWeight()->HasAQGC())
+        //    {Log(__FUNCTION__,"ERROR","AQGC weights not propagated correctly to the event weight");}
+        //} 
+        // END
+
        event_ -> SetPdfId(1,nano->Generator_id1);
        event_ -> SetPdfId(2,nano->Generator_id2);
        //Float_t         Generator_scalePDF;
