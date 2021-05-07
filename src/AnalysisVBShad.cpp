@@ -1116,6 +1116,7 @@ void VBShadAnalysis::Init(){
 
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
+        Book ("VBShadAnalysis/Baseline/eta_FatJet_"+l, "eta_FatJet; #eta; Events", 100,-5.,5.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatZbbJet_"+l, "pT_FatZbbJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_BB_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
@@ -2228,7 +2229,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         bool isZbbJet=false;
         //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
-        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_1, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
+        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJet=true;
         //        if(doBAntiAnalysis and f->IsZbbJet()) isZbbJet=true;
 
         if(isZbbJet) {
@@ -2262,6 +2263,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             bosonTDiscr.push_back(f->TvsQCD());
             bosonMass.push_back(f->SDMass());
             Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/eta_FatJet_" +label, systname, f->Eta(), e->weight() );
             Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
 
         }
@@ -2948,7 +2950,6 @@ void VBShadAnalysis::reset() // reset private members
 
 int VBShadAnalysis::analyze(Event *e, string systname)
 {
-
     //** reset
     reset();
 
@@ -3065,9 +3066,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if (year==2016) passtriggerHad = e->IsTriggered("HLT_PFHT900")
                         || e->IsTriggered("HLT_AK8PFJet450")
                         || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50")
-                        || e->IsTriggered("HLT_AK8PFJet360_TrimMass30")
                         || e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30")
                         || e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5")
+                        || e->IsTriggered("HLT_AK8PFJet360_TrimMass30")
                         || e->IsTriggered("HLT_PFJet450");
 
     if (year==2017 or year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
