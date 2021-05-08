@@ -1533,8 +1533,8 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
     if(index_i>=0 && index_j>=0 && index_k>=0 && index_l>=0){
         bosonJets.push_back(selectedJets[index_i]);
         bosonJets.push_back(selectedJets[index_j]);
-        forwardJets.push_back(selectedJets[index_k]);
-        forwardJets.push_back(selectedJets[index_l]);
+        if(selectedJets[index_k]->Pt() > fjPtCut ) forwardJets.push_back(selectedJets[index_k]);
+        if(selectedJets[index_l]->Pt() > fjPtCut ) forwardJets.push_back(selectedJets[index_l]);
 
         index_f1 = index_k;
         index_f2 = index_l;
