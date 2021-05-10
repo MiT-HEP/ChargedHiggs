@@ -279,6 +279,9 @@ else:
     elif 'DYToLL_1J_13TeV' in opts.label: xsec=888.9 
     elif 'DYToLL_2J_13TeV' in opts.label: xsec=348.8 
     elif 'DYJetsToLL_M-105To160' in opts.label: xsec=46.958 #NNLO (QCD)+NLO (EW)
+    elif 'DYJetsToLL_0J' in opts.label: xsec = 4620.70 #xsec=5313.0 ## from XSECDB + QCDNNL OF amcatnlo
+    elif 'DYJetsToLL_1J' in opts.label: xsec = 831.26 #xsec=955.8 ## from XSECDB
+    elif 'DYJetsToLL_2J' in opts.label: xsec = 313.44 #xsec=360.4 ## from XSECDB
     elif 'DYJetsToLL' in opts.label or 'DY' in opts.label: xsec=5765.4 # nnpdf 3.0
     #elif 'DYJets' in opts.label or 'DY' in opts.label: xsec=6025.
     ## SIG

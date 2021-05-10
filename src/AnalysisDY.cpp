@@ -3,6 +3,8 @@
 #define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4941:0.4148)
 #define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?.8001:.7527)
 
+#define VERBOSE
+
 void DYAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
     l->SetPtCut(10);
@@ -17,10 +19,16 @@ void DYAnalysis::SetJetCuts(Jet *j) {
     j->SetEtaCutCentral(2.0);
     j->SetPtCut(30);
     j->SetPuIdCut(100);
-    if (year==2017) j->SetEENoiseCut(true);
-    else  j->SetEENoiseCut(false);
+    //if (year==2017) j->SetEENoiseCut(true);
+    //else  
+    j->SetEENoiseCut(false);
     j->SetDeepBCut(DEEP_B_MEDIUM); 
 } 
+void DYAnalysis::SetFatJetCuts(FatJet *f){
+    f->SetEtaCut(2.5);
+    f->SetPtCut(250);
+    f->SetSDMassCut(50);
+}
 
 void DYAnalysis::Init(){
 
@@ -30,28 +38,20 @@ void DYAnalysis::Init(){
 	    Book ("DYAnalysis/Vars/Ptmm_"+ l ,"Ptmm;p_{T}^{#mu#mu} [GeV];Events", 1000,0,1000);
 	    Book ("DYAnalysis/Vars/NJmm_"+ l ,"NJmm;N_{jets}^{#mu#mu};Events", 10,0,10);
 	    Book ("DYAnalysis/Vars/Npvmm_"+ l ,"Npvmm", 50,0,50);
-	    Book3D ("DYAnalysis/Vars/MassPtRPtGen_"+ l ,"", 100,60,120,200,0,200,200,0,200);
-        //vector<int> jbin{500,1000,1500,2000,10000};
-        //vector<string> flavours={"G","Q","O","U"};
-        //for (int i=0;i<jbin.size()-1;++i)
-        //{
-	    //    Book ( Form("DYAnalysis/Vars/axis2_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 100,0,10);
-	    //    Book ( Form("DYAnalysis/Vars/mult_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,500);
-	    //    Book ( Form("DYAnalysis/Vars/qgl_jet%d_%d_",jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,1);
-        //    for(auto fl : flavours)
-        //    {
-	    //        Book ( Form("DYAnalysis/Vars/qgl_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,1);
-	    //        Book ( Form("DYAnalysis/Vars/axis2_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 100,0,10);
-	    //        Book ( Form("DYAnalysis/Vars/mult_%s_jet%d_%d_",fl.c_str(),jbin[i],jbin[i+1])+ l ,"Npvmm", 500,0,500);
-        //    }
-
-        //}
+	    Book ("DYAnalysis/Vars/JetPt_"+ l ,"JetPt", 1000,0,1000);
+	    Book ("DYAnalysis/Vars/FatJetPt_"+ l ,"FatJetPt", 1000,0,1000);
+	    Book ("DYAnalysis/Vars/FatJetSDMass_"+ l ,"FatJetPt", 1000,0,1000);
+	    Book ("DYAnalysis/Vars/FatJetWvsQCD_"+ l ,"FatJetPt", 100,0,1);
+	    Book ("DYAnalysis/Vars/FatJetZvsQCD_"+ l ,"FatJetPt", 100,0,1);
+	    Book ("DYAnalysis/Vars/FatJetBalance_"+ l ,"FatJetPt", 1000,0,2);
     }
 
 }
 
 int DYAnalysis::analyzeMM(Event *e, string systname)
 {
+
+
     string label = GetLabel(e);
 
     mu0 = e->GetMuon(0);
@@ -60,6 +60,7 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
     j0 = e->GetJet(0);
     j1 = e->GetJet(1); // UnUsed
 
+    FatJet* fj0 = e->GetFatJet(0);
     
     // Truth
     GenParticle *genmu0=NULL; GenParticle *genmu1=NULL;
@@ -105,44 +106,42 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
      * BTag
      */
     double btagsf=1; 
-    btagsf=e->ApplyBTagSF(3,year); //0 loose, 1 medium, 2 tight, 3 reshaping
+    //btagsf=e->ApplyBTagSF(3,year); //0 loose, 1 medium, 2 tight, 3 reshaping
     /*
      * Muon SF
      */
-    ApplyMuonSF(e,systname);
+    //ApplyMuonSF(e,systname);
     
     float ptcut0=29, ptcut1=20;
     bool passAsymmPtCuts = (recoMuons and  mu0->Pt() >ptcut0 and mu1->Pt() >ptcut1 );
 
     bool passTrigger=false;
-    if (year==2016) {passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); }
-    else if (year==2017) {passTrigger=e->IsTriggered("HLT_IsoMu27_v") or e->IsTriggered("HLT_IsoTkMu27_v"); }
-    else if (year==2018) {passTrigger=e->IsTriggered("HLT_IsoMu24_v") or e->IsTriggered("HLT_IsoTkMu24_v"); }
+    if (year==2016) {passTrigger=e->IsTriggered("HLT_IsoMu24") or e->IsTriggered("HLT_IsoTkMu24"); }
+    else if (year==2017) {passTrigger=e->IsTriggered("HLT_IsoMu27") or e->IsTriggered("HLT_IsoTkMu27"); }
+    else if (year==2018) {passTrigger=e->IsTriggered("HLT_IsoMu24") or e->IsTriggered("HLT_IsoTkMu24"); }
 
     bool passTrigger1 = false; 
     bool passTrigger2 = false;
 
-    if (recoMuons) 
-    {
-        bool passTriggerEvent = passTrigger;
-        if (year==2016) passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
-        else if (year==2017) passTrigger1 = (e->IsTriggered("HLT_IsoMu27_v",mu0) or e->IsTriggered("HLT_IsoTkMu27_v",mu0)) ;
-        else if (year==2018) passTrigger1 = (e->IsTriggered("HLT_IsoMu24_v",mu0) or e->IsTriggered("HLT_IsoTkMu24_v",mu0)) ;
+    //if (recoMuons)   //trigger matching
+    //{
+    //    //bool passTriggerEvent = passTrigger;
+    //    if (year==2016) passTrigger1 = (e->IsTriggered("HLT_IsoMu24",mu0) or e->IsTriggered("HLT_IsoTkMu24",mu0)) ;
+    //    else if (year==2017) passTrigger1 = (e->IsTriggered("HLT_IsoMu27",mu0) or e->IsTriggered("HLT_IsoTkMu27",mu0)) ;
+    //    else if (year==2018) passTrigger1 = (e->IsTriggered("HLT_IsoMu24",mu0) or e->IsTriggered("HLT_IsoTkMu24",mu0)) ;
 
-        passTrigger1 = passTrigger1 and mu0->GetTightId();
+    //    passTrigger1 = passTrigger1 and mu0->GetTightId();
 
-        if ( (mu1->Pt() > ptcut0 and year==2017) or (mu1->Pt()>26 and (year== 2016 or year==2018) )) 
-        {
-            if (year==2016) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
-            else if (year==2017) passTrigger2 = (e->IsTriggered("HLT_IsoMu27_v",mu1) or e->IsTriggered("HLT_IsoTkMu27_v",mu1)) ;
-            else if (year==2018) passTrigger2 = (e->IsTriggered("HLT_IsoMu24_v",mu1) or e->IsTriggered("HLT_IsoTkMu24_v",mu1)) ;
-            passTrigger2 = passTrigger2 and mu1->GetTightId();
-        }
-        passTrigger=passTrigger1 or passTrigger2;
-
-        if (passTriggerEvent and not passTrigger) Log(__FUNCTION__,"INFO","Fail to trigger event due to trigger matching");
-
-    }
+    //    if ( (mu1->Pt() > ptcut0 and year==2017) or (mu1->Pt()>26 and (year== 2016 or year==2018) )) 
+    //    {
+    //        if (year==2016) passTrigger2 = (e->IsTriggered("HLT_IsoMu24",mu1) or e->IsTriggered("HLT_IsoTkMu24",mu1)) ;
+    //        else if (year==2017) passTrigger2 = (e->IsTriggered("HLT_IsoMu27",mu1) or e->IsTriggered("HLT_IsoTkMu27",mu1)) ;
+    //        else if (year==2018) passTrigger2 = (e->IsTriggered("HLT_IsoMu24",mu1) or e->IsTriggered("HLT_IsoTkMu24",mu1)) ;
+    //        passTrigger2 = passTrigger2 and mu1->GetTightId();
+    //    }
+    //    passTrigger=passTrigger1 or passTrigger2;
+    //    //if (passTriggerEvent and not passTrigger) Log(__FUNCTION__,"INFO","Fail to trigger event due to trigger matching");
+    //}
 
     Object Z;
     float zrecopt=-1;
@@ -160,7 +159,16 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
         }
     }
 
-	Fill3D ("DYAnalysis/Vars/MassPtRPtGen_"+ label ,systname, zrecomass,zrecopt,ztruept,e->weight());
+    //DEBUG
+#ifdef VERBOSE
+    Log(__FUNCTION__,"DEBUG",Form("RecoMuons=%d",int(recoMuons)));
+    if(recoMuons) {
+        Log(__FUNCTION__,"DEBUG",Form("RecoMuons pt=%lf %lf ZPt=%lf ZM=%lf",mu0->Pt(),mu1->Pt(),Z.Pt(),Z.M() ));
+        Log(__FUNCTION__,"DEBUG",Form("PassTrigger=%d",int(passTrigger)));
+        Log(__FUNCTION__,"DEBUG",Form("PassAsymm=%d",int(passAsymmPtCuts)));
+    }
+#endif
+    // END DEBUG
 
     // Full selection
     if ( recoMuons and passAsymmPtCuts and passTrigger and Z.M() >60 and Z.M()<120)
@@ -171,33 +179,19 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
        	Fill("DYAnalysis/Vars/Npvmm_"+ label,systname, e->Npv(),e->weight()) ;
         Fill("DYAnalysis/Vars/NJmm_"+ label,systname, e->NcentralJets(),e->weight()) ;
 
-        //if (j0 != NULL and j0->Pt() > 500) {
-        //    vector<float> jbin{500,1000,1500,2000,10000};
-        //    //std::cout<<"[DEBUG] Considering jet with pt"<<j0->Pt()<<std::endl;
-        //    //first that is 'not less'
-        //    auto ib=std::lower_bound(jbin.begin(),jbin.end(),std::min(j0->Pt(),8000.F));
-        //    //std::cout<<"[DEBUG] -> found="<< (ib!=jbin.end()) <<" i="<<ib-jbin.begin()<<std::endl;
-        //    if (ib != jbin.end())
-        //    {
-        //        int i= ib-jbin.begin()-1;
-        //        Fill(Form("DYAnalysis/Vars/axis2_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("log:axis2"),e->weight());
-        //        Fill(Form("DYAnalysis/Vars/mult_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
-        //        Fill(Form("DYAnalysis/Vars/qgl_jet%.0f_%.0f_",jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
+        if (j0 != NULL and j0->Pt() > 50 and fabs(j0->DeltaPhi(Z))>2.5 ) {
+	        Fill ("DYAnalysis/Vars/JetPt_"+ label,systname ,j0->Pt(), e->weight());
+        }
 
-        //        string flavor=""; int fl=j0->Flavor();
-        //        if ( label != "Data" and fl ==21 ) flavor="G";
-        //        else if ( label != "Data" and abs(fl)<5 ) flavor="Q";
-        //        else if ( label != "Data" and abs(fl)!=0 ) flavor="O";
-        //        else if ( label != "Data" and abs(fl)==0 ) flavor="U";
+        if (fj0!= nullptr and fj0->Pt()>200 and fabs(fj0->DeltaPhi(Z))>2.5) 
+        {
+	        Fill ("DYAnalysis/Vars/FatJetPt_"+ label ,systname, fj0->Pt(), e->weight());
+	        Fill ("DYAnalysis/Vars/FatJetSDMass_"+ label ,systname, fj0->SDMass(), e->weight());
+	        Fill ("DYAnalysis/Vars/FatJetWvsQCD_"+ label ,systname, fj0->WvsQCD(), e->weight());
+	        Fill ("DYAnalysis/Vars/FatJetZvsQCD_"+ label ,systname, fj0->ZvsQCD(), e->weight());
+	        Fill ("DYAnalysis/Vars/FatJetBalance_"+ label ,systname, (fj0->Pt() - Z.Pt())/Z.Pt(), e->weight());
+        }
 
-        //        if (label!="Data")
-        //        {
-        //            Fill(Form("DYAnalysis/Vars/axis2_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("log:axis2"),e->weight());
-        //            Fill(Form("DYAnalysis/Vars/mult_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGLVar("mult"),e->weight());
-        //            Fill(Form("DYAnalysis/Vars/qgl_%s_jet%.0f_%.0f_",flavor.c_str(),jbin[i],jbin[i+1])+label,systname,j0->QGL(),e->weight());
-        //        }
-        //    }
-        //} // j0
     } // full selection on muons
 
 
@@ -209,7 +203,11 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
 int DYAnalysis::analyze(Event *e, string systname)
 {
 
-    if (e->weight() == 0.) Log(__FUNCTION__,"WARNING","Event Weight is NULL");
+#ifdef VERBOSE
+    Log(__FUNCTION__,"DEBUG","------------" );
+    Log(__FUNCTION__,"DEBUG",Form("Analyze event %ld:%ld:%ld",e->runNum(),e->lumiNum(),e->eventNum()));
+#endif
+
     analyzeMM(e,systname);
     //analyzeEM(e,systname);
     //analyzeEE(e,systname);
