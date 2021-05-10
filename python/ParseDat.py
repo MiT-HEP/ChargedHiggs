@@ -95,7 +95,7 @@ def ParseDat(name):
 		if '=' in l : value = '='.join(l.split('=')[1:])
 		value=re.sub('~',' ',value)
 		######### BOOL  ###########
-		if key == "Dump" or key=="Final":
+		if key == "Dump" or key=="Final" or key == "xrdcp":
 			config[key]=BoolKey(value)
 		######### SUB ######
 		if key == 'sub':

@@ -129,6 +129,7 @@ for b in branches:
 if opts.verbose: print "-> Opening output file '"+cfg['Output']+"'",
 loop.InitOutput( cfg['Output'] )
 if 'Final' in cfg and cfg['Final']: loop.SetOnlyFinal(True)
+if 'xrdcp' in cfg and cfg['xrdcp']: loop.SetXrdcp(True)
 if opts.verbose: print "DONE"
 ## add mc
 
