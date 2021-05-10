@@ -10,6 +10,7 @@ parser.add_option("","--mc",dest="mc",type='string',help="MC to Draw. [%default]
 parser.add_option("-v","--var",dest="var",type='string',help="Var to Draw. [%default]",default="Ptem");
 parser.add_option("-f","--file",dest="file",type='string',help="file. [%default]",default="test/mysub/DY/DY.root");
 parser.add_option("","--rebin",dest="rebin",type='int',help="rebin. [%default]",default=1);
+parser.add_option("","--xrange",dest="xrange",help="xrange. [%default]",default=None);
 
 opts, args = parser.parse_args()
 
@@ -49,17 +50,21 @@ def CMS():
         #ltx.DrawLatex(.17,.95,"#bf{CMS},#scale[0.75]{#it{ Preliminary}}") 
 
 def Range(dict):
-	if opts.var == 'Ptmm' or \
-	   opts.var == 'Ptem' or \
-	   opts.var == 'Ptee' or \
-	   opts.var == 'PtemNoMCut' :
-		   for h in dict:
-			   dict[h].Rebin(5)
-			   dict[h].GetXaxis().SetRangeUser(0,200)
-	if opts.var == 'EtaMu1':
-		   for h in dict:
-			   dict[h].Rebin(4)
-			   dict[h].GetXaxis().SetRangeUser(-2.5,2.5)
+    if opts.xrange:
+        for h in dict:
+           dict[h].GetXaxis().SetRangeUser(float(opts.xrange.split(',')[0]),float(opts.xrange.split(',')[1]))
+        return
+    if opts.var == 'Ptmm' or \
+       opts.var == 'Ptem' or \
+       opts.var == 'Ptee' or \
+       opts.var == 'PtemNoMCut' :
+        for h in dict:
+            dict[h].Rebin(5)
+            dict[h].GetXaxis().SetRangeUser(0,200)
+    if opts.var == 'EtaMu1':
+        for h in dict:
+            dict[h].Rebin(4)
+            dict[h].GetXaxis().SetRangeUser(-2.5,2.5)
 
 def Legend(dict):
 	l = ROOT.TLegend(0.65,.60,.93,.85)
