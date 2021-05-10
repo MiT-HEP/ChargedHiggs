@@ -341,7 +341,7 @@ int LoadNano::FillEvent(){
    //Fill Fatjets
    for(int i=0;i<nano->nFatJet;++i)
    {
-       bool id =  nano->FatJet_jetId[i];
+       bool id =  (nano->FatJet_jetId[i] & 2); // TIGHT - RUN2ULPUPPI
        if (not id) continue;
 
        FatJet *j = new FatJet() ;
