@@ -226,7 +226,7 @@ int LoadNano::FillEvent(){
         l->SetDxy(nano->Muon_dxy[i]);
 
         TLorentzVector fsrP4(0,0,0,0);
-        for(int k=0;k<=nano->nFsrPhoton;++k)
+        for(int k=0;k<nano->nFsrPhoton;++k)
         {
             if ( i!=nano->FsrPhoton_muonIdx[k]) continue; //not this muon
             double fsrDrEt2Cut = 0.012;
@@ -418,7 +418,7 @@ int LoadNano::FillEvent(){
 	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Photons");
 #endif
    //Fill Photons
-   for (int i=0;i<=nano->nPhoton;++i)
+   for (int i=0;i<nano->nPhoton;++i)
    {
         // electron veto
         if (not nano->Photon_electronVeto[i]) continue;
