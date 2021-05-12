@@ -3,7 +3,7 @@
 #define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4941:0.4148)
 #define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?.8001:.7527)
 
-#define VERBOSE
+//#define VERBOSE
 
 void DYAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
@@ -37,13 +37,23 @@ void DYAnalysis::Init(){
 	    Book ("DYAnalysis/Vars/Mmm_"+ l ,"Mmm;m^{#mu#mu} [GeV];Events", 100,50,200);
 	    Book ("DYAnalysis/Vars/Ptmm_"+ l ,"Ptmm;p_{T}^{#mu#mu} [GeV];Events", 1000,0,1000);
 	    Book ("DYAnalysis/Vars/NJmm_"+ l ,"NJmm;N_{jets}^{#mu#mu};Events", 10,0,10);
-	    Book ("DYAnalysis/Vars/Npvmm_"+ l ,"Npvmm", 50,0,50);
+	    Book ("DYAnalysis/Vars/Npvmm_"+ l ,"Npvmm", 100,0,100);
 	    Book ("DYAnalysis/Vars/JetPt_"+ l ,"JetPt", 1000,0,1000);
-	    Book ("DYAnalysis/Vars/FatJetPt_"+ l ,"FatJetPt", 1000,0,1000);
-	    Book ("DYAnalysis/Vars/FatJetSDMass_"+ l ,"FatJetPt", 1000,0,1000);
-	    Book ("DYAnalysis/Vars/FatJetWvsQCD_"+ l ,"FatJetPt", 100,0,1);
-	    Book ("DYAnalysis/Vars/FatJetZvsQCD_"+ l ,"FatJetPt", 100,0,1);
-	    Book ("DYAnalysis/Vars/FatJetBalance_"+ l ,"FatJetPt", 1000,0,2);
+	    Book ("DYAnalysis/Vars/FatJetPt_"+ l ,"FatJetPt;p_{T}^{fj} [GeV];Events", 1000,0,1000);
+	    Book ("DYAnalysis/Vars/FatJetEta_"+ l ,"FatJetEta;#eta_{fj};Events", 100,-5,5);
+	    Book ("DYAnalysis/Vars/FatJetPhi_"+ l ,"FatJetPhi;#phi_{fj};Events",100,0,6.1831);
+	    Book ("DYAnalysis/Vars/FatJetM_"+ l ,"FatJetM;mass [GeV];Events", 1000,0,1000);
+	    Book ("DYAnalysis/Vars/FatJetSDMass_"+ l ,"FatJetSDMass;softdrop mass [GeV];Events", 1000,0,1000);
+	    Book ("DYAnalysis/Vars/FatJetWvsQCD_"+ l ,"WvsQCD;WvsQCD;Events", 100,0,1);
+	    Book ("DYAnalysis/Vars/FatJetZvsQCD_"+ l ,"ZvsQCD;ZvsQCD;Events", 100,0,1);
+	    Book ("DYAnalysis/Vars/FatJetBalance_"+ l ,"Balance;(p_{T}^{#mu#mu}-p_{T}^{fj})/(p_{T}^{#mu#mu});Events", 1000,-1,1);
+	    Book ("DYAnalysis/Vars/FatJetSDMass_largeSDCorrection_"+ l ,"FatJetSDMass;softdrop mass [GeV];Events", 1000,0,1000);
+	    Book ("DYAnalysis/Vars/FatJetSDMass_smallSDCorrection_"+ l ,"FatJetSDMass;softdrop mass [GeV];Events", 1000,0,1000);
+	    Book ("DYAnalysis/Vars/FatJetEta_largeSDCorrection_"+ l ,"FatJetEta;#eta_{fj};Events", 100,-5,5);
+	    Book ("DYAnalysis/Vars/FatJetEta_smallSDCorrection_"+ l ,"FatJetEta;#eta_{fj};Events", 100,-5,5);
+	    Book ("DYAnalysis/Vars/FatJetBalance_largeSDCorrection_"+ l ,"Balance;(p_{T}^{#mu#mu}-p_{T}^{fj})/(p_{T}^{#mu#mu});Events", 1000,-1,1);
+	    Book ("DYAnalysis/Vars/FatJetBalance_smallSDCorrection_"+ l ,"Balance;(p_{T}^{#mu#mu}-p_{T}^{fj})/(p_{T}^{#mu#mu});Events", 1000,-1,1);
+	    Book ("DYAnalysis/Vars/FatJetNpv_"+ l ,"FatJetNPV;Npv;Events", 100,0,100); // after skim
     }
 
 }
@@ -186,10 +196,23 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
         if (fj0!= nullptr and fj0->Pt()>200 and fabs(fj0->DeltaPhi(Z))>2.5) 
         {
 	        Fill ("DYAnalysis/Vars/FatJetPt_"+ label ,systname, fj0->Pt(), e->weight());
+	        Fill ("DYAnalysis/Vars/FatJetEta_"+ label ,systname, fj0->Eta(), e->weight());
+	        Fill ("DYAnalysis/Vars/FatJetPhi_"+ label ,systname, fj0->Phi(), e->weight());
+	        Fill ("DYAnalysis/Vars/FatJetM_"+ label ,systname, fj0->M(), e->weight());
 	        Fill ("DYAnalysis/Vars/FatJetSDMass_"+ label ,systname, fj0->SDMass(), e->weight());
 	        Fill ("DYAnalysis/Vars/FatJetWvsQCD_"+ label ,systname, fj0->WvsQCD(), e->weight());
 	        Fill ("DYAnalysis/Vars/FatJetZvsQCD_"+ label ,systname, fj0->ZvsQCD(), e->weight());
 	        Fill ("DYAnalysis/Vars/FatJetBalance_"+ label ,systname, (fj0->Pt() - Z.Pt())/Z.Pt(), e->weight());
+       	    Fill("DYAnalysis/Vars/FatJetNpv_"+ label,systname, e->Npv(),e->weight()) ;
+            if (  fabs(fj0->M()-fj0->SDMass())/(fj0->M()+fj0->SDMass()) > 0.1) {
+	            Fill ("DYAnalysis/Vars/FatJetSDMass_largeSDCorrection_"+ label ,systname, fj0->SDMass(), e->weight());
+	            Fill ("DYAnalysis/Vars/FatJetEta_largeSDCorrection_"+ label ,systname, fj0->Eta(), e->weight());
+	            Fill ("DYAnalysis/Vars/FatJetBalance_largeSDCorrection_"+ label ,systname, (fj0->Pt() - Z.Pt())/Z.Pt(), e->weight());
+            }
+            else 
+	            Fill ("DYAnalysis/Vars/FatJetSDMass_smallSDCorrection_"+ label ,systname, fj0->SDMass(), e->weight());
+	            Fill ("DYAnalysis/Vars/FatJetEta_smallSDCorrection_"+ label ,systname, fj0->Eta(), e->weight());
+	            Fill ("DYAnalysis/Vars/FatJetBalance_smallSDCorrection_"+ label ,systname, (fj0->Pt() - Z.Pt())/Z.Pt(), e->weight());
         }
 
     } // full selection on muons

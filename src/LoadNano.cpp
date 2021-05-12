@@ -654,6 +654,7 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFHT300PT30_QuadPFJet_75_60_45_40_TriplePFBTagCSV_3p0");
       event_->triggerNames_.push_back("HLT_QuadPFJet98_83_71_15_BTagCSV_p013_VBF2");
       event_->triggerNames_.push_back("HLT_QuadPFJet98_83_71_15_DoubleBTagCSV_p013_p08_VBF1");
+      event_->triggerNames_.push_back("HLT_IsoMu27");
     } else if (year==2018){
       // https://dmytro.web.cern.ch/dmytro/trigger/triggerEvolution_all.html
       // below from MET
