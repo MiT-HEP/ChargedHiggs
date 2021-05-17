@@ -64,6 +64,8 @@ public:
     bool doBAntiAnalysis=false;
     bool doHADAntiAnalysis=false;
 
+    bool doSideBand = true;
+    
     bool doResonant = false;
 
     bool doWriteTree = true;
@@ -71,7 +73,7 @@ public:
     bool doTrigger=false;
     bool writeTrainTree=false;
 
-    bool doTMVA=false;
+    bool doTMVA=true;
     bool doResTagKeras = false;
     bool doResTagTMVA = true;
     // those two below are to prune the combination
@@ -106,6 +108,9 @@ private:
     // selected Objects
     vector<Jet*> selectedJets;
     vector<FatJet*> selectedFatJets;
+    vector<FatJet*> selectedFatJetsIn;
+    vector<FatJet*> selectedFatJetsOut;
+    vector<FatJet*> selectedFatJetsWide;
     vector<FatJet*> selectedMirrorFatJets;
     vector<FatJet*> selectedFatZbb;
 
