@@ -19,9 +19,10 @@ class DYAnalysis: virtual public AnalysisBase
         const string name() const override {return "DYAnalysis";}
         void SetLeptonCuts(Lepton *l) override ; 
         void SetJetCuts(Jet *j) override ; 
+        void SetFatJetCuts(FatJet *f) override;
 
 
-        int year=2017; // master switch for year configuration
+        int year=2016; // master switch for year configuration
     private:
 
         void ApplyMuonSF(Event*,string);

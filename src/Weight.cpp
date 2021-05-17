@@ -21,6 +21,33 @@ void Weight::PrintInfo() {
     Log(__FUNCTION__,"INFO",Form("pu=%lf", pu_.GetPUWeight(mcName_,puInt_,runNum_) ) );
     Log(__FUNCTION__,"INFO",Form("doL1=%d l1(nom)=%lf l1(down)=%lf l1(up)=%lf systL1=%d",l1_,l1prefiring_[L1Nom],l1prefiring_[L1Down],l1prefiring_[L1Up],int(systL1)));
     Log(__FUNCTION__,"INFO",Form("weight=%le", doWeight() ) );
+
+    //PRINT INFO ON THE DO WEIGTS PATH
+    {
+        if (syst == MC::none and systPdf <0 and systAQGC=="") 
+        {
+            Log(__FUNCTION__,"INFO","Scheme: Nominal");
+        }
+        else if (syst!=MC::none) {
+            Log(__FUNCTION__,"INFO","Scheme: Scales");
+            if (not scales_)
+                Log(__FUNCTION__,"ERROR","w/o scale weights");
+        }
+        else if (systPdf>=0) {
+            Log(__FUNCTION__,"INFO","Scheme: Pdf");
+            if (not pdfs_)
+                Log(__FUNCTION__,"ERROR","w/o pdf weights");
+        }
+        else if (systAQGC!="") 
+        {
+            Log(__FUNCTION__,"INFO","Scheme: AQGC");
+            if (not aqgcs_)
+                Log(__FUNCTION__,"INFO","w/o aqgc weights?");
+        }
+        else{
+            Log(__FUNCTION__,"ERROR","Scheme: UNKOWN");
+        }
+    }
     
     if (syst == MC::none and systPdf <0 ) 
     {
@@ -58,11 +85,19 @@ void Weight::PrintInfo() {
         for(int i=0;i< MC_MAX_PDFS ;++i)  
             Log(__FUNCTION__,"INFO",Form("   pdf %d: w=%lf NeventRwgt=%lf",i,pdfsWeights_[i],pdfsNeventReweight_[i]));
     }
+
+    if (aqgcs_ and systAQGC!="") {
+        Log(__FUNCTION__,"INFO"," --- AQGC ---");
+        Log(__FUNCTION__,"INFO","name="+systAQGC);
+        Log(__FUNCTION__,"INFO",Form("w=%lf",aqgcWeights_[systAQGC]));
+        Log(__FUNCTION__,"INFO",Form("NeventRwgt=%lf",currentMC_->aQGCNeventsReweight[systAQGC]));
+    
+    }
     Log(__FUNCTION__,"INFO","-------------------------------------");
 }
 
 void Weight::SetMcWeight(double w){
-    mcWeight_= w; scales_=false; pdfs_=false;
+    mcWeight_= w; scales_=false; pdfs_=false; aqgcs_=false; //
 }
 void Weight::SetScaleWeight(double w, MC::SCALES pos){
     if (pos>=MC_MAX_SCALES){
@@ -79,7 +114,15 @@ void Weight::SetPdfWeight(double w, unsigned pos){
     pdfsWeights_[pos]=w; pdfs_=true;
 }
 
-
+void Weight::SetAQGCWeight(double w, const string & name)
+{
+    if (std::find (MC::aqgc_names.begin(),MC::aqgc_names.end(), name) == MC::aqgc_names.end() ){
+        Log(__FUNCTION__,"ERROR",Form("Requested aqgc name '%s' not in the known lists of names MC::aqgc_names",name.c_str()));
+        throw abortException();
+    }
+    aqgcWeights_[name] = w;
+    aqgcs_=true;
+}
 
 void Weight::AddMC( string label, string dir, double xsec, double nevents)
 {
@@ -371,11 +414,15 @@ string Weight::LoadMC( string label)
         for (int i=0; i<MC_MAX_SCALES;++i) scalesNeventReweight_[i] =1.0;
         for (int i=0; i<MC_MAX_PDFS;++i) pdfsWeights_[i] =1.0;
         for (int i=0; i<MC_MAX_PDFS;++i) pdfsNeventReweight_[i] =1.0;
+        currentMC_=nullptr;
         return "data";
     }
 
     if( mc_db.find(label) == mc_db.end() )
+    {
+        currentMC_=nullptr;
         return "";
+    }
     mcName_ = label; 
     mcXsec_= mc_db[label]->xsec; 
     nEvents_ = mc_db[label] -> nevents; 
@@ -384,6 +431,8 @@ string Weight::LoadMC( string label)
     auto iter = mc_db.find(label);
     for (int i=0; i<MC_MAX_SCALES;++i) scalesNeventReweight_[i] = iter->second->scalesNeventsReweight[i];
     for (int i=0; i<MC_MAX_PDFS;++i) pdfsNeventReweight_[i] = iter->second->pdfsNeventsReweight[i];
+
+    currentMC_=mc_db[label];
 
     cout<<"[Weight]::[LoadMC]::[INFO] Loaded MC with weigths:"<<mcName_<<"| xSec "<<mcXsec_ <<" | SumW "<<nEvents_<<" | sf"<<sf_<<" | lumi "<<lumi_<<endl;
     return mc_db[label]->dir;

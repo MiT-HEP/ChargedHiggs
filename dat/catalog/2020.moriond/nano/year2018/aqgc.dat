@@ -1,0 +1,5 @@
+### Test samples for AQGC
+sub=aqgc|/store/user/amarini/nanoaqgc
+addfiles=%(aqgc)s/WPJJWMJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8  
+addfiles=%(aqgc)s/WPJJZJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8
+

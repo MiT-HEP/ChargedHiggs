@@ -10,6 +10,7 @@ parser.add_option("","--mc",dest="mc",type='string',help="MC to Draw. [%default]
 parser.add_option("-v","--var",dest="var",type='string',help="Var to Draw. [%default]",default="Ptem");
 parser.add_option("-f","--file",dest="file",type='string',help="file. [%default]",default="test/mysub/DY/DY.root");
 parser.add_option("","--rebin",dest="rebin",type='int',help="rebin. [%default]",default=1);
+parser.add_option("","--xrange",dest="xrange",help="xrange. [%default]",default=None);
 
 opts, args = parser.parse_args()
 
@@ -49,17 +50,21 @@ def CMS():
         #ltx.DrawLatex(.17,.95,"#bf{CMS},#scale[0.75]{#it{ Preliminary}}") 
 
 def Range(dict):
-	if opts.var == 'Ptmm' or \
-	   opts.var == 'Ptem' or \
-	   opts.var == 'Ptee' or \
-	   opts.var == 'PtemNoMCut' :
-		   for h in dict:
-			   dict[h].Rebin(5)
-			   dict[h].GetXaxis().SetRangeUser(0,200)
-	if opts.var == 'EtaMu1':
-		   for h in dict:
-			   dict[h].Rebin(4)
-			   dict[h].GetXaxis().SetRangeUser(-2.5,2.5)
+    if opts.xrange:
+        for h in dict:
+           dict[h].GetXaxis().SetRangeUser(float(opts.xrange.split(',')[0]),float(opts.xrange.split(',')[1]))
+        return
+    if opts.var == 'Ptmm' or \
+       opts.var == 'Ptem' or \
+       opts.var == 'Ptee' or \
+       opts.var == 'PtemNoMCut' :
+        for h in dict:
+            dict[h].Rebin(5)
+            dict[h].GetXaxis().SetRangeUser(0,200)
+    if opts.var == 'EtaMu1':
+        for h in dict:
+            dict[h].Rebin(4)
+            dict[h].GetXaxis().SetRangeUser(-2.5,2.5)
 
 def Legend(dict):
 	l = ROOT.TLegend(0.65,.60,.93,.85)
@@ -142,25 +147,7 @@ dict["Data"].Draw("PE SAME")
 c.Update()
 
 
-## s.GetXaxis().SetTitle( dict["Data"].GetXaxis().GetTitle() )
-## s.GetYaxis().SetTitle( dict["Data"].GetYaxis().GetTitle() )
-## s.GetYaxis().SetTitleOffset(1.2)
-#dict["Data"].Draw("AXIS")
-
 maxY = max( dict["Data"].GetMaximum(), dict["all"].GetMaximum() )
-
-## s.GetXaxis().SetLabelFont(43)
-## s.GetXaxis().SetTitleFont(43)
-## s.GetYaxis().SetLabelFont(43)
-## s.GetYaxis().SetTitleFont(43)
-## s.GetXaxis().SetLabelSize(26)
-## s.GetYaxis().SetLabelSize(26)
-## s.GetXaxis().SetTitleSize(28)
-## s.GetYaxis().SetTitleSize(28)
-## s.GetXaxis().SetTitleOffset(1.2)
-## s.GetYaxis().SetTitleOffset(1.2)
-## s.GetXaxis().SetRange(dict["Data"].GetXaxis().GetFirst(), dict["Data"].GetXaxis().GetLast() ) 
-## s.GetYaxis().SetRangeUser(0, maxY*1.25)
 
 dict["axis"].GetXaxis().SetLabelFont(43) ## for the ratio
 dict["axis"].GetXaxis().SetTitleFont(43)
@@ -184,12 +171,14 @@ c.Update()
 pdn.cd()
 
 pdn.SetGridy()
-for i in range(0, dict["all"].GetNbinsX() ) : dict["all"].SetBinError(i+1,0)
+dict["all_ratio" ] = dict["all"].Clone("all_ratio")
+for i in range(0, dict["all"].GetNbinsX() ) : dict["all"].SetBinError(i+1,0) ## reset Error
 dict[ "axis_ratio" ] = dict["axis"].Clone("axis_ratio")
 dict[ "axis_ratio" ] . Draw("AXIS")
 dict[ "ratio" ] = dict["Data"] . Clone(  "ratio")
 dict[ "ratio" ] . Divide( dict [ "all" ] )
 dict[ "ratio" ] . Draw(" PE  SAME")
+dict[ "all_ratio" ] . Divide(dict["all"])
 dict[ "axis_ratio" ] . GetYaxis() . SetRangeUser(0.6,1.4)
 dict[ "axis_ratio" ] . GetYaxis() . SetNdivisions(202)
 dict[ "axis_ratio" ] . GetYaxis() . SetTitle("data/MC")
@@ -198,24 +187,32 @@ dict[ "axis_ratio" ] . GetXaxis() . SetTitleOffset(4)
 
 bands = {}
 if True: ## band 10/20 in the ratio plot
-	for i in [10., 20.]:
-		bands[ int(i) ] = ROOT.TGraph()
-		bands[ int(i) ].SetPoint(bands[ int(i)].GetN(),dict["Data"].GetBinLowEdge(0)                           ,1. + i/100 )
-		bands[ int(i) ].SetPoint(bands[ int(i)].GetN(),dict["Data"].GetBinLowEdge(dict["Data"].GetNbinsX() +1) ,1. + i/100 )
-		bands[ int(i) ].SetPoint(bands[ int(i)].GetN(),dict["Data"].GetBinLowEdge(dict["Data"].GetNbinsX() +1) ,1. - i/100 )
-		bands[ int(i) ].SetPoint(bands[ int(i)].GetN(),dict["Data"].GetBinLowEdge(0)                           ,1. - i/100 )
-	if 20 in bands: 
-		bands[20].SetFillColor(ROOT.kGray)
-		bands[20].Draw("F SAME")
-	if 10 in bands: 
-		bands[10].SetFillColor(ROOT.kGray +1)
-		bands[10].Draw("F SAME")
-	bands[0] = ROOT.TGraph()
-	bands[0].SetPoint(0, dict["Data"].GetBinLowEdge(0) ,1.)
-	bands[0].SetPoint(1, dict["Data"].GetBinLowEdge(dict["Data"].GetNbinsX() +1)  ,1.)
-	bands[0].SetLineColor(ROOT.kBlack)
-	bands[0].Draw("L SAME")
-	dict[ "ratio" ] . Draw(" PE SAME")
+    for i in [10., 20.]:
+        bands[ int(i) ] = ROOT.TGraph()
+        bands[ int(i) ].SetPoint(bands[ int(i)].GetN(),dict["Data"].GetBinLowEdge(0)                           ,1. + i/100 )
+        bands[ int(i) ].SetPoint(bands[ int(i)].GetN(),dict["Data"].GetBinLowEdge(dict["Data"].GetNbinsX() +1) ,1. + i/100 )
+        bands[ int(i) ].SetPoint(bands[ int(i)].GetN(),dict["Data"].GetBinLowEdge(dict["Data"].GetNbinsX() +1) ,1. - i/100 )
+        bands[ int(i) ].SetPoint(bands[ int(i)].GetN(),dict["Data"].GetBinLowEdge(0)                           ,1. - i/100 )
+    if 20 in bands: 
+        #bands[20].SetFillColor(ROOT.kGray)
+        bands[20].SetFillColor(ROOT.kAzure-9)
+        bands[20].Draw("F SAME")
+    if 10 in bands: 
+        #bands[10].SetFillColor(ROOT.kGray +1)
+        bands[10].SetFillColor(ROOT.kBlue -9)
+        bands[10].Draw("F SAME")
+
+## STAT UNC
+dict["all_ratio"].SetFillColor(ROOT.kGray)
+dict["all_ratio"].SetMarkerStyle(0)
+dict["all_ratio"].SetMarkerColor(ROOT.kGray)
+dict["all_ratio"] .Draw("PE2 SAME") 
+bands[0] = ROOT.TGraph()
+bands[0].SetPoint(0, dict["Data"].GetBinLowEdge(0) ,1.)
+bands[0].SetPoint(1, dict["Data"].GetBinLowEdge(dict["Data"].GetNbinsX() +1)  ,1.)
+bands[0].SetLineColor(ROOT.kBlack)
+bands[0].Draw("L SAME")
+dict[ "ratio" ] . Draw(" PE SAME")
 
 dict[ "axis_ratio" ] . Draw(" AXIS SAME ")
 dict[ "axis_ratio" ] . Draw(" AXIS X+ Y+ SAME ")

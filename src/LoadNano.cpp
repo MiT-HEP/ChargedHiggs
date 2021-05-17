@@ -336,7 +336,7 @@ int LoadNano::FillEvent(){
    //Fill Fatjets
    for(int i=0;i<nano->nFatJet;++i)
    {
-       bool id =  nano->FatJet_jetId[i];
+       bool id =  (nano->FatJet_jetId[i] & 2);
        if (not id) continue;
 
        FatJet *j = new FatJet() ;
@@ -501,6 +501,14 @@ int LoadNano::FillEvent(){
             }
         }
 
+        if (tree_->GetLeaf(MC::aqgc_names[0].c_str()) != nullptr){ // aQGC
+           for (const auto& name : MC::aqgc_names) {
+               event_->GetWeight()->SetAQGCWeight(
+                       *(double*)tree_->GetLeaf(name.c_str())->GetValuePointer()
+                       , name);
+           }
+        }
+
        event_ -> SetPdfId(1,nano->Generator_id1);
        event_ -> SetPdfId(2,nano->Generator_id2);
        //Float_t         Generator_scalePDF;
@@ -618,6 +626,8 @@ void LoadNano::NewFile(){
         event_->triggerNames_.push_back("HLT_PFHT650_WideJetMJJ950DEtaJJ1p5");
 	//below from MET
 	event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+    //below for muons
+      event_->triggerNames_.push_back("HLT_IsoMu24");
     }else if (year==2017){
       //    https://dmytro.web.cern.ch/dmytro/trigger/2017/triggerEvolution_all.html
       // below from MET
@@ -644,6 +654,7 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFHT300PT30_QuadPFJet_75_60_45_40_TriplePFBTagCSV_3p0");
       event_->triggerNames_.push_back("HLT_QuadPFJet98_83_71_15_BTagCSV_p013_VBF2");
       event_->triggerNames_.push_back("HLT_QuadPFJet98_83_71_15_DoubleBTagCSV_p013_p08_VBF1");
+      event_->triggerNames_.push_back("HLT_IsoMu27");
     } else if (year==2018){
       // https://dmytro.web.cern.ch/dmytro/trigger/triggerEvolution_all.html
       // below from MET
@@ -659,6 +670,7 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFJetFwd140");
       event_->triggerNames_.push_back("HLT_PFJet500");
       event_->triggerNames_.push_back("HLT_IsoMu27");
+      event_->triggerNames_.push_back("HLT_IsoMu24");
       event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2");
       event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02");
       event_->triggerNames_.push_back("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");

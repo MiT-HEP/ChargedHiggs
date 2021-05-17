@@ -18,6 +18,8 @@
 #include "interface/Logger.hpp"
 
 #include <sstream>
+#include <cstdlib>
+#include <cstdio>
 
 //#define VERBOSE 3
 
@@ -127,11 +129,31 @@ void Looper::Loop()
         string fname =file_list_[fNumber];
         Log(__FUNCTION__,"DEBUG_NTC",string("Opening file: ")+fname);
 
+        if (xrdcp_ and local_ !=""){
+            system( ("rm -v "+ local_).c_str());
+            local_="";
+        }
+
+        if (xrdcp_ and fname.find("xrootd-cms.infn.it") != string::npos){
+            Log(__FUNCTION__,"INFO","->Calling xrdcp");
+            std::string name1 = std::tmpnam(nullptr);
+            local_=name1; // save name to delete it at next file
+            int status=system( ("xrdcp "+ fname + " "+name1).c_str()); 
+            if (status != 0) {
+                    Log(__FUNCTION__,"ERROR",Form("Unable to xrdcp. Exit status is %d",status));
+                    throw abortException();
+            }
+            fname = name1; // used for open. Then reset.
+        }
+
         TFile *f=TFile::Open(fname.c_str());
         if (f==nullptr){
 	        Log(__FUNCTION__,"ERROR", string("Unable to open file: ")+fname );
             throw abortException();
         }
+
+        if (xrdcp_) fname=file_list_[fNumber]; // make sure is reset to the original value. (Probably unsued) the List should be used everywhere anyhow
+
         tree_ = (TTree*)f->Get(loader_->chain().c_str());
         if (tree_==nullptr){
 	        Log(__FUNCTION__,"ERROR", string("Unable to find tree: ")+ loader_->chain() + " in file: "+fname );
