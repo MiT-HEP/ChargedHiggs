@@ -26,15 +26,19 @@ class Weight : virtual public SmearableBase {
     double scalesNeventReweight_[MC_MAX_SCALES];
     bool scales_{false};
     bool pdfs_{false};
+    bool aqgcs_{false};
     double pdfsWeights_[MC_MAX_PDFS];
     double pdfsNeventReweight_[MC_MAX_PDFS];
+    map<string,double> aqgcWeights_;
 
     // syst here will have the values of MC::SCALES
     int systPdf {-1}; // 0 ... MAX_MC_MAX_PDFS
+    string systAQGC {""};
 
     double l1prefiring_[3] {1.,1.,1.}; // NOM, down, up // L1PREFIRING
     bool l1_ {false};
     int systL1{0}; // 0: nom, -1 down, 1 up
+    MC* currentMC_{nullptr};
 
     protected:
 
@@ -54,8 +58,11 @@ class Weight : virtual public SmearableBase {
     void SetMcWeight(double w);
     void SetScaleWeight(double w, MC::SCALES pos);
     void SetPdfWeight(double w, unsigned pos);
+    void SetAQGCWeight(double w, const string & name);
     inline void SetSyst( MC::SCALES val) { syst = val;}
     inline void SetSystPdf( int val=-1) { systPdf = val;}
+    inline void SetSystAQGC( const string& val="") { systAQGC = val;}
+    inline bool HasAQGC() const { return aqgcs_;}
 
     void SetL1Prefiring(double x, int sys=0){ l1prefiring_[(sys==-1)?L1Down:((sys==1)?L1Up:L1Nom)] =x; l1_=true;};
 
@@ -72,6 +79,11 @@ class Weight : virtual public SmearableBase {
         l1prefiring_[L1Down]=1.;
         l1prefiring_[L1Up]=1.;
         systL1=0;
+        aqgcWeights_.clear();
+        systAQGC = "";
+        scales_=false;
+        pdfs_=false;
+        aqgcs_=false;
     }
     //
     string GetMC(){ return mcName_; }
@@ -80,6 +92,7 @@ class Weight : virtual public SmearableBase {
     void AddMC( string label, string dir, double xsec, double nevents);
     inline void AddMCScale( string label , MC::SCALES x, double rw) { mc_db[label]->scalesNeventsReweight[x] = rw; }
     inline void AddMCPdf( string label , unsigned x, double rw) { mc_db[label]->pdfsNeventsReweight[x] = rw; }
+    inline void AddMCAQGC(string label, const string& name, double rw){mc_db[label]->aQGCNeventsReweight[name]=rw; }
     string LoadMC( string label) ;	 // return "" if failed otherwise dir
     string LoadMCbyDir( string dir ) ;	 // return "" if failed otherwise label
 
@@ -147,17 +160,29 @@ class Weight : virtual public SmearableBase {
     // ---  check what happen with data, TODO CHECK LUMI
     inline double doWeight() { 
         double l1=1.; if (l1_) l1=l1prefiring_[(systL1==0)?L1Nom:(systL1<0)?L1Down:L1Up];
-        //Log(__FUNCTION__,"DEBUG",Form("Weight: Mc=%lf mcXsec=%lf sf=%lf pu=%lf nevents=%lf",mcWeight_, mcXsec_ ,sf_,pu_.GetPUWeight(mcName_,puInt_,runNum_), nEvents_));
-        if (syst == MC::none and systPdf <0)
-        return l1*mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
-        else if (systPdf<0) 
-        { // SCALES
-        if (not scales_) {Log(__FUNCTION__,"ERROR","Scales reweighting uncorrect!!!");PrintInfo();}
-        return l1*scalesWeights_[syst] * scalesNeventReweight_[syst] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        if (syst == MC::none and systPdf <0 and systAQGC=="")
+        { // NOMINAL
+            return l1*mcWeight_* mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
         }
-        else { // pdfs
-        if (not pdfs_) {Log(__FUNCTION__,"ERROR","Pdfs reweighting uncorrect!!!"); PrintInfo();}
-        return l1* pdfsWeights_[systPdf] * pdfsNeventReweight_[systPdf] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        else if (syst!=MC::none) 
+        { // SCALES
+            if (not scales_) {Log(__FUNCTION__,"ERROR","Scales reweighting uncorrect!!!");PrintInfo();}
+            return l1*scalesWeights_[syst] * scalesNeventReweight_[syst] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        }
+        else if (systPdf>=0) 
+        { // PDFS
+            if (not pdfs_) {Log(__FUNCTION__,"ERROR","Pdfs reweighting uncorrect!!!"); PrintInfo();}
+            return l1* pdfsWeights_[systPdf] * pdfsNeventReweight_[systPdf] * mcXsec_ * lumi_ * sf_ * pu_.GetPUWeight(mcName_,puInt_,runNum_)/ nEvents_; 
+        }
+        else if (systAQGC!="") 
+        { // AQGC
+            if (not aqgcs_) {Log(__FUNCTION__,"ERROR","AQGCs reweighting uncorrect!!!"); PrintInfo();}
+            if (currentMC_==nullptr) return 1; // data?
+            auto rwit = currentMC_->aQGCNeventsReweight.find(systAQGC);
+            if (rwit == currentMC_->aQGCNeventsReweight.end()) return 0.;
+            auto wit = aqgcWeights_.find(systAQGC);
+            if (wit == aqgcWeights_.end()) return 0.;
+            return l1*(wit->second) *(rwit->second) * mcXsec_*lumi_*sf_*pu_.GetPUWeight(mcName_,puInt_,runNum_)/nEvents_;
         }
     }
     double weight(){
@@ -165,6 +190,30 @@ class Weight : virtual public SmearableBase {
         if (R==0)PrintInfo();
         return R;
         }
+
+    double weight_aqgc(const string&name){
+        if (systPdf >=0 or syst!=MC::none or systAQGC!="") return 0.; // possible? do we need extras?
+        systAQGC=name;
+        double R=doWeight();
+        systAQGC="";
+        return R;
+    }
+
+    double weight_pdf(int idx){ // alternative way wrt to the smearer. Probably speed up things. TODO: check zeros?
+        if (systPdf >=0 or syst!=MC::none or systAQGC!="") return 0.; // possible? do we need extras?
+        systPdf=idx;
+        double R=doWeight();
+        systPdf=-1;
+        return R;
+    }
+
+    double weight_scale(MC::SCALES val){ // alternative way wrt to the smearer. Probably speed up things. TODO: check zeros?
+        if (systPdf >=0 or syst!=MC::none or systAQGC!="") return 0.; // possible? do we need extras?
+        syst=val;
+        double R=doWeight();
+        syst=MC::none;
+        return R;
+    }
 
     // 
 	void Log(const string& function, const string& level, const string& message) const;

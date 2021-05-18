@@ -6,6 +6,8 @@
 #define MC_MAX_PDFS 120
 
 #include "interface/Named.hpp"
+#include <map>
+#include <vector>
 
 // @brief This class will contain the basic MC informations
 //          XSEC, SumOf Event weights, directory ...
@@ -21,6 +23,11 @@ class MC : public Named {
         // if set, set the SumW base / SumW^R
         double scalesNeventsReweight[MC_MAX_SCALES];
         double pdfsNeventsReweight[MC_MAX_PDFS];
+
+        // for AQGC. using dynamic
+        std::map<std::string,double> aQGCNeventsReweight;
+        
+        const static std::vector<std::string> aqgc_names;//={ "fs0_0p00", "fs0_5p00", "fs0_10p00", "fs0_15p00", "fs0_20p00", "fs0_25p00", "fs0_30p00", "fs0_35p00", "fs0_40p00", "fs0_45p00", "fs0_50p00", "fs0_55p00", "fs0_60p00", "fs0_65p00", "fs0_70p00"};
 };
 
 #endif

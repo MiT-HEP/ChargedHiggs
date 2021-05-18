@@ -64,6 +64,8 @@ public:
     bool doBAntiAnalysis=false;
     bool doHADAntiAnalysis=false;
 
+    bool doSideBand = true;
+    
     bool doResonant = false;
 
     bool doWriteTree = true;
@@ -107,6 +109,9 @@ private:
     // selected Objects
     vector<Jet*> selectedJets;
     vector<FatJet*> selectedFatJets;
+    vector<FatJet*> selectedFatJetsIn;
+    vector<FatJet*> selectedFatJetsOut;
+    vector<FatJet*> selectedFatJetsWide;
     vector<FatJet*> selectedMirrorFatJets;
     vector<FatJet*> selectedFatZbb;
 

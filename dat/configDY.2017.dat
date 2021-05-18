@@ -1,0 +1,65 @@
+##configure Looper
+##### This file store the configuratino to run all the analysis
+##### if you want to make a config file that overwrite some changes just create a new one with the line
+##### include=dat/config.txt
+##### Files=....,....,...
+
+include=dat/config.nano.dat
+Loader=LoadNano|2017
+xrdcp=true
+
+################
+### DATASETS ###
+################
+
+Files=
+### DATA
+include=dat/catalog/2020.moriond/nano/year2017/SingleMuon_local.dat
+### DY
+#addfiles=/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17NanoAODv2-Pilot_106X_mc2017_realistic_v8-v3/NANOAODSIM
+addfiles=/DYJetsToLL_0J_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM
+addfiles=/DYJetsToLL_1J_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM
+addfiles=/DYJetsToLL_2J_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM
+#__________________________________________________________________
+#____________________ COMMON SETTINGS _____________________________
+#
+
+EntryPerSecond=10
+#MCDB=aux/mcdb.2019.v3.6.year2017.dat
+#pileup=aux/pileup.v3.6.year2017.root
+SFDB=aux/sf_VBShad.txt
+MCDB=aux/mcdb.nano.2017.txt
+pileup=aux/pileup.nano.year2017.root
+
+
+#Correct=RochesterCorrections
+#config=RochesterCorrections|year="2017",allow_reset=1
+Correct=NONE
+Smear=NONE
+
+
+Output=DY.root
+## Preselection:1,Preselection:2
+Analysis=JsonAnalysis,DYAnalysis
+
+#________________________________________________________________
+#____________________ CONFIGURATION _____________________________
+#
+##########  ANALYSIS  ################
+
+#############
+###  DY   ###
+#############
+
+config=DYAnalysis|AddLabel('DY')
+#addConfig=DYAnalysis|AddLabel('WW'),AddLabel('WZ'),AddLabel('ZZ'),AddLabel('TT'),AddLabel('QCD'),AddLabel('WJets')
+addConfig=DYAnalysis|year=2017
+
+############
+### JSON ###
+############
+
+#include=dat/json.dat
+include=dat/json.nano.year2017.dat
+
+

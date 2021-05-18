@@ -16,11 +16,19 @@ parser.add_option("-l","--label",dest="label",type="string",help="MC label",defa
 parser.add_option("-f","--file",dest="file",type="string",help="mc_database file name",default="dat/mc_database.txt");
 parser.add_option("-p","--pileup",dest="pu",type="string",help="Pileup File. All together! Keep them together.")
 parser.add_option("","--precise",action='store_true',help="Use Kahan accumulator (requires combine).",default=False)
-parser.add_option("","--no_run_tree",dest='run_tree',action='store_false',help="Use run tree",default=True)
+parser.add_option("","--noruntree",action='store_true',help="Don't use run tree",default=False)
 
 (opts,args)=parser.parse_args()
+
 from ParseDat import *
-useRunTree=opts.run_tree
+useRunTree=not opts.noruntree
+
+if not useRunTree:
+    print "I will loop over the Event tree"
+else:
+    print "I will use the Run Tree to speed up things"
+
+print "[DEBUG] useRunTree=",useRunTree
 
 #EOS = "/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select"
 #EOS = "/usr/bin/eos"
@@ -84,6 +92,8 @@ if opts.dat != "":
         if label == 'BTagCSV': continue # exclude data
 
         cmd = "python %s -d '%s' -x %f -l '%s' -f %s -p %s"%(sys.argv[0],f,opts.xsec,label,cfg['MCDB'],cfg['pileup'])
+        if opts.precise: cmd+=" --precise"
+        if opts.noruntree: cmd+=" --noruntree"
 
         if label in mcdb:
             print "* label", "'"+label+"'", "already parsed in mcdb ("+cfg['MCDB']+"). Cmd was:"
@@ -93,7 +103,6 @@ if opts.dat != "":
             print "going to execute",cmd
             call(cmd,shell=True)
     exit(0)
-
 
 
 if '/store/' in opts.dataset or '/eos/user' in opts.dataset: 
@@ -112,7 +121,7 @@ import ROOT as r
 r.gROOT.SetBatch()
 
 if opts.precise:
-    print "-> Loading combine library for accumulators"
+    print "-> Loading combine library for accumulators" #FIXME -> probably accumalators are not exported
     r.gSystem.Load("libHiggsAnalysisCombinedLimit.so")
 
 ## TODO count mcWeights, nEntries
@@ -124,6 +133,9 @@ sum2=r.TH1D("SumWeights","Sum of mcWeights^2",1,0,2)
 scales=r.TH1D("SumWeights_Scales","Sum of mcWeights",10,0,10)
 nPdfs=100
 pdfs=r.TH1D("SumWeights_Pdfs","Sum of mcWeights",nPdfs,0,nPdfs)
+
+nAQGCs=len(aqgc_names) ## in ParseDat
+aqgc=r.TH1D("SumWeights_aQGCs","Sum of mcWeights",nAQGCs,0,nAQGCs)
 
 if opts.precise:
     sum=r.KahanAccumulator(double)(0.)
@@ -138,12 +150,12 @@ simple = True ## NOT RD
 
 ## RUN DEPENDENT NEVER TESTED
 if simple:  ## 1D not Run dependent
-	name = "PU-%s"%opts.label
-	h = fOutput.Get(name)
-	if h != None : print "Overwriting",name
-	puHist=[r.TH1F(name,"PU Distribution of %s"%opts.label,nBins,xMin,xMax)]
+    name = "PU-%s"%opts.label
+    h = fOutput.Get(name)
+    if h != None : print "Overwriting",name
+    puHist=[r.TH1F(name,"PU Distribution of %s"%opts.label,nBins,xMin,xMax)]
 else:
-    raise ValueError("Copy, not tested")
+    raise ValueError("Copied, not tested")
     ## RD
     puHist=[]
     for idx in range(0,len(opts.run.split(',')) -1):
@@ -151,6 +163,7 @@ else:
         h=fOutput.Get(name)
         if  h != None: print "Overwriting",name
         puHist.append(  r.TH1F(name,"RD PU Distribution of %s"%opts.label,nBins,xMin,xMax)  )
+
 
 if opts.precise and useRunTree:
     raise ValueError("Cannot be precise with run tree")
@@ -169,6 +182,7 @@ for idx,fName in enumerate(fileList):
     if (runs.nLHEPdfSumw != nPdfs) : 
         print "[WARNING] ",runs.nLHEPdfSumw," pdf weights in the NANOAOD. Using only",nPdfs, "(must be <)"
 
+    print "[DEBUG] useRunTree=",useRunTree
     if not useRunTree:
         if opts.precise:
             t.Draw("Generator_weight","","goff") ##>>+ doesn't work
@@ -182,6 +196,19 @@ for idx,fName in enumerate(fileList):
         mysum2=r.TH1D("mysum2","Sum of mcWeights^2",1,0,2)
         t.Draw("1>>mysum2","Generator_weight*Generator_weight","goff") ##>>+ doesn't work
         sum2.Add(mysum2)
+
+        for i in range(0,9):
+            myscale=r.TH1D("myscale","Sum of weights",1,0,2)
+            t.Draw("1>>myscale","LHEScaleWeight[%d]*Generator_weight"%i,"goff") ##>>+ doesn't work
+            scales.Fill(i, myscale.GetBinContent(1))
+            myscale.Delete()
+
+        for i in range(0,nPdfs):
+            mypdf=r.TH1D("mypdf","Sum of weights",1,0,2)
+            t.Draw("1>>mypdf","LHEPdfSumw[%d]*Generator_weight"%i,"goff") ##>>+ doesn't work
+            pdfs.Fill(i, mypdf.GetBinContent(1))
+            mypdf.Delete()
+
     else:
         sum.Fill(1,runs.genEventSumw)
         sum2.Fill(1,runs.genEventSumw2)
@@ -192,6 +219,12 @@ for idx,fName in enumerate(fileList):
         ##pdfs
         for i in range(0,nPdfs):
             pdfs.Fill(i, runs.LHEPdfSumw[i] * runs.genEventSumw)
+
+        ##aqgc
+        if runs.GetLeaf("sum_"+aqgc_names[0]):
+            print "Using RunTree for AQGCs","aqgc.Fill(i, runs.sum_"+aqgc_names[0]+" )"
+            for i in range(0,nAQGCs):
+                eval("aqgc.Fill(i, runs.sum_"+aqgc_names[i]+" )")
 
     n += t.GetEntries()
 
@@ -246,6 +279,9 @@ else:
     elif 'DYToLL_1J_13TeV' in opts.label: xsec=888.9 
     elif 'DYToLL_2J_13TeV' in opts.label: xsec=348.8 
     elif 'DYJetsToLL_M-105To160' in opts.label: xsec=46.958 #NNLO (QCD)+NLO (EW)
+    elif 'DYJetsToLL_0J' in opts.label: xsec = 4620.70 #xsec=5313.0 ## from XSECDB + QCDNNL OF amcatnlo
+    elif 'DYJetsToLL_1J' in opts.label: xsec = 831.26 #xsec=955.8 ## from XSECDB
+    elif 'DYJetsToLL_2J' in opts.label: xsec = 313.44 #xsec=360.4 ## from XSECDB
     elif 'DYJetsToLL' in opts.label or 'DY' in opts.label: xsec=5765.4 # nnpdf 3.0
     #elif 'DYJets' in opts.label or 'DY' in opts.label: xsec=6025.
     ## SIG
@@ -272,6 +308,10 @@ else:
     elif 'WPJJWMJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJWMJJjj_QCD_LO' in opts.label: xsec=1
     elif 'WPJJWMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPJJZJJjj_EWK_QCD_LO' in opts.label: xsec=1
+
     ## SIG ChargedHiggsToBoson
     ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(WW->jjjj) 45
     elif 'DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph' in opts.label: xsec=0.225
@@ -367,20 +407,24 @@ else:
 
     ## 
     if scales.GetBinContent(1) > 0:
-    	print>>f, "SCALES", #r1f2=0,r1f5,r2f1,r2f2,r5f1,r5f5
+        print>>f, "SCALES", #r1f2=0,r1f5,r2f1,r2f2,r5f1,r5f5
         print>>f, sum.GetBinContent(1)/scales.GetBinContent(5 + 1)  , ## offset by one in filling
         print>>f, sum.GetBinContent(1)/scales.GetBinContent(3 + 1)  ,
         print>>f, sum.GetBinContent(1)/scales.GetBinContent(7 + 1)  ,
         print>>f, sum.GetBinContent(1)/scales.GetBinContent(8 + 1)  ,
         print>>f, sum.GetBinContent(1)/scales.GetBinContent(1 + 1)  ,
         print>>f, sum.GetBinContent(1)/scales.GetBinContent(0 + 1)  ,
-    	#for i in range(0,6):
-    	#	print>>f, sum.GetBinContent(1)/hScales.GetBinContent(i+1),
     
     if pdfs.GetBinContent(1) > 0:
-    	print>>f, "PDFS",
-    	for i in range(0,100):
-    		print>>f, sum.GetBinContent(1)/pdfs.GetBinContent(i+1), 
+        print>>f, "PDFS",
+        for i in range(0,100): ## this number is also in python/ParseDat
+            print>>f, sum.GetBinContent(1)/pdfs.GetBinContent(i+1), 
+
+    if aqgc.GetBinContent(1) >0:
+        print >>f,"AQGC",
+        ##aqgc
+        for i in range(0,nAQGCs):
+            print>>f, sum.GetBinContent(1)/aqgc.GetBinContent(i+1), 
 
     ## INTERNAL
     print >>f
@@ -389,4 +433,6 @@ print "---------------------------------------------"
 
 fOutput.cd();
 for h in puHist:
-	h.Write("",r.TObject.kOverwrite)
+    h.Write("",r.TObject.kOverwrite)
+
+

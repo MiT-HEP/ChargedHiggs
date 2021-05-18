@@ -129,25 +129,31 @@ for b in branches:
 if opts.verbose: print "-> Opening output file '"+cfg['Output']+"'",
 loop.InitOutput( cfg['Output'] )
 if 'Final' in cfg and cfg['Final']: loop.SetOnlyFinal(True)
+if 'xrdcp' in cfg and cfg['xrdcp']: loop.SetXrdcp(True)
 if opts.verbose: print "DONE"
 ## add mc
 
 if opts.verbose:print "######### MCDB ##############"
 mcdb= ReadMCDB(cfg['MCDB'])
 for label in mcdb:
-	if opts.verbose:
-		print label, " ".join(mcdb[label][0:3])
-	### LABEL dir Entries xSec
-	### loop.AddMC( label,dir,xSec,Entries)
-	loop.AddMC(label, mcdb[label][0], float(mcdb[label][2]),float(mcdb[label][1] ) )
-	scales=mcdb[label][3]
-	pdfs=mcdb[label][4]
-	if len(scales) > 0 :
-		if opts.verbose: print "   * MC has scales"
-		for idx,rw in enumerate(scales): loop.AddMCScale(label,idx,rw);
-	if len(pdfs) > 0 :
-		if opts.verbose: print "   * MC has pdfs"
-		for idx,rw in enumerate(pdfs): loop.AddMCPdf(label,idx,rw);
+    if opts.verbose: print label, " ".join(mcdb[label][0:3])
+    ### LABEL dir Entries xSec
+    ### loop.AddMC( label,dir,xSec,Entries)
+    loop.AddMC(label, mcdb[label][0], float(mcdb[label][2]),float(mcdb[label][1] ) )
+    scales=mcdb[label][3]
+    pdfs=mcdb[label][4]
+    aqgc=mcdb[label][5]
+    if len(scales) > 0 :
+        if opts.verbose: print "   * MC has scales"
+        for idx,rw in enumerate(scales): loop.AddMCScale(label,idx,rw);
+    if len(pdfs) > 0 :
+        if opts.verbose: print "   * MC has pdfs"
+        for idx,rw in enumerate(pdfs): loop.AddMCPdf(label,idx,rw);
+    
+    if len(aqgc) > 0 :
+        #if opts.verbose: 
+        print "   * MC has AQGC"
+        for idx,rw in enumerate(aqgc): loop.AddMCAQGC(label,aqgc_names[idx],rw);
 if opts.verbose:print "#############################"
 
 ## add PU

@@ -68,6 +68,9 @@ class Looper{
         void Log(const string& func, const string& state, const string& mex)  { Logger::getInstance().Log(name(),func,state, mex); };
         void LogErr(const string& func, const string& state, const string& mex) { Logger::getInstance().LogErr(name(),func,state, mex); };
 
+        bool xrdcp_{false}; // xrdcp xroodfiles
+        std::string local_{""}; // name of copied file
+
     protected:
         //
         /// @brief Performs actions when a NewFile is encountered
@@ -105,6 +108,9 @@ class Looper{
                     tree_=new TChain(loader_->chain().c_str());
 #endif
         }
+
+        /// @brief Do XRDCP before running on xrootd remote files
+        inline void SetXrdcp(bool xrdcp=true){xrdcp_=xrdcp;local_="";}
 
         /// @brief Add file to chain, Loader need to be init
         int AddToChain( string name );
@@ -165,6 +171,7 @@ class Looper{
         inline void AddMC( string label, string dir, double xsec, double nevents){event_ -> GetWeight() -> AddMC(label,dir,xsec,nevents); }
         inline void AddMCScale(string label, int x, double rw){ event_->GetWeight()->AddMCScale(label, MC::SCALES(x), rw);}
         inline void AddMCPdf(string label, int x, double rw){ event_->GetWeight()->AddMCPdf(label, x, rw);}
+        inline void AddMCAQGC(string label, const string& name, double rw){ event_->GetWeight()->AddMCAQGC(label, name, rw);}
 
         /// @brief add sf with label value and error
         inline void AddSF( string label, double sf, double err){ event_->GetWeight() -> AddSF(label,sf,err);}

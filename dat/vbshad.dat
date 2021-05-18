@@ -12,6 +12,11 @@ addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('ZbbWpmJJ_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZbbWpmJJ_QCD_LO')
+
+# AQGC this should come first as first matched first served
+addConfig=VBShadAnalysis|AddLabel('WPJJZJJjj_EWK_LO_NPle1_aQGC')
+addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO_NPle1_aQGC')
+
 ### for nanoV8
 addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_QCD_LO')
@@ -28,6 +33,10 @@ addConfig=VBShadAnalysis|AddLabel('WPMJJWPMJJjj_EWK_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('WPJJZJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('WPJJZJJjj_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('WPJJZJJjj_EWK_QCD_LO')
+
 ###
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO_TuneCP5_dipole')
 addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_EWK_LO_TuneCP5_dipole')

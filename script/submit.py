@@ -266,6 +266,26 @@ if opts.resubmit:
     else:
         joblist = opts.joblist.split(',')
 
+    if opts.proxy and opts.tar: ##update proxy
+        if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
+            pass
+        else:
+            print "-> Updating proxy in tar file","%s/package.tar.gz"%opts.dir, "Don't stop me now"
+            cmd=["gunzip", "%s/package.tar.gz"%opts.dir]
+            print "  * Uncopressing",' ' .join(cmd)
+            call(cmd)
+
+            cmd=["tar","-rf","%s/package.tar"%opts.dir]
+            cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) 
+            print "  * extending",' ' .join(cmd)
+            call(cmd)
+
+            cmd=["gzip", "%s/package.tar"%opts.dir]
+            print "  * compressing",' ' .join(cmd)
+            call(cmd)
+
+            print "-> Proxy updated"
+
     jdl=write_condor_jdl("condor_resubmit.jdl") ##  write preample without queueing
     #jdl.write("queue filename matching (%s/sub*sh)\n"%opts.dir)
     for job in joblist:
@@ -608,6 +628,7 @@ if not opts.hadoop:
                     sh.write("export X509_USER_PROXY=%s\n"%os.environ['X509_USER_PROXY'])
                 else:
                     sh.write("export X509_USER_PROXY=/tmp/x509up_u%d\n"%os.getuid())
+                    sh.write("cp -v tmp/x509up_u%d /tmp/\n"%os.getuid())
     
         touch = "touch " + basedir + "/sub%d.pend"%iJob
         call(touch,shell=True)
