@@ -7,6 +7,7 @@
 
 //2018  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18#Supported_Algorithms_and_Operati
 //2017  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17#Supported_Algorithms_and_Operati
+//2016  to be updated
 #define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1355:0.1208)
 #define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4506:0.4148)
 #define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?0.7738:.7665)
@@ -1125,6 +1126,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_"+l, "SDMass_FatJet; SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatZbbJet_"+l, "SDMass_FatZbbJet; SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_lowDiff_"+l, "SDMass_FatJet (low diff); SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_largeDiff_"+l, "SDMass_FatJet (large diff); SDMass [GeV]; Events", 100,0,200.);
 
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJet_"+l, "ZHbbvsQCD_FatJet; ZHbbvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_"+l, "ZHbbvsQCD_FatJetFake; ZHbbvsQCD; Events", 50,0,1.0);
@@ -1137,7 +1140,15 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/WvsT_FatJet_"+l, "WvsT_FatJet; WvsT; Events", 50,0,2.0);
         Book ("VBShadAnalysis/Baseline/ZHccvsQCD_FatJet_"+l, "ZHccvsQCD_FatJet; ZHccvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_"+l, "ZHccvsQCD_FatJetFake; ZHccvsQCD; Events", 50,0,1.0);
+        Book ("VBShadAnalysis/Baseline/Tau21_FatJetFake_"+l, "Tau21_FatJet Fake; tau21; Events", 50,0,1.0);
+
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_barrel_"+l, "SDMass_FatJetFake (barrel); SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_endcap_"+l, "SDMass_FatJetFake (endcap); SDMass [GeV]; Events", 100,0,200.);
+
+        Book ("VBShadAnalysis/Baseline/NSubJets_FatJetFake_"+l, "NSubJets; NSubJets; Events", 5,0,5);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_lowDiff_"+l, "SDMass_FatJetFake (low diff); SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_largeDiff_"+l, "SDMass_FatJetFake (large diff); SDMass [GeV]; Events", 100,0,200.);
 
         //Jet
         Book ("VBShadAnalysis/Baseline/NJet_"+l, "NJet; FatJet; Events", 10,0,10);
@@ -2199,6 +2210,11 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/WvsQCD_FatJet_" +label, systname, f->WvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/ZvsQCD_FatJet_" +label, systname, f->ZvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/TvsQCD_FatJet_" +label, systname, f->TvsQCD(), e->weight() );
+
+            float diff = (f->SDMass() - f->M())/(f->SDMass() + f->M());
+            if(fabs(diff)<0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_lowDiff_" +label, systname, f->SDMass(), e->weight() );
+            if(fabs(diff)>=0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_largeDiff_" +label, systname, f->SDMass(), e->weight() );
+
             if(f->WvsQCD()>0 and f->TvsQCD()>0){
                 double WvsT = f->WvsQCD()/ (f->WvsQCD() + f->TvsQCD());
                 Fill("VBShadAnalysis/Baseline/WvsT_FatJet_" +label, systname, WvsT, e->weight() );
@@ -2211,16 +2227,25 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/ZvsQCD_FatJetFake_" +label, systname, f->ZvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/TvsQCD_FatJetFake_" +label, systname, f->TvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_" +label, systname, f->ZHccvsQCD(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/Tau21_FatJetFake_" +label, systname, f->Tau2()/f->Tau1(), e->weight() );
             Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_" +label, systname, f->SDMass(), e->weight() );
+            //*
+            if(fabs(f->Eta())<1.4) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_barrel_" +label, systname, f->SDMass(), e->weight() );
+            if(fabs(f->Eta())>=1.4) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_endcap_" +label, systname, f->SDMass(), e->weight() );
+            float diff = (f->SDMass() - f->M())/(f->SDMass() + f->M());
+            if(fabs(diff)<0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_lowDiff_" +label, systname, f->SDMass(), e->weight() );
+            if(fabs(diff)>=0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_largeDiff_" +label, systname, f->SDMass(), e->weight() );
+            //*
+            Fill("VBShadAnalysis/Baseline/NSubJets_FatJetFake_" +label, systname, f->nSubjets, e->weight() );
         }
 
         if((minDR1<0.8 and V1isZbb) || (minDR2<0.8 and V2isZbb)) {
             Fill("VBShadAnalysis/Baseline/SDMass_FatZbbJet_" +label, systname, f->SDMass(), e->weight() );
-            Fill("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_" +label, systname, f->ZHbbvsQCD(), e->weight() );
-            Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_" +label, systname, f->ZHccvsQCD(), e->weight() );
-        } else {
             Fill("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJet_" +label, systname, f->ZHbbvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJet_" +label, systname, f->ZHccvsQCD(), e->weight() );
+        } else {
+            Fill("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_" +label, systname, f->ZHbbvsQCD(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_" +label, systname, f->ZHccvsQCD(), e->weight() );
         }
 
         double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetP4().Phi()));
