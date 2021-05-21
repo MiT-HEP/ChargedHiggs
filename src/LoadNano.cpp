@@ -265,7 +265,9 @@ int LoadNano::FillEvent(){
 
         j->SetNEMF(nano->Jet_neEmEF[i] );
         j->SetCEMF(nano->Jet_chEmEF[i] );
-	j->SetArea(nano->Jet_area[i]);
+        j->SetNHF(nano->Jet_neHEF[i] );
+        j->SetCHF(nano->Jet_chHEF[i] );
+	    j->SetArea(nano->Jet_area[i]);
 #warning MISSING NANO JES JER
         // TODO-- JES
         //j->SetValueUp  (Smearer::JES , (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
