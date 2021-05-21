@@ -81,6 +81,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
     int nSubjets;
     float subjet_btag; // max
     float subjet_btagdeep;//max
+    TLorentzVector subjet_sublead_p4;
+    TLorentzVector subjet_lead_p4;
 
     int isValid;
     //Gen-level info

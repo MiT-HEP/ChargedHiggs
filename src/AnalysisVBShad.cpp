@@ -1148,8 +1148,12 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/Tau21_FatJetFake_"+l, "Tau21_FatJet Fake; tau21; Events", 50,0,1.0);
 
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMassOverPT_FatJetFake_"+l, "SDMassOverPT_FatJetFake; SDMass [GeV]; Events", 100,0,1.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_barrel_"+l, "SDMass_FatJetFake (barrel); SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_endcap_"+l, "SDMass_FatJetFake (endcap); SDMass [GeV]; Events", 100,0,200.);
+
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/FatJetsMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
 
         Book ("VBShadAnalysis/Baseline/NSubJets_FatJetFake_"+l, "NSubJets; NSubJets; Events", 5,0,5);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_lowDiff_"+l, "SDMass_FatJetFake (low diff); SDMass [GeV]; Events", 100,0,200.);
@@ -2234,6 +2238,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_" +label, systname, f->ZHccvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/Tau21_FatJetFake_" +label, systname, f->Tau2()/f->Tau1(), e->weight() );
             Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_" +label, systname, f->SDMass(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/SDMassOverPT_FatJetFake_" +label, systname, f->SDMass()/f->Pt(), e->weight() );
+
             //*
             if(fabs(f->Eta())<1.4) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_barrel_" +label, systname, f->SDMass(), e->weight() );
             if(fabs(f->Eta())>=1.4) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_endcap_" +label, systname, f->SDMass(), e->weight() );
@@ -2241,6 +2247,10 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             if(fabs(diff)<0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_lowDiff_" +label, systname, f->SDMass(), e->weight() );
             if(fabs(diff)>=0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_largeDiff_" +label, systname, f->SDMass(), e->weight() );
             //*
+            float massRaw = (f->subjet_lead_p4 + f->subjet_sublead_p4).M();
+            Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJetFake_" +label, systname, massRaw , e->weight() );
+            Fill("VBShadAnalysis/Baseline/FatJetsMass_FatJetFake_" +label, systname, f->M() , e->weight() );
+
             Fill("VBShadAnalysis/Baseline/NSubJets_FatJetFake_" +label, systname, f->nSubjets, e->weight() );
         }
 

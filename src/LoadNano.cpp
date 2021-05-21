@@ -340,6 +340,8 @@ int LoadNano::FillEvent(){
            j->nSubjets+=1;
            j->subjet_btag= nano->SubJet_btagCSVV2[idx];
            j->subjet_btagdeep= nano->SubJet_btagDeepB[idx];
+	   TLorentzVector p4; p4.SetPtEtaPhiM(nano->SubJet_pt[idx],nano->SubJet_eta[idx],nano->SubJet_phi[idx],nano->SubJet_mass[idx]) ;
+	   j->subjet_lead_p4 = p4;
        }
 
        idx=nano->FatJet_subJetIdx2[i];
@@ -347,6 +349,9 @@ int LoadNano::FillEvent(){
            j->nSubjets+=1;
            j->subjet_btag= std::max(nano->SubJet_btagCSVV2[idx],j->subjet_btag);
            j->subjet_btagdeep= std::max(nano->SubJet_btagDeepB[idx],j->subjet_btagdeep);
+
+	   TLorentzVector p4; p4.SetPtEtaPhiM(nano->SubJet_pt[idx],nano->SubJet_eta[idx],nano->SubJet_phi[idx],nano->SubJet_mass[idx]) ;
+	   j->subjet_sublead_p4 = p4;
        }
 
        event_ -> fat_ . push_back(j);
