@@ -60,11 +60,12 @@ public:
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
     bool doHADAnalysis=false;
+    //
     bool doMETAntiAnalysis=false;
     bool doBAntiAnalysis=false;
     bool doHADAntiAnalysis=false;
-
-    bool doSideBand = true;
+    //
+    bool doSideBand = false;
     
     bool doResonant = false;
 
