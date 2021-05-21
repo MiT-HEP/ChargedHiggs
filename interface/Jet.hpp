@@ -36,7 +36,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float deepccut_ {-100};
 
     float nemf_,cemf_;
-    float nehf_,cehf_;
+    float nhf_,chf_;
     float area_;
 
     float bcorr_{1.}, bcorrunc_{1.};
@@ -112,12 +112,12 @@ class Jet : virtual public Object, virtual public SmearableComplex
     //float nemf_,cemf_;
     void SetNEMF(const float x) {nemf_=x;}
     void SetCEMF(const float x) {cemf_=x;}
-    void SetCEHF(const float x) {cehf_=x;}
-    void SetNEHF(const float x) {nehf_=x;}
+    void SetCHF(const float x) {chf_=x;}
+    void SetNHF(const float x) {nhf_=x;}
     inline float GetNEMF()const {return nemf_;}
     inline float GetCEMF()const {return cemf_;}
-    inline float GetNEHF()const {return nehf_;}
-    inline float GetCEHF()const {return cehf_;}
+    inline float GetNHF()const {return nhf_;}
+    inline float GetCHF()const {return chf_;}
 
     //Set and obtain jet area
     void SetArea(const float x) {area_=x;}
