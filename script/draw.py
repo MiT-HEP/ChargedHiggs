@@ -11,6 +11,7 @@ parser.add_option("-v","--var",dest="var",type='string',help="Var to Draw. [%def
 parser.add_option("-f","--file",dest="file",type='string',help="file. [%default]",default="test/mysub/DY/DY.root");
 parser.add_option("","--rebin",dest="rebin",type='int',help="rebin. [%default]",default=1);
 parser.add_option("","--xrange",dest="xrange",help="xrange. [%default]",default=None);
+parser.add_option("","--latex",dest="latex",help="Extra text. [%default]",default=None);
 
 opts, args = parser.parse_args()
 
@@ -37,17 +38,15 @@ def CMS():
         ltx=ROOT.TLatex()
         ltx.SetNDC()
         ltx.SetTextFont(42)
-        ltx.SetTextSize(0.03)
+        ltx.SetTextSize(0.035)
         ltx.SetTextAlign(31)
-	if opts.lumi > 1000: ltx.DrawLatex(.94,.96,"%.1f fb^{-1} (13TeV)" % (opts.lumi/1000.))  ## ONLY TCANVAS
-	else : ltx.DrawLatex(.94,.96,"%.1f pb^{-1} (13TeV)" % (opts.lumi))  ## ONLY TCANVAS
-        #ltx.DrawLatex(.96,.98,"%.1f pb^{-1} (13TeV)"%lumi)
-        ltx.SetTextAlign(13)
+        if opts.lumi > 1000: ltx.DrawLatex(.94,.96,"%.1f fb^{-1} (13TeV)" % (opts.lumi/1000.))  ## ONLY TCANVAS
+        else : ltx.DrawLatex(.94,.96,"%.1f pb^{-1} (13TeV)" % (opts.lumi))  ## ONLY TCANVAS
         ltx.SetTextSize(0.05)
-        #ltx.DrawLatex(.17,.93,"#bf{CMS},#scale[0.75]{#it{ Preliminary}}") #
-        ltx.SetTextAlign(33)
-        ltx.DrawLatex(.87,.92,"#bf{CMS},#scale[0.75]{#it{ Preliminary}}") #
-        #ltx.DrawLatex(.17,.95,"#bf{CMS},#scale[0.75]{#it{ Preliminary}}") 
+        ltx.SetTextAlign(13)
+        #ltx.SetTextAlign(33)
+        #ltx.DrawLatex(.87,.92,"#bf{CMS},#scale[0.75]{#it{ Preliminary}}") #
+        ltx.DrawLatex(.20,.92,"#bf{CMS},#scale[0.75]{#it{ Preliminary}}") #
 
 def Range(dict):
     if opts.xrange:
@@ -67,32 +66,31 @@ def Range(dict):
             dict[h].GetXaxis().SetRangeUser(-2.5,2.5)
 
 def Legend(dict):
-	l = ROOT.TLegend(0.65,.60,.93,.85)
-	l.AddEntry(dict["Data"],"data","PE")
-	if 'DY' in dict: l.AddEntry(dict["DY"],"DY","F")
-	if 'TT' in dict: l.AddEntry(dict["TT"],"TT","F")
-	if 'WJets' in dict: l.AddEntry(dict["WJets"],"WJets","F")
-	if 'WW' in dict: l.AddEntry(dict["WW"],"EWK","F")
-	if 'QCD' in dict: l.AddEntry(dict["QCD"],"QCD","F")
-	l.Draw()
-	l.SetBorderSize(0)
-	garbage.append(l)
+    l = ROOT.TLegend(0.65,.60,.93,.85)
+    l.AddEntry(dict["Data"],"data","PE")
+    if 'DY' in dict: l.AddEntry(dict["DY"],"DY","F")
+    if 'TT' in dict: l.AddEntry(dict["TT"],"TT","F")
+    if 'WJets' in dict: l.AddEntry(dict["WJets"],"WJets","F")
+    if 'WW' in dict: l.AddEntry(dict["WW"],"EWK","F")
+    if 'QCD' in dict: l.AddEntry(dict["QCD"],"QCD","F")
+    l.Draw()
+    l.SetBorderSize(0)
+    garbage.append(l)
 
 
 # fetch histograms
 dict={}
 fIn = ROOT.TFile.Open(opts.file)
 if fIn== None:
-	print "File ",opts.file,'does not exist'
+    print "File ",opts.file,'does not exist'
 
 for ext in ["Data"] + opts.mc.split(','):
-	print " * Fetching ",ext
-	full = opts.base + '/' + opts.var + "_" + ext
-	dict[ext] = fIn.Get( full )  
-	if dict[ext] == None:
-		print "Unable to fetch ",full
-	if opts.rebin >0: dict[ext].Rebin(opts.rebin)
-	if ext != "Data" : dict[ext].Scale(opts.lumi)
+    print " * Fetching ",ext
+    full = opts.base + '/' + opts.var + "_" + ext
+    dict[ext] = fIn.Get( full )  
+    if dict[ext] == None: print "Unable to fetch ",full
+    if opts.rebin >0: dict[ext].Rebin(opts.rebin)
+    if ext != "Data" : dict[ext].Scale(opts.lumi)
 
 ##Correct for range and bin
 Range(dict)
@@ -221,6 +219,13 @@ pup.cd()
 
 Legend(dict)
 CMS()
+if opts.latex:
+    ltx=ROOT.TLatex()
+    ltx.SetNDC()
+    ltx.SetTextFont(42)
+    ltx.SetTextSize(0.04)
+    ltx.SetTextAlign(33)
+    ltx.DrawLatex(.87,.92,opts.latex) 
 
 c.Update()
 if not opts.batch: raw_input("ok?")
