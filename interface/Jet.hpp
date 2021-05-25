@@ -24,6 +24,11 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float  qgl_ ; // To Set
     float unc_ ; // not used in the systematic smearing, but in the kinematic fits. Relative unceratainty
 
+    float hfSigmaEtaEta_ ;
+    float hfSigmaPhiPhi_ ;
+    int hfaEtaEtaStripSize_;
+    int hfcEtaEtaStripSize_;
+
     float puidcut_{-100};
     float puId;
 
@@ -85,6 +90,11 @@ class Jet : virtual public Object, virtual public SmearableComplex
             std::transform(name.begin(),name.end(),name.begin(),::tolower ) ;
             qglVars_[name] = value;
             };
+    inline void SetHFsigmaEtaEta(float hfSigmaEtaEta){ hfSigmaEtaEta_ = hfSigmaEtaEta;}
+    inline void SetHFsigmaPhiPhi(float hfSigmaPhiPhi){ hfSigmaPhiPhi_ = hfSigmaPhiPhi;}
+    inline void SetHFaEtaEtaStripSize(int hfaEtaEtaStripSize){ hfaEtaEtaStripSize_ = hfaEtaEtaStripSize;}
+    inline void SetHFcEtaEtaStripSize(int hfcEtaEtaStripSize){ hfcEtaEtaStripSize_ = hfcEtaEtaStripSize;}
+
     /// @brief set the pileup id
     void SetPuId(float x) {puId=x;}
     /// @brief get the pu id value
@@ -186,6 +196,11 @@ class Jet : virtual public Object, virtual public SmearableComplex
 
     /// @brief clear systematics
     inline void  clearSyst() override {Object::clearSyst() ;syst = 0; isValid=1;type=Smearer::NONE;} // reset smearing
+
+    inline float HFsigmaEtaEta() const { return hfSigmaEtaEta_; }
+    inline float HFsigmaPhiPhi() const { return hfSigmaPhiPhi_; }
+    inline int hfaEtaEtaStripSize() const { return hfaEtaEtaStripSize_; }
+    inline int hfcEtaEtaStripSize() const { return hfcEtaEtaStripSize_; }
 
     /// @brief return qgl discriminator value
     inline float QGL() const { return qgl_; } 

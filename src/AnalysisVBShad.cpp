@@ -7,6 +7,7 @@
 
 //2018  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18#Supported_Algorithms_and_Operati
 //2017  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17#Supported_Algorithms_and_Operati
+//2016  to be updated
 #define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1355:0.1208)
 #define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4506:0.4148)
 #define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?0.7738:.7665)
@@ -34,7 +35,7 @@
 void VBShadAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
     l->SetPtCut(10); 
-    l->SetIsoRelCut(0.25);
+    l->SetIsoRelCut(0.25); // check the 0.25-->0.4 as done for chargedHIggs
     l->SetEtaCut(2.4);
     //l->SetTightCut(true);
     //l->SetMediumCut(false);
@@ -72,7 +73,7 @@ void VBShadAnalysis::SetTauCuts(Tau *t){
     t->SetIsoRelCut(-1); // NOW byVLooseIsolationMVArun2v1DBoldDMwLT, BEFORE LooseCombinedIsolationDeltaBetaCorr3Hits
     t->SetIsoCut(-1);
     t->SetProngsCut(-1); // all Prong
-    t->SetDecayMode(1);  // 0=TauDecayModeFindingNewDMs 1=TauDecayModeFinding
+    t->SetDecayMode(0);
 }
 
 
@@ -1121,6 +1122,7 @@ void VBShadAnalysis::Init(){
 
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
+        Book ("VBShadAnalysis/Baseline/eta_FatJet_"+l, "eta_FatJet; #eta; Events", 100,-5.,5.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatZbbJet_"+l, "pT_FatZbbJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_BB_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
@@ -1129,6 +1131,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_"+l, "SDMass_FatJet; SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatZbbJet_"+l, "SDMass_FatZbbJet; SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_lowDiff_"+l, "SDMass_FatJet (low diff); SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_largeDiff_"+l, "SDMass_FatJet (large diff); SDMass [GeV]; Events", 100,0,200.);
 
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJet_"+l, "ZHbbvsQCD_FatJet; ZHbbvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_"+l, "ZHbbvsQCD_FatJetFake; ZHbbvsQCD; Events", 50,0,1.0);
@@ -1141,7 +1145,19 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/WvsT_FatJet_"+l, "WvsT_FatJet; WvsT; Events", 50,0,2.0);
         Book ("VBShadAnalysis/Baseline/ZHccvsQCD_FatJet_"+l, "ZHccvsQCD_FatJet; ZHccvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_"+l, "ZHccvsQCD_FatJetFake; ZHccvsQCD; Events", 50,0,1.0);
+        Book ("VBShadAnalysis/Baseline/Tau21_FatJetFake_"+l, "Tau21_FatJet Fake; tau21; Events", 50,0,1.0);
+
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMassOverPT_FatJetFake_"+l, "SDMassOverPT_FatJetFake; SDMass [GeV]; Events", 100,0,1.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_barrel_"+l, "SDMass_FatJetFake (barrel); SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_endcap_"+l, "SDMass_FatJetFake (endcap); SDMass [GeV]; Events", 100,0,200.);
+
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/FatJetsMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
+
+        Book ("VBShadAnalysis/Baseline/NSubJets_FatJetFake_"+l, "NSubJets; NSubJets; Events", 5,0,5);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_lowDiff_"+l, "SDMass_FatJetFake (low diff); SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_largeDiff_"+l, "SDMass_FatJetFake (large diff); SDMass [GeV]; Events", 100,0,200.);
 
         //Jet
         Book ("VBShadAnalysis/Baseline/NJet_"+l, "NJet; FatJet; Events", 10,0,10);
@@ -1537,8 +1553,8 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
     if(index_i>=0 && index_j>=0 && index_k>=0 && index_l>=0){
         bosonJets.push_back(selectedJets[index_i]);
         bosonJets.push_back(selectedJets[index_j]);
-        forwardJets.push_back(selectedJets[index_k]);
-        forwardJets.push_back(selectedJets[index_l]);
+        if(selectedJets[index_k]->Pt() > fjPtCut ) forwardJets.push_back(selectedJets[index_k]);
+        if(selectedJets[index_l]->Pt() > fjPtCut ) forwardJets.push_back(selectedJets[index_l]);
 
         index_f1 = index_k;
         index_f2 = index_l;
@@ -2203,6 +2219,11 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/WvsQCD_FatJet_" +label, systname, f->WvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/ZvsQCD_FatJet_" +label, systname, f->ZvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/TvsQCD_FatJet_" +label, systname, f->TvsQCD(), e->weight() );
+
+            float diff = (f->SDMass() - f->M())/(f->SDMass() + f->M());
+            if(fabs(diff)<0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_lowDiff_" +label, systname, f->SDMass(), e->weight() );
+            if(fabs(diff)>=0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_largeDiff_" +label, systname, f->SDMass(), e->weight() );
+
             if(f->WvsQCD()>0 and f->TvsQCD()>0){
                 double WvsT = f->WvsQCD()/ (f->WvsQCD() + f->TvsQCD());
                 Fill("VBShadAnalysis/Baseline/WvsT_FatJet_" +label, systname, WvsT, e->weight() );
@@ -2215,24 +2236,40 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/ZvsQCD_FatJetFake_" +label, systname, f->ZvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/TvsQCD_FatJetFake_" +label, systname, f->TvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_" +label, systname, f->ZHccvsQCD(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/Tau21_FatJetFake_" +label, systname, f->Tau2()/f->Tau1(), e->weight() );
             Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_" +label, systname, f->SDMass(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/SDMassOverPT_FatJetFake_" +label, systname, f->SDMass()/f->Pt(), e->weight() );
+
+            //*
+            if(fabs(f->Eta())<1.4) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_barrel_" +label, systname, f->SDMass(), e->weight() );
+            if(fabs(f->Eta())>=1.4) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_endcap_" +label, systname, f->SDMass(), e->weight() );
+            float diff = (f->SDMass() - f->M())/(f->SDMass() + f->M());
+            if(fabs(diff)<0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_lowDiff_" +label, systname, f->SDMass(), e->weight() );
+            if(fabs(diff)>=0.1) Fill("VBShadAnalysis/Baseline/SDMass_FatJetFake_largeDiff_" +label, systname, f->SDMass(), e->weight() );
+            //*
+            float massRaw = (f->subjet_lead_p4 + f->subjet_sublead_p4).M();
+            Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJetFake_" +label, systname, massRaw , e->weight() );
+            Fill("VBShadAnalysis/Baseline/FatJetsMass_FatJetFake_" +label, systname, f->M() , e->weight() );
+
+            Fill("VBShadAnalysis/Baseline/NSubJets_FatJetFake_" +label, systname, f->nSubjets, e->weight() );
         }
 
         if((minDR1<0.8 and V1isZbb) || (minDR2<0.8 and V2isZbb)) {
             Fill("VBShadAnalysis/Baseline/SDMass_FatZbbJet_" +label, systname, f->SDMass(), e->weight() );
-            Fill("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_" +label, systname, f->ZHbbvsQCD(), e->weight() );
-            Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_" +label, systname, f->ZHccvsQCD(), e->weight() );
-        } else {
             Fill("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJet_" +label, systname, f->ZHbbvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJet_" +label, systname, f->ZHccvsQCD(), e->weight() );
+        } else {
+            Fill("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_" +label, systname, f->ZHbbvsQCD(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_" +label, systname, f->ZHccvsQCD(), e->weight() );
         }
 
         double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetP4().Phi()));
         if(usePuppi) dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
+        // dPhiFatMet in principle only for the final V candidates
 
         bool isZbbJet=false;
-        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
-        //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_1, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
+        //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
+        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJet=true;
         //        if(doBAntiAnalysis and f->IsZbbJet()) isZbbJet=true;
 
         if(isZbbJet) {
@@ -2286,6 +2323,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             bosonTDiscr.push_back(f->TvsQCD());
             bosonMass.push_back(f->SDMass());
             Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/eta_FatJet_" +label, systname, f->Eta(), e->weight() );
             Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
 
         }
@@ -2345,9 +2383,23 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         float dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().GetP4().Phi()));
         if(usePuppi) dphi = fabs(ChargedHiggs::deltaPhi(j->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
 
-        // first 2,4 jets in the BMET,RMET
+        // first 2,4 jets in the BMET,RMET for met-jets aligned
         if(selectedFatJets.size()>0 and counter<3 and (dphi < minDPhi)) minDPhi = dphi;
         if(selectedFatJets.size()==0 and counter<5 and (dphi < minDPhi)) minDPhi = dphi;
+
+        // do we want to do this for all jets or for the first 2 or 4 ?
+        // HFjets event veto (anti aligned with MET)
+        if( (TMath::Pi() - dphi) < 0.4 and fabs(j->Eta()) > 3) {
+            //https://lathomas.web.cern.ch/lathomas/JetMETStuff/HFNoiseStudy/HFNoise_VBFHinv_Laurent.pdf
+            //slide3
+            if(j->hfcEtaEtaStripSize()>2) badHFjetVeto = true;
+
+            if(fabs(j->Eta()) < 4) {
+                //slide4 y = x - 0.02
+                if(j->HFsigmaPhiPhi() < (j->HFsigmaEtaEta() - 0.02)) badHFjetVeto = true;
+                if(j->HFsigmaPhiPhi() < 0.02 or j->HFsigmaEtaEta() < 0.02) badHFjetVeto = true;
+            }
+        }
 
         /*
         for (auto const& fat : selectedFatJets) {
@@ -2863,6 +2915,7 @@ void VBShadAnalysis::reset() // reset private members
 
     counterExtrabToVeto_=0;
     minDPhi=999.f;
+    badHFjetVeto = false;
 
     genVp = NULL;
     genVp2 = NULL;
@@ -2959,7 +3012,6 @@ void VBShadAnalysis::reset() // reset private members
 
 int VBShadAnalysis::analyze(Event *e, string systname)
 {
-
     //** reset
     reset();
 
@@ -3038,11 +3090,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     genStudies(e, label );
 
-    // REMOVE TOP FOR THE OS - EWK
+    // REMOVE TOP FOR THE OSWW or ZW - EWK
 
     bool foundTop = false;
 
-    if(checkSignalLabel(label)) {
+    if(label.find("WPJJWMJJjj_EWK") !=string::npos ||
+       label.find("ZNuNuWPMJJjj_EWK") !=string::npos ||
+       label.find("ZBBWPMJJjj_EWK") !=string::npos ) {
+
         for(Int_t i = 0; i < e->NGenPar(); i++){
             GenParticle *genpar = e->GetGenParticle(i);
             //        if( ! genpar->IsLHE()) continue;
@@ -3073,26 +3128,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if (year==2016) passtriggerHad = e->IsTriggered("HLT_PFHT900")
                         || e->IsTriggered("HLT_AK8PFJet450")
                         || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50")
-                        || e->IsTriggered("HLT_AK8PFJet360_TrimMass30")
                         || e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30")
                         || e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5")
+                        || e->IsTriggered("HLT_AK8PFJet360_TrimMass30")
                         || e->IsTriggered("HLT_PFJet450");
 
-    if (year==2017) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
-                        || e->IsTriggered("HLT_AK8PFJet500") 
-                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
-                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
-                        || e->IsTriggered("HLT_PFJet500");
-
-    if (year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
-                        || e->IsTriggered("HLT_AK8PFJet500")
-                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
-                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30") 
-                        || e->IsTriggered("HLT_PFJet500");
-
-
+    if (year==2017 or year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
+                                      || e->IsTriggered("HLT_AK8PFJet500")
+                                      || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
+                                      || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
+                                      || e->IsTriggered("HLT_PFJet500");
     /*
-    
       2017 - JetHT 
       HLT_DiPFJetAve160_HFJEC
       HLT_DiPFJetAve300_HFJEC 
@@ -3221,7 +3267,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if (VERBOSE and doMETAnalysis)Log(__FUNCTION__,"DEBUG",Form("MinDphi %f (0.4-2.74)",minDPhi ));
 
     if ( doMETAnalysis and minDPhi<0.4) return EVENT_NOT_USED;
-    if ( doMETAnalysis and minDPhi!=999 and TMath::Pi()-minDPhi<0.4) return EVENT_NOT_USED;
+    // to check if this anti-aligned is still needed for the generic jet, probably not on the resonant
+    //    if ( doMETAnalysis and minDPhi!=999 and (TMath::Pi()-minDPhi)<0.4) return EVENT_NOT_USED;
+    if ( doMETAnalysis and badHFjetVeto) return EVENT_NOT_USED;
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 5, e->weight() );  //5--vetoB+dPhiMET
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 5, 1 );
@@ -3726,7 +3774,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     VVRestObj(e);
     ///////////////////////////////////
 
-
     //////
     //$$$ CUT FLOW
     //////
@@ -3763,16 +3810,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/Baseline/NJet_" +label, systname, forwardJets.size(), e->weight() );
 
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
+    if( forwardJets[0]->Eta() * forwardJets[1]->Eta() >=0 ) return EVENT_NOT_USED;
 
     //    if(doTrigger) studyTriggers(e, category, label, systname);
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 7, e->weight() );  //7--NJet cut
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 7, e->weight() );  //7--NJet cut opposite side
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 7, 1 );
-
-    if( forwardJets[0]->Eta() * forwardJets[1]->Eta() >=0 ) return EVENT_NOT_USED;
-
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 8, e->weight() );  //8--JetOpposite
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 8, 1 );
 
     evt_Detajj = fabs(forwardJets[0]->DeltaEta(forwardJets[1]));
 
@@ -3781,8 +3824,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( evt_Detajj < dEtaCut ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 9, e->weight() );  //9--DeltaEta cut
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 9, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 8, e->weight() );  //8--DeltaEta cut
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 8, 1 );
 
     p4jj = forwardJets[0]->GetP4() + forwardJets[1]->GetP4();
 
@@ -3792,8 +3835,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( evt_Mjj < 500 ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--InvMjet cut
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 10, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 9, e->weight() ); //9--InvMjet cut
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 9, 1 );
 
     //////
     //$$$ VARIOUS plots below for tree
@@ -3826,8 +3869,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(!doResonant and !centrality1) return EVENT_NOT_USED;
     }
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 11, e->weight() ); //11--centrality
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 11, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--centrality
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 10, 1 );
 
     if(!doMETAnalysis) {
 
@@ -3842,16 +3885,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if( !doResonant and evt_cenEta < 0. ) return EVENT_NOT_USED;
     }
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--centrality
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 11, e->weight() ); //11--centrality
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 11, 1 );
 
 
     if(doHADAnalysis or doHADAntiAnalysis) { if(evt_PTV1<350 && evt_PTV2<300) return EVENT_NOT_USED; }
     else if(category.find("RBtag")   !=string::npos) { if(evt_PTV1<300) return EVENT_NOT_USED; }
 
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 13, e->weight() ); //13--V pt
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 13, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--V pt
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
 
 
     if(selectedFatZbb.size()>0) {
@@ -3880,8 +3923,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         ) and
        (!doResonant and evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 14, e->weight() ); //14--normPtVV
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 14, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 13, e->weight() ); //13--normPtVV
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 13, 1 );
 
     std::vector<TLorentzVector> oP4;
     oP4.push_back(p4VV);

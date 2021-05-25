@@ -60,11 +60,12 @@ public:
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
     bool doHADAnalysis=false;
+    //
     bool doMETAntiAnalysis=false;
     bool doBAntiAnalysis=false;
     bool doHADAntiAnalysis=false;
-
-    bool doSideBand = true;
+    //
+    bool doSideBand = false;
     
     bool doResonant = false;
 
@@ -104,6 +105,7 @@ private:
     bool V2isZbb=false;
 
     float minDPhi=999.;
+    bool badHFjetVeto = false;
 
     // selected Objects
     vector<Jet*> selectedJets;

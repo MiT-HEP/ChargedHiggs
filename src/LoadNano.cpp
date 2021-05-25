@@ -63,97 +63,67 @@ int LoadNano::FillEvent(){
 #warning Check met filter recommendation
         //event_->met_->filterbadPFMuon =  // now everything in full recommendation
         //event_->met_->filterbadChHadrons = 
-        event_->met_ . setFullRecommendation(nano->Flag_METFilters);//??
-        //if (year == 2016){
-        //event_->met_. setFullRecommendation(
-        //            nano->Flag_HBHENoiseFilter and
-        //            nano->Flag_HBHENoiseIsoFilter and
+	//        event_->met_ . setFullRecommendation(nano->Flag_METFilters);//??
+        if (year == 2016){
+        event_->met_. setFullRecommendation(
+		      nano->Flag_HBHENoiseFilter and
+		      nano->Flag_HBHENoiseIsoFilter and
         //            //nano->Flag_CSCTightHaloFilter and
         //            //nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
         //            //nano->Flag_CSCTightHalo2015Filter and
         //            //nano->Flag_globalTightHalo2016Filter and
-        //            nano->Flag_globalSuperTightHalo2016Filter and
+		      nano->Flag_globalSuperTightHalo2016Filter and
         //            //nano->Flag_HcalStripHaloFilter and
         //            //nano->Flag_hcalLaserEventFilter and
-        //            nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
+		      nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
         //            //nano->Flag_EcalDeadCellBoundaryEnergyFilter and
-        //            //nano->Flag_ecalBadCalibFilter and
-        //            nano->Flag_goodVertices and
-        //            //nano->Flag_eeBadScFilter and
+	//	      //nano->Flag_ecalBadCalibFilter and
+		      nano->Flag_goodVertices and
+		      nano->Flag_eeBadScFilter and
         //            //nano->Flag_ecalLaserCorrFilter and
         //            //nano->Flag_trkPOGFilters and
         //            //nano->Flag_chargedHadronTrackResolutionFilter and
         //            //nano->Flag_muonBadTrackFilter and
         //            //nano->Flag_BadChargedCandidateFilter and
-        //            nano->Flag_BadPFMuonFilter 
+		      nano->Flag_BadPFMuonFilter
         //            //nano->Flag_BadChargedCandidateSummer16Filter and
         //            //nano->Flag_BadPFMuonSummer16Filter and
         //            //nano->Flag_trkPOG_manystripclus53X and
         //            //nano->Flag_trkPOG_toomanystripclus53X and
         //            //nano->Flag_trkPOG_logErrorTooManyClusters and
         //            //nano->Flag_METFilters
-        //        );
-        //}
-        //if (year == 2017){
-        //event_->met_. setFullRecommendation(
-        //            nano->Flag_HBHENoiseFilter and
-        //            nano->Flag_HBHENoiseIsoFilter and
+					    );
+	}
+	if (year == 2017 or year == 2018){
+	  event_->met_. setFullRecommendation(
+		      nano->Flag_HBHENoiseFilter and
+		      nano->Flag_HBHENoiseIsoFilter and
         //            //nano->Flag_CSCTightHaloFilter and
         //            //nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
         //            //nano->Flag_CSCTightHalo2015Filter and
         //            //nano->Flag_globalTightHalo2016Filter and
-        //            nano->Flag_globalSuperTightHalo2016Filter and
+		      nano->Flag_globalSuperTightHalo2016Filter and
         //            //nano->Flag_HcalStripHaloFilter and
         //            //nano->Flag_hcalLaserEventFilter and
-        //            nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
+		      nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
         //            //nano->Flag_EcalDeadCellBoundaryEnergyFilter and
-        //            nano->Flag_ecalBadCalibFilter and
-        //            nano->Flag_goodVertices and
-        //            //nano->Flag_eeBadScFilter and
+		      nano->Flag_ecalBadCalibFilter and
+		      nano->Flag_goodVertices and
+		      nano->Flag_eeBadScFilter and
         //            //nano->Flag_ecalLaserCorrFilter and
         //            //nano->Flag_trkPOGFilters and
         //            //nano->Flag_chargedHadronTrackResolutionFilter and
         //            //nano->Flag_muonBadTrackFilter and
         //            //nano->Flag_BadChargedCandidateFilter and
-        //            nano->Flag_BadPFMuonFilter 
+		      nano->Flag_BadPFMuonFilter
         //            //nano->Flag_BadChargedCandidateSummer16Filter and
         //            //nano->Flag_BadPFMuonSummer16Filter and
         //            //nano->Flag_trkPOG_manystripclus53X and
         //            //nano->Flag_trkPOG_toomanystripclus53X and
         //            //nano->Flag_trkPOG_logErrorTooManyClusters and
         //            //nano->Flag_METFilters
-        //        );
-        //}
-        //if (year == 2018){
-        //event_->met_. setFullRecommendation(
-        //            nano->Flag_HBHENoiseFilter and
-        //            nano->Flag_HBHENoiseIsoFilter and
-        //            //nano->Flag_CSCTightHaloFilter and
-        //            //nano->Flag_CSCTightHaloTrkMuUnvetoFilter and
-        //            //nano->Flag_CSCTightHalo2015Filter and
-        //            //nano->Flag_globalTightHalo2016Filter and
-        //            nano->Flag_globalSuperTightHalo2016Filter and
-        //            //nano->Flag_HcalStripHaloFilter and
-        //            //nano->Flag_hcalLaserEventFilter and
-        //            nano->Flag_EcalDeadCellTriggerPrimitiveFilter and
-        //            //nano->Flag_EcalDeadCellBoundaryEnergyFilter and
-        //            nano->Flag_ecalBadCalibFilter and
-        //            nano->Flag_goodVertices and
-        //            //nano->Flag_eeBadScFilter and
-        //            //nano->Flag_ecalLaserCorrFilter and
-        //            //nano->Flag_trkPOGFilters and
-        //            //nano->Flag_chargedHadronTrackResolutionFilter and
-        //            //nano->Flag_muonBadTrackFilter and
-        //            //nano->Flag_BadChargedCandidateFilter and
-        //            nano->Flag_BadPFMuonFilter 
-        //            //nano->Flag_BadChargedCandidateSummer16Filter and
-        //            //nano->Flag_BadPFMuonSummer16Filter and
-        //            //nano->Flag_trkPOG_manystripclus53X and
-        //            //nano->Flag_trkPOG_toomanystripclus53X and
-        //            //nano->Flag_trkPOG_logErrorTooManyClusters and
-        //            //nano->Flag_METFilters
-        //        );
-        //}
+					      );
+        }
     }
 
     // puppi met
@@ -226,7 +196,7 @@ int LoadNano::FillEvent(){
         l->SetDxy(nano->Muon_dxy[i]);
 
         TLorentzVector fsrP4(0,0,0,0);
-        for(int k=0;k<=nano->nFsrPhoton;++k)
+        for(int k=0;k<nano->nFsrPhoton;++k)
         {
             if ( i!=nano->FsrPhoton_muonIdx[k]) continue; //not this muon
             double fsrDrEt2Cut = 0.012;
@@ -259,9 +229,9 @@ int LoadNano::FillEvent(){
         l->SetMiniIso(nano->Electron_miniPFRelIso_all[i]);
         l->SetIso(nano->Electron_pfRelIso03_all[i]*nano->Electron_pt[i]);
         l->SetCharge( nano->Electron_charge[i]);
-        l->SetTightId( nano->Electron_mvaFall17V1noIso_WP80[i]);
-        l->SetMediumId( nano->Electron_mvaFall17V1noIso_WP90[i]);
-        l->SetLooseId( nano->Electron_mvaFall17V1Iso_WPL[i]); 
+        l->SetTightId( nano->Electron_mvaFall17V2noIso_WP80[i]);
+        l->SetMediumId( nano->Electron_mvaFall17V2noIso_WP90[i]);
+        l->SetLooseId( nano->Electron_mvaFall17V2noIso_WPL[i]);
 
         l->SetR9(nano->Electron_r9[i]);
         l->SetSieie(nano->Electron_sieie[i]);
@@ -285,7 +255,7 @@ int LoadNano::FillEvent(){
    // Fill Jets
    for(int i=0;i<nano->nJet;++i)
    {
-        bool id =  nano->Jet_jetId[i];
+        bool id = (nano->Jet_jetId[i] & 2) ; // TIGHT - RUN2ULCHS
         if (not id) continue;
         Jet *j = new Jet() ;
         TLorentzVector p4;
@@ -310,6 +280,11 @@ int LoadNano::FillEvent(){
         j->SetDeepC ( nano->Jet_btagDeepC[i] );
 	// temporary, there are many nan in v8
 	j->SetQGL(std::isnan(nano->Jet_qgl[i])? 0.8 : nano->Jet_qgl[i]);
+
+	j->SetHFaEtaEtaStripSize(nano->Jet_hfadjacentEtaStripsSize[i]);
+	j->SetHFcEtaEtaStripSize(nano->Jet_hfcentralEtaStripSize[i]);
+	j->SetHFsigmaEtaEta(nano->Jet_hfsigmaEtaEta[i]);
+	j->SetHFsigmaPhiPhi(nano->Jet_hfsigmaPhiPhi[i]);
 
         //j->SetPuId(nano->Jet_puId[i]); //80X flags
         j->SetPuId(nano->Jet_puIdDisc[i]);//91x discr
@@ -338,7 +313,7 @@ int LoadNano::FillEvent(){
    //Fill Fatjets
    for(int i=0;i<nano->nFatJet;++i)
    {
-       bool id =  (nano->FatJet_jetId[i] & 2);
+       bool id =  (nano->FatJet_jetId[i] & 2); // TIGHT - RUN2ULPUPPI
        if (not id) continue;
 
        FatJet *j = new FatJet() ;
@@ -367,6 +342,8 @@ int LoadNano::FillEvent(){
            j->nSubjets+=1;
            j->subjet_btag= nano->SubJet_btagCSVV2[idx];
            j->subjet_btagdeep= nano->SubJet_btagDeepB[idx];
+	   TLorentzVector p4; p4.SetPtEtaPhiM(nano->SubJet_pt[idx],nano->SubJet_eta[idx],nano->SubJet_phi[idx],nano->SubJet_mass[idx]) ;
+	   j->subjet_lead_p4 = p4;
        }
 
        idx=nano->FatJet_subJetIdx2[i];
@@ -374,6 +351,9 @@ int LoadNano::FillEvent(){
            j->nSubjets+=1;
            j->subjet_btag= std::max(nano->SubJet_btagCSVV2[idx],j->subjet_btag);
            j->subjet_btagdeep= std::max(nano->SubJet_btagDeepB[idx],j->subjet_btagdeep);
+
+	   TLorentzVector p4; p4.SetPtEtaPhiM(nano->SubJet_pt[idx],nano->SubJet_eta[idx],nano->SubJet_phi[idx],nano->SubJet_mass[idx]) ;
+	   j->subjet_sublead_p4 = p4;
        }
 
        event_ -> fat_ . push_back(j);
@@ -403,7 +383,7 @@ int LoadNano::FillEvent(){
        t -> SetP4( p4);
        t -> SetType( 15 );
        t -> SetCharge( nano->Tau_charge[i] );
-       t -> SetId ( nano->Tau_idDecayModeNewDMs[i]) ;
+       t -> SetId ( nano->Tau_idDeepTau2017v2p1VSjet[i] ) ; // this is in the or with DecayModeNewDMs
         // probably not DB corrected: TOCHECK
        t -> SetIso2( nano->Tau_chargedIso[i]+nano->Tau_neutralIso[i]);
        t -> SetIdEle (nano->Tau_idAntiEle[i]); //2018? FIXME
@@ -415,7 +395,7 @@ int LoadNano::FillEvent(){
 	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Photons");
 #endif
    //Fill Photons
-   for (int i=0;i<=nano->nPhoton;++i)
+   for (int i=0;i<nano->nPhoton;++i)
    {
         // electron veto
         if (not nano->Photon_electronVeto[i]) continue;
