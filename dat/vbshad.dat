@@ -165,7 +165,8 @@ addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnnc
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnnmulticlass_BDTG.weights.xml")
 
 # Multiclass - RBtag (EWK vs QCD WZ) DNN
-addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_RBTag_Multi_DNN.weights.xml")
+#addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_RBTag_Multi_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_BHAD_Multi_DNN.weights_1.xml")
 
 ## Res DNN tagger
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l5_AllGoodVBad_RBTA_ActFuncTRS_DNN.weights.xml")
