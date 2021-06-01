@@ -213,7 +213,7 @@ private:
     vector<TMVA::Reader*> readers_dnn_;
 
     void InitTmva();
-    void ReadTmva();
+    void ReadTmva(Event*e);
 
     /**********************************
      *          SCIKIT                *
