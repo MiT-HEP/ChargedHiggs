@@ -1134,6 +1134,9 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_lowDiff_"+l, "SDMass_FatJet (low diff); SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_largeDiff_"+l, "SDMass_FatJet (large diff); SDMass [GeV]; Events", 100,0,200.);
 
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJet_"+l, "SDMass_FatJet; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/FatJetsMass_FatJet_"+l, "SDMass_FatJet; FatJet Mass [GeV]; Events", 100,0,200.);
+
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJet_"+l, "ZHbbvsQCD_FatJet; ZHbbvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_"+l, "ZHbbvsQCD_FatJetFake; ZHbbvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/WvsQCD_FatJet_"+l, "WvsQCD_FatJet; WvsQCD; Events", 50,0,1.0);
@@ -1152,8 +1155,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_barrel_"+l, "SDMass_FatJetFake (barrel); SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_endcap_"+l, "SDMass_FatJetFake (endcap); SDMass [GeV]; Events", 100,0,200.);
 
-        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
-        Book ("VBShadAnalysis/Baseline/FatJetsMass_FatJetFake_"+l, "SDMass_FatJetFake; SDMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJetFake_"+l, "SDMass_FatJetFake; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/FatJetsMass_FatJetFake_"+l, "SDMass_FatJetFake; FatJet Mass [GeV]; Events", 100,0,200.);
 
         Book ("VBShadAnalysis/Baseline/NSubJets_FatJetFake_"+l, "NSubJets; NSubJets; Events", 5,0,5);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_lowDiff_"+l, "SDMass_FatJetFake (low diff); SDMass [GeV]; Events", 100,0,200.);
@@ -2228,6 +2231,10 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
                 double WvsT = f->WvsQCD()/ (f->WvsQCD() + f->TvsQCD());
                 Fill("VBShadAnalysis/Baseline/WvsT_FatJet_" +label, systname, WvsT, e->weight() );
             }
+            float massRaw = (f->subjet_lead_p4 + f->subjet_sublead_p4).M();
+            Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJet_" +label, systname, massRaw , e->weight() );
+            Fill("VBShadAnalysis/Baseline/FatJetsMass_FatJet_" +label, systname, f->M() , e->weight() );
+
             //            if(topology==1) Fill("VBShadAnalysis/Baseline/pT_FatJet_BB_" +label, systname, f->Pt(), e->weight() );
             //            if(topology==2) Fill("VBShadAnalysis/Baseline/pT_FatJet_RB_" +label, systname, f->Pt(), e->weight() );
             //            if(topology==0) Fill("VBShadAnalysis/Baseline/pT_FatJet_RR_" +label, systname, f->Pt(), e->weight() );
@@ -2288,14 +2295,18 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             if (f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJet(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJet=true;
             if (f->IsWJetOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetOut(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25))) isWJetOut = true;
             if (f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetWide(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJetWide = true;
-            if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJetMirror=true;
+            if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 )) isWJetMirror=true;
         }
 
+
         if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
-            if ( f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJet=true;
+            if ( f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 )) isWJet=true;
+            /* // these might be needed to get the D for validation
             if ( f->IsWJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJetOut=true;
             if (isWJet or isWJetOut) isWJetWide = true;
             //Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
+            */
+            // regions B is excusive with A+C 
             if ( f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) ) isWJetMirror=true;
         }
 
@@ -2316,6 +2327,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if( (!doSideBand and isWJet) or (doSideBand and isWJetWide) ) {
             //if(!doMETAnalysis and !doResonant and isZbbJet) continue;  //avoid selectedFatZbb except resonant; 
+            // MARIA: the condition above we might need to add back
             //remove exceptions, as later in the category selection, already consider separately when Zbb>0 or fat>0, no need to count Zbb in fat TODO: to be condirmed with the resonant case 
             if(isZbbJet) continue;
             selectedFatJets.push_back(f);
@@ -2328,9 +2340,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         }
 
-        if(isWJetWide and not isZbbJet) selectedFatJetsWide.push_back(f);
         if(isWJet and not isZbbJet) selectedFatJetsIn.push_back(f);
-        if(isWJetOut and not isZbbJet) selectedFatJetsOut.push_back(f);
+        //        if(isWJetWide and not isZbbJet) selectedFatJetsWide.push_back(f);
+        if(isWJetOut and not isZbbJet) selectedFatJetsOut.push_back(f); //selectedFatJetsOut used for veto in the resolved
         if(isWJetMirror and not isZbbJet) selectedMirrorFatJets.push_back(f);
     }
 
@@ -2907,7 +2919,7 @@ void VBShadAnalysis::reset() // reset private members
 {
     selectedJets.clear();
     selectedFatJets.clear();
-    selectedFatJetsWide.clear();
+    //    selectedFatJetsWide.clear();
     selectedFatJetsIn.clear();
     selectedFatJetsOut.clear();
     selectedMirrorFatJets.clear();
@@ -3302,6 +3314,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         //50|---C---|---A---|---C---|155//
         //////////////////////////////////
 
+        // MARIA BB
         bool condition1_AvsC = doSideBand ? selectedFatJetsIn.size()<2 : selectedFatJetsIn.size()>1;
         bool condition2_AvsB = doHADAntiAnalysis ? selectedMirrorFatJets.size()<2 : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, < 2 to be inclusive with SR
 
@@ -3395,6 +3408,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         bool condition1_AvsC = doSideBand ? selectedFatJetsIn.size()==0 : selectedFatJetsIn.size()>0;
         bool condition2_AvsB = doBAntiAnalysis ? selectedMirrorFatJets.size()==0 : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
 
+        //MARIA BBtag
         if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
             category="_BBtag";
             // add cases with two Zbb Zbb most pures only for nonresonant
@@ -3801,7 +3815,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         e->ApplySF(sfname);
     }
 
-
     if(checkSignalLabel(label) and evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 6, e->weight() );  //6--InvMFatjet cut
@@ -3888,14 +3901,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 11, e->weight() ); //11--centrality
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 11, 1 );
 
-
     if(doHADAnalysis or doHADAntiAnalysis) { if(evt_PTV1<350 && evt_PTV2<300) return EVENT_NOT_USED; }
     else if(category.find("RBtag")   !=string::npos) { if(evt_PTV1<300) return EVENT_NOT_USED; }
 
-
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--V pt
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
-
 
     if(selectedFatZbb.size()>0) {
         evt_zepVB = fabs(selectedFatZbb[0]->Eta() - averageJJeta)/fabs(evt_Detajj);
