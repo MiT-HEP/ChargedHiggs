@@ -12,3 +12,7 @@ nvtx2018 tf1 0.812887+0.0136629*x-0.000938635*x*x+3.59058e-05*x*x*x-1.16732e-06*
 ####################
 include aux/QCDNonclosureBB.txt
 include aux/QCDNonclosureBBtag.txt
+
+#bdeep2016 csv aux/BTag/DeepCSV_2016LegacySF_V1.csv
+#bdeep2017 csv aux/BTag/DeepCSV_106XUL17SF_V2.csv
+#bdeep2018 csv aux/BTag/DeepCSV_106XUL18SF.csv
