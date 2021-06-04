@@ -3085,15 +3085,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$ Merge and redefine TTbar
     //$$$$$$$$$
 
-    if((label.find("TTTo2L2Nu") !=string::npos) 
-       or (label.find("TTToSemiLeptonic") !=string::npos)
-       or (label.find("TTToHadronic") !=string::npos)
-       or (label.find("TT_Mtt") !=string::npos) ) {
-        float Mtt = genMtt(e);
-        Fill("VBShadAnalysis/GENERAL/Mtt_" +label, systname, Mtt, e->weight() );
-    }
-
-    /* // comment for now; need to evaluate the final sample statistics 
+    // comment for now; need to evaluate the final sample statistics
 
     if (not e->IsRealData() and (
         (label.find("TTTo2L2Nu") !=string::npos) or
@@ -3101,13 +3093,22 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         (label.find("TTToHadronic") !=string::npos))
         and not e->ApplyMttReweight()) return EVENT_NOT_USED;
 
+    if((label.find("TTTo2L2Nu") !=string::npos)
+       or (label.find("TTToSemiLeptonic") !=string::npos)
+       or (label.find("TTToHadronic") !=string::npos)
+       or (label.find("TT_Mtt") !=string::npos)) {
+        float Mtt = genMtt(e);
+        Fill("VBShadAnalysis/GENERAL/Mtt_" +label, systname, Mtt, e->weight() );
+    }
+
     if ( label.find("TT_Mtt-1000toInf_TuneCP5") !=string::npos) label = "TT_TuneCP5";
     if ( label.find("TT_Mtt-700to1000_TuneCP5") !=string::npos) label = "TT_TuneCP5";
 
     if ( label.find("TTTo2L2Nu") !=string::npos) label = "TT_TuneCP5";
     if ( label.find("TTToSemiLeptonic") !=string::npos) label = "TT_TuneCP5";
     if ( label.find("TTToHadronic") !=string::npos) label = "TT_TuneCP5";
-    */
+
+    Fill("VBShadAnalysis/GENERAL/Mtt_" +label, systname, genMtt(e) , e->weight() );
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Final label is: " + label);
     //$$$$$$$$$
@@ -3117,7 +3118,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     genStudies(e, label );
 
     // REMOVE TOP FOR THE OSWW or ZW - EWK
-
     bool foundTop = false;
 
     if(label.find("WPJJWMJJjj_EWK") !=string::npos ||
@@ -3134,6 +3134,21 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GenStudies. Done " );
+    //$$$$$$$$$
+    //$$$$$$$$$
+    //$$$$$$$$$ Apply SF b-tag
+    //$$$$$$$$$
+    //$$$$$$$$$
+
+    /*
+    double btagsf=1;
+    if (true) // CSV-SF for passing loose,medium or tigth cuts
+        {
+            btagsf=e->ApplyBTagSF(3,year); //0 loose, 1 medium, 2 tight, 3 reshaping
+            Log(__FUNCTION__,"DEBUG",Form("BTag SF is %lf",btagsf));
+        }
+    */
+
     //$$$$$$$$$
     //$$$$$$$$$
     //$$$$$$$$$ Build cutflow
@@ -3811,7 +3826,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if((category.find("RBtag")   !=string::npos ) or (category.find("RMET")   !=string::npos )) MVV_cut=400;
 
     if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
-
 
     //unc on mvv, use 'Smear=@SmearSF("QCDNonclosure_CAT"!"QCD_MVV_CAT_Nonclosure")' to run, where CAT = BB or BBtag
     //
