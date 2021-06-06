@@ -1142,14 +1142,31 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/pT_FatJet_BB_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RB_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RR_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
+        Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
+
+        // mass studies
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_"+l, "SDMass_FatJet; SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatZbbJet_"+l, "SDMass_FatZbbJet; SDMass [GeV]; Events", 100,0,200.);
-        Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_lowDiff_"+l, "SDMass_FatJet (low diff); SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_largeDiff_"+l, "SDMass_FatJet (large diff); SDMass [GeV]; Events", 100,0,200.);
 
-        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJet_"+l, "SDMass_FatJet; SubJet Mass [GeV]; Events", 100,0,200.);
-        Book ("VBShadAnalysis/Baseline/FatJetsMass_FatJet_"+l, "SDMass_FatJet; FatJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJet_"+l, "SubJetsMass_FatJet; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/FatJetsMass_FatJet_"+l, "FatJetsMass_FatJet; FatJet Mass [GeV]; Events", 100,0,200.);
+
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJet_barrel_bin1_"+l, "SubJetsMass_FatJet barrel_bin1 ; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_barrel_bin1_"+l, "SDMass_FatJet barrel_bin1; FatJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJet_barrel_bin2_"+l, "SubJetsMass_FatJet barrel_bin2; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_barrel_bin2_"+l, "SDMass_FatJet barrel_bin2; FatJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJet_barrel_bin3_"+l, "SubJetsMass_FatJet barrel_bin3; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_barrel_bin3_"+l, "SDMass_FatJet barrel_bin3; FatJet Mass [GeV]; Events", 100,0,200.);
+
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJet_endcap_bin1_"+l, "SubJetsMass_FatJet endcap_bin1; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_endcap_bin1_"+l, "SDMass_FatJet endcap_bin1; FatJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJet_endcap_bin2_"+l, "SubJetsMass_FatJet endcap_bin2; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_endcap_bin2_"+l, "SDMass_FatJet endcap_bin2; FatJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass_FatJet_endcap_bin3_"+l, "SubJetsMass_FatJet endcap_bin3; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SDMass_FatJet_endcap_bin3_"+l, "SDMass_FatJet endcap_bin3; FatJet Mass [GeV]; Events", 100,0,200.);
+        //
 
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJet_"+l, "ZHbbvsQCD_FatJet; ZHbbvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_"+l, "ZHbbvsQCD_FatJetFake; ZHbbvsQCD; Events", 50,0,1.0);
@@ -2249,6 +2266,30 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJet_" +label, systname, massRaw , e->weight() );
             Fill("VBShadAnalysis/Baseline/FatJetsMass_FatJet_" +label, systname, f->M() , e->weight() );
 
+            if(fabs(f->Eta()) < 1.3) {
+
+                if(f->Pt()<400) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_barrel_bin1_" +label, systname, f->SDMass(), e->weight() );
+                if(f->Pt()<400) Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJet_barrel_bin1_" +label, systname, massRaw , e->weight() );
+
+                if(f->Pt()<600 and f->Pt()>=400) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_barrel_bin2_" +label, systname, f->SDMass(), e->weight() );
+                if(f->Pt()<600 and f->Pt()>=400) Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJet_barrel_bin2_" +label, systname, massRaw , e->weight() );
+
+                if(f->Pt()>600) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_barrel_bin3_" +label, systname, f->SDMass(), e->weight() );
+                if(f->Pt()>600) Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJet_barrel_bin3_" +label, systname, massRaw , e->weight() );
+
+            } else {
+
+                if(f->Pt()<400) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_endcap_bin1_" +label, systname, f->SDMass(), e->weight() );
+                if(f->Pt()<400) Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJet_endcap_bin1_" +label, systname, massRaw , e->weight() );
+
+                if(f->Pt()<600 and f->Pt()>=400) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_endcap_bin2_" +label, systname, f->SDMass(), e->weight() );
+                if(f->Pt()<600 and f->Pt()>=400) Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJet_endcap_bin2_" +label, systname, massRaw , e->weight() );
+
+                if(f->Pt()>600) Fill("VBShadAnalysis/Baseline/SDMass_FatJet_endcap_bin3_" +label, systname, f->SDMass(), e->weight() );
+                if(f->Pt()>600) Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJet_endcap_bin3_" +label, systname, massRaw , e->weight() );
+
+            }
+
             //            if(topology==1) Fill("VBShadAnalysis/Baseline/pT_FatJet_BB_" +label, systname, f->Pt(), e->weight() );
             //            if(topology==2) Fill("VBShadAnalysis/Baseline/pT_FatJet_RB_" +label, systname, f->Pt(), e->weight() );
             //            if(topology==0) Fill("VBShadAnalysis/Baseline/pT_FatJet_RR_" +label, systname, f->Pt(), e->weight() );
@@ -2296,7 +2337,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(isZbbJet) {
             selectedFatZbb.push_back(f);
             bosonBBDiscr.push_back(f->ZHbbvsQCD());
-            bosonBBMass.push_back(f->SDMass());
+            bosonBBMass.push_back(f->rawMass());
             bosonBBTDiscr.push_back(f->TvsQCD());
             Fill("VBShadAnalysis/Baseline/pT_FatZbbJet_" +label, systname, f->Pt(), e->weight() );
         }
@@ -2347,7 +2388,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             selectedFatJets.push_back(f);
             bosonVDiscr.push_back(f->WvsQCD());
             bosonTDiscr.push_back(f->TvsQCD());
-            bosonMass.push_back(f->SDMass());
+            bosonMass.push_back(f->rawMass());
             Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
             Fill("VBShadAnalysis/Baseline/eta_FatJet_" +label, systname, f->Eta(), e->weight() );
             Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
@@ -3635,9 +3676,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             TLorentzVector jetP4;
             //            cout << "is the selectedFatJets->SDMass() ok ?? "<< endl;
             if(selectedFatZbb.size()>0)
-                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->SDMass());
+                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass());
             else
-                jetP4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->SDMass());
+                jetP4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass());
             if(usePuppi) {
                 p4VV = (e->GetMet().GetPuppiMetP4() + jetP4);
                 evt_PTV1 = e->GetMet().GetPuppiMetP4().Pt();
