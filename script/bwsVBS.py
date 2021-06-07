@@ -212,8 +212,6 @@ class DatacardBuilder:
         if self.verbose >2: print "DEBUG","opening file:",fname
         normalization = self._get_norm(hname)
 
-        if ("ZBBWPMJJjj" in hname):
-            fname="/eos/user/h/hum/VBSHad/SigV2jes_BBtag_2016_sig.root"
         #if ("_BB_QCD_HT" in hname):
         #    fname="FinalHisto/HADanti.root"
         #    normalization = 0.0042
@@ -355,7 +353,7 @@ if __name__=="__main__":
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
     #db.add_category(opt.category,"/eos/user/h/hum/VBSHad","VBShadAnalysis/"+opt.analysisStra+"_"+opt.category,"Data",opt.input) 
-    db.add_category(opt.category,"/eos/user/h/hum/VBSHad","VBShadAnalysis/"+opt.analysisStra+"_"+opt.category,"QCD_HT",opt.input)
+    db.add_category(opt.category,"/eos/user/h/hum/VBSHad","VBShadAnalysis/"+opt.analysisStra+"_"+opt.category,"Data",opt.input)
 
     ## set bkg processes
     #db.add_process('top',False,['TT_TuneCUETP8M2T4','ST','TTX','TTJets'],[opt.category])
@@ -391,7 +389,7 @@ if __name__=="__main__":
     if ("BB" in opt.category) and ("Btag" not in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
     elif ("BBtag" in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)
     db.add_systematics('CMS_pileUp','PU','shape',('.*','.*'),1.)
-    #db.add_systematics('CMS_scale_j','JES_Total','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_scale_j','JES_Total','shape',('.*','.*'),1.)
     ## break down JES sources
     #db.add_systematics('jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)
     #db.add_systematics('jes_RelativeBal','JES_RelativeBal','shape',('.*','.*'),1.)
@@ -405,8 +403,8 @@ if __name__=="__main__":
     ###            WRITE               ###
     ######################################
 
-    db.write_cards('Datacards/NanoV2SDcorr/cms_vbshad_'+str(opt.year)+'_'+opt.analysisStra+'_'+opt.category+'.txt')
-    db.write_inputs('Datacards/NanoV2SDcorr/cms_vbshad_'+str(opt.year)+'_'+opt.analysisStra+'_'+opt.category+'.txt')
+    db.write_cards('cms_vbshad_'+str(opt.year)+'_'+opt.analysisStra+'_'+opt.category+'.txt')
+    db.write_inputs('cms_vbshad_'+str(opt.year)+'_'+opt.analysisStra+'_'+opt.category+'.txt')
 
 
 
