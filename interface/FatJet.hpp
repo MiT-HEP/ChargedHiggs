@@ -130,7 +130,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
 
     inline float rawMass() const {
         float massRaw = (subjet_lead_p4 + subjet_sublead_p4).M();
-        if(fabs(Eta()) > 1.3 )  massRaw = massRaw - 5.;
+        if(fabs(Eta()) > 1.3 )  massRaw = massRaw + 5.;
         return massRaw;
     }
 
