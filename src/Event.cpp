@@ -642,10 +642,12 @@ bool Event::ApplyMttReweight(){
 
     bool keepEvent=true;
 
+    /*
     if( GetWeight() -> GetMC() . find("TTTo") == string::npos)
         { // not ttbar sample
             return keepEvent;
         }
+    */
 
     /*
     if (not ExistSF("Mttreweight") )

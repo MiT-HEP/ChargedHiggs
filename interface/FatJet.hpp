@@ -107,7 +107,7 @@ class FatJet : virtual public Object, virtual public SmearableBase
     //    inline float SDTau2() const { return sdtau2 ; }
     //    inline float SDTau3() const { return sdtau3 ; }
 
-    inline float SDMass() const { return softdropMass ; }
+    inline float SDMass() const { return softdropMass; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
 
     inline int IsSubjetBTag() const { return 0 ; } // FIXME
@@ -128,26 +128,32 @@ class FatJet : virtual public Object, virtual public SmearableBase
         return IsJetExceptValidity();
     }
 
+    inline float rawMass() const {
+        float massRaw = (subjet_lead_p4 + subjet_sublead_p4).M();
+        if(fabs(Eta()) > 1.3 )  massRaw = massRaw + 5.;
+        return massRaw;
+    }
+
     // for VBS
     //    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.6 and IsFatJet() )   return 1; return 0;}
     //    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.45 and IsFatJet() )   return 1; return 0;}
 
     // cut1_ is the 0.5% mistag, cut_2 is 1% mistag, cut_3 is 2.5% mistag
-    inline int IsWJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(SDMass()-80) < 15. and WvsQCDMD > ((Pt()<500)?cut1_:cut3_) and IsFatJet() )   return 1; return 0;}
-    inline int IsZJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(SDMass()-90) < 15. and ZvsQCDMD > ((Pt()<500)?cut1_:cut3_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass() -80) < 15. and WvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-91) < 15. and ZvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
 
-    inline int IsWJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and SDMass() < 155. and WvsQCDMD > ((Pt()<500)?cut1_:cut3_) and IsFatJet() )   return 1; return 0;}
-    inline int IsZJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and SDMass() < 155. and ZvsQCDMD > ((Pt()<500)?cut1_:cut3_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass() < 155. and WvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass() < 155. and ZvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
 
-    inline int IsWJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(SDMass()-80) > 15. and WvsQCDMD > ((Pt()<500)?cut1_:cut3_) and IsFatJet() )   return 1; return 0;}
-    inline int IsZJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(SDMass()-90) > 15. and ZvsQCDMD > ((Pt()<500)?cut1_:cut3_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) > 15. and WvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-91) > 15. and ZvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
 
     //    inline int IsWJet() const { if( Pt() > 200. and SDMass() > 65. and SDMass() < 105. and WvsQCDMD > 0.258 and IsFatJet() )   return 1; return 0;}
 
     // ZHbbvsQCDMD > 0.3 is roughly 10% mistag (0.3 0.6  0.8945)
-    inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(SDMass()-90) < 15. and ZHbbvsQCDMD > ((Pt()<500)?cut1_:cut2_) and IsFatJet() )   return 1; return 0;}
-    inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(SDMass()-80) < 15. and WvsQCDMD > 0. and WvsQCDMD < ((Pt()<500)?cut1_:cut3_)  and IsFatJet())   return 1; return 0;}
-    inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(SDMass()-80) > 15. and SDMass() < 155. and WvsQCDMD > 0. and WvsQCDMD < ((Pt()<500)?cut1_:cut3_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(rawMass()-91) < 15. and ZHbbvsQCDMD > ((Pt()<500)?cut1_:cut2_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) < 15. and WvsQCDMD > 0. and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) > 15. and rawMass() < 155. and WvsQCDMD > 0. and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
     // $$$$$$$$$$$$$$$$$$$$$$$$$$
     // $$$$$ for ChargedHiggs
