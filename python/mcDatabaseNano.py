@@ -341,6 +341,14 @@ else:
     elif 'QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia'  in opts.label: xsec = 1092.0
     elif 'QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8' in opts.label: xsec = 99.76
     elif 'QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'  in opts.label: xsec = 20.35
+    ## from https://cms-gen-dev.cern.ch/xsdb/  SUS-RunIIFall17MiniAODv2 campaign (LO from sxdb * 1.23)
+    elif 'ZJetsToNuNu_HT-100To200'   in opts.label: xsec = 372.444
+    elif 'ZJetsToNuNu_HT-200To400'   in opts.label: xsec = 113.8857
+    elif 'ZJetsToNuNu_HT-400To600'   in opts.label: xsec = 16.2114
+    elif 'ZJetsToNuNu_HT-600To800'   in opts.label: xsec = 4.00611
+    elif 'ZJetsToNuNu_HT-800To1200'  in opts.label: xsec = 1.8327
+    elif 'ZJetsToNuNu_HT-1200To2500' in opts.label: xsec = 0.420537
+    elif 'ZJetsToNuNu_HT-2500ToInf'  in opts.label: xsec = 0.00632958
     ### H-> mumu
     elif 'HToMuMu' in opts.label: xsec=1
     elif 'HToZG' in opts.label: xsec=1
@@ -365,17 +373,17 @@ else:
     elif 'ST_t-channel_top_4f' in opts.label: xsec=136.02
     elif 'ST_tW_antitop_5f' in opts.label: xsec=30.09
     elif 'ST_tW_top_5f' in opts.label: xsec=30.11
-    ### WJETS 20508.9 * 3 
-    elif 'WJetsToLNu_HT-0To70'      in opts.label: xsec=57641.658055
-    elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1695.589715
-    ## genXS Analyzer
-    elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1627.45
-    elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=435.237
-    elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=59.1811
-    elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=14.5805
-    elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=6.65621
-    elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.60809
-    elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.038914
+    ## from https://cms-gen-dev.cern.ch/xsdb/ (LO from sxdb * 1.21)
+    elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1563.32
+    elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1687.95
+    elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=493.559
+    elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=69.5508
+    elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=15.5727
+    elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=6.49286
+    elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.29954
+    elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.00968121
+#    ### WJETS 20508.9 * 3
+#    elif 'WJetsToLNu_HT-0To70'      in opts.label: xsec=57641.658055
 ##    elif 'WJets' in opts.label: xsec=61526.7
     elif 'W0' in opts.label: xsec=34273.632815
     elif 'W1' in opts.label: xsec=18455.979619

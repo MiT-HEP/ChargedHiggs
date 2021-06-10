@@ -91,6 +91,7 @@ addConfig=VBShadAnalysis|AddLabel('ZJetsToQQ')
 addConfig=VBShadAnalysis|AddLabel('WJetsToQQ')
 
 addConfig=VBShadAnalysis|AddLabel('EWKZ2Jets_ZToNuNu')
+addConfig=VBShadAnalysis|AddLabel('EWKZ2Jets_ZToLL')
 addConfig=VBShadAnalysis|AddLabel('EWK_LNuJJ_MJJ-120_13TeV')
 addConfig=VBShadAnalysis|AddLabel('EWK_LLJJ_MLL-50_MJJ-120')
 addConfig=VBShadAnalysis|AddLabel('EWKWMinus2Jets')
