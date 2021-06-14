@@ -1868,9 +1868,17 @@ bool VBShadAnalysis::genMatchResonant(Event*e, string label, string category){
             if( (fabs(genpar->GetPdgId()) == 23) and ((selectedFatZbb[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2)) match_1 = true;
             if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
         } else if ( category.find("BB")   !=string::npos ) {
+            if(label.find("ZJJZJJjj_EWK_LO") !=string::npos  ||
+               label.find("ZJJZJJjj_EWK_QCD_LO") !=string::npos  ||
+               label.find("ZJJZJJjj_QCD_LO") !=string::npos) {
+                // target ZjjZjj
+                if( (fabs(genpar->GetPdgId()) == 23) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+                if( (fabs(genpar->GetPdgId()) == 23) and (selectedFatJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+            } else {
             // target WjjWjj
-            if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
-            if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+            }
         } else if( category.find("BMET")   !=string::npos ) {
             // target WjjZnn
             if( usePuppi ) {
@@ -1879,9 +1887,9 @@ bool VBShadAnalysis::genMatchResonant(Event*e, string label, string category){
                 if((fabs(genpar->GetPdgId()) == 23) and (e->GetMet().GetP4()).DeltaPhi(genpar->GetP4()) < 0.2 ) match_1 = true;
             }
             if(selectedFatZbb.size()>0) {
-                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatZbb[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatZbb[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
             } else {
-                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
             }
         }
     }
@@ -3086,7 +3094,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     string label = GetLabel(e);
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
-    if( label == "QCD_HT" ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
+    if( label == "QCD_HT" or
+        label == "ZJetsToNuNu" or label == "WJetsToLNu" or
+        label == "ZJetsToQQ" or label == "WJetsToQQ"
+        ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
+
+    if ( label.find("EWKZ2Jets_ZToNuNu") !=string::npos) label = "ZJetsToNuNu";
+    //    if ( label == "EWK_LNuJJ_MJJ-120") label = "WJetsToLNu";
+    if ( label.find("EWKZ2Jets_ZToLL") !=string::npos) label = "DY";
+    if ( label.find("EWKWMinus2Jets") !=string::npos) label = "WJetsToLNu";
+    if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
 
     /*
     // redefine labels
@@ -3158,6 +3175,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     genStudies(e, label );
 
+    /*
     // REMOVE TOP FOR THE OSWW or ZW - EWK
     bool foundTop = false;
 
@@ -3173,6 +3191,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if (foundTop) return EVENT_NOT_USED;
     }
+    */
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","GenStudies. Done " );
     //$$$$$$$$$
