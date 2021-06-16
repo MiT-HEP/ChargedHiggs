@@ -118,6 +118,7 @@ private:
 
     vector<float> bosonVDiscr;
     vector<float> bosonTDiscr;
+    vector<float> bosonBDiscr;
     vector<float> bosonMass;
     vector<float> bosonBBDiscr;
     vector<float> bosonBBMass;
@@ -166,10 +167,12 @@ private:
     float evt_bosV1mass=-1;
     float evt_bosV1discr=-1;
     float evt_bosV1tdiscr=-1;
+    float evt_bosV1bdiscr=-1;
     float evt_bosV1unc = 0;
     float evt_bosV2mass=-1;
     float evt_bosV2discr=-1;
     float evt_bosV2tdiscr=-1;
+    float evt_bosV2bdiscr=-1;
     float evt_bosV2discr2nd=-1;
     float evt_bosV2unc = 0;
     float evt_chi2_= -1;
