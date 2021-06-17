@@ -1775,8 +1775,8 @@ bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
 
         //if( fabs(genpar->GetParentPdgId())!= 23 && fabs(genpar->GetParentPdgId())!= 24 ) continue;
 
-        if(fabs(genpar->GetPdgId()) == 23) Fill("VBShadAnalysis/Baseline/Eta_genLHEZ_"+label, systname, genpar->Eta(), e->weight() );
-        if(fabs(genpar->GetPdgId()) == 24) Fill("VBShadAnalysis/Baseline/Eta_genLHEW_"+label, systname, genpar->Eta(), e->weight() );
+        if(fabs(genpar->GetPdgId()) == 23 and fabs(genpar->GetParentPdgId())>6) Fill("VBShadAnalysis/Baseline/Eta_genLHEZ_"+label, systname, genpar->Eta(), e->weight() );
+        if(fabs(genpar->GetPdgId()) == 24 and fabs(genpar->GetParentPdgId())>6) Fill("VBShadAnalysis/Baseline/Eta_genLHEW_"+label, systname, genpar->Eta(), e->weight() );
 
         if( (i == e->NGenPar()-3 or i == e->NGenPar()-4) and (bosonJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.3 ) match_1 = true;
         if( (i == e->NGenPar()-3 or i == e->NGenPar()-4) and (bosonJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.3 ) match_2 = true;
@@ -1866,34 +1866,35 @@ bool VBShadAnalysis::genMatchResonant(Event*e, string label, string category){
 
         GenParticle *genpar = e->GetGenParticle(i);
         if((fabs(genpar->GetPdgId()) != 23) and  (fabs(genpar->GetPdgId()) != 24) ) continue;
+        if(fabs(genpar->GetParentPdgId())<=6) continue;
 
         // target WjjZbb
         if( category.find("BBtag")   !=string::npos ) {
-            if( (fabs(genpar->GetPdgId()) == 23) and ((selectedFatZbb[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2)) match_1 = true;
-            if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+            if( (fabs(genpar->GetPdgId()) == 23) and fabs(genpar->GetParentPdgId())>6 and (selectedFatZbb[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+            if( (fabs(genpar->GetPdgId()) == 24) and fabs(genpar->GetParentPdgId())>6 and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
         } else if ( category.find("BB")   !=string::npos ) {
             if(label.find("ZJJZJJjj_EWK_LO") !=string::npos  ||
                label.find("ZJJZJJjj_EWK_QCD_LO") !=string::npos  ||
                label.find("ZJJZJJjj_QCD_LO") !=string::npos) {
                 // target ZjjZjj
-                if( (fabs(genpar->GetPdgId()) == 23) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
-                if( (fabs(genpar->GetPdgId()) == 23) and (selectedFatJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+                if( (fabs(genpar->GetPdgId()) == 23) and fabs(genpar->GetParentPdgId())>6 and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+                if( (fabs(genpar->GetPdgId()) == 23) and fabs(genpar->GetParentPdgId())>6 and (selectedFatJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
             } else {
             // target WjjWjj
-                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
-                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+                if( (fabs(genpar->GetPdgId()) == 24) and fabs(genpar->GetParentPdgId())>6 and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_1 = true;
+                if( (fabs(genpar->GetPdgId()) == 24) and fabs(genpar->GetParentPdgId())>6 and (selectedFatJets[1]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
             }
         } else if( category.find("BMET")   !=string::npos ) {
             // target WjjZnn
             if( usePuppi ) {
-                if((fabs(genpar->GetPdgId()) == 23) and (e->GetMet().GetPuppiMetP4()).DeltaPhi(genpar->GetP4()) < 0.2 ) match_1 = true;
+                if((fabs(genpar->GetPdgId()) == 23) and fabs(genpar->GetParentPdgId())>6 and (e->GetMet().GetPuppiMetP4()).DeltaPhi(genpar->GetP4()) < 0.2 ) match_1 = true;
             } else {
-                if((fabs(genpar->GetPdgId()) == 23) and (e->GetMet().GetP4()).DeltaPhi(genpar->GetP4()) < 0.2 ) match_1 = true;
+                if((fabs(genpar->GetPdgId()) == 23) and fabs(genpar->GetParentPdgId())>6 and (e->GetMet().GetP4()).DeltaPhi(genpar->GetP4()) < 0.2 ) match_1 = true;
             }
             if(selectedFatZbb.size()>0) {
-                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatZbb[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+                if( (fabs(genpar->GetPdgId()) == 24) and fabs(genpar->GetParentPdgId())>6 and (selectedFatZbb[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
             } else {
-                if( (fabs(genpar->GetPdgId()) == 24) and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
+                if( (fabs(genpar->GetPdgId()) == 24) and fabs(genpar->GetParentPdgId())>6 and (selectedFatJets[0]->GetP4()).DeltaR(genpar->GetP4()) < 0.2 ) match_2 = true;
             }
         }
     }
@@ -1973,18 +1974,18 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         //        if( ! genpar->IsLHE()) continue;
 
         // ** BOSON
-        if(fabs(genpar->GetPdgId()) == pdgID1) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
-        if(fabs(genpar->GetPdgId()) == pdgID2) if(genVp2==NULL and genpar!=genVp) { genVp2 = genpar; /*cout << "found W2 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
+        if(fabs(genpar->GetPdgId()) == pdgID1 and fabs(genpar->GetParentPdgId())>6) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
+        if(fabs(genpar->GetPdgId()) == pdgID2 and fabs(genpar->GetParentPdgId())>6) if(genVp2==NULL and genpar!=genVp) { genVp2 = genpar; /*cout << "found W2 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
 
         // ** DECAY PRODUCT
-        if(fabs(genpar->GetPdgId()) < 5 and fabs(genpar->GetParentPdgId())==pdgID1) if(dauV1a==NULL) { dauV1a = genpar; }
-        if(fabs(genpar->GetPdgId()) < 5 and fabs(genpar->GetParentPdgId())==pdgID1) if(dauV1b==NULL and genpar!=dauV1a) { dauV1b = genpar; }
-        if(fabs(genpar->GetPdgId()) < 5 and fabs(genpar->GetParentPdgId())==pdgID2) if(dauV2a==NULL) { dauV2a = genpar; }
-        if(fabs(genpar->GetPdgId()) < 5 and fabs(genpar->GetParentPdgId())==pdgID2) if(dauV2b==NULL and genpar!=dauV2a) { dauV2b = genpar; }
+        if(fabs(genpar->GetPdgId()) < 5 and fabs(genpar->GetParentPdgId())==pdgID1 and fabs(genpar->GetParentPdgId())>6) if(dauV1a==NULL) { dauV1a = genpar; }
+        if(fabs(genpar->GetPdgId()) < 5 and fabs(genpar->GetParentPdgId())==pdgID1 and fabs(genpar->GetParentPdgId())>6) if(dauV1b==NULL and genpar!=dauV1a) { dauV1b = genpar; }
+        if(fabs(genpar->GetPdgId()) < 5 and fabs(genpar->GetParentPdgId())==pdgID2 and fabs(genpar->GetParentPdgId())>6) if(dauV2a==NULL) { dauV2a = genpar; }
+        if(fabs(genpar->GetPdgId()) < 5 and fabs(genpar->GetParentPdgId())==pdgID2 and fabs(genpar->GetParentPdgId())>6) if(dauV2b==NULL and genpar!=dauV2a) { dauV2b = genpar; }
 
         // ** for ZbbZhadJJ
-        if(fabs(genpar->GetPdgId()) == 5 and fabs(genpar->GetParentPdgId())==pdgID1) V1isZbb=true;
-        if(fabs(genpar->GetPdgId()) == 5 and fabs(genpar->GetParentPdgId())==pdgID2) V2isZbb=true;
+        if(fabs(genpar->GetPdgId()) == 5 and fabs(genpar->GetParentPdgId())==pdgID1 and fabs(genpar->GetParentPdgId())>6) V1isZbb=true;
+        if(fabs(genpar->GetPdgId()) == 5 and fabs(genpar->GetParentPdgId())==pdgID2 and fabs(genpar->GetParentPdgId())>6) V2isZbb=true;
 
     }
 
