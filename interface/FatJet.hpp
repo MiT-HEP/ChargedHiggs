@@ -131,12 +131,28 @@ class FatJet : virtual public Object, virtual public SmearableBase
     inline float rawMass( bool isZbb=false) const {
         float massRaw = (subjet_lead_p4 + subjet_sublead_p4).M();
 
+        double corrZbbBar = 4.2*log(Pt())-11.8;
+        double corrZbbEnd = 3.3*log(Pt())-3.2;
+        double corrVjjBar = 4.2*log(Pt())-22.9;
+        double corrVjjEnd = 7.5;
+
+        if(isZbb) {
+            if (fabs(Eta()) > 1.3 )  massRaw = massRaw + ((corrZbbEnd >17.7) ? ((corrZbbEnd <19.7)? corrZbbEnd:19.7) : 17.7);
+            else massRaw = massRaw + ((corrZbbBar >13.8) ? ((corrZbbBar<17)?corrZbbBar:17) : 13.8);
+        } else {
+            if (fabs(Eta()) > 1.3 )  massRaw = massRaw + corrVjjEnd;
+            else massRaw = massRaw + ((corrVjjBar >3.5) ? ((corrVjjBar <6)? corrVjjBar:6) : 3.5);
+        }
+
+        /*
         if(isZbb) {
             if (fabs(Eta()) > 1.3 )  massRaw = massRaw + 15. + ((0.006*Pt())>5.?5.:(0.006*Pt()));
             else massRaw =  massRaw + 7. + ((0.009*Pt())>8.?8.:(0.009*Pt()));
         } else {
             if (fabs(Eta()) > 1.3 )  massRaw = massRaw + 5.;
         }
+        */
+
         return massRaw;
     }
 
