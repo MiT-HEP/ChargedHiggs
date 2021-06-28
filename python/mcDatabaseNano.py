@@ -349,6 +349,11 @@ else:
     elif 'ZJetsToNuNu_HT-800To1200'  in opts.label: xsec = 1.8327
     elif 'ZJetsToNuNu_HT-1200To2500' in opts.label: xsec = 0.420537
     elif 'ZJetsToNuNu_HT-2500ToInf'  in opts.label: xsec = 0.00632958
+    ## from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'EWKWPlus2Jets'     in opts.label: xsec = 39.05
+    elif 'EWKWMinus2Jets'    in opts.label: xsec = 32.05
+    elif 'EWKZ2Jets_ZToNuNu' in opts.label: xsec = 10.66
+    elif 'EWKZ2Jets_ZToLL'   in opts.label: xsec = 6.215
     ### H-> mumu
     elif 'HToMuMu' in opts.label: xsec=1
     elif 'HToZG' in opts.label: xsec=1
