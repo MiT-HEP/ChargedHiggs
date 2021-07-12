@@ -2368,12 +2368,12 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             if (f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJet(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJet=true;
             if (f->IsWJetOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetOut(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25))) isWJetOut = true;
             if (f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetWide(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJetWide = true;
-            if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 )) isWJetMirror=true;
+            if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJetMirror=true;
         }
 
 
         if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
-            if ( f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 )) isWJet=true;
+            if ( f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJet=true;
             /* // these might be needed to get the D for validation
             if ( f->IsWJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJetOut=true;
             if (isWJet or isWJetOut) isWJetWide = true;
@@ -3117,11 +3117,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         label == "ZJetsToQQ" or label == "WJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
 
+    /*
     if ( label.find("EWKZ2Jets_ZToNuNu") !=string::npos) label = "ZJetsToNuNu";
     //    if ( label == "EWK_LNuJJ_MJJ-120") label = "WJetsToLNu";
     if ( label.find("EWKZ2Jets_ZToLL") !=string::npos) label = "DY";
     if ( label.find("EWKWMinus2Jets") !=string::npos) label = "WJetsToLNu";
     if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
+    */
 
     /*
     // redefine labels
@@ -3148,12 +3150,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label.find("TTG") !=string::npos) label = "TTX";
     if ( label.find("ttH") !=string::npos) label = "TTX";
 
+    /* redefine labels
     if ( label.find("EWKZ2Jets_ZToNuNu") !=string::npos) label = "ZJetsToNuNu";
     //    if ( label == "EWK_LNuJJ_MJJ-120") label = "WJetsToLNu";
     if ( label.find("EWK_LLJJ_MLL-50_MJJ-120") !=string::npos) label = "DY";
     if ( label.find("EWKWMinus2Jets") !=string::npos) label = "WJetsToLNu";
     if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
-
+    */
     //    if(label.find("ZJetsToQQ") !=string::npos) label = "DY";
     //    if(label.find("WJetsToQQ") !=string::npos) label = "WJetsToLNu"; ;
 
@@ -3315,7 +3318,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
       }
     }
     
-
     //$$$$$$$$$$$
     //$$$$$$$$$$$
 
@@ -3897,7 +3899,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/BOSON/CosThetaStar_" +label, systname, cosThetaV1, e->weight() );
     Fill("VBShadAnalysis/BOSON/CosThetaStar_" +label, systname, cosThetaV2, e->weight() );
 
-
     ////// Fill VV-rest frame variables
     VVRestObj(e);
     ///////////////////////////////////
@@ -3908,7 +3909,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     double MVV_cut=500;
     // CHECK THIS: adjust with trigger turn ones especially on BB and Btag
-    if((category.find("RBtag")   !=string::npos ) or (category.find("RMET")   !=string::npos )) MVV_cut=400;
+    if((category.find("RMET")   !=string::npos )) MVV_cut=400;
 
     if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
 
