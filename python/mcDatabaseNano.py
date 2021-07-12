@@ -359,9 +359,11 @@ else:
     elif 'HToZG' in opts.label: xsec=1
     ##TTX
     elif 'TTZToQQ' in opts.label: xsec=0.5297
-    elif 'TTZToLLNuNu' in opts.label: xsec=0.2529
-    elif 'TTWJetsToQQ' in opts.label:xsec=0.40620
-    elif 'TTWJetsToLNu' in opts.label:xsec=0.2043
+    elif 'TTZToLLNuNu' in opts.label: xsec=0.2439
+    elif 'TTWJetsToQQ' in opts.label:xsec=0.4377
+    elif 'TTWJetsToLNu' in opts.label:xsec=0.2161
+    elif 'ttHJetToNonbb_M125'  in opts.label:xsec=0.5066
+    elif 'ttHJetTobb_M125'  in opts.label:xsec=0.5023
     elif 'TTGJets' in opts.label:xsec=3.697
     elif 'TTTT' in opts.label:xsec=0.009103
     ### TT
@@ -406,11 +408,11 @@ else:
     elif 'ZZTo4L' in opts.label: xsec=1.256
     elif 'WWToLNuQQ' in opts.label: xsec=45.68
     elif 'WWTo1L1NuQQ' in opts.label: xsec=45.68
-    #VVV
-    elif 'WWW' in opts.label: xsec=0.2086
-    elif 'WWZ' in opts.label: xsec=0.1651
-    elif 'WZZ' in opts.label: xsec=0.05565
-    elif 'ZZZ' in opts.label: xsec=0.01398
+    #VVV from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'WWW' in opts.label: xsec=0.2158
+    elif 'WWZ' in opts.label: xsec=0.1707
+    elif 'WZZ' in opts.label: xsec=0.05709
+    elif 'ZZZ' in opts.label: xsec=0.01476
     ### EWK EWK_LLJJ_MLL-50_MJJ-120
     elif 'EWK_LLJJ' in opts.label: xsec=1.630
     ##
