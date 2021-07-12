@@ -119,7 +119,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
         if( std::isnan(Pt()) ) return 0;
         if( Pt() < ptcut_ ) return 0;
         if( fabs(Eta()) >= etacut_) return 0;
-        if( fabs(SDMass()) < softdropMasscut_) return 0;
+        if( fabs((subjet_lead_p4 + subjet_sublead_p4).M()) < softdropMasscut_) return 0;
+        //        if( fabs(SDMass()) < softdropMasscut_) return 0;
         return 1;
     }
 
@@ -170,6 +171,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
 
     inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) < 15. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
     inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) > 15. and rawMass() < 155. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+
+    inline int IsZJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-90) < 15. and ZvsQCDMD > cut2_ and ZvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
     // $$$$$$$$$$$$$$$$$$$$$$$$$$
     // $$$$$ for ChargedHiggs
