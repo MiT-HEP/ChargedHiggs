@@ -341,14 +341,29 @@ else:
     elif 'QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia'  in opts.label: xsec = 1092.0
     elif 'QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8' in opts.label: xsec = 99.76
     elif 'QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'  in opts.label: xsec = 20.35
+    ## from https://cms-gen-dev.cern.ch/xsdb/  SUS-RunIIFall17MiniAODv2 campaign (LO from sxdb * 1.23)
+    elif 'ZJetsToNuNu_HT-100To200'   in opts.label: xsec = 372.444
+    elif 'ZJetsToNuNu_HT-200To400'   in opts.label: xsec = 113.8857
+    elif 'ZJetsToNuNu_HT-400To600'   in opts.label: xsec = 16.2114
+    elif 'ZJetsToNuNu_HT-600To800'   in opts.label: xsec = 4.00611
+    elif 'ZJetsToNuNu_HT-800To1200'  in opts.label: xsec = 1.8327
+    elif 'ZJetsToNuNu_HT-1200To2500' in opts.label: xsec = 0.420537
+    elif 'ZJetsToNuNu_HT-2500ToInf'  in opts.label: xsec = 0.00632958
+    ## from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'EWKWPlus2Jets'     in opts.label: xsec = 39.05
+    elif 'EWKWMinus2Jets'    in opts.label: xsec = 32.05
+    elif 'EWKZ2Jets_ZToNuNu' in opts.label: xsec = 10.66
+    elif 'EWKZ2Jets_ZToLL'   in opts.label: xsec = 6.215
     ### H-> mumu
     elif 'HToMuMu' in opts.label: xsec=1
     elif 'HToZG' in opts.label: xsec=1
     ##TTX
     elif 'TTZToQQ' in opts.label: xsec=0.5297
-    elif 'TTZToLLNuNu' in opts.label: xsec=0.2529
-    elif 'TTWJetsToQQ' in opts.label:xsec=0.40620
-    elif 'TTWJetsToLNu' in opts.label:xsec=0.2043
+    elif 'TTZToLLNuNu' in opts.label: xsec=0.2439
+    elif 'TTWJetsToQQ' in opts.label:xsec=0.4377
+    elif 'TTWJetsToLNu' in opts.label:xsec=0.2161
+    elif 'ttHJetToNonbb_M125'  in opts.label:xsec=0.5066
+    elif 'ttHJetTobb_M125'  in opts.label:xsec=0.5023
     elif 'TTGJets' in opts.label:xsec=3.697
     elif 'TTTT' in opts.label:xsec=0.009103
     ### TT
@@ -365,17 +380,17 @@ else:
     elif 'ST_t-channel_top_4f' in opts.label: xsec=136.02
     elif 'ST_tW_antitop_5f' in opts.label: xsec=30.09
     elif 'ST_tW_top_5f' in opts.label: xsec=30.11
-    ### WJETS 20508.9 * 3 
-    elif 'WJetsToLNu_HT-0To70'      in opts.label: xsec=57641.658055
-    elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1695.589715
-    ## genXS Analyzer
-    elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1627.45
-    elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=435.237
-    elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=59.1811
-    elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=14.5805
-    elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=6.65621
-    elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.60809
-    elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.038914
+    ## from https://cms-gen-dev.cern.ch/xsdb/ (LO from sxdb * 1.21)
+    elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1563.32
+    elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1687.95
+    elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=493.559
+    elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=69.5508
+    elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=15.5727
+    elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=6.49286
+    elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.29954
+    elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.00968121
+#    ### WJETS 20508.9 * 3
+#    elif 'WJetsToLNu_HT-0To70'      in opts.label: xsec=57641.658055
 ##    elif 'WJets' in opts.label: xsec=61526.7
     elif 'W0' in opts.label: xsec=34273.632815
     elif 'W1' in opts.label: xsec=18455.979619
@@ -393,11 +408,11 @@ else:
     elif 'ZZTo4L' in opts.label: xsec=1.256
     elif 'WWToLNuQQ' in opts.label: xsec=45.68
     elif 'WWTo1L1NuQQ' in opts.label: xsec=45.68
-    #VVV
-    elif 'WWW' in opts.label: xsec=0.2086
-    elif 'WWZ' in opts.label: xsec=0.1651
-    elif 'WZZ' in opts.label: xsec=0.05565
-    elif 'ZZZ' in opts.label: xsec=0.01398
+    #VVV from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'WWW' in opts.label: xsec=0.2158
+    elif 'WWZ' in opts.label: xsec=0.1707
+    elif 'WZZ' in opts.label: xsec=0.05709
+    elif 'ZZZ' in opts.label: xsec=0.01476
     ### EWK EWK_LLJJ_MLL-50_MJJ-120
     elif 'EWK_LLJJ' in opts.label: xsec=1.630
     ##
