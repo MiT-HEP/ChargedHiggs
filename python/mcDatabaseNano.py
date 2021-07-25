@@ -311,7 +311,6 @@ else:
     elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJZJJjj_EWK_QCD_LO' in opts.label: xsec=1
-
     ## SIG ChargedHiggsToBoson
     ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(WW->jjjj) 45
     elif 'DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph' in opts.label: xsec=0.225
@@ -380,7 +379,7 @@ else:
     elif 'ST_t-channel_top_4f' in opts.label: xsec=136.02
     elif 'ST_tW_antitop_5f' in opts.label: xsec=30.09
     elif 'ST_tW_top_5f' in opts.label: xsec=30.11
-    ## from https://cms-gen-dev.cern.ch/xsdb/ (LO from sxdb * 1.21)
+    ## from https://cms-gen-dev.cern.ch/xsdb/ (LO from xsdb * 1.21)
     elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1563.32
     elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1687.95
     elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=493.559
@@ -389,6 +388,10 @@ else:
     elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=6.49286
     elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.29954
     elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.00968121
+    ## from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'WJetsToLNu_0J'    in opts.label: xsec=53330.0
+    elif 'WJetsToLNu_1J'    in opts.label: xsec=8875.0
+    elif 'WJetsToLNu_2J'    in opts.label: xsec=3338.0
 #    ### WJETS 20508.9 * 3
 #    elif 'WJetsToLNu_HT-0To70'      in opts.label: xsec=57641.658055
 ##    elif 'WJets' in opts.label: xsec=61526.7
@@ -413,6 +416,10 @@ else:
     elif 'WWZ' in opts.label: xsec=0.1707
     elif 'WZZ' in opts.label: xsec=0.05709
     elif 'ZZZ' in opts.label: xsec=0.01476
+    #VV inclusive from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'WW_TuneCP5' in opts.label: xsec=75.95
+    elif 'WZ_TuneCP5' in opts.label: xsec=27.59
+    elif 'ZZ_TuneCP5' in opts.label: xsec=12.17
     ### EWK EWK_LLJJ_MLL-50_MJJ-120
     elif 'EWK_LLJJ' in opts.label: xsec=1.630
     ##
