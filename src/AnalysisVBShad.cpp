@@ -215,6 +215,11 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/eta1_Jet"+category+"_"+l, "eta_Jet; #eta (leading); Events", 100,0.,5.);
     Book ("VBShadAnalysis/eta2_Jet"+category+"_"+l, "eta_Jet; #eta (subleading) ; Events", 100,0.,5.);
 
+    Book ("VBShadAnalysis/nemf1_Jet"+category+"_"+l, "nemf1_Jet; nemf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nemf2_Jet"+category+"_"+l, "nemf2_Jet; nemf j2 (subleading) ; Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf1_Jet"+category+"_"+l, "nhf1_Jet; nhf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf2_Jet"+category+"_"+l, "nhf2_Jet; nhf j2 (subleading) ; Events", 100,0.,1.);
+
     // boosted jets
     Book ("VBShadAnalysis/pTV1_Jet"+category+"_"+l, "pT_V1_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
     Book ("VBShadAnalysis/pTV2_Jet"+category+"_"+l, "pT_V2_Jet; p_{T} [GeV] (subleading) ; Events", 160,0,1600);
@@ -3115,7 +3120,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
     if( label == "QCD_HT" or
-        label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or
+        label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
         label == "ZJetsToQQ" or label == "WJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
 
@@ -3949,6 +3954,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
     if( forwardJets[0]->Eta() * forwardJets[1]->Eta() >=0 ) return EVENT_NOT_USED;
 
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNHF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNHF(), e->weight());
+
+    // those are mainly wrong combination
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4 and (forwardJets[1]->GetNEMF()==0 or forwardJets[1]->GetNHF()==0)) return EVENT_NOT_USED;
+
     //    if(doTrigger) studyTriggers(e, category, label, systname);
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 7, e->weight() );  //7--NJet cut opposite side
@@ -4125,7 +4138,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/pT2_Jet" +category+"_"+label, systname, forwardJets[1]->GetP4().Pt(), e->weight() );
     Fill("VBShadAnalysis/eta1_Jet" +category+"_"+label, systname, fabs(forwardJets[0]->GetP4().Eta()), e->weight() );
     Fill("VBShadAnalysis/eta2_Jet" +category+"_"+label, systname, fabs(forwardJets[1]->GetP4().Eta()), e->weight() );
-
     // 
     Fill("VBShadAnalysis/pTV1_Jet" +category+"_"+label, systname, evt_PTV1, e->weight() );
     Fill("VBShadAnalysis/pTV2_Jet" +category+"_"+label, systname, evt_PTV2, e->weight() );
@@ -4139,22 +4151,23 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/Met" +category+"_"+label, systname, evt_PTV1, e->weight() );
     Fill("VBShadAnalysis/MetPhi"+category+"_"+label, systname, e->GetMet().GetP4().Phi(), e->weight() );
 
-    if( (category.find("BMET")   !=string::npos)  or (category.find("BB")   !=string::npos) or (category.find("BBtag")   !=string::npos) ) {
+    if( (category.find("BMET")   !=string::npos)  or (category.find("BB")   !=string::npos)) {
         if(selectedFatJets.size()>0) Fill("VBShadAnalysis/etaV1_Jet" +category+"_"+label, systname, fabs(selectedFatJets[0]->GetP4().Eta()), e->weight() );
-        if(selectedFatZbb.size()>0) Fill("VBShadAnalysis/etaV1_Jet" +category+"_"+label, systname, fabs(selectedFatZbb[0]->GetP4().Eta()), e->weight() );
     }
 
     if( (category.find("BBtag")   !=string::npos)  ) {
+        Fill("VBShadAnalysis/etaV1_Jet" +category+"_"+label, systname, fabs(selectedFatZbb[0]->GetP4().Eta()), e->weight() );
         Fill("VBShadAnalysis/etaV2_Jet" +category+"_"+label, systname, fabs(selectedFatJets[0]->GetP4().Eta()), e->weight() );
+        Fill("VBShadAnalysis/phiV1_Jet" +category+"_"+label, systname, selectedFatZbb[0]->GetP4().Phi() , e->weight() );
     }
 
-    if( (category.find("BB")   !=string::npos)  ) {
+    if( (doHADAnalysis or doHADAntiAnalysis) and (category.find("BB")   !=string::npos)  ) {
         Fill("VBShadAnalysis/etaV2_Jet" +category+"_"+label, systname, fabs(selectedFatJets[1]->GetP4().Eta()), e->weight() );
     }
 
-    if( doMETAnalysis and (category.find("BMET")   !=string::npos) ) {
-        if(selectedFatJets.size()>0) Fill("VBShadAnalysis/phiV1_Jet" +category+"_"+label, systname, fabs(selectedFatJets[0]->GetP4().Phi()) , e->weight() );
-        if(selectedFatZbb.size()>0) Fill("VBShadAnalysis/phiV1_Jet" +category+"_"+label, systname, fabs(selectedFatZbb[0]->GetP4().Phi()) , e->weight() );
+    if( (doMETAnalysis or doMETAntiAnalysis) and (category.find("BMET")   !=string::npos) ) {
+        if(selectedFatZbb.size()>0) Fill("VBShadAnalysis/phiV1_Jet" +category+"_"+label, systname, selectedFatZbb[0]->GetP4().Phi() , e->weight() );
+        else Fill("VBShadAnalysis/phiV1_Jet" +category+"_"+label, systname, selectedFatJets[0]->GetP4().Phi() , e->weight() );
     }
 
     /*
