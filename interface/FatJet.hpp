@@ -119,7 +119,8 @@ class FatJet : virtual public Object, virtual public SmearableBase
         if( std::isnan(Pt()) ) return 0;
         if( Pt() < ptcut_ ) return 0;
         if( fabs(Eta()) >= etacut_) return 0;
-        if( fabs(SDMass()) < softdropMasscut_) return 0;
+        if( fabs((subjet_lead_p4 + subjet_sublead_p4).M()) < softdropMasscut_) return 0;
+        //        if( fabs(SDMass()) < softdropMasscut_) return 0;
         return 1;
     }
 
@@ -128,9 +129,24 @@ class FatJet : virtual public Object, virtual public SmearableBase
         return IsJetExceptValidity();
     }
 
-    inline float rawMass() const {
+    inline float rawMass( bool isZbb=false) const {
         float massRaw = (subjet_lead_p4 + subjet_sublead_p4).M();
-        if(fabs(Eta()) > 1.3 )  massRaw = massRaw + 5.;
+
+        float PtZbb = (Pt()>1275.)?1275.:Pt();  //Pt()>1275 all have same corrections as Pt()=1275, safer and smoother
+        float PtVjj = (Pt()>1000.)?1000.:Pt();  //Pt()>1000 all have same corrections as Pt()=1000
+        double corrZbbBar = 259.2*exp(-0.0147*PtZbb)+2.85*log(PtZbb)-9.58;
+        double corrZbbEnd = 124.7*exp(-0.0092*PtZbb)+4.55*log(PtZbb)-17.67;
+        double corrVjjBar = -182.7*exp(-0.0015*PtVjj)-61.14*log(PtVjj)+469.9;
+        double corrVjjEnd = 2370.*exp(-0.0192*PtVjj)+4.51*log(PtVjj)-22.32;
+
+        if(isZbb){
+            if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrZbbBar<12)?corrZbbBar:12);
+            else  massRaw = massRaw + ((corrZbbEnd <19)? corrZbbEnd:19);
+        }else{
+            if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrVjjBar <7)? corrVjjBar:7);
+            else massRaw = massRaw + ((corrVjjEnd <10)? corrVjjEnd:10);
+        }
+
         return massRaw;
     }
 
@@ -151,9 +167,12 @@ class FatJet : virtual public Object, virtual public SmearableBase
     //    inline int IsWJet() const { if( Pt() > 200. and SDMass() > 65. and SDMass() < 105. and WvsQCDMD > 0.258 and IsFatJet() )   return 1; return 0;}
 
     // ZHbbvsQCDMD > 0.3 is roughly 10% mistag (0.3 0.6  0.8945)
-    inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(rawMass()-91) < 15. and ZHbbvsQCDMD > ((Pt()<500)?cut1_:cut2_) and IsFatJet() )   return 1; return 0;}
-    inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) < 15. and WvsQCDMD > 0. and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) > 15. and rawMass() < 155. and WvsQCDMD > 0. and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(rawMass(true)-91) < 15. and ZHbbvsQCDMD > ((Pt()<500)?cut1_:cut2_) and TvsQCD()<0.8 and IsFatJet() )   return 1; return 0;}
+
+    inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) < 15. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) > 15. and rawMass() < 155. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+
+    inline int IsZJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-90) < 15. and ZvsQCDMD > cut2_ and ZvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
     // $$$$$$$$$$$$$$$$$$$$$$$$$$
     // $$$$$ for ChargedHiggs

@@ -83,14 +83,25 @@ addConfig=VBShadAnalysis|AddLabel('ZZZ')
 addConfig=VBShadAnalysis|AddLabel('WWTo')
 addConfig=VBShadAnalysis|AddLabel('WZTo')
 addConfig=VBShadAnalysis|AddLabel('ZZTo')
+addConfig=VBShadAnalysis|AddLabel('ZZ_TuneCP5')
+addConfig=VBShadAnalysis|AddLabel('WZ_TuneCP5')
+addConfig=VBShadAnalysis|AddLabel('WW_TuneCP5')
 
-addConfig=VBShadAnalysis|AddLabel('ZJetsToNuNu')
-addConfig=VBShadAnalysis|AddLabel('WJetsToLNu')
+
+
+addConfig=VBShadAnalysis|AddLabel('ZJetsToNuNu_HT')
+addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_HT')
+
+addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_NJ')
+addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_0J')
+addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_1J')
+addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_2J')
 
 addConfig=VBShadAnalysis|AddLabel('ZJetsToQQ')
 addConfig=VBShadAnalysis|AddLabel('WJetsToQQ')
 
 addConfig=VBShadAnalysis|AddLabel('EWKZ2Jets_ZToNuNu')
+addConfig=VBShadAnalysis|AddLabel('EWKZ2Jets_ZToLL')
 addConfig=VBShadAnalysis|AddLabel('EWK_LNuJJ_MJJ-120_13TeV')
 addConfig=VBShadAnalysis|AddLabel('EWK_LLJJ_MLL-50_MJJ-120')
 addConfig=VBShadAnalysis|AddLabel('EWKWMinus2Jets')

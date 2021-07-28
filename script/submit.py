@@ -484,7 +484,7 @@ if True:
                 list =  FindEOS(f, "%%MOUNTPOINT%%/eos")
             else:
                 list =  FindEOS(f)
-        elif f.split('/')[-1] in ['NANOAODSIM','NANOAOD']:
+        elif f.split('~')[0].split('/')[-1] in ['NANOAODSIM','NANOAOD','USER']:
                 print "DEBUG-submit,Using dataset for",f, "forcing aaa" if opts.aaa else ""
                 if opts.aaa:
                     list =  FindDataset(f,"aaa" )
