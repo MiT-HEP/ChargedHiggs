@@ -618,10 +618,10 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("min(min(j3_Eta,j4_Eta)-min(j1_Eta,j2_Eta),max(j1_Eta,j2_Eta)-max(j3_Eta,j4_Eta))", 'F',readers_dnn_[i]);
 
 
-            //AddVariable("DEta_f12", 'F',readers_dnn_[i]);
-            AddVariable("DEta_v34", 'F',readers_dnn_[i]); 
-            AddVariable("DPhi_f12", 'F',readers_dnn_[i]);
-            AddVariable("DPhi_v34", 'F',readers_dnn_[i]);
+            //AddVariable("abs(DEta_f12)", 'F',readers_dnn_[i]);
+            AddVariable("abs(DEta_v34)", 'F',readers_dnn_[i]); 
+            AddVariable("abs(DPhi_f12)", 'F',readers_dnn_[i]);
+            AddVariable("abs(DPhi_v34)", 'F',readers_dnn_[i]);
             //AddVariable("DR_f12",   'F',readers_dnn_[i]);
             //AddVariable("DR_v34",   'F',readers_dnn_[i]);
             //AddVariable("M_f12",    'F',readers_dnn_[i]);
@@ -1518,10 +1518,10 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                             SetVariable("abs(j4_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", zepV4);
                             SetVariable("min(min(j3_Eta,j4_Eta)-min(j1_Eta,j2_Eta),max(j1_Eta,j2_Eta)-max(j3_Eta,j4_Eta))", centralV2);
 
-                            //SetVariable("DEta_f12", selectedJets[fi]->DeltaEta(selectedJets[fj]));
-                            SetVariable("DEta_v34", selectedJets[vk]->DeltaEta(selectedJets[vl]));
-                            SetVariable("DPhi_f12", ChargedHiggs::deltaPhi(selectedJets[fi]->Phi(), selectedJets[fj]->Phi()));
-                            SetVariable("DPhi_v34", ChargedHiggs::deltaPhi(selectedJets[vk]->Phi(), selectedJets[vl]->Phi()));
+                            //SetVariable("abs(DEta_f12)", selectedJets[fi]->DeltaEta(selectedJets[fj]));
+                            SetVariable("abs(DEta_v34)", selectedJets[vk]->DeltaEta(selectedJets[vl]));
+                            SetVariable("abs(DPhi_f12)", ChargedHiggs::deltaPhi(selectedJets[fi]->Phi(), selectedJets[fj]->Phi()));
+                            SetVariable("abs(DPhi_v34)", ChargedHiggs::deltaPhi(selectedJets[vk]->Phi(), selectedJets[vl]->Phi()));
                             //SetVariable("DR_f12", selectedJets[fi]->DeltaR(selectedJets[fj]));
                             //SetVariable("DR_v34", selectedJets[vk]->DeltaR(selectedJets[vl]));
                             //SetVariable("M_f12",  selectedJets[fi]->InvMass(selectedJets[fj]));
