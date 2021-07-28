@@ -1202,6 +1202,39 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_endcap_bin3_"+l, "SDMass_FatJet endcap_bin3; FatJet Mass [GeV]; Events", 100,0,200.);
         //
 
+        //Mass corr
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_END_200_"+l, "SubJetsMass END 2-300; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_END_300_"+l, "SubJetsMass END 3-400; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_END_400_"+l, "SubJetsMass END 4-500; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_END_500_"+l, "SubJetsMass END 5-600; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_END_600_"+l, "SubJetsMass END 6-700; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_END_700_"+l, "SubJetsMass END 7-800; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_END_800plus_"+l, "SubJetsMass END 800p; SubJet Mass [GeV]; Events", 200,0,200.);
+
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_END_200_"+l, "SubJetsMass END 2-300; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_END_300_"+l, "SubJetsMass END 3-400; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_END_400_"+l, "SubJetsMass END 4-500; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_END_500_"+l, "SubJetsMass END 5-600; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_END_600_"+l, "SubJetsMass END 6-700; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_END_700_"+l, "SubJetsMass END 7-800; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_END_800plus_"+l, "SubJetsMass END 800p; SubJet Mass [GeV]; Events", 100,0,200.);
+
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_BAR_200_"+l, "SubJetsMass BAR 2-300; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_BAR_300_"+l, "SubJetsMass BAR 3-400; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_BAR_400_"+l, "SubJetsMass BAR 4-500; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_BAR_500_"+l, "SubJetsMass BAR 5-600; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_BAR_600_"+l, "SubJetsMass BAR 6-700; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_BAR_700_"+l, "SubJetsMass BAR 7-800; SubJet Mass [GeV]; Events", 200,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass1_BAR_800plus_"+l, "SubJetsMass BAR 800p; SubJet Mass [GeV]; Events", 200,0,200.);
+
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_BAR_200_"+l, "SubJetsMass BAR 2-300; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_BAR_300_"+l, "SubJetsMass BAR 3-400; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_BAR_400_"+l, "SubJetsMass BAR 4-500; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_BAR_500_"+l, "SubJetsMass BAR 5-600; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_BAR_600_"+l, "SubJetsMass BAR 6-700; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_BAR_700_"+l, "SubJetsMass BAR 7-800; SubJet Mass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/SubJetsMass2_BAR_800plus_"+l, "SubJetsMass BAR 800p; SubJet Mass [GeV]; Events", 100,0,200.);
+
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJet_"+l, "ZHbbvsQCD_FatJet; ZHbbvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_"+l, "ZHbbvsQCD_FatJetFake; ZHbbvsQCD; Events", 50,0,1.0);
         Book ("VBShadAnalysis/Baseline/WvsQCD_FatJet_"+l, "WvsQCD_FatJet; WvsQCD; Events", 50,0,1.0);
@@ -2307,6 +2340,23 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         //        std::cout << " Pt=" << f->Pt() << " SDMass=" << f->SDMass() << " IsZbbJet = " << f->IsZbbJet() << "  IsWJet = " << f->IsWJet()  << std::endl;
 
+        if(doStudyMass){
+        // Do mass corrections
+        string range_j = "";
+        switch(int(f->Pt()/100.)){
+            case 2: range_j = "200_"; break;
+            case 3: range_j = "300_"; break;
+            case 4: range_j = "400_"; break;
+            case 5: range_j = "500_"; break;
+            case 6: range_j = "600_"; break;
+            case 7: range_j = "700_"; break;
+            default: range_j = "800plus_";
+        }
+        string eta_j = "";
+        if(fabs(f->Eta()) < 1.3) eta_j = "BAR_";
+        else eta_j = "END_";
+
+
         Double_t minDR1=9999;
         Double_t minDR2=9999;
         if(genVp!=NULL and genVp2!=NULL) {
@@ -2315,6 +2365,13 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Double_t delW2 = f->DeltaR(*genVp2);
             if (delW2 < minDR2){ minDR2 = delW2;}
         }
+
+
+        float massRaw = (f->subjet_lead_p4 + f->subjet_sublead_p4).M();
+
+        if(minDR1<0.8) Fill("VBShadAnalysis/Baseline/SubJetsMass1_"+eta_j+range_j+label, systname, massRaw , e->weight() ); 
+        else if(minDR2<0.8) Fill("VBShadAnalysis/Baseline/SubJetsMass2_"+eta_j+range_j+label, systname, massRaw , e->weight() );
+
 
         if(minDR1<0.8 or minDR2<0.8) {
             // for both W and Zbb not necessarity is matched with one jet
@@ -2332,7 +2389,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
                 double WvsT = f->WvsQCD()/ (f->WvsQCD() + f->TvsQCD());
                 Fill("VBShadAnalysis/Baseline/WvsT_FatJet_" +label, systname, WvsT, e->weight() );
             }
-            float massRaw = (f->subjet_lead_p4 + f->subjet_sublead_p4).M();
             Fill("VBShadAnalysis/Baseline/SubJetsMass_FatJet_" +label, systname, massRaw , e->weight() );
             Fill("VBShadAnalysis/Baseline/FatJetsMass_FatJet_" +label, systname, f->M() , e->weight() );
 
@@ -2399,6 +2455,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJetFake_" +label, systname, f->ZHbbvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJetFake_" +label, systname, f->ZHccvsQCD(), e->weight() );
         }
+
+        } // massive AK8 -- mass/discr plots filling ends
+
 
         double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetP4().Phi()));
         if(usePuppi) dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
