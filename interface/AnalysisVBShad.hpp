@@ -70,9 +70,10 @@ public:
     bool doResonant = false;
 
     bool doWriteTree = true;
+    bool writeTrainTree=false;
     bool usePuppi=false;
     bool doTrigger=false;
-    bool writeTrainTree=false;
+    bool doStudyMass=false; //inclusive SDMass, SubjetMass, W/ZvsQCD plots
 
     bool doTMVA=true;
     bool doResTagKeras = false;
