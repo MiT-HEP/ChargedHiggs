@@ -204,7 +204,7 @@ class DatacardBuilder:
 
     def _get_norm(self,hname):
         for sig in xsecsig:
-            if sig['name'] in hname:
+            if hname in sig['name']:
                 return sig['xsec']
         return 1.
             
