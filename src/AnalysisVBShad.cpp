@@ -2354,7 +2354,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         bool isZbbJet=false;
         //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
-        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJet=true;
+        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_1, DEEP_AK8_ZHbb_MD_1)) isZbbJet=true;
         //        if(doBAntiAnalysis and f->IsZbbJet()) isZbbJet=true;
 
         if(isZbbJet) {
@@ -2410,7 +2410,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             if(isZbbJet) continue;
             selectedFatJets.push_back(f);
             bosonBDiscr.push_back(f->subjet_btagdeep);
-            // fixme: this need to be filled depending on the W vs Z
+            // fixme: this need to be filled depending on the W vs Z. Think: what if pass both W and Z?
             bosonVDiscr.push_back(f->WvsQCD());
             bosonTDiscr.push_back(f->TvsQCD());
             bosonMass.push_back(f->rawMass());
@@ -3638,7 +3638,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             //******************//
             //// decide
             //********cut********//
-            float mWidth = 20.;
+            float mWidth = 15.;
             float mWidthL = 10.;
             float mWidthH = 20.;
             double chi2Cut=6.;
@@ -3836,7 +3836,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //// decide
             //********cut********//
-            float mWidth = 20.;
+            float mWidth = 15.;
             float mWidthL = 10.;
             float mWidthH = 20.;
             double chi2Cut=6.;
