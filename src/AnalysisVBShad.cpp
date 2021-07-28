@@ -596,29 +596,21 @@ void VBShadAnalysis::InitTmva() {
 
             AddVariable("j1_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j1_Eta)",'F',readers_dnn_[i]);
-            //AddVariable("abs(j1_Phi)",'F',readers_dnn_[i]);
             //AddVariable("j1_M",'F',readers_dnn_[i]);
-            //AddVariable("j1_Unc",'F',readers_dnn_[i]);
             AddVariable("j1_QGL",'F',readers_dnn_[i]);
 
             AddVariable("j2_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j2_Eta)", 'F',readers_dnn_[i]);
-            //AddVariable("abs(j2_Phi)",'F',readers_dnn_[i]);
             //AddVariable("j2_M",'F',readers_dnn_[i]);
-            //AddVariable("j2_Unc", 'F',readers_dnn_[i]);
             AddVariable("j2_QGL",'F',readers_dnn_[i]);
             //AddVariable("j2_PUDiscr",'F',readers_dnn_[i]);
 
             AddVariable("j3_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j3_Eta)", 'F',readers_dnn_[i]);
-            //AddVariable("abs(j3_Phi)",'F',readers_dnn_[i]);
-            //AddVariable("j3_Unc", 'F',readers_dnn_[i]);
             AddVariable("j3_QGL",'F',readers_dnn_[i]);
 
             AddVariable("j4_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j4_Eta)", 'F',readers_dnn_[i]);
-            //AddVariable("j4_Phi",'F',readers_dnn_[i]);
-            //AddVariable("j4_Unc", 'F',readers_dnn_[i]);
             AddVariable("j4_QGL",'F',readers_dnn_[i]);
 
 
@@ -655,9 +647,12 @@ void VBShadAnalysis::InitTmva() {
        
 
         for( size_t i=0;i<weights_dnn.size() ;++i) {
-            // so far WZ+ZZ Comb
-            if(i==0) readers_dnn_[i]->BookMVA("DNN_ResTag_RBTA",weights_dnn[i].c_str());
-            if(i==1) readers_dnn_[i]->BookMVA("DNN_ResTag_RMET",weights_dnn[i].c_str());
+            //Comb for RBtag and RMet.
+            //W and Z should be two separate tagger, the one with higher score is chosen. Currently no Zbb(nn)Zjj samples, put W xml file there.
+            if(i==0) readers_dnn_[i]->BookMVA("DNN_ResTag_W",weights_dnn[i].c_str());
+            if(i==1) readers_dnn_[i]->BookMVA("DNN_ResTag_Z",weights_dnn[i].c_str());
+        
+            //Later to be cleaned. If multi-class and V tagger can be completely abandoned.
             //if(i==2) readers_dnn_[i]->BookMVA("DNN_ResTag_RBTA_ml",weights_dnn[i].c_str());
             //if(i==3) readers_dnn_[i]->BookMVA("DNN_ResTag_RMET_ml",weights_dnn[i].c_str());
 
@@ -1436,8 +1431,8 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                     int fj  = -1;
                     int vk  = -1;
                     int vl  = -1;
-                    //int tmpTar = -1; //0 -- W; 1 -- Z
-                    int tmpTar = 0;
+                    int tmpTar = -1; //0 -- W; 1 -- Z
+                    //int tmpTar = 0;
                     /*
                     double Mij[2] = {fabs(selectedJets[i]->InvMass(selectedJets[j]) - 80.)/80. , fabs(selectedJets[i]->InvMass(selectedJets[j]) - 91.)/91.};
                     double Mjk[2] = {fabs(selectedJets[j]->InvMass(selectedJets[k]) - 80.)/80. , fabs(selectedJets[j]->InvMass(selectedJets[k]) - 91.)/91.};
@@ -1502,30 +1497,22 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
 
                             SetVariable("j1_pT",  selectedJets[fi]->GetP4().Pt());
                             SetVariable("abs(j1_Eta)", fabs(selectedJets[fi]->Eta()));
-                            //SetVariable("abs(j1_Phi)", fabs(selectedJets[fi]->Phi()));
-                            //SetVariable("j1_Unc",   sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
                             SetVariable("j1_QGL", selectedJets[fi]->QGL()<0?0:selectedJets[fi]->QGL()); 
 
 
                             SetVariable("j2_pT",  selectedJets[fj]->GetP4().Pt());
                             SetVariable("abs(j2_Eta)", fabs(selectedJets[fj]->Eta()));
-                            //SetVariable("abs(j2_Phi)", fabs(selectedJets[fj]->Phi()));
-                            //SetVariable("j2_Unc",   sqrt((selectedJets[fj]->GetJESUnc())*(selectedJets[fj]->GetJESUnc()) + Getjetres(selectedJets[fj]) * Getjetres(selectedJets[fj])));
                             SetVariable("j2_QGL", selectedJets[fj]->QGL()<0?0:selectedJets[fj]->QGL());
                             //SetVariable("j2_PUDiscr",selectedJets[fj]->GetPuId());
 
 
                             SetVariable("j3_pT",  selectedJets[vk]->GetP4().Pt());
                             SetVariable("abs(j3_Eta)", fabs(selectedJets[vk]->Eta()));
-                            //SetVariable("abs(j3_Phi)", fabs(selectedJets[vk]->Phi()));
-                            //SetVariable("j3_Unc",   sqrt((selectedJets[vk]->GetJESUnc())*(selectedJets[vk]->GetJESUnc()) + Getjetres(selectedJets[vk]) * Getjetres(selectedJets[vk])));
                             SetVariable("j3_QGL", selectedJets[vk]->QGL()<0?0:selectedJets[vk]->QGL());
 
 
                             SetVariable("j4_pT",  selectedJets[vl]->GetP4().Pt());
                             SetVariable("abs(j4_Eta)", fabs(selectedJets[vl]->Eta()));
-                            //SetVariable("j4_Phi", fabs(selectedJets[vl]->Phi()));
-                            //SetVariable("j4_Unc",   sqrt((selectedJets[vl]->GetJESUnc())*(selectedJets[vl]->GetJESUnc()) + Getjetres(selectedJets[vl]) * Getjetres(selectedJets[vl])));
                             SetVariable("j4_QGL", selectedJets[vl]->QGL()<0?0:selectedJets[vl]->QGL());
 
                             SetVariable("abs(j4_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", zepV4);
@@ -1548,8 +1535,14 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                             float dnn_ml_3 = 0;   // both not
                             float V_dnn = 0;
                             float V_cut = 0;
+
+                            float dnn_W = (float)readers_dnn_[0]->EvaluateMVA("DNN_ResTag_W");
+                            float dnn_Z = (float)readers_dnn_[1]->EvaluateMVA("DNN_ResTag_Z");
+           
+                            dnn = dnn_W; tmpTar = 0;
+                            if(dnn_Z>dnn_W) {dnn = dnn_Z; tmpTar = 1;} 
+
                             if(doBAnalysis){
-                                dnn = (float)readers_dnn_[0]->EvaluateMVA("DNN_ResTag_RBTA");
                                 //dnn_ml_0 = (float)readers_dnn_[2]->EvaluateMulticlass("DNN_ResTag_RBTA_ml")[0];
                                 //dnn_ml_2 = (float)readers_dnn_[2]->EvaluateMulticlass("DNN_ResTag_RBTA_ml")[2];
                                 //dnn_ml_3 = (float)readers_dnn_[2]->EvaluateMulticlass("DNN_ResTag_RBTA_ml")[3];
@@ -1558,7 +1551,6 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                                 V_cut = 0.75;
                             }
                             if(doMETAnalysis){
-                                dnn = (float)readers_dnn_[1]->EvaluateMVA("DNN_ResTag_RMET");
                                 //dnn_ml_0 = (float)readers_dnn_[3]->EvaluateMulticlass("DNN_ResTag_RMET_ml")[0];
                                 //dnn_ml_2 = (float)readers_dnn_[3]->EvaluateMulticlass("DNN_ResTag_RMET_ml")[2];
                                 //dnn_ml_3 = (float)readers_dnn_[3]->EvaluateMulticlass("DNN_ResTag_RMET_ml")[3];
