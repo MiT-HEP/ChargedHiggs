@@ -3812,7 +3812,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             //// decide
             //********cut********//
             float mWidth = 15.;
-            float mWidthL = 10.;
+            float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
             float tmvacut = 0.7; // 80% signal
@@ -3841,8 +3841,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 }
             }
 
-            bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
-            //            bool massWindow = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
+            //bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
+            bool massWindowAsy = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
+            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155) : (massWindowAsy);
             if( massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RBtag";
                 p4VV = ( selectedFatZbb[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
@@ -4010,7 +4011,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             //// decide
             //********cut********//
             float mWidth = 15.;
-            float mWidthL = 10.;
+            float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
             float tmvacut = 0.7; // 80% cut
@@ -4040,8 +4041,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             }
 
-            bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
-            //            bool massWindow = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
+            //bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
+            bool massWindowAsy = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
+            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155) : (massWindowAsy);
             if(massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RMET";
 
