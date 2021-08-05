@@ -16,7 +16,7 @@ Files=
 ### DATA
 include=dat/catalog/2020.moriond/nano/year2016/SingleMuon_local.dat
 ### DY
-addfiles=/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM
+#addfiles=/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM
 
 
 #__________________________________________________________________

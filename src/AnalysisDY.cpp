@@ -46,14 +46,27 @@ void DYAnalysis::Init(){
 	    Book ("DYAnalysis/Vars/FatJetZvsQCD_"+ l ,"ZvsQCD;ZvsQCD;Events", 100,0,1);
 	    Book ("DYAnalysis/Vars/FatJetNpv_"+ l ,"FatJetNPV;Npv;Events", 100,0,100); // after skim
 
-        //jet matching
-        Book ("DYAnalysis/Vars/FatJetBalance_"  + l ,"Balance;(p_{T}^{#mu#mu}-p_{T}^{fj})/(p_{T}^{#mu#mu});Events", 1000,-1,1);
+        Book ("DYAnalysis/Vars/FatJetBalance_"  + l ,"Balance;(p_{T}^{fj}-p_{T}^{#mu#mu})/(p_{T}^{#mu#mu});Events", 1000,-2,2);
         Book ("DYAnalysis/Vars/FatJetEta_"      + l,"FatJetEta;#eta_{fj};Events", 100,-5,5);
         Book ("DYAnalysis/Vars/FatJetSDMass_"   + l,"FatJetSDMass;softdrop mass [GeV];Events", 1000,0,1000);
+        //jet matching
         Book ("DYAnalysis/Vars/FatJetCEMF_"     + l ,"FatJetCEMF;cemf (matched);Events",100,0,1.); // matched
         Book ("DYAnalysis/Vars/FatJetNEMF_"     + l ,"FatJetCNMF;cnmf (matched);Events",100,0,1.);
-        Book ("DYAnalysis/Vars/FatJetIsJet_"    + l ,"FatJetIsJet;isJet (matched);Events",2,-.5,1.5);
+        Book ("DYAnalysis/Vars/FatJetCHF_"     + l ,"FatJetCHF;chf (matched);Events",100,0,1.); // matched
+        Book ("DYAnalysis/Vars/FatJetNHF_"     + l ,"FatJetNHF;nhf (matched);Events",100,0,1.);
+        Book ("DYAnalysis/Vars/FatJetIsJet_"    + l ,"FatJetIsJet;isJet (matched);Events",3,-1.5,1.5);
         Book ("DYAnalysis/Vars/FatJetPuId_"     + l ,"FatJetPuId;puid (matched);Events",100,0,1.);
+
+        for (const string& postfix : {"InnerBarrel","OuterBarrel","Endcap"} )  // ETA-DEPENDENT
+        {
+            Book ("DYAnalysis/Vars/FatJetBalance_" + postfix + "_" + l ,"Balance;(p_{T}^{fj}-p_{T}^{#mu#mu})/(p_{T}^{#mu#mu});Events", 1000,-2,2);
+            Book ("DYAnalysis/Vars/FatJetSDMass_"  + postfix + "_"  + l,"FatJetSDMass;softdrop mass [GeV];Events", 1000,0,1000);
+	        Book ("DYAnalysis/Vars/FatJetPhi_"    + postfix + "_" + l ,"FatJetPhi;#phi_{fj};Events",100,-3.1416,3.1416);
+            Book ("DYAnalysis/Vars/FatJetCHF_"    + postfix + "_"  + l ,"FatJetCHF;chf (matched);Events",100,0,1.); // matched
+            Book ("DYAnalysis/Vars/FatJetNHF_"     + postfix + "_" + l ,"FatJetNHF;nhf (matched);Events",100,0,1.);
+            Book ("DYAnalysis/Vars/FatJetNEMF_"    + postfix + "_"  + l ,"FatJetCNMF;cnmf (matched);Events",100,0,1.);
+        
+        }
     }
 
 }
@@ -214,9 +227,23 @@ int DYAnalysis::analyzeMM(Event *e, string systname)
 
             if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetCEMF_"+label,systname,j->GetCEMF(),e->weight());
             if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetNEMF_"+label,systname,j->GetNEMF(),e->weight());
-            if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetIsJet_"+label,systname,int(j->IsJet()),e->weight());
+            if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetCHF_"+label,systname,j->GetCHF(),e->weight());
+            if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetNHF_"+label,systname,j->GetNHF(),e->weight());
+            //if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetIsJet_"+label,systname,int(j->IsJet()),e->weight());
+            Fill ("DYAnalysis/Vars/FatJetIsJet_"+label,systname,(j!=nullptr)?int(j->IsJet()):-1,e->weight());
             if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetPuId_"+label,systname,j->GetPuId(),e->weight());
 
+            { //ETA-DEPENDENT
+            //string postfix = (fabs(fj0->Eta())<0.9) ? "InnerBarrel" : (fabs(fj0->Eta())<1.444) ? "OuterBarrel": "Endcap";
+            string postfix = (fj0->Eta()<0.5 and fj0->Eta() >-1.444) ? "InnerBarrel" : (fabs(fj0->Eta())<1.444) ? "OuterBarrel": "Endcap";
+	        Fill ("DYAnalysis/Vars/FatJetSDMass_"+ postfix+"_"+label ,systname, fj0->SDMass(), e->weight());
+	        Fill ("DYAnalysis/Vars/FatJetBalance_" + postfix+"_"+ label ,systname, (fj0->Pt() - Z.Pt())/Z.Pt(), e->weight());
+	        Fill ("DYAnalysis/Vars/FatJetPhi_" + postfix+"_"+ label ,systname, fj0->Phi(), e->weight());
+            if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetCHF_" + postfix + "_" +label,systname,j->GetCHF(),e->weight());
+            if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetNHF_" + postfix + "_" +label,systname,j->GetNHF(),e->weight());
+            if (j != nullptr)  Fill ("DYAnalysis/Vars/FatJetNEMF_"+ postfix + "_" + label,systname,j->GetNEMF(),e->weight());
+
+            } 
         }
 
     } // full selection on muons
