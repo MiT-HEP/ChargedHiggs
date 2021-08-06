@@ -21,6 +21,13 @@ void LoadNano::SetData(bool x)
     if(nano) nano->data=x;
 }
 
+void LoadNano::SetNanoV(int v)
+{
+    if(nano) {
+        nano->v9= (v==9)?1:0;
+    }
+}
+
 int LoadNano::InitTree(){
     if (tree_ == nullptr) {
         return 0;
@@ -576,9 +583,16 @@ void LoadNano::NewFile(){
     else if (fname.find("Run2017") != string::npos) {isData=true;} 
     else if (fname.find("Run2018") != string::npos) {isData=true;} 
 
+    int v=8;
+    if (fname.find("NanoAODv8") != string::npos) {v=8;} 
+    else if (fname.find("NanoAODv9") != string::npos) {v=9;} 
+    else if (fname.find("v8") != string::npos) {v=8;} 
+    else if (fname.find("v9") != string::npos) {v=9;} 
+
     // Figure out year
     SetYear(year);
     SetData(isData);
+    SetNanoV(v);
     
     InitTree();
     

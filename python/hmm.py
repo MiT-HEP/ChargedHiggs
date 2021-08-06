@@ -722,12 +722,12 @@ class HbbgConfig(HmmConfig):
 
     def lumi(self):
         #if self.year==2016: return 35867 ## 2016
-        print ("FIXME: Using Prescale lumi")
+        #print ("FIXME: Using Prescale lumi")
         if self.year==2012: return 19800 # don use it
-        if self.year==2015: return 2260/1.42857142857
-        if self.year==2016: return 35920/1.42857142857
-        if self.year==2017: return 41530/1.42857142857
-        if self.year==2018: return 59740/1.42857142857
+        if self.year==2015: return 2260  #/1.42857142857
+        if self.year==2016: return 35920 #/1.42857142857
+        if self.year==2017: return 41530 #/1.42857142857
+        if self.year==2018: return 59740 #/1.42857142857
         return 0.
 
     def br(self,mass=125):

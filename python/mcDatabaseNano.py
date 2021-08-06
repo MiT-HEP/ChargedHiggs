@@ -65,6 +65,8 @@ if opts.dat != "":
                    '13TeV' in x or \
                    'herwig' in x or \
                    'pythia' in x : label=x
+        elif '/store/group/phys_higgs/cmshmm/amarini/nano/' in f:
+            label=dirs[8]
         elif '/store/group/phys_higgs/cmshmm/amarini' in f:
             label=dirs[6] # default ?
 #            raise ValueError("to check label finding")
@@ -311,6 +313,8 @@ else:
     elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJZJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'VBF_HiggsZG_Zbb' in opts.label: xsec=1.
+    elif 'GluGlu_HiggsZG_Zbb' in opts.label: xsec=1.
     ## SIG ChargedHiggsToBoson
     ## cross section 1/pb normalization scaled for charge coniugation (x2) and BR(WW->jjjj) 45
     elif 'DoublyChargedHiggsGMmodel_HWW_M1000_13TeV-madgraph' in opts.label: xsec=0.225

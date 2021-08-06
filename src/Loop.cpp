@@ -139,6 +139,12 @@ void Looper::Loop()
             std::string name1 = std::tmpnam(nullptr);
             local_=name1; // save name to delete it at next file
             int status=system( ("xrdcp "+ fname + " "+name1).c_str()); 
+            if (status !=0) //try again
+            {
+                Log(__FUNCTION__,"INFO",string("->Calling xrdcp failed once. trying again. Cmd: '") + "xrdcp "+ fname + " "+name1 + "'");
+                sleep(60);
+                status=system( ("xrdcp "+ fname + " "+name1).c_str()); 
+            } // try again
             if (status != 0) {
                     Log(__FUNCTION__,"ERROR",Form("Unable to xrdcp. Exit status is %d",status));
                     throw abortException();

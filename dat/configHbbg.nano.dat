@@ -1,4 +1,6 @@
 include=dat/config.nano.dat
+Loader=LoadNano|2016
+xrdcp=true
 
 SFDB=aux/sf_database.2018.moriond.txt
 include=dat/json.2016.dat
@@ -8,41 +10,34 @@ include=dat/json.2016.dat
 ################
 
 Files=
-#addfiles=/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/amarini-NANOAODSIMv7_2016-07f11a9f6612f8436de459459102e3f2/USER~instance=prod/phys03
-#addfiles=/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/amarini-NANOAODSIMv7_2016-07f11a9f6612f8436de459459102e3f2/USER~instance=prod/phys03
-
-#No publication?
-#addfiles=/store/user/amarini/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/NANOAODSIMv7_2016
-#addfiles=/store/user/amarini/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/NANOAODSIMv7_2016
-
-#Loader=LoadNano|2016
-#Files=/store/mc/RunIISummer20UL18NanoAODv2/GluGluHToZZTo4L_M130_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8
 
 ## Signal
+addfiles=/store/group/phys_higgs/cmshmm/amarini/VBF_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/UL2016-NANOAODSIMv8
+addfiles=/store/group/phys_higgs/cmshmm/amarini/GluGlu_HiggsZG_Zbb_M125_13TeV_powheg_pythia8/UL2016-NANOAODSIMv8
+
+## QCD
+include=dat/catalog/2020.moriond/nano/year2016/QCD.dat
+include=dat/catalog/2020.moriond/nano/year2016/ttvbs.dat
+## THESE are skimmed
+#include=dat/catalog/2020.moriond/nano/year2016/QCD_local.dat
+#include=dat/catalog/2020.moriond/nano/year2016/ttvbs_local.dat
 
 ### DATA
+## this is skimmed: 1 fatjet
+#include=dat/catalog/2020.moriond/nano/year2016/jetHT_local.dat
+include=dat/catalog/2020.moriond/nano/year2016/jetHT.dat
+addfiles=/store/group/phys_higgs/cmshmm/amarini/nano/2016/BTagCSV
 
-
-############ RUN WITH DOUBLE MUONS ####################
-#addConfig=HmumuAnalysis|SetMultiPrimaryDataset(),AddLabel("DoubleMuon"),AddLabel("SingleMuon")
-#include=dat/catalog/2018.moriond/doubleMuon.dat
-######################################################
-
-Smear=NONE
 ## be less peaky, given the n. of systs
 EntryPerSecond=10
 Final=no
 
-
-#MCDB=aux/mcdb.2020.v3.7.year2016.dat
-#pileup=aux/pileup.v3.7.year2016.root
-
-MCDB=aux/mcdb.nano.year2016.txt
+SFDB=aux/sf_VBShad.txt
+MCDB=aux/mcdb.nano.2016.txt
 pileup=aux/pileup.nano.year2016.root
 
-Correct=MetPhiCorrector
-config=MetPhiCorrector|year=2016
-
+Correct=NONE
+Smear=NONE
 
 Analysis=OneAnalysis,JsonAnalysis,MetFiltersAnalysis,HbbgAnalysis
 
@@ -53,4 +48,6 @@ addConfig=HbbgAnalysis|AddLabel('TT')
 addConfig=HbbgAnalysis|AddLabel('QCD')
 addConfig=HbbgAnalysis|year=2016
 addConfig=HbbgAnalysis|weights.push_back('aux/bdt_hbbg_v1.xml')
+
+addConfig=HbbgAnalysis|SetMultiPrimaryDataset(),AddLabel('BTagCSV'),AddLabel('JetHT'),AddLabel('SinglePhoton') ## BTagCSV (VBF) and JetHT (GluGlu) is the deafult fall back
 

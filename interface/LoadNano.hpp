@@ -27,6 +27,7 @@ class LoadNano : public Loader
 
     void SetYear(int y) override ;
     void SetData(bool x) override ;
+    void SetNanoV(int v) ;// NanoVersion is only in nano
 };
 
 #endif
