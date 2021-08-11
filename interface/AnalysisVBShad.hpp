@@ -142,6 +142,7 @@ private:
     float bosV2j2Pt=-100;
     float bosV2j1Pt=-100;
 
+    float evt_MTVV=-100;
     float evt_MVV=-100;
     float evt_DRV2=-100;
     float evt_PetaVV=-100;
@@ -159,18 +160,26 @@ private:
     float evt_mtop=0;
 
     float evt_zepVB=-100;
+    float evt_zepVB1=-100;
+    float evt_zepVB2=-100;
     float evt_zepV2=-100;
     float evt_cenEta=-100;
+    float evt_cenEtaRes=-100;
     float evt_zepVV=-100;
+    float evt_zepV2j1=-100;
+    float evt_zepV2j2=-100;
     float evt_DRV1j=-100;
+    float evt_DRV2j=-100;
     float evt_FW2=-100;
 
     float evt_bosV1mass=-1;
+    float evt_bosV1Eta=-100;
     float evt_bosV1discr=-1;
     float evt_bosV1tdiscr=-1;
     float evt_bosV1bdiscr=-1;
     float evt_bosV1unc = 0;
     float evt_bosV2mass=-1;
+    float evt_bosV2Eta=-100;
     float evt_bosV2discr=-1;
     float evt_bosV2tdiscr=-1;
     float evt_bosV2bdiscr=-1;
@@ -190,6 +199,8 @@ private:
     bool evt_genmatch = 0;
     float evt_j1unc = 0;
     float evt_j2unc = 0;
+    float evt_j1QGL = -1;
+    float evt_j2QGL = -1;
 
     //VV-rest Frame
     float evt_VVcenEta = -100;
