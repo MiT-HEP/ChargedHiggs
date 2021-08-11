@@ -3753,20 +3753,21 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         //50|--Cres-|--Ares-|--Cres-|155//
         //////////////////////////////////
 
-        bool condition1_AvsC = doSideBand ? selectedFatJetsIn.size()==0 : selectedFatJetsIn.size()>0;
-        bool condition2_AvsB = doBAntiAnalysis ? selectedMirrorFatJets.size()==0 : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
+        bool condition1_AvsC = doSideBand ? (selectedFatJetsIn.size()==0 and selectedFatZbb.size()==1) : (selectedFatJetsIn.size()>0 or selectedFatZbb.size()>1);
+        bool condition2_AvsB = doBAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbb.size()==1) : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
 
         //MARIA BBtag
-        if(selectedFatZbb.size()>0 and selectedFatJets.size()>0 and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
+        if(  (selectedFatZbb.size()>1 or (selectedFatZbb.size()==1 and selectedFatJets.size()>0)) and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
             category="_BBtag";
-            // add cases with two Zbb Zbb most pures only for nonresonant
 
             TLorentzVector jet1P4;
             TLorentzVector jet2P4;
             Fill("VBShadAnalysis/Baseline/pT_BJet_"+label, systname, selectedFatZbb[0]->GetP4().Pt(), e->weight() );
 
-            jet1P4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass());
-            jet2P4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass());
+            jet1P4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass(true));
+            if(selectedFatZbb.size()>1) jet2P4.SetPtEtaPhiM(selectedFatZbb[1]->Pt(),selectedFatZbb[1]->Eta(),selectedFatZbb[1]->Phi(),selectedFatZbb[1]->rawMass(true));
+            else jet2P4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass());
+        
             p4VV = jet1P4 + jet2P4;
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
             //p4VV = (selectedFatJets[0]->GetP4()+selectedFatZbb[0]->GetP4());
@@ -3774,24 +3775,32 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             evt_MVV = p4VV.M();
             evt_PTVV = p4VV.Pt();
             evt_PTV1 = selectedFatZbb[0]->GetP4().Pt();
-            evt_PTV2 = selectedFatJets[0]->GetP4().Pt();
+            evt_PTV2 = jet2P4.Pt();
+
             evt_bosV1discr = bosonBBDiscr[0];
             evt_bosV1mass = bosonBBMass[0];
             evt_bosV1Eta = selectedFatZbb[0]->Eta();
-            evt_bosV1unc = -1;
+            evt_bosV1unc = 0;
             evt_bosV1tdiscr = bosonBBTDiscr[0];
             evt_bosV1bdiscr = -1;
-            evt_bosV2discr = bosonVDiscr[0];
-            evt_bosV2tdiscr = bosonTDiscr[0];
-            evt_bosV2bdiscr = bosonBDiscr[0];
+            if(selectedFatZbb.size()>1){
+                evt_bosV2discr = bosonBBDiscr[1];
+                evt_bosV2mass = bosonBBMass[1];
+                evt_bosV2tdiscr = bosonBBTDiscr[1];
+                evt_bosV2bdiscr = -1.;
+            }else{
+                evt_bosV2discr = bosonVDiscr[0];
+                evt_bosV2tdiscr = bosonTDiscr[0];
+                evt_bosV2bdiscr = bosonBDiscr[0];
+                evt_bosV2mass = bosonMass[0];
+            }
+            evt_bosV2Eta = jet2P4.Eta();
             evt_bosV2discr2nd = -1.;
-            evt_bosV2mass = bosonMass[0];
-            evt_bosV2Eta = selectedFatJets[0]->Eta();
             evt_bosV2unc = 0;
-            evt_DetaVV = fabs(selectedFatJets[0]->DeltaEta(selectedFatZbb[0]));
-            evt_PetaVV = selectedFatJets[0]->GetP4().Eta() * selectedFatZbb[0]->GetP4().Eta();
-            evt_EtaMinV = std::min(selectedFatJets[0]->Eta(),selectedFatZbb[0]->Eta());
-            evt_EtaMaxV = std::max(selectedFatJets[0]->Eta(),selectedFatZbb[0]->Eta());
+            evt_DetaVV = fabs(jet2P4.Eta() - jet1P4.Eta());
+            evt_PetaVV = jet1P4.Eta() * jet2P4.Eta();
+            evt_EtaMinV = std::min(jet1P4.Eta(),jet2P4.Eta());
+            evt_EtaMaxV = std::max(jet1P4.Eta(),jet2P4.Eta());
             //            float Mjj=jettagForBoosted(e, label, systname, evt_EtaMinV, evt_EtaMaxV);
             for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
                 if(selectedJets[iter]->Pt()<50 ) continue;
@@ -3802,7 +3811,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         // target the ZbbZqq + ZbbWqq resolved
-        if(selectedFatZbb.size()>0 and selectedFatJets.size()==0 and selectedFatJetsOut.size() == 0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
+        if(selectedFatZbb.size()==1 and selectedFatJets.size()==0 and selectedFatJetsOut.size() == 0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
             category="";
 
             ///////$$$$$$$
@@ -3902,7 +3911,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 category="_RBtag";
     
                 TLorentzVector jetP4;
-                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass());
+                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass(true));
 
                 p4VV = jetP4 + bosonJets[0]->GetP4() + bosonJets[1]->GetP4();
                 //p4VV = ( selectedFatZbb[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
@@ -3973,7 +3982,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             TLorentzVector metP4;
             //            cout << "is the selectedFatJets->SDMass() ok ?? "<< endl;
             if(selectedFatZbb.size()>0)
-                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass());
+                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass(true));
             else
                 jetP4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass());
             if(usePuppi) {
