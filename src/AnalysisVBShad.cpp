@@ -753,7 +753,7 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
     // MIX
     Branch(name,"varCen",'F');
     Branch(name,"varCenRes",'F');
-    Branch(name,"varzepVB",'F')
+    Branch(name,"varzepVB",'F');
     Branch(name,"varzepVB1",'F');
     Branch(name,"varzepVB2",'F');
     Branch(name,"varzepVV",'F');
