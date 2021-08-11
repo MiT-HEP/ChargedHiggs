@@ -3654,6 +3654,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
             category="_BB";
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
+
+            TLorentzVector jet1P4;
+            TLorentzVector jet2P4;
+
             evt_bosV1discr = bosonVDiscr[0];
             evt_bosV1tdiscr = bosonTDiscr[0];
             evt_bosV1mass = bosonMass[0];
@@ -3667,7 +3671,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             evt_bosV2Eta = selectedFatJets[1]->Eta();
             evt_bosV2bdiscr = bosonBDiscr[1];
 
-            p4VV = (selectedFatJets[0]->GetP4()+selectedFatJets[1]->GetP4());
+            jet1P4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass());
+            jet2P4.SetPtEtaPhiM(selectedFatJets[1]->Pt(),selectedFatJets[1]->Eta(),selectedFatJets[1]->Phi(),selectedFatJets[1]->rawMass());
+            p4VV = jet1P4 + jet2P4;
+            //p4VV = (selectedFatJets[0]->GetP4()+selectedFatJets[1]->GetP4());
             evt_MVV = p4VV.M();
             evt_PTVV = p4VV.Pt();
             evt_PTV1 = selectedFatJets[0]->GetP4().Pt();
@@ -3754,10 +3761,15 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             category="_BBtag";
             // add cases with two Zbb Zbb most pures only for nonresonant
 
+            TLorentzVector jet1P4;
+            TLorentzVector jet2P4;
             Fill("VBShadAnalysis/Baseline/pT_BJet_"+label, systname, selectedFatZbb[0]->GetP4().Pt(), e->weight() );
 
+            jet1P4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass());
+            jet2P4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass());
+            p4VV = jet1P4 + jet2P4;
             //            evt_MVV = selectedFatJets[0]->InvMass(selectedFatJets[1]);
-            p4VV = (selectedFatJets[0]->GetP4()+selectedFatZbb[0]->GetP4());
+            //p4VV = (selectedFatJets[0]->GetP4()+selectedFatZbb[0]->GetP4());
 
             evt_MVV = p4VV.M();
             evt_PTVV = p4VV.Pt();
@@ -3888,7 +3900,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155) : (massWindowAsy);
             if( massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RBtag";
-                p4VV = ( selectedFatZbb[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
+    
+                TLorentzVector jetP4;
+                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass());
+
+                p4VV = jetP4 + bosonJets[0]->GetP4() + bosonJets[1]->GetP4();
+                //p4VV = ( selectedFatZbb[0]->GetP4() + bosonJets[0]->GetP4() + bosonJets[1]->GetP4());
                 evt_chi2_ = chi2;
                 evt_MVV = p4VV.M();
                 evt_PTVV = p4VV.Pt();
