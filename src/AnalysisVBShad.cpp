@@ -4272,8 +4272,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         //if(!doResonant and !centrality1) return EVENT_NOT_USED;
     }
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--centrality
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 10, 1 );
+    //Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--centrality
+    //Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 10, 1 );
 
     if(!doMETAnalysis) {
 
@@ -4307,13 +4307,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
 
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 11, e->weight() ); //11--centrality
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 11, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--centrality
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 10, 1 );
 
     if(doHADAnalysis or doHADAntiAnalysis) { if(evt_PTV1<400) return EVENT_NOT_USED; }
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--V pt
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 11, e->weight() ); //11--V pt
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 11, 1 );
 
 
     //Zep and DR variables
@@ -4358,8 +4358,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         ) and
        (!doResonant and evt_normPTVVjj > 0.25) ) return EVENT_NOT_USED;
 
-    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 13, e->weight() ); //13--normPtVV
-    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 13, 1 );
+    Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--normPtVV
+    Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
 
     std::vector<TLorentzVector> oP4;
     oP4.push_back(p4VV);
