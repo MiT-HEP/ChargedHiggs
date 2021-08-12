@@ -3342,6 +3342,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
     */
 
+    if ( label.find("EWKWMinus2Jets") !=string::npos) label = "EWKW";
+    if ( label.find("EWKWPlus2Jets") !=string::npos) label = "EWKW";
+
     /*
     // redefine labels
     if ( label == "WWW") label = "MULTIBOSON";
@@ -4307,7 +4310,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 11, e->weight() ); //11--centrality
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 11, 1 );
 
-    if(doHADAnalysis or doHADAntiAnalysis) { if(evt_PTV1<350) return EVENT_NOT_USED; }
+    if(doHADAnalysis or doHADAntiAnalysis) { if(evt_PTV1<400) return EVENT_NOT_USED; }
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 12, e->weight() ); //12--V pt
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 12, 1 );
