@@ -130,12 +130,16 @@ private:
     vector<Jet*> vetoJets;
 
     TLorentzVector p4VV;
+    TLorentzVector p4V1;
+    TLorentzVector p4V2;
     TLorentzVector p4jj;
     TLorentzVector p4VVjj;
 
     float evt_Mjj=-100;
     float evt_Detajj=-100;
     float evt_Dphijj=-100;
+    float evt_Jet1Eta=-100;
+    float evt_Jet1Pt=-100;
     float evt_Jet2Eta=-100;
     float evt_Jet2Pt=-100;
 
@@ -145,6 +149,7 @@ private:
     float evt_MTVV=-100;
     float evt_MVV=-100;
     float evt_DRV2=-100;
+    float evt_DphiVV=-100;
     float evt_PetaVV=-100;
     float evt_DetaVV=-100;
     float evt_MVV_gen=-100;
