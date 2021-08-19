@@ -631,12 +631,14 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
       event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
       // below from JetHT
-      event_->triggerNames_.push_back("HLT_PFHT1050");
-      event_->triggerNames_.push_back("HLT_AK8PFHT800_TrimMass50");
-      event_->triggerNames_.push_back("HLT_AK8PFJet500");
-      event_->triggerNames_.push_back("HLT_AK8PFJet400_TrimMass30");
+      event_->triggerNames_.push_back("HLT_PFHT1050"); //41.54
+      event_->triggerNames_.push_back("HLT_AK8PFHT750_TrimMass50"); //30.96 **
+      event_->triggerNames_.push_back("HLT_AK8PFHT800_TrimMass50"); //36.49
+      event_->triggerNames_.push_back("HLT_AK8PFJet500");           //41.54
+      event_->triggerNames_.push_back("HLT_AK8PFJet380_TrimMass30");//31.22 **
+      event_->triggerNames_.push_back("HLT_AK8PFJet400_TrimMass30");//36.75
       event_->triggerNames_.push_back("HLT_AK8PFJetFwd400");
-      event_->triggerNames_.push_back("HLT_PFJet500");
+      event_->triggerNames_.push_back("HLT_PFJet500");              //41.54
       //HLT_CaloJet500_NoJetID
       //HLT_DiPFJetAve160_HFJEC_v13
       //HLT_DiPFJetAve60_HFJEC_v13

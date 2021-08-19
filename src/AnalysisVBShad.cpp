@@ -7,7 +7,9 @@
 
 //2018  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18#Supported_Algorithms_and_Operati
 //2017  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17#Supported_Algorithms_and_Operati
-//2016  to be updated
+//2016  to be updated temporaty from here https://indico.cern.ch/event/1063451/contributions/4484910/attachments/2293669/3900253/OH_TnPULl6v1.pdf
+//PRE DeepCSV: L = 0.2027, M = 0.6001, T = 0.8819
+//POST DeepCSV: L = 0.1918, M = 0.5847, T = 0.8767
 #define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1355:0.1208)
 #define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4506:0.4148)
 #define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?0.7738:.7665)
@@ -3496,11 +3498,19 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_AK8PFJet360_TrimMass30")
                         || e->IsTriggered("HLT_PFJet450");
 
-    if (year==2017 or year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
-                                      || e->IsTriggered("HLT_AK8PFJet500")
-                                      || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
-                                      || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
-                                      || e->IsTriggered("HLT_PFJet500");
+    if (year==2017) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
+                        || e->IsTriggered("HLT_AK8PFJet500")
+                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
+                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
+                        || e->IsTriggered("HLT_PFJet500")
+                        || e->IsTriggered("HLT_AK8PFHT750_TrimMass50")
+                        || e->IsTriggered("HLT_AK8PFJet380_TrimMass30");
+
+    if (year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
+                        || e->IsTriggered("HLT_AK8PFJet500")
+                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
+                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
+                        || e->IsTriggered("HLT_PFJet500");
     /*
       2017 - JetHT 
       HLT_DiPFJetAve160_HFJEC
