@@ -1196,6 +1196,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RR_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
 
+        if(doStudyMass){
+
         // mass studies
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_"+l, "SDMass_FatJet; SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatZbbJet_"+l, "SDMass_FatZbbJet; SDMass [GeV]; Events", 100,0,200.);
@@ -1279,6 +1281,7 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/NSubJets_FatJetFake_"+l, "NSubJets; NSubJets; Events", 5,0,5);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_lowDiff_"+l, "SDMass_FatJetFake (low diff); SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_largeDiff_"+l, "SDMass_FatJetFake (large diff); SDMass [GeV]; Events", 100,0,200.);
+        }// end mass study
 
         //Jet
         Book ("VBShadAnalysis/Baseline/NJet_"+l, "NJet; FatJet; Events", 10,0,10);
