@@ -966,6 +966,8 @@ void VBShadAnalysis::Init(){
     Log(__FUNCTION__,"INFO",Form("doBAntiAnalysis=%d",doBAntiAnalysis));
     Log(__FUNCTION__,"INFO",Form("doHADAntiAnalysis=%d",doHADAntiAnalysis));
 
+    Log(__FUNCTION__,"INFO",Form("doSideBand=%d",doSideBand));
+
     if(doResonant) doTMVA=false;
 
     if (not jet_resolution)
@@ -2534,6 +2536,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if(doMETAntiAnalysis)  doMETAnalysis=true;
         if(doBAntiAnalysis) doBAnalysis=true;
+        if(doHADAntiAnalysis) doHADAnalysis=true;
 
         if(doMETAnalysis and dPhiFatMet<0.4) continue;
 
@@ -2673,7 +2676,7 @@ void VBShadAnalysis::VVRestObj(Event*e){
         }
     }
     //BBtag
-    if (doBAnalysis){
+    if (doBAnalysis or doBAntiAnalysis){
         if(selectedFatZbb.size()>0 and selectedFatJets.size()>0){
             boostVV = (selectedFatJets[0]->GetP4()+selectedFatZbb[0]->GetP4()).BoostVector();
                    
@@ -3567,7 +3570,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
           if(!passtriggerMET) return EVENT_NOT_USED;
       }
 
-      if(doBAnalysis) {
+      if(doBAnalysis or doBAntiAnalysis) {
         if(!passtriggerBtag) return EVENT_NOT_USED;
       }
     }
@@ -3634,7 +3637,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //    if ( ( doHADAnalysis or doHADAntiAnalysis ) and e->Bjets() > 0 ) return EVENT_NOT_USED;
     //    if ( doBAnalysis and (e->Bjets() == 0 or e->Bjets()>2) ) return EVENT_NOT_USED;
     if ( doMETAnalysis and e->Bjets()>2 ) return EVENT_NOT_USED;
-    if ( !doBAntiAnalysis and counterExtrabToVeto_>0) return EVENT_NOT_USED;
+    if ( counterExtrabToVeto_>0 ) return EVENT_NOT_USED;
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","b veto" );
     Fill("VBShadAnalysis/Baseline/NBJet_" +label, systname, e->Bjets(), e->weight() );
@@ -3915,7 +3918,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
             bool massWindowAsy = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
-            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155) : (massWindowAsy);
+            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155 && MV > 50) : (massWindowAsy);
             if( massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RBtag";
     
@@ -4117,7 +4120,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
             bool massWindowAsy = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
-            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155) : (massWindowAsy);
+            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155 && MV > 50) : (massWindowAsy);
             if(massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RMET";
 
