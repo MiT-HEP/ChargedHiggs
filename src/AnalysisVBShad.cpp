@@ -1188,6 +1188,16 @@ void VBShadAnalysis::Init(){
         Book("VBShadAnalysis/Baseline/mVV_MET_triggerMetOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
         }
 
+        if( (l.find("TT_TuneCP5") !=string::npos) or (l.find("WJetsToLNu_HT") !=string::npos) ) {
+        //GenLepton
+        Book ("VBShadAnalysis/Baseline/genElePt_"+l, "genElePt; p_{T} (e); Events", 200,0,200);
+        Book ("VBShadAnalysis/Baseline/genEleEta_"+l, "genEleEta; #eta (e); Events", 100,-5.,5.);
+        Book ("VBShadAnalysis/Baseline/genMuoPt_"+l, "genMuoPt; p_{T} (#mu); Events", 200,0,200);
+        Book ("VBShadAnalysis/Baseline/genMuoEta_"+l, "genMuoEta; #eta (#mu); Events", 100,-5.,5.);
+        Book ("VBShadAnalysis/Baseline/genTauPt_"+l, "genTauPt; p_{T} (#tau); Events", 200,0,200);
+        Book ("VBShadAnalysis/Baseline/genTauEta_"+l, "genTauEta; #eta (#tau); Events", 100,-5.,5.);
+        }
+
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
         Book ("VBShadAnalysis/Baseline/eta_FatJet_"+l, "eta_FatJet; #eta; Events", 100,-5.,5.);
@@ -2087,6 +2097,9 @@ void VBShadAnalysis::genStudies(Event*e, string label )
 
         GenParticle *genpar = e->GetGenParticle(i);
         //        if( ! genpar->IsLHE()) continue;
+
+        // ** promptLeptons from W for Wjets and semileptonic ttbar in MET category
+        if((fabs(genpar->GetPdgId()) == 11 ||  fabs(genpar->GetPdgId()) == 13 || fabs(genpar->GetPdgId()) == 15) and fabs(genpar->GetParentPdgId())==24) if(genLep==NULL) { genLep = genpar; }
 
         // ** BOSON
         if(fabs(genpar->GetPdgId()) == pdgID1 and fabs(genpar->GetParentPdgId())>6) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
@@ -3226,6 +3239,7 @@ void VBShadAnalysis::reset() // reset private members
     minDPhi=999.f;
     badHFjetVeto = false;
 
+    genLep = NULL;
     genVp = NULL;
     genVp2 = NULL;
     dauV1a = NULL;
@@ -3413,7 +3427,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$ Merge and redefine TTbar
     //$$$$$$$$$
 
-    // comment for now; need to evaluate the final sample statistics
+    // comment for now; need to evaluate the LEPTON veto
 
     if (not e->IsRealData() and (
         (label.find("TTTo2L2Nu") !=string::npos) or
@@ -3651,6 +3665,15 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 5, e->weight() );  //5--vetoB+dPhiMET
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 5, 1 );
+
+    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) ) {
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 11) Fill("VBShadAnalysis/Baseline/genElePt_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 11) Fill("VBShadAnalysis/Baseline/genEleEta_"+label, systname, genLep->Eta() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 13) Fill("VBShadAnalysis/Baseline/genMuoPt_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 13) Fill("VBShadAnalysis/Baseline/genMuoEta_"+label, systname, genLep->Eta() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauPt_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauEta_"+label, systname, genLep->Eta() , e->weight() );
+    }
 
     //$$$$$$$$$
     //$$$$$$$$$

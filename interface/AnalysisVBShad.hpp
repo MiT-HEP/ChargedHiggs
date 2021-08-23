@@ -85,6 +85,7 @@ public:
 private:
 
     // for genStudies
+    GenParticle *genLep = NULL;
     GenParticle *genVp = NULL;
     GenParticle *genVp2 = NULL;
 

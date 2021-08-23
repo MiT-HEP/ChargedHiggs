@@ -390,12 +390,14 @@ int LoadNano::FillEvent(){
        t -> SetP4( p4);
        t -> SetType( 15 );
        t -> SetCharge( nano->Tau_charge[i] );
-       t -> SetId ( nano->Tau_idDeepTau2017v2p1VSjet[i] ) ; // this is in the or with DecayModeNewDMs
+       bool id = (nano->Tau_idDeepTau2017v2p1VSjet[i] & 1) ; // bitmask 1 = VVVLoose, this is in the or with DecayModeNewDMs
+       if (not id) continue;
         // probably not DB corrected: TOCHECK
        t -> SetIso2( nano->Tau_chargedIso[i]+nano->Tau_neutralIso[i]);
        t -> SetIdEle (nano->Tau_idAntiEle[i]); //2018? FIXME
        t -> SetIdMu (nano->Tau_idAntiMu[i]); // 2018 FIXME
        //decay mode
+       event_ -> taus_ . push_back(t);
    }
 
 #ifdef VERBOSE
