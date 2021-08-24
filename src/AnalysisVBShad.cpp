@@ -10,9 +10,9 @@
 //2016  to be updated temporaty from here https://indico.cern.ch/event/1063451/contributions/4484910/attachments/2293669/3900253/OH_TnPULl6v1.pdf
 //PRE DeepCSV: L = 0.2027, M = 0.6001, T = 0.8819
 //POST DeepCSV: L = 0.1918, M = 0.5847, T = 0.8767
-#define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1355:0.1208)
-#define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4506:0.4148)
-#define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?0.7738:.7665)
+#define DEEP_B_LOOSE ((year==2016)?0.2027:(year==2017)?0.1355:0.1208)
+#define DEEP_B_MEDIUM ((year==2016)?0.6001:(year==2017)?0.4506:0.4148)
+#define DEEP_B_TIGHT ((year==2016)?0.8819 :(year==2017)?0.7738:.7665)
 
 #define DEEP_C_LOOSE ((year==2016)?1.:(year==2017)?0.04:0.064)
 #define DEEP_C_MEDIUM ((year==2016)?1.:(year==2017)?0.144:0.153)
