@@ -75,7 +75,7 @@ void VBShadAnalysis::SetTauCuts(Tau *t){
     t->SetIsoRelCut(-1); // NOW byVLooseIsolationMVArun2v1DBoldDMwLT, BEFORE LooseCombinedIsolationDeltaBetaCorr3Hits
     t->SetIsoCut(-1);
     t->SetProngsCut(-1); // all Prong
-    t->SetDecayMode(0);
+    t->SetDecayMode(-1);
 }
 
 
@@ -1196,6 +1196,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/genMuoEta_"+l, "genMuoEta; #eta (#mu); Events", 100,-5.,5.);
         Book ("VBShadAnalysis/Baseline/genTauPt_"+l, "genTauPt; p_{T} (#tau); Events", 200,0,200);
         Book ("VBShadAnalysis/Baseline/genTauEta_"+l, "genTauEta; #eta (#tau); Events", 100,-5.,5.);
+        Book ("VBShadAnalysis/Baseline/genTauPt_all_"+l, "genTauPt; p_{T} (#tau); Events", 200,0,200);
+        Book ("VBShadAnalysis/Baseline/genTauEta_all_"+l, "genTauEta; #eta (#tau); Events", 100,-5.,5.);
         }
 
         //FatJet
@@ -3598,7 +3600,22 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     // kill Top/W/Z
     if ( e->Nleps() > 0 ) return EVENT_NOT_USED;
+
+    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) ) {
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauPt_all_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauEta_all_"+label, systname, genLep->Eta() , e->weight() );
+    }
+
     if ( e->Ntaus() > 0 ) return EVENT_NOT_USED;
+
+    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) ) {
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 11) Fill("VBShadAnalysis/Baseline/genElePt_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 11) Fill("VBShadAnalysis/Baseline/genEleEta_"+label, systname, genLep->Eta() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 13) Fill("VBShadAnalysis/Baseline/genMuoPt_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 13) Fill("VBShadAnalysis/Baseline/genMuoEta_"+label, systname, genLep->Eta() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauPt_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauEta_"+label, systname, genLep->Eta() , e->weight() );
+    }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Lepton and taus veto" );
 
@@ -3665,15 +3682,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 5, e->weight() );  //5--vetoB+dPhiMET
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 5, 1 );
-
-    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) ) {
-        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 11) Fill("VBShadAnalysis/Baseline/genElePt_"+label, systname, genLep->Pt() , e->weight() );
-        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 11) Fill("VBShadAnalysis/Baseline/genEleEta_"+label, systname, genLep->Eta() , e->weight() );
-        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 13) Fill("VBShadAnalysis/Baseline/genMuoPt_"+label, systname, genLep->Pt() , e->weight() );
-        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 13) Fill("VBShadAnalysis/Baseline/genMuoEta_"+label, systname, genLep->Eta() , e->weight() );
-        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauPt_"+label, systname, genLep->Pt() , e->weight() );
-        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauEta_"+label, systname, genLep->Eta() , e->weight() );
-    }
 
     //$$$$$$$$$
     //$$$$$$$$$
