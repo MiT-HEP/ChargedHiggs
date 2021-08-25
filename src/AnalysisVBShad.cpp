@@ -7,10 +7,12 @@
 
 //2018  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18#Supported_Algorithms_and_Operati
 //2017  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17#Supported_Algorithms_and_Operati
-//2016  to be updated
-#define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1355:0.1208)
-#define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4506:0.4148)
-#define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?0.7738:.7665)
+//2016  to be updated temporaty from here https://indico.cern.ch/event/1063451/contributions/4484910/attachments/2293669/3900253/OH_TnPULl6v1.pdf
+//PRE DeepCSV: L = 0.2027, M = 0.6001, T = 0.8819
+//POST DeepCSV: L = 0.1918, M = 0.5847, T = 0.8767
+#define DEEP_B_LOOSE ((year==2016)?0.2027:(year==2017)?0.1355:0.1208)
+#define DEEP_B_MEDIUM ((year==2016)?0.6001:(year==2017)?0.4506:0.4148)
+#define DEEP_B_TIGHT ((year==2016)?0.8819 :(year==2017)?0.7738:.7665)
 
 #define DEEP_C_LOOSE ((year==2016)?1.:(year==2017)?0.04:0.064)
 #define DEEP_C_MEDIUM ((year==2016)?1.:(year==2017)?0.144:0.153)
@@ -73,7 +75,7 @@ void VBShadAnalysis::SetTauCuts(Tau *t){
     t->SetIsoRelCut(-1); // NOW byVLooseIsolationMVArun2v1DBoldDMwLT, BEFORE LooseCombinedIsolationDeltaBetaCorr3Hits
     t->SetIsoCut(-1);
     t->SetProngsCut(-1); // all Prong
-    t->SetDecayMode(0);
+    t->SetDecayMode(-1);
 }
 
 
@@ -964,6 +966,8 @@ void VBShadAnalysis::Init(){
     Log(__FUNCTION__,"INFO",Form("doBAntiAnalysis=%d",doBAntiAnalysis));
     Log(__FUNCTION__,"INFO",Form("doHADAntiAnalysis=%d",doHADAntiAnalysis));
 
+    Log(__FUNCTION__,"INFO",Form("doSideBand=%d",doSideBand));
+
     if(doResonant) doTMVA=false;
 
     if (not jet_resolution)
@@ -1184,6 +1188,18 @@ void VBShadAnalysis::Init(){
         Book("VBShadAnalysis/Baseline/mVV_MET_triggerMetOr_" +l, "mVV; mVV [GeV]; Events", 250,0,2500);
         }
 
+        if( (l.find("TT_TuneCP5") !=string::npos) or (l.find("WJetsToLNu_HT") !=string::npos) ) {
+        //GenLepton
+        Book ("VBShadAnalysis/Baseline/genElePt_"+l, "genElePt; p_{T} (e); Events", 200,0,200);
+        Book ("VBShadAnalysis/Baseline/genEleEta_"+l, "genEleEta; #eta (e); Events", 100,-5.,5.);
+        Book ("VBShadAnalysis/Baseline/genMuoPt_"+l, "genMuoPt; p_{T} (#mu); Events", 200,0,200);
+        Book ("VBShadAnalysis/Baseline/genMuoEta_"+l, "genMuoEta; #eta (#mu); Events", 100,-5.,5.);
+        Book ("VBShadAnalysis/Baseline/genTauPt_"+l, "genTauPt; p_{T} (#tau); Events", 200,0,200);
+        Book ("VBShadAnalysis/Baseline/genTauEta_"+l, "genTauEta; #eta (#tau); Events", 100,-5.,5.);
+        Book ("VBShadAnalysis/Baseline/genTauPt_all_"+l, "genTauPt; p_{T} (#tau); Events", 200,0,200);
+        Book ("VBShadAnalysis/Baseline/genTauEta_all_"+l, "genTauEta; #eta (#tau); Events", 100,-5.,5.);
+        }
+
         //FatJet
         Book ("VBShadAnalysis/Baseline/NFatJet_"+l, "NFatJet; NFatJet; Events", 5,0,5);
         Book ("VBShadAnalysis/Baseline/eta_FatJet_"+l, "eta_FatJet; #eta; Events", 100,-5.,5.);
@@ -1193,6 +1209,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RB_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RR_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
+
+        if(doStudyMass){
 
         // mass studies
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_"+l, "SDMass_FatJet; SDMass [GeV]; Events", 100,0,200.);
@@ -1277,6 +1295,7 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/NSubJets_FatJetFake_"+l, "NSubJets; NSubJets; Events", 5,0,5);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_lowDiff_"+l, "SDMass_FatJetFake (low diff); SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJetFake_largeDiff_"+l, "SDMass_FatJetFake (large diff); SDMass [GeV]; Events", 100,0,200.);
+        }// end mass study
 
         //Jet
         Book ("VBShadAnalysis/Baseline/NJet_"+l, "NJet; FatJet; Events", 10,0,10);
@@ -2081,6 +2100,9 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         GenParticle *genpar = e->GetGenParticle(i);
         //        if( ! genpar->IsLHE()) continue;
 
+        // ** promptLeptons from W for Wjets and semileptonic ttbar in MET category
+        if((fabs(genpar->GetPdgId()) == 11 ||  fabs(genpar->GetPdgId()) == 13 || fabs(genpar->GetPdgId()) == 15) and fabs(genpar->GetParentPdgId())==24) if(genLep==NULL) { genLep = genpar; }
+
         // ** BOSON
         if(fabs(genpar->GetPdgId()) == pdgID1 and fabs(genpar->GetParentPdgId())>6) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
         if(fabs(genpar->GetPdgId()) == pdgID2 and fabs(genpar->GetParentPdgId())>6) if(genVp2==NULL and genpar!=genVp) { genVp2 = genpar; /*cout << "found W2 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
@@ -2529,6 +2551,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if(doMETAntiAnalysis)  doMETAnalysis=true;
         if(doBAntiAnalysis) doBAnalysis=true;
+        if(doHADAntiAnalysis) doHADAnalysis=true;
 
         if(doMETAnalysis and dPhiFatMet<0.4) continue;
 
@@ -2668,7 +2691,7 @@ void VBShadAnalysis::VVRestObj(Event*e){
         }
     }
     //BBtag
-    if (doBAnalysis){
+    if (doBAnalysis or doBAntiAnalysis){
         if(selectedFatZbb.size()>0 and selectedFatJets.size()>0){
             boostVV = (selectedFatJets[0]->GetP4()+selectedFatZbb[0]->GetP4()).BoostVector();
                    
@@ -3218,6 +3241,7 @@ void VBShadAnalysis::reset() // reset private members
     minDPhi=999.f;
     badHFjetVeto = false;
 
+    genLep = NULL;
     genVp = NULL;
     genVp2 = NULL;
     dauV1a = NULL;
@@ -3405,7 +3429,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$ Merge and redefine TTbar
     //$$$$$$$$$
 
-    // comment for now; need to evaluate the final sample statistics
+    // comment for now; need to evaluate the LEPTON veto
 
     if (not e->IsRealData() and (
         (label.find("TTTo2L2Nu") !=string::npos) or
@@ -3496,11 +3520,19 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_AK8PFJet360_TrimMass30")
                         || e->IsTriggered("HLT_PFJet450");
 
-    if (year==2017 or year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
-                                      || e->IsTriggered("HLT_AK8PFJet500")
-                                      || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
-                                      || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
-                                      || e->IsTriggered("HLT_PFJet500");
+    if (year==2017) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
+                        || e->IsTriggered("HLT_AK8PFJet500")
+                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
+                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
+                        || e->IsTriggered("HLT_PFJet500")
+                        || e->IsTriggered("HLT_AK8PFHT750_TrimMass50")
+                        || e->IsTriggered("HLT_AK8PFJet380_TrimMass30");
+
+    if (year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
+                        || e->IsTriggered("HLT_AK8PFJet500")
+                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
+                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
+                        || e->IsTriggered("HLT_PFJet500");
     /*
       2017 - JetHT 
       HLT_DiPFJetAve160_HFJEC
@@ -3554,7 +3586,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
           if(!passtriggerMET) return EVENT_NOT_USED;
       }
 
-      if(doBAnalysis) {
+      if(doBAnalysis or doBAntiAnalysis) {
         if(!passtriggerBtag) return EVENT_NOT_USED;
       }
     }
@@ -3568,7 +3600,22 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     // kill Top/W/Z
     if ( e->Nleps() > 0 ) return EVENT_NOT_USED;
+
+    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) ) {
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauPt_all_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauEta_all_"+label, systname, genLep->Eta() , e->weight() );
+    }
+
     if ( e->Ntaus() > 0 ) return EVENT_NOT_USED;
+
+    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) ) {
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 11) Fill("VBShadAnalysis/Baseline/genElePt_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 11) Fill("VBShadAnalysis/Baseline/genEleEta_"+label, systname, genLep->Eta() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 13) Fill("VBShadAnalysis/Baseline/genMuoPt_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 13) Fill("VBShadAnalysis/Baseline/genMuoEta_"+label, systname, genLep->Eta() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauPt_"+label, systname, genLep->Pt() , e->weight() );
+        if(genLep!=NULL and fabs(genLep->GetPdgId()) == 15) Fill("VBShadAnalysis/Baseline/genTauEta_"+label, systname, genLep->Eta() , e->weight() );
+    }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Lepton and taus veto" );
 
@@ -3621,7 +3668,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //    if ( ( doHADAnalysis or doHADAntiAnalysis ) and e->Bjets() > 0 ) return EVENT_NOT_USED;
     //    if ( doBAnalysis and (e->Bjets() == 0 or e->Bjets()>2) ) return EVENT_NOT_USED;
     if ( doMETAnalysis and e->Bjets()>2 ) return EVENT_NOT_USED;
-    if ( !doBAntiAnalysis and counterExtrabToVeto_>0) return EVENT_NOT_USED;
+    if ( counterExtrabToVeto_>0 ) return EVENT_NOT_USED;
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","b veto" );
     Fill("VBShadAnalysis/Baseline/NBJet_" +label, systname, e->Bjets(), e->weight() );
@@ -3902,7 +3949,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
             bool massWindowAsy = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
-            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155) : (massWindowAsy);
+            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155 && MV > 50) : (massWindowAsy);
             if( massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RBtag";
     
@@ -4104,7 +4151,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
             bool massWindowAsy = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
-            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155) : (massWindowAsy);
+            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155 && MV > 50) : (massWindowAsy);
             if(massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RMET";
 
