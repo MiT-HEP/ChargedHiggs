@@ -11,7 +11,7 @@
 //using namespace std;
 
 // ---
-class FatJet : virtual public Object, virtual public SmearableBase
+class FatJet : virtual public Object, virtual public SmearableComplex
 {
     friend class CorrectorBase;
     // This class take care of the jet definition in the analysis
@@ -43,6 +43,39 @@ class FatJet : virtual public Object, virtual public SmearableBase
     TLorentzVector pp4;
 
     public:
+
+    //  ---- smearable complex add thingea
+
+    /// @brief return pt, corrected by systematics
+    inline float Pt() const override { 
+            if (syst ==0) return p4.Pt(); 
+            if (syst>0 ) return ptUpSyst[type];
+            else return ptDownSyst[type];
+    }
+    /// @brief return Energy corrected by systematics
+    inline float E() const override { 
+        if (syst == 0) return p4.E(); 
+        else return Pt()/p4.Pt() *p4.E();
+    }
+    
+    /// @brief return p4 corrected by systematics
+    inline TLorentzVector & GetP4() override {
+        if (syst == 0) return p4;
+        if (syst!=0 ) {
+            pp4=p4;
+            if (p4.Pt()>0) {
+                return pp4 *= (Pt()/p4.Pt());
+            } else {
+                return pp4;
+            }
+        }
+    }
+
+    /// @brief return systematic uncertainty under consideration
+    inline float GetUnc() const { return Pt()/p4.Pt(); }
+    inline void  clearSyst() override {Object::clearSyst() ;syst = 0; isValid=1;type=Smearer::NONE;} // reset smearing
+
+    // -------------------------
 
     void SetPtCut(float x){ptcut_= x;}
     void SetEtaCut(float x){etacut_ = x;}
