@@ -11,9 +11,13 @@
 
 #define VERBOSE 0
 
-#define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1522:0.1241)
-#define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4941:0.4148)
-#define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?.8001:.7527)
+#define DEEP_B_LOOSE ((year==2016)?0.2217:(year==2017)?0.1355:0.1208)
+#define DEEP_B_MEDIUM ((year==2016)?0.6321:(year==2017)?0.4506:0.4148)
+#define DEEP_B_TIGHT ((year==2016)?0.8953:(year==2017)?0.7738:.7665)
+
+#define DEEP_C_LOOSE ((year==2016)?1.:(year==2017)?0.04:0.064)
+#define DEEP_C_MEDIUM ((year==2016)?1.:(year==2017)?0.144:0.153)
+#define DEEP_C_TIGHT ((year==2016)?1.:(year==2017)?0.73:0.405)
 
 #define FAT_ZHBB_MEDIUM 0.8945
 //#define FAT_TAU32 0.81
@@ -760,10 +764,10 @@ int HbbgAnalysis::analyze(Event *event, string systname)
      * L1 PreFiring Map
      */
 
-    //#warning NO_PREFIRE
-    double l1prefire=1.0;
-    if(year==2017)l1prefire=e->ApplyL1PreFire(2017); // apply to the event weight, but keep it for comp
-    else if(year==2016)l1prefire=e->ApplyL1PreFire(2016); // apply to the event weight, but keep it for comp
+    //#warning NO_PREFIRE ; ALREADY DONE IN NANO
+    //double l1prefire=1.0;
+    //if(year==2017)l1prefire=e->ApplyL1PreFire(2017); // apply to the event weight, but keep it for comp
+    //else if(year==2016)l1prefire=e->ApplyL1PreFire(2016); // apply to the event weight, but keep it for comp
 
     /*
      * HIGGS REWEIGHT -- UNCERTAINTIES
@@ -910,31 +914,22 @@ int HbbgAnalysis::analyze(Event *event, string systname)
     // BTAG SF: before using jets. (if reshaping)
     // -----------------------
   
-    //#warning NO_BTAGSF 
+    #warning NO_BTAGSF 
     
     double btagsf=1; 
-    if (true) // CSV-SF for passing loose,medium or tigth cuts
+    if (false) // CSV-SF for passing loose,medium or tigth cuts
     {
         btagsf=e->ApplyBTagSF(3,year); //0 loose, 1 medium, 2 tight, 3 reshaping
         //Log(__FUNCTION__,"DEBUG",Form("BTag SF is %lf",btagsf));
     }
 
+    #warning NO_PUIDSF
     double puidsf=1.;
-    if (true) 
+    if (false) 
     {
         puidsf=e->ApplyPuIdSF(year); //working point set in the sf configuration. Applying both pass and fails.
     }
     
-    // select jets
-
-    //for(unsigned i=0;i<e->Njets() ; ++i)
-    //{
-    //    Jet *j=e->GetJet(i);
-    //    if (selectedJets.size() == 0 and j->Pt() <30) continue;
-    //    selectedJets.push_back(j);
-    //}
-
-
 
     // Objects : 4 jets, 1 photon
    
@@ -1058,7 +1053,7 @@ int HbbgAnalysis::analyze(Event *event, string systname)
             passTrigger = passBTagCSV or passJetHT or passSinglePhoton;
 
             // NERO I have this in v3.7. Nero is with _v
-            passTrigger |= e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v") ; // FIXME somehow in a better way
+            //passTrigger |= e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq200_v") ; // FIXME somehow in a better way
         } // nano
     }
 

@@ -21,6 +21,13 @@ void LoadNano::SetData(bool x)
     if(nano) nano->data=x;
 }
 
+void LoadNano::SetNanoV(int v)
+{
+    if(nano) {
+        nano->v9= (v==9)?1:0;
+    }
+}
+
 int LoadNano::InitTree(){
     if (tree_ == nullptr) {
         return 0;
@@ -383,12 +390,14 @@ int LoadNano::FillEvent(){
        t -> SetP4( p4);
        t -> SetType( 15 );
        t -> SetCharge( nano->Tau_charge[i] );
-       t -> SetId ( nano->Tau_idDeepTau2017v2p1VSjet[i] ) ; // this is in the or with DecayModeNewDMs
+       bool id = (nano->Tau_idDeepTau2017v2p1VSjet[i] & 4) ; // bitmask 1 = VVVLoose, 4 = VLoose, this is in the or with DecayModeNewDMs
+       if (not id) continue;
         // probably not DB corrected: TOCHECK
        t -> SetIso2( nano->Tau_chargedIso[i]+nano->Tau_neutralIso[i]);
        t -> SetIdEle (nano->Tau_idAntiEle[i]); //2018? FIXME
        t -> SetIdMu (nano->Tau_idAntiMu[i]); // 2018 FIXME
        //decay mode
+       event_ -> taus_ . push_back(t);
    }
 
 #ifdef VERBOSE
@@ -576,9 +585,16 @@ void LoadNano::NewFile(){
     else if (fname.find("Run2017") != string::npos) {isData=true;} 
     else if (fname.find("Run2018") != string::npos) {isData=true;} 
 
+    int v=8;
+    if (fname.find("NanoAODv8") != string::npos) {v=8;} 
+    else if (fname.find("NanoAODv9") != string::npos) {v=9;} 
+    else if (fname.find("v8") != string::npos) {v=8;} 
+    else if (fname.find("v9") != string::npos) {v=9;} 
+
     // Figure out year
     SetYear(year);
     SetData(isData);
+    SetNanoV(v);
     
     InitTree();
     
@@ -617,12 +633,14 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
       event_->triggerNames_.push_back("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
       // below from JetHT
-      event_->triggerNames_.push_back("HLT_PFHT1050");
-      event_->triggerNames_.push_back("HLT_AK8PFHT800_TrimMass50");
-      event_->triggerNames_.push_back("HLT_AK8PFJet500");
-      event_->triggerNames_.push_back("HLT_AK8PFJet400_TrimMass30");
+      event_->triggerNames_.push_back("HLT_PFHT1050"); //41.54
+      event_->triggerNames_.push_back("HLT_AK8PFHT750_TrimMass50"); //30.96 **
+      event_->triggerNames_.push_back("HLT_AK8PFHT800_TrimMass50"); //36.49
+      event_->triggerNames_.push_back("HLT_AK8PFJet500");           //41.54
+      event_->triggerNames_.push_back("HLT_AK8PFJet380_TrimMass30");//31.22 **
+      event_->triggerNames_.push_back("HLT_AK8PFJet400_TrimMass30");//36.75
       event_->triggerNames_.push_back("HLT_AK8PFJetFwd400");
-      event_->triggerNames_.push_back("HLT_PFJet500");
+      event_->triggerNames_.push_back("HLT_PFJet500");              //41.54
       //HLT_CaloJet500_NoJetID
       //HLT_DiPFJetAve160_HFJEC_v13
       //HLT_DiPFJetAve60_HFJEC_v13

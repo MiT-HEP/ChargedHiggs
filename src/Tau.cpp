@@ -28,7 +28,7 @@ int Tau::IsTau() const {
     if ( Pt() < ptcut_ ) return 0;
     if ( fabs(Eta() ) > etacut_) return 0;
     if ( trackptcut_ >0 and trackptcut_ > trackpt_) return 0;
-    if ( not id_iso ) return 0; // this include additional cuts on top of the iso cut
+    //if ( not id_iso ) return 0; // this include additional cuts on top of the iso cut
     //if (GetNProng() != 1 ) return 0;
     if ( selectprongs_ >=0 )
         {
