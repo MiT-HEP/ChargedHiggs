@@ -285,8 +285,14 @@ void VBShadAnalysis::ReadTmva(Event*e){
     bdt.clear();
     bdt_multi.clear();
 
+    // Miao: very ugly now. Clean and Reorder
+    SetVariable("j1QGL",evt_j1QGL); 
+    SetVariable("j2QGL",evt_j2QGL); 
+
     SetVariable("varMjj",evt_Mjj); //0
     SetVariable("varDetajj",evt_Detajj); //1
+    SetVariable("varJet1Pt",evt_Jet1Pt);
+    SetVariable("abs(varJet1Eta)", abs(evt_Jet1Eta));
     SetVariable("varJet2Pt",evt_Jet2Pt); //2
     SetVariable("varMVV",evt_MVV); //3
     SetVariable("varnormPTVVjj",evt_normPTVVjj); //4
@@ -297,6 +303,7 @@ void VBShadAnalysis::ReadTmva(Event*e){
 
     SetVariable("varCen",evt_cenEta); //8
     SetVariable("varzepVB",evt_zepVB); //9
+    SetVariable("varzepVV",evt_zepVV);    
     SetVariable("bosV2chi2",evt_chi2_); //10
     SetVariable("bosV2mass",evt_bosV2mass); //11
     SetVariable("varFW2j",evt_FW2); //12
@@ -304,6 +311,7 @@ void VBShadAnalysis::ReadTmva(Event*e){
 
     SetVariable("varDetaVV",evt_DetaVV);//14 
     SetVariable("varDRVj",evt_DRV1j);//15
+    SetVariable("min(varDRV1j,varDRV2j)",std::min(evt_DRV1j,evt_DRV2j));
 
     //for RBtag multi-DNN in particular
     SetVariable("varnormPTVVjj",evt_normPTVVjj);
@@ -360,39 +368,36 @@ void VBShadAnalysis::InitTmva() {
         cout << " GOING TO BDTG - HAD " << endl;
 
         for (int i=0; i<3; i++) {
+            AddVariable("j1QGL",'F',readers_[i]);
+            AddVariable("j2QGL" ,'F',readers_[i]);
             AddVariable("varMjj",'F',readers_[i]); //0
-            AddVariable("varDetajj",'F',readers_[i]); //1
+            AddVariable("varJet1Pt",'F',readers_[i]); //1
             AddVariable("varJet2Pt",'F',readers_[i]); //2
-            AddVariable("varMVV",'F',readers_[i]); //3
-            AddVariable("varPTV2",'F',readers_[i]); //4
+            AddVariable("varPTV1",'F',readers_[i]); //4
             AddVariable("varCen",'F',readers_[i]); //6
+            AddVariable("varzepVV",'F',readers_[i]); 
+            AddVariable("min(varDRV1j,varDRV2j)",'F',readers_[i]);
             AddVariable("varnormPTVVjj",'F',readers_[i]); //7
         }
 
         cout << "---------------------------------------------" << endl;
         cout << " GOING TO BDTG - MET " << endl;
 
-        for (int i=3; i<4; i++) {
+        for (int i=3; i<6; i++) {
+            AddVariable("j1QGL",'F',readers_[i]);
+            AddVariable("j2QGL" ,'F',readers_[i]);
             AddVariable("varMjj",'F',readers_[i]); //0
-            AddVariable("varDetajj",'F',readers_[i]); //1
+            AddVariable("abs(varJet1Eta)",'F',readers_[i]); 
+            AddVariable("varJet1Pt",'F',readers_[i]); 
             AddVariable("varJet2Pt",'F',readers_[i]); //2
             AddVariable("varPTV1",'F',readers_[i]); //4
+            AddVariable("varPTV2",'F',readers_[i]); //4
             //        AddVariable("varMVV",'F',i); //3
             //        AddVariable("varPTVV",'F',i); //4
-            AddVariable("varzepVB",'F',readers_[i]); //5
+            AddVariable("varCen",'F',readers_[i]); //5
             AddVariable("varnormPTVVjj",'F',readers_[i]); //6
         }
 
-        // old training with the top included
-        for (int i=4; i<6; i++) {
-            AddVariable("varMjj",'F',readers_[i]); //0
-            AddVariable("varDetajj",'F',readers_[i]); //1
-            AddVariable("varJet2Pt",'F',readers_[i]); //2
-            AddVariable("varMVV",'F',readers_[i]); //3
-            AddVariable("varPTVV",'F',readers_[i]); //4
-            AddVariable("varzepVB",'F',readers_[i]); //5
-            AddVariable("varnormPTVVjj",'F',readers_[i]); //6
-        }
 
         //BBtag-Nano
         cout << "---------------------------------------------" << endl;
