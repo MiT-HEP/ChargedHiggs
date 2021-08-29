@@ -3520,7 +3520,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_AK8PFJet360_TrimMass30")
                         || e->IsTriggered("HLT_PFJet450");
 
-    if (year==2017) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
+    if (year==2017 || year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
                         || e->IsTriggered("HLT_AK8PFJet500")
                         || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
                         || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
@@ -3528,11 +3528,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_AK8PFHT750_TrimMass50")
                         || e->IsTriggered("HLT_AK8PFJet380_TrimMass30");
 
-    if (year==2018) passtriggerHad = e->IsTriggered("HLT_PFHT1050")
-                        || e->IsTriggered("HLT_AK8PFJet500")
-                        || e->IsTriggered("HLT_AK8PFHT800_TrimMass50")
-                        || e->IsTriggered("HLT_AK8PFJet400_TrimMass30")
-                        || e->IsTriggered("HLT_PFJet500");
     /*
       2017 - JetHT 
       HLT_DiPFJetAve160_HFJEC
