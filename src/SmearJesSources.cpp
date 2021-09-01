@@ -69,3 +69,51 @@ int SmearJesSource::smear(Event *e)
     
     return SMEAR_OK;
 }
+
+// ------------------------------ AK8 -----------------
+SmearJesSourceAK8::SmearJesSourceAK8(const string &fname, const string&n):
+    //fname_(fname),
+    SmearJesSource(fname,n)
+{   // apparently I can't delegate the constructor to the one below
+	name_ = "JESAK8_"+n;
+	Log(__FUNCTION__,"INFO","Constructing smear function using definitions in: "+fname_ + " and section: "+n);
+	//params_ . reset ( new JetCorrectorParameters(fname_,n) ) ;
+	//jecUnc_ . reset ( new JetCorrectionUncertainty( *params_) );
+}
+
+SmearJesSourceAK8::SmearJesSourceAK8(const string &n) : SmearJesSource(n){
+	name_ = "JESAK8_"+n;
+	Log(__FUNCTION__,"INFO","Constructing smear function using definitions in: "+fname_ + " and section: "+n);
+	//params_ . reset ( new JetCorrectorParameters(fname_,n) ) ;
+	//jecUnc_ . reset ( new JetCorrectionUncertainty( *params_) );
+}
+
+int SmearJesSourceAK8::smear(Event *e)
+{
+
+    for (auto j : GetFatJets(e))
+    {
+        j->syst = 0; // use nominal point while setting
+        j->SetFilled(Smearer::SOURCES,1) ;
+        //unsmeared += j->GetP4();
+
+
+        jecUnc_->setJetPt(j->Pt());
+        jecUnc_->setJetEta(j->Eta());
+        float sup =  jecUnc_->getUncertainty(true);;
+
+        jecUnc_->setJetPt(j->Pt()); // need to be reset
+        jecUnc_->setJetEta(j->Eta());
+        float sdw =  jecUnc_->getUncertainty(false);;
+
+        //	Log(__FUNCTION__,"DEBUG",Form("Getting Uncertainties up=%f down=%f",sup,sdw));
+
+        j->SetValueUp(Smearer::SOURCES,j->Pt() * (1+ sup) ) ;
+        j->SetValueDown(Smearer::SOURCES,j->Pt() * (1-sdw) ) ;
+
+        j->SetSmearType(Smearer::SOURCES);
+        j->syst = syst_;
+    }
+
+    return SMEAR_OK;
+}
