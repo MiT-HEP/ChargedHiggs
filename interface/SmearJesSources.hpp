@@ -23,6 +23,7 @@ class SmearJesSource : virtual public SmearBase
 
 class SmearJesSourceAK8 : virtual public SmearJesSource
 {
+    public:
         SmearJesSourceAK8() : SmearJesSource(){ name_ = "JESAK8_SOURCE";}
         SmearJesSourceAK8(const string &n) ;
         SmearJesSourceAK8(const string &fname, const string &n) ;
