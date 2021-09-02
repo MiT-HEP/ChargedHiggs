@@ -664,7 +664,9 @@ void LoadNano::NewFile(){
       // below from JetHT
       event_->triggerNames_.push_back("HLT_PFHT1050");
       event_->triggerNames_.push_back("HLT_AK8PFJet500");
+      event_->triggerNames_.push_back("HLT_AK8PFHT750_TrimMass50"); 
       event_->triggerNames_.push_back("HLT_AK8PFHT800_TrimMass50");
+      event_->triggerNames_.push_back("HLT_AK8PFJet380_TrimMass30");
       event_->triggerNames_.push_back("HLT_AK8PFJet400_TrimMass30");
       event_->triggerNames_.push_back("HLT_AK8PFJetFwd200");
       event_->triggerNames_.push_back("HLT_PFJetFwd140");
