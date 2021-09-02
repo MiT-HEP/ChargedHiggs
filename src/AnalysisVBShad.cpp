@@ -4206,24 +4206,26 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     //////
     if(label.find("ZJetsToNuNu_HT") !=string::npos and genVp!=NULL) {
+
         if( not e->ExistSF("ZNNLO_rwg") ){
             LogN(__FUNCTION__,"WARNING","SF: ZNNLO_rwg does not exist",10);
             return EVENT_NOT_USED;
         }
-
-        e->SetPtEtaSF("ZNNLO_rwg", genVp->Pt() ,0.); // it is only pt dependent
+        auto pt = (genVp->Pt()<160)?160: (genVp->Pt()>1200)? 1200:genVp->Pt(); 
+            e->SetPtEtaSF("ZNNLO_rwg", pt ,0.); // it is only pt dependent
         e->ApplySF("ZNNLO_rwg");
     }
 
    if (label.find("WJetsToLNu_HT") !=string::npos and genVp!=NULL) {
 
-        if( not e->ExistSF("WNNLO_rwg") ){
-            LogN(__FUNCTION__,"WARNING","SF: WNNLO_rwg does not exist",10);
-            return EVENT_NOT_USED;
-        }
+       if( not e->ExistSF("WNNLO_rwg") ){
+           LogN(__FUNCTION__,"WARNING","SF: WNNLO_rwg does not exist",10);
+           return EVENT_NOT_USED;
+       }
+       auto pt = (genVp->Pt()<160)?160: (genVp->Pt()>1200)? 1200:genVp->Pt(); 
+       e->SetPtEtaSF("WNNLO_rwg", pt ,0.); // it is only pt dependent
+       e->ApplySF("WNNLO_rwg");
 
-        e->SetPtEtaSF("WNNLO_rwg", genVp->Pt() ,0.); // it is only pt dependent
-        e->ApplySF("WNNLO_rwg");
     }
 
     //unc on mvv, use 'Smear=@SmearSF("QCDNonclosure_CAT"!"QCD_MVV_CAT_Nonclosure")' to run, where CAT = BB or BBtag
