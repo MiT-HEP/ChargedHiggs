@@ -3460,6 +3460,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/GENERAL/Mtt_" +label, systname, genMtt(e) , e->weight() );
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Final label is: " + label);
+
     //$$$$$$$$$
     //$$$$$$$$$ genStudies
     //$$$$$$$$$
@@ -4200,14 +4201,30 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     ///////////////////////////////////
 
     //////
-    //$$$ CUT FLOW
+    //$$$ APPLY WEIGHTS
     //////
 
-    double MVV_cut=500;
-    // CHECK THIS: adjust with trigger turn ones especially on BB and Btag
-    if((category.find("RMET")   !=string::npos )) MVV_cut=250;
+    //////
+    if(label.find("ZJetsToNuNu_HT") !=string::npos and genVp!=NULL) {
+        if( not e->ExistSF("ZNNLO_rwg") ){
+            LogN(__FUNCTION__,"WARNING","SF: ZNNLO_rwg does not exist",10);
+            return EVENT_NOT_USED;
+        }
 
-    if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
+        e->SetPtEtaSF("ZNNLO_rwg", genVp->Pt() ,0.); // it is only pt dependent
+        e->ApplySF("ZNNLO_rwg");
+    }
+
+   if (label.find("WJetsToLNu_HT") !=string::npos and genVp!=NULL) {
+
+        if( not e->ExistSF("WNNLO_rwg") ){
+            LogN(__FUNCTION__,"WARNING","SF: WNNLO_rwg does not exist",10);
+            return EVENT_NOT_USED;
+        }
+
+        e->SetPtEtaSF("WNNLO_rwg", genVp->Pt() ,0.); // it is only pt dependent
+        e->ApplySF("WNNLO_rwg");
+    }
 
     //unc on mvv, use 'Smear=@SmearSF("QCDNonclosure_CAT"!"QCD_MVV_CAT_Nonclosure")' to run, where CAT = BB or BBtag
     //
@@ -4224,6 +4241,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         e->SetPtEtaSF(sfname,evt_MVV,0);
         e->ApplySF(sfname);
     }
+
+    //////
+    //$$$ CUT FLOW
+    //////
+
+    double MVV_cut=500;
+    // CHECK THIS: adjust with trigger turn ones especially on BB and Btag
+    if((category.find("RMET")   !=string::npos )) MVV_cut=250;
+
+    if( evt_MVV < MVV_cut ) return EVENT_NOT_USED;
 
     if(checkSignalLabel(label) and evt_MVV_gen!=0) Fill("VBShadAnalysis/MVVres" +category+"_"+label, systname, (evt_MVV-evt_MVV_gen)/evt_MVV_gen, e->weight() );
 
