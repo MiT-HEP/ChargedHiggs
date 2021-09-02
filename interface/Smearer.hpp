@@ -33,6 +33,7 @@ class SmearBase : public Named {
         virtual int smear(Event *e){return 0;}; // 0 = success; 1 not applicable to the event
         virtual int smear(CorrectorBase *c){return 0;}; // 0 = success; 1 not applicable to the event
         virtual inline vector<Jet*> &GetJets(Event *e){return e->jets_;}
+        virtual inline vector<FatJet*> &GetFatJets(Event *e){return e->fat_;}
         virtual inline vector<Tau*> &GetTaus(Event *e){return e->taus_;}
         virtual inline Met &GetMet(Event *e){return e->met_;}
 };

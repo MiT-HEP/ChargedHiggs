@@ -10,7 +10,7 @@
 class SmearJesSource : virtual public SmearBase
 {
     //syst_ =  -1 , 1 / UP/DOWN
-    private:
+    protected:
         std::unique_ptr<JetCorrectorParameters> params_;
 	    std::unique_ptr<JetCorrectionUncertainty> jecUnc_;
     public:
@@ -20,6 +20,15 @@ class SmearJesSource : virtual public SmearBase
         int smear(Event*e) override;	
         string fname_{"aux/JEC/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_UncertaintySources_AK8PFchs.txt"};
 };
+
+class SmearJesSourceAK8 : virtual public SmearJesSource
+{
+        SmearJesSourceAK8() : SmearJesSource(){ name_ = "JESAK8_SOURCE";}
+        SmearJesSourceAK8(const string &n) ;
+        SmearJesSourceAK8(const string &fname, const string &n) ;
+        int smear(Event*e) override;	
+};
+
 
 #endif
 // Local Variables:
