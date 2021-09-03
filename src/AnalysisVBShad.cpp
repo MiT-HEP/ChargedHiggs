@@ -2107,6 +2107,9 @@ void VBShadAnalysis::genStudies(Event*e, string label )
 
         // ** promptLeptons from W for Wjets and semileptonic ttbar in MET category
         if((fabs(genpar->GetPdgId()) == 11 ||  fabs(genpar->GetPdgId()) == 13 || fabs(genpar->GetPdgId()) == 15) and fabs(genpar->GetParentPdgId())==24) if(genLep==NULL) { genLep = genpar; }
+        // ** prompt V for the ZJetsToNuNu_HT and WJetsToLNu_HT and pt-reweighting
+        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("ZJetsToNuNu_HT") !=string::npos) ) if(genVp==NULL) { genVp = genpar; }
+        if( (fabs(genpar->GetPdgId()) == 24) and (label.find("WJetsToLNu_HT") !=string::npos) ) if(genVp==NULL) { genVp = genpar; }
 
         // ** BOSON
         if(fabs(genpar->GetPdgId()) == pdgID1 and fabs(genpar->GetParentPdgId())>6) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
