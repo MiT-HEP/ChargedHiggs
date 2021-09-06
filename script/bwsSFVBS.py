@@ -68,8 +68,8 @@ print("### combine -M MultiDimFit --redefineSignalPOIs="+','.join(["w%d"%i for i
 print("",file=out)
 print ("### interpret with",file=out)
 print ("### w0 = pt1Eta1",file=out)
-print ("### w1 = pt1Eta2",file=out)
-print ("### w2 = pt2Eta1",file=out)
+print ("### w1 = pt2Eta1",file=out)
+print ("### w2 = pt1Eta2",file=out)
 print ("### w3 = pt2Eta2",file=out)
 
 
