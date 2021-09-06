@@ -135,9 +135,10 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
 void VBShadAnalysis::BookHisto(string l, string category)
 {
 
-    Book ("VBShadAnalysis/DRV1j"+category+"_"+l, " ; #Delta #R (V,jet) ; Events", 125,0,6.28);
+    Book ("VBShadAnalysis/DRV1j"+category+"_"+l, " ; #Delta #R (V1,jet) ; Events", 125,0,6.28);
+    Book ("VBShadAnalysis/DRV2j"+category+"_"+l, " ; #Delta #R (V2,jet) ; Events", 125,0,6.28);
     Book ("VBShadAnalysis/ZepBosBVar"+category+"_"+l, " ; |#eta_{V} - 0.5*(#eta_{j1} + #eta_{j2})| / #Delta #eta(jj) ; Events", 250,0,2);
-    Book ("VBShadAnalysis/BOSON/ZepBosVVar"+category+"_"+l, " ; |#eta_{VV} - 0.5*(#eta_{j1} + #eta_{j2})| / #Delta #eta(jj) ; Events", 250,0,2);
+    Book ("VBShadAnalysis/ZepBosVVar"+category+"_"+l, " ; |#eta_{VV} - 0.5*(#eta_{j1} + #eta_{j2})| / #Delta #eta(jj) ; Events", 250,0,2);
     Book ("VBShadAnalysis/BOSON/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 120,0,3000); // should be 120,0,3000 -- 25 GeV bin
     Book ("VBShadAnalysis/FW2"+category+"_"+l, " ; FW2 ; Events", 100,0,1.);
 
@@ -212,7 +213,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
     // fwd jets
     Book ("VBShadAnalysis/pT1_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
-    Book ("VBShadAnalysis/pT2_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) ; Events", 160,0,1600);
+    Book ("VBShadAnalysis/pT2_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) ; Events", 100,0,1000);
 
     Book ("VBShadAnalysis/eta1_Jet"+category+"_"+l, "eta_Jet; #eta (leading); Events", 100,0.,5.);
     Book ("VBShadAnalysis/eta2_Jet"+category+"_"+l, "eta_Jet; #eta (subleading) ; Events", 100,0.,5.);
@@ -4368,7 +4369,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(!doMETAnalysis) {
 
         evt_zepVV = fabs(p4VV.Eta() - averageJJeta)/fabs(evt_Detajj);
-        Fill("VBShadAnalysis/BOSON/ZepBosVVar" +category+"_"+label, systname, evt_zepVV, e->weight() );
+        Fill("VBShadAnalysis/ZepBosVVar" +category+"_"+label, systname, evt_zepVV, e->weight() );
 
         evt_cenEta = std::min(
                            evt_EtaMinV - std::min(forwardJets[0]->Eta(),forwardJets[1]->Eta()),
@@ -4394,7 +4395,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     //only cut for btag cate, others used in MVA
     if( !doResonant and (category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos) and evt_cenEta < 0. ) return EVENT_NOT_USED;
-
 
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--centrality
@@ -4431,6 +4431,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
 
     Fill("VBShadAnalysis/DRV1j" +category+"_"+label, systname, evt_DRV1j, e->weight() );
+    Fill("VBShadAnalysis/DRV2j" +category+"_"+label, systname, evt_DRV2j, e->weight() );
     Fill("VBShadAnalysis/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
     Fill("VBShadAnalysis/normPTVVjj" +category+"_"+label, systname, evt_normPTVVjj, e->weight() );
     Fill("VBShadAnalysis/Dphimin" +category+"_"+label, systname, minDPhi, e->weight() );
