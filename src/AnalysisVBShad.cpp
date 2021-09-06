@@ -1216,6 +1216,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RR_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
 
+        if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 16,0,16);
+
         if(doStudyMass){
 
         // mass studies
@@ -2588,6 +2590,11 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
     }
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
+
+    if(selectedFatJets.size()>1 and doStudySFfat) {
+        int indexij = 4*getIndex(0) + getIndex(1);
+        Fill("VBShadAnalysis/Baseline/SF_FatJet_" +label, systname, indexij, e->weight() );  // fill to derive SF
+    }
 
     //AK4
     for(unsigned i=0;i<e->Njets() ; ++i)

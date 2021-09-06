@@ -57,6 +57,14 @@ public:
     bool genMatchResolved(Event*e, string systname, string label);
     bool genMatchResonant(Event*e, string label, string category);
 
+    int getIndex(int nFat) {
+        int index = ((selectedFatJets[nFat]->Pt() < 600) and (fabs(selectedFatJets[nFat]->Eta()) < 1.3) )? 0 : -1 ; // pt1Eta1
+        index = ((selectedFatJets[nFat]->Pt() >= 600) and (fabs(selectedFatJets[nFat]->Eta()) < 1.3) )? 1 : index ; // pt1Eta2
+        index = ((selectedFatJets[nFat]->Pt() < 600) and (fabs(selectedFatJets[nFat]->Eta()) >= 1.3) )? 2 : index ; // pt2Eta1
+        index = ((selectedFatJets[nFat]->Pt() >= 600) and (fabs(selectedFatJets[nFat]->Eta()) >= 1.3) )? 3 : index ; // pt2Eta2
+        return index;
+    }
+
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
     bool doHADAnalysis=false;
@@ -74,6 +82,7 @@ public:
     bool usePuppi=false;
     bool doTrigger=false;
     bool doStudyMass=false; //inclusive SDMass, SubjetMass, W/ZvsQCD plots
+    bool doStudySFfat=true;
 
     bool doTMVA=true;
     bool doResTagKeras = false;
