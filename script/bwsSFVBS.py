@@ -4,7 +4,7 @@ from __future__ import print_function
 import ROOT
 import math
 
-year=16
+year=17
 
 fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT6/UL%d/HADanti/HADanti.root'%year
 hname='VBShadAnalysis/Baseline/SF_FatJet_'
@@ -65,6 +65,8 @@ for j in xrange(0,n0):
 print("--------------",file=out)
 print("### Run with",file=out)
 print("### combine -M MultiDimFit --redefineSignalPOIs="+','.join(["w%d"%i for i in xrange(0,n0)])+" --setParameters r=1 --freezeParameters=r -d "+oname,file=out)
+print("### or with", file=out)
+print("### combine -M FitDiagnostics --saveShapes --saveWithUncertainties --skipBOnlyFit --redefineSignalPOIs="+','.join(["w%d"%i for i in xrange(0,n0)])+" --setParameters r=1 --freezeParameters=r -d "+oname, file=out)
 print("",file=out)
 print ("### interpret with",file=out)
 print ("### w0 = pt1Eta1",file=out)
