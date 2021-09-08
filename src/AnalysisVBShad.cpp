@@ -3382,7 +3382,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     string label = GetLabel(e);
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
-    if( label == "QCD_HT" or
+    if( label == "QCD_HT" or label == "QCD_Pt" or
         label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
         label == "ZJetsToQQ" or label == "WJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
@@ -4198,6 +4198,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
     }
 
+    evt_PTVV = p4VV.Pt();
+    evt_PTV1 = p4V1.Pt();
+    evt_PTV2 = p4V2.Pt();
+    evt_bosV1Eta = p4V1.Eta();
+    evt_bosV2Eta = p4V2.Eta();
+
+
     //$$$$$$$$$
     //$$$$$$$$$
 
@@ -4238,6 +4245,21 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        e->ApplySF("WNNLO_rwg");
 
     }
+
+
+   //////
+   if(label.find("QCD_HT") !=string::npos) {
+
+       string sfname="";
+       if (year==2016)  sfname = "FatJetV_2016";
+       if (year==2017)  sfname = "FatJetV_2017";
+       if (year==2018)  sfname = "FatJetV_2018";
+
+       e->SetPtEtaSF(sfname, evt_PTV1, evt_bosV1Eta);
+       e->SetPtEtaSF(sfname, evt_PTV2, evt_bosV2Eta);
+       e->ApplySF(sfname);
+
+   }
 
     //unc on mvv, use 'Smear=@SmearSF("QCDNonclosure_CAT"!"QCD_MVV_CAT_Nonclosure")' to run, where CAT = BB or BBtag
     //
@@ -4337,11 +4359,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //only after passing above all VBF selections, start to calculate VV properties below
     ////////
 
-    evt_PTVV = p4VV.Pt();
-    evt_PTV1 = p4V1.Pt();
-    evt_PTV2 = p4V2.Pt();
-    evt_bosV1Eta = p4V1.Eta();
-    evt_bosV2Eta = p4V2.Eta();
     evt_DphiVV = ChargedHiggs::deltaPhi(p4V1.Phi(), p4V2.Phi());
 
     if(!doMETAnalysis){
