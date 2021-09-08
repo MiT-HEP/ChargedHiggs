@@ -135,9 +135,10 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
 void VBShadAnalysis::BookHisto(string l, string category)
 {
 
-    Book ("VBShadAnalysis/DRV1j"+category+"_"+l, " ; #Delta #R (V,jet) ; Events", 125,0,6.28);
+    Book ("VBShadAnalysis/DRV1j"+category+"_"+l, " ; #Delta #R (V1,jet) ; Events", 125,0,6.28);
+    Book ("VBShadAnalysis/DRV2j"+category+"_"+l, " ; #Delta #R (V2,jet) ; Events", 125,0,6.28);
     Book ("VBShadAnalysis/ZepBosBVar"+category+"_"+l, " ; |#eta_{V} - 0.5*(#eta_{j1} + #eta_{j2})| / #Delta #eta(jj) ; Events", 250,0,2);
-    Book ("VBShadAnalysis/BOSON/ZepBosVVar"+category+"_"+l, " ; |#eta_{VV} - 0.5*(#eta_{j1} + #eta_{j2})| / #Delta #eta(jj) ; Events", 250,0,2);
+    Book ("VBShadAnalysis/ZepBosVVar"+category+"_"+l, " ; |#eta_{VV} - 0.5*(#eta_{j1} + #eta_{j2})| / #Delta #eta(jj) ; Events", 250,0,2);
     Book ("VBShadAnalysis/BOSON/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 120,0,3000); // should be 120,0,3000 -- 25 GeV bin
     Book ("VBShadAnalysis/FW2"+category+"_"+l, " ; FW2 ; Events", 100,0,1.);
 
@@ -212,7 +213,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
     // fwd jets
     Book ("VBShadAnalysis/pT1_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
-    Book ("VBShadAnalysis/pT2_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) ; Events", 160,0,1600);
+    Book ("VBShadAnalysis/pT2_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) ; Events", 100,0,1000);
 
     Book ("VBShadAnalysis/eta1_Jet"+category+"_"+l, "eta_Jet; #eta (leading); Events", 100,0.,5.);
     Book ("VBShadAnalysis/eta2_Jet"+category+"_"+l, "eta_Jet; #eta (subleading) ; Events", 100,0.,5.);
@@ -1214,6 +1215,8 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RB_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RR_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
+
+        if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 16,0,16);
 
         if(doStudyMass){
 
@@ -2588,6 +2591,11 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
 
+    if(selectedFatJets.size()>1 and doStudySFfat) {
+        int indexij = 4*getIndex(0) + getIndex(1);
+        Fill("VBShadAnalysis/Baseline/SF_FatJet_" +label, systname, indexij, e->weight() );  // fill to derive SF
+    }
+
     //AK4
     for(unsigned i=0;i<e->Njets() ; ++i)
     {
@@ -3374,7 +3382,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     string label = GetLabel(e);
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
-    if( label == "QCD_HT" or
+    if( label == "QCD_HT" or label == "QCD_Pt" or
         label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
         label == "ZJetsToQQ" or label == "WJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
@@ -4190,6 +4198,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
     }
 
+    evt_PTVV = p4VV.Pt();
+    evt_PTV1 = p4V1.Pt();
+    evt_PTV2 = p4V2.Pt();
+    evt_bosV1Eta = p4V1.Eta();
+    evt_bosV2Eta = p4V2.Eta();
+
+
     //$$$$$$$$$
     //$$$$$$$$$
 
@@ -4230,6 +4245,22 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        e->ApplySF("WNNLO_rwg");
 
     }
+
+
+   //////
+   if(label.find("QCD_HT") !=string::npos) {
+
+       string sfname="";
+       if (year==2016)  sfname = "FatJetV_2016";
+       if (year==2017)  sfname = "FatJetV_2017";
+       if (year==2018)  sfname = "FatJetV_2018";
+
+       e->SetPtEtaSF(sfname, evt_PTV1, fabs(evt_bosV1Eta));
+       e->ApplySF(sfname);
+       e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
+       e->ApplySF(sfname);
+
+   }
 
     //unc on mvv, use 'Smear=@SmearSF("QCDNonclosure_CAT"!"QCD_MVV_CAT_Nonclosure")' to run, where CAT = BB or BBtag
     //
@@ -4329,11 +4360,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //only after passing above all VBF selections, start to calculate VV properties below
     ////////
 
-    evt_PTVV = p4VV.Pt();
-    evt_PTV1 = p4V1.Pt();
-    evt_PTV2 = p4V2.Pt();
-    evt_bosV1Eta = p4V1.Eta();
-    evt_bosV2Eta = p4V2.Eta();
     evt_DphiVV = ChargedHiggs::deltaPhi(p4V1.Phi(), p4V2.Phi());
 
     if(!doMETAnalysis){
@@ -4368,7 +4394,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(!doMETAnalysis) {
 
         evt_zepVV = fabs(p4VV.Eta() - averageJJeta)/fabs(evt_Detajj);
-        Fill("VBShadAnalysis/BOSON/ZepBosVVar" +category+"_"+label, systname, evt_zepVV, e->weight() );
+        Fill("VBShadAnalysis/ZepBosVVar" +category+"_"+label, systname, evt_zepVV, e->weight() );
 
         evt_cenEta = std::min(
                            evt_EtaMinV - std::min(forwardJets[0]->Eta(),forwardJets[1]->Eta()),
@@ -4394,7 +4420,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     //only cut for btag cate, others used in MVA
     if( !doResonant and (category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos) and evt_cenEta < 0. ) return EVENT_NOT_USED;
-
 
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--centrality
@@ -4431,6 +4456,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
 
     Fill("VBShadAnalysis/DRV1j" +category+"_"+label, systname, evt_DRV1j, e->weight() );
+    Fill("VBShadAnalysis/DRV2j" +category+"_"+label, systname, evt_DRV2j, e->weight() );
     Fill("VBShadAnalysis/ZepBosBVar" +category+"_"+label, systname, evt_zepVB, e->weight() );
     Fill("VBShadAnalysis/normPTVVjj" +category+"_"+label, systname, evt_normPTVVjj, e->weight() );
     Fill("VBShadAnalysis/Dphimin" +category+"_"+label, systname, minDPhi, e->weight() );
