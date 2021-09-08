@@ -4255,8 +4255,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        if (year==2017)  sfname = "FatJetV_2017";
        if (year==2018)  sfname = "FatJetV_2018";
 
-       e->SetPtEtaSF(sfname, evt_PTV1, evt_bosV1Eta);
-       e->SetPtEtaSF(sfname, evt_PTV2, evt_bosV2Eta);
+       e->SetPtEtaSF(sfname, evt_PTV1, fabs(evt_bosV1Eta));
+       e->ApplySF(sfname);
+       e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
        e->ApplySF(sfname);
 
    }
