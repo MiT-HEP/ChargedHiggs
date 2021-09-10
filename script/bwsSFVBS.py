@@ -4,12 +4,13 @@ from __future__ import print_function
 import ROOT
 import math
 
-year=17
-
-fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT6/UL%d/HADanti/HADanti.root'%year
+year=18
+#fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT6/UL%d/HADanti/HADanti.root'%year
+#n=16
+fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT10/UL%d/HADanti/HADanti.root'%year
+n=36
 hname='VBShadAnalysis/Baseline/SF_FatJet_'
 oname='datacard_SF_20%d.txt'%year
-n=16
 ## structure is Data, QCD, Others
 labels=["JetHT","QCD_HT","TT_TuneCP5"]
 
