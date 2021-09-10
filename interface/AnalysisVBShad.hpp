@@ -59,13 +59,14 @@ public:
 
     int getIndex(int nFat) {
         auto pt = selectedFatJets[nFat]->Pt();
-        int index = (( pt >= 300 and pt < 500 ) and (fabs(selectedFatJets[nFat]->Eta()) < 1.3) )? 0 : -1 ; // pt1Eta1
-        index = ((pt >= 500 and pt < 750) and (fabs(selectedFatJets[nFat]->Eta()) < 1.3) )? 1 : index ; // pt2Eta1
-        index = ((pt >= 750) and (fabs(selectedFatJets[nFat]->Eta()) < 1.3) )? 2 : index ; // pt3Eta1
+        auto etaAbs = fabs(selectedFatJets[nFat]->Eta());
+        int index = (( pt >= 300 and pt < 500 ) and (etaAbs < 1.3) )? 0 : -1 ; // pt1Eta1
+        index = ((pt >= 500 and pt < 750) and (etaAbs < 1.3) )? 1 : index ; // pt2Eta1
+        index = ((pt >= 750) and (etaAbs < 1.3) )? 2 : index ; // pt3Eta1
 
-        index = ((pt >= 300 and pt < 500) and (fabs(selectedFatJets[nFat]->Eta()) < 1.3) )? 3 : index ; // pt1Eta2
-        index = ((pt >= 500 and pt < 750) and (fabs(selectedFatJets[nFat]->Eta()) < 1.3) )? 4 : index ; // pt2Eta2
-        index = ((pt >= 750) and (fabs(selectedFatJets[nFat]->Eta()) >= 1.3) )? 5 : index ; // pt3Eta2
+        index = ((pt >= 300 and pt < 500) and (etaAbs >= 1.3) )? 3 : index ; // pt1Eta2
+        index = ((pt >= 500 and pt < 750) and (etaAbs >= 1.3) )? 4 : index ; // pt2Eta2
+        index = ((pt >= 750) and (etaAbs >= 1.3) )? 5 : index ; // pt3Eta2
         return index;
     }
 
