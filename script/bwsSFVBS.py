@@ -4,10 +4,10 @@ from __future__ import print_function
 import ROOT
 import math
 
-year=18
+year=16
 #fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT6/UL%d/HADanti/HADanti.root'%year
 #n=16
-fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT10/UL%d/HADanti/HADanti.root'%year
+fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT10fix/UL%d/HADanti/HADanti.root'%year
 n=36
 hname='VBShadAnalysis/Baseline/SF_FatJet_'
 oname='datacard_SF_20%d.txt'%year
@@ -33,8 +33,11 @@ lumi=35920. if year==16 else 41530 if year==17 else 59740
 fIn=ROOT.TFile.Open(fname)
 if fIn==None: print("ERROR fname",fname,"does not exists")
 hists=[ fIn.Get(hname+l) for l in labels]
-for h,l in zip(hists,labels) :
-    if h==None: print("ERROR","label",label,"does not have an hist")
+for i,(h,l) in enumerate(zip(hists,labels)) :
+    if h==None: 
+        print("ERROR","label",l,"does not have an hist")
+        hists[i]=ROOT.TH1D("tmp","tmp",n,0,n)
+        for ii in xrange(0,n): hists[i].SetBinContent(ii+1,0.001/lumi)
 out=open(oname,"w")
 
 valid= [ hists[qcd].GetBinContent(i+1)*lumi>0.01  for i in xrange(0,n)] ## check that prediction is non-zero.

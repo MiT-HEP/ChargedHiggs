@@ -5,6 +5,7 @@ import ROOT
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
 import os,sys
+import math
 
 print ("-> Looking for basepath")
 basepath = ""
@@ -20,7 +21,7 @@ sys.path.insert(0,basepath +"/python")
 from hmm import Stack
 
 fname="fitDiagnostics.root"
-year=18
+year=16
 n=36
 paper=False
 #labels=["QCD_HT","TT_TuneCP5"]
@@ -70,22 +71,28 @@ for i in xrange(0,n):
 hdata.GetYaxis().SetRangeUser(1,1000000)
 hdata.Draw("AXIS")
 #hdata.Draw("PE SAME")
-hdata.GetXaxis().SetBinLabel(1,"pT_{<600}-|#eta|_{<1.3} #minus pT_{<600}-|#eta|_{<1.3}");
-hdata.GetXaxis().SetBinLabel(2,"pT_{>600}-|#eta|_{<1.3} #minus ");
-hdata.GetXaxis().SetBinLabel(3,"pT_{<600}-|#eta|_{>1.3} #minus ");
-hdata.GetXaxis().SetBinLabel(4,"pT_{>600}-|#eta|_{>1.3} #minus ");
-hdata.GetXaxis().SetBinLabel(5,"pT_{<600}-|#eta|_{<1.3} #minus pT_{>600}-|#eta|_{<1.3}");
-hdata.GetXaxis().SetBinLabel(6," ");
-hdata.GetXaxis().SetBinLabel(7," ");
-hdata.GetXaxis().SetBinLabel(8," ");
-hdata.GetXaxis().SetBinLabel(9,"pT_{<600}-|#eta|_{<1.3} #minus pT_{<600}-|#eta|_{>1.3}");
-hdata.GetXaxis().SetBinLabel(10," ");
-hdata.GetXaxis().SetBinLabel(11," ");
-hdata.GetXaxis().SetBinLabel(12," ");
-hdata.GetXaxis().SetBinLabel(13,"pT_{<600}-|#eta|_{<1.3} #minus pT_{>600}-|#eta|_{>1.3}");
-hdata.GetXaxis().SetBinLabel(14," ");
-hdata.GetXaxis().SetBinLabel(15," ");
-hdata.GetXaxis().SetBinLabel(16," ");
+if n== 16:
+    hdata.GetXaxis().SetBinLabel(1,"pT_{<600}-|#eta|_{<1.3} #minus pT_{<600}-|#eta|_{<1.3}");
+    hdata.GetXaxis().SetBinLabel(2,"pT_{>600}-|#eta|_{<1.3} #minus ");
+    hdata.GetXaxis().SetBinLabel(3,"pT_{<600}-|#eta|_{>1.3} #minus ");
+    hdata.GetXaxis().SetBinLabel(4,"pT_{>600}-|#eta|_{>1.3} #minus ");
+    hdata.GetXaxis().SetBinLabel(5,"pT_{<600}-|#eta|_{<1.3} #minus pT_{>600}-|#eta|_{<1.3}");
+    hdata.GetXaxis().SetBinLabel(6," ");
+    hdata.GetXaxis().SetBinLabel(7," ");
+    hdata.GetXaxis().SetBinLabel(8," ");
+    hdata.GetXaxis().SetBinLabel(9,"pT_{<600}-|#eta|_{<1.3} #minus pT_{<600}-|#eta|_{>1.3}");
+    hdata.GetXaxis().SetBinLabel(10," ");
+    hdata.GetXaxis().SetBinLabel(11," ");
+    hdata.GetXaxis().SetBinLabel(12," ");
+    hdata.GetXaxis().SetBinLabel(13,"pT_{<600}-|#eta|_{<1.3} #minus pT_{>600}-|#eta|_{>1.3}");
+    hdata.GetXaxis().SetBinLabel(14," ");
+    hdata.GetXaxis().SetBinLabel(15," ");
+    hdata.GetXaxis().SetBinLabel(16," ");
+else:
+    for i in xrange(0,int(math.sqrt(n))):
+        for j in xrange(0,int(math.sqrt(n))):
+            hdata.GetXaxis().SetBinLabel(i+int(math.sqrt(n))*j+1,"w%dw%d"%(i,j))
+            hdata.LabelsOption("v")
 
 bkg=Stack()
 bkg.SetName("bkgmc")
