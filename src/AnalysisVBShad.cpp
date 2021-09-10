@@ -1216,7 +1216,7 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RR_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
 
-        if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 16,0,16);
+        if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 36,0,36);
 
         if(doStudyMass){
 
@@ -2592,7 +2592,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
 
     if(selectedFatJets.size()>1 and doStudySFfat) {
-        int indexij = 4*getIndex(0) + getIndex(1);
+        int indexij = 6*getIndex(0) + getIndex(1);
         Fill("VBShadAnalysis/Baseline/SF_FatJet_" +label, systname, indexij, e->weight() );  // fill to derive SF
     }
 
@@ -4255,10 +4255,22 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        if (year==2017)  sfname = "FatJetV_2017";
        if (year==2018)  sfname = "FatJetV_2018";
 
-       e->SetPtEtaSF(sfname, evt_PTV1, fabs(evt_bosV1Eta));
-       e->ApplySF(sfname);
-       e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
-       e->ApplySF(sfname);
+       if((category.find("BB") !=string::npos)) {
+           e->SetPtEtaSF(sfname, evt_PTV1, fabs(evt_bosV1Eta));
+           e->ApplySF(sfname);
+           e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
+           e->ApplySF(sfname);
+       }
+
+       if((category.find("BBtag") !=string::npos) and selectedFatJets.size()>0) {
+           e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
+           e->ApplySF(sfname);
+       }
+
+       if((category.find("BMET") !=string::npos) and selectedFatJets.size()>0) {
+           e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
+           e->ApplySF(sfname);
+       }
 
    }
 
