@@ -169,7 +169,17 @@ void VBShadAnalysis::BookHisto(string l, string category)
             }
         }
 
+
         if(doMETAnalysis or doMETAntiAnalysis) {
+            AddFinalHisto("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l);
+            AddFinalHisto("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l);
+            AddFinalHisto("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l);
+
+            AddFinalHisto("VBShadAnalysis/DNNMultiEWKdnn"+category+"_"+l);
+            AddFinalHisto("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+l);
+            AddFinalHisto("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+l);
+
+
             Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "DNN withMET ; DNNwithMET; Events", 100,0.,1.);
 
             Book ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+l, "BDT Multi withMET (response for ZZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
@@ -184,15 +194,9 @@ void VBShadAnalysis::BookHisto(string l, string category)
             Book ("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+l, "DNN Multi withMET (response for WZ qcd); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+l, "DNN Multi withMET (response for BKG ); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
 
+
+
         }
-
-        AddFinalHisto("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l);
-        AddFinalHisto("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l);
-        AddFinalHisto("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l);
-
-        AddFinalHisto("VBShadAnalysis/DNNMultiEWKdnn"+category+"_"+l);
-        AddFinalHisto("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+l);
-        AddFinalHisto("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+l);
 
 
     }
@@ -4265,6 +4269,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
            e->ApplySF(sfname);
        }
 
+       /*
        if((category.find("BBtag") !=string::npos) and selectedFatJets.size()>0) {
            e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
            e->ApplySF(sfname);
@@ -4274,6 +4279,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
            e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
            e->ApplySF(sfname);
        }
+       */
 
    }
 
@@ -4620,14 +4626,15 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             Fill ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+label, systname, bdt_multi[0], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+label, systname, bdt_multi[1], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+label, systname, bdt_multi[2], e->weight() );
-
+/*
             Fill ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+label, systname, bdt_multi[3], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+label, systname, bdt_multi[4], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+label, systname, bdt_multi[5], e->weight() );
-
+*/
             Fill ("VBShadAnalysis/DNNMultiEWKdnn"+category+"_"+label, systname, bdt_multi[12], e->weight() );
             Fill ("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+label, systname, bdt_multi[13], e->weight() );
             Fill ("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+label, systname, bdt_multi[14], e->weight() );
+
         }
     }
 
