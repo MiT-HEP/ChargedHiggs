@@ -1,0 +1,4 @@
+sub=amarini2|/store/user/amarini/nanoaqgc
+
+addfiles=%(amarini2)s/WPJJWMJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8
+addfiles=%(amarini2)s/WPJJZJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8
