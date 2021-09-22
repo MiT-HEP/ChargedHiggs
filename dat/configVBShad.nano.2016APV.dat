@@ -9,7 +9,7 @@ xrdcp=true
 Files=
 ## Signal
 #include=dat/catalog/2020.moriond/nano/year2016APV/vbshad_local.dat
-#include=dat/catalog/2020.moriond/nano/year2016APV/vbshad.dat
+include=dat/catalog/2020.moriond/nano/year2016APV/vbshad.dat
 #include=dat/catalog/2020.moriond/nano/year2016APV/vbsDoublyCH.dat
 ##
 ### BKGS
@@ -54,8 +54,8 @@ addConfig=VBShadAnalysis|year=12016
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
 #Output=VBShadSignal_HAD.root
 
-addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
-Output=VBShadSignal_MET.root
+#addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+#Output=VBShadSignal_MET.root
 
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
 #Output=VBShadSignal_B.root

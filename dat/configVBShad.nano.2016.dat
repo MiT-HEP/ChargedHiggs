@@ -8,6 +8,7 @@ xrdcp=true
 
 Files=
 ## Signal
+include=dat/catalog/2020.moriond/nano/year2016/vbsAQGC.dat
 #include=dat/catalog/2020.moriond/nano/year2016/vbshad_local.dat
 include=dat/catalog/2020.moriond/nano/year2016/vbshad.dat
 #include=dat/catalog/2020.moriond/nano/year2016/vbsDoublyCH.dat
@@ -15,7 +16,7 @@ include=dat/catalog/2020.moriond/nano/year2016/vbshad.dat
 ### BKGS
 include=dat/catalog/2020.moriond/nano/year2016/QCD_local.dat
 include=dat/catalog/2020.moriond/nano/year2016/ttvbs_local.dat
-#include=dat/catalog/2020.moriond/nano/year2016/WZjets_local.dat
+include=dat/catalog/2020.moriond/nano/year2016/WZjets_local.dat
 #include=dat/catalog/2020.moriond/nano/year2016/ewk.dat
 #include=dat/catalog/2020.moriond/nano/year2016/st.dat
 ### BKGS backup
@@ -27,6 +28,7 @@ include=dat/catalog/2020.moriond/nano/year2016/ttvbs_local.dat
 
 # add Label
 include=dat/vbshad.dat
+
 #__________________________________________________________________
 #____________________ COMMON SETTINGS _____________________________
 #
@@ -52,8 +54,8 @@ addConfig=VBShadAnalysis|year=2016
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
 #Output=VBShadSignal_HAD.root
 
-addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
-Output=VBShadSignal_MET.root
+#addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0
+#Output=VBShadSignal_MET.root
 
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0
 #Output=VBShadSignal_B.root
