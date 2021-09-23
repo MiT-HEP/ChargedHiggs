@@ -4,6 +4,14 @@ ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
 
+class SimpleRebin:
+    def __init__(self,n):
+        self.nmerge=n
+    def applyMapping(self, x, h):
+        h2=h.Clone()
+        h2.Rebin(self.nmerge)
+        return h2
+
 class Rebin:
     
     h = None        # sum of bkgs
