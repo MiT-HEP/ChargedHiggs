@@ -579,7 +579,10 @@ if __name__=="__main__":
     ######################################
 
     extra =""
-    if opt.aqgc: extra="_aqgc_"+aqgc_par
+    if 'anti' in opt.input : extra="_anti"
+    if 'side' in opt.input : extra="_side"
+    if opt.aqgc: extra+="_aqgc_"+aqgc_par
+
     db.write_cards('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
     db.write_inputs('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
 

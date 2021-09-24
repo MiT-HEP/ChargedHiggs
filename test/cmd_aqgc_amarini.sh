@@ -2,9 +2,9 @@
 #/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT3/UL18/HAD/HAD.root
 
 #Copy file in Datacards/inputs/ or /eos/user/h/hum/VBSHad
-python script/bwsVBSHad.py -q 1 -s mVV -y 2018 -c BB -i HAD.root
+python script/bwsVBSHad.py -q 1 -s mVV -y 2018 -c BB -i HADSR_2018_sep12.root
 
-python script/bwsVBSHad.py -q 5 --aqgc -s MVV -y 2018 -c BB -i HAD.root
+python script/bwsVBSHad.py -q 5 --aqgc -s MVV -y 2018 -c BB -i HADSR_2018_sep12.root
 
 
 
@@ -21,7 +21,6 @@ combine -M MultiDimFit -t -1 --toysFile  higgsCombine_AsimovSM.GenerateOnly.mH12
 # deltaNLL wrt baseline, i.e. at r=1
 combine -M MultiDimFit -t -1 --toysFile  higgsCombine_AsimovSM.GenerateOnly.mH120.VALUE0p00.123456.root  --keyword-value VALUE=$val -n "_ft7_$val" -d higgsCombine_baseline.MultiDimFit.mH120.VALUE${val}.root  --skipInitialFit --algo fixed --fixedPointPOIs r=1 --snapshotName MultiDimFit
 done
-
 
 
 hadd higgsCombine_tmp_ft7.root higgsCombine_ft7_*.MultiDimFit.mH120.VALUE*.root
