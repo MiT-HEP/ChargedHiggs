@@ -8,22 +8,21 @@ xrdcp=true
 
 Files=
 ## Signal
-include=dat/catalog/2020.moriond/nano/year2016/vbsAQGC.dat
-#include=dat/catalog/2020.moriond/nano/year2016/vbshad_local.dat
-include=dat/catalog/2020.moriond/nano/year2016/vbshad.dat
-#include=dat/catalog/2020.moriond/nano/year2016/vbsDoublyCH.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/vbshad_local.dat
+include=dat/catalog/2020.moriond/nano/year2016APV/vbshad.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/vbsDoublyCH.dat
 ##
 ### BKGS
-include=dat/catalog/2020.moriond/nano/year2016/QCD_local.dat
-include=dat/catalog/2020.moriond/nano/year2016/ttvbs_local.dat
-include=dat/catalog/2020.moriond/nano/year2016/WZjets_local.dat
-#include=dat/catalog/2020.moriond/nano/year2016/ewk.dat
-#include=dat/catalog/2020.moriond/nano/year2016/st.dat
+include=dat/catalog/2020.moriond/nano/year2016APV/QCD_local.dat
+include=dat/catalog/2020.moriond/nano/year2016APV/ttvbs_local.dat
+include=dat/catalog/2020.moriond/nano/year2016APV/WZjets_local.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/ewk.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/st.dat
 ### BKGS backup
-##include=dat/catalog/2020.moriond/nano/year2016/Zinv.dat
-##include=dat/catalog/2020.moriond/nano/year2016/Vjets.dat
-##include=dat/catalog/2020.moriond/nano/year2016/QCD.dat
-##include=dat/catalog/2020.moriond/nano/year2016/ttvbs.dat
+##include=dat/catalog/2020.moriond/nano/year2016APV/Zinv.dat
+##include=dat/catalog/2020.moriond/nano/year2016APV/Vjets.dat
+##include=dat/catalog/2020.moriond/nano/year2016APV/QCD.dat
+##include=dat/catalog/2020.moriond/nano/year2016APV/ttvbs.dat
 
 
 # add Label
@@ -34,9 +33,9 @@ include=dat/vbshad.dat
 #
 
 SFDB=aux/sf_VBShad.txt
-MCDB=aux/mcdb.nano.2016.txt
+MCDB=aux/mcdb.nano.2016APV.txt
 include=dat/json.nano.year2016.dat
-pileup=aux/pileup.nano.year2016.root
+pileup=aux/pileup.nano.year2016APV.root
 
 Smear=NONE
 #Smear=NONE,PU,@SmearJesSourceAK8("aux/JEC/Nano/Summer19UL16_V7_MC_UncertaintySources_AK8PFPuppi.txt"!"Total"),@SmearJesSource("aux/JEC/Nano/Summer19UL16_V7_MC_UncertaintySources_AK4PFchs.txt"!"Total")
@@ -48,8 +47,9 @@ Final=no
 ## be less peaky, given the n. of systs
 EntryPerSecond=10
 
+# note: year must be different preVFP
 Analysis=OneAnalysis,JsonAnalysis,MetFiltersAnalysis,VBShadAnalysis
-addConfig=VBShadAnalysis|year=2016
+addConfig=VBShadAnalysis|year=12016
 
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1
 #Output=VBShadSignal_HAD.root
@@ -62,35 +62,35 @@ addConfig=VBShadAnalysis|year=2016
 
 ##
 
-#include=dat/catalog/2020.moriond/nano/year2016/jetHT_local.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/jetHT_local.dat
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=1,doSideBand=1
 #Output=VBShadSignal_side_HAD.root
 
-#include=dat/catalog/2020.moriond/nano/year2016/jetHT_local.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/jetHT_local.dat
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=1,doHADAnalysis=0,doSideBand=1
 #Output=VBShadSignal_side_B.root
 
-#include=dat/catalog/2020.moriond/nano/year2016/MET_local.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/MET_local.dat
 #addConfig=VBShadAnalysis|doMETAnalysis=1,doBAnalysis=0,doHADAnalysis=0,doSideBand=1
 #Output=VBShadSignal_side_MET.root
 
 ##
 
-##include=dat/catalog/2020.moriond/nanov9/year2016/jetHT.dat
-##include=dat/catalog/2020.moriond/nano/year2016/jetHT.dat
-#include=dat/catalog/2020.moriond/nano/year2016/jetHT_local.dat
+##include=dat/catalog/2020.moriond/nanov9/year2016APV/jetHT.dat
+##include=dat/catalog/2020.moriond/nano/year2016APV/jetHT.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/jetHT_local.dat
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=1,doBAntiAnalysis=0
 #Output=VBShadAntiSignal_HAD.root
 
-##include=dat/catalog/2020.moriond/nano/year2016/jetHT.dat
-#include=dat/catalog/2020.moriond/nano/year2016/jetHT_local.dat
+##include=dat/catalog/2020.moriond/nano/year2016APV/jetHT.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/jetHT_local.dat
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doHADAntiAnalysis=0,doBAntiAnalysis=1
 #Output=VBShadAntiSignal_B.root
 
-##include=dat/catalog/2020.moriond/nano/year2016/MET.dat
-#include=dat/catalog/2020.moriond/nano/year2016/MET_local.dat
+##include=dat/catalog/2020.moriond/nano/year2016APV/MET.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/MET_local.dat
 #addConfig=VBShadAnalysis|doMETAnalysis=0,doBAnalysis=0,doHADAnalysis=0,doMETAntiAnalysis=1,doBAntiAnalysis=0
 #Output=VBShadAntiSignal_MET.root
 
 ## SingleMuon
-#include=dat/catalog/2020.moriond/nano/year2016/SingleMuon_local.dat
+#include=dat/catalog/2020.moriond/nano/year2016APV/SingleMuon_local.dat

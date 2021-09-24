@@ -1,6 +1,8 @@
-addfiles=/store/group/phys_higgs/cmshmm/amarini/nano/2017/SingleMuon/crab_SingleMuon_2017_Run2017B
-addfiles=/store/group/phys_higgs/cmshmm/amarini/nano/2017/SingleMuon/crab_SingleMuon_2017_Run2017D
-addfiles=/store/group/phys_higgs/cmshmm/amarini/nano/2017/SingleMuon/crab_SingleMuon_2017_Run2017E
-addfiles=/store/group/phys_higgs/cmshmm/amarini/nano/2017/SingleMuon/crab_SingleMuon_2017_Run2017F
-addfiles=/store/group/phys_higgs/cmshmm/amarini/nano/2017/SingleMuon/crab_SingleMuon_2017_Run2017G
-addfiles=/store/group/phys_higgs/cmshmm/amarini/nano/2017/SingleMuon/crab_SingleMuon_2017_Run2017H
+sub=amarini|/store/group/phys_higgs/cmshmm/amarini/nano/2017
+
+addfiles=%(amarini)s/SingleMuon/crab_SingleMuon_2017_Run2017B
+addfiles=%(amarini)s/SingleMuon/crab_SingleMuon_2017_Run2017D
+addfiles=%(amarini)s/SingleMuon/crab_SingleMuon_2017_Run2017E
+addfiles=%(amarini)s/SingleMuon/crab_SingleMuon_2017_Run2017F
+addfiles=%(amarini)s/SingleMuon/crab_SingleMuon_2017_Run2017G
+addfiles=%(amarini)s/SingleMuon/crab_SingleMuon_2017_Run2017H

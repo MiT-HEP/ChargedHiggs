@@ -1,0 +1,9 @@
+sub=amarini|/store/group/phys_higgs/cmshmm/amarini/nano/2016
+
+addfiles=%(amarini)s/MET/crab_MET_2016_Run2016B-ver1_HIPM
+addfiles=%(amarini)s/MET/crab_MET_2016_Run2016B-ver2_HIPM
+addfiles=%(amarini)s/MET/crab_MET_2016_Run2016C
+addfiles=%(amarini)s/MET/crab_MET_2016_Run2016D
+addfiles=%(amarini)s/MET/crab_MET_2016_Run2016E
+addfiles=%(amarini)s/MET/crab_MET_2016_Run2016F-HIPM
+

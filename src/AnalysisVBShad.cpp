@@ -10,23 +10,23 @@
 //2016  to be updated temporaty from here https://indico.cern.ch/event/1063451/contributions/4484910/attachments/2293669/3900253/OH_TnPULl6v1.pdf
 //PRE DeepCSV: L = 0.2027, M = 0.6001, T = 0.8819
 //POST DeepCSV: L = 0.1918, M = 0.5847, T = 0.8767
-#define DEEP_B_LOOSE ((year==2016)?0.2027:(year==2017)?0.1355:0.1208)
-#define DEEP_B_MEDIUM ((year==2016)?0.6001:(year==2017)?0.4506:0.4148)
-#define DEEP_B_TIGHT ((year==2016)?0.8819 :(year==2017)?0.7738:.7665)
+#define DEEP_B_LOOSE ((year==12016)?0.2027:(year==2016)?0.1918:(year==2017)?0.1355:0.1208)
+#define DEEP_B_MEDIUM ((year==12016)?0.6001:(year==2016)?0.5847:(year==2017)?0.4506:0.4148)
+#define DEEP_B_TIGHT ((year==12016)?0.8819:(year==2016)?0.8767:(year==2017)?0.7738:.7665)
 
-#define DEEP_C_LOOSE ((year==2016)?1.:(year==2017)?0.04:0.064)
-#define DEEP_C_MEDIUM ((year==2016)?1.:(year==2017)?0.144:0.153)
-#define DEEP_C_TIGHT ((year==2016)?1.:(year==2017)?0.73:0.405)
+#define DEEP_C_LOOSE ((year==2016 or year==12016)?1.:(year==2017)?0.04:0.064)
+#define DEEP_C_MEDIUM ((year==2016 or year==12016)?1.:(year==2017)?0.144:0.153)
+#define DEEP_C_TIGHT ((year==2016 or year==12016)?1.:(year==2017)?0.73:0.405)
 
 //https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAK8Tagging2018WPsSFs#Working_Points
-#define DEEP_AK8_W_MD_50 ((year==2016)?0.274:(year==2017)?0.258:0.245)
-#define DEEP_AK8_W_MD_25 ((year==2016)?0.506:(year==2017)?0.506:0.479)
-#define DEEP_AK8_W_MD_1 ((year==2016)?0.731:(year==2017)?0.739:0.704)
-#define DEEP_AK8_W_MD_05 ((year==2016)?0.828:(year==2017)?0.838:0.806)
+#define DEEP_AK8_W_MD_50 ((year==2016 or year==12016)?0.274:(year==2017)?0.258:0.245)
+#define DEEP_AK8_W_MD_25 ((year==2016 or year==12016)?0.506:(year==2017)?0.506:0.479)
+#define DEEP_AK8_W_MD_1 ((year==2016 or year==12016)?0.731:(year==2017)?0.739:0.704)
+#define DEEP_AK8_W_MD_05 ((year==2016 or year==12016)?0.828:(year==2017)?0.838:0.806)
 
 //slide4 of https://indico.cern.ch/event/853828/contributions/3723593/attachments/1977626/3292045/lg-btv-deepak8v2-sf-20200127.pdf
-#define DEEP_AK8_ZHbb_MD_50 ((year==2016)?0.6795:(year==2017)?0.5845:0.5165)
-#define DEEP_AK8_ZHbb_MD_25 ((year==2016)?0.8945:(year==2017)?0.8695:0.8365)
+#define DEEP_AK8_ZHbb_MD_50 ((year==2016 or year==12016)?0.6795:(year==2017)?0.5845:0.5165)
+#define DEEP_AK8_ZHbb_MD_25 ((year==2016 or year==12016)?0.8945:(year==2017)?0.8695:0.8365)
 #define DEEP_AK8_ZHbb_MD_1 0.97
 
 // from Loukas
@@ -2222,7 +2222,23 @@ void VBShadAnalysis::studyTriggers(Event* e, string category, string label, stri
                     passtriggerbtag1 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6");
                     passtriggerbtag2 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160");
                     passtriggerbtag3 = e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240");
-                    passtriggerbtag4 = e->IsTriggered("HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p087");           
+                    passtriggerbtag4 = e->IsTriggered("HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p087");
+                    passtriggerbtag5 = e->IsTriggered("HLT_PFHT450_SixJet40_BTagCSV_p056");
+                    passtriggerbtag6 = e->IsTriggered("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056");
+                    passtriggermet1 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+                    break;
+
+        case 12016:  passtriggerHad1 = e->IsTriggered("HLT_PFHT900");
+                    passtriggerHad2 = e->IsTriggered("HLT_AK8PFJet450");
+                    passtriggerHad3 = e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50");
+                    passtriggerHad4 = e->IsTriggered("HLT_AK8PFJet360_TrimMass30");
+                    passtriggerHad5 = e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30");
+                    passtriggerHad6 = e->IsTriggered("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5");
+                    passtriggerHad7 = e->IsTriggered("HLT_PFJet450");
+                    passtriggerbtag1 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6");
+                    passtriggerbtag2 = e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160");
+                    passtriggerbtag3 = e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240");
+                    passtriggerbtag4 = e->IsTriggered("HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p087");
                     passtriggerbtag5 = e->IsTriggered("HLT_PFHT450_SixJet40_BTagCSV_p056");
                     passtriggerbtag6 = e->IsTriggered("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056");
                     passtriggermet1 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
@@ -3531,12 +3547,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     // TRIGGER STORY
 
     bool passtriggerMET = false;
-    if  (year==2016 ) passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight"));
+    if  (year==2016 or year==12016) passtriggerMET = (e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight"));
     if  (year==2017 or year==2018) passtriggerMET = ( e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60"));
  
     bool passtriggerHad = false;
     
-    if (year==2016) passtriggerHad = e->IsTriggered("HLT_PFHT900")
+    if (year==2016 or year==12016) passtriggerHad = e->IsTriggered("HLT_PFHT900")
                         || e->IsTriggered("HLT_AK8PFJet450")
                         || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50")
                         || e->IsTriggered("HLT_AK8DiPFJet300_200_TrimMass30")
@@ -3566,7 +3582,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     bool passtriggerBtag = false;
     
-    if (year==2016 ) passtriggerBtag = passtriggerHad
+    if (year==2016 or year==12016) passtriggerBtag = passtriggerHad
                          || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6")
                          || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160")
                          || e->IsTriggered("HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240")
@@ -4258,7 +4274,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
    if(label.find("QCD_HT") !=string::npos) {
 
        string sfname="";
-       if (year==2016)  sfname = "FatJetV_2016";
+       if (year==2016 or year==12016)  sfname = "FatJetV_2016";
        if (year==2017)  sfname = "FatJetV_2017";
        if (year==2018)  sfname = "FatJetV_2018";
 
