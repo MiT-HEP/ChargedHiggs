@@ -561,9 +561,9 @@ if __name__=="__main__":
     #if ("BB" in opt.category) and ("Btag" not in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
     #elif ("BBtag" in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)
 
-    #db.add_systematics('CMS_pileUp','PU','shape',('.*','.*'),1.)
-    #db.add_systematics('CMS_scale_j','JES_Total','shape',('.*','.*'),1.)
-    #db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_pileUp','PU','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_scale_j','JES_Total','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*','.*'),1.)
 
     ## break down JES sources
     #db.add_systematics('jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)
