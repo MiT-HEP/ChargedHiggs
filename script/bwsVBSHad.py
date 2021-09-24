@@ -265,7 +265,7 @@ class DatacardBuilder:
 
     def _get_norm(self,hname):
         for sig in xsecsig:
-            if opt.aqgc and sig['cont'] == 'EWK' : return 1. ## how they are normalized?
+            #if opt.aqgc and sig['cont'] == 'EWK' : return 1. ## how they are normalized?
             if sig['name'] in hname:
                 return sig['xsec']
         return 1.
