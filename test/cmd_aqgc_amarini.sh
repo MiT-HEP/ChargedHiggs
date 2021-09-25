@@ -2,9 +2,11 @@
 #/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT3/UL18/HAD/HAD.root
 
 #Copy file in Datacards/inputs/ or /eos/user/h/hum/VBSHad
-python script/bwsVBSHad.py -q 1 -s mVV -y 2018 -c BB -i HADSR_2018_sep12.root
+python script/bwsVBSHad.py --there -q 1 -s Mjj -y 2020 -c BB -i HADSR_2020_sep12.root
+python script/bwsVBSHad.py --there -q 1 -s Mjj -y 2020 -c BB -i HADanti_2020_sep12.root
+python script/bwsVBSHad.py --there -q 1 -s Mjj -y 2020 -c BB -i HADside_2020_sep12.root
 
-python script/bwsVBSHad.py -q 5 --aqgc -s MVV -y 2018 -c BB -i HADSR_2018_sep12.root
+python script/bwsVBSHad.py --there -q 5 --aqgc -s MVV -y 2018 -c BB -i HADSR_2018_sep12.root --aqgc_parameter ft7
 
 
 

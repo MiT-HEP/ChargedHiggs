@@ -3,6 +3,7 @@ import os, sys, re
 from optparse import OptionParser
 from datetime import datetime
 import itertools, copy ## for keywords
+import numpy as np
 
 if __name__=="__main__":
     usage='''%prog 
@@ -17,6 +18,9 @@ if __name__=="__main__":
     parser.add_option("-s","--analysisStra",type='string',help="which one to fit with:mVV, mjj, BDT, ... ? ", default="mjj")
 
     parser.add_option("","--aqgc",action='store_true',help="AQGC input and datacard [%default]",default=False) ### aqgc code wrappend by this guardw
+    parser.add_option("","--aqgc_parameter",help="AQGC parameter [%default]",default='ft7') 
+    parser.add_option("","--there",action='store_true',help="Don't save directory in datacards fname. [%default]",default=False) 
+    #parser.add_option("","--aqgc_interpolate",action='append',help="AQGC extra points to evaluate [%default]",default=[])
     parser.add_option("-q","--quote",type='int',help="sig ext.: 1: (WW/WZ/ZZ)+(ewk/qcd/int) all separate; 2: VVAll+(ewk/qcd/int); 3: (WW/WZ/ZZ)-All; 4: VV-All ; 5:AQGC",default=1)
 
     opt,args=parser.parse_args()
@@ -33,6 +37,7 @@ lumis={
     2020: 45.7
 }
 
+if "%d"%opt.year not in opt.input:  raise ValueError('Your file should match the selected year. Year: ' + opt.year+ "not in filename "+opt.input)
 
 ## [ssww, osww, zzjj, wzbb, wznn]/[ewk,qcd,ewk-qcd] 
 xsecsig = [
@@ -79,7 +84,8 @@ if opt.aqgc:
     aqgc_values = { par:[ name.split('_')[1] for name in aqgc_names if name.split('_')[0] == par ] for par in aqgc_parameters } ## par -> list of value_str , value
     aqgc_fname=re.sub('.root','aqgc.root',opt.input)
     print "Using AQGC file name",aqgc_fname
-    aqgc_par='ft7'
+    #aqgc_par='ft7'
+    aqgc_par=opt.aqgc_parameter
     if aqgc_par not in aqgc_parameters: raise ValueError(aqgc_par+" is not in the list of aqgc_parameters. Possible values are: "+ ','.join(aqgc_parameters))
    
     if len(aqgc_values[aqgc_par]) == 0:
@@ -91,13 +97,11 @@ if opt.aqgc:
         print "AQGC values = ",aqgc_values
         print "------------------"
         raise RuntimeError("List of values for parameter is empty")
-
+    from morphing import morphing
 
 
 LikeBins=25
 likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(2)
-
-
 
 def read_input():
     psig = []
@@ -187,6 +191,7 @@ class DatacardBuilder:
 
     def write_cards(self,outname): #datacard.txt
         outroot=re.sub(".txt.*",".inputs.root",outname)
+        if opt.there: outroot=outroot.split('/')[-1]
         now=datetime.now()
 
         txt= open(outname,"w")
@@ -396,28 +401,23 @@ class DatacardBuilder:
             self._write(data)
             
             # redefine self.processes to write if it has keywords
-            print "DEBUG KEYWORD"
             myprocesses = {}
             for proc in self.processes:
                 d2 = self.processes[proc]
                 if d2['keywords'] == None: myprocesses[proc] = d2
                 else:
-                    #key_str="_".join( sorted([key for key in d2['keywords']]) )
                     # for each key, loop over values
-                    print "DEBUG KW","ORIGINAL SUFFIXES",','.join(d2['suffix'])
                     l = [ d2['keywords'][key] for key in sorted(d2['keywords']) ] # list of list of all possibilities
                     for aval in itertools.product(*l):
                         newproc = proc +"_" + '_'.join(aval) # proc_$KEY1_$KEY2...
-                        #dnew= d2.copy()
                         dnew= copy.deepcopy(d2) 
-                        print "DEBUG KW","DNEW ",','.join(dnew['suffix'])
                         dnew['proc'] = newproc
                         for isuf,suf in enumerate(dnew['suffix']): 
-                            #dnew['suffix'][isuf] = d2['suffix'][isuf][:] ## need to make a copy of this
                             for ikey,key in enumerate(sorted(d2['keywords'])):
                                 ## key -> val
-                                dnew['suffix'][isuf] = dnew['suffix'][isuf].replace(key,aval[ikey]) #re.sub(key,aval[ikey],dnew['suffix'][isuf]) I may need to escape $
-                        print "DEBUG KW","DNEW AFTER SUB",','.join(dnew['suffix'])
+                                dnew['suffix'][isuf] = dnew['suffix'][isuf].replace(key,aval[ikey]) 
+                        dnew['iskeyword'] = True ## carry out this information. Not used for the moment.
+                        #dnew['interpolate'] = aval[0] in ops.aqgc_interpolate
                         myprocesses[newproc]=dnew
             # proc
             for proc in myprocesses:
@@ -429,18 +429,19 @@ class DatacardBuilder:
                 for suffix in d2['suffix']:
                     if h==None:
                         ##fname from category
-                        h=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
-                        if h==None and d2['fname'] != None: 
-                            ## try with the fname in proc. 
-                            ### TODO: considering first choice iff set?
-                            ### TODO: propagate this to syst
-                            print "DEBUG","Falling back to ", "%(fname)s"%d2 ,"for proc", proc
+                        if d2['fname'] != None: 
+                            print "WARNING","Using file (instead of default) ", "%(fname)s"%d2 ,"for proc", proc
                             h=self._get_histo("%(path)s"%d +"/%(fname)s"%d2,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
+                        else:
+                            h=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
+                        # if h == None and 'interpolate' in d2 and d2['interpolate']:
+                        # TODO: find closest value, fetch them and interpolate them
                     else:
-                        hTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
-                        if hTmp==None and d2['fname'] != None: 
-                            print "DEBUG","Falling back to ", "%(fname)s"%d2 ,"for proc", proc
+                        if d2['fname'] != None: 
+                            print "WARNING","Using file (instead of default) ", "%(fname)s"%d2 ,"for proc", proc
                             hTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix,"")
+                        else:
+                            hTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                         h.Add(hTmp)
                 h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
                 self._write(h)
@@ -463,17 +464,22 @@ class DatacardBuilder:
                     hdn = None
                     for suffix in d2['suffix']:
                         if hup==None:
-                            hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
-                            hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
-                            if hup==None and hdn==None and d2['fname'] != None: 
+                            ## todo here, check for systs fname here. Possible symmetrize to the default over there
+                            if d2['fname'] != None: 
+                                # if fname set in proc, use it.
                                 hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
                                 hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
+                            else:
+                                # use category fname
+                                hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
                         else:
-                            hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","")
-                            hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","")
-                            if hupTmp==None and hdnTmp==None and d2['fname'] != None: 
+                            if d2['fname'] != None: 
                                 hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
                                 hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
+                            else:
+                                hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","")
+                                hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","")
                             hup.Add(hupTmp)
                             hdn.Add(hdnTmp)
                             #if matched: print "WARNING", "syst duplicate found","discarding",c,p,v,"matching for",cat,proc
@@ -489,8 +495,6 @@ class DatacardBuilder:
         self.fOut.Close()
         return self
                             
-
-
 
 if __name__=="__main__":
 
@@ -561,9 +565,11 @@ if __name__=="__main__":
     #if ("BB" in opt.category) and ("Btag" not in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
     #elif ("BBtag" in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)
 
-    db.add_systematics('CMS_pileUp','PU','shape',('.*','.*'),1.)
-    db.add_systematics('CMS_scale_j','JES_Total','shape',('.*','.*'),1.)
-    db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*','.*'),1.)
+    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*' 
+
+    db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_scale_j','JES_Total','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
 
     ## break down JES sources
     #db.add_systematics('jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)

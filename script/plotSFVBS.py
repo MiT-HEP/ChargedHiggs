@@ -21,7 +21,7 @@ sys.path.insert(0,basepath +"/python")
 from hmm import Stack
 
 fname="fitDiagnostics.root"
-year=16
+year=116
 n=36
 paper=False
 #labels=["QCD_HT","TT_TuneCP5"]
@@ -30,6 +30,8 @@ paper=False
 
 ########
 lumi=35920. if year==16 else 41530 if year==17 else 59740
+if year == 116: lumi=19523.
+if year == 216: lumi=16803.
 colors = [ ROOT.kBlue, 8, ROOT.kCyan+2, ROOT.kAzure-6,ROOT.kOrange+7,ROOT.kMagenta,ROOT.kGreen-4];
 ##########
 fIn=ROOT.TFile.Open(fname)
