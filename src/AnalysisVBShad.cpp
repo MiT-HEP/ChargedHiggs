@@ -4276,11 +4276,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
    if(label.find("QCD_HT") !=string::npos) {
 
        string sfname="";
-       if (year==2016 or year==12016)  sfname = "FatJetV_2016";
+       if (year==12016)  sfname = "FatJetV_12016";
+       if (year==2016)  sfname = "FatJetV_2016";
        if (year==2017)  sfname = "FatJetV_2017";
        if (year==2018)  sfname = "FatJetV_2018";
 
-       if((category.find("BB") !=string::npos)) {
+       if((doHADAnalysis or doHADAntiAnalysis) and (category.find("BB") !=string::npos)) {
            e->SetPtEtaSF(sfname, evt_PTV1, fabs(evt_bosV1Eta));
            e->ApplySF(sfname);
            e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
