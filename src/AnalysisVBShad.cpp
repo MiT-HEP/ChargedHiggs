@@ -2585,7 +2585,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(doBAntiAnalysis) doBAnalysis=true;
         if(doHADAntiAnalysis) doHADAnalysis=true;
 
-        if(doMETAnalysis and dPhiFatMet<0.4) continue;
+        if(doMETAnalysis and dPhiFatMet<0.4) continue; // should this be larger 0.8 ? or veto ?
 
         if( (!doSideBand and isWJet) or (doSideBand and isWJetWide) ) {
             //if(!doMETAnalysis and !doResonant and isZbbJet) continue;  //avoid selectedFatZbb except resonant; 
@@ -3448,6 +3448,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //    if ( label == "ST") label = "TT";
     if ( label.find("ttZ") !=string::npos) label = "TTX";
     if ( label.find("TTTT") !=string::npos) label = "TTX";
+    if ( label.find("TTZ") !=string::npos) label = "TTX";
     if ( label.find("TTW") !=string::npos) label = "TTX";
     if ( label.find("TTG") !=string::npos) label = "TTX";
     if ( label.find("ttH") !=string::npos) label = "TTX";
