@@ -171,9 +171,9 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
 
         if(doMETAnalysis or doMETAntiAnalysis) {
-            AddFinalHisto("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l);
-            AddFinalHisto("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l);
-            AddFinalHisto("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l);
+            //            AddFinalHisto("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l);
+            //            AddFinalHisto("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l);
+            //            AddFinalHisto("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l);
 
             AddFinalHisto("VBShadAnalysis/DNNMultiEWKdnn"+category+"_"+l);
             AddFinalHisto("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+l);
@@ -186,19 +186,15 @@ void VBShadAnalysis::BookHisto(string l, string category)
             Book ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+l, "BDT Multi withMET (response for WZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+l, "BDT Multi withMET (response for BKG); BDT Multi withMET [GeV]; Events", 200,0.,1.);
 
-            Book ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l, "BDT Multi withMET (response for WZ ewk); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
-            Book ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l, "BDT Multi withMET (response for WZ qcd); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
-            Book ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l, "BDT Multi withMET (response for BKG ); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            //            Book ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l, "BDT Multi withMET (response for WZ ewk); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            //            Book ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l, "BDT Multi withMET (response for WZ qcd); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            //            Book ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l, "BDT Multi withMET (response for BKG ); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
 
             Book ("VBShadAnalysis/DNNMultiEWKdnn"+category+"_"+l, "DNN Multi withMET (response for WZ ewk); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+l, "DNN Multi withMET (response for WZ qcd); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+l, "DNN Multi withMET (response for BKG ); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
 
-
-
         }
-
-
     }
 
     if(checkSignalLabel(l)) Book ("VBShadAnalysis/MVVres"+category+"_"+l, "MVVres ; ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100, -5., 5.);
@@ -214,7 +210,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/Detajj"+category+"_"+l, "Deta jj ; #Delta#eta(j,j) ; Events", 100,0,10.);
 
     Book ("VBShadAnalysis/normPTVVjj"+category+"_"+l, "normPTVVjj; |#vec{p_{T}^{tot}}| / #Sigma p_{T} ; Events", 100,0,1.);
-    Book ("VBShadAnalysis/Dphimin"+category+"_"+l, "Dphimin", 100,0,6.28);
+    Book ("VBShadAnalysis/Dphimin"+category+"_"+l, "Dphimin;  min#Delta#Phi(Met,j)", 100,0,6.28);
     Book ("VBShadAnalysis/Met"+category+"_"+l, "Met; Met [GeV]; Events", 100,0,1000);
     Book ("VBShadAnalysis/MetPhi"+category+"_"+l, "Met #phi; Met #phi; Events", 100,-TMath::Pi(),TMath::Pi());
     Book ("VBShadAnalysis/PTVV"+category+"_"+l, "PTVV; PTVV [GeV]; Events", 100,0,1000);
@@ -229,10 +225,10 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
     Book ("VBShadAnalysis/qgl1_Jet"+category+"_"+l, "QGL1_Jet; QGL j1(leading); Events", 100,0.,1.);
     Book ("VBShadAnalysis/qgl2_Jet"+category+"_"+l, "QGL2_Jet; QGL j2(subleading) ; Events", 100,0.,1.);
-    Book ("VBShadAnalysis/nemf1_Jet"+category+"_"+l, "nemf1_Jet; nemf j1 (leading); Events", 100,0.,1.);
-    Book ("VBShadAnalysis/nemf2_Jet"+category+"_"+l, "nemf2_Jet; nemf j2 (subleading) ; Events", 100,0.,1.);
-    Book ("VBShadAnalysis/nhf1_Jet"+category+"_"+l, "nhf1_Jet; nhf j1 (leading); Events", 100,0.,1.);
-    Book ("VBShadAnalysis/nhf2_Jet"+category+"_"+l, "nhf2_Jet; nhf j2 (subleading) ; Events", 100,0.,1.);
+    //    Book ("VBShadAnalysis/nemf1_Jet"+category+"_"+l, "nemf1_Jet; nemf j1 (leading); Events", 100,0.,1.);
+    //    Book ("VBShadAnalysis/nemf2_Jet"+category+"_"+l, "nemf2_Jet; nemf j2 (subleading) ; Events", 100,0.,1.);
+    //    Book ("VBShadAnalysis/nhf1_Jet"+category+"_"+l, "nhf1_Jet; nhf j1 (leading); Events", 100,0.,1.);
+    //    Book ("VBShadAnalysis/nhf2_Jet"+category+"_"+l, "nhf2_Jet; nhf j2 (subleading) ; Events", 100,0.,1.);
 
     // boosted jets
     Book ("VBShadAnalysis/pTV1_Jet"+category+"_"+l, "pT_V1_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
@@ -837,9 +833,9 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
     Branch(name,"BDTMultiwithMETwz",'F');
     Branch(name,"BDTMultiwithMETbkg",'F');
 
-    Branch(name,"BDTMultiEWKchi2",'F');
-    Branch(name,"BDTMultiQCDchi2",'F');
-    Branch(name,"BDTMultiBKGchi2",'F');
+    //    Branch(name,"BDTMultiEWKchi2",'F');
+    //    Branch(name,"BDTMultiQCDchi2",'F');
+    //    Branch(name,"BDTMultiBKGchi2",'F');
 
     Branch(name,"BDTMultiEWKdnnC",'F');
     Branch(name,"BDTMultiQCDdnnC",'F');
@@ -3550,7 +3546,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if  (year==2017 or year==2018) passtriggerMET = ( e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight") || e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60"));
  
     bool passtriggerHad = false;
-    
+
+    if (doHADAnalysis or doHADAntiAnalysis) {
     if (year==2016 or year==12016) passtriggerHad = e->IsTriggered("HLT_PFHT900")
                         || e->IsTriggered("HLT_AK8PFJet450")
                         || e->IsTriggered("HLT_AK8PFHT700_TrimR0p1PT0p03Mass50")
@@ -3566,6 +3563,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_PFJet500")
                         || e->IsTriggered("HLT_AK8PFHT750_TrimMass50")
                         || e->IsTriggered("HLT_AK8PFJet380_TrimMass30");
+    }
 
     /*
       2017 - JetHT 
@@ -3581,6 +3579,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     bool passtriggerBtag = false;
     
+    if(doBAnalysis or doBAntiAnalysis) {
     if (year==2016 or year==12016) passtriggerBtag = passtriggerHad
                          || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p014_DoublePFJetsC100MaxDeta1p6")
                          || e->IsTriggered("HLT_DoubleJetsC100_DoubleBTagCSV_p026_DoublePFJetsC160")
@@ -3608,7 +3607,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2")
                         || e->IsTriggered("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94")
                         || e->IsTriggered("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
-
+    }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Before tirgger" );
     
@@ -4338,10 +4337,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
     if( forwardJets[0]->Eta() * forwardJets[1]->Eta() >=0 ) return EVENT_NOT_USED;
 
+    /*
     if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNEMF(), e->weight());
     if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNEMF(), e->weight());
     if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNHF(), e->weight());
     if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNHF(), e->weight());
+    */
 
     // those are mainly wrong combination
     if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4 and (forwardJets[1]->GetNEMF()==0 or forwardJets[1]->GetNHF()==0)) return EVENT_NOT_USED;
