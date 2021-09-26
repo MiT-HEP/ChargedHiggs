@@ -573,12 +573,12 @@ void LoadNano::NewFile(){
     if (fname.find("mc2016") != string::npos) {year=2016;} // prefer string like mcYYYY
     else if (fname.find("mc2017") != string::npos) {year=2017;}
     else if (fname.find("mc2018") != string::npos) {year=2018;}
-    else if (fname.find("2016") != string::npos) {year=2016;} // fall back to YYYY
-    else if (fname.find("2017") != string::npos) {year=2017;}
-    else if (fname.find("2018") != string::npos) {year=2018;}
     else if (fname.find("UL16") != string::npos) {year=2016;} // fall back to YYYY
     else if (fname.find("UL17") != string::npos) {year=2017;}
     else if (fname.find("UL18") != string::npos) {year=2018;}
+    else if (fname.find("2016") != string::npos) {year=2016;} // fall back to YYYY
+    else if (fname.find("2017") != string::npos) {year=2017;}
+    else if (fname.find("2018") != string::npos) {year=2018;}
     else Log(__FUNCTION__,"WARNING","Unable to identify year. Using 2016 as default");
     
     if (fname.find("Run2016") != string::npos) {isData=true;} 
