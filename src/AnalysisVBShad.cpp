@@ -3593,6 +3593,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2")
                         || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2")
                         || e->IsTriggered("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5")
+                        || e->IsTriggered("HLT_PFHT380_SixJet32_DoubleBTagCSV_p075")
+                        || e->IsTriggered("HLT_PFHT430_SixJet40_BTagCSV_p080")
                         || e->IsTriggered("HLT_QuadPFJet98_83_71_15_BTagCSV_p013_VBF2")
                         || e->IsTriggered("HLT_QuadPFJet98_83_71_15_DoubleBTagCSV_p013_p08_VBF1");
 
@@ -3602,6 +3604,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                         || e->IsTriggered("HLT_DoublePFJets200_CaloBTagDeepCSV_p71")
                         || e->IsTriggered("HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1")
                         || e->IsTriggered("HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2")
+                        || e->IsTriggered("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5")
+                        || e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2")
                         || e->IsTriggered("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94")
                         || e->IsTriggered("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
 

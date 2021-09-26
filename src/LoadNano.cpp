@@ -648,6 +648,8 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2");
       event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
       event_->triggerNames_.push_back("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
+      event_->triggerNames_.push_back("HLT_PFHT380_SixJet32_DoubleBTagCSV_p075");
+      event_->triggerNames_.push_back("HLT_PFHT430_SixJet40_BTagCSV_p080");
       // below in Dataset BTagCSV
       event_->triggerNames_.push_back("HLT_AK8PFJet330_PFAK8BTagCSV_p1");
       event_->triggerNames_.push_back("HLT_DoublePFJets100MaxDeta1p6_DoubleCaloBTagCSV_p33");
@@ -673,6 +675,8 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFJet500");
       event_->triggerNames_.push_back("HLT_IsoMu27");
       event_->triggerNames_.push_back("HLT_IsoMu24");
+      event_->triggerNames_.push_back("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5");
+      event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
       event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2");
       event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02");
       event_->triggerNames_.push_back("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");
