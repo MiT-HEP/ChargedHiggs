@@ -20,6 +20,10 @@ parser.add_option("-o","--outname",dest="outname",help="Name of output pdf/png/C
 #parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
 #parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true",help="Draw observation")
 parser.add_option("-p","--poi",dest="poi",default="r",type="string",help="POI [%default]")
+parser.add_option("","--xtitle",dest="xtitle",default=None,type="string",help="xtitle [%default]")
+parser.add_option("","--xrange",dest="xrange",default=None,type="string",help="xrange [%default]")
+parser.add_option("","--yrange",dest="yrange",default=None,type="string",help="yrange [%default]")
+parser.add_option("","--tobaseline",dest="tobaseline",default=None,type="string",help="assume that r has value 0/1 only and one is the interesting value. Value r. [%default]")
 ##
 #parser.add_option("","--addSM",dest="addSM",default=False,action="store_true",help="Add SM Diamond to 2D plot")
 parser.add_option("","--run12",dest="run12",default=False,action="store_true")
@@ -198,12 +202,22 @@ ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
 xmin=-1
 xmax=6
+if opts.xrange: 
+    xmin= float(opts.xrange.split(',')[0])
+    xmax= float(opts.xrange.split(',')[1])
 dummy = ROOT.TH1D("dummy","dummy",1000, xmin,xmax)
 dummy.GetXaxis().SetRangeUser(xmin,xmax)
 #dummy.GetYaxis().SetRangeUser(1.e-10,1)
 dummy.GetYaxis().SetRangeUser(0,6)
+if opts.yrange:
+    ymin= float(opts.yrange.split(',')[0])
+    ymax= float(opts.yrange.split(',')[1])
+    dummy.GetYaxis().SetRangeUser(ymin,ymax)
+
 
 dummy.GetXaxis().SetTitle("#mu")
+if opts.xtitle:  dummy.GetXaxis().SetTitle(opts.xtitle)
+
 dummy.GetYaxis().SetTitle("-2 #Delta Ln L")
 
 dummy.GetXaxis().SetTitleSize(0.05)
@@ -226,19 +240,27 @@ res=[]
 for i in range(tree.GetEntries()):
   tree.GetEntry(i)
   xv = getattr(tree,opts.poi)
-  if tree.deltaNLL<0 : print "Warning, found -ve deltaNLL = ",  tree.deltaNLL, " at ", xv 
-  if 2*tree.deltaNLL < 100:
+  if isinstance(xv,ROOT.std.string):
+      xv = float( str(xv).replace('p','.').replace('m','-'))
+  if opts.tobaseline:
+      r = getattr(tree,opts.tobaseline)
+      if abs(r-0.00) <0.001 : continue
+      print "BASELINE: ",xv, r, 2*tree.deltaNLL
+  if tree.deltaNLL<0 and not opts.tobaseline : print "Warning, found -ve deltaNLL = ",  tree.deltaNLL, " at ", xv 
+  if (2*tree.deltaNLL < 100) or opts.tobaseline: ## baseline may be arbitrary
     res.append([xv,2*tree.deltaNLL])
+
 res.sort()
 res=shiftToMinimum(res)
 ## clean spikes
-res = cleanSpikes1D(res)
+if not opts.tobaseline: 
+    res = cleanSpikes1D(res) 
 minNLL = min([re[1] for re in res])
 print "minNLL is",minNLL
 
 obs=ROOT.TGraph()
 for re, nll in res: 
-    if nll>=0. and nll<5:
+    if (nll>=0. and nll<5) or (opts.tobaseline and nll>=0 and nll <=20) :
         obs.SetPoint(obs.GetN(),re,nll)
 graphs.append(obs)
 m,m1 = findQuantile(res,0);
@@ -323,7 +345,7 @@ if opts.more != "":
     
         obsM=ROOT.TGraph()
         for re, nll in more: 
-           if nll>=0. and nll<5:
+           if (nll>=0. and nll<5) or (opts.tobaseline):
                obsM.SetPoint(obsM.GetN(),re,nll)
         m,m1 = findQuantile(more,0);
         l,h  = findQuantile(more,1);
@@ -437,7 +459,7 @@ l.SetTextFont(42)
 
 l.SetTextAlign(23)
 l.SetTextSize(0.045)
-l.DrawLatex(0.8,0.88,"H#rightarrow#mu#mu")
+#l.DrawLatex(0.8,0.88,"H#rightarrow#mu#mu")
 
 l.SetTextSize(0.045)
 l.SetTextAlign(23)
@@ -498,9 +520,9 @@ if opts.more != "":
 
 
 if opts.run12:
-    l.DrawLatex(0.89,.91,"5.0 fb^{-1} (7 TeV) + 19.8 fb^{-1} (8 TeV) + 35.9 fb^{-1} (13 TeV)")
+    l.DrawLatex(0.89,.91,"5.0 fb^{-1} (7 TeV) + 19.8 fb^{-1} (8 TeV) + 138 fb^{-1} (13 TeV)")
 else:
-    l.DrawLatex(0.89,.91,"35.9 fb^{-1} (13 TeV)")
+    l.DrawLatex(0.89,.91,"138 fb^{-1} (13 TeV)")
 
 
 c.Update()

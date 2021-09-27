@@ -4,10 +4,16 @@ from __future__ import print_function
 import ROOT
 import math
 
-year=16
+# PreVFP 116  PostVFP 216
+year=116
 #fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT6/UL%d/HADanti/HADanti.root'%year
 #n=16
 fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT10fix/UL%d/HADanti/HADanti.root'%year
+
+
+if year == 216: fname="/eos/user/d/dalfonso/VBSfilesSEPT22/HADanti_ul16_sept22.root"
+if year == 116: fname="/eos/user/d/dalfonso/VBSfilesSEPT22/HADanti_ul16apv_sept22.root"
+
 n=36
 hname='VBShadAnalysis/Baseline/SF_FatJet_'
 oname='datacard_SF_20%d.txt'%year
@@ -16,7 +22,10 @@ labels=["JetHT","QCD_HT","TT_TuneCP5"]
 
 data=0
 qcd =1
-lumi=35920. if year==16 else 41530 if year==17 else 59740
+
+lumi=35920. if year==16 else 41530. if year==17 else  59740. if year == 18 else 0.
+if year == 116: lumi=19523.
+if year == 216: lumi=16803.
 
 #return 35920
 #return 41530
@@ -41,6 +50,10 @@ for i,(h,l) in enumerate(zip(hists,labels)) :
 out=open(oname,"w")
 
 valid= [ hists[qcd].GetBinContent(i+1)*lumi>0.01  for i in xrange(0,n)] ## check that prediction is non-zero.
+
+print ("DEBUG","valid",' '.join( [ "%d"%x for x in valid]))
+print ("DEBUG","data",' '.join(["%d"%int(hists[data].GetBinContent(i+1)) for i in xrange(0,n)]))
+print ("DEBUG","qcd",' '.join(["%d"%int(hists[qcd].GetBinContent(i+1)*lumi) for i in xrange(0,n)]))
 
 print("### Automatically created to derive SF",file=out)
 print("ibin *",file=out)

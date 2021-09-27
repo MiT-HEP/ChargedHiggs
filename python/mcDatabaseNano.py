@@ -449,8 +449,11 @@ else:
     if aqgc.GetBinContent(1) >0:
         print >>f,"AQGC",
         ##aqgc
+        lastSM=0.
         for i in range(0,nAQGCs):
-            print>>f, sum.GetBinContent(1)/aqgc.GetBinContent(i+1), 
+            #print>>f, sum.GetBinContent(1)/aqgc.GetBinContent(i+1),  ### orig. normalize each variations to the nominal xsec
+            if aqgc_names[i].split("_")[1] == "0p00": lastSM= aqgc.GetBinContent(i+1)
+            print>>f, sum.GetBinContent(1)/lastSM, 
 
     ## INTERNAL
     print >>f
