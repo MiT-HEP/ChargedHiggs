@@ -114,8 +114,8 @@ def read_input():
     psig = []
 
     for sig in xsecsig:
-        if not opts.aqgc and 'AQGC' in sig['cont']: continue
-        if opts.aqgc and 'EWK' in sig['cont']: continue
+        if not opt.aqgc and 'AQGC' in sig['cont']: continue
+        if opt.aqgc and 'EWK' in sig['cont']: continue
 
         if ("BB" in opt.category) and ("Btag" not in opt.category):
             if ("WW" in sig['pro']) or ("ZJJZJJ" in sig['name']) or ("WJJZJJ" in sig['name']) :
@@ -280,8 +280,8 @@ class DatacardBuilder:
 
     def _get_norm(self,hname):
         for sig in xsecsig:
-            if not opts.aqgc and 'AQGC' in sig['cont']: continue
-            if opts.aqgc and 'EWK' in sig['cont']: continue
+            if not opt.aqgc and 'AQGC' in sig['cont']: continue
+            if opt.aqgc and 'EWK' in sig['cont']: continue
             if sig['name'] in hname:
                 return sig['xsec']
         return 1.
@@ -515,7 +515,7 @@ if __name__=="__main__":
     
     base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
-        base_path="Datacards/inputs/SEP22" 
+        base_path="Datacards/inputs/SEP12" 
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -539,7 +539,7 @@ if __name__=="__main__":
 
     ## set sig processes
     for sig in sigprocess:
-        if not opts.aqgc and 'AQGC' in sig['cont']: continue ## alerady in read_inputs
+        if not opt.aqgc and 'AQGC' in sig['cont']: continue ## alerady in read_inputs
 
         if opt.quote == 1:
             if sig == sigprocess[0]: db.add_process(sig['pro']+sig['cont'],True,[sig['name']],[opt.category])
@@ -601,8 +601,8 @@ if __name__=="__main__":
     if 'side' in opt.input : extra="_side"
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/SEP22/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
-    db.write_inputs('Datacards/SEP22/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
+    db.write_cards('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
+    db.write_inputs('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
 
 #Local Variables:
 #mode:c++
