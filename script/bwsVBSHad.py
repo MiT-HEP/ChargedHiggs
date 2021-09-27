@@ -2,8 +2,11 @@
 import os, sys, re
 from optparse import OptionParser
 from datetime import datetime
+
 import itertools, copy ## for keywords
 import numpy as np
+import math
+
 
 if __name__=="__main__":
     usage='''%prog 
@@ -16,6 +19,7 @@ if __name__=="__main__":
     parser.add_option("-y","--year",type='int',help="year; full run2 == 2020",default=2016)
     parser.add_option("-c","--category",type='string',help="5 category: BB, BMET, RMET, BBTAG, RBTAG", default="BB")
     parser.add_option("-s","--analysisStra",type='string',help="which one to fit with:mVV, mjj, BDT, ... ? ", default="mjj")
+    parser.add_option("-r","--region",type='string',help="region: SR or anti or side",default='SR')
 
     parser.add_option("","--aqgc",action='store_true',help="AQGC input and datacard [%default]",default=False) ### aqgc code wrappend by this guardw
     parser.add_option("","--aqgc_parameter",help="AQGC parameter [%default]",default='ft7') 
@@ -54,7 +58,7 @@ xsecsig = [
 {"pro" : "WZ", "cont": "QCD", "name": "ZBBWPMJJjj_QCD_LO", "xsec" : 1.33},
 #{"pro" : "WZ", "cont": "INT", "name": "ZBBWPMJJjj_EWK_QCD_LO", "xsec" : 1.46},
 {"pro" : "WZ", "cont": "EWK", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
-{"pro" : "WZ", "cont": "QCD", "name": "ZNuNuWPMJJjj_QCD_LO", "xsec" : 1.78},
+#{"pro" : "WZ", "cont": "QCD", "name": "ZNuNuWPMJJjj_QCD_LO", "xsec" : 1.78}
 #{"pro" : "WZ", "cont": "INT", "name": "ZNuNuWPMJJjj_EWK_QCD_LO", "xsec" : 1.95},
 
 {"pro": "WW", "cont": "AQGC", "name" :"WMJJWMJJjj_EWK_LO", "xsec": 0.13/2.},  ## these are splitted
@@ -291,15 +295,6 @@ class DatacardBuilder:
         #normalization = 1.
         #print hname,normalization
 
-        #if ("_QCD_HT" in hname):
-        #    fname="/eos/user/h/hum/VBSHad/ResultsV0_BB_CR_2016_QCD.root"
-            #normalization = 0.0042
-        #    normalization = 0.015
-
-        #if ("JJjj" in hname):
-        #    fname="/eos/user/h/hum/VBSHad/ResultV2_taufix_BDT_BB_2018_Sig.root"
-
-
         qcd_bb_sf={
                 2016: 0.014, #0.0111,#0.0122,
                 2017: 0.007, #0.0064, #0.0086,
@@ -331,8 +326,8 @@ class DatacardBuilder:
             if htmp==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",ftmp
             if htmp==None: return None ## WARNING
 
-            if ("_QCD_HT" in hname and "BBtag" in opt.category): normalization = qcd_bbtag_sf[y]   
-            elif ("_QCD_HT" in hname and "BB" in opt.category): normalization = qcd_bb_sf[y]
+            if ("_QCD_HT" in hname and "BBtag" in opt.category and "SR" in opt.region): normalization = qcd_bbtag_sf[y]   
+            elif ("_QCD_HT" in hname and "BB" in opt.category and "SR" in opt.region): normalization = qcd_bb_sf[y]
 
             htmp = self._manipulate_histo(htmp,y,normalization)
             if h: h.Add(htmp.Clone(rename))
@@ -380,10 +375,36 @@ class DatacardBuilder:
                             hsigTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             hsig.Add(hsigTmp)
 
-        #### current bin strategy: sig_err/sig < 20%; bkg_err/bkg < 20%; num_bkg > 1; min bin_width
+        #### current bin strategy: sig_err/sig < 20%; bkg_err/bkg < 20%; num_bkg > 1
         #### Not too aggresive: control on tot_bkg yields, but not on individual ones
         mapping = likelihoodBinning.createMapping(h,hsig)
         return mapping
+
+    def creat_QCD_Shape(self,h_nominal,systname="") :
+        Area   = 1.52e-01
+        mshift = 1.13
+        bcut   = 1.06
+
+        h=h_nominal.Clone(systname)
+
+        normold = h.Integral()
+
+
+        for iBin in range(1,h.GetNbinsX()+1):
+            cen = h.GetBinContent(iBin)
+	    bdt = h.GetBinCenter(iBin)
+
+	    scaleUp = Area * math.log(bdt + mshift) + bcut
+	    scaleDn = max(2 - scaleUp, 0.001)
+
+            if 'Up' in systname:   h.SetBinContent(iBin,cen*scaleUp)
+	    if 'Down' in systname: h.SetBinContent(iBin,cen*scaleDn)
+
+        normnew = h.Integral()
+        h.Scale(normold/normnew)
+
+        return h
+
 
 
     def write_inputs(self,outname): #datacard.txt
@@ -462,6 +483,7 @@ class DatacardBuilder:
                     s=self.systs[sname]
                     if 'shape' not in s['type']: continue
 
+
                     # check if matched
                     matched = False
                     SystName = ''
@@ -474,6 +496,14 @@ class DatacardBuilder:
                     hup = None
                     hdn = None
                     for suffix in d2['suffix']:
+
+			# QCDnonclosure shape
+                        if 'QCDnonclosure' in sname:
+                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            hup = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                            hdn = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Down")
+			    continue
+
                         if hup==None:
                             ## todo here, check for systs fname here. Possible symmetrize to the default over there
                             if d2['fname'] != None: 
@@ -525,12 +555,16 @@ if __name__=="__main__":
     ## set bkg processes
     #db.add_process('top',False,['TT_TuneCUETP8M2T4','ST','TTX','TTJets'],[opt.category])
     #db.add_process('ttbar',False,['TTTo2L2Nu_TuneCP5','TTToSemiLeptonic_TuneCP5','TTToHadronic_TuneCP5','TT_Mtt-700to1000_TuneCP5','TT_Mtt-1000toInf_TuneCP5'],[opt.category])
-    db.add_process('ttbar',False,['TT_TuneCP5','Other'],[opt.category])
+    #db.add_process('ttbar',False,['TTTo2L2Nu_TuneCP5','TTToSemiLeptonic_TuneCP5','TTToHadronic_TuneCP5'],[opt.category])
+    db.add_process('ttbar',False,['TT_TuneCP5'],[opt.category])
     #db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
     #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
+    #db.add_process('Zinv',False,['ZJetsToNuNu'],[opt.category])
+    #db.add_process('Winv',False,['WJetsToLNu'],[opt.category])
     if("MET" not in opt.category):
         db.add_process('QCD',False,['QCD_HT'],[opt.category])
     else:
+        #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
         #db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
         db.add_process('Zinv',False,['ZJetsToNuNu_HT'],[opt.category])
         #db.add_process('Winv',False,['WJetsToLNu_HT','WJetsToLNu_NJ'],[opt.category])
@@ -570,15 +604,21 @@ if __name__=="__main__":
     db.add_systematics('lumi','','lnN',('.*','.*'),1.025)
     db.add_systematics('QCDScale_ttbar','','lnN',('.*','ttbar'),1.05)
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
-    db.add_systematics('CMS_QCDnonclosure_n','','lnN',('.*','QCD'),1.20)  ## QCD Norm
-    #if ("BB" in opt.category) and ("Btag" not in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
+
+    if "Btag" in opt.category and ("anti" not in opt.region): db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm
+ 
+    if ("BB" in opt.category) and ("Btag" not in opt.category):
+#        if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
+        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)
     #elif ("BBtag" in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)
 
-    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*' 
 
+    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*' 
     db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_j','JES_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
+
+
 
     ## break down JES sources
     #db.add_systematics('jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)
@@ -594,12 +634,10 @@ if __name__=="__main__":
     ######################################
 
     extra =""
-    if 'anti' in opt.input : extra="_anti"
-    if 'side' in opt.input : extra="_side"
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
-    db.write_inputs('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
+    db.write_cards('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++
@@ -608,6 +646,4 @@ if __name__=="__main__":
 #c-basic-offset:8
 #End:
 #vim: tabstop=8 expandtab shiftwidth=8 softtabstop=8
-
-
 
