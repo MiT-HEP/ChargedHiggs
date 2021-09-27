@@ -53,9 +53,16 @@ xsecsig = [
 {"pro" : "WZ", "cont": "EWK", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.13},
 #{"pro" : "WZ", "cont": "QCD", "name": "ZBBWPMJJjj_QCD_LO", "xsec" : 1.33},
 #{"pro" : "WZ", "cont": "INT", "name": "ZBBWPMJJjj_EWK_QCD_LO", "xsec" : 1.46},
-{"pro" : "WZ", "cont": "EWK", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17}
+{"pro" : "WZ", "cont": "EWK", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
 #{"pro" : "WZ", "cont": "QCD", "name": "ZNuNuWPMJJjj_QCD_LO", "xsec" : 1.78},
 #{"pro" : "WZ", "cont": "INT", "name": "ZNuNuWPMJJjj_EWK_QCD_LO", "xsec" : 1.95},
+
+{"pro": "WW", "cont": "AQGC", "name" :"WMJJWMJJjj_EWK_LO", "xsec": 0.13/2.},  ## these are splitted
+{"pro": "WW", "cont": "AQGC", "name" :"WPJJWPJJjj_EWK_LO", "xsec": 0.13/2.},
+{"pro" : "ZZ", "cont": "AQGC", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.06},
+{"pro" : "osWW", "cont": "AQGC", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.89},
+{"pro" : "WZ", "cont": "AQGC", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.13},
+{"pro" : "WZ", "cont": "AQGC", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
 ]
 
 if opt.aqgc:
@@ -107,6 +114,9 @@ def read_input():
     psig = []
 
     for sig in xsecsig:
+        if not opts.aqgc and 'AQGC' in sig['cont']: continue
+        if opts.aqgc and 'EWK' in sig['cont']: continue
+
         if ("BB" in opt.category) and ("Btag" not in opt.category):
             if ("WW" in sig['pro']) or ("ZJJZJJ" in sig['name']) or ("WJJZJJ" in sig['name']) :
                 psig.append(sig)
@@ -270,7 +280,8 @@ class DatacardBuilder:
 
     def _get_norm(self,hname):
         for sig in xsecsig:
-            #if opt.aqgc and sig['cont'] == 'EWK' : return 1. ## how they are normalized?
+            if not opts.aqgc and 'AQGC' in sig['cont']: continue
+            if opts.aqgc and 'EWK' in sig['cont']: continue
             if sig['name'] in hname:
                 return sig['xsec']
         return 1.
@@ -528,6 +539,8 @@ if __name__=="__main__":
 
     ## set sig processes
     for sig in sigprocess:
+        if not opts.aqgc and 'AQGC' in sig['cont']: continue ## alerady in read_inputs
+
         if opt.quote == 1:
             if sig == sigprocess[0]: db.add_process(sig['pro']+sig['cont'],True,[sig['name']],[opt.category])
             else: db.add_process(sig['pro']+sig['cont'],False,[sig['name']],[opt.category])
@@ -541,20 +554,19 @@ if __name__=="__main__":
             db.add_process('VV',True,[sig['name']],[opt.category])
 
         elif opt.quote == 5 and opt.aqgc: ## AQGC
-            #aqgc_parameters = list(set([ x.split('_')[0] for x in aqgc_names ]))
-            #aqgc_values
-            #def add_process(self,x,issig,suffix=[],cat=[],fname=None):
-            #NPle1_aQGC_AQGC_ft7_m10p00   
-            #SM='0p00' #should we use the SM value from the Nominal samples or from the aQGC?
-            #for par in aqgc_parameters:
-            if "EWK" in sig['cont']: 
+            print "FIXME WPMJJWPMJJ"
+            ##if sig == "WPMJJWPMJJjj_EWK_LO":  sig_aqgc = ["WMJJWMJJjj_EWK_LO","WPJJWPJJjj_EWK_LO"]
+
+            if "AQGC" in sig['cont']: 
                 db.add_process('VV_AQGC_EWK',True,[sig['name']+'_NPle1_aQGC_AQGC_'+aqgc_par+'_'+'$VALUE'],[opt.category],aqgc_fname)
                 db.processes['VV_AQGC_EWK']['keywords']={
                         '$VALUE': [ val for val in aqgc_values[aqgc_par] ] 
                         }
-            else: 
+            elif 'EWK' not in sig['cont']: 
                 db.add_process('VV_QCD',False,[sig['name']],[opt.category])
                 db.add_process('VV_QCD_EWK',False,[sig['name']],[opt.category])
+            else: 
+                pass ## EWK is in AQGC, but there is a difference in the dataset names
 
 
     ## set systs
