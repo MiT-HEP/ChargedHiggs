@@ -42,19 +42,19 @@ if "%d"%opt.year not in opt.input:  raise ValueError('Your file should match the
 ## [ssww, osww, zzjj, wzbb, wznn]/[ewk,qcd,ewk-qcd] 
 xsecsig = [
 {"pro" : "ssWW", "cont": "EWK", "name": "WPMJJWPMJJjj_EWK_LO", "xsec" : 0.13},
-#{"pro" : "ssWW", "cont": "QCD", "name": "WPMJJWPMJJjj_QCD_LO", "xsec" : 0.11},
+{"pro" : "ssWW", "cont": "QCD", "name": "WPMJJWPMJJjj_QCD_LO", "xsec" : 0.11},
 #{"pro" : "ssWW", "cont": "INT", "name": "WPMJJWPMJJjj_EWK_QCD_LO", "xsec" : 0.24},
 {"pro" : "osWW", "cont": "EWK", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.89},
-#{"pro" : "osWW", "cont": "QCD", "name": "WPJJWMJJjj_QCD_LO", "xsec" : 9.79},
+{"pro" : "osWW", "cont": "QCD", "name": "WPJJWMJJjj_QCD_LO", "xsec" : 9.79},
 #{"pro" : "osWW", "cont": "INT", "name": "WPJJWMJJjj_EWK_QCD_LO", "xsec" : 11.65},
 {"pro" : "ZZ", "cont": "EWK", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.06},
-#{"pro" : "ZZ", "cont": "QCD", "name": "ZJJZJJjj_QCD_LO", "xsec" : 1.13},
+{"pro" : "ZZ", "cont": "QCD", "name": "ZJJZJJjj_QCD_LO", "xsec" : 1.13},
 #{"pro" : "ZZ", "cont": "INT", "name": "ZJJZJJjj_EWK_QCD_LO", "xsec" : 1.19},
 {"pro" : "WZ", "cont": "EWK", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.13},
-#{"pro" : "WZ", "cont": "QCD", "name": "ZBBWPMJJjj_QCD_LO", "xsec" : 1.33},
+{"pro" : "WZ", "cont": "QCD", "name": "ZBBWPMJJjj_QCD_LO", "xsec" : 1.33},
 #{"pro" : "WZ", "cont": "INT", "name": "ZBBWPMJJjj_EWK_QCD_LO", "xsec" : 1.46},
 {"pro" : "WZ", "cont": "EWK", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
-#{"pro" : "WZ", "cont": "QCD", "name": "ZNuNuWPMJJjj_QCD_LO", "xsec" : 1.78},
+{"pro" : "WZ", "cont": "QCD", "name": "ZNuNuWPMJJjj_QCD_LO", "xsec" : 1.78},
 #{"pro" : "WZ", "cont": "INT", "name": "ZNuNuWPMJJjj_EWK_QCD_LO", "xsec" : 1.95},
 
 {"pro": "WW", "cont": "AQGC", "name" :"WMJJWMJJjj_EWK_LO", "xsec": 0.13/2.},  ## these are splitted
@@ -554,9 +554,6 @@ if __name__=="__main__":
             db.add_process('VV',True,[sig['name']],[opt.category])
 
         elif opt.quote == 5 and opt.aqgc: ## AQGC
-            print "FIXME WPMJJWPMJJ"
-            ##if sig == "WPMJJWPMJJjj_EWK_LO":  sig_aqgc = ["WMJJWMJJjj_EWK_LO","WPJJWPJJjj_EWK_LO"]
-
             if "AQGC" in sig['cont']: 
                 db.add_process('VV_AQGC_EWK',True,[sig['name']+'_NPle1_aQGC_AQGC_'+aqgc_par+'_'+'$VALUE'],[opt.category],aqgc_fname)
                 db.processes['VV_AQGC_EWK']['keywords']={
@@ -573,7 +570,7 @@ if __name__=="__main__":
     db.add_systematics('lumi','','lnN',('.*','.*'),1.025)
     db.add_systematics('QCDScale_ttbar','','lnN',('.*','ttbar'),1.05)
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
-    #db.add_systematics('CMS_QCDnonclosure_n','','lnN',('.*','QCD'),1.20)  ## QCD Norm
+    db.add_systematics('CMS_QCDnonclosure_n','','lnN',('.*','QCD'),1.20)  ## QCD Norm
     #if ("BB" in opt.category) and ("Btag" not in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
     #elif ("BBtag" in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)
 
