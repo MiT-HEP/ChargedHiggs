@@ -27,3 +27,5 @@ done
 
 hadd higgsCombine_tmp_ft7.root higgsCombine_ft7_*.MultiDimFit.mH120.VALUE*.root
 python ../../script/makeNLLPlots.py --xtitle ft7 -o deltaNLL_ft7 -p VALUE -f higgsCombine_tmp_ft7.root --tobaseline r --nosmooth --xrange -16,30.
+
+python script/plotAQGC.py -f Datacards/NanoSepV2/AQGC/higgsCombine_fs0_all.root -l fs0 --more $(ls Datacards/NanoSepV2/AQGC/higgs* | grep -v fs0| while read f ; do echo  "$f:$(echo ${f%%_all.root} | sed 's:.*_::g')" ; done | tr '\n' ',' | sed 's/,$//') -o plot_aqgc/all  --xrange -16,16

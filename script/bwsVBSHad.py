@@ -504,7 +504,7 @@ if __name__=="__main__":
     
     base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
-        base_path="Datacards/inputs"
+        base_path="Datacards/inputs/SEP22" 
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -589,8 +589,8 @@ if __name__=="__main__":
     if 'side' in opt.input : extra="_side"
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
-    db.write_inputs('Datacards/NanoSepV2/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
+    db.write_cards('Datacards/SEP22/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
+    db.write_inputs('Datacards/SEP22/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'.txt')
 
 #Local Variables:
 #mode:c++
