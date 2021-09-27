@@ -1,0 +1,10 @@
+sub=amarini2|/store/user/amarini/nanoaqgc2
+
+addfiles=%(amarini2)s/WMJJWMJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8/mc2017
+addfiles=%(amarini2)s/WMJJZJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8/mc2017
+addfiles=%(amarini2)s/WPJJWMJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8/mc2017
+addfiles=%(amarini2)s/WPJJWPJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8/mc2017
+addfiles=%(amarini2)s/WPJJZJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8/mc2017
+addfiles=%(amarini2)s/ZBBZJJnoBjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8/mc2017
+addfiles=%(amarini2)s/ZJJZJJjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8/mc2017
+addfiles=%(amarini2)s/ZNuNuZJJnoBjj_EWK_LO_NPle1_aQGC_TuneCP5_13TeV-madgraph-pythia8/mc2017

@@ -14,8 +14,14 @@ addConfig=VBShadAnalysis|AddLabel('ZbbWpmJJ_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZbbWpmJJ_QCD_LO')
 
 # AQGC this should come first as first matched first served
-addConfig=VBShadAnalysis|AddLabel('WPJJZJJjj_EWK_LO_NPle1_aQGC')
+addConfig=VBShadAnalysis|AddLabel('WMJJWMJJjj_EWK_LO_NPle1_aQGC')
+addConfig=VBShadAnalysis|AddLabel('WMJJZJJjj_EWK_LO_NPle1_aQGC')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO_NPle1_aQGC')
+addConfig=VBShadAnalysis|AddLabel('WPJJWPJJjj_EWK_LO_NPle1_aQGC')
+addConfig=VBShadAnalysis|AddLabel('WPJJZJJjj_EWK_LO_NPle1_aQGC')
+addConfig=VBShadAnalysis|AddLabel('ZBBZJJnoBjj_EWK_LO_NPle1_aQGC')
+addConfig=VBShadAnalysis|AddLabel('ZJJZJJjj_EWK_LO_NPle1_aQGC')
+addConfig=VBShadAnalysis|AddLabel('ZNuNuZJJnoBjj_EWK_LO_NPle1_aQGC')
 
 ### for nanoV8
 addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_LO')
@@ -117,9 +123,9 @@ addConfig=VBShadAnalysis|AddLabel('TT_TuneCP5')
 addConfig=VBShadAnalysis|AddLabel('TT_Mtt-700to1000_TuneCP5')
 addConfig=VBShadAnalysis|AddLabel('TT_Mtt-1000toInf_TuneCP5')
 #addConfig=VBShadAnalysis|AddLabel('TTJets_TuneCP5')
-#addConfig=VBShadAnalysis|AddLabel('TTTo2L2Nu_TuneCP5')
-#addConfig=VBShadAnalysis|AddLabel('TTToSemiLeptonic_TuneCP5')
-#addConfig=VBShadAnalysis|AddLabel('TTToHadronic_TuneCP5')
+addConfig=VBShadAnalysis|AddLabel('TTTo2L2Nu_TuneCP5')
+addConfig=VBShadAnalysis|AddLabel('TTToSemiLeptonic_TuneCP5')
+addConfig=VBShadAnalysis|AddLabel('TTToHadronic_TuneCP5')
 addConfig=VBShadAnalysis|AddLabel('TTTo2L2Nu_SuperSet')
 addConfig=VBShadAnalysis|AddLabel('TTToSemiLeptonic_SuperSet')
 addConfig=VBShadAnalysis|AddLabel('TTToHadronic_SuperSet')
@@ -155,9 +161,9 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV1_2020_BB_x2
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV1_2020_taufix_BMET_x1.weights.xml")
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV1_2020_taufix_BMET_x2.weights.xml")
 ### use DNN
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV2_2020_taufix_BMET_x0.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV2_2020_taufix_BMET_x1.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV2_2020_taufix_BMET_x2.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV2_2020_morestat_BMET_x0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV2_2020_morestat_BMET_x1.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV2_2020_morestat_BMET_x2.weights.xml")
 
 
 ## BBTag  -MC (678)
@@ -169,9 +175,9 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BBtag
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRBtag.weights.xml")
 
 ## RMET - MC (10, 11, 12)
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV2_2020_taufix_RMET_x0.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV2_2020_taufix_RMET_x1.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV2_2020_taufix_RMET_x2.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV2_2020_morestat_RMET_x0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV2_2020_morestat_RMET_x1.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV2_2020_morestat_RMET_x2.weights.xml")
 
 # Multiclass - RMET (WvsZ)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_RMET_BDTG.weights.xml")
