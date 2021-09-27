@@ -35,7 +35,7 @@ if [[ "$point" == "cards"* ]] ; then
             file="HAD";
             [[ "$cat" == *"MET" ]] && { file="MET"; }
             [ "$cat" == "BBtag" ] && { file="BHAD"; }
-            python script/bwsVBSHad.py --there -q 5 --aqgc -s MVV -y ${year} -c ${cat} -i ${file}${reg}_${year}_${SUFFIX}.root --aqgc_parameter $aqgc_par
+            python script/bwsVBSHad.py --there -q 5 --aqgc -r $reg -s MVV -y ${year} -c ${cat} -i ${file}${reg}_${year}_${SUFFIX}.root --aqgc_parameter $aqgc_par
             EXITSTATUS=$?
             [ "$EXITSTATUS" == "0" ] || {
                      echo "Cards creation failed. |$EXITSTATUS| " ; 
@@ -46,7 +46,7 @@ if [[ "$point" == "cards"* ]] ; then
             EXTRA=""
             [ "$reg" == "anti" ] && EXTRA="_anti";
             [ "$reg" == "side" ] && EXTRA="_side";
-            CARDS+=" cms_vbshad_${year}_5${EXTRA}_aqgc_${aqgc_par}_MVV_${cat}.txt"
+            CARDS+=" cms_vbshad_${year}_5_aqgc_${aqgc_par}_MVV_${cat}_${reg}.txt"
     done
     done
     cd $DATACARDS
