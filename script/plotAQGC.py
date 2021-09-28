@@ -188,7 +188,7 @@ def cleanSpikes1D(rfix):
  return rkeep
 
 
-def Draw(obs, label,xmin,eplus,eminus):
+def Draw(obs, label,xobs,eplus,eminus):
     c=ROOT.TCanvas()
     c.SetCanvasSize(700,500)
     c.SetBottomMargin(0.15)
@@ -246,7 +246,7 @@ def Draw(obs, label,xmin,eplus,eminus):
     l.SetTextSize(0.045)
     l.SetTextAlign(23)
 
-    l.DrawLatex(0.8,0.88-.1,(label + " = %"+opts.precision+" ^{#font[122]{+}%"+opts.precision+"}_{#font[122]{-}%"+opts.precision+"}")%(xmin,eplus,eminus))
+    l.DrawLatex(0.8,0.88-.1,(label + " = %"+opts.precision+" ^{#font[122]{+}%"+opts.precision+"}_{#font[122]{-}%"+opts.precision+"}")%(xobs,eplus,eminus))
 
     l.SetTextFont(42)
     l.SetTextSize(0.06)
@@ -330,7 +330,7 @@ def GetLimitFromFile(fname,poi):
       if opts.tobaseline:
           r = getattr(tree,opts.tobaseline)
           if abs(r-0.00) <0.001 : continue
-          print "BASELINE: ",xv, r, 2*tree.deltaNLL
+          #print "BASELINE: ",xv, r, 2*tree.deltaNLL
       if tree.deltaNLL<0 and not opts.tobaseline : print "Warning, found -ve deltaNLL = ",  tree.deltaNLL, " at ", xv 
       if (2*tree.deltaNLL < 100) or opts.tobaseline: ## baseline may be arbitrary
         res.append([xv,2*tree.deltaNLL])
@@ -338,8 +338,8 @@ def GetLimitFromFile(fname,poi):
     res.sort()
     res=shiftToMinimum(res)
     ## clean spikes
-    if not opts.tobaseline:  
-        res = cleanSpikes1D(res) 
+    if not opts.tobaseline:  res = cleanSpikes1D(res) 
+    print "> ",len(res), "good entries over",tree.GetEntries()/2 if opts.tobaseline else tree.GetEntries()
     return res
 
 def GetGraph(res):
