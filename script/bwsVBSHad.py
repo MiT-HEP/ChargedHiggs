@@ -595,7 +595,7 @@ if __name__=="__main__":
                         }
             elif 'EWK' not in sig['cont']: 
                 db.add_process('VV_QCD',False,[sig['name']],[opt.category])
-                db.add_process('VV_QCD_EWK',False,[sig['name']],[opt.category])
+                #db.add_process('VV_QCD_EWK',False,[sig['name']],[opt.category])
             else: 
                 pass ## EWK is in AQGC, but there is a difference in the dataset names
 
