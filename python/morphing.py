@@ -24,6 +24,11 @@ def interpolate(array, x):
     y1 = array[i1]
     return y0+ (y1-y0)/float(i1-i0) * (x-i0)
 
+def test_if_same( a0, a1 ,eps=0.0001) :
+    m = np.max( np.abs(a0-a1) )
+    if m < eps: return True
+    return False
+
 def morphing(  (p0,h0) , (p1,h1) , p, delta=0.001):
     ''' Evaluate a histogram (h) interpolating it from h0-h1, with corresponding parameters p0,p1 at p'''
     nbins=h0.GetNbinsX()
@@ -31,6 +36,7 @@ def morphing(  (p0,h0) , (p1,h1) , p, delta=0.001):
     ## 
     a0= np.array([h0.GetBinContent(i+1) for i in xrange(0,nbins)])
     a1= np.array([h1.GetBinContent(i+1) for i in xrange(0,nbins)])
+
     ### Normalization
     n0 = np.sum(a0)
     n1 = np.sum(a1)
@@ -40,6 +46,12 @@ def morphing(  (p0,h0) , (p1,h1) , p, delta=0.001):
     ### PDF
     pdf0 = a0 / n0
     pdf1 = a1 / n1
+    
+    ## quick exit
+    if test_if_same(pdf0,pdf1):
+        h= h0.Clone(h0.GetName() + "_par_%f"%p)
+        h.Scale(n / n0 ) 
+        return h
     ## cdf 
     cdf0 =np.cumsum(pdf0)
     cdf1 =np.cumsum(pdf1)

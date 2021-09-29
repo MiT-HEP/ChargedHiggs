@@ -17,6 +17,25 @@ eval `scramv1 runtime -sh`
 
 mkdir -p $WORKDIR
 
+INTERPOLATE=""
+## ONLY POSITIVE FOR THE TIME BEING
+[ "$aqgc_par" == "fs0" ] && { for v in "0p50" "1p00" "1p50" "2p00" "2p50" "3p00" "3p50" "4p00" "4p50"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+[ "$aqgc_par" == "fs1" ] && { for v in "m5p00" "m4p50" "m4p00" "m3p50" "m3p00" "m2p50" "m2p00" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p00" "2p50" "3p00" "3p50" "4p00" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#m8p00,0p00,8p00 
+[ "$aqgc_par" == "fs2" ] && { for v in "m5p00" "m4p50" "m4p00" "m3p50" "m3p00" "m2p50" "m2p00" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p00" "2p50" "3p00" "3p50" "4p00" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#m8p00,m4p00,0p00,4p00,8p00
+[ "$aqgc_par" == "fm5" ] && { for v in "m5p00" "m4p50" "m3p50" "m3p00" "m2p50" "m2p00" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p00" "2p50" "3p00" "3p50" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#m4p00,m2p00,0p00,2p00,4p00
+[ "$aqgc_par" == "fm4" ] && { for v in "m5p00" "m4p50" "m3p50" "m3p00" "m2p50" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p50" "3p00" "3p50" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#m6p00,m4p00,m2p00,0p00,2p00,4p00,6p00
+[ "$aqgc_par" == "fm3" ] && { for v in "m5p00" "m4p50" "m3p50" "m3p00" "m2p50" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p50" "3p00" "3p50" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#m5p40,m4p50,m3p60,m2p70,m1p80,m0p90,0p00,0p90,1p80,2p70,3p60,4p50,5p40
+[ "$aqgc_par" == "fm0" ] && { for v in "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#m6p00,m4p50,m3p00,m1p50,0p00,1p50,3p00,4p50,6p00
+[ "$aqgc_par" == "fm2" ] && { for v in "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#m1p00,m0p50,0p00,0p50,1p00
+[ "$aqgc_par" == "ft8" ] && { for v in "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+
 # prepare combined datacard SR+anti+side BB BBtag  BMET  RMET
 CARDNAME="cms_vbshad_${year}_final_aqgc_${aqgc_par}_MVV.txt"
 
@@ -35,7 +54,7 @@ if [[ "$point" == "cards"* ]] ; then
             file="HAD";
             [[ "$cat" == *"MET" ]] && { file="MET"; }
             [ "$cat" == "BBtag" ] && { file="BHAD"; }
-            python script/bwsVBSHad.py --there -q 5 --aqgc -r $reg -s MVV -y ${year} -c ${cat} -i ${file}${reg}_${year}_${SUFFIX}.root --aqgc_parameter $aqgc_par
+            python script/bwsVBSHad.py --there -q 5 --aqgc -r $reg -s MVV -y ${year} -c ${cat} -i ${file}${reg}_${year}_${SUFFIX}.root --aqgc_parameter $aqgc_par ${INTERPOLATE}
             EXITSTATUS=$?
             [ "$EXITSTATUS" == "0" ] || {
                      echo "Cards creation failed. |$EXITSTATUS| " ; 
