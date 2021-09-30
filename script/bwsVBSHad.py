@@ -136,7 +136,8 @@ def find_closest_values(par, point):
         
 
 LikeBins=25
-likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(2)
+#likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(2)
+likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(10)
 
 def read_input():
     psig = []
@@ -381,8 +382,9 @@ class DatacardBuilder:
             if htmp==None: return None ## WARNING
 
             if "_QCD_HT" in hname and "SR" in opt.region and "BB" in opt.category:
-                fmore = ftmp.replace("HAD", "HADanti")
-	        fInmore = ROOT.TFile.Open(fmore)
+                #fmore = ftmp.replace("HADSR", "HADanti").replace("HAD","HADanti")
+                fmore = re.sub('(HAD(?!SR)|HADSR)','HADanti',ftmp)
+                fInmore = ROOT.TFile.Open(fmore)
                 if self.fOut!=None: self.fOut.cd()
                 htmpmore = fInmore.Get(hname)
                 if htmpmore==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",fmore                
@@ -729,8 +731,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/SEP23/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/SEP23/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/SEP23_Rebin10/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/SEP23_Rebin10/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++

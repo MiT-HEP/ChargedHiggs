@@ -7,11 +7,9 @@ output = $(logdir)/$(filename)_$(model)_$(point).out
 error = $(logdir)/$(filename)_$(model)_$(point).err
 executable = $(filename)
 +JobFlavour = "espresso"
-#+AccountingGroup = "group_u_CMST3.all"
++AccountingGroup = "group_u_CMST3.all"
 JobBatchName = "cards"
 arguments = $(model) $(point)
 filename=aqgc_condor.sh
 point=cards-submit
 queue model in (ft1 ft0 ft2 ft5 ft7 ft6 ft9 fm7 fm4 fm5 fm2 fm3 fm0 fm1 fs0 fs1 fs2 ft8)
-#queue model in (ft7 ft1 ft0)
-#queue model in (ft2 ft5 ft6 ft9 fm7 fm4 fm5 fm2 fm3 fm0 fm1 fs0 fs1 fs2 ft8)
