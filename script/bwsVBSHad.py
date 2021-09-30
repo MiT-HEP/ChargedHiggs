@@ -52,13 +52,13 @@ xsecsig = [
 {"pro" : "osWW", "cont": "QCD", "name": "WPJJWMJJjj_QCD_LO", "xsec" : 9.79},
 #{"pro" : "osWW", "cont": "INT", "name": "WPJJWMJJjj_EWK_QCD_LO", "xsec" : 11.65},
 {"pro" : "ZZ", "cont": "EWK", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.06},
-{"pro" : "ZZ", "cont": "QCD", "name": "ZJJZJJjj_QCD_LO", "xsec" : 1.13},
+#{"pro" : "ZZ", "cont": "QCD", "name": "ZJJZJJjj_QCD_LO", "xsec" : 1.13},
 #{"pro" : "ZZ", "cont": "INT", "name": "ZJJZJJjj_EWK_QCD_LO", "xsec" : 1.19},
 {"pro" : "WZ", "cont": "EWK", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.13},
 {"pro" : "WZ", "cont": "QCD", "name": "ZBBWPMJJjj_QCD_LO", "xsec" : 1.33},
 #{"pro" : "WZ", "cont": "INT", "name": "ZBBWPMJJjj_EWK_QCD_LO", "xsec" : 1.46},
 {"pro" : "WZ", "cont": "EWK", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
-#{"pro" : "WZ", "cont": "QCD", "name": "ZNuNuWPMJJjj_QCD_LO", "xsec" : 1.78}
+{"pro" : "WZ", "cont": "QCD", "name": "ZNuNuWPMJJjj_QCD_LO", "xsec" : 1.78},
 #{"pro" : "WZ", "cont": "INT", "name": "ZNuNuWPMJJjj_EWK_QCD_LO", "xsec" : 1.95},
 
 {"pro": "WW", "cont": "AQGC", "name" :"WMJJWMJJjj_EWK_LO", "xsec": 0.13/2.},  ## these are splitted
@@ -122,7 +122,7 @@ def read_input():
         if opt.aqgc and 'EWK' in sig['cont']: continue
 
         if ("BB" in opt.category) and ("Btag" not in opt.category):
-            if ("WW" in sig['pro']) or ("ZJJZJJ" in sig['name']) or ("WJJZJJ" in sig['name']) :
+            if ("WW" in sig['pro']) or ("ZJJZJJ" in sig['name']) or ("WJJZJJ" in sig['name']) or ("BB" in sig['name']) :
                 psig.append(sig)
         elif "MET" in opt.category:
             if ("NuNu" in sig['name']):
@@ -325,6 +325,14 @@ class DatacardBuilder:
             htmp=fIn.Get(hname)
             if htmp==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",ftmp
             if htmp==None: return None ## WARNING
+
+            if "_QCD_HT" in hname and "SR" in opt.region and "BB" in opt.category:
+                fmore = ftmp.replace("HAD", "HADanti")
+		fInmore = ROOT.TFile.Open(fmore)
+                if self.fOut!=None: self.fOut.cd()
+                htmpmore = fInmore.Get(hname)
+                if htmpmore==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",fmore                
+                else: htmp.Add(htmpmore)
 
             if ("_QCD_HT" in hname and "BBtag" in opt.category and "SR" in opt.region): normalization = qcd_bbtag_sf[y]   
             elif ("_QCD_HT" in hname and "BB" in opt.category and "SR" in opt.region): normalization = qcd_bb_sf[y]
@@ -542,8 +550,9 @@ if __name__=="__main__":
     sigprocess = read_input() 
 
     db=DatacardBuilder(opt.verbose)
-    
-    base_path = '/eos/user/h/hum/VBSHad'
+   
+    base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT23syst' 
+    #base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
         base_path="Datacards/inputs/SEP22" 
 
@@ -608,7 +617,7 @@ if __name__=="__main__":
     if "Btag" in opt.category and ("anti" not in opt.region): db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm
  
     if ("BB" in opt.category) and ("Btag" not in opt.category):
-#        if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
+        #if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
         if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)
     #elif ("BBtag" in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)
 
@@ -636,8 +645,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/SEP22/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/SEP22/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/NanoSepV4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/NanoSepV4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++
