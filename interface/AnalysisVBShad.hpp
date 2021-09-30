@@ -44,6 +44,7 @@ public:
     void SetTauCuts(Tau*t) override;
     void SetJetCuts(Jet *j) override ;
     void SetFatJetCuts(FatJet *f) override;
+    void SetPhotonCuts(Photon *p) override;
 
     float Getjetres(Jet* ajet);
     std::pair<float, int> resolvedDNN(Event*e, string label, string systname);

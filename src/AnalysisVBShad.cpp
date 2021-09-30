@@ -78,6 +78,14 @@ void VBShadAnalysis::SetTauCuts(Tau *t){
     t->SetDecayMode(-1);
 }
 
+void VBShadAnalysis::SetPhotonCuts(Photon *p){ // Already selecting Medium ided photons
+    // I'm removing jets that look really likes photons.
+    p->SetIsoCut(-1);
+    p->SetIsoRelCut(0.15);
+    p->SetPtCut(15);
+    p->SetEtaCut(2.5);
+    // TODO CHeck for nano: electronVeto (ok) and medium ID
+}
 
 void VBShadAnalysis::SetFatJetCuts(FatJet *f){
     f->SetEtaCut(2.5);
@@ -3655,6 +3663,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Lepton and taus veto" );
+
+    //    if ( e->Nphotons() > 0 ) return EVENT_NOT_USED;
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 2, e->weight() );  //2--lepVeto
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 2, 1 );
