@@ -24,7 +24,7 @@ if __name__=="__main__":
     parser.add_option("","--aqgc",action='store_true',help="AQGC input and datacard [%default]",default=False) ### aqgc code wrappend by this guardw
     parser.add_option("","--aqgc_parameter",help="AQGC parameter [%default]",default='ft7') 
     parser.add_option("","--there",action='store_true',help="Don't save directory in datacards fname. [%default]",default=False) 
-    #parser.add_option("","--aqgc_interpolate",action='append',help="AQGC extra points to evaluate [%default]",default=[])
+    parser.add_option("","--aqgc_interpolate",action='append',help="AQGC extra points to evaluate [%default]",default=[]) ## INTERPOLATE
     parser.add_option("-q","--quote",type='int',help="sig ext.: 1: (WW/WZ/ZZ)+(ewk/qcd/int) all separate; 2: VVAll+(ewk/qcd/int); 3: (WW/WZ/ZZ)-All; 4: VV-All ; 5:AQGC",default=1)
 
     opt,args=parser.parse_args()
@@ -84,11 +84,9 @@ if opt.aqgc:
 
     aqgc_quotes=[5]
     if opt.quote not in aqgc_quotes: raise ValueError("AQGC and quote=5 is required")
-    ##  examples "fs1_m112p00","fs1_m104p00",
     ### CONFIGURATION. I need to import the aqgc parameters that I will run on. 
     ### the list of all possible reweightings are in aqgc_names. 
     ### this name structure is  parameter_value with usual masks for strings 
-    ## TODO check if import correctly
     sys.path.insert(0,"./")
     from ParseDat import aqgc_names
     aqgc_parameters = list(set([ x.split('_')[0] for x in aqgc_names ]))
@@ -108,8 +106,34 @@ if opt.aqgc:
         print "AQGC values = ",aqgc_values
         print "------------------"
         raise RuntimeError("List of values for parameter is empty")
-    from morphing import morphing
 
+    ###################### FOR INTERPOLATION ##################
+    def aqgc_atof(s):
+        return float(s.replace('m','-').replace('p','.'))
+    def aqgc_ftoa(f):
+        return ('%.2f'%f).replace('-','m').replace('.','p')
+
+    aqgc_values_float = { par: sorted([ aqgc_atof(name.split('_')[1]) for name in aqgc_names if name.split('_')[0] == par ]) for par in aqgc_parameters } ## INTERPOLATE
+
+from morphing import morphing ## INTERPOLATE
+def find_closest_values(par, point):
+    '''returns two strings, the one below and the one above p'''
+    global aqgc_values_float
+    p= aqgc_atof(point)
+    lo,hi = None,None
+    for i,v in enumerate(aqgc_values_float[par]):
+        if v <= p: ## take the last
+            lo = v
+        if hi==None and v>=p: # take the first
+            hi = v
+    if lo == None or hi == None: 
+        #raise ValueError("Unable to interpolate paremeter", par,"at",p,".",(lo,hi),". Values are: ",','.join(['%f'%x for x in aqgc_values_float[par] ]))
+        raise ValueError("Unable to interpolate paremeter", par,"at",p,".",(lo,hi),". Values are: ",','.join(aqgc_values[par]))
+    if lo == hi :
+        raise ValueError("Unable to interpolate parameter",par,"at",p,".", "Point already in the list of values", ','.join(aqgc_values[par]) )
+    return lo,hi
+    ##########################################################
+        
 
 LikeBins=25
 likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(2)
@@ -289,7 +313,37 @@ class DatacardBuilder:
             if sig['name'] in hname:
                 return sig['xsec']
         return 1.
-            
+
+    def _get_interpolated_histo(self,fname,rename, (p1,hname1),(p2,hname2),p): ### INTERPOLATE
+        ''' Return linearly interpolated histo'''
+        h1 = self._get_histo(fname, hname1,"tmp1")
+        h1.SetName("tmp1")
+
+        if hname2 == hname1: ## nothing to interpolate
+            h1.SetName(rename)
+            return h1
+
+        h2 = self._get_histo(fname, hname2,"tmp2")
+        h2.SetName("tmp2")
+
+        #a1 = aqgc_atof(p1) 
+        #a2 = aqgc_atof(p2) 
+        a1 = p1 ## these are already float
+        a2 = p2
+        a = aqgc_atof(p) 
+
+        # square interpolation
+        if True:
+            a1 = p1**2
+            a2 = p2**2
+            a =  aqgc_atof(p)**2
+
+        h= morphing( (a1,h1),(a2,h2), a)
+        h.SetName(rename)
+        h1.Delete()
+        h2.Delete()
+        return h
+
     def _get_histo(self,fname,hname,rename=""):
         normalization = self._get_norm(hname)
         #normalization = 1.
@@ -449,7 +503,22 @@ class DatacardBuilder:
                                 ## key -> val
                                 dnew['suffix'][isuf] = dnew['suffix'][isuf].replace(key,aval[ikey]) 
                         dnew['iskeyword'] = True ## carry out this information. Not used for the moment.
-                        #dnew['interpolate'] = aval[0] in ops.aqgc_interpolate
+                        dnew['interpolate'] = aval[0] in opt.aqgc_interpolate  ## INTERPOLATE
+                        if dnew['interpolate']:
+                            if len(d2['keywords']) != 1 : raise ValueError("Unimplemented")
+                            dnew['iinfo'] = {} ## interpolation info
+                            dnew['iinfo']['point'] = aval[0] ## INTERPOLATE
+                            lo,hi= find_closest_values(aqgc_par, dnew['iinfo']['point'])
+                            dnew['iinfo']['lo'] = lo
+                            dnew['iinfo']['hi'] = hi
+                            dnew['iinfo']['suffix'] = []
+                            for suf in d2['suffix']:
+                                key = sorted(d2['keywords'])[0]
+                                suf1 = copy.deepcopy(suf)
+                                suf2= copy.deepcopy(suf)
+                                suf1=suf1.replace(key, aqgc_ftoa(lo))
+                                suf2=suf2.replace(key, aqgc_ftoa(hi))
+                                dnew['iinfo']['suffix'].append( (suf1,suf2) )
                         myprocesses[newproc]=dnew
             # proc
             for proc in myprocesses:
@@ -458,27 +527,39 @@ class DatacardBuilder:
                     if self.verbose >2: print "DEBUG","excluding",cat,proc
                     continue
                 h = None
-                for suffix in d2['suffix']:
+                for isuf,suffix in enumerate(d2['suffix']):
                     if h==None:
                         ##fname from category
                         if d2['fname'] != None: 
                             print "WARNING","Using file (instead of default) ", "%(fname)s"%d2 ,"for proc", proc
-                            h=self._get_histo("%(path)s"%d +"/%(fname)s"%d2,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
+                            if d2['interpolate']:
+                                print "WARNING","INTERPOLATING ", "%(fname)s"%d2 ,"for proc", proc, d2['iinfo']
+                                fname="%(path)s"%d +"/%(fname)s"%d2
+                                hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0]
+                                hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1]
+                                h=self._get_interpolated_histo(fname,"%(cat)s_"%d+proc, (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
+                            else:
+                                h=self._get_histo("%(path)s"%d +"/%(fname)s"%d2,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
                         else:
                             h=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
-                        # if h == None and 'interpolate' in d2 and d2['interpolate']:
-                        # TODO: find closest value, fetch them and interpolate them
                     else:
                         if d2['fname'] != None: 
                             print "WARNING","Using file (instead of default) ", "%(fname)s"%d2 ,"for proc", proc
-                            hTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix,"")
+                            if d2['interpolate']:
+                                print "WARNING","INTERPOLATING ", "%(fname)s"%d2 ,"for proc", proc, d2['iinfo']
+                                fname="%(path)s"%d +"/%(fname)s"%d2
+                                hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0]
+                                hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1]
+                                hTmp=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
+                            else:
+                                hTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix,"")
                         else:
                             hTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                         h.Add(hTmp)
                 h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
                 self._write(h)
 
-                # SYST
+                # SYST TODO implement interpolation logic
                 for sname in self.systs:
                     s=self.systs[sname]
                     if 'shape' not in s['type']: continue
@@ -507,6 +588,7 @@ class DatacardBuilder:
                         if hup==None:
                             ## todo here, check for systs fname here. Possible symmetrize to the default over there
                             if d2['fname'] != None: 
+                                if d2['interpolate']: raise RuntimeError("Unimplemented")
                                 # if fname set in proc, use it.
                                 hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
                                 hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
@@ -516,6 +598,7 @@ class DatacardBuilder:
                                 hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
                         else:
                             if d2['fname'] != None: 
+                                if d2['interpolate']: raise RuntimeError("Unimplemented")
                                 hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
                                 hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
                             else:
@@ -545,7 +628,7 @@ if __name__=="__main__":
     
     base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
-        base_path="Datacards/inputs/SEP22" 
+        base_path="Datacards/inputs/SEP23" 
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -591,11 +674,12 @@ if __name__=="__main__":
             if "AQGC" in sig['cont']: 
                 db.add_process('VV_AQGC_EWK',True,[sig['name']+'_NPle1_aQGC_AQGC_'+aqgc_par+'_'+'$VALUE'],[opt.category],aqgc_fname)
                 db.processes['VV_AQGC_EWK']['keywords']={
-                        '$VALUE': [ val for val in aqgc_values[aqgc_par] ] 
+                        #'$VALUE': [ val for val in aqgc_values[aqgc_par] ] 
+                        '$VALUE': [ val for val in aqgc_values[aqgc_par] ]  + opt.aqgc_interpolate  ### INTERPOLATE
                         }
             elif 'EWK' not in sig['cont']: 
                 db.add_process('VV_QCD',False,[sig['name']],[opt.category])
-                db.add_process('VV_QCD_EWK',False,[sig['name']],[opt.category])
+                #db.add_process('VV_QCD_EWK',False,[sig['name']],[opt.category])
             else: 
                 pass ## EWK is in AQGC, but there is a difference in the dataset names
 
@@ -636,8 +720,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/SEP22/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/SEP22/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/SEP23/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/SEP23/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++

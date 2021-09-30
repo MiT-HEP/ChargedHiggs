@@ -2,11 +2,11 @@
 #/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT3/UL18/HAD/HAD.root
 
 #Copy file in Datacards/inputs/ or /eos/user/h/hum/VBSHad
-python script/bwsVBSHad.py --there -q 2 -s Mjj -y 2020 -c BB -r SR -i HADSR_2020_sep12.root
-python script/bwsVBSHad.py --there -q 2 -s Mjj -y 2020 -c BB -r anti -i HADanti_2020_sep12.root
-python script/bwsVBSHad.py --there -q 2 -s Mjj -y 2020 -c BB -r side -i HADside_2020_sep12.root
+python script/bwsVBSHad.py --there -q 2 -s Mjj -y 2020 -c BB -r SR -i HADSR_2020_sep23.root
+python script/bwsVBSHad.py --there -q 2 -s Mjj -y 2020 -c BB -r anti -i HADanti_2020_sep23.root
+python script/bwsVBSHad.py --there -q 2 -s Mjj -y 2020 -c BB -r side -i HADside_2020_sep23.root
 
-python script/bwsVBSHad.py --there -q 5 --aqgc -s MVV -y 2018 -c BB -r SR -i HADSR_2018_sep12.root --aqgc_parameter ft7
+python script/bwsVBSHad.py --there -q 5 --aqgc -s MVV -y 2018 -c BB -r SR -i HADSR_2018_sep23.root --aqgc_parameter ft7
 
 
 
@@ -28,4 +28,7 @@ done
 hadd higgsCombine_tmp_ft7.root higgsCombine_ft7_*.MultiDimFit.mH120.VALUE*.root
 python ../../script/makeNLLPlots.py --xtitle ft7 -o deltaNLL_ft7 -p VALUE -f higgsCombine_tmp_ft7.root --tobaseline r --nosmooth --xrange -16,30.
 
-python script/plotAQGC.py -f Datacards/NanoSepV2/AQGC/higgsCombine_fs0_all.root -l fs0 --more $(ls Datacards/NanoSepV2/AQGC/higgs* | grep -v fs0| while read f ; do echo  "$f:$(echo ${f%%_all.root} | sed 's:.*_::g')" ; done | tr '\n' ',' | sed 's/,$//') -o plot_aqgc/all  --xrange -16,16
+python script/plotAQGC.py --more $(ls Datacards/SEP23/AQGC/higgs*all.root | while read f ; do echo  "$f:$(echo ${f%%_all.root} | sed 's:.*_::g')" ; done | tr '\n' ',' | sed 's/,$//') -o plot_aqgc/all  --xrange -16,16
+
+python script/plotAQGC_panel.py -o plot_aqgc/all
+rsync -avP plot_aqgc/ ~/www/cms-private/VBSHadronic/SEP23/plot_aqgc/
