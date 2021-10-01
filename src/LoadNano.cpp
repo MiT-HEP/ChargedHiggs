@@ -573,12 +573,12 @@ void LoadNano::NewFile(){
     if (fname.find("mc2016") != string::npos) {year=2016;} // prefer string like mcYYYY
     else if (fname.find("mc2017") != string::npos) {year=2017;}
     else if (fname.find("mc2018") != string::npos) {year=2018;}
-    else if (fname.find("2016") != string::npos) {year=2016;} // fall back to YYYY
-    else if (fname.find("2017") != string::npos) {year=2017;}
-    else if (fname.find("2018") != string::npos) {year=2018;}
     else if (fname.find("UL16") != string::npos) {year=2016;} // fall back to YYYY
     else if (fname.find("UL17") != string::npos) {year=2017;}
     else if (fname.find("UL18") != string::npos) {year=2018;}
+    else if (fname.find("2016") != string::npos) {year=2016;} // fall back to YYYY
+    else if (fname.find("2017") != string::npos) {year=2017;}
+    else if (fname.find("2018") != string::npos) {year=2018;}
     else Log(__FUNCTION__,"WARNING","Unable to identify year. Using 2016 as default");
     
     if (fname.find("Run2016") != string::npos) {isData=true;} 
@@ -648,6 +648,8 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2");
       event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
       event_->triggerNames_.push_back("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
+      event_->triggerNames_.push_back("HLT_PFHT380_SixJet32_DoubleBTagCSV_p075");
+      event_->triggerNames_.push_back("HLT_PFHT430_SixJet40_BTagCSV_p080");
       // below in Dataset BTagCSV
       event_->triggerNames_.push_back("HLT_AK8PFJet330_PFAK8BTagCSV_p1");
       event_->triggerNames_.push_back("HLT_DoublePFJets100MaxDeta1p6_DoubleCaloBTagCSV_p33");
@@ -673,6 +675,8 @@ void LoadNano::NewFile(){
       event_->triggerNames_.push_back("HLT_PFJet500");
       event_->triggerNames_.push_back("HLT_IsoMu27");
       event_->triggerNames_.push_back("HLT_IsoMu24");
+      event_->triggerNames_.push_back("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5");
+      event_->triggerNames_.push_back("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
       event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2");
       event_->triggerNames_.push_back("HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02");
       event_->triggerNames_.push_back("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");

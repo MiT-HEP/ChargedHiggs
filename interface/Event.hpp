@@ -208,6 +208,7 @@ class Event{
     inline int NFatJets()const {int n=0; for(auto j : fat_) if(j->IsFatJet()) n++; return n;}
     inline int Ntaus(){int n=0; for(auto t : taus_) if(t->IsTau()) n++; return n;}
     inline int Nleps(){int n=0; for(auto t : leps_) if(t->IsLep()) n++; return n;}
+    inline int Nphotons(){int n=0; for(auto t : phos_) if(t->IsPho()) n++; return n;}
     inline int NGenPar() const {return genparticles_.size();}
 
     ///@brief compute soft variables. Njets and HT in the eta gap between j1 and j2 excluded with dR. Exclude all good leptons (e/mu) as well.
