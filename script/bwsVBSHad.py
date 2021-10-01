@@ -71,8 +71,19 @@ xsecsig = [
 {"pro" : "WZ", "cont": "AQGC", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
 ]
 
-if opt.aqgc:
+print "-> Looking for basepath"
+basepath = ""
+mypath = os.path.abspath(os.getcwd())
+while mypath != "" and mypath != "/":
+    if "ChargedHiggs" in os.path.basename(mypath):
+        basepath = os.path.abspath(mypath)
+    mypath = os.path.dirname(mypath)
+print "-> Base Path is " + basepath
+sys.path.insert(0,basepath)
+sys.path.insert(0,basepath +"/python")
+from morphing import morphing ## INTERPOLATE
 
+if opt.aqgc:
 
     aqgc_quotes=[5]
     if opt.quote not in aqgc_quotes: raise ValueError("AQGC and quote=5 is required")
@@ -107,17 +118,6 @@ if opt.aqgc:
 
     aqgc_values_float = { par: sorted([ aqgc_atof(name.split('_')[1]) for name in aqgc_names if name.split('_')[0] == par ]) for par in aqgc_parameters } ## INTERPOLATE
 
-print "-> Looking for basepath"
-basepath = ""
-mypath = os.path.abspath(os.getcwd())
-while mypath != "" and mypath != "/":
-    if "ChargedHiggs" in os.path.basename(mypath):
-        basepath = os.path.abspath(mypath)
-    mypath = os.path.dirname(mypath)
-print "-> Base Path is " + basepath
-sys.path.insert(0,basepath)
-sys.path.insert(0,basepath +"/python")
-from morphing import morphing ## INTERPOLATE
 
 def find_closest_values(par, point):
     '''returns two strings, the one below and the one above p'''
@@ -761,8 +761,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/SEP23_Rebin10/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/SEP23_Rebin10/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/SEP23All/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/SEP23All/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++
