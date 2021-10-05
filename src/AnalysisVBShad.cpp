@@ -2566,11 +2566,11 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
             if ( f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJet=true;
-            /* // these might be needed to get the D for validation
-            if ( f->IsWJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) isWJetOut=true;
+            // these might be needed to get the D for validation
+            if ( f->IsWJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJetOut=true;
             if (isWJet or isWJetOut) isWJetWide = true;
             //Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
-            */
+            
             // regions B is excusive with A+C 
             if ( f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) ) isWJetMirror=true;
         }
