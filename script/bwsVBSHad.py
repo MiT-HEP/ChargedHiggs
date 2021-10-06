@@ -5,6 +5,7 @@ from datetime import datetime
 
 import itertools, copy ## for keywords
 import numpy as np
+from array import array
 import math
 
 
@@ -352,25 +353,24 @@ class DatacardBuilder:
         normalization = self._get_norm(hname)
         #normalization = 1.
         #print hname,normalization
+        #OLD
+        #qcd_bb_sf={
+        #        2016: 0.014, #0.0111,#0.0122,
+        #        12016: 0.01352,   #
+        #        22016: 0.01246, #  
+        #        2017: 0.008346, #0.007, #0.0064, #0.0086,
+        #        2018: 0.01961, #0.02,  #0.0207, #0.0237,
+        #        2020: 0.015,
+        #}
 
-        qcd_bb_sf={
-                2016: 0.014, #0.0111,#0.0122,
-                12016: 0.01352,   #
-                22016: 0.01246, #  
-                2017: 0.008346, #0.007, #0.0064, #0.0086,
-                2018: 0.01961, #0.02,  #0.0207, #0.0237,
-                2020: 0.015,
-        }
-
-        qcd_bbtag_sf={
-            2016: 0.0990, #0.0624,
-            22016: 0.0990, #0.0624,
-            12016: 0.004855, #0.0624,
-            2017: 0.0272, #0.0289,
-            2018: 0.1609, #0.0988, #0.0899,
-            2020: 0.015,
-        }
-
+        #qcd_bbtag_sf={
+        #    2016: 0.0990, #0.0624,
+        #    22016: 0.0990, #0.0624,
+        #    12016: 0.004855, #0.0624,
+        #    2017: 0.0272, #0.0289,
+        #    2018: 0.1609, #0.0988, #0.0899,
+        #    2020: 0.015,
+        #}
 
         years = [opt.year]
         if opt.year==2020: years = [2016, 2017, 2018]
@@ -381,8 +381,6 @@ class DatacardBuilder:
 
         h = None
         for y in years:
-            qcd_bb_sf[0]=[0.,0.]   # check QCD SF
-            qcd_bbtag_sf[0]=[0.,0.] # check QCD SF
             ftmp = fname.replace(str(opt.year), str(y))
 
             fIn=ROOT.TFile.Open(ftmp)
@@ -392,44 +390,90 @@ class DatacardBuilder:
             htmp=fIn.Get(hname)
             if htmp==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",ftmp
             if htmp==None: return None ## WARNING
+            
+            ### QCD SF and hist stat. enhancement
+            if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
+                strategy=0 # 0: A/(A+B) 1: CB/D / (A+B)
+                if opt.category == 'BB': strategy=1
+                if opt.category == 'BBtag': strategy=0
 
-            if "_QCD_HT" in hname and "SR" in opt.region and "BB" in opt.category:
-                #fmore = ftmp.replace("HADSR", "HADanti").replace("HAD","HADanti")
-                fmore = re.sub('(HAD(?!SR)|HADSR)','HADanti',ftmp)
-                fInmore = ROOT.TFile.Open(fmore)
-                if self.fOut!=None: self.fOut.cd()
-                htmpmore = fInmore.Get(hname)
+                fInD ={} #
+                htmpD = {} ## dictionary to hold additional histograms
+                for reg in ["anti","side","antiSide"] if strategy==1 else ["anti"]:
+                    fmore = re.sub('(HAD(?!SR)|HADSR)','HAD'+reg,ftmp)
+                    fInD[reg] = ROOT.TFile.Open(fmore)
+                    if fInD[reg] == None: 
+                        print "ERROR: no such file or directory:",fmore
 
-                if htmpmore==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",fmore                
-                else: 
-                    if opt.category == 'BB':
-                        qcd_bb_sf[0][0] += htmp.Integral() ## numerator
-                        qcd_bb_sf[0][1] += htmpmore.Integral() ## ~denominator
-                    if opt.category == 'BBtag':
-                        qcd_bbtag_sf[0][0] += htmp.Integral() ## numerator
-                        qcd_bbtag_sf[0][1] += htmpmore.Integral() ## ~denominator
-                    htmp.Add(htmpmore)
+                    if self.fOut!=None: self.fOut.cd()
+                    htmpD[reg] = fInD[reg].Get(hname)
+                    if htmpD[reg]==None and self.verbose >0: 
+                        print "ERROR","unable to get histogram",hname,"from",fmore, "for region",reg
+                        planename = re.sub('_QCD_HT.*$','_QCD_HT',hname)
+                        print "WARNING","falling back to non systmatic variation", planename
+                        htmpD[reg] = fInD[reg].Get(planename)
+                        if htmpD[reg] == None:
+                            print "ERROR","unable to get histogram",hname,"from",fmore, "for region",reg
+                            raise RuntimeError()
 
-            if ("_QCD_HT" in hname and "BBtag" in opt.category and "SR" in opt.region): 
-                normalization = qcd_bbtag_sf[y]   
-                print "-> DEBUG SF BBTAG is",qcd_bbtag_sf[y],"on the fly is",qcd_bbtag_sf[0][0]/(qcd_bbtag_sf[0][0]+qcd_bbtag_sf[0][1]),"year",y,hname
-                # do the check only for central values, because for syst is a bit different. why don't we compute on the fly directly?
-                if re.search('_QCD_HT$',hname) and  abs(qcd_bbtag_sf[y] - qcd_bbtag_sf[0][0]/(qcd_bbtag_sf[0][0]+qcd_bbtag_sf[0][1]) )/qcd_bbtag_sf[y] > 0.1: raise ValueError("Check QCD SF")
-            elif ("_QCD_HT" in hname and "BB" in opt.category and "SR" in opt.region): 
-                normalization = qcd_bb_sf[y]
-                print "-> DEBUG SF BB is",qcd_bb_sf[y],"on the fly is",qcd_bb_sf[0][0]/(qcd_bb_sf[0][0]+qcd_bb_sf[0][1]),"year",y,hname
-                if re.search('_QCD_HT$',hname) and abs(qcd_bb_sf[y] - qcd_bb_sf[0][0]/(qcd_bb_sf[0][0]+qcd_bb_sf[0][1]))/ qcd_bb_sf[y] >0.1: raise ValueError("Check QCD SF")
+
+                if htmpD["anti"] and (strategy ==0 or (htmpD['side'] and htmpD['antiSide'])):
+
+                    first =1 
+                    last= htmp.GetNbinsX()
+                    if opt.aqgc: last +=1 ## include overflow
+
+                    # keep track of errors
+                    eA=array('d',[0.])
+                    eB=array('d',[0.])
+                    eC=array('d',[0.])
+                    eD=array('d',[0.])
+
+                    # compute SF for proper normaliation
+                    a = htmp.IntegralAndError(first, last,eA)
+                    b = htmpD['anti'].IntegralAndError(first,last,eB)
+                    if strategy == 1:
+                        c = htmpD['side'].IntegralAndError(first,last,eC)
+                        d = htmpD['antiSide'].IntegralAndError(first,last,eD)
+                    
+                    rA,rB = eA[0]/a if a>0 else 1, eB[0]/b if b>0 else 1. ## relative errors
+                    if strategy == 1: rC,rD  = eC[0]/c if c>0 else 1. , eD[0]/d  if d>0 else 1.
+                    rAoB = math.sqrt(rA**2 + rB**2)
+                    eAoB = rAoB* a/b
+                    
+                    ## new
+                    if strategy ==1 :
+                        sf = c*b/(d*(a+b))
+                        rSF = math.sqrt(rC**2 + rD**2 + (eAoB/(a/b+1))**2 ) ## relative error
+                        eSF = rSF *sf
+                    ## old A/(A+B)
+                    if strategy ==0 :
+                        sf = a/(a+b)
+                        eBoA=rAoB * b/a
+                        rSF = abs( eBoA/(1.+b/a)  ) ## relative error
+                        eSF = rSF *sf
+
+                    normalization = sf
+                    print "-> DEBUG SF",opt.category,y,hname,
+                    print "sf is", normalization,'+/-',eSF, "(",rSF*100,"%)"
+                    print " ---> A=",a,"+/-",eA[0],"(","%.0f"%(rA*100),"%)",
+                    print "B=",b,"+/-",eB[0],"(","%.0f"%(rB*100),"%)",
+                    if strategy == 1:
+                        print "C=",c,"+/-",eC[0],"(","%.0f"%(rC*100),"%)",
+                        print "D=",d,"+/-",eD[0],"(","%.0f"%(rD*100),"%)",
+                    print ## newline
+
+                    # take the shape from anti and add it to the SR one. Do this after you compute a and b
+                    htmp.Add(htmpD["anti"])
+
+                # close open files
+                for f in fInD: fInD[f].Close()
 
             htmp = self._manipulate_histo(htmp,y,normalization)
             if h: h.Add(htmp.Clone(rename))
             else: h=htmp.Clone(rename)
             fIn.Close()
 
-
-        ####
-        #for b in range(1, h.GetNbinsX()+1):
-        #    if b <= 45: h.SetBinContent(b,0.)
-        ####
         if opt.aqgc:
             ## including overflow for aqgc
             h.SetBinContent( h.GetNbinsX(), h.GetBinContent( h.GetNbinsX()) + h.GetBinContent(h.GetNbinsX()+1))
@@ -669,7 +713,7 @@ if __name__=="__main__":
     base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT23syst' 
     #base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
-        base_path="Datacards/inputs/SEP23" 
+        base_path="Datacards/inputs/OCT5" 
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -761,8 +805,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/SEP23All/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/SEP23All/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/OCT5/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/OCT5/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++

@@ -7,9 +7,9 @@ echo "-> Requested parameter $aqgc_par and point $point"
 
 CMSSW="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src"
 CHARGEDHIGGS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs"
-DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/SEP23_Rebin10"
-WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/SEP23_Rebin10/AQGC"
-SUFFIX="sep23"
+DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT5"
+WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT5/AQGC"
+SUFFIX="oct5"
 year=2018
 
 cd $CMSSW
@@ -43,10 +43,10 @@ if [[ "$point" == "cards"* ]] ; then
     echo "-> Preparing Cards"
     cd $CHARGEDHIGGS
     CARDS=""
-    ###CATEGORIES="BB BBtag BMET RMET"
-    ###REGIONS="SR anti side"
-    CATEGORIES="BB"
-    REGIONS="SR"
+    CATEGORIES="BB BBtag BMET RMET"
+    REGIONS="SR anti side"
+    ###CATEGORIES="BB"
+    ###REGIONS="SR"
     for cat in $CATEGORIES ; do
         #for reg in "SR" "anti" "side"; do 
         for reg in "SR"; do  ## I don't have anti/side for aqgc
