@@ -685,10 +685,10 @@ class DatacardBuilder:
                                 hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
                                 hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
                             if hup != None and hdn == None:
-                                hdn = hup.Clone()
+                                hdn = hup.Clone(re.sub("Up$","Down",hup.GetName())
                                 hdn.Reset("ACE")
                             if hdn != None and hup == None:
-                                hup = hdn.Clone()
+                                hup = hdn.Clone(re.sub("Down$","Up",hdn.GetName()))
                                 hup.Reset("ACE")
                         else:
                             if d2['fname'] != None: 
@@ -702,15 +702,6 @@ class DatacardBuilder:
                             hdn.Add(hdnTmp)
                             #if matched: print "WARNING", "syst duplicate found","discarding",c,p,v,"matching for",cat,proc
                             #$CHANNEL_$PROCESS_$SYSTEMATIC
-
-                    if hup == None and opt.cat=="BBtag":
-                        print "ERROR hup is None", opt.cat,hname
-                        hup=h.Clone()
-                        hup.Reset("ACE")
-                    if hdn == None and opt.cat=="BBtag":
-                        print "ERROR hdn is None", opt.cat,hname
-                        hdn=h.Clone()
-                        hdn.Reset("ACE")
 
                     hup = likelihoodBinning.applyMapping(LikelihoodMapping, hup)
                     hdn = likelihoodBinning.applyMapping(LikelihoodMapping, hdn)
