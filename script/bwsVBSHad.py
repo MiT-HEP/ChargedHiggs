@@ -68,8 +68,12 @@ xsecsig = [
 {"pro": "WW", "cont": "AQGC", "name" :"WPJJWPJJjj_EWK_LO", "xsec": 0.13/2.},
 {"pro" : "ZZ", "cont": "AQGC", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.06},
 {"pro" : "osWW", "cont": "AQGC", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.89},
-{"pro" : "WZ", "cont": "AQGC", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.13},
-{"pro" : "WZ", "cont": "AQGC", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
+#{"pro": "WZ", "cont": "AQGC", "name" :"WMJJZJJjj_EWK_LO", "xsec": 0.13/2.}, ## xs?
+#{"pro" : "WZ", "cont": "AQGC", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.13},  ## does not exist
+#{"pro" : "WZ", "cont": "AQGC", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
+## BR: Zjj 70% , Zbb 15%, Znn 20%. -> ZjjnoB=55%
+{"pro" : "ZZ", "cont": "AQGC", "name": "ZBBZJJnoBjj_EWK_LO", "xsec" : 0.06/0.70/0.70 * 0.15*0.55},  ## from ZJJZJJ
+{"pro" : "ZZ", "cont": "AQGC", "name": "ZNuNuZJJnoBjj_EWK_LO", "xsec" : 0.06/0.70/0.70*0.20*0.55}, ## from ZJJZJJ
 ]
 
 print "-> Looking for basepath"
