@@ -19,10 +19,10 @@ mkdir -p $WORKDIR
 
 INTERPOLATE=""
 ## ONLY POSITIVE FOR THE TIME BEING
-[ "$aqgc_par" == "fs0" ] && { for v in "0p50" "1p00" "1p50" "2p00" "2p50" "3p00" "3p50" "4p00" "4p50"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
-[ "$aqgc_par" == "fs1" ] && { for v in "m5p00" "m4p50" "m4p00" "m3p50" "m3p00" "m2p50" "m2p00" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p00" "2p50" "3p00" "3p50" "4p00" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+[ "$aqgc_par" == "fs0" ] && { for v in "1p00" "2p00" "2p50" "3p00" "3p50" "4p00" "4p50"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+[ "$aqgc_par" == "fs1" ] && { for v in "m5p00" "m4p50" "m4p00" "m3p50" "m3p00" "m2p00" "m1p00" "1p00" "2p00" "3p00" "3p50" "4p00" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m8p00,0p00,8p00 
-[ "$aqgc_par" == "fs2" ] && { for v in "m5p00" "m4p50" "m4p00" "m3p50" "m3p00" "m2p50" "m2p00" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p00" "2p50" "3p00" "3p50" "4p00" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+[ "$aqgc_par" == "fs2" ] && { for v in "m5p00" "m4p50" "m4p00" "m3p50" "m3p00" "m2p50" "m2p00" "m1p00" "1p00" "2p00" "2p50" "3p00" "3p50" "4p00" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m8p00,m4p00,0p00,4p00,8p00
 [ "$aqgc_par" == "fm5" ] && { for v in "m5p00" "m4p50" "m3p50" "m3p00" "m2p50" "m2p00" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p00" "2p50" "3p00" "3p50" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m4p00,m2p00,0p00,2p00,4p00
@@ -30,11 +30,22 @@ INTERPOLATE=""
 #m6p00,m4p00,m2p00,0p00,2p00,4p00,6p00
 [ "$aqgc_par" == "fm3" ] && { for v in "m5p00" "m4p50" "m3p50" "m3p00" "m2p50" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p50" "3p00" "3p50" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m5p40,m4p50,m3p60,m2p70,m1p80,m0p90,0p00,0p90,1p80,2p70,3p60,4p50,5p40
-[ "$aqgc_par" == "fm0" ] && { for v in "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+[ "$aqgc_par" == "fm0" ] && { for v in "m0p80" "m0p70" "m0p60" "m0p50" "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" "0p50" "0p60" "0p70" "0p80" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m6p00,m4p50,m3p00,m1p50,0p00,1p50,3p00,4p50,6p00
-[ "$aqgc_par" == "fm2" ] && { for v in "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+[ "$aqgc_par" == "fm2" ] && { for v in "m0p80" "m0p70" "m0p60" "m0p50" "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" "0p50" "0p60" "0p70" "0p80" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m1p00,m0p50,0p00,0p50,1p00
 [ "$aqgc_par" == "ft8" ] && { for v in "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#ft9 m1p00,m0p50,0p00,0p50
+[ "$aqgc_par" == "ft9" ] && { for v in "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#ft5: ,m1p00,m0p80,m0p60,m0p40,m0p20,0p00,0p20,0p40,
+[ "$aqgc_par" == "ft5" ] && { for v in "m0p09" "m0p08" "m0p07" "m0p06" "m0p05" "m0p04" "m0p03" "m0p02" "m0p01" "0p01" "0p02" "0p03" "0p04" "0p05" "0p06" "0p07" "0p08" "0p09" ; do  INTERPOLATE+=" --aqgc_interpolate $v"; done ; }
+#ft2  m0p10,0p00,0p10,0p20
+[ "$aqgc_par" == "ft2" ] && { for v in "m0p09" "m0p08" "m0p07" "m0p06" "m0p05" "m0p04" "m0p03" "m0p02" "m0p01" "0p01" "0p02" "0p03" "0p04" "0p05" "0p06" "0p07" "0p08" "0p09" ; do  INTERPOLATE+=" --aqgc_interpolate $v"; done ; }
+#ft1  m0p05,0p00,0p05,0p10
+[ "$aqgc_par" == "ft1" ] && { for v in "m0p09" "m0p08" "m0p07" "m0p06" "m0p04" "m0p03" "m0p02" "m0p01" "0p01" "0p02" "0p03" "0p04" "0p06" "0p07" "0p08" "0p09" ; do  INTERPOLATE+=" --aqgc_interpolate $v"; done ; }
+#ft0 m0p05,0p00,0p05,0p10
+[ "$aqgc_par" == "ft0" ] && { for v in "m0p09" "m0p08" "m0p07" "m0p06" "m0p04" "m0p03" "m0p02" "m0p01" "0p01" "0p02" "0p03" "0p04" "0p06" "0p07" "0p08" "0p09" ; do  INTERPOLATE+=" --aqgc_interpolate $v"; done ; }
+
 
 # prepare combined datacard SR+anti+side BB BBtag  BMET  RMET
 CARDNAME="cms_vbshad_${year}_final_aqgc_${aqgc_par}_MVV.txt"

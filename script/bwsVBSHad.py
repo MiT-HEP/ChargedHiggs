@@ -87,6 +87,7 @@ print "-> Base Path is " + basepath
 sys.path.insert(0,basepath)
 sys.path.insert(0,basepath +"/python")
 from morphing import morphing ## INTERPOLATE
+from morphing import morphing_vertical ## INTERPOLATE
 
 if opt.aqgc:
 
@@ -347,7 +348,8 @@ class DatacardBuilder:
             a2 = p2**2
             a =  aqgc_atof(p)**2
 
-        h= morphing( (a1,h1),(a2,h2), a)
+        #h= morphing( (a1,h1),(a2,h2), a)
+        h= morphing_vertical( (a1,h1),(a2,h2), a)
         h.SetName(rename)
         h1.Delete()
         h2.Delete()
