@@ -703,6 +703,15 @@ class DatacardBuilder:
                             #if matched: print "WARNING", "syst duplicate found","discarding",c,p,v,"matching for",cat,proc
                             #$CHANNEL_$PROCESS_$SYSTEMATIC
 
+                    if hup == None and opt.cat=="BBtag":
+                        print "ERROR hup is None", opt.cat,hname
+                        hup=h.Clone()
+                        hup.Reset("ACE")
+                    if hdn == None and opt.cat=="BBtag":
+                        print "ERROR hdn is None", opt.cat,hname
+                        hdn=h.Clone()
+                        hdn.Reset("ACE")
+
                     hup = likelihoodBinning.applyMapping(LikelihoodMapping, hup)
                     hdn = likelihoodBinning.applyMapping(LikelihoodMapping, hdn)
                  

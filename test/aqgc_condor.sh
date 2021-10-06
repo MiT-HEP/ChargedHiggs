@@ -10,7 +10,7 @@ CHARGEDHIGGS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/Cha
 DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT5"
 WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT5/AQGC"
 SUFFIX="oct5"
-year=2018
+year=2021
 
 cd $CMSSW
 eval `scramv1 runtime -sh`
