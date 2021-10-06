@@ -685,7 +685,7 @@ class DatacardBuilder:
                                 hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
                                 hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
                             if hup != None and hdn == None:
-                                hdn = hup.Clone(re.sub("Up$","Down",hup.GetName())
+                                hdn = hup.Clone(re.sub("Up$","Down",hup.GetName()))
                                 hdn.Reset("ACE")
                             if hdn != None and hup == None:
                                 hup = hdn.Clone(re.sub("Down$","Up",hdn.GetName()))
