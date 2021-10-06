@@ -29,6 +29,18 @@ def test_if_same( a0, a1 ,eps=0.0001) :
     if m < eps: return True
     return False
 
+def morphing_vertical(  (p0,h0) , (p1,h1) , p):
+    ''' vertical morphing '''
+    nbins=h0.GetNbinsX()
+    if h1.GetNbinsX() != nbins: raise ValueError("cannot interpolate different histograms")
+    a0= np.array([h0.GetBinContent(i+1) for i in xrange(0,nbins)])
+    a1= np.array([h1.GetBinContent(i+1) for i in xrange(0,nbins)])
+    a = 1.-(p-p0) /(p1-p0) ## tc at a=1 -> pdf0 , and a=0 pdf1
+    val = a0*a + a1 *(1.-a)
+    h= h0.Clone(h0.GetName() + "_par_%f"%p)
+    [ h.SetBinContent(i+1,val[i]) for i in xrange(0,nbins)]
+    return h
+
 def morphing(  (p0,h0) , (p1,h1) , p, delta=0.001):
     ''' Evaluate a histogram (h) interpolating it from h0-h1, with corresponding parameters p0,p1 at p'''
     nbins=h0.GetNbinsX()
@@ -116,5 +128,23 @@ if __name__ == "__main__":
     h0.GetYaxis().SetRangeUser(0,500)
     canv.Modified()
     canv.Update()
+
+    canv2 = ROOT.TCanvas("c2","c2")
+    hists_v=[]
+    for a,c  in zip([0.,.1,.2,.3,.4,.5,.6,.7,.8,.9, 1.],[ROOT.kBlue+i for i in range(0,11)]):
+        h=  morphing_vertical(  (0,h0) , (1.,h1) , a)
+        h.SetLineWidth(1)
+        h.SetLineColor(c)
+        h.Draw("HIST SAME")
+        garbage.append(h)
+        hists.append(h)
+        print "N0",h0.Integral(),"N1",h1.Integral(),"N=",h.Integral(),"Frac=",a
+
+    h0.Draw("HIST SAME")
+    h1.Draw("HIST SAME")
+    
+    h0.GetYaxis().SetRangeUser(0,500)
+    canv2.Modified()
+    canv2.Update()
 
     raw_input("ok?")

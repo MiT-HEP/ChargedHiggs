@@ -16,7 +16,7 @@ if __name__=="__main__":
 
     parser.add_option("-i","--input",type='string',help="input file name", default="HAD.root")
 
-    parser.add_option("-y","--year",type='int',help="year; full run2 == 2020",default=2016)
+    parser.add_option("-y","--year",type='int',help="year; full run2 == 2020 (12016 = APV 22016=postVFP, 2021 with APV splitting)",default=2016)
     parser.add_option("-c","--category",type='string',help="5 category: BB, BMET, RMET, BBTAG, RBTAG", default="BB")
     parser.add_option("-s","--analysisStra",type='string',help="which one to fit with:mVV, mjj, BDT, ... ? ", default="mjj")
     parser.add_option("-r","--region",type='string',help="region: SR or anti or side",default='SR')
@@ -35,10 +35,12 @@ import FwBinning as FwRebin
 
 
 lumis={
+    12016: 19.52, #APV
+    22016: 16.80, #postVFP
     2016: 35.9,
     2017: 41.5,
     2018: 60.0,
-    2020: 45.7
+    2020: 45.7,
 }
 
 if "%d"%opt.year not in opt.input:  raise ValueError('Your file should match the selected year. Year: ' + opt.year+ "not in filename "+opt.input)
@@ -69,18 +71,19 @@ xsecsig = [
 {"pro" : "WZ", "cont": "AQGC", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
 ]
 
-if opt.aqgc:
+print "-> Looking for basepath"
+basepath = ""
+mypath = os.path.abspath(os.getcwd())
+while mypath != "" and mypath != "/":
+    if "ChargedHiggs" in os.path.basename(mypath):
+        basepath = os.path.abspath(mypath)
+    mypath = os.path.dirname(mypath)
+print "-> Base Path is " + basepath
+sys.path.insert(0,basepath)
+sys.path.insert(0,basepath +"/python")
+from morphing import morphing ## INTERPOLATE
 
-    print "-> Looking for basepath"
-    basepath = ""
-    mypath = os.path.abspath(os.getcwd())
-    while mypath != "" and mypath != "/":
-        if "ChargedHiggs" in os.path.basename(mypath):
-            basepath = os.path.abspath(mypath)
-        mypath = os.path.dirname(mypath)
-    print "-> Base Path is " + basepath
-    sys.path.insert(0,basepath)
-    sys.path.insert(0,basepath +"/python")
+if opt.aqgc:
 
     aqgc_quotes=[5]
     if opt.quote not in aqgc_quotes: raise ValueError("AQGC and quote=5 is required")
@@ -115,7 +118,7 @@ if opt.aqgc:
 
     aqgc_values_float = { par: sorted([ aqgc_atof(name.split('_')[1]) for name in aqgc_names if name.split('_')[0] == par ]) for par in aqgc_parameters } ## INTERPOLATE
 
-from morphing import morphing ## INTERPOLATE
+
 def find_closest_values(par, point):
     '''returns two strings, the one below and the one above p'''
     global aqgc_values_float
@@ -136,7 +139,8 @@ def find_closest_values(par, point):
         
 
 LikeBins=25
-likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(2)
+#likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(2)
+likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(10)
 
 def read_input():
     psig = []
@@ -351,25 +355,34 @@ class DatacardBuilder:
 
         qcd_bb_sf={
                 2016: 0.014, #0.0111,#0.0122,
-                2017: 0.007, #0.0064, #0.0086,
-                2018: 0.02,  #0.0207, #0.0237,
-                2020: 0.015
+                12016: 0.01352,   #
+                22016: 0.01246, #  
+                2017: 0.008346, #0.007, #0.0064, #0.0086,
+                2018: 0.01961, #0.02,  #0.0207, #0.0237,
+                2020: 0.015,
         }
 
         qcd_bbtag_sf={
             2016: 0.0990, #0.0624,
+            22016: 0.0990, #0.0624,
+            12016: 0.004855, #0.0624,
             2017: 0.0272, #0.0289,
-            2018: 0.0988, #0.0899,
-            2020: 0.015
+            2018: 0.1609, #0.0988, #0.0899,
+            2020: 0.015,
         }
 
 
         years = [opt.year]
         if opt.year==2020: years = [2016, 2017, 2018]
+        if opt.year==2021: years= [12016,22016,2017,2018]
         print years 
+        
+        ## check qcd sf
 
         h = None
         for y in years:
+            qcd_bb_sf[0]=[0.,0.]   # check QCD SF
+            qcd_bbtag_sf[0]=[0.,0.] # check QCD SF
             ftmp = fname.replace(str(opt.year), str(y))
 
             fIn=ROOT.TFile.Open(ftmp)
@@ -381,15 +394,31 @@ class DatacardBuilder:
             if htmp==None: return None ## WARNING
 
             if "_QCD_HT" in hname and "SR" in opt.region and "BB" in opt.category:
-                fmore = ftmp.replace("HAD", "HADanti")
-	        fInmore = ROOT.TFile.Open(fmore)
+                #fmore = ftmp.replace("HADSR", "HADanti").replace("HAD","HADanti")
+                fmore = re.sub('(HAD(?!SR)|HADSR)','HADanti',ftmp)
+                fInmore = ROOT.TFile.Open(fmore)
                 if self.fOut!=None: self.fOut.cd()
                 htmpmore = fInmore.Get(hname)
-                if htmpmore==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",fmore                
-                else: htmp.Add(htmpmore)
 
-            if ("_QCD_HT" in hname and "BBtag" in opt.category and "SR" in opt.region): normalization = qcd_bbtag_sf[y]   
-            elif ("_QCD_HT" in hname and "BB" in opt.category and "SR" in opt.region): normalization = qcd_bb_sf[y]
+                if htmpmore==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",fmore                
+                else: 
+                    if opt.category == 'BB':
+                        qcd_bb_sf[0][0] += htmp.Integral() ## numerator
+                        qcd_bb_sf[0][1] += htmpmore.Integral() ## ~denominator
+                    if opt.category == 'BBtag':
+                        qcd_bbtag_sf[0][0] += htmp.Integral() ## numerator
+                        qcd_bbtag_sf[0][1] += htmpmore.Integral() ## ~denominator
+                    htmp.Add(htmpmore)
+
+            if ("_QCD_HT" in hname and "BBtag" in opt.category and "SR" in opt.region): 
+                normalization = qcd_bbtag_sf[y]   
+                print "-> DEBUG SF BBTAG is",qcd_bbtag_sf[y],"on the fly is",qcd_bbtag_sf[0][0]/(qcd_bbtag_sf[0][0]+qcd_bbtag_sf[0][1]),"year",y,hname
+                # do the check only for central values, because for syst is a bit different. why don't we compute on the fly directly?
+                if re.search('_QCD_HT$',hname) and  abs(qcd_bbtag_sf[y] - qcd_bbtag_sf[0][0]/(qcd_bbtag_sf[0][0]+qcd_bbtag_sf[0][1]) )/qcd_bbtag_sf[y] > 0.1: raise ValueError("Check QCD SF")
+            elif ("_QCD_HT" in hname and "BB" in opt.category and "SR" in opt.region): 
+                normalization = qcd_bb_sf[y]
+                print "-> DEBUG SF BB is",qcd_bb_sf[y],"on the fly is",qcd_bb_sf[0][0]/(qcd_bb_sf[0][0]+qcd_bb_sf[0][1]),"year",y,hname
+                if re.search('_QCD_HT$',hname) and abs(qcd_bb_sf[y] - qcd_bb_sf[0][0]/(qcd_bb_sf[0][0]+qcd_bb_sf[0][1]))/ qcd_bb_sf[y] >0.1: raise ValueError("Check QCD SF")
 
             htmp = self._manipulate_histo(htmp,y,normalization)
             if h: h.Add(htmp.Clone(rename))
@@ -401,6 +430,9 @@ class DatacardBuilder:
         #for b in range(1, h.GetNbinsX()+1):
         #    if b <= 45: h.SetBinContent(b,0.)
         ####
+        if opt.aqgc:
+            ## including overflow for aqgc
+            h.SetBinContent( h.GetNbinsX(), h.GetBinContent( h.GetNbinsX()) + h.GetBinContent(h.GetNbinsX()+1))
         print hname, h.Integral()
 
         return h
@@ -729,8 +761,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/SEP23/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/SEP23/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/SEP23All/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/SEP23All/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++

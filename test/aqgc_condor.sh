@@ -7,8 +7,8 @@ echo "-> Requested parameter $aqgc_par and point $point"
 
 CMSSW="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src"
 CHARGEDHIGGS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs"
-DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/SEP23"
-WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/SEP23/AQGC"
+DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/SEP23_Rebin10"
+WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/SEP23_Rebin10/AQGC"
 SUFFIX="sep23"
 year=2018
 
@@ -94,8 +94,23 @@ if [[ "$point" == *"submit" ]] ; then
     #condor_submit $MYNAME
 
     SM_VALUE="0p00"
+    [ -f "higgsCombine_AsimovSM.GenerateOnly.mH120.VALUE0p00.123456.root" ] || { 
     combine -M GenerateOnly -t -1 --expectSignal=1 -n "_AsimovSM" --keyword-value VALUE=${SM_VALUE} -d $DATACARDS/$CARDNAME --saveToys
-    echo "Exit status |$?|"
+    echo "Exit status |$?|";
+    }
+    touch "${WORKDIR}/${aqgc_par}.cards.done"
+fi
+
+if [ "$point" == "watchdog" ] ; then
+    cd $WORKDIR
+    DONE_JDL=$(ls *jdl | wc -l)
+    DONE_DONE=$(ls *.cards.done | wc -l)
+    TODO_JDL=$(echo "ft1 ft0 ft2 ft5 ft7 ft6 ft9 fm7 fm4 fm5 fm2 fm3 fm0 fm1 fs0 fs1 fs2 ft8" | wc -w) 
+    guard="watchdog.done"
+    [ "${DONE_JDL}" == "${TODO_JDL}" ] && [ "${TODO_JDL}" == "${DONE_DONE}" ] && [ ! -f $guard ] && {
+        touch $guard 
+        for jdl in *jdl ; do condor_submit $jdl ; mv -v $jdl log/ ; done
+        } 
 fi
 
 if [[ "$point" != "cards"* ]] ; then
