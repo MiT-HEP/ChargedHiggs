@@ -2674,7 +2674,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         // do we want to do this for all jets or for the first 2 or 4 ?
         // HFjets event veto (anti aligned with MET)
-        if( (TMath::Pi() - dphi) < 0.4 and fabs(j->Eta()) > 3) {
+        if( (TMath::Pi() - dphi) < 0.4 and fabs(j->Eta()) > 2.99) {
             //https://lathomas.web.cern.ch/lathomas/JetMETStuff/HFNoiseStudy/HFNoise_VBFHinv_Laurent.pdf
             //slide3
             if(j->hfcEtaEtaStripSize()>2) badHFjetVeto = true;
@@ -2684,6 +2684,12 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
                 if(j->HFsigmaPhiPhi() < (j->HFsigmaEtaEta() - 0.02)) badHFjetVeto = true;
                 if(j->HFsigmaPhiPhi() < 0.02 or j->HFsigmaEtaEta() < 0.02) badHFjetVeto = true;
             }
+
+            // see also AN2021-094-v5 section 6
+            if(fabs(j->Eta()) >= 4) {
+                if(j->HFsigmaPhiPhi() < 0.2 or j->HFsigmaEtaEta() > 0.1) badHFjetVeto = true;
+            }
+
         }
 
         /*
