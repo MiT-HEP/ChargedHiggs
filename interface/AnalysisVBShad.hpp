@@ -86,7 +86,7 @@ public:
     bool doWriteTree = true;
     bool writeTrainTree=false;
     bool usePuppi=false;
-    bool doTrigger=false;
+    bool doTrigger=true;
     bool doStudyMass=false; //inclusive SDMass, SubjetMass, W/ZvsQCD plots
     bool doStudySFfat=true;
 
@@ -132,6 +132,8 @@ private:
     vector<FatJet*> selectedFatJetsWide;
     vector<FatJet*> selectedMirrorFatJets;
     vector<FatJet*> selectedFatZbb;
+    vector<FatJet*> selectedFatZbbIn;
+    vector<FatJet*> selectedFatZbbWide;
 
     vector<float> bosonVDiscr;
     vector<float> bosonTDiscr;
