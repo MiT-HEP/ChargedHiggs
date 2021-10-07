@@ -2557,7 +2557,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if do BHADside/BHADantiside:    selectedFatZbb  stores Zbbwide, for use
         ***************************************************/
 
-        bool cat_condition1 = (doBAnalysis or doBAntiAnalysis) and !doSideBand;
+        bool cat_condition1 = !doHADAnalysis and !doHADAntiAnalysis and !doSideBand;
         if( (cat_condition1 and isZbbJet) or (!cat_condition1 and isZbbJetWide)  ) {
             selectedFatZbb.push_back(f);
             bosonBBDiscr.push_back(f->ZHbbvsQCD());
@@ -4077,8 +4077,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         //50|--Cres-|--Ares-|--Cres-|155//
         //////////////////////////////////
 
-        bool condition1_AvsC = doSideBand ? (selectedFatJetsIn.size()==0 and selectedFatZbb.size()==0) : 1;
-        bool condition2_AvsB = doMETAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbb.size()==0) : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
+        bool condition1_AvsC = doSideBand ? (selectedFatJetsIn.size()==0 and selectedFatZbbIn.size()==0) : 1;
+        bool condition2_AvsB = doMETAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbbWide.size()==0) : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
 
         if((selectedFatJets.size()>0 or (!doResonant and selectedFatZbb.size()==1)) and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
             category="_BMET";
@@ -4131,7 +4131,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         // target the ZnnZqq + ZnnWqq resolved
-        if(selectedFatJets.size()==0 and selectedFatJetsOut.size()==0 and selectedFatZbb.size()==0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
+        if(selectedFatJets.size()==0 and selectedFatJetsOut.size()==0 and selectedFatZbbWide.size()==0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
             category="";
 
             double MV = 0.;
