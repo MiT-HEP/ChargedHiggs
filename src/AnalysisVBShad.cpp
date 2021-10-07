@@ -2302,45 +2302,45 @@ void VBShadAnalysis::studyTriggers(Event* e, string category, string label, stri
 
     if(category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos){
 
-        Fill("VBShadAnalysis/Baseline/mVV"+category+"_Base_" +label, systname, evt_Mjj, e->weight() );
+        Fill("VBShadAnalysis/Baseline/mVV"+category+"_Base_" +label, systname, evt_MVV, e->weight() );
         Fill("VBShadAnalysis/Baseline/pTV1"+category+"_Base_" +label, systname, evt_PTV1, e->weight() );
         Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_Base_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
         Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_Base_" +label, systname, evt_MVV, evt_Mjj, e->weight() ); 
 
 
-        if(passtriggerbtag1){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag1_" +label, systname, evt_Mjj, e->weight() );
+        if(passtriggerbtag1){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag1_" +label, systname, evt_MVV, e->weight() );
                               Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag1_" +label, systname, evt_PTV1, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag1_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag1_" +label, systname, evt_MVV, evt_Mjj, e->weight() );} 
-        if(passtriggerbtag2){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag2_" +label, systname, evt_Mjj, e->weight() );
+        if(passtriggerbtag2){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag2_" +label, systname, evt_MVV, e->weight() );
                               Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag2_" +label, systname, evt_PTV1, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag2_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag2_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
-        if(passtriggerbtag3){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag3_" +label, systname, evt_Mjj, e->weight() );
+        if(passtriggerbtag3){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag3_" +label, systname, evt_MVV, e->weight() );
                               Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag3_" +label, systname, evt_PTV1, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag3_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag3_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
-        if(passtriggerbtag4){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag4_" +label, systname, evt_Mjj, e->weight() );
+        if(passtriggerbtag4){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag4_" +label, systname, evt_MVV, e->weight() );
                               Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag4_" +label, systname, evt_PTV1, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag4_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag4_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
-        if(passtriggerbtag5){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag5_" +label, systname, evt_Mjj, e->weight() );
+        if(passtriggerbtag5){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag5_" +label, systname, evt_MVV, e->weight() );
                               Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag5_" +label, systname, evt_PTV1, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag5_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag5_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
-        if(passtriggerbtag6){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag6_" +label, systname, evt_Mjj, e->weight() );
+        if(passtriggerbtag6){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag6_" +label, systname, evt_MVV, e->weight() );
                               Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag6_" +label, systname, evt_PTV1, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag6_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag6_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
-        if(passtriggerbtag7){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag7_" +label, systname, evt_Mjj, e->weight() );
+        if(passtriggerbtag7){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtag7_" +label, systname, evt_MVV, e->weight() );
                               Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtag7_" +label, systname, evt_PTV1, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtag7_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtag7_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
-        if(passtriggerHadOR){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHadOr_" +label, systname, evt_Mjj, e->weight() );
+        if(passtriggerHadOR){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, e->weight() );
                               Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerHadOr_" +label, systname, evt_PTV1, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerHadOr_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
                               Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerHadOr_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}
-        if(passtriggerbtagOR){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtagOr_" +label, systname, evt_Mjj, e->weight() );
+        if(passtriggerbtagOR){ Fill("VBShadAnalysis/Baseline/mVV"+category+"_triggerBtagOr_" +label, systname, evt_MVV, e->weight() );
                                Fill("VBShadAnalysis/Baseline/pTV1"+category+"_triggerBtagOr_" +label, systname, evt_PTV1, e->weight() );
                                Fill2D("VBShadAnalysis/Baseline/pTV2V1"+category+"_triggerBtagOr_" +label, systname, evt_PTV1, evt_PTV2, e->weight() );
                                Fill2D("VBShadAnalysis/Baseline/mJJvsmVV"+category+"_triggerBtagOr_" +label, systname, evt_MVV, evt_Mjj, e->weight() );}

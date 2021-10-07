@@ -86,7 +86,7 @@ public:
     bool doWriteTree = true;
     bool writeTrainTree=false;
     bool usePuppi=false;
-    bool doTrigger=true;
+    bool doTrigger=false;
     bool doStudyMass=false; //inclusive SDMass, SubjetMass, W/ZvsQCD plots
     bool doStudySFfat=true;
 
