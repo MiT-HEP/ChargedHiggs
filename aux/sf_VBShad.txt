@@ -28,3 +28,11 @@ include aux/QCDNonclosureBBtag.txt
 #bdeep2016 csv aux/BTag/DeepCSV_2016LegacySF_V1.csv
 #bdeep2017 csv aux/BTag/DeepCSV_106XUL17SF_V2.csv
 #bdeep2018 csv aux/BTag/DeepCSV_106XUL18SF.csv
+
+####################
+####  HIGGS   ####
+####################
+wg1 wg1
+nnlops nnlops aux/NNLOPS_reweight.root
+double base 2.0 0.00
+

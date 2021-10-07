@@ -7,8 +7,8 @@ echo "-> Requested parameter $aqgc_par and point $point"
 
 CMSSW="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src"
 CHARGEDHIGGS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs"
-DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT5"
-WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT5/AQGC"
+DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT7"
+WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT7/AQGC"
 SUFFIX="oct5"
 year=2021
 
@@ -23,6 +23,8 @@ INTERPOLATE=""
 [ "$aqgc_par" == "fs1" ] && { for v in "m5p00" "m4p50" "m4p00" "m3p50" "m3p00" "m2p00" "m1p00" "1p00" "2p00" "3p00" "3p50" "4p00" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m8p00,0p00,8p00 
 [ "$aqgc_par" == "fs2" ] && { for v in "m5p00" "m4p50" "m4p00" "m3p50" "m3p00" "m2p50" "m2p00" "m1p00" "1p00" "2p00" "2p50" "3p00" "3p50" "4p00" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#m4p00,m2p00,0p00,2p00,4p00,
+[ "$aqgc_par" == "fm7" ] && { for v in "m5p00" "m4p50" "m3p50" "m3p00" "m2p50" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p50" "3p00" "3p50" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m8p00,m4p00,0p00,4p00,8p00
 [ "$aqgc_par" == "fm5" ] && { for v in "m5p00" "m4p50" "m3p50" "m3p00" "m2p50" "m2p00" "m1p50" "m1p00" "m0p50" "0p50" "1p00" "1p50" "2p00" "2p50" "3p00" "3p50" "4p50" "5p00"; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m4p00,m2p00,0p00,2p00,4p00
@@ -33,6 +35,8 @@ INTERPOLATE=""
 [ "$aqgc_par" == "fm0" ] && { for v in "m0p80" "m0p70" "m0p60" "m0p50" "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" "0p50" "0p60" "0p70" "0p80" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m6p00,m4p50,m3p00,m1p50,0p00,1p50,3p00,4p50,6p00
 [ "$aqgc_par" == "fm2" ] && { for v in "m0p80" "m0p70" "m0p60" "m0p50" "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" "0p50" "0p60" "0p70" "0p80" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
+#m1p00,m0p80,m0p60,m0p40,m0p20,0p00,0p20,0p40,0p60,0p80,1p00
+[ "$aqgc_par" == "ft6" ] && { for v in  "m0p30" "m0p25" "m0p15" "m0p10" "m0p05" "0p05" "0p10" "0p15" "0p25" "0p30"  ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #m1p00,m0p50,0p00,0p50,1p00
 [ "$aqgc_par" == "ft8" ] && { for v in "m0p40" "m0p30" "m0p20" "m0p10" "0p10" "0p20" "0p30" "0p40" ; do INTERPOLATE+=" --aqgc_interpolate $v"; done ; }  
 #ft9 m1p00,m0p50,0p00,0p50
@@ -61,6 +65,7 @@ if [[ "$point" == "cards"* ]] ; then
     for cat in $CATEGORIES ; do
         #for reg in "SR" "anti" "side"; do 
         for reg in "SR"; do  ## I don't have anti/side for aqgc
+            [[ "$cat" == *"MET" ]]  && [ "$reg" == "anti" ] && continue; 
             echo ">> Cat $cat Reg $reg"
             file="HAD";
             [[ "$cat" == *"MET" ]] && { file="MET"; }
