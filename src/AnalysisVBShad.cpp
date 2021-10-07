@@ -2198,7 +2198,7 @@ void VBShadAnalysis::studyTriggers(Event* e, string category, string label, stri
     bool passtriggerbtag6 = false;
     bool passtriggerbtag7 = false;
     bool passtriggerbtag8 = false;
-
+    bool passtriggerbtag9 = false;
 
     bool passtriggerHad1 = false;
     bool passtriggerHad2 = false;
@@ -2258,6 +2258,8 @@ void VBShadAnalysis::studyTriggers(Event* e, string category, string label, stri
                     passtriggerbtag3 = e->IsTriggered("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
                     passtriggerbtag4 = e->IsTriggered("HLT_QuadPFJet98_83_71_15_BTagCSV_p013_VBF2");
                     passtriggerbtag5 = e->IsTriggered("HLT_QuadPFJet98_83_71_15_DoubleBTagCSV_p013_p08_VBF1");
+                    passtriggerbtag6 = e->IsTriggered("HLT_PFHT380_SixJet32_DoubleBTagCSV_p075");
+                    passtriggerbtag7 = e->IsTriggered("HLT_PFHT430_SixJet40_BTagCSV_p080");
                     passtriggermet1 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
                     passtriggermet2 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
                     break;
@@ -2276,8 +2278,10 @@ void VBShadAnalysis::studyTriggers(Event* e, string category, string label, stri
                     //passtriggerbtag4 = e->IsTriggered("HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV_p71");
                     passtriggerbtag4 = e->IsTriggered("HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1");
                     passtriggerbtag5 = e->IsTriggered("HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2");
-                    passtriggerbtag6 = e->IsTriggered("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");
-                    passtriggerbtag7 = e->IsTriggered("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
+                    passtriggerbtag8 = e->IsTriggered("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");
+                    passtriggerbtag9 = e->IsTriggered("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
+                    passtriggerbtag6 = e->IsTriggered("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5");
+                    passtriggerbtag7 = e->IsTriggered("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
                     passtriggermet1 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
                     passtriggermet2 = e->IsTriggered("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
                     break;
@@ -2288,7 +2292,7 @@ void VBShadAnalysis::studyTriggers(Event* e, string category, string label, stri
 
     bool passtriggerHadOR = passtriggerHad1 || passtriggerHad2 || passtriggerHad3 || passtriggerHad4 || passtriggerHad5 || passtriggerHad6 || passtriggerHad7;
 
-    bool passtriggerbtagOR = passtriggerbtag1 || passtriggerbtag2 || passtriggerbtag3 || passtriggerbtag4 || passtriggerbtag5 || passtriggerbtag6 || passtriggerbtag7 || passtriggerbtag8 || passtriggerHadOR;
+    bool passtriggerbtagOR = passtriggerbtag1 || passtriggerbtag2 || passtriggerbtag3 || passtriggerbtag4 || passtriggerbtag5 || passtriggerbtag6 || passtriggerbtag7 || passtriggerbtag8 || passtriggerbtag9 || passtriggerHadOR;
 
     bool passtriggermetOR = passtriggermet1 || passtriggermet2;
 
@@ -2540,11 +2544,21 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         // dPhiFatMet in principle only for the final V candidates
 
         bool isZbbJet=false;
+        bool isZbbJetWide=false;
         //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
         if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_1, DEEP_AK8_ZHbb_MD_1)) isZbbJet=true;
-        //        if(doBAntiAnalysis and f->IsZbbJet()) isZbbJet=true;
+        if(f->IsZbbJetWide(DEEP_AK8_ZHbb_MD_1, DEEP_AK8_ZHbb_MD_1)) isZbbJetWide=true; 
 
-        if(isZbbJet) {
+        /****************** Logic ***************************
+        if do HAD/HADanti/HADside:      selectedFatZbb  stores Zbbwide, for vetoing
+        if do MET/METanti:              selectedFatZbb  stores Zbb_in,  for use
+        if do METside:                  selectedFatZbb  stores Zbbwide, for use
+        if do BHAD/BHADanti:            selectedFatZbb  stores Zbb_in,  for use
+        if do BHADside/BHADantiside:    selectedFatZbb  stores Zbbwide, for use
+        ***************************************************/
+
+        bool cat_condition1 = !doHADAnalysis and !doHADAntiAnalysis and !doSideBand;
+        if( (cat_condition1 and isZbbJet) or (!cat_condition1 and isZbbJetWide)  ) {
             selectedFatZbb.push_back(f);
             bosonBBDiscr.push_back(f->ZHbbvsQCD());
             bosonBBMass.push_back(f->rawMass(true));
@@ -2595,7 +2609,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             //if(!doMETAnalysis and !doResonant and isZbbJet) continue;  //avoid selectedFatZbb except resonant; 
             // MARIA: the condition above we might need to add back
             //remove exceptions, as later in the category selection, already consider separately when Zbb>0 or fat>0, no need to count Zbb in fat TODO: to be condirmed with the resonant case 
-            if(isZbbJet) continue;
+            if(isZbbJetWide) continue;
             selectedFatJets.push_back(f);
             bosonBDiscr.push_back(f->subjet_btagdeep);
             // fixme: this need to be filled depending on the W vs Z. Think: what if pass both W and Z?
@@ -2608,10 +2622,17 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         }
 
-        if(isWJet and not isZbbJet) selectedFatJetsIn.push_back(f);
+
+        /**************************************************
+        Select priority: discrimator goes before mass, i.e.
+        Zbb (full) -> Vjj (full)
+        **************************************************/
+        if(isZbbJet) selectedFatZbbIn.push_back(f);
+        if(isZbbJetWide) selectedFatZbbWide.push_back(f);
+        if(isWJet and not isZbbJetWide) selectedFatJetsIn.push_back(f);
         //        if(isWJetWide and not isZbbJet) selectedFatJetsWide.push_back(f);
-        if(isWJetOut and not isZbbJet) selectedFatJetsOut.push_back(f); //selectedFatJetsOut used for veto in the resolved
-        if(isWJetMirror and not isZbbJet) selectedMirrorFatJets.push_back(f);
+        if(isWJetOut and not isZbbJetWide) selectedFatJetsOut.push_back(f); //selectedFatJetsOut used for veto in the resolved
+        if(isWJetMirror and not isZbbJetWide) selectedMirrorFatJets.push_back(f);
     }
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
@@ -3283,6 +3304,8 @@ void VBShadAnalysis::reset() // reset private members
     selectedFatJetsOut.clear();
     selectedMirrorFatJets.clear();
     selectedFatZbb.clear();
+    selectedFatZbbIn.clear();
+    selectedFatZbbWide.clear();
 
     counterExtrabToVeto_=0;
     minDPhi=999.f;
@@ -3856,8 +3879,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         //50|--Cres-|--Ares-|--Cres-|155//
         //////////////////////////////////
 
-        bool condition1_AvsC = doSideBand ? (selectedFatJetsIn.size()==0 and selectedFatZbb.size()==1) : (selectedFatJetsIn.size()>0 or selectedFatZbb.size()>1);
-        bool condition2_AvsB = doBAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbb.size()==1) : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
+        bool condition1_AvsC = doSideBand ? ((selectedFatJetsIn.size()==0 or selectedFatZbbIn.size()==0) and selectedFatZbbIn.size()<2) : (selectedFatJetsIn.size()>0 or selectedFatZbbIn.size()>1);
+        bool condition2_AvsB = doBAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbbWide.size()==1) : 1; //when doing Anti, selectedMirrorFatJets stores SR Wide fatjets, ==0 to be inclusive with SR
 
         //MARIA BBtag
         if(  (selectedFatZbb.size()>1 or (selectedFatZbb.size()==1 and selectedFatJets.size()>0)) and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
@@ -3907,7 +3930,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         // target the ZbbZqq + ZbbWqq resolved
-        if(selectedFatZbb.size()==1 and selectedFatJets.size()==0 and selectedFatJetsOut.size() == 0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
+        if(selectedFatZbb.size()==1 and selectedFatZbbWide.size()==1 and selectedFatJets.size()==0 and selectedFatJetsOut.size() == 0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
+        // Notice the selection here: the 2nd wide boosted object (can be Zbb_wide or Vjj_wide) is vetoed.    
+
             category="";
 
             ///////$$$$$$$
@@ -4002,7 +4027,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
             //bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
             bool massWindowAsy = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
-            bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155 && MV > 50) : (massWindowAsy);
+            bool massWindow = doSideBand ? ( (!massWindowAsy && MV < 155 && MV > 50) or (selectedFatZbbIn.size()==0) ) : (massWindowAsy);
             if( massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RBtag";
     
@@ -4058,8 +4083,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         //50|--Cres-|--Ares-|--Cres-|155//
         //////////////////////////////////
 
-        bool condition1_AvsC = doSideBand ? (selectedFatJetsIn.size()==0 and selectedFatZbb.size()==0) : 1;
-        bool condition2_AvsB = doMETAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbb.size()==0) : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
+        bool condition1_AvsC = doSideBand ? (selectedFatJetsIn.size()==0 and selectedFatZbbIn.size()==0) : 1;
+        bool condition2_AvsB = doMETAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbbWide.size()==0) : 1; //when doing Anti, selectedMirrorFatJets stores SR fatjets, ==0 to be inclusive with SR
 
         if((selectedFatJets.size()>0 or (!doResonant and selectedFatZbb.size()==1)) and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
             category="_BMET";
@@ -4112,7 +4137,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         // target the ZnnZqq + ZnnWqq resolved
-        if(selectedFatJets.size()==0 and selectedFatJetsOut.size()==0 and selectedFatZbb.size()==0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
+        if(selectedFatJets.size()==0 and selectedFatJetsOut.size()==0 and selectedFatZbbWide.size()==0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
             category="";
 
             double MV = 0.;

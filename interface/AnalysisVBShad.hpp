@@ -132,6 +132,8 @@ private:
     vector<FatJet*> selectedFatJetsWide;
     vector<FatJet*> selectedMirrorFatJets;
     vector<FatJet*> selectedFatZbb;
+    vector<FatJet*> selectedFatZbbIn;
+    vector<FatJet*> selectedFatZbbWide;
 
     vector<float> bosonVDiscr;
     vector<float> bosonTDiscr;

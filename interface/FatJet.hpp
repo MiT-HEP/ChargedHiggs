@@ -201,6 +201,8 @@ class FatJet : virtual public Object, virtual public SmearableComplex
 
     // ZHbbvsQCDMD > 0.3 is roughly 10% mistag (0.3 0.6  0.8945)
     inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(rawMass(true)-91) < 15. and ZHbbvsQCDMD > ((Pt()<500)?cut1_:cut2_) and TvsQCD()<0.9 and IsFatJet() )   return 1; return 0;}
+    inline int IsZbbJetWide(float cut1_, float cut2_) const { if( Pt() > 200. and rawMass(true) < 155. and ZHbbvsQCDMD > ((Pt()<500)?cut1_:cut2_) and TvsQCD()<0.9 and IsFatJet() )   return 1; return 0;}
+
 
     inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) < 15. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
     inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) > 15. and rawMass() < 155. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
