@@ -185,6 +185,18 @@ class SmearPdfs : virtual public SmearBase
         int smear(Event*e) override;	
 };
 
+class SmearL1Prefire : virtual public SmearBase
+{
+    /*
+     *Never tested.
+     */
+
+    public: 
+        SmearL1Prefire() : SmearBase(){ name_="L1Prefire";}
+        SmearL1Prefire(string name) : SmearBase(){ name_=name;}
+        int smear(Event*e) override;	
+};
+
 class SmearBjets : virtual public SmearBase
 {
     /* for simple smearing, correlated use SmearSF*/
