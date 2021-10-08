@@ -17,7 +17,7 @@ with open(opts.outname + ".json") as fin:
 
 ####################################### 
 nPoints=10
-xmin,xmax=-16.,16.
+xmin,xmax=-17.,17.
 ytick = 0.05
 border=0.01
 ########################################
@@ -114,16 +114,17 @@ print ">continue"
 def draw_axis_tick(x,y,precision="%.1f"):
     global gc,txt
     xl,xh = x,x
-    yl,yh = y,y+0.1
+    yl,yh = y,y+ (0.1 if precision !="" else 0.05)
     line= ROOT.TLine(xl,yl,xh,yh)
     line.SetLineColor(ROOT.kBlack) 
     line.SetLineWidth(1)
     line.Draw()
     gc.append(line)
-    txt.SetNDC(False)
-    txt.SetTextSize(12)
-    txt.SetTextAlign(21)
-    txt.DrawLatex(x,yh+0.01,precision%x)
+    if precision!="":
+        txt.SetNDC(False)
+        txt.SetTextSize(12)
+        txt.SetTextAlign(21)
+        txt.DrawLatex(x,yh+0.01,precision%x)
 
 def draw_pad(y,xmin,xmax,side,drawAxis=True):
     global dummy, gc,c
@@ -153,14 +154,16 @@ def draw_pad(y,xmin,xmax,side,drawAxis=True):
     gc.append(p)
 
     if drawAxis: 
-        if abs(xmin+16)<0.1 : ## -16,16
+        if abs(xmin+17)<0.1 : ## -16,16
             for x in [-15,-10,-5,0,5,10,15]: draw_axis_tick(x,y-0.5,"%.0f")
         elif abs(xmin+10)<0.1: ## -10,10
             for x in [-8,-6,-4,-2,-1,0,2,4,6,8]: draw_axis_tick(x,y-0.5,"%.0f")
         elif abs(xmin+5)<0.1: ## -5,5
             for x in [-4,-3,-2,-1,0,1,2,3,4]: draw_axis_tick(x,y-0.5,"%.0f")
         elif abs(xmin+1)<0.01: ## -1,1
-            for x in [-.8,-.6,-.4,.2,0.,.2,.4,.6,.8]: draw_axis_tick(x,y-0.5,"%.1f")
+            for x in [-.8,-.4,0,.4,.8]: draw_axis_tick(x,y-0.5,"%.1f")
+            #for x in [-.5,0.,.5]: draw_axis_tick(x,y-0.5,"%.1f")
+            #for x in [-.75,-.25,.25,.75]: draw_axis_tick(x,y-0.5,"") ## only tick, no text
         elif abs(xmin+0.5)<0.001: ## -0.5,.5
             #for x in [-0.4,-0.3,-0.2,-0.1,0,0.1,.2,.3,.4]: draw_axis_tick(x,y-0.5,"%.1f")
             for x in [-0.4,-0.2,0,0.2,.4]: draw_axis_tick(x,y-0.5,"%.1f")
@@ -259,11 +262,17 @@ def draw_label(label, x,y, dxl, dxh, dxl2,dxh2,side):
     global txt2
     if side=='left': p1.cd()
     if side=='right': p2.cd()
-    #newlabel=label[0] + "_{" +label[1:].upper()+"}"+"/#Lambda^{4}" # "[TeV^{-4}]"
+    precision="%.1f"
+    if dxl <1 and dxh<1: precision="%.2f"
+    #if dxl <0.1 and dxh<0.1: precision="%.3f"
     newlabel="#voidb" + "_{"+label[1].upper() + "#kern[0.3]{"+label[2:]+"}}"+"#kern[0.3]{/}#Lambda^{4}" # "[TeV^{-4}]"
     txt2.SetNDC(False)
     txt2.SetTextAlign(12)
-    txt2.DrawLatex(xmin+0.1*(xmax-xmin),y,newlabel + "  %.1f^{#font[122]{+}%.1f}_{#font[122]{-}%.1f}  ({}^{#font[122]{+}%.1f}_{#font[122]{-}%.1f})"%(x,dxh,dxl,dxh2,dxl2) )
+    txt2.DrawLatex(xmin+0.1*(xmax-xmin),y,
+            newlabel + "#scale[0.85]{" + 
+            ("  "+precision+"^{#font[122]{+}"+precision+"}_{#font[122]{-}"+precision+"}  #scale[1.3]{(}{}^{#font[122]{+}"+precision+"}_{#font[122]{-}"+precision+"}#scale[1.3]{)}")%(x,dxh,dxl,dxh2,dxl2) 
+            + "}" ## close scale
+            )
 
 #fm0 fm1 fm2 fm3 fm4 fm5 fm7    fs0 fs1 
 #ft0 ft1 ft2 ft5 ft6 ft7 ft8 ft9    fs2
@@ -273,28 +282,27 @@ right=['ft0','ft1','ft2','ft5','ft6','ft7','ft8','ft9','empty','fs2']
 
 ranges={ 
         "fm0":[-10,10.],
-        "fs0":[-16,16.],
         "ft0":[-0.5,0.5],
         "ft1":[-0.5,0.5],
         "ft2":[-0.5,0.5],
         "ft5":[-0.5,0.5],
-        "ft6":[-5,5],
+        "ft6":[-1,1],
         "ft7":[-5,5],
-        "ft8":[-5,5],
-        "ft9":[-5,5],
+        "ft8":[-0.5,0.5],
+        "ft9":[-1,1],
         "fm2":[-5,5],
         "fm1":[-5,5],
         "fm0":[-5,5],
         "fm4":[-5,5],
-        "default":[-16,16],
+        "default":[-17,17],
         }
 
 print "> Drawing Empties as well"
 y = left.index('empty') 
-pe0=draw_pad( y,-16.,16.,'left',False)
+pe0=draw_pad( y,-17.,17.,'left',False)
 pe0.SetFillColor(ROOT.kGray)
 y = right.index('empty') 
-pe1=draw_pad( y,-16.,16.,'right',False)
+pe1=draw_pad( y,-17.,17.,'right',False)
 pe1.SetFillColor(ROOT.kGray)
 
 print "> Drawing Lines and Labels"

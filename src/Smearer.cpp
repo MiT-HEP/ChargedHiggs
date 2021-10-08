@@ -270,6 +270,14 @@ int SmearScales::smear(Event*e)
     return SMEAR_OK;
 }
 
+int SmearL1Prefire::smear(Event*e){
+    if ( e->IsRealData() ) return SMEAR_NA;
+
+    e->GetWeight()->SetSystL1(syst);
+
+    return SMEAR_OK;
+}
+
 int SmearPdfs::smear(Event*e)
 {
     if ( e->IsRealData() ) return SMEAR_NA;

@@ -28,6 +28,7 @@
 	<class name="SmearPu"/>
 	<class name="SmearScales"/>
 	<class name="SmearPdfs"/>
+	<class name="SmearL1Prefire"/>
 	<class name="SmearBjets"/>
 	<class name="SmearKaMuCa"/>
 	<class name="SmearJesSource"/>
