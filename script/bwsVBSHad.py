@@ -798,17 +798,16 @@ if __name__=="__main__":
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
     db.add_systematics('CMS_eff_l','','lnN',('.*','.*'),1.04)
 
-    if "BBtag" in opt.category:
-        if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape BBtag
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm BBtag
-    elif "RBtag" in opt.category:
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm RBtag
-    elif "BB" in opt.category:
-        if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape BB
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)  ## QCD norm BB
+    if "anti" not in opt.region:
+        if "BBtag" in opt.category: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm BBtag
+        elif "RBtag" in opt.category: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm RBtag
+        elif "BB" in opt.category:db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)  ## QCD norm BB
 
+    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
 
-    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*' 
+    if "side" not in opt.region:
+        if "BBtag" in opt.category: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape BBtag
+        elif "BB" in opt.category: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape BB
     db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_j','JES_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
