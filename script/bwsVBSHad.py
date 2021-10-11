@@ -483,7 +483,14 @@ class DatacardBuilder:
         if opt.aqgc:
             ## including overflow for aqgc
             h.SetBinContent( h.GetNbinsX(), h.GetBinContent( h.GetNbinsX()) + h.GetBinContent(h.GetNbinsX()+1))
+
+        #totbin = h.GetNbinsX()
+        #h.Rebin(totbin)
+        #print hname, h.Integral(), h.GetBinError(1)
         print hname, h.Integral()
+
+
+
 
         return h
 
@@ -529,6 +536,11 @@ class DatacardBuilder:
         mshift = 1.13
         bcut   = 1.06
 
+        if 'BBtag' in systname:
+            Area   = -9.27
+            mshift = 45410
+            bcut   = 100.5
+
         h=h_nominal.Clone(systname)
 
         normold = h.Integral()
@@ -548,7 +560,6 @@ class DatacardBuilder:
         h.Scale(normold/normnew)
 
         return h
-
 
 
     def write_inputs(self,outname): #datacard.txt
@@ -749,7 +760,7 @@ if __name__=="__main__":
         db.add_process('Zinv',False,['ZJetsToNuNu_HT'],[opt.category])
         #db.add_process('Winv',False,['WJetsToLNu_HT','WJetsToLNu_NJ'],[opt.category])
         db.add_process('Winv',False,['WJetsToLNu_HT'],[opt.category])
-        #db.add_process('EWKV',False,['EWKW','EWKZ2Jets_ZToNuNu'],[opt.category])
+        db.add_process('EWKV',False,['EWKW','EWKZ2Jets_ZToNuNu'],[opt.category])
 
     ## set sig processes
     for sig in sigprocess:
@@ -785,20 +796,23 @@ if __name__=="__main__":
     db.add_systematics('lumi','','lnN',('.*','.*'),1.025)
     db.add_systematics('QCDScale_ttbar','','lnN',('.*','ttbar'),1.05)
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
+    db.add_systematics('CMS_eff_l','','lnN',('.*','.*'),1.04)
 
-    if "Btag" in opt.category and ("anti" not in opt.region): db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm
- 
-    if ("BB" in opt.category) and ("Btag" not in opt.category):
-#        if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)
-    #elif ("BBtag" in opt.category): db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)
+    if "anti" not in opt.region:
+        if "BBtag" in opt.category: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm BBtag
+        elif "RBtag" in opt.category: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm RBtag
+        elif "BB" in opt.category:db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)  ## QCD norm BB
 
+    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
 
-    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*' 
+    if "side" not in opt.region:
+        if "BBtag" in opt.category: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape BBtag
+        elif "BB" in opt.category: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape BB
     db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_j','JES_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
-
+    db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
 
 
     ## break down JES sources
