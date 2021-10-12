@@ -27,6 +27,7 @@
 //slide4 of https://indico.cern.ch/event/853828/contributions/3723593/attachments/1977626/3292045/lg-btv-deepak8v2-sf-20200127.pdf
 #define DEEP_AK8_ZHbb_MD_50 ((year==2016 or year==12016)?0.6795:(year==2017)?0.5845:0.5165)
 #define DEEP_AK8_ZHbb_MD_25 ((year==2016 or year==12016)?0.8945:(year==2017)?0.8695:0.8365)
+//#define DEEP_AK8_ZHbb_MD_25 0.80
 #define DEEP_AK8_ZHbb_MD_1 0.97
 
 // from Loukas
@@ -151,7 +152,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/FW2"+category+"_"+l, " ; FW2 ; Events", 100,0,1.);
 
     AddFinalHisto("VBShadAnalysis/MVV"+category+"_"+l);
-    Book ("VBShadAnalysis/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 120,0,3000); // should be 120,0,3000 -- 25 GeV bin
+    Book ("VBShadAnalysis/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 200,0,5000); // should be 200,0,5000 -- 25 GeV bin
 
     if(checkSignalLabel(l)) {
         Book ("VBShadAnalysis/MVV"+category+"_match_"+l, "MVV (match) ; MVV [GeV]; Events", 120,0,3000); // should be 120,0,3000 -- 25 GeV bin
@@ -207,7 +208,6 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
     if(checkSignalLabel(l)) Book ("VBShadAnalysis/MVVres"+category+"_"+l, "MVVres ; ( MVV_{reco} - MVV_{gen} ) / MVV_{gen}; Events", 100, -5., 5.);
 
-    AddFinalHisto("VBShadAnalysis/FWJETS/Mjj"+category+"_"+l);
     Book ("VBShadAnalysis/FWJETS/Mjj"+category+"_"+l, "Mjj ; M(j,j) [GeV]; Events", 35,0,3500.); // 140,0,3500.
     Book ("VBShadAnalysis/FWJETS/Dphijj"+category+"_"+l, "Dphi jj ; #Delta#Phi(j,j) ; Events", 100,0,6.28);
 
@@ -2546,8 +2546,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         bool isZbbJet=false;
         bool isZbbJetWide=false;
         //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
-        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_1, DEEP_AK8_ZHbb_MD_1)) isZbbJet=true;
-        if(f->IsZbbJetWide(DEEP_AK8_ZHbb_MD_1, DEEP_AK8_ZHbb_MD_1)) isZbbJetWide=true; 
+        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJet=true;
+        if(f->IsZbbJetWide(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJetWide=true; 
 
         /****************** Logic ***************************
         if do HAD/HADanti/HADside:      selectedFatZbb  stores Zbbwide, for vetoing
