@@ -63,8 +63,8 @@ if [[ "$point" == "cards"* ]] ; then
     ###CATEGORIES="BB"
     ###REGIONS="SR"
     for cat in $CATEGORIES ; do
-        #for reg in "SR" "anti" "side"; do 
-        for reg in "SR"; do  ## I don't have anti/side for aqgc
+        for reg in "SR" "anti" "side"; do 
+        #for reg in "SR"; do  ## I don't have anti/side for aqgc
             [[ "$cat" == *"MET" ]]  && [ "$reg" == "anti" ] && continue; 
             echo ">> Cat $cat Reg $reg"
             file="HAD";

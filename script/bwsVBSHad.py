@@ -400,8 +400,8 @@ class DatacardBuilder:
             ### QCD SF and hist stat. enhancement
             if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
                 strategy=0 # 0: A/(A+B) 1: CB/D / (A+B)
-                if opt.category == 'BB': strategy=0
-                if opt.category == 'BBtag': strategy=0
+                if opt.category == 'BB': strategy=1
+                if opt.category == 'BBtag': strategy=1
 
                 fInD ={} #
                 htmpD = {} ## dictionary to hold additional histograms
