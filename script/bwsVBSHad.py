@@ -395,7 +395,7 @@ class DatacardBuilder:
             if self.verbose >2: print "DEBUG","getting histo",hname,"->",rename
             htmp=fIn.Get(hname)
             if htmp==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",ftmp
-            if htmp==None: return None ## WARNING
+            if htmp==None: continue ## WARNING
             
             ### QCD SF and hist stat. enhancement
             if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
@@ -484,15 +484,13 @@ class DatacardBuilder:
             ## including overflow for aqgc
             h.SetBinContent( h.GetNbinsX(), h.GetBinContent( h.GetNbinsX()) + h.GetBinContent(h.GetNbinsX()+1))
 
-        #totbin = h.GetNbinsX()
-        #h.Rebin(totbin)
-        #print hname, h.Integral(), h.GetBinError(1)
-        print hname, h.Integral()
-
-
-
-
-        return h
+        if h:
+            #totbin = h.GetNbinsX()
+            #h.Rebin(totbin)
+            #print hname, h.Integral(), h.GetBinError(1)
+            print hname, h.Integral()
+            return h
+        else: return None
 
     def _write(self, o ):
         if o==None and self.verbose> 0: print "ERROR","unable to write none object"
