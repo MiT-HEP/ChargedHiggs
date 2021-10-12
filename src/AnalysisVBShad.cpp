@@ -27,8 +27,8 @@
 //slide4 of https://indico.cern.ch/event/853828/contributions/3723593/attachments/1977626/3292045/lg-btv-deepak8v2-sf-20200127.pdf
 #define DEEP_AK8_ZHbb_MD_50 ((year==2016 or year==12016)?0.6795:(year==2017)?0.5845:0.5165)
 #define DEEP_AK8_ZHbb_MD_25 ((year==2016 or year==12016)?0.8945:(year==2017)?0.8695:0.8365)
-//#define DEEP_AK8_ZHbb_MD_25 0.80
-#define DEEP_AK8_ZHbb_MD_1 0.97
+#define DEEP_AK8_ZHbb_MD_25 0.80
+//#define DEEP_AK8_ZHbb_MD_1 0.97
 
 // from Loukas
 #define ParticleNet_AK8_ZHbb_MD_loose 0.90
@@ -2557,8 +2557,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if do BHADside/BHADantiside:    selectedFatZbb  stores Zbbwide, for use
         ***************************************************/
 
-        bool cat_condition1 = !doHADAnalysis and !doHADAntiAnalysis and !doSideBand;
-        if( (cat_condition1 and isZbbJet) or (!cat_condition1 and isZbbJetWide)  ) {
+        //        bool cat_condition1 = !doHADAnalysis and !doHADAntiAnalysis and !doSideBand;
+        //        if( (cat_condition1 and isZbbJet) or (!cat_condition1 and isZbbJetWide)  ) {
+        if(isZbbJet) {
             selectedFatZbb.push_back(f);
             bosonBBDiscr.push_back(f->ZHbbvsQCD());
             bosonBBMass.push_back(f->rawMass(true));
@@ -2609,7 +2610,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             //if(!doMETAnalysis and !doResonant and isZbbJet) continue;  //avoid selectedFatZbb except resonant; 
             // MARIA: the condition above we might need to add back
             //remove exceptions, as later in the category selection, already consider separately when Zbb>0 or fat>0, no need to count Zbb in fat TODO: to be condirmed with the resonant case 
-            if(isZbbJetWide) continue;
+            //            if(isZbbJetWide) continue;
+            if(isZbbJet) continue;
             selectedFatJets.push_back(f);
             bosonBDiscr.push_back(f->subjet_btagdeep);
             // fixme: this need to be filled depending on the W vs Z. Think: what if pass both W and Z?
@@ -2629,10 +2631,14 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         **************************************************/
         if(isZbbJet) selectedFatZbbIn.push_back(f);
         if(isZbbJetWide) selectedFatZbbWide.push_back(f);
-        if(isWJet and not isZbbJetWide) selectedFatJetsIn.push_back(f);
+        if(isWJet and not isZbbJet) selectedFatJetsIn.push_back(f);
+        //        if(isWJet and not isZbbJetWide) selectedFatJetsIn.push_back(f);
         //        if(isWJetWide and not isZbbJet) selectedFatJetsWide.push_back(f);
-        if(isWJetOut and not isZbbJetWide) selectedFatJetsOut.push_back(f); //selectedFatJetsOut used for veto in the resolved
-        if(isWJetMirror and not isZbbJetWide) selectedMirrorFatJets.push_back(f);
+        //        if(isWJetOut and not isZbbJetWide) selectedFatJetsOut.push_back(f); //selectedFatJetsOut used for veto in the resolved
+        //        if(isWJetMirror and not isZbbJetWide) selectedMirrorFatJets.push_back(f);
+
+        if(isWJetOut and not isZbbJet) selectedFatJetsOut.push_back(f); //selectedFatJetsOut used for veto in the resolved
+        if(isWJetMirror and not isZbbJet) selectedMirrorFatJets.push_back(f);
     }
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
