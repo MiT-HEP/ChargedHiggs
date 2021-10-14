@@ -2573,21 +2573,26 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         bool isWJetMirror=false;
         if(!doHADAntiAnalysis and !doMETAntiAnalysis and !doBAntiAnalysis) {
             if (f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJet(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJet=true;
-            if (f->IsWJetOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetOut(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25))) isWJetOut = true;
             if (f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetWide(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJetWide = true;
+
+            // isWJetOut and isWJetMirror only for resolved ( veto bosted ABC when doing resolved)
+            if (f->IsWJetOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetOut(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25))) isWJetOut = true;
+            //isWJetMirror unused when doing the SR
             if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJetMirror=true;
         }
 
 
         if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
-            if ( f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJet=true;
-            // these might be needed to get the D for validation
-            if ( f->IsWJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJetOut=true;
-            if (isWJet or isWJetOut) isWJetWide = true;
-            //Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
-            
-            // regions B is excusive with A+C 
+            if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJet=true;
+            if (f->IsWJetMirrorWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetMirrorWide(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25)) ) isWJetWide = true;
+
+            // regions B+D is excusive with A+C
+            // Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
             if ( f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) ) isWJetMirror=true;
+
+            // IsWJetMirrorOut only for resolved
+            if ( f->IsWJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJetOut=true;
+
         }
 
         //////comments for above////////////////////////////////////        ////////////////////////////////////////////////////
@@ -2613,6 +2618,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             //            if(isZbbJetWide) continue;
             if(isZbbJet) continue;
             selectedFatJets.push_back(f);
+            if(isWJet) selectedFatJetsIn.push_back(f);
             bosonBDiscr.push_back(f->subjet_btagdeep);
             // fixme: this need to be filled depending on the W vs Z. Think: what if pass both W and Z?
             bosonVDiscr.push_back(f->WvsQCD());
@@ -2631,7 +2637,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         **************************************************/
         if(isZbbJet) selectedFatZbbIn.push_back(f);
         if(isZbbJetWide) selectedFatZbbWide.push_back(f);
-        if(isWJet and not isZbbJet) selectedFatJetsIn.push_back(f);
+        //        if(isWJet and not isZbbJet) selectedFatJetsIn.push_back(f);
         //        if(isWJet and not isZbbJetWide) selectedFatJetsIn.push_back(f);
         //        if(isWJetWide and not isZbbJet) selectedFatJetsWide.push_back(f);
         //        if(isWJetOut and not isZbbJetWide) selectedFatJetsOut.push_back(f); //selectedFatJetsOut used for veto in the resolved
@@ -3885,11 +3891,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         //50|--Cres-|--Ares-|--Cres-|155//
         //////////////////////////////////
 
-        bool condition1_AvsC = doSideBand ? ((selectedFatJetsIn.size()==0 or selectedFatZbbIn.size()==0) and selectedFatZbbIn.size()<2) : (selectedFatJetsIn.size()>0 or selectedFatZbbIn.size()>1);
-        bool condition2_AvsB = doBAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbbWide.size()==1) : 1; //when doing Anti, selectedMirrorFatJets stores SR Wide fatjets, ==0 to be inclusive with SR
+        //        bool condition1_AvsC = doSideBand ? ((selectedFatJetsIn.size()==0 or selectedFatZbbIn.size()==0) and selectedFatZbbIn.size()<2) : (selectedFatJetsIn.size()>0 or selectedFatZbbIn.size()>1);
+        //        bool condition2_AvsB = doBAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbbWide.size()==1) : 1; //when doing Anti, selectedMirrorFatJets stores SR Wide fatjets, ==0 to be inclusive with SR
+
+        bool condition1_AvsC = doSideBand ? selectedFatJetsIn.size()==0: true;
+        bool condition2_AvsB = doBAntiAnalysis ? selectedMirrorFatJets.size()==0 : true;
 
         //MARIA BBtag
-        if(  (selectedFatZbb.size()>1 or (selectedFatZbb.size()==1 and selectedFatJets.size()>0)) and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
+        //        if(  (selectedFatZbb.size()>1 or (selectedFatZbb.size()==1 and selectedFatJets.size()>0)) and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
+        if( selectedFatZbb.size()==1 and selectedFatJets.size()>0 and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
+
             category="_BBtag";
 
             TLorentzVector jet1P4;
