@@ -27,8 +27,8 @@
 //slide4 of https://indico.cern.ch/event/853828/contributions/3723593/attachments/1977626/3292045/lg-btv-deepak8v2-sf-20200127.pdf
 #define DEEP_AK8_ZHbb_MD_50 ((year==2016 or year==12016)?0.6795:(year==2017)?0.5845:0.5165)
 #define DEEP_AK8_ZHbb_MD_25 ((year==2016 or year==12016)?0.8945:(year==2017)?0.8695:0.8365)
-#define DEEP_AK8_ZHbb_MD_25 0.80
-//#define DEEP_AK8_ZHbb_MD_1 0.97
+//#define DEEP_AK8_ZHbb_MD_25 0.80
+#define DEEP_AK8_ZHbb_MD_1 0.97
 
 // from Loukas
 #define ParticleNet_AK8_ZHbb_MD_loose 0.90
@@ -3894,12 +3894,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         //        bool condition1_AvsC = doSideBand ? ((selectedFatJetsIn.size()==0 or selectedFatZbbIn.size()==0) and selectedFatZbbIn.size()<2) : (selectedFatJetsIn.size()>0 or selectedFatZbbIn.size()>1);
         //        bool condition2_AvsB = doBAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbbWide.size()==1) : 1; //when doing Anti, selectedMirrorFatJets stores SR Wide fatjets, ==0 to be inclusive with SR
 
-        bool condition1_AvsC = doSideBand ? selectedFatJetsIn.size()==0: true;
-        bool condition2_AvsB = doBAntiAnalysis ? selectedMirrorFatJets.size()==0 : true;
+        bool condition1_AvsC = doSideBand ? (selectedFatJetsIn.size()==0 and selectedFatZbb.size()==1): true;
+        bool condition2_AvsB = doBAntiAnalysis ? (selectedMirrorFatJets.size()==0 and selectedFatZbb.size()==1): true;
 
         //MARIA BBtag
-        //        if(  (selectedFatZbb.size()>1 or (selectedFatZbb.size()==1 and selectedFatJets.size()>0)) and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
-        if( selectedFatZbb.size()==1 and selectedFatJets.size()>0 and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
+        if(  (selectedFatZbb.size()>1 or (selectedFatZbb.size()==1 and selectedFatJets.size()>0)) and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
+            //        if( selectedFatZbb.size()==1 and selectedFatJets.size()>0 and selectedJets.size()>1 and condition1_AvsC and condition2_AvsB) {
 
             category="_BBtag";
 
