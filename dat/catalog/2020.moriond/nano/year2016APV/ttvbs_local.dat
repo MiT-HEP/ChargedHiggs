@@ -4,7 +4,7 @@ addfiles=%(amarini)s/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8
 addfiles=%(amarini)s/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8
 addfiles=%(amarini)s/TTToHadronic_TuneCP5_13TeV-powheg-pythia8
 addfiles=%(amarini)s/TT_Mtt-1000toInf_TuneCP5_13TeV-powheg-pythia8
-#addfiles=%(amarini)s/TT_Mtt-700to1000_TuneCP5_13TeV-powheg-pythia8
+addfiles=%(amarini)s/TT_Mtt-700to1000_TuneCP5_13TeV-powheg-pythia8
 
 #addfiles=%(amarini)s/TTTo2L2Nu_SuperSet
 #addfiles=%(amarini)s/TTToSemiLeptonic_SuperSet
