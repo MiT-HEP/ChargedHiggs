@@ -7,9 +7,9 @@ echo "-> Requested parameter $aqgc_par and point $point"
 
 CMSSW="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src"
 CHARGEDHIGGS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs"
-DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT11"
-WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT11/AQGC"
-SUFFIX="oct7"
+DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT15"
+WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT15/AQGC"
+SUFFIX="oct15"
 year=2021
 
 cd $CMSSW
@@ -63,8 +63,8 @@ if [[ "$point" == "cards"* ]] ; then
     ###CATEGORIES="BB"
     ###REGIONS="SR"
     for cat in $CATEGORIES ; do
-        #for reg in "SR" "anti" "side"; do 
-        for reg in "SR"; do  ## I don't have anti/side for aqgc
+        for reg in "SR" "anti" "side"; do 
+        #for reg in "SR"; do  ## I don't have anti/side for aqgc
             [[ "$cat" == *"MET" ]]  && [ "$reg" == "anti" ] && continue; 
             echo ">> Cat $cat Reg $reg"
             file="HAD";
