@@ -9,7 +9,7 @@ CMSSW="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src"
 CHARGEDHIGGS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs"
 DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT15"
 WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/OCT15/AQGC"
-SUFFIX="oct7"
+SUFFIX="oct15"
 year=2021
 
 cd $CMSSW
