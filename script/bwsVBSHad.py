@@ -145,8 +145,9 @@ def find_closest_values(par, point):
         
 
 LikeBins=25
-#likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(2)
-likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(10)
+#likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.SimpleRebin(10)
+aqgc_rebin = [500.,750.,1000.,1250.,1500.,2000.,5000.] if opt.category in ["BBtag", "BMET"] and opt.region == "SR" else [500.,750.,1000.,1250.,1500.,1750.,2000.,5000.]
+likelihoodBinning = FwRebin.RebinLikelihood(LikeBins) if not opt.aqgc else FwRebin.FixedRebin(aqgc_rebin)
 
 def read_input():
     psig = []
@@ -580,7 +581,11 @@ class DatacardBuilder:
             data=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_%(suffix)s"%d,"%(cat)s_data_obs"%d)
             if data==None: 
                 print "[WARNING] Creating fake data histogram for",cat
-                data=ROOT.TH1D("%(cat)s_data_obs"%d,"fake data histogram with 100 bins",100,0,100)
+                xmin,xmax=0,100
+                if opt.aqgc: xmin=500.,5000.
+                data=ROOT.TH1D("%(cat)s_data_obs"%d,"fake data histogram with 100 bins",100,xmin,xmax)
+                if opt.aqgc:
+                    data = likelihoodBinning.applyMapping(LikelihoodMapping, data)
             else:
                 data =  likelihoodBinning.applyMapping(LikelihoodMapping, data)
             self._write(data)
