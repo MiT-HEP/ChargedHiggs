@@ -24,9 +24,6 @@ class FixedRebin:
         return h1
 
 class Rebin:
-    def __init__(self,n):
-        self.nmerge=n
-    
     h = None        # sum of bkgs
     h_ref = None    # reference (TTbar)
     maxStat = 0.3 #original 0.3 miao change
