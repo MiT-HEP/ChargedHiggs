@@ -12,8 +12,18 @@ class SimpleRebin:
         h2.Rebin(self.nmerge)
         return h2
 
+gc=[]
+class FixedRebin:
+    def __init__(self,l):
+        self.boundaries_=array.array('d',l)
+    def applyMapping(self,x,h):
+        global gc
+        h1 = h.Rebin(len(self.boundaries_)-1,h.GetName(),self.boundaries_)
+        if h != None and h1 == None:
+            print "[ERROR], Unable to rebin",h.GetName()
+        return h1
+
 class Rebin:
-    
     h = None        # sum of bkgs
     h_ref = None    # reference (TTbar)
     maxStat = 0.3 #original 0.3 miao change

@@ -31,4 +31,6 @@ python ../../script/makeNLLPlots.py --xtitle ft7 -o deltaNLL_ft7 -p VALUE -f hig
 python script/plotAQGC.py --more $(ls Datacards/OCT15/AQGC/higgs*all.root | while read f ; do echo  "$f:$(echo ${f%%_all.root} | sed 's:.*_::g')" ; done | tr '\n' ',' | sed 's/,$//') -o plot_aqgc/all  --xrange -16,16 -b
 
 python script/plotAQGC_panel.py -o plot_aqgc/all
-rsync -avP plot_aqgc/ ~/www/cms-private/VBSHadronic/OCT15/plot_aqgc/
+
+mkdir ~/www/cms-private/VBSHadronic/OCT15_rebin§
+rsync -avP plot_aqgc/ ~/www/cms-private/VBSHadronic/OCT15_rebin/plot_aqgc/
