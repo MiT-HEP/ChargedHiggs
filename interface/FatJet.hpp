@@ -206,8 +206,11 @@ class FatJet : virtual public Object, virtual public SmearableComplex
 
     inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) < 15. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
     inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) > 15. and rawMass() < 155. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsWJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass() < 155. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+
     inline int IsZJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-91) < 15. and ZvsQCDMD > cut2_ and ZvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
     inline int IsZJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-91) > 15. and rawMass() < 155. and ZvsQCDMD > cut2_ and ZvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass() < 155. and ZvsQCDMD > cut2_ and ZvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
     // $$$$$$$$$$$$$$$$$$$$$$$$$$
     // $$$$$ for ChargedHiggs
