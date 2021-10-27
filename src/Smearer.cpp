@@ -273,7 +273,7 @@ int SmearScales::smear(Event*e)
 int SmearL1Prefire::smear(Event*e){
     if ( e->IsRealData() ) return SMEAR_NA;
 
-    e->GetWeight()->SetSystL1(syst);
+    e->GetWeight()->SetSystL1(syst_);
 
     return SMEAR_OK;
 }
