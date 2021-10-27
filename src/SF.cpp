@@ -349,7 +349,7 @@ void SF_CSV::init(string filename)
     string measL="incl";
     //calib=new BTagCalibration("CSVv2",filename);
     //Log(__FUNCTION__,"DEBUG","calibration");
-    calib=new BTagCalibration("DeepCSV",filename);
+    calib=new BTagCalibration("DeepCSV",filename,/*validate=*/ false);
     //Log(__FUNCTION__,"DEBUG","ReaderL: Constructor");
     readerL=new BTagCalibrationReader( BTagEntry::OP_LOOSE,  // operating point 
                     "central" ,          // systematics type

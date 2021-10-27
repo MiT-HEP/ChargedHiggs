@@ -32,5 +32,5 @@ python script/plotAQGC.py --more $(ls Datacards/OCT15/AQGC/higgs*all.root | whil
 
 python script/plotAQGC_panel.py -o plot_aqgc/all
 
-mkdir ~/www/cms-private/VBSHadronic/OCT15_rebin§
+mkdir ~/www/cms-private/VBSHadronic/OCT15_rebin
 rsync -avP plot_aqgc/ ~/www/cms-private/VBSHadronic/OCT15_rebin/plot_aqgc/
