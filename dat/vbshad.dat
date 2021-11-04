@@ -90,8 +90,6 @@ addConfig=VBShadAnalysis|AddLabel('ZZ_TuneCP5')
 addConfig=VBShadAnalysis|AddLabel('WZ_TuneCP5')
 addConfig=VBShadAnalysis|AddLabel('WW_TuneCP5')
 
-
-
 addConfig=VBShadAnalysis|AddLabel('ZJetsToNuNu_HT')
 addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_HT')
 
@@ -99,6 +97,11 @@ addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_NJ')
 addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_0J')
 addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_1J')
 addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_2J')
+
+addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_Pt')
+addConfig=VBShadAnalysis|AddLabel('Z1JetsToNuNu_M-50_LHEFilterPtZ')
+addConfig=VBShadAnalysis|AddLabel('Z2JetsToNuNu_M-50_LHEFilterPtZ')
+addConfig=VBShadAnalysis|AddLabel('ZJetsToNuNuPt')
 
 addConfig=VBShadAnalysis|AddLabel('ZJetsToQQ')
 addConfig=VBShadAnalysis|AddLabel('WJetsToQQ')

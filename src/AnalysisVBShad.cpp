@@ -2120,8 +2120,8 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         // ** promptLeptons from W for Wjets and semileptonic ttbar in MET category
         if((fabs(genpar->GetPdgId()) == 11 ||  fabs(genpar->GetPdgId()) == 13 || fabs(genpar->GetPdgId()) == 15) and fabs(genpar->GetParentPdgId())==24) if(genLep==NULL) { genLep = genpar; }
         // ** prompt V for the ZJetsToNuNu_HT and WJetsToLNu_HT and pt-reweighting
-        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("ZJetsToNuNu_HT") !=string::npos) ) if(genVp==NULL) { genVp = genpar; }
-        if( (fabs(genpar->GetPdgId()) == 24) and (label.find("WJetsToLNu_HT") !=string::npos) ) if(genVp==NULL) { genVp = genpar; }
+        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos ) ) if(genVp==NULL) { genVp = genpar; }
+        if( (fabs(genpar->GetPdgId()) == 24) and (label.find("WJetsToLNu_HT") !=string::npos or label.find("WJetsToLNu_Pt") !=string::npos ) ) if(genVp==NULL) { genVp = genpar; }
 
         // ** BOSON
         if(fabs(genpar->GetPdgId()) == pdgID1 and fabs(genpar->GetParentPdgId())>6) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
@@ -3177,6 +3177,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ZJetsToNuNu_HT") !=string::npos) mc = 300 ;
     if(label.find("WJetsToLNu_HT") !=string::npos) mc = 310 ;
     if(label.find("WJetsToLNu_Nj") !=string::npos) mc = 311 ;
+    if(label.find("WJetsToLNu_Pt") !=string::npos) mc = 312 ;
     if(label.find("DY") !=string::npos) mc = 320 ;
     if(label.find("ZJetsToQQ") !=string::npos) mc = 330 ;
     if(label.find("WJetsToQQ") !=string::npos) mc = 340 ;
@@ -3449,7 +3450,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
     if( label == "QCD_HT" or label == "QCD_Pt" or
-        label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
+        label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_Pt" or
+        label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
+        label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
         label == "ZJetsToQQ" or label == "WJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
 
@@ -3474,6 +3477,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label == "WZTo") label = "MULTIBOSON";
     if ( label == "ZZTo") label = "MULTIBOSON";
     */
+
+    if( label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
+    if( label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
 
     if( label.find("WJetsToLNu_0J")  !=string::npos) label = "WJetsToLNu_NJ";
     if( label.find("WJetsToLNu_1J")  !=string::npos) label = "WJetsToLNu_NJ";
@@ -4306,7 +4312,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //////
 
     //////
-    if(label.find("ZJetsToNuNu_HT") !=string::npos and genVp!=NULL) {
+    if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNu_Pt")) and genVp!=NULL) {
 
         if( not e->ExistSF("ZNNLO_rwg") ){
             LogN(__FUNCTION__,"WARNING","SF: ZNNLO_rwg does not exist",10);
@@ -4317,7 +4323,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         e->ApplySF("ZNNLO_rwg");
     }
 
-   if (label.find("WJetsToLNu_HT") !=string::npos and genVp!=NULL) {
+    if ((label.find("WJetsToLNu_HT") !=string::npos or label.find("WJetsToLNu_Pt") !=string::npos) and genVp!=NULL) {
 
        if( not e->ExistSF("WNNLO_rwg") ){
            LogN(__FUNCTION__,"WARNING","SF: WNNLO_rwg does not exist",10);
