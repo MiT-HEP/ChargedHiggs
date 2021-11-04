@@ -383,15 +383,20 @@ else:
     elif 'ST_t-channel_top_4f' in opts.label: xsec=136.02
     elif 'ST_tW_antitop_5f' in opts.label: xsec=30.09
     elif 'ST_tW_top_5f' in opts.label: xsec=30.11
-    ## from https://cms-gen-dev.cern.ch/xsdb/ (LO from xsdb * 1.21)
-    elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1563.32
-    elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1687.95
-    elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=493.559
-    elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=69.5508
-    elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=15.5727
-    elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=6.49286
-    elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.29954
-    elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.00968121
+    ## from https://cms-gen-dev.cern.ch/xsdb/ (UL LO from xsdb * 1.21)
+    elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1529.44
+    elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1519.76
+    elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=405.95
+    elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=54.75
+    elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=13.27
+    elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=5.96
+    elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.40
+    elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.00968121 ## not updated yet in the https://cms-gen-dev.cern.ch/xsdb
+    ### from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'WJetsToLNu_Pt-100To250_MatchEWPDG20'  in opts.label: xsec = 763.7
+    elif 'WJetsToLNu_Pt-250To400_MatchEWPDG20'  in opts.label: xsec = 27.55
+    elif 'WJetsToLNu_Pt-400To600_MatchEWPDG20'  in opts.label: xsec = 3.477
+    elif 'WJetsToLNu_Pt-600ToInf_MatchEWPDG20'  in opts.label: xsec = 0.5415
     ## from https://cms-gen-dev.cern.ch/xsdb/
     elif 'WJetsToLNu_0J'    in opts.label: xsec=53330.0
     elif 'WJetsToLNu_1J'    in opts.label: xsec=8875.0
