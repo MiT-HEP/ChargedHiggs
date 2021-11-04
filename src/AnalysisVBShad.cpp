@@ -4312,7 +4312,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //////
 
     //////
-    if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNu_Pt")) and genVp!=NULL) {
+    if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt")) and genVp!=NULL) {
 
         if( not e->ExistSF("ZNNLO_rwg") ){
             LogN(__FUNCTION__,"WARNING","SF: ZNNLO_rwg does not exist",10);
