@@ -14,6 +14,7 @@ class LoadNano : public Loader
 {
     protected:
         std::unique_ptr<nanov8> nano; 
+        int version_{8};
         
     public:
     const string name() const override { return "LoadNano" ;} 
