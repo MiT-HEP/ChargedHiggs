@@ -23,6 +23,7 @@ void LoadNano::SetData(bool x)
 
 void LoadNano::SetNanoV(int v)
 {
+    version_=v;
     if(nano) {
         nano->v9= (v==9)?1:0;
     }
@@ -33,7 +34,7 @@ int LoadNano::InitTree(){
         return 0;
     }
     //tree_->SetBranchAddress("run",&run);
-    nano.reset(new nanov8(tree_,year,isData)); // call nano::Init -> SetBranchAddress
+    nano.reset(new nanov8(tree_,year,isData, (version_==9))); // call nano::Init -> SetBranchAddress
     
     // cache settings for AAA opening    
     unsigned long cachesize = 3145728U ;   //30 MBytes

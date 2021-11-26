@@ -1,8 +1,9 @@
 #include "interface/nanov8.hpp"
-nanov8::nanov8(TTree *tree,int y,bool isData) : fChain(0) 
+nanov8::nanov8(TTree *tree,int y,bool isData,bool isV9) : fChain(0) 
 {
    year=y;
    data=isData;
+   v9 = isV9;
    Init(tree);
 }
 
