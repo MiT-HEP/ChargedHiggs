@@ -3185,6 +3185,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("QCD_HT") !=string::npos) mc =500 ;
     if(label.find("QCD_Inclusive") !=string::npos) mc =501 ;
     if(label.find("QCD_Pt") !=string::npos) mc =502 ;
+    if(label.find("QCD_bEnriched_HT") !=string::npos) mc =503 ;
 
     SetTreeVar("mc",mc);
 
@@ -3449,7 +3450,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     string label = GetLabel(e);
     if (label == "Other") Log(__FUNCTION__,"WARNING","Unable to associate label to file: "+e->GetName() );
 
-    if( label == "QCD_HT" or label == "QCD_Pt" or
+    if( label == "QCD_HT" or label == "QCD_Pt" or label == "QCD_bEnriched_HT" or
         label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_Pt" or
         label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
         label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
@@ -4367,7 +4368,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
    }
 
     //unc on mvv, use 'Smear=@SmearSF("QCDNonclosure_CAT"!"QCD_MVV_CAT_Nonclosure")' to run, where CAT = BB or BBtag
-    //
+    // THIS IS OLD not needed anymore
     if( not e->IsRealData() and (label.find("QCD_HT")!=string::npos)){
         string sfname="";
         if(doHADAnalysis or doHADAntiAnalysis)  sfname="QCD_MVV_BB_Nonclosure";
