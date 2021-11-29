@@ -23,13 +23,19 @@ addConfig=VBShadAnalysis|AddLabel('ZBBZJJnoBjj_EWK_LO_NPle1_aQGC')
 addConfig=VBShadAnalysis|AddLabel('ZJJZJJjj_EWK_LO_NPle1_aQGC')
 addConfig=VBShadAnalysis|AddLabel('ZNuNuZJJnoBjj_EWK_LO_NPle1_aQGC')
 
-### for nanoV8
-addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_LO')
-addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_QCD_LO')
-addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_QCD_LO')
+### for nanoV8 / v9
+addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_EWK_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZNUNUZJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZNUNUZJJjj_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZNUNUZJJjj_EWK_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_EWK_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZJJNOBWPMJJjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZJJNOBWPMJJjj_EWK_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZJJNOBWPMJJjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('ZJJZJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZJJZJJjj_EWK_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('ZJJZJJjj_QCD_LO')
@@ -39,6 +45,11 @@ addConfig=VBShadAnalysis|AddLabel('WPMJJWPMJJjj_EWK_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_QCD_LO')
+
+#v8 only
+#addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_LO')
+#addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_QCD_LO')
+#addConfig=VBShadAnalysis|AddLabel('ZNuNuWPMJJjj_EWK_QCD_LO'
 
 ###
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO_TuneCP5_dipole')
