@@ -395,7 +395,9 @@ int LoadNano::FillEvent(){
        if (not id) continue;
         // probably not DB corrected: TOCHECK
        t -> SetIso2( nano->Tau_chargedIso[i]+nano->Tau_neutralIso[i]);
-       t -> SetIdEle (nano->Tau_idAntiEle[i]); //2018? FIXME
+       t->SetIdEle(nano->Tau_idAntiEleDeadECal[i]);
+       //if (version_ ==9) 
+       //else t -> SetIdEle (nano->Tau_idAntiEle[i]); //2018? FIXME
        t -> SetIdMu (nano->Tau_idAntiMu[i]); // 2018 FIXME
        //decay mode
        event_ -> taus_ . push_back(t);
