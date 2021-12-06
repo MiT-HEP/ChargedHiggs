@@ -298,21 +298,38 @@ else:
     elif 'ZNuNuWPMJJjj_EWK_LO' in opts.label: xsec=1
     elif 'ZNuNuWPMJJjj_QCD_LO' in opts.label: xsec=1
     elif 'ZNuNuWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'ZNUNUWPMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZNUNUWPMJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'ZNUNUWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'ZNUNUZJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZNUNUZJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'ZNUNUZJJjj_EWK_QCD_LO' in opts.label: xsec=1
     elif 'ZBBWPMJJjj_EWK_LO' in opts.label: xsec=1
     elif 'ZBBWPMJJjj_QCD_LO' in opts.label: xsec=1
     elif 'ZBBWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
     elif 'ZJJZJJjj_EWK_LO' in opts.label: xsec=1
     elif 'ZJJZJJjj_EWK_QCD_LO' in opts.label: xsec=1
     elif 'ZJJZJJjj_QCD_LO' in opts.label: xsec=1
+    elif 'ZJJNOBWPMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZJJNOBWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'ZJJNOBWPMJJjj_QCD_LO' in opts.label: xsec=1
     elif 'WPMJJWPMJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPMJJWPMJJjj_QCD_LO' in opts.label: xsec=1
     elif 'WPMJJWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
     elif 'WPJJWMJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJWMJJjj_QCD_LO' in opts.label: xsec=1
     elif 'WPJJWMJJjj_EWK_QCD_LO' in opts.label: xsec=1
-    elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
+    ## for aQGC central + from Andrea weights
+##    elif 'WPJJWMJJjj_EWK_LO' in opts.label: xsec=1
+##    elif 'ZJJZJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJZJJjj_EWK_QCD_LO' in opts.label: xsec=1
+    elif 'WMJJWMJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WMJJZJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPJJWPJJjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZBBZJJnoBjj_EWK_LO' in opts.label: xsec=1
+    elif 'ZNuNuZJJnoBjj_EWK_LO' in opts.label: xsec=1
+##
     elif 'VBF_HiggsZG_Zbb' in opts.label: xsec=1.
     elif 'GluGlu_HiggsZG_Zbb' in opts.label: xsec=1.
     ## SIG ChargedHiggsToBoson
@@ -344,6 +361,24 @@ else:
     elif 'QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia'  in opts.label: xsec = 1092.0
     elif 'QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8' in opts.label: xsec = 99.76
     elif 'QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8'  in opts.label: xsec = 20.35
+    ### QCD from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'QCD_HT100to200_BGenFilter_TuneCP5_13TeV-madgraph-pythia8'     in opts.label: xsec=1275000.0
+    elif 'QCD_HT200to300_BGenFilter_TuneCP5_13TeV-madgraph-pythia8'     in opts.label: xsec=111700.0
+    elif 'QCD_HT300to500_BGenFilter_TuneCP5_13TeV-madgraph-pythia8'     in opts.label: xsec=27960.0
+    elif 'QCD_HT500to700_BGenFilter_TuneCP5_13TeV-madgraph-pythia8'     in opts.label: xsec=3078.0
+    elif 'QCD_HT700to1000_BGenFilter_TuneCP5_13TeV-madgraph-pythia8'    in opts.label: xsec=721.8
+    elif 'QCD_HT1000to1500_BGenFilter_TuneCP5_13TeV-madgraph-pythia8'   in opts.label: xsec=138.2
+    elif 'QCD_HT1500to2000_BGenFilter_TuneCP5_13TeV-madgraph-pythia8'   in opts.label: xsec=13.61
+    elif 'QCD_HT2000toInf_BGenFilter_TuneCP5_13TeV-madgraph-pythia8'    in opts.label: xsec=2.92
+    ### QCD from https://cms-gen-dev.cern.ch/xsdb/  - UL - unless specified
+    elif 'QCD_bEnriched_HT100to200_TuneCP5_13TeV-madgraph-pythia8'    in opts.label: xsec = 1127000.0
+    elif 'QCD_bEnriched_HT200to300_TuneCP5_13TeV-madgraph-pythia8'    in opts.label: xsec = 80220.0
+    elif 'QCD_bEnriched_HT300to500_TuneCP5_13TeV-madgraph-pythia8'    in opts.label: xsec = 16700.0
+    elif 'QCD_bEnriched_HT500to700_TuneCP5_13TeV-madgraph-pythia8'    in opts.label: xsec = 1487.0
+    elif 'QCD_bEnriched_HT700to1000_TuneCP5_13TeV-madgraph-pythia8'   in opts.label: xsec = 298.8
+    elif 'QCD_bEnriched_HT1000to1500_TuneCP5_13TeV-madgraph-pythia8'  in opts.label: xsec = 46.61
+    elif 'QCD_bEnriched_HT1500to2000_TuneCP5_13TeV-madgraph-pythia8'  in opts.label: xsec = 4.017
+    elif 'QCD_bEnriched_HT2000toInf_TuneCP5_13TeV-madgraph-pythia8'   in opts.label: xsec = 0.6967
     ## from https://cms-gen-dev.cern.ch/xsdb/  SUS-RunIIFall17MiniAODv2 campaign (LO from sxdb * 1.23)
     elif 'ZJetsToNuNu_HT-100To200'   in opts.label: xsec = 372.444
     elif 'ZJetsToNuNu_HT-200To400'   in opts.label: xsec = 113.8857
@@ -383,19 +418,29 @@ else:
     elif 'ST_t-channel_top_4f' in opts.label: xsec=136.02
     elif 'ST_tW_antitop_5f' in opts.label: xsec=30.09
     elif 'ST_tW_top_5f' in opts.label: xsec=30.11
-    ## from https://cms-gen-dev.cern.ch/xsdb/ (LO from xsdb * 1.21)
-    elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1563.32
-    elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1687.95
-    elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=493.559
-    elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=69.5508
-    elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=15.5727
-    elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=6.49286
-    elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.29954
-    elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.00968121
+    ## from https://cms-gen-dev.cern.ch/xsdb/ (UL LO from xsdb * 1.21)
+    elif 'WJetsToLNu_HT-70To100'    in opts.label: xsec=1529.44
+    elif 'WJetsToLNu_HT-100To200'   in opts.label: xsec=1519.76
+    elif 'WJetsToLNu_HT-200To400'   in opts.label: xsec=405.95
+    elif 'WJetsToLNu_HT-400To600'   in opts.label: xsec=54.75
+    elif 'WJetsToLNu_HT-600To800'   in opts.label: xsec=13.27
+    elif 'WJetsToLNu_HT-800To1200'  in opts.label: xsec=5.96
+    elif 'WJetsToLNu_HT-1200To2500' in opts.label: xsec=1.40
+    elif 'WJetsToLNu_HT-2500ToInf'  in opts.label: xsec=0.00968121 ## not updated yet in the https://cms-gen-dev.cern.ch/xsdb
+    ### from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'WJetsToLNu_Pt-100To250_MatchEWPDG20'  in opts.label: xsec = 763.7
+    elif 'WJetsToLNu_Pt-250To400_MatchEWPDG20'  in opts.label: xsec = 27.55
+    elif 'WJetsToLNu_Pt-400To600_MatchEWPDG20'  in opts.label: xsec = 3.477
+    elif 'WJetsToLNu_Pt-600ToInf_MatchEWPDG20'  in opts.label: xsec = 0.5415
     ## from https://cms-gen-dev.cern.ch/xsdb/
     elif 'WJetsToLNu_0J'    in opts.label: xsec=53330.0
     elif 'WJetsToLNu_1J'    in opts.label: xsec=8875.0
     elif 'WJetsToLNu_2J'    in opts.label: xsec=3338.0
+    ## from https://cms-gen-dev.cern.ch/xsdb/ (UL LO)
+    elif 'WJetsToQQ_HT-200to400'     in opts.label: xsec=2549.0
+    elif 'WJetsToQQ_HT-400to600'     in opts.label: xsec=276.5
+    elif 'WJetsToQQ_HT-600to800'     in opts.label: xsec=59.25
+    elif 'WJetsToQQ_HT-800toInf'     in opts.label: xsec=28.75
 #    ### WJETS 20508.9 * 3
 #    elif 'WJetsToLNu_HT-0To70'      in opts.label: xsec=57641.658055
 ##    elif 'WJets' in opts.label: xsec=61526.7
