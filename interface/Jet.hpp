@@ -44,6 +44,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float nhf_,chf_;
     float area_;
 
+    float year_;
+
     float bcorr_{1.}, bcorrunc_{1.};
 
     TLorentzVector pp4;
@@ -65,6 +67,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     void SetEENoiseCut(bool x){eenoise_ = x;}
     ///@brief set the pu id cut
     void SetPuIdCut(float x) {puidcut_=x;}
+    ///@brief set the pu id cut
+    void SetPuIdYear(int x) {year_=x;}
     ///@brief set the pt cut 
     void SetPtCut(float x){ptcut_= x;}
     ///@brief set the pt cut 

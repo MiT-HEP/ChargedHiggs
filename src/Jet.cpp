@@ -45,25 +45,54 @@ int Jet::IsBJetInvIso()const{
 
 int Jet::PassPuId() const {
     if( puidcut_ > -100 and puidcut_ < 100 and puId < puidcut_ ) return 0; 
-    if(puidcut_ == 100 ) { // Loose
+    if(puidcut_ == 100 ) { // Loose (updated for UL)
+        // https://github.com/nurfikri89/cmssw/blob/ce39cb860e21d83ee4978fbaa2edd50ab892a575/RecoJets/JetProducers/python/PileupJetIDCutParams_cfi.py
         float aeta= abs(Eta());
         float pt = p4.Pt(); // no syst
-        if ( aeta< 2.5){
-            if (pt >=30 and pt< 50 and puId <-0.89)  return 0;
-            if (pt >=10 and pt< 30 and puId <-0.97)  return 0;
+        if(year_==2017 or year_==2018) {
+            if ( aeta< 2.5){
+                if (pt >=20 and pt< 30 and puId <-0.88)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.63)  return 0;
+                if (pt >=40 and pt< 50 and puId <-0.19)  return 0;
+            }
+            else if (aeta < 2.75){
+                if (pt >=20 and pt< 30 and puId <-0.55)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.18)  return 0;
+                if (pt >=40 and pt< 50 and puId <-0.22)  return 0;
+            }
+            else if (aeta < 3.00){
+                if (pt >=20 and pt< 30 and puId <-0.60)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.43)  return 0;
+                if (pt >=40 and pt< 50 and puId <-0.13)  return 0;
+            }
+            else if (aeta < 5.00){
+                if (pt >=20 and pt< 30 and puId <-0.43)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.24)  return 0;
+                if (pt >=40 and pt< 50 and puId <-0.03)  return 0;
+            }
+        } else {
+            if ( aeta< 2.5){
+                if (pt >=20 and pt< 30 and puId <-0.90)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.71)  return 0;
+                if (pt >=40 and pt< 50 and puId <-0.42)  return 0;
+            }
+            else if (aeta < 2.75){
+                if (pt >=20 and pt< 30 and puId <-0.57)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.36)  return 0;
+                if (pt >=40 and pt< 50 and puId <-0.09)  return 0;
+            }
+            else if (aeta < 3.00){
+                if (pt >=20 and pt< 30 and puId <-0.43)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.29)  return 0;
+                if (pt >=40 and pt< 50 and puId <-0.14)  return 0;
+            }
+            else if (aeta < 5.00){
+                if (pt >=20 and pt< 30 and puId <-0.42)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.23)  return 0;
+                if (pt >=40 and pt< 50 and puId <-0.02)  return 0;
+            }
         }
-        else if (aeta < 2.75){
-            if (pt >=30 and pt< 50 and puId <-0.52)  return 0;
-            if (pt >=10 and pt< 30 and puId <-0.68)  return 0;
-        }
-        else if (aeta < 3.00){
-            if (pt >=30 and pt< 50 and puId <-0.38)  return 0;
-            if (pt >=10 and pt< 30 and puId <-0.53)  return 0;
-        }
-        else if (aeta < 5.00){
-            if (pt >=30 and pt< 50 and puId <-0.30)  return 0;
-            if (pt >=10 and pt< 30 and puId <-0.47)  return 0;
-        }
+
     }
     if(puidcut_ == 200 ) { // Medium
         float aeta= abs(Eta());
@@ -149,8 +178,6 @@ int Jet::IsJetExceptValidity() const {
     if (PassEENoise() ==0 ) return 0;
     return 1;
 }
-
-
 
 // Local Variables:
 // mode:c++
