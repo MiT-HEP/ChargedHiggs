@@ -82,6 +82,7 @@ addConfig=VBShadAnalysis|AddLabel('WWjj_SS_ll')
 addConfig=VBShadAnalysis|AddLabel('WWjj_SS_lt')
 addConfig=VBShadAnalysis|AddLabel('WWjj_SS_tt')
 
+addConfig=VBShadAnalysis|AddLabel('BGenFilter')
 addConfig=VBShadAnalysis|AddLabel('QCD_HT')
 addConfig=VBShadAnalysis|AddLabel('QCD_bEnriched_HT')
 addConfig=VBShadAnalysis|AddLabel('QCD_Inclusive')
