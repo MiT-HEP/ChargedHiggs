@@ -843,8 +843,6 @@ double Event::ApplyPuIdSF(int year)
         //SetPtEtaSF(name,pt,aeta);
         SetPtEtaSF(name,aeta,pt);//switched in th2?
 
-        j->SetPuIdYear(year);
-
         if (j->PassPuId()){
             //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("* Multiplying SF (passPUId) by %f",GetWeight()->GetSF(name)->get()) );
             eventsf*=GetWeight()->GetSF(name)->get();

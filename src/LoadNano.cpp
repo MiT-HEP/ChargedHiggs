@@ -296,6 +296,7 @@ int LoadNano::FillEvent(){
 	j->SetHFsigmaPhiPhi(nano->Jet_hfsigmaPhiPhi[i]);
 
         //j->SetPuId(nano->Jet_puId[i]); //80X flags
+	j->SetPuIdYear(year);
         j->SetPuId(nano->Jet_puIdDisc[i]);//91x discr
         j->SetBCorrection(nano->Jet_bRegCorr[i], nano->Jet_bRegRes[i]); 
         j->SetHadFlavor(nano->Jet_hadronFlavour[i]); 
