@@ -275,7 +275,7 @@ int LoadNano::FillEvent(){
         j->SetCEMF(nano->Jet_chEmEF[i] );
         j->SetNHF(nano->Jet_neHEF[i] );
         j->SetCHF(nano->Jet_chHEF[i] );
-	    j->SetArea(nano->Jet_area[i]);
+	j->SetArea(nano->Jet_area[i]);
 #warning MISSING NANO JES JER
         // TODO-- JES
         //j->SetValueUp  (Smearer::JES , (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
@@ -284,6 +284,7 @@ int LoadNano::FillEvent(){
         //
         //TODO -- JER
         j->bdiscr = nano->Jet_btagCSVV2[i];
+        j->SetDeepFlavB ( nano->Jet_btagDeepFlavB[i] );
         j->SetDeepB ( nano->Jet_btagDeepB[i] );
         j->SetDeepC ( nano->Jet_btagDeepC[i] );
 	// temporary, there are many nan in v8

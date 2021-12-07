@@ -28,6 +28,7 @@ int Jet::IsBJet() const {
     if ( fabs(Eta()) > betacut_ ) return 0;
     if (bcut_ >-99. and bdiscr <= bcut_ ) return 0;
     if (deepbcut_ > -99. and GetDeepB() <= deepbcut_ ) return 0;
+    if (deepflavbcut_ > -99. and GetDeepFlavB() <= deepflavbcut_ ) return 0;
     if (not IsJet() ) return 0;
     return 1;
 
@@ -38,6 +39,7 @@ int Jet::IsBJetInvIso()const{
     if ( fabs(Eta()) > betacut_ ) return 0;
     if (bcut_ >-99. and bdiscr <= bcut_ ) return 0;
     if (deepbcut_ > -99. and deepB <= deepbcut_ ) return 0;
+    if (deepflavbcut_ > -99. and deepFlavB <= deepflavbcut_ ) return 0;
     if (not IsJetInvIso() ) return 0;
     return 1;
 

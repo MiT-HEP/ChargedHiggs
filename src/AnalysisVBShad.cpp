@@ -9,9 +9,14 @@
 //2017  https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17#Supported_Algorithms_and_Operati
 //2016pre  https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16preVFP
 //2016post https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16postVFP
+//#DEEP-CSV
 #define DEEP_B_LOOSE ((year==12016)?0.2027:(year==2016)?0.1918:(year==2017)?0.1355:0.1208)
 #define DEEP_B_MEDIUM ((year==12016)?0.6001:(year==2016)?0.5847:(year==2017)?0.4506:0.4148)
 #define DEEP_B_TIGHT ((year==12016)?0.8819:(year==2016)?0.8767:(year==2017)?0.7738:.7665)
+//#DeepJet
+#define DEEP_Jet_LOOSE ((year==12016)?0.0508:(year==2016)?0.0480:(year==2017)?0.0532:0.0490)
+#define DEEP_Jet_MEDIUM ((year==12016)?0.2598:(year==2016)?0.2489:(year==2017)?0.3040:0.2783)
+#define DEEP_Jet_TIGHT ((year==12016)?0.6502:(year==2016)?0.6377:(year==2017)?0.7476:0.7100)
 
 // CvsL
 #define DEEP_C_LOOSE ((year==2016 or year==12016)?1.:(year==2017)?0.04:0.064)
@@ -54,7 +59,8 @@ void VBShadAnalysis::SetJetCuts(Jet *j) {
     j->SetBCut(-100); //L=0.5426 , M=  0.8484, T0.9535
     //    j->SetDeepBCut(DEEP_B_LOOSE);
     // might want to switch to the loose for the noBnoMET
-    j->SetDeepBCut(DEEP_B_MEDIUM);
+    //    j->SetDeepBCut(DEEP_B_MEDIUM);
+    j->SetDeepFlavBCut(DEEP_Jet_MEDIUM);
     //    j->SetBCut(0.8484); //L=0.5426 , M=  0.8484, T0.9535
     //    j->SetBCut(0.5426); //L=0.5426 , M=  0.8484, T0.9535
     j->SetEtaCut(4.7); 
@@ -2679,7 +2685,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         Jet *j=e->GetJet(i);
 
         // COUNT additional b-veto (20 GeV-Medium)
-        if (j->GetDeepB() > DEEP_B_MEDIUM) {
+        //        if (j->GetDeepB() > DEEP_B_MEDIUM) {
+        if (j->GetDeepFlavB() > DEEP_Jet_MEDIUM) {
             if(selectedFatZbb.size()>0) {
                 if( j->DeltaR(selectedFatZbb[0]) < 1.2 ) continue;
             }
@@ -2696,7 +2703,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
     {
         Jet *j=e->GetJet(i);
         // COUNT additional jets candidate for forward or resolved
-        if (j->GetDeepB() > DEEP_B_MEDIUM) continue;
+        //        if (j->GetDeepB() > DEEP_B_MEDIUM) continue;
+        if ( j->GetDeepFlavB() > DEEP_Jet_MEDIUM) continue;
         if ( j->Pt()<30 ) continue;
 
         Fill("VBShadAnalysis/Baseline/pT_Jet_" +label, systname, j->Pt(), e->weight() );
@@ -2857,7 +2865,7 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     SetTreeVar("j1_M",   selectedJets[fi]->M());
     SetTreeVar("j1_Unc",   sqrt((selectedJets[fi]->GetJESUnc())*(selectedJets[fi]->GetJESUnc()) + Getjetres(selectedJets[fi]) * Getjetres(selectedJets[fi])));
     SetTreeVar("j1_QGL",  selectedJets[fi]->QGL());
-    SetTreeVar("j1_DeepB", selectedJets[fi]->GetDeepB());
+    SetTreeVar("j1_DeepB", selectedJets[fi]->GetDeepB()); // note: check the deepJet (also there is a cut on the mediumB already)
     SetTreeVar("j1_DeepC", selectedJets[fi]->GetDeepC());
     SetTreeVar("j1_PUDiscr", selectedJets[fi]->GetPuId());
     SetTreeVar("j1_Area", selectedJets[fi]->GetArea());
