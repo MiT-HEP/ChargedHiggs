@@ -726,11 +726,13 @@ double Event::ApplyL1PreFire(int year){
 //#define VERBOSE 2
 double Event::ApplyBTagSF(int wp,int year)
 {
+    // FIXME - this is still CSV
     double sf=1.;
     string name="bdeep";
     if (year==2017) name="bdeep2017";
     else if (year==2018) name="bdeep2018";
     else if (year==2016) name ="bdeep2016";
+    else if (year==12016) name ="bdeep2016pre";
     SetWPSF(name,wp); // loose, for sf
 
 
@@ -840,6 +842,8 @@ double Event::ApplyPuIdSF(int year)
        
         //SetPtEtaSF(name,pt,aeta);
         SetPtEtaSF(name,aeta,pt);//switched in th2?
+
+        j->SetPuIdYear(year);
 
         if (j->PassPuId()){
             //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("* Multiplying SF (passPUId) by %f",GetWeight()->GetSF(name)->get()) );
