@@ -2587,7 +2587,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(isZbbJet) {
             selectedFatZbb.push_back(f);
             bosonBBDiscr.push_back(f->ZHbbvsQCD());
-            bosonBBMass.push_back(f->rawMass(true));
+            bosonBBMass.push_back(f->rawMass(f->MASSTYPE,true));
             bosonBBTDiscr.push_back(f->TvsQCD());
             Fill("VBShadAnalysis/Baseline/pT_FatZbbJet_" +label, systname, f->Pt(), e->weight() );
         }
@@ -2648,7 +2648,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             // fixme: this need to be filled depending on the W vs Z. Think: what if pass both W and Z?
             bosonVDiscr.push_back(f->WvsQCD());
             bosonTDiscr.push_back(f->TvsQCD());
-            bosonMass.push_back(f->rawMass());
+            bosonMass.push_back(f->rawMass(f->MASSTYPE));
             Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
             Fill("VBShadAnalysis/Baseline/eta_FatJet_" +label, systname, f->Eta(), e->weight() );
             Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
@@ -3874,8 +3874,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             evt_bosV2mass = bosonMass[1];
             evt_bosV2bdiscr = bosonBDiscr[1];
 
-            jet1P4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass());
-            jet2P4.SetPtEtaPhiM(selectedFatJets[1]->Pt(),selectedFatJets[1]->Eta(),selectedFatJets[1]->Phi(),selectedFatJets[1]->rawMass());
+            jet1P4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass(selectedFatJets[0]->MASSTYPE));
+            jet2P4.SetPtEtaPhiM(selectedFatJets[1]->Pt(),selectedFatJets[1]->Eta(),selectedFatJets[1]->Phi(),selectedFatJets[1]->rawMass(selectedFatJets[1]->MASSTYPE));
             p4V1 = jet1P4;
             p4V2 = jet2P4;
             p4VV = jet1P4 + jet2P4;
@@ -3960,9 +3960,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             TLorentzVector jet2P4;
             Fill("VBShadAnalysis/Baseline/pT_BJet_"+label, systname, selectedFatZbb[0]->GetP4().Pt(), e->weight() );
 
-            jet1P4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass(true));
-            if(selectedFatZbb.size()>1) jet2P4.SetPtEtaPhiM(selectedFatZbb[1]->Pt(),selectedFatZbb[1]->Eta(),selectedFatZbb[1]->Phi(),selectedFatZbb[1]->rawMass(true));
-            else jet2P4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass());
+            jet1P4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass(selectedFatZbb[0]->MASSTYPE,true));
+            if(selectedFatZbb.size()>1) jet2P4.SetPtEtaPhiM(selectedFatZbb[1]->Pt(),selectedFatZbb[1]->Eta(),selectedFatZbb[1]->Phi(),selectedFatZbb[1]->rawMass(selectedFatZbb[1]->MASSTYPE,true));
+            else jet2P4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass(selectedFatJets[0]->MASSTYPE));
         
             p4VV = jet1P4 + jet2P4;
             p4V1 = jet1P4;
@@ -4102,7 +4102,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 category="_RBtag";
     
                 TLorentzVector jetP4;
-                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass(true));
+                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass(selectedFatZbb[0]->MASSTYPE,true));
 
                 p4VV = jetP4 + bosonJets[0]->GetP4() + bosonJets[1]->GetP4();
                 p4V1 = jetP4;
@@ -4166,12 +4166,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             TLorentzVector metP4;
             //            cout << "is the selectedFatJets->SDMass() ok ?? "<< endl;
             if(selectedFatZbb.size()>0){
-                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass(true));
+                jetP4.SetPtEtaPhiM(selectedFatZbb[0]->Pt(),selectedFatZbb[0]->Eta(),selectedFatZbb[0]->Phi(),selectedFatZbb[0]->rawMass(selectedFatZbb[0]->MASSTYPE,true));
                 evt_bosV2discr = bosonBBDiscr[0];
                 evt_bosV2tdiscr = bosonBBTDiscr[0];
                 evt_bosV2mass = bosonBBMass[0];
             }else{
-                jetP4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass());
+                jetP4.SetPtEtaPhiM(selectedFatJets[0]->Pt(),selectedFatJets[0]->Eta(),selectedFatJets[0]->Phi(),selectedFatJets[0]->rawMass(selectedFatJets[0]->MASSTYPE));
                 evt_bosV2discr = bosonVDiscr[0];
                 evt_bosV2tdiscr = bosonTDiscr[0];
                 evt_bosV2bdiscr = bosonBDiscr[0];

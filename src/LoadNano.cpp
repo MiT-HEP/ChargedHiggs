@@ -337,13 +337,24 @@ int LoadNano::FillEvent(){
 
        // sf mass
        j->softdropMass = nano->FatJet_msoftdrop[i];
+
+       // particleNet Mass
+       j->particleNetMass = nano->FatJet_particleNet_mass[i];
+
        //
-       j->TvsQCDMD =nano->FatJet_deepTagMD_TvsQCD[i];
-       j->WvsQCDMD =nano->FatJet_deepTagMD_WvsQCD[i];
-       j->ZHbbvsQCDMD =nano->FatJet_deepTagMD_ZHbbvsQCD[i];
-       j->ZHccvsQCDMD =nano->FatJet_deepTagMD_ZHccvsQCD[i];
-       j->ZbbvsQCDMD =nano->FatJet_deepTagMD_ZbbvsQCD[i];
-       j->ZvsQCDMD =nano->FatJet_deepTagMD_ZvsQCD[i];
+       j->TvsQCDMD = nano->FatJet_deepTagMD_TvsQCD[i];
+       j->WvsQCDMD = nano->FatJet_deepTagMD_WvsQCD[i];
+       j->ZHbbvsQCDMD = nano->FatJet_deepTagMD_ZHbbvsQCD[i];
+       j->ZHccvsQCDMD = nano->FatJet_deepTagMD_ZHccvsQCD[i];
+       j->ZbbvsQCDMD = nano->FatJet_deepTagMD_ZbbvsQCD[i];
+       j->ZvsQCDMD = nano->FatJet_deepTagMD_ZvsQCD[i];
+
+       j->TvsQCDpNet = nano->FatJet_particleNet_TvsQCD[i];
+       j->WvsQCDpNet = nano->FatJet_particleNet_WvsQCD[i];
+       j->ZvsQCDpNet = nano->FatJet_particleNet_ZvsQCD[i];
+       j->HbbvsQCDpNet = nano->FatJet_particleNet_HbbvsQCD[i];
+       j->HccvsQCDpNet = nano->FatJet_particleNet_HccvsQCD[i];
+       j->ZbbccvsQCDpNet = (nano->FatJet_particleNetMD_Xbb[i] + nano->FatJet_particleNetMD_Xcc[i])/(nano->FatJet_particleNetMD_Xbb[i] + nano->FatJet_particleNetMD_Xcc[i] + nano->FatJet_particleNetMD_Xqq[i] + nano->FatJet_particleNetMD_QCD[i]);
 
        j->nSubjets=0;
        // Subjets
