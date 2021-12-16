@@ -1246,6 +1246,8 @@ void VBShadAnalysis::Init(){
         if(doStudyMass){
 
         // mass studies
+        Book ("VBShadAnalysis/Baseline/PNetMass_FatJet_"+l, "PNetMass_FatJet; PNetMass [GeV]; Events", 100,0,200.);
+        Book ("VBShadAnalysis/Baseline/PNetMass_FatZbbJet_"+l, "PNetMass_FatZbbJet; PNetMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_"+l, "SDMass_FatJet; SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatZbbJet_"+l, "SDMass_FatZbbJet; SDMass [GeV]; Events", 100,0,200.);
         Book ("VBShadAnalysis/Baseline/SDMass_FatJet_lowDiff_"+l, "SDMass_FatJet (low diff); SDMass [GeV]; Events", 100,0,200.);
@@ -2480,6 +2482,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if(minDR1<0.8 or minDR2<0.8) {
             // for both W and Zbb not necessarity is matched with one jet
+            Fill("VBShadAnalysis/Baseline/PNetMass_FatJet_" +label, systname, f->PNetMass(), e->weight() );
             Fill("VBShadAnalysis/Baseline/SDMass_FatJet_" +label, systname, f->SDMass(), e->weight() );
             Fill("VBShadAnalysis/Baseline/Tau21_FatJet_" +label, systname, f->Tau2()/f->Tau1(), e->weight() );
             Fill("VBShadAnalysis/Baseline/WvsQCD_FatJet_" +label, systname, f->WvsQCD(), e->weight() );
@@ -2554,6 +2557,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         if((minDR1<0.8 and V1isZbb) || (minDR2<0.8 and V2isZbb)) {
             Fill("VBShadAnalysis/Baseline/SDMass_FatZbbJet_" +label, systname, f->SDMass(), e->weight() );
+            Fill("VBShadAnalysis/Baseline/PNetMass_FatZbbJet_" +label, systname, f->PNetMass(), e->weight() );
             Fill("VBShadAnalysis/Baseline/ZHbbvsQCD_FatJet_" +label, systname, f->ZHbbvsQCD(), e->weight() );
             Fill("VBShadAnalysis/Baseline/ZHccvsQCD_FatJet_" +label, systname, f->ZHccvsQCD(), e->weight() );
         } else {

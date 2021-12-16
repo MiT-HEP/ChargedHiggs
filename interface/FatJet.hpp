@@ -44,7 +44,7 @@ class FatJet : virtual public Object, virtual public SmearableComplex
 
     public:
 
-    int  MASSTYPE = 2;
+    int  MASSTYPE = 1;
 
     //  ---- smearable complex add thingea
 
@@ -195,25 +195,60 @@ class FatJet : virtual public Object, virtual public SmearableComplex
         }
 
         if(type==1) {
+
             massRaw = PNetMass();
+            float PtV = (Pt()>1000.)?1000.:((Pt()<300.)?300.:Pt());
+            double corrZbbBar = 0.000571 * PtV - 5.734;
+            double corrZbbEnd = 0.000840 * PtV - 6.005;
+            double corrVjjBar = 0.004656 * PtV - 7.011;
+            double corrVjjEnd = 0.006859 * PtV - 8.725;
+
+            if(isZbb){
+                if (fabs(Eta()) < 1.3 ) massRaw = massRaw + corrZbbBar;
+                else  massRaw = massRaw + corrZbbEnd;
+            }else{
+                if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrVjjBar < -3.5)? corrVjjBar:-3.5);
+                else massRaw = massRaw + ((corrVjjEnd < -4)? corrVjjEnd : -4);
+            }
         }
 
         if(type==2) {
             massRaw = (subjet_lead_p4 + subjet_sublead_p4).M();
 
-            float PtZbb = (Pt()>1275.)?1275.:Pt();  //Pt()>1275 all have same corrections as Pt()=1275, safer and smoother
-            float PtVjj = (Pt()>1000.)?1000.:Pt();  //Pt()>1000 all have same corrections as Pt()=1000
-            double corrZbbBar = 259.2*exp(-0.0147*PtZbb)+2.85*log(PtZbb)-9.58;
-            double corrZbbEnd = 124.7*exp(-0.0092*PtZbb)+4.55*log(PtZbb)-17.67;
-            double corrVjjBar = -182.7*exp(-0.0015*PtVjj)-61.14*log(PtVjj)+469.9;
-            double corrVjjEnd = 2370.*exp(-0.0192*PtVjj)+4.51*log(PtVjj)-22.32;
+            bool doNanoV9 = true;
+            if(doNanoV9) {
 
-            if(isZbb){
-                if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrZbbBar<12)?corrZbbBar:12);
-                else  massRaw = massRaw + ((corrZbbEnd <19)? corrZbbEnd:19);
-            }else{
-                if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrVjjBar <7)? corrVjjBar:7);
-                else massRaw = massRaw + ((corrVjjEnd <10)? corrVjjEnd:10);
+                float PtV = (Pt()>1000.)?1000.:((Pt()<315.)?315.:Pt());
+                float PtV1 = (Pt()>1000.)?1000.:((Pt()<400.)?400.:Pt());
+                double corrZbbBar = 5248*exp(-0.02208*PtV)+5.172*log(PtV)-27.9;
+                double corrZbbEnd = 180.2*exp(-0.00985*PtV)+6.03*log(PtV)-33.7;
+                double corrVjjBar = 247.2*exp(-0.01194*PtV1)+7.084*log(PtV1)-43.78;
+                double corrVjjEnd = 42790.*exp(-0.03029*PtV)+5.331*log(PtV)-31.69;
+
+                if(isZbb){
+                    if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrZbbBar<8)?corrZbbBar:8);
+                    else massRaw = massRaw + ((corrZbbEnd <8.5)? corrZbbEnd:8.5);
+                }else{
+                    if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrVjjBar <4)? corrVjjBar:4);
+                    else massRaw = massRaw + ((corrVjjEnd <5)? corrVjjEnd:5);
+                }
+
+            } else {
+
+                float PtZbb = (Pt()>1275.)?1275.:Pt();  //Pt()>1275 all have same corrections as Pt()=1275, safer and smoother
+                float PtVjj = (Pt()>1000.)?1000.:Pt();  //Pt()>1000 all have same corrections as Pt()=1000
+                double corrZbbBar = 259.2*exp(-0.0147*PtZbb)+2.85*log(PtZbb)-9.58;
+                double corrZbbEnd = 124.7*exp(-0.0092*PtZbb)+4.55*log(PtZbb)-17.67;
+                double corrVjjBar = -182.7*exp(-0.0015*PtVjj)-61.14*log(PtVjj)+469.9;
+                double corrVjjEnd = 2370.*exp(-0.0192*PtVjj)+4.51*log(PtVjj)-22.32;
+
+                if(isZbb){
+                    if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrZbbBar<12)?corrZbbBar:12);
+                    else  massRaw = massRaw + ((corrZbbEnd <19)? corrZbbEnd:19);
+                }else{
+                    if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrVjjBar <7)? corrVjjBar:7);
+                    else massRaw = massRaw + ((corrVjjEnd <10)? corrVjjEnd:10);
+                }
             }
         }
 
