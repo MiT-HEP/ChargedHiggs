@@ -36,9 +36,14 @@
 #define DEEP_AK8_ZHbb_MD_1 0.97
 
 // from Loukas
-#define ParticleNet_AK8_ZHbb_MD_loose 0.90
-#define ParticleNet_AK8_ZHbb_MD_medium 0.94
-#define ParticleNet_AK8_ZHbb_MD_tight 0.985
+//#define ParticleNet_AK8_ZHbb_MD_loose 0.90
+//#define ParticleNet_AK8_ZHbb_MD_medium 0.94
+//#define ParticleNet_AK8_ZHbb_MD_tight 0.985
+
+// from Miao
+#define ParticleNet_loose 0.90
+#define ParticleNet_MEDIUM 0.94
+#define ParticleNet_tight 0.98
 
 void VBShadAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
@@ -2575,8 +2580,10 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         bool isZbbJet=false;
         bool isZbbJetWide=false;
         //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
-        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJet=true;
-        if(f->IsZbbJetWide(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJetWide=true; 
+        if(!useParticleNet and f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJet=true;
+        if(!useParticleNet and f->IsZbbJetWide(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJetWide=true;
+        if(useParticleNet and f->IsZbbJet(ParticleNet_MEDIUM, ParticleNet_MEDIUM)) isZbbJet=true;
+        if(useParticleNet and f->IsZbbJetWide(ParticleNet_MEDIUM, ParticleNet_MEDIUM)) isZbbJetWide=true;
 
         /****************** Logic ***************************
         if do HAD/HADanti/HADside:      selectedFatZbb  stores Zbbwide, for vetoing
@@ -2600,28 +2607,53 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         bool isWJetWide=false;
         bool isWJetOut=false;
         bool isWJetMirror=false;
-        if(!doHADAntiAnalysis and !doMETAntiAnalysis and !doBAntiAnalysis) {
-            if (f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJet(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJet=true;
-            if (f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetWide(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJetWide = true;
 
-            // isWJetOut and isWJetMirror only for resolved ( veto bosted ABC when doing resolved)
-            if (f->IsWJetOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetOut(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25))) isWJetOut = true;
-            //isWJetMirror unused when doing the SR
-            if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJetMirror=true;
-        }
+        if(useParticleNet) {
 
+            if(!doHADAntiAnalysis and !doMETAntiAnalysis and !doBAntiAnalysis) {
+                if (f->IsWJet( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM) or (!doResonant and f->IsZJet(ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM)) ) isWJet=true;
+                if (f->IsWJetWide( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetWide(ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM)) ) isWJetWide = true;
 
-        if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
-            if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJet=true;
-            if (f->IsWJetMirrorWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetMirrorWide(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25)) ) isWJetWide = true;
+                // isWJetOut and isWJetMirror only for resolved ( veto bosted ABC when doing resolved)
+                if (f->IsWJetOut( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetOut(ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM))) isWJetOut = true;
+                //isWJetMirror unused when doing the SR
+                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.2 , ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ))) isWJetMirror=true;
+            }
 
-            // regions B+D is excusive with A+C
-            // Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
-            if ( f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) ) isWJetMirror=true;
+            if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
+                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ))) isWJet=true;
+                if (f->IsWJetMirrorWide( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetMirrorWide(ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM)) ) isWJetWide = true;
 
-            // IsWJetMirrorOut only for resolved
-            if ( f->IsWJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJetOut=true;
+                // regions B+D is excusive with A+C
+                // Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
+                if ( f->IsWJetWide( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetWide( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM )) ) isWJetMirror=true;
 
+                // IsWJetMirrorOut only for resolved
+                if ( f->IsWJetMirrorOut( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirrorOut( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ))) isWJetOut=true;
+            }
+        } else {
+
+            if(!doHADAntiAnalysis and !doMETAntiAnalysis and !doBAntiAnalysis) {
+                if (f->IsWJet( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJet(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJet=true;
+                if (f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetWide(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25)) ) isWJetWide = true;
+
+                // isWJetOut and isWJetMirror only for resolved ( veto bosted ABC when doing resolved)
+                if (f->IsWJetOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetOut(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25))) isWJetOut = true;
+                //isWJetMirror unused when doing the SR
+                if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJetMirror=true;
+            }
+
+            if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
+                if (f->IsWJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirror( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJet=true;
+                if (f->IsWJetMirrorWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25) or (!doResonant and f->IsZJetMirrorWide(DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25)) ) isWJetWide = true;
+
+                // regions B+D is excusive with A+C
+                // Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
+                if ( f->IsWJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetWide( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_1, DEEP_AK8_W_MD_25 )) ) isWJetMirror=true;
+
+                // IsWJetMirrorOut only for resolved
+                if ( f->IsWJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ) or (!doResonant and f->IsZJetMirrorOut( DEEP_AK8_W_MD_05, DEEP_AK8_W_MD_50, DEEP_AK8_W_MD_25 ))) isWJetOut=true;
+            }
         }
 
         //////comments for above////////////////////////////////////        ////////////////////////////////////////////////////
@@ -2632,7 +2664,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         //// i.e. wide cuts at 155 for sideband, out goes to inf////        //// while for Anti, no need to go to inf //////////
         //// out used solely for resolved regions to veto all fats//        //// so both cut at 155                   //////////
         ////////////////////////////////////////////////////////////        ////////////////////////////////////////////////////
-
 
         if(doMETAntiAnalysis)  doMETAnalysis=true;
         if(doBAntiAnalysis) doBAnalysis=true;
