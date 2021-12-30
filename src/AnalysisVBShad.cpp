@@ -133,6 +133,19 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
        l.find("WPJJWMJJjj_EWK") !=string::npos  ||
        l.find("WPJJWMJJjj_QCD") !=string::npos  ||
        l.find("WPJJWMJJjj_EWK_QCD") !=string::npos  ||
+       //
+       l.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ||
+       l.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ||
+       l.find("WPLEPWPHADjj_EWK_LO") !=string::npos  ||
+       l.find("WMLEPWMHADjj_EWK_LO") !=string::npos  ||
+       l.find("WPLEPZHADjj_EWK_LO") !=string::npos  ||
+       l.find("WMLEPZHADjj_EWK_LO") !=string::npos  ||
+       l.find("WPHADWMLEPjj_QCD_LO") !=string::npos  ||
+       l.find("WPLEPWMHADjj_QCD_LO") !=string::npos  ||
+       l.find("WPLEPWPHADjj_QCD_LO") !=string::npos  ||
+       l.find("WMLEPWMHADjj_QCD_LO") !=string::npos  ||
+       l.find("WPLEPZHADjj_QCD_LO") !=string::npos  ||
+       l.find("WMLEPZHADjj_QCD_LO") !=string::npos  ||
        // OLD labels
        l.find("ZnnZhadJJ_EWK") !=string::npos  ||
        l.find("ZbbZhadJJ_EWK")!=string::npos  ||
@@ -2097,6 +2110,16 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WPJJWMJJjj_EWK_LO") !=string::npos ||
                label.find("WPJJWMJJjj_QCD_LO") !=string::npos ||
                label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ||
+               //
+               label.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ||
+               label.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ||
+               label.find("WPLEPWPHADjj_EWK_LO") !=string::npos  ||
+               label.find("WMLEPWMHADjj_EWK_LO") !=string::npos  ||
+               label.find("WPHADWMLEPjj_QCD_LO") !=string::npos  ||
+               label.find("WPLEPWMHADjj_QCD_LO") !=string::npos  ||
+               label.find("WPLEPWPHADjj_QCD_LO") !=string::npos  ||
+               label.find("WMLEPWMHADjj_QCD_LO") !=string::npos  ||
+               //
                label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ||
                label.find("DoublyChargedHiggsGMmodel_HWW_M2000") !=string::npos ||
@@ -2124,6 +2147,12 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1000") !=string::npos ||
                label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M1500") !=string::npos ||
                label.find("SinglyChargedHiggsGMmodel_HWZ_Znn_M2000") !=string::npos ||
+               //
+               label.find("WPLEPZHADjj_EWK_LO") !=string::npos  ||
+               label.find("WMLEPZHADjj_EWK_LO") !=string::npos  ||
+               label.find("WPLEPZHADjj_QCD_LO") !=string::npos  ||
+               label.find("WMLEPZHADjj_QCD_LO") !=string::npos  ||
+               //
                label.find("ZNUNUWPMJJjj_EWK") !=string::npos  ||
                label.find("ZNUNUWPMJJjj_QCD") !=string::npos  ||
                label.find("ZNUNUWPMJJjj_EWK_QCD") !=string::npos  ||
@@ -3144,6 +3173,20 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("ZJJNOBWPMJJjj_EWK_LO") !=string::npos ) sigmc = 22 ;
     if(label.find("ZJJNOBWPMJJjj_QCD_LO") !=string::npos ) sigmc = 23 ;
     if(label.find("ZJJNOBWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 24 ;
+
+    if(label.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ) sigmc = 25 ;
+    if(label.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ) sigmc = 26 ;
+    if(label.find("WPLEPWPHADjj_EWK_LO") !=string::npos  ) sigmc = 27 ;
+    if(label.find("WMLEPWMHADjj_EWK_LO") !=string::npos  ) sigmc = 28 ;
+    if(label.find("WPLEPZHADjj_EWK_LO") !=string::npos  ) sigmc = 29 ;
+    if(label.find("WMLEPZHADjj_EWK_LO") !=string::npos  ) sigmc = 30 ;
+    if(label.find("WPHADWMLEPjj_QCD_LO") !=string::npos  ) sigmc = 31 ;
+    if(label.find("WPLEPWMHADjj_QCD_LO") !=string::npos  ) sigmc = 32 ;
+    if(label.find("WPLEPWPHADjj_QCD_LO") !=string::npos  ) sigmc = 33 ;
+    if(label.find("WMLEPWMHADjj_QCD_LO") !=string::npos  ) sigmc = 34 ;
+    if(label.find("WPLEPZHADjj_QCD_LO") !=string::npos  ) sigmc = 35 ;
+    if(label.find("WMLEPZHADjj_QCD_LO") !=string::npos  ) sigmc = 36 ;
+
     SetTreeVar("MC",sigmc);
 
 }
@@ -3223,6 +3266,19 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ZJJNOBWPMJJjj_EWK_LO") !=string::npos  ) mc = 22 ;
     if(label.find("ZJJNOBWPMJJjj_QCD_LO") !=string::npos  ) mc = 23 ;
     if(label.find("ZJJNOBWPMJJjj_EWK_QCD_LO") !=string::npos  ) mc = 24 ;
+    // semilep
+    if(label.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ) mc = 25 ;
+    if(label.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ) mc = 26 ;
+    if(label.find("WPLEPWPHADjj_EWK_LO") !=string::npos  ) mc = 27 ;
+    if(label.find("WMLEPWMHADjj_EWK_LO") !=string::npos  ) mc = 28 ;
+    if(label.find("WPLEPZHADjj_EWK_LO") !=string::npos  ) mc = 29 ;
+    if(label.find("WMLEPZHADjj_EWK_LO") !=string::npos  ) mc = 30 ;
+    if(label.find("WPHADWMLEPjj_QCD_LO") !=string::npos  ) mc = 31 ;
+    if(label.find("WPLEPWMHADjj_QCD_LO") !=string::npos  ) mc = 32 ;
+    if(label.find("WPLEPWPHADjj_QCD_LO") !=string::npos  ) mc = 33 ;
+    if(label.find("WMLEPWMHADjj_QCD_LO") !=string::npos  ) mc = 34 ;
+    if(label.find("WPLEPZHADjj_QCD_LO") !=string::npos  ) mc = 35 ;
+    if(label.find("WMLEPZHADjj_QCD_LO") !=string::npos  ) mc = 36 ;
     //
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1000") !=string::npos ) mc = 51 ;
     if(label.find("DoublyChargedHiggsGMmodel_HWW_M1500") !=string::npos ) mc = 52 ;
