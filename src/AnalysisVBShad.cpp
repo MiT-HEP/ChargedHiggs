@@ -2632,6 +2632,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/pT_FatZbbJet_" +label, systname, f->Pt(), e->weight() );
         }
 
+        if(isZbbJet) selectedFatZbbIn.push_back(f);
+        if(isZbbJetWide) selectedFatZbbWide.push_back(f);
+
         bool isWJet=false;
         bool isWJetWide=false;
         bool isWJetOut=false;
@@ -2724,8 +2727,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         Select priority: discrimator goes before mass, i.e.
         Zbb (full) -> Vjj (full)
         **************************************************/
-        if(isZbbJet) selectedFatZbbIn.push_back(f);
-        if(isZbbJetWide) selectedFatZbbWide.push_back(f);
         //        if(isWJet and not isZbbJet) selectedFatJetsIn.push_back(f);
         //        if(isWJet and not isZbbJetWide) selectedFatJetsIn.push_back(f);
         //        if(isWJetWide and not isZbbJet) selectedFatJetsWide.push_back(f);
@@ -4091,7 +4092,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         // target the ZbbZqq + ZbbWqq resolved
-        if(selectedFatZbb.size()==1 and selectedFatZbbWide.size()==1 and selectedFatJets.size()==0 and selectedFatJetsOut.size() == 0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
+        if(selectedFatZbb.size()==1 and /*selectedFatZbbWide.size()>0 and*/ selectedFatJets.size()==0 and selectedFatJetsOut.size() == 0 and selectedMirrorFatJets.size()==0 and selectedJets.size()>3) {
         // Notice the selection here: the 2nd wide boosted object (can be Zbb_wide or Vjj_wide) is vetoed.    
 
             category="";
