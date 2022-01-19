@@ -30,11 +30,11 @@ addfiles=%(amarini)s/WPLEPWPHADjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-N
 addfiles=%(amarini)s/WMLEPWMHADjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #ssWW
 addfiles=%(amarini)s/WPLEPZHADjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9    #WlepZ
 addfiles=%(amarini)s/WMLEPZHADjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9    #WlepZ
-#WPHADZLEPjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
+##WPHADZLEPjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 ##WMHADZLEPjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 ##ZLEPZHADjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 
-addfiles=%(amarini)s/WMLEPWMHADjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #ssWW
+#addfiles=%(amarini)s/WMLEPWMHADjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #ssWW
 addfiles=%(amarini)s/WPHADWMLEPjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #osWW
 addfiles=%(amarini)s/WPLEPWMHADjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #osWW
 addfiles=%(amarini)s/WPLEPWPHADjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #ssWW
