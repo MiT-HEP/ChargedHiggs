@@ -601,7 +601,7 @@ void LoadNano::NewFile(){
     else if (fname.find("Run2017") != string::npos) {isData=true;} 
     else if (fname.find("Run2018") != string::npos) {isData=true;} 
 
-    int v=8;
+    int v=9;
     if (fname.find("NanoAODv8") != string::npos) {v=8;} 
     else if (fname.find("NanoAODv9") != string::npos) {v=9;} 
     else if (fname.find("v8") != string::npos) {v=8;} 
