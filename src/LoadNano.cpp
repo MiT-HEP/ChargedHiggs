@@ -355,6 +355,8 @@ int LoadNano::FillEvent(){
        j->HbbvsQCDpNet = nano->FatJet_particleNet_HbbvsQCD[i];
        j->HccvsQCDpNet = nano->FatJet_particleNet_HccvsQCD[i];
        j->ZbbccvsQCDpNet = (nano->FatJet_particleNetMD_Xbb[i] + nano->FatJet_particleNetMD_Xcc[i])/(nano->FatJet_particleNetMD_Xbb[i] + nano->FatJet_particleNetMD_Xcc[i] + nano->FatJet_particleNetMD_Xqq[i] + nano->FatJet_particleNetMD_QCD[i]);
+       j->XbbpNet = nano->FatJet_particleNetMD_Xbb[i];
+       j->XccpNet = nano->FatJet_particleNetMD_Xcc[i];
 
        j->nSubjets=0;
        // Subjets

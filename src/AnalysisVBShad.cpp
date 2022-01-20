@@ -44,6 +44,8 @@
 #define ParticleNet_loose 0.90
 #define ParticleNet_MEDIUM 0.94
 #define ParticleNet_tight 0.98
+#define ParticleNet_Xbb 0.96
+#define ParticleNet_Xcc 0.96
 
 void VBShadAnalysis::SetLeptonCuts(Lepton *l){ 
     l->SetIsoCut(-1); 
@@ -2611,8 +2613,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
         if(!useParticleNet and f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJet=true;
         if(!useParticleNet and f->IsZbbJetWide(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_25)) isZbbJetWide=true;
-        if(useParticleNet and f->IsZbbJet(ParticleNet_MEDIUM, ParticleNet_MEDIUM)) isZbbJet=true;
-        if(useParticleNet and f->IsZbbJetWide(ParticleNet_MEDIUM, ParticleNet_MEDIUM)) isZbbJetWide=true;
+        if(useParticleNet and f->IsZbbJet(ParticleNet_Xbb, ParticleNet_Xcc)) isZbbJet=true;
+        if(useParticleNet and f->IsZbbJetWide(ParticleNet_Xbb, ParticleNet_Xcc)) isZbbJetWide=true;
 
         /****************** Logic ***************************
         if do HAD/HADanti/HADside:      selectedFatZbb  stores Zbbwide, for vetoing
@@ -2626,7 +2628,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         //        if( (cat_condition1 and isZbbJet) or (!cat_condition1 and isZbbJetWide)  ) {
         if(isZbbJet) {
             selectedFatZbb.push_back(f);
-            bosonBBDiscr.push_back(f->ZHbbvsQCD());
+            bosonBBDiscr.push_back(f->Xbb());
             bosonBBMass.push_back(f->rawMass(f->MASSTYPE,true));
             bosonBBTDiscr.push_back(f->TvsQCD());
             Fill("VBShadAnalysis/Baseline/pT_FatZbbJet_" +label, systname, f->Pt(), e->weight() );
