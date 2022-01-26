@@ -44,6 +44,8 @@ class FatJet : virtual public Object, virtual public SmearableComplex
 
     public:
 
+    int  MASSTYPE = 1;
+
     //  ---- smearable complex add thingea
 
     /// @brief return pt, corrected by systematics
@@ -105,10 +107,21 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     float ZbbvsQCDMD; //
     float ZvsQCDMD; //
 
+    float TvsQCDpNet; //
+    float WvsQCDpNet; //
+    float HbbvsQCDpNet; //
+    float HccvsQCDpNet; //
+    float ZbbvsQCDpNet; //
+    float ZbbccvsQCDpNet; //
+    float XbbpNet; //
+    float XccpNet; //
+    float ZvsQCDpNet; //
+
     float sdtau1;
     float sdtau2;
     float sdtau3;
     float softdropMass;
+    float particleNetMass;
     float CorrectedPrunedMass;
 
     int nSubjets;
@@ -130,6 +143,8 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     inline float SDTau2() const { return sdtau2 ; }
     inline float SDTau3() const { return sdtau3 ; }
 
+    /*
+    // deepAK8 version
     inline float TvsQCD() const { return TvsQCDMD ; }
     inline float WvsQCD() const { return WvsQCDMD ; }
     inline float ZHbbvsQCD() const { return ZHbbvsQCDMD ; }
@@ -139,6 +154,19 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     //    inline float SDTau1() const { return sdtau1 ; }
     //    inline float SDTau2() const { return sdtau2 ; }
     //    inline float SDTau3() const { return sdtau3 ; }
+    */
+
+    // particleNetVersion
+    inline float TvsQCD() const { return TvsQCDpNet ; }
+    inline float WvsQCD() const { return WvsQCDpNet ; }
+    inline float ZHbbvsQCD() const { return HbbvsQCDpNet ; }
+    inline float ZHccvsQCD() const { return HccvsQCDpNet ; }
+    inline float ZbbvsQCD() const { return ZbbccvsQCDpNet ; }
+    inline float ZvsQCD() const { return ZvsQCDpNet ; }
+    inline float Xbb() const { return XbbpNet ; }
+    inline float Xcc() const { return XccpNet ; }
+
+    inline float PNetMass() const { return particleNetMass; }
 
     inline float SDMass() const { return softdropMass; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
@@ -162,22 +190,70 @@ class FatJet : virtual public Object, virtual public SmearableComplex
         return IsJetExceptValidity();
     }
 
-    inline float rawMass( bool isZbb=false) const {
-        float massRaw = (subjet_lead_p4 + subjet_sublead_p4).M();
+    inline float rawMass( int type , bool isZbb=false) const {
 
-        float PtZbb = (Pt()>1275.)?1275.:Pt();  //Pt()>1275 all have same corrections as Pt()=1275, safer and smoother
-        float PtVjj = (Pt()>1000.)?1000.:Pt();  //Pt()>1000 all have same corrections as Pt()=1000
-        double corrZbbBar = 259.2*exp(-0.0147*PtZbb)+2.85*log(PtZbb)-9.58;
-        double corrZbbEnd = 124.7*exp(-0.0092*PtZbb)+4.55*log(PtZbb)-17.67;
-        double corrVjjBar = -182.7*exp(-0.0015*PtVjj)-61.14*log(PtVjj)+469.9;
-        double corrVjjEnd = 2370.*exp(-0.0192*PtVjj)+4.51*log(PtVjj)-22.32;
+        float massRaw = -1;
 
-        if(isZbb){
-            if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrZbbBar<12)?corrZbbBar:12);
-            else  massRaw = massRaw + ((corrZbbEnd <19)? corrZbbEnd:19);
-        }else{
-            if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrVjjBar <7)? corrVjjBar:7);
-            else massRaw = massRaw + ((corrVjjEnd <10)? corrVjjEnd:10);
+        if(type==0) {
+            massRaw = SDMass();
+        }
+
+        if(type==1) {
+
+            massRaw = PNetMass();
+            float PtV = (Pt()>1000.)?1000.:((Pt()<300.)?300.:Pt());
+            double corrZbbBar = 0.000571 * PtV - 5.734;
+            double corrZbbEnd = 0.000840 * PtV - 6.005;
+            double corrVjjBar = 0.004656 * PtV - 7.011;
+            double corrVjjEnd = 0.006859 * PtV - 8.725;
+
+            if(isZbb){
+                if (fabs(Eta()) < 1.3 ) massRaw = massRaw + corrZbbBar;
+                else  massRaw = massRaw + corrZbbEnd;
+            }else{
+                if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrVjjBar < -3.5)? corrVjjBar:-3.5);
+                else massRaw = massRaw + ((corrVjjEnd < -4)? corrVjjEnd : -4);
+            }
+        }
+
+        if(type==2) {
+            massRaw = (subjet_lead_p4 + subjet_sublead_p4).M();
+
+            bool doNanoV9 = true;
+            if(doNanoV9) {
+
+                float PtV = (Pt()>1000.)?1000.:((Pt()<315.)?315.:Pt());
+                float PtV1 = (Pt()>1000.)?1000.:((Pt()<400.)?400.:Pt());
+                double corrZbbBar = 5248*exp(-0.02208*PtV)+5.172*log(PtV)-27.9;
+                double corrZbbEnd = 180.2*exp(-0.00985*PtV)+6.03*log(PtV)-33.7;
+                double corrVjjBar = 247.2*exp(-0.01194*PtV1)+7.084*log(PtV1)-43.78;
+                double corrVjjEnd = 42790.*exp(-0.03029*PtV)+5.331*log(PtV)-31.69;
+
+                if(isZbb){
+                    if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrZbbBar<8)?corrZbbBar:8);
+                    else massRaw = massRaw + ((corrZbbEnd <8.5)? corrZbbEnd:8.5);
+                }else{
+                    if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrVjjBar <4)? corrVjjBar:4);
+                    else massRaw = massRaw + ((corrVjjEnd <5)? corrVjjEnd:5);
+                }
+
+            } else {
+
+                float PtZbb = (Pt()>1275.)?1275.:Pt();  //Pt()>1275 all have same corrections as Pt()=1275, safer and smoother
+                float PtVjj = (Pt()>1000.)?1000.:Pt();  //Pt()>1000 all have same corrections as Pt()=1000
+                double corrZbbBar = 259.2*exp(-0.0147*PtZbb)+2.85*log(PtZbb)-9.58;
+                double corrZbbEnd = 124.7*exp(-0.0092*PtZbb)+4.55*log(PtZbb)-17.67;
+                double corrVjjBar = -182.7*exp(-0.0015*PtVjj)-61.14*log(PtVjj)+469.9;
+                double corrVjjEnd = 2370.*exp(-0.0192*PtVjj)+4.51*log(PtVjj)-22.32;
+
+                if(isZbb){
+                    if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrZbbBar<12)?corrZbbBar:12);
+                    else  massRaw = massRaw + ((corrZbbEnd <19)? corrZbbEnd:19);
+                }else{
+                    if (fabs(Eta()) < 1.3 ) massRaw = massRaw + ((corrVjjBar <7)? corrVjjBar:7);
+                    else massRaw = massRaw + ((corrVjjEnd <10)? corrVjjEnd:10);
+                }
+            }
         }
 
         return massRaw;
@@ -188,29 +264,31 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     //    inline int IsWJet() const { if( Pt() > 200. and softdropMass > 65. and softdropMass < 105. and tau2 > 0 and tau1 > 0 and tau2 < tau1*0.45 and IsFatJet() )   return 1; return 0;}
 
     // cut1_ is the 0.5% mistag, cut_2 is 1% mistag, cut_3 is 2.5% mistag
-    inline int IsWJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass() -80) < 15. and WvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
-    inline int IsZJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-91) < 15. and ZvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE) -80) < 15. and WvsQCDpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) < 15. and ZvsQCDpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
 
-    inline int IsWJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass() < 155. and WvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
-    inline int IsZJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass() < 155. and ZvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and WvsQCDpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and ZvsQCDpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
 
-    inline int IsWJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) > 15. and WvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
-    inline int IsZJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-91) > 15. and ZvsQCDMD > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-80) > 15. and WvsQCDpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) > 15. and ZvsQCDpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
 
     //    inline int IsWJet() const { if( Pt() > 200. and SDMass() > 65. and SDMass() < 105. and WvsQCDMD > 0.258 and IsFatJet() )   return 1; return 0;}
 
     // ZHbbvsQCDMD > 0.3 is roughly 10% mistag (0.3 0.6  0.8945)
-    inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(rawMass(true)-91) < 15. and ZHbbvsQCDMD > ((Pt()<500)?cut1_:cut2_) and TvsQCD()<0.9 and IsFatJet() )   return 1; return 0;}
-    inline int IsZbbJetWide(float cut1_, float cut2_) const { if( Pt() > 200. and rawMass(true) < 155. and ZHbbvsQCDMD > ((Pt()<500)?cut1_:cut2_) and TvsQCD()<0.9 and IsFatJet() )   return 1; return 0;}
+    //    inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE,true)-91) < 15. and HbbvsQCDpNet  > ((Pt()<500)?cut1_:cut2_) /*and TvsQCD()<0.9*/ and IsFatJet() )   return 1; return 0;}
+    //    inline int IsZbbJetWide(float cut1_, float cut2_) const { if( Pt() > 200. and rawMass(MASSTYPE,true) < 155. and HbbvsQCDpNet  > ((Pt()<500)?cut1_:cut2_) /*and TvsQCD()<0.9*/ and IsFatJet() )   return 1; return 0;}
 
+    inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE,true)-91) < 15. and (XbbpNet > cut1_ || XccpNet > cut2_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZbbJetWide(float cut1_, float cut2_) const { if( Pt() > 200. and rawMass(MASSTYPE,true) < 155. and (XbbpNet > cut1_ || XccpNet > cut2_) and IsFatJet() )   return 1; return 0;}
 
-    inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) < 15. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-80) > 15. and rawMass() < 155. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsWJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass() < 155. and WvsQCDMD > cut2_ and WvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-80) < 15. and WvsQCDpNet > cut2_ and WvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-80) > 15. and rawMass(MASSTYPE) < 155. and WvsQCDpNet > cut2_ and WvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsWJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and WvsQCDpNet > cut2_ and WvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
-    inline int IsZJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-91) < 15. and ZvsQCDMD > cut2_ and ZvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsZJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass()-91) > 15. and rawMass() < 155. and ZvsQCDMD > cut2_ and ZvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsZJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass() < 155. and ZvsQCDMD > cut2_ and ZvsQCDMD < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) < 15. and ZvsQCDpNet > cut2_ and ZvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) > 15. and rawMass(MASSTYPE) < 155. and ZvsQCDpNet > cut2_ and ZvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and ZvsQCDpNet > cut2_ and ZvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
     // $$$$$$$$$$$$$$$$$$$$$$$$$$
     // $$$$$ for ChargedHiggs

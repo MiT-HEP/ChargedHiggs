@@ -731,6 +731,7 @@ double Event::ApplyBTagSF(int wp,int year)
     if (year==2017) name="bdeep2017";
     else if (year==2018) name="bdeep2018";
     else if (year==2016) name ="bdeep2016";
+    else if (year==12016) name ="bdeep2016pre";
     SetWPSF(name,wp); // loose, for sf
 
 
@@ -744,7 +745,8 @@ double Event::ApplyBTagSF(int wp,int year)
         SetJetFlavorSF(name,j->hadFlavor());
 
         if (wp == 3) // reshaping
-            SetDiscrSF(name,j->GetDeepB());
+            SetDiscrSF(name,j->GetDeepFlavB());
+        //            SetDiscrSF(name,j->GetDeepB());
 
         if (not j->IsBJet() and wp !=3) continue;
 

@@ -89,6 +89,7 @@ public:
     bool doTrigger=false;
     bool doStudyMass=false; //inclusive SDMass, SubjetMass, W/ZvsQCD plots
     bool doStudySFfat=true;
+    bool useParticleNet=true;
 
     bool doTMVA=true;
     bool doResTagKeras = false;

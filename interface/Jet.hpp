@@ -34,15 +34,20 @@ class Jet : virtual public Object, virtual public SmearableComplex
 
     bool  eenoise_{false};// reject noise from ee with cuts
 
+    float deepFlavB;
+    float deepflavbcut_{-100};
+
     float deepB; // ** deep btag discriminator (B+BB)
-    float deepbcut_ {-100};
+    float deepbcut_{-100};
 
     float deepC;
-    float deepccut_ {-100};
+    float deepccut_{-100};
 
     float nemf_,cemf_;
     float nhf_,chf_;
     float area_;
+
+    float year_;
 
     float bcorr_{1.}, bcorrunc_{1.};
 
@@ -65,6 +70,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     void SetEENoiseCut(bool x){eenoise_ = x;}
     ///@brief set the pu id cut
     void SetPuIdCut(float x) {puidcut_=x;}
+    ///@brief set the pu id cut
+    void SetPuIdYear(int x) {year_=x;}
     ///@brief set the pt cut 
     void SetPtCut(float x){ptcut_= x;}
     ///@brief set the pt cut 
@@ -79,6 +86,8 @@ class Jet : virtual public Object, virtual public SmearableComplex
     void SetBCut(float x) {bcut_=x;}
     ///@brief set the deep b csv tagger (deep b+bb). only one between std and deep can be set. To unset use -100
     void SetDeepBCut(float x) {deepbcut_=x;}
+    ///@brief set the deep b csv tagger (deep b+bb). only one between std and deep can be set. To unset use -100
+    void SetDeepFlavBCut(float x) {deepflavbcut_=x;}
     ///@brief set the deep c csv tagger . only one between std and deep can be set. To unset use -100
     void SetDeepCCut(float x) {deepccut_=x;}
     ///@brief set the B Regressions and unc
@@ -108,8 +117,10 @@ class Jet : virtual public Object, virtual public SmearableComplex
     //inline float GetDeepB() const {if (isDeepBSFSet) return deepB_SF; else return deepB;}
     //inline float GetBareDeepB() const {return deepB;}
     inline float GetDeepB() const { return deepB;}
+    inline float GetDeepFlavB() const { return deepFlavB;}
     /// @brief set the deep B discri (B+BB)
     void SetDeepB(const float& x) {deepB=x;}
+    void SetDeepFlavB(const float& x) {deepFlavB=x;}
 
     //@set and obtain deep C tag
     void SetDeepC(const float& x) {deepC=x;}

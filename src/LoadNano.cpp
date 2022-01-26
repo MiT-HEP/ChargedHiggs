@@ -275,7 +275,7 @@ int LoadNano::FillEvent(){
         j->SetCEMF(nano->Jet_chEmEF[i] );
         j->SetNHF(nano->Jet_neHEF[i] );
         j->SetCHF(nano->Jet_chHEF[i] );
-	    j->SetArea(nano->Jet_area[i]);
+	j->SetArea(nano->Jet_area[i]);
 #warning MISSING NANO JES JER
         // TODO-- JES
         //j->SetValueUp  (Smearer::JES , (1. + bj -> unc -> at(iJet) ) * ((TLorentzVector*)(*bj->p4)[iJet])->Pt() ); //
@@ -284,6 +284,7 @@ int LoadNano::FillEvent(){
         //
         //TODO -- JER
         j->bdiscr = nano->Jet_btagCSVV2[i];
+        j->SetDeepFlavB ( nano->Jet_btagDeepFlavB[i] );
         j->SetDeepB ( nano->Jet_btagDeepB[i] );
         j->SetDeepC ( nano->Jet_btagDeepC[i] );
 	// temporary, there are many nan in v8
@@ -295,6 +296,7 @@ int LoadNano::FillEvent(){
 	j->SetHFsigmaPhiPhi(nano->Jet_hfsigmaPhiPhi[i]);
 
         //j->SetPuId(nano->Jet_puId[i]); //80X flags
+	j->SetPuIdYear(year);
         j->SetPuId(nano->Jet_puIdDisc[i]);//91x discr
         j->SetBCorrection(nano->Jet_bRegCorr[i], nano->Jet_bRegRes[i]); 
         j->SetHadFlavor(nano->Jet_hadronFlavour[i]); 
@@ -335,13 +337,26 @@ int LoadNano::FillEvent(){
 
        // sf mass
        j->softdropMass = nano->FatJet_msoftdrop[i];
+
+       // particleNet Mass
+       j->particleNetMass = nano->FatJet_particleNet_mass[i];
+
        //
-       j->TvsQCDMD =nano->FatJet_deepTagMD_TvsQCD[i];
-       j->WvsQCDMD =nano->FatJet_deepTagMD_WvsQCD[i];
-       j->ZHbbvsQCDMD =nano->FatJet_deepTagMD_ZHbbvsQCD[i];
-       j->ZHccvsQCDMD =nano->FatJet_deepTagMD_ZHccvsQCD[i];
-       j->ZbbvsQCDMD =nano->FatJet_deepTagMD_ZbbvsQCD[i];
-       j->ZvsQCDMD =nano->FatJet_deepTagMD_ZvsQCD[i];
+       j->TvsQCDMD = nano->FatJet_deepTagMD_TvsQCD[i];
+       j->WvsQCDMD = nano->FatJet_deepTagMD_WvsQCD[i];
+       j->ZHbbvsQCDMD = nano->FatJet_deepTagMD_ZHbbvsQCD[i];
+       j->ZHccvsQCDMD = nano->FatJet_deepTagMD_ZHccvsQCD[i];
+       j->ZbbvsQCDMD = nano->FatJet_deepTagMD_ZbbvsQCD[i];
+       j->ZvsQCDMD = nano->FatJet_deepTagMD_ZvsQCD[i];
+
+       j->TvsQCDpNet = nano->FatJet_particleNet_TvsQCD[i];
+       j->WvsQCDpNet = nano->FatJet_particleNet_WvsQCD[i];
+       j->ZvsQCDpNet = nano->FatJet_particleNet_ZvsQCD[i];
+       j->HbbvsQCDpNet = nano->FatJet_particleNet_HbbvsQCD[i];
+       j->HccvsQCDpNet = nano->FatJet_particleNet_HccvsQCD[i];
+       j->ZbbccvsQCDpNet = (nano->FatJet_particleNetMD_Xbb[i] + nano->FatJet_particleNetMD_Xcc[i])/(nano->FatJet_particleNetMD_Xbb[i] + nano->FatJet_particleNetMD_Xcc[i] + nano->FatJet_particleNetMD_Xqq[i] + nano->FatJet_particleNetMD_QCD[i]);
+       j->XbbpNet = nano->FatJet_particleNetMD_Xbb[i];
+       j->XccpNet = nano->FatJet_particleNetMD_Xcc[i];
 
        j->nSubjets=0;
        // Subjets
@@ -588,7 +603,7 @@ void LoadNano::NewFile(){
     else if (fname.find("Run2017") != string::npos) {isData=true;} 
     else if (fname.find("Run2018") != string::npos) {isData=true;} 
 
-    int v=8;
+    int v=9;
     if (fname.find("NanoAODv8") != string::npos) {v=8;} 
     else if (fname.find("NanoAODv9") != string::npos) {v=9;} 
     else if (fname.find("v8") != string::npos) {v=8;} 

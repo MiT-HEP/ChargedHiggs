@@ -30,9 +30,9 @@ public:
     OP_RESHAPING=3,
   };
   enum JetFlavor {
-    FLAV_B=0,
-    FLAV_C=1,
-    FLAV_UDSG=2,
+    FLAV_B=5,
+    FLAV_C=4,
+    FLAV_UDSG=0,
   };
   struct Parameters {
     OperatingPoint operatingPoint;
