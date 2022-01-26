@@ -3717,14 +3717,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
     //$$$$$$$$$
 
-    /*
     double btagsf=1;
-    if (true) // CSV-SF for passing loose,medium or tigth cuts
+    if (true) // deepJet-SF for passing loose,medium or tigth cuts
         {
             btagsf=e->ApplyBTagSF(3,year); //0 loose, 1 medium, 2 tight, 3 reshaping
-            Log(__FUNCTION__,"DEBUG",Form("BTag SF is %lf",btagsf));
+            if (VERBOSE)Log(__FUNCTION__,"DEBUG",Form("BTag SF is %lf",btagsf));
         }
-    */
 
     //$$$$$$$$$
     //$$$$$$$$$

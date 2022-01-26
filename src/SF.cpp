@@ -350,6 +350,7 @@ void SF_CSV::init(string filename)
     //calib=new BTagCalibration("CSVv2",filename);
     //Log(__FUNCTION__,"DEBUG","calibration");
     calib=new BTagCalibration("DeepCSV",filename,/*validate=*/ false);
+    /*
     //Log(__FUNCTION__,"DEBUG","ReaderL: Constructor");
     readerL=new BTagCalibrationReader( BTagEntry::OP_LOOSE,  // operating point 
                     "central" ,          // systematics type
@@ -372,6 +373,7 @@ void SF_CSV::init(string filename)
     readerT->load( *calib, BTagEntry::FLAV_B,measB); 
     readerT->load( *calib, BTagEntry::FLAV_C,measB); 
     readerT->load( *calib, BTagEntry::FLAV_UDSG,measL);
+    */
 
     /// reshaping
     Log(__FUNCTION__,"DEBUG","ReaderR: Constructor");

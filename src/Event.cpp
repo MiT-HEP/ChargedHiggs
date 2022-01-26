@@ -726,7 +726,6 @@ double Event::ApplyL1PreFire(int year){
 //#define VERBOSE 2
 double Event::ApplyBTagSF(int wp,int year)
 {
-    // FIXME - this is still CSV
     double sf=1.;
     string name="bdeep";
     if (year==2017) name="bdeep2017";
@@ -746,7 +745,8 @@ double Event::ApplyBTagSF(int wp,int year)
         SetJetFlavorSF(name,j->hadFlavor());
 
         if (wp == 3) // reshaping
-            SetDiscrSF(name,j->GetDeepB());
+            SetDiscrSF(name,j->GetDeepFlavB());
+        //            SetDiscrSF(name,j->GetDeepB());
 
         if (not j->IsBJet() and wp !=3) continue;
 
