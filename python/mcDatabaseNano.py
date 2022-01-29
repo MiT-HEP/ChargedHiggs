@@ -295,6 +295,7 @@ else:
     elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-220' in opts.label: xsec=1
     elif 'ChargedHiggs_HplusTB_HplusToTauNu_M-250' in opts.label: xsec=1
     ## SIG VBS
+    ## SIG VBS nanoV8/nanov9 naming convention
     elif 'ZNuNuWPMJJjj_EWK_LO' in opts.label: xsec=1
     elif 'ZNuNuWPMJJjj_QCD_LO' in opts.label: xsec=1
     elif 'ZNuNuWPMJJjj_EWK_QCD_LO' in opts.label: xsec=1
@@ -323,12 +324,24 @@ else:
 ##    elif 'WPJJWMJJjj_EWK_LO' in opts.label: xsec=1
 ##    elif 'ZJJZJJjj_EWK_LO' in opts.label: xsec=1
     elif 'WPJJZJJjj_EWK_LO' in opts.label: xsec=1
-    elif 'WPJJZJJjj_EWK_QCD_LO' in opts.label: xsec=1
-    elif 'WMJJWMJJjj_EWK_LO' in opts.label: xsec=1
-    elif 'WMJJZJJjj_EWK_LO' in opts.label: xsec=1
-    elif 'WPJJWPJJjj_EWK_LO' in opts.label: xsec=1
-    elif 'ZBBZJJnoBjj_EWK_LO' in opts.label: xsec=1
-    elif 'ZNuNuZJJnoBjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPLEPWMHADjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPLEPWPHADjj_QCD_LO' in opts.label: xsec=1
+    elif 'WMLEPWMHADjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPLEPZHADjj_QCD_LO' in opts.label: xsec=1
+    elif 'WMLEPZHADjj_QCD_LO' in opts.label: xsec=1
+## leptonici
+    elif 'WPHADWMLEPjj_EWK_LO' in opts.label:xsec=1
+    elif 'WPLEPWMHADjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPLEPWPHADjj_EWK_LO' in opts.label: xsec=1
+    elif 'WMLEPWMHADjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPLEPZHADjj_EWK_LO' in opts.label: xsec=1
+    elif 'WMLEPZHADjj_EWK_LO' in opts.label: xsec=1
+    elif 'WPHADWMLEPjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPLEPWMHADjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPLEPWPHADjj_QCD_LO' in opts.label: xsec=1
+    elif 'WMLEPWMHADjj_QCD_LO' in opts.label: xsec=1
+    elif 'WPLEPZHADjj_QCD_LO' in opts.label: xsec=1
+    elif 'WMLEPZHADjj_QCD_LO' in opts.label: xsec=1
 ##
     elif 'VBF_HiggsZG_Zbb' in opts.label: xsec=1.
     elif 'GluGlu_HiggsZG_Zbb' in opts.label: xsec=1.
@@ -498,7 +511,8 @@ else:
         for i in range(0,nAQGCs):
             #print>>f, sum.GetBinContent(1)/aqgc.GetBinContent(i+1),  ### orig. normalize each variations to the nominal xsec
             if aqgc_names[i].split("_")[1] == "0p00": lastSM= aqgc.GetBinContent(i+1)
-            print>>f, sum.GetBinContent(1)/lastSM, 
+        for i in range(0,nAQGCs):
+            print>>f, sum.GetBinContent(1)/lastSM,
 
     ## INTERNAL
     print >>f

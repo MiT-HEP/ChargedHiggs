@@ -23,6 +23,19 @@ addConfig=VBShadAnalysis|AddLabel('ZBBZJJnoBjj_EWK_LO_NPle1_aQGC')
 addConfig=VBShadAnalysis|AddLabel('ZJJZJJjj_EWK_LO_NPle1_aQGC')
 addConfig=VBShadAnalysis|AddLabel('ZNuNuZJJnoBjj_EWK_LO_NPle1_aQGC')
 
+#v9
+addConfig=VBShadAnalysis|AddLabel('aQGC_WPJJWPJJjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WMJJWMJJjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WPJJZJJjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WMJJZJJjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WPJJWMJJjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WPHADWMLEPjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WPLEPWMHADjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WPLEPZHADjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WMLEPZHADjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WMLEPWMHADjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WPLEPWPHADjj_EWK_LO_NPle1')
+
 ### for nanoV8 / v9
 addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_QCD_LO')
