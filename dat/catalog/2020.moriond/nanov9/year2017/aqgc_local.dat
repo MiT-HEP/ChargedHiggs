@@ -1,0 +1,13 @@
+sub=amarini|/store/group/phys_higgs/cmshmm/amarini
+
+addfiles=%(amarini)s/aQGC_WPJJWPJJjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WMJJZJJjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WMJJWMJJjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WPJJZJJjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WPJJWMJJjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WPHADWMLEPjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WPLEPWMHADjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WPLEPZHADjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WMLEPZHADjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WMLEPWMHADjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_WPLEPWPHADjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9
