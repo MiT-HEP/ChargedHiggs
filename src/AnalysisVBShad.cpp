@@ -652,23 +652,23 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("j1_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j1_Eta)",'F',readers_dnn_[i]);
             //AddVariable("j1_M",'F',readers_dnn_[i]);
-            AddVariable("j1_QGL",'F',readers_dnn_[i]);
+            //AddVariable("j1_QGL",'F',readers_dnn_[i]);
 
             AddVariable("j2_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j2_Eta)", 'F',readers_dnn_[i]);
             //AddVariable("j2_M",'F',readers_dnn_[i]);
-            AddVariable("j2_QGL",'F',readers_dnn_[i]);
+            //AddVariable("j2_QGL",'F',readers_dnn_[i]);
             //AddVariable("j2_PUDiscr",'F',readers_dnn_[i]);
 
             AddVariable("j3_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j3_Eta)", 'F',readers_dnn_[i]);
-            AddVariable("j3_QGL",'F',readers_dnn_[i]);
+            //AddVariable("j3_QGL",'F',readers_dnn_[i]);
 
             AddVariable("j4_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j4_Eta)", 'F',readers_dnn_[i]);
-            AddVariable("j4_QGL",'F',readers_dnn_[i]);
+            //AddVariable("j4_QGL",'F',readers_dnn_[i]);
 
-
+            AddVariable("abs(j3_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", 'F',readers_dnn_[i]);
             AddVariable("abs(j4_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", 'F',readers_dnn_[i]);
             AddVariable("min(min(j3_Eta,j4_Eta)-min(j1_Eta,j2_Eta),max(j1_Eta,j2_Eta)-max(j3_Eta,j4_Eta))", 'F',readers_dnn_[i]);
 
@@ -1621,24 +1621,25 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
 
                             SetVariable("j1_pT",  selectedJets[fi]->GetP4().Pt());
                             SetVariable("abs(j1_Eta)", fabs(selectedJets[fi]->Eta()));
-                            SetVariable("j1_QGL", selectedJets[fi]->QGL()<0?0:selectedJets[fi]->QGL()); 
+                            //SetVariable("j1_QGL", selectedJets[fi]->QGL()<0?0:selectedJets[fi]->QGL()); 
 
 
                             SetVariable("j2_pT",  selectedJets[fj]->GetP4().Pt());
                             SetVariable("abs(j2_Eta)", fabs(selectedJets[fj]->Eta()));
-                            SetVariable("j2_QGL", selectedJets[fj]->QGL()<0?0:selectedJets[fj]->QGL());
+                            //SetVariable("j2_QGL", selectedJets[fj]->QGL()<0?0:selectedJets[fj]->QGL());
                             //SetVariable("j2_PUDiscr",selectedJets[fj]->GetPuId());
 
 
                             SetVariable("j3_pT",  selectedJets[vk]->GetP4().Pt());
                             SetVariable("abs(j3_Eta)", fabs(selectedJets[vk]->Eta()));
-                            SetVariable("j3_QGL", selectedJets[vk]->QGL()<0?0:selectedJets[vk]->QGL());
+                            //SetVariable("j3_QGL", selectedJets[vk]->QGL()<0?0:selectedJets[vk]->QGL());
 
 
                             SetVariable("j4_pT",  selectedJets[vl]->GetP4().Pt());
                             SetVariable("abs(j4_Eta)", fabs(selectedJets[vl]->Eta()));
-                            SetVariable("j4_QGL", selectedJets[vl]->QGL()<0?0:selectedJets[vl]->QGL());
+                            //SetVariable("j4_QGL", selectedJets[vl]->QGL()<0?0:selectedJets[vl]->QGL());
 
+                            SetVariable("abs(j3_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", zepV3);
                             SetVariable("abs(j4_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", zepV4);
                             SetVariable("min(min(j3_Eta,j4_Eta)-min(j1_Eta,j2_Eta),max(j1_Eta,j2_Eta)-max(j3_Eta,j4_Eta))", centralV2);
 
@@ -3033,8 +3034,8 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
         //cout << "new event !!! " << e->NGenPar() << endl;
 
         int MatchParentID = 24;
-        if((label.find("ZnnZhadJJ_EWK") !=string::npos) || (label.find("ZbbZhadJJ_EWK")!=string::npos )) MatchParentID = 23;
-
+        //if((label.find("ZnnZhadJJ_EWK") !=string::npos) || (label.find("ZbbZhadJJ_EWK")!=string::npos )) MatchParentID = 23;
+        if((label.find("ZNUNUZJJjj_EWK") !=string::npos) || (label.find("ZJJZJJjj_EWK")!=string::npos )) MatchParentID = 23;
 
         for(Int_t g = 0; g < e->NGenPar(); g++){
 
@@ -4161,7 +4162,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.7; // 80% signal
+            float tmvacut = 0.65; // 80% signal
             float kerascut = 0.5;
             //******************//
 
@@ -4362,7 +4363,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.7; // 80% cut
+            float tmvacut = 0.65; // 80% cut
             float kerascut = 0.5;
             //******************//
 
