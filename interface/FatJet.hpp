@@ -180,7 +180,8 @@ class FatJet : virtual public Object, virtual public SmearableComplex
         if( std::isnan(Pt()) ) return 0;
         if( Pt() < ptcut_ ) return 0;
         if( fabs(Eta()) >= etacut_) return 0;
-        if( fabs((subjet_lead_p4 + subjet_sublead_p4).M()) < softdropMasscut_) return 0;
+        if( fabs(PNetMass()) < softdropMasscut_) return 0;
+        //        if( fabs((subjet_lead_p4 + subjet_sublead_p4).M()) < softdropMasscut_) return 0;
         //        if( fabs(SDMass()) < softdropMasscut_) return 0;
         return 1;
     }

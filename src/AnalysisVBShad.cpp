@@ -104,7 +104,7 @@ void VBShadAnalysis::SetPhotonCuts(Photon *p){ // Already selecting Medium ided 
 void VBShadAnalysis::SetFatJetCuts(FatJet *f){
     f->SetEtaCut(2.5);
     f->SetPtCut(300);
-    f->SetSDMassCut(50);
+    f->SetSDMassCut(30);
 }
 
 bool VBShadAnalysis::checkSignalLabel(string l) {
