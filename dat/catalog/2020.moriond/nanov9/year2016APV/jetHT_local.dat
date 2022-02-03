@@ -1,0 +1,7 @@
+sub=amarini|/store/group/phys_smp/amarini/nano/2016
+
+addfiles=%(amarini)s/JetHT/crab_JetHT_2016_Run2017B-ver1_HIPM
+addfiles=%(amarini)s/JetHT/crab_JetHT_2016_Run2018C-ver1_HIPM
+addfiles=%(amarini)s/JetHT/crab_JetHT_2016_Run2018D-HIPM
+addfiles=%(amarini)s/JetHT/crab_JetHT_2016_Run2018E-HIPM
+addfiles=%(amarini)s/JetHT/crab_JetHT_2016_Run2018F-HIPM
