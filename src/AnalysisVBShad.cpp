@@ -2610,6 +2610,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(usePuppi) dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
         // dPhiFatMet in principle only for the final V candidates
 
+        if((doMETAnalysis or doMETAntiAnalysis) and dPhiFatMet<0.4) continue; // should this be larger 0.8 ? or veto ?
+
         bool isZbbJet=false;
         bool isZbbJetWide=false;
         //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
@@ -2704,8 +2706,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(doMETAntiAnalysis)  doMETAnalysis=true;
         if(doBAntiAnalysis) doBAnalysis=true;
         if(doHADAntiAnalysis) doHADAnalysis=true;
-
-        if(doMETAnalysis and dPhiFatMet<0.4) continue; // should this be larger 0.8 ? or veto ?
 
         if( (!doSideBand and isWJet) or (doSideBand and isWJetWide) ) {
             //if(!doMETAnalysis and !doResonant and isZbbJet) continue;  //avoid selectedFatZbb except resonant; 
