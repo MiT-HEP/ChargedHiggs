@@ -42,7 +42,8 @@
 
 // from Miao
 #define ParticleNet_loose 0.90
-#define ParticleNet_MEDIUM 0.94
+//#define ParticleNet_MEDIUM 0.94
+#define ParticleNet_MEDIUM 0.80
 #define ParticleNet_tight 0.98
 #define ParticleNet_Xbb 0.96
 #define ParticleNet_Xcc 0.96
@@ -104,7 +105,7 @@ void VBShadAnalysis::SetPhotonCuts(Photon *p){ // Already selecting Medium ided 
 void VBShadAnalysis::SetFatJetCuts(FatJet *f){
     f->SetEtaCut(2.5);
     f->SetPtCut(300);
-    f->SetSDMassCut(50);
+    f->SetSDMassCut(30);
 }
 
 bool VBShadAnalysis::checkSignalLabel(string l) {
@@ -1261,7 +1262,9 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RR_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
 
-        if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 36,0,36);
+        //        if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 36,0,36);
+        if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 100,0,100);
+        if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_Mjj_"+l, "SF_FatJet (after mjj cut); bit; Events", 100,0,100);
 
         if(doStudyMass){
 
@@ -2608,6 +2611,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(usePuppi) dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
         // dPhiFatMet in principle only for the final V candidates
 
+        if((doMETAnalysis or doMETAntiAnalysis) and dPhiFatMet<0.4) continue; // should this be larger 0.8 ? or veto ?
+
         bool isZbbJet=false;
         bool isZbbJetWide=false;
         //        if(f->IsZbbJet(DEEP_AK8_ZHbb_MD_25, DEEP_AK8_ZHbb_MD_50)) isZbbJet=true;
@@ -2703,8 +2708,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         if(doBAntiAnalysis) doBAnalysis=true;
         if(doHADAntiAnalysis) doHADAnalysis=true;
 
-        if(doMETAnalysis and dPhiFatMet<0.4) continue; // should this be larger 0.8 ? or veto ?
-
         if( (!doSideBand and isWJet) or (doSideBand and isWJetWide) ) {
             //if(!doMETAnalysis and !doResonant and isZbbJet) continue;  //avoid selectedFatZbb except resonant; 
             // MARIA: the condition above we might need to add back
@@ -2715,7 +2718,8 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             if(isWJet) selectedFatJetsIn.push_back(f);
             bosonBDiscr.push_back(f->subjet_btagdeep);
             // fixme: this need to be filled depending on the W vs Z. Think: what if pass both W and Z?
-            bosonVDiscr.push_back(f->WvsQCD());
+            //            bosonVDiscr.push_back(f->WvsQCD());
+            bosonVDiscr.push_back(f->Xqq());
             bosonTDiscr.push_back(f->TvsQCD());
             bosonMass.push_back(f->rawMass(f->MASSTYPE));
             Fill("VBShadAnalysis/Baseline/pT_FatJet_" +label, systname, f->Pt(), e->weight() );
@@ -2740,11 +2744,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
     }
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
-
-    if(selectedFatJets.size()>1 and doStudySFfat) {
-        int indexij = 6*getIndex(0) + getIndex(1);
-        Fill("VBShadAnalysis/Baseline/SF_FatJet_" +label, systname, indexij, e->weight() );  // fill to derive SF
-    }
 
     //AK4
     for(unsigned i=0;i<e->Njets() ; ++i)
@@ -3916,6 +3915,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 5, e->weight() );  //5--vetoB+dPhiMET
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 5, 1 );
 
+    if(doStudySFfat and selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1 ) {
+        int indexij = 10*getIndex(0) + getIndex(1);
+        Fill("VBShadAnalysis/Baseline/SF_FatJet_" +label, systname, indexij, e->weight() );  // fill to derive SF
+        // Fill("VBShadAnalysis/Baseline/SF_FatJet_Mjj_" +label, systname, indexij, e->weight() );  // fill to derive SF
+    }
+
+
     //$$$$$$$$$
     //$$$$$$$$$
     //$$$$$$$$$ Build categories below
@@ -4484,12 +4490,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        if (year==2017)  sfname = "FatJetV_2017";
        if (year==2018)  sfname = "FatJetV_2018";
 
+       /*
        if((doHADAnalysis or doHADAntiAnalysis) and (category.find("BB") !=string::npos)) {
            e->SetPtEtaSF(sfname, evt_PTV1, fabs(evt_bosV1Eta));
            e->ApplySF(sfname);
            e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
            e->ApplySF(sfname);
        }
+       */
 
        /*
        if((category.find("BBtag") !=string::npos) and selectedFatJets.size()>0) {
@@ -4505,6 +4513,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
    }
 
+   /*
     //unc on mvv, use 'Smear=@SmearSF("QCDNonclosure_CAT"!"QCD_MVV_CAT_Nonclosure")' to run, where CAT = BB or BBtag
     // THIS IS OLD not needed anymore
     if( not e->IsRealData() and (label.find("QCD_HT")!=string::npos)){
@@ -4520,6 +4529,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         e->SetPtEtaSF(sfname,evt_MVV,0);
         e->ApplySF(sfname);
     }
+   */
 
     //////
     //$$$ CUT FLOW
@@ -4573,6 +4583,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/FWJETS/Mjj" +category+"_"+label, systname, evt_Mjj, e->weight() );
 
     if( evt_Mjj < 500 ) return EVENT_NOT_USED;
+
+    if(doStudySFfat and selectedFatJets.size()>1 and selectedFatZbb.size()==0 and selectedJets.size()>1 ) {
+        int indexij = 10*getIndex(0) + getIndex(1);
+        //        Fill("VBShadAnalysis/Baseline/SF_FatJet_" +label, systname, indexij, e->weight() );  // fill to derive SF
+        Fill("VBShadAnalysis/Baseline/SF_FatJet_Mjj_" +label, systname, indexij, e->weight() );  // fill to derive SF
+    }
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 9, e->weight() ); //9--InvMjet cut
     Fill("VBShadAnalysis/GENERAL/CutflowNoW_" +label, systname, 9, 1 );
