@@ -42,7 +42,8 @@
 
 // from Miao
 #define ParticleNet_loose 0.90
-#define ParticleNet_MEDIUM 0.94
+//#define ParticleNet_MEDIUM 0.94
+#define ParticleNet_MEDIUM 0.80
 #define ParticleNet_tight 0.98
 #define ParticleNet_Xbb 0.96
 #define ParticleNet_Xcc 0.96
