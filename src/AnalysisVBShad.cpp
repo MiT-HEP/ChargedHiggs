@@ -653,23 +653,23 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("j1_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j1_Eta)",'F',readers_dnn_[i]);
             //AddVariable("j1_M",'F',readers_dnn_[i]);
-            AddVariable("j1_QGL",'F',readers_dnn_[i]);
+            //AddVariable("j1_QGL",'F',readers_dnn_[i]);
 
             AddVariable("j2_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j2_Eta)", 'F',readers_dnn_[i]);
             //AddVariable("j2_M",'F',readers_dnn_[i]);
-            AddVariable("j2_QGL",'F',readers_dnn_[i]);
+            //AddVariable("j2_QGL",'F',readers_dnn_[i]);
             //AddVariable("j2_PUDiscr",'F',readers_dnn_[i]);
 
             AddVariable("j3_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j3_Eta)", 'F',readers_dnn_[i]);
-            AddVariable("j3_QGL",'F',readers_dnn_[i]);
+            //AddVariable("j3_QGL",'F',readers_dnn_[i]);
 
             AddVariable("j4_pT", 'F',readers_dnn_[i]);
             AddVariable("abs(j4_Eta)", 'F',readers_dnn_[i]);
-            AddVariable("j4_QGL",'F',readers_dnn_[i]);
+            //AddVariable("j4_QGL",'F',readers_dnn_[i]);
 
-
+            AddVariable("abs(j3_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", 'F',readers_dnn_[i]);
             AddVariable("abs(j4_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", 'F',readers_dnn_[i]);
             AddVariable("min(min(j3_Eta,j4_Eta)-min(j1_Eta,j2_Eta),max(j1_Eta,j2_Eta)-max(j3_Eta,j4_Eta))", 'F',readers_dnn_[i]);
 
@@ -1261,6 +1261,7 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RB_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RR_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
+        Book ("VBShadAnalysis/Baseline/PNetMass_FatJet_Inclusive_"+l, "PNetMass_FatJet; PNetMass [GeV]; Events", 200,0,200.);
 
         //        if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 36,0,36);
         if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 100,0,100);
@@ -1616,7 +1617,7 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                         float zepV4 = fabs(selectedJets[vl]->Eta() - (selectedJets[fi]->Eta()+selectedJets[fj]->Eta())/2.0)/fabs(selectedJets[fi]->DeltaEta(selectedJets[fj]));        
                         float centralV2 = std::min( std::min(selectedJets[vk]->Eta(),selectedJets[vl]->Eta())-std::min(selectedJets[fi]->Eta(),selectedJets[fj]->Eta()), std::max(selectedJets[fi]->Eta(),selectedJets[fj]->Eta())-std::max(selectedJets[vk]->Eta(),selectedJets[vl]->Eta()) );
                     
-                        if(zepV3>25 || zepV4>20) continue;
+                        if(zepV3>25 || zepV4>25) continue;
 
 
                         if(doResTagTMVA){
@@ -1624,24 +1625,25 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
 
                             SetVariable("j1_pT",  selectedJets[fi]->GetP4().Pt());
                             SetVariable("abs(j1_Eta)", fabs(selectedJets[fi]->Eta()));
-                            SetVariable("j1_QGL", selectedJets[fi]->QGL()<0?0:selectedJets[fi]->QGL()); 
+                            //SetVariable("j1_QGL", selectedJets[fi]->QGL()<0?0:selectedJets[fi]->QGL()); 
 
 
                             SetVariable("j2_pT",  selectedJets[fj]->GetP4().Pt());
                             SetVariable("abs(j2_Eta)", fabs(selectedJets[fj]->Eta()));
-                            SetVariable("j2_QGL", selectedJets[fj]->QGL()<0?0:selectedJets[fj]->QGL());
+                            //SetVariable("j2_QGL", selectedJets[fj]->QGL()<0?0:selectedJets[fj]->QGL());
                             //SetVariable("j2_PUDiscr",selectedJets[fj]->GetPuId());
 
 
                             SetVariable("j3_pT",  selectedJets[vk]->GetP4().Pt());
                             SetVariable("abs(j3_Eta)", fabs(selectedJets[vk]->Eta()));
-                            SetVariable("j3_QGL", selectedJets[vk]->QGL()<0?0:selectedJets[vk]->QGL());
+                            //SetVariable("j3_QGL", selectedJets[vk]->QGL()<0?0:selectedJets[vk]->QGL());
 
 
                             SetVariable("j4_pT",  selectedJets[vl]->GetP4().Pt());
                             SetVariable("abs(j4_Eta)", fabs(selectedJets[vl]->Eta()));
-                            SetVariable("j4_QGL", selectedJets[vl]->QGL()<0?0:selectedJets[vl]->QGL());
+                            //SetVariable("j4_QGL", selectedJets[vl]->QGL()<0?0:selectedJets[vl]->QGL());
 
+                            SetVariable("abs(j3_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", zepV3);
                             SetVariable("abs(j4_Eta-(j1_Eta+j2_Eta)/2.)/abs(DEta_f12)", zepV4);
                             SetVariable("min(min(j3_Eta,j4_Eta)-min(j1_Eta,j2_Eta),max(j1_Eta,j2_Eta)-max(j3_Eta,j4_Eta))", centralV2);
 
@@ -1937,8 +1939,8 @@ bool VBShadAnalysis::genMatchResolved(Event*e, string systname, string label){
     float bosjer2=Getjetres(bosonJets[1]);
 
     int MatchParentID = 24;
-    if((label.find("ZnnZhadJJ_EWK") !=string::npos) || (label.find("ZbbZhadJJ_EWK")!=string::npos )) MatchParentID = 23;
-
+    //if((label.find("ZnnZhadJJ_EWK") !=string::npos) || (label.find("ZbbZhadJJ_EWK")!=string::npos )) MatchParentID = 23;
+    if((label.find("ZNUNUZJJjj_EWK") !=string::npos) || (label.find("ZJJZJJjj_EWK")!=string::npos ) || (label.find("WPLEPZHADjj_EWK")!=string::npos ) || (label.find("WMLEPZHADjj_EWK")!=string::npos )) MatchParentID = 23;
 
     for(Int_t i = e->NGenPar()-1; i >= 0; i--){
 
@@ -2606,6 +2608,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         } // massive AK8 -- mass/discr plots filling ends
 
+        //some general mass plots
+        Fill("VBShadAnalysis/Baseline/PNetMass_FatJet_Inclusive_" +label, systname, f->PNetMass(), e->weight() );
+
 
         double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetP4().Phi()));
         if(usePuppi) dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetPuppiMetP4().Phi()));
@@ -3009,9 +3014,22 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     bool match_V = false;
     bool match_f = false;
 
-    float dr1V1j,dr1V2j, dr2V1j,dr2V2j, dr3V1j,dr3V2j, dr4V1j,dr4V2j;
-    float dr1V1jLHE,dr1V2jLHE,dr2V1jLHE,dr2V2jLHE, dr3V1jLHE,dr3V2jLHE,dr4V1jLHE,dr4V2jLHE;
-
+    float dr1V1j = -1;
+    float dr1V2j = -1;
+    float dr2V1j = -1;
+    float dr2V2j = -1;
+    float dr3V1j = -1;
+    float dr3V2j = -1;
+    float dr4V1j = -1;
+    float dr4V2j = -1;
+    float dr1V1jLHE = -1;
+    float dr1V2jLHE = -1;
+    float dr2V1jLHE = -1;
+    float dr2V2jLHE = -1;
+    float dr3V1jLHE = -1;
+    float dr3V2jLHE = -1;
+    float dr4V1jLHE = -1;
+    float dr4V2jLHE = -1;
 
     if(checkSignalLabel(label)) {
 
@@ -3032,8 +3050,8 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
         //cout << "new event !!! " << e->NGenPar() << endl;
 
         int MatchParentID = 24;
-        if((label.find("ZnnZhadJJ_EWK") !=string::npos) || (label.find("ZbbZhadJJ_EWK")!=string::npos )) MatchParentID = 23;
-
+        //if((label.find("ZnnZhadJJ_EWK") !=string::npos) || (label.find("ZbbZhadJJ_EWK")!=string::npos )) MatchParentID = 23;
+        if((label.find("ZNUNUZJJjj_EWK") !=string::npos) || (label.find("ZJJZJJjj_EWK")!=string::npos ) || (label.find("WPLEPZHADjj_EWK")!=string::npos ) || (label.find("WMLEPZHADjj_EWK")!=string::npos )) MatchParentID = 23;
 
         for(Int_t g = 0; g < e->NGenPar(); g++){
 
@@ -3087,24 +3105,29 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
             //if(g == e->NGenPar() - 3 && genpar->GetP4().DeltaR(V2j->GetP4()) > 0.3) cout << "WRONG ORDER 2" << endl;
             */
         }
-    
-        dr1V1j = selectedJets[fi]->GetP4().DeltaR(V1j->GetP4());
-        dr1V2j = selectedJets[fi]->GetP4().DeltaR(V2j->GetP4());
-        dr2V1j = selectedJets[fj]->GetP4().DeltaR(V1j->GetP4());
-        dr2V2j = selectedJets[fj]->GetP4().DeltaR(V2j->GetP4());
-        dr3V1j = selectedJets[vk]->GetP4().DeltaR(V1j->GetP4());
-        dr3V2j = selectedJets[vk]->GetP4().DeltaR(V2j->GetP4());
-        dr4V1j = selectedJets[vl]->GetP4().DeltaR(V1j->GetP4());
-        dr4V2j = selectedJets[vl]->GetP4().DeltaR(V2j->GetP4());  
+   
+        if(V1j != NULL && V2j != NULL){ 
+            dr1V1j = selectedJets[fi]->GetP4().DeltaR(V1j->GetP4());
+            dr1V2j = selectedJets[fi]->GetP4().DeltaR(V2j->GetP4());
+            dr2V1j = selectedJets[fj]->GetP4().DeltaR(V1j->GetP4());
+            dr2V2j = selectedJets[fj]->GetP4().DeltaR(V2j->GetP4());
+            dr3V1j = selectedJets[vk]->GetP4().DeltaR(V1j->GetP4());
+            dr3V2j = selectedJets[vk]->GetP4().DeltaR(V2j->GetP4());
+            dr4V1j = selectedJets[vl]->GetP4().DeltaR(V1j->GetP4());
+            dr4V2j = selectedJets[vl]->GetP4().DeltaR(V2j->GetP4());  
+        }
 
-        dr1V1jLHE = selectedJets[fi]->GetP4().DeltaR(V1jLHE->GetP4());
-        dr1V2jLHE = selectedJets[fi]->GetP4().DeltaR(V2jLHE->GetP4());
-        dr2V1jLHE = selectedJets[fj]->GetP4().DeltaR(V1jLHE->GetP4());
-        dr2V2jLHE = selectedJets[fj]->GetP4().DeltaR(V2jLHE->GetP4());
-        dr3V1jLHE = selectedJets[vk]->GetP4().DeltaR(V1jLHE->GetP4());
-        dr3V2jLHE = selectedJets[vk]->GetP4().DeltaR(V2jLHE->GetP4());
-        dr4V1jLHE = selectedJets[vl]->GetP4().DeltaR(V1jLHE->GetP4());
-        dr4V2jLHE = selectedJets[vl]->GetP4().DeltaR(V2jLHE->GetP4());
+
+        if(V1jLHE != NULL && V2jLHE != NULL){
+            dr1V1jLHE = selectedJets[fi]->GetP4().DeltaR(V1jLHE->GetP4());
+            dr1V2jLHE = selectedJets[fi]->GetP4().DeltaR(V2jLHE->GetP4());
+            dr2V1jLHE = selectedJets[fj]->GetP4().DeltaR(V1jLHE->GetP4());
+            dr2V2jLHE = selectedJets[fj]->GetP4().DeltaR(V2jLHE->GetP4());
+            dr3V1jLHE = selectedJets[vk]->GetP4().DeltaR(V1jLHE->GetP4());
+            dr3V2jLHE = selectedJets[vk]->GetP4().DeltaR(V2jLHE->GetP4());
+            dr4V1jLHE = selectedJets[vl]->GetP4().DeltaR(V1jLHE->GetP4());
+            dr4V2jLHE = selectedJets[vl]->GetP4().DeltaR(V2jLHE->GetP4());
+        }
 
         if(dr1V1j < 0.4 or dr1V2j < 0.4) matchk = true;
         if(dr2V1j < 0.4 or dr2V2j < 0.4) matchl = true;
@@ -4167,7 +4190,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.7; // 80% signal
+            float tmvacut = 0.75; // 80% signal
             float kerascut = 0.5;
             //******************//
 
@@ -4194,8 +4217,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             }
 
             //bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
-            bool massWindowAsy = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
-            bool massWindow = doSideBand ? ( (!massWindowAsy && MV < 155 && MV > 50) or (selectedFatZbbIn.size()==0) ) : (massWindowAsy);
+            bool massWindowAsy = ( (MV >= mBoson_W - mWidthL) and (MV <= mBoson_Z + mWidthH)  );
+            bool massWindow = doSideBand ? ( (!massWindowAsy && MV < 155 && MV > 50) /*or (selectedFatZbbIn.size()==0)*/ ) : (massWindowAsy);
             if( massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RBtag";
     
@@ -4368,7 +4391,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.7; // 80% cut
+            float tmvacut = 0.75; // 80% cut
             float kerascut = 0.5;
             //******************//
 
@@ -4396,7 +4419,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             }
 
             //bool massWindow = doSideBand ? ( (fabs(MV-mBoson) >  mWidth) && MV < 155) : (fabs(MV-mBoson) < mWidth);
-            bool massWindowAsy = ((MV - mBoson + mWidthL) > 0 and (MV-mBoson) < mWidthH);
+            bool massWindowAsy = ( (MV >= mBoson_W - mWidthL) and (MV <= mBoson_Z + mWidthH)  );
             bool massWindow = doSideBand ? ( !massWindowAsy && MV < 155 && MV > 50) : (massWindowAsy);
             if(massWindow and bosonJets.size()>1 and (chi2<chi2Cut or (doResTagKeras and evt_maxkeras > kerascut) or (doResTagTMVA and evt_maxDnn > tmvacut) ) ) {
                 category="_RMET";
