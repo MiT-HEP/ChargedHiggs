@@ -1260,6 +1260,7 @@ void VBShadAnalysis::Init(){
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RB_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/pT_FatJet_RR_"+l, "pT_FatJet; pT [GeV]; Events", 120,0,2400.);
         Book ("VBShadAnalysis/Baseline/Tau21_FatJet_"+l, "Tau21_FatJet; tau21; Events", 50,0,1.0);
+        Book ("VBShadAnalysis/Baseline/PNetMass_FatJet_Inclusive_"+l, "PNetMass_FatJet; PNetMass [GeV]; Events", 200,0,200.);
 
         if(doStudySFfat) Book ("VBShadAnalysis/Baseline/SF_FatJet_"+l, "SF_FatJet; bit; Events", 36,0,36);
 
@@ -2603,6 +2604,9 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         }
 
         } // massive AK8 -- mass/discr plots filling ends
+
+        //some general mass plots
+        Fill("VBShadAnalysis/Baseline/PNetMass_FatJet_Inclusive_" +label, systname, f->PNetMass(), e->weight() );
 
 
         double dPhiFatMet=fabs(ChargedHiggs::deltaPhi(f->Phi(), e->GetMet().GetP4().Phi()));
