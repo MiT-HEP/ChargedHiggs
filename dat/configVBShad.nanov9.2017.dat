@@ -7,13 +7,20 @@ Loader=LoadNano|2017
 xrdcp=true
 
 Files=
+### BKGS
+include=dat/catalog/2020.moriond/nanov9/year2017/QCD_local.dat
+include=dat/catalog/2020.moriond/nanov9/year2017/ttvbs_local.dat
+#include=dat/catalog/2020.moriond/nanov9/year2017/Zinv_local.dat
+#include=dat/catalog/2020.moriond/nanov9/year2017/Wjets_local.dat
+
 ## Signal
 include=dat/catalog/2020.moriond/nanov9/year2017/vbshad_local.dat
-### BKGS
-#include=dat/catalog/2020.moriond/nanov9/year2017/Zinv.dat
+#include=dat/catalog/2020.moriond/nanov9/year2017/aqgc_local.dat
+
 #include=dat/catalog/2020.moriond/nanov9/year2017/Vjets.dat
-#include=dat/catalog/2020.moriond/nanov9/year2017/QCD.dat
-#include=dat/catalog/2020.moriond/nanov9/year2017/ttvbs.dat 
+#include=dat/catalog/2020.moriond/nanov9/year2017/ewk.dat
+##include=dat/catalog/2020.moriond/nanov9/year2017/QCD.dat
+##include=dat/catalog/2020.moriond/nanov9/year2017/ttvbs.dat
 
 # add Label
 include=dat/vbshad.dat
@@ -23,7 +30,7 @@ include=dat/vbshad.dat
 #
 
 SFDB=aux/sf_VBShad.txt
-MCDB=aux/mcdb.nanov9.2017.txt
+MCDB=aux/mcdb.nanov9.local.2017.txt
 include=dat/json.nano.year2017.dat
 pileup=aux/pileup.nanov9.year2017.root
 
