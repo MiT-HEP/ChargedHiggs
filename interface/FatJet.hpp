@@ -289,9 +289,9 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-80) > 15. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
     inline int IsWJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
-    inline int IsZJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) < 15. and ZvsQCDpNet > cut2_ and ZvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsZJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) > 15. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and ZvsQCDpNet > cut2_ and ZvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsZJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and ZvsQCDpNet > cut2_ and ZvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) < 15. and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) > 15. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
     // $$$$$$$$$$$$$$$$$$$$$$$$$$
     // $$$$$ for ChargedHiggs
