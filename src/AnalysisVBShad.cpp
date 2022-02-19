@@ -4513,14 +4513,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        if (year==2017)  sfname = "FatJetV_2017";
        if (year==2018)  sfname = "FatJetV_2018";
 
-       /*
        if((doHADAnalysis or doHADAntiAnalysis) and (category.find("BB") !=string::npos)) {
            e->SetPtEtaSF(sfname, evt_PTV1, fabs(evt_bosV1Eta));
            e->ApplySF(sfname);
            e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
            e->ApplySF(sfname);
        }
-       */
 
        /*
        if((category.find("BBtag") !=string::npos) and selectedFatJets.size()>0) {
