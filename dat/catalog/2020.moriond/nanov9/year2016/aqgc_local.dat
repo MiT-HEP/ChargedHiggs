@@ -11,3 +11,6 @@ addfiles=%(amarini)s/aQGC_WPLEPZHADjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia
 addfiles=%(amarini)s/aQGC_WMLEPZHADjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv9
 addfiles=%(amarini)s/aQGC_WMLEPWMHADjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv9
 addfiles=%(amarini)s/aQGC_WPLEPWPHADjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_ZBBZJJNOBjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_ZJJZJJjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv9
+addfiles=%(amarini)s/aQGC_ZNUNUZJJNOBjj_EWK_LO_NPle1_TuneCP5_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv9
