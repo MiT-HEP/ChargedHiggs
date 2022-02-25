@@ -43,7 +43,7 @@
 // from Miao
 #define ParticleNet_loose 0.90
 //#define ParticleNet_MEDIUM 0.94
-#define ParticleNet_MEDIUM 0.80
+#define ParticleNet_MEDIUM 0.75 //0.80
 #define ParticleNet_tight 0.98
 #define ParticleNet_Xbb 0.96
 #define ParticleNet_Xcc 0.96
@@ -2661,19 +2661,19 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
                 // isWJetOut and isWJetMirror only for resolved ( veto bosted ABC when doing resolved)
                 if (f->IsWJetOut( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetOut(ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM))) isWJetOut = true;
                 //isWJetMirror unused when doing the SR
-                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.2 , ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ))) isWJetMirror=true;
+                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.35 , ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ))) isWJetMirror=true;
             }
 
             if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
-                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ))) isWJet=true;
-                if (f->IsWJetMirrorWide( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetMirrorWide(ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM)) ) isWJetWide = true;
+                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ))) isWJet=true;
+                if (f->IsWJetMirrorWide( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetMirrorWide(ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM)) ) isWJetWide = true;
 
                 // regions B+D is excusive with A+C
                 // Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
                 if ( f->IsWJetWide( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetWide( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM )) ) isWJetMirror=true;
 
                 // IsWJetMirrorOut only for resolved
-                if ( f->IsWJetMirrorOut( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirrorOut( ParticleNet_MEDIUM, 0.2, ParticleNet_MEDIUM ))) isWJetOut=true;
+                if ( f->IsWJetMirrorOut( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirrorOut( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ))) isWJetOut=true;
             }
         } else {
 
@@ -4190,7 +4190,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.75; // 80% signal
+            float tmvacut = 0.60; // 80% signal
             float kerascut = 0.5;
             //******************//
 
@@ -4391,7 +4391,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.75; // 80% cut
+            float tmvacut = 0.60; // 80% cut
             float kerascut = 0.5;
             //******************//
 
@@ -4513,14 +4513,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
        if (year==2017)  sfname = "FatJetV_2017";
        if (year==2018)  sfname = "FatJetV_2018";
 
-       /*
        if((doHADAnalysis or doHADAntiAnalysis) and (category.find("BB") !=string::npos)) {
            e->SetPtEtaSF(sfname, evt_PTV1, fabs(evt_bosV1Eta));
            e->ApplySF(sfname);
            e->SetPtEtaSF(sfname, evt_PTV2, fabs(evt_bosV2Eta));
            e->ApplySF(sfname);
        }
-       */
 
        /*
        if((category.find("BBtag") !=string::npos) and selectedFatJets.size()>0) {

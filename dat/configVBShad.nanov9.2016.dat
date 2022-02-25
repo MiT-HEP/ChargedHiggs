@@ -7,13 +7,21 @@ Loader=LoadNano|2016
 xrdcp=true
 
 Files=
+### BKGS
+include=dat/catalog/2020.moriond/nanov9/year2016/QCD_local.dat
+include=dat/catalog/2020.moriond/nanov9/year2016/ttvbs_local.dat
+#include=dat/catalog/2020.moriond/nanov9/year2016/Zinv_local.dat
+#include=dat/catalog/2020.moriond/nanov9/year2016/Wjets_local.dat
+
 ## Signal
 include=dat/catalog/2020.moriond/nanov9/year2016/vbshad_local.dat
-### BKGS
-include=dat/catalog/2020.moriond/nanov9/year2016/Zinv.dat
-include=dat/catalog/2020.moriond/nanov9/year2016/Vjets.dat
-include=dat/catalog/2020.moriond/nanov9/year2016/QCD.dat
-include=dat/catalog/2020.moriond/nanov9/year2016/ttvbs.dat 
+#include=dat/catalog/2020.moriond/nanov9/year2016/aqgc_local.dat
+
+#include=dat/catalog/2020.moriond/nanov9/year2016/Vjets.dat
+#include=dat/catalog/2020.moriond/nanov9/year2016/ewk.dat
+##include=dat/catalog/2020.moriond/nanov9/year2016/Zinv.dat
+##include=dat/catalog/2020.moriond/nanov9/year2016/QCD.dat
+##include=dat/catalog/2020.moriond/nanov9/year2016/ttvbs.dat
 
 # add Label
 include=dat/vbshad.dat
@@ -23,7 +31,7 @@ include=dat/vbshad.dat
 #
 
 SFDB=aux/sf_VBShad.txt
-MCDB=aux/mcdb.nanov9.2016.txt
+MCDB=aux/mcdb.nanov9.local.2016.txt
 include=dat/json.nano.year2016.dat
 pileup=aux/pileup.nanov9.year2016.root
 

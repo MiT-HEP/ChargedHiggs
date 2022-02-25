@@ -270,11 +270,11 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     inline int IsWJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE) -80) < 15. and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
     inline int IsZJet(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) < 15. and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
 
-    inline int IsWJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
-    inline int IsZJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZJetWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
 
-    inline int IsWJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-80) > 15. and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
-    inline int IsZJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) > 15. and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsWJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-80) > 15. and rawMass(MASSTYPE)>50 and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZJetOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) > 15. and rawMass(MASSTYPE)>50 and XqqpNet > ((Pt()<500)?cut1_:cut1_) and IsFatJet() )   return 1; return 0;}
 
     //    inline int IsWJet() const { if( Pt() > 200. and SDMass() > 65. and SDMass() < 105. and WvsQCDMD > 0.258 and IsFatJet() )   return 1; return 0;}
 
@@ -283,15 +283,15 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     //    inline int IsZbbJetWide(float cut1_, float cut2_) const { if( Pt() > 200. and rawMass(MASSTYPE,true) < 155. and HbbvsQCDpNet  > ((Pt()<500)?cut1_:cut2_) /*and TvsQCD()<0.9*/ and IsFatJet() )   return 1; return 0;}
 
     inline int IsZbbJet(float cut1_, float cut2_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE,true)-91) < 15. and (XbbpNet > cut1_ || XccpNet > cut2_) and IsFatJet() )   return 1; return 0;}
-    inline int IsZbbJetWide(float cut1_, float cut2_) const { if( Pt() > 200. and rawMass(MASSTYPE,true) < 155. and (XbbpNet > cut1_ || XccpNet > cut2_) and IsFatJet() )   return 1; return 0;}
+    inline int IsZbbJetWide(float cut1_, float cut2_) const { if( Pt() > 200. and rawMass(MASSTYPE,true) < 155. and rawMass(MASSTYPE)>50 and (XbbpNet > cut1_ || XccpNet > cut2_) and IsFatJet() )   return 1; return 0;}
 
     inline int IsWJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-80) < 15. and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-80) > 15. and rawMass(MASSTYPE) < 155. and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsWJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsWJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-80) > 15. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsWJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
-    inline int IsZJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) < 15. and ZvsQCDpNet > cut2_ and ZvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsZJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) > 15. and rawMass(MASSTYPE) < 155. and ZvsQCDpNet > cut2_ and ZvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
-    inline int IsZJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and ZvsQCDpNet > cut2_ and ZvsQCDpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirror(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) < 15. and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirrorOut(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and fabs(rawMass(MASSTYPE)-91) > 15. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
+    inline int IsZJetMirrorWide(float cut1_, float cut2_, float cut3_) const { if( Pt() > 200. and rawMass(MASSTYPE) < 155. and rawMass(MASSTYPE)>50 and XqqpNet > cut2_ and XqqpNet < ((Pt()<500)?cut1_:cut1_)  and IsFatJet())   return 1; return 0;}
 
     // $$$$$$$$$$$$$$$$$$$$$$$$$$
     // $$$$$ for ChargedHiggs
