@@ -198,9 +198,9 @@ addConfig=VBShadAnalysis|SetMultiPrimaryDataset(),AddLabel("MET"),AddLabel("JetH
 ##addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross1.weights.xml")
 ##addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross2.weights.xml")
 ### new nano
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV1_2020_BB_x0.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV1_2020_BB_x1.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV1_2020_BB_x2.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BB_x0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BB_x1.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BB_x2.weights.xml")
 ## BB - data w/ QCDmirror (0,1,2)
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross0_data.weights.xml")
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSHad_cross1_data.weights.xml")
