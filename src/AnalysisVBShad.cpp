@@ -341,8 +341,9 @@ void VBShadAnalysis::ReadTmva(Event*e){
 
     SetVariable("varMjj",evt_Mjj); //2
     SetVariable("varDetajj",evt_Detajj); //3
-    SetVariable("varJet1Pt",evt_Jet1Pt); //4
     SetVariable("abs(varJet1Eta)", abs(evt_Jet1Eta)); //5
+    SetVariable("varJet1Pt",evt_Jet1Pt);
+    SetVariable("abs(varJet2Eta)", abs(evt_Jet2Eta));
     SetVariable("varJet2Pt",evt_Jet2Pt); //6
     SetVariable("varMVV",evt_MVV); //7
     SetVariable("varMTVV",evt_MTVV); //8
@@ -352,6 +353,7 @@ void VBShadAnalysis::ReadTmva(Event*e){
     SetVariable("varPTV2",evt_PTV2); //11
     SetVariable("varPTV1",evt_PTV1); //12
 
+    SetVariable("max(abs(bosV1Eta),abs(bosV2Eta))",std::max(fabs(evt_bosV1Eta),fabs(evt_bosV2Eta)));
     SetVariable("varCen",evt_cenEta); //13
     SetVariable("varzepVB",evt_zepVB); //14
     SetVariable("varzepVV",evt_zepVV); //15   
@@ -361,7 +363,8 @@ void VBShadAnalysis::ReadTmva(Event*e){
     SetVariable("varmtop",evt_mtop); //19
 
     SetVariable("varDetaVV",evt_DetaVV);//20 
-    SetVariable("varDRVj",evt_DRV1j);//21
+    SetVariable("varDRV1j",evt_DRV1j);//21
+    SetVariable("varDRV2j",evt_DRV2j);
     SetVariable("min(varDRV1j,varDRV2j)",std::min(evt_DRV1j,evt_DRV2j)); //22
 
     //for RBtag multi-DNN in particular
@@ -437,12 +440,18 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("j1QGL",'F',readers_[i]);  //0
             AddVariable("j2QGL" ,'F',readers_[i]); //1
             AddVariable("varMjj",'F',readers_[i]); //2
+            AddVariable("varDetajj",'F',readers_[i]); //3
+            AddVariable("abs(varJet1Eta)",'F',readers_[i]);
             AddVariable("varJet1Pt",'F',readers_[i]); //4
+            AddVariable("abs(varJet2Eta)",'F',readers_[i]);
             AddVariable("varJet2Pt",'F',readers_[i]); //6
+            AddVariable("varMVV",'F',readers_[i]);
             AddVariable("varPTV1",'F',readers_[i]); //12
+            AddVariable("max(abs(bosV1Eta),abs(bosV2Eta))",'F',readers_[i]);
             AddVariable("varCen",'F',readers_[i]); //13
             AddVariable("varzepVV",'F',readers_[i]); //15
-            AddVariable("min(varDRV1j,varDRV2j)",'F',readers_[i]); //22
+            AddVariable("varDRV1j",'F',readers_[i]); //22
+            AddVariable("varDRV2j",'F',readers_[i]); //22
             AddVariable("varnormPTVVjj",'F',readers_[i]); //9
         }
 
