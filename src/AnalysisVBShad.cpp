@@ -204,10 +204,10 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
         AddFinalHisto("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l);
         AddFinalHisto("VBShadAnalysis/BDTwithMET"+category+"_"+l);
-        if(!doBAnalysis and !doMETAnalysis) Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "BDT noBnoMET ; BDT noBnoMET; Events", 200,-1.,1.);
+        if(!doBAnalysis and !doMETAnalysis) Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "DNN noBnoMET ; DNN noBnoMET; Events", 200,0.,1.);
 
         if(doBAnalysis or doBAntiAnalysis) {
-            Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "BDT with Btag ; BDT with Btag; Events", 200,-1.,1.);
+            Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "DNN with Btag ; DNN with Btag; Events", 200,0.,1.);
             if(category.find("RBtag")   !=string::npos ) {
                 Book ("VBShadAnalysis/DNNMultiRBtagEWK"+category+"_"+l, "DNN MultiClass RBtag (response for ZZ); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
                 Book ("VBShadAnalysis/DNNMultiRBtagQCD"+category+"_"+l, "DNN MultiClass RBtag (response for WZ); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
@@ -226,7 +226,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
             AddFinalHisto("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+l);
 
 
-            Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "DNN withMET ; DNNwithMET; Events", 100,0.,1.);
+            Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "DNN withMET ; DNNwithMET; Events", 200,0.,1.);
 
             Book ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+l, "BDT Multi withMET (response for ZZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+l, "BDT Multi withMET (response for WZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
@@ -476,16 +476,20 @@ void VBShadAnalysis::InitTmva() {
         cout << " GOING TO BBtag-Nano   " << endl;
 
         for (int i=6; i<9; i++) {
+            AddVariable("j1QGL",'F',readers_[i]);  //0
+            AddVariable("j2QGL" ,'F',readers_[i]); //1
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varDetajj",'F',readers_[i]); //1
+            AddVariable("varJet1Pt",'F',readers_[i]); //4
+            AddVariable("abs(varJet2Eta)",'F',readers_[i]);
             AddVariable("varJet2Pt",'F',readers_[i]); //2
-            AddVariable("varMVV",'F',readers_[i]); //3
-            AddVariable("varDetaVV",'F',readers_[i]); //14
-            AddVariable("varzepVB",'F',readers_[i]); //5
-            AddVariable("varDRVj",'F',readers_[i]); //15
+            AddVariable("varPTV1",'F',readers_[i]); //12
+            AddVariable("varPTV2",'F',readers_[i]); //12
+            AddVariable("varCen",'F',readers_[i]); //13
+            AddVariable("varzepVV",'F',readers_[i]); //15
+            AddVariable("varDRV1j",'F',readers_[i]); //22          
             AddVariable("varnormPTVVjj",'F',readers_[i]); //6
             //AddVariable("bosV2mass",'F',readers_[i]); //8
-            AddVariable("varFW2j",'F',readers_[i]); //9
         }
 
 

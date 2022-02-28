@@ -218,9 +218,9 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV2_2020_mores
 
 
 ## BBTag  -MC (678)
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BBtag_ewk_x0.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BBtag_ewk_x1.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV0_run2_BBtag_ewk_x2.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BBtag_x0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BBtag_x1.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BBtag_x2.weights.xml")
 
 ## RBtag - MC (9)
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRBtag.weights.xml")
