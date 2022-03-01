@@ -464,9 +464,11 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("varMjj",'F',readers_[i]); //2
             AddVariable("varDetajj",'F',readers_[i]); //3
             AddVariable("varJet1Pt",'F',readers_[i]); //4
+            AddVariable("abs(varJet2Eta)",'F',readers_[i]);
             AddVariable("varJet2Pt",'F',readers_[i]); //6
             AddVariable("varMTVV",'F',readers_[i]); //8
             AddVariable("varCen",'F',readers_[i]); //13
+            AddVariable("varDRV2j",'F',readers_[i]); 
             AddVariable("varnormPTVVjj",'F',readers_[i]); //9
         }
 
@@ -524,11 +526,13 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("j2QGL" ,'F',readers_[i]); //1
             AddVariable("varMjj",'F',readers_[i]); //2
             AddVariable("varDetajj",'F',readers_[i]); //3
-            //AddVariable("varJet1Pt",'F',readers_[i]); //4
+            AddVariable("abs(varJet1Eta)",'F',readers_[i]);
+            AddVariable("varJet1Pt",'F',readers_[i]); //4
+            AddVariable("abs(varJet2Eta)",'F',readers_[i]);
             AddVariable("varJet2Pt",'F',readers_[i]); //6
-            AddVariable("varMVV",'F',readers_[i]); //8
-            AddVariable("varPTV1",'F',readers_[i]); //12
+            AddVariable("varMTVV",'F',readers_[i]); //8
             AddVariable("varCenRes",'F',readers_[i]); //23
+            AddVariable("varDRV2j",'F',readers_[i]);   
             AddVariable("varnormPTVVjj",'F',readers_[i]); //9
             AddVariable("bosV2discr",'F',readers_[i]); //26
         }
@@ -3202,12 +3206,12 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("ZJJZJJjj_EWK_LO") !=string::npos ) sigmc = 13 ;
     if(label.find("ZJJZJJjj_QCD_LO") !=string::npos ) sigmc = 14 ;
     if(label.find("ZJJZJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 15 ;
-    if(label.find("ZNUNUWPMJJjj_EWK") !=string::npos ) sigmc = 16 ;
-    if(label.find("ZNUNUWPMJJjj_QCD") !=string::npos ) sigmc = 17 ;
-    if(label.find("ZNUNUWPMJJjj_EWK_QCD") !=string::npos  ) sigmc = 18 ;
-    if(label.find("ZNUNUZJJjj_EWK") !=string::npos ) sigmc = 19 ;
-    if(label.find("ZNUNUZJJjj_QCD") !=string::npos ) sigmc = 20 ;
-    if(label.find("ZNUNUZJJjj_EWK_QCD") !=string::npos ) sigmc = 21 ;
+    if(label.find("ZNUNUWPMJJjj_EWK_LO") !=string::npos ) sigmc = 16 ;
+    if(label.find("ZNUNUWPMJJjj_QCD_LO") !=string::npos ) sigmc = 17 ;
+    if(label.find("ZNUNUWPMJJjj_EWK_QCD_LO") !=string::npos  ) sigmc = 18 ;
+    if(label.find("ZNUNUZJJjj_EWK_LO") !=string::npos ) sigmc = 19 ;
+    if(label.find("ZNUNUZJJjj_QCD_LO") !=string::npos ) sigmc = 20 ;
+    if(label.find("ZNUNUZJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 21 ;
     if(label.find("ZJJNOBWPMJJjj_EWK_LO") !=string::npos ) sigmc = 22 ;
     if(label.find("ZJJNOBWPMJJjj_QCD_LO") !=string::npos ) sigmc = 23 ;
     if(label.find("ZJJNOBWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 24 ;
@@ -3295,12 +3299,12 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ZJJZJJjj_EWK_LO") !=string::npos ) mc = 13 ;
     if(label.find("ZJJZJJjj_QCD_LO") !=string::npos ) mc = 14 ;
     if(label.find("ZJJZJJjj_EWK_QCD_LO") !=string::npos ) mc = 15 ;
-    if(label.find("ZNUNUWPMJJjj_EWK") !=string::npos ) mc = 16 ;
-    if(label.find("ZNUNUWPMJJjj_QCD") !=string::npos ) mc = 17 ;
-    if(label.find("ZNUNUWPMJJjj_EWK_QCD") !=string::npos  ) mc = 18 ;
-    if(label.find("ZNUNUZJJjj_EWK") !=string::npos  ) mc = 19 ;
-    if(label.find("ZNUNUZJJjj_QCD") !=string::npos   ) mc = 20 ;
-    if(label.find("ZNUNUZJJjj_EWK_QCD") !=string::npos  ) mc = 21 ;
+    if(label.find("ZNUNUWPMJJjj_EWK_LO") !=string::npos ) mc = 16 ;
+    if(label.find("ZNUNUWPMJJjj_QCD_LO") !=string::npos ) mc = 17 ;
+    if(label.find("ZNUNUWPMJJjj_EWK_QCD_LO") !=string::npos  ) mc = 18 ;
+    if(label.find("ZNUNUZJJjj_EWK_LO") !=string::npos  ) mc = 19 ;
+    if(label.find("ZNUNUZJJjj_QCD_LO") !=string::npos   ) mc = 20 ;
+    if(label.find("ZNUNUZJJjj_EWK_QCD_LO") !=string::npos  ) mc = 21 ;
     if(label.find("ZJJNOBWPMJJjj_EWK_LO") !=string::npos  ) mc = 22 ;
     if(label.find("ZJJNOBWPMJJjj_QCD_LO") !=string::npos  ) mc = 23 ;
     if(label.find("ZJJNOBWPMJJjj_EWK_QCD_LO") !=string::npos  ) mc = 24 ;
