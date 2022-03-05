@@ -390,8 +390,8 @@ void VBShadAnalysis::ReadTmva(Event*e){
         if(i==0 || i==1 || i==2) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSHad") );
         if(i==3 || i==4 || i==5) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSMet") );
         if(i==6 || i==7 || i==8) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSBBtag") );
-        if(i==9 ) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRBtag") );
-        if(i==10 || i==11 || i==12) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRMET") );
+        if(i==9 || i==10 || i==11) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRBtag") );
+        if(i==12 || i==13 || i==14) bdt.push_back(readers_[i]->EvaluateMVA("BDT_VBSRMET") );
     }
 
     /*
@@ -500,20 +500,22 @@ void VBShadAnalysis::InitTmva() {
         cout << " GOING TO RBtag   " << endl;
         //old training
 
-        for (int i=9; i<10; i++) {
+        for (int i=9; i<12; i++) {
+            AddVariable("j1QGL",'F',readers_[i]);  //0
+            AddVariable("j2QGL" ,'F',readers_[i]); //1
             AddVariable("varMjj",'F',readers_[i]); //0
+            AddVariable("varDetajj",'F',readers_[i]);
+            AddVariable("varJet1Pt",'F',readers_[i]); //4
+            AddVariable("abs(varJet2Eta)",'F',readers_[i]);
             AddVariable("varJet2Pt",'F',readers_[i]); //2
-            //        AddVariable("varDetajj",'F',i); //1
-            //        AddVariable("varMVV",'F',i); //3
-            AddVariable("varPTV2",'F',readers_[i]); //4
-            AddVariable("varCen",'F',readers_[i]); //5
-            //        AddVariable("varzepVB",'F',i); //6
+            AddVariable("varMVV",'F',readers_[i]); //3
+            AddVariable("varPTV1",'F',readers_[i]); //4
+            //AddVariable("varCen",'F',readers_[i]); //5
+            AddVariable("varzepVV",'F',readers_[i]); //6
             AddVariable("varnormPTVVjj",'F',readers_[i]); //7
-            AddVariable("varmtop",'F',readers_[i]); //8
-            AddVariable("bosV2mass",'F',readers_[i]); //9
-            AddVariable("bosV2chi2",'F',readers_[i]); //10
-
-            AddSpectator("mc",'F',i); AddSpectator("weight",'F',i); AddSpectator("ana_category",'F',i); AddSpectator("bosGen",'F',i); AddSpectator("evt",'F',i);
+            //AddVariable("varmtop",'F',readers_[i]); //8
+            //AddVariable("bosV2mass",'F',readers_[i]); //9
+            AddVariable("bosV2discr",'F',readers_[i]);
         }
 
         // RMET
@@ -521,7 +523,7 @@ void VBShadAnalysis::InitTmva() {
         cout << " GOING TO RMET-Nano   " << endl;
         //new binary class for RMET!
 
-        for (int i=10; i<13; i++) {
+        for (int i=12; i<15; i++) {
             AddVariable("j1QGL",'F',readers_[i]);  //0
             AddVariable("j2QGL" ,'F',readers_[i]); //1
             AddVariable("varMjj",'F',readers_[i]); //2
@@ -547,8 +549,8 @@ void VBShadAnalysis::InitTmva() {
             if(i==0 or i==1 or i==2) readers_[i]->BookMVA("BDT_VBSHad",weights[i].c_str());
             if(i==3 or i==4 or i==5) readers_[i]->BookMVA("BDT_VBSMet",weights[i].c_str());
             if(i==6 or i==7 or i==8) readers_[i]->BookMVA("BDT_VBSBBtag",weights[i].c_str());
-            if(i==9 ) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
-            if(i==10 or i==11 or i==12) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
+            if(i==9 or i==10 or i==11) readers_[i]->BookMVA("BDT_VBSRBtag",weights[i].c_str());
+            if(i==12 or i==13 or i==14) readers_[i]->BookMVA("BDT_VBSRMET",weights[i].c_str());
         }
     }
 
@@ -4884,8 +4886,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(doHADAnalysis or doHADAntiAnalysis) BDTnoBnoMET = bdt[xset];
         if(doMETAnalysis and (category.find("BMET")   !=string::npos)) BDTwithMET = bdt[xset+3];
-        if(doMETAnalysis and (category.find("RMET")   !=string::npos)) BDTwithMET = bdt[xset+10];
-        if(doBAnalysis and (category.find("RBtag")   !=string::npos)) BDTbtag = bdt[9]; // from Will
+        if(doMETAnalysis and (category.find("RMET")   !=string::npos)) BDTwithMET = bdt[xset+12];
+        if(doBAnalysis and (category.find("RBtag")   !=string::npos)) BDTbtag = bdt[xset+9]; // from Will
         if(doBAnalysis and (category.find("BBtag")   !=string::npos)) BDTbtag = bdt[xset+6]; // from Miao
 
         if(!doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
