@@ -99,22 +99,50 @@ int Jet::PassPuId() const {
     if(puidcut_ == 200 ) { // Medium
         float aeta= abs(Eta());
         float pt = p4.Pt(); // no syst
-        if ( aeta< 2.5){
-            if (pt >=30 and pt< 50 and puId <+0.61)  return 0;
-            if (pt >=10 and pt< 30 and puId <+0.18)  return 0;
+        if(year_==2017 or year_==2018) {
+            if ( aeta< 2.5){
+                if (pt >=20 and pt< 30 and puId <0.68)  return 0;
+                if (pt >=30 and pt< 40 and puId <0.90)  return 0;
+                if (pt >=40 and pt< 50 and puId <0.96)  return 0;
+            }
+            else if (aeta < 2.75){
+                if (pt >=20 and pt< 30 and puId <-0.04)  return 0;
+                if (pt >=30 and pt< 40 and puId <0.36)  return 0;
+                if (pt >=40 and pt< 50 and puId <0.61)  return 0;
+            }
+            else if (aeta < 3.00){
+                if (pt >=20 and pt< 30 and puId <-0.43)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.16)  return 0;
+                if (pt >=40 and pt< 50 and puId <0.14)  return 0;
+            }
+            else if (aeta < 5.00){
+                if (pt >=20 and pt< 30 and puId <-0.30)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.09)  return 0;
+                if (pt >=40 and pt< 50 and puId <0.12)  return 0;
+            }
+        } else {
+            if ( aeta< 2.5){
+                if (pt >=20 and pt< 30 and puId <0.62)  return 0;
+                if (pt >=30 and pt< 40 and puId <0.86)  return 0;
+                if (pt >=40 and pt< 50 and puId <0.93)  return 0;
+            }
+            else if (aeta < 2.75){
+                if (pt >=20 and pt< 30 and puId <-0.39)  return 0;
+                if (pt >=30 and pt< 40 and puId <0.10)  return 0;
+                if (pt >=40 and pt< 50 and puId <0.19)  return 0;
+            }
+            else if (aeta < 3.00){
+                if (pt >=20 and pt< 30 and puId <-0.32)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.15)  return 0;
+                if (pt >=40 and pt< 50 and puId <0.04)  return 0;
+            }
+            else if (aeta < 5.00){
+                if (pt >=20 and pt< 30 and puId <-0.29)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.08)  return 0;
+                if (pt >=40 and pt< 50 and puId <0.12)  return 0;
+            }
         }
-        else if (aeta < 2.75){
-            if (pt >=30 and pt< 50 and puId <-0.35)  return 0;
-            if (pt >=10 and pt< 30 and puId <-0.55)  return 0;
-        }
-        else if (aeta < 3.00){
-            if (pt >=30 and pt< 50 and puId <-0.23)  return 0;
-            if (pt >=10 and pt< 30 and puId <-0.42)  return 0;
-        }
-        else if (aeta < 5.00){
-            if (pt >=30 and pt< 50 and puId <-0.17)  return 0;
-            if (pt >=10 and pt< 30 and puId <-0.36)  return 0;
-        }
+
     }
     if(puidcut_ == 300 ) { // Tight
         float aeta= abs(Eta());
