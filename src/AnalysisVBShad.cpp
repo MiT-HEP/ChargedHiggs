@@ -2680,19 +2680,19 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
                 // isWJetOut and isWJetMirror only for resolved ( veto bosted ABC when doing resolved)
                 if (f->IsWJetOut( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetOut(ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM))) isWJetOut = true;
                 //isWJetMirror unused when doing the SR
-                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.35 , ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ))) isWJetMirror=true;
+                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.30 , ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ))) isWJetMirror=true;
             }
 
             if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
-                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ))) isWJet=true;
-                if (f->IsWJetMirrorWide( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetMirrorWide(ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM)) ) isWJetWide = true;
+                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ))) isWJet=true;
+                if (f->IsWJetMirrorWide( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetMirrorWide(ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM)) ) isWJetWide = true;
 
                 // regions B+D is excusive with A+C
                 // Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
                 if ( f->IsWJetWide( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetWide( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM )) ) isWJetMirror=true;
 
                 // IsWJetMirrorOut only for resolved
-                if ( f->IsWJetMirrorOut( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirrorOut( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ))) isWJetOut=true;
+                if ( f->IsWJetMirrorOut( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirrorOut( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ))) isWJetOut=true;
             }
         } else {
 
