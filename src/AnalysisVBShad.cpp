@@ -77,7 +77,7 @@ void VBShadAnalysis::SetJetCuts(Jet *j) {
     //#warning NOPUID
     //j->SetPuIdCut(-999);
     //#warning PUID
-    j->SetPuIdCut(100); // 100=loose
+    j->SetPuIdCut(100); // 100=loose 200=medium
 }
 
 void VBShadAnalysis::SetTauCuts(Tau *t){
@@ -3355,6 +3355,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ST") !=string::npos) mc =210 ;
     // V+jets
     if(label.find("ZJetsToNuNu_HT") !=string::npos) mc = 300 ;
+    if(label.find("ZJetsToNuNuPt") !=string::npos) mc = 301 ;
     if(label.find("WJetsToLNu_HT") !=string::npos) mc = 310 ;
     if(label.find("WJetsToLNu_Nj") !=string::npos) mc = 311 ;
     if(label.find("WJetsToLNu_Pt") !=string::npos) mc = 312 ;
@@ -4720,7 +4721,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
 
     //only cut for btag cate, others used in MVA
-    if( !doResonant and (category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos) and evt_cenEta < 0. ) return EVENT_NOT_USED;
+    //    if( !doResonant and (category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos) and evt_cenEta < 0. ) return EVENT_NOT_USED;
 
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--centrality
