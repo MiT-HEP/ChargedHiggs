@@ -402,9 +402,9 @@ void VBShadAnalysis::ReadTmva(Event*e){
     ---- all multi classes here -----
     0     : all 0,1,2                    - RMET  -- BDT W vs Z from Will
     1     : all 3,4,5                    - RMET  -- BDT EWK vs QCD with dnn tagger (athough not used now, switch to DNN)      
-    2,3,4 : all 6,7,8/9,10,11/12,13,14   - BMET  -- DNN EWK vs QCD with dnn tagger
-    4     : all 15,16,17                 - RMET  -- DNN EWK vs QCD with dnn tagger from Ava
-    5     : all 18,19,20                 - RBTag -- DNN EWK vs QCD with dnn tagger from Ava (athough not used now)
+    2,3,4 : all 6,7,8/9,10,11/12,13,14   - BMET  -- DNN EWK vs QCD with dnn tagger (3 folder X 3 classes)
+    5     : all 15,16,17                 - RMET  -- DNN EWK vs QCD with dnn tagger from Ava
+    6     : all 18,19,20                 - RBTag -- DNN EWK vs QCD with dnn tagger from Ava (athough not used now)
     -----------------------------------
     */
 
@@ -475,6 +475,7 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("varCen",'F',readers_[i]); //13
             AddVariable("varDRV2j",'F',readers_[i]); 
             AddVariable("varnormPTVVjj",'F',readers_[i]); //9
+            AddVariable("varFW2j",'F',readers_[i]);
         }
 
 
@@ -4223,7 +4224,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.60; // 80% signal
+            float tmvacut = 0.75; // 80% signal
             float kerascut = 0.5;
             //******************//
 
@@ -4424,7 +4425,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.60; // 80% cut
+            float tmvacut = 0.75; // 80% cut
             float kerascut = 0.5;
             //******************//
 
@@ -4926,11 +4927,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(doMETAnalysis or doMETAntiAnalysis) {
             Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );
-
+/*
             Fill ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+label, systname, bdt_multi[0], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+label, systname, bdt_multi[1], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+label, systname, bdt_multi[2], e->weight() );
-/*
+
             Fill ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+label, systname, bdt_multi[3], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+label, systname, bdt_multi[4], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+label, systname, bdt_multi[5], e->weight() );
