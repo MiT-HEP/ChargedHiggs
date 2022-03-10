@@ -241,7 +241,9 @@ private:
     float BDTnoBnoMET = -100;
     float BDTwithMET = -100;
     float BDTbtag = -100;
-    float MultiBDTwithMET = -100;
+    float MultiBDTwithMETewk = -100;
+    float MultiBDTwithMETqcd = -100;
+    float MultiBDTwithMETbkg = -100;
     int counterExtrabToVeto_=0;
 
     /************
