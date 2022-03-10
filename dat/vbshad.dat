@@ -219,9 +219,9 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BB
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV1_2020_taufix_BMET_x1.weights.xml")
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_NanoV1_2020_taufix_BMET_x2.weights.xml")
 ### use DNN
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BMET_x0.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BMET_x1.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BMET_x2.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BMET_x0_test.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BMET_x1_test.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BMET_x2_test.weights.xml")
 
 
 ## BBTag  -MC (678)
@@ -241,18 +241,25 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_RM
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_RMET_x1_test.weights.xml")
 addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_RMET_x2_test.weights.xml")
 
-# Multiclass - RMET (WvsZ)
+# Multiclass - RMET (WvsZ, chi2)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_RMET_BDTG.weights.xml")
 
-# Multiclass BDT - RMET (EWK vs QCD WZ)
+# Multiclass BDT - RMET (EWK vs QCD, chi2)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlassChi2_BDTG.weights.xml")
-addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnncut_BDTG.weights.xml")
-addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnnmulticlass_BDTG.weights.xml")
 
-# Multiclass DNN - RMET (EWK vs QCD WZ)
+# Multiclass BDT - RMET (EWK vs QCD dnn, super old, not used)
+#addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnncut_BDTG.weights.xml")
+#addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnnmulticlass_BDTG.weights.xml")
+
+# Multiclass DNN - BMET (EWK vs QCD)
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_BMET_multi_x0.weights.xml")
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_BMET_multi_x1.weights.xml")
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_BMET_multi_x2.weights.xml")
+
+# Multiclass DNN - RMET (EWK vs QCD WZ, from Ava)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_MET_Multi_final.weights.xml")
 
-# Multiclass - RBtag (EWK vs QCD WZ) DNN
+# Multiclass DNN - RBtag (EWK vs QCD WZ, from Ava)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_BHAD_Multi_DNN.weights_1.xml")
 
 ## Res DNN tagger
@@ -260,8 +267,8 @@ addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_BHAD_Multi_DNN.
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l5_AllGoodVBad_RMET_ActFuncTRS_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_nanoV2newAssgn_RBTA_All_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_nanoV2newAssgn_RMET_All_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_NanoV9_MixDR_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_NanoV9_MixDR_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_NanoV9_MixDR_4layer_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_NanoV9_MixDR_4layer_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_nanoVJulComb5r1_RBTA_2020_zepCen_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_nanoVJulComb5r1_RBTA_2020_zepCen_DNN.weights.xml")
 addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_DNN_multi_RBTA_CorrLHE_DNN.weights.xml")
