@@ -266,7 +266,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/Met"+category+"_"+l, "Met; Met [GeV]; Events", 100,0,1000);
     Book ("VBShadAnalysis/MetPhi"+category+"_"+l, "Met #phi; Met #phi; Events", 100,-TMath::Pi(),TMath::Pi());
     Book ("VBShadAnalysis/PTVV"+category+"_"+l, "PTVV; PTVV [GeV]; Events", 100,0,1000);
-    Book ("VBShadAnalysis/Centrality"+category+"_"+l, "Centrality; Centrality; Events", 100,0,5);
+    Book ("VBShadAnalysis/Centrality"+category+"_"+l, "Centrality; Centrality; Events", 70,-2,5);
 
     // fwd jets
     Book ("VBShadAnalysis/pT1_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
@@ -3388,6 +3388,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("DY") !=string::npos) mc = 320 ;
     if(label.find("ZJetsToQQ") !=string::npos) mc = 330 ;
     if(label.find("WJetsToQQ") !=string::npos) mc = 340 ;
+    if(label.find("VJetsToQQ") !=string::npos) mc = 350 ;
 
     if(label.find("QCD_HT") !=string::npos) mc =500 ;
     if(label.find("QCD_Inclusive") !=string::npos) mc =501 ;
@@ -3663,7 +3664,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_Pt" or
         label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
         label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
-        label == "ZJetsToQQ" or label == "WJetsToQQ"
+        label == "ZJetsToQQ" or label == "WJetsToQQ" or label == "VJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
 
     /*
@@ -3721,8 +3722,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label.find("EWKWMinus2Jets") !=string::npos) label = "WJetsToLNu";
     if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
     */
-    //    if(label.find("ZJetsToQQ") !=string::npos) label = "DY";
-    //    if(label.find("WJetsToQQ") !=string::npos) label = "WJetsToLNu"; ;
+    if(label.find("ZJetsToQQ") !=string::npos) label = "VJetsToQQ";
+    if(label.find("WJetsToQQ") !=string::npos) label = "VJetsToQQ";
 
     //$$$$$$$$$
     //$$$$$$$$$ Merge and redefine TTbar
@@ -4526,7 +4527,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ APPLY WEIGHTS
     //////
 
-    //////
+    //////  to be applied also to VQQ ?
     if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt")) and genVp!=NULL) {
 
         if( not e->ExistSF("ZNNLO_rwg") ){
