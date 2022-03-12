@@ -3315,9 +3315,9 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WPJJWMJJjj_EWK_LO") !=string::npos ) mc = 4 ;
     if(label.find("WPJJWMJJjj_QCD_LO") !=string::npos ) mc = 5 ;
     if(label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ) mc = 6 ;
-    if(label.find("WPJJWMJJjj_4f_EWK_LO") !=string::npos ) mc = 4 ;
-    if(label.find("WPJJWMJJjj_4f_QCD_LO") !=string::npos ) mc = 5 ;
-    if(label.find("WPJJWMJJjj_4f_EWK_QCD_LO") !=string::npos ) mc = 6 ;
+    if(label.find("WPJJWMJJjj_4f_EWK_LO") !=string::npos ) mc = 40 ;
+    if(label.find("WPJJWMJJjj_4f_QCD_LO") !=string::npos ) mc = 41 ;
+    if(label.find("WPJJWMJJjj_4f_EWK_QCD_LO") !=string::npos ) mc = 42 ;
     if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) mc = 7 ;
     if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) mc = 8 ;
     if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 9 ;
