@@ -491,14 +491,17 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("j2QGL" ,'F',readers_[i]); //1
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varDetajj",'F',readers_[i]); //1
+            AddVariable("abs(varJet1Eta)",'F',readers_[i]);
             AddVariable("varJet1Pt",'F',readers_[i]); //4
             AddVariable("abs(varJet2Eta)",'F',readers_[i]);
             AddVariable("varJet2Pt",'F',readers_[i]); //2
+            AddVariable("varMVV",'F',readers_[i]);
             AddVariable("varPTV1",'F',readers_[i]); //12
             AddVariable("varPTV2",'F',readers_[i]); //12
             AddVariable("varCen",'F',readers_[i]); //13
             AddVariable("varzepVV",'F',readers_[i]); //15
-            AddVariable("varDRV1j",'F',readers_[i]); //22          
+            AddVariable("varDRV1j",'F',readers_[i]); //22
+            AddVariable("varDRV2j",'F',readers_[i]);
             AddVariable("varnormPTVVjj",'F',readers_[i]); //6
             //AddVariable("bosV2mass",'F',readers_[i]); //8
         }
@@ -514,13 +517,16 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("j2QGL" ,'F',readers_[i]); //1
             AddVariable("varMjj",'F',readers_[i]); //0
             AddVariable("varDetajj",'F',readers_[i]);
+            AddVariable("abs(varJet1Eta)",'F',readers_[i]);
             AddVariable("varJet1Pt",'F',readers_[i]); //4
             AddVariable("abs(varJet2Eta)",'F',readers_[i]);
             AddVariable("varJet2Pt",'F',readers_[i]); //2
             AddVariable("varMVV",'F',readers_[i]); //3
             AddVariable("varPTV1",'F',readers_[i]); //4
-            //AddVariable("varCen",'F',readers_[i]); //5
+            AddVariable("varPTV2",'F',readers_[i]);
+            AddVariable("varCen",'F',readers_[i]); //5
             AddVariable("varzepVV",'F',readers_[i]); //6
+            AddVariable("varDRV1j",'F',readers_[i]);
             AddVariable("varnormPTVVjj",'F',readers_[i]); //7
             //AddVariable("varmtop",'F',readers_[i]); //8
             //AddVariable("bosV2mass",'F',readers_[i]); //9

@@ -226,15 +226,15 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BM
 
 
 ## BBTag  -MC (678)
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BBtag_x0.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BBtag_x1.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_BBtag_x2.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V2_2020_BBtag_x0_test.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V2_2020_BBtag_x1_test.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V2_2020_BBtag_x2_test.weights.xml")
 
 ## RBtag - MC (9,10,11)
 #addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_BDT_VBSRBtag.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_RBtag_x0.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_RBtag_x1.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V1_2020_RBtag_x2.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V2_2020_RBtag_x0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V2_2020_RBtag_x1.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V2_2020_RBtag_x2.weights.xml")
 
 
 ## RMET - MC (12, 13, 14)
@@ -268,8 +268,8 @@ addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_BHAD_Multi_DNN.
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_dnn_l5_AllGoodVBad_RMET_ActFuncTRS_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_nanoV2newAssgn_RBTA_All_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/ResTag_nanoV2newAssgn_RMET_All_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_NanoV9_MixDR_4layer_DNN.weights.xml")
-addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_NanoV9_MixDR_4layer_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_NanoV9_MixDR_DNN.weights.xml")
+addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_NanoV9_MixDR_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_nanoVJulComb5r1_RBTA_2020_zepCen_DNN.weights.xml")
 #addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_nanoVJulComb5r1_RBTA_2020_zepCen_DNN.weights.xml")
 addConfig=VBShadAnalysis|weights_dnn.push_back("aux/BDTvbs/resTag_DNN_multi_RBTA_CorrLHE_DNN.weights.xml")
