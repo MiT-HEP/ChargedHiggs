@@ -210,6 +210,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
         if(!doBAnalysis and !doMETAnalysis) Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "DNN noBnoMET ; DNN noBnoMET; Events", 200,0.,1.);
 
         if(doBAnalysis or doBAntiAnalysis) {
+            AddFinalHisto("VBShadAnalysis/BDTbtag"+category+"_"+l);
             Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "DNN with Btag ; DNN with Btag; Events", 200,0.,1.);
             if(category.find("RBtag")   !=string::npos ) {
                 Book ("VBShadAnalysis/DNNMultiRBtagEWK"+category+"_"+l, "DNN MultiClass RBtag (response for ZZ); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
