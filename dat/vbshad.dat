@@ -230,29 +230,32 @@ addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/bdt_DNN_NanoV9_V2_2020_RB
 
 
 ## RMET - MC (12, 13, 14)
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_RMET_x0_test.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_RMET_x1_test.weights.xml")
-addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_RMET_x2_test.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_RMET_x0.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_RMET_x1.weights.xml")
+addConfig=VBShadAnalysis|weights.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_RMET_x2.weights.xml")
 
-# Multiclass - RMET (WvsZ, chi2)
+# Multiclass - RMET (WvsZ, chi2, 0)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_RMET_BDTG.weights.xml")
 
-# Multiclass BDT - RMET (EWK vs QCD, chi2)
+# Multiclass BDT - RMET (EWK vs QCD, chi2, 1)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlassChi2_BDTG.weights.xml")
 
 # Multiclass BDT - RMET (EWK vs QCD dnn, super old, not used)
 #addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnncut_BDTG.weights.xml")
 #addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/TMVAMulticlass_Dnnmulticlass_BDTG.weights.xml")
 
-# Multiclass DNN - BMET (EWK vs QCD)
+# Multiclass DNN - BMET (EWK vs QCD 2,3,4)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_BMET_multi_x0.weights.xml")
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_BMET_multi_x1.weights.xml")
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V1_2020_BMET_multi_x2.weights.xml")
 
-# Multiclass DNN - RMET (EWK vs QCD WZ, from Ava)
-addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_MET_Multi_final.weights.xml")
+# Multiclass DNN - RMET (EWK vs QCD 5,6,7)
+#addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_MET_Multi_final.weights.xml") #(old WZ from Ava)
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V2_2020_RMET_multi_x0.weights.xml")
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V2_2020_RMET_multi_x1.weights.xml")
+addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/dnn_DNN_NanoV9_V2_2020_RMET_multi_x2.weights.xml")
 
-# Multiclass DNN - RBtag (EWK vs QCD WZ, from Ava)
+# Multiclass DNN - RBtag (EWK vs QCD WZ, from Ava,8)
 addConfig=VBShadAnalysis|weights_multi.push_back("aux/BDTvbs/DNN_BHAD_Multi_DNN.weights_1.xml")
 
 ## Res DNN tagger
