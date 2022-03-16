@@ -731,7 +731,7 @@ double Event::ApplyBTagSF(int wp,int year)
     if (year==2017) name="bdeep2017";
     else if (year==2018) name="bdeep2018";
     else if (year==2016) name ="bdeep2016";
-    else if (year==12016) name ="bdeep2016pre";
+    else if (year==12016) name ="bdeep2016APV";
     SetWPSF(name,wp); // loose, for sf
 
 
