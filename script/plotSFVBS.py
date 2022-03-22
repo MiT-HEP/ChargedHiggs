@@ -21,8 +21,10 @@ sys.path.insert(0,basepath +"/python")
 from hmm import Stack
 
 fname="fitDiagnostics.root"
-year=116
-n=36
+#year=18
+year=216
+#n=36
+n=100
 paper=False
 #labels=["QCD_HT","TT_TuneCP5"]
 
@@ -58,7 +60,7 @@ hqcd.SetLineColor(ROOT.kBlack)
 hqcd.SetLineWidth(2)
 
 for i in xrange(0,n):
-    gtmp = fIn.Get("shapes_fit_s/bin%d/data"%i)
+    gtmp  = fIn.Get("shapes_fit_s/bin%d/data"%i)
     h1tmp = fIn.Get("shapes_fit_s/bin%d/QCD_HT"%i)
     h2tmp = fIn.Get("shapes_fit_s/bin%d/TT_TuneCP5"%i)
     if gtmp == None: 
@@ -120,6 +122,10 @@ if True:
         txt.DrawLatex(.18,.92,"#bf{CMS}")
     else:
         txt.DrawLatex(.16,.92,"#bf{CMS} #scale[0.7]{#it{Preliminary}}")
+
+    #if what=='prefit':
+    #    txt.SetTextSize(28)
+    #    txt.DrawLatex(.16,88,"PREFIT")
 
 c.Modify()
 c.Update()
