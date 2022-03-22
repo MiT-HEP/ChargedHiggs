@@ -48,21 +48,43 @@ if "%d"%opt.year not in opt.input:  raise ValueError('Your file should match the
 
 ## [ssww, osww, zzjj, wzbb, wznn]/[ewk,qcd,ewk-qcd] 
 xsecsig = [
-{"pro" : "ssWW", "cont": "EWK", "name": "WPMJJWPMJJjj_EWK_LO", "xsec" : 0.13},
-{"pro" : "ssWW", "cont": "QCD", "name": "WPMJJWPMJJjj_QCD_LO", "xsec" : 0.11},
-#{"pro" : "ssWW", "cont": "INT", "name": "WPMJJWPMJJjj_EWK_QCD_LO", "xsec" : 0.24},
-{"pro" : "osWW", "cont": "EWK", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.89},
-{"pro" : "osWW", "cont": "QCD", "name": "WPJJWMJJjj_QCD_LO", "xsec" : 9.79},
+{"pro" : "ssWW", "cont": "EWK", "name": "WPMJJWPMJJjj_EWK_LO", "xsec" : 0.1258},
+{"pro" : "ssWW", "cont": "QCD", "name": "WPMJJWPMJJjj_QCD_LO", "xsec" : 0.1083},
+#{"pro" : "ssWW", "cont": "INT", "name": "WPMJJWPMJJjj_EWK_QCD_LO", "xsec" : 0.2448},
+{"pro" : "osWW", "cont": "EWK", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.8932},
+{"pro" : "osWW", "cont": "QCD", "name": "WPJJWMJJjj_QCD_LO", "xsec" : 160.},###9.79},
 #{"pro" : "osWW", "cont": "INT", "name": "WPJJWMJJjj_EWK_QCD_LO", "xsec" : 11.65},
-{"pro" : "ZZ", "cont": "EWK", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.06},
-{"pro" : "ZZ", "cont": "QCD", "name": "ZJJZJJjj_QCD_LO", "xsec" : 1.13},
-#{"pro" : "ZZ", "cont": "INT", "name": "ZJJZJJjj_EWK_QCD_LO", "xsec" : 1.19},
-{"pro" : "WZ", "cont": "EWK", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.13},
-{"pro" : "WZ", "cont": "QCD", "name": "ZBBWPMJJjj_QCD_LO", "xsec" : 1.33},
-#{"pro" : "WZ", "cont": "INT", "name": "ZBBWPMJJjj_EWK_QCD_LO", "xsec" : 1.46},
-{"pro" : "WZ", "cont": "EWK", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
-{"pro" : "WZ", "cont": "QCD", "name": "ZNuNuWPMJJjj_QCD_LO", "xsec" : 1.78},
-#{"pro" : "WZ", "cont": "INT", "name": "ZNuNuWPMJJjj_EWK_QCD_LO", "xsec" : 1.95},
+{"pro" : "ZZ", "cont": "EWK", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.0533},
+{"pro" : "ZZ", "cont": "QCD", "name": "ZJJZJJjj_QCD_LO", "xsec" : 1.084},
+#{"pro" : "ZZ", "cont": "INT", "name": "ZJJZJJjj_EWK_QCD_LO", "xsec" : 1.143},
+{"pro" : "WZ", "cont": "EWK", "name": "ZJJNOBWPMJJjj_EWK_LO", "xsec" : 0.4548},
+{"pro" : "WZ", "cont": "QCD", "name": "ZJJNOBWPMJJjj_QCD_LO", "xsec" : 4.7207},
+#{"pro" : "WZ", "cont": "INT", "name": "ZJJNOBWPMJJjj_EWK_QCD_LO", "xsec" : 5.1734},
+{"pro" : "WZ", "cont": "EWK", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.1236},
+{"pro" : "WZ", "cont": "QCD", "name": "ZBBWPMJJjj_QCD_LO", "xsec" : 1.264},
+#{"pro" : "WZ", "cont": "INT", "name": "ZBBWPMJJjj_EWK_QCD_LO", "xsec" : 1.388},
+{"pro" : "WZ", "cont": "EWK", "name": "ZNUNUWPMJJjj_EWK_LO", "xsec" : 0.1652},
+{"pro" : "WZ", "cont": "QCD", "name": "ZNUNUWPMJJjj_QCD_LO", "xsec" : 1.699},
+#{"pro" : "WZ", "cont": "INT", "name": "ZNUNUWPMJJjj_EWK_QCD_LO", "xsec" : 1.865},
+{"pro" : "ZZ", "cont": "EWK", "name": "ZNUNUZJJjj_EWK_LO", "xsec" : 0.0312},
+{"pro" : "ZZ", "cont": "QCD", "name": "ZNUNUZJJjj_QCD_LO", "xsec" : 0.6352},
+#{"pro" : "ZZ", "cont": "INT", "name": "ZNUNUZJJjj_EWK_QCD_LO", "xsec" : 0.6698},
+####semi-lep
+{"pro" : "ssWW", "cont": "EWK", "name": "WMLEPWMHADjj_EWK_LO", "xsec" : 0.0323},
+{"pro" : "ssWW", "cont": "EWK", "name": "WPLEPWPHADjj_EWK_LO", "xsec" : 0.0873},
+{"pro" : "osWW", "cont": "EWK", "name": "WPHADWMLEPjj_EWK_LO", "xsec" : 0.9464},
+{"pro" : "osWW", "cont": "EWK", "name": "WPLEPWMHADjj_EWK_LO", "xsec" : 0.9464},
+{"pro" : "WZ", "cont": "EWK", "name": "WPLEPZHADjj_EWK_LO", "xsec" : 0.1814},
+{"pro" : "WZ", "cont": "EWK", "name": "WMLEPZHADjj_EWK_LO", "xsec" : 0.0996},
+{"pro" : "ssWW", "cont": "QCD", "name": "WMLEPWMHADjj_QCD_LO", "xsec" : 0.0318},
+{"pro" : "ssWW", "cont": "QCD", "name": "WPLEPWPHADjj_QCD_LO", "xsec" : 0.0727},
+{"pro" : "osWW", "cont": "QCD", "name": "WPHADWMLEPjj_QCD_LO", "xsec" : 76.19},
+{"pro" : "osWW", "cont": "QCD", "name": "WPLEPWMHADjj_QCD_LO", "xsec" : 76.19},
+{"pro" : "WZ", "cont": "QCD", "name": "WPLEPZHADjj_QCD_LO", "xsec" : 1.782},
+{"pro" : "WZ", "cont": "QCD", "name": "WMLEPZHADjj_QCD_LO", "xsec" : 1.087},
+
+
+
 
 {"pro": "WW", "cont": "AQGC", "name" :"WMJJWMJJjj_EWK_LO", "xsec": 0.13/2.},  ## these are splitted
 {"pro": "WW", "cont": "AQGC", "name" :"WPJJWPJJjj_EWK_LO", "xsec": 0.13/2.},
@@ -157,14 +179,14 @@ def read_input():
         if opt.aqgc and 'EWK' in sig['cont']: continue
 
         if ("BB" in opt.category) and ("Btag" not in opt.category):
-            if ("WW" in sig['pro']) or ("ZJJZJJ" in sig['name']) or ("WJJZJJ" in sig['name']):
+            if ("ZBB" not in sig['name']) and ("ZNUNU" not in sig['name']) and ("LEP" not in sig['name']):
                 psig.append(sig)
         elif "MET" in opt.category:
-            if ("NuNu" in sig['name']):
+            if ("NUNU" in sig['name']) or ("LEP" in sig['name']):
                 psig.append(sig)
         elif "Btag" in opt.category:
             #if ("BB" in sig['name']):
-            if ("BB" in sig['name']) or ("ZJJZJJ" in sig['name']):
+            if ("ZNUNU" not in sig['name']) and ("LEP" not in sig['name']):
                 psig.append(sig)
 
     return psig
@@ -388,7 +410,10 @@ class DatacardBuilder:
 
         h = None
         for y in years:
-            ftmp = fname.replace(str(opt.year), str(y))
+
+            if y == 12016: ftmp = fname.replace(str(opt.year), '2016APV')
+            elif y == 22016: ftmp = fname.replace(str(opt.year), '2016')
+            else: ftmp = fname.replace(str(opt.year), str(y))
 
             fIn=ROOT.TFile.Open(ftmp)
             if self.verbose >2: print "DEBUG","opening file:",ftmp
@@ -397,6 +422,41 @@ class DatacardBuilder:
             htmp=fIn.Get(hname)
             if htmp==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",ftmp
             if htmp==None: continue ## WARNING
+
+            """
+            ################### MET ###################################
+            if "WJetsToLNu_HT" in hname and "FEB26" in ftmp and "2016APV" not in ftmp:
+                ftmpmore = re.sub('FEB26','FEB26vjetNLO',ftmp)
+                fInmore = ROOT.TFile.Open(ftmpmore)
+
+		if self.fOut!=None: self.fOut.cd() 
+                hnamemore = re.sub('WJetsToLNu_HT','WJetsToLNu_Pt',hname)
+                htmpmore=fInmore.Get(hnamemore)
+
+                sfmore = htmp.Integral()/(htmp.Integral()+htmpmore.Integral())
+                normalization = sfmore
+                print "WJetsToLNu_Pt, sf=", sfmore
+                htmp.Add(htmpmore)
+
+                fInmore.Close()
+
+
+            if "ZJetsToNuNu_HT" in hname and "FEB26" in ftmp and "2016APV" not in ftmp:
+                ftmpmore = re.sub('FEB26','FEB26vjetNLO',ftmp)
+                fInmore = ROOT.TFile.Open(ftmpmore)
+ 
+		if self.fOut!=None: self.fOut.cd()
+                hnamemore = re.sub('ZJetsToNuNu_HT','ZJetsToNuNuPt',hname)
+                htmpmore=fInmore.Get(hnamemore)
+
+                sfmore = htmp.Integral()/(htmp.Integral()+htmpmore.Integral())
+                normalization = sfmore
+                print "ZJetsToNuNuPt, sf=", sfmore
+                htmp.Add(htmpmore)
+
+                fInmore.Close()
+            ###########################################################
+            """
             
             ### QCD SF and hist stat. enhancement
             if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
@@ -486,10 +546,9 @@ class DatacardBuilder:
             h.SetBinContent( h.GetNbinsX(), h.GetBinContent( h.GetNbinsX()) + h.GetBinContent(h.GetNbinsX()+1))
 
         if h:
-            #totbin = h.GetNbinsX()
+            totbin = h.GetNbinsX()
             #h.Rebin(totbin)
-            #print hname, h.Integral(), h.GetBinError(1)
-            print hname, h.Integral()
+            if "Up" not in hname and "Down" not in hname: print hname, h.Integral(), h.GetBinError(1), "unc.", h.GetBinError(1)/h.Integral()*100
             return h
         else: return None
 
@@ -736,7 +795,7 @@ if __name__=="__main__":
 
     db=DatacardBuilder(opt.verbose)
    
-    base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT23syst' 
+    base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/MAR14syst'
     #base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
         base_path="Datacards/inputs/OCT15" 
@@ -801,22 +860,30 @@ if __name__=="__main__":
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
     db.add_systematics('CMS_eff_l','','lnN',('.*','.*'),1.04)
 
-    if "anti" not in opt.region:
-        if "BBtag" in opt.category: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm BBtag
-        elif "RBtag" in opt.category: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm RBtag
-        elif "BB" in opt.category:db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)  ## QCD norm BB
+    if "BBtag" in opt.category:
+        if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape
+        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm
+    elif "RBtag" in opt.category:
+        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm
+    elif "BB" in opt.category:
+        if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
+        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)
+
 
     proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
-
-    if "side" not in opt.region:
-        if "BBtag" in opt.category: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape BBtag
-        elif "BB" in opt.category: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape BB
     db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_j','JES_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
-
+    db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_btag_HF','BRHF','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_btag_HFSTAT1','BRHFSTAT1','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_btag_HFSTAT2','BRHFSTAT2','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_btag_LFSTAT1','BRLFSTAT1','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_btag_LFSTAT2','BRLFSTAT2','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_btag_LF','BRLF','shape',('.*',proc_regex),1.)
 
     ## break down JES sources
     #db.add_systematics('jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)
