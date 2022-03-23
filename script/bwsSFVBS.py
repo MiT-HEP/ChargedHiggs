@@ -5,16 +5,20 @@ import ROOT
 import math
 
 # PreVFP 116  PostVFP 216
-year=116
-#fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT6/UL%d/HADanti/HADanti.root'%year
-#n=16
-fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT10fix/UL%d/HADanti/HADanti.root'%year
+import os,sys
+year=18
+try:
+    year=int(sys.argv[1])
+    print ("year is now",year)
+except: 
+    print ("Unable to set year. Current value is",year)
 
+n=100
 
-if year == 216: fname="/eos/user/d/dalfonso/VBSfilesSEPT22/HADanti_ul16_sept22.root"
-if year == 116: fname="/eos/user/d/dalfonso/VBSfilesSEPT22/HADanti_ul16apv_sept22.root"
+fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/FEB26/UL20%d/HADanti/HADanti.root'%year
+if year == 216: fname="/eos/user/d/dalfonso/AnalysisVBS/NANO/FEB26/UL2016/HADanti/HADanti.root"
+if year == 116: fname="/eos/user/d/dalfonso/AnalysisVBS/NANO/FEB26/UL2016APV/HADanti/HADanti.root"
 
-n=36
 hname='VBShadAnalysis/Baseline/SF_FatJet_'
 oname='datacard_SF_20%d.txt'%year
 ## structure is Data, QCD, Others
@@ -27,6 +31,7 @@ lumi=35920. if year==16 else 41530. if year==17 else  59740. if year == 18 else 
 if year == 116: lumi=19523.
 if year == 216: lumi=16803.
 
+print ("DEBUG","lumi",lumi)
 #return 35920
 #return 41530
 #return 59740 
