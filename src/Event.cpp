@@ -222,6 +222,10 @@ double Event::weight_aqgc(const std::string& name){
     return weight_ -> weight_aqgc(name);
 }
 
+double Event::weight_scale(MC::SCALES num) {
+    return weight_ -> weight_scale(num);
+}
+
 //#define VERBOSE 1
 void Event::validate(){
     //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","Begin Validate");
