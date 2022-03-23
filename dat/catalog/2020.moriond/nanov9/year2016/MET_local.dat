@@ -1,0 +1,5 @@
+sub=amarini|/store/group/phys_smp/amarini/nano/2016
+
+addfiles=%(amarini)s/MET/crab_MET_2016_Run2018F
+addfiles=%(amarini)s/MET/crab_MET_2016_Run2018G
+addfiles=%(amarini)s/MET/crab_MET_2016_Run2018H
