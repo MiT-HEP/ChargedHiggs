@@ -4878,7 +4878,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
     }
 
-    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
+    //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
+    if( (label.find("TT_TuneCP5") !=string::npos) ) {
         if ( (systname=="" or systname=="NONE") and e->GetWeight()->HasScale()) // SCALE RF
         { // only on the money plots, when no other syst, and for MC with aqgc weights
             // prepare weights
@@ -5015,6 +5016,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             FillTree("tree_vbs");
         }
 
+        /*
         if (systname.find("JES_TotalUp")    !=string::npos) {
             std::cout << " writing tree systname = " << systname << std::endl;
             setTree(e,label,category);
@@ -5026,6 +5028,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             setTree(e,label,category);
             FillTree("tree_vbs_JES_TotalDown");
         }
+        */
 
     }
 
