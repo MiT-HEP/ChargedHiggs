@@ -1,5 +1,6 @@
 #cp -v /eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT22aqgc/UL18/HAD/HAD.root Datacards/inputs/HADaqgc.root
 #/eos/user/d/dalfonso/AnalysisVBS/NANO/SEPT3/UL18/HAD/HAD.root
+#MAR14aQGCsyst
 
 #Copy file in Datacards/inputs/ or /eos/user/h/hum/VBSHad
 python script/bwsVBSHad.py --there -q 2 -s Mjj -y 2020 -c BB -r SR -i HADSR_2020_sep23.root
