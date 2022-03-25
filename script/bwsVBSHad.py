@@ -461,8 +461,8 @@ class DatacardBuilder:
             ### QCD SF and hist stat. enhancement
             if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
                 strategy=0 # 0: A/(A+B) 1: CB/D / (A+B)
-                if opt.category == 'BB': strategy=1
-                if opt.category == 'BBtag': strategy=1
+                #if opt.category == 'BB': strategy=1
+                #if opt.category == 'BBtag': strategy=1
 
                 fInD ={} #
                 htmpD = {} ## dictionary to hold additional histograms
@@ -877,7 +877,7 @@ if __name__=="__main__":
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
+    #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HF','BRHF','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HFSTAT1','BRHFSTAT1','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HFSTAT2','BRHFSTAT2','shape',('.*',proc_regex),1.)
