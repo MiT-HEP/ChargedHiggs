@@ -406,8 +406,6 @@ class DatacardBuilder:
         if opt.year==2021: years= [12016,22016,2017,2018]
         print years 
         
-        ## check qcd sf
-
         h = None
         for y in years:
 
@@ -457,7 +455,16 @@ class DatacardBuilder:
                 fInmore.Close()
             ###########################################################
             """
-            
+
+            ### hname cooking, for central, syst e.t.c ###
+            if '_BRLFSTAT1Up' in hname:
+                namecen  = re.sub('_BRLFSTAT1Up','',hname)
+                namedown = re.sub('_BRLFSTAT1Up','_BRLFSTAT1Down',hname)
+                htmp     = fIn.Get(namecen)
+                hdown    = fIn.Get(namedown)
+                htmp.Add(htmp)
+                htmp.Add(hdown,-1.)
+
             ### QCD SF and hist stat. enhancement
             if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
                 strategy=0 # 0: A/(A+B) 1: CB/D / (A+B)
