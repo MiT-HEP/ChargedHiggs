@@ -395,8 +395,6 @@ class DatacardBuilder:
         if opt.year==2021: years= [12016,22016,2017,2018]
         print years 
         
-        ## check qcd sf
-
         h = None
         for y in years:
 
@@ -412,11 +410,55 @@ class DatacardBuilder:
             if htmp==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",ftmp
             if htmp==None: continue ## WARNING
 
+            """
+            ################### MET ###################################
+            if "WJetsToLNu_HT" in hname and "FEB26" in ftmp and "2016APV" not in ftmp:
+                ftmpmore = re.sub('FEB26','FEB26vjetNLO',ftmp)
+                fInmore = ROOT.TFile.Open(ftmpmore)
+
+		if self.fOut!=None: self.fOut.cd() 
+                hnamemore = re.sub('WJetsToLNu_HT','WJetsToLNu_Pt',hname)
+                htmpmore=fInmore.Get(hnamemore)
+
+                sfmore = htmp.Integral()/(htmp.Integral()+htmpmore.Integral())
+                normalization = sfmore
+                print "WJetsToLNu_Pt, sf=", sfmore
+                htmp.Add(htmpmore)
+
+                fInmore.Close()
+
+
+            if "ZJetsToNuNu_HT" in hname and "FEB26" in ftmp and "2016APV" not in ftmp:
+                ftmpmore = re.sub('FEB26','FEB26vjetNLO',ftmp)
+                fInmore = ROOT.TFile.Open(ftmpmore)
+ 
+		if self.fOut!=None: self.fOut.cd()
+                hnamemore = re.sub('ZJetsToNuNu_HT','ZJetsToNuNuPt',hname)
+                htmpmore=fInmore.Get(hnamemore)
+
+                sfmore = htmp.Integral()/(htmp.Integral()+htmpmore.Integral())
+                normalization = sfmore
+                print "ZJetsToNuNuPt, sf=", sfmore
+                htmp.Add(htmpmore)
+
+                fInmore.Close()
+            ###########################################################
+            """
+
+            ### hname cooking, for central, syst e.t.c ###
+            if '_BRLFSTAT1Up' in hname:
+                namecen  = re.sub('_BRLFSTAT1Up','',hname)
+                namedown = re.sub('_BRLFSTAT1Up','_BRLFSTAT1Down',hname)
+                htmp     = fIn.Get(namecen)
+                hdown    = fIn.Get(namedown)
+                htmp.Add(htmp)
+                htmp.Add(hdown,-1.)
+
             ### QCD SF and hist stat. enhancement
             if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
                 strategy=0 # 0: A/(A+B) 1: CB/D / (A+B)
-                if opt.category == 'BB': strategy=1
-                if opt.category == 'BBtag': strategy=1
+                #if opt.category == 'BB': strategy=1
+                #if opt.category == 'BBtag': strategy=1
 
                 fInD ={} #
                 htmpD = {} ## dictionary to hold additional histograms
@@ -834,7 +876,7 @@ if __name__=="__main__":
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
+    #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HF','BRHF','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HFSTAT1','BRHFSTAT1','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HFSTAT2','BRHFSTAT2','shape',('.*',proc_regex),1.)
