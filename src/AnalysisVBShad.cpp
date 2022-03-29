@@ -4878,24 +4878,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
     }
 
-    //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
-    if( (label.find("TT_TuneCP5") !=string::npos) ) {
-        if ( (systname=="" or systname=="NONE") and e->GetWeight()->HasScale()) // SCALE RF
-        { // only on the money plots, when no other syst, and for MC with aqgc weights
-            // prepare weights
-            for (const auto & num : {MC::r1f2,MC::r1f5,MC::r2f1,MC::r2f2,MC::r5f1,MC::r5f5})
-            {
-                double w=e->weight_scale(num);
-                Fill("VBShadAnalysis/MVV" +category+"_"+label, string("Scale_")+Form("%d",num), evt_MVV, w );
-                Fill("VBShadAnalysis/Mjj" +category+"_"+label, string("Scale_")+Form("%d",num), evt_Mjj, w );
-                if(!doBAnalysis and !doMETAnalysis) Fill("VBShadAnalysis/BDTnoBnoMET" +category+"_"+label, string("Scale_")+Form("%d",num), BDTnoBnoMET, w );
-                if(doMETAnalysis or doMETAntiAnalysis) Fill("VBShadAnalysis/BDTwithMET" +category+"_"+label, string("Scale_")+Form("%d",num), BDTwithMET, w );
-                if(doBAnalysis or doBAntiAnalysis) Fill("VBShadAnalysis/BDTbtag" +category+"_"+label, string("Scale_")+Form("%d",num), BDTbtag, w );
-            }
-        }
-    }
-
-
     if(checkSignalLabel(label)) {
         if(evt_genmatch) Fill("VBShadAnalysis/MVV" + category+"_match_"+label, systname, evt_MVV, e->weight() );
         if(!evt_genmatch) Fill("VBShadAnalysis/MVV" + category+"_unMatch_"+label, systname, evt_MVV, e->weight() );
@@ -5007,7 +4989,24 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             Fill ("VBShadAnalysis/DNNMultiEWK1dnn"+category+"_"+label, systname, MultiBDTwithMETewk/(MultiBDTwithMETewk+MultiBDTwithMETbkg), e->weight() );
             Fill ("VBShadAnalysis/DNNMultiEWK2dnn"+category+"_"+label, systname, MultiBDTwithMETewk/(MultiBDTwithMETewk+MultiBDTwithMETqcd), e->weight() );
         }
-    }
+
+        //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
+        if( (label.find("TT_TuneCP5") !=string::npos) ) {
+            if ( (systname=="" or systname=="NONE") and e->GetWeight()->HasScale()) // SCALE RF
+                { // only on the money plots, when no other syst, and for MC with aqgc weights
+                    // prepare weights
+                    for (const auto & num : {MC::r1f2,MC::r1f5,MC::r2f1,MC::r2f2,MC::r5f1,MC::r5f5})
+                        {
+                            double w=e->weight_scale(num);
+                            Fill("VBShadAnalysis/MVV" +category+"_"+label, string("Scale_")+Form("%d",num), evt_MVV, w );
+                            Fill("VBShadAnalysis/Mjj" +category+"_"+label, string("Scale_")+Form("%d",num), evt_Mjj, w );
+                            if(!doBAnalysis and !doMETAnalysis) Fill("VBShadAnalysis/BDTnoBnoMET" +category+"_"+label, string("Scale_")+Form("%d",num), BDTnoBnoMET, w );
+                            if(doMETAnalysis or doMETAntiAnalysis) Fill("VBShadAnalysis/BDTwithMET" +category+"_"+label, string("Scale_")+Form("%d",num), BDTwithMET, w );
+                            if(doBAnalysis or doBAntiAnalysis) Fill("VBShadAnalysis/BDTbtag" +category+"_"+label, string("Scale_")+Form("%d",num), BDTbtag, w );
+                        }
+                }
+        }
+    }// end doTMVA
 
     if(doWriteTree) {
 
