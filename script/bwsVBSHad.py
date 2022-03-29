@@ -43,6 +43,7 @@ lumis={
     2018: 60.0,
     2020: 45.7,
 }
+doEnvelop = False
 
 if "%d"%opt.year not in opt.input:  raise ValueError('Your file should match the selected year. Year: ' + opt.year+ "not in filename "+opt.input)
 
@@ -627,6 +628,31 @@ class DatacardBuilder:
         return h
 
 
+    def envelop(self, hups, hdns, hname="") :
+
+        hup=hups[0].Clone(hname+'Up')
+        hdn=hdns[0].Clone(hname+'Down')
+
+        if hup==None or hdn==None:
+            print "ERROR","unable to get RF histogram"
+            return
+
+        ## up
+        for upp in hups:
+            for iBin in range(1,hup.GetNbinsX()+1):
+                c= hup.GetBinContent(iBin)
+                if upp.GetBinContent(iBin)>c:
+                    hup.SetBinContent(iBin,upp.GetBinContent(iBin))
+        ##down
+        for dnn in hdns:
+            for iBin in range(1,hdn.GetNbinsX()+1):
+                c= hdn.GetBinContent(iBin)
+                if dnn.GetBinContent(iBin)<c:
+                    hdn.SetBinContent(iBin,dnn.GetBinContent(iBin))
+
+        return hup,hdn
+
+
     def write_inputs(self,outname): #datacard.txt
         outroot=re.sub(".txt.*",".inputs.root",outname)
         self.fOut=ROOT.TFile.Open(outroot,"RECREATE")
@@ -746,6 +772,20 @@ class DatacardBuilder:
 
                     hup = None
                     hdn = None
+                    Up = "Up"
+                    Down = "Down"
+
+                    # RFScale
+                    if 'scaleF' in sname:
+                        Up = "_0"
+                        Down = "_1"
+                    elif 'scaleR' in sname and not 'scaleRF' in sname:
+                        Up = "_2"
+                        Down = "_4"
+                    elif 'scaleRF' in sname:
+                        Up = "_3"
+                        Down = "_5"
+
                     for suffix in d2['suffix']:
 
 			# QCDnonclosure shape
@@ -760,12 +800,12 @@ class DatacardBuilder:
                             if d2['fname'] != None: 
                                 if d2['interpolate']: raise RuntimeError("Unimplemented")
                                 # if fname set in proc, use it.
-                                hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             else:
                                 # use category fname
-                                hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             if hup != None and hdn == None:
                                 hdn = hup.Clone(re.sub("Up$","Down",hup.GetName()))
                                 hdn.Reset("ACE")
@@ -775,11 +815,11 @@ class DatacardBuilder:
                         else:
                             if d2['fname'] != None: 
                                 if d2['interpolate']: raise RuntimeError("Unimplemented")
-                                hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             else:
-                                hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","")
-                                hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","")
+                                hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Up,"")
+                                hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Down,"")
                             hup.Add(hupTmp)
                             hdn.Add(hdnTmp)
                             #if matched: print "WARNING", "syst duplicate found","discarding",c,p,v,"matching for",cat,proc
@@ -883,6 +923,9 @@ if __name__=="__main__":
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_scaleR','Scale','shape',('.*','ttbar'),1.)
+    db.add_systematics('CMS_scaleF','Scale','shape',('.*','ttbar'),1.)
+    #db.add_systematics('CMS_scaleRF','Scale','shape',('.*','ttbar'),1.)
     db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
     #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HF','BRHF','shape',('.*',proc_regex),1.)
