@@ -314,6 +314,8 @@ class DatacardBuilder:
         txt.write('-'*50+'\n')
 
         for s in self.systs:
+            if doEnvelop and ("scaleR" in s or "scaleF" in s) and not "scaleRF" in s: continue
+            if not doEnvelop and "scaleRF" in s: continue
             txt.write("%(syst)s %(type)s "%self.systs[s])
             # write systematic line: 
             # construct a list of all the matches, append -, and take the first match in each cat and proc
@@ -756,6 +758,8 @@ class DatacardBuilder:
                 self._write(h)
 
                 # SYST TODO implement interpolation logic
+                hups = []
+                hdns = []
                 for sname in self.systs:
                     s=self.systs[sname]
                     if 'shape' not in s['type']: continue
@@ -824,6 +828,22 @@ class DatacardBuilder:
                             hdn.Add(hdnTmp)
                             #if matched: print "WARNING", "syst duplicate found","discarding",c,p,v,"matching for",cat,proc
                             #$CHANNEL_$PROCESS_$SYSTEMATIC
+
+                    ### envelop
+                    if 'scaleF' in sname:
+                        hups.append(hup)
+                        hdns.append(hdn)
+                        if doEnvelop: continue
+                    elif 'scaleR' in sname and not 'scaleRF' in sname:
+                        hups.append(hup)
+                        hdns.append(hdn)
+                        if doEnvelop: continue
+                    elif 'scaleRF' in sname:
+                        if not doEnvelop: continue
+                        else:
+                            hups.append(hup)
+                            hdns.append(hdn)
+                            hup,hdn = self.envelop(hups,hdns,"%(cat)s_"%d+proc+"_"+sname)
 
                     hup = likelihoodBinning.applyMapping(LikelihoodMapping, hup)
                     hdn = likelihoodBinning.applyMapping(LikelihoodMapping, hdn)
@@ -923,9 +943,7 @@ if __name__=="__main__":
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_scaleR','Scale','shape',('.*','ttbar'),1.)
-    db.add_systematics('CMS_scaleF','Scale','shape',('.*','ttbar'),1.)
-    #db.add_systematics('CMS_scaleRF','Scale','shape',('.*','ttbar'),1.)
+
     db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
     #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HF','BRHF','shape',('.*',proc_regex),1.)
@@ -934,6 +952,10 @@ if __name__=="__main__":
     db.add_systematics('CMS_btag_LFSTAT1','BRLFSTAT1','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_LFSTAT2','BRLFSTAT2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_LF','BRLF','shape',('.*',proc_regex),1.)
+
+    db.add_systematics('CMS_scaleR','Scale','shape',('.*','ttbar'),1.)
+    db.add_systematics('CMS_scaleF','Scale','shape',('.*','ttbar'),1.)
+    if doEnvelop: db.add_systematics('CMS_scaleRF','Scale','shape',('.*','ttbar'),1.)
 
     ## break down JES sources
     #db.add_systematics('jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)
