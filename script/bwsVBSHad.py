@@ -929,9 +929,9 @@ if __name__=="__main__":
 
     if "BBtag" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm
+        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm
     elif "RBtag" in opt.category:
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm
+        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm
     elif "BB" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
         if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)
@@ -944,7 +944,7 @@ if __name__=="__main__":
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
 
-    db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
+    #db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
     #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HF','BRHF','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HFSTAT1','BRHFSTAT1','shape',('.*',proc_regex),1.)
