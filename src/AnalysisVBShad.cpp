@@ -77,7 +77,7 @@ void VBShadAnalysis::SetJetCuts(Jet *j) {
     //#warning NOPUID
     //j->SetPuIdCut(-999);
     //#warning PUID
-    j->SetPuIdCut(100); // 100=loose
+    j->SetPuIdCut(100); // 100=loose 200=medium
 }
 
 void VBShadAnalysis::SetTauCuts(Tau *t){
@@ -136,6 +136,9 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
        l.find("WPJJWMJJjj_EWK") !=string::npos  ||
        l.find("WPJJWMJJjj_QCD") !=string::npos  ||
        l.find("WPJJWMJJjj_EWK_QCD") !=string::npos  ||
+       l.find("WPJJWMJJjj_4f_EWK") !=string::npos  ||
+       l.find("WPJJWMJJjj_4f_QCD") !=string::npos  ||
+       l.find("WPJJWMJJjj_4f_EWK_QCD") !=string::npos  ||
        //
        l.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ||
        l.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ||
@@ -207,6 +210,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
         if(!doBAnalysis and !doMETAnalysis) Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "DNN noBnoMET ; DNN noBnoMET; Events", 200,0.,1.);
 
         if(doBAnalysis or doBAntiAnalysis) {
+            AddFinalHisto("VBShadAnalysis/BDTbtag"+category+"_"+l);
             Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "DNN with Btag ; DNN with Btag; Events", 200,0.,1.);
             if(category.find("RBtag")   !=string::npos ) {
                 Book ("VBShadAnalysis/DNNMultiRBtagEWK"+category+"_"+l, "DNN MultiClass RBtag (response for ZZ); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
@@ -263,7 +267,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/Met"+category+"_"+l, "Met; Met [GeV]; Events", 100,0,1000);
     Book ("VBShadAnalysis/MetPhi"+category+"_"+l, "Met #phi; Met #phi; Events", 100,-TMath::Pi(),TMath::Pi());
     Book ("VBShadAnalysis/PTVV"+category+"_"+l, "PTVV; PTVV [GeV]; Events", 100,0,1000);
-    Book ("VBShadAnalysis/Centrality"+category+"_"+l, "Centrality; Centrality; Events", 100,0,5);
+    Book ("VBShadAnalysis/Centrality"+category+"_"+l, "Centrality; Centrality; Events", 70,-2,5);
 
     // fwd jets
     Book ("VBShadAnalysis/pT1_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
@@ -2181,6 +2185,9 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WPJJWMJJjj_EWK_LO") !=string::npos ||
                label.find("WPJJWMJJjj_QCD_LO") !=string::npos ||
                label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ||
+               label.find("WPJJWMJJjj_4f_EWK_LO") !=string::npos ||
+               label.find("WPJJWMJJjj_4f_QCD_LO") !=string::npos ||
+               label.find("WPJJWMJJjj_4f_EWK_QCD_LO") !=string::npos ||
                //
                label.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ||
                label.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ||
@@ -2725,19 +2732,19 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
                 // isWJetOut and isWJetMirror only for resolved ( veto bosted ABC when doing resolved)
                 if (f->IsWJetOut( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetOut(ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM))) isWJetOut = true;
                 //isWJetMirror unused when doing the SR
-                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.35 , ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ))) isWJetMirror=true;
+                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.30 , ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ))) isWJetMirror=true;
             }
 
             if(doHADAntiAnalysis or doMETAntiAnalysis or doBAntiAnalysis) {
-                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ))) isWJet=true;
-                if (f->IsWJetMirrorWide( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetMirrorWide(ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM)) ) isWJetWide = true;
+                if (f->IsWJetMirror( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirror( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ))) isWJet=true;
+                if (f->IsWJetMirrorWide( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM) or (!doResonant and f->IsZJetMirrorWide(ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM)) ) isWJetWide = true;
 
                 // regions B+D is excusive with A+C
                 // Caution: When doing Anti, selectedMirrorFatJets stores SR fatjet, required to <2/<1(BB-anti/MET and B-anti) to be orthogonal
                 if ( f->IsWJetWide( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetWide( ParticleNet_MEDIUM, ParticleNet_MEDIUM, ParticleNet_MEDIUM )) ) isWJetMirror=true;
 
                 // IsWJetMirrorOut only for resolved
-                if ( f->IsWJetMirrorOut( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirrorOut( ParticleNet_MEDIUM, 0.35, ParticleNet_MEDIUM ))) isWJetOut=true;
+                if ( f->IsWJetMirrorOut( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ) or (!doResonant and f->IsZJetMirrorOut( ParticleNet_MEDIUM, 0.30, ParticleNet_MEDIUM ))) isWJetOut=true;
             }
         } else {
 
@@ -3244,6 +3251,9 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("WPJJWMJJjj_EWK_LO") !=string::npos ) sigmc = 4 ;
     if(label.find("WPJJWMJJjj_QCD_LO") !=string::npos ) sigmc = 5 ;
     if(label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 6 ;
+    if(label.find("WPJJWMJJjj_4f_EWK_LO") !=string::npos ) sigmc = 40 ;
+    if(label.find("WPJJWMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 41 ;
+    if(label.find("WPJJWMJJjj_4f_EWK_QCD_LO") !=string::npos ) sigmc = 42 ;
     if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) sigmc = 7 ;
     if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) sigmc = 8 ;
     if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 9 ;
@@ -3337,6 +3347,9 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WPJJWMJJjj_EWK_LO") !=string::npos ) mc = 4 ;
     if(label.find("WPJJWMJJjj_QCD_LO") !=string::npos ) mc = 5 ;
     if(label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ) mc = 6 ;
+    if(label.find("WPJJWMJJjj_4f_EWK_LO") !=string::npos ) mc = 40 ;
+    if(label.find("WPJJWMJJjj_4f_QCD_LO") !=string::npos ) mc = 41 ;
+    if(label.find("WPJJWMJJjj_4f_EWK_QCD_LO") !=string::npos ) mc = 42 ;
     if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) mc = 7 ;
     if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) mc = 8 ;
     if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 9 ;
@@ -3400,12 +3413,14 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ST") !=string::npos) mc =210 ;
     // V+jets
     if(label.find("ZJetsToNuNu_HT") !=string::npos) mc = 300 ;
+    if(label.find("ZJetsToNuNuPt") !=string::npos) mc = 301 ;
     if(label.find("WJetsToLNu_HT") !=string::npos) mc = 310 ;
     if(label.find("WJetsToLNu_Nj") !=string::npos) mc = 311 ;
     if(label.find("WJetsToLNu_Pt") !=string::npos) mc = 312 ;
     if(label.find("DY") !=string::npos) mc = 320 ;
     if(label.find("ZJetsToQQ") !=string::npos) mc = 330 ;
     if(label.find("WJetsToQQ") !=string::npos) mc = 340 ;
+    if(label.find("VJetsToQQ") !=string::npos) mc = 350 ;
 
     if(label.find("QCD_HT") !=string::npos) mc =500 ;
     if(label.find("QCD_Inclusive") !=string::npos) mc =501 ;
@@ -3681,7 +3696,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_Pt" or
         label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
         label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
-        label == "ZJetsToQQ" or label == "WJetsToQQ"
+        label == "ZJetsToQQ" or label == "WJetsToQQ" or label == "VJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
 
     /*
@@ -3739,8 +3754,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label.find("EWKWMinus2Jets") !=string::npos) label = "WJetsToLNu";
     if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
     */
-    //    if(label.find("ZJetsToQQ") !=string::npos) label = "DY";
-    //    if(label.find("WJetsToQQ") !=string::npos) label = "WJetsToLNu"; ;
+    if(label.find("ZJetsToQQ") !=string::npos) label = "VJetsToQQ";
+    if(label.find("WJetsToQQ") !=string::npos) label = "VJetsToQQ";
 
     //$$$$$$$$$
     //$$$$$$$$$ Merge and redefine TTbar
@@ -4255,7 +4270,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.75; // 80% signal
+            float tmvacut = 0.6; // 80% signal
             float kerascut = 0.5;
             //******************//
 
@@ -4456,7 +4471,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.75; // 80% cut
+            float tmvacut = 0.6; // 80% cut
             float kerascut = 0.5;
             //******************//
 
@@ -4544,7 +4559,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ APPLY WEIGHTS
     //////
 
-    //////
+    //////  to be applied also to VQQ ?
     if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt")) and genVp!=NULL) {
 
         if( not e->ExistSF("ZNNLO_rwg") ){
@@ -4766,7 +4781,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
 
     //only cut for btag cate, others used in MVA
-    if( !doResonant and (category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos) and evt_cenEta < 0. ) return EVENT_NOT_USED;
+    //    if( !doResonant and (category.find("BBtag")   !=string::npos or category.find("RBtag")   !=string::npos) and evt_cenEta < 0. ) return EVENT_NOT_USED;
 
 
     Fill("VBShadAnalysis/GENERAL/Cutflow_" +label, systname, 10, e->weight() ); //10--centrality
@@ -4974,7 +4989,24 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             Fill ("VBShadAnalysis/DNNMultiEWK1dnn"+category+"_"+label, systname, MultiBDTwithMETewk/(MultiBDTwithMETewk+MultiBDTwithMETbkg), e->weight() );
             Fill ("VBShadAnalysis/DNNMultiEWK2dnn"+category+"_"+label, systname, MultiBDTwithMETewk/(MultiBDTwithMETewk+MultiBDTwithMETqcd), e->weight() );
         }
-    }
+
+        //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
+        if( (label.find("TT_TuneCP5") !=string::npos) ) {
+            if ( (systname=="" or systname=="NONE") and e->GetWeight()->HasScale()) // SCALE RF
+                { // only on the money plots, when no other syst, and for MC with aqgc weights
+                    // prepare weights
+                    for (const auto & num : {MC::r1f2,MC::r1f5,MC::r2f1,MC::r2f2,MC::r5f1,MC::r5f5})
+                        {
+                            double w=e->weight_scale(num);
+                            Fill("VBShadAnalysis/MVV" +category+"_"+label, string("Scale_")+Form("%d",num), evt_MVV, w );
+                            Fill("VBShadAnalysis/Mjj" +category+"_"+label, string("Scale_")+Form("%d",num), evt_Mjj, w );
+                            if(!doBAnalysis and !doMETAnalysis) Fill("VBShadAnalysis/BDTnoBnoMET" +category+"_"+label, string("Scale_")+Form("%d",num), BDTnoBnoMET, w );
+                            if(doMETAnalysis or doMETAntiAnalysis) Fill("VBShadAnalysis/BDTwithMET" +category+"_"+label, string("Scale_")+Form("%d",num), BDTwithMET, w );
+                            if(doBAnalysis or doBAntiAnalysis) Fill("VBShadAnalysis/BDTbtag" +category+"_"+label, string("Scale_")+Form("%d",num), BDTbtag, w );
+                        }
+                }
+        }
+    }// end doTMVA
 
     if(doWriteTree) {
 
@@ -4983,6 +5015,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             FillTree("tree_vbs");
         }
 
+        /*
         if (systname.find("JES_TotalUp")    !=string::npos) {
             std::cout << " writing tree systname = " << systname << std::endl;
             setTree(e,label,category);
@@ -4994,6 +5027,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             setTree(e,label,category);
             FillTree("tree_vbs_JES_TotalDown");
         }
+        */
 
     }
 

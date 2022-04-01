@@ -392,14 +392,32 @@ else:
     elif 'QCD_bEnriched_HT1000to1500_TuneCP5_13TeV-madgraph-pythia8'  in opts.label: xsec = 46.61
     elif 'QCD_bEnriched_HT1500to2000_TuneCP5_13TeV-madgraph-pythia8'  in opts.label: xsec = 4.017
     elif 'QCD_bEnriched_HT2000toInf_TuneCP5_13TeV-madgraph-pythia8'   in opts.label: xsec = 0.6967
-    ## from https://cms-gen-dev.cern.ch/xsdb/  SUS-RunIIFall17MiniAODv2 campaign (LO from sxdb * 1.23)
-    elif 'ZJetsToNuNu_HT-100To200'   in opts.label: xsec = 372.444
-    elif 'ZJetsToNuNu_HT-200To400'   in opts.label: xsec = 113.8857
-    elif 'ZJetsToNuNu_HT-400To600'   in opts.label: xsec = 16.2114
-    elif 'ZJetsToNuNu_HT-600To800'   in opts.label: xsec = 4.00611
+    ## from https://cms-gen-dev.cern.ch/xsdb/  - UL - unless specified
+    elif 'ZJetsToNuNu_HT-100To200'   in opts.label: xsec = 328.41
+    elif 'ZJetsToNuNu_HT-200To400'   in opts.label: xsec = 89.88
+    elif 'ZJetsToNuNu_HT-400To600'   in opts.label: xsec = 12.18192
+    elif 'ZJetsToNuNu_HT-600To800'   in opts.label: xsec = 2.968
     elif 'ZJetsToNuNu_HT-800To1200'  in opts.label: xsec = 1.8327
     elif 'ZJetsToNuNu_HT-1200To2500' in opts.label: xsec = 0.420537
     elif 'ZJetsToNuNu_HT-2500ToInf'  in opts.label: xsec = 0.00632958
+    ### from https://cms-gen-dev.cern.ch/xsdb/
+    elif 'WJetsToLNu_Pt-100To250_MatchEWPDG20'  in opts.label: xsec = 763.7
+    elif 'WJetsToLNu_Pt-250To400_MatchEWPDG20'  in opts.label: xsec = 27.55
+    elif 'WJetsToLNu_Pt-400To600_MatchEWPDG20'  in opts.label: xsec = 3.477
+    elif 'WJetsToLNu_Pt-600ToInf_MatchEWPDG20'  in opts.label: xsec = 0.5415
+    elif 'Z1JetsToNuNu_M-50_LHEFilterPtZ-50To150_MatchEWPDG20'  in opts.label: xsec = 579.9
+    elif 'Z1JetsToNuNu_M-50_LHEFilterPtZ-150To250_MatchEWPDG20'  in opts.label: xsec = 17.42
+    elif 'Z1JetsToNuNu_M-50_LHEFilterPtZ-250To400_MatchEWPDG20'  in opts.label: xsec = 1.987
+    elif 'Z1JetsToNuNu_M-50_LHEFilterPtZ-400ToInf_MatchEWPDG20'  in opts.label: xsec = 0.2179
+    elif 'Z2JetsToNuNu_M-50_LHEFilterPtZ-50To150_MatchEWPDG20'  in opts.label: xsec = 312.5
+    elif 'Z2JetsToNuNu_M-50_LHEFilterPtZ-150To250_MatchEWPDG20'  in opts.label: xsec = 30 ## placeholder
+    elif 'Z2JetsToNuNu_M-50_LHEFilterPtZ-250To400_MatchEWPDG20'  in opts.label: xsec = 4.98
+    elif 'Z2JetsToNuNu_M-50_LHEFilterPtZ-400ToInf_MatchEWPDG20'  in opts.label: xsec = 0.8165
+    ## from https://cms-gen-dev.cern.ch/xsdb/ (UL LO)
+    elif 'ZJetsToQQ_HT-200to400'     in opts.label: xsec=1012.0
+    elif 'ZJetsToQQ_HT-400to600'     in opts.label: xsec=114.2
+    elif 'ZJetsToQQ_HT-600to800'     in opts.label: xsec=25.34
+    elif 'ZJetsToQQ_HT-800toInf'     in opts.label: xsec=14.5 ## placeholder
     ## from https://cms-gen-dev.cern.ch/xsdb/
     elif 'EWKWPlus2Jets'     in opts.label: xsec = 39.05
     elif 'EWKWMinus2Jets'    in opts.label: xsec = 32.05

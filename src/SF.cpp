@@ -476,14 +476,14 @@ void SF_CSV::set( float pt, float eta, int wp, int flavor,float discr)
         // original
         //sf=nominal->eval_auto_bounds(systType,BTEFlav, eta, pt,discr) ;//-sf ) ;
         // hacked for CFErr
-        if (systType.find("cferr") != string::npos)
+        if ((systType.find("cferr") != string::npos) and BTEFlav == BTagEntry::FLAV_C )
         {
             string newSystType = "";
             if (systType == "up_cferr1")newSystType = "up_hf";
             if (systType == "down_cferr1")newSystType = "down_hf";
             if (systType == "up_cferr2")newSystType = "up_lf";
             if (systType == "down_cferr2")newSystType = "down_lf";
-            sf= 2*(nominal->eval_auto_bounds(newSystType,BTEFlav, eta, pt,discr) -sf )  + sf;
+            sf= 2*(nominal->eval_auto_bounds(newSystType,BTagEntry::FLAV_B, eta, pt,discr) -sf )  + sf;
         }
         else{
             sf=nominal->eval_auto_bounds(systType,BTEFlav, eta, pt,discr) ;//-sf ) ;
