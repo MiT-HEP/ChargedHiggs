@@ -7,9 +7,9 @@ echo "-> Requested parameter $aqgc_par and point $point"
 
 CMSSW="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src"
 CHARGEDHIGGS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs"
-DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/MAR14"
-WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/MAR14/AQGC"
-SUFFIX="mar14"
+DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/MAR24"
+WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/MAR24/AQGC"
+SUFFIX="mar24"
 year=2021
 
 cd $CMSSW
@@ -59,6 +59,7 @@ if [[ "$point" == "cards"* ]] ; then
     cd $CHARGEDHIGGS
     CARDS=""
     CATEGORIES="BB BBtag BMET RMET"
+    #CATEGORIES="BB"
     REGIONS="SR anti side"
     ###CATEGORIES="BB"
     ###REGIONS="SR"

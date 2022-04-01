@@ -29,9 +29,9 @@ done
 hadd higgsCombine_tmp_ft7.root higgsCombine_ft7_*.MultiDimFit.mH120.VALUE*.root
 python ../../script/makeNLLPlots.py --xtitle ft7 -o deltaNLL_ft7 -p VALUE -f higgsCombine_tmp_ft7.root --tobaseline r --nosmooth --xrange -16,30.
 
-python script/plotAQGC.py --more $(ls Datacards/OCT15/AQGC/higgs*all.root | while read f ; do echo  "$f:$(echo ${f%%_all.root} | sed 's:.*_::g')" ; done | tr '\n' ',' | sed 's/,$//') -o plot_aqgc/all  --xrange -16,16 -b
+python script/plotAQGC.py --more $(ls Datacards/MAR24/AQGC/higgs*all.root | while read f ; do echo  "$f:$(echo ${f%%_all.root} | sed 's:.*_::g')" ; done | tr '\n' ',' | sed 's/,$//') -o plot_aqgc/all  --xrange -16,16 -b
 
 python script/plotAQGC_panel.py -o plot_aqgc/all
 
-mkdir ~/www/cms-private/VBSHadronic/OCT15_rebin
-rsync -avP plot_aqgc/ ~/www/cms-private/VBSHadronic/OCT15_rebin/plot_aqgc/
+mkdir ~/www/cms-private/VBSHadronic/MAR24
+rsync -avP plot_aqgc/ ~/www/cms-private/VBSHadronic/MAR24/plot_aqgc/

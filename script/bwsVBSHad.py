@@ -539,7 +539,7 @@ class DatacardBuilder:
                 print "ERROR","Unable to get file",fname,hname,"->",rename
             fIn.Close()
 
-        if opt.aqgc:
+        if opt.aqgc and h:
             ## including overflow for aqgc
             h.SetBinContent( h.GetNbinsX(), h.GetBinContent( h.GetNbinsX()) + h.GetBinContent(h.GetNbinsX()+1))
 
@@ -793,10 +793,10 @@ if __name__=="__main__":
 
     db=DatacardBuilder(opt.verbose)
    
-    base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/MAR14syst'
+    base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/MAR24syst'
     #base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
-        base_path="Datacards/inputs/MAR14" 
+        base_path="Datacards/inputs/MAR24" 
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -900,8 +900,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/MAR14/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/MAR14/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/MAR24/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/MAR24/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++

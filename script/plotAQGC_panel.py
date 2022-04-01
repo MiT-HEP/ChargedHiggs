@@ -274,17 +274,18 @@ def draw_label(label, x,y, dxl, dxh, dxl2,dxh2,side):
             + "}" ## close scale
             )
 
-#fm0 fm1 fm2 fm3 fm4 fm5 fm7    fs0 fs1 
-#ft0 ft1 ft2 ft5 ft6 ft7 ft8 ft9    fs2
-
-left=['fm0','fm1','fm2','fm3','fm4','fm5','fm7','empty','fs0','fs1']
-right=['ft0','ft1','ft2','ft5','ft6','ft7','ft8','ft9','empty','fs2']
+#left=['fm0','fm1','fm2','fm3','fm4','fm5','fm7','empty','fs0','fs1']
+#right=['ft0','ft1','ft2','ft5','ft6','ft7','ft8','ft9','empty','fs2']
+left=['fm0','fm1','fm2','fm3','fm4','fm5','fm7','fs0','fs1','fs2']
+right=['ft0','ft1','ft2','ft3','ft4','ft5','ft6','ft7','ft8','ft9']
 
 ranges={ 
         "fm0":[-10,10.],
         "ft0":[-0.5,0.5],
         "ft1":[-0.5,0.5],
         "ft2":[-0.5,0.5],
+        "ft3":[-5,5],
+        "ft4":[-5,5],
         "ft5":[-0.5,0.5],
         "ft6":[-1,1],
         "ft7":[-5,5],
@@ -298,12 +299,14 @@ ranges={
         }
 
 print "> Drawing Empties as well"
-y = left.index('empty') 
-pe0=draw_pad( y,-17.,17.,'left',False)
-pe0.SetFillColor(ROOT.kGray)
-y = right.index('empty') 
-pe1=draw_pad( y,-17.,17.,'right',False)
-pe1.SetFillColor(ROOT.kGray)
+if 'empty' in left:
+    y = left.index('empty') 
+    pe0=draw_pad( y,-17.,17.,'left',False)
+    pe0.SetFillColor(ROOT.kGray)
+if 'empty' in right:
+    y = right.index('empty') 
+    pe1=draw_pad( y,-17.,17.,'right',False)
+    pe1.SetFillColor(ROOT.kGray)
 
 print "> Drawing Lines and Labels"
 for label in results:

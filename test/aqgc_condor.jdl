@@ -6,10 +6,13 @@ log = $(logdir)/$(filename)_$(model)_$(point).log
 output = $(logdir)/$(filename)_$(model)_$(point).out
 error = $(logdir)/$(filename)_$(model)_$(point).err
 executable = $(filename)
-+JobFlavour = "espresso"
+#+JobFlavour = "espresso"
+#+JobFlavour = "microcentury"
++JobFlavour = "workday"
 +AccountingGroup = "group_u_CMST3.all"
 JobBatchName = "cards"
 arguments = $(model) $(point)
 filename=aqgc_condor.sh
 point=cards-submit
-queue model in (ft1 ft0 ft2 ft5 ft7 ft6 ft9 fm7 fm4 fm5 fm2 fm3 fm0 fm1 fs0 fs1 fs2 ft8)
+queue model in (fs0 fs1 fs2 fm0 fm1 fm2 fm3 fm4 fm5 fm7 ft0 ft1 ft2 ft3 ft4 ft5 ft6 ft7 ft8 ft9)
+#queue model in (ft3 ft4)
