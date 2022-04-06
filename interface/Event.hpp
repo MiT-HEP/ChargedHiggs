@@ -264,6 +264,7 @@ class Event{
     ///@brief return the weight for the event. the safe guard forces 1 for data.
     double weight(bool safe=true); // safe will return 1 for data, ALWAYS
     double weight_aqgc(const string&name);  // try a different approach, since probably smearer are too slow ... 1500 weights
+    double weight_scale(MC::SCALES num);
 
     // update objects that can be invalid (jets)
     virtual void validate();

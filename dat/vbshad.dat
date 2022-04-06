@@ -39,6 +39,13 @@ addConfig=VBShadAnalysis|AddLabel('aQGC_ZBBZJJNOBjj_EWK_LO_NPle1')
 addConfig=VBShadAnalysis|AddLabel('aQGC_ZJJZJJjj_EWK_LO_NPle1')
 addConfig=VBShadAnalysis|AddLabel('aQGC_ZNUNUZJJNOBjj_EWK_LO_NPle1')
 
+# 4F should come first
+addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_4f_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_4f_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_4f_EWK_LO_')
+addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_4f_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_4f_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_4f_QCD_LO')
 
 ### for nanoV8 / v9
 addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_EWK_LO')
@@ -153,6 +160,7 @@ addConfig=VBShadAnalysis|AddLabel('Z1JetsToNuNu_M-50_LHEFilterPtZ')
 addConfig=VBShadAnalysis|AddLabel('Z2JetsToNuNu_M-50_LHEFilterPtZ')
 addConfig=VBShadAnalysis|AddLabel('ZJetsToNuNuPt')
 
+addConfig=VBShadAnalysis|AddLabel('VJetsToQQ')
 addConfig=VBShadAnalysis|AddLabel('ZJetsToQQ')
 addConfig=VBShadAnalysis|AddLabel('WJetsToQQ')
 

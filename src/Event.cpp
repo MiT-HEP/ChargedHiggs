@@ -222,6 +222,10 @@ double Event::weight_aqgc(const std::string& name){
     return weight_ -> weight_aqgc(name);
 }
 
+double Event::weight_scale(MC::SCALES num) {
+    return weight_ -> weight_scale(num);
+}
+
 //#define VERBOSE 1
 void Event::validate(){
     //Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG","Begin Validate");
@@ -731,7 +735,7 @@ double Event::ApplyBTagSF(int wp,int year)
     if (year==2017) name="bdeep2017";
     else if (year==2018) name="bdeep2018";
     else if (year==2016) name ="bdeep2016";
-    else if (year==12016) name ="bdeep2016pre";
+    else if (year==12016) name ="bdeep2016APV";
     SetWPSF(name,wp); // loose, for sf
 
 
@@ -750,7 +754,9 @@ double Event::ApplyBTagSF(int wp,int year)
 
         if (not j->IsBJet() and wp !=3) continue;
 
-        SetPtEtaSF(name,j->Pt(), j->Eta() );
+        if(j->Pt()<30) continue;
+        SetPtEtaSF(name,j->Pt(), std::abs(j->Eta()) );
+        //        SetPtEtaSF(name,std::max(j->Pt(),31), std::abs(j->Eta()) );
 
 #ifdef VERBOSE
         if(VERBOSE>1)Logger::getInstance().Log("Event",__FUNCTION__,"DEBUG",Form("Applying bdeep sf '%s' for jet: %f,%f,%d = %f",name.c_str(),j->Pt(),j->Eta(),j->Flavor(),GetWeight()->GetSF(name)->get()));
