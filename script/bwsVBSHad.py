@@ -254,7 +254,7 @@ class DatacardBuilder:
                 'type': type,
                 }
         else:
-            self.systs[x]['catproc'].append(catproc)
+            self.systs[x]['cat-proc'].append(catproc)
             self.systs[x]['value'].append(value)
             self.systs[x]['fname'].append(fname)
             self.systs[x]['inname'].append(inname)
@@ -600,14 +600,14 @@ class DatacardBuilder:
         return mapping
 
     def creat_QCD_Shape(self,h_nominal,systname="") :
-        Area   = 1.52e-01
-        mshift = 1.13
-        bcut   = 1.06
+        Area   = 0.0614
+        mshift = 0.183
+        bcut   = 1.036
 
         if 'BBtag' in systname:
-            Area   = -9.27
-            mshift = 45410
-            bcut   = 100.5
+            Area   = 1.814
+            mshift = 12.39
+            bcut   = -3.649
 
         h=h_nominal.Clone(systname)
 
@@ -629,6 +629,21 @@ class DatacardBuilder:
 
         return h
 
+    def creat_LepEff_Shape(self,h_nominal,n_suffix,hname="") :
+        correff = 1.04
+
+        hup = h_nominal.Clone(hname+'Up')
+        hdn = h_nominal.Clone(hname+'Down')
+
+        realLepPro = ['WMLEP','WPLEP','TT_TuneCP5','EWKV','WJetsToLNu']
+
+        for pros in realLepPro:
+            if pros in n_suffix:
+                hup.Scale(correff)
+                hdn.Scale(1./correff)
+                break
+
+        return hup,hdn
 
     def envelop(self, hups, hdns, hname="") :
 
@@ -799,6 +814,16 @@ class DatacardBuilder:
                             hdn = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Down")
 			    continue
 
+                        if 'CMS_eff_l' in sname:
+                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            if hup == None:
+                                hup, hdn = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
+                            else:
+                                hupTmp, hdnTmp = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
+                                hup.Add(hupTmp)
+                                hdn.Add(hdnTmp)
+                            continue
+
                         if hup==None:
                             ## todo here, check for systs fname here. Possible symmetrize to the default over there
                             if d2['fname'] != None: 
@@ -883,6 +908,8 @@ if __name__=="__main__":
     #db.add_process('Winv',False,['WJetsToLNu'],[opt.category])
     if("MET" not in opt.category):
         db.add_process('QCD',False,['QCD_HT'],[opt.category])
+        #db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
+        if "Btag" in opt.category: db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
     else:
         #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
         #db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
@@ -925,7 +952,9 @@ if __name__=="__main__":
     db.add_systematics('lumi','','lnN',('.*','.*'),1.025)
     db.add_systematics('QCDScale_ttbar','','lnN',('.*','ttbar'),1.05)
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
-    db.add_systematics('CMS_eff_l','','lnN',('.*','.*'),1.04)
+
+    proc_reall = '^((?!Zinv).)*$' if "MET" in opt.category else 'ttbar'
+    db.add_systematics('CMS_eff_l','','shape',('.*',proc_reall),1.)
 
     if "BBtag" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape
