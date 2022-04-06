@@ -102,6 +102,164 @@ public:
     bool doMultiTagger = false;
     bool do2DNN = false;
 
+    bool computeGenPhaseSpace(){
+        // do this only for signals // TODO. WRONG. I don't have the vector bosons:
+        // ***********************************************************************************************
+        // *    Row   * Instance * LHEPart_s * LHEPart_p * LHEPart_p * LHEPart_e * LHEPart_p * LHEPart_m *
+        // ***********************************************************************************************
+        // *        0 *        0 *        -1 *        -3 *         0 *         0 *         0 *         0 *
+        // *        0 *        1 *        -1 *         2 *         0 *         0 *         0 *         0 *
+        // *        0 *        2 *         1 *         2 * 76.476562 * -2.260742 * 0.6577148 * 0.0014090 *
+        // *        0 *        3 *         1 *        -1 * 16.519531 * -3.321533 * 3.0432128 * -0.001290 *
+        // *        0 *        4 *         1 *         4 * 7.5432128 * -2.466186 * 3.0053710 * -0.000209 *
+        // *        0 *        5 *         1 *        -3 * 16.599609 * 1.4619140 * 1.0394897 * -4.95e-05 *
+        // *        0 *        6 *         1 *         1 * 124.97656 * -2.564208 * -2.658691 * 0.0019313 *
+        // *        0 *        7 *         1 *        -4 *  65.90625 * 0.6576538 * -0.086147 * 0.0001744 *
+        //
+        // *        1 *        0 *        -1 *         2 *         0 *         0 *         0 *         0 *
+        // *        1 *        1 *        -1 *         2 *         0 *         0 *         0 *         0 *
+        // *        1 *        2 *         1 *         2 * 51.097656 * 1.4138183 * -1.416625 * -0.000927 *
+        // *        1 *        3 *         1 *        -1 * 41.046875 * 0.5098876 * 0.2323989 * 0.0002894 *
+        // *        1 *        4 *         1 *         4 * 33.714843 * -2.421264 * 1.8319702 * -0.000919 *
+        // *        1 *        5 *         1 *        -3 * 18.933593 * -0.071132 * 3.1094970 * -3.17e-05 *
+        // *        1 *        6 *         1 *         1 * 31.653320 * -4.157226 * -2.737670 * 0.0049445 *
+        // *        1 *        7 *         1 *         1 * 22.185546 * 4.3540039 * 1.1557006 * 0.0001105 *
+        //
+        // *        2 *        0 *        -1 *         2 *         0 *         0 *         0 *         0 *
+        // *        2 *        1 *        -1 *         2 *         0 *         0 *         0 *         0 *
+        // *        2 *        2 *         1 *         4 * 194.22656 * -0.514587 * 0.0364723 * -0.001383 *
+        // *        2 *        3 *         1 *        -3 * 65.746093 * 0.0014323 * 0.8343505 * -0.000118 *
+        // *        2 *        4 *         1 *         4 * 35.611328 * 1.0833129 * 1.6046142 * -7.17e-05 *
+        // *        2 *        5 *         1 *        -3 * 84.210937 * 0.2208099 * 3.0567627 * -0.000317 *
+        // *        2 *        6 *         1 *         1 *  293.9375 * -2.787231 * -1.904907 * -0.008561 *
+        // *        2 *        7 *         1 *         3 * 187.94531 * 2.7351074 * 1.8775634 * 0.0012753 *
+       
+        // fwd - bkw jets 
+        GenParticle *q1=nullptr, *q2=nullptr;
+        // find vector bosons
+        GenParticle *q11=nullptr,*q12=nullptr,*q21=nullptr,*q22=nullptr;  // decay product
+        vector<GenParticle*> q ;
+
+        for(Int_t i = 0; i < e->NGenPar(); i++){
+            GenParticle *genpar = e->GetGenParticle(i);
+            if (genpar == nullptr) break;
+            if( ! genpar->IsLHE()) continue; // loop only on the LHE particles
+
+            int apdg= abs(genpar->GetPdgId());
+
+            if (apdg< 6){ // do I also have the V decays?
+                q.push_back(genpar);
+            }
+        }
+
+        if (q.size() <6) return false;
+        // find vector bosons
+        // search the couples closer in mass to Z 91.18 and W =
+        constexpr float mW = 80.34; 
+        constexpr float mZ = 91.18; 
+        
+        float delta1 =1000.;  // find the best candidates
+        for (int i=0;i<6;++i)
+        for (int j=i+1;i<6;++i)
+        {
+            // Z
+            if (abs(q[i]->GetPdgId()) == abs(q[j]->GetPdgId()) and q[i]->GetPdgId()*q[j]->GetPdgId()<0) {
+                double m = q[j]->InvMass(q[i]);
+                if ( fabs(m-mZ) < delta1) {
+                    q11= q[i];
+                    q12 = q[j];
+                    delta1 = fabs(m-mZ);
+                }
+            } // ended Z loop
+            // W 
+            if (  
+                (abs(q[i]->GetPdgId()) + abs(q[j]->GetPdgId()) )%2 ==1
+                and q[i]->GetPdgId()*q[j]->GetPdgId()>0
+                ) {
+                double m = q[j]->InvMass(q[i]);
+                if ( fabs(m-mW) < delta1) {
+                    q11= q[i];
+                    q12 = q[j];
+                    delta1 = fabs(m-mW);
+                }
+            } // ended Z loop
+        }
+        
+        //////// ----------- SECOND LOOP
+        float delta2 =1000.;  // find the best candidates
+        for (int i=0;i<6;++i)
+        {
+        if (q[i] == q11 or q[i] == q12) continue;
+        for (int j=i+1;i<6;++i)
+        {
+            if (q[j] == q11 or q[j] == q12) continue;
+            // Z
+            if (abs(q[i]->GetPdgId()) == abs(q[j]->GetPdgId()) and q[i]->GetPdgId()*q[j]->GetPdgId()<0) {
+                double m = q[j]->InvMass(q[i]);
+                if ( fabs(m-mZ) < delta2) {
+                    q21= q[i];
+                    q22 = q[j];
+                    delta2 = fabs(m-mZ);
+                }
+            } // ended Z loop
+            // W 
+            if (  
+                (abs(q[i]->GetPdgId()) + abs(q[j]->GetPdgId()) )%2 ==1
+                and q[i]->GetPdgId()*q[j]->GetPdgId()>0
+                ) {
+                double m = q[j]->InvMass(q[i]);
+                if ( fabs(m-mW) < delta2) {
+                    q21= q[i];
+                    q22 = q[j];
+                    delta2 = fabs(m-mW);
+                }
+            } // ended Z loop
+        }
+        }
+
+        // end association
+        TLorentzVector zero(0,0,0,0); // just to satisfy my paranoia
+        Object V1, V2 ; V1.SetP4(zero); V2.SetP4(zero);
+        V1 += *q11 ; V1 +=  *q12;
+        V2 += *q21 ; V2 += *q22;
+
+        for (int i=0;i<6;++i)
+        {
+            if (q[i] == q11 or q[i] == q12 or q[i]== q21 or q[i]==q22) continue;
+            if (q1==nullptr) q1=q[i];
+            else if (q2==nullptr) q2=q[i];
+        }
+
+        // find fwd bkw gen jets matching q1 and q2
+        GenJet *j1 = nullptr, *j2 = nullptr;
+        for (int i=0;;++i){
+            GenJet *gj=e->GetGenJet(i);
+            if (gj == nullptr) break;
+            if (j1 == nullptr and gj->DeltaR(q1) <0.4) j1 =gj;
+            if (j2 == nullptr and gj->DeltaR(q2) <0.4) j2 =gj;
+        }
+
+        if (j1 == nullptr or j2 == nullptr) return false;
+
+        double mjj = j1->InvMass(j2);
+        double mvv = V1.InvMass(V2);
+        
+        if (q11->Pt() <10) return false;
+        if (q12->Pt() <10) return false;
+        if (q21->Pt() <10) return false;
+        if (q22->Pt() <10) return false;
+        if (V1.Pt() <10 ) return false;
+        if (V2.Pt() <10 ) return false;
+        if (j1->Pt() <30) return false;
+        if (j2->Pt() <30) return false;
+        if (fabs(j1->Eta()) > 4.7) return false;
+        if (fabs(j2->Eta()) > 4.7) return false;
+        if (fabs(j1->Eta() -j2->Eta()) <2.5 ) return false;  //deltaetajj
+        if (mjj <100) return false;
+        if (mvv <100) return false;
+        return true;
+    }
+
 private:
 
     // for genStudies
