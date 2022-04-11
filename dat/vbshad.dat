@@ -40,6 +40,10 @@ addConfig=VBShadAnalysis|AddLabel('aQGC_ZJJZJJjj_EWK_LO_NPle1')
 addConfig=VBShadAnalysis|AddLabel('aQGC_ZNUNUZJJNOBjj_EWK_LO_NPle1')
 
 # 4F should come first
+addConfig=VBShadAnalysis|AddLabel('WPHADWMLEPjj_4f_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('WPHADWMLEPjj_4f_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('WPLEPWMHADjj_4f_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('WPLEPWMHADjj_4f_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_4f_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_4f_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_4f_EWK_LO_')
@@ -70,13 +74,13 @@ addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPJJWMJJjj_EWK_QCD_LO')
 
-###
+### lepts
 addConfig=VBShadAnalysis|AddLabel('WMHADZLEPjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WMLEPWMHADjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WMLEPZHADjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WPHADWMLEPjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WPHADZLEPjj_EWK_LO')
-addConfig=VBShadAnalysis|AddLabel('WPLEPWMHADjj_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('WPLEPWMHADjj_EWK_LO') ##
 addConfig=VBShadAnalysis|AddLabel('WPLEPWPHADjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('WPLEPZHADjj_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZLEPZHADjj_EWK_LO')
@@ -85,7 +89,7 @@ addConfig=VBShadAnalysis|AddLabel('WMLEPWMHADjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WMLEPZHADjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPHADWMLEPjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPHADZLEPjj_QCD_LO')
-addConfig=VBShadAnalysis|AddLabel('WPLEPWMHADjj_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('WPLEPWMHADjj_QCD_LO') ##
 addConfig=VBShadAnalysis|AddLabel('WPLEPWPHADjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('WPLEPZHADjj_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('ZLEPZHADjj_QCD_LO')
