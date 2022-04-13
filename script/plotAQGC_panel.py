@@ -157,7 +157,7 @@ def draw_pad(y,xmin,xmax,side,drawAxis=True):
         if abs(xmin+17)<0.1 : ## -16,16
             for x in [-15,-10,-5,0,5,10,15]: draw_axis_tick(x,y-0.5,"%.0f")
         elif abs(xmin+10)<0.1: ## -10,10
-            for x in [-8,-6,-4,-2,-1,0,2,4,6,8]: draw_axis_tick(x,y-0.5,"%.0f")
+            for x in [-8,-6,-4,-2,0,2,4,6,8]: draw_axis_tick(x,y-0.5,"%.0f")
         elif abs(xmin+5)<0.1: ## -5,5
             for x in [-4,-3,-2,-1,0,1,2,3,4]: draw_axis_tick(x,y-0.5,"%.0f")
         elif abs(xmin+1)<0.01: ## -1,1
@@ -274,17 +274,21 @@ def draw_label(label, x,y, dxl, dxh, dxl2,dxh2,side):
             + "}" ## close scale
             )
 
-#fm0 fm1 fm2 fm3 fm4 fm5 fm7    fs0 fs1 
-#ft0 ft1 ft2 ft5 ft6 ft7 ft8 ft9    fs2
+#left=['fm0','fm1','fm2','fm3','fm4','fm5','fm7','empty','fs0','fs1']
+#right=['ft0','ft1','ft2','ft5','ft6','ft7','ft8','ft9','empty','fs2']
+left=['fm0','fm1','fm2','fm3','fm4','fm5','fm7','fs0','fs1','fs2']
+right=['ft0','ft1','ft2','ft3','ft4','ft5','ft6','ft7','ft8','ft9']
 
-left=['fm0','fm1','fm2','fm3','fm4','fm5','fm7','empty','fs0','fs1']
-right=['ft0','ft1','ft2','ft5','ft6','ft7','ft8','ft9','empty','fs2']
-
-ranges={ 
-        "fm0":[-10,10.],
+ranges={  ## -10,10  -5,5 -1,1 -0.5,.5, -.1,.1
+        "fm7":[-10,10.],
+        "fs0":[-10,10.],
+        "fs1":[-10,10.],
+        "fs2":[-10,10.],
         "ft0":[-0.5,0.5],
         "ft1":[-0.5,0.5],
         "ft2":[-0.5,0.5],
+        "ft3":[-0.5,0.5],
+        "ft4":[-5,5],
         "ft5":[-0.5,0.5],
         "ft6":[-1,1],
         "ft7":[-5,5],
@@ -292,18 +296,20 @@ ranges={
         "ft9":[-1,1],
         "fm2":[-5,5],
         "fm1":[-5,5],
-        "fm0":[-5,5],
+        "fm0":[-1,1],
         "fm4":[-5,5],
         "default":[-17,17],
         }
 
 print "> Drawing Empties as well"
-y = left.index('empty') 
-pe0=draw_pad( y,-17.,17.,'left',False)
-pe0.SetFillColor(ROOT.kGray)
-y = right.index('empty') 
-pe1=draw_pad( y,-17.,17.,'right',False)
-pe1.SetFillColor(ROOT.kGray)
+if 'empty' in left:
+    y = left.index('empty') 
+    pe0=draw_pad( y,-17.,17.,'left',False)
+    pe0.SetFillColor(ROOT.kGray)
+if 'empty' in right:
+    y = right.index('empty') 
+    pe1=draw_pad( y,-17.,17.,'right',False)
+    pe1.SetFillColor(ROOT.kGray)
 
 print "> Drawing Lines and Labels"
 for label in results:

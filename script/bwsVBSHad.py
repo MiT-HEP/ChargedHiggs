@@ -84,20 +84,27 @@ xsecsig = [
 {"pro" : "WZ", "cont": "QCD", "name": "WPLEPZHADjj_QCD_LO", "xsec" : 1.782},
 {"pro" : "WZ", "cont": "QCD", "name": "WMLEPZHADjj_QCD_LO", "xsec" : 1.087},
 
-
-
-
-{"pro": "WW", "cont": "AQGC", "name" :"WMJJWMJJjj_EWK_LO", "xsec": 0.13/2.},  ## these are splitted
-{"pro": "WW", "cont": "AQGC", "name" :"WPJJWPJJjj_EWK_LO", "xsec": 0.13/2.},
-{"pro" : "ZZ", "cont": "AQGC", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.06},
-{"pro" : "osWW", "cont": "AQGC", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.89},
-#{"pro": "WZ", "cont": "AQGC", "name" :"WMJJZJJjj_EWK_LO", "xsec": 0.13/2.}, ## xs?
-#{"pro" : "WZ", "cont": "AQGC", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.13},  ## does not exist
+########################### AQGC ###################################
+# had
+{"pro": "WW", "cont": "AQGC", "name" :"WMJJWMJJjj_EWK_LO", "xsec": 0.0304},  ## these are splitted
+{"pro": "WW", "cont": "AQGC", "name" :"WPJJWPJJjj_EWK_LO", "xsec": 0.1249},
+{"pro" : "ZZ", "cont": "AQGC", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.0319},
+{"pro" : "osWW", "cont": "AQGC", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.8139},
+{"pro": "WZ", "cont":"AQGC","name":"WMJJZJJjj_EWK_LO" , "xsec":0.1880},
+{"pro": "WZ", "cont":"AQGC","name":"WPJJZJJjj_EWK_LO" , "xsec":0.3492},
+{"pro": "ZZ", "cont":"AQGC","name":"ZBBZJJNOBjj_EWK_LO" , "xsec":0.0055},
+#{} ## ZNuNu -> 2016APV ??
+{"pro":"ZZ","cont":"AQGC","name":"ZNUNUZJJNOBjj_EWK_LO","xsec":0.0074},
+#lep
+{"pro":"osWW","cont":"AQGC","name":"WPHADWMLEPjj_EWK_LO","xsec":0.9067},
+{"pro":"osWW","cont":"AQGC","name":"WPLEPWMHADjj_EWK_LO","xsec":0.9067},
+{"pro":"WW","cont":"AQGC","name":"WPLEPWPHADjj_EWK_LO","xsec":0.1355},
+{"pro":"WW","cont":"AQGC","name":"WMLEPWMHADjj_EWK_LO","xsec":0.0222},
+{"pro":"WZ","cont":"AQGC","name":"WPLEPZHADjj_EWK_LO","xsec":0.1746},
+{"pro":"WZ","cont":"AQGC","name":"WMLEPZHADjj_EWK_LO","xsec":0.0940},
+]
 #{"pro" : "WZ", "cont": "AQGC", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
 ## BR: Zjj 70% , Zbb 15%, Znn 20%. -> ZjjnoB=55%
-{"pro" : "ZZ", "cont": "AQGC", "name": "ZBBZJJnoBjj_EWK_LO", "xsec" : 0.06/0.70/0.70 * 0.15*0.55},  ## from ZJJZJJ
-{"pro" : "ZZ", "cont": "AQGC", "name": "ZNuNuZJJnoBjj_EWK_LO", "xsec" : 0.06/0.70/0.70*0.20*0.55}, ## from ZJJZJJ
-]
 
 print "-> Looking for basepath"
 basepath = ""
@@ -385,24 +392,6 @@ class DatacardBuilder:
         normalization = self._get_norm(hname)
         #normalization = 1.
         #print hname,normalization
-        #OLD
-        #qcd_bb_sf={
-        #        2016: 0.014, #0.0111,#0.0122,
-        #        12016: 0.01352,   #
-        #        22016: 0.01246, #  
-        #        2017: 0.008346, #0.007, #0.0064, #0.0086,
-        #        2018: 0.01961, #0.02,  #0.0207, #0.0237,
-        #        2020: 0.015,
-        #}
-
-        #qcd_bbtag_sf={
-        #    2016: 0.0990, #0.0624,
-        #    22016: 0.0990, #0.0624,
-        #    12016: 0.004855, #0.0624,
-        #    2017: 0.0272, #0.0289,
-        #    2018: 0.1609, #0.0988, #0.0899,
-        #    2020: 0.015,
-        #}
 
         years = [opt.year]
         if opt.year==2020: years = [2016, 2017, 2018]
@@ -549,9 +538,11 @@ class DatacardBuilder:
             htmp = self._manipulate_histo(htmp,y,normalization)
             if h: h.Add(htmp.Clone(rename))
             else: h=htmp.Clone(rename)
+            if h==None:
+                print "ERROR","Unable to get file",fname,hname,"->",rename
             fIn.Close()
 
-        if opt.aqgc:
+        if opt.aqgc and h:
             ## including overflow for aqgc
             h.SetBinContent( h.GetNbinsX(), h.GetBinContent( h.GetNbinsX()) + h.GetBinContent(h.GetNbinsX()+1))
 
@@ -862,10 +853,10 @@ if __name__=="__main__":
 
     db=DatacardBuilder(opt.verbose)
    
-    base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/MAR14syst'
+    base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/MAR24syst'
     #base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
-        base_path="Datacards/inputs/OCT15" 
+        base_path="Datacards/inputs/MAR24" 
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -909,7 +900,8 @@ if __name__=="__main__":
 
         elif opt.quote == 5 and opt.aqgc: ## AQGC
             if "AQGC" in sig['cont']: 
-                db.add_process('VV_AQGC_EWK',True,[sig['name']+'_NPle1_aQGC_AQGC_'+aqgc_par+'_'+'$VALUE'],[opt.category],aqgc_fname)
+                #MVV_BB_aQGC_WMJJWMJJjj_EWK_LO_NPle1_AQGC_ft9_0p00
+                db.add_process('VV_AQGC_EWK',True,[ 'aQGC_'+sig['name']+'_NPle1_AQGC_'+aqgc_par+'_'+'$VALUE'],[opt.category],aqgc_fname)
                 db.processes['VV_AQGC_EWK']['keywords']={
                         #'$VALUE': [ val for val in aqgc_values[aqgc_par] ] 
                         '$VALUE': [ val for val in aqgc_values[aqgc_par] ]  + opt.aqgc_interpolate  ### INTERPOLATE
@@ -973,8 +965,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/OCT15/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/OCT15/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/MAR24_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/MAR24_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++
