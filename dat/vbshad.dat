@@ -163,6 +163,7 @@ addConfig=VBShadAnalysis|AddLabel('WJetsToLNu_Pt')
 addConfig=VBShadAnalysis|AddLabel('Z1JetsToNuNu_M-50_LHEFilterPtZ')
 addConfig=VBShadAnalysis|AddLabel('Z2JetsToNuNu_M-50_LHEFilterPtZ')
 addConfig=VBShadAnalysis|AddLabel('ZJetsToNuNuPt')
+addConfig=VBShadAnalysis|AddLabel('DYJetsToLL_Pt')
 
 addConfig=VBShadAnalysis|AddLabel('VJetsToQQ')
 addConfig=VBShadAnalysis|AddLabel('ZJetsToQQ')
