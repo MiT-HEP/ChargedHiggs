@@ -271,6 +271,22 @@ class SmearWG1 : virtual public SmearBase
 
 };
 
+class SmearPNetMass : public SmearBase 
+{
+    public: 
+        SmearPNetMass() : SmearBase(){ name_ = "PNetMass";}
+        int smear(Event *e) override
+        { 
+            if( e->IsRealData() ) return SMEAR_NA;
+
+            for (auto j : GetFatJets(e))
+            {
+                j->systPNetMass_ = syst_;
+            }
+            return SMEAR_OK;
+        }; // 0 = success; 1 not applicable to the event
+};
+
 #endif
 // Local Variables:
 // mode:c++

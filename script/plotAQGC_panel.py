@@ -236,9 +236,9 @@ def set_style(o,style):
             o.SetArrowSize(0.03)
             o.SetOption("|>")
 
-def draw_line( x, y, dxl,dxh, pad='left',style='68'):
+def draw_line( x, y, dxl,dxh, pad='left',style='68',xmin=xmin,xmax=xmax):
     global gc
-    global xmin,xmax
+    #global xmin,xmax
     if pad=='left': p3.cd()
     if pad=='right': p4.cd()
     print "DEBUG", "Drawing line @",x,y,dxl,dxh,pad,style
@@ -375,7 +375,8 @@ for label in results:
                 cmax=ccmax
                 ccadi=key
         cbf = (cmin+cmax)/2.
-        draw_line( cbf, y+0.23, cbf - cmin ,cmax-cbf, side,'comp')
+        #def draw_line( x, y, dxl,dxh, pad='left',style='68',xmin=xmin,xmax=xmax):
+        draw_line( cbf, y+0.23, cbf - cmin ,cmax-cbf, side,'comp',ranges[label if label in ranges else "default"][0],ranges[label if label in ranges else "default"][1])
         ctxt = ROOT.TLatex()
         ctxt.SetNDC(False)
         ctxt.SetTextColor(ROOT.kGray)
