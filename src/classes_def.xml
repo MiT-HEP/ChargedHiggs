@@ -36,6 +36,8 @@
 	<class name="SmearJerPuppiMet"/>
 	<class name="SmearUnclusteredPuppiMet"/>
 	<class name="SmearJesSourceAK8"/>
+	<class name="SmearPNetDiscriminator"/>
+	<class name="SmearPNetMass"/>
 	
 	<!-- Looper -->
 	<class name="Weight"/>

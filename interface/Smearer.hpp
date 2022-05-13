@@ -287,6 +287,25 @@ class SmearPNetMass : public SmearBase
         }; // 0 = success; 1 not applicable to the event
 };
 
+class SmearPNetDiscriminator : public SmearBase 
+{
+    public: 
+        SmearPNetDiscriminator() : SmearBase(){ name_ = "PNetXXX";}
+        SmearPNetDiscriminator(string myname="PNetXqq") : SmearBase(){ name_ = myname;}
+        int smear(Event *e) override
+        { 
+            if( e->IsRealData() ) return SMEAR_NA;
+
+            for (auto j : GetFatJets(e))
+            {
+                if (name_ =="PNetXqq") j->systPNetXqq_ = syst_;
+                if (name_ =="PNetXbb") j->systPNetXbb_ = syst_;
+                if (name_ =="PNetXcc") j->systPNetXcc_ = syst_;
+            }
+            return SMEAR_OK;
+        }; // 0 = success; 1 not applicable to the event
+};
+
 #endif
 // Local Variables:
 // mode:c++
