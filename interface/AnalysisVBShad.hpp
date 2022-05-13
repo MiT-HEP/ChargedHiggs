@@ -75,6 +75,23 @@ public:
         return index;
     }
 
+    int getIndexB(int nFat) {
+        auto pt = selectedFatZbb[nFat]->Pt();
+        auto etaAbs = fabs(selectedFatZbb[nFat]->Eta());
+        int index = (( pt >= 300 and pt < 400 ) and (etaAbs < 1.3) )? 0 : -1 ; // pt1Eta1
+        index = ((pt >= 400 and pt < 500) and (etaAbs < 1.3) )? 1 : index ; // pt2Eta1
+        index = ((pt >= 500 and pt < 600) and (etaAbs < 1.3) )? 2 : index ; // pt2Eta1
+        index = ((pt >= 600 and pt < 750) and (etaAbs < 1.3) )? 3 : index ; // pt2Eta1
+        index = ((pt >= 750) and (etaAbs < 1.3) )? 4 : index ; // pt3Eta1
+
+        index = ((pt >= 300 and pt < 400) and (etaAbs >= 1.3) )? 5 : index ; // pt1Eta2
+        index = ((pt >= 400 and pt < 500) and (etaAbs >= 1.3) )? 6 : index ; // pt1Eta2
+        index = ((pt >= 500 and pt < 600) and (etaAbs >= 1.3) )? 7 : index ; // pt2Eta2
+        index = ((pt >= 600 and pt < 750) and (etaAbs >= 1.3) )? 8 : index ; // pt2Eta2
+        index = ((pt >= 750) and (etaAbs >= 1.3) )? 9 : index ; // pt3Eta2
+        return index;
+    }
+
     bool doMETAnalysis=false;
     bool doBAnalysis=false;
     bool doHADAnalysis=false;

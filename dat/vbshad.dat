@@ -38,6 +38,9 @@ addConfig=VBShadAnalysis|AddLabel('aQGC_WPLEPWPHADjj_EWK_LO_NPle1')
 addConfig=VBShadAnalysis|AddLabel('aQGC_ZBBZJJNOBjj_EWK_LO_NPle1')
 addConfig=VBShadAnalysis|AddLabel('aQGC_ZJJZJJjj_EWK_LO_NPle1')
 addConfig=VBShadAnalysis|AddLabel('aQGC_ZNUNUZJJNOBjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WMJJZNUNUjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_WPJJZNUNUjj_EWK_LO_NPle1')
+addConfig=VBShadAnalysis|AddLabel('aQGC_ZNUNUZBBjj_EWK_LO_NPle1')
 
 # 4F should come first
 addConfig=VBShadAnalysis|AddLabel('WPHADWMLEPjj_4f_EWK_LO')
