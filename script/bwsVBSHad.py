@@ -43,6 +43,7 @@ lumis={
     2018: 60.0,
     2020: 45.7,
 }
+doEnvelop = False
 
 if "%d"%opt.year not in opt.input:  raise ValueError('Your file should match the selected year. Year: ' + opt.year+ "not in filename "+opt.input)
 
@@ -83,20 +84,27 @@ xsecsig = [
 {"pro" : "WZ", "cont": "QCD", "name": "WPLEPZHADjj_QCD_LO", "xsec" : 1.782},
 {"pro" : "WZ", "cont": "QCD", "name": "WMLEPZHADjj_QCD_LO", "xsec" : 1.087},
 
-
-
-
-{"pro": "WW", "cont": "AQGC", "name" :"WMJJWMJJjj_EWK_LO", "xsec": 0.13/2.},  ## these are splitted
-{"pro": "WW", "cont": "AQGC", "name" :"WPJJWPJJjj_EWK_LO", "xsec": 0.13/2.},
-{"pro" : "ZZ", "cont": "AQGC", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.06},
-{"pro" : "osWW", "cont": "AQGC", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.89},
-#{"pro": "WZ", "cont": "AQGC", "name" :"WMJJZJJjj_EWK_LO", "xsec": 0.13/2.}, ## xs?
-#{"pro" : "WZ", "cont": "AQGC", "name": "ZBBWPMJJjj_EWK_LO", "xsec" : 0.13},  ## does not exist
+########################### AQGC ###################################
+# had
+{"pro": "WW", "cont": "AQGC", "name" :"WMJJWMJJjj_EWK_LO", "xsec": 0.0304},  ## these are splitted
+{"pro": "WW", "cont": "AQGC", "name" :"WPJJWPJJjj_EWK_LO", "xsec": 0.1249},
+{"pro" : "ZZ", "cont": "AQGC", "name": "ZJJZJJjj_EWK_LO", "xsec" : 0.0319},
+{"pro" : "osWW", "cont": "AQGC", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.8139},
+{"pro": "WZ", "cont":"AQGC","name":"WMJJZJJjj_EWK_LO" , "xsec":0.1880},
+{"pro": "WZ", "cont":"AQGC","name":"WPJJZJJjj_EWK_LO" , "xsec":0.3492},
+{"pro": "ZZ", "cont":"AQGC","name":"ZBBZJJNOBjj_EWK_LO" , "xsec":0.0055},
+#{} ## ZNuNu -> 2016APV ??
+{"pro":"ZZ","cont":"AQGC","name":"ZNUNUZJJNOBjj_EWK_LO","xsec":0.0074},
+#lep
+{"pro":"osWW","cont":"AQGC","name":"WPHADWMLEPjj_EWK_LO","xsec":0.9067},
+{"pro":"osWW","cont":"AQGC","name":"WPLEPWMHADjj_EWK_LO","xsec":0.9067},
+{"pro":"WW","cont":"AQGC","name":"WPLEPWPHADjj_EWK_LO","xsec":0.1355},
+{"pro":"WW","cont":"AQGC","name":"WMLEPWMHADjj_EWK_LO","xsec":0.0222},
+{"pro":"WZ","cont":"AQGC","name":"WPLEPZHADjj_EWK_LO","xsec":0.1746},
+{"pro":"WZ","cont":"AQGC","name":"WMLEPZHADjj_EWK_LO","xsec":0.0940},
+]
 #{"pro" : "WZ", "cont": "AQGC", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
 ## BR: Zjj 70% , Zbb 15%, Znn 20%. -> ZjjnoB=55%
-{"pro" : "ZZ", "cont": "AQGC", "name": "ZBBZJJnoBjj_EWK_LO", "xsec" : 0.06/0.70/0.70 * 0.15*0.55},  ## from ZJJZJJ
-{"pro" : "ZZ", "cont": "AQGC", "name": "ZNuNuZJJnoBjj_EWK_LO", "xsec" : 0.06/0.70/0.70*0.20*0.55}, ## from ZJJZJJ
-]
 
 print "-> Looking for basepath"
 basepath = ""
@@ -253,7 +261,7 @@ class DatacardBuilder:
                 'type': type,
                 }
         else:
-            self.systs[x]['catproc'].append(catproc)
+            self.systs[x]['cat-proc'].append(catproc)
             self.systs[x]['value'].append(value)
             self.systs[x]['fname'].append(fname)
             self.systs[x]['inname'].append(inname)
@@ -313,6 +321,8 @@ class DatacardBuilder:
         txt.write('-'*50+'\n')
 
         for s in self.systs:
+            if doEnvelop and ("scaleR" in s or "scaleF" in s) and not "scaleRF" in s: continue
+            if not doEnvelop and "scaleRF" in s: continue
             txt.write("%(syst)s %(type)s "%self.systs[s])
             # write systematic line: 
             # construct a list of all the matches, append -, and take the first match in each cat and proc
@@ -382,32 +392,12 @@ class DatacardBuilder:
         normalization = self._get_norm(hname)
         #normalization = 1.
         #print hname,normalization
-        #OLD
-        #qcd_bb_sf={
-        #        2016: 0.014, #0.0111,#0.0122,
-        #        12016: 0.01352,   #
-        #        22016: 0.01246, #  
-        #        2017: 0.008346, #0.007, #0.0064, #0.0086,
-        #        2018: 0.01961, #0.02,  #0.0207, #0.0237,
-        #        2020: 0.015,
-        #}
-
-        #qcd_bbtag_sf={
-        #    2016: 0.0990, #0.0624,
-        #    22016: 0.0990, #0.0624,
-        #    12016: 0.004855, #0.0624,
-        #    2017: 0.0272, #0.0289,
-        #    2018: 0.1609, #0.0988, #0.0899,
-        #    2020: 0.015,
-        #}
 
         years = [opt.year]
         if opt.year==2020: years = [2016, 2017, 2018]
         if opt.year==2021: years= [12016,22016,2017,2018]
         print years 
         
-        ## check qcd sf
-
         h = None
         for y in years:
 
@@ -457,12 +447,21 @@ class DatacardBuilder:
                 fInmore.Close()
             ###########################################################
             """
-            
+
+            ### hname cooking, for central, syst e.t.c ###
+            if '_BRLFSTAT1Up' in hname:
+                namecen  = re.sub('_BRLFSTAT1Up','',hname)
+                namedown = re.sub('_BRLFSTAT1Up','_BRLFSTAT1Down',hname)
+                htmp     = fIn.Get(namecen)
+                hdown    = fIn.Get(namedown)
+                htmp.Add(htmp)
+                htmp.Add(hdown,-1.)
+
             ### QCD SF and hist stat. enhancement
             if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
                 strategy=0 # 0: A/(A+B) 1: CB/D / (A+B)
-                if opt.category == 'BB': strategy=1
-                if opt.category == 'BBtag': strategy=1
+                #if opt.category == 'BB': strategy=1
+                #if opt.category == 'BBtag': strategy=1
 
                 fInD ={} #
                 htmpD = {} ## dictionary to hold additional histograms
@@ -539,9 +538,11 @@ class DatacardBuilder:
             htmp = self._manipulate_histo(htmp,y,normalization)
             if h: h.Add(htmp.Clone(rename))
             else: h=htmp.Clone(rename)
+            if h==None:
+                print "ERROR","Unable to get file",fname,hname,"->",rename
             fIn.Close()
 
-        if opt.aqgc:
+        if opt.aqgc and h:
             ## including overflow for aqgc
             h.SetBinContent( h.GetNbinsX(), h.GetBinContent( h.GetNbinsX()) + h.GetBinContent(h.GetNbinsX()+1))
 
@@ -590,14 +591,14 @@ class DatacardBuilder:
         return mapping
 
     def creat_QCD_Shape(self,h_nominal,systname="") :
-        Area   = 1.52e-01
-        mshift = 1.13
-        bcut   = 1.06
+        Area   = 0.0614
+        mshift = 0.183
+        bcut   = 1.036
 
         if 'BBtag' in systname:
-            Area   = -9.27
-            mshift = 45410
-            bcut   = 100.5
+            Area   = 1.814
+            mshift = 12.39
+            bcut   = -3.649
 
         h=h_nominal.Clone(systname)
 
@@ -618,6 +619,46 @@ class DatacardBuilder:
         h.Scale(normold/normnew)
 
         return h
+
+    def creat_LepEff_Shape(self,h_nominal,n_suffix,hname="") :
+        correff = 1.04
+
+        hup = h_nominal.Clone(hname+'Up')
+        hdn = h_nominal.Clone(hname+'Down')
+
+        realLepPro = ['WMLEP','WPLEP','TT_TuneCP5','EWKV','WJetsToLNu']
+
+        for pros in realLepPro:
+            if pros in n_suffix:
+                hup.Scale(correff)
+                hdn.Scale(1./correff)
+                break
+
+        return hup,hdn
+
+    def envelop(self, hups, hdns, hname="") :
+
+        hup=hups[0].Clone(hname+'Up')
+        hdn=hdns[0].Clone(hname+'Down')
+
+        if hup==None or hdn==None:
+            print "ERROR","unable to get RF histogram"
+            return
+
+        ## up
+        for upp in hups:
+            for iBin in range(1,hup.GetNbinsX()+1):
+                c= hup.GetBinContent(iBin)
+                if upp.GetBinContent(iBin)>c:
+                    hup.SetBinContent(iBin,upp.GetBinContent(iBin))
+        ##down
+        for dnn in hdns:
+            for iBin in range(1,hdn.GetNbinsX()+1):
+                c= hdn.GetBinContent(iBin)
+                if dnn.GetBinContent(iBin)<c:
+                    hdn.SetBinContent(iBin,dnn.GetBinContent(iBin))
+
+        return hup,hdn
 
 
     def write_inputs(self,outname): #datacard.txt
@@ -723,6 +764,8 @@ class DatacardBuilder:
                 self._write(h)
 
                 # SYST TODO implement interpolation logic
+                hups = []
+                hdns = []
                 for sname in self.systs:
                     s=self.systs[sname]
                     if 'shape' not in s['type']: continue
@@ -739,6 +782,20 @@ class DatacardBuilder:
 
                     hup = None
                     hdn = None
+                    Up = "Up"
+                    Down = "Down"
+
+                    # RFScale
+                    if 'scaleF' in sname:
+                        Up = "_0"
+                        Down = "_1"
+                    elif 'scaleR' in sname and not 'scaleRF' in sname:
+                        Up = "_2"
+                        Down = "_4"
+                    elif 'scaleRF' in sname:
+                        Up = "_3"
+                        Down = "_5"
+
                     for suffix in d2['suffix']:
 
 			# QCDnonclosure shape
@@ -748,17 +805,27 @@ class DatacardBuilder:
                             hdn = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Down")
 			    continue
 
+                        if 'CMS_eff_l' in sname:
+                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            if hup == None:
+                                hup, hdn = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
+                            else:
+                                hupTmp, hdnTmp = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
+                                hup.Add(hupTmp)
+                                hdn.Add(hdnTmp)
+                            continue
+
                         if hup==None:
                             ## todo here, check for systs fname here. Possible symmetrize to the default over there
                             if d2['fname'] != None: 
                                 if d2['interpolate']: raise RuntimeError("Unimplemented")
                                 # if fname set in proc, use it.
-                                hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             else:
                                 # use category fname
-                                hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             if hup != None and hdn == None:
                                 hdn = hup.Clone(re.sub("Up$","Down",hup.GetName()))
                                 hdn.Reset("ACE")
@@ -768,15 +835,31 @@ class DatacardBuilder:
                         else:
                             if d2['fname'] != None: 
                                 if d2['interpolate']: raise RuntimeError("Unimplemented")
-                                hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Up","%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+"Down","%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             else:
-                                hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Up","")
-                                hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+"Down","")
+                                hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Up,"")
+                                hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Down,"")
                             hup.Add(hupTmp)
                             hdn.Add(hdnTmp)
                             #if matched: print "WARNING", "syst duplicate found","discarding",c,p,v,"matching for",cat,proc
                             #$CHANNEL_$PROCESS_$SYSTEMATIC
+
+                    ### envelop
+                    if 'scaleF' in sname:
+                        hups.append(hup)
+                        hdns.append(hdn)
+                        if doEnvelop: continue
+                    elif 'scaleR' in sname and not 'scaleRF' in sname:
+                        hups.append(hup)
+                        hdns.append(hdn)
+                        if doEnvelop: continue
+                    elif 'scaleRF' in sname:
+                        if not doEnvelop: continue
+                        else:
+                            hups.append(hup)
+                            hdns.append(hdn)
+                            hup,hdn = self.envelop(hups,hdns,"%(cat)s_"%d+proc+"_"+sname)
 
                     hup = likelihoodBinning.applyMapping(LikelihoodMapping, hup)
                     hdn = likelihoodBinning.applyMapping(LikelihoodMapping, hdn)
@@ -795,10 +878,10 @@ if __name__=="__main__":
 
     db=DatacardBuilder(opt.verbose)
    
-    base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/MAR14syst'
+    base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/MAR24syst'
     #base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
-        base_path="Datacards/inputs/OCT15" 
+        base_path="Datacards/inputs/MAR24" 
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -816,6 +899,8 @@ if __name__=="__main__":
     #db.add_process('Winv',False,['WJetsToLNu'],[opt.category])
     if("MET" not in opt.category):
         db.add_process('QCD',False,['QCD_HT'],[opt.category])
+        #db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
+        if "Btag" in opt.category: db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
     else:
         #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
         #db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
@@ -842,7 +927,8 @@ if __name__=="__main__":
 
         elif opt.quote == 5 and opt.aqgc: ## AQGC
             if "AQGC" in sig['cont']: 
-                db.add_process('VV_AQGC_EWK',True,[sig['name']+'_NPle1_aQGC_AQGC_'+aqgc_par+'_'+'$VALUE'],[opt.category],aqgc_fname)
+                #MVV_BB_aQGC_WMJJWMJJjj_EWK_LO_NPle1_AQGC_ft9_0p00
+                db.add_process('VV_AQGC_EWK',True,[ 'aQGC_'+sig['name']+'_NPle1_AQGC_'+aqgc_par+'_'+'$VALUE'],[opt.category],aqgc_fname)
                 db.processes['VV_AQGC_EWK']['keywords']={
                         #'$VALUE': [ val for val in aqgc_values[aqgc_par] ] 
                         '$VALUE': [ val for val in aqgc_values[aqgc_par] ]  + opt.aqgc_interpolate  ### INTERPOLATE
@@ -858,13 +944,15 @@ if __name__=="__main__":
     db.add_systematics('lumi','','lnN',('.*','.*'),1.025)
     db.add_systematics('QCDScale_ttbar','','lnN',('.*','ttbar'),1.05)
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
-    db.add_systematics('CMS_eff_l','','lnN',('.*','.*'),1.04)
+
+    proc_reall = '^((?!Zinv).)*$' if "MET" in opt.category else 'ttbar'
+    db.add_systematics('CMS_eff_l','','shape',('.*',proc_reall),1.)
 
     if "BBtag" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm
+        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm
     elif "RBtag" in opt.category:
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.20)  ## QCD Norm
+        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm
     elif "BB" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
         if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)
@@ -876,14 +964,19 @@ if __name__=="__main__":
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
+
+    #db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
+    #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HF','BRHF','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HFSTAT1','BRHFSTAT1','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_HFSTAT2','BRHFSTAT2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_LFSTAT1','BRLFSTAT1','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_LFSTAT2','BRLFSTAT2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_LF','BRLF','shape',('.*',proc_regex),1.)
+
+    db.add_systematics('CMS_scaleR','Scale','shape',('.*','ttbar'),1.)
+    db.add_systematics('CMS_scaleF','Scale','shape',('.*','ttbar'),1.)
+    if doEnvelop: db.add_systematics('CMS_scaleRF','Scale','shape',('.*','ttbar'),1.)
 
     ## break down JES sources
     #db.add_systematics('jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)
@@ -901,8 +994,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/OCT15/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/OCT15/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/MAR24_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/MAR24_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++

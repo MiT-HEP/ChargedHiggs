@@ -44,6 +44,8 @@ class FatJet : virtual public Object, virtual public SmearableComplex
 
     public:
 
+    int systPNetMass_{0};
+
     int  MASSTYPE = 1;
 
     //  ---- smearable complex add thingea
@@ -75,7 +77,7 @@ class FatJet : virtual public Object, virtual public SmearableComplex
 
     /// @brief return systematic uncertainty under consideration
     inline float GetUnc() const { return Pt()/p4.Pt(); }
-    inline void  clearSyst() override {Object::clearSyst() ;syst = 0; isValid=1;type=Smearer::NONE;} // reset smearing
+    inline void  clearSyst() override {Object::clearSyst() ;syst = 0; isValid=1;type=Smearer::NONE; systPNetMass_=0;} // reset smearing
 
     // -------------------------
 
@@ -168,7 +170,7 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     inline float Xcc() const { return XccpNet ; }
     inline float Xqq() const { return XqqpNet ; }
 
-    inline float PNetMass() const { return particleNetMass; }
+    inline float PNetMass() const { return particleNetMass* (1. + systPNetMass_*0.05); }
 
     inline float SDMass() const { return softdropMass; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }

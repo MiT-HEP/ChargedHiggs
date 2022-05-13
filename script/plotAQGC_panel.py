@@ -7,6 +7,7 @@ import json
 from optparse import OptionParser
 parser = OptionParser()
 parser.add_option("","--paper",dest="paper",default=False,action="store_true")
+parser.add_option("","--comparison",dest="comparison",default=False,action="store_true")
 parser.add_option("-o","--outname",dest="outname",help="Name of output pdf/png/C")
 (opts,args)=parser.parse_args()
 
@@ -14,6 +15,31 @@ import ROOT
 
 with open(opts.outname + ".json") as fin: 
     results = json.loads(fin.read())
+
+if opts.comparison:
+    #From AN Table. 2, 95%CL CLs
+    comp_table = {
+            "ft0":{ "SMP-20-001":[-0.24,0.22],"SMP-19-012":[-0.69,0.97],"SMP-19-008":[-0.6, 0.64],"SMP-18-007":[-0.74, 0.69],"SMP-18-006":[-0.12,0.11],},
+            "ft1":{ "SMP-20-001":[-0.31, 0.31], "SMP-19-012":[-0.81, 1.2],"SMP-19-008":[-0.35, 0.39],"SMP-18-007":[-0.98, 0.96],"SMP-18-006":[-0.12,0.13],},
+            "ft2":{ "SMP-20-001":[-0.63, 0.59],"SMP-19-012":[-1.6, 3.1],"SMP-19-008":[-0.99,1.18],"SMP-18-007":[-1.97, 1.86],"SMP-18-006":[-0.28,0.28],},
+            "ft5":{ "SMP-19-008":[-0.45, 0.46], "SMP-18-007":[-0.70, 0.75],},
+            "ft6":{ "SMP-19-008":[-0.36, 0.38], "SMP-18-007":[-1.64, 1.68],},
+            "ft7":{ "SMP-19-008":[-0.87, 0.93], "SMP-18-007":[-2.59, 2.82],},
+            "ft8":{ "SMP-20-001":[-0.43, 0.43], "SMP-18-007":[-0.47, 0.47],},
+            "ft9":{ "SMP-20-001":[-0.92, 0.92], "SMP-18-007":[-1.27, 1.27],},
+            ##
+            "fm0":{ "SMP-19-012":[-11, 12], "SMP-19-008":[-8.07, 7.99],"SMP-18-007":[-19.5, 20.3],"SMP-18-006":[-0.69, 0.70],},
+            "fm1":{ "SMP-19-012":[-11.8, 12.1], "SMP-19-008":[-40.5, 39.5], "SMP-18-007":[-2.0, 2.1],"SMP-18-006":[-0.28, 0.28],},
+            "fm2":{ "SMP-19-008":[-2.81, 2.81], "SMP-18-007":[-8.22, 8.10],},
+            "fm3":{ "SMP-19-008":[-4.41, 4.49], "SMP-18-007":[-17.7, 17.9],},
+            "fm4":{ "SMP-19-008":[-4.99, 4.95], "SMP-18-007":[-15.3, 15.8],},
+            "fm5":{ "SMP-19-008":[-8.27, 8.31], "SMP-18-007":[-25.1, 24.5],},
+            "fm6":{ "SMP-19-012":[-22, 25], "SMP-19-008":[-16.2, 16.0], "SMP-18-007":[-38.9, 40.6],"SMP-18-006":[-1.3, 1.3],},
+            "fm7":{ "SMP-19-012":[-16, 18], "SMP-19-008":[-20.8, 20.2], "SMP-18-007":[-60.3, 62.5], "SMP-18-006":[-3.4, 3.4],},
+            ##
+            "fs0":{ "SMP-19-012":[-34, 35],"SMP-18-006":[-2.7, 2.7],},
+            "fs1":{ "SMP-19-012":[-86, 99], "SMP-18-006":[-3.4,3.4],},
+    }
 
 ####################################### 
 nPoints=10
@@ -157,7 +183,7 @@ def draw_pad(y,xmin,xmax,side,drawAxis=True):
         if abs(xmin+17)<0.1 : ## -16,16
             for x in [-15,-10,-5,0,5,10,15]: draw_axis_tick(x,y-0.5,"%.0f")
         elif abs(xmin+10)<0.1: ## -10,10
-            for x in [-8,-6,-4,-2,-1,0,2,4,6,8]: draw_axis_tick(x,y-0.5,"%.0f")
+            for x in [-8,-6,-4,-2,0,2,4,6,8]: draw_axis_tick(x,y-0.5,"%.0f")
         elif abs(xmin+5)<0.1: ## -5,5
             for x in [-4,-3,-2,-1,0,1,2,3,4]: draw_axis_tick(x,y-0.5,"%.0f")
         elif abs(xmin+1)<0.01: ## -1,1
@@ -179,6 +205,10 @@ def set_style(o,style):
         o.SetMarkerColor(ROOT.kBlack)
         o.SetMarkerStyle(20)
         o.SetMarkerSize(0.8)
+    if o.InheritsFrom("TMarker") and style=='comp':
+        o.SetMarkerColor(ROOT.kGray)
+        o.SetMarkerStyle(0)
+        o.SetMarkerSize(0)
     if o.InheritsFrom("TLine"):
         if style=='68':
             o.SetLineColor(ROOT.kBlack)
@@ -186,6 +216,9 @@ def set_style(o,style):
         if style=='95':
             o.SetLineColor(ROOT.kRed+2)
             o.SetLineWidth(1)
+        if style=='comp':
+            o.SetLineColor(ROOT.kGray)
+            o.SetLineWidth(2)
     if o.InheritsFrom("TArrow"):
         if style=='68':
             o.SetFillColor(ROOT.kBlack);
@@ -197,10 +230,15 @@ def set_style(o,style):
             o.SetAngle(40);
             o.SetArrowSize(0.03)
             o.SetOption("|>")
+        if style=='comp':
+            o.SetFillColor(ROOT.kGray);
+            o.SetAngle(40);
+            o.SetArrowSize(0.03)
+            o.SetOption("|>")
 
-def draw_line( x, y, dxl,dxh, pad='left',style='68'):
+def draw_line( x, y, dxl,dxh, pad='left',style='68',xmin=xmin,xmax=xmax):
     global gc
-    global xmin,xmax
+    #global xmin,xmax
     if pad=='left': p3.cd()
     if pad=='right': p4.cd()
     print "DEBUG", "Drawing line @",x,y,dxl,dxh,pad,style
@@ -274,17 +312,21 @@ def draw_label(label, x,y, dxl, dxh, dxl2,dxh2,side):
             + "}" ## close scale
             )
 
-#fm0 fm1 fm2 fm3 fm4 fm5 fm7    fs0 fs1 
-#ft0 ft1 ft2 ft5 ft6 ft7 ft8 ft9    fs2
+#left=['fm0','fm1','fm2','fm3','fm4','fm5','fm7','empty','fs0','fs1']
+#right=['ft0','ft1','ft2','ft5','ft6','ft7','ft8','ft9','empty','fs2']
+left=['fm0','fm1','fm2','fm3','fm4','fm5','fm7','fs0','fs1','fs2']
+right=['ft0','ft1','ft2','ft3','ft4','ft5','ft6','ft7','ft8','ft9']
 
-left=['fm0','fm1','fm2','fm3','fm4','fm5','fm7','empty','fs0','fs1']
-right=['ft0','ft1','ft2','ft5','ft6','ft7','ft8','ft9','empty','fs2']
-
-ranges={ 
-        "fm0":[-10,10.],
+ranges={  ## -10,10  -5,5 -1,1 -0.5,.5, -.1,.1
+        "fm7":[-10,10.],
+        "fs0":[-10,10.],
+        "fs1":[-10,10.],
+        "fs2":[-10,10.],
         "ft0":[-0.5,0.5],
         "ft1":[-0.5,0.5],
         "ft2":[-0.5,0.5],
+        "ft3":[-0.5,0.5],
+        "ft4":[-5,5],
         "ft5":[-0.5,0.5],
         "ft6":[-1,1],
         "ft7":[-5,5],
@@ -292,18 +334,20 @@ ranges={
         "ft9":[-1,1],
         "fm2":[-5,5],
         "fm1":[-5,5],
-        "fm0":[-5,5],
+        "fm0":[-1,1],
         "fm4":[-5,5],
         "default":[-17,17],
         }
 
 print "> Drawing Empties as well"
-y = left.index('empty') 
-pe0=draw_pad( y,-17.,17.,'left',False)
-pe0.SetFillColor(ROOT.kGray)
-y = right.index('empty') 
-pe1=draw_pad( y,-17.,17.,'right',False)
-pe1.SetFillColor(ROOT.kGray)
+if 'empty' in left:
+    y = left.index('empty') 
+    pe0=draw_pad( y,-17.,17.,'left',False)
+    pe0.SetFillColor(ROOT.kGray)
+if 'empty' in right:
+    y = right.index('empty') 
+    pe1=draw_pad( y,-17.,17.,'right',False)
+    pe1.SetFillColor(ROOT.kGray)
 
 print "> Drawing Lines and Labels"
 for label in results:
@@ -318,6 +362,29 @@ for label in results:
     side = 'pad' ## use previous defined pad
     draw_line( results[label]['bf'], y, results[label]['95'][0] ,results[label]['95'][1], side,'95')
     draw_line( results[label]['bf'], y, results[label]['68'][0] ,results[label]['68'][1], side,'68')
+
+    if opts.comparison and label in comp_table:
+        cmin=None
+        cmax=None
+        ccadi=None
+        for key in comp_table[label]:
+            ccmin= comp_table[label][key][0]
+            ccmax= comp_table[label][key][1]
+            if ccadi==None or (cmin+cmax)/2. > (ccmin+ccmax)/2. :
+                cmin=ccmin
+                cmax=ccmax
+                ccadi=key
+        cbf = (cmin+cmax)/2.
+        #def draw_line( x, y, dxl,dxh, pad='left',style='68',xmin=xmin,xmax=xmax):
+        draw_line( cbf, y+0.23, cbf - cmin ,cmax-cbf, side,'comp',ranges[label if label in ranges else "default"][0],ranges[label if label in ranges else "default"][1])
+        ctxt = ROOT.TLatex()
+        ctxt.SetNDC(False)
+        ctxt.SetTextColor(ROOT.kGray)
+        ctxt.SetTextAlign(21)
+        ctxt.SetTextFont(43)
+        ctxt.SetTextSize(14)
+        ctxt.DrawLatex(cbf,y+0.24,ccadi)
+        gc.append(ctxt)
 
     side= 'left' if label in left else 'right' if label in right else None
     ylabel= y
@@ -342,7 +409,7 @@ else: ## multi lines
 ### Draw text on Canvas
 
 print "> Save"
-c.SaveAs(opts.outname +"_summary"+ ".pdf")
-c.SaveAs(opts.outname +"_summary"+ ".png")
+c.SaveAs(opts.outname + ( "_comp" if opts.comparison else"") +"_summary"+ ".pdf")
+c.SaveAs(opts.outname + ( "_comp" if opts.comparison else"") +"_summary"+ ".png")
 
 raw_input("ok?")
