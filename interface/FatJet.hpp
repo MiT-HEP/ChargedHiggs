@@ -39,6 +39,7 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     float ZvsQCDMDcut_;
 
     // FIXME: add puppi
+    int systPNetMass_{0};
 
     TLorentzVector pp4;
 
@@ -168,7 +169,7 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     inline float Xcc() const { return XccpNet ; }
     inline float Xqq() const { return XqqpNet ; }
 
-    inline float PNetMass() const { return particleNetMass; }
+    inline float PNetMass() const { return particleNetMass* (1. + systPNetMass_*0.05); }
 
     inline float SDMass() const { return softdropMass; }
     inline float CorrPrunedMass() const { return CorrectedPrunedMass ; }
