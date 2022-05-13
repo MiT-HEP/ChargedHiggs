@@ -277,7 +277,7 @@ class SmearPNetMass : public SmearBase
         SmearPNetMass() : SmearBase(){ name_ = "PNetMass";}
         int smear(Event *e) override
         {
-            for (auto j : GetiFatJets(e))
+            for (auto j : GetFatJets(e))
             {
                 j->systPNetMass_ = syst_;
             }
