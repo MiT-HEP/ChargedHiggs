@@ -287,11 +287,11 @@ class SmearPNetMass : public SmearBase
         }; // 0 = success; 1 not applicable to the event
 };
 
-class SmearPNetDiscriminator : public SmearBase 
+class SmearPNetDiscriminator : virtual public SmearBase 
 {
     public: 
         SmearPNetDiscriminator() : SmearBase(){ name_ = "PNetXXX";}
-        SmearPNetDiscriminator(string myname="PNetXqq") : SmearBase(){ name_ = myname;}
+        SmearPNetDiscriminator(const string & myname) : SmearBase(){ name_ = myname; if (name_ != "PNetXqq" and name_!="PNetXbb" and name_!="PNetXcc") Log(__FUNCTION__,"ERROR","Not a good discriminator type:"+myname) ;}
         int smear(Event *e) override
         { 
             if( e->IsRealData() ) return SMEAR_NA;
