@@ -200,7 +200,9 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/FW2"+category+"_"+l, " ; FW2 ; Events", 100,0,1.);
 
     AddFinalHisto("VBShadAnalysis/MVV"+category+"_"+l);
+    AddFinalHisto("VBShadAnalysis/MVVClip"+category+"_"+l);
     Book ("VBShadAnalysis/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 200,0,5000); // should be 200,0,5000 -- 25 GeV bin
+    Book ("VBShadAnalysis/MVVClip"+category+"_"+l, "MVV ; MVV [GeV]; Events", 200,0,5000); // should be 200,0,5000 -- 25 GeV bin
 
     if(checkSignalLabel(l)) {
         Book ("VBShadAnalysis/MVV"+category+"_match_"+l, "MVV (match) ; MVV [GeV]; Events", 120,0,3000); // should be 120,0,3000 -- 25 GeV bin
@@ -4900,6 +4902,18 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             {
                 double w=e->weight_aqgc(name);
                 Fill("VBShadAnalysis/MVV" +category+"_"+label, string("AQGC_")+name, evt_MVV, w );
+                // Clipping
+                {
+                    float MVV_gen = (genVp->GetP4()+genVp2->GetP4()).M();   // evt_MVV could be either mvv or mt; here it should be always mvv. TOCHECK are genVp and genVp2 always filled?
+                    if (toClip(MVV_gen, name)){
+                        size_t split = name.find('_');
+                        string SM = name.substr(0,split)+"_0p00";
+                        w=e->weight_aqgc(SM);
+                    }
+
+                    Fill("VBShadAnalysis/MVVClip" +category+"_"+label, string("AQGC_")+name, evt_MVV, w );
+
+                }
             }
         }
     }
