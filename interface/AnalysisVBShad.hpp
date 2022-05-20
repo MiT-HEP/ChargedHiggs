@@ -120,37 +120,6 @@ public:
     bool do2DNN = false;
 
     bool computeGenPhaseSpace(){
-        // do this only for signals // TODO. WRONG. I don't have the vector bosons:
-        // ***********************************************************************************************
-        // *    Row   * Instance * LHEPart_s * LHEPart_p * LHEPart_p * LHEPart_e * LHEPart_p * LHEPart_m *
-        // ***********************************************************************************************
-        // *        0 *        0 *        -1 *        -3 *         0 *         0 *         0 *         0 *
-        // *        0 *        1 *        -1 *         2 *         0 *         0 *         0 *         0 *
-        // *        0 *        2 *         1 *         2 * 76.476562 * -2.260742 * 0.6577148 * 0.0014090 *
-        // *        0 *        3 *         1 *        -1 * 16.519531 * -3.321533 * 3.0432128 * -0.001290 *
-        // *        0 *        4 *         1 *         4 * 7.5432128 * -2.466186 * 3.0053710 * -0.000209 *
-        // *        0 *        5 *         1 *        -3 * 16.599609 * 1.4619140 * 1.0394897 * -4.95e-05 *
-        // *        0 *        6 *         1 *         1 * 124.97656 * -2.564208 * -2.658691 * 0.0019313 *
-        // *        0 *        7 *         1 *        -4 *  65.90625 * 0.6576538 * -0.086147 * 0.0001744 *
-        //
-        // *        1 *        0 *        -1 *         2 *         0 *         0 *         0 *         0 *
-        // *        1 *        1 *        -1 *         2 *         0 *         0 *         0 *         0 *
-        // *        1 *        2 *         1 *         2 * 51.097656 * 1.4138183 * -1.416625 * -0.000927 *
-        // *        1 *        3 *         1 *        -1 * 41.046875 * 0.5098876 * 0.2323989 * 0.0002894 *
-        // *        1 *        4 *         1 *         4 * 33.714843 * -2.421264 * 1.8319702 * -0.000919 *
-        // *        1 *        5 *         1 *        -3 * 18.933593 * -0.071132 * 3.1094970 * -3.17e-05 *
-        // *        1 *        6 *         1 *         1 * 31.653320 * -4.157226 * -2.737670 * 0.0049445 *
-        // *        1 *        7 *         1 *         1 * 22.185546 * 4.3540039 * 1.1557006 * 0.0001105 *
-        //
-        // *        2 *        0 *        -1 *         2 *         0 *         0 *         0 *         0 *
-        // *        2 *        1 *        -1 *         2 *         0 *         0 *         0 *         0 *
-        // *        2 *        2 *         1 *         4 * 194.22656 * -0.514587 * 0.0364723 * -0.001383 *
-        // *        2 *        3 *         1 *        -3 * 65.746093 * 0.0014323 * 0.8343505 * -0.000118 *
-        // *        2 *        4 *         1 *         4 * 35.611328 * 1.0833129 * 1.6046142 * -7.17e-05 *
-        // *        2 *        5 *         1 *        -3 * 84.210937 * 0.2208099 * 3.0567627 * -0.000317 *
-        // *        2 *        6 *         1 *         1 *  293.9375 * -2.787231 * -1.904907 * -0.008561 *
-        // *        2 *        7 *         1 *         3 * 187.94531 * 2.7351074 * 1.8775634 * 0.0012753 *
-       
         // fwd - bkw jets 
         GenParticle *q1=nullptr, *q2=nullptr;
         // find vector bosons
@@ -275,6 +244,51 @@ public:
         if (mjj <100) return false;
         if (mvv <100) return false;
         return true;
+    }
+
+    bool toClip(float mvvGeV, const string & aqgc_param)
+    {   // true is above clipping limits
+        // arXiv:2004.05174
+
+        float mvv = mvvGeV/1000.; // in TeV
+        // split the name  
+        // fs0_21p00
+        size_t split = aqgc_param.find('_');
+        string param = aqgc_param.substr(0,split);
+        string num = aqgc_param.substr(split+1);
+        std::replace(num.begin(),num.end(),'p','.');
+        std::replace(num.begin(),num.end(),'m','-');
+        float aqgc_val = std::atof(num.c_str());
+
+        // 1 operator
+        float bound =0.;
+             if (param =="fs0") { bound= 32.* M_PI / std::pow(mvv,4);}
+        else if (param =="fs1") { bound= 96./7.*M_PI / std::pow(mvv,4);}
+        else if (param =="fs2") { bound= 96./5.*M_PI / std::pow(mvv,4);}
+        //--
+        else if (param =="fm0") { bound= 32./std::sqrt(6.F) *M_PI / std::pow(mvv,4);}
+        else if (param =="fm1") { bound= 128./std::sqrt(6.F)*M_PI/std::pow(mvv,4);}
+        else if (param =="fm2") { bound= 16./std::sqrt(2.F)*M_PI/std::pow(mvv,4);}
+        else if (param =="fm3") { bound= 64./std::sqrt(2.F)*M_PI/std::pow(mvv,4);} 
+        else if (param =="fm4") { bound= 32.*M_PI/std::pow(mvv,4);} 
+        else if (param =="fm5") { bound= 64.*M_PI/std::pow(mvv,4);}
+        else if (param =="fm7") { bound= 256./std::sqrt(6.F)*M_PI / std::pow(mvv,4);}
+        //--
+        else if (param =="ft0") { bound= 12./5. *M_PI / std::pow(mvv,4);}
+        else if (param =="ft1") { bound= 24./5. *M_PI / std::pow(mvv,4);}
+        else if (param =="ft2") { bound= 96./13. *M_PI / std::pow(mvv,4);}
+        else if (param =="ft3") { bound= 32./3 *M_PI / std::pow(mvv,4);}
+        else if (param =="ft4") { bound= 16.*M_PI / std::pow(mvv,4);}
+        else if (param =="ft5") { bound= 8./std::sqrt(3.F) *M_PI / std::pow(mvv,4);}
+        else if (param =="ft6") { bound= 48./7. *M_PI / std::pow(mvv,4);}
+        else if (param =="ft7") { bound= 32./std::sqrt(3.F) *M_PI / std::pow(mvv,4);}
+        else if (param =="ft8") { bound= 3./2. *M_PI / std::pow(mvv,4);}
+        else if (param =="ft9") { bound= 24./7. *M_PI / std::pow(mvv,4);}
+        else { Log(__FUNCTION__,"ERROR","Unknown aqgc clipping for param" + param); throw abortException();}
+        
+        if (aqgc_val > bound) return true;
+        else return false;
+
     }
 
 private:
