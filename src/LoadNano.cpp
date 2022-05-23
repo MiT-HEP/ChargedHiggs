@@ -187,6 +187,7 @@ int LoadNano::FillEvent(){
 #endif
    for(int i=0;i<nano->nMuon;++i)
    {
+        if (i >=  sizeof(nano->Muon_pt) / sizeof(nano->Muon_pt[0])) continue;
         //if (not Muon_isPFcand[i] ) continue; // loose
         Lepton *l =new Lepton();
         TLorentzVector p4;
@@ -206,6 +207,7 @@ int LoadNano::FillEvent(){
         TLorentzVector fsrP4(0,0,0,0);
         for(int k=0;k<nano->nFsrPhoton;++k)
         {
+            if (i >=  sizeof(nano->FsrPhoton_pt) / sizeof(nano->FsrPhoton_pt[0])) continue;
             if ( i!=nano->FsrPhoton_muonIdx[k]) continue; //not this muon
             double fsrDrEt2Cut = 0.012;
             double fsrIsoCut = 1.8;
@@ -226,6 +228,7 @@ int LoadNano::FillEvent(){
    // Fill Electrons.
    for(int i=0;i<nano->nElectron;++i)
    {
+        if (i >=  sizeof(nano->Electron_pt) / sizeof(nano->Electron_pt[0])) continue;
         Lepton *l =new Lepton();
         TLorentzVector p4;
         p4.SetPtEtaPhiM(nano->Electron_pt[i],nano->Electron_eta[i],nano->Electron_phi[i],nano->Electron_mass[i]);
@@ -263,6 +266,7 @@ int LoadNano::FillEvent(){
    // Fill Jets
    for(int i=0;i<nano->nJet;++i)
    {
+        if (i >=  sizeof(nano->Jet_pt) / sizeof(nano->Jet_pt[0])) continue;
         bool id = (nano->Jet_jetId[i] & 2) ; // TIGHT - RUN2ULCHS
         if (not id) continue;
         Jet *j = new Jet() ;
@@ -323,6 +327,7 @@ int LoadNano::FillEvent(){
    //Fill Fatjets
    for(int i=0;i<nano->nFatJet;++i)
    {
+        if (i >=  sizeof(nano->FatJet_pt) / sizeof(nano->FatJet_pt[0])) continue;
        bool id =  (nano->FatJet_jetId[i] & 2); // TIGHT - RUN2ULPUPPI
        if (not id) continue;
 
@@ -388,6 +393,7 @@ int LoadNano::FillEvent(){
 #endif
    // TrackJets -- Soft Activity
    for(int i =0 ;i<nano->nSoftActivityJet;++i){
+        if (i >=  sizeof(nano->SoftActivityJet_pt) / sizeof(nano->SoftActivityJet_pt[0])) continue;
         TrackJet *j =new TrackJet();
         TLorentzVector p4; p4.SetPtEtaPhiM(nano->SoftActivityJet_pt[i],nano->SoftActivityJet_eta[i],nano->SoftActivityJet_phi[i],0.) ;
         j->SetP4(p4);
@@ -402,6 +408,7 @@ int LoadNano::FillEvent(){
    //FILL Tau
    for (int i=0;i<nano->nTau;++i)
    {
+        if (i >=  sizeof(nano->Tau_pt) / sizeof(nano->Tau_pt[0])) continue;
        Tau *t =new Tau();
        TLorentzVector p4; p4.SetPtEtaPhiM(nano->Tau_pt[i],nano->Tau_eta[i],nano->Tau_phi[i],nano->Tau_mass[i]) ;
        t -> SetP4( p4);
@@ -425,6 +432,7 @@ int LoadNano::FillEvent(){
    //Fill Photons
    for (int i=0;i<nano->nPhoton;++i)
    {
+        if (i >=  sizeof(nano->Photon_pt) / sizeof(nano->Photon_pt[0])) continue;
         // electron veto
         if (not nano->Photon_electronVeto[i]) continue;
 
