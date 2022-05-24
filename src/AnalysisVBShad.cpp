@@ -300,6 +300,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/massV1"+category+"_"+l, "VMass_leading; MassV [GeV]; Events", 200,0,200);
     Book ("VBShadAnalysis/massV2"+category+"_"+l, "VMass_trailing; MassV [GeV]; Events", 200,0,200);
 
+    Book ("VBShadAnalysis/bosV1discr"+category+"_"+l, "V1tagger; V1Tagger score; Events", 100,0,1);
     Book ("VBShadAnalysis/bosV2discr"+category+"_"+l, "V2tagger; V2Tagger score; Events", 100,0,1);
     Book ("VBShadAnalysis/bosV2discr2nd"+category+"_"+l, "V2tagger; V2Tagger 2ndscore; Events", 100,0,1);
 
@@ -4963,6 +4964,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/massV1" +category+"_"+label, systname, evt_bosV1mass, e->weight() );
     Fill("VBShadAnalysis/massV2" +category+"_"+label, systname, evt_bosV2mass, e->weight() );
 
+    Fill("VBShadAnalysis/bosV1discr"  +category+"_"+label, systname, evt_bosV1discr, e->weight() );
     Fill("VBShadAnalysis/bosV2discr"  +category+"_"+label, systname, evt_bosV2discr, e->weight() );
     Fill("VBShadAnalysis/bosV2discr2nd"  +category+"_"+label, systname, evt_bosV2discr2nd, e->weight() );
     
