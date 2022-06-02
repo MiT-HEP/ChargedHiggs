@@ -2185,6 +2185,11 @@ void VBShadAnalysis::genStudies(Event*e, string label )
        || (label.find("ZNUNUZJJjj_EWK") !=string::npos)
        || (label.find("ZNUNUZJJjj_QCD") !=string::npos)
        || (label.find("ZNUNUZJJjj_EWK_QCD") !=string::npos)
+       || (label.find("ZBBZJJNOBjj_EWK") !=string::npos)
+       || (label.find("ZBBZJJNOBjj_EWK") !=string::npos)
+       || (label.find("ZBBZJJNOBjj_EWK") !=string::npos)
+       || (label.find("ZNUNUZJJNOBjj_EWK") !=string::npos)
+       || (label.find("ZNUNUZBBjj_EWK") !=string::npos)
        ) {
         pdgID1=23;
         pdgID2=23;
@@ -2198,6 +2203,8 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WPJJWMJJjj_EWK_LO") !=string::npos ||
                label.find("WPJJWMJJjj_QCD_LO") !=string::npos ||
                label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ||
+               label.find("WPJJWPJJjj_EWK_LO") !=string::npos ||
+               label.find("WMJJWMJJjj_EWK_LO") !=string::npos ||
                //
                label.find("WPJJWMJJjj_4f_EWK_LO") !=string::npos ||
                label.find("WPJJWMJJjj_4f_QCD_LO") !=string::npos ||
@@ -2266,7 +2273,12 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("ZBBWPMJJjj_EWK_QCD_LO")!=string::npos ||
                label.find("ZbbWpmJJ_EWK")!=string::npos ||
                label.find("ZbbWpmJJ_EWK_QCD")!=string::npos ||
-               label.find("ZbbWpmJJ_QCD")!=string::npos
+               label.find("ZbbWpmJJ_QCD")!=string::npos ||
+               //
+               label.find("WPJJZJJjj_EWK")!=string::npos ||
+               label.find("WMJJZJJjj_EWK")!=string::npos ||
+               label.find("WMJJZNUNUjj_EWK")!=string::npos ||
+               label.find("WPJJZNUNUjj_EWK")!=string::npos
                ) {
         pdgID1=23;
         pdgID2=24;
