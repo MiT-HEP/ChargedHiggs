@@ -66,6 +66,8 @@ xsecsig = [
 #{"pro" : "WZ", "cont": "INT", "name": "ZBBWPMJJjj_EWK_QCD_LO", "xsec" : 1.388},
 {"pro" : "WZ", "cont": "EWK", "name": "ZNUNUWPMJJjj_EWK_LO", "xsec" : 0.1652},
 {"pro" : "WZ", "cont": "QCD", "name": "ZNUNUWPMJJjj_QCD_LO", "xsec" : 1.699},
+#{"pro" : "WZ", "cont": "EWK", "name": "ZNUNUWPMJJjj_4f_EWK_LO", "xsec" : 0.06303},
+#{"pro" : "WZ", "cont": "QCD", "name": "ZNUNUWPMJJjj_4f_QCD_LO", "xsec" : 1.5950},
 #{"pro" : "WZ", "cont": "INT", "name": "ZNUNUWPMJJjj_EWK_QCD_LO", "xsec" : 1.865},
 {"pro" : "ZZ", "cont": "EWK", "name": "ZNUNUZJJjj_EWK_LO", "xsec" : 0.0312},
 {"pro" : "ZZ", "cont": "QCD", "name": "ZNUNUZJJjj_QCD_LO", "xsec" : 0.6352},
@@ -75,12 +77,16 @@ xsecsig = [
 {"pro" : "ssWW", "cont": "EWK", "name": "WPLEPWPHADjj_EWK_LO", "xsec" : 0.0873},
 {"pro" : "osWW", "cont": "EWK", "name": "WPHADWMLEPjj_EWK_LO", "xsec" : 0.9464},
 {"pro" : "osWW", "cont": "EWK", "name": "WPLEPWMHADjj_EWK_LO", "xsec" : 0.9464},
+#{"pro" : "osWW", "cont": "EWK", "name": "WPHADWMLEPjj_4f_EWK_LO", "xsec" : 0.184},
+#{"pro" : "osWW", "cont": "EWK", "name": "WPLEPWMHADjj_4f_EWK_LO", "xsec" : 0.183},
 {"pro" : "WZ", "cont": "EWK", "name": "WPLEPZHADjj_EWK_LO", "xsec" : 0.1814},
 {"pro" : "WZ", "cont": "EWK", "name": "WMLEPZHADjj_EWK_LO", "xsec" : 0.0996},
 {"pro" : "ssWW", "cont": "QCD", "name": "WMLEPWMHADjj_QCD_LO", "xsec" : 0.0318},
 {"pro" : "ssWW", "cont": "QCD", "name": "WPLEPWPHADjj_QCD_LO", "xsec" : 0.0727},
 {"pro" : "osWW", "cont": "QCD", "name": "WPHADWMLEPjj_QCD_LO", "xsec" : 76.19},
 {"pro" : "osWW", "cont": "QCD", "name": "WPLEPWMHADjj_QCD_LO", "xsec" : 76.19},
+#{"pro" : "osWW", "cont": "QCD", "name": "WPHADWMLEPjj_4f_QCD_LO", "xsec" : 4.126},
+#{"pro" : "osWW", "cont": "QCD", "name": "WPLEPWMHADjj_4f_QCD_LO", "xsec" : 4.126},
 {"pro" : "WZ", "cont": "QCD", "name": "WPLEPZHADjj_QCD_LO", "xsec" : 1.782},
 {"pro" : "WZ", "cont": "QCD", "name": "WMLEPZHADjj_QCD_LO", "xsec" : 1.087},
 
@@ -405,6 +411,12 @@ class DatacardBuilder:
             elif y == 22016: ftmp = fname.replace(str(opt.year), '2016')
             else: ftmp = fname.replace(str(opt.year), str(y))
 
+            ##### cook year dependent jes histos #######            
+            if y == 12016 or y == 22016: jesy = "2016"
+            else: jesy = str(y)
+            if '201' in hname and jesy not in hname:
+                hname = re.sub('_JES.*','',hname)
+
             fIn=ROOT.TFile.Open(ftmp)
             if self.verbose >2: print "DEBUG","opening file:",ftmp
             if self.fOut!=None: self.fOut.cd()
@@ -535,7 +547,7 @@ class DatacardBuilder:
                 # close open files
                 for f in fInD: fInD[f].Close()
 
-            htmp = self._manipulate_histo(htmp,y,normalization)
+            if 'data_obs' not in rename: htmp = self._manipulate_histo(htmp,y,normalization)
             if h: h.Add(htmp.Clone(rename))
             else: h=htmp.Clone(rename)
             if h==None:
@@ -563,10 +575,14 @@ class DatacardBuilder:
     def play_binning(self):
 	h = None
 	hsig = None
+        hbkg = []
+
+        majorbkg = ['QCD','ttbar','Winv','Zinv']
 	for cat in self.categories:
             d=self.categories[cat]
             # proc
             for proc in self.processes:
+                hbkg_pro = None
                 d2=self.processes[proc]
                 if cat not in d2['cat']:
                     if self.verbose >2: print "DEBUG","excluding",cat,proc
@@ -578,16 +594,23 @@ class DatacardBuilder:
                         else:
                             hTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             h.Add(hTmp)
+                        if hbkg_pro == None:
+                            hbkg_pro = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
+                        else:
+                            hTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            hbkg_pro.Add(hTmp)
 		    else:
                         if hsig==None:
                             hsig=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
                         else:
                             hsigTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             hsig.Add(hsigTmp)
-
+                for mbkg in majorbkg:
+                    if mbkg in proc:
+                        hbkg.append(hbkg_pro)
         #### current bin strategy: sig_err/sig < 20%; bkg_err/bkg < 20%; num_bkg > 1
-        #### Not too aggresive: control on tot_bkg yields, but not on individual ones
-        mapping = likelihoodBinning.createMapping(h,hsig)
+        #### Not too aggresive: control on tot_bkg yields, also on individual ones: none-zero major+majorbkg_err/majorbkg<50%
+        mapping = likelihoodBinning.createMapping(h,hsig,hbkg)
         return mapping
 
     def creat_QCD_Shape(self,h_nominal,systname="") :
@@ -626,7 +649,7 @@ class DatacardBuilder:
         hup = h_nominal.Clone(hname+'Up')
         hdn = h_nominal.Clone(hname+'Down')
 
-        realLepPro = ['WMLEP','WPLEP','TT_TuneCP5','EWKV','WJetsToLNu']
+        realLepPro = ['WMLEP','WPLEP','TT_TuneCP5','EWKW','WJetsToLNu']
 
         for pros in realLepPro:
             if pros in n_suffix:
@@ -899,14 +922,14 @@ if __name__=="__main__":
     #db.add_process('Winv',False,['WJetsToLNu'],[opt.category])
     if("MET" not in opt.category):
         db.add_process('QCD',False,['QCD_HT'],[opt.category])
-        #db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
-        if "Btag" in opt.category: db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
+        db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
+        #if "Btag" in opt.category: db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
     else:
         #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
         #db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
-        db.add_process('Zinv',False,['ZJetsToNuNu_HT'],[opt.category])
+        db.add_process('Zinv',False,['Z2JetsToNuNu_M-50_LHEFilterPtZ'],[opt.category])
         #db.add_process('Winv',False,['WJetsToLNu_HT','WJetsToLNu_NJ'],[opt.category])
-        db.add_process('Winv',False,['WJetsToLNu_HT'],[opt.category])
+        db.add_process('Winv',False,['WJetsToLNu_Pt'],[opt.category])
         db.add_process('EWKV',False,['EWKW','EWKZ2Jets_ZToNuNu'],[opt.category])
 
     ## set sig processes
@@ -941,7 +964,7 @@ if __name__=="__main__":
 
 
     ## set systs
-    db.add_systematics('lumi','','lnN',('.*','.*'),1.025)
+    db.add_systematics('lumi','','lnN',('.*','.*'),1.018)
     db.add_systematics('QCDScale_ttbar','','lnN',('.*','ttbar'),1.05)
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
 
@@ -950,20 +973,27 @@ if __name__=="__main__":
 
     if "BBtag" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape
+        else: db.add_systematics('CMS_QCDnonclosure_s_side_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape for side itself
         if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm
+        else: db.add_systematics('CMS_QCDnonclosure_n_anti_BBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm for anti itself
     elif "RBtag" in opt.category:
         if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm
     elif "BB" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
+        else: db.add_systematics('CMS_QCDnonclosure_s_side_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
         if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)
-
+        else: db.add_systematics('CMS_QCDnonclosure_n_anti_BB','','lnN',('.*','QCD'),1.20)
 
     proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
     db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_scale_j','JES_Total','shape',('.*',proc_regex),1.)
+    #db.add_systematics('CMS_scale_j','JES_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_scale_PNetMass','PNetMass','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_eff_Xqq','PNetXqq','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_eff_Xbb','PNetXbb','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_eff_Xcc','PNetXcc','shape',('.*',proc_regex),1.)
 
     #db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
     #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
@@ -974,18 +1004,38 @@ if __name__=="__main__":
     db.add_systematics('CMS_btag_LFSTAT2','BRLFSTAT2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_LF','BRLF','shape',('.*',proc_regex),1.)
 
-    db.add_systematics('CMS_scaleR','Scale','shape',('.*','ttbar'),1.)
-    db.add_systematics('CMS_scaleF','Scale','shape',('.*','ttbar'),1.)
-    if doEnvelop: db.add_systematics('CMS_scaleRF','Scale','shape',('.*','ttbar'),1.)
+    db.add_systematics('CMS_scaleR_tt','Scale','shape',('.*','ttbar'),1.)
+    db.add_systematics('CMS_scaleF_tt','Scale','shape',('.*','ttbar'),1.)
+    db.add_systematics('CMS_scaleR_Zj','Scale','shape',('.*','Zinv'),1.)
+    db.add_systematics('CMS_scaleF_Zj','Scale','shape',('.*','Zinv'),1.)
+    db.add_systematics('CMS_scaleR_Wj','Scale','shape',('.*','Winv'),1.)
+    db.add_systematics('CMS_scaleF_Wj','Scale','shape',('.*','Winv'),1.)
+    db.add_systematics('CMS_scaleR_VQQ','Scale','shape',('.*','VQQ'),1.)
+    db.add_systematics('CMS_scaleF_VQQ','Scale','shape',('.*','VQQ'),1.)
+    if doEnvelop:
+        db.add_systematics('CMS_scaleRF_tt','Scale','shape',('.*','ttbar'),1.)
+        db.add_systematics('CMS_scaleRF_Zj','Scale','shape',('.*','Zinv'),1.)
+        db.add_systematics('CMS_scaleRF_Wj','Scale','shape',('.*','Winv'),1.)
+        db.add_systematics('CMS_scaleRF_VQQ','Scale','shape',('.*','VQQ'),1.)
 
     ## break down JES sources
-    #db.add_systematics('jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)
-    #db.add_systematics('jes_RelativeBal','JES_RelativeBal','shape',('.*','.*'),1.)
-    #db.add_systematics('jes_HF','JES_HF','shape',('.*','.*'),1.)
-    #db.add_systematics('jes_BBEC1','JES_BBEC1','shape',('.*','.*'),1.)
-    #db.add_systematics('jes_EC2','JES_EC2','shape',('.*','.*'),1.)
-    #db.add_systematics('jes_Absolute','JES_Absolute','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_jes_RelativeBal','JES_RelativeBal','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_jes_HF','JES_HF','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_jes_BBEC1','JES_BBEC1','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_jes_EC2','JES_EC2','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_jes_Absolute','JES_Absolute','shape',('.*','.*'),1.)
 
+    ##year dependent
+    jes_years = [opt.year]
+    if opt.year==2020 or opt.year==2021: jes_years = [2016, 2017, 2018]
+
+    for jy in jes_years:
+        db.add_systematics('CMS_jes_BBEC1_'+str(jy),'JES_BBEC1_'+str(jy),'shape',('.*','.*'),1.)
+        db.add_systematics('CMS_jes_RelativeSample_'+str(jy),'JES_RelativeSample_'+str(jy),'shape',('.*','.*'),1.)
+        db.add_systematics('CMS_jes_EC2_'+str(jy),'JES_EC2_'+str(jy),'shape',('.*','.*'),1.)
+        db.add_systematics('CMS_jes_HF_'+str(jy),'JES_HF_'+str(jy),'shape',('.*','.*'),1.)
+        db.add_systematics('CMS_jes_Absolute_'+str(jy),'JES_Absolute_'+str(jy),'shape',('.*','.*'),1.)
 
     ######################################
     ###            WRITE               ###
