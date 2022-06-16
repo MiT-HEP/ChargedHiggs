@@ -210,6 +210,7 @@ class DatacardBuilder:
         self.categories={}  # bin_name -> file, path, 
         self.processes={} #
         self.systs={}
+        self.rateparam={}
         self.fOut=None
         self.verbose=verbose
         self.proc_number={}
@@ -272,6 +273,15 @@ class DatacardBuilder:
             self.systs[x]['fname'].append(fname)
             self.systs[x]['inname'].append(inname)
 
+        return self
+
+    def add_rateparam(self,x,proc,rmin=0.5,rmax=2.0):
+        self.rateparam[x] = {
+            "pname": x,
+            "proc": proc,
+            "rmin": rmin,
+            "rmax": rmax,
+            }
         return self
 
     def write_cards(self,outname): #datacard.txt
@@ -338,6 +348,10 @@ class DatacardBuilder:
                     ]))
             txt.write("\n")
 
+        for rp in self.rateparam:
+            txt.write('%(pname)s rateParam * %(proc)s 1 [%(rmin)f,%(rmax)f]\n'%self.rateparam[rp])
+
+
         ### Add autoMCStats
         txt.write("* autoMCStats 0\n")
 
@@ -394,10 +408,10 @@ class DatacardBuilder:
         h2.Delete()
         return h
 
-    def _get_histo(self,fname,hname,rename=""):
-        normalization = self._get_norm(hname)
+    def _get_histo(self,fname,hnameorg,rename=""):
+        normalization = self._get_norm(hnameorg)
         #normalization = 1.
-        #print hname,normalization
+        #print hnameorg,normalization
 
         years = [opt.year]
         if opt.year==2020: years = [2016, 2017, 2018]
@@ -411,9 +425,9 @@ class DatacardBuilder:
             elif y == 22016: ftmp = fname.replace(str(opt.year), '2016')
             else: ftmp = fname.replace(str(opt.year), str(y))
 
+            hname = hnameorg
             ##### cook year dependent jes histos #######            
-            if y == 12016 or y == 22016: jesy = "2016"
-            else: jesy = str(y)
+            jesy = "2016" if (y == 12016 or y == 22016) else str(y)
             if '201' in hname and jesy not in hname:
                 hname = re.sub('_JES.*','',hname)
 
@@ -962,6 +976,9 @@ if __name__=="__main__":
             else: 
                 pass ## EWK is in AQGC, but there is a difference in the dataset names
 
+    ## add data-driven norm bkg rateparameters
+    db.add_rateparam('CMS_vbshad_Zinvnorm','Zinv',0.75,1.25)
+    db.add_rateparam('CMS_vbshad_Winvnorm','Winv',0.75,1.25)
 
     ## set systs
     db.add_systematics('lumi','','lnN',('.*','.*'),1.018)
