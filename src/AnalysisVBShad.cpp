@@ -2291,7 +2291,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         // ** promptLeptons from W for Wjets and semileptonic ttbar in MET category
         if((fabs(genpar->GetPdgId()) == 11 ||  fabs(genpar->GetPdgId()) == 13 || fabs(genpar->GetPdgId()) == 15) and fabs(genpar->GetParentPdgId())==24) if(genLep==NULL) { genLep = genpar; }
         // ** prompt V for the ZJetsToNuNu_HT and WJetsToLNu_HT and pt-reweighting
-        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos )) if(genVp==NULL) { genVp = genpar; }
+        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("DYJetsToLL_Pt") !=string::npos or label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos )) if(genVp==NULL) { genVp = genpar; }
         if( (fabs(genpar->GetPdgId()) == 24) and (label.find("WJetsToLNu_HT") !=string::npos or label.find("WJetsToLNu_Pt") !=string::npos ) ) if(genVp==NULL) { genVp = genpar; }
 
         // ** BOSON
@@ -4613,7 +4613,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ APPLY WEIGHTS
     //////
 
-    //////  to be applied also to VQQ ?
+    //////  EWK correction to be applied also to VQQ ?
     if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("DYJetsToLL_Pt") !=string::npos) and genVp!=NULL) {
 
         if( not e->ExistSF("ZNNLO_rwg") ){
