@@ -133,6 +133,7 @@ myTmp.cd()
 sum=r.TH1D("SumWeights","Sum of mcWeights",1,0,2)
 sum2=r.TH1D("SumWeights","Sum of mcWeights^2",1,0,2)
 scales=r.TH1D("SumWeights_Scales","Sum of mcWeights",10,0,10)
+nScales=0
 nPdfs=100
 pdfs=r.TH1D("SumWeights_Pdfs","Sum of mcWeights",nPdfs,0,nPdfs)
 
@@ -198,7 +199,8 @@ for idx,fName in enumerate(fileList):
         mysum2=r.TH1D("mysum2","Sum of mcWeights^2",1,0,2)
         t.Draw("1>>mysum2","Generator_weight*Generator_weight","goff") ##>>+ doesn't work
         sum2.Add(mysum2)
-
+        
+        nScales=9
         for i in range(0,9):
             myscale=r.TH1D("myscale","Sum of weights",1,0,2)
             t.Draw("1>>myscale","LHEScaleWeight[%d]*Generator_weight"%i,"goff") ##>>+ doesn't work
@@ -216,7 +218,8 @@ for idx,fName in enumerate(fileList):
         sum2.Fill(1,runs.genEventSumw2)
 
         ## scales
-        for i in range(0,9):
+        nScales=runs.nLHEScaleSumw
+        for i in range(0,runs.nLHEScaleSumw):
             scales.Fill(i, runs.LHEScaleSumw[i] * runs.genEventSumw)
         ##pdfs
         for i in range(0,nPdfs):
@@ -507,15 +510,24 @@ else:
     ## INTERNAL
     print>>f,  xsec,
 
-    ## 
     if scales.GetBinContent(1) > 0:
         print>>f, "SCALES", #r1f2=0,r1f5,r2f1,r2f2,r5f1,r5f5
-        print>>f, sum.GetBinContent(1)/scales.GetBinContent(5 + 1)  , ## offset by one in filling
-        print>>f, sum.GetBinContent(1)/scales.GetBinContent(3 + 1)  ,
-        print>>f, sum.GetBinContent(1)/scales.GetBinContent(7 + 1)  ,
-        print>>f, sum.GetBinContent(1)/scales.GetBinContent(8 + 1)  ,
-        print>>f, sum.GetBinContent(1)/scales.GetBinContent(1 + 1)  ,
-        print>>f, sum.GetBinContent(1)/scales.GetBinContent(0 + 1)  ,
+        if nScales >=9 :
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(5 + 1)  , ## offset by one in filling
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(3 + 1)  ,
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(7 + 1)  ,
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(8 + 1)  ,
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(1 + 1)  ,
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(0 + 1)  ,
+
+    ##  | Float_t LHE scale variation weights (w_var / w_nominal); [0] is MUF="0.5" MUR="0.5"; [1] is MUF="1.0" MUR="0.5"; [2] is MUF="2.0" MUR="0.5"; [3] is MUF="0.5" MUR="1.0"; [4] is MUF="2.0" MUR="1.0"; [5] is MUF="0.5" MUR="2.0"; [6] is MUF="1.0" MUR="2.0"; [7] is MUF="2.0" MUR="2.0"*
+        if nScales ==8 : ## removed the 1-1
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(4 + 1)  , ## offset by one in filling
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(3 + 1)  ,
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(6 + 1)  ,
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(7 + 1)  ,
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(1 + 1)  ,
+            print>>f, sum.GetBinContent(1)/scales.GetBinContent(0 + 1)  ,
     
     if pdfs.GetBinContent(1) > 0:
         print>>f, "PDFS",
