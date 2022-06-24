@@ -4323,8 +4323,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.6; // 80% signal
+            float tmvacut = 0.6; // 80% signal  deve prendere 1 +- 0.5%
             float kerascut = 0.5;
+
+            string sfnameResTag="";
+            if (year==12016)  sfnameResTag = "SFresTag_12016";
+            if (year==2016)  sfnameResTag = "SFresTag_2016";
+            if (year==2017)  sfnameResTag = "SFresTag_2017";
+            if (year==2018)  sfnameResTag = "SFresTag_2018";
+
+            e->ApplySF(sfnameResTag);
+
             //******************//
 
             if( (bosonJets.size()>1) && (forwardJets.size() > 1)  && ( forwardJets[0]->Eta() * forwardJets[1]->Eta() <0 ) && (fabs(forwardJets[0]->DeltaEta(forwardJets[1])) > 3.) && ((forwardJets[0]->GetP4() + forwardJets[1]->GetP4()).M() > 500) ){
