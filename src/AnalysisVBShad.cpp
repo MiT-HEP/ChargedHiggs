@@ -2836,7 +2836,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
         }
 
-
         /**************************************************
         Select priority: discrimator goes before mass, i.e.
         Zbb (full) -> Vjj (full)
@@ -4637,6 +4636,21 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     }
 
+
+    // //////
+
+    string sfnamePU="";
+    if (year==12016)  sfnamePU = "PUJetID_12016";
+    if (year==2016)  sfnamePU = "PUJetID_2016";
+    if (year==2017)  sfnamePU = "PUJetID_2017";
+    if (year==2018)  sfnamePU = "PUJetID_2018";
+
+    if((doMETAnalysis or doMETAntiAnalysis) and (category.find("RMET") !=string::npos)) {
+        e->SetPtEtaSF(sfnamePU, bosonJets[0]->GetP4().Pt(), fabs(bosonJets[0]->GetP4().Eta()));
+        e->ApplySF(sfnamePU);
+        e->SetPtEtaSF(sfnamePU, bosonJets[1]->GetP4().Pt(), fabs(bosonJets[1]->GetP4().Eta()));
+        e->ApplySF(sfnamePU);
+    }
 
    //////
    if(label.find("QCD_HT") !=string::npos) {
