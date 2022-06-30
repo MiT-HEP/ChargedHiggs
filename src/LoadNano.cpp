@@ -279,6 +279,7 @@ int LoadNano::FillEvent(){
         j->SetCEMF(nano->Jet_chEmEF[i] );
         j->SetNHF(nano->Jet_neHEF[i] );
         j->SetCHF(nano->Jet_chHEF[i] );
+        j->SetnConstituents(nano->Jet_nConstituents[i] );
 	j->SetArea(nano->Jet_area[i]);
 #warning MISSING NANO JES JER
         // TODO-- JES

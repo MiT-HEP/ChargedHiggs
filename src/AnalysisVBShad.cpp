@@ -281,16 +281,35 @@ void VBShadAnalysis::BookHisto(string l, string category)
     // fwd jets
     Book ("VBShadAnalysis/pT1_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
     Book ("VBShadAnalysis/pT2_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) ; Events", 100,0,1000);
+    Book ("VBShadAnalysis/pT2_JetBarrel"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) Barrel; Events", 100,0,1000);
+    Book ("VBShadAnalysis/pT2_JetEndcap"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) Endcap; Events", 100,0,1000);
 
     Book ("VBShadAnalysis/eta1_Jet"+category+"_"+l, "eta_Jet; #eta (leading); Events", 100,0.,5.);
     Book ("VBShadAnalysis/eta2_Jet"+category+"_"+l, "eta_Jet; #eta (subleading) ; Events", 100,0.,5.);
 
     Book ("VBShadAnalysis/qgl1_Jet"+category+"_"+l, "QGL1_Jet; QGL j1(leading); Events", 100,0.,1.);
     Book ("VBShadAnalysis/qgl2_Jet"+category+"_"+l, "QGL2_Jet; QGL j2(subleading) ; Events", 100,0.,1.);
-    //    Book ("VBShadAnalysis/nemf1_Jet"+category+"_"+l, "nemf1_Jet; nemf j1 (leading); Events", 100,0.,1.);
-    //    Book ("VBShadAnalysis/nemf2_Jet"+category+"_"+l, "nemf2_Jet; nemf j2 (subleading) ; Events", 100,0.,1.);
-    //    Book ("VBShadAnalysis/nhf1_Jet"+category+"_"+l, "nhf1_Jet; nhf j1 (leading); Events", 100,0.,1.);
-    //    Book ("VBShadAnalysis/nhf2_Jet"+category+"_"+l, "nhf2_Jet; nhf j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/nemf1_Jet"+category+"_"+l, "nemf1_Jet; nemf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nemf2_Jet"+category+"_"+l, "nemf2_Jet; nemf j2 (subleading) ; Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf1_Jet"+category+"_"+l, "nhf1_Jet; nhf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf2_Jet"+category+"_"+l, "nhf2_Jet; nhf j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/nemf1_outTrkJet"+category+"_"+l, "nemf1_outTrkJet 2.4-3; nemf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nemf2_outTrkJet"+category+"_"+l, "nemf2_outTrkJet 2.4-3; nemf j2 (subleading) ; Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf1_outTrkJet"+category+"_"+l, "nhf1_outTrkJet 2.4-3; nhf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf2_outTrkJet"+category+"_"+l, "nhf2_outTrkJet 2.4-3; nhf j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/cemf1_Jet"+category+"_"+l, "cemf1_Jet; cemf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/cemf2_Jet"+category+"_"+l, "cemf2_Jet; cemf j2 (subleading) ; Events", 100,0.,1.);
+    Book ("VBShadAnalysis/chf1_Jet"+category+"_"+l, "chf1_Jet; chf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/chf2_Jet"+category+"_"+l, "chf2_Jet; chf j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/puJetId1_Jet"+category+"_"+l, "puJetId1_Jet; puJetId j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/puJetId2_Jet"+category+"_"+l, "puJetId2_Jet; puJetId j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/const1_Jet"+category+"_"+l, "const1_Jet; const j1 (leading); Events", 100,0.,100.);
+    Book ("VBShadAnalysis/const2_Jet"+category+"_"+l, "const2_Jet; const j2 (subleading) ; Events", 100,0.,100.);
 
     // boosted jets
     Book ("VBShadAnalysis/pTV1_Jet"+category+"_"+l, "pT_V1_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
@@ -1097,6 +1116,7 @@ void VBShadAnalysis::Init(){
     Log(__FUNCTION__,"INFO",Form("doHADAntiAnalysis=%d",doHADAntiAnalysis));
 
     Log(__FUNCTION__,"INFO",Form("doSideBand=%d",doSideBand));
+    //    Log(__FUNCTION__,"INFO",Form("doLepAnalysis=%d",doLepAnalysis));
 
     if(doResonant) doTMVA=false;
 
@@ -2617,7 +2637,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             if (delW2 < minDR2){ minDR2 = delW2;}
         }
 
-
         float massRaw = (f->subjet_lead_p4 + f->subjet_sublead_p4).M();
 
         if(minDR1<0.8) Fill("VBShadAnalysis/Baseline/SubJetsMass1_"+eta_j+range_j+label, systname, massRaw , e->weight() ); 
@@ -3955,8 +3974,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Before tirgger" );
-    
-    
+
     if(!doTrigger){
       //    bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
       if (doHADAnalysis or doHADAntiAnalysis) {
@@ -3971,8 +3989,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
       if(doBAnalysis or doBAntiAnalysis) {
         if(!passtriggerBtag) return EVENT_NOT_USED;
       }
+
     }
-    
+
     //$$$$$$$$$$$
     //$$$$$$$$$$$
 
@@ -4729,12 +4748,26 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
     if( forwardJets[0]->Eta() * forwardJets[1]->Eta() >=0 ) return EVENT_NOT_USED;
 
-    /*
-    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNEMF(), e->weight());
-    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNEMF(), e->weight());
-    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNHF(), e->weight());
-    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNHF(), e->weight());
-    */
+    if(fabs(forwardJets[0]->GetP4().Eta())<2.4 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/nemf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<2.4 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/nemf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[0]->GetP4().Eta())<2.4 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/nhf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNHF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<2.4 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/nhf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNHF(), e->weight());
+
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf1_outTrkJet" +category+"_"+label, systname, forwardJets[0]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf2_outTrkJet" +category+"_"+label, systname, forwardJets[1]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf1_outTrkJet" +category+"_"+label, systname, forwardJets[0]->GetNHF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf2_outTrkJet" +category+"_"+label, systname, forwardJets[1]->GetNHF(), e->weight());
+
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/cemf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetCEMF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/cemf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetCEMF(), e->weight());
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/chf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetCHF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/chf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetCHF(), e->weight());
+
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/puJetId1_Jet" +category+"_"+label, systname, forwardJets[0]->GetPuId(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/puJetId2_Jet" +category+"_"+label, systname, forwardJets[1]->GetPuId(), e->weight());
+
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/const1_Jet" +category+"_"+label, systname, forwardJets[0]->GetnConstituents(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/const2_Jet" +category+"_"+label, systname, forwardJets[1]->GetnConstituents(), e->weight());
 
     // those are mainly wrong combination V8
     //    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4 and (forwardJets[1]->GetNEMF()==0 or forwardJets[1]->GetNHF()==0)) return EVENT_NOT_USED;
@@ -4987,6 +5020,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/pT1_Jet" +category+"_"+label, systname, forwardJets[0]->GetP4().Pt(), e->weight() );
     Fill("VBShadAnalysis/pT2_Jet" +category+"_"+label, systname, forwardJets[1]->GetP4().Pt(), e->weight() );
+
+    if( fabs(forwardJets[0]->GetP4().Eta())< 1.5) Fill("VBShadAnalysis/pT2_JetBarrel" +category+"_"+label, systname, forwardJets[1]->GetP4().Pt(), e->weight() );
+    if( fabs(forwardJets[0]->GetP4().Eta())> 1.5 and fabs(forwardJets[0]->GetP4().Eta())< 3 ) Fill("VBShadAnalysis/pT2_JetEndcap" +category+"_"+label, systname, forwardJets[1]->GetP4().Pt(), e->weight() );
+
     Fill("VBShadAnalysis/eta1_Jet" +category+"_"+label, systname, fabs(forwardJets[0]->GetP4().Eta()), e->weight() );
     Fill("VBShadAnalysis/eta2_Jet" +category+"_"+label, systname, fabs(forwardJets[1]->GetP4().Eta()), e->weight() );
     Fill("VBShadAnalysis/qgl1_Jet" +category+"_"+label, systname, evt_j1QGL, e->weight() );
