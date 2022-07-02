@@ -4674,10 +4674,16 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if (year==2018)  sfnamePU = "PUJetID_2018";
 
     if((doMETAnalysis or doMETAntiAnalysis) and (category.find("RMET") !=string::npos)) {
-        e->SetPtEtaSF(sfnamePU, bosonJets[0]->GetP4().Pt(), fabs(bosonJets[0]->GetP4().Eta()));
-        e->ApplySF(sfnamePU);
-        e->SetPtEtaSF(sfnamePU, bosonJets[1]->GetP4().Pt(), fabs(bosonJets[1]->GetP4().Eta()));
-        e->ApplySF(sfnamePU);
+
+        if(bosonJets[0]->GetP4().Pt()<50) {
+            e->SetPtEtaSF(sfnamePU, bosonJets[0]->GetP4().Pt(), fabs(bosonJets[0]->GetP4().Eta()));
+            e->ApplySF(sfnamePU);
+        }
+
+        if(bosonJets[1]->GetP4().Pt()<50) {
+            e->SetPtEtaSF(sfnamePU, bosonJets[1]->GetP4().Pt(), fabs(bosonJets[1]->GetP4().Eta()));
+            e->ApplySF(sfnamePU);
+        }
     }
 
    //////
@@ -4770,7 +4776,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/const2_Jet" +category+"_"+label, systname, forwardJets[1]->GetnConstituents(), e->weight());
 
     // those are mainly wrong combination V8
-    //    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4 and (forwardJets[1]->GetNEMF()==0 or forwardJets[1]->GetNHF()==0)) return EVENT_NOT_USED;
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4 and (forwardJets[1]->GetNEMF()==0 or forwardJets[1]->GetNHF()==0)) return EVENT_NOT_USED;
+
+    //AD HOC cleaning cut
+    if(year==2016 or year==2017 or year==2018) {
+        if(fabs(forwardJets[1]->GetP4().Eta())<2.5 and fabs(forwardJets[1]->GetP4().Eta())>1.44 and forwardJets[1]->GetNEMF() < 0.05) return EVENT_NOT_USED;
+    }
 
     //    if(doTrigger) studyTriggers(e, category, label, systname);
 

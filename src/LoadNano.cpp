@@ -269,6 +269,7 @@ int LoadNano::FillEvent(){
         if (i >=  sizeof(nano->Jet_pt) / sizeof(nano->Jet_pt[0])) continue;
         bool id = (nano->Jet_jetId[i] & 2) ; // TIGHT - RUN2ULCHS
         if (not id) continue;
+	if(nano->Jet_nConstituents[i]<1) continue; // remove those with 0 constituents
         Jet *j = new Jet() ;
         TLorentzVector p4;
         p4.SetPtEtaPhiM(nano->Jet_pt[i],nano->Jet_eta[i],nano->Jet_phi[i],nano->Jet_mass[i]);
