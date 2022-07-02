@@ -3761,22 +3761,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( label == "QCD_HT" or label == "QCD_Pt" or label == "QCD_bEnriched_HT" or label == "BGenFilter" or
         label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_Pt" or
-        label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
+        label == "ZJetsToNuNuPt" or label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
         label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
         label == "DYJetsToLL_Pt" or
         label == "ZJetsToQQ" or label == "WJetsToQQ" or label == "VJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
 
-    /*
-    if ( label.find("EWKZ2Jets_ZToNuNu") !=string::npos) label = "ZJetsToNuNu";
-    //    if ( label == "EWK_LNuJJ_MJJ-120") label = "WJetsToLNu";
-    if ( label.find("EWKZ2Jets_ZToLL") !=string::npos) label = "DY";
-    if ( label.find("EWKWMinus2Jets") !=string::npos) label = "WJetsToLNu";
-    if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
-    */
+    if ( label.find("EWKZ2Jets_ZToNuNu") !=string::npos) label = "EWKV";
+    if ( label.find("EWKZ2Jets_ZToLL") !=string::npos) label = "EWKV";
 
-    if ( label.find("EWKWMinus2Jets") !=string::npos) label = "EWKW";
-    if ( label.find("EWKWPlus2Jets") !=string::npos) label = "EWKW";
+    if ( label.find("EWKWMinus2Jets") !=string::npos) label = "EWKV";
+    if ( label.find("EWKWPlus2Jets") !=string::npos) label = "EWKV";
 
     /*
     // redefine labels
@@ -3789,8 +3784,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label == "ZZTo") label = "MULTIBOSON";
     */
 
-    //    if( label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
-    //    if( label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
+    if( label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
+    if( label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
 
     if( label.find("WJetsToLNu_0J")  !=string::npos) label = "WJetsToLNu_NJ";
     if( label.find("WJetsToLNu_1J")  !=string::npos) label = "WJetsToLNu_NJ";
@@ -5135,7 +5130,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
-        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_Pt") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
+        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or ( label.find("ZJetsToNuNuPt") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_Pt") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
             if ( (systname=="" or systname=="NONE") and e->GetWeight()->HasScale()) // SCALE RF
                 { // only on the money plots, when no other syst, and for MC with aqgc weights
                     // prepare weights
