@@ -229,7 +229,6 @@ void VBShadAnalysis::BookHisto(string l, string category)
             }
         }
 
-
         if(doMETAnalysis or doMETAntiAnalysis) {
             //            AddFinalHisto("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l);
             //            AddFinalHisto("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l);
@@ -282,16 +281,35 @@ void VBShadAnalysis::BookHisto(string l, string category)
     // fwd jets
     Book ("VBShadAnalysis/pT1_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
     Book ("VBShadAnalysis/pT2_Jet"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) ; Events", 100,0,1000);
+    Book ("VBShadAnalysis/pT2_JetBarrel"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) Barrel; Events", 100,0,1000);
+    Book ("VBShadAnalysis/pT2_JetEndcap"+category+"_"+l, "pT_Jet; p_{T} [GeV] (subleading) Endcap; Events", 100,0,1000);
 
     Book ("VBShadAnalysis/eta1_Jet"+category+"_"+l, "eta_Jet; #eta (leading); Events", 100,0.,5.);
     Book ("VBShadAnalysis/eta2_Jet"+category+"_"+l, "eta_Jet; #eta (subleading) ; Events", 100,0.,5.);
 
     Book ("VBShadAnalysis/qgl1_Jet"+category+"_"+l, "QGL1_Jet; QGL j1(leading); Events", 100,0.,1.);
     Book ("VBShadAnalysis/qgl2_Jet"+category+"_"+l, "QGL2_Jet; QGL j2(subleading) ; Events", 100,0.,1.);
-    //    Book ("VBShadAnalysis/nemf1_Jet"+category+"_"+l, "nemf1_Jet; nemf j1 (leading); Events", 100,0.,1.);
-    //    Book ("VBShadAnalysis/nemf2_Jet"+category+"_"+l, "nemf2_Jet; nemf j2 (subleading) ; Events", 100,0.,1.);
-    //    Book ("VBShadAnalysis/nhf1_Jet"+category+"_"+l, "nhf1_Jet; nhf j1 (leading); Events", 100,0.,1.);
-    //    Book ("VBShadAnalysis/nhf2_Jet"+category+"_"+l, "nhf2_Jet; nhf j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/nemf1_Jet"+category+"_"+l, "nemf1_Jet; nemf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nemf2_Jet"+category+"_"+l, "nemf2_Jet; nemf j2 (subleading) ; Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf1_Jet"+category+"_"+l, "nhf1_Jet; nhf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf2_Jet"+category+"_"+l, "nhf2_Jet; nhf j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/nemf1_outTrkJet"+category+"_"+l, "nemf1_outTrkJet 2.4-3; nemf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nemf2_outTrkJet"+category+"_"+l, "nemf2_outTrkJet 2.4-3; nemf j2 (subleading) ; Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf1_outTrkJet"+category+"_"+l, "nhf1_outTrkJet 2.4-3; nhf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/nhf2_outTrkJet"+category+"_"+l, "nhf2_outTrkJet 2.4-3; nhf j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/cemf1_Jet"+category+"_"+l, "cemf1_Jet; cemf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/cemf2_Jet"+category+"_"+l, "cemf2_Jet; cemf j2 (subleading) ; Events", 100,0.,1.);
+    Book ("VBShadAnalysis/chf1_Jet"+category+"_"+l, "chf1_Jet; chf j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/chf2_Jet"+category+"_"+l, "chf2_Jet; chf j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/puJetId1_Jet"+category+"_"+l, "puJetId1_Jet; puJetId j1 (leading); Events", 100,0.,1.);
+    Book ("VBShadAnalysis/puJetId2_Jet"+category+"_"+l, "puJetId2_Jet; puJetId j2 (subleading) ; Events", 100,0.,1.);
+
+    Book ("VBShadAnalysis/const1_Jet"+category+"_"+l, "const1_Jet; const j1 (leading); Events", 100,0.,100.);
+    Book ("VBShadAnalysis/const2_Jet"+category+"_"+l, "const2_Jet; const j2 (subleading) ; Events", 100,0.,100.);
 
     // boosted jets
     Book ("VBShadAnalysis/pTV1_Jet"+category+"_"+l, "pT_V1_Jet; p_{T} [GeV] (leading); Events", 160,0,1600);
@@ -300,6 +318,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
     Book ("VBShadAnalysis/massV1"+category+"_"+l, "VMass_leading; MassV [GeV]; Events", 200,0,200);
     Book ("VBShadAnalysis/massV2"+category+"_"+l, "VMass_trailing; MassV [GeV]; Events", 200,0,200);
 
+    Book ("VBShadAnalysis/bosV1discr"+category+"_"+l, "V1tagger; V1Tagger score; Events", 100,0,1);
     Book ("VBShadAnalysis/bosV2discr"+category+"_"+l, "V2tagger; V2Tagger score; Events", 100,0,1);
     Book ("VBShadAnalysis/bosV2discr2nd"+category+"_"+l, "V2tagger; V2Tagger 2ndscore; Events", 100,0,1);
 
@@ -1097,6 +1116,7 @@ void VBShadAnalysis::Init(){
     Log(__FUNCTION__,"INFO",Form("doHADAntiAnalysis=%d",doHADAntiAnalysis));
 
     Log(__FUNCTION__,"INFO",Form("doSideBand=%d",doSideBand));
+    //    Log(__FUNCTION__,"INFO",Form("doLepAnalysis=%d",doLepAnalysis));
 
     if(doResonant) doTMVA=false;
 
@@ -2184,6 +2204,11 @@ void VBShadAnalysis::genStudies(Event*e, string label )
        || (label.find("ZNUNUZJJjj_EWK") !=string::npos)
        || (label.find("ZNUNUZJJjj_QCD") !=string::npos)
        || (label.find("ZNUNUZJJjj_EWK_QCD") !=string::npos)
+       || (label.find("ZBBZJJNOBjj_EWK") !=string::npos)
+       || (label.find("ZBBZJJNOBjj_EWK") !=string::npos)
+       || (label.find("ZBBZJJNOBjj_EWK") !=string::npos)
+       || (label.find("ZNUNUZJJNOBjj_EWK") !=string::npos)
+       || (label.find("ZNUNUZBBjj_EWK") !=string::npos)
        ) {
         pdgID1=23;
         pdgID2=23;
@@ -2197,6 +2222,8 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WPJJWMJJjj_EWK_LO") !=string::npos ||
                label.find("WPJJWMJJjj_QCD_LO") !=string::npos ||
                label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ||
+               label.find("WPJJWPJJjj_EWK_LO") !=string::npos ||
+               label.find("WMJJWMJJjj_EWK_LO") !=string::npos ||
                //
                label.find("WPJJWMJJjj_4f_EWK_LO") !=string::npos ||
                label.find("WPJJWMJJjj_4f_QCD_LO") !=string::npos ||
@@ -2265,7 +2292,12 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("ZBBWPMJJjj_EWK_QCD_LO")!=string::npos ||
                label.find("ZbbWpmJJ_EWK")!=string::npos ||
                label.find("ZbbWpmJJ_EWK_QCD")!=string::npos ||
-               label.find("ZbbWpmJJ_QCD")!=string::npos
+               label.find("ZbbWpmJJ_QCD")!=string::npos ||
+               //
+               label.find("WPJJZJJjj_EWK")!=string::npos ||
+               label.find("WMJJZJJjj_EWK")!=string::npos ||
+               label.find("WMJJZNUNUjj_EWK")!=string::npos ||
+               label.find("WPJJZNUNUjj_EWK")!=string::npos
                ) {
         pdgID1=23;
         pdgID2=24;
@@ -2279,7 +2311,7 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         // ** promptLeptons from W for Wjets and semileptonic ttbar in MET category
         if((fabs(genpar->GetPdgId()) == 11 ||  fabs(genpar->GetPdgId()) == 13 || fabs(genpar->GetPdgId()) == 15) and fabs(genpar->GetParentPdgId())==24) if(genLep==NULL) { genLep = genpar; }
         // ** prompt V for the ZJetsToNuNu_HT and WJetsToLNu_HT and pt-reweighting
-        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos ) ) if(genVp==NULL) { genVp = genpar; }
+        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("DYJetsToLL_Pt") !=string::npos or label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos )) if(genVp==NULL) { genVp = genpar; }
         if( (fabs(genpar->GetPdgId()) == 24) and (label.find("WJetsToLNu_HT") !=string::npos or label.find("WJetsToLNu_Pt") !=string::npos ) ) if(genVp==NULL) { genVp = genpar; }
 
         // ** BOSON
@@ -2605,7 +2637,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             if (delW2 < minDR2){ minDR2 = delW2;}
         }
 
-
         float massRaw = (f->subjet_lead_p4 + f->subjet_sublead_p4).M();
 
         if(minDR1<0.8) Fill("VBShadAnalysis/Baseline/SubJetsMass1_"+eta_j+range_j+label, systname, massRaw , e->weight() ); 
@@ -2823,7 +2854,6 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
             Fill("VBShadAnalysis/Baseline/DphiMETFat_" +label, systname, dPhiFatMet, e->weight() );
 
         }
-
 
         /**************************************************
         Select priority: discrimator goes before mass, i.e.
@@ -3731,22 +3761,21 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if( label == "QCD_HT" or label == "QCD_Pt" or label == "QCD_bEnriched_HT" or label == "BGenFilter" or
         label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_Pt" or
-        label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
+        label == "ZJetsToNuNuPt" or label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
         label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
         label == "DYJetsToLL_Pt" or
         label == "ZJetsToQQ" or label == "WJetsToQQ" or label == "VJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
 
-    /*
-    if ( label.find("EWKZ2Jets_ZToNuNu") !=string::npos) label = "ZJetsToNuNu";
-    //    if ( label == "EWK_LNuJJ_MJJ-120") label = "WJetsToLNu";
-    if ( label.find("EWKZ2Jets_ZToLL") !=string::npos) label = "DY";
-    if ( label.find("EWKWMinus2Jets") !=string::npos) label = "WJetsToLNu";
-    if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
-    */
+    if ( label.find("EWKZ2Jets_ZToNuNu") !=string::npos) label = "EWKV";
+    if ( label.find("EWKZ2Jets_ZToLL") !=string::npos) label = "EWKV";
+    if ( label.find("EWKZ2Jets_ZToQQ") !=string::npos) label = "EWKV";
 
-    if ( label.find("EWKWMinus2Jets") !=string::npos) label = "EWKW";
-    if ( label.find("EWKWPlus2Jets") !=string::npos) label = "EWKW";
+    if ( label.find("EWKWMinus2Jets") !=string::npos) label = "EWKV";
+    if ( label.find("EWKWPlus2Jets") !=string::npos) label = "EWKV";
+
+    if ( label.find("EWKWminus2Jets") !=string::npos) label = "EWKV";
+    if ( label.find("EWKWplus2Jets") !=string::npos) label = "EWKV";
 
     /*
     // redefine labels
@@ -3759,8 +3788,8 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label == "ZZTo") label = "MULTIBOSON";
     */
 
-    //    if( label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
-    //    if( label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
+    if( label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
+    if( label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ")  !=string::npos ) label = "ZJetsToNuNuPt";
 
     if( label.find("WJetsToLNu_0J")  !=string::npos) label = "WJetsToLNu_NJ";
     if( label.find("WJetsToLNu_1J")  !=string::npos) label = "WJetsToLNu_NJ";
@@ -3944,8 +3973,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     }
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Before tirgger" );
-    
-    
+
     if(!doTrigger){
       //    bool passtriggerHAD = (e->IsTriggered("HLT_PFHT_800_v") || e->IsTriggered("HLT_AK8PFJet360_TrimMass30_v") || e->IsTriggered("HLT_AK8PFHT650_TrimR0p1PT0p3Mass50_v"));
       if (doHADAnalysis or doHADAntiAnalysis) {
@@ -3960,8 +3988,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
       if(doBAnalysis or doBAntiAnalysis) {
         if(!passtriggerBtag) return EVENT_NOT_USED;
       }
+
     }
-    
+
     //$$$$$$$$$$$
     //$$$$$$$$$$$
 
@@ -4005,7 +4034,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if ( (!doMETAnalysis and !doMETAntiAnalysis) and e->GetMet().GetPuppiMetP4().Pt() > 200 ) return EVENT_NOT_USED;
     } else {
         // events with MET in separate category
-        if ( (doMETAnalysis or doMETAntiAnalysis) and e->GetMet().GetP4().Pt() < 250 ) return EVENT_NOT_USED;
+        if ( (doMETAnalysis or doMETAntiAnalysis) and e->GetMet().GetP4().Pt() < 200 ) return EVENT_NOT_USED;
         if ( (!doMETAnalysis and !doMETAntiAnalysis) and e->GetMet().GetP4().Pt() > 200 ) return EVENT_NOT_USED;
     }
 
@@ -4312,8 +4341,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.6; // 80% signal
+            float tmvacut = 0.6; // 80% signal  deve prendere 1 +- 0.5%
             float kerascut = 0.5;
+
+            string sfnameResTag="";
+            if (year==12016)  sfnameResTag = "SFresTag_12016";
+            if (year==2016)  sfnameResTag = "SFresTag_2016";
+            if (year==2017)  sfnameResTag = "SFresTag_2017";
+            if (year==2018)  sfnameResTag = "SFresTag_2018";
+
+            e->ApplySF(sfnameResTag);
+
             //******************//
 
             if( (bosonJets.size()>1) && (forwardJets.size() > 1)  && ( forwardJets[0]->Eta() * forwardJets[1]->Eta() <0 ) && (fabs(forwardJets[0]->DeltaEta(forwardJets[1])) > 3.) && ((forwardJets[0]->GetP4() + forwardJets[1]->GetP4()).M() > 500) ){
@@ -4601,7 +4639,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ APPLY WEIGHTS
     //////
 
-    //////  to be applied also to VQQ ?
+    //////  EWK correction to be applied also to VQQ ?
     if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("DYJetsToLL_Pt") !=string::npos) and genVp!=NULL) {
 
         if( not e->ExistSF("ZNNLO_rwg") ){
@@ -4625,6 +4663,27 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     }
 
+
+    // //////
+
+    string sfnamePU="";
+    if (year==12016)  sfnamePU = "PUJetID_12016";
+    if (year==2016)  sfnamePU = "PUJetID_2016";
+    if (year==2017)  sfnamePU = "PUJetID_2017";
+    if (year==2018)  sfnamePU = "PUJetID_2018";
+
+    if((doMETAnalysis or doMETAntiAnalysis) and (category.find("RMET") !=string::npos)) {
+
+        if(bosonJets[0]->GetP4().Pt()<50) {
+            e->SetPtEtaSF(sfnamePU, bosonJets[0]->GetP4().Pt(), fabs(bosonJets[0]->GetP4().Eta()));
+            e->ApplySF(sfnamePU);
+        }
+
+        if(bosonJets[1]->GetP4().Pt()<50) {
+            e->SetPtEtaSF(sfnamePU, bosonJets[1]->GetP4().Pt(), fabs(bosonJets[1]->GetP4().Eta()));
+            e->ApplySF(sfnamePU);
+        }
+    }
 
    //////
    if(label.find("QCD_HT") !=string::npos) {
@@ -4694,15 +4753,34 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if( forwardJets.size() < 2 ) return EVENT_NOT_USED;
     if( forwardJets[0]->Eta() * forwardJets[1]->Eta() >=0 ) return EVENT_NOT_USED;
 
-    /*
-    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNEMF(), e->weight());
-    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNEMF(), e->weight());
-    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNHF(), e->weight());
-    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNHF(), e->weight());
-    */
+    if(fabs(forwardJets[0]->GetP4().Eta())<2.4 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/nemf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<2.4 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/nemf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[0]->GetP4().Eta())<2.4 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/nhf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetNHF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<2.4 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/nhf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetNHF(), e->weight());
+
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf1_outTrkJet" +category+"_"+label, systname, forwardJets[0]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nemf2_outTrkJet" +category+"_"+label, systname, forwardJets[1]->GetNEMF(), e->weight());
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf1_outTrkJet" +category+"_"+label, systname, forwardJets[0]->GetNHF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4) Fill("VBShadAnalysis/nhf2_outTrkJet" +category+"_"+label, systname, forwardJets[1]->GetNHF(), e->weight());
+
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/cemf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetCEMF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/cemf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetCEMF(), e->weight());
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/chf1_Jet" +category+"_"+label, systname, forwardJets[0]->GetCHF(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/chf2_Jet" +category+"_"+label, systname, forwardJets[1]->GetCHF(), e->weight());
+
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/puJetId1_Jet" +category+"_"+label, systname, forwardJets[0]->GetPuId(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/puJetId2_Jet" +category+"_"+label, systname, forwardJets[1]->GetPuId(), e->weight());
+
+    if(fabs(forwardJets[0]->GetP4().Eta())<3 and fabs(forwardJets[0]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/const1_Jet" +category+"_"+label, systname, forwardJets[0]->GetnConstituents(), e->weight());
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>1.5) Fill("VBShadAnalysis/const2_Jet" +category+"_"+label, systname, forwardJets[1]->GetnConstituents(), e->weight());
 
     // those are mainly wrong combination V8
-    //    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4 and (forwardJets[1]->GetNEMF()==0 or forwardJets[1]->GetNHF()==0)) return EVENT_NOT_USED;
+    if(fabs(forwardJets[1]->GetP4().Eta())<3 and fabs(forwardJets[1]->GetP4().Eta())>2.4 and (forwardJets[1]->GetNEMF()==0 or forwardJets[1]->GetNHF()==0)) return EVENT_NOT_USED;
+
+    //AD HOC cleaning cut
+    if(year==2016 or year==2017 or year==2018) {
+        if(fabs(forwardJets[1]->GetP4().Eta())<2.5 and fabs(forwardJets[1]->GetP4().Eta())>1.44 and forwardJets[1]->GetNEMF() < 0.05) return EVENT_NOT_USED;
+    }
 
     //    if(doTrigger) studyTriggers(e, category, label, systname);
 
@@ -4952,6 +5030,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     Fill("VBShadAnalysis/pT1_Jet" +category+"_"+label, systname, forwardJets[0]->GetP4().Pt(), e->weight() );
     Fill("VBShadAnalysis/pT2_Jet" +category+"_"+label, systname, forwardJets[1]->GetP4().Pt(), e->weight() );
+
+    if( fabs(forwardJets[0]->GetP4().Eta())< 1.5) Fill("VBShadAnalysis/pT2_JetBarrel" +category+"_"+label, systname, forwardJets[1]->GetP4().Pt(), e->weight() );
+    if( fabs(forwardJets[0]->GetP4().Eta())> 1.5 and fabs(forwardJets[0]->GetP4().Eta())< 3 ) Fill("VBShadAnalysis/pT2_JetEndcap" +category+"_"+label, systname, forwardJets[1]->GetP4().Pt(), e->weight() );
+
     Fill("VBShadAnalysis/eta1_Jet" +category+"_"+label, systname, fabs(forwardJets[0]->GetP4().Eta()), e->weight() );
     Fill("VBShadAnalysis/eta2_Jet" +category+"_"+label, systname, fabs(forwardJets[1]->GetP4().Eta()), e->weight() );
     Fill("VBShadAnalysis/qgl1_Jet" +category+"_"+label, systname, evt_j1QGL, e->weight() );
@@ -4963,6 +5045,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     Fill("VBShadAnalysis/massV1" +category+"_"+label, systname, evt_bosV1mass, e->weight() );
     Fill("VBShadAnalysis/massV2" +category+"_"+label, systname, evt_bosV2mass, e->weight() );
 
+    Fill("VBShadAnalysis/bosV1discr"  +category+"_"+label, systname, evt_bosV1discr, e->weight() );
     Fill("VBShadAnalysis/bosV2discr"  +category+"_"+label, systname, evt_bosV2discr, e->weight() );
     Fill("VBShadAnalysis/bosV2discr2nd"  +category+"_"+label, systname, evt_bosV2discr2nd, e->weight() );
     
@@ -5051,7 +5134,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
-        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_Pt") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
+        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or ( label.find("ZJetsToNuNuPt") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_Pt") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
             if ( (systname=="" or systname=="NONE") and e->GetWeight()->HasScale()) // SCALE RF
                 { // only on the money plots, when no other syst, and for MC with aqgc weights
                     // prepare weights

@@ -46,6 +46,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
     float nemf_,cemf_;
     float nhf_,chf_;
     float area_;
+    float nConst_;
 
     float year_;
 
@@ -139,6 +140,9 @@ class Jet : virtual public Object, virtual public SmearableComplex
     inline float GetCEMF()const {return cemf_;}
     inline float GetNHF()const {return nhf_;}
     inline float GetCHF()const {return chf_;}
+
+    void SetnConstituents(const float x) {nConst_=x;}
+    inline float GetnConstituents()const {return nConst_;}
 
     //Set and obtain jet area
     void SetArea(const float x) {area_=x;}

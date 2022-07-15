@@ -56,7 +56,7 @@ int LoadNano::FillEvent(){
 #ifdef VERBOSE
 	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Met");
 #endif
-        TLorentzVector met; met.SetPtEtaPhiM(nano->MET_pt,0,nano->MET_phi,0);
+	TLorentzVector met; met.SetPtEtaPhiM(nano->DeepMETResolutionTune_pt,0,nano->DeepMETResolutionTune_phi,0);
         event_ -> met_ .SetP4(met);
         event_->met_.SetSignificance(nano->MET_significance);
 
@@ -269,6 +269,7 @@ int LoadNano::FillEvent(){
         if (i >=  sizeof(nano->Jet_pt) / sizeof(nano->Jet_pt[0])) continue;
         bool id = (nano->Jet_jetId[i] & 2) ; // TIGHT - RUN2ULCHS
         if (not id) continue;
+	if(nano->Jet_nConstituents[i]<1) continue; // remove those with 0 constituents
         Jet *j = new Jet() ;
         TLorentzVector p4;
         p4.SetPtEtaPhiM(nano->Jet_pt[i],nano->Jet_eta[i],nano->Jet_phi[i],nano->Jet_mass[i]);
@@ -279,6 +280,7 @@ int LoadNano::FillEvent(){
         j->SetCEMF(nano->Jet_chEmEF[i] );
         j->SetNHF(nano->Jet_neHEF[i] );
         j->SetCHF(nano->Jet_chHEF[i] );
+        j->SetnConstituents(nano->Jet_nConstituents[i] );
 	j->SetArea(nano->Jet_area[i]);
 #warning MISSING NANO JES JER
         // TODO-- JES
