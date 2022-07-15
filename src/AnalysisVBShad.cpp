@@ -3769,9 +3769,13 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if ( label.find("EWKZ2Jets_ZToNuNu") !=string::npos) label = "EWKV";
     if ( label.find("EWKZ2Jets_ZToLL") !=string::npos) label = "EWKV";
+    if ( label.find("EWKZ2Jets_ZToQQ") !=string::npos) label = "EWKV";
 
     if ( label.find("EWKWMinus2Jets") !=string::npos) label = "EWKV";
     if ( label.find("EWKWPlus2Jets") !=string::npos) label = "EWKV";
+
+    if ( label.find("EWKWminus2Jets") !=string::npos) label = "EWKV";
+    if ( label.find("EWKWplus2Jets") !=string::npos) label = "EWKV";
 
     /*
     // redefine labels
