@@ -4034,7 +4034,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if ( (!doMETAnalysis and !doMETAntiAnalysis) and e->GetMet().GetPuppiMetP4().Pt() > 200 ) return EVENT_NOT_USED;
     } else {
         // events with MET in separate category
-        if ( (doMETAnalysis or doMETAntiAnalysis) and e->GetMet().GetP4().Pt() < 250 ) return EVENT_NOT_USED;
+        if ( (doMETAnalysis or doMETAntiAnalysis) and e->GetMet().GetP4().Pt() < 200 ) return EVENT_NOT_USED;
         if ( (!doMETAnalysis and !doMETAntiAnalysis) and e->GetMet().GetP4().Pt() > 200 ) return EVENT_NOT_USED;
     }
 
