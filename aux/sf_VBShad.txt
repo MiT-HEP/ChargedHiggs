@@ -19,6 +19,12 @@ include aux/V_NNLO_rwg.txt
 
 include aux/FatJet_Corr.txt
 
+##############################
+####  PU jetID pt-eta Rew  ####
+##############################
+
+include aux/SF_puID.txt
+
 ####################
 ####  MVV Rew   ####
 ####################
@@ -38,3 +44,12 @@ wg1 wg1
 nnlops nnlops aux/NNLOPS_reweight.root
 double base 2.0 0.00
 
+
+####################
+####  RES-TAG   ####
+####################
+
+SFresTag_12016 base 1.0 0.05
+SFresTag_2016 base 1.0 0.05
+SFresTag_2017 base 1.0 0.05
+SFresTag_2018 base 1.0 0.05

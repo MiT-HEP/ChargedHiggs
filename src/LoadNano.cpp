@@ -56,7 +56,7 @@ int LoadNano::FillEvent(){
 #ifdef VERBOSE
 	if(VERBOSE>0) Log(__FUNCTION__,"DEBUG","Filling Met");
 #endif
-        TLorentzVector met; met.SetPtEtaPhiM(nano->MET_pt,0,nano->MET_phi,0);
+	TLorentzVector met; met.SetPtEtaPhiM(nano->DeepMETResolutionTune_pt,0,nano->DeepMETResolutionTune_phi,0);
         event_ -> met_ .SetP4(met);
         event_->met_.SetSignificance(nano->MET_significance);
 
@@ -269,6 +269,7 @@ int LoadNano::FillEvent(){
         if (i >=  sizeof(nano->Jet_pt) / sizeof(nano->Jet_pt[0])) continue;
         bool id = (nano->Jet_jetId[i] & 2) ; // TIGHT - RUN2ULCHS
         if (not id) continue;
+	if(nano->Jet_nConstituents[i]<1) continue; // remove those with 0 constituents
         Jet *j = new Jet() ;
         TLorentzVector p4;
         p4.SetPtEtaPhiM(nano->Jet_pt[i],nano->Jet_eta[i],nano->Jet_phi[i],nano->Jet_mass[i]);
@@ -279,6 +280,7 @@ int LoadNano::FillEvent(){
         j->SetCEMF(nano->Jet_chEmEF[i] );
         j->SetNHF(nano->Jet_neHEF[i] );
         j->SetCHF(nano->Jet_chHEF[i] );
+        j->SetnConstituents(nano->Jet_nConstituents[i] );
 	j->SetArea(nano->Jet_area[i]);
 #warning MISSING NANO JES JER
         // TODO-- JES
@@ -505,14 +507,34 @@ int LoadNano::FillEvent(){
         //     [6] is renscfact=2d0 facscfact=0.5d0 ; 
         //     [7] is renscfact=2d0 facscfact=1d0 ; 
         //     [8] is renscfact=2d0 facscfact=2d0
-       
-        event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[5]*nano->Generator_weight , MC::r1f2 ) ;
-        event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[3]*nano->Generator_weight , MC::r1f5 ) ;
-        event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[7]*nano->Generator_weight , MC::r2f1 ) ;
-        event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[8]*nano->Generator_weight , MC::r2f2 ) ;
-        event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[1]*nano->Generator_weight , MC::r5f1 ) ;
-        event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[0]*nano->Generator_weight , MC::r5f5 ) ;
-    //
+        if (  nano->nLHEScaleWeight >= 9){ 
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[5]*nano->Generator_weight , MC::r1f2 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[3]*nano->Generator_weight , MC::r1f5 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[7]*nano->Generator_weight , MC::r2f1 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[8]*nano->Generator_weight , MC::r2f2 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[1]*nano->Generator_weight , MC::r5f1 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[0]*nano->Generator_weight , MC::r5f5 ) ;
+        }
+
+        //##  | Float_t LHE scale variation weights (w_var / w_nominal); 
+        //[0] is MUF="0.5" MUR="0.5"; 
+        //[1] is MUF="1.0" MUR="0.5"; 
+        //[2] is MUF="2.0" MUR="0.5"; 
+        //[3] is MUF="0.5" MUR="1.0"; 
+        //[4] is MUF="2.0" MUR="1.0"; 
+        //[5] is MUF="0.5" MUR="2.0"; 
+        //[6] is MUF="1.0" MUR="2.0"; 
+        //[7] is MUF="2.0" MUR="2.0"*
+
+        if ( nano->nLHEScaleWeight ==8){
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[4]*nano->Generator_weight , MC::r1f2 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[3]*nano->Generator_weight , MC::r1f5 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[6]*nano->Generator_weight , MC::r2f1 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[7]*nano->Generator_weight , MC::r2f2 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[1]*nano->Generator_weight , MC::r5f1 ) ;
+            event_ -> GetWeight() -> SetScaleWeight( nano->LHEScaleWeight[0]*nano->Generator_weight , MC::r5f5 ) ;
+        }
+    
         if ( tree_ ->GetBranchStatus("nLHEPdfWeight") != 0 ){  
             for (unsigned i=0 ; i< nano->nLHEPdfWeight;++i){
                 event_->GetWeight()->SetPdfWeight( nano->LHEPdfWeight[i] * nano->Generator_weight, i);

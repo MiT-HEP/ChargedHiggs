@@ -170,9 +170,15 @@ class FatJet : virtual public Object, virtual public SmearableComplex
     inline float ZbbvsQCD() const { return ZbbccvsQCDpNet ; }
     inline float ZvsQCD() const { return ZvsQCDpNet ; }
 
+    /*
     inline float Xbb() const { return XbbpNet + systPNetXbb_*0.05; }   // absolute shift?
     inline float Xcc() const { return XccpNet + systPNetXcc_*0.05; }
     inline float Xqq() const { return XqqpNet + systPNetXqq_*0.05; }
+    */
+
+    inline float Xbb() const { return XbbpNet * (1 + systPNetXbb_*0.05); }   // moved to relative shift
+    inline float Xcc() const { return XccpNet * (1 + systPNetXcc_*0.05); }
+    inline float Xqq() const { return XqqpNet * (1 + systPNetXqq_*0.05); }
 
     inline float PNetMass() const { return particleNetMass* (1. + systPNetMass_*0.05); }
 
