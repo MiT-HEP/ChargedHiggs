@@ -434,6 +434,7 @@ class RebinLikelihood:
 
     h_bkg = None        # sum of bkgs
     h_sig = None
+    hbkg = []
     lbins = 100
     binMin = 0
     binMax = 0
@@ -473,6 +474,9 @@ class RebinLikelihood:
         if self.h_bkg.GetBinContent(i) <= 0 or self.h_bkg.GetBinError(i) / self.h_bkg.GetBinContent(i) > self.maxStat or self.h_bkg.GetBinContent(i) < 1 or self.h_sig.GetBinContent(i) <= 0 or self.h_sig.GetBinError(i) / self.h_sig.GetBinContent(i) > self.maxSigStat: return True
 	hall = self.h_sig.Clone("hall")
 	hall.Add(self.h_bkg)
+        for hbkgi in self.hbkg:
+            if hbkgi.GetBinContent(i) <= 0.: return True
+            if hbkgi.GetBinError(i)/hbkgi.GetBinContent(i) > 0.5: return True
 	#if self.h_bkg.GetBinContent(i) <= 1 or self.h_sig.GetBinContent(i) <= 0 or hall.GetBinError(i) / hall.GetBinContent(i) > self.maxSigStat: return True
 	#if self.h_bkg.GetBinContent(i) <= 1 or self.h_sig.GetBinContent(i) <= 0 or hall.GetBinError(i) / hall.GetBinContent(i) > self.maxSigStat or self.h_sig.GetBinContent(i) < 0.05*math.sqrt(self.h_bkg.GetBinContent(i)): return True
 	if self.h_bkg.GetBinWidth(i) < 100: return True	
@@ -509,11 +513,12 @@ class RebinLikelihood:
         return
 
 
-    def createMapping(self, h_bkg, h_sig):
+    def createMapping(self, h_bkg, h_sig, hbkg):
 
         #print h_bkg.GetEntries(), h_bkg.Integral()
         self.h_bkg = h_bkg
         self.h_sig = h_sig
+        self.hbkg  = hbkg
         self.binMin = float(self.h_bkg.GetBinLowEdge(1)) # min bin
         self.binMax = float(self.h_bkg.GetBinLowEdge(self.h_bkg.GetNbinsX()+1)) # max bin
 
@@ -632,6 +637,8 @@ class RebinLikelihood:
         #print "BIN VECTOR ", i, mybins
         self.h_bkg = self.h_bkg.Rebin(len(mybins)-1, self.h_bkg.GetName(), mybins)
         self.h_sig = self.h_sig.Rebin(len(mybins)-1, self.h_sig.GetName(), mybins)
+        for k in range(0,len(self.hbkg)):
+            self.hbkg[k] = self.hbkg[k].Rebin(len(mybins)-1, self.hbkg[k].GetName(), mybins)
         #print "BIINNS", self.h_bkg.GetNbinsX()
 
     def getBinArray(self):
