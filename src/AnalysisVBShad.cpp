@@ -4341,7 +4341,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.6; // 80% signal  deve prendere 1 +- 0.5%
+            float tmvacut = 0.7; // 80% signal  deve prendere 1 +- 0.5%
             float kerascut = 0.5;
 
             string sfnameResTag="";
@@ -4551,7 +4551,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float mWidthL = 15.;
             float mWidthH = 20.;
             double chi2Cut=6.;
-            float tmvacut = 0.6; // 80% cut
+            float tmvacut = 0.7; // 80% cut
             float kerascut = 0.5;
             //******************//
 
