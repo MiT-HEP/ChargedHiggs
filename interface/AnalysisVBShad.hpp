@@ -26,6 +26,7 @@ public:
     bool doFinal = false;
     int VERBOSE=false;
     int systResTagger_=0;
+    int systResMass_=0;
 
     void Init() override;
     int analyze(Event*,string systname) override;

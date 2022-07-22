@@ -3749,6 +3749,7 @@ void VBShadAnalysis::reset() // reset private members
     MultiBDTwithMETbkg = -100;
 
     systResTagger_=0;
+    systResMass_=0;
 }
 
 
@@ -3855,6 +3856,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     if (systname=="ResTaggerUp") systResTagger_=1;
     if (systname=="ResTaggerDown") systResTagger_=-1;
+
+    if (systname=="ResMassUp") systResMass_=1;
+    if (systname=="ResMassDown") systResMass_=-1;
 
     Fill("VBShadAnalysis/GENERAL/Mtt_" +label, systname, genMtt(e) , e->weight() );
 
@@ -4333,6 +4337,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             if(doResTagKeras or doResTagTMVA){
                 std::tie(MV,mBoson_ind) = resolvedDNN(e,label, systname);
                 if(mBoson_ind == 0) {mBoson = mBoson_W;} else if(mBoson_ind == 1) {mBoson = mBoson_Z;}
+                MV = MV * (1 + systResMass_*0.05);
             }
             //******************//
 
@@ -4349,6 +4354,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float tmvacut = 0.6; // 80% signal  deve prendere 1 +- 0.5%
             float kerascut = 0.5;
 
+            /*
             string sfnameResTag="";
             if (year==12016)  sfnameResTag = "SFresTag_12016";
             if (year==2016)  sfnameResTag = "SFresTag_2016";
@@ -4356,6 +4362,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             if (year==2018)  sfnameResTag = "SFresTag_2018";
 
             e->ApplySF(sfnameResTag);
+            */
 
             //******************//
 

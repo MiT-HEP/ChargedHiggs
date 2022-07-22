@@ -313,6 +313,13 @@ class SmearResTagger : virtual public SmearBase
         // void, the analysis take care to change it if the name is matched
 };
 
+class SmearResMass : virtual public SmearBase
+{
+    public:
+        SmearResMass():SmearBase(){name_="ResMass";}
+        // void, the analysis take care to change it if the name is matched
+};
+
 #endif
 // Local Variables:
 // mode:c++
