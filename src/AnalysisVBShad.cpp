@@ -1610,8 +1610,6 @@ float VBShadAnalysis::jettagForBoosted(Event*e, string label, string systname, f
     return  Mkl;
 }
 
-
-
 std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string systname){
 
     bosonJets.clear();
@@ -1799,7 +1797,7 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                             if(dnn > evt_maxDnn){
 
                                 evt_2ndmaxDnn = evt_maxDnn;
-                                evt_maxDnn = dnn;
+                                evt_maxDnn = dnn * (1 + systResTagger_*0.05);
                                 index_i=vk;
                                 index_j=vl;
                                 index_k=fi;
@@ -1874,6 +1872,7 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
         index_v1 = index_i;
         index_v2 = index_j;
     }
+
 
     std::pair<float, int> pairResDNN = std::make_pair(0., -1);
     if(bosonJets.size()>1 && VTarget>=0) pairResDNN  = std::make_pair((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M() , VTarget); 
@@ -3488,6 +3487,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ZJetsToQQ") !=string::npos) mc = 330 ;
     if(label.find("WJetsToQQ") !=string::npos) mc = 340 ;
     if(label.find("VJetsToQQ") !=string::npos) mc = 350 ;
+    if(label.find("EWKV") !=string::npos) mc = 360 ;
 
     if(label.find("QCD_HT") !=string::npos) mc =500 ;
     if(label.find("QCD_Inclusive") !=string::npos) mc =501 ;
@@ -3747,6 +3747,8 @@ void VBShadAnalysis::reset() // reset private members
     MultiBDTwithMETewk = -100;
     MultiBDTwithMETqcd = -100;
     MultiBDTwithMETbkg = -100;
+
+    systResTagger_=0;
 }
 
 
@@ -3850,6 +3852,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label.find("TTTo2L2Nu") !=string::npos) label = "TT_TuneCP5";
     if ( label.find("TTToSemiLeptonic") !=string::npos) label = "TT_TuneCP5";
     if ( label.find("TTToHadronic") !=string::npos) label = "TT_TuneCP5";
+
+    if (systname=="ResTaggerUp") systResTagger_=1;
+    if (systname=="ResTaggerDown") systResTagger_=-1;
 
     Fill("VBShadAnalysis/GENERAL/Mtt_" +label, systname, genMtt(e) , e->weight() );
 
