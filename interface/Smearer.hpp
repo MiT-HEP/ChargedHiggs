@@ -287,7 +287,7 @@ class SmearPNetMass : public SmearBase
         }; // 0 = success; 1 not applicable to the event
 };
 
-class SmearPNetDiscriminator : virtual public SmearBase 
+class SmearPNetDiscriminator : virtual public SmearBase
 {
     public: 
         SmearPNetDiscriminator() : SmearBase(){ name_ = "PNetXXX";}
@@ -304,6 +304,20 @@ class SmearPNetDiscriminator : virtual public SmearBase
             }
             return SMEAR_OK;
         }; // 0 = success; 1 not applicable to the event
+};
+
+class SmearResTagger : virtual public SmearBase
+{
+    public:
+        SmearResTagger():SmearBase(){name_="ResTagger";}
+        // void, the analysis take care to change it if the name is matched
+};
+
+class SmearResMass : virtual public SmearBase
+{
+    public:
+        SmearResMass():SmearBase(){name_="ResMass";}
+        // void, the analysis take care to change it if the name is matched
 };
 
 #endif

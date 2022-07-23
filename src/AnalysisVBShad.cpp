@@ -201,6 +201,7 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
     AddFinalHisto("VBShadAnalysis/MVV"+category+"_"+l);
     AddFinalHisto("VBShadAnalysis/MVVClip"+category+"_"+l);
+
     Book ("VBShadAnalysis/MVV"+category+"_"+l, "MVV ; MVV [GeV]; Events", 200,0,5000); // should be 200,0,5000 -- 25 GeV bin
     Book ("VBShadAnalysis/MVVClip"+category+"_"+l, "MVV ; MVV [GeV]; Events", 200,0,5000); // should be 200,0,5000 -- 25 GeV bin
 
@@ -217,10 +218,23 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
         AddFinalHisto("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l);
         AddFinalHisto("VBShadAnalysis/BDTwithMET"+category+"_"+l);
+
+        if(checkSignalLabel(l) and (!(l.find("aQGC") != string::npos))) {
+
+            AddFinalHisto("VBShadAnalysis/BDTnoBnoMETfiducial"+category+"_"+l);
+            AddFinalHisto("VBShadAnalysis/BDTwithMETfiducial"+category+"_"+l);
+
+            AddFinalHisto("VBShadAnalysis/BDTnoBnoMETnonfiducial"+category+"_"+l);
+            AddFinalHisto("VBShadAnalysis/BDTwithMETnonfiducial"+category+"_"+l);
+        }
+
         if(!doBAnalysis and !doMETAnalysis) Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "DNN noBnoMET ; DNN noBnoMET; Events", 200,0.,1.);
 
         if(doBAnalysis or doBAntiAnalysis) {
             AddFinalHisto("VBShadAnalysis/BDTbtag"+category+"_"+l);
+            AddFinalHisto("VBShadAnalysis/BDTbtagfiducial"+category+"_"+l);
+            AddFinalHisto("VBShadAnalysis/BDTbtagnonfiducial"+category+"_"+l);
+
             Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "DNN with Btag ; DNN with Btag; Events", 200,0.,1.);
             if(category.find("RBtag")   !=string::npos ) {
                 Book ("VBShadAnalysis/DNNMultiRBtagEWK"+category+"_"+l, "DNN MultiClass RBtag (response for ZZ); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
@@ -234,12 +248,12 @@ void VBShadAnalysis::BookHisto(string l, string category)
             //            AddFinalHisto("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l);
             //            AddFinalHisto("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l);
 
-            AddFinalHisto("VBShadAnalysis/DNNMultiEWKdnn"+category+"_"+l);
-            AddFinalHisto("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+l);
-            AddFinalHisto("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+l);
+            //            AddFinalHisto("VBShadAnalysis/DNNMultiEWKdnn"+category+"_"+l);
+            //            AddFinalHisto("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+l);
+            //            AddFinalHisto("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+l);
     
-            AddFinalHisto("VBShadAnalysis/DNNMultiEWK1dnn"+category+"_"+l);
-            AddFinalHisto("VBShadAnalysis/DNNMultiEWK2dnn"+category+"_"+l);
+            //            AddFinalHisto("VBShadAnalysis/DNNMultiEWK1dnn"+category+"_"+l);
+            //            AddFinalHisto("VBShadAnalysis/DNNMultiEWK2dnn"+category+"_"+l);
 
             Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "DNN withMET ; DNNwithMET; Events", 200,0.,1.);
 
@@ -1134,6 +1148,7 @@ void VBShadAnalysis::Init(){
     for ( string l : AllLabel()  ) {
 
         //cutflow
+        Book ("VBShadAnalysis/GENERAL/CrossSection_"+l, "cutflow; bit; Events", 2,0,2);
         Book ("VBShadAnalysis/GENERAL/Cutflow_"+l, "cutflow; bit; Events", 15,0,15);
         Book ("VBShadAnalysis/GENERAL/CutflowNoW_"+l, "cutflow, no weights; bit; Events", 15,0,15);
         Book ("VBShadAnalysis/GENERAL/Mtt_"+l, "Mtt (unclassified); Mtt [GeV]; Events", 100,0,2500);
@@ -1610,8 +1625,6 @@ float VBShadAnalysis::jettagForBoosted(Event*e, string label, string systname, f
     return  Mkl;
 }
 
-
-
 std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string systname){
 
     bosonJets.clear();
@@ -1799,7 +1812,7 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
                             if(dnn > evt_maxDnn){
 
                                 evt_2ndmaxDnn = evt_maxDnn;
-                                evt_maxDnn = dnn;
+                                evt_maxDnn = dnn * (1 + systResTagger_*0.05);
                                 index_i=vk;
                                 index_j=vl;
                                 index_k=fi;
@@ -1874,6 +1887,7 @@ std::pair<float, int> VBShadAnalysis::resolvedDNN(Event*e, string label, string 
         index_v1 = index_i;
         index_v2 = index_j;
     }
+
 
     std::pair<float, int> pairResDNN = std::make_pair(0., -1);
     if(bosonJets.size()>1 && VTarget>=0) pairResDNN  = std::make_pair((bosonJets[0]->GetP4() + bosonJets[1]->GetP4()).M() , VTarget); 
@@ -3488,6 +3502,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("ZJetsToQQ") !=string::npos) mc = 330 ;
     if(label.find("WJetsToQQ") !=string::npos) mc = 340 ;
     if(label.find("VJetsToQQ") !=string::npos) mc = 350 ;
+    if(label.find("EWKV") !=string::npos) mc = 360 ;
 
     if(label.find("QCD_HT") !=string::npos) mc =500 ;
     if(label.find("QCD_Inclusive") !=string::npos) mc =501 ;
@@ -3747,6 +3762,9 @@ void VBShadAnalysis::reset() // reset private members
     MultiBDTwithMETewk = -100;
     MultiBDTwithMETqcd = -100;
     MultiBDTwithMETbkg = -100;
+
+    systResTagger_=0;
+    systResMass_=0;
 }
 
 
@@ -3851,6 +3869,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label.find("TTToSemiLeptonic") !=string::npos) label = "TT_TuneCP5";
     if ( label.find("TTToHadronic") !=string::npos) label = "TT_TuneCP5";
 
+    if (systname=="ResTaggerUp") systResTagger_=1;
+    if (systname=="ResTaggerDown") systResTagger_=-1;
+
+    if (systname=="ResMassUp") systResMass_=1;
+    if (systname=="ResMassDown") systResMass_=-1;
+
     Fill("VBShadAnalysis/GENERAL/Mtt_" +label, systname, genMtt(e) , e->weight() );
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","Final label is: " + label);
@@ -3858,6 +3882,12 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$$$$$$$
     //$$$$$$$$$ genStudies
     //$$$$$$$$$
+
+    bool genPhaseSig = false;
+    if(checkSignalLabel(label) and (!(label.find("aQGC") != string::npos))) {
+        genPhaseSig = computeGenPhaseSpace();
+        Fill("VBShadAnalysis/GENERAL/CrossSection_" +label, systname, int(genPhaseSig) , e->weight() );
+    }
 
     genStudies(e, label );
 
@@ -4328,6 +4358,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             if(doResTagKeras or doResTagTMVA){
                 std::tie(MV,mBoson_ind) = resolvedDNN(e,label, systname);
                 if(mBoson_ind == 0) {mBoson = mBoson_W;} else if(mBoson_ind == 1) {mBoson = mBoson_Z;}
+                MV = MV * (1 + systResMass_*0.05);
             }
             //******************//
 
@@ -4344,6 +4375,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             float tmvacut = 0.7; // 80% signal  deve prendere 1 +- 0.5%
             float kerascut = 0.5;
 
+            /*
             string sfnameResTag="";
             if (year==12016)  sfnameResTag = "SFresTag_12016";
             if (year==2016)  sfnameResTag = "SFresTag_2016";
@@ -4351,6 +4383,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             if (year==2018)  sfnameResTag = "SFresTag_2018";
 
             e->ApplySF(sfnameResTag);
+            */
 
             //******************//
 
@@ -5105,8 +5138,19 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         if(doBAnalysis and (category.find("BBtag")   !=string::npos)) BDTbtag = bdt[xset+6]; // from Miao
 
         if(!doBAnalysis and !doMETAnalysis) Fill ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
+
+        if(checkSignalLabel(label) and (!(label.find("aQGC") != string::npos))) {
+            if(!doBAnalysis and !doMETAnalysis and genPhaseSig) Fill ("VBShadAnalysis/BDTnoBnoMETfiducial"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
+            if(!doBAnalysis and !doMETAnalysis and (!genPhaseSig)) Fill ("VBShadAnalysis/BDTnoBnoMETnonfiducial"+category+"_"+label, systname, BDTnoBnoMET, e->weight() );
+        }
+
         if(doBAnalysis or doBAntiAnalysis) {
             Fill ("VBShadAnalysis/BDTbtag"+category+"_"+label, systname, BDTbtag, e->weight() );
+            if(checkSignalLabel(label) and (!(label.find("aQGC") != string::npos))) {
+                if(genPhaseSig) Fill ("VBShadAnalysis/BDTbtagfiducial"+category+"_"+label, systname, BDTbtag, e->weight() );
+                if(!genPhaseSig) Fill ("VBShadAnalysis/BDTbtagnonfiducial"+category+"_"+label, systname, BDTbtag, e->weight() );
+            }
+
             if((category.find("RBtag")   !=string::npos)) {
                 Fill ("VBShadAnalysis/DNNMultiRBtagEWK"+category+"_"+label, systname, bdt_multi[24], e->weight() ); // from Ava
                 Fill ("VBShadAnalysis/DNNMultiRBtagQCD"+category+"_"+label, systname, bdt_multi[25], e->weight() ); // from Ava
@@ -5116,6 +5160,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
         if(doMETAnalysis or doMETAntiAnalysis) {
             Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );
+            if(checkSignalLabel(label) and (!(label.find("aQGC") != string::npos))) {
+                if(genPhaseSig) Fill ("VBShadAnalysis/BDTwithMETfiducial"+category+"_"+label, systname, BDTwithMET, e->weight() );
+                if(!genPhaseSig) Fill ("VBShadAnalysis/BDTwithMEnonfiducialT"+category+"_"+label, systname, BDTwithMET, e->weight() );
+            }
 /*
             Fill ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+label, systname, bdt_multi[0], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+label, systname, bdt_multi[1], e->weight() );

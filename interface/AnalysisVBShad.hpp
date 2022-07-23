@@ -25,6 +25,8 @@ public:
     int year=2016; // master switch for year configuration
     bool doFinal = false;
     int VERBOSE=false;
+    int systResTagger_=0;
+    int systResMass_=0;
 
     void Init() override;
     int analyze(Event*,string systname) override;
@@ -101,7 +103,6 @@ public:
     bool doHADAntiAnalysis=false;
     //
     bool doSideBand = false;
-    
     bool doResonant = false;
 
     bool doWriteTree = true;
