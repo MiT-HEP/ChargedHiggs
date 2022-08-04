@@ -514,6 +514,7 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("varJet2Pt",'F',readers_[i]); //6
             AddVariable("varMVV",'F',readers_[i]);
             AddVariable("varPTV1",'F',readers_[i]); //12
+            AddVariable("varPTV2",'F',readers_[i]); 
             AddVariable("max(abs(bosV1Eta),abs(bosV2Eta))",'F',readers_[i]);
             AddVariable("varCen",'F',readers_[i]); //13
             AddVariable("varzepVV",'F',readers_[i]); //15
@@ -530,10 +531,13 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("j2QGL" ,'F',readers_[i]); //1
             AddVariable("varMjj",'F',readers_[i]); //2
             AddVariable("varDetajj",'F',readers_[i]); //3
+            AddVariable("abs(varJet1Eta)",'F',readers_[i]);
             AddVariable("varJet1Pt",'F',readers_[i]); //4
             AddVariable("abs(varJet2Eta)",'F',readers_[i]);
             AddVariable("varJet2Pt",'F',readers_[i]); //6
             AddVariable("varMTVV",'F',readers_[i]); //8
+            AddVariable("varPTV1",'F',readers_[i]); //12
+            AddVariable("varPTV2",'F',readers_[i]);
             AddVariable("varCen",'F',readers_[i]); //13
             AddVariable("varDRV2j",'F',readers_[i]); 
             AddVariable("varnormPTVVjj",'F',readers_[i]); //9
@@ -607,6 +611,8 @@ void VBShadAnalysis::InitTmva() {
             AddVariable("abs(varJet2Eta)",'F',readers_[i]);
             AddVariable("varJet2Pt",'F',readers_[i]); //6
             AddVariable("varMTVV",'F',readers_[i]); //8
+            AddVariable("varPTV1",'F',readers_[i]); //12
+            AddVariable("varPTV2",'F',readers_[i]);
             AddVariable("varCenRes",'F',readers_[i]); //23
             AddVariable("varDRV2j",'F',readers_[i]);   
             AddVariable("varnormPTVVjj",'F',readers_[i]); //9
