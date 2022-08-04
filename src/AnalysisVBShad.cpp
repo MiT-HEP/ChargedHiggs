@@ -218,24 +218,37 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
         AddFinalHisto("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l);
         AddFinalHisto("VBShadAnalysis/BDTwithMET"+category+"_"+l);
+        AddFinalHisto("VBShadAnalysis/BDTbtag"+category+"_"+l);
 
         if(checkSignalLabel(l) and (!(l.find("aQGC") != string::npos))) {
 
-            AddFinalHisto("VBShadAnalysis/BDTnoBnoMETfiducial"+category+"_"+l);
-            AddFinalHisto("VBShadAnalysis/BDTwithMETfiducial"+category+"_"+l);
+            if(!doBAnalysis and !doMETAnalysis) {
+                AddFinalHisto("VBShadAnalysis/BDTnoBnoMETfiducial"+category+"_"+l);
+                AddFinalHisto("VBShadAnalysis/BDTnoBnoMETnonfiducial"+category+"_"+l);
+                Book ("VBShadAnalysis/BDTnoBnoMETfiducial"+category+"_"+l, "DNN noBnoMET ; DNN noBnoMET; Events", 200,0.,1.);
+                Book ("VBShadAnalysis/BDTnoBnoMETnonfiducial"+category+"_"+l, "DNN noBnoMET ; DNN noBnoMET; Events", 200,0.,1.);
+            }
 
-            AddFinalHisto("VBShadAnalysis/BDTnoBnoMETnonfiducial"+category+"_"+l);
-            AddFinalHisto("VBShadAnalysis/BDTwithMETnonfiducial"+category+"_"+l);
+            if(doBAnalysis or doBAntiAnalysis) {
+                AddFinalHisto("VBShadAnalysis/BDTbtagfiducial"+category+"_"+l);
+                AddFinalHisto("VBShadAnalysis/BDTbtagnonfiducial"+category+"_"+l);
+                Book ("VBShadAnalysis/BDTbtagfiducial"+category+"_"+l, "DNN with Btag ; DNN with Btag; Events", 200,0.,1.);
+                Book ("VBShadAnalysis/BDTbtagnonfiducial"+category+"_"+l, "DNN with Btag ; DNN with Btag; Events", 200,0.,1.);
+            }
+
+            if(doMETAnalysis or doMETAntiAnalysis) {
+                AddFinalHisto("VBShadAnalysis/BDTwithMETfiducial"+category+"_"+l);
+                AddFinalHisto("VBShadAnalysis/BDTwithMETnonfiducial"+category+"_"+l);
+                Book ("VBShadAnalysis/BDTwithMETfiducial"+category+"_"+l, "DNN withMET ; DNNwithMET; Events", 200,0.,1.);
+                Book ("VBShadAnalysis/BDTwithMETnonfiducial"+category+"_"+l, "DNN withMET ; DNNwithMET; Events", 200,0.,1.);
+            }
         }
 
         if(!doBAnalysis and !doMETAnalysis) Book ("VBShadAnalysis/BDTnoBnoMET"+category+"_"+l, "DNN noBnoMET ; DNN noBnoMET; Events", 200,0.,1.);
 
         if(doBAnalysis or doBAntiAnalysis) {
-            AddFinalHisto("VBShadAnalysis/BDTbtag"+category+"_"+l);
-            AddFinalHisto("VBShadAnalysis/BDTbtagfiducial"+category+"_"+l);
-            AddFinalHisto("VBShadAnalysis/BDTbtagnonfiducial"+category+"_"+l);
-
             Book ("VBShadAnalysis/BDTbtag"+category+"_"+l, "DNN with Btag ; DNN with Btag; Events", 200,0.,1.);
+
             if(category.find("RBtag")   !=string::npos ) {
                 Book ("VBShadAnalysis/DNNMultiRBtagEWK"+category+"_"+l, "DNN MultiClass RBtag (response for ZZ); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
                 Book ("VBShadAnalysis/DNNMultiRBtagQCD"+category+"_"+l, "DNN MultiClass RBtag (response for WZ); DNN Multi RBtag [GeV]; Events", 200,0.,1.);
@@ -257,19 +270,21 @@ void VBShadAnalysis::BookHisto(string l, string category)
 
             Book ("VBShadAnalysis/BDTwithMET"+category+"_"+l, "DNN withMET ; DNNwithMET; Events", 200,0.,1.);
 
+            /*
             Book ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+l, "BDT Multi withMET (response for ZZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/BDTMultiwithMETwz"+category+"_"+l, "BDT Multi withMET (response for WZ); BDT Multi withMET [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/BDTMultiwithMETbkg"+category+"_"+l, "BDT Multi withMET (response for BKG); BDT Multi withMET [GeV]; Events", 200,0.,1.);
 
-            //            Book ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l, "BDT Multi withMET (response for WZ ewk); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
-            //            Book ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l, "BDT Multi withMET (response for WZ qcd); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
-            //            Book ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l, "BDT Multi withMET (response for BKG ); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            Book ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+l, "BDT Multi withMET (response for WZ ewk); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            Book ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+l, "BDT Multi withMET (response for WZ qcd); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            Book ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+l, "BDT Multi withMET (response for BKG ); BDT Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
 
             Book ("VBShadAnalysis/DNNMultiEWKdnn"+category+"_"+l, "DNN Multi withMET (response for WZ ewk); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+l, "DNN Multi withMET (response for WZ qcd); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+l, "DNN Multi withMET (response for BKG ); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/DNNMultiEWK1dnn"+category+"_"+l, "DNN Multi withMET (response for WZ ewk); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
             Book ("VBShadAnalysis/DNNMultiEWK2dnn"+category+"_"+l, "DNN Multi withMET (response for WZ ewk); DNN Multi ewk vs qcd [GeV]; Events", 200,0.,1.);
+            */
 
         }
     }
@@ -5162,7 +5177,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             Fill ("VBShadAnalysis/BDTwithMET"+category+"_"+label, systname, BDTwithMET, e->weight() );
             if(checkSignalLabel(label) and (!(label.find("aQGC") != string::npos))) {
                 if(genPhaseSig) Fill ("VBShadAnalysis/BDTwithMETfiducial"+category+"_"+label, systname, BDTwithMET, e->weight() );
-                if(!genPhaseSig) Fill ("VBShadAnalysis/BDTwithMEnonfiducialT"+category+"_"+label, systname, BDTwithMET, e->weight() );
+                if(!genPhaseSig) Fill ("VBShadAnalysis/BDTwithMETnonfiducial"+category+"_"+label, systname, BDTwithMET, e->weight() );
             }
 /*
             Fill ("VBShadAnalysis/BDTMultiwithMETzz"+category+"_"+label, systname, bdt_multi[0], e->weight() );
@@ -5172,13 +5187,15 @@ int VBShadAnalysis::analyze(Event *e, string systname)
             Fill ("VBShadAnalysis/BDTMultiEWKchi2"+category+"_"+label, systname, bdt_multi[3], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiQCDchi2"+category+"_"+label, systname, bdt_multi[4], e->weight() );
             Fill ("VBShadAnalysis/BDTMultiBKGchi2"+category+"_"+label, systname, bdt_multi[5], e->weight() );
-*/
             Fill ("VBShadAnalysis/DNNMultiEWKdnn"+category+"_"+label, systname, MultiBDTwithMETewk, e->weight() );
             Fill ("VBShadAnalysis/DNNMultiQCDdnn"+category+"_"+label, systname, MultiBDTwithMETqcd, e->weight() );
             Fill ("VBShadAnalysis/DNNMultiBKGdnn"+category+"_"+label, systname, MultiBDTwithMETbkg, e->weight() );
 
             Fill ("VBShadAnalysis/DNNMultiEWK1dnn"+category+"_"+label, systname, MultiBDTwithMETewk/(MultiBDTwithMETewk+MultiBDTwithMETbkg), e->weight() );
             Fill ("VBShadAnalysis/DNNMultiEWK2dnn"+category+"_"+label, systname, MultiBDTwithMETewk/(MultiBDTwithMETewk+MultiBDTwithMETqcd), e->weight() );
+*/
+
+
         }
 
         //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
