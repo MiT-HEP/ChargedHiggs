@@ -5056,7 +5056,10 @@ int VBShadAnalysis::analyze(Event *e, string systname)
                 Fill("VBShadAnalysis/MVV" +category+"_"+label, string("AQGC_")+name, evt_MVV, w );
                 // Clipping
                 {
-                    float MVV_gen = (genVp->GetP4()+genVp2->GetP4()).M();   // evt_MVV could be either mvv or mt; here it should be always mvv. TOCHECK are genVp and genVp2 always filled?
+
+                    float MVV_gen = 0 ;
+                    if(genVp!=NULL and genVp2!=NULL) MVV_gen = (genVp->GetP4()+genVp2->GetP4()).M();   // evt_MVV could be either mvv or mt; here it should be always mvv. TOCHECK are genVp and genVp2 always filled?
+
                     if (toClip(MVV_gen, name)){
                         size_t split = name.find('_');
                         string SM = name.substr(0,split)+"_0p00";
