@@ -1013,8 +1013,8 @@ if __name__=="__main__":
     if "BBtag" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape
         else: db.add_systematics('CMS_QCDnonclosure_s_side_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape for side itself
-        if "anti" not in opt.region: db.add_rateparam('CMS_QCDnonclosure_n_BBtag','QCD',0.5,1.5)  ## QCD Norm
-        else: db.add_rateparam('CMS_QCDnonclosure_n_anti_BBtag','QCD',0.9,1.1)  ## QCD Norm for anti itself
+        if "anti" not in opt.region: db.add_rateparam('CMS_QCDnonclosure_n_BBtag','QCD',0.5,1.50)  ## QCD Norm
+        else: db.add_rateparam('CMS_QCDnonclosure_n_anti_BBtag','QCD',0.5,1.50)  ## QCD Norm for anti itself
     elif "RBtag" in opt.category:
         if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm
     elif "BB" in opt.category:
