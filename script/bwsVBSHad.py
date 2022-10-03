@@ -483,6 +483,13 @@ class DatacardBuilder:
                 htmp.Add(htmp)
                 htmp.Add(hdown,-1.)
 
+            if '_BRLFUp' in hname:
+                nameup = re.sub('_BRLFUp','_BRLFDown',hname)
+                htmp     = fIn.Get(nameup)
+            if '_BRLFDown' in hname:
+                namedn = re.sub('_BRLFDown','_BRLFUp',hname)
+                htmp     = fIn.Get(namedn)
+
             ### QCD SF and hist stat. enhancement
             if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
                 strategy=0 # 0: A/(A+B) 1: CB/D / (A+B)
@@ -564,8 +571,8 @@ class DatacardBuilder:
             if 'data_obs' not in rename: htmp = self._manipulate_histo(htmp,y,normalization)
             if h: h.Add(htmp.Clone(rename))
             else: h=htmp.Clone(rename)
-            if h==None:
-                print "ERROR","Unable to get file",fname,hname,"->",rename
+            #if h==None:
+            #    print "ERROR","Unable to get file",fname,hname,"->",rename
             fIn.Close()
 
         if opt.aqgc and h:
@@ -575,7 +582,7 @@ class DatacardBuilder:
         if h:
             totbin = h.GetNbinsX()
             #h.Rebin(totbin)
-            if "Up" not in hname and "Down" not in hname: print hname, h.Integral(), h.GetBinError(1), "unc.", h.GetBinError(1)/h.Integral()*100
+            #if "Up" not in hnameorg and "Down" not in hnameorg: print hnameorg, h.Integral(), h.GetBinError(1), "unc.", h.GetBinError(1)/h.Integral()*100
             return h
         else: return None
 
@@ -591,7 +598,9 @@ class DatacardBuilder:
 	hsig = None
         hbkg = []
 
-        majorbkg = ['QCD','ttbar','Winv','Zinv']
+        if("MET" not in opt.category):
+            majorbkg = ['QCD','ttbar']
+        else: majorbkg = ['ttbar','Winv','Zinv']
 	for cat in self.categories:
             d=self.categories[cat]
             # proc
@@ -628,14 +637,14 @@ class DatacardBuilder:
         return mapping
 
     def creat_QCD_Shape(self,h_nominal,systname="") :
-        Area   = 0.0614
-        mshift = 0.183
-        bcut   = 1.036
+        Area   = 0.2652
+        mshift = 4.773
+        bcut   = 0.5663
 
         if 'BBtag' in systname:
-            Area   = 1.814
-            mshift = 12.39
-            bcut   = -3.649
+            Area   = 0.667
+            mshift = 16.49
+            bcut   = -0.9112
 
         h=h_nominal.Clone(systname)
 
@@ -835,15 +844,14 @@ class DatacardBuilder:
 
                     for suffix in d2['suffix']:
 
+                        hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
 			# QCDnonclosure shape
                         if 'QCDnonclosure' in sname:
-                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             hup = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Up")
                             hdn = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Down")
 			    continue
 
                         if 'CMS_eff_l' in sname:
-                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             if hup == None:
                                 hup, hdn = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
                             else:
@@ -869,6 +877,11 @@ class DatacardBuilder:
                             if hdn != None and hup == None:
                                 hup = hdn.Clone(re.sub("Down$","Up",hdn.GetName()))
                                 hup.Reset("ACE")
+                            if hup == None and hdn == None:
+                                hup = hnom.Clone("%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdn = hnom.Clone("%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hup.Reset("ACE")
+                                hdn.Reset("ACE")
                         else:
                             if d2['fname'] != None: 
                                 if d2['interpolate']: raise RuntimeError("Unimplemented")
@@ -877,6 +890,10 @@ class DatacardBuilder:
                             else:
                                 hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Up,"")
                                 hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Down,"")
+                            if hupTmp == None:
+                                hupTmp = hnom.Clone("")
+                            if hdnTmp == None:
+                                hdnTmp = hnom.Clone("")
                             hup.Add(hupTmp)
                             hdn.Add(hdnTmp)
                             #if matched: print "WARNING", "syst duplicate found","discarding",c,p,v,"matching for",cat,proc
@@ -923,7 +940,9 @@ if __name__=="__main__":
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
     #db.add_category(opt.category,"/eos/user/h/hum/VBSHad","VBShadAnalysis/"+opt.analysisStra+"_"+opt.category,"Data",opt.input) 
-    db.add_category(opt.category,base_path,"VBShadAnalysis/"+opt.analysisStra+"_"+opt.category,"TT_TuneCP5",opt.input)
+    if "MET" in opt.category:
+        db.add_category(opt.category,base_path,"VBShadAnalysis/"+opt.analysisStra+"_"+opt.category,"MET",opt.input)
+    else: db.add_category(opt.category,base_path,"VBShadAnalysis/"+opt.analysisStra+"_"+opt.category,"JetHT",opt.input)
 
     ## set bkg processes
     #db.add_process('top',False,['TT_TuneCUETP8M2T4','ST','TTX','TTJets'],[opt.category])
@@ -934,17 +953,18 @@ if __name__=="__main__":
     #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
     #db.add_process('Zinv',False,['ZJetsToNuNu'],[opt.category])
     #db.add_process('Winv',False,['WJetsToLNu'],[opt.category])
+    db.add_process('QCD',False,['QCD_HT'],[opt.category])
+    db.add_process('EWKV',False,['EWKW','EWKZ'],[opt.category])
     if("MET" not in opt.category):
-        db.add_process('QCD',False,['QCD_HT'],[opt.category])
+        #db.add_process('QCD',False,['QCD_HT'],[opt.category])
         db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
-        #if "Btag" in opt.category: db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
     else:
         #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
-        #db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
-        db.add_process('Zinv',False,['Z2JetsToNuNu_M-50_LHEFilterPtZ'],[opt.category])
+        db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
+        db.add_process('Zinv',False,['ZJetsToNuNuPt','DYJetsToLL_Pt'],[opt.category])
         #db.add_process('Winv',False,['WJetsToLNu_HT','WJetsToLNu_NJ'],[opt.category])
         db.add_process('Winv',False,['WJetsToLNu_Pt'],[opt.category])
-        db.add_process('EWKV',False,['EWKW','EWKZ2Jets_ZToNuNu'],[opt.category])
+        #db.add_process('EWKV',False,['EWKW','EWKZ2Jets_ZToNuNu'],[opt.category])
 
     ## set sig processes
     for sig in sigprocess:
@@ -977,8 +997,10 @@ if __name__=="__main__":
                 pass ## EWK is in AQGC, but there is a difference in the dataset names
 
     ## add data-driven norm bkg rateparameters
-    db.add_rateparam('CMS_vbshad_Zinvnorm','Zinv',0.75,1.25)
-    db.add_rateparam('CMS_vbshad_Winvnorm','Winv',0.75,1.25)
+    if "MET" in opt.category:
+        db.add_rateparam('CMS_vbshad_Zinvnorm','Zinv',0.75,1.25)
+        db.add_rateparam('CMS_vbshad_Winvnorm','Winv',0.75,1.25)
+
 
     ## set systs
     db.add_systematics('lumi','','lnN',('.*','.*'),1.018)
@@ -991,26 +1013,31 @@ if __name__=="__main__":
     if "BBtag" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape
         else: db.add_systematics('CMS_QCDnonclosure_s_side_BBtag','QCDNonclosure_BBtag','shape',('.*','QCD'),1.)  ## QCD shape for side itself
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm
-        else: db.add_systematics('CMS_QCDnonclosure_n_anti_BBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm for anti itself
+        if "anti" not in opt.region: db.add_rateparam('CMS_QCDnonclosure_n_BBtag','QCD',0.5,1.50)  ## QCD Norm
+        else: db.add_rateparam('CMS_QCDnonclosure_n_anti_BBtag','QCD',0.5,1.50)  ## QCD Norm for anti itself
     elif "RBtag" in opt.category:
         if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_RBtag','','lnN',('.*','QCD'),1.10)  ## QCD Norm
     elif "BB" in opt.category:
         if "side" not in opt.region: db.add_systematics('CMS_QCDnonclosure_s_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
         else: db.add_systematics('CMS_QCDnonclosure_s_side_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
-        if "anti" not in opt.region: db.add_systematics('CMS_QCDnonclosure_n_BB','','lnN',('.*','QCD'),1.20)
-        else: db.add_systematics('CMS_QCDnonclosure_n_anti_BB','','lnN',('.*','QCD'),1.20)
+        if "anti" not in opt.region: db.add_rateparam('CMS_QCDnonclosure_n_BB','QCD',0.5,1.50)
+        else: db.add_rateparam('CMS_QCDnonclosure_n_anti_BB','QCD',0.5,1.50)
 
     proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
     db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
+    if "RMET" in opt.category:
+        db.add_systematics('CMS_eff_ResolvedDiscr','ResTagger','shape',('.*',proc_regex),1.)
+        #db.add_systematics('CMS_eff_ResolvedMass','ResMass','shape',('.*',proc_regex),1.)
+
+
     #db.add_systematics('CMS_scale_j','JES_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_scale_PNetMass','PNetMass','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_eff_Xqq','PNetXqq','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_eff_Xbb','PNetXbb','shape',('.*',proc_regex),1.)
-    db.add_systematics('CMS_eff_Xcc','PNetXcc','shape',('.*',proc_regex),1.)
+    #db.add_systematics('CMS_scale_PNetMass','PNetMass','shape',('.*',proc_regex),1.)
+    #db.add_systematics('CMS_eff_Xqq','PNetXqq','shape',('.*',proc_regex),1.)
+    #db.add_systematics('CMS_eff_Xbb','PNetXbb','shape',('.*',proc_regex),1.)
+    #db.add_systematics('CMS_eff_Xcc','PNetXcc','shape',('.*',proc_regex),1.)
 
     #db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
     #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
