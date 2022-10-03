@@ -479,7 +479,7 @@ class RebinLikelihood:
             if hbkgi.GetBinError(i)/hbkgi.GetBinContent(i) > 0.5: return True
 	#if self.h_bkg.GetBinContent(i) <= 1 or self.h_sig.GetBinContent(i) <= 0 or hall.GetBinError(i) / hall.GetBinContent(i) > self.maxSigStat: return True
 	#if self.h_bkg.GetBinContent(i) <= 1 or self.h_sig.GetBinContent(i) <= 0 or hall.GetBinError(i) / hall.GetBinContent(i) > self.maxSigStat or self.h_sig.GetBinContent(i) < 0.05*math.sqrt(self.h_bkg.GetBinContent(i)): return True
-	if self.h_bkg.GetBinWidth(i) < 100: return True	
+	if self.h_bkg.GetBinWidth(i) < 0.05: return True	
 
         #if self.h_sig.Integral(1,i) < 0.5*self.h_sig.Integral(): return True
 
