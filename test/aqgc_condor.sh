@@ -7,9 +7,9 @@ echo "-> Requested parameter $aqgc_par and point $point"
 
 CMSSW="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src"
 CHARGEDHIGGS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs"
-DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/MAR24_interpolate"
-WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/MAR24_interpolate/AQGC"
-SUFFIX="mar24"
+DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/AUG12_interpolate"
+WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/AUG12_interpolate/AQGC"
+SUFFIX="aug12"
 year=2021
 
 cd $CMSSW

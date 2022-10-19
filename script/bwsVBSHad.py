@@ -98,9 +98,10 @@ xsecsig = [
 {"pro" : "osWW", "cont": "AQGC", "name": "WPJJWMJJjj_EWK_LO", "xsec" : 1.8139},
 {"pro": "WZ", "cont":"AQGC","name":"WMJJZJJjj_EWK_LO" , "xsec":0.1880},
 {"pro": "WZ", "cont":"AQGC","name":"WPJJZJJjj_EWK_LO" , "xsec":0.3492},
-{"pro": "ZZ", "cont":"AQGC","name":"ZBBZJJNOBjj_EWK_LO" , "xsec":0.0055},
+#{"pro": "ZZ", "cont":"AQGC","name":"ZBBZJJNOBjj_EWK_LO" , "xsec":0.0055},  ### to be double checked if stat problems
 #{} ## ZNuNu -> 2016APV ??
 {"pro":"ZZ","cont":"AQGC","name":"ZNUNUZJJNOBjj_EWK_LO","xsec":0.0074},
+#{"pro" : "WZ", "cont": "AQGC", "name": "ZNUNUWPMJJjj_EWK_LO", "xsec" : 0.1652},
 #lep
 {"pro":"osWW","cont":"AQGC","name":"WPHADWMLEPjj_EWK_LO","xsec":0.9067},
 {"pro":"osWW","cont":"AQGC","name":"WPLEPWMHADjj_EWK_LO","xsec":0.9067},
@@ -111,6 +112,15 @@ xsecsig = [
 ]
 #{"pro" : "WZ", "cont": "AQGC", "name": "ZNuNuWPMJJjj_EWK_LO", "xsec" : 0.17},
 ## BR: Zjj 70% , Zbb 15%, Znn 20%. -> ZjjnoB=55%
+
+
+# BMET
+# KEY: TH1D      MVV_BMET_aQGC_ZNUNUZBBjj_EWK_LO_NPle1_AQGC_fm0_0p00;1   MVV 
+# KEY: TH1D      MVV_BMET_aQGC_ZNUNUZJJNOBjj_EWK_LO_NPle1_AQGC_fm0_0p00;1        MVV 
+# KEY: TH1D      MVV_BMET_aQGC_ZJJZJJjj_EWK_LO_NPle1_AQGC_fm0_0p00;1     MVV 
+# KEY: TH1D      MVV_BMET_aQGC_ZBBZJJNOBjj_EWK_LO_NPle1_AQGC_fm0_0p00;1  MVV 
+#
+#
 
 print "-> Looking for basepath"
 basepath = ""
@@ -445,7 +455,7 @@ class DatacardBuilder:
                 ftmpmore = re.sub('FEB26','FEB26vjetNLO',ftmp)
                 fInmore = ROOT.TFile.Open(ftmpmore)
 
-		if self.fOut!=None: self.fOut.cd() 
+                if self.fOut!=None: self.fOut.cd() 
                 hnamemore = re.sub('WJetsToLNu_HT','WJetsToLNu_Pt',hname)
                 htmpmore=fInmore.Get(hnamemore)
 
@@ -461,7 +471,7 @@ class DatacardBuilder:
                 ftmpmore = re.sub('FEB26','FEB26vjetNLO',ftmp)
                 fInmore = ROOT.TFile.Open(ftmpmore)
  
-		if self.fOut!=None: self.fOut.cd()
+                if self.fOut!=None: self.fOut.cd()
                 hnamemore = re.sub('ZJetsToNuNu_HT','ZJetsToNuNuPt',hname)
                 htmpmore=fInmore.Get(hnamemore)
 
@@ -587,12 +597,12 @@ class DatacardBuilder:
         self.garbage.append(o) ## avoid destruction
 
     def play_binning(self):
-	h = None
-	hsig = None
+        h = None
+        hsig = None
         hbkg = []
 
         majorbkg = ['QCD','ttbar','Winv','Zinv']
-	for cat in self.categories:
+        for cat in self.categories:
             d=self.categories[cat]
             # proc
             for proc in self.processes:
@@ -602,7 +612,7 @@ class DatacardBuilder:
                     if self.verbose >2: print "DEBUG","excluding",cat,proc
                     continue
                 for suffix in d2['suffix']:
-		    if not d2['issig']:
+                    if not d2['issig']:
                         if h==None:
                             h=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
                         else:
@@ -613,7 +623,7 @@ class DatacardBuilder:
                         else:
                             hTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             hbkg_pro.Add(hTmp)
-		    else:
+                    else:
                         if hsig==None:
                             hsig=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"%(cat)s_"%d+proc)
                         else:
@@ -644,13 +654,13 @@ class DatacardBuilder:
 
         for iBin in range(1,h.GetNbinsX()+1):
             cen = h.GetBinContent(iBin)
-	    bdt = h.GetBinCenter(iBin)
+            bdt = h.GetBinCenter(iBin)
 
-	    scaleUp = Area * math.log(bdt + mshift) + bcut
-	    scaleDn = max(2 - scaleUp, 0.001)
+            scaleUp = Area * math.log(bdt + mshift) + bcut
+            scaleDn = max(2 - scaleUp, 0.001)
 
             if 'Up' in systname:   h.SetBinContent(iBin,cen*scaleUp)
-	    if 'Down' in systname: h.SetBinContent(iBin,cen*scaleDn)
+            if 'Down' in systname: h.SetBinContent(iBin,cen*scaleDn)
 
         normnew = h.Integral()
         h.Scale(normold/normnew)
@@ -835,15 +845,34 @@ class DatacardBuilder:
 
                     for suffix in d2['suffix']:
 
-			# QCDnonclosure shape
+                        if d2['fname'] != None:
+                            if d2['interpolate']: 
+                                #raise RuntimeError("Unimplemented")
+                                #print "D2",d2
+                                print "WARNING","INTERPOLATING ", "%(fname)s"%d2 ,"for proc", proc, d2['iinfo']
+                                fname="%(path)s"%d +"/%(fname)s"%d2
+                                hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0]
+                                hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1]
+                                hnom0=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
+                            else:
+                                hnom0 = self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix,"")
+                        else:
+                            hnom0 = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+
+                        if hnom0 == None:
+                            print ("hnom0 is None", d2['fname'], d2['interpolate'] if 'interpolate' in d2 else 'None', "%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix,"%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix)
+
+                        # QCDnonclosure shape
                         if 'QCDnonclosure' in sname:
-                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            hnom=hnom0.Clone()
+                            #hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             hup = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Up")
                             hdn = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Down")
-			    continue
+                            continue
 
                         if 'CMS_eff_l' in sname:
-                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            hnom = hnom0.Clone()
+                            #hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             if hup == None:
                                 hup, hdn = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
                             else:
@@ -918,7 +947,7 @@ if __name__=="__main__":
     base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/MAR24syst'
     #base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
-        base_path="Datacards/inputs/MAR24" 
+        base_path="Datacards/inputs/AUG12" 
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -941,10 +970,12 @@ if __name__=="__main__":
     else:
         #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
         #db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
-        db.add_process('Zinv',False,['Z2JetsToNuNu_M-50_LHEFilterPtZ'],[opt.category])
+        #db.add_process('Zinv',False,['Z2JetsToNuNu_M-50_LHEFilterPtZ'],[opt.category])
+        db.add_process('Zinv',False,['ZJetsToNuNuPt'],[opt.category])
         #db.add_process('Winv',False,['WJetsToLNu_HT','WJetsToLNu_NJ'],[opt.category])
         db.add_process('Winv',False,['WJetsToLNu_Pt'],[opt.category])
-        db.add_process('EWKV',False,['EWKW','EWKZ2Jets_ZToNuNu'],[opt.category])
+        #db.add_process('EWKV',False,['EWKW','EWKZ2Jets_ZToNuNu'],[opt.category])
+        db.add_process('EWKV',False,['EWKW','EWKZ'],[opt.category])
 
     ## set sig processes
     for sig in sigprocess:
@@ -1036,23 +1067,23 @@ if __name__=="__main__":
         db.add_systematics('CMS_scaleRF_VQQ','Scale','shape',('.*','VQQ'),1.)
 
     ## break down JES sources
-    db.add_systematics('CMS_jes_FlavorQCD','JES_FlavorQCD','shape',('.*','.*'),1.)
-    db.add_systematics('CMS_jes_RelativeBal','JES_RelativeBal','shape',('.*','.*'),1.)
-    db.add_systematics('CMS_jes_HF','JES_HF','shape',('.*','.*'),1.)
-    db.add_systematics('CMS_jes_BBEC1','JES_BBEC1','shape',('.*','.*'),1.)
-    db.add_systematics('CMS_jes_EC2','JES_EC2','shape',('.*','.*'),1.)
-    db.add_systematics('CMS_jes_Absolute','JES_Absolute','shape',('.*','.*'),1.)
+    db.add_systematics('CMS_jes_FlavorQCD','JES_FlavorQCD','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_jes_RelativeBal','JES_RelativeBal','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_jes_HF','JES_HF','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_jes_BBEC1','JES_BBEC1','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_jes_EC2','JES_EC2','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_jes_Absolute','JES_Absolute','shape',('.*',proc_regex),1.)
 
     ##year dependent
     jes_years = [opt.year]
     if opt.year==2020 or opt.year==2021: jes_years = [2016, 2017, 2018]
 
     for jy in jes_years:
-        db.add_systematics('CMS_jes_BBEC1_'+str(jy),'JES_BBEC1_'+str(jy),'shape',('.*','.*'),1.)
-        db.add_systematics('CMS_jes_RelativeSample_'+str(jy),'JES_RelativeSample_'+str(jy),'shape',('.*','.*'),1.)
-        db.add_systematics('CMS_jes_EC2_'+str(jy),'JES_EC2_'+str(jy),'shape',('.*','.*'),1.)
-        db.add_systematics('CMS_jes_HF_'+str(jy),'JES_HF_'+str(jy),'shape',('.*','.*'),1.)
-        db.add_systematics('CMS_jes_Absolute_'+str(jy),'JES_Absolute_'+str(jy),'shape',('.*','.*'),1.)
+        db.add_systematics('CMS_jes_BBEC1_'+str(jy),'JES_BBEC1_'+str(jy),'shape',('.*',proc_regex),1.)
+        db.add_systematics('CMS_jes_RelativeSample_'+str(jy),'JES_RelativeSample_'+str(jy),'shape',('.*',proc_regex),1.)
+        db.add_systematics('CMS_jes_EC2_'+str(jy),'JES_EC2_'+str(jy),'shape',('.*',proc_regex),1.)
+        db.add_systematics('CMS_jes_HF_'+str(jy),'JES_HF_'+str(jy),'shape',('.*',proc_regex),1.)
+        db.add_systematics('CMS_jes_Absolute_'+str(jy),'JES_Absolute_'+str(jy),'shape',('.*',proc_regex),1.)
 
     ######################################
     ###            WRITE               ###
@@ -1061,8 +1092,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/MAR24_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/MAR24_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++
