@@ -441,6 +441,9 @@ class DatacardBuilder:
             if '201' in hname and jesy not in hname:
                 hname = re.sub('_JES.*','',hname)
 
+            if 'Clip' in hname and 'AQGC' not in hname:
+                hname = re.sub('Clip','',hname)  ## remove "Clip" from non signal processes
+
             fIn=ROOT.TFile.Open(ftmp)
             if self.verbose >2: print "DEBUG","opening file:",ftmp
             if self.fOut!=None: self.fOut.cd()
@@ -448,41 +451,6 @@ class DatacardBuilder:
             htmp=fIn.Get(hname)
             if htmp==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",ftmp
             if htmp==None: continue ## WARNING
-
-            """
-            ################### MET ###################################
-            if "WJetsToLNu_HT" in hname and "FEB26" in ftmp and "2016APV" not in ftmp:
-                ftmpmore = re.sub('FEB26','FEB26vjetNLO',ftmp)
-                fInmore = ROOT.TFile.Open(ftmpmore)
-
-                if self.fOut!=None: self.fOut.cd() 
-                hnamemore = re.sub('WJetsToLNu_HT','WJetsToLNu_Pt',hname)
-                htmpmore=fInmore.Get(hnamemore)
-
-                sfmore = htmp.Integral()/(htmp.Integral()+htmpmore.Integral())
-                normalization = sfmore
-                print "WJetsToLNu_Pt, sf=", sfmore
-                htmp.Add(htmpmore)
-
-                fInmore.Close()
-
-
-            if "ZJetsToNuNu_HT" in hname and "FEB26" in ftmp and "2016APV" not in ftmp:
-                ftmpmore = re.sub('FEB26','FEB26vjetNLO',ftmp)
-                fInmore = ROOT.TFile.Open(ftmpmore)
- 
-                if self.fOut!=None: self.fOut.cd()
-                hnamemore = re.sub('ZJetsToNuNu_HT','ZJetsToNuNuPt',hname)
-                htmpmore=fInmore.Get(hnamemore)
-
-                sfmore = htmp.Integral()/(htmp.Integral()+htmpmore.Integral())
-                normalization = sfmore
-                print "ZJetsToNuNuPt, sf=", sfmore
-                htmp.Add(htmpmore)
-
-                fInmore.Close()
-            ###########################################################
-            """
 
             ### hname cooking, for central, syst e.t.c ###
             if '_BRLFSTAT1Up' in hname:
@@ -1092,8 +1060,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++
