@@ -453,14 +453,15 @@ class DatacardBuilder:
             if htmp==None: continue ## WARNING
 
             ### hname cooking, for central, syst e.t.c ###
-            if '_BRLFSTAT1Up' in hname:
+            if '_BRLFSTAT1Up' in hname: ##symmetrizing it
                 namecen  = re.sub('_BRLFSTAT1Up','',hname)
                 namedown = re.sub('_BRLFSTAT1Up','_BRLFSTAT1Down',hname)
                 htmp     = fIn.Get(namecen)
                 hdown    = fIn.Get(namedown)
                 htmp.Add(htmp)
-                htmp.Add(hdown,-1.)
-
+                htmp.Add(hdown,-1.) 
+            
+            ### exchanging up with down for all yiers
             if '_BRLFUp' in hname:
                 nameup = re.sub('_BRLFUp','_BRLFDown',hname)
                 htmp     = fIn.Get(nameup)
@@ -706,8 +707,8 @@ class DatacardBuilder:
             data=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_%(suffix)s"%d,"%(cat)s_data_obs"%d)
             if data==None: 
                 print "[WARNING] Creating fake data histogram for",cat
-                xmin,xmax=0,100
-                if opt.aqgc: xmin=500.,5000.
+                xmin,xmax=0.,100.
+                if opt.aqgc: xmin,xmax=500.,5000.
                 data=ROOT.TH1D("%(cat)s_data_obs"%d,"fake data histogram with 100 bins",100,xmin,xmax)
                 if opt.aqgc:
                     data = likelihoodBinning.applyMapping(LikelihoodMapping, data)
@@ -788,7 +789,7 @@ class DatacardBuilder:
                 h = likelihoodBinning.applyMapping(LikelihoodMapping, h)
                 self._write(h)
 
-                # SYST TODO implement interpolation logic
+                # SYST TODO check interpolation logic
                 hups = []
                 hdns = []
                 for sname in self.systs:
@@ -821,7 +822,7 @@ class DatacardBuilder:
                         Up = "_3"
                         Down = "_5"
 
-                    for suffix in d2['suffix']:
+                    for isuf,suffix in enumerate(d2['suffix']):
 
                         if d2['fname'] != None:
                             if d2['interpolate']: 
@@ -862,14 +863,23 @@ class DatacardBuilder:
                         if hup==None:
                             ## todo here, check for systs fname here. Possible symmetrize to the default over there
                             if d2['fname'] != None: 
-                                if d2['interpolate']: raise RuntimeError("Unimplemented")
-                                # if fname set in proc, use it.
-                                hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+                                if d2['interpolate']: #raise RuntimeError("Unimplemented")
+                                    fname="%(path)s"%d +"/%(fname)s"%d2
+                                    hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0] + "_" + SystName + Up
+                                    hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1] + "_" + SystName + Up
+                                    hup=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
+                                    hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0] + "_" + SystName + Down
+                                    hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1] + "_" + SystName + Down
+                                    hdn=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
+                                else:
+                                    # if fname set in proc, use it.
+                                    hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                    hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             else:
                                 # use category fname
                                 hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
                                 hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+
                             if hup != None and hdn == None:
                                 hdn = hup.Clone(re.sub("Up$","Down",hup.GetName()))
                                 hdn.Reset("ACE")
@@ -883,9 +893,17 @@ class DatacardBuilder:
                                 hdn.Reset("ACE")
                         else:
                             if d2['fname'] != None: 
-                                if d2['interpolate']: raise RuntimeError("Unimplemented")
-                                hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+                                if d2['interpolate']: 
+                                    fname="%(path)s"%d +"/%(fname)s"%d2
+                                    hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0] + "_" + SystName + Up
+                                    hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1] + "_" + SystName + Up
+                                    hupTmp=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
+                                    hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0] + "_" + SystName + Down
+                                    hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1] + "_" + SystName + Down
+                                    hdnTmp=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
+                                else:
+                                    hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                    hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             else:
                                 hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Up,"")
                                 hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Down,"")
@@ -1003,7 +1021,8 @@ if __name__=="__main__":
     db.add_systematics('lumi','','lnN',('.*','.*'),1.018)
     db.add_systematics('QCDScale_ttbar','','lnN',('.*','ttbar'),1.05)
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
-
+    
+    ## real lepton uncertainty
     proc_reall = '^((?!Zinv).)*$' if "MET" in opt.category else 'ttbar'
     db.add_systematics('CMS_eff_l','','shape',('.*',proc_reall),1.)
 
@@ -1019,8 +1038,10 @@ if __name__=="__main__":
         else: db.add_systematics('CMS_QCDnonclosure_s_side_BB','QCDNonclosure_BB','shape',('.*','QCD'),1.)  ## QCD shape
         if "anti" not in opt.region: db.add_rateparam('CMS_QCDnonclosure_n_BB','QCD',0.5,1.50)
         else: db.add_rateparam('CMS_QCDnonclosure_n_anti_BB','QCD',0.5,1.50)
-
-    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
+    
+    #No shape uncertainties in aqgc signal
+    #proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
+    proc_regex = '.*'
     db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
     if "RMET" in opt.category:
         db.add_systematics('CMS_eff_ResolvedDiscr','ResTagger','shape',('.*',proc_regex),1.)
@@ -1053,6 +1074,7 @@ if __name__=="__main__":
     db.add_systematics('CMS_scaleF_Wj','Scale','shape',('.*','Winv'),1.)
     db.add_systematics('CMS_scaleR_VQQ','Scale','shape',('.*','VQQ'),1.)
     db.add_systematics('CMS_scaleF_VQQ','Scale','shape',('.*','VQQ'),1.)
+
     if doEnvelop:
         db.add_systematics('CMS_scaleRF_tt','Scale','shape',('.*','ttbar'),1.)
         db.add_systematics('CMS_scaleRF_Zj','Scale','shape',('.*','Zinv'),1.)
