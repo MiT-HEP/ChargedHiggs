@@ -953,7 +953,6 @@ if __name__=="__main__":
     #db.add_process('Zinv',False,['ZJetsToNuNu'],[opt.category])
     #db.add_process('Winv',False,['WJetsToLNu'],[opt.category])
     db.add_process('QCD',False,['QCD_HT'],[opt.category])
-    db.add_process('EWKV',False,['EWKW','EWKZ'],[opt.category])
     if("MET" not in opt.category):
         #db.add_process('QCD',False,['QCD_HT'],[opt.category])
         db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
