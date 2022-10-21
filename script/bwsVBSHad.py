@@ -1075,7 +1075,7 @@ if __name__=="__main__":
     db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
     if "RMET" in opt.category:
         db.add_systematics('CMS_eff_ResolvedDiscr','ResTagger','shape',('.*',proc_regex),1.)
-        #db.add_systematics('CMS_eff_ResolvedMass','ResMass','shape',('.*',proc_regex),1.)
+        #db.add_systematics('CMS_eff_ResolvedMass','ResMass','shape',('.*',proc_regex),1.) ##MARIA, to reactivate if we rerun
 
 
     #db.add_systematics('CMS_scale_j','JES_Total','shape',('.*',proc_regex),1.)
