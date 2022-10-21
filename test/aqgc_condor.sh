@@ -21,6 +21,8 @@ eval `scramv1 runtime -sh`
 
 mkdir -p $WORKDIR
 
+echo "Running $VAR in dir $WDIR"
+
 INTERPOLATE=""
 ############## FS #############
 ############## FM #############

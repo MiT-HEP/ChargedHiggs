@@ -468,6 +468,19 @@ class DatacardBuilder:
             if '_BRLFDown' in hname:
                 namedn = re.sub('_BRLFDown','_BRLFUp',hname)
                 htmp     = fIn.Get(namedn)
+            
+            ## Fix PNet Discr shapes uncertainties, scaling them by 1.-cut
+            for discr in [ 'Xqq','Xbb','Xcc' ]:
+                for s in ['Up','Down']:
+                    systname='_CMS_eff_'+discr+s
+                    if systname in hname:
+                        namecen  = re.sub(systname,'',hname)
+                        h0     = fIn.Get(namecen)
+
+                        htmp.Add(h0,-1)
+                        htmp.Scale( 1.- ( 0.75 if discr == 'Xqq' else 0.96)  )   ## Xbb 0.96, Xcc, 0.96, Xqq 0.75
+                        htmp.Add(h0)
+                        
 
             ### QCD SF and hist stat. enhancement
             if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
@@ -823,7 +836,7 @@ class DatacardBuilder:
                         Down = "_5"
 
                     for isuf,suffix in enumerate(d2['suffix']):
-
+                        # take the nominal to do manipulations
                         if d2['fname'] != None:
                             if d2['interpolate']: 
                                 #raise RuntimeError("Unimplemented")
@@ -862,23 +875,35 @@ class DatacardBuilder:
 
                         if hup==None:
                             ## todo here, check for systs fname here. Possible symmetrize to the default over there
+                            #MVV_BB_aQGC_WMJJZNUNUjj_EWK_LO_NPle1_PUUp   -> _AQGC_ftx_value
+                            #MVV_BB_aQGC_WMJJWMJJjj_EWK_LO_NPle1_AQGC_ft9_0p00
+                            #derive new suffix 
+
+                            isAQGC= re.match("AQGC",suffix)
+                            suffix_short = re.sub('_AQGC_.*','',suffix) ## if not AQGC is the same as suffix
+                            if isAQGC:
+                                suffix_SM= re.sub('_[^_]*','_0p00',suffix)
+
                             if d2['fname'] != None: 
-                                if d2['interpolate']: #raise RuntimeError("Unimplemented")
-                                    fname="%(path)s"%d +"/%(fname)s"%d2
-                                    hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0] + "_" + SystName + Up
-                                    hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1] + "_" + SystName + Up
-                                    hup=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
-                                    hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0] + "_" + SystName + Down
-                                    hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1] + "_" + SystName + Down
-                                    hdn=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
-                                else:
-                                    # if fname set in proc, use it.
-                                    hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
-                                    hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+                                # if fname set in proc, use it.
+                                hup=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix_short+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdn=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix_short+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hSM=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix_SM,"%(cat)s_"%d+proc+"_SM") if isAQGC else None
+    
                             else:
                                 # use category fname
-                                hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hup=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix_short+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdn=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix_short+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hSM=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix_SM,"%(cat)s_"%d+proc+"_SM") if isAQGC else None
+
+                            if isAQGC and hup != None:
+                                #hup = hup * hnom/ hSM  ## multiplicative or additive?
+                                hup.Multiply(hnom)
+                                hup.Divide(hSM)
+
+                            if isAQGC and hdn != None:
+                                hdn.Multiply(hnom)
+                                hdn.Divide(hSM)
 
                             if hup != None and hdn == None:
                                 hdn = hup.Clone(re.sub("Up$","Down",hup.GetName()))
@@ -887,30 +912,33 @@ class DatacardBuilder:
                                 hup = hdn.Clone(re.sub("Down$","Up",hdn.GetName()))
                                 hup.Reset("ACE")
                             if hup == None and hdn == None:
-                                hup = hnom.Clone("%(cat)s_"%d+proc+"_"+sname+"Up")
-                                hdn = hnom.Clone("%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hup = hnom0.Clone("%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdn = hnom0.Clone("%(cat)s_"%d+proc+"_"+sname+"Down")
                                 hup.Reset("ACE")
                                 hdn.Reset("ACE")
                         else:
                             if d2['fname'] != None: 
-                                if d2['interpolate']: 
-                                    fname="%(path)s"%d +"/%(fname)s"%d2
-                                    hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0] + "_" + SystName + Up
-                                    hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1] + "_" + SystName + Up
-                                    hupTmp=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
-                                    hname1 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][0] + "_" + SystName + Down
-                                    hname2 = "%(base)s_"%d+d2['iinfo']['suffix'][isuf][1] + "_" + SystName + Down
-                                    hdnTmp=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
-                                else:
-                                    hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
-                                    hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix_short+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdnTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix_short+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hSM=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix_SM,"%(cat)s_"%d+proc+"_SM") if isAQGC else None
                             else:
-                                hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Up,"")
-                                hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix+"_"+SystName+Down,"")
+                                hupTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix_short+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
+                                hdnTmp=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix_short+"_"+SystName+Down,"%(cat)s_"%d+proc+"_"+sname+"Down")
+                                hSM=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix_SM,"%(cat)s_"%d+proc+"_SM") if isAQGC else None
+
+                            if isAQGC and hup != None:
+                                hupTmp.Multiply(hnom)
+                                hupTmp.Divide(hSM)
+
+                            if isAQGC and hdn != None:
+                                hdnTmp.Multiply(hnom)
+                                hdnTmp.Divide(hSM)
+
                             if hupTmp == None:
-                                hupTmp = hnom.Clone("")
+                                hupTmp = hnom0.Clone("")
                             if hdnTmp == None:
-                                hdnTmp = hnom.Clone("")
+                                hdnTmp = hnom0.Clone("")
+
                             hup.Add(hupTmp)
                             hdn.Add(hdnTmp)
                             #if matched: print "WARNING", "syst duplicate found","discarding",c,p,v,"matching for",cat,proc
@@ -1052,10 +1080,11 @@ if __name__=="__main__":
     db.add_systematics('CMS_scale_AK8j','JESAK8_Total','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
+
     #db.add_systematics('CMS_scale_PNetMass','PNetMass','shape',('.*',proc_regex),1.)
-    #db.add_systematics('CMS_eff_Xqq','PNetXqq','shape',('.*',proc_regex),1.)
-    #db.add_systematics('CMS_eff_Xbb','PNetXbb','shape',('.*',proc_regex),1.)
-    #db.add_systematics('CMS_eff_Xcc','PNetXcc','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_eff_Xqq','PNetXqq','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_eff_Xbb','PNetXbb','shape',('.*',proc_regex),1.)
+    db.add_systematics('CMS_eff_Xcc','PNetXcc','shape',('.*',proc_regex),1.)
 
     #db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
     #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
