@@ -2,20 +2,26 @@
 
 aqgc_par="$1"
 point="$2" ## cards -> prepare the card; cards-sumbmit: prepare and submit
+VAR="MVV"
+[ "$3" != "" ] && export VAR="$3"
 
 echo "-> Requested parameter $aqgc_par and point $point"
 
 CMSSW="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src"
 CHARGEDHIGGS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs"
-DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/MAR24_interpolate"
-WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/MAR24_interpolate/AQGC"
-SUFFIX="mar24"
+WDIR="AUG12_interpolate"
+[ "$3" == "MVVClip" ] && WDIR="AUG12_clip"
+DATACARDS="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/${WDIR}"
+WORKDIR="/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/${WDIR}/AQGC"
+SUFFIX="aug12"
 year=2021
 
 cd $CMSSW
 eval `scramv1 runtime -sh`
 
 mkdir -p $WORKDIR
+
+echo "Running $VAR in dir $WDIR"
 
 INTERPOLATE=""
 ############## FS #############
@@ -53,7 +59,7 @@ INTERPOLATE=""
 #### 
 
 # prepare combined datacard SR+anti+side BB BBtag  BMET  RMET
-CARDNAME="cms_vbshad_${year}_final_aqgc_${aqgc_par}_MVV.txt"
+CARDNAME="cms_vbshad_${year}_final_aqgc_${aqgc_par}_${VAR}.txt"
 
 if [[ "$point" == "cards"* ]] ; then
     echo "-> Preparing Cards"
@@ -72,7 +78,7 @@ if [[ "$point" == "cards"* ]] ; then
             file="HAD";
             [[ "$cat" == *"MET" ]] && { file="MET"; }
             [ "$cat" == "BBtag" ] && { file="BHAD"; }
-            python script/bwsVBSHad.py --there -q 5 --aqgc -r $reg -s MVV -y ${year} -c ${cat} -i ${file}${reg}_${year}_${SUFFIX}.root --aqgc_parameter $aqgc_par ${INTERPOLATE}
+            python script/bwsVBSHad.py --there -q 5 --aqgc -r $reg -s ${VAR} -y ${year} -c ${cat} -i ${file}${reg}_${year}_${SUFFIX}.root --aqgc_parameter $aqgc_par ${INTERPOLATE}
             EXITSTATUS=$?
             [ "$EXITSTATUS" == "0" ] || {
                      echo "Cards creation failed. |$EXITSTATUS| " ; 
@@ -83,7 +89,7 @@ if [[ "$point" == "cards"* ]] ; then
             EXTRA=""
             [ "$reg" == "anti" ] && EXTRA="_anti";
             [ "$reg" == "side" ] && EXTRA="_side";
-            CARDS+=" cms_vbshad_${year}_5_aqgc_${aqgc_par}_MVV_${cat}_${reg}.txt"
+            CARDS+=" cms_vbshad_${year}_5_aqgc_${aqgc_par}_${VAR}_${cat}_${reg}.txt"
     done
     done
     cd $DATACARDS
