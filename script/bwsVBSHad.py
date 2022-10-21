@@ -102,6 +102,8 @@ xsecsig = [
 #{} ## ZNuNu -> 2016APV ??
 {"pro":"ZZ","cont":"AQGC","name":"ZNUNUZJJNOBjj_EWK_LO","xsec":0.0074},
 #{"pro" : "WZ", "cont": "AQGC", "name": "ZNUNUWPMJJjj_EWK_LO", "xsec" : 0.1652},
+{"pro" : "WZ", "cont": "AQGC", "name": "WPJJZNUNUjj_EWK_LO", "xsec" : 2.6910},
+{"pro" : "WZ", "cont": "AQGC", "name": "WMJJZNUNUjj_EWK_LO", "xsec" : 1.0950},
 #lep
 {"pro":"osWW","cont":"AQGC","name":"WPHADWMLEPjj_EWK_LO","xsec":0.9067},
 {"pro":"osWW","cont":"AQGC","name":"WPLEPWMHADjj_EWK_LO","xsec":0.9067},
