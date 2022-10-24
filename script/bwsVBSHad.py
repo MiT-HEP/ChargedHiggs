@@ -102,8 +102,9 @@ xsecsig = [
 #{} ## ZNuNu -> 2016APV ??
 {"pro":"ZZ","cont":"AQGC","name":"ZNUNUZJJNOBjj_EWK_LO","xsec":0.0074},
 #{"pro" : "WZ", "cont": "AQGC", "name": "ZNUNUWPMJJjj_EWK_LO", "xsec" : 0.1652},
-{"pro" : "WZ", "cont": "AQGC", "name": "WPJJZNUNUjj_EWK_LO", "xsec" : 2.6910},
-{"pro" : "WZ", "cont": "AQGC", "name": "WMJJZNUNUjj_EWK_LO", "xsec" : 1.0950},
+## scaling 0.1652 (SM Sum) for 2.6910 1.0950. (BSM)
+{"pro" : "WZ", "cont": "AQGC", "name": "WPJJZNUNUjj_EWK_LO", "xsec" : 0.11742 }, ### TODO FIXME
+{"pro" : "WZ", "cont": "AQGC", "name": "WMJJZNUNUjj_EWK_LO", "xsec" : 0.04778},
 #lep
 {"pro":"osWW","cont":"AQGC","name":"WPHADWMLEPjj_EWK_LO","xsec":0.9067},
 {"pro":"osWW","cont":"AQGC","name":"WPLEPWMHADjj_EWK_LO","xsec":0.9067},
@@ -349,6 +350,7 @@ class DatacardBuilder:
         txt.write('-'*50+'\n')
 
         for s in self.systs:
+            print "DEBUG","[writeCard]","doing syst",s
             if doEnvelop and ("scaleR" in s or "scaleF" in s) and not "scaleRF" in s: continue
             if not doEnvelop and "scaleRF" in s: continue
             txt.write("%(syst)s %(type)s "%self.systs[s])
@@ -359,6 +361,7 @@ class DatacardBuilder:
                     for cat in self.categories for proc in self.processes if cat in self.processes[proc]['cat'] 
                     ]))
             txt.write("\n")
+        print "DEBUG","[writeCard]",">done systs"
 
         for rp in self.rateparam:
             txt.write('%(pname)s rateParam * %(proc)s 1 [%(rmin)f,%(rmax)f]\n'%self.rateparam[rp])
@@ -428,7 +431,7 @@ class DatacardBuilder:
         years = [opt.year]
         if opt.year==2020: years = [2016, 2017, 2018]
         if opt.year==2021: years= [12016,22016,2017,2018]
-        print years 
+        #print years 
         
         h = None
         for y in years:
@@ -808,6 +811,7 @@ class DatacardBuilder:
                 hups = []
                 hdns = []
                 for sname in self.systs:
+                    print "DEBUG","[writeInputs]","doing syst",sname, "for process",proc,"is interpolated?", d2['interpolate'] if 'interpolate' in d2 else False
                     s=self.systs[sname]
                     if 'shape' not in s['type']: continue
 
@@ -969,6 +973,8 @@ class DatacardBuilder:
                     hdn.Write()
                     self._write(hup)
                     self._write(hdn)
+                print "DEBUG","[writeInputs]","done systs", "for process",proc
+            print "DEBUG","[writeInputs]","done process",proc
         self.fOut.Close()
         return self
                             
@@ -1112,6 +1118,8 @@ if __name__=="__main__":
         db.add_systematics('CMS_scaleRF_Wj','Scale','shape',('.*','Winv'),1.)
         db.add_systematics('CMS_scaleRF_VQQ','Scale','shape',('.*','VQQ'),1.)
 
+    print("DEBUG, skipping some syst for AQGC")
+    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
     ## break down JES sources
     db.add_systematics('CMS_jes_FlavorQCD','JES_FlavorQCD','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_jes_RelativeBal','JES_RelativeBal','shape',('.*',proc_regex),1.)
@@ -1138,8 +1146,8 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_cards('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    db.write_inputs('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++
