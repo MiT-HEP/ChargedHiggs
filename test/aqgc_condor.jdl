@@ -8,12 +8,14 @@ error = $(logdir)/$(filename)_$(model)_$(point).err
 executable = $(filename)
 #+JobFlavour = "espresso"
 #+JobFlavour = "microcentury"
-+JobFlavour = "workday"
+#+JobFlavour = "workday"
++JobFlavour = "tomorrow"
 +AccountingGroup = "group_u_CMST3.all"
 JobBatchName = "cards"
 arguments = $(model) $(point)
 filename=aqgc_condor.sh
 point=cards-submit
+queue model in (fs0 fs1 fs2 fm0 fm1 fm2 fm3 fm4 fm5 fm7 ft0 ft1 ft2 ft3 ft4 ft5 ft6 ft7 ft8 ft9)
+
+#arguments = $(model) $(point) MVVClip
 #queue model in (fs0 fs1 fs2 fm0 fm1 fm2 fm3 fm4 fm5 fm7 ft0 ft1 ft2 ft3 ft4 ft5 ft6 ft7 ft8 ft9)
-#queue model in (ft3 ft4)
-queue model in (ft7)

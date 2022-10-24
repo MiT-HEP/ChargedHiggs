@@ -15,14 +15,14 @@ except:
 
 n=100
 
-fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/FEB26/UL20%d/HADanti/HADanti.root'%year
-if year == 216: fname="/eos/user/d/dalfonso/AnalysisVBS/NANO/FEB26/UL2016/HADanti/HADanti.root"
-if year == 116: fname="/eos/user/d/dalfonso/AnalysisVBS/NANO/FEB26/UL2016APV/HADanti/HADanti.root"
+fname='/eos/user/d/dalfonso/AnalysisVBS/NANO/MAY13/UL20%d/HADanti/HADanti.root'%year
+if year == 216: fname="/eos/user/d/dalfonso/AnalysisVBS/NANO/MAY13/UL2016/HADanti/HADanti.root"
+if year == 116: fname="/eos/user/d/dalfonso/AnalysisVBS/NANO/MAY13/UL2016APV/HADanti/HADanti.root"
 
 hname='VBShadAnalysis/Baseline/SF_FatJet_'
 oname='datacard_SF_20%d.txt'%year
 ## structure is Data, QCD, Others
-labels=["JetHT","QCD_HT","TT_TuneCP5"]
+labels=["JetHT","QCD_HT","TT_TuneCP5","VJetsToQQ"]
 
 data=0
 qcd =1
