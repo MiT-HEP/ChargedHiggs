@@ -12,9 +12,10 @@ ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
 from HiggsAnalysis.CombinedLimit.DatacardParser import *
 from HiggsAnalysis.CombinedLimit.ShapeTools     import *
 
-#card = "Datacards/NanoV9FebV10/cms_vbshad_2021_2_BDTbtag_BBtag_SR.txt"
-#card = "Datacards/NanoSepV2/cms_vbshad_2020_2_BDTnoBnoMET_BB.txt"
-card = "DATACARD/AUG4/cms_vbshad_2021_2_BDTwithMET_RMET_SR.txt"
+#card = "DATACARD/AUG4/cms_vbshad_2021_2_BDTnoBnoMET_BB_all.txt"
+#card = "DATACARD/AUG4/cms_vbshad_2021_2_BDTbtag_BBtag_all.txt"
+card = "DATACARD/AUG4/cms_vbshad_2021_2_BDTwithMET_RMET_all.txt"
+#card = "DATACARD/AUG4/cms_vbshad_2021_2_BDTwithMET_BMET_all.txt"
 
 ### DC reader options
 parser = OptionParser()
@@ -174,7 +175,8 @@ systGroups = {
     "lumi"              : ["lumi"], #   
     "pileup"            : ["CMS_pileUp"], # 
     "prefire"           : ["CMS_L1Prefire"],
-    "resolvedV"         : ["CMS_eff_resolvedV"],
+    "resolvedV"         : ["CMS_eff_ResolvedDiscr"],
+    "resolvedV_m"       : ["CMS_eff_ResolvedMass"],
     "boostedV"          : ["CMS_eff_Xqq","CMS_eff_Xbb", "CMS_eff_Xcc"],
     "boostedV_m"        : ["CMS_scale_PNetMass"],
     "th_xsec"           : ["QCDScale_ttbar"],
@@ -192,15 +194,17 @@ systGroups = {
 
 systLabels = {
 
-    "jets4"          : "AK4 Jet energy scale and resolution & $\\checkmark$",
-    "jets8"          : "AK8 Jet energy scale and resolution & $\\checkmark$",
+    "jets4"          : "AK4 JES and JER & $\\checkmark$",
+    "jets8"          : "AK8 JES and JER & $\\checkmark$",
     "lumi"          : "Luminosity &",
     "pileup"        : "Pileup & $\\checkmark$",
-    "prefire"       : "L1-prefiring inneficiency & $\\checkmark$",
+    "prefire"       : "L1-prefiring inefficiency & $\\checkmark$",
     "trigger"       : "Trigger efficiency &",
     "lepton"        : "Lepton veto efficiency &",
-    "boostedV"      : "\\textsc{ParticleNet} discriminator scale &",
-    "boostedV_m"    : "\\textsc{ParticleNet} mass scale &",
+#    "boostedV"      : "textsc{ParticleNet} discriminator scale &",
+#    "boostedV_m"    : "textsc{ParticleNet} mass scale &",
+    "boostedV"      : "ParticleNet discriminator scale &",
+    "boostedV_m"    : "ParticleNet mass scale &",
     "resolvedV"     : "Resolved V discriminator scale &",
     "th_xsec"       : "Cross section (scale, PDF) &",
     "th_acc"        : "Acceptance (scale, PDF) & $\\checkmark$",
@@ -237,8 +241,8 @@ procLabels = {
 }
 
 
-
-systGroups_ordered = ["trigger","lepton","pileup","prefire","lumi","jets4","jets8","btag","met","resolvedV", "qcd_s","th_xsec","th_acc","stats"]
+systGroups_ordered = ["trigger","lepton","pileup","prefire","lumi","jets4","jets8","btag","met","resolvedV","boostedV","boostedV_m","qcd_s","th_xsec","th_acc","stats"]
+#systGroups_ordered = ["trigger","lepton","pileup","prefire","lumi","jets4","jets8","btag","met","resolvedV","qcd_s","th_xsec","th_acc","stats"]
 #systGroups_ordered = ["lumi","lepton","trigger","pileup","jets", "bjets", "met", "th_acc", "th_xsec", "tt_mass", "sdmass", "nsub", "qcdP0", "qcdP1"]
 procGroups_ordered = ["VVEWK", "VVQCD", "qcd", "ttbar", "VJets","EWKV"]
 #procGroups_ordered = ["ttbar"]

@@ -471,10 +471,11 @@ class DatacardBuilder:
                 namedn = re.sub('_BRLFDown','_BRLFUp',hname)
                 htmp     = fIn.Get(namedn)
             
+
             ## Fix PNet Discr shapes uncertainties, scaling them by 1.-cut
             for discr in [ 'Xqq','Xbb','Xcc' ]:
                 for s in ['Up','Down']:
-                    systname='_CMS_eff_'+discr+s
+                    systname='_PNet'+discr+s
                     if systname in hname:
                         namecen  = re.sub(systname,'',hname)
                         h0     = fIn.Get(namecen)
@@ -983,6 +984,8 @@ if __name__=="__main__":
     #base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
         base_path="Datacards/inputs/AUG12" 
+    if os.environ['USER'] == "dalfonso":
+        base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/AUG4SYST/'
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -1004,6 +1007,7 @@ if __name__=="__main__":
     if("MET" not in opt.category):
         #db.add_process('QCD',False,['QCD_HT'],[opt.category])
         db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
+        db.add_process('EWKV',False,['EWKW','EWKZ'],[opt.category])
     else:
         #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
         db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
@@ -1138,8 +1142,12 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    if os.environ['USER'] == "amarini":
+                   db.write_cards('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+                   db.write_inputs('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    if os.environ['USER'] == "dalfonso":
+                   db.write_cards('DATACARD/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+                   db.write_inputs('DATACARD/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
 
 #Local Variables:
 #mode:c++
