@@ -1,12 +1,41 @@
 #!/usr/bin/env python
 import os, sys, re
 from optparse import OptionParser
-from datetime import datetime
+import time
+from datetime import datetime, timedelta
 
 import itertools, copy ## for keywords
 import numpy as np
 from array import array
 import math
+
+class Timing:
+    def __init__(self):
+        self.start_=datetime.now() ## global start
+        self.start= self.start_
+        ## partial sums
+        self.sums_={}
+        self.start_sums_={}
+
+
+    def __call__(self, mex,overall=False):
+        end=datetime.now()
+        print ">>",mex,end - (self.start_ if overall else self.start )
+        sys.stdout.flush()
+        self.start=datetime.now()
+        return self
+
+    def start_sum(self, what):
+        if what not in self.sums_: self.sums_[what] = timedelta() ## 0
+        self.start_sums_[what] = datetime.now()
+
+    def end_sum(self,what):
+        end = datetime.now()
+        self.sums_[what] +=  end - self.start_sums_[what]
+        self.start_sums_[what] = datetime.now()
+
+    def print_sum(self,what):
+        print ">>",what,"sum is",self.sums_[what]  if what in self.sums_ else "Not there"
 
 
 if __name__=="__main__":
@@ -228,6 +257,8 @@ class DatacardBuilder:
         self.verbose=verbose
         self.proc_number={}
         self.garbage=[]
+        self.timing=Timing()
+        self.file_map_={}
         pass
 
     def _get_proc_number(self,proc):
@@ -298,6 +329,7 @@ class DatacardBuilder:
         return self
 
     def write_cards(self,outname): #datacard.txt
+        self.timing.start_sum('write_cards')
         outroot=re.sub(".txt.*",".inputs.root",outname)
         if opt.there: outroot=outroot.split('/')[-1]
         now=datetime.now()
@@ -378,6 +410,8 @@ class DatacardBuilder:
                 for key in d2['keywords']:
                     txt.write('### ' + key +' '+ ','.join(d2['keywords'][key]) + '\n')
 
+        self.timing.end_sum('write_cards')
+
 
     def _manipulate_histo(self,htmp,y,corr):
         htmp.Scale(lumis[y] * 1000 * corr)
@@ -394,6 +428,7 @@ class DatacardBuilder:
 
     def _get_interpolated_histo(self,fname,rename, (p1,hname1),(p2,hname2),p): ### INTERPOLATE
         ''' Return linearly interpolated histo'''
+        self.timing.start_sum('get_interpolated_histo')
         h1 = self._get_histo(fname, hname1,"tmp1")
         h1.SetName("tmp1")
 
@@ -421,9 +456,24 @@ class DatacardBuilder:
         h.SetName(rename)
         h1.Delete()
         h2.Delete()
+        self.timing.end_sum('get_interpolated_histo')
         return h
 
+    def _open_file(self,fname):
+        ''' Keep a map of opened files. Avoid I/O operations'''
+        self.file_map_={}
+        if fname not in self.file_map_: 
+            fIn=ROOT.TFile.Open(fname)
+            if self.verbose >2: print "DEBUG","opening file:",fname
+            if self.fOut!=None: self.fOut.cd()
+
+            if fIn==None: raise RuntimeError('Unable to open file: '+fname+'. Total number of file opened is %d'%len(self.file_map_))
+            self.file_map_[fname] = fIn
+            
+        return self.file_map_[fname]
+
     def _get_histo(self,fname,hnameorg,rename=""):
+        self.timing.start_sum('get_histo')
         normalization = self._get_norm(hnameorg)
         #normalization = 1.
         #print hnameorg,normalization
@@ -449,9 +499,8 @@ class DatacardBuilder:
             if 'Clip' in hname and 'AQGC' not in hname:
                 hname = re.sub('Clip','',hname)  ## remove "Clip" from non signal processes
 
-            fIn=ROOT.TFile.Open(ftmp)
-            if self.verbose >2: print "DEBUG","opening file:",ftmp
-            if self.fOut!=None: self.fOut.cd()
+            #fIn=ROOT.TFile.Open(ftmp)
+            fIn = self._open_file(ftmp)
             if self.verbose >2: print "DEBUG","getting histo",hname,"->",rename
             htmp=fIn.Get(hname)
             if htmp==None and self.verbose >0: print "ERROR","unable to get histogram",hname,"from",ftmp
@@ -497,7 +546,8 @@ class DatacardBuilder:
                 htmpD = {} ## dictionary to hold additional histograms
                 for reg in ["anti","side","antiSide"] if strategy==1 else ["anti"]:
                     fmore = re.sub('(HAD(?!SR)|HADSR)','HAD'+reg,ftmp)
-                    fInD[reg] = ROOT.TFile.Open(fmore)
+                    #fInD[reg] = ROOT.TFile.Open(fmore)
+                    fInD[reg] = self._open_file(fmore)
                     if fInD[reg] == None: 
                         print "ERROR: no such file or directory:",fmore
 
@@ -576,6 +626,7 @@ class DatacardBuilder:
             ## including overflow for aqgc
             h.SetBinContent( h.GetNbinsX(), h.GetBinContent( h.GetNbinsX()) + h.GetBinContent(h.GetNbinsX()+1))
 
+        self.timing.end_sum('get_histo')
         if h:
             totbin = h.GetNbinsX()
             #h.Rebin(totbin)
@@ -706,8 +757,9 @@ class DatacardBuilder:
 
 
     def write_inputs(self,outname): #datacard.txt
+        self.timing.start_sum('write_inputs')
         outroot=re.sub(".txt.*",".inputs.root",outname)
-        self.fOut=ROOT.TFile.Open(outroot,"RECREATE")
+        self.fOut=ROOT.TFile.Open(outroot,"RECREATE") ## leave this open here, w/ RECREATE
         self.fOut.cd()
         info=ROOT.TNamed("info","date %s\n"%(datetime.now().strftime("%Y/%m/%d %H:%M")) )
 
@@ -717,9 +769,9 @@ class DatacardBuilder:
             LikelihoodMapping = FwRebin.SimpleRebin(10)
         else:
             LikelihoodMapping = self.play_binning()
-
-
-        for cat in self.categories:
+        
+        for icat, cat in enumerate(self.categories):
+            print ">> DOING CAT", cat, icat,"of",len(self.categories)
             d=self.categories[cat]
             # data
             data=self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_%(suffix)s"%d,"%(cat)s_data_obs"%d)
@@ -769,7 +821,8 @@ class DatacardBuilder:
                                 dnew['iinfo']['suffix'].append( (suf1,suf2) )
                         myprocesses[newproc]=dnew
             # proc
-            for proc in myprocesses:
+            for iproc,proc in enumerate(myprocesses):
+                print "DEBUG","[writeInputs]","doing proc",proc, iproc,"of",len(myprocesses), "Completion", float(icat *len(myprocesses) + iproc) / float(len(myprocesses)*len(self.categories))
                 d2=myprocesses[proc]
                 if cat not in d2['cat']: 
                     if self.verbose >2: print "DEBUG","excluding",cat,proc
@@ -810,8 +863,8 @@ class DatacardBuilder:
                 # SYST TODO check interpolation logic
                 hups = []
                 hdns = []
-                for sname in self.systs:
-                    print "DEBUG","[writeInputs]","doing syst",sname, "for process",proc,"is interpolated?", d2['interpolate'] if 'interpolate' in d2 else False
+                for isyst,sname in enumerate(self.systs):
+                    #print "DEBUG","[writeInputs]","doing syst",sname, isyst,"of",len(self.systs), "for process",proc,"is interpolated?", d2['interpolate'] if 'interpolate' in d2 else False
                     s=self.systs[sname]
                     if 'shape' not in s['type']: continue
 
@@ -976,6 +1029,8 @@ class DatacardBuilder:
                 print "DEBUG","[writeInputs]","done systs", "for process",proc
             print "DEBUG","[writeInputs]","done process",proc
         self.fOut.Close()
+        ### profiling informations
+        self.timing.end_sum('write_inputs')
         return self
                             
 
@@ -1089,10 +1144,14 @@ if __name__=="__main__":
     db.add_systematics('CMS_L1Prefire','L1Prefire','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_scale_uncluster','UNCLUSTER','shape',('.*',proc_regex),1.)
 
+
     #db.add_systematics('CMS_scale_PNetMass','PNetMass','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_eff_Xqq','PNetXqq','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_eff_Xbb','PNetXbb','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_eff_Xcc','PNetXcc','shape',('.*',proc_regex),1.)
+
+    #print("DEBUG, skipping some syst for AQGC")
+    #proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
 
     #db.add_systematics('CMS_btag_CFERR1','BRCFERR1','shape',('.*',proc_regex),1.)
     #db.add_systematics('CMS_btag_CFERR2','BRCFERR2','shape',('.*',proc_regex),1.)
@@ -1102,6 +1161,7 @@ if __name__=="__main__":
     db.add_systematics('CMS_btag_LFSTAT1','BRLFSTAT1','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_LFSTAT2','BRLFSTAT2','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_btag_LF','BRLF','shape',('.*',proc_regex),1.)
+
 
     db.add_systematics('CMS_scaleR_tt','Scale','shape',('.*','ttbar'),1.)
     db.add_systematics('CMS_scaleF_tt','Scale','shape',('.*','ttbar'),1.)
@@ -1118,8 +1178,6 @@ if __name__=="__main__":
         db.add_systematics('CMS_scaleRF_Wj','Scale','shape',('.*','Winv'),1.)
         db.add_systematics('CMS_scaleRF_VQQ','Scale','shape',('.*','VQQ'),1.)
 
-    print("DEBUG, skipping some syst for AQGC")
-    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
     ## break down JES sources
     db.add_systematics('CMS_jes_FlavorQCD','JES_FlavorQCD','shape',('.*',proc_regex),1.)
     db.add_systematics('CMS_jes_RelativeBal','JES_RelativeBal','shape',('.*',proc_regex),1.)
@@ -1148,6 +1206,13 @@ if __name__=="__main__":
 
     db.write_cards('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
     db.write_inputs('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+
+    print ">>>> PROFILING INFORMATION SUMS"
+    db.timing.print_sum('write_cards')
+    db.timing.print_sum('write_inputs')
+    db.timing.print_sum('get_histo')
+    db.timing.print_sum('get_interpolated_histo')
+    db.timing('Overall time')
 
 #Local Variables:
 #mode:c++
