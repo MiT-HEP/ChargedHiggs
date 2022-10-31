@@ -864,15 +864,14 @@ class DatacardBuilder:
 
                         # QCDnonclosure shape
                         if 'QCDnonclosure' in sname:
-                            hnom=hnom0.Clone()
-                            #hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            #hnom=hnom0.Clone()
+                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             hup = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Up")
                             hdn = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             continue
 
                         if 'CMS_eff_l' in sname:
-                            hnom = hnom0.Clone()
-                            #hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             if hup == None:
                                 hup, hdn = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
                             else:
@@ -880,6 +879,8 @@ class DatacardBuilder:
                                 hup.Add(hupTmp)
                                 hdn.Add(hdnTmp)
                             continue
+
+                        #note this suffix_short should be used also for CMS_eff_l
 
                         isAQGC= re.match("AQGC",suffix)
                         suffix_short = re.sub('_AQGC_.*','',suffix) ## if not AQGC is the same as suffix
