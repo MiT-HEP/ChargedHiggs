@@ -120,7 +120,8 @@ public:
     bool doMultiTagger = false;
     bool do2DNN = false;
 
-    bool computeGenPhaseSpace(){
+    bool computeGenPhaseSpace(string l){
+
         // fwd - bkw jets 
         GenParticle *q1=nullptr, *q2=nullptr;
         // find vector bosons
@@ -134,7 +135,7 @@ public:
 
             int apdg= abs(genpar->GetPdgId());
 
-            if (apdg< 6){ // do I also have the V decays?
+            if (apdg< 6 or apdg==12 or apdg==14 or apdg==16){ // do I also have the V decays? // look for quarks and neutrinos
                 q.push_back(genpar);
             }
         }
@@ -145,12 +146,39 @@ public:
         constexpr float mW = 80.34; 
         constexpr float mZ = 91.18; 
         
-        float delta1 =1000.;  // find the best candidates
+        //
+        bool twoW=false;
+        if (l.find("WPMJJWPMJJjj") !=string::npos
+            or l.find("WPJJWMJJjj") !=string::npos
+            //
+            or l.find("WPHADWMLEPjj") !=string::npos
+            or l.find("WPLEPWMHADjj") !=string::npos
+            or l.find("WPLEPWPHADjj") !=string::npos
+            or l.find("WMLEPWMHADjj") !=string::npos
+            //
+            ) twoW=true;
+
+        bool twoZ=false;
+        if (l.find("ZNUNUZJJjj") !=string::npos
+            or l.find("ZJJZJJjj") !=string::npos
+            ) twoZ=true;
+
+        bool oneZoneW=false;
+        if (l.find("ZNUNUWPMJJjj") !=string::npos
+            or l.find("ZJJNOBWPMJJjj") !=string::npos
+            or l.find("ZBBWPMJJjj") !=string::npos
+            //
+            or l.find("WPLEPZHADjj") !=string::npos
+            or l.find("WMLEPZHADjj") !=string::npos
+            ) oneZoneW=true;
+
+        float delta1 = 1000.;  // find the best candidates
         for (int i=0;i<6;++i)
         for (int j=i+1;i<6;++i)
         {
             // Z
-            if (abs(q[i]->GetPdgId()) == abs(q[j]->GetPdgId()) and q[i]->GetPdgId()*q[j]->GetPdgId()<0) {
+            if ( (twoZ or oneZoneW)
+                and abs(q[i]->GetPdgId()) == abs(q[j]->GetPdgId()) and q[i]->GetPdgId()*q[j]->GetPdgId()<0) {
                 double m = q[j]->InvMass(q[i]);
                 if ( fabs(m-mZ) < delta1) {
                     q11= q[i];
@@ -159,9 +187,9 @@ public:
                 }
             } // ended Z loop
             // W 
-            if (  
-                (abs(q[i]->GetPdgId()) + abs(q[j]->GetPdgId()) )%2 ==1
-                and q[i]->GetPdgId()*q[j]->GetPdgId()>0
+            if (twoW
+                and (abs(q[i]->GetPdgId()) + abs(q[j]->GetPdgId()) )%2 ==1
+                and q[i]->GetPdgId()*q[j]->GetPdgId()<0
                 ) {
                 double m = q[j]->InvMass(q[i]);
                 if ( fabs(m-mW) < delta1) {
@@ -169,11 +197,11 @@ public:
                     q12 = q[j];
                     delta1 = fabs(m-mW);
                 }
-            } // ended Z loop
+            } // ended W loop
         }
         
         //////// ----------- SECOND LOOP
-        float delta2 =1000.;  // find the best candidates
+        float delta2 = 1000.;  // find the best candidates
         for (int i=0;i<6;++i)
         {
         if (q[i] == q11 or q[i] == q12) continue;
@@ -181,7 +209,8 @@ public:
         {
             if (q[j] == q11 or q[j] == q12) continue;
             // Z
-            if (abs(q[i]->GetPdgId()) == abs(q[j]->GetPdgId()) and q[i]->GetPdgId()*q[j]->GetPdgId()<0) {
+            if (twoZ
+                and abs(q[i]->GetPdgId()) == abs(q[j]->GetPdgId()) and q[i]->GetPdgId()*q[j]->GetPdgId()<0) {
                 double m = q[j]->InvMass(q[i]);
                 if ( fabs(m-mZ) < delta2) {
                     q21= q[i];
@@ -190,9 +219,9 @@ public:
                 }
             } // ended Z loop
             // W 
-            if (  
-                (abs(q[i]->GetPdgId()) + abs(q[j]->GetPdgId()) )%2 ==1
-                and q[i]->GetPdgId()*q[j]->GetPdgId()>0
+            if ((twoW or oneZoneW)
+                and (abs(q[i]->GetPdgId()) + abs(q[j]->GetPdgId()) )%2 ==1
+                and q[i]->GetPdgId()*q[j]->GetPdgId()<0
                 ) {
                 double m = q[j]->InvMass(q[i]);
                 if ( fabs(m-mW) < delta2) {
@@ -200,13 +229,27 @@ public:
                     q22 = q[j];
                     delta2 = fabs(m-mW);
                 }
-            } // ended Z loop
+            } // ended W loop
         }
+        }
+
+        if(q21==nullptr or q22==nullptr) {
+            std::cout << " ------- q21 or q22 are null " << std::endl;
+            std::cout << " q11=" << q11 << " ->GetPdgId() " << q11->GetPdgId() << std::endl;
+            std::cout << " q12=" << q12 << " ->GetPdgId() " << q12->GetPdgId() << std::endl;
+            std::cout << " q[0]->GetPdgId() " << q[0]->GetPdgId() << std::endl;
+            std::cout << " q[1]->GetPdgId() " << q[1]->GetPdgId() << std::endl;
+            std::cout << " q[2]->GetPdgId() " << q[2]->GetPdgId() << std::endl;
+            std::cout << " q[3]->GetPdgId() " << q[3]->GetPdgId() << std::endl;
+            std::cout << " q[4]->GetPdgId() " << q[4]->GetPdgId() << std::endl;
+            std::cout << " q[5]->GetPdgId() " << q[5]->GetPdgId() << std::endl;
+            return false;
         }
 
         // end association
         TLorentzVector zero(0,0,0,0); // just to satisfy my paranoia
         Object V1, V2 ; V1.SetP4(zero); V2.SetP4(zero);
+
         V1 += *q11 ; V1 +=  *q12;
         V2 += *q21 ; V2 += *q22;
 
@@ -230,13 +273,19 @@ public:
 
         double mjj = j1->InvMass(j2);
         double mvv = V1.InvMass(V2);
-        
+
+        // note to fix on MET:
+        //     no eta V1,V2
+        //     MVV --> MTVV
+
         if (q11->Pt() <10) return false;
         if (q12->Pt() <10) return false;
         if (q21->Pt() <10) return false;
         if (q22->Pt() <10) return false;
-        if (V1.Pt() <10 ) return false;
-        if (V2.Pt() <10 ) return false;
+        if (V1.Pt() <100 ) return false;
+        if (V2.Pt() <100 ) return false;
+        if (fabs(V1.Eta()) <2.5 ) return false;
+        if (fabs(V2.Eta()) <2.5 ) return false;
         if (j1->Pt() <30) return false;
         if (j2->Pt() <30) return false;
         if (fabs(j1->Eta()) > 4.7) return false;
@@ -244,6 +293,7 @@ public:
         if (fabs(j1->Eta() -j2->Eta()) <2.5 ) return false;  //deltaetajj
         if (mjj <100) return false;
         if (mvv <100) return false;
+
         return true;
     }
 

@@ -3906,7 +3906,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     bool genPhaseSig = false;
     if(checkSignalLabel(label) and (!(label.find("aQGC") != string::npos))) {
-        genPhaseSig = computeGenPhaseSpace();
+        genPhaseSig = computeGenPhaseSpace(label);
         Fill("VBShadAnalysis/GENERAL/CrossSection_" +label, systname, int(genPhaseSig) , e->weight() );
     }
 
