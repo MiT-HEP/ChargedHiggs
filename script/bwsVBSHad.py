@@ -578,18 +578,20 @@ class DatacardBuilder:
                 #htmp     = fIn.Get(namedn)
                 htmp     = self._bare_get(fIn,namedn)
             
+
             ## Fix PNet Discr shapes uncertainties, scaling them by 1.-cut
             for discr in [ 'Xqq','Xbb','Xcc' ]:
                 for s in ['Up','Down']:
-                    systname='_CMS_eff_'+discr+s
+                    systname='_PNet'+discr+s
                     if systname in hname:
                         namecen  = re.sub(systname,'',hname)
                         #h0     = fIn.Get(namecen)
                         h0     = self._bare_get(fIn,namecen)
 
-                        htmp.Add(h0,-1)
-                        htmp.Scale( 1.- ( 0.75 if discr == 'Xqq' else 0.96)  )   ## Xbb 0.96, Xcc, 0.96, Xqq 0.75
-                        htmp.Add(h0)
+                        if h0:
+                            htmp.Add(h0,-1)
+                            htmp.Scale( 1.- ( 0.75 if discr == 'Xqq' else 0.96)  )   ## Xbb 0.96, Xcc, 0.96, Xqq 0.75
+                            htmp.Add(h0)
                         
 
             ### QCD SF and hist stat. enhancement
@@ -937,6 +939,7 @@ class DatacardBuilder:
                             SystName = inh
                     if not matched: continue
 
+                    hnom0 = None
                     hup = None
                     hdn = None
                     Up = "Up"
@@ -966,23 +969,25 @@ class DatacardBuilder:
                                 hnom0=self._get_interpolated_histo(fname,"", (d2['iinfo']['lo'],hname1),(d2['iinfo']['hi'],hname2),d2['iinfo']['point'])
                             else:
                                 hnom0 = self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix,"")
+                                print hnom0.GetName()
                         else:
-                            hnom0 = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            if hnom0 == None: hnom0=hnom.Clone()
+                            else: hnom0.Add(hnom)
 
                         if hnom0 == None:
                             print ("hnom0 is None", d2['fname'], d2['interpolate'] if 'interpolate' in d2 else 'None', "%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix,"%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix)
 
                         # QCDnonclosure shape
                         if 'QCDnonclosure' in sname:
-                            hnom=hnom0.Clone()
-                            #hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            #hnom=hnom0.Clone()
+                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             hup = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Up")
                             hdn = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             continue
 
                         if 'CMS_eff_l' in sname:
-                            hnom = hnom0.Clone()
-                            #hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
+                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
                             if hup == None:
                                 hup, hdn = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
                             else:
@@ -991,16 +996,18 @@ class DatacardBuilder:
                                 hdn.Add(hdnTmp)
                             continue
 
+                        #note this suffix_short should be used also for CMS_eff_l
+
+                        isAQGC= re.match("AQGC",suffix)
+                        suffix_short = re.sub('_AQGC_.*','',suffix) ## if not AQGC is the same as suffix
+                        if isAQGC:
+                            suffix_SM= re.sub('_[^_]*','_0p00',suffix)
+
                         if hup==None:
                             ## todo here, check for systs fname here. Possible symmetrize to the default over there
                             #MVV_BB_aQGC_WMJJZNUNUjj_EWK_LO_NPle1_PUUp   -> _AQGC_ftx_value
                             #MVV_BB_aQGC_WMJJWMJJjj_EWK_LO_NPle1_AQGC_ft9_0p00
                             #derive new suffix 
-
-                            isAQGC= re.match("AQGC",suffix)
-                            suffix_short = re.sub('_AQGC_.*','',suffix) ## if not AQGC is the same as suffix
-                            if isAQGC:
-                                suffix_SM= re.sub('_[^_]*','_0p00',suffix)
 
                             if d2['fname'] != None: 
                                 # if fname set in proc, use it.
@@ -1103,6 +1110,8 @@ if __name__=="__main__":
     #base_path = '/eos/user/h/hum/VBSHad'
     if os.environ['USER'] == "amarini":
         base_path="Datacards/inputs/AUG12" 
+    if os.environ['USER'] == "dalfonso":
+        base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/AUG4SYST/'
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -1124,6 +1133,7 @@ if __name__=="__main__":
     if("MET" not in opt.category):
         #db.add_process('QCD',False,['QCD_HT'],[opt.category])
         db.add_process('VQQ',False,['VJetsToQQ'],[opt.category])
+        db.add_process('EWKV',False,['EWKW','EWKZ'],[opt.category])
     else:
         #db.add_process('diBoson',False,['DIBOSON'],[opt.category])
         db.add_process('triBoson',False,['TRIBOSON'],[opt.category])
@@ -1263,9 +1273,12 @@ if __name__=="__main__":
     extra =""
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
-    db.write_cards('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-    db.write_inputs('Datacards/AUG12_interpolate/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-
+    if os.environ['USER'] == "amarini":
+                   db.write_cards('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+                   db.write_inputs('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+    if os.environ['USER'] == "dalfonso":
+                   db.write_cards('DATACARD/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+                   db.write_inputs('DATACARD/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
     db.print_profile_info("FINAL")
 
 #Local Variables:
