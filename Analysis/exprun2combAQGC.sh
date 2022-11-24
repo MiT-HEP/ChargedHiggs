@@ -9,10 +9,14 @@ echo 'carddir='$carddir
 
 UPdir='/afs/cern.ch/user/a/amarini/work/ChHiggs2017/CMSSW_10_2_13/src/ChargedHiggs/Datacards/AUG12_interpolate'
 carddir='AQGC'
-year='2021'
-quote='5_aqgc_fm2'
 fitr="exp"
-string='0p40' 
+year='2021'
+
+#quote='5_aqgc_fm2'
+#string='0p40'
+
+quote='5_aqgc_ft7'
+string='0p40'
 
 echo "-- AQGC --"
 echo "start t2w"
@@ -33,7 +37,7 @@ combineCards.py cms_vbshad_$year\_$quote\_MVV_BB_SR.txt cms_vbshad_$year\_$quote
 cd ../ 
 
 ### comb region ###
-text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose --PO 'map=.*/VV_AQGC_EWK:r_s0[1,0,5]' $carddir/cms_vbshad_$year\_$quote\_MVV_BB_all.txt -o $carddir/workspace_$year\_$quote\_MVV_BB_all.root
+text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose --PO 'map=.*/VV_AQGC_EWK:r_s0[1,0,5]' --keyword-value VALUE=0p00 $carddir/cms_vbshad_$year\_$quote\_MVV_BB_all.txt -o $carddir/workspace_$year\_$quote\_MVV_BB_all.root
 
 echo "done t2w"
 
@@ -43,7 +47,7 @@ echo "significance"
 if [ "$fitr" = "exp" ]; then 
 	### comb region ###
 	echo "BB all - exp"
-	combine $carddir/workspace_$year\_$quote\_MVV_BB_all.root -M Significance -n BB_significance_MVV_BB_all_VVEWK --setParameters r_s0=1 -t -1 -v 10 
+	combine $carddir/workspace_$year\_$quote\_MVV_BB_all.root -M Significance -n BB_significance_MVV_BB_all_VVEWK --setParameters r_s0=1 -t -1 
 
 else
 	echo "run unb CR postfit later"
@@ -58,7 +62,7 @@ echo "FitDiagnostics"
 
 if [ "$fitr" = "exp" ]; then
 	echo "BB all - exp"
-	combine -M FitDiagnostics -t -1 $carddir/workspace_$year\_$quote\_MVV_BB_all.root  --robustFit=1  --X-rtd MINIMIZER_analytic --saveShapes --saveWithUncertainties --saveNormalizations  --setParameters r_s0=1 --rMin -5 --rMax 5 -n final_$year\_$quote\_MVV_BB_all -v 10
+	combine -M FitDiagnostics -t -1 $carddir/workspace_$year\_$quote\_MVV_BB_all.root  --robustFit=1  --X-rtd MINIMIZER_analytic --saveShapes --saveWithUncertainties --saveNormalizations  --setParameters r_s0=1 --rMin -5 --rMax 5 -n final_$year\_$quote\_MVV_BB_all
 #	combine -M FitDiagnostics -t -1 $carddir/workspace_$year\_DNN_comb_all_VVEWK.root --robustFit=1  --X-rtd MINIMIZER_analytic --saveShapes --saveWithUncertainties --saveNormalizations  --setParameters r_s0=1 --rMin -5 --rMax 5 -n final_$year\_DNN_comb_all_VVEWK
 else
 	combine -M FitDiagnostics $carddir/workspace_$year\_DNN_comb_CR_VVEWK.root --robustFit=1  --X-rtd MINIMIZER_analytic --saveShapes --saveWithUncertainties --saveNormalizations --rMin 0 --rMax 5 -n final_$year\_DNN_comb_CR_unb_VVEWK --cminDefaultMinimizerStrategy 1 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND --X-rtd MINIMIZER_analytic --cminDefaultMinimizerTolerance=0.5
