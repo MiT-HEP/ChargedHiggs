@@ -3906,7 +3906,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     bool genPhaseSig = false;
     if(checkSignalLabel(label) and (!(label.find("aQGC") != string::npos))) {
-        genPhaseSig = computeGenPhaseSpace(label);
+        genPhaseSig = computeGenPhaseSpace(label,(doMETAnalysis or doMETAntiAnalysis));
         Fill("VBShadAnalysis/GENERAL/CrossSection_" +label, systname, int(genPhaseSig) , e->weight() );
     }
 
@@ -4878,13 +4878,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ VARIOUS plots below for tree
     //////
 
-
     evt_j1unc = sqrt((forwardJets[0]->GetJESUnc())*(forwardJets[0]->GetJESUnc()) + Getjetres(forwardJets[0]) * Getjetres(forwardJets[0]));
     evt_j2unc = sqrt((forwardJets[1]->GetJESUnc())*(forwardJets[1]->GetJESUnc()) + Getjetres(forwardJets[1]) * Getjetres(forwardJets[1]));
 
     evt_j1QGL = forwardJets[0]->QGL();
     evt_j2QGL = forwardJets[1]->QGL();
-
 
     evt_Jet1Eta=forwardJets[0]->Eta();
     evt_Jet1Pt=forwardJets[0]->Pt();
@@ -4893,7 +4891,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     evt_Dphijj = ChargedHiggs::deltaPhi(forwardJets[0]->Phi(), forwardJets[1]->Phi());
     Fill("VBShadAnalysis/FWJETS/Dphijj" +category+"_"+label, systname, fabs(evt_Dphijj), e->weight() );
-
 
     ////////////////////
     //
@@ -4910,7 +4907,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_EtaMinV = std::min(evt_bosV1Eta,evt_bosV2Eta);
         evt_EtaMaxV = std::max(evt_bosV1Eta,evt_bosV2Eta);
     }
-
 
     p4VVjj = p4VV + p4jj;
 

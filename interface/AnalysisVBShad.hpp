@@ -120,7 +120,7 @@ public:
     bool doMultiTagger = false;
     bool do2DNN = false;
 
-    bool computeGenPhaseSpace(string l){
+    bool computeGenPhaseSpace(string l, bool doMETAnalysis){
 
         // fwd - bkw jets 
         GenParticle *q1=nullptr, *q2=nullptr;
@@ -274,25 +274,23 @@ public:
         double mjj = j1->InvMass(j2);
         double mvv = V1.InvMass(V2);
 
-        // note to fix on MET:
-        //     no eta V1,V2
-        //     MVV --> MTVV
-
         if (q11->Pt() <10) return false;
         if (q12->Pt() <10) return false;
         if (q21->Pt() <10) return false;
         if (q22->Pt() <10) return false;
-        if (V1.Pt() <100 ) return false;
-        if (V2.Pt() <100 ) return false;
-        if (fabs(V1.Eta()) <2.5 ) return false;
-        if (fabs(V2.Eta()) <2.5 ) return false;
-        if (j1->Pt() <30) return false;
-        if (j2->Pt() <30) return false;
+        if (V1.Pt() <100 ) return false; // at RECO < 300
+        if (V2.Pt() <100 ) return false; // forRMET should be cut on the qij.Pt() and qij.Eta()
+        if( not doMETAnalysis) {
+            if (fabs(V1.Eta()) > 2.5 ) return false;
+            if (fabs(V2.Eta()) > 2.5 ) return false;
+            if (mvv <100) return false; // forMET use ChargedHiggs::mtMassive(V1->P4(),V2->P4()); // at RECO < 500
+        }
+        if (j1->Pt() <20) return false;
+        if (j2->Pt() <20) return false;
         if (fabs(j1->Eta()) > 4.7) return false;
         if (fabs(j2->Eta()) > 4.7) return false;
-        if (fabs(j1->Eta() -j2->Eta()) <2.5 ) return false;  //deltaetajj
-        if (mjj <100) return false;
-        if (mvv <100) return false;
+        if (fabs(j1->Eta() - j2->Eta()) <2.5 ) return false;  //deltaetajj
+        if (mjj <100) return false; // at RECO < 500
 
         return true;
     }
