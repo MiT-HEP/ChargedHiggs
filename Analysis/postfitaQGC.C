@@ -21,44 +21,49 @@
 
 const double aaano = 35.87;
 const int bkgtype = 7;
+//const TString testSignal = "fm2";
+//const TString testPoint = "0p40";
+
+const TString testSignal = "ft7";
+const TString testPoint = "0p40";
 
 TString bkgname[bkgtype] = {"VV_QCD","EWKV","Zinv","Winv","ttbar","QCD","VV_AQGC_EWK"};
 TString bkgshort[bkgtype] = {"VVQCD","EWKV","Zinv","W+jets","t#bar{t}","QCD","VVEWK"};
 //const int colorbkg[bkgtype] = {kOrange+9,kBlue-7,kOrange-9,kMagenta-2,kGreen+2,kAzure-4,kOrange};
 const int colorbkg[bkgtype] = {kGreen+2, kYellow-9, kOrange+1, kOrange-9,kAzure-4,kOrange-2,kOrange+9};
 
-
-
-
 void postfitaQGC(TString cat, TString ana, TString pro){
 
         setTDRStyle();
 
-
 	//TFile* f1 = TFile::Open(Form("/afs/cern.ch/user/h/hum/work/private/CMSSW_10_2_13/src/ChargedHiggs/fitDiagnosticsNanoVsystModBin_%s_%s_VV.root",ana.Data(), cat.Data())  );
 	//TFile* f2 = TFile::Open(Form("/afs/cern.ch/user/h/hum/work/private/CMSSW_10_2_13/src/ChargedHiggs/Datacards/NanoV2NewBinning/cms_vbshad_%s_%s.inputs.root", ana.Data(), cat.Data()));
 
-	TFile* f1 = TFile::Open(Form("/afs/cern.ch/user/h/hum/work/private/CMSSW_10_2_13/src/ChargedHiggs/aQGC/fitDiagnosticsMAR24_2021_MVV_%s_SR_VVEWK.root",cat.Data() ));
-	TFile* f2 = TFile::Open(Form("/afs/cern.ch/user/h/hum/work/private/CMSSW_10_2_13/src/ChargedHiggs/aQGC/Datacards/MAR24/cms_vbshad_2021_5_aqgc_ft5_MVV_%s_SR.inputs.root", cat.Data()));
-        TFile* f3 = TFile::Open(Form("/afs/cern.ch/user/h/hum/work/private/CMSSW_10_2_13/src/ChargedHiggs/aQGC/Datacards/MAR24/cms_vbshad_2021_5_aqgc_fs1_MVV_%s_SR.inputs.root", cat.Data()));
+	TString fileName1= Form("$CMSSW_BASE/src/ChargedHiggs/Analysis/fitDiagnosticsfinal_2021_5_aqgc_%s_MVV_%s_all.root",testSignal.Data(),cat.Data());
+	TString fileName2= Form("$CMSSW_BASE/src/ChargedHiggs/Analysis/AQGC/cms_vbshad_2021_5_aqgc_%s_MVV_%s_SR.inputs.root",testSignal.Data(),cat.Data()); // SR --> side, anti
+	TString fileName3= Form("$CMSSW_BASE/src/ChargedHiggs/Analysis/AQGC/cms_vbshad_2021_5_aqgc_%s_MVV_%_SR.inputs.root",testSignal.Data(),cat.Data()); // SR --> side, anti
 
+	TFile* f1 = TFile::Open(fileName1);
+	TFile* f2 = TFile::Open(fileName2);
+	TFile* f3 = TFile::Open(fileName3);
 
+	//	TFile* f1 = TFile::Open(Form("/afs/cern.ch/user/h/hum/work/private/CMSSW_10_2_13/src/ChargedHiggs/aQGC/fitDiagnosticsMAR24_2021_MVV_%s_SR_VVEWK.root",cat.Data() ));
+	//	TFile* f2 = TFile::Open(Form("/afs/cern.ch/user/h/hum/work/private/CMSSW_10_2_13/src/ChargedHiggs/aQGC/Datacards/MAR24/cms_vbshad_2021_5_aqgc_ft5_MVV_%s_SR.inputs.root", cat.Data()));
+	//      TFile* f3 = TFile::Open(Form("/afs/cern.ch/user/h/hum/work/private/CMSSW_10_2_13/src/ChargedHiggs/aQGC/Datacards/MAR24/cms_vbshad_2021_5_aqgc_fs1_MVV_%s_SR.inputs.root", cat.Data()));
 
         vector<TDirectoryFile*> catep;
         vector<TDirectoryFile*> cater;
 	vector<TH1D*> cateorg;
 
-	cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/%s" ,cat.Data())) );
-
-        catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/%s" ,cat.Data())) );
+	//	cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/%s" ,cat.Data())) );
+	//	catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/%s" ,cat.Data())) );
+	cater.push_back( (TDirectoryFile*)f1->Get("shapes_fit_s/ch1") );
+	catep.push_back( (TDirectoryFile*)f1->Get("shapes_fit_s/ch1") );
 
         //cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_prefit/%s" ,cat.Data())) );
-
 	//catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_prefit/%s" ,cat.Data())) );
-
-	//cater.push_back( (TDirectoryFile*)f1->Get("shapes_prefit/ch1"));
-	//catep.push_back( (TDirectoryFile*)f1->Get("shapes_prefit/ch1"));
-
+	//	cater.push_back( (TDirectoryFile*)f1->Get("shapes_prefit/ch1"));
+	//	catep.push_back( (TDirectoryFile*)f1->Get("shapes_prefit/ch1"));
 	//cateorg.push_back( (TH1D*)f2->Get(Form("%s_data_obs",cat.Data())) );
 	cateorg.push_back( (TH1D*)f2->Get(Form("%s_ttbar",cat.Data())) );
 
@@ -73,7 +78,6 @@ void postfitaQGC(TString cat, TString ana, TString pro){
         TH1D* tot_sigbin2;
 	TH1D* tot_sig3;
         TH1D* tot_sigbin3;
-
                 
         TGraphAsymmErrors* fit_data;
 
@@ -108,16 +112,17 @@ void postfitaQGC(TString cat, TString ana, TString pro){
 
                 if(catep[i]==NULL) continue;
 
+		// testPoint
+		if(f2) tot_sig  = (TH1D*)f2->Get(Form("%s_VV_AQGC_EWK_%s",cat.Data(),testPoint.Data()));
+		if(f2) tot_sig2 = (TH1D*)f2->Get(Form("%s_VV_AQGC_EWK_%s",cat.Data(),testPoint.Data()));
+		//		if(f3) tot_sig3 = (TH1D*)f3->Get(Form("%s_VV_AQGC_EWK_%s",cat.Data(),testPoint.Data()));
 
-		tot_sig  = (TH1D*)f2->Get(Form("%s_VV_AQGC_EWK_5p20",cat.Data()));
-		tot_sig2 = (TH1D*)f2->Get(Form("%s_VV_AQGC_EWK_5p20",cat.Data()));
-		tot_sig3 = (TH1D*)f3->Get(Form("%s_VV_AQGC_EWK_24p00",cat.Data()));
-		
 		tot_bkg = (TH1D*)catep[i]->Get("total");
 	        //tot_bkg = (TH1D*)catep[i]->Get("total_background");
                 fit_data = (TGraphAsymmErrors*)catep[i]->Get("data");
 
                 if(fit_data == NULL or tot_bkg == NULL) continue;
+		if(tot_sig == NULL or tot_sig2 == NULL) continue;
 
                 NBins = cateorg[i]->GetNbinsX();
 		xbegin = cateorg[i]->GetXaxis()->GetXmin();
@@ -125,7 +130,7 @@ void postfitaQGC(TString cat, TString ana, TString pro){
 		// signal *************************//
                 tot_sigbin = (TH1D*)cateorg[i]->Clone("sig");
 		tot_sigbin2 = (TH1D*)cateorg[i]->Clone("sig2");
-		tot_sigbin3 = (TH1D*)cateorg[i]->Clone("sig3");
+		//		tot_sigbin3 = (TH1D*)cateorg[i]->Clone("sig3");
                 for(int k=1; k<=NBins; k++){
                         double xwidth = cateorg[i]->GetBinWidth(k);
                         if (NBins == 1) xwidth = 5000;
@@ -133,7 +138,7 @@ void postfitaQGC(TString cat, TString ana, TString pro){
                         //else if(k == NBins) xwidth = cateorg[i]->GetBinWidth(k) - 5500;
                         tot_sigbin->SetBinContent(k,tot_sig->GetBinContent(k)/xwidth);
 			tot_sigbin2->SetBinContent(k,tot_sig2->GetBinContent(k)/xwidth);
-			tot_sigbin3->SetBinContent(k,tot_sig3->GetBinContent(k)/xwidth);
+			//			tot_sigbin3->SetBinContent(k,tot_sig3->GetBinContent(k)/xwidth);
                 }
 
                 tot_sigbin->SetLineWidth(2);
@@ -142,8 +147,8 @@ void postfitaQGC(TString cat, TString ana, TString pro){
 		tot_sigbin2->SetLineWidth(2);
                 tot_sigbin2->SetLineColor(kRed+1);
 
-		tot_sigbin3->SetLineWidth(2);
-                tot_sigbin3->SetLineColor(kViolet);
+		//		tot_sigbin3->SetLineWidth(2);
+		//                tot_sigbin3->SetLineColor(kViolet);
 
 		////////////////////////////////////
 
@@ -183,9 +188,10 @@ void postfitaQGC(TString cat, TString ana, TString pro){
                 }
 
 
-
 		bkgall->SetFillColor(kBlack);
 		bkgall->SetFillStyle(3004);
+
+		std::cout <<  " HELLO before loop [j] " << std::endl;
 
 
                 for(int j=0; j<bkgtype; j++){
@@ -314,7 +320,7 @@ void postfitaQGC(TString cat, TString ana, TString pro){
         bkgall->Draw("e2 same");
         tot_sigbin->Draw("hist same");
 	//tot_sigbin2->Draw("hist same");
-	tot_sigbin3->Draw("hist same");
+	//	tot_sigbin3->Draw("hist same");
 	//ddbin->Draw("P e same");
 
 
@@ -360,7 +366,7 @@ void postfitaQGC(TString cat, TString ana, TString pro){
 	//legend0->AddEntry(tot_sigbin2,"EWK W#pmW#mp","l");
 	//legend0->AddEntry(tot_sigbin3,"EWK ZZ","l");
 
-        legend0->AddEntry(tot_sigbin3,"f_{S1}/#Lambda^{4} = 24 TeV^{-4}","l");
+	//        legend0->AddEntry(tot_sigbin3,"f_{S1}/#Lambda^{4} = 24 TeV^{-4}","l");
 
 	//legend0->AddEntry(ddbin,"Data","LP");
         //legend0->AddEntry(bkgall,"f_{S0}/#Lambda^{4} = 20.0 TeV^{-4}","l");
@@ -436,9 +442,9 @@ void postfitaQGC(TString cat, TString ana, TString pro){
                 char savepath[150];
                 char Ssavepath2[150];
                 char Ssavepath3[150];
-		sprintf(savepath,"/afs/cern.ch/user/h/hum/work/public/CMSSW_10_2_13/src/ChargedHiggs/Analysis/plots/2021Apr/Apr02_2021_unlog_%s_%s_%s.pdf",ana.Data(),cat.Data(),pro.Data());
-		sprintf(Ssavepath2,"/afs/cern.ch/user/h/hum/work/public/CMSSW_10_2_13/src/ChargedHiggs/Analysis/plots/2021Apr/Apr02_2021_unlog_%s_%s_%s.png",ana.Data(),cat.Data(),pro.Data());
-		sprintf(Ssavepath3,"/afs/cern.ch/user/h/hum/work/public/CMSSW_10_2_13/src/ChargedHiggs/Analysis/plots/2021Apr/Apr02_2021_unlog_%s_%s_%s.C",ana.Data(),cat.Data(),pro.Data());
+		sprintf(savepath,"$CMSSW_BASE/src/ChargedHiggs/Analysis/AQGC/NOV24_unlog_%s_%s_%s_%s_%s.pdf",testSignal.Data(),testPoint.Data(),ana.Data(),cat.Data(),pro.Data());
+		sprintf(Ssavepath2,"$CMSSW_BASE/src/ChargedHiggs/Analysis/AQGC/NOV24_unlog_%s_%s_%s_%s_%s.png",testSignal.Data(),testPoint.Data(),ana.Data(),cat.Data(),pro.Data());
+		sprintf(Ssavepath3,"$CMSSW_BASE/src/ChargedHiggs/Analysis/AQGC/NOV24_unlog_%s_%s_%s_%s_%s.C",testSignal.Data(),testPoint.Data(),ana.Data(),cat.Data(),pro.Data());
 
                 c1a->SaveAs(savepath);
                 c1a->SaveAs(Ssavepath2);
