@@ -16,7 +16,7 @@ parser.add_option("","--more",dest="more",default="",type="string",help="Input f
 
 parser.add_option("-l","--label",dest="label",default="",type="string",help="Labels, or none or one for input file")
 parser.add_option("-o","--outname",dest="outname",help="Name of output pdf/png/C")
-#parser.add_option("-v","--verbose",dest="verbose",default=False,action="store_true")
+parser.add_option("-v","--verbose",dest="verbose",default=False,action="store_true")
 parser.add_option("-b","--batch",dest="batch",default=False,action="store_true")
 #parser.add_option("-u","--unblind",dest="unblind",default=False,action="store_true",help="Draw observation")
 #parser.add_option("-p","--poi",dest="poi",default="r",type="string",help="POI [%default]")
@@ -68,6 +68,11 @@ def findQuantile(pts,cl):
 		if c : 
 			maxci=len(rcrossbound)-c_i-1
 			break
+    
+	if opts.verbose:
+	    print ">>> CL ",cl
+	    print ">>> crossbound:",crossbound
+	    print ">>> Min ci,",minci
 
 	if minci>0: 
 		y0,x0 = pts[minci-1][0],pts[minci-1][1]
@@ -340,6 +345,9 @@ def GetLimitFromFile(fname,poi):
     ## clean spikes
     if not opts.tobaseline:  res = cleanSpikes1D(res) 
     print "> ",len(res), "good entries over",tree.GetEntries()/2 if opts.tobaseline else tree.GetEntries()
+    if opts.verbose:
+        for x,y in res:
+            print "* ",x,"->",y
     return res
 
 def GetGraph(res):

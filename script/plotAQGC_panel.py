@@ -9,9 +9,11 @@ parser = OptionParser()
 parser.add_option("","--paper",dest="paper",default=False,action="store_true")
 parser.add_option("","--comparison",dest="comparison",default=False,action="store_true")
 parser.add_option("-o","--outname",dest="outname",help="Name of output pdf/png/C")
+parser.add_option("-b","--batch",action='store_true',dest="batch",help="Batch",default=False)
 (opts,args)=parser.parse_args()
 
 import ROOT
+if opts.batch: ROOT.gROOT.SetBatch()
 
 with open(opts.outname + ".json") as fin: 
     results = json.loads(fin.read())
