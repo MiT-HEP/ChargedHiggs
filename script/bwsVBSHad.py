@@ -511,8 +511,11 @@ class DatacardBuilder:
             if self.cached_obj[(fname,dirname)] == None:
                 print "Why I am None?",fname, dirname, hname
             obj=self.cached_obj[(fname,dirname)].FindObject(hname) ## could be done better
+        if obj != None and obj.InheritsFrom("TH1") and ROOT.TMath.IsNaN(obj.Integral()):
+            print ">  Input Integral is Nan for", obj.GetName()
+            obj.Print("V ALL")
         self.timing.end_sum("bare_get")
-        return obj
+        return obj.Clone() if obj != None else obj
 
     def _get_histo(self,fname,hnameorg,rename=""):
         self.timing.start_sum('get_histo')
@@ -592,7 +595,7 @@ class DatacardBuilder:
                             htmp.Add(h0,-1)
                             htmp.Scale( 1.- ( 0.75 if discr == 'Xqq' else 0.96)  )   ## Xbb 0.96, Xcc, 0.96, Xqq 0.75
                             htmp.Add(h0)
-                        
+
 
             ### QCD SF and hist stat. enhancement
             #if "_QCD_HT" in hname and "SR" in opt.region and opt.category in ["BB","BBtag"]:
@@ -697,6 +700,10 @@ class DatacardBuilder:
     def _write(self, o ):
         if o==None and self.verbose> 0: print "ERROR","unable to write none object"
         if o == None: return 
+        if o.InheritsFrom("TH1") and ROOT.TMath.IsNaN(o.Integral()):
+            print("Integral of "+o.GetName()+"is nan")
+            o.Print("VALL")
+            raise RuntimeError
         if self.verbose >2: print "DEBUG", "writing object",o.GetName()
         o.Write()
         self.garbage.append(o) ## avoid destruction
@@ -986,22 +993,23 @@ class DatacardBuilder:
                             hdn = self.creat_QCD_Shape(hnom,"%(cat)s_"%d+proc+"_"+sname+"Down")
                             continue
 
-                        if 'CMS_eff_l' in sname:
-                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix,"")
-                            if hup == None:
-                                hup, hdn = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
-                            else:
-                                hupTmp, hdnTmp = self.creat_LepEff_Shape(hnom,suffix,"%(cat)s_"%d+proc+"_"+sname)
-                                hup.Add(hupTmp)
-                                hdn.Add(hdnTmp)
-                            continue
-
                         #note this suffix_short should be used also for CMS_eff_l
 
                         isAQGC= re.match("AQGC",suffix)
                         suffix_short = re.sub('_AQGC_.*','',suffix) ## if not AQGC is the same as suffix
                         if isAQGC:
                             suffix_SM= re.sub('_[^_]*','_0p00',suffix)
+
+                        if 'CMS_eff_l' in sname:
+                            hnom = self._get_histo("%(path)s/%(fname)s"%d,"%(base)s_"%d+suffix_short,"")
+                            if hup == None:
+                                hup, hdn = self.creat_LepEff_Shape(hnom,suffix_short,"%(cat)s_"%d+proc+"_"+sname)
+                            else:
+                                hupTmp, hdnTmp = self.creat_LepEff_Shape(hnom,suffix_short,"%(cat)s_"%d+proc+"_"+sname)
+                                hup.Add(hupTmp)
+                                hdn.Add(hdnTmp)
+                            continue
+
 
                         if hup==None:
                             ## todo here, check for systs fname here. Possible symmetrize to the default over there
@@ -1031,16 +1039,16 @@ class DatacardBuilder:
                                 hdn.Divide(hSM)
 
                             if hup != None and hdn == None:
-                                hdn = hup.Clone(re.sub("Up$","Down",hup.GetName()))
-                                hdn.Reset("ACE")
+                                hdn = hnom0.Clone(re.sub("Up$","Down",hup.GetName()))
+                                #hdn.Reset("ACE") ## the zero point is the nominal
                             if hdn != None and hup == None:
-                                hup = hdn.Clone(re.sub("Down$","Up",hdn.GetName()))
-                                hup.Reset("ACE")
+                                hup = hnom0.Clone(re.sub("Down$","Up",hdn.GetName()))
+                                #hup.Reset("ACE")
                             if hup == None and hdn == None:
                                 hup = hnom0.Clone("%(cat)s_"%d+proc+"_"+sname+"Up")
                                 hdn = hnom0.Clone("%(cat)s_"%d+proc+"_"+sname+"Down")
-                                hup.Reset("ACE")
-                                hdn.Reset("ACE")
+                                #hup.Reset("ACE")
+                                #hdn.Reset("ACE")
                         else:
                             if d2['fname'] != None: 
                                 hupTmp=self._get_histo("%(path)s"%d+"/%(fname)s"%d2,"%(base)s_"%d+suffix_short+"_"+SystName+Up,"%(cat)s_"%d+proc+"_"+sname+"Up")
@@ -1183,7 +1191,8 @@ if __name__=="__main__":
     db.add_systematics('CMS_eff_trigger','','lnN',('.*','.*'),1.025)
     
     ## real lepton uncertainty
-    proc_reall = '^((?!Zinv).)*$' if "MET" in opt.category else 'ttbar'
+    #proc_reall = '^((?!Zinv).)*$' if "MET" in opt.category else 'ttbar'
+    proc_reall = '^((?!Zinv|AQGC).)*$' if "MET" in opt.category else 'ttbar'
     db.add_systematics('CMS_eff_l','','shape',('.*',proc_reall),1.)
 
     if "BBtag" in opt.category:
@@ -1200,8 +1209,8 @@ if __name__=="__main__":
         else: db.add_rateparam('CMS_QCDnonclosure_n_anti_BB','QCD',0.5,1.50)
     
     #No shape uncertainties in aqgc signal
-    #proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
-    proc_regex = '.*'
+    proc_regex = '^((?!AQGC).)*$' if opt.aqgc else '.*'
+    #proc_regex = '.*'
     db.add_systematics('CMS_pileUp','PU','shape',('.*',proc_regex),1.)
     if "RMET" in opt.category:
         db.add_systematics('CMS_eff_ResolvedDiscr','ResTagger','shape',('.*',proc_regex),1.)
@@ -1274,8 +1283,8 @@ if __name__=="__main__":
     if opt.aqgc: extra+="_aqgc_"+aqgc_par
 
     if os.environ['USER'] == "amarini":
-                   db.write_cards('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-                   db.write_inputs('Datacards/AUG12_clip/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+                   db.write_cards('Datacards/DEC2_nosyst/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+                   db.write_inputs('Datacards/DEC2_nosyst/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
     if os.environ['USER'] == "dalfonso":
                    db.write_cards('DATACARD/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
                    db.write_inputs('DATACARD/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
