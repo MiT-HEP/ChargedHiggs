@@ -67,7 +67,8 @@ class SystematicSmoother:
 
     def smooth(self):
 
-        self.rebin()
+# comment this step since we do in the bwsVBSHad.py
+#       self.rebin()
 
         # new histograms containing the smoothed ratios --> after rebinning
         self.rUpSmoothed = self.rUp.Clone("upSmoothed")
