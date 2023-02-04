@@ -34,7 +34,7 @@ addfiles=%(amarini)s/WMLEPZHADjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NA
 ##WMHADZLEPjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 ##ZLEPZHADjj_EWK_LO_TuneCP5_13TeV-madgraph-pythia8
 
-#addfiles=%(amarini)s/WMLEPWMHADjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #ssWW
+addfiles=%(amarini)s/WMLEPWMHADjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #ssWW
 addfiles=%(amarini)s/WPHADWMLEPjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #osWW
 addfiles=%(amarini)s/WPLEPWMHADjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #osWW
 addfiles=%(amarini)s/WPLEPWPHADjj_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2017-NANOAODSIMv9   #ssWW
