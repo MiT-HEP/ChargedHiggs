@@ -2346,8 +2346,8 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         // ** promptLeptons from W for Wjets and semileptonic ttbar in MET category
         if((fabs(genpar->GetPdgId()) == 11 ||  fabs(genpar->GetPdgId()) == 13 || fabs(genpar->GetPdgId()) == 15) and fabs(genpar->GetParentPdgId())==24) if(genLep==NULL) { genLep = genpar; }
         // ** prompt V for the ZJetsToNuNu_HT and WJetsToLNu_HT and pt-reweighting
-        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("DYJetsToLL_Pt") !=string::npos or label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos )) if(genVp==NULL) { genVp = genpar; }
-        if( (fabs(genpar->GetPdgId()) == 24) and (label.find("WJetsToLNu_HT") !=string::npos or label.find("WJetsToLNu_Pt") !=string::npos ) ) if(genVp==NULL) { genVp = genpar; }
+        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos or label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("ZJetsToQQ")!=string::npos )) if(genVp==NULL) { genVp = genpar; }
+        if( (fabs(genpar->GetPdgId()) == 24) and (label.find("WJetsToLNu_HT") !=string::npos or label.find("WJetsToLNu_Pt") !=string::npos or label.find("WJetsToQQ")!=string::npos) ) if(genVp==NULL) { genVp = genpar; }
 
         // ** BOSON
         if(fabs(genpar->GetPdgId()) == pdgID1 and fabs(genpar->GetParentPdgId())>6) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
@@ -3518,7 +3518,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WJetsToLNu_HT") !=string::npos) mc = 310 ;
     if(label.find("WJetsToLNu_Nj") !=string::npos) mc = 311 ;
     if(label.find("WJetsToLNu_Pt") !=string::npos) mc = 312 ;
-    if(label.find("DYJetsToLL_Pt") !=string::npos) mc = 313 ;
+    if(label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos) mc = 313 ;
     if(label.find("DY") !=string::npos) mc = 320 ;
     if(label.find("ZJetsToQQ") !=string::npos) mc = 330 ;
     if(label.find("WJetsToQQ") !=string::npos) mc = 340 ;
@@ -3802,7 +3802,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_Pt" or
         label == "ZJetsToNuNuPt" or label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
         label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
-        label == "DYJetsToLL_Pt" or
+        label == "DYJetsToLL_LHEFilterPtZ" or
         label == "ZJetsToQQ" or label == "WJetsToQQ" or label == "VJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
 
@@ -3860,8 +3860,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label.find("EWKWMinus2Jets") !=string::npos) label = "WJetsToLNu";
     if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
     */
-    if(label.find("ZJetsToQQ") !=string::npos) label = "VJetsToQQ";
-    if(label.find("WJetsToQQ") !=string::npos) label = "VJetsToQQ";
 
     //$$$$$$$$$
     //$$$$$$$$$ Merge and redefine TTbar
@@ -3911,6 +3909,9 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     }
 
     genStudies(e, label );
+
+    if(label.find("ZJetsToQQ") !=string::npos) label = "VJetsToQQ";
+    if(label.find("WJetsToQQ") !=string::npos) label = "VJetsToQQ";
 
     /*
     // REMOVE TOP FOR THE OSWW or ZW - EWK
@@ -4694,14 +4695,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //////
 
     //////  EWK correction to be applied also to VQQ ?
-    if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("DYJetsToLL_Pt") !=string::npos) and genVp!=NULL) {
+    if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos or label.find("VJetsToQQ") !=string::npos ) and genVp!=NULL) {
 
         if( not e->ExistSF("ZNNLO_rwg") ){
             LogN(__FUNCTION__,"WARNING","SF: ZNNLO_rwg does not exist",10);
             return EVENT_NOT_USED;
         }
         auto pt = (genVp->Pt()<160)?160: (genVp->Pt()>1200)? 1200:genVp->Pt(); 
-            e->SetPtEtaSF("ZNNLO_rwg", pt ,0.); // it is only pt dependent
+        e->SetPtEtaSF("ZNNLO_rwg", pt ,0.); // it is only pt dependent
         e->ApplySF("ZNNLO_rwg");
     }
 
@@ -5204,7 +5205,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
-        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or ( label.find("ZJetsToNuNuPt") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_Pt") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
+        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or ( label.find("ZJetsToNuNuPt") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
             if ( (systname=="" or systname=="NONE") and e->GetWeight()->HasScale()) // SCALE RF
                 { // only on the money plots, when no other syst, and for MC with aqgc weights
                     // prepare weights
