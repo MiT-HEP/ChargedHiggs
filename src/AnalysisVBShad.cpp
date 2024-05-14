@@ -18,7 +18,7 @@
 #define DEEP_Jet_MEDIUM ((year==12016)?0.2598:(year==2016)?0.2489:(year==2017)?0.3040:0.2783)
 #define DEEP_Jet_TIGHT ((year==12016)?0.6502:(year==2016)?0.6377:(year==2017)?0.7476:0.7100)
 
-// CvsL
+// CvsL (not used)
 #define DEEP_C_LOOSE ((year==2016 or year==12016)?1.:(year==2017)?0.04:0.064)
 #define DEEP_C_MEDIUM ((year==2016 or year==12016)?1.:(year==2017)?0.144:0.153)
 #define DEEP_C_TIGHT ((year==2016 or year==12016)?1.:(year==2017)?0.73:0.405)
@@ -1583,7 +1583,7 @@ void VBShadAnalysis::Init(){
 
     } //end label loop
 
-    if(doWriteTree) { writeTree("tree_vbs",0); writeTree("tree_vbs_JES_TotalDown",0); writeTree("tree_vbs_JES_TotalUp",0); }
+    if(doWriteTree) { writeTree("tree_vbs",0); /*writeTree("tree_vbs_JES_TotalDown",0); writeTree("tree_vbs_JES_TotalUp",0);*/ }
     if(writeTrainTree) writeTree("tree_resTag",1);
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
@@ -3519,11 +3519,13 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WJetsToLNu_Nj") !=string::npos) mc = 311 ;
     if(label.find("WJetsToLNu_Pt") !=string::npos) mc = 312 ;
     if(label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos) mc = 313 ;
-    if(label.find("DY") !=string::npos) mc = 320 ;
+    //    if(label.find("DY") !=string::npos) mc = 320 ;
     if(label.find("ZJetsToQQ") !=string::npos) mc = 330 ;
     if(label.find("WJetsToQQ") !=string::npos) mc = 340 ;
     if(label.find("VJetsToQQ") !=string::npos) mc = 350 ;
     if(label.find("EWKV") !=string::npos) mc = 360 ;
+    if(label.find("EWKW") !=string::npos) mc = 361 ;
+    if(label.find("EWKZ") !=string::npos) mc = 362 ;
 
     if(label.find("QCD_HT") !=string::npos) mc =500 ;
     if(label.find("QCD_Inclusive") !=string::npos) mc =501 ;
@@ -5205,7 +5207,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
-        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or ( label.find("ZJetsToNuNuPt") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
+        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or ( label.find("ZJetsToNuNuPt") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
             if ( (systname=="" or systname=="NONE") and e->GetWeight()->HasScale()) // SCALE RF
                 { // only on the money plots, when no other syst, and for MC with aqgc weights
                     // prepare weights

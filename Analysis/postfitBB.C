@@ -19,52 +19,103 @@
 #include <math.h>
 #include "tdrstyle.C"
 
-const double aaano = 35.87;
-const int bkgtype = 9;
+const int bkgtype = 10;
 
-TString bkgname[bkgtype] = {"VVOther","triBoson","EWKV","Zinv","Winv","ttbar","VQQ","QCD","VVEWK"};
-TString bkgshort[bkgtype] = {"VVQCD","triboson","EWKV","Zinv","W+jets","t#bar{t}","VQQ","QCD","VVEWK"};
+TString bkgname[bkgtype] = {"VVOther","triBoson","st","EWKV","Zinv","Winv","ttbar","VQQ","QCD","VVEWK"};
+TString bkgshort[bkgtype] = {"VVQCD","triboson","st","EWKV","Zinv","W+jets","t#bar{t}","VQQ","QCD","VVEWK"};
 //const int colorbkg[bkgtype] = {kOrange+9,kBlue-7,kOrange-9,kMagenta-2,kGreen+2,kAzure-4,kOrange};
-const int colorbkg[bkgtype] = {kGreen+2,kGreen-9, kYellow-9, kOrange+1, kOrange-9,kAzure-4,kViolet-9,kOrange-2,kOrange+9};
+const int colorbkg[bkgtype] = {kGreen+2,kGreen-9, kAzure-3, kYellow-9, kOrange+1, kOrange-9,kAzure-4,kViolet-9,kOrange-2,kOrange+9};
 
+bool doPostFit=true;
+TString regionToPlot = "";
+TString stringToPlot = "";
+TString fileName1 = "";
 
+// to run
+// root -l -q -b postfitBB.C+'("BB","BDTnoBnoMET","comb",1)'
+// root -l -q -b postfitBB.C+'("BBtag","BDTbtag","comb",1)'
+// root -l -q -b postfitBB.C+'("BMET","BDTwithMET","comb",1)'
+// root -l -q -b postfitBB.C+'("RMET","BDTwithMET","comb",1)'
 
+// root -l -q -b postfitBB.C+'("RMET","MVV","comb",1)'
 
-void postfitBB(TString cat, TString ana, TString pro){
+void postfitBB(TString cat, TString ana, TString pro, int cy){
 
-  //cms_vbshad_2021_2_BDTwithMET_RMET_side.inputs.root
+  //  int cy = 1;
+  if(cy==1) { stringToPlot = "_sr"; regionToPlot = "SR"; }
+  if(cy==2) { stringToPlot = "_side"; regionToPlot = "side"; }
+  if(cy==3) { stringToPlot = "_anti"; regionToPlot = "anti"; }
 
-  TString fileName1= "$CMSSW_BASE/src/ChargedHiggs/Analysis/fitDiagnosticsfinal_2021_DNN_comb_all_VVEWK.root";
-  TString fileName2= "$CMSSW_BASE/src/ChargedHiggs/Analysis/DATACARD/AUG4/cms_vbshad_2021_2_%s_%s_SR.inputs.root"; // SR --> side, anti
+  stringToPlot = regionToPlot;
+
+  int cx = 0;
+  if (cat == "BB") cx = 1;
+  else if (cat == "BMET") cx = 2;
+  else if (cat == "RMET") cx = 3;
+  else if (cat == "BBtag") cx = 4;
+
+  TString directory_= "$CMSSW_BASE/src/ChargedHiggs/Analysis/DATACARDMVA_bin0p05_stat0p5_wSmooth/FEB5four/";
+  TString fileName1 = Form(directory_+"fitDiagnosticsfinal_2021_DNN_comb_all_%s_%s_all_VVEWKunb_VVEWK.root", ana.Data(), cat.Data());
+  TString fileName2= Form(directory_+"cms_vbshad_2021_2_%s_%s_%s.inputs.root", ana.Data(), cat.Data(), regionToPlot.Data()); // SR --> side, anti
+
+  if(!ana.Contains("BDT")) {
+    directory_= Form("$CMSSW_BASE/src/ChargedHiggs/Analysis/DATACARD%s_wSmooth/FEB5four/", ana.Data());
+    fileName1 = Form(directory_+"fitDiagnosticsfinal_2021_%s_%s_all_VVEWKunb_VVEWK.root", ana.Data(), cat.Data());
+    fileName2= Form(directory_+"cms_vbshad_2021_2_%s_%s_%s.inputs.root", ana.Data(), cat.Data(), regionToPlot.Data()); // SR --> side, anti
+  }
+
+  std::cout << fileName1 << std::endl;
+  std::cout << fileName2 << std::endl;
 
   setTDRStyle();
-  TFile* f1 = TFile::Open(fileName1.Data());
-  TFile* f2 = TFile::Open(Form(fileName2.Data(), ana.Data(), cat.Data()));
+  TFile* f1 = TFile::Open(fileName1);
+  TFile* f2 = TFile::Open(fileName2);
 
         vector<TDirectoryFile*> catep;
         vector<TDirectoryFile*> cater;
 	vector<TH1D*> cateorg;
 
-
 	//chx_chy
 	//x: 1 bb 2 bmet 3 rmet 4 bbtag
 	//y: 1 sr 2 side 3 anti
-	int cx = 0;
-	if (cat == "BB") cx = 1;
-	else if (cat == "BMET") cx = 2;
-        else if (cat == "RMET") cx = 3;
-        else if (cat == "BBtag") cx = 4;
 
-        cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/ch%i_ch1",cx)) );
-        catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/ch%i_ch1",cx)) );
+	/* when doing combined category we need
+	if(doPostFit)  {
+	  cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/ch%i_ch%i",cx,cy)) );
+	  catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/ch%i_ch%i",cx,cy)) );
+	  // fit_b this is background only fit
+	  //	  cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/ch%i_ch%i",cx,cy)) );
+	  //	  catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/ch%i_ch%i",cx,cy)) );
 
+	} else {
+	  cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_prefit/ch%i_ch%i",cx,cy)) );
+	  catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_prefit/ch%i_ch%i",cx,cy)) );
+	}
+
+	*/
+
+	if(doPostFit)  {
+	  cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/ch%i",cy)) );
+	  catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/ch%i",cy)) );
+	} else {
+	  cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_prefit/ch%i",cy)) );
+	  catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_prefit/ch%i",cy)) );
+	}
+
+	/*
+	if(doPostFit)  {
+	  cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/%s","BMET")) );
+	  catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_s/%s","BMET")) );
+	} else {
+	  cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_prefit/%s","BMET")) );
+	  catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_prefit/%s","BMET")) );
+	}
+	*/
 
 //        cater.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_b/%s" ,cat.Data())) );
-
 //	catep.push_back( (TDirectoryFile*)f1->Get(Form("shapes_fit_b/%s" ,cat.Data())) );
-
-	//cateorg.push_back( (TH1D*)f2->Get(Form("%s_data_obs",cat.Data())) );
-	cateorg.push_back( (TH1D*)f2->Get(Form("%s_ttbar",cat.Data())) );
+//	cateorg.push_back( (TH1D*)f2->Get(Form("%s_data_obs",cat.Data())) );
+	cateorg.push_back( (TH1D*)f2->Get(Form("%s_ttbar",cat.Data())) );  // to get the right binning, ttbar is the a bkg for all 4 category
 
 	THStack *cateyields = new THStack("cateyield","");
 
@@ -153,7 +204,6 @@ void postfitBB(TString cat, TString ana, TString pro){
 		////////////////////////////////////
 
 
-		cout << "what a fuck" << endl;
 		//tot_bkg
                 for(int k=1; k<=NBins; k++){
                                 
@@ -311,12 +361,12 @@ void postfitBB(TString cat, TString ana, TString pro){
 
 	cout << "zenmel000" << endl;
 
-        cateyields->Draw("hist");
-        bkgall->Draw("e2 same");
-        tot_sigbin->Draw("hist same");
+	if(cateyields)  cateyields->Draw("hist");
+	if(bkgall) bkgall->Draw("e2 same");
+        if(tot_sigbin) tot_sigbin->Draw("hist same");
 	//tot_sigbin2->Draw("hist same");
 	//tot_sigbin3->Draw("hist same");
-	//ddbin->Draw("P e same");
+	ddbin->Draw("P e same");
 
 
 	cout << "zenmel0" << endl;
@@ -400,7 +450,8 @@ void postfitBB(TString cat, TString ana, TString pro){
         hRatio->SetLineWidth(1);
         hRatio->SetLineColor(kBlack);
 
-        hRatio->GetXaxis()->SetTitle("DNN score");
+	if(ana.Contains("BDT")) hRatio->GetXaxis()->SetTitle("DNN score");
+	if(ana.Contains("Mjj")) hRatio->GetXaxis()->SetTitle("Mjj");
         //hRatio->GetXaxis()->SetRangeUser(0,1);
         hRatio->GetYaxis()->SetTitle("Data/BKG");
         hRatio->GetYaxis()->SetLabelFont(43);
@@ -427,22 +478,33 @@ void postfitBB(TString cat, TString ana, TString pro){
 	//if (HhRatio->GetErrorY(a) > 0.8)
 	cout << a << "," << HhRatio->GetErrorY(a) << "shenmea" << endl;
 	}
+	// Draw the data in the ratio PAD
                 TGraphAsymmErrors* gr = new TGraphAsymmErrors(NBins,x,y,xrl,xrh,yrl,yrh);
                 gr->SetMarkerStyle(20);
                 gr->SetMarkerColor(kBlack);
                 gr->SetMarkerSize(1.5);
-                //gr->Draw("P e ");
+                gr->Draw("P e ");
                 char savepath[150];
                 char Ssavepath2[150];
                 char Ssavepath3[150];
-		sprintf(savepath,"$CMSSW_BASE/src/ChargedHiggs/Analysis/plots/Sep24unb_newcolor_%s_%s_%s.pdf",ana.Data(),cat.Data(),pro.Data());
-		sprintf(Ssavepath2,"$CMSSW_BASE/src/ChargedHiggs/Analysis/plots/Sep24unb_newcolor_%s_%s_%s.png",ana.Data(),cat.Data(),pro.Data());
-		sprintf(Ssavepath3,"$CMSSW_BASE/src/ChargedHiggs/Analysis/plots/Sep24unb_newcolor_%s_%s_%s.C",ana.Data(),cat.Data(),pro.Data());
+
+		if(doPostFit) stringToPlot += "_postfit";
+		else stringToPlot += "_prefit";
+
+		//		stringToPlot += "_SRonly";
+
+		if(ana.Contains("BDT")) {
+		  sprintf(savepath,"~/www/VBS/FEB5four/PrePostDistributions/unb_%s_%s_%s_%s.pdf",ana.Data(),cat.Data(),pro.Data(),stringToPlot.Data());
+		  sprintf(Ssavepath2,"~/www/VBS/FEB5four/PrePostDistributions/unb_%s_%s_%s_%s.png",ana.Data(),cat.Data(),pro.Data(),stringToPlot.Data());
+		  sprintf(Ssavepath3,"~/www/VBS/FEB5four/PrePostDistributions/unb_%s_%s_%s_%s.C",ana.Data(),cat.Data(),pro.Data(),stringToPlot.Data());
+		} else {
+		  sprintf(savepath,"~/www/VBS/FEB5four/PrePostDistributions/unb_%s_%s_%s_%s.pdf",ana.Data(),cat.Data(),pro.Data(),stringToPlot.Data());
+		  sprintf(Ssavepath2,"~/www/VBS/FEB5four/PrePostDistributions/unb_%s_%s_%s_%s.png",ana.Data(),cat.Data(),pro.Data(),stringToPlot.Data());
+		  sprintf(Ssavepath3,"~/www/VBS/FEB5four/PrePostDistributions/unb_%s_%s_%s_%s.C",ana.Data(),cat.Data(),pro.Data(),stringToPlot.Data());
+		}
 
                 c1a->SaveAs(savepath);
                 c1a->SaveAs(Ssavepath2);
                 c1a->SaveAs(Ssavepath3);
-
-
 
 }
