@@ -8,8 +8,8 @@
 #endif
 
 void JetFilter2016::Init(){
-    TFile *f=TFile::Open("aux/hotjets-runBCDEFGH.root");
-    h.reset( (TH2D*)f->Get("h2jet")->Clone() ) ;
+    TFile *f=TFile::Open(filename_.c_str());
+    h.reset( (TH2D*)f->Get(histname_.c_str())->Clone() ) ;
     //f->Close();
 }
 
