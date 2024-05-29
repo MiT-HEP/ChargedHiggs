@@ -62,6 +62,7 @@ if __name__=="__main__":
 ######### after option parser, so we have --help
 import ROOT
 import FwBinning as FwRebin
+import systematicSmoother as ss
 
 
 lumis={
@@ -714,7 +715,7 @@ class DatacardBuilder:
         hbkg = []
 
         if("MET" not in opt.category):
-            majorbkg = ['QCD','ttbar']
+                majorbkg = ['QCD','VQQ','ttbar']
         else: majorbkg = ['ttbar','Winv','Zinv']
 
         for cat in self.categories:
@@ -852,7 +853,7 @@ class DatacardBuilder:
             else:
                 data =  likelihoodBinning.applyMapping(LikelihoodMapping, data)
             self._write(data)
-            
+
             # redefine self.processes to write if it has keywords
             myprocesses = {}
             for proc in self.processes:
@@ -1095,7 +1096,18 @@ class DatacardBuilder:
 
                     hup = likelihoodBinning.applyMapping(LikelihoodMapping, hup)
                     hdn = likelihoodBinning.applyMapping(LikelihoodMapping, hdn)
-                 
+
+                    ##do the Smoothing and plotting
+                    if 'btag' or 'jes' or 'scale' in sname:
+                                    nomH = likelihoodBinning.applyMapping(LikelihoodMapping, hnom0)
+                                    upH = hup.Clone()
+                                    dnH = hdn.Clone()
+                                    print('HELLO SMOOTHING for ',sname, ' process is ', proc)
+                                    smoother= ss.SystematicSmoother(nomH, upH, dnH, "/afs/cern.ch/user/d/dalfonso/www/VBS/JAN20fits/SmoothedSYST")
+                                    hUp_smoothed, hDn_smoothed = smoother.smooth()
+                                    hup=hUp_smoothed.Clone()
+                                    hdn=hDn_smoothed.Clone()
+
                     hup.Write()
                     hdn.Write()
                     self._write(hup)
@@ -1119,7 +1131,7 @@ if __name__=="__main__":
     if os.environ['USER'] == "amarini":
         base_path="Datacards/inputs/AUG12" 
     if os.environ['USER'] == "dalfonso":
-        base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/AUG4SYST/'
+        base_path = '/eos/user/d/dalfonso/AnalysisVBS/NANO/AUG4SYST'
 
     ## set categories
     ## when no data, "data" can be substituted with any process, will not affect obtaining expected results
@@ -1179,6 +1191,7 @@ if __name__=="__main__":
             else: 
                 pass ## EWK is in AQGC, but there is a difference in the dataset names
 
+    ##toTry separate RMET vs BMET
     ## add data-driven norm bkg rateparameters
     if "MET" in opt.category:
         db.add_rateparam('CMS_vbshad_Zinvnorm','Zinv',0.75,1.25)
@@ -1286,8 +1299,8 @@ if __name__=="__main__":
                    db.write_cards('Datacards/DEC2_nosyst/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
                    db.write_inputs('Datacards/DEC2_nosyst/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
     if os.environ['USER'] == "dalfonso":
-                   db.write_cards('DATACARD/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
-                   db.write_inputs('DATACARD/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+                   db.write_cards('DATACARDMVA_bin0p05_stat0p5_wSmooth/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
+                   db.write_inputs('DATACARDMVA_bin0p05_stat0p5_wSmooth/AUG4/cms_vbshad_'+str(opt.year)+'_'+str(opt.quote)+extra+'_'+opt.analysisStra+'_'+opt.category+'_'+opt.region+'.txt')
     db.print_profile_info("FINAL")
 
 #Local Variables:

@@ -18,7 +18,7 @@
 #define DEEP_Jet_MEDIUM ((year==12016)?0.2598:(year==2016)?0.2489:(year==2017)?0.3040:0.2783)
 #define DEEP_Jet_TIGHT ((year==12016)?0.6502:(year==2016)?0.6377:(year==2017)?0.7476:0.7100)
 
-// CvsL
+// CvsL (not used)
 #define DEEP_C_LOOSE ((year==2016 or year==12016)?1.:(year==2017)?0.04:0.064)
 #define DEEP_C_MEDIUM ((year==2016 or year==12016)?1.:(year==2017)?0.144:0.153)
 #define DEEP_C_TIGHT ((year==2016 or year==12016)?1.:(year==2017)?0.73:0.405)
@@ -147,6 +147,8 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
        l.find("ZNUNUWPMJJjj_4f_QCD") !=string::npos  ||
        l.find("ZBBWPMJJjj_4f_EWK") !=string::npos  ||
        l.find("ZBBWPMJJjj_4f_QCD") !=string::npos  ||
+       l.find("ZJJWPMJJjj_4f_EWK") !=string::npos  ||
+       l.find("ZJJWPMJJjj_4f_QCD") !=string::npos  ||
        //
        l.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ||
        l.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ||
@@ -1583,7 +1585,7 @@ void VBShadAnalysis::Init(){
 
     } //end label loop
 
-    if(doWriteTree) { writeTree("tree_vbs",0); writeTree("tree_vbs_JES_TotalDown",0); writeTree("tree_vbs_JES_TotalUp",0); }
+    if(doWriteTree) { writeTree("tree_vbs",0); /*writeTree("tree_vbs_JES_TotalDown",0); writeTree("tree_vbs_JES_TotalUp",0);*/ }
     if(writeTrainTree) writeTree("tree_resTag",1);
 
     if (VERBOSE)Log(__FUNCTION__,"DEBUG","End Init");
@@ -2266,10 +2268,6 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WPHADWMLEPjj_4f_QCD_LO") !=string::npos  ||
                label.find("WPLEPWMHADjj_4f_EWK_LO") !=string::npos  ||
                label.find("WPLEPWMHADjj_4f_QCD_LO") !=string::npos  ||
-               label.find("ZNUNUWPMJJjj_4f_EWK_LO") !=string::npos  ||
-               label.find("ZNUNUWPMJJjj_4f_QCD_LO") !=string::npos  ||
-               label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos  ||
-               label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos  ||
                //
                label.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ||
                label.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ||
@@ -2325,6 +2323,12 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("ZBBWPMJJjj_EWK_LO")!=string::npos ||
                label.find("ZBBWPMJJjj_QCD_LO")!=string::npos ||
                label.find("ZBBWPMJJjj_EWK_QCD_LO")!=string::npos ||
+               label.find("ZNUNUWPMJJjj_4f_EWK_LO") !=string::npos  ||
+               label.find("ZNUNUWPMJJjj_4f_QCD_LO") !=string::npos  ||
+               label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos  ||
+               label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos  ||
+               label.find("ZJJWPMJJjj_4f_EWK_LO") !=string::npos  ||
+               label.find("ZJJWPMJJjj_4f_QCD_LO") !=string::npos  ||
                label.find("ZbbWpmJJ_EWK")!=string::npos ||
                label.find("ZbbWpmJJ_EWK_QCD")!=string::npos ||
                label.find("ZbbWpmJJ_QCD")!=string::npos ||
@@ -2346,8 +2350,8 @@ void VBShadAnalysis::genStudies(Event*e, string label )
         // ** promptLeptons from W for Wjets and semileptonic ttbar in MET category
         if((fabs(genpar->GetPdgId()) == 11 ||  fabs(genpar->GetPdgId()) == 13 || fabs(genpar->GetPdgId()) == 15) and fabs(genpar->GetParentPdgId())==24) if(genLep==NULL) { genLep = genpar; }
         // ** prompt V for the ZJetsToNuNu_HT and WJetsToLNu_HT and pt-reweighting
-        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("DYJetsToLL_Pt") !=string::npos or label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos )) if(genVp==NULL) { genVp = genpar; }
-        if( (fabs(genpar->GetPdgId()) == 24) and (label.find("WJetsToLNu_HT") !=string::npos or label.find("WJetsToLNu_Pt") !=string::npos ) ) if(genVp==NULL) { genVp = genpar; }
+        if( (fabs(genpar->GetPdgId()) == 23) and (label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos or label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("ZJetsToQQ")!=string::npos )) if(genVp==NULL) { genVp = genpar; }
+        if( (fabs(genpar->GetPdgId()) == 24) and (label.find("WJetsToLNu_HT") !=string::npos or label.find("WJetsToLNu_Pt") !=string::npos or label.find("WJetsToQQ")!=string::npos) ) if(genVp==NULL) { genVp = genpar; }
 
         // ** BOSON
         if(fabs(genpar->GetPdgId()) == pdgID1 and fabs(genpar->GetParentPdgId())>6) if(genVp==NULL) { genVp = genpar; /*cout << "found W1 pt= "<< genpar->Pt() << " eta=" << genpar->Eta()  << endl;*/ }
@@ -3336,10 +3340,9 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("WPJJWMJJjj_EWK_LO") !=string::npos ) sigmc = 4 ;
     if(label.find("WPJJWMJJjj_QCD_LO") !=string::npos ) sigmc = 5 ;
     if(label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 6 ;
-
     if(label.find("WPJJWMJJjj_4f_EWK_LO") !=string::npos  ) sigmc = 40 ;
     if(label.find("WPJJWMJJjj_4f_QCD_LO") !=string::npos  ) sigmc = 41 ;
-    //    if(label.find("WPJJWMJJjj_4f_EWK_QCD_LO") !=string::npos ) sigmc = 42 ;
+    if(label.find("WPJJWMJJjj_4f_EWK_QCD_LO") !=string::npos ) sigmc = 42 ;
     if(label.find("WPHADWMLEPjj_4f_EWK_LO") !=string::npos  ) sigmc = 43 ;
     if(label.find("WPHADWMLEPjj_4f_QCD_LO") !=string::npos  ) sigmc = 44 ;
     if(label.find("WPLEPWMHADjj_4f_EWK_LO") !=string::npos  ) sigmc = 45 ;
@@ -3348,10 +3351,12 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("ZNUNUWPMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 48 ;
     if(label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos ) sigmc = 49 ;
     if(label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 50 ;
+    if(label.find("ZJJWPMJJjj_4f_EWK_LO") !=string::npos ) sigmc = 38 ;
+    if(label.find("ZJJWPMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 39 ;
     //
-    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) sigmc = 7 ;
-    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) sigmc = 8 ;
-    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 9 ;
+    //    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) sigmc = 7 ;
+    //    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) sigmc = 8 ;
+    //    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 9 ;
     if(label.find("ZBBWPMJJjj_EWK_LO") !=string::npos ) sigmc = 10 ;
     if(label.find("ZBBWPMJJjj_QCD_LO") !=string::npos ) sigmc = 11 ;
     if(label.find("ZBBWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 12 ;
@@ -3449,9 +3454,16 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WPHADWMLEPjj_4f_QCD_LO") !=string::npos ) mc = 44 ;
     if(label.find("WPLEPWMHADjj_4f_EWK_LO") !=string::npos ) mc = 45 ;
     if(label.find("WPLEPWMHADjj_4f_QCD_LO") !=string::npos ) mc = 46 ;
-    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) mc = 7 ;
-    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) mc = 8 ;
-    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 9 ;
+    if(label.find("ZNUNUWPMJJjj_4f_EWK_LO") !=string::npos  ) mc = 47 ;
+    if(label.find("ZNUNUWPMJJjj_4f_QCD_LO") !=string::npos ) mc = 48 ;
+    if(label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos ) sigmc = 49 ;
+    if(label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 50 ;
+    if(label.find("ZJJWPMJJjj_4f_EWK_LO") !=string::npos ) mc = 38 ;
+    if(label.find("ZJJWPMJJjj_4f_QCD_LO") !=string::npos ) mc = 39 ;
+
+    //    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) mc = 7 ;
+    //    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) mc = 8 ;
+    //    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 9 ;
     if(label.find("ZBBWPMJJjj_EWK_LO") !=string::npos ) mc = 10 ;
     if(label.find("ZBBWPMJJjj_QCD_LO") !=string::npos ) mc = 11 ;
     if(label.find("ZBBWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 12 ;
@@ -3518,12 +3530,14 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WJetsToLNu_HT") !=string::npos) mc = 310 ;
     if(label.find("WJetsToLNu_Nj") !=string::npos) mc = 311 ;
     if(label.find("WJetsToLNu_Pt") !=string::npos) mc = 312 ;
-    if(label.find("DYJetsToLL_Pt") !=string::npos) mc = 313 ;
-    if(label.find("DY") !=string::npos) mc = 320 ;
+    if(label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos) mc = 313 ;
+    //    if(label.find("DY") !=string::npos) mc = 320 ;
     if(label.find("ZJetsToQQ") !=string::npos) mc = 330 ;
     if(label.find("WJetsToQQ") !=string::npos) mc = 340 ;
     if(label.find("VJetsToQQ") !=string::npos) mc = 350 ;
     if(label.find("EWKV") !=string::npos) mc = 360 ;
+    if(label.find("EWKW") !=string::npos) mc = 361 ;
+    if(label.find("EWKZ") !=string::npos) mc = 362 ;
 
     if(label.find("QCD_HT") !=string::npos) mc =500 ;
     if(label.find("QCD_Inclusive") !=string::npos) mc =501 ;
@@ -3802,7 +3816,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         label == "ZJetsToNuNu_HT" or label == "WJetsToLNu_HT" or label == "WJetsToLNu_Pt" or
         label == "ZJetsToNuNuPt" or label == "Z1JetsToNuNu_M-50_LHEFilterPtZ" or label == "Z2JetsToNuNu_M-50_LHEFilterPtZ" or
         label == "WJetsToLNu_0J" or label == "WJetsToLNu_1J" or label == "WJetsToLNu_2J" or label == "WJetsToLNu_NJ" or
-        label == "DYJetsToLL_Pt" or
+        label == "DYJetsToLL_LHEFilterPtZ" or
         label == "ZJetsToQQ" or label == "WJetsToQQ" or label == "VJetsToQQ"
         ) Fill("VBShadAnalysis/GENERAL/LHEht_" +label, systname, e->GetLHEHT(), e->weight() );  //forQCDHT
 
@@ -3860,8 +3874,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     if ( label.find("EWKWMinus2Jets") !=string::npos) label = "WJetsToLNu";
     if ( label.find("EWKWPlus2Jets") !=string::npos) label = "WJetsToLNu";
     */
-    if(label.find("ZJetsToQQ") !=string::npos) label = "VJetsToQQ";
-    if(label.find("WJetsToQQ") !=string::npos) label = "VJetsToQQ";
 
     //$$$$$$$$$
     //$$$$$$$$$ Merge and redefine TTbar
@@ -3906,11 +3918,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     bool genPhaseSig = false;
     if(checkSignalLabel(label) and (!(label.find("aQGC") != string::npos))) {
-        genPhaseSig = computeGenPhaseSpace(label);
+        genPhaseSig = computeGenPhaseSpace(label,(doMETAnalysis or doMETAntiAnalysis));
         Fill("VBShadAnalysis/GENERAL/CrossSection_" +label, systname, int(genPhaseSig) , e->weight() );
     }
 
     genStudies(e, label );
+
+    if(label.find("ZJetsToQQ") !=string::npos) label = "VJetsToQQ";
+    if(label.find("WJetsToQQ") !=string::npos) label = "VJetsToQQ";
 
     /*
     // REMOVE TOP FOR THE OSWW or ZW - EWK
@@ -4694,14 +4709,14 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //////
 
     //////  EWK correction to be applied also to VQQ ?
-    if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("DYJetsToLL_Pt") !=string::npos) and genVp!=NULL) {
+    if((label.find("ZJetsToNuNu_HT") !=string::npos or label.find("ZJetsToNuNuPt") !=string::npos or label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos or label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos or label.find("VJetsToQQ") !=string::npos ) and genVp!=NULL) {
 
         if( not e->ExistSF("ZNNLO_rwg") ){
             LogN(__FUNCTION__,"WARNING","SF: ZNNLO_rwg does not exist",10);
             return EVENT_NOT_USED;
         }
         auto pt = (genVp->Pt()<160)?160: (genVp->Pt()>1200)? 1200:genVp->Pt(); 
-            e->SetPtEtaSF("ZNNLO_rwg", pt ,0.); // it is only pt dependent
+        e->SetPtEtaSF("ZNNLO_rwg", pt ,0.); // it is only pt dependent
         e->ApplySF("ZNNLO_rwg");
     }
 
@@ -4878,13 +4893,11 @@ int VBShadAnalysis::analyze(Event *e, string systname)
     //$$$ VARIOUS plots below for tree
     //////
 
-
     evt_j1unc = sqrt((forwardJets[0]->GetJESUnc())*(forwardJets[0]->GetJESUnc()) + Getjetres(forwardJets[0]) * Getjetres(forwardJets[0]));
     evt_j2unc = sqrt((forwardJets[1]->GetJESUnc())*(forwardJets[1]->GetJESUnc()) + Getjetres(forwardJets[1]) * Getjetres(forwardJets[1]));
 
     evt_j1QGL = forwardJets[0]->QGL();
     evt_j2QGL = forwardJets[1]->QGL();
-
 
     evt_Jet1Eta=forwardJets[0]->Eta();
     evt_Jet1Pt=forwardJets[0]->Pt();
@@ -4893,7 +4906,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
 
     evt_Dphijj = ChargedHiggs::deltaPhi(forwardJets[0]->Phi(), forwardJets[1]->Phi());
     Fill("VBShadAnalysis/FWJETS/Dphijj" +category+"_"+label, systname, fabs(evt_Dphijj), e->weight() );
-
 
     ////////////////////
     //
@@ -4910,7 +4922,6 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         evt_EtaMinV = std::min(evt_bosV1Eta,evt_bosV2Eta);
         evt_EtaMaxV = std::max(evt_bosV1Eta,evt_bosV2Eta);
     }
-
 
     p4VVjj = p4VV + p4jj;
 
@@ -5208,7 +5219,7 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         }
 
         //    if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos)) {
-        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or ( label.find("ZJetsToNuNuPt") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_Pt") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
+        if( (label.find("TT_TuneCP5") !=string::npos) or (label.find("ZJetsToNuNu_HT") !=string::npos) or (label.find("WJetsToLNu_HT") !=string::npos) or ( label.find("ZJetsToNuNuPt") !=string::npos) or (label.find("Z1JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("Z2JetsToNuNu_M-50_LHEFilterPtZ") !=string::npos) or (label.find("WJetsToLNu_Pt") !=string::npos) or (label.find("DYJetsToLL_LHEFilterPtZ") !=string::npos) or (label.find("VJetsToQQ") !=string::npos)) {
             if ( (systname=="" or systname=="NONE") and e->GetWeight()->HasScale()) // SCALE RF
                 { // only on the money plots, when no other syst, and for MC with aqgc weights
                     // prepare weights

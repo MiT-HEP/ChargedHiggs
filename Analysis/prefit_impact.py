@@ -12,10 +12,11 @@ ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
 from HiggsAnalysis.CombinedLimit.DatacardParser import *
 from HiggsAnalysis.CombinedLimit.ShapeTools     import *
 
-#card = "DATACARD/AUG4/cms_vbshad_2021_2_BDTnoBnoMET_BB_all.txt"
-#card = "DATACARD/AUG4/cms_vbshad_2021_2_BDTbtag_BBtag_all.txt"
-card = "DATACARD/AUG4/cms_vbshad_2021_2_BDTwithMET_RMET_all.txt"
-#card = "DATACARD/AUG4/cms_vbshad_2021_2_BDTwithMET_BMET_all.txt"
+
+#card = "DATACARDMVA_bin0p05_stat0p5_wSmooth/FEB5four/cms_vbshad_2021_2_BDTwithMET_BMET_all.txt"
+#card = "DATACARDMVA_bin0p05_stat0p5_wSmooth/FEB5four/cms_vbshad_2021_2_BDTwithMET_RMET_all.txt"
+#card = "DATACARDMVA_bin0p05_stat0p5_wSmooth/FEB5four/cms_vbshad_2021_2_BDTbtag_BBtag_all.txt"
+card = "DATACARDMVA_bin0p05_stat0p5_wSmooth/FEB5four/cms_vbshad_2021_2_BDTnoBnoMET_BB_all.txt"
 
 ### DC reader options
 parser = OptionParser()
@@ -240,6 +241,7 @@ procLabels = {
     "VVQCD"    : "QCD VV"
 }
 
+print(card)
 
 systGroups_ordered = ["trigger","lepton","pileup","prefire","lumi","jets4","jets8","btag","met","resolvedV","boostedV","boostedV_m","qcd_s","th_xsec","th_acc","stats"]
 #systGroups_ordered = ["trigger","lepton","pileup","prefire","lumi","jets4","jets8","btag","met","resolvedV","qcd_s","th_xsec","th_acc","stats"]

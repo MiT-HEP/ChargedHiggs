@@ -680,7 +680,8 @@ bool Event::ApplyMttReweight(){
 
     if (foundTop1 and foundTop2) mass=(Top1+Top2).M();
 
-    if (mass>700) keepEvent=false;
+    //    if (mass>700) keepEvent=false; # there is less statistics in these bins
+    if (mass>1000) keepEvent=false;
 
     return keepEvent;
 
