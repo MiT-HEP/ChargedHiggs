@@ -99,6 +99,8 @@ QCD_HT2000toInf_BGenFilter_TuneCP5_13TeV-madgraph-pythia8 /QCD_HT2000toInf_BGenF
 #WPJJWMJJjj_4f_EWK_LO_TuneCP5_13TeV-madgraph-madspin-pythia8 /store/group/phys_higgs/cmshmm/amarini/WPJJWMJJjj_EWK_LO_4f_TuneCP5_13TeV-madgraph-madspin-pythia8/UL2016-NANOAODSIMv9 934000.0 1
 WPJJWMJJjj_4f_EWK_LO_TuneCP5_13TeV-madgraph-madspin-pythia8 /store/group/phys_higgs/cmshmm/amarini/WPJJWMJJjj_4f_EWK_LO_TuneCP5_13TeV-madgraph-madspin-pythia8/UL2016-NANOAODSIMv9 934000.0 1
 WPJJWMJJjj_4f_QCD_LO_TuneCP5_13TeV-madgraph-madspin-pythia8 /store/group/phys_higgs/cmshmm/amarini/WPJJWMJJjj_4f_QCD_LO_TuneCP5_13TeV-madgraph-madspin-pythia8/UL2016-NANOAODSIMv9 419500.0 1
+ZJJWPMJJjj_4f_QCD_LO_TuneCP5_13TeV-madgraph-pythia8 /store/group/phys_higgs/cmshmm/amarini/ZJJWPMJJjj_4f_QCD_LO_TuneCP5_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv9 480500.0 1.0
+ZJJWPMJJjj_4f_EWK_LO_TuneCP5_13TeV-madgraph-pythia8 /store/group/phys_higgs/cmshmm/amarini/ZJJWPMJJjj_4f_EWK_LO_TuneCP5_13TeV-madgraph-pythia8/UL2016-NANOAODSIMv9 939500.0 1.0
 
 ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8 /ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v2/NANOAODSIM 83024149.938 32.51
 ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8 /ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v2/NANOAODSIM 80821432.592 32.45

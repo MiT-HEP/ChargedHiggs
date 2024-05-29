@@ -147,6 +147,8 @@ bool VBShadAnalysis::checkSignalLabel(string l) {
        l.find("ZNUNUWPMJJjj_4f_QCD") !=string::npos  ||
        l.find("ZBBWPMJJjj_4f_EWK") !=string::npos  ||
        l.find("ZBBWPMJJjj_4f_QCD") !=string::npos  ||
+       l.find("ZJJWPMJJjj_4f_EWK") !=string::npos  ||
+       l.find("ZJJWPMJJjj_4f_QCD") !=string::npos  ||
        //
        l.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ||
        l.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ||
@@ -2266,10 +2268,6 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("WPHADWMLEPjj_4f_QCD_LO") !=string::npos  ||
                label.find("WPLEPWMHADjj_4f_EWK_LO") !=string::npos  ||
                label.find("WPLEPWMHADjj_4f_QCD_LO") !=string::npos  ||
-               label.find("ZNUNUWPMJJjj_4f_EWK_LO") !=string::npos  ||
-               label.find("ZNUNUWPMJJjj_4f_QCD_LO") !=string::npos  ||
-               label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos  ||
-               label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos  ||
                //
                label.find("WPHADWMLEPjj_EWK_LO") !=string::npos  ||
                label.find("WPLEPWMHADjj_EWK_LO") !=string::npos  ||
@@ -2325,6 +2323,12 @@ void VBShadAnalysis::genStudies(Event*e, string label )
                label.find("ZBBWPMJJjj_EWK_LO")!=string::npos ||
                label.find("ZBBWPMJJjj_QCD_LO")!=string::npos ||
                label.find("ZBBWPMJJjj_EWK_QCD_LO")!=string::npos ||
+               label.find("ZNUNUWPMJJjj_4f_EWK_LO") !=string::npos  ||
+               label.find("ZNUNUWPMJJjj_4f_QCD_LO") !=string::npos  ||
+               label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos  ||
+               label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos  ||
+               label.find("ZJJWPMJJjj_4f_EWK_LO") !=string::npos  ||
+               label.find("ZJJWPMJJjj_4f_QCD_LO") !=string::npos  ||
                label.find("ZbbWpmJJ_EWK")!=string::npos ||
                label.find("ZbbWpmJJ_EWK_QCD")!=string::npos ||
                label.find("ZbbWpmJJ_QCD")!=string::npos ||
@@ -3336,10 +3340,9 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("WPJJWMJJjj_EWK_LO") !=string::npos ) sigmc = 4 ;
     if(label.find("WPJJWMJJjj_QCD_LO") !=string::npos ) sigmc = 5 ;
     if(label.find("WPJJWMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 6 ;
-
     if(label.find("WPJJWMJJjj_4f_EWK_LO") !=string::npos  ) sigmc = 40 ;
     if(label.find("WPJJWMJJjj_4f_QCD_LO") !=string::npos  ) sigmc = 41 ;
-    //    if(label.find("WPJJWMJJjj_4f_EWK_QCD_LO") !=string::npos ) sigmc = 42 ;
+    if(label.find("WPJJWMJJjj_4f_EWK_QCD_LO") !=string::npos ) sigmc = 42 ;
     if(label.find("WPHADWMLEPjj_4f_EWK_LO") !=string::npos  ) sigmc = 43 ;
     if(label.find("WPHADWMLEPjj_4f_QCD_LO") !=string::npos  ) sigmc = 44 ;
     if(label.find("WPLEPWMHADjj_4f_EWK_LO") !=string::npos  ) sigmc = 45 ;
@@ -3348,10 +3351,12 @@ void VBShadAnalysis::setTrainingTree(Event*e, string label, int fi, int fj, int 
     if(label.find("ZNUNUWPMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 48 ;
     if(label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos ) sigmc = 49 ;
     if(label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 50 ;
+    if(label.find("ZJJWPMJJjj_4f_EWK_LO") !=string::npos ) sigmc = 38 ;
+    if(label.find("ZJJWPMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 39 ;
     //
-    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) sigmc = 7 ;
-    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) sigmc = 8 ;
-    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 9 ;
+    //    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) sigmc = 7 ;
+    //    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) sigmc = 8 ;
+    //    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 9 ;
     if(label.find("ZBBWPMJJjj_EWK_LO") !=string::npos ) sigmc = 10 ;
     if(label.find("ZBBWPMJJjj_QCD_LO") !=string::npos ) sigmc = 11 ;
     if(label.find("ZBBWPMJJjj_EWK_QCD_LO") !=string::npos ) sigmc = 12 ;
@@ -3449,9 +3454,16 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WPHADWMLEPjj_4f_QCD_LO") !=string::npos ) mc = 44 ;
     if(label.find("WPLEPWMHADjj_4f_EWK_LO") !=string::npos ) mc = 45 ;
     if(label.find("WPLEPWMHADjj_4f_QCD_LO") !=string::npos ) mc = 46 ;
-    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) mc = 7 ;
-    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) mc = 8 ;
-    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 9 ;
+    if(label.find("ZNUNUWPMJJjj_4f_EWK_LO") !=string::npos  ) mc = 47 ;
+    if(label.find("ZNUNUWPMJJjj_4f_QCD_LO") !=string::npos ) mc = 48 ;
+    if(label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos ) sigmc = 49 ;
+    if(label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 50 ;
+    if(label.find("ZJJWPMJJjj_4f_EWK_LO") !=string::npos ) mc = 38 ;
+    if(label.find("ZJJWPMJJjj_4f_QCD_LO") !=string::npos ) mc = 39 ;
+
+    //    if(label.find("ZNuNuWPMJJjj_EWK_LO") !=string::npos ) mc = 7 ;
+    //    if(label.find("ZNuNuWPMJJjj_QCD_LO") !=string::npos ) mc = 8 ;
+    //    if(label.find("ZNuNuWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 9 ;
     if(label.find("ZBBWPMJJjj_EWK_LO") !=string::npos ) mc = 10 ;
     if(label.find("ZBBWPMJJjj_QCD_LO") !=string::npos ) mc = 11 ;
     if(label.find("ZBBWPMJJjj_EWK_QCD_LO") !=string::npos ) mc = 12 ;

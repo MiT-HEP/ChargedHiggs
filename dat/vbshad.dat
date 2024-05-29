@@ -53,6 +53,8 @@ addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_4f_EWK_LO_')
 addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_4f_QCD_LO')
 addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_4f_EWK_LO')
 addConfig=VBShadAnalysis|AddLabel('ZBBWPMJJjj_4f_QCD_LO')
+addConfig=VBShadAnalysis|AddLabel('ZJJWPMJJjj_4f_EWK_LO')
+addConfig=VBShadAnalysis|AddLabel('ZJJWPMJJjj_4f_QCD_LO')
 
 ### for nanoV8 / v9
 addConfig=VBShadAnalysis|AddLabel('ZNUNUWPMJJjj_EWK_LO')
