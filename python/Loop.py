@@ -298,7 +298,11 @@ for smear in cfg['Smear']:
 for corr in cfg['Correct']:
 	if opts.verbose: print "-> constructing corrector: '"+corr+"'"
 	if corr=='NONE' or corr=='' : continue
-	c = r.__getattr__(corr)() 
+	if '(' in corr:## this if can be removed
+			corr = re.sub('!',',',corr) ## put a comma
+			c=eval("r."+corr)
+	else:
+	    c = r.__getattr__(corr)() 
 	if corr in cfg['config']:
 		for key in cfg['config'][corr]:
 			if opts.verbose:print '  - config keys', key
