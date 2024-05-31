@@ -62,6 +62,7 @@
     <!-- -->
     <class name="GeoFit"/>
     <class name="SDMasscorr"/>
+    <class name="JetFilter2016"/>
 
     <class name="KinematicFit"/>
     <class name="KinematicFit2"/>
