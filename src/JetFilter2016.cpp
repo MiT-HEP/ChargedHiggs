@@ -11,6 +11,12 @@ void JetFilter2016::Init(){
     TFile *f=TFile::Open(filename_.c_str());
     h.reset( (TH2D*)f->Get(histname_.c_str())->Clone() ) ;
     //f->Close();
+    if (useMC_)
+    {
+        TFile *f2=TFile::Open(filenameMC_.c_str());
+        hMC.reset( (TH2D*)f2->Get(histnameMC_.c_str())->Clone() ) ;
+        //f2->Close();
+    }
 }
 
 int JetFilter2016::correct(Event *e) 
@@ -31,11 +37,23 @@ int JetFilter2016::correct(Event *e)
 
     for (auto&j : GetJetVector(e) )
     {
-        if ( h->GetBinContent(h->FindBin(j->Eta(), j->Phi())) > 0)  
+        if ( not useMC_ or e->IsRealData() )
         {
-            // bad 
-            Scale(*j,0.0);
+            if ( h->GetBinContent(h->FindBin(j->Eta(), j->Phi())) > 0)  
+            {
+                // bad 
+                Scale(*j,0.0);
+            }
         }
+        else // if not apply the same different and it is a MC event
+        {
+            if ( hMC->GetBinContent(hMC->FindBin(j->Eta(), j->Phi())) > 0)  
+            {
+                // bad 
+                Scale(*j,0.0);
+            }
+        }
+
     }
 #ifdef DEBUG
     if (DEBUG>1){
