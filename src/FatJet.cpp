@@ -22,3 +22,15 @@ FatJet::FatJet() :Object(){
   ZbbvsQCDMDcut_=-1;
   ZvsQCDMDcut_=-1;
 }
+
+int FatJet::CrossHEM() const {
+
+    float eta= Eta();
+    float phi= Phi();
+    float pt = p4.Pt(); // no syst
+
+    if (-1.77 <phi< -0.67 and -2.7<eta<-1.1  ) return 0;
+
+    return 1;
+
+}

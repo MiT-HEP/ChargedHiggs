@@ -196,6 +196,17 @@ int Jet::PassEENoise()const {
     return 1;
 }
 
+int Jet::CrossHEM()const {
+
+    float eta= Eta();
+    float phi= Phi();
+    float pt = p4.Pt(); // no syst
+    if (-1.57 <phi< -0.87 and -2.5<eta<-1.3  ) return 0;
+
+    return 1;
+
+}
+
 // HEM -3.0 < eta < -1.3, -1.57 < phi < -0.87) for Run2018C and D
 // 20 % for jets with -1.57 <phi< -0.87 and -2.5<eta<-1.3
 // 35 % for jets with -1.57 <phi< -0.87 and -3.0<eta<-2.5
