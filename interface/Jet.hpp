@@ -66,6 +66,7 @@ class Jet : virtual public Object, virtual public SmearableComplex
 
     int PassPuId() const ;
     int PassEENoise() const;
+    int CrossHEM() const;
 
     ///@brief set ee noise cut on
     void SetEENoiseCut(bool x){eenoise_ = x;}

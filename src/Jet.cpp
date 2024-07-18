@@ -48,6 +48,7 @@ int Jet::IsBJetInvIso()const{
 int Jet::PassPuId() const {
     if( puidcut_ > -100 and puidcut_ < 100 and puId < puidcut_ ) return 0; 
     if(puidcut_ == 100 ) { // Loose (updated for UL)
+        // https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/python/PileupJetIDCutParams_cfi.py
         // https://github.com/nurfikri89/cmssw/blob/ce39cb860e21d83ee4978fbaa2edd50ab892a575/RecoJets/JetProducers/python/PileupJetIDCutParams_cfi.py
         float aeta= abs(Eta());
         float pt = p4.Pt(); // no syst
@@ -75,7 +76,7 @@ int Jet::PassPuId() const {
             }
         } else {
             if ( aeta< 2.5){
-                if (pt >=20 and pt< 30 and puId <-0.95)  return 0;
+                if (pt >=20 and pt< 30 and puId <-0.90)  return 0;
                 if (pt >=30 and pt< 40 and puId <-0.71)  return 0;
                 if (pt >=40 and pt< 50 and puId <-0.42)  return 0;
             }
@@ -129,7 +130,7 @@ int Jet::PassPuId() const {
             }
             else if (aeta < 2.75){
                 if (pt >=20 and pt< 30 and puId <-0.39)  return 0;
-                if (pt >=30 and pt< 40 and puId <0.10)  return 0;
+                if (pt >=30 and pt< 40 and puId <-0.10)  return 0;
                 if (pt >=40 and pt< 50 and puId <0.19)  return 0;
             }
             else if (aeta < 3.00){
@@ -193,6 +194,17 @@ int Jet::PassEENoise()const {
     }
 
     return 1;
+}
+
+int Jet::CrossHEM()const {
+
+    float eta= Eta();
+    float phi= Phi();
+    float pt = p4.Pt(); // no syst
+    if (-1.57 <phi< -0.87 and -2.5<eta<-1.3  ) return 0;
+
+    return 1;
+
 }
 
 // HEM -3.0 < eta < -1.3, -1.57 < phi < -0.87) for Run2018C and D

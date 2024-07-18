@@ -28,6 +28,8 @@ public:
     int systResTagger_=0;
     int systResMass_=0;
 
+    std::unique_ptr<TRandom> rnd_;
+
     void Init() override;
     int analyze(Event*,string systname) override;
     void EndEvent() override;
@@ -395,6 +397,10 @@ private:
     TLorentzVector p4V2;
     TLorentzVector p4jj;
     TLorentzVector p4VVjj;
+
+    float evt_MHT = 0.;
+    float evt_MHTphi =- 999.;
+    float evt_HT = 0.;
 
     float evt_Mjj=-100;
     float evt_Detajj=-100;

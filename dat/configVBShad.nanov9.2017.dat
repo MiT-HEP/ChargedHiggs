@@ -39,7 +39,7 @@ Smear=NONE
 
 Correct=NONE
 #Correct=SDMasscorr
-#Correct=@JetFilter2016("aux/hotjets-UL17_v2.root"!"h2hot_ul17_plus_hep17_plus_hbpw89")
+#Correct=JetFilter2016("aux/hotjets-UL17_v2.root"!"h2hot_ul17_plus_hep17_plus_hbpw89"!"aux/hotjets-UL17_v2.root"!"h2hot_ul17_plus_hep17_plus_hbpw89")
 Final=no
 
 ## be less peaky, given the n. of systs

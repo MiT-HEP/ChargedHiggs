@@ -84,6 +84,8 @@ class FatJet : virtual public Object, virtual public SmearableComplex
 
     // -------------------------
 
+    int CrossHEM() const;
+
     void SetPtCut(float x){ptcut_= x;}
     void SetEtaCut(float x){etacut_ = x;}
 

@@ -859,7 +859,6 @@ void VBShadAnalysis::InitTmva() {
 
 void VBShadAnalysis::InitScikit(){
 
-
     py . reset(new TPython);
 
     py -> Exec("import numpy as np");
@@ -911,6 +910,10 @@ void VBShadAnalysis::writeTree(string name, int purp){   //purp = 0: main; purp 
     Branch(name,"NVetoJets",'I');
     Branch(name,"met_pt",'F');
     Branch(name,"met_phi",'F');
+
+    Branch(name,"HT",'F');
+    Branch(name,"MHT",'F');
+    Branch(name,"MHTphi",'F');
 
     Branch(name,"mc",'I'); // to distinguish between the different mc
     Branch(name,"ana_category",'I');
@@ -2642,6 +2645,17 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
     //$$$$$$$$$
     //$$$$$$$$$
 
+    rnd_.reset( new TRandom3(e->eventNum()) ) ;
+
+    bool applyHEM = false;
+    if (year == 2018 and
+        e->IsRealData() and
+        e->runNum()>319077 ) applyHEM = true;
+
+    if (year == 2018 and
+        not e->IsRealData() and
+        rnd_->Rndm() >= 0.632 ) applyHEM = true;
+
     //AK8 jet
     for(unsigned i=0;i<e->NFatJets() ; ++i)
     {
@@ -2649,6 +2663,7 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
         FatJet *f=e->GetFatJet(i);
 
         //        std::cout << " Pt=" << f->Pt() << " SDMass=" << f->SDMass() << " IsZbbJet = " << f->IsZbbJet() << "  IsWJet = " << f->IsWJet()  << std::endl;
+        if(applyHEM and f->CrossHEM()) continue;
 
         if(doStudyMass){
         // Do mass corrections
@@ -2910,10 +2925,13 @@ void VBShadAnalysis::getObjects(Event* e, string label, string systname )
 
     Fill("VBShadAnalysis/Baseline/NFatJet_" +label, systname, selectedFatJets.size(), e->weight() );
 
+
     //AK4
     for(unsigned i=0;i<e->Njets() ; ++i)
     {
         Jet *j=e->GetJet(i);
+
+        if(applyHEM and j->CrossHEM()) continue;
 
         // COUNT additional b-veto (20 GeV-Medium)
         //        if (j->GetDeepB() > DEEP_B_MEDIUM) {
@@ -3456,8 +3474,8 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     if(label.find("WPLEPWMHADjj_4f_QCD_LO") !=string::npos ) mc = 46 ;
     if(label.find("ZNUNUWPMJJjj_4f_EWK_LO") !=string::npos  ) mc = 47 ;
     if(label.find("ZNUNUWPMJJjj_4f_QCD_LO") !=string::npos ) mc = 48 ;
-    if(label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos ) sigmc = 49 ;
-    if(label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos ) sigmc = 50 ;
+    if(label.find("ZBBWPMJJjj_4f_EWK_LO") !=string::npos ) mc = 49 ;
+    if(label.find("ZBBWPMJJjj_4f_QCD_LO") !=string::npos ) mc = 50 ;
     if(label.find("ZJJWPMJJjj_4f_EWK_LO") !=string::npos ) mc = 38 ;
     if(label.find("ZJJWPMJJjj_4f_QCD_LO") !=string::npos ) mc = 39 ;
 
@@ -3560,7 +3578,9 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
     SetTreeVar("j1QGL",evt_j1QGL);
     SetTreeVar("j2QGL",evt_j2QGL);
 
-
+    SetTreeVar("HT",evt_HT);
+    SetTreeVar("MHT",evt_MHT);
+    SetTreeVar("MHTphi",evt_MHTphi);
 
     SetTreeVar("genMVV",evt_MVV_gen);
     SetTreeVar("varMVV",evt_MVV);
@@ -3669,6 +3689,7 @@ void VBShadAnalysis::setTree(Event*e, string label, string category )
 
 void VBShadAnalysis::reset() // reset private members
 {
+
     selectedJets.clear();
     selectedFatJets.clear();
     //    selectedFatJetsWide.clear();
@@ -3717,6 +3738,10 @@ void VBShadAnalysis::reset() // reset private members
 
 
     // below variables for the ntuples (REDUNDANT ??)
+
+    evt_MHTphi =- 999.;
+    evt_MHT = 0.;
+    evt_HT = 0.;
 
     evt_Mjj=-100;
     evt_Detajj=-100;
@@ -4161,6 +4186,17 @@ int VBShadAnalysis::analyze(Event *e, string systname)
         int indexij = 10*getIndex(0) + getIndexB(0);
         Fill("VBShadAnalysis/Baseline/SF_FatJetbTag_" +label, systname, indexij, e->weight() );  // fill to derive SF
     }
+
+    TLorentzVector jetP4all;
+
+    for(unsigned iter=0; iter<selectedJets.size(); ++iter) {
+        evt_HT+=selectedJets[iter]->Pt();
+        jetP4all-= selectedJets[iter]->GetP4();
+    }
+
+    evt_MHTphi = jetP4all.Phi();
+    evt_MHT = jetP4all.Pt();
+
 
     //$$$$$$$$$
     //$$$$$$$$$
