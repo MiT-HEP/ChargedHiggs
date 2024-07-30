@@ -2,6 +2,7 @@
 #define CUTSELECTOR_H
 
 #include <cstdint>
+#include <ostream>
 #include <bitset>
 
 class CutSelector{

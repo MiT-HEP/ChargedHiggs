@@ -52,17 +52,18 @@ parser.add_option_group(summary)
 
 #EOS='/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select'
 EOS='/usr/bin/eos'
+#EOS='eos'
 instance="root://eoscms/"
 if '/eos/user' in opts.dir: instance="root://eosuser/"
 EOS2=EOS+" " + instance + " "
 
 if 'CMSSW_BASE' not in os.environ:
-	print "-> Use a CMSSW environment: cmsenv"
-	exit(0)
+        print("-> Use a CMSSW environment: cmsenv")
+        exit(0)
 
-print "inserting in path cwd"
+print("inserting in path cwd")
 sys.path.insert(0,os.getcwd())
-print "inserting in path cwd/python"
+print("inserting in path cwd/python")
 sys.path.insert(0,os.getcwd()+'/python')
 
 ## bash color string
@@ -73,106 +74,106 @@ cyan = "\033[01;36m"
 white = "\033[00m"
 
 def PrintLine(list):
-	''' convert list in list of int number, sort and compress consecutive numbers. Then print the result:
-	4,5,8,3 -> 3-5,8
-	'''
-	nums = [ int(s) for s in list ]
-	nums.sort()
-	compress = []
-	last = None
-	blockinit = None
+        ''' convert list in list of int number, sort and compress consecutive numbers. Then print the result:
+        4,5,8,3 -> 3-5,8
+        '''
+        nums = [ int(s) for s in list ]
+        nums.sort()
+        compress = []
+        last = None
+        blockinit = None
 
-	for n in nums:
-		#first if it is not consecutive
-		if last == None: ## INIT
-			blockinit = n
+        for n in nums:
+                #first if it is not consecutive
+                if last == None: ## INIT
+                        blockinit = n
 
-		elif last != n-1:
-			#close a block and open a new one
-			if last != blockinit:
-				compress.append( str(blockinit) + "-" + str(last) ) 
-			else:
-				compress.append( str(last) ) 
-			blockinit = n
+                elif last != n-1:
+                        #close a block and open a new one
+                        if last != blockinit:
+                                compress.append( str(blockinit) + "-" + str(last) ) 
+                        else:
+                                compress.append( str(last) ) 
+                        blockinit = n
 
-		last = n
+                last = n
 
-	#consider also the last number
-	#close a block and open a new one
-	if last != blockinit:
-		compress.append( str(blockinit) + "-" + str(last) ) 
-	else:
-		compress.append( str(last) ) 
+        #consider also the last number
+        #close a block and open a new one
+        if last != blockinit:
+                compress.append( str(blockinit) + "-" + str(last) ) 
+        else:
+                compress.append( str(last) ) 
 
-	return ",".join(compress)
+        return ",".join(compress)
 
 def Print_ (done, run, fail, pend):
-	'''Internal'''
-	tot = len(run) + len(fail) + len(done) + len(pend)
+        '''Internal'''
+        tot = len(run) + len(fail) + len(done) + len(pend)
 
-	color = red
-	if len(run) > len(fail) and len(run) >len(pend)  : color= yellow
-	if len(pend) > len(run) and len(pend) >len(fail): color= cyan
-	if len(done) == tot and tot >0 : color = green
-	
-	print " ----  Directory "+ color+opts.dir+white+" --------"
-	print " Pend: " + cyan   + "%3d"%len(pend) + " / " + str(tot) + white + " : " + PrintLine(pend)  ###
-	print " Run : " + yellow + "%3d"%len(run) + " / "  + str(tot) + white + " : " + PrintLine(run)  ### + ",".join(run)  + "|" 
-	print " Fail: " + red    + "%3d"%len(fail) + " / " + str(tot) + white + " : " + PrintLine(fail) ### + ",".join(fail) + "|" 
-	print " Done: " + green  + "%3d"%len(done) + " / " + str(tot) + white + " : " + PrintLine(done) ### + ",".join(done) + "|" 
-	print " -------------------------------------"
+        color = red
+        if len(run) > len(fail) and len(run) >len(pend)  : color= yellow
+        if len(pend) > len(run) and len(pend) >len(fail): color= cyan
+        if len(done) == tot and tot >0 : color = green
+        
+        print(" ----  Directory "+ color+opts.dir+white+" --------")
+        print(" Pend: " + cyan   + "%3d"%len(pend) + " / " + str(tot) + white + " : " + PrintLine(pend))  ###
+        print(" Run : " + yellow + "%3d"%len(run) + " / "  + str(tot) + white + " : " + PrintLine(run))  ### + ",".join(run)  + "|" 
+        print(" Fail: " + red    + "%3d"%len(fail) + " / " + str(tot) + white + " : " + PrintLine(fail)) ### + ",".join(fail) + "|" 
+        print(" Done: " + green  + "%3d"%len(done) + " / " + str(tot) + white + " : " + PrintLine(done)) ### + ",".join(done) + "|" 
+        print(" -------------------------------------")
 
 def PrintSummary(dir, doPrint=True):
-	''' Print summary informations for dir'''
-	run  = glob(dir + "/*run")
-	fail = glob(dir + "/*fail")
-	done = glob(dir + "/*done")
-	pend = glob(dir + "/*pend")
+        ''' Print summary informations for dir'''
+        run  = glob(dir + "/*run")
+        fail = glob(dir + "/*fail")
+        done = glob(dir + "/*done")
+        pend = glob(dir + "/*pend")
 
-	run = [ re.sub('\.run','' , re.sub('.*/sub','', r) ) for r in run ] 	
-	fail = [ re.sub('\.fail','' , re.sub('.*/sub','', r) ) for r in fail ] 	
-	done = [ re.sub('\.done','' , re.sub('.*/sub','', r) ) for r in done ] 	
-	pend = [ re.sub('\.pend','' , re.sub('.*/sub','', r) ) for r in pend ] 	
+        run = [ re.sub('\.run','' , re.sub('.*/sub','', r) ) for r in run ]         
+        fail = [ re.sub('\.fail','' , re.sub('.*/sub','', r) ) for r in fail ]         
+        done = [ re.sub('\.done','' , re.sub('.*/sub','', r) ) for r in done ]         
+        pend = [ re.sub('\.pend','' , re.sub('.*/sub','', r) ) for r in pend ]         
 
-	if doPrint:
-		Print_(done,run,fail,pend)
+        if doPrint:
+                Print_(done,run,fail,pend)
 
-	return ( done, run, fail, pend)
+        return ( done, run, fail, pend)
 
 def PrintHadhoop(dir, doPrint = True):
-	log = glob ( dir + "/test.*.log" )
-	done=[]
-	run =[]
-	fail=[]
-	pend=[]
-	for l in log:
-		iJob = re.sub('.*/test\.','', re.sub("\.log","" , l ) )
-		status = call( "cat %s | grep 'Job executing on host' >& /dev/null"%(l) , shell=True)
-		if status != 0 :
-			pend.append(iJob)
-			continue
-		status = call( "cat %s | grep 'Job terminated.' >& /dev/null"%(l) , shell=True)
-		if status != 0:
-			run.append(iJob)
-			continue
-		status = call( "cat %s | grep 'return value 0' >& /dev/null"%(l) , shell=True)
-		if status != 0:
-			fail.append(iJob)
-			continue
-		outlist = glob(dir +"/*_%s.root"%iJob)
-		if len(outlist) != 1:
-			print "unable to find outfile in:",outlist
-			fail.append(iJob)
-			continue
-		outname=outlist[0]
-		if os.stat(outname).st_size == 0:
-			fail.append(iJob)
-			continue
-		done.append(iJob)
-	
-	if doPrint:
-		Print_(done,run,fail,pend)
-	return ( done, run, fail)
+        log = glob ( dir + "/test.*.log" )
+        done=[]
+        run =[]
+        fail=[]
+        pend=[]
+        for l in log:
+                iJob = re.sub('.*/test\.','', re.sub("\.log","" , l ) )
+                status = call( "cat %s | grep 'Job executing on host' >& /dev/null"%(l) , shell=True)
+                if status != 0 :
+                        pend.append(iJob)
+                        continue
+                status = call( "cat %s | grep 'Job terminated.' >& /dev/null"%(l) , shell=True)
+                if status != 0:
+                        run.append(iJob)
+                        continue
+                status = call( "cat %s | grep 'return value 0' >& /dev/null"%(l) , shell=True)
+                if status != 0:
+                        fail.append(iJob)
+                        continue
+                outlist = glob(dir +"/*_%s.root"%iJob)
+                if len(outlist) != 1:
+                        print("unable to find outfile in:",outlist)
+                        fail.append(iJob)
+                        continue
+                outname=outlist[0]
+                if os.stat(outname).st_size == 0:
+                        fail.append(iJob)
+                        continue
+                done.append(iJob)
+        
+        if doPrint:
+                Print_(done,run,fail,pend)
+        return ( done, run, fail)
 
 def write_condor_jdl(filename="condor.jdl"):
     ## write condor.jdl for batch submission and resubmission
@@ -185,7 +186,8 @@ def write_condor_jdl(filename="condor.jdl"):
     else:  raise ValueError("Unknown queue:"+opts.queue)
     
     jdl = open(opts.dir +"/"+filename,"w")
-    jdl.write('requirements = (OpSysAndVer =?= "CentOS7")\n')
+    jdl.write('requirements = (OpSysAndVer =?= "AlmaLinux9")\n')
+    #jdl.write('requirements = (OpSysAndVer =?= "CentOS7")\n')
     #jdl.write('requirements = (OpSysAndVer =?= "SLC6")\n')
     jdl.write("log = $(filename).log\n")
     jdl.write("output = $(filename).out\n")
@@ -200,32 +202,32 @@ def write_condor_jdl(filename="condor.jdl"):
     return jdl
 
 if opts.status:
-	if opts.hadoop:
-		PrintHadhoop(opts.dir,doPrint=True)
-	else:
-		( done, run, fail, pend) = PrintSummary(opts.dir,doPrint=True)
-		cpu=[]
-		termcpu=re.compile("TERM_CPULIMIT")
-		for iJob in fail + run:
-		    try:
-		        log = open(opts.dir + "/log"+iJob+".txt")
-		    except IOError: 
-		        continue
-		    if re.search("TERM_CPULIMIT",log.read() ) != None : cpu.append(iJob)
-		    log.close()
-		if len(cpu) >0 :
-		    print " CPU LIMIT",PrintLine(cpu)
-		    print " -------------------------------------"
-		#if opts.fullstatus:
-		notRunning=[]
-		#bjobs = re.sub('//','/',check_output("bjobs -w",shell=True))
+        if opts.hadoop:
+                PrintHadhoop(opts.dir,doPrint=True)
+        else:
+                ( done, run, fail, pend) = PrintSummary(opts.dir,doPrint=True)
+                cpu=[]
+                termcpu=re.compile("TERM_CPULIMIT")
+                for iJob in fail + run:
+                    try:
+                        log = open(opts.dir + "/log"+iJob+".txt")
+                    except IOError: 
+                        continue
+                    if re.search("TERM_CPULIMIT",log.read() ) != None : cpu.append(iJob)
+                    log.close()
+                if len(cpu) >0 :
+                    print(" CPU LIMIT",PrintLine(cpu))
+                    print(" -------------------------------------")
+                #if opts.fullstatus:
+                notRunning=[]
+                #bjobs = re.sub('//','/',check_output("bjobs -w",shell=True))
         if not opts.nocheck:
             condor_q= check_output("condor_q",shell=True) 
         else:
             condor_q=""
         if opts.dir not in condor_q and not opts.nocheck: 
-		    print " NOT RUNNING! (condor) ", opts.dir
-		    print " -------------------------------------"
+                    print(" NOT RUNNING! (condor) ", opts.dir)
+                    print(" -------------------------------------")
         if not opts.nocheck: ## check size
             ls = check_output("ls -l %s/*root | tr -s ' ' | cut -d ' ' -f 5,9 "%opts.dir, shell=True)
             allfiles={}
@@ -239,16 +241,16 @@ if opts.status:
                     allfiles[f] = size
                     maxsize= max(size,maxsize)
                     fTry = ROOT.TFile.Open(f)
-                    if fTry == None or fTry.IsZombie() : print "file:", f ,"is corrupted"
-                    elif fTry.TestBit(ROOT.TFile.kRecovered): print "file:",f,"is recovered"
+                    if fTry == None or fTry.IsZombie() : print("file:", f ,"is corrupted")
+                    elif fTry.TestBit(ROOT.TFile.kRecovered): print("file:",f,"is recovered")
                     fTry.Close()
                 except Exception as e:
-                    print e
+                    print(e)
                     pass
             #print "Max size is",maxsize
             #for f in allfiles:
             #    if allfiles[f] < 0.75*maxsize: print "file:",f,"is suspiciously small"
-	exit(0)
+        exit(0)
 
 if opts.resubmit:
     ( done, run, fail, pend) = PrintSummary(opts.dir,False)
@@ -270,21 +272,21 @@ if opts.resubmit:
         if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
             pass
         else:
-            print "-> Updating proxy in tar file","%s/package.tar.gz"%opts.dir, "Don't stop me now"
+            print("-> Updating proxy in tar file","%s/package.tar.gz"%opts.dir, "Don't stop me now")
             cmd=["gunzip", "%s/package.tar.gz"%opts.dir]
-            print "  * Uncopressing",' ' .join(cmd)
+            print("  * Uncopressing",' ' .join(cmd))
             call(cmd)
 
             cmd=["tar","-rf","%s/package.tar"%opts.dir]
             cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) 
-            print "  * extending",' ' .join(cmd)
+            print("  * extending",' ' .join(cmd))
             call(cmd)
 
             cmd=["gzip", "%s/package.tar"%opts.dir]
-            print "  * compressing",' ' .join(cmd)
+            print("  * compressing",' ' .join(cmd))
             call(cmd)
 
-            print "-> Proxy updated"
+            print("-> Proxy updated")
 
     jdl=write_condor_jdl("condor_resubmit.jdl") ##  write preample without queueing
     #jdl.write("queue filename matching (%s/sub*sh)\n"%opts.dir)
@@ -320,12 +322,12 @@ if opts.resubmit:
                 jdl.write("queue\n\n")
             else:
                 cmdline = "bsub -q " + opts.queue + " -o %s/log%d.txt"%(basedir,iJob) + " -J " + "%s/Job_%d"%(opts.dir,iJob) + " %s/sub%d.sh"%(basedir,iJob)
-                print cmdline
+                print(cmdline)
                 call (cmdline,shell=True)
     if opts.condor:
         jdl.close()
         ## submit condor
-        print "-> Submitting","%s/condor_resubmit.jdl"%opts.dir
+        print("-> Submitting","%s/condor_resubmit.jdl"%opts.dir)
         cmd = "condor_submit -batch-name %s %s/condor_resubmit.jdl"%(opts.dir,opts.dir)
         if not opts.dryrun and '/eos/' in opts.dir: 
                 #'/eos/user/a/amarini'
@@ -333,64 +335,64 @@ if opts.resubmit:
                 l = opts.dir.split('/') 
                 l2=l[l.index(user)+1:]
                 mydir='/'.join(l2)
-                print "->eos workaround: using local dir",mydir
+                print("->eos workaround: using local dir",mydir)
                 call("mkdir -p %s"%mydir,shell=True)
                 call("cp  %s/*{sh,jdl} %s/"%(opts.dir,mydir),shell=True)
                 call("sed -i'' 's:/eos/user/"+user[0]+"/"+user+"/::g' %s/condor_resubmit.jdl"%mydir,shell=True)
                 call("sed -i'' 's:/eos/cms/store/user/"+user+"/::g' %s/condor_resubmit.jdl"%mydir,shell=True)
                 cmd ="condor_submit -batch-name %s %s/condor_resubmit.jdl"%(opts.dir,mydir)
-                print "   cmd=",cmd
+                print("   cmd=",cmd)
                 status = call(cmd,shell=True)
                 if status !=0:
-                    print "unable to submit,",cmd
+                    print("unable to submit,",cmd)
                 else:
-                    print cmd
+                    print(cmd)
         elif not opts.dryrun: 
-            print "   cmd=",cmd
+            print("   cmd=",cmd)
             call(cmd, shell=True)
         else:
-            print "   cmd=",cmd
+            print("   cmd=",cmd)
     exit(0)
 
 if opts.hadd:
-	filelist = glob(opts.dir + "/*.root")
-	if opts.dir[-1] == '/':dir = opts.dir[:-1]
-	else: dir  = opts.dir[:]
+        filelist = glob(opts.dir + "/*.root")
+        if opts.dir[-1] == '/':dir = opts.dir[:-1]
+        else: dir  = opts.dir[:]
 
-	if not opts.nocheck:
-		cmd = "zcat %s/log*.txt.gz | grep -i error | sort | uniq -c "%dir
-		st=call(cmd,shell=True)
+        if not opts.nocheck:
+                cmd = "zcat %s/log*.txt.gz | grep -i error | sort | uniq -c "%dir
+                st=call(cmd,shell=True)
 
-		cmd = "zcat %s/log*.txt.gz | grep -i '\[error\]' > /dev/null "%dir
-		st=call(cmd,shell=True)
-		if st == 0 and opts.clear:
-			print "-> Errors have been found. Refusing to clear"
-			opts.clear = False
-		cmd = "zcat %s/log*.txt.gz | grep -i warning | sort | uniq -c "%dir
-		call(cmd,shell=True)
+                cmd = "zcat %s/log*.txt.gz | grep -i '\[error\]' > /dev/null "%dir
+                st=call(cmd,shell=True)
+                if st == 0 and opts.clear:
+                        print("-> Errors have been found. Refusing to clear")
+                        opts.clear = False
+                cmd = "zcat %s/log*.txt.gz | grep -i warning | sort | uniq -c "%dir
+                call(cmd,shell=True)
 
-	name = re.sub('.*/','',dir)
-	cmd = "[ -f %s%s.root ] && rm -v %s/%s.root"%(opts.dir,name,opts.dir,name) ## remove the file in oredr not to double count
-	call(cmd,shell=True)
-	cmd = "hadd -f %s/%s.root "%(opts.dir, name ) + " ".join(filelist)
-	st=call(cmd,shell=True)
+        name = re.sub('.*/','',dir)
+        cmd = "[ -f %s%s.root ] && rm -v %s/%s.root"%(opts.dir,name,opts.dir,name) ## remove the file in oredr not to double count
+        call(cmd,shell=True)
+        cmd = "hadd -f %s/%s.root "%(opts.dir, name ) + " ".join(filelist)
+        st=call(cmd,shell=True)
 
-	if st !=0 :
-		print "-> Unsuccessfull hadd. (in case refuse to clear). Removing created file."
-		cmd="rm -v %s/%s.root "%(opts.dir, name )
-		call(cmd,shell=True)
-		opts.clear = False
+        if st !=0 :
+                print("-> Unsuccessfull hadd. (in case refuse to clear). Removing created file.")
+                cmd="rm -v %s/%s.root "%(opts.dir, name )
+                call(cmd,shell=True)
+                opts.clear = False
 
-	if opts.clear: 
-		filelist = glob(opts.dir + "/*")
-		rmlist = [ f for f in filelist if  re.sub('^.*/','',f) != name + ".root"]
-		keeplist = [ f for f in filelist if re.sub('^.*/','',f) == name + ".root"]
-		rmcmd = "rm " + " ".join(rmlist)
-		#for i in rmlist:
-		#	print i, "'"+re.sub('^.*/','',f) + "'", "'" + name + ".root'"
-		print " I will keep = '",keeplist
-		call(rmcmd,shell=True)
-	exit(0)
+        if opts.clear: 
+                filelist = glob(opts.dir + "/*")
+                rmlist = [ f for f in filelist if  re.sub('^.*/','',f) != name + ".root"]
+                keeplist = [ f for f in filelist if re.sub('^.*/','',f) == name + ".root"]
+                rmcmd = "rm " + " ".join(rmlist)
+                #for i in rmlist:
+                #        print i, "'"+re.sub('^.*/','',f) + "'", "'" + name + ".root'"
+                print(" I will keep = '",keeplist)
+                call(rmcmd,shell=True)
+        exit(0)
 
 # import Parser
 from ParseDat import *
@@ -404,7 +406,7 @@ ds.end()
 call("[ -d %s ] && rm -r %s"%(opts.dir,opts.dir),shell=True)
 
 if '/eos/' in opts.dir or '/store/' in opts.dir:
-    print "->> calling eos mkdir"
+    print("->> calling eos mkdir")
     call("[ -d %s ] && %s rm -r %s"%(opts.dir,EOS2,opts.dir),shell=True)
     call(EOS2+" mkdir %s"%opts.dir,shell=True)
 
@@ -414,62 +416,62 @@ cmdFile.write("##Commands used to submit on batch. Automatic written by python/s
 cmdFile.write("##"+' '.join(sys.argv)+"\n")
 
 if opts.tar:
-	cmd=["tar","-czf","%s/package.tar.gz"%opts.dir]
-	if True: ## copy also the bare library in the tar. for grid submission
-		cmdBare = "mkdir -p ./bin/bare"
-		call(cmdBare,shell=True)
-		cmdBare = "cp " +os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/bin/libBare.so ./bin/bare/"
-		call(cmdBare,shell=True)
-		cmdBare = "cp " +os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/bin/dict_rdict.pcm ./bin/bare/"
-		call(cmdBare,shell=True)
-		## run time libraries needs also the .h files :(
-		cmdBare = "mkdir -p ./bin/interface"
-		call(cmdBare,shell=True)
-		cmdBare = "cp " + os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/interface/*hpp ./bin/interface/"
-		call(cmdBare,shell=True);
-		### this file is produced by make
-		#cmdBare = "cp bin/libChargedHiggs.so bin/libChargedHiggs.0.so"
-		#call(cmdBare,shell=True)
-		#cmdBare = "/afs/cern.ch/user/a/amarini/public/patchelf --set-rpath '' bin/libChargedHiggs.0.so"
-		#call(cmdBare,shell=True)
-	cmd.extend( glob("bin/bare/*" ) )
-	cmd.extend( glob("bin/interface/*" ) )
-	cmd.extend( glob("bin/*so" ) )
-	cmd.extend( glob("bin/dict*" ) )
-	#cmd.extend( glob("bin/tag.txt" ) )
-	#cmd.extend( glob("dat/*dat" ) )
-	#cmd.extend( glob("dat/*txt" ) )
-	cmd.extend( glob("dat/*" ) )
-	cmd.extend( glob("aux/*" ) )
-	cmd.extend( glob("python/*py") )
-	#cmd.extend( glob("test/*") )
-	cmd.extend( glob("test/*py") )
-	cmd.extend( glob("test/*C") )
-	cmd.extend( glob("test/*.hpp") )
-	cmd.extend( glob("test/*.cpp") )
-	cmd.extend( glob("test/*.o") )
-	cmd.extend( glob("test/*.so") )
-	cmd.extend( glob("test/*.exe") )
-	cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
-	#/tmp/x509up_u45059
-	if opts.proxy: 
-		if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
-			pass
-		else:
-			cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
-	tarCmdline = " ".join(cmd)
-	print tarCmdline
-	call(cmd)
+        cmd=["tar","-czf","%s/package.tar.gz"%opts.dir]
+        if True: ## copy also the bare library in the tar. for grid submission
+                cmdBare = "mkdir -p ./bin/bare"
+                call(cmdBare,shell=True)
+                cmdBare = "cp " +os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/bin/libBare.so ./bin/bare/"
+                call(cmdBare,shell=True)
+                cmdBare = "cp " +os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/bin/dict_rdict.pcm ./bin/bare/"
+                call(cmdBare,shell=True)
+                ## run time libraries needs also the .h files :(
+                cmdBare = "mkdir -p ./bin/interface"
+                call(cmdBare,shell=True)
+                cmdBare = "cp " + os.environ["CMSSW_BASE"] + "/src/NeroProducer/Core/interface/*hpp ./bin/interface/"
+                call(cmdBare,shell=True);
+                ### this file is produced by make
+                #cmdBare = "cp bin/libChargedHiggs.so bin/libChargedHiggs.0.so"
+                #call(cmdBare,shell=True)
+                #cmdBare = "/afs/cern.ch/user/a/amarini/public/patchelf --set-rpath '' bin/libChargedHiggs.0.so"
+                #call(cmdBare,shell=True)
+        cmd.extend( glob("bin/bare/*" ) )
+        cmd.extend( glob("bin/interface/*" ) )
+        cmd.extend( glob("bin/*so" ) )
+        cmd.extend( glob("bin/dict*" ) )
+        #cmd.extend( glob("bin/tag.txt" ) )
+        #cmd.extend( glob("dat/*dat" ) )
+        #cmd.extend( glob("dat/*txt" ) )
+        cmd.extend( glob("dat/*" ) )
+        cmd.extend( glob("aux/*" ) )
+        cmd.extend( glob("python/*py") )
+        #cmd.extend( glob("test/*") )
+        cmd.extend( glob("test/*py") )
+        cmd.extend( glob("test/*C") )
+        cmd.extend( glob("test/*.hpp") )
+        cmd.extend( glob("test/*.cpp") )
+        cmd.extend( glob("test/*.o") )
+        cmd.extend( glob("test/*.so") )
+        cmd.extend( glob("test/*.exe") )
+        cmd.extend( glob("interface/*hpp" ) ) ## who is the genius that in ROOT6 need these at run time ? 
+        #/tmp/x509up_u45059
+        if opts.proxy: 
+                if 'X509_USER_PROXY' in os.environ and '/afs/' in os.environ['X509_USER_PROXY']:
+                        pass
+                else:
+                        cmd.extend( glob("/tmp/x509up_u%d"%os.getuid())) ## export X509_USER_PROXY=x509up_u$(id -u)
+        tarCmdline = " ".join(cmd)
+        print(tarCmdline)
+        call(cmd)
 
-	tarInfo = open("%s/tar.txt"%opts.dir,"w")
-	print >> tarInfo, tarCmdline
-	tarInfo.close()
-	cmd="git rev-parse HEAD > %s/tag.txt" %opts.dir
-	call(cmd,shell=True)
-	cmd="git describe --tags >> %s/tag.txt" %opts.dir
-	call(cmd,shell=True)
-	cmd="git diff HEAD > %s/patch.txt" %opts.dir
-	call(cmd,shell=True)
+        tarInfo = open("%s/tar.txt"%opts.dir,"w")
+        print(tarCmdline, file=tarInfo)
+        tarInfo.close()
+        cmd="git rev-parse HEAD > %s/tag.txt" %opts.dir
+        call(cmd,shell=True)
+        cmd="git describe --tags >> %s/tag.txt" %opts.dir
+        call(cmd,shell=True)
+        cmd="git diff HEAD > %s/patch.txt" %opts.dir
+        call(cmd,shell=True)
 
 ## expand *
 if True:
@@ -479,13 +481,13 @@ if True:
         list=[]
         if '/store/' in f or '/eos/user' in f:
             if opts.hadoop:
-                list = FindHadoop( f ) 
+                list = FindHadoop( f , '/eos/cms/' )
             elif opts.mount:
                 list =  FindEOS(f, "%%MOUNTPOINT%%/eos")
             else:
-                list =  FindEOS(f)
+                list =  FindEOS("root://eoscms/"+f)
         elif f.split('~')[0].split('/')[-1] in ['NANOAODSIM','NANOAOD','USER']:
-                print "DEBUG-submit,Using dataset for",f, "forcing aaa" if opts.aaa else ""
+                print("DEBUG-submit,Using dataset for",f, "forcing aaa" if opts.aaa else "")
                 if opts.aaa:
                     list =  FindDataset(f,"aaa" )
                 elif opts.fullcheck:
@@ -497,7 +499,7 @@ if True:
             if list == []: ### maybe remote ?
                 list=f
         if len(list)==0:
-            print "<*> Error in File list from",f,"-- No File Found"
+            print("<*> Error in File list from",f,"-- No File Found")
             raise IOError
         fileList.extend(list)
     config['Files']=fileList
@@ -505,7 +507,7 @@ if True:
 
 if opts.hadoop: ### T3 MIT
    if len(fileList) ==0:
-        print "filelist has 0 len: Nothing to be done"
+        print("filelist has 0 len: Nothing to be done")
         exit(0)
    redirect = ">&2"
    run= open("%s/run.sh"%opts.dir,"w")
@@ -530,7 +532,7 @@ if opts.hadoop: ### T3 MIT
    run.write("echo --- LS ---- %s\n"%redirect)
    run.write("ls -l | sed 's/^/LS ---/' %s\n"%redirect)
    #cmsRun cfg.py jobId=$JOBID
-   run.write("python python/Loop.py -v -d ../../input${JOBID}.dat %s\n"%redirect)
+   run.write("python3 python/Loop.py -v -d ../../input${JOBID}.dat %s\n"%redirect)
    run.write('EXITCODE=$?\n')
    run.write("echo Finished At: %s\n"%redirect)
    run.write("date %s\n"%redirect)
@@ -544,7 +546,7 @@ if opts.hadoop: ### T3 MIT
      ntry=0
      while ntry<3:
         if len(splittedInput[iJob]) == 0 : 
-             print "No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white
+             print("No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white)
              continue
         outname = re.sub('.root','_%d.root'%iJob,config['Output'])
         dat=open("%s/input%d.dat"%(opts.dir,iJob),"w")
@@ -560,7 +562,7 @@ if opts.hadoop: ### T3 MIT
         # check that created dat file is non-empty
         ntry+=1
         if os.stat("%s/input%d.dat"%(opts.dir,iJob)).st_size >20: break
-        print "-> Dat file not written correctly at trial",ntry
+        print("-> Dat file not written correctly at trial",ntry)
         if ntry==3: 
             sys.exit(0)
    # create condor.jdl
@@ -585,9 +587,9 @@ if opts.hadoop: ### T3 MIT
    if not opts.dryrun: 
         status = call(cmd,shell=True)
         if status !=0:
-            print "unable to submit,",cmd
+            print("unable to submit,",cmd)
         else:
-            print cmd
+            print(cmd)
 
 
 ##################### WRITE BATCH ###########################
@@ -611,7 +613,7 @@ if not opts.hadoop:
         sh.write('LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH\n'%os.getcwd())
     
         if opts.venv:
-            sh.write('PYTHONPATH=%s/venv/lib/python2.7/site-packages/:$PYTHONPATH\n'%os.getcwd())
+            sh.write('PYTHONPATH=%s/venv/lib/python3.9/site-packages/:$PYTHONPATH\n'%os.getcwd())
             sh.write('PATH=%s/venv/bin:$PATH\n'%os.getcwd())
     
         if opts.tar:
@@ -662,13 +664,13 @@ if not opts.hadoop:
     
     
         if opts.debug>1:
-        	# after CD in the WORKDIR and mount
-        	sh.write('echo "-------- ENV -------"\n')
-        	sh.write("env \n") # print run time environment
-        	sh.write('echo "--------------------"\n')
-        	sh.write('echo "-------- LS -------"\n')
-        	sh.write("ls -lR\n")
-        	sh.write('echo "--------------------"\n')
+                # after CD in the WORKDIR and mount
+                sh.write('echo "-------- ENV -------"\n')
+                sh.write("env \n") # print run time environment
+                sh.write('echo "--------------------"\n')
+                sh.write('echo "-------- LS -------"\n')
+                sh.write("ls -lR\n")
+                sh.write('echo "--------------------"\n')
     
     
     
@@ -685,7 +687,7 @@ if not opts.hadoop:
             sh.write("touch trigger.mountpoint.tmp\n")
             sh.write("cd $WORKDIR\n")
 
-        sh.write('python python/Loop.py -v -d %s/input%d.dat %s\n'%(opts.dir,iJob,compressString))
+        sh.write('python3 python/Loop.py -v -d %s/input%d.dat %s\n'%(opts.dir,iJob,compressString))
     
         if opts.compress:
             sh.write('EXITCODE=${PIPESTATUS[0]}\n')
@@ -744,21 +746,21 @@ if not opts.hadoop:
     
         #sh.write('#$-N %s/Job_%d\n'%(opts.dir,iJob))
         if len(splittedInput[iJob]) == 0 : 
-            print "No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white
+            print("No file to run on for job "+ str(iJob)+"," + red + " will not send it!" + white)
             continue
         ## submit
     if opts.condor:
             ## submit condor
-            print "-> Submitting","%s/condor.jdl"%opts.dir
+            print("-> Submitting","%s/condor.jdl"%opts.dir)
             cmd = "condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,opts.dir)
-            print "   cmd=",cmd
+            print("   cmd=",cmd)
             if not opts.dryrun and '/eos/' in opts.dir: 
                 #'/eos/user/a/amarini'
                 user=os.environ['USER']
                 l = opts.dir.split('/') 
                 l2=l[l.index(user)+1:]
                 mydir='/'.join(l2)
-                print "->eos workaround: using local dir",mydir
+                print("->eos workaround: using local dir",mydir)
                 call("mkdir -p %s"%mydir,shell=True)
                 call("cp  %s/*{sh,jdl} %s/"%(opts.dir,mydir),shell=True)
                 call("sed -i'' 's:/eos/user/"+user[0]+"/"+user+"/::g' %s/condor.jdl"%mydir,shell=True)
@@ -766,9 +768,9 @@ if not opts.hadoop:
                 cmd ="condor_submit -batch-name %s %s/condor.jdl"%(opts.dir,mydir)
                 status = call(cmd,shell=True)
                 if status !=0:
-                    print "unable to submit,",cmd
+                    print("unable to submit,",cmd)
                 else:
-                    print cmd
+                    print(cmd)
             elif not opts.dryrun: 
                 call(cmd, shell=True)
 ## END

@@ -6,7 +6,7 @@ import math
 from optparse import OptionParser
 from subprocess import call, check_output
 
-parser = OptionParser(usage = "usage\n Example: $python python/mcDatabaseNano.py -i dat/config.nano.dat");
+parser = OptionParser(usage = "usage\n Example: $python3 python/mcDatabaseNano.py -i dat/config.nano.dat");
 
 parser.add_option("-i","--dat",dest="dat",type="string",help="Input dat to scout. Either this is '' or dataset is ''",default="");
 parser.add_option("-x","--xsec",dest="xsec",type="float",help="Use external cross-section",default=-1);
@@ -24,11 +24,11 @@ from ParseDat import *
 useRunTree=not opts.noruntree
 
 if not useRunTree:
-    print "I will loop over the Event tree"
+    print("I will loop over the Event tree")
 else:
-    print "I will use the Run Tree to speed up things"
+    print("I will use the Run Tree to speed up things")
 
-print "[DEBUG] useRunTree=",useRunTree
+print("[DEBUG] useRunTree=",useRunTree)
 
 #EOS = "/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select"
 #EOS = "/usr/bin/eos"
@@ -36,10 +36,10 @@ print "[DEBUG] useRunTree=",useRunTree
 
 if opts.dat != "":
     if opts.dataset != "":
-        print "* ignoring dataset specification"
+        print("* ignoring dataset specification")
     cfg = ParseDat(opts.dat)
 
-    print "* reading already parsed mcdb"
+    print("* reading already parsed mcdb")
 
     try:
         mcdb= ReadMCDB(cfg['MCDB'])
@@ -49,7 +49,7 @@ if opts.dat != "":
     for f in cfg['Files']:
         if f=="": continue
 
-        print "DEBUG, parsing file",f
+        print("DEBUG, parsing file",f)
         if '.root' in f : continue
 
         dirs=f.split('/')
@@ -81,7 +81,7 @@ if opts.dat != "":
             ## this is a dataset
             label=dirs[1]
 
-        print "DEBUG, label is",label
+        print("DEBUG, label is",label)
         ## find label: directory not containing only numbers, hyphens, underscore, or empty
         
         if label == 'Tau': continue # exclude data
@@ -93,37 +93,37 @@ if opts.dat != "":
         if label == 'DoubleElectron': continue # exclude data
         if label == 'BTagCSV': continue # exclude data
 
-        cmd = "python %s -d '%s' -x %f -l '%s' -f %s -p %s"%(sys.argv[0],f,opts.xsec,label,cfg['MCDB'],cfg['pileup'])
+        cmd = "python3 %s -d '%s' -x %f -l '%s' -f %s -p %s"%(sys.argv[0],f,opts.xsec,label,cfg['MCDB'],cfg['pileup'])
         if opts.precise: cmd+=" --precise"
         if opts.noruntree: cmd+=" --noruntree"
 
         if label in mcdb:
-            print "* label", "'"+label+"'", "already parsed in mcdb ("+cfg['MCDB']+"). Cmd was:"
-            print "  ",cmd
+            print("* label", "'"+label+"'", "already parsed in mcdb ("+cfg['MCDB']+"). Cmd was:")
+            print("  ",cmd)
             continue
         elif label != '':
-            print "going to execute",cmd
+            print("going to execute",cmd)
             call(cmd,shell=True)
     exit(0)
 
 
 if '/store/' in opts.dataset or '/eos/user' in opts.dataset: 
-    print "DEBUG, Calling FindEOS"
+    print("DEBUG, Calling FindEOS")
     fileList =  FindEOS(opts.dataset)
 elif 'NANOAOD' in opts.dataset: 
-    print "DEBUG, Calling FindDataset"
+    print("DEBUG, Calling FindDataset")
     fileList =  FindDataset(opts.dataset)
 else:
     raise ValueError("not supported nano spec: "+opts.dataset)
 
-print "DEBUG, DATASET is",opts.dataset,"FILE LIST",fileList 
+print("DEBUG, DATASET is",opts.dataset,"FILE LIST",fileList) 
 
 sys.argv=[]
 import ROOT as r
 r.gROOT.SetBatch()
 
 if opts.precise:
-    print "-> Loading combine library for accumulators" #FIXME -> probably accumalators are not exported
+    print("-> Loading combine library for accumulators") #FIXME -> probably accumalators are not exported
     r.gSystem.Load("libHiggsAnalysisCombinedLimit.so")
 
 ## TODO count mcWeights, nEntries
@@ -155,7 +155,7 @@ simple = True ## NOT RD
 if simple:  ## 1D not Run dependent
     name = "PU-%s"%opts.label
     h = fOutput.Get(name)
-    if h != None : print "Overwriting",name
+    if h != None : print("Overwriting",name)
     puHist=[r.TH1F(name,"PU Distribution of %s"%opts.label,nBins,xMin,xMax)]
 else:
     raise ValueError("Copied, not tested")
@@ -164,7 +164,7 @@ else:
     for idx in range(0,len(opts.run.split(',')) -1):
         name = "RD-%s_%d_%d"%( opts.label, int(opts.run.split(',')[idx]), int(opts.run.split(',')[idx+1]) )
         h=fOutput.Get(name)
-        if  h != None: print "Overwriting",name
+        if  h != None: print("Overwriting",name)
         puHist.append(  r.TH1F(name,"RD PU Distribution of %s"%opts.label,nBins,xMin,xMax)  )
 
 
@@ -172,10 +172,10 @@ if opts.precise and useRunTree:
     raise ValueError("Cannot be precise with run tree")
 
 for idx,fName in enumerate(fileList):
-    print "processing file:",idx,"/",len(fileList)," : ", fName
+    print("processing file:",idx,"/",len(fileList)," : ", fName)
     fROOT = r.TFile.Open( fName )
     if fROOT == None:
-        print "Unable to open, trying AAA: ",re.sub('eoscms','xrootd-cms.infn.it',fName)
+        print("Unable to open, trying AAA: ",re.sub('eoscms','xrootd-cms.infn.it',fName))
         fROOT = r.TFile.Open(re.sub('eoscms','xrootd-cms.infn.it',fName))
 
     t = fROOT.Get("Events")
@@ -183,9 +183,9 @@ for idx,fName in enumerate(fileList):
     runs.GetEntry(0)
 
     if (runs.nLHEPdfSumw != nPdfs) : 
-        print "[WARNING] ",runs.nLHEPdfSumw," pdf weights in the NANOAOD. Using only",nPdfs, "(must be <)"
+        print("[WARNING] ",runs.nLHEPdfSumw," pdf weights in the NANOAOD. Using only",nPdfs, "(must be <)")
 
-    print "[DEBUG] useRunTree=",useRunTree
+    print("[DEBUG] useRunTree=",useRunTree)
     if not useRunTree:
         if opts.precise:
             t.Draw("Generator_weight","","goff") ##>>+ doesn't work
@@ -227,7 +227,7 @@ for idx,fName in enumerate(fileList):
 
         ##aqgc
         if runs.GetLeaf("sum_"+aqgc_names[0]):
-            print "Using RunTree for AQGCs","aqgc.Fill(i, runs.sum_"+aqgc_names[0]+" )"
+            print("Using RunTree for AQGCs","aqgc.Fill(i, runs.sum_"+aqgc_names[0]+" )")
             for i in range(0,nAQGCs):
                 eval("aqgc.Fill(i, runs.sum_"+aqgc_names[i]+" )")
 
@@ -248,22 +248,22 @@ for idx,fName in enumerate(fileList):
     fROOT.Close()
 
 
-print "---------------------------------------------"
-print "SumWeights = ", sum.GetBinContent(1) if not opts.precise else sum()
-print "Tot Entries = ", n
-print "SumWeights2 = ", sum2.GetBinContent(1)
+print("---------------------------------------------")
+print("SumWeights = ", sum.GetBinContent(1) if not opts.precise else sum())
+print("Tot Entries = ", n)
+print("SumWeights2 = ", sum2.GetBinContent(1))
 if opts.precise:
-    print "Effective Events = ", sum()**2 / sum2.GetBinContent(1), "Ratio=",(sum())**2 / sum2.GetBinContent(1) /n
+    print("Effective Events = ", sum()**2 / sum2.GetBinContent(1), "Ratio=",(sum())**2 / sum2.GetBinContent(1) /n)
 else:
-    print "Effective Events = ", (sum.GetBinContent(1))**2 / sum2.GetBinContent(1), "Ratio=",(sum.GetBinContent(1))**2 / sum2.GetBinContent(1) /n
-print "---------------------------------------------"
+    print("Effective Events = ", (sum.GetBinContent(1))**2 / sum2.GetBinContent(1), "Ratio=",(sum.GetBinContent(1))**2 / sum2.GetBinContent(1) /n)
+print("---------------------------------------------")
 
 ### LABEL dir Entries xSec
 f = open (opts.file,"a")
-print>>f, opts.label,opts.dataset, sum.GetBinContent(1) if not opts.precise else sum() ,
+print(opts.label,opts.dataset, sum.GetBinContent(1) if not opts.precise else sum(), end=' ', file=f)
 
 if opts.xsec >0 : 
-    print>>f, opts.xsec,
+    print(opts.xsec, end=' ', file=f)
 else: 
     ## AUTOMAGIC CROSS SECTIONS -- NO INTERNAL XS :(
     xsec=0
@@ -508,46 +508,46 @@ else:
     ##
     #elif '' in opts.label: xsec=
     ## INTERNAL
-    print>>f,  xsec,
+    print(xsec, end=' ', file=f)
 
     if scales.GetBinContent(1) > 0:
-        print>>f, "SCALES", #r1f2=0,r1f5,r2f1,r2f2,r5f1,r5f5
+        print("SCALES", end=' ', file=f) #r1f2=0,r1f5,r2f1,r2f2,r5f1,r5f5
         if nScales >=9 :
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(5 + 1)  , ## offset by one in filling
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(3 + 1)  ,
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(7 + 1)  ,
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(8 + 1)  ,
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(1 + 1)  ,
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(0 + 1)  ,
+            print(sum.GetBinContent(1)/scales.GetBinContent(5 + 1), end=' ', file=f) ## offset by one in filling
+            print(sum.GetBinContent(1)/scales.GetBinContent(3 + 1), end=' ', file=f)
+            print(sum.GetBinContent(1)/scales.GetBinContent(7 + 1), end=' ', file=f)
+            print(sum.GetBinContent(1)/scales.GetBinContent(8 + 1), end=' ', file=f)
+            print(sum.GetBinContent(1)/scales.GetBinContent(1 + 1), end=' ', file=f)
+            print(sum.GetBinContent(1)/scales.GetBinContent(0 + 1), end=' ', file=f)
 
     ##  | Float_t LHE scale variation weights (w_var / w_nominal); [0] is MUF="0.5" MUR="0.5"; [1] is MUF="1.0" MUR="0.5"; [2] is MUF="2.0" MUR="0.5"; [3] is MUF="0.5" MUR="1.0"; [4] is MUF="2.0" MUR="1.0"; [5] is MUF="0.5" MUR="2.0"; [6] is MUF="1.0" MUR="2.0"; [7] is MUF="2.0" MUR="2.0"*
         if nScales ==8 : ## removed the 1-1
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(4 + 1)  , ## offset by one in filling
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(3 + 1)  ,
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(6 + 1)  ,
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(7 + 1)  ,
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(1 + 1)  ,
-            print>>f, sum.GetBinContent(1)/scales.GetBinContent(0 + 1)  ,
+            print(sum.GetBinContent(1)/scales.GetBinContent(4 + 1), end=' ', file=f) ## offset by one in filling
+            print(sum.GetBinContent(1)/scales.GetBinContent(3 + 1), end=' ', file=f)
+            print(sum.GetBinContent(1)/scales.GetBinContent(6 + 1), end=' ', file=f)
+            print(sum.GetBinContent(1)/scales.GetBinContent(7 + 1), end=' ', file=f)
+            print(sum.GetBinContent(1)/scales.GetBinContent(1 + 1), end=' ', file=f)
+            print(sum.GetBinContent(1)/scales.GetBinContent(0 + 1), end=' ', file=f)
     
     if pdfs.GetBinContent(1) > 0:
-        print>>f, "PDFS",
+        print("PDFS", end=' ', file=f)
         for i in range(0,100): ## this number is also in python/ParseDat
-            print>>f, sum.GetBinContent(1)/pdfs.GetBinContent(i+1), 
+            print(sum.GetBinContent(1)/pdfs.GetBinContent(i+1), end=' ', file=f) 
 
     if aqgc.GetBinContent(1) >0:
-        print >>f,"AQGC",
+        print("AQGC", end=' ', file=f)
         ##aqgc
         lastSM=0.
         for i in range(0,nAQGCs):
             #print>>f, sum.GetBinContent(1)/aqgc.GetBinContent(i+1),  ### orig. normalize each variations to the nominal xsec
             if aqgc_names[i].split("_")[1] == "0p00": lastSM= aqgc.GetBinContent(i+1)
         for i in range(0,nAQGCs):
-            print>>f, sum.GetBinContent(1)/lastSM,
+            print(sum.GetBinContent(1)/lastSM, end=' ', file=f)
 
     ## INTERNAL
-    print >>f
+    print(file=f)
 
-print "---------------------------------------------"
+print("---------------------------------------------")
 
 fOutput.cd();
 for h in puHist:

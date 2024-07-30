@@ -10,6 +10,7 @@
 
 #include <memory>
 #include "interface/localQGLikelihoodCalculator.hpp"
+#include <fstream>
 
 class QGAnalysis: virtual public AnalysisBase
 {
