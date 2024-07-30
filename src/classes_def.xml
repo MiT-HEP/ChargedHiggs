@@ -47,11 +47,11 @@
 	
 	<!-- Fitter -->
 	<class name="BaseFitter"/>
-	<class name="Fitter"/>
-	<class name="BackgroundFitter"/>
+    <!-- <class name="Fitter"/> -->
+    <!-- <class name="BackgroundFitter"/> -->
 	<class name="PurityFit"/>
 	<class name="PurityFitAnalytic"/>
-	<class name="PdfModelBuilder"/>
+    <!--<class name="PdfModelBuilder"/> -->
 	
 	<!-- Additional shapes -->
 	<class name="RooCMSShape"/>
