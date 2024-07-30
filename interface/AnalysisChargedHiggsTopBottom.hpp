@@ -15,6 +15,8 @@
 #include "TMVA/Reader.h"
 #include "TMVA/Tools.h"
 
+#include <fstream>
+
 class ChargedHiggsTopBottom:  virtual public AnalysisBase
 {
 public:

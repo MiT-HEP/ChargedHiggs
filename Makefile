@@ -37,14 +37,14 @@ ifndef CMSSW_BASE
 $(info No CMSSSW !!!!)
 $(info I ll sleep 3s to let you acknowledge it)
 $(shell sleep 3s)
-CXXFLAGS += -I/usr/include/python2.7 -lpython2.7
+CXXFLAGS += -I/usr/include/python3.9 -lpython3.9
 else
 $(info CMSSW found: $(CMSSW_BASE) )
 COMBINELIBFILE = $(wildcard $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/libHiggsAnalysisCombinedLimit.so)
 COMBINELIB = HiggsAnalysisCombinedLimit
 COMBINELIBDIR = $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/
-CXXFLAGS += -I"/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/python/2.7.11-mlhled/include/python2.7"
-CXXFLAGS += -D HAVE_PYTHIA -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/230-gnimlf5/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/230-gnimlf5/lib  -lpythia8
+CXXFLAGS += -I"/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/python3/3.9.14-e432d7f95f9e22c05899c3205f44ed54/include/python3.9"
+CXXFLAGS += -D HAVE_PYTHIA -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/306-687274b5349576f1777e8bb247ec5a88/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/pythia8/306-687274b5349576f1777e8bb247ec5a88/lib  -lpythia8
 #-I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/clhep/2.2.0.4-kpegke/include
 #"-lpythia8 -lclhep "
 endif
